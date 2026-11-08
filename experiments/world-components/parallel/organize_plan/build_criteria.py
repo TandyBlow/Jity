@@ -19,7 +19,12 @@ import text_conformance as tc
 
 HERE = Path(__file__).resolve().parent
 import sys
-OUT = Path(sys.argv[sys.argv.index("--out") + 1]) if "--out" in sys.argv else HERE / "freeze" / "criteria-v2.json"
+
+# Default target is derived from the checker version, so running this without
+# --out can never rewrite an older frozen file (criteria-v2 belongs to R2).
+_default_major = tc.CONTRACT_VERSION.rsplit("v", 1)[-1]
+OUT = (Path(sys.argv[sys.argv.index("--out") + 1]) if "--out" in sys.argv
+       else HERE / "freeze" / f"criteria-v{_default_major}.json")
 
 
 def sha256(path: Path) -> str:
@@ -64,7 +69,8 @@ def main() -> int:
     doc = {
         "protocol": f"c3-acceptance-criteria-{tc.CONTRACT_VERSION}",
         "created": datetime.now(timezone.utc).isoformat(),
-        "supersedes": "runs/r1 (v1 checker accepted reversed order, out-of-scope 随后, and added content)",
+        "supersedes": ("runs/r1 (v1 checker) and runs/r2 (v2 checker). runs/r2 keeps its own "
+                       "criteria-v2 record; this file governs runs/r4 onward."),
         "checker": {
             "module": "text_conformance.py",
             "sha256": sha256(HERE / "text_conformance.py"),
@@ -84,7 +90,9 @@ def main() -> int:
         "acceptance": {
             "itemAccepted": "该条没有任何 hard 发现，且所有 review 发现都有人工结论（结论为“合法改写”才算通过）",
             "pairedSuccess": "同一来源的两份计划都被 itemAccepted",
-            "gate": "新冻结留出上成对成功 ≥ 8/10，且严格高于四个固定策略的同批成绩（当前材料上固定策略成对成功均为 0）",
+            "gate": ("门线由留出包冻结时写入的 gateRule 决定：max(8, ceil(0.8*N))，"
+                     "必须使用全部 N 个来源，不允许挑选子集；当前 holdout-a-v1 为 12 源，"
+                     "即 10/12。此文件不再写死 8/10。"),
             "mustNot": [
                 "不得只报告平均分而隐藏逐条 hard 发现",
                 "不得用固定策略的成绩替代模型成绩",
@@ -99,8 +107,8 @@ def main() -> int:
             "rule": "unsure 不计入通过；每批重新开表，不复用上一批结论",
         },
         "nextRoundPreregistration": {
-            "inputs": "runs/r2/downstream-inputs.jsonl 的 18 条（与 r1 相同，逐字节一致）",
-            "checker": "text_conformance.py 的 v2，代码哈希见 checker.sha256",
+            "inputs": "runs/r4/downstream-inputs.jsonl 的 18 条（与 r1/r2 逐字节一致）",
+            "checker": "text_conformance.py 的 v3，代码哈希见 checker.sha256",
             "controls": ["split-all", "merge-all-adjacent", "merge-first-pair", "merge-last-pair"],
             "responsiveness": "同一来源交换 P1/P2 标签后，输出必须跟着换；否则先判“没读计划”",
             "stop": "模型成对成功不高于固定策略即停止，不加步数、不换基座",

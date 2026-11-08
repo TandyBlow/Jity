@@ -1,0 +1,588 @@
+{
+ "rows": [
+  {
+   "caseId": "N01-missing-fact",
+   "note": "drop f4's group",
+   "synthetic": false,
+   "expectedCodes": [
+    "fact-missing"
+   ],
+   "actualCodes": [
+    "fact-missing"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "fact-missing",
+     "detail": "f4 is not covered by any group",
+     "factId": "f4"
+    }
+   ]
+  },
+  {
+   "caseId": "N02-duplicate-fact",
+   "note": "f4 appears in two groups",
+   "synthetic": false,
+   "expectedCodes": [
+    "fact-duplicate"
+   ],
+   "actualCodes": [
+    "fact-duplicate",
+    "link-count"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "link-count",
+     "detail": "group 3 has 2 facts and 0 links",
+     "group": 3
+    },
+    {
+     "code": "fact-duplicate",
+     "detail": "f4 appears more than once",
+     "factId": "f4"
+    }
+   ]
+  },
+  {
+   "caseId": "N03-unknown-fact",
+   "note": "replace f4 with f9",
+   "synthetic": false,
+   "expectedCodes": [
+    "fact-missing",
+    "fact-unknown"
+   ],
+   "actualCodes": [
+    "fact-missing",
+    "fact-unknown"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "fact-unknown",
+     "detail": "f9 is not in the selected set",
+     "factId": "f9"
+    },
+    {
+     "code": "fact-missing",
+     "detail": "f4 is not covered by any group",
+     "factId": "f4"
+    }
+   ]
+  },
+  {
+   "caseId": "N04-order-changed",
+   "note": "swap f2 and f3 groups",
+   "synthetic": false,
+   "expectedCodes": [
+    "order-changed"
+   ],
+   "actualCodes": [
+    "order-changed"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "order-changed",
+     "detail": "flattened groups are not the input order; groups must be contiguous chunks",
+     "got": [
+      "f0",
+      "f1",
+      "f3",
+      "f2",
+      "f4"
+     ],
+     "expected": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ]
+    }
+   ]
+  },
+  {
+   "caseId": "N05-non-contiguous",
+   "note": "group f0+f2 skips f1",
+   "synthetic": false,
+   "expectedCodes": [
+    "link-entity-mismatch",
+    "order-changed"
+   ],
+   "actualCodes": [
+    "link-entity-mismatch",
+    "order-changed",
+    "ref-cross-group-omit"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "link-entity-mismatch",
+     "detail": "group 0 link 0 joins f0(person_a) and f2(person_b); expected parallel, got continuation",
+     "group": 0,
+     "linkIndex": 0,
+     "expected": "parallel",
+     "actual": "continuation"
+    },
+    {
+     "code": "order-changed",
+     "detail": "flattened groups are not the input order; groups must be contiguous chunks",
+     "got": [
+      "f0",
+      "f2",
+      "f1",
+      "f3",
+      "f4"
+     ],
+     "expected": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "ref-cross-group-omit",
+     "detail": "f1 omits across a group boundary; the name is only in an earlier group",
+     "factId": "f1",
+     "entityId": "person_a"
+    }
+   ]
+  },
+  {
+   "caseId": "N06-continuation-across-entities",
+   "note": "continuation joins 周宁 with 陈默",
+   "synthetic": false,
+   "expectedCodes": [
+    "link-entity-mismatch",
+    "order-changed"
+   ],
+   "actualCodes": [
+    "edge-same-group",
+    "edge-target-not-isolated",
+    "link-entity-mismatch",
+    "order-changed"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "link-entity-mismatch",
+     "detail": "group 0 link 0 joins f2(person_b) and f3(person_c); expected parallel, got continuation",
+     "group": 0,
+     "linkIndex": 0,
+     "expected": "parallel",
+     "actual": "continuation"
+    },
+    {
+     "code": "order-changed",
+     "detail": "flattened groups are not the input order; groups must be contiguous chunks",
+     "got": [
+      "f2",
+      "f3",
+      "f0",
+      "f1",
+      "f4"
+     ],
+     "expected": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "edge-same-group",
+     "detail": "edge ('f2', 'f3') endpoints share one group",
+     "edge": 0
+    },
+    {
+     "code": "edge-target-not-isolated",
+     "detail": "edge ('f2', 'f3') target f3 must be its own group",
+     "edge": 0
+    }
+   ]
+  },
+  {
+   "caseId": "N07-parallel-within-entity",
+   "note": "parallel joins two 林川 facts",
+   "synthetic": false,
+   "expectedCodes": [
+    "link-entity-mismatch"
+   ],
+   "actualCodes": [
+    "link-entity-mismatch"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "link-entity-mismatch",
+     "detail": "group 0 link 0 joins f0(person_a) and f1(person_a); expected continuation, got parallel",
+     "group": 0,
+     "linkIndex": 0,
+     "expected": "continuation",
+     "actual": "parallel"
+    }
+   ]
+  },
+  {
+   "caseId": "N08-first-mention-omit",
+   "note": "first 林川 fact is omitted",
+   "synthetic": false,
+   "expectedCodes": [
+    "ref-first-mention-omit",
+    "ref-omit-without-name"
+   ],
+   "actualCodes": [
+    "ref-first-mention-omit",
+    "ref-omit-without-name"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "ref-first-mention-omit",
+     "detail": "f0 omits the first mention of person_a",
+     "factId": "f0",
+     "entityId": "person_a"
+    },
+    {
+     "code": "ref-omit-without-name",
+     "detail": "f0 omits but no name precedes it in the same group",
+     "factId": "f0"
+    },
+    {
+     "code": "ref-first-mention-omit",
+     "detail": "f1 omits the first mention of person_a",
+     "factId": "f1",
+     "entityId": "person_a"
+    },
+    {
+     "code": "ref-omit-without-name",
+     "detail": "f1 omits but no name precedes it in the same group",
+     "factId": "f1"
+    }
+   ]
+  },
+  {
+   "caseId": "N09-cross-group-omit",
+   "note": "omit 陈默 in a later group",
+   "synthetic": false,
+   "expectedCodes": [
+    "ref-cross-group-omit"
+   ],
+   "actualCodes": [
+    "ref-cross-group-omit"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "ref-cross-group-omit",
+     "detail": "f4 omits across a group boundary; the name is only in an earlier group",
+     "factId": "f4",
+     "entityId": "person_c"
+    }
+   ]
+  },
+  {
+   "caseId": "N10-missing-edge",
+   "note": "drop the authorized before(f2->f3)",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-missing-authorized"
+   ],
+   "actualCodes": [
+    "edge-missing-authorized"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-missing-authorized",
+     "detail": "authorized relation ('f2', 'f3') is not carried by the plan",
+     "edge": [
+      "f2",
+      "f3"
+     ]
+    }
+   ]
+  },
+  {
+   "caseId": "N11-unauthorized-edge",
+   "note": "invent before(f0->f1)",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-missing-authorized",
+    "edge-unauthorized"
+   ],
+   "actualCodes": [
+    "edge-missing-authorized",
+    "edge-same-group",
+    "edge-target-not-isolated",
+    "edge-unauthorized"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-unauthorized",
+     "detail": "edge ('f0', 'f1') is not in the fixture authorization record",
+     "edge": 0
+    },
+    {
+     "code": "edge-same-group",
+     "detail": "edge ('f0', 'f1') endpoints share one group",
+     "edge": 0
+    },
+    {
+     "code": "edge-target-not-isolated",
+     "detail": "edge ('f0', 'f1') target f1 must be its own group",
+     "edge": 0
+    },
+    {
+     "code": "edge-missing-authorized",
+     "detail": "authorized relation ('f2', 'f3') is not carried by the plan",
+     "edge": [
+      "f2",
+      "f3"
+     ]
+    }
+   ]
+  },
+  {
+   "caseId": "N12-reversed-edge",
+   "note": "reverse the authorized direction",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-missing-authorized",
+    "edge-order",
+    "edge-unauthorized"
+   ],
+   "actualCodes": [
+    "edge-missing-authorized",
+    "edge-order",
+    "edge-unauthorized"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-order",
+     "detail": "edge 0 must go forward in input order",
+     "edge": 0
+    },
+    {
+     "code": "edge-unauthorized",
+     "detail": "edge ('f3', 'f2') is not in the fixture authorization record",
+     "edge": 0
+    },
+    {
+     "code": "edge-missing-authorized",
+     "detail": "authorized relation ('f2', 'f3') is not carried by the plan",
+     "edge": [
+      "f2",
+      "f3"
+     ]
+    }
+   ]
+  },
+  {
+   "caseId": "N13-target-not-isolated",
+   "note": "merge the relation target f3 with f4",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-target-not-isolated"
+   ],
+   "actualCodes": [
+    "edge-target-not-isolated"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-target-not-isolated",
+     "detail": "edge ('f2', 'f3') target f3 must be its own group",
+     "edge": 0
+    }
+   ]
+  },
+  {
+   "caseId": "N14-extra-field",
+   "note": "add a free-text temporal field",
+   "synthetic": false,
+   "expectedCodes": [
+    "plan-free-text",
+    "unknown-field"
+   ],
+   "actualCodes": [
+    "plan-free-text",
+    "unknown-field"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "unknown-field",
+     "detail": "plan key 'then' is not in ['edges', 'groups', 'refs']",
+     "field": "then"
+    },
+    {
+     "code": "plan-free-text",
+     "detail": "banned temporal/causal wording in 'f0 随后 f1'",
+     "value": "f0 随后 f1"
+    }
+   ]
+  },
+  {
+   "caseId": "N15-cause-edge",
+   "note": "turn before into cause",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-type"
+   ],
+   "actualCodes": [
+    "edge-type"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-type",
+     "detail": "edge 0 type 'cause' is not allowed",
+     "edge": 0
+    }
+   ]
+  },
+  {
+   "caseId": "N16-time-on-group",
+   "note": "add a time field to a group",
+   "synthetic": false,
+   "expectedCodes": [
+    "plan-free-text",
+    "unknown-field"
+   ],
+   "actualCodes": [
+    "plan-free-text",
+    "unknown-field"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "plan-free-text",
+     "detail": "banned temporal/causal wording in '随后'",
+     "value": "随后"
+    },
+    {
+     "code": "unknown-field",
+     "detail": "group 0 key 'time' is not allowed",
+     "group": 0,
+     "field": "time"
+    }
+   ]
+  },
+  {
+   "caseId": "N17-bad-edge-mode",
+   "note": "mode is a temporal word",
+   "synthetic": false,
+   "expectedCodes": [
+    "edge-mode"
+   ],
+   "actualCodes": [
+    "edge-mode"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "edge-mode",
+     "detail": "edge 0 mode 'then' is not allowed",
+     "edge": 0
+    }
+   ]
+  },
+  {
+   "caseId": "N18-ambiguous-name",
+   "note": "two entities named 张伟",
+   "synthetic": true,
+   "expectedCodes": [
+    "ref-ambiguous-name"
+   ],
+   "actualCodes": [
+    "ref-ambiguous-name"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "ref-ambiguous-name",
+     "detail": "f0 belongs to an entity whose display name is shared; ref 'name' is ambiguous",
+     "factId": "f0"
+    },
+    {
+     "code": "ref-ambiguous-name",
+     "detail": "f1 belongs to an entity whose display name is shared; ref 'name' is ambiguous",
+     "factId": "f1"
+    }
+   ]
+  },
+  {
+   "caseId": "N19-ambiguous-omit",
+   "note": "A/B/A: omit at f2 points back to B if read nearest-first",
+   "synthetic": true,
+   "expectedCodes": [
+    "ref-ambiguous-omit"
+   ],
+   "actualCodes": [
+    "ref-ambiguous-omit"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "ref-ambiguous-omit",
+     "detail": "f2 omits p1 but the nearest preceding name is f1(p2)",
+     "factId": "f2",
+     "entityId": "p1",
+     "nearestNamedFact": "f1"
+    }
+   ]
+  },
+  {
+   "caseId": "N20-time-fact-unsupported",
+   "note": "time facts have no entity; this schema refuses them",
+   "synthetic": true,
+   "expectedCodes": [
+    "unsupported-fact-kind"
+   ],
+   "actualCodes": [
+    "unsupported-fact-kind"
+   ],
+   "ok": true,
+   "missingExpected": [],
+   "errors": [
+    {
+     "code": "unsupported-fact-kind",
+     "detail": "f1 kind='time' has no entity; this round's plan schema does not cover it",
+     "factId": "f1",
+     "kind": "time"
+    },
+    {
+     "code": "unsupported-fact-kind",
+     "detail": "f1 has no entityId",
+     "factId": "f1"
+    }
+   ]
+  }
+ ]
+}

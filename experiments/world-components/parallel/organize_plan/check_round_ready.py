@@ -26,10 +26,18 @@ import json
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
 HOLDOUT_FREEZE = HERE / "freeze" / "holdout-v1-freeze.json"
-SIGNOFF = HERE / "runs" / "r2" / "signoff.json"
-ACCEPTANCE = HERE / "runs" / "r2" / "acceptance.json"
+# The current round is runs/r4 (v3 checker). runs/r2 is the v2 history: it keeps
+# its own criteria-v2 pins and is never used to open today's gate.
+SIGNOFF = HERE / "runs" / "r4" / "signoff.json"
+ACCEPTANCE = HERE / "runs" / "r4" / "acceptance.json"
+R2_SIGNOFF = HERE / "runs" / "r2" / "signoff.json"
 ADOPTION = HERE / "freeze" / "checkpoint-adoption.json"
-CRITERIA = HERE / "freeze" / "criteria-v2.json"
+def newest_criteria() -> Path:
+    found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
+    return found[-1] if found else HERE / "freeze" / "criteria-v2.json"
+
+
+CRITERIA = newest_criteria()
 
 
 def sha256(path: Path) -> str:
@@ -81,6 +89,26 @@ def check_holdout(freeze_path: Path | None = None) -> dict:
     if recomputed != (doc.get("packageDigest") or {}).get("sha256"):
         return {"ready": False, "state": "留出冻结件已过期",
                 "detail": "冻结件的 packageDigest 与重算值不一致"}
+    # The database carries the evidence the facts were checked against, so a
+    # changed or deleted world.db must also invalidate the freeze.
+    manifest_path = package / "manifest.json"
+    db_problems = []
+    if not manifest_path.exists():
+        db_problems.append("manifest.json missing")
+    else:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        db_rel = (manifest.get("databases") or {})
+        db_name = next(iter(db_rel.values()), "world.db") if db_rel else "world.db"
+        db_path = package / db_name
+        want_db = (manifest.get("files") or {}).get("world.db")
+        if not db_path.exists():
+            db_problems.append(f"{db_name} missing")
+        elif want_db and sha256(db_path) != want_db:
+            db_problems.append(f"{db_name} changed")
+    if db_problems:
+        return {"ready": False, "state": "留出冻结件已过期",
+                "detail": "冻结后材料变了：" + "；".join(db_problems)}
+
     signoff = doc.get("semanticSignoff") or {}
     signoff_path = package / signoff.get("file", "")
     if not signoff_path.exists() or sha256(signoff_path) != signoff.get("sha256"):
@@ -95,8 +123,12 @@ def check_holdout(freeze_path: Path | None = None) -> dict:
 
 def check_signoff() -> dict:
     if not SIGNOFF.exists():
-        return {"ready": False, "state": "人工签认待完成",
-                "detail": "runs/r2/signoff.json 不存在；先填 runs/r2/signoff-form.json 再跑 apply_signoff.py"}
+        detail = (f"{SIGNOFF.relative_to(HERE).as_posix()} 不存在；先填 "
+                  f"{SIGNOFF.with_name('signoff-form.json').relative_to(HERE).as_posix()} "
+                  f"再跑 apply_signoff.py")
+        if R2_SIGNOFF.exists():
+            detail += "。runs/r2/signoff.json 是 v2 检查器的历史审计记录，不用于当前门"
+        return {"ready": False, "state": "人工签认待完成", "detail": detail}
     signed = json.loads(SIGNOFF.read_text(encoding="utf-8"))
     if not signed.get("signed"):
         return {"ready": False, "state": "人工签认待完成", "detail": "signoff.json 未标 signed"}

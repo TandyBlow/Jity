@@ -12,6 +12,9 @@ Each test names the defect it locks down:
   T7  a sanity fact is expressed as a symptom, not a number
   T8  a frozen holdout whose material changed afterwards is not "ready"
   T9  the gate threshold for N sources is pre-registered as max(8, ceil(0.8N))
+  T10 the digest prefilled by the producer equals the digest c3 recomputes
+  T11 a changed or deleted world.db invalidates the freeze
+  T12 build_criteria.py never overwrites an older frozen criteria file
 
 Run:
     python -X utf8 test_regressions.py
@@ -158,6 +161,12 @@ def test_T8_frozen_holdout_must_match_its_material() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         pkg, digest = make_package(tmp_path)
+        (pkg / "world.db").write_bytes(b"sqlite-bytes")
+        manifest = json.loads((pkg / "manifest.json").read_text(encoding="utf-8"))
+        manifest["databases"] = {"s": "world.db"}
+        manifest["files"] = {"world.db": sha256(pkg / "world.db")}
+        (pkg / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+        digest = vh.package_digest(pkg, ["s1", "s2"])["sha256"]
         write_signoff(pkg, package_sha=digest)
         freeze = {
             "package": str(pkg), "status": "admissible",
@@ -179,6 +188,71 @@ def test_T8_frozen_holdout_must_match_its_material() -> None:
         state = check_round_ready.check_holdout(freeze_path)
         assert state["ready"] is False, state
         assert state["state"] == "留出冻结件已过期", state
+
+
+PACKAGE_CANDIDATES = [
+    Path("D:/others/Jity/artifacts/holdout-a-v1"),
+    Path("artifacts/holdout-a-v1"),
+]
+
+
+def test_T10_producer_digest_equals_recomputed_digest() -> None:
+    """The template's prefilled digest must equal what c3 computes.
+
+    This is the cross-branch check for the circular-dependency defect: the
+    digest lives only in the template, never inside manifest.json.
+    """
+    pkg = next((p for p in PACKAGE_CANDIDATES if (p / "manifest.json").exists()), None)
+    if pkg is None:
+        print("  (skipped: holdout package not present in this checkout)")
+        return
+    manifest = json.loads((pkg / "manifest.json").read_text(encoding="utf-8"))
+    assert "packageSha256" not in manifest, "the digest must not live inside manifest.json"
+    template = json.loads((pkg / "semantic-review-signoff.template.json").read_text(encoding="utf-8"))
+    digest = vh.package_digest(pkg, manifest["sources"])
+    assert template["packageSha256"] == digest["sha256"], (
+        f"template {template['packageSha256'][:12]} != recomputed {digest['sha256'][:12]}")
+
+
+def test_T11_changed_or_deleted_db_invalidates_freeze() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        pkg, digest = make_package(tmp_path)
+        (pkg / "world.db").write_bytes(b"sqlite-bytes")
+        manifest = json.loads((pkg / "manifest.json").read_text(encoding="utf-8"))
+        manifest["databases"] = {"s": "world.db"}
+        manifest["files"] = {"world.db": sha256(pkg / "world.db")}
+        (pkg / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+        write_signoff(pkg, package_sha=vh.package_digest(pkg, ["s1", "s2"])["sha256"])
+        freeze = {
+            "package": str(pkg), "status": "admissible",
+            "manifestSha256": sha256(pkg / "manifest.json"),
+            "semanticSignoff": {"file": "semantic-review-signoff.json",
+                                "sha256": sha256(pkg / "semantic-review-signoff.json")},
+            "pairFiles": vh.package_digest(pkg, ["s1", "s2"])["files"],
+            "packageDigest": vh.package_digest(pkg, ["s1", "s2"]),
+            "gateRule": {"sources": 2, "minimumPairedSuccess": 8},
+            "plans": {"s1": {}}, "sources": [{"sourceId": "s1"}, {"sourceId": "s2"}],
+        }
+        freeze_path = tmp_path / "freeze.json"
+        freeze_path.write_text(json.dumps(freeze, ensure_ascii=False), encoding="utf-8")
+        assert check_round_ready.check_holdout(freeze_path)["ready"] is True
+
+        (pkg / "world.db").write_bytes(b"tampered")
+        state = check_round_ready.check_holdout(freeze_path)
+        assert state["ready"] is False and state["state"] == "留出冻结件已过期", state
+        assert "world.db changed" in state["detail"], state
+
+        (pkg / "world.db").unlink()
+        state = check_round_ready.check_holdout(freeze_path)
+        assert state["ready"] is False and "world.db missing" in state["detail"], state
+
+
+def test_T12_criteria_generator_never_overwrites_history() -> None:
+    src = (HERE / "build_criteria.py").read_text(encoding="utf-8")
+    assert 'criteria-v2.json' not in src.split("def main")[0].split("import sys")[-1], (
+        "the default output must not be criteria-v2.json")
+    assert 'criteria-v{_default_major}.json' in src, src[:400]
 
 
 def test_T9_gate_threshold_is_preregistered() -> None:

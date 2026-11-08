@@ -1,7 +1,7 @@
 {
  "protocol": "c3-acceptance-criteria-c3-text-conformance-v3",
- "created": "2026-11-08T07:53:18.004506+00:00",
- "supersedes": "runs/r1 (v1 checker accepted reversed order, out-of-scope 随后, and added content)",
+ "created": "2026-11-08T08:23:03.888565+00:00",
+ "supersedes": "runs/r1 (v1 checker) and runs/r2 (v2 checker). runs/r2 keeps its own criteria-v2 record; this file governs runs/r4 onward.",
  "checker": {
   "module": "text_conformance.py",
   "sha256": "714aeb46b05a8a410693f39be971e9778a22792927de6e50bf0513d418a1cca0",
@@ -119,7 +119,7 @@
  "acceptance": {
   "itemAccepted": "该条没有任何 hard 发现，且所有 review 发现都有人工结论（结论为“合法改写”才算通过）",
   "pairedSuccess": "同一来源的两份计划都被 itemAccepted",
-  "gate": "新冻结留出上成对成功 ≥ 8/10，且严格高于四个固定策略的同批成绩（当前材料上固定策略成对成功均为 0）",
+  "gate": "门线由留出包冻结时写入的 gateRule 决定：max(8, ceil(0.8*N))，必须使用全部 N 个来源，不允许挑选子集；当前 holdout-a-v1 为 12 源，即 10/12。此文件不再写死 8/10。",
   "mustNot": [
    "不得只报告平均分而隐藏逐条 hard 发现",
    "不得用固定策略的成绩替代模型成绩",
@@ -146,8 +146,8 @@
   "rule": "unsure 不计入通过；每批重新开表，不复用上一批结论"
  },
  "nextRoundPreregistration": {
-  "inputs": "runs/r2/downstream-inputs.jsonl 的 18 条（与 r1 相同，逐字节一致）",
-  "checker": "text_conformance.py 的 v2，代码哈希见 checker.sha256",
+  "inputs": "runs/r4/downstream-inputs.jsonl 的 18 条（与 r1/r2 逐字节一致）",
+  "checker": "text_conformance.py 的 v3，代码哈希见 checker.sha256",
   "controls": [
    "split-all",
    "merge-all-adjacent",

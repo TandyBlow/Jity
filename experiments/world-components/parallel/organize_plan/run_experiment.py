@@ -37,7 +37,14 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]  # c3 worktree root
-RUN = HERE / "runs" / "r2"   # v2 checker; runs/r1 stays as the v1 record
+def newest_criteria() -> Path:
+    """The criteria file that matches the current checker (highest version wins)."""
+    found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
+    return found[-1] if found else HERE / "freeze" / "criteria-v2.json"
+
+
+# runs/r1 = v1 checker, runs/r2 = v2 checker (both kept as history), runs/r4 = v3
+RUN = HERE / "runs" / "r4"
 
 sys.path.insert(0, str(HERE))
 import plan_contract as contract  # noqa: E402
@@ -190,9 +197,7 @@ def write_manual_review(queue: list[dict]) -> dict:
 
 def check_frozen_criteria() -> list[str]:
     """Refuse to run when the frozen criteria no longer describe this code."""
-    # Prefer the newest frozen criteria file; criteria-v2 stays as the R2 record.
-    candidates = sorted((HERE / "freeze").glob("criteria-v*.json"))
-    path = candidates[-1] if candidates else HERE / "freeze" / "criteria-v2.json"
+    path = newest_criteria()
     if not path.exists():
         return []          # first run: criteria are generated afterwards
     doc = json.loads(path.read_text(encoding="utf-8"))

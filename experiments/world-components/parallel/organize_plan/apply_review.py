@@ -37,8 +37,13 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import gate_rules  # noqa: E402
 
-RUN = HERE / "runs" / "r2"
-CRITERIA = HERE / "freeze" / "criteria-v2.json"
+def newest_criteria() -> Path:
+    found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
+    return found[-1] if found else HERE / "freeze" / "criteria-v2.json"
+
+
+RUN = HERE / "runs" / "r4"
+CRITERIA = newest_criteria()
 PROBES = RUN / "tamper-probes.json"
 REVIEW = RUN / "manual-review.json"
 SIGNOFF = RUN / "signoff.json"

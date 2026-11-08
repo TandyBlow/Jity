@@ -590,6 +590,58 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 
 本轮实验只回答“**能否按计划组织事实并把它写成文字**”。12 个来源的事实类型全部是外观变化 + 一条时间先后关系，没有任务完成、位置移动、理智/个性变化、多线剧情。因此**不能**把结果外推为 Jity 的互动叙事能力；那需要在真实游戏回合里另做一轮（事实表达准确性 + 剧情连贯），与本轮是两个问题。
 
+## 8.11 2026-11-08 第二次审阅后的修正
+
+外部复审发现两处会阻断人工签认的缺陷、两处遗漏。逐条修，并新增 3 条回归检查（现共 12 条）。
+
+### 8.11.1 包摘要的循环依赖（严重）
+
+**原来**：A 侧先算 `package_digest()`（其中包含 `manifest.json` 的哈希），把结果写进 `manifest.packageSha256`，**然后才**写 manifest。c3 读的是写之后的 manifest，于是两边算的不是同一份内容。复算确认：模板预填 `7624273e…`，c3 重算 `72aea90a…`。
+
+**现在**：
+
+- `packageSha256` **不再写进 manifest**，只存在于 `semantic-review-signoff.template.json`；
+- 摘要规则两侧同一套：`sha256` over `{相对路径: 文件哈希}`（manifest.json + `pairs/*.json`），JSON 按 key 排序；
+- A 侧生成器在写完所有文件后**自己复算一遍**与模板比对，不一致就以退出码 1 失败（本次通过，摘要 `9dc96154…`）；
+- `manifest.generationProcess.packageDigestRule` 写明规则。
+
+回归 T10：读实际包，断言 manifest 里没有 `packageSha256`、模板值与 c3 重算值相等。本次 `digestMatch: true`，摘要 `9dc9615482fe…`。
+
+### 8.11.2 R2 签认流程与 v3 检查器不兼容（阻塞）
+
+**原来**：`build_signoff_form.py` 固定读 `criteria-v2.json`（钉 v2 检查器 `a4444195…`），而代码已是 v3（`714aeb46…`）。人工填完 R2 表单也会被判“文件已变”，`--force` 重生成仍然钉 v2。
+
+**现在**：版本分开。
+
+| 目录 | 检查器 | 状态 |
+| --- | --- | --- |
+| `runs/r1/` | v1 | 历史记录 |
+| `runs/r2/` | v2 | 历史记录，判据 `criteria-v2.json`；它的 `signoff.json` 只作审计 |
+| `runs/r4/` | v3 | **当前轮**，判据 `criteria-v3.json`，门与签认都在这里 |
+
+- `run_experiment.py` 默认写 `runs/r4`；
+- 四个脚本（`apply_review`/`apply_signoff`/`build_signoff_form`/`check_round_ready`）自动选取**版本号最高的** `criteria-v*.json`；
+- `check_round_ready` 只认 `runs/r4/signoff.json`；`runs/r2/signoff.json` 在提示里注明“v2 历史审计记录，不用于当前门”。
+
+`runs/r2` 的 `summary.json`/`input-hashes.json` 已恢复成 v2 运行时的内容，不再被 v3 覆盖。
+
+### 8.11.3 冻结校验补上 world.db（遗漏）
+
+`check_holdout()` 现在读 `manifest.files["world.db"]` 与 `manifest.databases`，比对数据库文件：缺失 → `world.db missing`，哈希不符 → `world.db changed`，都判“留出冻结件已过期”。
+
+回归 T11：改一个字节 → 过期；删除 → 过期。
+
+### 8.11.4 判据文件内容与生成器（遗漏）
+
+- `criteria-v3.json` 的门线不再写死 8/10，改为“由冻结包写入的 `gateRule` 决定：`max(8, ceil(0.8N))`，必须用全部来源”；下一轮预登记改为引用 `runs/r4` 与 v3 检查器。
+- `build_criteria.py` 不带 `--out` 时，输出名由检查器版本推导（现在是 `criteria-v3.json`），**不会覆盖 `criteria-v2.json`**。
+
+回归 T12：断言默认输出名不是 `criteria-v2.json`。
+
+### 8.11.5 门槛提醒
+
+留出包仍未通过：`blockedBy = PKG-no-semantic-signoff, PKG-semantic-signoff-incomplete`。六族（结构/点链/证据/授权/隔离/双计划）仍是 0 错。在有人签 `semantic-review-signoff.json` 之前，不冻结、不跑模型。
+
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
 `model_smoke.py` 在 CPU 上加载**冻结基线** Randeng-T5-77M（`model.safetensors` sha256 `5cdc572109cf…`，与旧 controllability 的起点同一个哈希），跑 4 条提示（fixture-r1、fixture-r2 × 两份计划），greedy，`max_new_tokens=128`。
@@ -666,7 +718,7 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
 | `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点），含冻结材料重校验 | — |
-| `test_regressions.py` | 2026-11-08 审阅发现的 9 条回归检查 | — |
+| `test_regressions.py` | 两轮审阅发现的 12 条回归检查 | — |
 | `freeze/criteria-v3.json` | v3 检查器的判据（v2 保留为 R2 记录） | 见文件 |
 | `gate_rules.py` | 门规则纯函数 + 7 条回归检查（AI 签认、仅改 signerKind 都不能开门） | — |
 | `HANDOVER.md` | 交接页：三项状态、两条保留点、只接收三类外部进展 | — |
@@ -693,7 +745,7 @@ python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒�
 python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
 python -X utf8 gate_rules.py             # 门规则回归检查（7 条）
 python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
-python -X utf8 test_regressions.py        # 审阅修正的 9 条回归（9/9）
+python -X utf8 test_regressions.py        # 两轮审阅修正的 12 条回归（12/12）
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）

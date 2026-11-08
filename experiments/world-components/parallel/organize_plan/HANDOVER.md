@@ -13,7 +13,7 @@
 | # | 状态 | 就绪 | 依据 |
 | --- | --- | --- | --- |
 | 1 | **留出待交付** | NO | 包已到（`artifacts/holdout-a-v1`，12 源）；卡在**人工语义签认**：c3 不再读 AI 草稿，需要单独的 `semantic-review-signoff.json` |
-| 2 | **人工签认待完成** | NO | 有签认记录，但 `signerKind='ai'`、`signoffClass='audit-only'` |
+| 2 | **人工签认待完成** | NO | 当前轮 `runs/r4`（v3 检查器）尚未签认；`runs/r2/signoff.json` 只是 v2 历史审计记录 |
 | 3 | **计划训练检查点缺失** | NO | `freeze/checkpoint-adoption.json` 不存在；取证 `not-found-locally` |
 
 ```

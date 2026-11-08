@@ -23,10 +23,15 @@ import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-RUN = HERE / "runs" / "r2"
+def newest_criteria() -> Path:
+    found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
+    return found[-1] if found else HERE / "freeze" / "criteria-v2.json"
+
+
+RUN = HERE / "runs" / "r4"
 FORM = RUN / "signoff-form.json"
 
-CRITERIA = HERE / "freeze" / "criteria-v2.json"
+CRITERIA = newest_criteria()
 PROBES = HERE / "freeze" / "tamper-probes.json"
 REVIEW = RUN / "manual-review.json"
 ACCEPTANCE = RUN / "acceptance.json"
