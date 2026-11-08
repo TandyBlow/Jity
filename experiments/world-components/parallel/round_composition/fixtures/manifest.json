@@ -1,15 +1,13 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:53:36.647970+00:00",
+ "recordedAt": "2026-11-08T06:53:56.798953+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "399e4b7d851e660fed83ee35312e48c654fcb68e",
+  "headAtRecording": "45ebf878ddbb50e683e1e32f8c429386921ef708",
   "headSubject": "C7 round composition: fix the two v3 defects found in review (duration parsing, plan grants)",
   "porcelain": [
-   "M experiments/world-components/parallel/round_composition/README.md",
-   " M experiments/world-components/parallel/round_composition/contract-decisions.md",
    "?? TASK.md"
   ]
  },
