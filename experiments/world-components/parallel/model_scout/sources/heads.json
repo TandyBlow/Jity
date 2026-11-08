@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-11-08T06:52:34.472Z",
+  "entries": [
+    {
+      "name": "MNN-Pocket-0.3B-Instruct-F16.gguf",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/resolve/main/MNN-Pocket-0.3B-Instruct-F16.gguf",
+      "status": 200,
+      "linkedEtag": "7c08939950b370dac6bc5e83725d6039b5af285656440b968818305c674abd0a",
+      "linkedSize": 725654560
+    },
+    {
+      "name": "MNN-Pocket-0.3B-Instruct-Q8_0.gguf",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/resolve/main/MNN-Pocket-0.3B-Instruct-Q8_0.gguf",
+      "status": 200,
+      "linkedEtag": "31eb5db92b2e02a80e9e3a9316aa83120cbee98e4f4a22ca19015ba601dbd690",
+      "linkedSize": 386751520
+    },
+    {
+      "name": "MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/resolve/main/MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+      "status": 200,
+      "linkedEtag": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097",
+      "linkedSize": 191896672
+    }
+  ]
+}

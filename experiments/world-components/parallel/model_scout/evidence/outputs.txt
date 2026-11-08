@@ -1,0 +1,78 @@
+[任务: narration-natural]
+用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。
+只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。
+本点时间推进：2 分钟（必须自然地写出来）。
+事实：
+- 学生A / 位置 = 从 走廊 到 大厅
+不得出现：学生A从大厅走到走廊（方向反转）；学生A推开门冲进大厅（新增事件）。
+最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。
+只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。
+正文:
+
+=== MNN-Pocket-0.3B Q4_1 (QAT, recommended) ===
+file: probe-Q4_1-ctx2048-r2.json
+model: D:\others\Jity\.local\models\MNN-Pocket-0.3B-Instruct-Q4_1.gguf
+model sha256: a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097
+finish: stop / stop
+
+-- call 1 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+-- call 2 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+=== MNN-Pocket-0.3B Q4_1, world-page settings (ctx 2048, enable_thinking kwarg) ===
+file: probe-Q4_1-ctx2048-pagekw.json
+model: D:\others\Jity\.local\models\MNN-Pocket-0.3B-Instruct-Q4_1.gguf
+model sha256: a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097
+finish: stop / stop
+
+-- call 1 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+-- call 2 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+=== MNN-Pocket-0.3B Q4_1, narration-eval settings (ctx 4096, enable_thinking kwarg) ===
+file: probe-Q4_1-ctx4096-pagekw.json
+model: D:\others\Jity\.local\models\MNN-Pocket-0.3B-Instruct-Q4_1.gguf
+model sha256: a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097
+finish: stop / stop
+
+-- call 1 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+-- call 2 --
+学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  
+时间推进，2分钟。
+
+=== MNN-Pocket-0.3B Q8_0 ===
+file: probe-Q8_0-ctx2048.json
+model: D:\others\Jity\.local\models\MNN-Pocket-0.3B-Instruct-Q8_0.gguf
+model sha256: 31eb5db92b2e02a80e9e3a9316aa83120cbee98e4f4a22ca19015ba601dbd690
+finish: stop / stop
+
+-- call 1 --
+学生A沿着走廊前行，脚步轻缓地踏在石板上，脚步声在空旷的走廊中回响。  
+时间推进，时长数值为2分钟。
+
+-- call 2 --
+学生A沿着走廊前行，脚步轻缓地踏在石板上，脚步声在空旷的走廊中回响。  
+时间推进，时长数值为2分钟。
+
+=== control: Qwen3-0.6B Q4_K_M (existing baseline) ===
+file: control-qwen3-0.6b.json
+model: D:\others\Jity\frontend\public\models\Qwen3-0.6B-Q4_K_M.gguf
+model sha256: ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a
+finish: stop / stop
+
+-- call 1 --
+学生A从走廊走到大厅。
+
+-- call 2 --
+学生A从走廊走到大厅。

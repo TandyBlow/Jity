@@ -1,0 +1,102 @@
+{
+  "capturedAt": "2026-11-08T06:52:22.172Z",
+  "tool": "curl (system proxy)",
+  "entries": [
+    {
+      "name": "hf-api-base",
+      "url": "https://huggingface.co/api/models/taobao-mnn/MNN-Pocket-0.3B",
+      "file": "hf-api-base.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/api/models/taobao-mnn/MNN-Pocket-0.3B",
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 4910,
+      "ms": 2429,
+      "sha256": "a350f9d4117bea111e50ef8c1935bed710c19b65a5c95d92e0250350c57d3da1"
+    },
+    {
+      "name": "hf-api-gguf",
+      "url": "https://huggingface.co/api/models/taobao-mnn/MNN-Pocket-0.3B-GGUF?blobs=true",
+      "file": "hf-api-gguf.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/api/models/taobao-mnn/MNN-Pocket-0.3B-GGUF?blobs=true",
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 5126,
+      "ms": 1340,
+      "sha256": "6bc569d3156794284dc08edd36efe423d9083009e575959705f8b6e28bce4dc7"
+    },
+    {
+      "name": "hf-card-base",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/raw/main/README.md",
+      "file": "hf-card-base.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/raw/main/README.md",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 9431,
+      "ms": 1586,
+      "sha256": "b06bf28680a84a740f2dd78d7a6181c7cda2398f4de7435a98fb72de29b97e7f"
+    },
+    {
+      "name": "hf-card-gguf",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/raw/main/README.md",
+      "file": "hf-card-gguf.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/raw/main/README.md",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 8242,
+      "ms": 1367,
+      "sha256": "f852a6d25cebdbdb65e3ab12948a7c4d251233a2a07af227c0f0d9a40db22f3c"
+    },
+    {
+      "name": "hf-config-base",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/raw/main/config.json",
+      "file": "hf-config-base.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/raw/main/config.json",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 1356,
+      "ms": 1317,
+      "sha256": "6271cac3107f51ff98005cb4ad987a9406540c5a2a65396eefc9b17baf0b15f9"
+    },
+    {
+      "name": "hf-license-gguf",
+      "url": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/raw/main/LICENSE.txt",
+      "file": "hf-license-gguf.body",
+      "status": 200,
+      "finalUrl": "https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/raw/main/LICENSE.txt",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 11363,
+      "ms": 1406,
+      "sha256": "c4082a47027777530d49447f8f105002466257bcb2985f5aded0736d10061729"
+    },
+    {
+      "name": "mnn-github-readme",
+      "url": "https://raw.githubusercontent.com/alibaba/MNN/master/README.md",
+      "file": "mnn-github-readme.body",
+      "status": 200,
+      "finalUrl": "https://raw.githubusercontent.com/alibaba/MNN/master/README.md",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 14947,
+      "ms": 1422,
+      "sha256": "a306368204dc973b4b0d6d20e5ae0929bcfa26a29731e7af16c66249869e6023",
+      "pocketMentions": [
+        "- [2026/11/04] We released **MNN-Pocket-0.3B**, a **300M-parameter mobile-app-native language model** for Chinese/English instruction following. The MNN team co-designed its architecture, training methods, and inference engine around smartphone apps' task requirements and resource budgets. It supports **32K context**; the INT4 (W4A16) QAT MNN build occupies only **173 MB** and achieves **350 tok/s** decode throughput in tests on iPhone 18 Pro. Released under **Apache 2.0**.",
+        "  [ModelScope](https://modelscope.cn/collections/MNN/MNN-Pocket-03B) | [Hugging Face](https://huggingface.co/collections/taobao-mnn/mnn-pocket-03b) | [Technical report](https://modelscope.cn/models/MNN/MNN-Pocket-0.3B/resolve/master/MNN-Pocket-0.3B-Technical-Report.pdf)"
+      ]
+    },
+    {
+      "name": "mnn-github-readme-cn",
+      "url": "https://raw.githubusercontent.com/alibaba/MNN/master/README_CN.md",
+      "file": "mnn-github-readme-cn.body",
+      "status": 200,
+      "finalUrl": "https://raw.githubusercontent.com/alibaba/MNN/master/README_CN.md",
+      "contentType": "text/plain; charset=utf-8",
+      "bytes": 11571,
+      "ms": 1418,
+      "sha256": "5f687bcbe7d780fb56eb3bc4bcc8b5cec4584a7b4c81a1af3aca80c65f53f0fb",
+      "pocketMentions": [
+        "- [2026/11/04] 我们发布了 **MNN-Pocket-0.3B**，一款支持中英文指令交互的 **3 亿参数手机应用原生大模型**。MNN 团队从手机应用的任务需求与资源预算出发，协同设计模型结构、训练方法与推理引擎。支持 **32K 上下文**；INT4（W4A16）QAT MNN 版本体积仅 **173 MB**，在 iPhone 18 Pro 上实测解码速度为 **350 tok/s**。以 **Apache 2.0** 许可证开源。",
+        "  [ModelScope](https://modelscope.cn/collections/MNN/MNN-Pocket-03B) | [Hugging Face](https://huggingface.co/collections/taobao-mnn/mnn-pocket-03b) | [Technical report](https://modelscope.cn/models/MNN/MNN-Pocket-0.3B/resolve/master/MNN-Pocket-0.3B-Technical-Report.pdf)"
+      ]
+    }
+  ]
+}
