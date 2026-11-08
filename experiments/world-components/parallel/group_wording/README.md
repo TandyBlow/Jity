@@ -93,7 +93,9 @@ B-large-77M 和 B-large-784M 都在 19 个多事实组里留下 `2/19` 的安全
 | `precheck_v1.py` / `precheck_b2.py` | 两批运行前检查 |
 | `probe_identity.py` / `probe-identity-v1.json` | 本地 77M 检查点身份排查 |
 | `manifest-v1.json` | 第一批文件哈希快照 |
-| `manifest-v2.json` | 当前全部 31 个交付文件的哈希清单（第二批交付主清单） |
+| `manifest-v2.json` | 当前交付文件的哈希清单（不含两份 manifest 和生成的核验报告） |
+| `verify_delivery_v1.py` / `verify-delivery-v1.json` | 收尾核验脚本与逐项结果（清单、冻结、输出、GW 覆盖、勘误） |
+| `closing-note-v1.md` | 收尾说明（供父分支汇总） |
 
 ## 复跑
 
