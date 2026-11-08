@@ -141,6 +141,27 @@ SOURCES = {
         "out/real-batch-v3-summary.txt",
         "experiments/world-components/parallel/round_composition/"
         "out/real-batch-v3-aborted-no-intervention.json",
+        # post-review: N5 counter-examples, omission analysis, runner guards
+        "experiments/world-components/parallel/round_composition/"
+        "probe_judge_gaps.py",
+        "experiments/world-components/parallel/round_composition/"
+        "judge-gaps.md",
+        "experiments/world-components/parallel/round_composition/"
+        "out/judge-gaps-probes.json",
+        "experiments/world-components/parallel/round_composition/"
+        "out/judge-gaps-probes.log",
+        "experiments/world-components/parallel/round_composition/"
+        "make_fact_omission.py",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/fact-omission-v3.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fact-omission-v3.md",
+        "experiments/world-components/parallel/round_composition/"
+        "runner_guards.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_runner_guards.py",
+        "experiments/world-components/parallel/round_composition/"
+        "review-response.md",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

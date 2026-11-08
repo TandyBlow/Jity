@@ -1,0 +1,267 @@
+{
+ "version": "fact-omission-v3",
+ "batchId": "real-batch-2026-11-08-v3-shape",
+ "scope": "first call of each of the 10 v3 samples; retries not analysed",
+ "totalFacts": 22,
+ "categories": {
+  "missing_component": 6,
+  "paraphrased_conveyed": 8,
+  "conveyed": 2,
+  "not_attempted": 1,
+  "ambiguous": 1,
+  "conflated": 2,
+  "wrong_fact_aspect": 1,
+  "meta_only": 1
+ },
+ "movedFacts": {
+  "facts": 9,
+  "samples": 6,
+  "sampleIds": [
+   "rb-move-other-appearance",
+   "rb-move-outcome",
+   "rb-same-name",
+   "rb-subtask",
+   "rb-time-vague",
+   "rb-two-actors-move"
+  ],
+  "fullyStatedSamples": 0,
+  "components": {
+   "missing_origin": 4,
+   "missing_destination": 1,
+   "missing_both": 1,
+   "meta_only": 1,
+   "conflated": 2
+  }
+ },
+ "outcomeFacts": {
+  "facts": 4,
+  "conveyedSemantically": 4,
+  "frameMissOnly": 4
+ },
+ "timeFacts": {
+  "facts": 3,
+  "formalOrSemantic": 3
+ },
+ "n6Revisions": [
+  {
+   "caseId": "rb-sanity-only",
+   "factId": "f0",
+   "firstReview": "fail: the personality change is not conveyed",
+   "revised": "conveyed (weakly): fog plus a wary glance is the recorded trait",
+   "effect": "verdict unchanged: the sample still fails on invented residents and an unknown danger"
+  },
+  {
+   "caseId": "rb-time-only",
+   "factId": "f1",
+   "firstReview": "fail: the no-change fact is not conveyed",
+   "revised": "conveyed: 管线镇依旧保持着那份宁静 states that nothing changed",
+   "effect": "verdict unchanged: the sample still invents a walk to an abandoned factory area"
+  }
+ ],
+ "rows": [
+  {
+   "caseId": "rb-move-outcome",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "正文从「钟楼的旧木门……推门而入」开始，起点从未出现，到达也没有陈述",
+   "note": "destination-first opening"
+  },
+  {
+   "caseId": "rb-move-outcome",
+   "factId": "f1",
+   "kind": "outcome",
+   "record": "把铜铃挂回了钟楼",
+   "category": "paraphrased_conveyed",
+   "evidence": "「他熟练地将铜铃挂回原位」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-time-vague",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "「他缓缓走向钟楼内部」——已在钟楼内，无起点",
+   "note": "destination-first opening"
+  },
+  {
+   "caseId": "rb-time-vague",
+   "factId": "f1",
+   "kind": "outcome",
+   "record": "把铜铃挂回了钟楼",
+   "category": "paraphrased_conveyed",
+   "evidence": "「轻轻挂回原位」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-time-vague",
+   "factId": "f2",
+   "kind": "time",
+   "record": "时间经过",
+   "category": "conveyed",
+   "evidence": "「过去了一会儿」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-inner-change",
+   "factId": "f0",
+   "kind": "appearance_changed",
+   "record": "外袍被雨浸透",
+   "category": "paraphrased_conveyed",
+   "evidence": "「雨水顺着衣襟滴落，浸透了衣料」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-inner-change",
+   "factId": "f1",
+   "kind": "personality_changed",
+   "record": "话少了许多",
+   "category": "not_attempted",
+   "evidence": "只写了步伐与心情，没有触碰说话多少",
+   "note": ""
+  },
+  {
+   "caseId": "rb-inner-change",
+   "factId": "f2",
+   "kind": "sanity_changed",
+   "record": "理智上升",
+   "category": "ambiguous",
+   "evidence": "「他心中却渐渐平静下来」方向可上可下",
+   "note": ""
+  },
+  {
+   "caseId": "rb-two-actors-move",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线甲 管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "从钟楼内部写起，「穿过破旧的走廊」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-two-actors-move",
+   "factId": "f1",
+   "kind": "moved",
+   "record": "管线乙 管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "「管线乙急匆匆地跟在后面」——跟随，无起终点",
+   "note": ""
+  },
+  {
+   "caseId": "rb-same-name",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线甲 管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "「他从管线镇出发……钟楼的轮廓」——给了起点，没有到达",
+   "note": ""
+  },
+  {
+   "caseId": "rb-same-name",
+   "factId": "f1",
+   "kind": "moved",
+   "record": "管线乙 管线镇→钟楼",
+   "category": "conflated",
+   "evidence": "两个「管线乙」被写成同一个跟随者",
+   "note": ""
+  },
+  {
+   "caseId": "rb-same-name",
+   "factId": "f2",
+   "kind": "moved",
+   "record": "管线乙 管线镇→钟楼",
+   "category": "conflated",
+   "evidence": "同名第二人被并入同一个跟随者，身份没有分开",
+   "note": ""
+  },
+  {
+   "caseId": "rb-subtask",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线镇→钟楼",
+   "category": "missing_component",
+   "evidence": "「推门而入……沿着楼梯缓缓而上」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-subtask",
+   "factId": "f1",
+   "kind": "subtask_added",
+   "record": "找梯子（属于：把铜铃挂回钟楼）",
+   "category": "wrong_fact_aspect",
+   "evidence": "「环视四周，寻找着可以攀爬的梯子」——自己去找，不是被交付",
+   "note": ""
+  },
+  {
+   "caseId": "rb-sanity-only",
+   "factId": "f0",
+   "kind": "personality_changed",
+   "record": "对雾天格外警觉",
+   "category": "paraphrased_conveyed",
+   "evidence": "「雾气如丝般弥漫……目光中透出一丝警觉」",
+   "note": "weak; N6 originally called this absent, revised below"
+  },
+  {
+   "caseId": "rb-sanity-only",
+   "factId": "f1",
+   "kind": "sanity_changed",
+   "record": "理智下降",
+   "category": "paraphrased_conveyed",
+   "evidence": "「他的理智却在逐渐模糊」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-time-only",
+   "factId": "f0",
+   "kind": "time",
+   "record": "时间经过",
+   "category": "conveyed",
+   "evidence": "「过去了一会儿」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-time-only",
+   "factId": "f1",
+   "kind": "no_change",
+   "record": "无变化",
+   "category": "paraphrased_conveyed",
+   "evidence": "「管线镇依旧保持着那份宁静」",
+   "note": "N6 originally called this absent, revised below"
+  },
+  {
+   "caseId": "rb-conflict-two-actors",
+   "factId": "f0",
+   "kind": "outcome",
+   "record": "合力把钟抬离了地面",
+   "category": "paraphrased_conveyed",
+   "evidence": "「我们齐心协力，将钟缓缓抬离了地面」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-conflict-two-actors",
+   "factId": "f1",
+   "kind": "outcome",
+   "record": "抬钟时肩膀抵住了钟沿",
+   "category": "paraphrased_conveyed",
+   "evidence": "「他的肩膀不由自主地抵住了钟沿」",
+   "note": ""
+  },
+  {
+   "caseId": "rb-move-other-appearance",
+   "factId": "f0",
+   "kind": "moved",
+   "record": "管线镇→钟楼",
+   "category": "meta_only",
+   "evidence": "「到达了钟楼的顶层，完成了任务指令中的移动」——陈述的是指令，不是位移",
+   "note": ""
+  }
+ ],
+ "reading": [
+  "Of the 22 must-express facts, 10 are present semantically (4 outcomes, 2 time facts, appearance, sanity, personality, no-change) and 12 are absent or malformed.",
+  "None of the 9 moved facts is fully stated: 4 miss the origin, 1 misses the destination, 2 miss both, 1 only names the move, 2 conflate the same-name actors.",
+  "Every one of the 4 outcome facts is conveyed; only the frame misses. Relaxing the outcome frame would therefore flip 4 facts but still 0 samples, because a move fact always fails in the same text.",
+  "So the binding constraint is not wording: it is that the passage is never organised to carry the record's movement (origin and destination) and, in one case, the assignment of a subtask."
+ ]
+}

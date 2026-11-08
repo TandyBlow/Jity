@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `4e4a756f317aed03f59123233897d22a95aee165a0455a603d42e735792e7256` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `71dcbd5c23a02a29dc8936ca1ed65cec1062f777f4b039d9a1965b8ddc6d2f8c` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -290,3 +290,20 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 **结果：** 首次调用 **10/10 自然结束、0/10 触顶**（输出 77–121 tokens，v2 为 215–384）；小节标签/记录行回显 **0 例**、对话 **0 例**；硬门仍 **0/10**，N6 **10 fail**。形态指令生效，但没有带来过门：模型改用同义措辞，而门要求「从 A 来到 B」与权威结果原话。6 个带移动事实的样本里，语义上完整传达移动的 **0 个**（`rb-same-name` 只给了起点）。D4 专名 **0 条**；「新广场/旧工厂区/井盖」按 E5 归 N6。复核绑定首次调用，`qualityFinal` 待核。
 
 文件：`fixtures/batch-v3.json`、`fixtures/review-v3.json`、`out/real-batch-v3.json`、`out/real-batch-v3-raw.jsonl`、`out/real-batch-v3-reviewed.json`、`real-batch-v3.md`。
+
+## 15. 评审后的反例与事实遗漏分析（未跑新批次）
+
+评审 `1935056` 之后没有新的模型调用。三件事：
+
+1. **N5 反例**：评审列出的四处风险全部复现——G2 误拒登记名（`管线甲` 在事实片段外再出现一次就判 false）、G1 接受否定句（`并未`）与未实现语气（`差点就`）、G4 只数名字次数、G6 把缺失的 `done_reason` 当正常结束；另确认编造人物对硬门不可见、旁观者归属分不清。三个对照反例正常拒绝。把三批原文重判：G2 每批误报 9/10 样本（16–19 条），但**忽略 G2 后通过数仍为 0**，否定/旁观者漏洞尚未被利用。判定器保持冻结，修法见 `judge-gaps.md` §3。
+2. **事实遗漏**：10 个样本的 22 条必述事实逐条归类，语义在场 10 条、缺失或走形 12 条；9 条移动事实 0 条完整（缺起点 4、缺终点 1、两头都缺 1、只陈述指令 1、同名合并 2）；4 条结果事实全部语义在场。所以放宽结果帧只会改 4 条事实、0 个样本。见 `fact-omission-v3.md`。分析中两处 N6 判定改判（`rb-sanity-only` 个性、`rb-time-only` 无变化 → 已传达），样本结论不变。
+3. **记录保护**：`runner_guards.py` 在首次调用前核对实时模型 digest（现在跑 `runner_guards.py fixtures/batch-v3.json` 得到 `845dbda0ea48 7.6B Q4_K_M`），逐次核对「发送的提示词 = 归档的提示词」，并拒绝缺失的 `done_reason`（不再默认 `eos`）。`test_runner_guards.py` 8/8 通过，其中两条直接复现 v3 的两个事故。冻结的 `real_batch_v3.py` 未改，下一个 runner 必须调用这些守卫。
+| `probe_judge_gaps.py` | N5 反例探针（评审四点 + 两个盲区） | `1691271f5a52031f01a7ab5ecc1a8d9512ab99def76ac3dac29da18d9cd12d88` |
+| `judge-gaps.md` | 反例结论、对三批的影响、建议修法 | `a170e361c480363b95135de70dcef3101a1c498f352da9030d8ca7f1a96e9f49` |
+| `make_fact_omission.py` | 事实遗漏分析生成器 | `6c397131b63870b4078878fa338f158434ba302aa7e38a22a9a725c3893d0274` |
+| `fact-omission-v3.md` | 22 条必述事实的逐条归类 | `7a9084dc13ec71a558f5de9108e46ef5f4ef5db224cd8c4445d664e0827304c7` |
+| `runner_guards.py` | 推理前 digest、提示词一致性、结束原因守卫 | `b17076291f8101258b970dff2632b2ce74f16d05fb8927d3b2aec70bc39f91b0` |
+| `test_runner_guards.py` | 守卫测试（8 例，含两个 v3 事故的反例） | `01fa85c1ac5f5240a388b850716bebf83f1fa1935bdcd177eff77f3fa6ba4b36` |
+| `review-response.md` | 对 2026-11-08 评审的逐条回应 | `0670980a78ab43e5d7aed7489b7f5c46e27fea0aa09a071dd6b6dc9041434094` |
+
+评审回应全文：`review-response.md`。

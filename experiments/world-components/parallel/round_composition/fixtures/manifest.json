@@ -1,23 +1,16 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T07:42:57.886859+00:00",
+ "recordedAt": "2026-11-08T08:03:02.637407+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "bed6c03ff16021754d22c374438d62eccf1def80",
-  "headSubject": "C7 round composition: output-budget control 384 (v2) plus v1 errata",
+  "headAtRecording": "19350563d3ff70cda3b0389c18527559bcd99e88",
+  "headSubject": "C7 round composition: N5 counter-examples, fact-omission analysis, runner guards",
   "porcelain": [
-   "M experiments/world-components/parallel/round_composition/README.md",
-   " M experiments/world-components/parallel/round_composition/apply_review.py",
-   " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
-   " M experiments/world-components/parallel/round_composition/fixtures/review-v2.json",
-   " M experiments/world-components/parallel/round_composition/out/real-batch-v2-reviewed.json",
-   " M experiments/world-components/parallel/round_composition/real-batch-v2.md",
-   " M experiments/world-components/parallel/round_composition/record_manifest.py",
-   " M experiments/world-components/parallel/round_composition/write_review_v2.py",
    "?? TASK.md"
-  ]
+  ],
+  "note": "headAtRecording is the commit the tree was recorded on, i.e. the PARENT of the commit that ships this manifest (amends re-pin it)."
  },
  "environment": {
   "python": "3.11.15",
@@ -147,8 +140,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "53761df105e05917bff04564b44732ac958610d450bf90610e29541f84d76c1c",
-    "bytes": 36447
+    "sha256": "5df20b784d34655f53d9ae13197f50a6026338d05ec76f845ba1259ac1d43a5e",
+    "bytes": 39160
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -361,6 +354,56 @@
     "bytes": 328686
    },
    {
+    "path": "experiments/world-components/parallel/round_composition/probe_judge_gaps.py",
+    "sha256": "1691271f5a52031f01a7ab5ecc1a8d9512ab99def76ac3dac29da18d9cd12d88",
+    "bytes": 11164
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge-gaps.md",
+    "sha256": "a170e361c480363b95135de70dcef3101a1c498f352da9030d8ca7f1a96e9f49",
+    "bytes": 5056
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/judge-gaps-probes.json",
+    "sha256": "174333d5a94eb2fd9ec720c2afe437da50a2421f1139d824e484ccabaa476e5a",
+    "bytes": 22372
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/judge-gaps-probes.log",
+    "sha256": "706be4ca7073a37e32bc74b6bd9ffc921b860721f0e60103bcce540af624052d",
+    "bytes": 4409
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_fact_omission.py",
+    "sha256": "6c397131b63870b4078878fa338f158434ba302aa7e38a22a9a725c3893d0274",
+    "bytes": 12725
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/fact-omission-v3.json",
+    "sha256": "33feafb26124c3580a25ff293f048e70dadc7766487190db05adac72b391edae",
+    "bytes": 7807
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fact-omission-v3.md",
+    "sha256": "7a9084dc13ec71a558f5de9108e46ef5f4ef5db224cd8c4445d664e0827304c7",
+    "bytes": 5708
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/runner_guards.py",
+    "sha256": "b17076291f8101258b970dff2632b2ce74f16d05fb8927d3b2aec70bc39f91b0",
+    "bytes": 5298
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_runner_guards.py",
+    "sha256": "01fa85c1ac5f5240a388b850716bebf83f1fa1935bdcd177eff77f3fa6ba4b36",
+    "bytes": 4327
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/review-response.md",
+    "sha256": "0670980a78ab43e5d7aed7489b7f5c46e27fea0aa09a071dd6b6dc9041434094",
+    "bytes": 4332
+   },
+   {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
     "sha256": "0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020",
     "bytes": 24229
@@ -422,6 +465,11 @@
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",
    "sha256": "43aa5b7a4b2a9248a842cbb76136994b6d98d3af58285f14e77b71950edfb644",
    "bytes": 577
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\judge-gaps-probes.json",
+   "sha256": "174333d5a94eb2fd9ec720c2afe437da50a2421f1139d824e484ccabaa476e5a",
+   "bytes": 22372
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v1-reviewed.json",
