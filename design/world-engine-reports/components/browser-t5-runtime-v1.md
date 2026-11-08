@@ -1,6 +1,6 @@
-# c9 浏览器 T5 运行验证（77M r3-direction）· 第四轮
+# c9 浏览器 T5 运行验证（77M r3-direction）· 第五轮（收尾）
 
-日期：2026-11-08。版本：第四轮。第一轮（`471fde9`）证明 fp32 能跑且与离线逐 token 一致；第二轮（`58e6546`）补 Worker 承载与终止释放、int8 实测、取消延迟按「发出取消→抛错」重测；第三轮（`2bbd5ba`）修正终止回收的时序口径与 int8 差异的归属。本轮按代码审查修四类问题：**验收脚本的空数据漏报与退出码**、**离线参照的退出码**、**回收时间只记一个阈值**、**适配器让出后不复查取消、长度截断与正常结束不分**。对象：**冻结的 N4 成句组件 `r3-direction`**（Randeng-T5-77M 全参微调，77,440,384 参数）的 fp32 与 int8 ONNX 导出。
+日期：2026-11-08。版本：第五轮，c9 到此结束。第一轮（`471fde9`）证明 fp32 能跑且与离线逐 token 一致；第二轮（`58e6546`）补 Worker 承载与终止释放、int8 实测、取消延迟按「发出取消→抛错」重测；第三轮（`2bbd5ba`）修正回收时序与 int8 归因；第四轮（`3795117`）修验收脚本的空数据漏报、离线参照退出码、回收阈值口径、适配器两处缺陷。本轮补第四轮遗留的三处验收漏洞（`finishReason` 过滤、未查每次运行的 `ok`/`fatal`、`config` 哈希未核对）与 `onStep` 回调内同步取消多跑一步的问题。对象：**冻结的 N4 成句组件 `r3-direction`**（Randeng-T5-77M 全参微调，77,440,384 参数）的 fp32 与 int8 ONNX 导出。
 
 范围仍只有运行：加载、推理、取消、内存、浏览器与离线一致性。**不判断文本质量，不训练，不接正式页面**；`frontend/src/app/world/page.tsx`、`backend/app`、共享契约未改动。结论分 **已证明 / 已失败 / 无法判断**。
 
@@ -14,13 +14,15 @@
 | 「`terminate()` 在 **+103 ms** 把内存还到 4.46 MB」 | **撤回时间部分**。那个时间戳是内存采样*开始*的时刻，而 `performance.measureUserAgentSpecificMemory()` 本身要 **13–60 s**（它强制全量 GC），所以只能说明「到某个更晚时刻已经是 4.46 MB」。补做的 1 秒粒度进程树工作集采样显示：terminate 后 **+0.19 s 仍是 1085.7 MB，+1.21 s 降到 378.6 MB**（另一轮 +59 ms 仍 2014.8 MB，+1.13 s 降到 964.2 MB）。可说的上界是**约 1 秒量级**，亚秒精度没测到 |
 | 「int8 与 fp32 比有 2/7 用例 token 不同」 | **补齐归因**。补跑同一份 int8 图的 ORT-python 参照后，浏览器 int8 三轮 × 7 用例与它**逐 token 全同（21/21）**；那 2 处差异在离线 int8 上一模一样地出现。差异属于量化本身，不是浏览器 |
 | 「回收在约 1 秒内完成」（第三轮） | **撤回「完成」这一半**。第三轮靠 `firstDropSample`（比终止时低 400 MiB）当完成信号，那只是「掉了一大块」。拆成三个数重测（两次 no-rebuild 轮）：首次明显下降在 **+0.81 s / +0.86 s**，此时整树仍有约 **996 MiB**；之后继续缓降，到 +15 s 左右稳定在 **597–606 MiB**（worker 创建前 620–623 MiB）。**能说**：terminate 让内存大幅回落；**不能说**：模型堆何时全部释放 |
+| 「21 个用例里 20 个 eos、1 个缺失也算通过」（第四轮验收） | **本轮修复**。旧实现先过滤掉没有 `finishReason` 的用例再判断，等于「缺字段＝跳过」；也从未检查每次运行自己的 `ok`/`fatal`。现在：除 `expectations.json` 里按名钉住的旧运行外，**每个用例**必须同时有 `finishReason=eos` 与 `status=ok`，缺字段直接失败；每次运行新增 `run.<name>.completed`（`ok=true` 且无 `fatal`）；`checkpoint.config` 的 sha256 也纳入核对 |
+| 「`onStep` 里同步 `abort()` 仍会多跑一步」（第四轮适配器） | **本轮修复**。取消检查统一成三处（进循环前、让出后、`onStep` 之后）。实测：第 5 步回调里同步取消，**发出→抛错 0.8 ms、completedSteps=4**（一步都不多跑）；定时取消 2.8 ms、0 步 |
 | 「最大取消延迟为 35–72 ms」（第一轮） | **第二轮已撤回**。那是单步耗时；第一轮记的 397 / 575 ms 又是从开始生成算起，两个都不对。按 `abort()` 调用时刻到 `AbortError` 抛出的间隔测：page 内 **52.9–97.2 ms**，worker 内 **93.0–266.5 ms**。上界不是一步耗时，而是取消到达时**正在执行的那次 ORT 调用**的剩余时间——停在解码步约 50–100 ms，停在 encoder 上可到 266 ms |
 
 ## 1. 结论清单
 
 - [x] **已证明**：Worker 承载的运行时可以整体回收内存（fp32 973.3 → 4.46 MB，回收 968.8 MB；int8 713.1 → 4.46 MB，回收 708.9 MB），且**重建的 worker 输出与终止前、与离线参照逐 token 相同**（7/7）。**回收时点（本轮重新拆开测）**：两次 no-rebuild 轮里，首次明显下降在 terminate 后 **+0.81 s / +0.86 s**（此时整树仍有约 996 MiB），之后继续缓降，15 s 左右稳定在 **597–606 MiB**（创建前 620–623 MiB）。所以「大幅释放」已证明，「模型堆何时全部释放」**仍未确定**。
-- [x] **已证明**：fp32 的 token 一致性累计 **7 次页面运行 × 7 = 49/49** 与 **6 次 worker 运行 × 7 = 42/42** 全绿；分词器把 7 个用例切出的 id 每次都等于夹具里烘焙的 id；所有出结果的用例 `finishReason` 都是 `eos`，没有一次撞长度上限。
-- [x] **已证明**（int8）：图体积 **376.96 MB → 220.46 MB**（−41.5%），创建会话 **13.71 s → 8.74 s**，每步 **51.9 → 48.1 ms** 中位，整页可归因内存 **973.3 → 713.4 MB**；token 与 fp32 有 **2/7 用例不同**，差异都集中在一处措辞（「从柳堤来到药圃」/「由柳堤进入药圃」），事实与数字不变。**归因**：浏览器 int8 四轮运行（3 次页面 + 1 次 worker）与同图 ORT-python int8 参照 **28/28 逐 token 相同**，这 2 处差异来自量化本身，不是浏览器。
+- [x] **已证明**：fp32 的 token 一致性累计 **8 次页面运行 × 7 = 56/56** 与 **7 次 worker 运行 × 7 = 49/49** 全绿；分词器把 7 个用例切出的 id 每次都等于夹具里烘焙的 id；所有带 `finishReason` 的用例都是 `eos` 且 `status=ok`，没有一次撞长度上限。
+- [x] **已证明**（int8）：图体积 **376.96 MB → 220.46 MB**（−41.5%），创建会话 **13.71 s → 8.74 s**，每步 **51.9 → 48.1 ms** 中位，整页可归因内存 **973.3 → 713.4 MB**；token 与 fp32 有 **2/7 用例不同**，差异都集中在一处措辞（「从柳堤来到药圃」/「由柳堤进入药圃」），事实与数字不变。**归因**：浏览器 int8 五轮运行（4 次页面 + 1 次 worker）与同图 ORT-python int8 参照 **35/35 逐 token 相同**，这 2 处差异来自量化本身，不是浏览器。
 - [ ] **无法判断**：wllama 能否端到端跑 T5——仓库仍没有真实 T5 GGUF，也没有 HF→GGUF 转换器，与第一轮相同，不算通过。
 
 ## 2. 这一轮谁给了谁什么
@@ -101,7 +103,7 @@ worker 运行（模型在 worker 里，分词器在主线程）：fp32 worker �
 
 两处都是同一句的两种说法，人名、地点、方向、时长都没变。
 
-**这两处差异不是浏览器造成的。** 本轮补跑了**同一份 int8 图**的 ORT-python 参照（`runs/offline-reference-int8.json`，同 id、同贪心、单线程），得到的两处差异与浏览器一模一样（`陆知微从柳堤来到药圃`）。浏览器 int8 在页面三轮 + worker 一轮共 **28/28 次用例与离线 int8 逐 token 相同**，说明浏览器侧没有引入任何额外漂移，2/7 是量化本身的效应。
+**这两处差异不是浏览器造成的。** 本轮补跑了**同一份 int8 图**的 ORT-python 参照（`runs/offline-reference-int8.json`，同 id、同贪心、单线程），得到的两处差异与浏览器一模一样（`陆知微从柳堤来到药圃`）。浏览器 int8 在页面四轮 + worker 一轮共 **35/35 次用例与离线 int8 逐 token 相同**，说明浏览器侧没有引入任何额外漂移，2/7 是量化本身的效应。
 
 量化脚本自己的口径也写明 int8 **不要求 token 全等**，准入看的是判据洁净；c9 只报差异，不下质量结论。
 
@@ -119,6 +121,8 @@ worker 运行（模型在 worker 里，分词器在主线程）：fp32 worker �
 | worker，定时 120 ms（fp32） | 编码阶段 | 1 | **120.0 ms** |
 | worker，定时 120 ms（fp32，非内存轮） | 编码阶段 | 1 | **266.5 ms** |
 | page，定时 120 ms（`fp32-r4`，修完让出后复查） | 让出窗口内 | 0 | **5.0 ms** |
+| page，第 5 步回调内同步取消（`fp32-r5`，修完 onStep 复查） | onStep 回调 | 4（不再多跑第 5 步） | **0.8 ms** |
+| page，定时 120 ms（`fp32-r5`） | 让出窗口内 | 0 | **2.8 ms** |
 
 最后一行是第四轮修完「让出后不复查」之后的数字：取消落在让出窗口里，现在会在下一步开始前就被发现，所以只花 5 ms、且一步都不多跑。修之前同类场景要等当前这步跑完（52.9–97.2 ms、多跑 1 步）。
 
@@ -158,11 +162,11 @@ worker 运行里传输量是 775.3 MiB（fp32）/ 476.8 MiB（int8），因为 A
 
 | 组 | 运行次数 | 用例×次数 | token 与离线一致 |
 | --- | --- | --- | --- |
-| fp32 页面 | 7 | 49 | **49/49** |
-| fp32 worker | 6 | 42 | **42/42** |
-| int8 页面 vs 离线 int8 | 3 | 21 | **21/21** |
+| fp32 页面 | 8 | 56 | **56/56** |
+| fp32 worker | 7 | 49 | **49/49** |
+| int8 页面 vs 离线 int8 | 4 | 28 | **28/28** |
 | int8 worker vs 离线 int8 | 1 | 7 | **7/7** |
-| int8 vs 离线 fp32（跨量化对照） | 4 | 28 | 20/28（8 处差异 = 2 个用例 × 4 轮，同一处措辞） |
+| int8 vs 离线 fp32（跨量化对照） | 5 | 35 | 25/35（10 处差异 = 2 个用例 × 5 轮，同一处措辞） |
 
 fp32 的 8 次运行里，分词器切出的 id 每次都等于夹具烘焙的 id（7/7 × 8）。第二轮把分词器与模型拆开后（`t5_adapter.mjs` r2）又跑了一轮 fp32 页面运行（`fp32-r3`），仍 7/7 一致——说明拆分没有改动数值路径。
 
@@ -173,7 +177,8 @@ fp32 的 8 次运行里，分词器切出的 id 每次都等于夹具烘焙的 i
 | 漏洞 | 现在的做法 | 负例验证 |
 | --- | --- | --- |
 | `all()` 在空集合上返回 True：没有 fp32 运行记录也会「通过」；int8 没有用例也能「同图一致」 | `expectations.json` 钉住：夹具 sha256、7 个用例名、参数量、fp32/int8 两套图哈希、分词表哈希，以及最少运行组数（page-fp32≥1、worker-fp32≥1、int8≥1、带深层内存的 worker≥1、离线 fp32/int8 各 1）；每组运行必须正好 7 个用例且 id 非空、步数 >0 | 空 `runs/`：exit 1，`minRuns.*` 四条 FAIL，全部布尔判决为 false |
-| 判决失败不影响退出码 | 所有判决本身也是 check，`allChecksPass` 由全部 check 汇总，`compare.py` 以它决定 0/1 | 篡改一个 id + 把一个 `finishReason` 改成 `max_tokens`：exit 1，报 parity FAIL 与 `finish.eosOnly 20/21` |
+| 判决失败不影响退出码 | 所有判决本身也是 check，`allChecksPass` 由全部 check 汇总，`compare.py` 以它决定 0/1；当前 **69 条 check** 全过 | 篡改一个 id + 把一个 `finishReason` 改成 `max_tokens`：exit 1，报 parity FAIL 与 `finish.eosOnly` |
+| `finishReason` 缺失的用例被过滤掉，剩下的全 eos 也算过；每次运行的 `ok`/`fatal` 从不检查 | 旧运行（`pre_finish_reason_runs` 里按名钉住）之外，**每个用例**必须有 `finishReason=eos` 与 `status=ok`；每次运行加 `run.<name>.completed`；并核对 `checkpoint.config` 的 sha256 | 删掉一个 `finishReason`：`finish.reported` FAIL；把一次运行标成 `ok=false` + `fatal`：`run.w-fp32-2.completed` FAIL；把 `config` 哈希改错：`checkpoint.config` FAIL。三例 exit 1 |
 | `offline_reference.py --graphs int8` 因「与存下的 fp32 token 不同」返回 1，会被自动化误判为崩溃 | 完成性（用例齐全、id 非空、步数>0）才算失败；fp32 额外要求复现存下的 `referenceIds`；int8 只打印差异说明 | int8 现在 exit 0 并打印「2/7 与存下的 fp32 id 不同，属量化预期」；fp32 仍 exit 0 且全同 |
 
 另外两个探针脚本也按同一原则收紧：`run_probe.mjs` 对 int8 不再因「与 fp32 参照不同」报失败（改为打印条数），但对**任何**变体的 `finishReason != eos` 都报失败；`run_worker_probe.mjs` 在 `--no-rebuild` 模式下不再要求重建一致性，但要求 terminate 数据存在。
@@ -183,6 +188,7 @@ fp32 的 8 次运行里，分词器切出的 id 每次都等于夹具烘焙的 i
 | 问题 | 修法 | 复测证据 |
 | --- | --- | --- |
 | 取消信号只在循环开头检查，`setTimeout` 让出后不复查：取消恰好落在让出窗口时，会多跑一步解码 | 让出后**再查一次**，抛出的 `AbortError.detail` 带 `abortObservedAfterYield: true` | `fp32-r4` 定时取消：**发出→抛错 5.0 ms**、已完成 0 步（旧版同类场景是 52.9–97.2 ms / 1 步），说明多跑的那一步被挡住了 |
+| `onStep()` 回调内部同步调用 `abort()` 后仍会多跑一步解码 | 取消检查统一为三处（进循环前、让出后、回调后），`AbortError.detail.abortPhase` 记录落在哪一处 | `fp32-r5` 第 5 步回调内取消：**0.8 ms 抛出**，`completedSteps=4`、`stepsSeen=5`，一步没多跑 |
 | 达到 `maxTokens=64` 也返回 `status: "ok"`，截断文本与正常结束无法区分 | 新增 `finishReason` 取 `eos` 或 `max_tokens`，`status` 相应为 `ok` / `truncated` | 三轮重跑共 21 个用例的 `finishReason` 全为 `eos`；`compare.py` 增加 `finish.eosOnly` 与 `finish.observed` 两条 check，篡改负例能被抓出 |
 
 ## 9. wllama（与第一轮相同，未推进）
@@ -202,6 +208,12 @@ fp32 的 8 次运行里，分词器切出的 id 每次都等于夹具烘焙的 i
 
 ## 11. 复现
 
-命令见 `experiments/world-components/parallel/browser_t5/README.md`。原始输出在 `runs/`（不提交）：`run1/run2/run3/mem1/fp32-r2/fp32-r3`（页面，fp32）、`int8-r1/int8-mem1`（页面，int8）、`w-fp32-1/w-fp32-mem1/w-fp32-mem2`（worker，fp32）、`w-int8-mem1`（worker，int8）、`w-fp32-mem3/w-rss-1`（旧口径 RSS 轮）、`w-rss-nr2/w-rss-nr3`（no-rebuild RSS 轮，本轮回收时点证据）。汇总证据：`artifacts/world-components/browser-t5-runtime-r4.json`（本轮，含 `acceptance.checks` 全量 41 条与 RSS 三轮摘要），`…-r3.json` / `…-r2.json` / `…-r1.json` 为前三轮。
+命令见 `experiments/world-components/parallel/browser_t5/README.md`。原始输出在 `runs/`（不提交）：`run1/run2/run3/mem1/fp32-r2/fp32-r3`（页面，fp32）、`int8-r1/int8-mem1`（页面，int8）、`w-fp32-1/w-fp32-mem1/w-fp32-mem2`（worker，fp32）、`w-int8-mem1`（worker，int8）、`w-fp32-mem3/w-rss-1`（旧口径 RSS 轮）、`w-rss-nr2/w-rss-nr3`（no-rebuild RSS 轮）、`fp32-r5/int8-r3/w-fp32-3`（本轮修复后重跑）。汇总证据：`artifacts/world-components/browser-t5-runtime-r5.json`（本轮，含 `acceptance.checks` 全量 69 条、RSS 两轮摘要、离线 int8 参照），`…-r4.json` / `…-r3.json` / `…-r2.json` / `…-r1.json` 为前四轮。
+
+## 12. c9 到此结束
+
+按审查意见，旧版短文本模型（`r3-direction`）的浏览器运行方案已经验证完毕：能跑、与离线一致、能取消、内存能回收、int8 成本已知，验收脚本现在缺数据就会失败。**同一组 7 个用例继续反复测量不会带来新信息**，因此 c9 不再增加运行轮次。
+
+下一阶段交给正式 N4 接入实验，需要测的是：真实叙事任务上的正文质量（含是否符合已提交世界事实）、连续多回合的端到端耗时、与其它组件共存时的浏览器内存、以及失败与恢复路径。本报告的所有数字只对 `r3-direction`（1–4 条事实、128 token 输入上限）成立，不能外推到 265–422 token 的新版 N4 输入。
 
 浏览器与运行时：Edge `157.0.0.0`（headless，`--enable-precise-memory-info`）、Playwright `1.63.0`、onnxruntime-web `1.30.0`（wasm，`numThreads=1`）、sentencepiece-js `1.1.0`、Node `v22.20.0`、win32 x64。

@@ -167,33 +167,30 @@ export class T5Browser {
     let past = Object.fromEntries(this.pastNames.map((n) => [n, empty]));
     let step = 0;
     let finishReason = "max_tokens";
+    // Checked at every point where control can return to the caller or to a
+    // callback: before the step, after the macrotask yield, and after onStep.
+    // Without the third one, an onStep() that aborts synchronously still costs
+    // one more decoder step.
+    const throwIfAborted = (phase) => {
+      if (!signal || !signal.aborted) return;
+      const e = new DOMException("aborted before step " + step, "AbortError");
+      // abortObservedAt is the instant the loop noticed the signal; the caller
+      // records when it issued abort(), and the gap is the real latency.
+      e.detail = { completedSteps: step, partialIds: null,
+                   abortObservedAt: performance.now(),
+                   abortPhase: phase,
+                   stepEndOffsetsMs: stepEndOffsetsMs.slice() };
+      throw e;
+    };
     for (; step < maxTokens; step++) {
-      if (signal && signal.aborted) {
-        const e = new DOMException("aborted before step " + step, "AbortError");
-        // abortObservedAt is the instant the loop noticed the signal, i.e. a
-        // step boundary. The caller records when it issued abort(); the gap
-        // between the two is what cancel latency actually means here.
-        e.detail = { completedSteps: step, partialIds: null,
-                     abortObservedAt: performance.now(),
-                     stepEndOffsetsMs: stepEndOffsetsMs.slice() };
-        throw e;
-      }
+      throwIfAborted("before-step");
       // macrotask yield (off only for the "cost of yielding" measurement):
       // ORT-web single-thread runs inside a microtask cascade, so without it
       // the page cannot observe an abort, receive a cancel message, or repaint
       if (macrotaskYield) await new Promise((r) => setTimeout(r));
-      // re-check AFTER the yield: an abort or a worker cancel message can
-      // arrive during it, and without this check the loop would run one more
-      // full decoder step before noticing
-      if (signal && signal.aborted) {
-        const e = new DOMException("aborted before step " + step, "AbortError");
-        e.detail = { completedSteps: step, partialIds: null,
-                     abortObservedAt: performance.now(),
-                     abortObservedAfterYield: true,
-                     stepEndOffsetsMs: stepEndOffsetsMs.slice() };
-        throw e;
-      }
+      throwIfAborted("after-yield");
       if (onStep) onStep(step);
+      throwIfAborted("after-onStep");
       const feeds = {
         decoder_input_ids: new this.ort.Tensor("int64",
             BigInt64Array.from([BigInt(prefix[prefix.length - 1])]), [1, 1]),

@@ -35,5 +35,22 @@
   "worker_with_deep_memory": 1,
   "offline_fp32": 1,
   "offline_int8": 1
- }
+ },
+ "pre_finish_reason_runs": [
+  "run1",
+  "run2",
+  "run3",
+  "mem1",
+  "fp32-r2",
+  "fp32-r3",
+  "int8-r1",
+  "int8-mem1",
+  "w-fp32-1",
+  "w-fp32-mem1",
+  "w-fp32-mem2",
+  "w-fp32-mem3",
+  "w-int8-mem1",
+  "w-rss-1"
+ ],
+ "finish_reason_note": "runs listed in pre_finish_reason_runs were produced before the adapter reported finishReason/status; every other run must carry BOTH fields on EVERY case with finishReason=eos and status=ok. A missing field on a post-adapter run is a failure, not something to filter out. Coverage minimums for these runs live in compare.py (finish.reportedByPage / finish.reportedByWorker), not in min_runs."
 }

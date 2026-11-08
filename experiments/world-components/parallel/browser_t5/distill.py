@@ -36,7 +36,7 @@ def file_sha(p: pathlib.Path) -> str | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(
-        WT / "artifacts" / "world-components" / "browser-t5-runtime-r4.json"))
+        WT / "artifacts" / "world-components" / "browser-t5-runtime-r5.json"))
     args = ap.parse_args()
 
     assets = load(RUNS / "assets.json")
@@ -102,8 +102,8 @@ def main() -> int:
         }
 
     evidence = {
-        "round": 4,
-        "supersedes": "browser-t5-runtime-r3.json (round 3), r2, r1",
+        "round": 5,
+        "supersedes": "browser-t5-runtime-r4.json (round 4), r3, r2, r1",
         "task": {
             "id": "c9", "branch": "exp/c-browser-t5",
             "exclusive_dir": "experiments/world-components/parallel/browser_t5/",
@@ -248,7 +248,7 @@ def main() -> int:
             },
             {
                 "claimInRound3": "terminate 后 +1.21 s 内存降到 378.6 MB，据此说「回收在约 1 秒内完成」",
-                "status": "撤回「完成」这一半（本轮的修正）",
+                "status": "round 4 修正",
                 "whatTheDataShows": "r3 用的是「比终止时低 400 MiB」这一个阈值，它只能证明已经掉了一大块。"
                                     "拆成三个数重测（两次 no-rebuild 轮）：首次明显下降在 +0.81 s / +0.86 s，"
                                     "此时仍有约 996 MiB；之后继续缓降，到 +15 s 左右稳定在 597–606 MiB，"
@@ -257,6 +257,32 @@ def main() -> int:
                 "remainingClaim": "terminate 能大幅释放已证明（页面可归因 973.3 → 4.46 MB，"
                                   "int8 713.1 → 4.46 MB）；「模型堆何时全部释放」仍未确定，"
                                   "需更细采样或进程内记账才能给完成时刻",
+            },
+            {
+                "claimInRound4": "finish.eosOnly 会过滤掉没有 finishReason 的用例，"
+                                 "且未检查每次运行自身的 ok/fatal",
+                "status": "本轮修复",
+                "whatTheDataShows": "旧实现把缺失字段的用例排除后再判断，"
+                                    "21 个里 20 个 eos、1 个缺失仍通过；也从未看过 "
+                                    "result.ok / result.fatal。现在："
+                                    "pre_finish_reason_runs 之外的每一次运行，"
+                                    "每个用例都必须同时有 finishReason=eos 与 status=ok，"
+                                    "缺字段直接失败；每次运行新增 "
+                                    "run.<name>.completed（ok=true 且无 fatal）；"
+                                    "checkpoint.config 的 sha256 也纳入核对",
+                "remainingClaim": "本轮 69 条 check 全过；负例（删一个 finishReason、"
+                                  "把一个运行标成 fatal、改错 config 哈希）"
+                                  "分别被 finish.reported / run.*.completed / "
+                                  "checkpoint.config 抓到，退出码 1",
+            },
+            {
+                "claimInRound4": "onStep 回调里同步 abort() 仍会多跑一步解码",
+                "status": "本轮修复",
+                "whatTheDataShows": "取消检查改为三处统一函数（进循环前、让出后、"
+                                    "onStep 之后）。step-boundary 取消实测："
+                                    "发出→抛错 0.8 ms，completedSteps=4（一步都不多跑）；"
+                                    "定时取消 2.8 ms、0 步",
+                "remainingClaim": "取消粒度仍是一步：已进入的那次 ORT 调用不可中断",
             },
         ],
         "rssRuns": rss_runs,

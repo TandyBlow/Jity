@@ -55,12 +55,14 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--runs", default=str(RUNS),
                     help="run directory to judge (default: ./runs)")
+    ap.add_argument("--expectations", default=str(HERE / "expectations.json"),
+                    help="pinned expectations file")
     args = ap.parse_args()
     runs_dir = pathlib.Path(args.runs)
     out_path = pathlib.Path(args.out) if args.out else runs_dir / "comparison.json"
 
     assets = load(runs_dir / "assets.json")
-    expect = load(HERE / "expectations.json")
+    expect = load(pathlib.Path(args.expectations))
     checks = []
 
     def check(name: str, ok: bool, detail: str = "") -> bool:
@@ -75,6 +77,10 @@ def main() -> int:
           str(assets["checkpoint"]["params"]))
     check("checkpoint.spiece",
           assets["checkpoint"]["spiece"]["sha256"] == expect["checkpoint"]["spiece_sha256"])
+    check("checkpoint.config",
+          assets["checkpoint"]["config"]["sha256"] == expect["checkpoint"]["config_sha256"],
+          f'{assets["checkpoint"]["config"]["sha256"]} vs '
+          f'{expect["checkpoint"]["config_sha256"]}')
     for variant, key in (("fp32", "graphs"), ("int8", "graphs_int8")):
         got = {k: v.get("sha256") for k, v in assets[key].items()
                if k in expect["graphs"][variant]}
@@ -188,6 +194,10 @@ def main() -> int:
             and all(c.get("timings", {}).get("steps", 0) > 0 and c.get("ids")
                     for c in raw["result"].get("cases", []))
         )
+        page_ok = raw["result"].get("ok") is True
+        check(f"run.{x['run']}.completed", page_ok and "fatal" not in raw["result"],
+              "page reported ok" if page_ok else json.dumps(
+                  raw["result"].get("fatal"))[:200])
         if x["noRebuild"]:
             # exempt by design: no case loop runs after terminate in this mode
             x["caseSetComplete"] = None
@@ -374,15 +384,31 @@ def main() -> int:
           vd["workerTerminateReleasesMemory"])
     check("verdict.rebuiltWorkerReproduces", vd["rebuiltWorkerReproduces"])
 
-    # generation must end on EOS, never by hitting the 64-token cap
-    finishes = [(x["run"], c["name"], c.get("finishReason"))
-                for x in per_run for c in x["cases"]]
-    with_reason = [(r, n, f) for r, n, f in finishes if f is not None]
-    check("finish.eosOnly",
-          all(f == "eos" for _, _, f in with_reason),
-          f"{sum(1 for _, _, f in with_reason if f == 'eos')}/{len(with_reason)} eos")
-    check("finish.observed", len(with_reason) > 0,
-          "no run recorded finishReason (adapter r3+ required)")
+    # Generation must end on EOS, never by hitting the 64-token cap, and the
+    # status must agree. Runs from before the adapter reported these fields are
+    # listed by name in expectations.json; anything not listed must carry both
+    # fields on EVERY case - a missing field is a failure, not a filter.
+    legacy = set(expect.get("pre_finish_reason_runs", []))
+    modern = [(x["run"], x["kind"], c) for x in per_run if not x["noRebuild"]
+              for c in x["cases"] if x["run"] not in legacy]
+    missing = [(r, c["name"]) for r, _, c in modern if c.get("finishReason") is None
+               or c.get("status") is None]
+    check("finish.reported", not missing,
+          f"{len(missing)} case(s) without finishReason/status: {missing[:3]}")
+    bad_finish = [(r, c["name"], c.get("finishReason"), c.get("status"))
+                  for r, _, c in modern
+                  if c.get("finishReason") != "eos" or c.get("status") != "ok"]
+    check("finish.eosOnly", not bad_finish,
+          f"{len(modern) - len(bad_finish)}/{len(modern)} eos+ok"
+          + (f"; bad={bad_finish[:3]}" if bad_finish else ""))
+    reported_page = {(r) for r, k, c in modern if k == "page" and c.get("finishReason")}
+    reported_worker = {(r) for r, k, c in modern if k == "worker" and c.get("finishReason")}
+    check("finish.reportedByPage", len(reported_page) >=
+          expect["min_runs"].get("finish_reason_reported_page", 1),
+          f"{len(reported_page)} page run(s)")
+    check("finish.reportedByWorker", len(reported_worker) >=
+          expect["min_runs"].get("finish_reason_reported_worker", 1),
+          f"{len(reported_worker)} worker run(s)")
 
     # cancellation must actually abort in every run that attempted it
     cancels = [c for c in comparison["cancelSummary"]]
