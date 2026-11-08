@@ -51,7 +51,9 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `build_references.py` | 参照来源表的生成与路径校验 |
 | `step6/references/reference-paragraphs-v2.md` | 参照 v2：正文＋面板＋来源；删除语义越界，数值移入面板（仍为草稿，未作标尺） |
 | `step6/route-plan.md` | 段落生成路线方案：验收标准（草稿未冻结）、A/B/C 路线、数据、排期、未决问题 |
-| `step6/scenes/campus-three-points.md` | 编写的实验样例 v2：校园三点连续结算（输入／事件／状态／正文＋面板）；已按审核修订玩家越权、柜位问答、双钥匙身份、面板位置 |
+| `step6/scenes/campus-three-points.md` | 编写的实验样例 v3（一致性样例，非叙事标尺）：校园三点连续结算（输入／事件／状态／正文＋面板）；已按审核修订玩家越权、柜位问答、双钥匙身份、面板位置 |
+| `step6/acceptance-boundaries.md` | 样例分两类、Q1/Q2 判分范围、面板由程序生成、玩家台词授权、叙事样例准入条件 |
+| `step6/n4-input-gap.md` | N4.0 输入缺口核对：缺玩家原话、上一段正文、说话/失败/交接事实；不直接接 C6 段落任务 |
 | `step6/context-audit.md` | 三题与现有数据库的上下文核查：缺玩家输入/上一段/触发事件，夹具只适合事实表达 |
 
 ## 复现
