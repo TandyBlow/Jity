@@ -9,6 +9,7 @@ import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.world_facts import router as facts_router
 from app.routers.worlds import router
 from app.services.world.control import WorldService
 from app.services.world.store import FixtureBaselineStore
@@ -19,6 +20,7 @@ def install_world_routes(app, store=None):
         store if store is not None else FixtureBaselineStore(
             clock=lambda: int(time.time() * 1000)))
     app.include_router(router)
+    app.include_router(facts_router)
 
 
 def create_world_app(*, store=None, allowed_origins=None):
