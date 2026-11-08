@@ -37,7 +37,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]  # c3 worktree root
-RUN = HERE / "runs" / "r1"
+RUN = HERE / "runs" / "r2"   # v2 checker; runs/r1 stays as the v1 record
 
 sys.path.insert(0, str(HERE))
 import plan_contract as contract  # noqa: E402
@@ -147,7 +147,32 @@ def _smoke_summary():
     }
 
 
+def check_frozen_criteria() -> list[str]:
+    """Refuse to run when the frozen criteria no longer describe this code."""
+    path = HERE / "freeze" / "criteria-v2.json"
+    if not path.exists():
+        return []          # first run: criteria are generated afterwards
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    problems = []
+    want = doc["checker"]["sha256"]
+    got = sha256(HERE / "text_conformance.py")
+    if want != got:
+        problems.append(f"text_conformance.py hash {got[:12]} != frozen {want[:12]}")
+    want_probes = doc["probeSet"]["sha256"]
+    got_probes = sha256(HERE / "freeze" / "tamper-probes.json")
+    if want_probes != got_probes:
+        problems.append(f"tamper-probes.json hash {got_probes[:12]} != frozen {want_probes[:12]}")
+    return problems
+
+
 def main() -> int:
+    drift = check_frozen_criteria()
+    if drift:
+        print("FROZEN CRITERIA DRIFT:")
+        for d in drift:
+            print(" -", d)
+        print("regenerate with: python -X utf8 build_criteria.py (then re-run this script)")
+        return 1
     RUN.mkdir(parents=True, exist_ok=True)
     sources = json.loads((HERE / "freeze/sources.json").read_text(encoding="utf-8"))["sources"]
     src_by_id = {s["sourceId"]: s for s in sources}
@@ -252,7 +277,8 @@ def main() -> int:
             plan = plan_by_key[(src_id, plan_key)]
             facts = [f for f in src["facts"] if f["factId"] in plan["factsUsed"]]
             result = text_conformance.check_text(
-                facts, plan["authorizedEdges"], plan["plan"], text_by_key[(src_id, text_key)]
+                facts, plan["authorizedEdges"], plan["plan"], text_by_key[(src_id, text_key)],
+                context=contexts.get(src_id),
             )
             conformance.append({
                 "sourceId": src_id,
@@ -260,8 +286,9 @@ def main() -> int:
                 "check": check_id,
                 "textPlanId": text_key,
                 "checkedPlanId": plan_key,
-                "ok": result["ok"],
-                "violations": result["violations"],
+                "accepted": result["accepted"],
+                "hard": result["hard"],
+                "review": result["review"],
                 "checks": result["checks"],
             })
 
@@ -273,6 +300,7 @@ def main() -> int:
     broken_result = text_conformance.check_text(
         [f for f in edge_source["facts"] if f["factId"] in edge_plan["factsUsed"]],
         edge_plan["authorizedEdges"], edge_plan["plan"], broken,
+        context=contexts.get(edge_source["sourceId"]),
     )
     conformance.append({
         "sourceId": edge_source["sourceId"],
@@ -280,16 +308,102 @@ def main() -> int:
         "check": "negative-missing-required-wording",
         "textPlanId": edge_plan["planId"],
         "checkedPlanId": edge_plan["planId"],
-        "ok": broken_result["ok"],
-        "violations": broken_result["violations"],
+        "accepted": broken_result["accepted"],
+        "hard": broken_result["hard"],
+        "review": broken_result["review"],
         "checks": broken_result["checks"],
     })
 
-    self_pass = sum(1 for r in conformance if r["check"].startswith("self") and r["ok"])
+    self_pass = sum(1 for r in conformance if r["check"].startswith("self") and r["accepted"])
     self_total = sum(1 for r in conformance if r["check"].startswith("self"))
-    cross_fail = sum(1 for r in conformance if r["check"].startswith("cross") and not r["ok"])
+    cross_fail = sum(1 for r in conformance if r["check"].startswith("cross") and not r["accepted"])
     cross_total = sum(1 for r in conformance if r["check"].startswith("cross"))
-    negative_caught = next(r for r in conformance if r["check"].startswith("negative"))["ok"] is False
+    negative_caught = next(r for r in conformance if r["check"].startswith("negative"))["accepted"] is False
+
+    # --- 4b. frozen tamper probes (v2 gate) ------------------------------
+    probe_doc = json.loads((HERE / "freeze/tamper-probes.json").read_text(encoding="utf-8"))
+    probes = []
+    for pr in probe_doc["probes"]:
+        plan = plan_by_key[(pr["baseSourceId"], pr["basePlanId"])]
+        src = src_by_id[pr["baseSourceId"]]
+        facts = [f for f in src["facts"] if f["factId"] in plan["factsUsed"]]
+        result = text_conformance.check_text(
+            facts, plan["authorizedEdges"], plan["plan"], pr["text"],
+            context=contexts.get(pr["baseSourceId"]),
+        )
+        hard_codes = sorted({h["code"] for h in result["hard"]})
+        review_runs = sorted({r.get("run", "") for r in result["review"]})
+        expect = pr["expect"]
+        if expect["verdict"] == "fail":
+            met = bool(set(hard_codes) & set(expect["mustIncludeCodes"]))
+        else:
+            need = expect["reviewRunContains"]
+            met = (not result["hard"]) and any(all(n in run for n in need) for run in review_runs)
+        probes.append({
+            "probeId": pr["probeId"],
+            "mutation": pr["mutation"],
+            "expectedVerdict": expect["verdict"],
+            "expectedCodes": expect["mustIncludeCodes"],
+            "actualHardCodes": hard_codes,
+            "actualReviewRuns": review_runs,
+            "accepted": result["accepted"],
+            "met": met,
+        })
+    probes_met = sum(1 for p in probes if p["met"])
+
+    # --- 4c. manual review queue (review items only, max 10 rows/batch) ---
+    queue = []
+    for pr in probe_doc["probes"]:
+        plan = plan_by_key[(pr["baseSourceId"], pr["basePlanId"])]
+        src = src_by_id[pr["baseSourceId"]]
+        facts = [f for f in src["facts"] if f["factId"] in plan["factsUsed"]]
+        result = text_conformance.check_text(
+            facts, plan["authorizedEdges"], plan["plan"], pr["text"],
+            context=contexts.get(pr["baseSourceId"]),
+        )
+        for item in result["review"]:
+            queue.append({
+                "queueId": f"{pr['probeId']}:{item.get('run', '')}",
+                "origin": "tamper-probe",
+                "probeId": pr["probeId"],
+                "sourceId": pr["baseSourceId"],
+                "planId": pr["basePlanId"],
+                "code": item["code"],
+                "run": item.get("run"),
+                "outsideVocabulary": item.get("outsideVocabulary", ""),
+                "detail": item["detail"],
+                "text": pr["text"],
+                "verdict": None,
+                "reviewerNote": "",
+            })
+    # archived base-model output, re-scored with v2 (no new model call)
+    smoke_path = HERE / "runs" / "r1" / "model-smoke.jsonl"
+    if smoke_path.exists():
+        for line in smoke_path.read_text(encoding="utf-8").splitlines():
+            row = json.loads(line)
+            plan = plan_by_key[(row["sourceId"], row["planId"])]
+            src = src_by_id[row["sourceId"]]
+            facts = [f for f in src["facts"] if f["factId"] in plan["factsUsed"]]
+            result = text_conformance.check_text(
+                facts, plan["authorizedEdges"], plan["plan"], row["output"],
+                context=contexts.get(row["sourceId"]),
+            )
+            queue.append({
+                "queueId": f"smoke:{row['sourceId']}:{row['planId']}",
+                "origin": "archived-base-smoke",
+                "probeId": None,
+                "sourceId": row["sourceId"],
+                "planId": row["planId"],
+                "code": "archived-output-hard-fail" if result["hard"] else "archived-output-accepted",
+                "run": None,
+                "outsideVocabulary": "",
+                "detail": f"{len(result['hard'])} hard finding(s): "
+                          + ", ".join(sorted({h['code'] for h in result['hard']})[:6]),
+                "text": row["output"],
+                "verdict": "fail" if result["hard"] else None,
+                "reviewerNote": "archived output already fails hard; listed for completeness",
+            })
+    queue = queue[:10]
 
     # --- 5. fixed-strategy controls --------------------------------------
     controls = []
@@ -336,6 +450,12 @@ def main() -> int:
     (RUN / "downstream-inputs.jsonl").write_text(
         "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in inputs), encoding="utf-8")
 
+    # --- 6b. compare this run's inputs with the r1 record ----------------
+    same_as_r1 = "<r1 missing>"
+    r1_inputs = HERE / "runs" / "r1" / "downstream-inputs.jsonl"
+    if r1_inputs.exists():
+        same_as_r1 = sha256(r1_inputs) == sha256(RUN / "downstream-inputs.jsonl")
+
     # --- 7. summaries -----------------------------------------------------
     summary = {
         "sources": len(sources),
@@ -350,6 +470,7 @@ def main() -> int:
         "legacyPlans": {"rows": len(legacy_rows),
                         "legal": sum(1 for r in legacy_rows if r["ok"])},
         "referenceTexts": len(ref_rows),
+        "checkerVersion": text_conformance.CONTRACT_VERSION,
         "conformance": {
             "selfPass": self_pass,
             "selfTotal": self_total,
@@ -357,6 +478,14 @@ def main() -> int:
             "crossTotal": cross_total,
             "missingRequiredWordingCaught": negative_caught,
         },
+        "tamperProbes": {
+            "total": len(probes),
+            "met": probes_met,
+            "hardFail": sum(1 for p in probes if p["expectedVerdict"] == "fail"),
+            "manualReview": sum(1 for p in probes if p["expectedVerdict"] == "review"),
+        },
+        "manualReviewQueue": len(queue),
+        "downstreamInputsIdenticalToR1": same_as_r1,
         "fixedStrategy": {
             "rows": len(controls),
             "legalRows": controls_legal,
@@ -372,6 +501,8 @@ def main() -> int:
     (RUN / "legacy-plans.json").write_text(json.dumps({"rows": legacy_rows}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (RUN / "conformance.json").write_text(json.dumps({"rows": conformance}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (RUN / "controls.json").write_text(json.dumps({"rows": controls}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    (RUN / "tamper-probes.json").write_text(json.dumps({"rows": probes}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    (RUN / "manual-review.json").write_text(json.dumps({"rows": queue}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (RUN / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     hashes = {
@@ -382,11 +513,13 @@ def main() -> int:
         "python": sys.version.split()[0],
         "platform": platform.platform(),
         "code": {name: sha256(HERE / name) for name in [
-            "plan_contract.py", "build_freeze.py", "reference_compose.py",
-            "text_conformance.py", "render_input.py", "run_experiment.py", "model_smoke.py"]},
+            "plan_contract.py", "build_freeze.py", "build_tamper_probes.py", "build_criteria.py",
+            "reference_compose.py", "text_conformance.py", "render_input.py",
+            "run_experiment.py", "model_smoke.py"]},
         "freeze": {name: sha256(HERE / "freeze" / name) for name in [
             "sources.json", "plans-v1.jsonl", "negative-cases.json",
-            "contexts.json", "source-hashes.json"]},
+            "contexts.json", "tamper-probes.json", "criteria-v2.json",
+            "source-hashes.json"]},
     }
     (RUN / "input-hashes.json").write_text(json.dumps(hashes, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
@@ -415,6 +548,21 @@ def main() -> int:
     for r in negatives:
         lines.append(f"| {r['caseId']} | {', '.join(r['expectedCodes'])} | {', '.join(r['actualCodes'])} | {'yes' if r['ok'] else 'NO'} |")
     lines += [
+        "",
+        "## Tamper probes (v2 gate)",
+        f"met: {probes_met}/{len(probes)}",
+        "",
+        "| probe | mutation | expected | hard codes | review runs | met |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for p in probes:
+        lines.append(f"| {p['probeId']} | {p['mutation'][:52]} | {p['expectedVerdict']} "
+                     f"| {', '.join(p['actualHardCodes']) or '-'} "
+                     f"| {', '.join(p['actualReviewRuns']) or '-'} | {'yes' if p['met'] else 'NO'} |")
+    lines += [
+        "",
+        "## Manual review queue",
+        f"rows: {len(queue)} (verdicts are empty until a human fills them)",
         "",
         "## Old controllability plans re-checked",
         f"legal: {sum(1 for r in legacy_rows if r['ok'])}/{len(legacy_rows)} "

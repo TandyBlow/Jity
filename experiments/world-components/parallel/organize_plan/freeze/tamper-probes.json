@@ -1,0 +1,193 @@
+{
+ "protocol": "c3-tamper-probes-v2",
+ "created": "2026-11-08T06:06:37.653269+00:00",
+ "checkerVersion": "c3-text-conformance-v2",
+ "baseTexts": "runs/r1/reference-output.jsonl (18 texts, all accepted by the v1 checker)",
+ "note": "Each probe is one mechanical edit of a reference text. 'fail' means at least one hard finding with one of the listed codes. 'review' means no hard finding but a review item whose residual run contains the listed substring; a human verdict is required before the item is accepted.",
+ "probes": [
+  {
+   "probeId": "T01-reverse-sentences",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "reverse the order of all four sentences",
+   "text": "陈默的袖口湿到肘部。随后，陈默的鞋底沾了泥。周宁的斗篷下摆湿了一片。林川的袖口沾了雨，指节发白。",
+   "textSha256": "51a8063588c10690568c9379d2ad20a77542ae3794b9a9768c6166b6290372c6",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "group-out-of-order"
+    ],
+    "reviewRunContains": []
+   },
+   "note": "v1 accepted this: it only compared adjacent groups for 'different sentence'."
+  },
+  {
+   "probeId": "T02-sequence-out-of-scope",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "prefix the 周宁 sentence (not the edge target) with 随后",
+   "text": "林川的袖口沾了雨，指节发白。随后，周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "e9be1790aee3c8b267b0ddff165f05178091b7c35a0c10a2b041435be2b65742",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "sequence-wording-outside-scope",
+     "sequence-wording-excess"
+    ],
+    "reviewRunContains": []
+   },
+   "note": "v1 accepted this: it only checked that a required edge exists somewhere in the text."
+  },
+  {
+   "probeId": "T03-add-unlicensed-object",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "append ，并拿走了一把刀 to the last sentence",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，并拿走了一把刀。",
+   "textSha256": "babfb2d58d2fc6426c266638e69316f2041850f008474767204d06239b585837",
+   "expect": {
+    "verdict": "review",
+    "mustIncludeCodes": [
+     "added-content-outside-vocabulary"
+    ],
+    "reviewRunContains": [
+     "刀"
+    ]
+   },
+   "note": "v1 accepted this; v2 must flag 刀 as vocabulary outside the selected facts, names and visible list."
+  },
+  {
+   "probeId": "T04-swap-two-groups",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "swap sentence 0 and sentence 1 (group order broken, sentence count unchanged)",
+   "text": "周宁的斗篷下摆湿了一片。林川的袖口沾了雨，指节发白。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "9e3eab081b5db07d8772430fa1dbd3b7f17abe13882ae34ee056711a877b6915",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "group-out-of-order"
+    ],
+    "reviewRunContains": []
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T05-swap-clauses-in-group",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "swap the two clauses inside group [f0,f1]",
+   "text": "林川的指节发白，袖口沾了雨。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "fabc59c6323f09d5095a6e33ac30f4750d3409980256fb9e95b4332684ceb094",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "within-group-order"
+    ],
+    "reviewRunContains": []
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T06-second-sequence-word",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "append ，随后，陈默退了出去 to the last sentence",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，随后，陈默退了出去。",
+   "textSha256": "9d6ac4b7e747f91471af7d0d62b44c51023e6f29eeda94274a188bbfee78a870",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "sequence-wording-outside-scope",
+     "sequence-wording-excess"
+    ],
+    "reviewRunContains": []
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T07-added-sentence",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "insert an extra sentence 潮汐簿被合上了。 in the middle",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。潮汐簿被合上了。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "11d5b29984767b514450dee7672aec863433b5640f0abc6d189922ab6a7b08f3",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "added-sentence"
+    ],
+    "reviewRunContains": [
+     "合"
+    ]
+   },
+   "note": "also produces a review item because 合 is outside the vocabulary"
+  },
+  {
+   "probeId": "T08-drop-required-wording",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P2",
+   "mutation": "delete 随后， from the required-edge target sentence",
+   "text": "林川的袖口沾了雨。林川的指节发白。周宁的斗篷下摆湿了一片。陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "475c5fb19f911b8445b31785f10e4d9e07119adf027f5954e8a185df910871e4",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "sequence-wording-missing"
+    ],
+    "reviewRunContains": []
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T09-props-only-addition",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "append ，墨和干纸还在 to the last sentence (all characters come from the visible list)",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，墨和干纸还在。",
+   "textSha256": "331b6e87128b199498d61b3c5e95740a0c40f1390b3d1f91f94b24737bfc4d51",
+   "expect": {
+    "verdict": "review",
+    "mustIncludeCodes": [
+     "added-content-visible-only"
+    ],
+    "reviewRunContains": [
+     "墨"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T10-wrong-actor",
+   "baseSourceId": "fixture-r1",
+   "basePlanId": "P1",
+   "mutation": "replace the first 林川 with 周宁",
+   "text": "周宁的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "textSha256": "536449fc613adb88d0cce1a7e7117d0bc337ef30aeb1e3d6e59eab4b1cce58d3",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "ref-name-missing"
+    ],
+    "reviewRunContains": []
+   },
+   "note": ""
+  },
+  {
+   "probeId": "T11-sequence-in-grouping-family",
+   "baseSourceId": "train-r2",
+   "basePlanId": "P1",
+   "mutation": "append 随后 to the first sentence; this source carries no authorised edge at all",
+   "text": "随后，沈砚的灯罩蒙了灰。沈砚的掌心出汗。叶知微的衣角结了盐霜，鬓发被雾打湿。",
+   "textSha256": "9e3376123b198b95637b1aa6d949c43327e395cc68647e3aab7eac6c76f762f0",
+   "expect": {
+    "verdict": "fail",
+    "mustIncludeCodes": [
+     "invented-sequence"
+    ],
+    "reviewRunContains": []
+   },
+   "note": "the grouping family has edges=[]; any 随后 must be rejected outright"
+  }
+ ]
+}
