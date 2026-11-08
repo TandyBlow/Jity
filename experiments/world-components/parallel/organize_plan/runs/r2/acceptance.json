@@ -1,0 +1,263 @@
+{
+ "identitySha256": "90ba21f42339226a27a96e3813aaf8680834ce1c3b23f42421daaa8f44f1d277",
+ "criteria": {
+  "file": "freeze/criteria-v2.json",
+  "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+  "contractVersion": "c3-text-conformance-v2"
+ },
+ "inputs": {
+  "probes": {
+   "file": "runs/r2/tamper-probes.json",
+   "sha256": "e0f353a5f1ede5230c4a26d2cec7edefe8d3890dcf9f60af2243824c5e3624b5"
+  },
+  "manualReview": {
+   "file": "runs/r2/manual-review.json",
+   "sha256": "57dc73d0cc642165741b683f1db0eef1c06a5c5efbedc822b9515ac21e956886"
+  }
+ },
+ "reviewer": {
+  "identity": "Codex",
+  "kind": "ai",
+  "date": "2026-11-08",
+  "reviewedCommit": "8a93f45",
+  "humanSignoff": "pending",
+  "scope": "AI逐条复核；不冒充人工签认，不改变冻结判据、程序硬判或模型能力结论。"
+ },
+ "counts": {
+  "probes": 11,
+  "rejectedHard": 9,
+  "rejectedReview": 1,
+  "pendingReview": 1,
+  "accepted": 0
+ },
+ "programOnly": {
+  "acceptedWithoutReview": 2,
+  "detail": "probes the v2 program alone would let through (no hard finding)"
+ },
+ "gateStatus": "PROVISIONAL_AI_REVIEW_ONLY",
+ "gateMeaning": "verdicts are AI review; human sign-off is still pending, so this cannot be used as the acceptance gate for a model round yet",
+ "deviations": [
+  "smoke:fixture-r1:P1: verdict 'fail' used for 'archived-output-hard-fail'; treated as 'new-content-fail'",
+  "smoke:fixture-r1:P2: verdict 'fail' used for 'archived-output-hard-fail'; treated as 'new-content-fail'"
+ ],
+ "outcomes": [
+  {
+   "probeId": "T01-reverse-sentences",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "group-out-of-order"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): group-out-of-order"
+  },
+  {
+   "probeId": "T02-sequence-out-of-scope",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "sequence-wording-excess",
+    "sequence-wording-outside-scope"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): sequence-wording-excess, sequence-wording-outside-scope"
+  },
+  {
+   "probeId": "T03-add-unlicensed-object",
+   "expectedVerdict": "review",
+   "hardCodes": [],
+   "reviewRuns": [
+    "刀",
+    "拿走"
+   ],
+   "reviewVerdicts": [
+    "new-content-fail",
+    "new-content-fail"
+   ],
+   "outcome": "rejected-review",
+   "reason": "review judged new content"
+  },
+  {
+   "probeId": "T04-swap-two-groups",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "group-out-of-order"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): group-out-of-order"
+  },
+  {
+   "probeId": "T05-swap-clauses-in-group",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "ref-not-omitted",
+    "within-group-order"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): ref-not-omitted, within-group-order"
+  },
+  {
+   "probeId": "T06-second-sequence-word",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "sequence-wording-excess",
+    "sequence-wording-outside-scope"
+   ],
+   "reviewRuns": [
+    "出去",
+    "退"
+   ],
+   "reviewVerdicts": [
+    "new-content-fail",
+    "new-content-fail"
+   ],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): sequence-wording-excess, sequence-wording-outside-scope"
+  },
+  {
+   "probeId": "T07-added-sentence",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "added-sentence"
+   ],
+   "reviewRuns": [
+    "合上",
+    "潮汐簿"
+   ],
+   "reviewVerdicts": [
+    "new-content-fail",
+    "new-content-fail"
+   ],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): added-sentence"
+  },
+  {
+   "probeId": "T08-drop-required-wording",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "sequence-wording-missing"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): sequence-wording-missing"
+  },
+  {
+   "probeId": "T09-props-only-addition",
+   "expectedVerdict": "review",
+   "hardCodes": [],
+   "reviewRuns": [
+    "墨",
+    "干纸"
+   ],
+   "reviewVerdicts": [
+    "unsure",
+    "unsure"
+   ],
+   "outcome": "pending-review",
+   "reason": "review left unsure or unfilled"
+  },
+  {
+   "probeId": "T10-wrong-actor",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "ref-missing-antecedent",
+    "ref-name-missing"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): ref-missing-antecedent, ref-name-missing"
+  },
+  {
+   "probeId": "T11-sequence-in-grouping-family",
+   "expectedVerdict": "fail",
+   "hardCodes": [
+    "invented-sequence",
+    "sequence-wording-excess"
+   ],
+   "reviewRuns": [],
+   "reviewVerdicts": [],
+   "outcome": "rejected-hard",
+   "reason": "program hard finding(s): invented-sequence, sequence-wording-excess"
+  }
+ ],
+ "rows": [
+  {
+   "queueId": "T03-add-unlicensed-object:拿走",
+   "code": "added-content-outside-vocabulary",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：选中事实仅记录外观变化，没有陈默拿走物品的行动；新增拿走事件，不是事实改写。人工签认待完成。"
+  },
+  {
+   "queueId": "T03-add-unlicensed-object:刀",
+   "code": "added-content-outside-vocabulary",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：选中事实及可见清单均未授权刀及其被拿走的事件；本结论不外推为整个世界不存在刀。人工签认待完成。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:退",
+   "code": "added-content-outside-vocabulary",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：新增陈默退场动作，五条选中外观事实没有该行动；原有关系词硬判失败仍有效。人工签认待完成。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:出去",
+   "code": "added-content-outside-vocabulary",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：出去与退共同断言未经记录的移动/退场事件，不是外观事实的改写；保留既有硬判失败。人工签认待完成。"
+  },
+  {
+   "queueId": "T07-added-sentence:潮汐簿",
+   "code": "added-content-visible-only",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：潮汐簿虽在可见清单中，但完整分句断言它被合上；可见物存在不能授权合簿事件，不能孤立按名词判为合法。人工签认待完成。"
+  },
+  {
+   "queueId": "T07-added-sentence:合上",
+   "code": "added-content-outside-vocabulary",
+   "verdict": "new-content-fail",
+   "normalised": "new-content-fail",
+   "note": "Codex AI复核：选中事实未记录潮汐簿被合上的动作/状态变化；不是对原外观事实的同义改写。新增句的硬判失败仍有效。人工签认待完成。"
+  },
+  {
+   "queueId": "T09-props-only-addition:墨",
+   "code": "added-content-visible-only",
+   "verdict": "unsure",
+   "normalised": "unsure",
+   "note": "Codex AI复核：墨列在freeze/contexts.json的可见清单，提到该物品本身不等于编造事件；但还在带有持续状态含义，选中事实没有相应前后状态，且上下文标为仅展示用途，无法确认完整分句受授权。不计通过；人工签认待完成。"
+  },
+  {
+   "queueId": "T09-props-only-addition:干纸",
+   "code": "added-content-visible-only",
+   "verdict": "unsure",
+   "normalised": "unsure",
+   "note": "Codex AI复核：干纸列在freeze/contexts.json的可见清单，不因重复可见名词自动判错；完整分句的还在是否仅表当前可见、或新增持续状态，现有事实链不能确定。不计通过；人工签认待完成。"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P1",
+   "code": "archived-output-hard-fail",
+   "verdict": "fail",
+   "normalised": "new-content-fail",
+   "note": "archived output already fails hard; listed for completeness"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P2",
+   "code": "archived-output-hard-fail",
+   "verdict": "fail",
+   "normalised": "new-content-fail",
+   "note": "archived output already fails hard; listed for completeness"
+  }
+ ]
+}

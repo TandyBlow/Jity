@@ -1,8 +1,8 @@
 {
- "created": "2026-11-08T06:08:59.773730+00:00",
- "runtimeHead": "d6e9ba8d735fd5d806549c09ecf9bda49f57f951",
+ "created": "2026-11-08T06:15:04.302330+00:00",
+ "runtimeHead": "8a93f450bf427e18267f8fce0be3e37613dec55f",
  "runtimeBranch": "exp/c-organize-plan",
- "runtimeStatus": "M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/run_experiment.py\n M experiments/world-components/parallel/organize_plan/text_conformance.py\n?? TASK.md",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/run_experiment.py\n M experiments/world-components/parallel/organize_plan/runs/r2/input-hashes.json\n M experiments/world-components/parallel/organize_plan/runs/r2/manual-review.json\n M experiments/world-components/parallel/organize_plan/runs/r2/summary.json\n?? .local-mr-before.json\n?? TASK.md",
  "python": "3.12.3",
  "platform": "Windows-11-10.0.26200-SP0",
  "code": {
@@ -13,7 +13,7 @@
   "reference_compose.py": "9bd893bd727a2d97ef9c46ba661b1ffb38b5503bbf4ca26652961207135bef09",
   "text_conformance.py": "a4444195f6ce6ee6c5ad9d30fd6536a3161510125fed036c1011e1e21cc76d90",
   "render_input.py": "143548e16df10c644d9e7638e6bb7d0ec74efd1579278330e225d67132363c05",
-  "run_experiment.py": "4630a488233c7fec7f8d0e17626a570de6db8fc2908dc6151e0aacb37374370d",
+  "run_experiment.py": "9ec11ed7562b6e7e361137f82929a0b9f4253d89f352131af843a9bf3e8099d9",
   "model_smoke.py": "de6769d40bbedc374162c81fe5272c4da16c65eb6eaf4e02176a51f073b48e80"
  },
  "freeze": {

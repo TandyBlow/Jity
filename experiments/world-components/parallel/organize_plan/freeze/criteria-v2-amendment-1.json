@@ -1,0 +1,36 @@
+{
+ "protocol": "c3-criteria-v2-amendment-1",
+ "created": "2026-11-08T06:17:04.521104+00:00",
+ "appliesTo": {
+  "file": "freeze/criteria-v2.json",
+  "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+  "contractVersion": "c3-text-conformance-v2"
+ },
+ "trigger": {
+  "what": "the reviewer wrote verdict \"fail\" on 2 rows of runs/r2/manual-review.json",
+  "rows": [
+   "smoke:fixture-r1:P1",
+   "smoke:fixture-r1:P2"
+  ],
+  "whyThoseRows": "they are archived base-model outputs that already fail the program's hard checks; the queue carried them for completeness, so there was no open semantic question to answer",
+  "contractConflict": "freeze/criteria-v2.json manualReview.verdictValues lists only paraphrase-ok / new-content-fail / unsure"
+ },
+ "resolution": {
+  "rule": "apply_review.py accepts \"fail\" ONLY when the row's code is archived-output-hard-fail, and maps it to new-content-fail; any other use of \"fail\" is reported as a deviation and treated as pending",
+  "notChanged": [
+   "22 hard rules",
+   "2 review rules",
+   "itemAccepted definition",
+   "pairedSuccess definition",
+   "gate line",
+   "maxRowsPerBatch=10"
+  ],
+  "effectOnProbes": "none: the two aliased rows belong to archived outputs, not to the 11 probes",
+  "recordedIn": "runs/r2/acceptance.json deviations[]"
+ },
+ "reviewFileAtAmendment": {
+  "file": "runs/r2/manual-review.json",
+  "sha256": "57dc73d0cc642165741b683f1db0eef1c06a5c5efbedc822b9515ac21e956886"
+ },
+ "note": "a frozen criteria file is not rewritten retroactively; this amendment records the gap and the narrow bridge, so a later reviewer can see exactly what was stretched."
+}

@@ -28,6 +28,8 @@
   "manualReview": 2
  },
  "manualReviewQueue": 10,
+ "manualReviewPreservedVerdicts": 10,
+ "manualReviewOrphaned": 0,
  "downstreamInputsIdenticalToR1": true,
  "fixedStrategy": {
   "rows": 36,

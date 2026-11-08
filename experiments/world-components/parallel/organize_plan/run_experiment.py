@@ -147,6 +147,47 @@ def _smoke_summary():
     }
 
 
+REVIEW_FIELDS = ("verdict", "reviewerNote", "reviewer", "reviewedAt")
+
+
+def write_manual_review(queue: list[dict]) -> dict:
+    """Write the review queue WITHOUT destroying filled-in verdicts.
+
+    A re-run regenerates the rows (same queueIds, same order), but the
+    verdict/reviewerNote of an existing row and the top-level `reviewer` block
+    are carried over. Rows that no longer exist are kept under `orphanedRows`
+    instead of being dropped silently.
+    """
+    path = RUN / "manual-review.json"
+    previous: dict[str, dict] = {}
+    reviewer = None
+    if path.exists():
+        old = json.loads(path.read_text(encoding="utf-8"))
+        reviewer = old.get("reviewer")
+        previous = {r["queueId"]: r for r in old.get("rows", [])}
+    merged, seen, preserved = [], set(), 0
+    for row in queue[:10]:
+        old = previous.get(row["queueId"])
+        if old:
+            seen.add(row["queueId"])
+            for field in REVIEW_FIELDS:
+                if old.get(field) not in (None, "", {}):
+                    row[field] = old[field]
+                    if field == "verdict":
+                        preserved += 1
+        merged.append(row)
+    orphaned = [r for k, r in previous.items() if k not in seen]
+    doc: dict = {}
+    if reviewer:
+        doc["reviewer"] = reviewer
+    doc["rows"] = merged
+    if orphaned:
+        doc["orphanedRows"] = orphaned
+    path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return {"rows": len(merged), "preservedVerdicts": preserved,
+            "orphaned": len(orphaned), "reviewer": reviewer}
+
+
 def check_frozen_criteria() -> list[str]:
     """Refuse to run when the frozen criteria no longer describe this code."""
     path = HERE / "freeze" / "criteria-v2.json"
@@ -404,6 +445,7 @@ def main() -> int:
                 "reviewerNote": "archived output already fails hard; listed for completeness",
             })
     queue = queue[:10]
+    review_write = write_manual_review(queue)
 
     # --- 5. fixed-strategy controls --------------------------------------
     controls = []
@@ -484,7 +526,9 @@ def main() -> int:
             "hardFail": sum(1 for p in probes if p["expectedVerdict"] == "fail"),
             "manualReview": sum(1 for p in probes if p["expectedVerdict"] == "review"),
         },
-        "manualReviewQueue": len(queue),
+        "manualReviewQueue": review_write["rows"],
+        "manualReviewPreservedVerdicts": review_write["preservedVerdicts"],
+        "manualReviewOrphaned": review_write["orphaned"],
         "downstreamInputsIdenticalToR1": same_as_r1,
         "fixedStrategy": {
             "rows": len(controls),
@@ -502,7 +546,7 @@ def main() -> int:
     (RUN / "conformance.json").write_text(json.dumps({"rows": conformance}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (RUN / "controls.json").write_text(json.dumps({"rows": controls}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (RUN / "tamper-probes.json").write_text(json.dumps({"rows": probes}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    (RUN / "manual-review.json").write_text(json.dumps({"rows": queue}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    review_write = write_manual_review(queue)
     (RUN / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     hashes = {

@@ -1,0 +1,733 @@
+{
+ "created": "2026-11-08T06:16:58.473934+00:00",
+ "purpose": "find a local checkpoint usable for the plan-execution arm; no model is loaded and no generation is run",
+ "searchRoots": [
+  ".local\\models",
+  ".local\\demo-n1n4",
+  ".local\\world-components-worktree\\experiments\\world-components\\assets",
+  ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2",
+  ".local\\world-components-worktree\\ckpt-scenevb",
+  ".local\\world-components-next-worktree\\artifacts\\next-runs",
+  ".local\\mockremote\\base"
+ ],
+ "maxHashedBytes": 524288000,
+ "checkpoints": [
+  {
+   "dir": ".local\\demo-n1n4\\.qwen05",
+   "sizeBytes": 988097824,
+   "modelSha256": null,
+   "hashed": false,
+   "arch": {
+    "model_type": "qwen2",
+    "architectures": [
+     "Qwen2ForCausalLM"
+    ],
+    "vocab_size": 151936
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\demo-n1n4\\ckpt-asm",
+   "sizeBytes": 309783976,
+   "modelSha256": "7018add1169028ac656f88ab5ae1ac3facdaf9d5cb4eccd6a215dd6c1227a193",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\demo-n1n4\\ckpt-rewrite",
+   "sizeBytes": 309783976,
+   "modelSha256": "01bb8b93067edf0c3b85c5304773d7f2559ee1d64a2bf96cc5c12b1bed202bda",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\demo-n1n4\\ckpt-rw100",
+   "sizeBytes": 309783976,
+   "modelSha256": "550bba2aa6377f686273ec4b3dd3022bd25dff77baea3eb1adfde77cd0cd8ea2",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\demo-n1n4\\ckpt-rw60",
+   "sizeBytes": 309783976,
+   "modelSha256": "8f2f4c73f1a0054a4f5673be74a9a763b5114f6ca65ae67b636f23640af73785",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\mockremote\\base",
+   "sizeBytes": 309783976,
+   "modelSha256": "e89739ec40981635af85312c4457e73b136d79f9b3e4656e3128ecf4a10de409",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\models",
+   "sizeBytes": 309783976,
+   "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "spiece.model"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-next-worktree\\artifacts\\next-runs\\cf24-arm-control\\ckpt",
+   "sizeBytes": 309783976,
+   "modelSha256": "d203d0eff2772b8c1b0e9cf811f4148f06ad2745d22712d24bc1c7315bbc0e1e",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-next-worktree\\artifacts\\next-runs\\cf24-arm-treatment\\ckpt",
+   "sizeBytes": 309783976,
+   "modelSha256": "afb1ae3f3bca54516f636580c01003d3b37f628d0bd3ce07a85b2ee5e19176a1",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\ckpt-scenevb",
+   "sizeBytes": 309783976,
+   "modelSha256": "a7793908b6aecf38d9d0cd6dab33157916601d7db43c0a9cea8c80f18b8f4761",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step120",
+   "sizeBytes": 309783976,
+   "modelSha256": "9c1e08fd769b69fd268e3a13d576090828456c1345af37652ab551934a01b09e",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step180",
+   "sizeBytes": 309783976,
+   "modelSha256": "e033755897521bbbefa3eb347842459d1e171a23daf34c35ec655e349a640a03",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step240",
+   "sizeBytes": 309783976,
+   "modelSha256": "65beb317d5972a3971602fb8dea716e1e26145201ec26f8e7ee150cfe1359286",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step300",
+   "sizeBytes": 309783976,
+   "modelSha256": "8f082bb63e1587f24862c1f113a61f68dddd2be22a15ed13a5e494ebbfc2e086",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step360",
+   "sizeBytes": 309783976,
+   "modelSha256": "b80e8d0fdce04fe986bf4c09afcdd3c786903fa4226eb78532276e65413eed5e",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step60",
+   "sizeBytes": 309783976,
+   "modelSha256": "5d37ebf37a0519eaa3aeb8a937c1f657550daa021e0fc68905f9498d808efc7e",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r1",
+   "sizeBytes": 309783976,
+   "modelSha256": "ce335cac904275472b7714164fa802adc09255762ea276a385af0fd02f482aa4",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r2-large",
+   "sizeBytes": 309783976,
+   "modelSha256": "5ee2efe0b4f4ab03be1ab17530a71fd7e660cae304dbc961a23bd131387c9003",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r2-small",
+   "sizeBytes": 309783976,
+   "modelSha256": "f0c781d94a6deff36a01ecf59bf6f52ea643c42fa14e47272921545fbdae84d7",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r3-direction",
+   "sizeBytes": 309783976,
+   "modelSha256": "baceebff5d33eacfc2aa8373c61e2d231130e9986f0e1da30523299c41c19b45",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\route-act-s240",
+   "sizeBytes": 309783976,
+   "modelSha256": "5f17c48a0a19c72bbcaf0517321a4c02f95bc891f3ddcf3e227c7c6ae0564d54",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\route-control-s240",
+   "sizeBytes": 309783976,
+   "modelSha256": "25a600b3057c52bf38d283d49848466df37aad9169f8627efa7b1571af594071",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\route-control-u240recipe",
+   "sizeBytes": 309783976,
+   "modelSha256": "25a600b3057c52bf38d283d49848466df37aad9169f8627efa7b1571af594071",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\route-state-s240",
+   "sizeBytes": 309783976,
+   "modelSha256": "4a761edadb44522aa1c45b7a9fde4e2d969d0507ef41aee29c454fa5cbf603b9",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+   "sizeBytes": 309783974,
+   "modelSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": true,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-extractor-v1",
+   "sizeBytes": 309783976,
+   "modelSha256": "4d7171bf52ae7bcee2d3056ab89935a3524d25a1eb7cf1c10b3cceae51e7e6ad",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-n5",
+   "sizeBytes": 41392192,
+   "modelSha256": "619576cbc0b437833d0ef77177d60aefc019140d221c22f2344444893ab5c4a6",
+   "hashed": true,
+   "arch": {
+    "model_type": "bert",
+    "architectures": [
+     "BertModel"
+    ],
+    "vocab_size": 21128
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-v2",
+   "sizeBytes": 309783976,
+   "modelSha256": "e89739ec40981635af85312c4457e73b136d79f9b3e4656e3128ecf4a10de409",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-v3",
+   "sizeBytes": 309783976,
+   "modelSha256": "5b55c912d237e040cd4ffb775dafe453efb26d9427c69e5f98d91df33cdee337",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  },
+  {
+   "dir": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-v3a",
+   "sizeBytes": 309783976,
+   "modelSha256": "d212abb07301264f9b7b47a519c8b68b1c35f4fb16709f7f9441a4abe2b6bb91",
+   "hashed": true,
+   "arch": {
+    "model_type": "t5",
+    "architectures": [
+     "T5ForConditionalGeneration"
+    ],
+    "d_model": 512,
+    "num_layers": 8,
+    "num_decoder_layers": 8,
+    "vocab_size": 32596
+   },
+   "configPresent": true,
+   "tokenizerFiles": [
+    "special_tokens_map.json",
+    "spiece.model",
+    "tokenizer_config.json"
+   ],
+   "mentionedInRecords": false,
+   "planTrainingClaim": null
+  }
+ ],
+ "finding": {
+  "count": 30,
+  "withHash": 29,
+  "mentionedInRecords": 1,
+  "planTrained": 0,
+  "why": "no record ties any of these weight hashes to training that consumed a plan block; the controllability run reported that its checkpoint was not saved, and the frozen protocol only pins the base weight hash"
+ },
+ "caveat": "a checkpoint whose hash appears in no record cannot be used to answer 'can a plan-trained model follow plans' — its identity is unknown, so any result would be unattributable"
+}

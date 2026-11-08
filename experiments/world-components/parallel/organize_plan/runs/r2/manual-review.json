@@ -1,4 +1,12 @@
 {
+ "reviewer": {
+  "identity": "Codex",
+  "kind": "ai",
+  "date": "2026-11-08",
+  "reviewedCommit": "8a93f45",
+  "humanSignoff": "pending",
+  "scope": "AI逐条复核；不冒充人工签认，不改变冻结判据、程序硬判或模型能力结论。"
+ },
  "rows": [
   {
    "queueId": "T03-add-unlicensed-object:拿走",
@@ -11,8 +19,8 @@
    "outsideVocabulary": "拿走",
    "detail": "content '拿走' uses characters that appear in no selected fact, name or visible item ('拿走')",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，并拿走了一把刀。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：选中事实仅记录外观变化，没有陈默拿走物品的行动；新增拿走事件，不是事实改写。人工签认待完成。"
   },
   {
    "queueId": "T03-add-unlicensed-object:刀",
@@ -25,8 +33,8 @@
    "outsideVocabulary": "刀",
    "detail": "content '刀' uses characters that appear in no selected fact, name or visible item ('刀')",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，并拿走了一把刀。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：选中事实及可见清单均未授权刀及其被拿走的事件；本结论不外推为整个世界不存在刀。人工签认待完成。"
   },
   {
    "queueId": "T06-second-sequence-word:退",
@@ -39,8 +47,8 @@
    "outsideVocabulary": "退",
    "detail": "content '退' uses characters that appear in no selected fact, name or visible item ('退')",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，随后，陈默退了出去。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：新增陈默退场动作，五条选中外观事实没有该行动；原有关系词硬判失败仍有效。人工签认待完成。"
   },
   {
    "queueId": "T06-second-sequence-word:出去",
@@ -53,8 +61,8 @@
    "outsideVocabulary": "出去",
    "detail": "content '出去' uses characters that appear in no selected fact, name or visible item ('出去')",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，随后，陈默退了出去。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：出去与退共同断言未经记录的移动/退场事件，不是外观事实的改写；保留既有硬判失败。人工签认待完成。"
   },
   {
    "queueId": "T07-added-sentence:潮汐簿",
@@ -67,8 +75,8 @@
    "outsideVocabulary": "",
    "detail": "content '潮汐簿' only reuses scene-visible vocabulary; needs manual review",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。潮汐簿被合上了。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：潮汐簿虽在可见清单中，但完整分句断言它被合上；可见物存在不能授权合簿事件，不能孤立按名词判为合法。人工签认待完成。"
   },
   {
    "queueId": "T07-added-sentence:合上",
@@ -81,8 +89,8 @@
    "outsideVocabulary": "合上",
    "detail": "content '合上' uses characters that appear in no selected fact, name or visible item ('合上')",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。潮汐簿被合上了。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "new-content-fail",
+   "reviewerNote": "Codex AI复核：选中事实未记录潮汐簿被合上的动作/状态变化；不是对原外观事实的同义改写。新增句的硬判失败仍有效。人工签认待完成。"
   },
   {
    "queueId": "T09-props-only-addition:墨",
@@ -95,8 +103,8 @@
    "outsideVocabulary": "",
    "detail": "content '墨' only reuses scene-visible vocabulary; needs manual review",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，墨和干纸还在。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "unsure",
+   "reviewerNote": "Codex AI复核：墨列在freeze/contexts.json的可见清单，提到该物品本身不等于编造事件；但还在带有持续状态含义，选中事实没有相应前后状态，且上下文标为仅展示用途，无法确认完整分句受授权。不计通过；人工签认待完成。"
   },
   {
    "queueId": "T09-props-only-addition:干纸",
@@ -109,8 +117,8 @@
    "outsideVocabulary": "",
    "detail": "content '干纸' only reuses scene-visible vocabulary; needs manual review",
    "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，墨和干纸还在。",
-   "verdict": null,
-   "reviewerNote": ""
+   "verdict": "unsure",
+   "reviewerNote": "Codex AI复核：干纸列在freeze/contexts.json的可见清单，不因重复可见名词自动判错；完整分句的还在是否仅表当前可见、或新增持续状态，现有事实链不能确定。不计通过；人工签认待完成。"
   },
   {
    "queueId": "smoke:fixture-r1:P1",

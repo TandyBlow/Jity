@@ -330,7 +330,7 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | T09…:墨 / :干纸 | fixture-r1 P1 | added-content-visible-only | 墨 / 干纸 | 只是提到道具还是发生了事？ |
 | smoke:fixture-r1:P1/P2 | 基线 smoke | archived-output-hard-fail | — | 已硬判失败，仅登记 |
 
-注意：这 10 行里有两行是**已经硬判失败**的归档输出，列进来只为留档；真正等人工的是前 8 行。
+注意：这 10 行里有两行是**已经硬判失败**的归档输出，列进来只为留档；真正等人工结论的是前 8 行（见 §8.5.8，已填一轮 AI 复核）。
 
 ### 8.5.7 冻结的判据
 
@@ -340,7 +340,62 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 
 **下一轮验收门的一句话定义**：新冻结留出上，**同一来源两份计划都“无 hard 且 review 全部人工判为合法改写”**，成对成功 ≥ 8/10，且严格高于四个固定策略的同批成绩。当前材料上固定策略成对成功都是 0，模型必须真的按计划切换才能过。
 
----
+### 8.5.8 人工核验已收到一轮（AI 复核，待人工签认）
+
+`runs/r2/manual-review.json` 的 10 行已填，文件顶部记录了复核者身份：
+
+```json
+"reviewer": {"identity": "Codex", "kind": "ai", "date": "2026-11-08",
+             "reviewedCommit": "8a93f45", "humanSignoff": "pending",
+             "scope": "AI逐条复核；不冒充人工签认，不改变冻结判据、程序硬判或模型能力结论。"}
+```
+
+逐行结论：
+
+| 队列行 | 剩余内容 | 结论 | 理由（复核者原话摘要） |
+| --- | --- | --- | --- |
+| T03:拿走 | 拿走 | `new-content-fail` | 选中事实只有外观变化，没有拿物品的行动 |
+| T03:刀 | 刀 | `new-content-fail` | 事实与可见清单都没授权“刀被拿走”；不外推为整个世界没有刀 |
+| T06:退 | 退 | `new-content-fail` | 新增退场动作；原有的关系词硬判失败仍有效 |
+| T06:出去 | 出去 | `new-content-fail` | 与“退”共同断言未经记录的移动/退场 |
+| T07:潮汐簿 | 潮汐簿 | `new-content-fail` | 物件在可见清单里，但整个分句断言“被合上”；可见物存在不授权事件 |
+| T07:合上 | 合上 | `new-content-fail` | 没有记录合上的动作；新增句的硬判失败仍有效 |
+| T09:墨 | 墨 | `unsure` | 物件在可见清单，提到物品不等于编造事件；但“还在”的持续状态无法确认 |
+| T09:干纸 | 干纸 | `unsure` | 同上，不因重复可见名词自动判错，但持续状态无法确认 |
+| smoke:fixture-r1:P1 | — | `fail` | 归档输出本就硬判失败，列为留档 |
+| smoke:fixture-r1:P2 | — | `fail` | 同上 |
+
+**一处与冻结判据的偏差**：`freeze/criteria-v2.json` 只允许 `paraphrase-ok / new-content-fail / unsure` 三个取值，这里用了第四个 `fail`，且只出现在两行**已经硬判失败**的归档输出上。处理办法不是改写冻结件，而是：
+
+- `apply_review.py` 只在行的 `code == archived-output-hard-fail` 时接受 `fail`，把它当作 `new-content-fail`；
+- 其它场合出现 `fail` 一律记为偏差并按“待定”处理；
+- 偏差写进 `runs/r2/acceptance.json` 的 `deviations[]`，并另立 `freeze/criteria-v2-amendment-1.json` 说明来由，22 条 hard 规则、2 条 review 规则、接受定义、门线一个字没改。
+
+### 8.5.9 复核后的验收结果
+
+`apply_review.py` 把“程序的 hard 判定”和“人工结论”合成一个结论，写在 `runs/r2/acceptance.json`：
+
+| 结论 | 数量 | 是哪几条 |
+| --- | --- | --- |
+| `rejected-hard`（程序硬判失败） | 9 | T01、T02、T04、T05、T06、T07、T08、T10、T11 |
+| `rejected-review`（程序放过、人工判新内容） | 1 | T03（`刀`、`拿走`） |
+| `pending-review`（程序放过、人工 `unsure`） | 1 | T09（`墨`、`干纸`） |
+| `accepted` | 0 | — |
+
+对照：**只看程序**的话，11 条里有 2 条没有硬判问题（T03、T09），会被放过；加入人工结论后，1 条被判失败、1 条卡在 `unsure`。这就是“程序 + 人工”两级判据的实际作用。
+
+**门状态**：`acceptance.json` 的 `gateStatus` 是 `PROVISIONAL_AI_REVIEW_ONLY`，不是 `OPEN`。含义写在文件里：结论来自 AI 复核、人工签认为 `pending`，所以这份结论**不能**直接当作下一轮模型验收门；它只说明“这套判据 + 核验流程是可用的”，并给出每一行的具体理由供人工核对。
+
+`apply_review.py` 的判定顺序（写死在代码里，可复算）：有 hard 发现 → `rejected-hard`；否则有 `new-content-fail` → `rejected-review`；否则有 `unsure` 或未填 → `pending-review`；全部 `paraphrase-ok` → `accepted`。
+
+`acceptance.json` 不写时间戳，`identitySha256` 由三个输入文件的哈希算出，所以同样的输入重跑得到逐字节相同的文件（实测两次 `ab1cbcfa…`），两个复核者可以直接 `diff`。
+
+### 8.5.10 重跑不会冲掉已填的结论
+
+这一点单独修了：`run_experiment.py` 原先直接覆盖 `manual-review.json`，重跑会把 10 行人工结论清空。现在 `write_manual_review()` 按 `queueId` 合并——保留每行的 `verdict`、`reviewerNote` 和顶部的 `reviewer` 块；新队列里消失的行放进 `orphanedRows` 而不是静默丢弃。
+
+实测：先备份当前文件，重跑 `run_experiment.py`，10 条 `verdict` 全部保留、`reviewer` 块一致、`summary.json` 记录 `manualReviewPreservedVerdicts: 10`、`manualReviewOrphaned: 0`。
+
 
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
@@ -405,7 +460,11 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | `runs/r2/reference-output.jsonl` | 18 条确定性参考正文 | — |
 | `runs/r2/conformance.json` | 自检/交叉/负例的文本检查（v2，18/18 接受、交叉 18/18 失败） | — |
 | `runs/r2/tamper-probes.json` | 11 个探针在 v2 下的逐条结果 | — |
-| `runs/r2/manual-review.json` | 人工核验队列（≤10 行，`verdict` 为空） | — |
+| `runs/r2/manual-review.json` | 人工核验表（10 行，已填一轮 AI 复核，`humanSignoff: pending`） | 见文件 |
+| `runs/r2/acceptance.json` | 程序硬判 + 人工结论合成的逐条验收结果与门状态 | — |
+| `freeze/criteria-v2-amendment-1.json` | `fail` 取值的窄口修正记录（不改冻结件） | — |
+| `freeze/checkpoint-inventory.json` | 30 个本地权重目录的清点（29 个哈希，0 个可归因计划训练） | — |
+| `NEXT-ROUND.md` | 检查点与新留出的现状、三条路线、阻塞点 | — |
 | `runs/r2/controls.json` | 4 个固定策略 × 9 个来源 | — |
 | `runs/r2/downstream-inputs.jsonl` | 18 条 N4 模拟输入（与 r1 逐字节一致） | — |
 | `runs/r2/summary.json` | 头部数字 | — |
@@ -420,6 +479,8 @@ python -X utf8 build_tamper_probes.py # 从 runs/r1 的参考正文机械生成 
 python -X utf8 build_criteria.py      # 生成冻结判据（自动带入检查器/探针哈希）
 python -X utf8 run_experiment.py      # 合法性 + 旧计划复检 + 参考正文 + 探针 + 人工队列 + 固定策略
 python -X utf8 render_input.py --out runs/r2/downstream-inputs.jsonl
+python -X utf8 apply_review.py        # 把 manual-review.json 的结论并进 acceptance.json
+python -X utf8 inventory_checkpoints.py  # 只读清点本地权重（约 35 秒，不算模型）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）
 ```
 
@@ -444,4 +505,7 @@ python -X utf8 text_conformance.py --texts runs/r1/reference-output.jsonl
 - **已证明**：在这 9 个可追溯来源、18 份计划上，合法性校验 18/18 通过；20 个负例全部按预期被拦下；确定性参考执行器 18/18 按计划生成，交叉检查 18/18 能区分两份计划；四个固定策略没有一对能同时通过两份计划；v2 文本检查器 11/11 探针按预期处置（9 硬判、2 转人工）。
 - **已证明（限定范围）**：上述 9 个重叠来源上的旧 A/B 计划 18/18 合法；这不等于旧固定留出 10 源全部合法（其中只有 2 源有证据链）。
 - **已失败**：不训练的 77M 基线在 4 条 smoke 上 0/4 通过文本一致性（只说明基线不读计划，不是接口结论）。
+- **已证明（判据层面，AI 复核待人工签认）**：v2 判据加人工核验后，11 条篡改探针 10 条被判失败、1 条（T09“墨/干纸”）停在 `unsure`；只看程序会放过 2 条，加入复核后放过 0 条。门状态 `PROVISIONAL_AI_REVIEW_ONLY`，尚不能当模型验收门。
+- **已失败**：本地 30 个权重目录里，没有一个能证明“训练时读过计划块”（29 个算了哈希，只有基座 `5cdc5721…` 出现在旧记录里）。
 - **无法判断**：计划训练过的模型（旧 controllability 检查点或新检查点）能否执行计划；真实浏览器端到端质量；更长计划、更多事实类型、跨组省略、真实玩家回合下的表现。
+- **阻塞**：新留出无法从现有材料产生——9 个来源全部在旧训练/选点/复核里出现过，主工作区也只有这 10 组 provenance；新一组需要 Python 侧提交新世界回合与授权关系。详见 `NEXT-ROUND.md`。
