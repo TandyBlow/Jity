@@ -1,0 +1,128 @@
+{
+ "worldId": "world_9",
+ "units": [
+  {
+   "factId": "f0",
+   "entityId": "person_a",
+   "name": "岑鹤",
+   "kind": "appearance_changed",
+   "text": "袖管里塞着半把谷壳",
+   "pointId": "h02_p1",
+   "evidenceId": "h02_p1/person_a/appearance/h02_p1_1",
+   "sequence": 1
+  },
+  {
+   "factId": "f1",
+   "entityId": "person_a",
+   "name": "岑鹤",
+   "kind": "appearance_changed",
+   "text": "指甲缝里嵌了糠",
+   "pointId": "h02_p1",
+   "evidenceId": "h02_p1/person_a/appearance/h02_p1_2",
+   "sequence": 1
+  },
+  {
+   "factId": "f2",
+   "entityId": "person_b",
+   "name": "汤续",
+   "kind": "appearance_changed",
+   "text": "腰带上的铜扣掉了一个",
+   "pointId": "h02_p2",
+   "evidenceId": "h02_p2/person_b/appearance/h02_p2_1",
+   "sequence": 2
+  },
+  {
+   "factId": "f3",
+   "entityId": "person_c",
+   "name": "罗砚",
+   "kind": "appearance_changed",
+   "text": "后背的汗把里衣贴住",
+   "pointId": "h02_p3",
+   "evidenceId": "h02_p3/person_c/appearance/h02_p3_1",
+   "sequence": 3
+  },
+  {
+   "factId": "f4",
+   "entityId": "person_c",
+   "name": "罗砚",
+   "kind": "appearance_changed",
+   "text": "鞋帮裂开一道口子",
+   "pointId": "h02_p3",
+   "evidenceId": "h02_p3/person_c/appearance/h02_p3_2",
+   "sequence": 3
+  }
+ ],
+ "points": [
+  {
+   "id": "h02_p1",
+   "sequence": 1,
+   "previousPointId": "root_11",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "h02_p2",
+   "sequence": 2,
+   "previousPointId": "h02_p1",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 3,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "h02_p3",
+   "sequence": 3,
+   "previousPointId": "h02_p2",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "second"
+    }
+   }
+  }
+ ],
+ "requestedRelations": [
+  {
+   "type": "before",
+   "fromFactId": "f2",
+   "toFactId": "f3"
+  }
+ ],
+ "authorization": {
+  "verdict": "pass",
+  "validatorVersion": "world-relation-validator/1",
+  "relations": [
+   {
+    "type": "before",
+    "fromFactId": "f2",
+    "toFactId": "f3",
+    "evidence": [
+     {
+      "type": "event",
+      "evidenceId": "h02_p2/person_b/appearance/h02_p2_1"
+     },
+     {
+      "type": "event",
+      "evidenceId": "h02_p3/person_c/appearance/h02_p3_1"
+     }
+    ],
+    "authorization": {
+     "verdict": "pass",
+     "validatorVersion": "world-relation-validator/1"
+    },
+    "elapsedSeconds": 1
+   }
+  ],
+  "rejected": [],
+  "problems": []
+ }
+}

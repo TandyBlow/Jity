@@ -1,0 +1,525 @@
+{
+ "protocol": "holdout-similarity-evidence-v1",
+ "package": "artifacts\\holdout-a-v1",
+ "oldMaterialSources": [
+  "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+  "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\pairs-v2.jsonl",
+  "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\experiments\\world-components\\parallel\\organize_plan\\freeze\\sources.json"
+ ],
+ "oldFactCount": 302,
+ "threshold": 0.8,
+ "summary": {
+  "sources": 12,
+  "facts": 60,
+  "maxJaccardAnyFact": 0.273,
+  "identicalFacts": 0,
+  "sourcesAboveThreshold": []
+ },
+ "note": "Jaccard is a screen. A low score is not proof of semantic independence; a human still has to read each source against the old material.",
+ "sources": {
+  "h01": {
+   "worldId": "world_1",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "肩头的雪化成一片深色",
+     "identicalToOld": false,
+     "maxJaccard": 0.083,
+     "nearestOldText": "肩头落着灰"
+    },
+    {
+     "factId": "f1",
+     "text": "护腕的皮带松了一格",
+     "identicalToOld": false,
+     "maxJaccard": 0.083,
+     "nearestOldText": "脚踝肿了一块"
+    },
+    {
+     "factId": "f2",
+     "text": "靴筒外侧磨出白痕",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "磨出了毛边"
+    },
+    {
+     "factId": "f3",
+     "text": "手指冻得发僵",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f4",
+     "text": "帽绳断了一股",
+     "identicalToOld": false,
+     "maxJaccard": 0.2,
+     "nearestOldText": "缠着的旧缆绳断了"
+    }
+   ],
+   "maxJaccard": 0.2,
+   "anyIdentical": false
+  },
+  "h02": {
+   "worldId": "world_9",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "袖管里塞着半把谷壳",
+     "identicalToOld": false,
+     "maxJaccard": 0.182,
+     "nearestOldText": "指缝里塞着泥"
+    },
+    {
+     "factId": "f1",
+     "text": "指甲缝里嵌了糠",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "指缝里塞着泥"
+    },
+    {
+     "factId": "f2",
+     "text": "腰带上的铜扣掉了一个",
+     "identicalToOld": false,
+     "maxJaccard": 0.077,
+     "nearestOldText": "脚踝肿了一块"
+    },
+    {
+     "factId": "f3",
+     "text": "后背的汗把里衣贴住",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f4",
+     "text": "鞋帮裂开一道口子",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "围巾松开一截"
+    }
+   ],
+   "maxJaccard": 0.182,
+   "anyIdentical": false
+  },
+  "h03": {
+   "worldId": "world_17",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "围脖被风吹得翻起",
+     "identicalToOld": false,
+     "maxJaccard": 0.182,
+     "nearestOldText": "玻璃罩被风吹歪"
+    },
+    {
+     "factId": "f1",
+     "text": "耳廓冻出红点",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f2",
+     "text": "袖口的毛边被磨平",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "袖口沾了雨"
+    },
+    {
+     "factId": "f3",
+     "text": "裤腿上沾着草屑",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f4",
+     "text": "领口撑得变了形",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    }
+   ],
+   "maxJaccard": 0.182,
+   "anyIdentical": false
+  },
+  "h04": {
+   "worldId": "world_25",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "手背被缰绳勒出红痕",
+     "identicalToOld": false,
+     "maxJaccard": 0.083,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f1",
+     "text": "袖口滴着水",
+     "identicalToOld": false,
+     "maxJaccard": 0.143,
+     "nearestOldText": "袖口沾了雨"
+    },
+    {
+     "factId": "f2",
+     "text": "鞋跟陷进泥里拔不动",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "鞋跟磨塌了"
+    },
+    {
+     "factId": "f3",
+     "text": "睫毛上挂着水汽",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f4",
+     "text": "斗篷领子湿了一圈",
+     "identicalToOld": false,
+     "maxJaccard": 0.273,
+     "nearestOldText": "斗篷下摆湿了一片"
+    }
+   ],
+   "maxJaccard": 0.273,
+   "anyIdentical": false
+  },
+  "h05": {
+   "worldId": "world_33",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "眉毛上落了煤灰",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f1",
+     "text": "指背蹭出一道黑印",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "手背蹭破了皮"
+    },
+    {
+     "factId": "f2",
+     "text": "腰带挂钩崩开了",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "袖口开了线"
+    },
+    {
+     "factId": "f3",
+     "text": "靴面沾着湿煤渣",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f4",
+     "text": "袖管里落了碎屑",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    }
+   ],
+   "maxJaccard": 0.111,
+   "anyIdentical": false
+  },
+  "h06": {
+   "worldId": "world_41",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "手腕上缠着湿布条",
+     "identicalToOld": false,
+     "maxJaccard": 0.077,
+     "nearestOldText": "缠着的旧缆绳断了"
+    },
+    {
+     "factId": "f1",
+     "text": "掌心起了一层白泡",
+     "identicalToOld": false,
+     "maxJaccard": 0.273,
+     "nearestOldText": "泥水结了一层白盐"
+    },
+    {
+     "factId": "f2",
+     "text": "衣摆结着冰碴",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f3",
+     "text": "发梢冻成一缕一缕",
+     "identicalToOld": false,
+     "maxJaccard": 0.083,
+     "nearestOldText": "把系泊绳收成一卷"
+    },
+    {
+     "factId": "f4",
+     "text": "靴缝里渗进凉水",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "指缝里塞着泥"
+    }
+   ],
+   "maxJaccard": 0.273,
+   "anyIdentical": false
+  },
+  "h07": {
+   "worldId": "world_49",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "指腹勒出深红印子",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f1",
+     "text": "小臂上沾了麻屑",
+     "identicalToOld": false,
+     "maxJaccard": 0.2,
+     "nearestOldText": "手背上沾了盐沫"
+    },
+    {
+     "factId": "f2",
+     "text": "膝弯处蹭掉一块皮",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "脚踝肿了一块"
+    },
+    {
+     "factId": "f3",
+     "text": "肩线被压得往下塌",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f4",
+     "text": "后背留下一道绳痕",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    }
+   ],
+   "maxJaccard": 0.2,
+   "anyIdentical": false
+  },
+  "h08": {
+   "worldId": "world_57",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "裤脚卷着几根草茎",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "裤脚沾了铜油"
+    },
+    {
+     "factId": "f1",
+     "text": "脚背被草叶划出细口",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f2",
+     "text": "头巾歪到一边",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f3",
+     "text": "手肘上沾着干草末",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f4",
+     "text": "衣襟上落了一层尘",
+     "identicalToOld": false,
+     "maxJaccard": 0.182,
+     "nearestOldText": "封面蒙了一层灰"
+    }
+   ],
+   "maxJaccard": 0.182,
+   "anyIdentical": false
+  },
+  "h09": {
+   "worldId": "world_65",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "袖口落着几根细羽",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "text": "指节上蹭破一层薄皮",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "text": "衣摆在门槛上蹭脏",
+     "identicalToOld": false,
+     "maxJaccard": 0.167,
+     "nearestOldText": "把鱼筐放在门槛边"
+    },
+    {
+     "factId": "f3",
+     "text": "鞋尖踢出了口子",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "磨出了毛边"
+    },
+    {
+     "factId": "f4",
+     "text": "帽檐歪向一边",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "帽檐压出折痕"
+    }
+   ],
+   "maxJaccard": 0.167,
+   "anyIdentical": false
+  },
+  "h10": {
+   "worldId": "world_73",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "衬衫后背洇出汗印",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "掌心出汗"
+    },
+    {
+     "factId": "f1",
+     "text": "袖口卷到手肘上",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "袖口沾了雨"
+    },
+    {
+     "factId": "f2",
+     "text": "腰间的布袋磨破了角",
+     "identicalToOld": false,
+     "maxJaccard": 0.083,
+     "nearestOldText": "手背蹭破了皮"
+    },
+    {
+     "factId": "f3",
+     "text": "额头沾着草籽",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f4",
+     "text": "鞋带断了一根",
+     "identicalToOld": false,
+     "maxJaccard": 0.111,
+     "nearestOldText": "脚踝肿了一块"
+    }
+   ],
+   "maxJaccard": 0.111,
+   "anyIdentical": false
+  },
+  "h11": {
+   "worldId": "world_81",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "手心的裂口又开了",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "袖口开了线"
+    },
+    {
+     "factId": "f1",
+     "text": "袖子里藏着一把干粮",
+     "identicalToOld": false,
+     "maxJaccard": 0.077,
+     "nearestOldText": "把干纸放在桌角"
+    },
+    {
+     "factId": "f2",
+     "text": "肩上披的褂子滑下一边",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f3",
+     "text": "脚踝上缠着布条",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "脚踝肿了一块"
+    },
+    {
+     "factId": "f4",
+     "text": "裤管上沾着松针",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "手背沾着盐沫"
+    }
+   ],
+   "maxJaccard": 0.1,
+   "anyIdentical": false
+  },
+  "h12": {
+   "worldId": "world_89",
+   "facts": [
+    {
+     "factId": "f0",
+     "text": "发间落着细小的霜",
+     "identicalToOld": false,
+     "maxJaccard": 0.1,
+     "nearestOldText": "肩头落着灰"
+    },
+    {
+     "factId": "f1",
+     "text": "鼻尖冻得发红",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    },
+    {
+     "factId": "f2",
+     "text": "衣角挂着半截草绳",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "衣角结了盐霜"
+    },
+    {
+     "factId": "f3",
+     "text": "手背裂开几道细纹",
+     "identicalToOld": false,
+     "maxJaccard": 0.091,
+     "nearestOldText": "手背沾着盐沫"
+    },
+    {
+     "factId": "f4",
+     "text": "靴子里灌进了雪水",
+     "identicalToOld": false,
+     "maxJaccard": 0.0,
+     "nearestOldText": ""
+    }
+   ],
+   "maxJaccard": 0.1,
+   "anyIdentical": false
+  }
+ }
+}
