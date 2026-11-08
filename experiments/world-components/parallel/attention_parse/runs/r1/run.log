@@ -1,0 +1,29 @@
+commit 0df57f413a13 branch exp/c-attention-parse trackedDirty=False
+python 3.11.15 Windows-10-10.0.26200-SP0
+
+sample  category            status(expected/actual)  targets(expected -> actual)          errors
+S01     exact_name           resolved/resolved     person_a             -> person_a             ok
+S02     synonym_descriptor   resolved/resolved     person_a             -> person_a             ok
+S03     synonym_descriptor   resolved/resolved     item_key,corridor    -> item_key,corridor    ok
+S04     pronoun_unique       resolved/resolved     person_a             -> person_a             ok
+S05     pronoun_multi        ambiguous/ambiguous    -                    -> -                    ok
+S06     shared_form          ambiguous/ambiguous    -                    -> -                    ok
+S07     irrelevant           none/none         -                    -> -                    ok
+S08     unknown_reference    unresolved/unresolved   -                    -> -                    ok
+S09     multi_object         resolved/resolved     person_c,task_shelf  -> person_c,task_shelf  ok
+S10     self_reference       resolved/resolved     person_c,box         -> person_c,box         ok
+
+U1 unit M1 完全同名                  ambiguous/ambiguous    ok
+U2 unit M3 描述词不唯一                ambiguous/ambiguous    ok
+U3 unit M1/M3 无关语句               none/none         ok
+U4 unit M4 代词无前文                 unresolved/unresolved   ok
+U5 unit M4 地点代词唯一                resolved/resolved     ok
+U6 unit 非全选回退                    none/none         ok
+
+P1 probe 代词 × 前文用描述词指代                desired=resolved/person_a actual=unresolved/- -> known_limit
+P2 probe 同名 × 描述词共同消解                 desired=resolved/dup_a actual=ambiguous/- -> known_limit
+P3 probe 昵称变体                         desired=resolved/person_a actual=none/- -> known_limit
+P4 probe 无所指的远指                       desired=unresolved/- actual=none/- -> known_limit
+P5 probe 否定句里的对象                      desired=resolved/box actual=resolved/box,person_a -> known_limit
+
+headline: 10/10 samples passed; unit 6/6; selectAllHits=0; probes known_limit=5 unexpected_pass=0 unclassified=0
