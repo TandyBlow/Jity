@@ -1,9 +1,9 @@
 {
  "packageId": "holdout-a-v1",
  "producedBy": "A (world-server): backend/scripts/build_holdout_v1.py",
- "createdAt": "2026-11-08T07:51:38+00:00",
+ "createdAt": "2026-11-08T08:21:57+00:00",
  "worldInternalTime": "2027-01-16T05:00:00",
- "baseCommit": "9f2b0532d34f3c77c7213605fab9b9b61507e193",
+ "baseCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
  "sources": [
   "h01",
   "h02",
@@ -56,14 +56,15 @@
    }
   ],
   "dedupeFactTexts": 302,
-  "producedAt": "2026-11-08T07:51:38+00:00",
-  "producerCommit": "9f2b0532d34f3c77c7213605fab9b9b61507e193",
+  "packageDigestRule": "sha256 over sorted {relative path: sha256} of manifest.json and pairs/*.json; the digest itself lives only in the sign-off template",
+  "producedAt": "2026-11-08T08:21:57+00:00",
+  "producerCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
   "authorityEvidence": "world_evidence + world_point_evidence + world_points.delta_json",
   "relationValidator": "world-relation-validator/1",
-  "producerStatus": "D artifacts/holdout-a-v1/SEMANTIC-REVIEW-TODO.md\n D artifacts/holdout-a-v1/build-log.json\n D artifacts/holdout-a-v1/manifest.json\n D artifacts/holdout-a-v1/semantic-review-evidence.json\n D artifacts/holdout-a-v1/semantic-review.json\n M artifacts/holdout-a-v1/world.db\n M backend/app/database/world_repository.py\n M backend/scripts/build_holdout_v1.py\n M frontend/next.config.ts\n?? artifacts/cohesion-split/\n?? artifacts/decode-compare/\n?? artifacts/statement-extractor/\n?? artifacts/statement-verification/\n?? artifacts/world-provenance/\n?? backend/app/database/world_evidence_store.py\n?? backend/app/database/world_evidence_v1.sql\n?? backend/app/services/world/provenance.py\n?? backend/scripts/authorize_relations.py\n?? backend/scripts/authorize_round.py\n?? backend/scripts/build_mixed_round.py\n?? backend/scripts/build_pair_worlds.py\n?? backend/scripts/round_input.py\n?? backend/tests/test_world_provenance_chain.py\n?? design/world-engine-reports/b240-diagnostic-point.md\n?? design/world-engine-reports/b240-gain-loss-table.md\n?? design/world-engine-reports/background-selection-run.md\n?? design/world-engine-reports/boundary-arm-closing-record.md\n?? design/world-engine-reports/boundary-data-arm.md\n?? design/world-engine-reports/boundary-v2-arm.md\n?? design/world-engine-reports/cohesion-split-pilot.md\n?? design/world-engine-reports/decode-beam-vs-greedy.md\n?? design/world-engine-reports/direction-cases-review.md\n?? design/world-engine-reports/expression-contract-v2.md\n?? design/world-engine-reports/incomplete-round-assembly.md\n?? design/world-engine-reports/joint-label-compatibility-v1.md\n?? design/world-engine-reports/manual-reachability-5.md\n?? design/world-engine-reports/narration-service-loop.md\n?? design/world-engine-reports/organization-a1-freeze.md\n?? design/world-engine-reports/organization-run-v2.md\n?? design/world-engine-reports/pipeline-round-acceptance.md\n?? design/world-engine-reports/planner-split-trial.md\n?? design/world-engine-reports/provenance-chain.md\n?? design/w"
+  "producerStatus": "D artifacts/holdout-a-v1/SEMANTIC-REVIEW-TODO.md\n D artifacts/holdout-a-v1/build-log.json\n D artifacts/holdout-a-v1/manifest.json\n D artifacts/holdout-a-v1/semantic-review-evidence.json\n D artifacts/holdout-a-v1/semantic-review-signoff.template.json\n D artifacts/holdout-a-v1/semantic-review.json\n M artifacts/holdout-a-v1/world.db\n M backend/app/database/world_repository.py\n M backend/scripts/build_holdout_v1.py\n M frontend/next.config.ts\n?? artifacts/cohesion-split/\n?? artifacts/decode-compare/\n?? artifacts/statement-extractor/\n?? artifacts/statement-verification/\n?? artifacts/world-provenance/\n?? backend/app/database/world_evidence_store.py\n?? backend/app/database/world_evidence_v1.sql\n?? backend/app/services/world/provenance.py\n?? backend/scripts/authorize_relations.py\n?? backend/scripts/authorize_round.py\n?? backend/scripts/build_mixed_round.py\n?? backend/scripts/build_pair_worlds.py\n?? backend/scripts/round_input.py\n?? backend/tests/test_world_provenance_chain.py\n?? design/world-engine-reports/b240-diagnostic-point.md\n?? design/world-engine-reports/b240-gain-loss-table.md\n?? design/world-engine-reports/background-selection-run.md\n?? design/world-engine-reports/boundary-arm-closing-record.md\n?? design/world-engine-reports/boundary-data-arm.md\n?? design/world-engine-reports/boundary-v2-arm.md\n?? design/world-engine-reports/cohesion-split-pilot.md\n?? design/world-engine-reports/decode-beam-vs-greedy.md\n?? design/world-engine-reports/direction-cases-review.md\n?? design/world-engine-reports/expression-contract-v2.md\n?? design/world-engine-reports/incomplete-round-assembly.md\n?? design/world-engine-reports/joint-label-compatibility-v1.md\n?? design/world-engine-reports/manual-reachability-5.md\n?? design/world-engine-reports/narration-service-loop.md\n?? design/world-engine-reports/organization-a1-freeze.md\n?? design/world-engine-reports/organization-run-v2.md\n?? design/world-engine-reports/pipeline-round-acceptance.md\n?? design/world-engine-reports/planner-split-trial.m"
  },
  "files": {
-  "world.db": "268023927a0523a760eabed72ab0cc8c0b55d4fcc944f1e16a8fd844d35d5045",
+  "world.db": "9d7f26a8bf1028cdf0da3e43d849c02b4649a877cee3b24bd2c04b56b50a735e",
   "pairs": {
    "h01": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
    "h02": "6d0c6fbfd233fb5f9f66143d7b7943a7681c2ec7a1a4576f3743f9db0d417afb",
@@ -78,6 +79,5 @@
    "h11": "5c8a0a9024281f604f0f310dc691bc4429cde6a8389d49fb668709486309a221",
    "h12": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
   }
- },
- "packageSha256": "7624273e78b434c69eacc20e509305fe6b8101911bed4dfa2889a6466c1e9e8e"
+ }
 }

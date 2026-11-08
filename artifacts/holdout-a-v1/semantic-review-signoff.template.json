@@ -1,7 +1,7 @@
 {
  "protocol": "c3-holdout-semantic-signoff-v1",
  "packageId": "holdout-a-v1",
- "packageSha256": "7624273e78b434c69eacc20e509305fe6b8101911bed4dfa2889a6466c1e9e8e",
+ "packageSha256": "9dc9615482fe2d796be3aa12ba983eb20852c46d65246d7cf2b36979087737eb",
  "reviewedCommit": "",
  "iReviewedEachSource": false,
  "reviewer": {

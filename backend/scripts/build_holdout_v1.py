@@ -475,6 +475,8 @@ def main(out_arg: str) -> int:
                              'is created, and refuses to run if any old corpus is missing'),
             'dedupeCorpora': old_inventory,
             'dedupeFactTexts': len(OLD_MATERIAL_ROWS),
+            'packageDigestRule': ('sha256 over sorted {relative path: sha256} of manifest.json and '
+                                  'pairs/*.json; the digest itself lives only in the sign-off template'),
             'producedAt': generated_at,
             'producerCommit': None,
             'authorityEvidence': 'world_evidence + world_point_evidence + world_points.delta_json',
@@ -513,13 +515,16 @@ def main(out_arg: str) -> int:
 
     # The human sign-off template, bound to the digest of the reviewed files.
     # c3 never reads the draft's verdicts; it reads only the sign-off file.
-    manifest['packageSha256'] = package_digest(out, package['sources'])['sha256']
-    (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + '\n',
-                                       encoding='utf-8')
+    #
+    # The digest MUST NOT live inside manifest.json: package_digest() hashes that
+    # file, so writing the digest back into it would make the value depend on
+    # itself and never match a later recomputation. The digest is therefore kept
+    # only in the template, and verified below against the file as it stands.
+    digest = package_digest(out, package['sources'])
     template = {
         'protocol': 'c3-holdout-semantic-signoff-v1',
         'packageId': manifest['packageId'],
-        'packageSha256': manifest['packageSha256'],
+        'packageSha256': digest['sha256'],
         'reviewedCommit': '',
         'iReviewedEachSource': False,
         'reviewer': {'identity': '', 'kind': 'human', 'date': ''},
@@ -533,6 +538,16 @@ def main(out_arg: str) -> int:
     }
     (out / 'semantic-review-signoff.template.json').write_text(
         json.dumps(template, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+
+    # Producer-side proof that the prefilled digest is reproducible: recompute it
+    # from the finished files and refuse to report success if it differs.
+    verify = package_digest(out, package['sources'])['sha256']
+    if verify != template['packageSha256']:
+        print(json.dumps({'status': 'failed',
+                          'reason': 'package digest is not reproducible',
+                          'template': template['packageSha256'], 'recomputed': verify},
+                         ensure_ascii=False, indent=1))
+        return 1
     todo = """# 语义独立性复核（待人工签认）
 
 本目录有两份文件，不要混用：
@@ -567,6 +582,8 @@ def main(out_arg: str) -> int:
                       for sid, v in package['pairs'].items()},
         'nearDuplicateScreen': 'pass',
         'dbSha256': manifest['files']['world.db'],
+        'packageSha256': template['packageSha256'],
+        'packageSha256Reproducible': True,
     }
     (out / 'build-log.json').write_text(json.dumps(log, ensure_ascii=False, indent=1) + '\n',
                                         encoding='utf-8')
