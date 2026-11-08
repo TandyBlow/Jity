@@ -1,0 +1,609 @@
+{
+  "protocol": "c1-attention-granularity-v1",
+  "scope": "label validation only; no extractor was run",
+  "hashes": {
+    "generatedAt": "2026-11-08T05:43:22+00:00",
+    "commit": "ee5c4ccfe66196418968dfda0397bff9721e9230",
+    "branch": "exp/c-attention-parse",
+    "trackedDirty": false,
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "files": {
+      "build_anchors.py": "7bc4967f6866e1b4f44ae7976a96e8e9b385e94f7b573be3b3d8cfb9f6d16966",
+      "validate_acceptance.py": "5ec6c9bacc6d7756912408436410b794b14a4a4b8ebfb4a062c6c844b420eda0",
+      "freeze/contract-v1.md": "d18e563fb9197bc39533042cb399e1dbc27a8ca7459ca797cc531f5bd72e91ac",
+      "freeze/acceptance-v1.json": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
+      "freeze/anchors-v1.json": "4995c449ad954a4eef1890ac8cf4b856311c44ca9cbd7c04dfd0c34758f5507b",
+      "freeze/rosters.json": "2e498291130a23c1bd5cb3c256d140196fb68c338276f8b132fc079631845d82"
+    }
+  },
+  "summary": {
+    "samples": 10,
+    "passed": 10,
+    "failed": 0,
+    "scopes": {
+      "object": 1,
+      "position": 1,
+      "appearance": 1,
+      "task": 1,
+      "part": 3
+    },
+    "states": {
+      "resolved": 7,
+      "ambiguous": 1,
+      "unresolved": 1,
+      "none": 1
+    }
+  },
+  "rows": [
+    {
+      "sampleId": "A01",
+      "category": "scope_object",
+      "worldRef": "W2",
+      "utterance": "林川怎么样了？",
+      "state": "resolved",
+      "scopes": [
+        "object"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_object state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "person_a"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "object"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "林川"
+        },
+        {
+          "check": "target0_object_has_no_part",
+          "ok": true,
+          "detail": "None"
+        },
+        {
+          "check": "target0_no_part_outside_part_scope",
+          "ok": true,
+          "detail": "{'part': None, 'partAnchored': None}"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A02",
+      "category": "scope_position",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "state": "resolved",
+      "scopes": [
+        "position"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_position state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "person_a"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "position"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "林川"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "在哪儿"
+        },
+        {
+          "check": "target0_no_part_outside_part_scope",
+          "ok": true,
+          "detail": "{'part': None, 'partAnchored': None}"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A03",
+      "category": "scope_appearance",
+      "worldRef": "W2",
+      "utterance": "周宁今天穿的什么？",
+      "state": "resolved",
+      "scopes": [
+        "appearance"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_appearance state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "person_c"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "appearance"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "周宁"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "穿的"
+        },
+        {
+          "check": "target0_no_part_outside_part_scope",
+          "ok": true,
+          "detail": "{'part': None, 'partAnchored': None}"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A04",
+      "category": "scope_task",
+      "worldRef": "W2",
+      "utterance": "林川的任务怎样了？",
+      "state": "resolved",
+      "scopes": [
+        "task"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_task state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "person_a"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "task"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "林川"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "任务"
+        },
+        {
+          "check": "target0_no_part_outside_part_scope",
+          "ok": true,
+          "detail": "{'part': None, 'partAnchored': None}"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A05",
+      "category": "scope_part_anchored_initial",
+      "worldRef": "W2",
+      "utterance": "盒盖还关着吗？",
+      "state": "resolved",
+      "scopes": [
+        "part"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_part_anchored_initial state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "box"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "part"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "盒盖"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "盒盖"
+        },
+        {
+          "check": "target0_part_in_utterance",
+          "ok": true,
+          "detail": "盒盖"
+        },
+        {
+          "check": "target0_part_anchored_matches_fixture",
+          "ok": true,
+          "detail": "label=True fixture=True anchors=1"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A06",
+      "category": "scope_part_anchored_change",
+      "worldRef": "W1",
+      "utterance": "钥匙表面的灰还在吗？",
+      "state": "resolved",
+      "scopes": [
+        "part"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W1"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_part_anchored_change state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "item_key"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "part"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "钥匙"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "表面"
+        },
+        {
+          "check": "target0_part_in_utterance",
+          "ok": true,
+          "detail": "表面"
+        },
+        {
+          "check": "target0_part_anchored_matches_fixture",
+          "ok": true,
+          "detail": "label=True fixture=True anchors=3"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A07",
+      "category": "scope_part_unanchored",
+      "worldRef": "W2",
+      "utterance": "林川的袖口湿了吗？",
+      "state": "resolved",
+      "scopes": [
+        "part"
+      ],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "resolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=scope_part_unanchored state=resolved"
+        },
+        {
+          "check": "resolved_has_targets",
+          "ok": true,
+          "detail": "1 targets"
+        },
+        {
+          "check": "target0_entity_exists",
+          "ok": true,
+          "detail": "person_a"
+        },
+        {
+          "check": "target0_scope_known",
+          "ok": true,
+          "detail": "part"
+        },
+        {
+          "check": "target0_surface_in_utterance",
+          "ok": true,
+          "detail": "林川"
+        },
+        {
+          "check": "target0_scope_cue_in_utterance",
+          "ok": true,
+          "detail": "袖口"
+        },
+        {
+          "check": "target0_part_in_utterance",
+          "ok": true,
+          "detail": "袖口"
+        },
+        {
+          "check": "target0_part_anchored_matches_fixture",
+          "ok": true,
+          "detail": "label=False fixture=False anchors=2"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A08",
+      "category": "state_ambiguous",
+      "worldRef": "W1",
+      "utterance": "那个学生怎么样了？",
+      "state": "ambiguous",
+      "scopes": [],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W1"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "ambiguous"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=state_ambiguous state=ambiguous"
+        },
+        {
+          "check": "ambiguous_no_targets",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "check": "ambiguous_has_two_plus",
+          "ok": true,
+          "detail": "['person_a', 'person_b']"
+        },
+        {
+          "check": "ambiguous_candidates_exist",
+          "ok": true,
+          "detail": "['person_a', 'person_b']"
+        },
+        {
+          "check": "ambiguous_share_form",
+          "ok": true,
+          "detail": "学生A,学生B"
+        },
+        {
+          "check": "ambiguous_has_reason",
+          "ok": true,
+          "detail": "shared_name_stem"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A09",
+      "category": "state_unresolved",
+      "worldRef": "W2",
+      "utterance": "老林的任务呢？",
+      "state": "unresolved",
+      "scopes": [],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "unresolved"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=state_unresolved state=unresolved"
+        },
+        {
+          "check": "unresolved_no_targets",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "check": "unresolved_has_mentions",
+          "ok": true,
+          "detail": "['老林']"
+        },
+        {
+          "check": "unresolved_mentions_in_utterance",
+          "ok": true,
+          "detail": "['老林']"
+        },
+        {
+          "check": "unresolved_has_reason",
+          "ok": true,
+          "detail": "nickname_not_in_committed_record"
+        }
+      ],
+      "errors": [],
+      "match": true
+    },
+    {
+      "sampleId": "A10",
+      "category": "state_none",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "state": "none",
+      "scopes": [],
+      "checks": [
+        {
+          "check": "roster_exists",
+          "ok": true,
+          "detail": "W2"
+        },
+        {
+          "check": "state_known",
+          "ok": true,
+          "detail": "none"
+        },
+        {
+          "check": "category_matches_state",
+          "ok": true,
+          "detail": "category=state_none state=none"
+        },
+        {
+          "check": "none_no_targets",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "check": "none_no_candidates",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "check": "none_has_reason",
+          "ok": true,
+          "detail": "no_attention_mention"
+        }
+      ],
+      "errors": [],
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+commit ee5c4ccfe661 branch exp/c-attention-parse trackedDirty=False
+python 3.11.15 Windows-10-10.0.26200-SP0
+scope: frozen label validation only; no extractor run
+
+A01 scope_object                 resolved    scopes=object                   ok
+A02 scope_position               resolved    scopes=position                 ok
+A03 scope_appearance             resolved    scopes=appearance               ok
+A04 scope_task                   resolved    scopes=task                     ok
+A05 scope_part_anchored_initial  resolved    scopes=part                     ok
+A06 scope_part_anchored_change   resolved    scopes=part                     ok
+A07 scope_part_unanchored        resolved    scopes=part                     ok
+A08 state_ambiguous              ambiguous   scopes=-                        ok
+A09 state_unresolved             unresolved  scopes=-                        ok
+A10 state_none                   none        scopes=-                        ok
+
+summary: 10/10 labels valid; scopes={'object': 1, 'position': 1, 'appearance': 1, 'task': 1, 'part': 3}; states={'resolved': 7, 'ambiguous': 1, 'unresolved': 1, 'none': 1}
