@@ -182,8 +182,10 @@ def check_signoff() -> dict:
     if not acc_signoff:
         stale.append("acceptance.json records no sign-off")
     else:
-        if acc_signoff.get("file") and acc_signoff["file"] != pins_mod.rel(SIGNOFF):
-            stale.append(f"acceptance.json counts a different file: {acc_signoff['file']}")
+        # Unconditional: a missing file field is itself a mismatch, otherwise the
+        # record could point at no file and still pass on the hash alone.
+        if acc_signoff.get("file") != pins_mod.rel(SIGNOFF):
+            stale.append(f"acceptance.json counts a different file: {acc_signoff.get('file')!r}")
         if sha256(SIGNOFF) != acc_signoff.get("sha256"):
             stale.append("signoff.json changed after the acceptance record was written")
     if stale:

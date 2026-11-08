@@ -19,6 +19,7 @@ Each test names the defect it locks down:
   T14 a misnamed pin is caught (hash right, path wrong)
   T15 editing one row of a signed file closes the gate again
   T16 a pin without a sha256, or a missing pin, blocks readiness
+  T17 an acceptance sign-off record without a file field blocks readiness
 
 Run:
     python -X utf8 test_regressions.py
@@ -337,6 +338,24 @@ def test_T16_missing_pin_hash_blocks_readiness() -> None:
         state = _ready_in(tmp)
         assert state["ready"] is False, state
         assert "acceptanceIdentity" in state["detail"], state
+
+
+def test_T17_acceptance_signoff_without_file_field_blocks_readiness() -> None:
+    """A correct hash plus no file field must not count: the record names nothing."""
+    with tempfile.TemporaryDirectory() as t:
+        tmp = Path(t)
+        built = _signed_round(tmp)
+        assert _ready_in(tmp)["ready"] is True
+
+        acc_path = tmp / "runs" / "r4" / "acceptance.json"
+        acc = json.loads(acc_path.read_text(encoding="utf-8"))
+        assert acc["signoff"]["sha256"] == pins_mod.sha256(tmp / "runs" / "r4" / "signoff.json")
+        del acc["signoff"]["file"]
+        acc_path.write_text(json.dumps(acc, ensure_ascii=False, indent=1) + NL, encoding="utf-8")
+
+        state = _ready_in(tmp)
+        assert state["ready"] is False, state
+        assert "counts a different file" in state["detail"], state
 
 
 PACKAGE_CANDIDATES = [

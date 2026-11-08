@@ -725,6 +725,29 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 
 **反向验证**（证明这两条测试不是永远通过）：把 8.13.1、8.13.2 的修复临时撤掉再跑 → `T15`、`T16` 均 FAIL（都是 `ready: True`）；恢复后 `16 passed, 0 skipped`。
 
+## 8.14 2026-11-08 第五次审阅后的修正
+
+复审指出一处小遗漏：`check_signoff()` 里比较验收记录的文件名时写成了
+
+```python
+if acc_signoff.get("file") and acc_signoff["file"] != pins_mod.rel(SIGNOFF):
+```
+
+`and` 的前半段让「字段不存在」绕过检查。若 `acceptance.json` 保留正确的 `signoff.sha256` 却删掉 `file`，其余检查都通过，门仍会开。
+
+**修法**：去掉短路，无条件比对。
+
+```python
+if acc_signoff.get("file") != pins_mod.rel(SIGNOFF):
+    stale.append(f"acceptance.json counts a different file: {acc_signoff.get('file')!r}")
+```
+
+缺字段时 `get()` 返回 `None`，与当前签认文件路径不等，直接判过期并写出 `None`。
+
+回归 **T17**：签认记录哈希正确、删掉 `file` → `ready: false`，理由含 `counts a different file`。
+
+**反向验证**：把条件改回带 `and` 的旧写法 → T17 FAIL（`ready: True`）；恢复后 `17 passed, 0 skipped`。
+
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
 `model_smoke.py` 在 CPU 上加载**冻结基线** Randeng-T5-77M（`model.safetensors` sha256 `5cdc572109cf…`，与旧 controllability 的起点同一个哈希），跑 4 条提示（fixture-r1、fixture-r2 × 两份计划），greedy，`max_new_tokens=128`。
@@ -801,7 +824,7 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
 | `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点），含冻结材料重校验 | — |
-| `test_regressions.py` | 四轮审阅发现的 16 条回归检查（跳过单独计） | — |
+| `test_regressions.py` | 五轮审阅发现的 17 条回归检查（跳过单独计） | — |
 | `pins.py` | pin 的路径/哈希一致性规则，四个脚本共用 | — |
 | `freeze/criteria-v3.json` | v3 检查器的判据（v2 保留为 R2 记录） | 见文件 |
 | `gate_rules.py` | 门规则纯函数 + 7 条回归检查（AI 签认、仅改 signerKind 都不能开门） | — |
@@ -829,7 +852,7 @@ python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒�
 python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
 python -X utf8 gate_rules.py             # 门规则回归检查（7 条）
 python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
-python -X utf8 test_regressions.py        # 四轮审阅修正的 16 条回归
+python -X utf8 test_regressions.py        # 五轮审阅修正的 17 条回归
 python -X utf8 test_regressions.py --strict-cross  # 跨分支检查缺包时判失败
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
