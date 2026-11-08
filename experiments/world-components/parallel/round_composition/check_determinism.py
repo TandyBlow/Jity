@@ -1,10 +1,13 @@
-# Determinism check for the offline composer.
+# Determinism check for the offline composer(s).
 #
-# Runs compose.py twice into separate archives, strips ONLY wall-clock
-# fields (runAt, per-stage ms, per-attempt ms, totalMs, and the retry
-# feedback strings that are derived from a previous attempt's wall clock —
-# there are none), then compares the rest byte-for-byte. Anything that
-# differs is a non-deterministic input, and the check fails loudly.
+# Runs compose.py (v2, frozen gate) and compose_v3.py (adjudicated N5 v3)
+# twice each into separate archives, strips ONLY wall-clock fields (runAt,
+# per-stage ms, per-attempt ms and the case-level timings block), then
+# compares each pair byte-for-byte. Anything else that differs is a
+# non-deterministic input, and the check fails loudly.
+#
+# Both versions are checked because they share the same chain: a change in one
+# that silently leaks into the other would show up here.
 #
 # Usage: python -X utf8 check_determinism.py
 
@@ -15,22 +18,28 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE / "out"
-A = OUT / "determinism-a.json"
-B = OUT / "determinism-b.json"
+PAIRS = {
+    "v2": (HERE / "compose.py",
+           OUT / "determinism-a.json", OUT / "determinism-b.json"),
+    "v3": (HERE / "compose_v3.py",
+           OUT / "determinism-v3-a.json", OUT / "determinism-v3-b.json"),
+}
 RESULT = OUT / "determinism.json"
 
 
 def strip(doc: dict) -> dict:
     d = json.loads(json.dumps(doc))
     d.pop("runAt", None)
-    for case in d["cases"]:
+    for case in d.get("cases") or []:
         case.pop("timings", None)
-        for stage in case.get("stages", {}).values():
+        for stage in (case.get("stages") or {}).values():
             if not isinstance(stage, dict):
                 continue
             stage.pop("ms", None)
             for att in stage.get("attempts") or []:
                 att.pop("ms", None)
+            for verdict in stage.get("verdicts") or []:
+                verdict.pop("ms", None)
     return d
 
 
@@ -59,25 +68,34 @@ def first_diff(a, b, path="root"):
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    for target in (A, B):
-        subprocess.run([sys.executable, "-X", "utf8",
-                        str(HERE / "compose.py"), "--out", str(target)],
-                       check=True, capture_output=True)
-    a, b = strip(json.loads(A.read_text(encoding="utf-8"))), strip(
-        json.loads(B.read_text(encoding="utf-8")))
-    diff = first_diff(a, b, "archive")
-    # A second difference class must also be reported: our own output file
-    # hashes change every run only through the stripped timing fields.
-    res = {"version": "round-composition-determinism-v0.1",
-           "compared": [str(A.relative_to(HERE)), str(B.relative_to(HERE))],
-           "strippedFields": ["runAt", "timings", "*.stages.*.ms",
-                              "*.stages.*.attempts[].ms"],
-           "identicalAfterStrip": diff is None,
-           "firstDifference": diff}
-    RESULT.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n",
+    sections = {}
+    for name, (script, a_path, b_path) in PAIRS.items():
+        for target in (a_path, b_path):
+            subprocess.run([sys.executable, "-X", "utf8", str(script),
+                            "--out", str(target)], check=True,
+                           capture_output=True)
+        a = strip(json.loads(a_path.read_text(encoding="utf-8")))
+        b = strip(json.loads(b_path.read_text(encoding="utf-8")))
+        diff = first_diff(a, b, "archive")
+        sections[name] = {
+            "script": script.name,
+            "compared": [str(a_path.relative_to(HERE)),
+                         str(b_path.relative_to(HERE))],
+            "identicalAfterStrip": diff is None,
+            "firstDifference": diff,
+        }
+    result = {
+        "version": "round-composition-determinism-v0.2",
+        "strippedFields": ["runAt", "timings", "*.stages.*.ms",
+                           "*.stages.*.attempts[].ms"],
+        "versions": sections,
+        "identicalAfterStrip": all(s["identicalAfterStrip"]
+                                   for s in sections.values()),
+    }
+    RESULT.write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n",
                       encoding="utf-8", newline="\n")
-    print(json.dumps(res, ensure_ascii=False))
-    return 0 if diff is None else 1
+    print(json.dumps(result, ensure_ascii=False))
+    return 0 if result["identicalAfterStrip"] else 1
 
 
 if __name__ == "__main__":

@@ -60,6 +60,22 @@ SOURCES = {
         "contract-decisions.md",
         "experiments/world-components/parallel/round_composition/"
         "contract_probes.py",
+        # v3 (adjudicated) implementation
+        "experiments/world-components/parallel/round_composition/judge_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "compose_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "make_v3_fixtures.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_judge_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "human-review-v1.md",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/cases-v3-extra.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/annotations-v1.json",
+        "experiments/world-components/parallel/round_composition/"
+        "out/console-v3.log",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",
@@ -180,6 +196,29 @@ def main() -> int:
         "sources": files,
         "outputs": outputs,
         "missing": missing,
+        "n5Rules": {
+            "v3_adjudicated": {
+                "file": "judge_v3.py",
+                "version": "n5-v3",
+                "applies": "out/composition-v3-run.json only",
+                "D1": "outcome + resultText; missing resultText blocks "
+                      "(JudgeBlocked outcome-result-missing); the goal is never "
+                      "accepted as a substitute",
+                "D2": "vague expression accepted; any stated duration is parsed "
+                      "and compared with the authoritative time fact",
+                "D3": "hard gates only; quality() returns pending/undetermined "
+                      "unless an executed N6 result is supplied",
+                "D5": "G4/G5 data-triggered; the judge takes no rowId",
+                "D4": "unregistered names come from human labels: unchecked -> "
+                      "count null, checked-and-clean -> 0",
+            },
+            "v2_frozen": {
+                "file": "eval_n4_v2.py",
+                "applies": "out/composition-run.json (kept unchanged)",
+                "note": "still rowId-substring triggered; still requires the "
+                        "exact time value and the quoted task goal",
+            },
+        },
         "n5Rule": {
             "gating": "eval_n4_v2.judge_row (frozen v2 holdout gate): "
                       "G1 alignment/must coverage, G2 residue name+goal scan, "

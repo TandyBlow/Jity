@@ -1,18 +1,32 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:12:30.303662+00:00",
+ "recordedAt": "2026-11-08T06:23:17.706924+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "9310e6c6cd61e937793d2dce04c1ce5fa5362cb8",
-  "headSubject": "C7 round composition: state which ok cases carry task facts (precision fix)",
+  "headAtRecording": "b2c7710920a3367017104f3f3e17579ac9f83a05",
+  "headSubject": "C7 round composition: make D1-D5 decidable (options, costs, acceptance) and probe the outcome route",
   "porcelain": [
-   "M experiments/world-components/parallel/round_composition/README.md",
-   " M experiments/world-components/parallel/round_composition/contract-decisions.md",
-   " M experiments/world-components/parallel/round_composition/contract_probes.py",
-   " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
-   " M experiments/world-components/parallel/round_composition/out/contract-probes.json",
+   "M  experiments/world-components/parallel/round_composition/README.md",
+   "M  experiments/world-components/parallel/round_composition/check_determinism.py",
+   "A  experiments/world-components/parallel/round_composition/compose_v3.py",
+   "M  experiments/world-components/parallel/round_composition/contract-decisions.md",
+   "A  experiments/world-components/parallel/round_composition/fixtures/annotations-v1.json",
+   "A  experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+   "M  experiments/world-components/parallel/round_composition/fixtures/manifest.json",
+   "A  experiments/world-components/parallel/round_composition/human-review-v1.md",
+   "A  experiments/world-components/parallel/round_composition/judge_v3.py",
+   "A  experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
+   "A  experiments/world-components/parallel/round_composition/out/composition-v3-run.json",
+   "AM experiments/world-components/parallel/round_composition/out/console-v3.log",
+   "M  experiments/world-components/parallel/round_composition/out/determinism-a.json",
+   "M  experiments/world-components/parallel/round_composition/out/determinism-b.json",
+   "A  experiments/world-components/parallel/round_composition/out/determinism-v3-a.json",
+   "A  experiments/world-components/parallel/round_composition/out/determinism-v3-b.json",
+   "M  experiments/world-components/parallel/round_composition/out/determinism.json",
+   "M  experiments/world-components/parallel/round_composition/record_manifest.py",
+   "A  experiments/world-components/parallel/round_composition/test_judge_v3.py",
    "?? TASK.md"
   ]
  },
@@ -144,8 +158,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "93834ae2785b9e922045bc9f4c45274ea91321ecb965a41099150efc0ae1629f",
-    "bytes": 20646
+    "sha256": "cd89eec555b55ecba1e51fdb909478eeda3575f159c3dd47a002aba918e8e743",
+    "bytes": 26275
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -154,13 +168,53 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
-    "sha256": "997953db146843a84bc035b89c8f157adaecf84a8a390982225662873450c667",
-    "bytes": 16179
+    "sha256": "a7ad1207ca360b1dde5f7f797d60b571e9f50cd1a5df32e7e85d4a0918cf28c1",
+    "bytes": 17808
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
     "sha256": "8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c",
     "bytes": 9425
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v3.py",
+    "sha256": "22a25b71f3fb3d81c41032cbeeaedabee7a0d0fab3b010fbb3222040a4d5bf1b",
+    "bytes": 11637
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/compose_v3.py",
+    "sha256": "9f873892b1204087ffff629d58b74503623823f0db6d199ee8f5663662e7a427",
+    "bytes": 35730
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
+    "sha256": "e0802dc797ec44307d8ff5d5947cbd443ccda3f1da7352758228edb82dc7831d",
+    "bytes": 12362
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v3.py",
+    "sha256": "261c1fae95086315b8f38facd457ceaa6049f210eeb36e6fc0df7181a1f2ad0c",
+    "bytes": 9578
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/human-review-v1.md",
+    "sha256": "c7522ed3b1686c479f576f06a2fd00476627630490da8555620c732e3b4524fa",
+    "bytes": 4435
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+    "sha256": "3e9ed095fba0260e6a3fd61e39ef083bd2f389965953340c23c853e393baa0a4",
+    "bytes": 58133
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/annotations-v1.json",
+    "sha256": "3a3ede5e4b8064a732fadba2fb6ce776b87457870d2416dfe97ab800ff94e2e1",
+    "bytes": 2204
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/console-v3.log",
+    "sha256": "7374c2db71b37b98747f8bcb5de1e42fec172f9a2d3ed962e7943aa1ff243ee2",
+    "bytes": 2859
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -191,27 +245,59 @@
    "bytes": 172858
   },
   {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-v3-run.json",
+   "sha256": "46d40633c94e92065269d0b4438e935ab791594ee4e3473511585e192bff9ba7",
+   "bytes": 158654
+  },
+  {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
    "sha256": "57e27e0c076dd5ac6a07c402e7d8bc90336a0cb472442392abe83a4a226cefdf",
    "bytes": 4078
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
-   "sha256": "a991cbb4de3a0c11d3c0183faad901cc02cd39fe8d47ce48878413c363753004",
-   "bytes": 172865
+   "sha256": "8753d77bffb1254903c48db5b554a30ab0b3a9ae09aa58ccaeceb82f0c69a634",
+   "bytes": 172863
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-b.json",
-   "sha256": "6436c42286ffe7f076d62cd9b70aef9e6f324aef3a94e3fe6ce6e665f254d026",
-   "bytes": 172866
+   "sha256": "0e4dfc6c799122eb67c96a9ef94495d8cb2af8b649c28590555e70fb350520df",
+   "bytes": 172858
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-a.json",
+   "sha256": "f34b1543d152cec2ceda8b68e72fd5acd073fe4af02c57d6a8fdeb1ae95c1125",
+   "bytes": 158663
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-b.json",
+   "sha256": "bdc9c891e4fd0777687761b0e7237e63bece54cd212ce8e26bf03a18872db4b8",
+   "bytes": 158659
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",
-   "sha256": "f93d847da324ca87478916891415637985d757db7a8fa963821f35b5dedbb4c2",
-   "bytes": 282
+   "sha256": "43aa5b7a4b2a9248a842cbb76136994b6d98d3af58285f14e77b71950edfb644",
+   "bytes": 577
   }
  ],
  "missing": [],
+ "n5Rules": {
+  "v3_adjudicated": {
+   "file": "judge_v3.py",
+   "version": "n5-v3",
+   "applies": "out/composition-v3-run.json only",
+   "D1": "outcome + resultText; missing resultText blocks (JudgeBlocked outcome-result-missing); the goal is never accepted as a substitute",
+   "D2": "vague expression accepted; any stated duration is parsed and compared with the authoritative time fact",
+   "D3": "hard gates only; quality() returns pending/undetermined unless an executed N6 result is supplied",
+   "D5": "G4/G5 data-triggered; the judge takes no rowId",
+   "D4": "unregistered names come from human labels: unchecked -> count null, checked-and-clean -> 0"
+  },
+  "v2_frozen": {
+   "file": "eval_n4_v2.py",
+   "applies": "out/composition-run.json (kept unchanged)",
+   "note": "still rowId-substring triggered; still requires the exact time value and the quoted task goal"
+  }
+ },
  "n5Rule": {
   "gating": "eval_n4_v2.judge_row (frozen v2 holdout gate): G1 alignment/must coverage, G2 residue name+goal scan, G3 exact time value, G4 conflict names (rowId-gated), G5 same-name bare (rowId-gated), G6 no truncation. P1/P2 pronoun gates are aggregate-level and not used per case.",
   "recordedOnly": "corpus_check.check_narration via narration_pipeline.verify_text (v7 recognizer): must-coverage and unrecognized content are review-class, no truncation rule. Archived as n5CrossCheck; never gates, never auto-passes.",
