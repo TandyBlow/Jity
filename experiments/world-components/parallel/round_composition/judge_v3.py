@@ -57,43 +57,123 @@ VAGUE_TIME = (
 # sign, a decimal or Chinese numeral (or 半/几/数) and a unit, and any match it
 # cannot convert to (value, unit) is an EXPLICIT duration that cannot be
 # checked -> hard failure, never a fallback to the vague expression.
+# Number grammar covers Arabic decimals, Chinese decimals (八点八) and Chinese
+# numerals up to 千; the unit alternatives are longest-first so 分半钟 beats
+# 分钟. A trailing 半 (八分钟半) is captured separately. Whatever the scanner
+# matches must be the WHOLE expression: a match that is preceded or followed by
+# more numeric material (点/半/零/digit/numeral) is a fragment and becomes
+# unparseable instead of being read as its legal-looking prefix.
+CN_CHARS = "零一二两三四五六七八九十百千"
 DURATION_RE = re.compile(
     r"(?P<neg>负|－|-|−)?\s*"
-    r"(?P<num>\d+(?:\.\d+)?|[零一二两三四五六七八九十百]+|半|几|数)?\s*"
-    r"(?P<unit>个月|分钟|分半钟|分半|小时|钟头|秒钟|秒|天|日|年|月|时辰)")
+    r"(?P<num>\d+(?:\.\d+)?"
+    r"|[零一二两三四五六七八九十百千]+点[零一二三四五六七八九]+"
+    r"|[零一二两三四五六七八九十百千]+|半|几|数)?\s*"
+    r"(?P<unit>个半小时|个半月|个小时|个钟头|个月|分钟|分半钟|分半"
+    r"|小时|钟头|秒钟|秒|天|日|年|月|时辰)"
+    r"(?P<tailhalf>半)?")
+
+CN_DIGIT = {"零": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
+            "六": 6, "七": 7, "八": 8, "九": 9}
+CN_UNIT = {"十": 10, "百": 100, "千": 1000}
+
+
+def _cn_number(text):
+    """Chinese numeral -> int, or None. Covers 十/百/千 and 零 separators
+    (一百零五). The frozen `corpus_check.cn_to_int` returns None above 99 and
+    the first version then crashed on float(None); this parser replaces it for
+    durations and never raises."""
+    if not text:
+        return None
+    if text.isdigit():
+        return int(text)
+    total, section, num, seen = 0, 0, 0, False
+    for ch in text:
+        if ch in CN_DIGIT:
+            num = CN_DIGIT[ch]
+            seen = True
+        elif ch in CN_UNIT:
+            unit = CN_UNIT[ch]
+            section += (num or 1) * unit
+            num = 0
+            seen = True
+        else:
+            return None
+    if not seen:
+        return None
+    return total + section + num
+
+
+def _cn_decimal(text):
+    """八点八 -> 8.8; 零点五 -> 0.5; None when not a clean decimal."""
+    if "点" not in text:
+        return None
+    whole, frac = text.split("点", 1)
+    if not whole or not frac:
+        return None
+    if any(ch not in CN_DIGIT for ch in frac):
+        return None
+    w = _cn_number(whole)
+    if w is None:
+        return None
+    return w + int("".join(str(CN_DIGIT[ch]) for ch in frac)) / (10 ** len(frac))
 
 UNIT_MAP = {"秒钟": "second", "秒": "second", "分钟": "minute",
             "分半钟": "minute", "分半": "minute", "小时": "hour",
-            "钟头": "hour", "天": "day", "日": "day", "个月": "month",
+            "个小时": "hour", "钟头": "hour", "个钟头": "hour",
+            "个半小时": "hour", "天": "day", "日": "day",
+            "个月": "month", "个半月": "month", "半月": "month",
             "月": "month", "年": "year"}
-HALF_UNITS = {"分半钟", "分半"}
+
+# Exact-length units can be compared across units (90 minutes == 1.5 hours).
+# Months and years have no fixed length, so those are compared unit-for-unit.
+SECONDS_PER = {"second": 1, "minute": 60, "hour": 3600, "day": 86400}
 
 
-def _parse_duration(num, unit_cn, neg):
+def _same_duration(value, unit, amount, auth_unit) -> bool:
+    if unit == auth_unit:
+        return abs(float(value) - float(amount)) < 1e-9
+    if unit in SECONDS_PER and auth_unit in SECONDS_PER:
+        return abs(float(value) * SECONDS_PER[unit]
+                   - float(amount) * SECONDS_PER[auth_unit]) < 1e-6
+    return False
+HALF_UNITS = {"分半钟", "分半", "个半小时", "个半月"}
+
+
+def _parse_duration(num, unit_cn, neg, tail_half=False):
     """-> (value, unit) or None when the expression is an explicit duration we
-    cannot convert exactly. None is a hard failure, not a vague pass."""
-    if unit_cn == "时辰":       # archaic unit, no exact minute mapping
+    cannot convert exactly. None is a hard failure, not a vague pass. Never
+    raises: any conversion problem is an unparseable duration."""
+    try:
+        if unit_cn == "时辰":   # archaic unit, no exact minute mapping
+            return None
+        unit = UNIT_MAP.get(unit_cn)
+        if unit is None:
+            return None
+        extra = 0.5 if (unit_cn in HALF_UNITS or tail_half) else 0.0
+        if num is None:
+            return None
+        if num == "半":
+            value = 0.5
+        elif num in ("几", "数"):
+            return None
+        elif re.fullmatch(r"\d+(?:\.\d+)?", num):
+            value = float(num)
+        elif _cn_decimal(num) is not None:
+            value = float(_cn_decimal(num))
+        elif re.fullmatch(rf"[{CN_CHARS}]+", num):
+            whole = _cn_number(num)
+            if whole is None:
+                return None
+            value = float(whole)
+        else:
+            return None
+        value += extra
+        if neg:
+            value = -value
+        return value, unit
+    except Exception:            # conversion failure is a verdict, not a crash
         return None
-    unit = UNIT_MAP.get(unit_cn)
-    if unit is None:
-        return None
-    extra = 0.5 if unit_cn in HALF_UNITS else 0.0
-    if num is None:
-        return None
-    if num == "半":
-        value = 0.5
-    elif num in ("几", "数"):
-        return None
-    elif re.fullmatch(r"\d+(?:\.\d+)?", num):
-        value = float(num)
-    elif re.fullmatch(r"[零一二两三四五六七八九十百]+", num):
-        value = float(cn_to_int(num))
-    else:
-        return None
-    value += extra
-    if neg:
-        value = -value
-    return value, unit
 
 BLOCKING_CODES = {"outcome-result-missing", "unsupported-kind"}
 
@@ -133,17 +213,35 @@ def _patterns_for(fact, pronoun=None):
         raise JudgeBlocked("unsupported-kind", kind)
 
 
+def _is_fragment(text, start, end):
+    """A match that sits inside a larger numeric expression is not a duration:
+    '八点八分钟' / '八分钟半' / '一百分钟' fragments must not be read as their
+    legal-looking prefix. Checked on both sides."""
+    before = text[start - 1] if start > 0 else ""
+    after = text[end] if end < len(text) else ""
+    return (before in (CN_CHARS + "点0123456789")
+            or after in ("点", "半", "零") or after.isdigit())
+
+
 def _duration_mentions(text):
     """-> (parsed, unparseable). `parsed` holds (value, unit) expressions we
     can compare; `unparseable` holds explicit duration claims we cannot
-    convert (8.8分钟 stays parsed as 8.8; 八分半钟 as 8.5; 几分钟/时辰 land
-    here)."""
+    convert OR fragments of a larger expression. Unparseable is a hard
+    failure; it never falls back to a vague expression."""
     parsed, unparseable = [], []
     for m in DURATION_RE.finditer(text):
         raw = m.group(0)
-        got = _parse_duration(m.group("num"), m.group("unit"),
-                              bool(m.group("neg")))
         entry = {"raw": raw, "start": m.start(), "end": m.end()}
+        if m.group("num") is None:
+            # a bare unit ("分钟过去了") states a duration without a value
+            unparseable.append(entry)
+            continue
+        if _is_fragment(text, m.start(), m.end()):
+            unparseable.append(entry)
+            continue
+        got = _parse_duration(m.group("num"), m.group("unit"),
+                              bool(m.group("neg")),
+                              bool(m.group("tailhalf")))
         if got is None:
             unparseable.append(entry)
         else:
@@ -175,7 +273,8 @@ def _time_gate(facts, must, text):
                             for m in parsed)
         else:
             for m in parsed:
-                if (m["amount"], m["unit"]) not in authorized:
+                if not any(_same_duration(m["amount"], m["unit"], a, u)
+                           for a, u in authorized):
                     problems.append(
                         f"time-value-mismatch:{m['raw']}="
                         f"{m['amount']}{m['unit']} not in "

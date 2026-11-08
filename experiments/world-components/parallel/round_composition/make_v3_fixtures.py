@@ -242,12 +242,51 @@ def main() -> int:
              "why": "half-minute value hidden behind a vague clause"},
             {"text": base + "几分钟过去了。", "expect": "n5-rejected",
              "why": "explicit but unparseable duration"},
+            {"text": base + "过了一会儿，八点八分钟过去了。",
+             "expect": "n5-rejected",
+             "why": "second review: only 八分钟 was matched inside a Chinese "
+                    "decimal expression"},
+            {"text": base + "过了一会儿，八分钟半过去了。",
+             "expect": "n5-rejected",
+             "why": "second review: trailing 半 was left outside the match"},
+            {"text": base + "一百分钟过去了。", "expect": "n5-rejected",
+             "why": "second review: cn_to_int returned None above 99, the "
+                    "first build raised TypeError instead of judging"},
         ],
         "rowIdAliases": ["comp:d2-time-value-strict",
                          "alias:d2-time-value-strict"],
         "notes": "Same authoritative value 8 minutes throughout. The first "
                  "version passed 8.8 / 负八分钟 / 八分半钟 / 几分钟; all four "
                  "must now fail, while 约八分钟 and a pure vague clause pass.",
+    })
+
+    # ---- unit forms and cross-unit equality ----------------------------
+    f90 = [{"factId": "f0", "kind": "moved", "entityId": "char_pa",
+            "name": "管线甲", "from": "管线镇", "to": "钟楼",
+            "entityGroup": "characters"},
+           {"factId": "f2", "kind": "time", "amount": 90, "unit": "minute"}]
+    cases.append({
+        "caseId": "d2-time-units", "title": "时长单位与复合表达",
+        "expect": "n5-pass", "judgeOnly": True,
+        "facts": f90, "mustExpress": ["f0", "f2"],
+        "plan": {"sentences": [{"index": 0, "factIds": ["f0", "f2"],
+                                "coreference": [],
+                                "time": {"amount": 90, "unit": "minute"}}]},
+        "sentenceTexts": ["管线甲从管线镇来到了钟楼。一个半小时过去了。"],
+        "counterTexts": [
+            {"text": "管线甲从管线镇来到了钟楼。一小时四十分钟过去了。",
+             "expect": "n5-rejected",
+             "why": "compound duration: 一小时 + 四十分钟, neither equals 90 "
+                    "minutes; compound expressions are not summed"},
+            {"text": "管线甲从管线镇来到了钟楼。一百分钟过去了。",
+             "expect": "n5-rejected",
+             "why": "100 minutes != 90 minutes; also proves 百 does not crash"},
+        ],
+        "rowIdAliases": ["comp:d2-time-units", "alias:d2-time-units"],
+        "notes": "Exact-length units (second/minute/hour/day) are compared in "
+              "seconds, so 一个半小时 equals 90 minutes; months/years stay "
+              "unit-for-unit because their length is not fixed. Compound "
+              "expressions are not summed and therefore fail.",
     })
 
     # ---- grant regression: legal pronoun must be matched ----------------

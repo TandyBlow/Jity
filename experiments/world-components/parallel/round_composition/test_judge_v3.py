@@ -144,6 +144,40 @@ def test_d2_regressions():
     ok, _ = g3("过了一会儿。")
     check(ok, "D2 regression: a pure vague clause still passes")
 
+    # second review: fragments of a larger numeric expression
+    ok, probs = g3("过了一会儿，八点八分钟过去了。")
+    check(not ok, "D2 regression 2: 八点八分钟 must not be read as 八分钟")
+    check(any("time-value-mismatch" in p for p in probs),
+          "D2 regression 2: the Chinese decimal is parsed as 8.8")
+    ok, probs = g3("过了一会儿，八分钟半过去了。")
+    check(not ok, "D2 regression 2: 八分钟半 must not be read as 八分钟")
+    check(any("time-value-mismatch" in p for p in probs),
+          "D2 regression 2: the trailing 半 is folded into 8.5")
+
+    # second review: no exception on large Chinese numerals
+    raised = None
+    try:
+        ok, probs = g3("一百分钟过去了。")
+    except Exception as exc:  # noqa: BLE001 - the point is that nothing escapes
+        raised = repr(exc)
+        ok, probs = True, []
+    check(raised is None, f"D2 regression 2: 一百分钟 must not raise ({raised})")
+    check(not ok, "D2 regression 2: 一百分钟 != 8分钟")
+    check(any("time-value-mismatch" in p for p in probs),
+          "D2 regression 2: 一百分钟 is parsed and compared")
+
+    # positive control for the numerals and for cross-unit equality
+    big = time_facts(amount=100, unit="minute")
+    r = j.judge(big, must, PLAN, base + "一百分钟过去了。")
+    check(r["hardPass"], "D2: 一百分钟 passes against a 100-minute fact")
+    ninety = time_facts(amount=90, unit="minute")
+    r = j.judge(ninety, ["f0", "f1", "f2"], PLAN,
+                base + "一个半小时过去了。")
+    check(r["hardPass"], "D2: 一个半小时 equals 90 minutes (exact units)")
+    r = j.judge(ninety, ["f0", "f1", "f2"], PLAN,
+                base + "半小时过去了。")
+    check(not r["hardPass"], "D2: 半小时 is 30 minutes, not 90")
+
 
 def test_pronoun_grant():
     """Reviewer finding (2026-11-08): v3 ignored plan grants and rejected a

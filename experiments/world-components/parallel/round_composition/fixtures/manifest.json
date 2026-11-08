@@ -1,13 +1,25 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:53:56.798953+00:00",
+ "recordedAt": "2026-11-08T06:59:33.127917+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "45ebf878ddbb50e683e1e32f8c429386921ef708",
-  "headSubject": "C7 round composition: fix the two v3 defects found in review (duration parsing, plan grants)",
+  "headAtRecording": "74c6cce2ff59a4bddf782347d59be872f5c2362a",
+  "headSubject": "C7 round composition: drop accidental bytecode and ignore it",
   "porcelain": [
+   "M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/contract-decisions.md",
+   " M experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+   " M experiments/world-components/parallel/round_composition/judge_v3.py",
+   " M experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
+   " M experiments/world-components/parallel/round_composition/out/composition-v3-run.json",
+   " M experiments/world-components/parallel/round_composition/out/console-v3.log",
+   " M experiments/world-components/parallel/round_composition/out/determinism-a.json",
+   " M experiments/world-components/parallel/round_composition/out/determinism-b.json",
+   " M experiments/world-components/parallel/round_composition/out/determinism-v3-a.json",
+   " M experiments/world-components/parallel/round_composition/out/determinism-v3-b.json",
+   " M experiments/world-components/parallel/round_composition/test_judge_v3.py",
    "?? TASK.md"
   ]
  },
@@ -139,8 +151,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "e85824cd0923c62470427354e1ab4530fd72ac5fae2f04e3639dfdd52c502ed5",
-    "bytes": 28645
+    "sha256": "edb4891484ba0c885fa77253fc604d70dca17346a38c44f8c4053c1d98d93522",
+    "bytes": 30126
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -149,8 +161,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
-    "sha256": "03f56475163ba1d54a579c26d38f8c2034d0733b7f46e268b65373e844fcecd2",
-    "bytes": 18811
+    "sha256": "57bc9586f2b5e57b803a666519c27b4a3e92beff50df2f548364211e45d7aefc",
+    "bytes": 19436
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
@@ -159,8 +171,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/judge_v3.py",
-    "sha256": "d3cfabea5027dfccdf7b72c5b8e845d2bf5ca0f61dc2f0f2a9bf7765a5c4215b",
-    "bytes": 14691
+    "sha256": "0b5ca4f3346de58eb5088b7066637772cc47f9174501a076896f8218d5f9fa02",
+    "bytes": 18882
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose_v3.py",
@@ -169,13 +181,13 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
-    "sha256": "0d948d0362f8eab7b579ea46a1b67f4acb6daed1108a529243c9fbdbdcc8dbd9",
-    "bytes": 15401
+    "sha256": "36cd91f668aa5a060541feb3de23c7a2bd3cd86b72fbb0dda64f81d18fb04d3c",
+    "bytes": 17795
    },
    {
     "path": "experiments/world-components/parallel/round_composition/test_judge_v3.py",
-    "sha256": "f5a474a763b66452dabffeb566c2af85b579e871bab374cfc4152edda69c1ed9",
-    "bytes": 13096
+    "sha256": "344a708da4420c546572dc9ce013753d9caf5771206b27d414e795231f177a8f",
+    "bytes": 14917
    },
    {
     "path": "experiments/world-components/parallel/round_composition/human-review-v1.md",
@@ -184,8 +196,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
-    "sha256": "dc6c1dee153c804381596ca5ea9457dbd2831a703e3a674eee31a5cc10647d35",
-    "bytes": 69725
+    "sha256": "8e9ac38d4519a75f445d97e5ef7ba1695b0263717342d69ffbfb880d3f13c5cb",
+    "bytes": 72171
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/annotations-v1.json",
@@ -194,8 +206,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/out/console-v3.log",
-    "sha256": "de75832bf27dc7894baffe0ca36b865905b218433ee4bcc9d338756064583209",
-    "bytes": 3037
+    "sha256": "bda4da5c0524e3b528ded3a8b3ae81425e85ef53d77e9025c6eb485ec93ac9df",
+    "bytes": 3126
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -227,8 +239,8 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-v3-run.json",
-   "sha256": "1c87daad79e121cfdbd48ca03a84d7a6170b67e6080ce454942a6cc135d6acfd",
-   "bytes": 175479
+   "sha256": "11596f76933737462b4174818cab6c029f2dd537ad28e3c0cb6cab20ee64d341",
+   "bytes": 184911
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
@@ -237,23 +249,23 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
-   "sha256": "fcf261ecbceb35228fa2228859adf13fe3ade670b95cae897650c34fbf48dd96",
-   "bytes": 172864
+   "sha256": "61935260883afdf177a2f87f6099d89207050acb1daad1daf11772318f065d89",
+   "bytes": 172867
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-b.json",
-   "sha256": "ce04a28bc6475533ca626c981d3c0d403732272955d2fa7dd1466bbacd99cc1e",
-   "bytes": 172861
+   "sha256": "2555ba022c03d9c07140069172f37db89c419023813b2e36472fe4d1f3c6781f",
+   "bytes": 172866
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-a.json",
-   "sha256": "47ed4ac46f01c73fd7ff05fab5a7ad5ba7f920d862e645485c534d69527846ae",
-   "bytes": 175479
+   "sha256": "f7cc8ac7af7fda3690a0e421ec15aaa504ab2fe8e25ca73e2e4347caa48cb0df",
+   "bytes": 184918
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-b.json",
-   "sha256": "04ea3b83cef21783a13e488c836c8de462e75811c4367475d18f91cbf47461f4",
-   "bytes": 175484
+   "sha256": "7b61bf481c559356a0098d7fb4ae1a1e3496129eb1dbdab13e54f32d99c6acfb",
+   "bytes": 184916
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",
