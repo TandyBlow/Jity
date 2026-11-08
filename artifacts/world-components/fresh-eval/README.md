@@ -37,24 +37,26 @@
 
 | 规则 | 怎么算 | 拦什么 |
 |---|---|---|
-| **R1 子串** | 候选正文（≥4 个汉字）与 13,341 条排除串做**双向包含**比较：候选含排除串、或排除串含候选，都算命中。排除串里带（注记）的，先剥注记再比一次 | 直接照抄、保留连续子串的片段复用；不保证拦住改标点 |
+| **R1 子串（v2，事后版）** | 三种方向分别判：**完全相等**→命中；**候选被排除串包含**（候选是旧材料的一段）→命中；**排除串被候选包含**→只有该排除串 **≥8 个汉字**才算命中，更短的记作提示（`R1-short-phrase`）。排除串里带（注记）的，先剥注记再比一次 | 直接照抄、整段复用、把旧句嵌进新句。8 字下限的理由：夹具任务目标只有 5 字，若不设限，任何点名称沿已登记任务的候选都会被自己的素材判死（`c8d04` 实测）。**这条是看过候选之后才改的，原版 v1（任意方向包含即命中）保留在 `tools/screening.py`，两版判定差异见 `diagnostics/rule-diff.md`；v2 只能用于规则开发，不能用它证明候选自身独立** |
 | **R2 词表** | 候选的人物、地点、任务、物品名逐个查 4,567 项词表并集（分桶只表示「在那个位置被观察到」，判定用并集） | 换名字不换内容时，名字本身先被拦；也防止新场景撞回「走廊／大厅／陈舟／顾北汀」这些旧词 |
-| **R3 事实签名** | 把候选的事实拼成 `(按 kind 排序并保留重复 \| 涉及人物数 \| 时间量+单位)`，和十条旧题签名全等即命中 | 保守拦截事实形状照旧的候选，包含只换人名地名的派生 |
+| **R3 事实签名** | 只用**本点原始 Δ 产生的事实**拼签名 `(kind 计数 \| 涉及人物数 \| 时长折算秒数)`；未变化实体的现状读数（`at`／理智现值）只作引用，不进签名。和十条旧题签名全等即命中 | 保守拦截事实形状照旧的候选，包含只换人名地名的派生，也拦住换时间写法（2 分钟 ↔ 120 秒）的派生 |
 
 十条旧题的签名（`sources/exclusion-scope.json` 里可复查）：
 
 ```
-nv-move-1               moved                                  |1|2minute
-nv-task-pers-sanity-1   personality+sanity+task                |1|1minute
-nv-multi-1              at+moved                               |2|1minute
-nv-task-only-1          task_achieved                          |1|30second
-nv-refused-1            （无事实）                              |0|1second
-nv-empty-1              （无事实）                              |0|5minute
-nv-cont-1               moved                                  |1|2second
-nv-cont-2               at                                     |1|2minute
-nv-cont-3               at                                     |1|5minute
-nv-multi-opposite-1     moved+moved                            |2|3second
+nv-move-1               moved*1                                   |1|120s
+nv-task-pers-sanity-1   personality_changed*1+sanity_changed*1+task_achieved*1 |1|60s
+nv-multi-1              moved*1                                   |1|60s   ← 只算 person_a 的移动
+nv-task-only-1          task_achieved*1                           |1|30s
+nv-refused-1            none                                      |0|1s
+nv-empty-1              none                                      |0|300s
+nv-cont-1               moved*1                                   |1|2s
+nv-cont-2               none                                      |0|120s  ← 该点只有现状陈述，没有新增变化
+nv-cont-3               none                                      |0|300s  ← 与 nv-empty-1 同形，口径无法区分
+nv-multi-opposite-1     moved*2                                   |2|3s
 ```
+
+改成「只算变化」之后，`nv-cont-3` 与 `nv-empty-1` 撞成同一个签名（两者都只有时间流逝），这是统一口径的已知代价，不是本批夹具的问题。
 
 ### 走一遍：一个「只换名字」的候选会被怎么判
 
@@ -107,6 +109,8 @@ python artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
 | R3 只比事实形状，且时间单位不归一化 | 形状不同或等价时间换单位的语义派生不会被抓；同形独立来源也可能被拦 | 人工核验表逐条判；不将自动规则视为来源证明 |
 | 主树 `artifacts/` 是另一个检出的文件 | 换机器／换检出后哈希可能漂移 | 路径记作 `main-tree:` 前缀；`--check` 会报漂移而不是静默通过 |
 | 十题之外还有 `hv-*`／`ns-*`／`b3-*` 三族旧题 | 只把它们算进 R1 排除串，没做逐题签名 | 已在 `exclusion-scope.json` 的 `threeArmSiblings` 登记；要逐题签名需另开一轮 |
+| 绑定已登记夹具的夹具必然复用夹具里的人名地名 | 词表闸对它们恒为命中 | `source-bound` 模式只把命中记为「已登记复用」并逐项列出；它只表示来源绑定状态，**不表示独立性通过** |
+| 本批没有正式独立来源 | 六条只能作诊断，不能作正式评测题 | 已在 `diagnostics/report.md` 逐条写「独立性：undetermined」；正式评测题须另找可核实的独立来源（不必限定等 R01） |
 
 ---
 
@@ -121,20 +125,31 @@ artifacts/world-components/fresh-eval/
 │   ├── vocab-used.json / .md     4,567 项已用词表（6 个分桶 + 并集）
 │   └── exclusion-scope.json      规则文本、十题签名、已知限制
 ├── selftest-report.json / .md    自检逐项结果与输入哈希
+├── diagnostics/                  六条诊断夹具 + 缺口 + 核验表（0 条正式题，未冻结）
+│   ├── diagnostics.json          六条定义（来源、参数声明、核对要求）
+│   ├── report.json / .md         内核结果、三种状态、两版判定
+│   ├── rule-diff.md              R1 v1 与 v2 的逐条判定差异
+│   ├── fact-provenance.json/.md  原始 Δ / 变化事实 / 现状引用 对账
+│   ├── gaps.json / .md           叙事投影缺口（交对应模块）
+│   └── review-table.md           人工核验表（标注者列留空）
 ├── verification.log             来源复算、自检和回归检查的命令与输出
 ├── .gitattributes               保留本目录文件原始字节，避免哈希随换行转换漂移
 └── tools/
     ├── build_inventory.py        来源表 + 抽取 + 清单生成（--check 校验漂移）
     ├── exclusion_selftest.py     规则自检；--candidates <json> 可对候选批量判
+    ├── build_diagnostics.py      诊断夹具核验：内核 + 事实对账 + 两版规则
     └── test_exclusion_selftest.py 注记剥离和旧题漏解析的回归检查
 ```
 
 ---
 
-## 7. 下一步
+## 7. 当前状态与下一步
 
-1. **筛场景**（TASK 第 2 步）：先从已提交状态或已登记夹具中查找未参与训练/调参的独立来源，登记 `entityId / fieldPath / pointId` 及使用历史，再按多人物、多地点、可见性、任务、关系、玩家关注制作覆盖表。每条候选过 `exclusion_selftest.py --candidates` 并保存命中理由。不能为了绕过词表或签名而换名、改时长、拼装新事实；找不到合格来源就登记缺口，不凭空补造世界记录。
-2. **人工核验表**（第 3 步）：首批 ≤10 条，固定编号，登记来源、输入、标注者、核对项；标注者不能是参与调参的人。
-3. **一次性冻结**（第 4 步）：输入清单 + SHA-256 + 去重证据一起固化，之后只读，并从训练材料里物理隔离。
+**已交付**：六条诊断夹具、零条正式独立评测题、未冻结（见 `diagnostics/`）。诊断不等于评测：`source-bound` 只表示来源绑定状态，`accepted by apply_point` 只表示增量被内核接受，`not-committed` 表示本批全是假设点、没有 round/group/settle/points 记录，独立性一律 `undetermined`。
 
-来源历史无法核实、缺失归档影响无法排除时，保持 `undetermined`。本目录的合成自检输入只是规则探针，不进入正式候选或评测集。第一步提交只归档来源审计与规则机制，不表示新评测集已冻结或独立性已获证明。
+**下一步**：
+1. 按 `diagnostics/review-table.md` 做人工核验（标注者不得参与调参），逐项填「通过／不通过／无法判断」；`无法判断` 不算通过。
+2. 正式评测题另找可核实的独立来源：要能追到来源文件、点位身份和使用历史，且能证明未参与训练或调参。不限定只能等 R01。
+3. 投影缺口（`diagnostics/gaps.md`）交对应模块；能力补齐后必须重新核验来源独立性，不能自动晋升为正式题。
+
+来源历史无法核实、缺失归档影响无法排除时，保持 `undetermined`。本目录的合成自检输入只是规则探针，不进入正式评测集。本轮提交只归档来源审计、规则机制与六条诊断夹具，不表示新评测集已冻结或独立性已获证明。

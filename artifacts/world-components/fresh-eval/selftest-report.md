@@ -1,6 +1,6 @@
 # 排除规则自检（自动生成，勿手改）
 
-工作树 HEAD：`64405346fe63c2f05cf067f3b328893fa9e0d381`；脚本 `tools/exclusion_selftest.py`。
+工作树 HEAD：`ee16725640901bb66501134e83a68ac63ee80333`；脚本 `tools/exclusion_selftest.py`。
 
 ## 输入
 
@@ -24,6 +24,7 @@
 | `nv-multi-opposite-1` | rejected | rejected | R1-substring, R3-signature |
 | 改名派生（nv-move-1 换名同形） (`deriv-renamed-move-2min`) | rejected | rejected | R3-signature |
 | 改写派生（nv-empty-1 空点 5 分钟） (`deriv-paraphrase-empty-5min`) | rejected | rejected | R3-signature |
+| 单位改名派生（5 分钟写成 300 秒） (`deriv-unit-renamed-300s`) | rejected | rejected | R3-signature |
 | 新场景（三条事实、7 分钟） (`synthetic-fresh-ok`) | candidate | candidate | （无） |
 
 十题完整性：True；每题 R1/R3 独立命中：True；派生仅 R3 命中：True；注记剥离回归：True。

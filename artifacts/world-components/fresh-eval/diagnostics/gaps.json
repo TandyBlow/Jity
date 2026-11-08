@@ -1,0 +1,50 @@
+{
+  "formatVersion": 1,
+  "note": "叙事投影的能力缺口。每条写清合法输入、抛错位置、影响，以及补上之后必须重新核验来源独立性（不得自动晋升为正式评测题）。c8 不修这些代码。",
+  "gaps": [
+    {
+      "id": "g02",
+      "dimension": "空间相对位置（beside / behind / under / above / in_front_of）",
+      "legalInput": "EntityDelta.positionSet.relativeTo = {entityId, relation}；A 侧 apply_point 的 _check_positions 接受并校验引用与房间共处",
+      "throwPoint": "frontend/src/lib/world-engine/runtime/committed-narration.ts:49 → unsupported_narration_position",
+      "condition": "position.slotId != null 或 position.relativeTo != null",
+      "impact": "‘站在门旁边／躲在桌下’这类状态无法进入已提交叙事事实；页面只能拒绝整点，不会部分降级",
+      "ownerAction": "投影需要新增相对位置事实类型（含目标实体名与关系词），并定义关系词的中文表达与歧义处理",
+      "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+      "evidence": "committed-narration.ts sha256 309ca19f…；A 侧 apply.py 005ea5b"
+    },
+    {
+      "id": "g03",
+      "dimension": "外貌变化（人物 / 地点 / 物品）",
+      "legalInput": "EntityDelta.appearanceChanges（人物、物品、地点均合法），内核 _extend_changes 维护 supersedes 链与 sourcePointId",
+      "throwPoint": "committed-narration.ts:28 → unsupported_narration_world_change（地点/物品）；:51 → unrecorded_appearance_change（人物）",
+      "condition": "before.state.items / locations 与 after 不相等；或人物 appearanceChanges 数组发生变化",
+      "impact": "外貌改写、衣物被雨打湿、黑板写满字、地点变暗等全部无法叙述；‘外貌’类覆盖在页面路径上不可测",
+      "ownerAction": "投影需要支持三类实体的外貌事实，并规定只述当前生效描述（折叠 supersedes 链）还是同时述变化",
+      "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+      "evidence": "committed-narration.ts 第 28、51 行；design/world-protocol/v1/fixtures/description-changes.json 提供了已登记的三类变化样例"
+    },
+    {
+      "id": "g04",
+      "dimension": "任务树新增（subtasksAdded）",
+      "legalInput": "EntityDelta.subtasksAdded = [Task]；内核校验同 owner、必须有父任务、不允许环、按层级排序",
+      "throwPoint": "committed-narration.ts:35 → unsupported_committed_delta",
+      "condition": "delta 的键不在 ['entityId','positionSet','sanitySet','tasksAchieved','personalityChanges'] 内",
+      "impact": "新增子任务无法叙述，玩家看不到任务树扩张；已登记夹具 task-normalization.json 的整条路径在页面上不可达",
+      "ownerAction": "投影需要支持新增子任务事实，并先确定产品口径：新增子任务要不要进叙事、以什么粒度（父任务下新增一条还是一条条列）",
+      "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+      "evidence": "committed-narration.ts 第 35 行；design/world-protocol/v1/fixtures/task-normalization.json"
+    },
+    {
+      "id": "g03b",
+      "dimension": "部分数值因果（只有任务达成、没有理智/人格）",
+      "legalInput": "EntityDelta.tasksAchieved 单独出现（内核允许）",
+      "throwPoint": "committed-narration.ts:38 → narration_requires_complete_numeric_cause",
+      "condition": "tasksAchieved / personalityChanges / sanitySet 三者未同时出现",
+      "impact": "只达成任务、没有数值变化或人格变化的点无法进入页面叙事；三臂对照里的 nv-task-only-1 正是这种手写包，与投影规则不一致",
+      "ownerAction": "需要产品口径：纯任务达成是否必须伴随理智/人格变化；若不必，投影应放宽为一类事实单独成立",
+      "afterFix": "改口径后要重跑旧题剔除范围（nv-task-only-1 与该规则冲突，可能需要重写或降级）",
+      "evidence": "committed-narration.ts 第 38 行"
+    }
+  ]
+}

@@ -32,6 +32,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import pathlib
 import re
@@ -43,6 +44,30 @@ OUT = HERE.parent                      # artifacts/world-components/fresh-eval
 REPO = OUT.parents[2]                  # .../c-fresh-eval
 CJK = re.compile(r"[\u4e00-\u9fff]")
 CJK_RUN = re.compile(r"[\u4e00-\u9fff]{2,8}")
+
+def _three_arm_facts(kinds, actors, amount, unit):
+    """Build a fact list for the ten frozen items.
+
+    Change facts (moved / task / personality / sanity_changed) use at most
+    `actors` distinct actors; standing facts (at / plain sanity) reuse the same
+    ids and never enter the change signature.
+    """
+    changes = [k for k in kinds if k in _screening.CHANGE_KINDS]
+    change_actors = min(actors, len(changes)) if changes else 0
+    facts, ci = [], 0
+    for kind in kinds:
+        if kind in _screening.CHANGE_KINDS:
+            facts.append({"kind": kind, "actor": f"a{ci % max(change_actors, 1)}"})
+            ci += 1
+        else:
+            facts.append({"kind": kind, "actor": f"a{ci % max(actors, 1)}"})
+    return facts
+
+_spec = importlib.util.spec_from_file_location("screening", HERE / "screening.py")
+_screening = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_screening)
+signature_of = _screening.signature_of
+write_artifact = _screening.write_artifact
 
 # ---------------------------------------------------------------- sources ---
 SOURCES: list[dict] = [
@@ -199,7 +224,8 @@ RULES = {
     "textMatch": "双向子串：候选串与排除串任一方向包含即命中；只比较 ≥4 个汉字的内容串",
     "noteStrip": "含（）注记的排除串，剥掉注记后的核心串同样入集（nv-cont-1 冒烟教训）",
     "castWords": "人物/地名等词表项：零命中才是目标，命中即改名，不按子串宽容量放过",
-    "signature": "事实签名=(kind 集合, 涉及人物数, 时间量, 时间单位)；与 nv-* 十题任一相同即判改名派生",
+    "signature": "事实签名=(kind 计数, 涉及人物数, 时长折算秒数)；与 nv-* 十题任一相同即判改名派生",
+    "signatureTime": "时长先折算成秒再比：2 分钟与 120 秒视为同一时长，防单位改名绕过",
     "signatureLimit": "签名只覆盖事实形状，不覆盖语义；形状不同也可能是派生，由人工核验补",
     "excludedFields": "结构字段 kind/unit/ref/amount/entityId/scope 不参与文本比对",
     "unknownProvenance": "来源或用途无法追到文件与哈希的场景记为 undetermined，不进入候选池",
@@ -491,7 +517,12 @@ def main() -> int:
         "vocabScopeSources": [s["id"] for s in inv["sources"] if s["scope"] == "vocab"],
         "threeArmItems": [
             {"id": i, "kinds": sorted(k), "actors": a, "timeAmount": t,
-             "timeUnit": u, "signature": f"{'+'.join(sorted(k)) or 'none'}|{a}|{t}{u}"}
+             "timeUnit": u,
+             "changeKinds": sorted(x for x in k if x in _screening.CHANGE_KINDS),
+             "signature": _screening.change_signature(
+                 _three_arm_facts(k, a, t, u), {"amount": t, "unit": u}),
+             "fullSignature": _screening.full_signature(
+                 _three_arm_facts(k, a, t, u), {"amount": t, "unit": u})}
             for (i, k, a, t, u) in NV_SIGNATURES
         ],
         "threeArmSiblings": {
@@ -546,21 +577,21 @@ def main() -> int:
     inv["blockingTotal"] = len(blocked)
     inv["vocabTotal"] = {b: len(v) for b, v in vocab_all.items()}
 
-    (OUT / "sources/inventory.json").write_text(
-        json.dumps(inv, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    write_artifact(OUT / "sources/inventory.json", 
+        json.dumps(inv, ensure_ascii=False, indent=1) + "\n")
     with (OUT / "sources/exclusion-corpus.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
         for s in sorted(blocked):
             fh.write(json.dumps({"text": s, "sources": blocked[s]["sources"],
                                  "keys": blocked[s]["keys"]}, ensure_ascii=False) + "\n")
-    (OUT / "sources/vocab-used.json").write_text(
+    write_artifact(OUT / "sources/vocab-used.json", 
         json.dumps({"worktreeHead": head,
                     "buckets": {b: dict(sorted(v.items())) for b, v in vocab_all.items()}},
-                   ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+                   ensure_ascii=False, indent=1) + "\n")
     exclusion["blockingStrings"] = len(blocked)
     exclusion["vocabCounts"] = {b: len(v) for b, v in vocab_all.items()}
     exclusion["vocabUnionCount"] = len(set().union(*[set(v) for v in vocab_all.values()]))
-    (OUT / "sources/exclusion-scope.json").write_text(
-        json.dumps(exclusion, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    write_artifact(OUT / "sources/exclusion-scope.json", 
+        json.dumps(exclusion, ensure_ascii=False, indent=1) + "\n")
 
     lines = ["# 来源清点（自动生成，勿手改）", "",
              f"工作树 HEAD：`{head}`；生成脚本 `tools/build_inventory.py`。", "",
@@ -578,7 +609,7 @@ def main() -> int:
     for gap in inv["knownSourceGaps"]:
         lines.append(f"- `{gap['path']}`：{gap['status']}；已找到 {len(gap['foundFiles'])} 个文件；"
                      "当前工作树/主树范围之外未核实，不能据此声明历史去重完整。")
-    (OUT / "sources/inventory.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    write_artifact(OUT / "sources/inventory.md", "\n".join(lines) + "\n")
 
     vlines = ["# 已用词表（自动生成，勿手改）", "",
               f"工作树 HEAD：`{head}`。只统计 `text`/`vocab` 范围来源。", "",
@@ -595,7 +626,7 @@ def main() -> int:
         if len(items) > 600:
             vlines.append(f"| … | 其余 {len(items) - 600} 项见 `vocab-used.json` |")
         vlines.append("")
-    (OUT / "sources/vocab-used.md").write_text("\n".join(vlines).rstrip() + "\n", encoding="utf-8")
+    write_artifact(OUT / "sources/vocab-used.md", "\n".join(vlines).rstrip() + "\n")
 
     print(f"head={head[:12]} sources={len(inv['sources'])} "
           f"files={sum(len(s['files']) for s in inv['sources'])} "

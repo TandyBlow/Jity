@@ -1,0 +1,1017 @@
+{
+ "worktreeHead": "ee16725640901bb66501134e83a68ac63ee80333",
+ "items": [
+  {
+   "id": "c8d01",
+   "points": [
+    {
+     "pointId": "c8d01_p1",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|180s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|180s"
+    }
+   ]
+  },
+  {
+   "id": "c8d02",
+   "points": [
+    {
+     "pointId": "c8d02_p1",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      },
+      "person_c": {
+       "entityId": "person_c",
+       "positionSet": {
+        "containerId": "classroom2",
+        "slotId": null,
+        "relativeTo": null
+       }
+      },
+      "person_e": {
+       "entityId": "person_e",
+       "positionSet": {
+        "containerId": "floor2",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      },
+      {
+       "kind": "moved",
+       "actorId": "person_c",
+       "name": "C",
+       "from": "一号教室",
+       "to": "二号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "fromValue": "classroom1",
+       "toValue": "classroom2"
+      },
+      {
+       "kind": "moved",
+       "actorId": "person_e",
+       "name": "E",
+       "from": "一号教室",
+       "to": "二楼",
+       "fieldPath": "characters.person_e.position.containerId",
+       "fromValue": "classroom1",
+       "toValue": "floor2"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*3|3|90s",
+     "fullSignature": "at*3+moved*3+sanity*6|6|90s"
+    }
+   ]
+  },
+  {
+   "id": "c8d03",
+   "points": [
+    {
+     "pointId": "c8d03_p1",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|50s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|50s"
+    }
+   ]
+  },
+  {
+   "id": "c8d04",
+   "points": [
+    {
+     "pointId": "c8d04_p1",
+     "rawDelta": {
+      "person_c": {
+       "entityId": "person_c",
+       "tasksAchieved": [
+        "task_wait_noon"
+       ],
+       "personalityChanges": [
+        {
+         "id": "c8d04_relief",
+         "text": "暂时放松了对周围的警戒。",
+         "supersedes": []
+        }
+       ],
+       "sanitySet": 26
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "sanity_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "from": 30,
+       "to": 26,
+       "fieldPath": "characters.person_c.sanity",
+       "fromValue": 30,
+       "toValue": 26
+      },
+      {
+       "kind": "task_achieved",
+       "actorId": "person_c",
+       "name": "C",
+       "taskId": "task_wait_noon",
+       "goal": "坚持到中午十二点。",
+       "fieldPath": "characters.person_c.tasks.task_wait_noon.status",
+       "fromValue": "pending",
+       "toValue": "achieved"
+      },
+      {
+       "kind": "personality_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "changeId": "c8d04_relief",
+       "text": "暂时放松了对周围的警戒。",
+       "fieldPath": "characters.person_c.personalityChanges",
+       "toValue": "c8d04_relief"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "大堂",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|120s",
+     "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|120s"
+    }
+   ]
+  },
+  {
+   "id": "c8d05",
+   "points": [
+    {
+     "pointId": "c8d05_p1",
+     "rawDelta": {},
+     "changeFacts": [],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "大堂",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "none|0|40s",
+     "fullSignature": "at*6+sanity*6|6|40s"
+    }
+   ]
+  },
+  {
+   "id": "c8d06",
+   "points": [
+    {
+     "pointId": "c8d06_p1",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|4s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|4s"
+    },
+    {
+     "pointId": "c8d06_p2",
+     "rawDelta": {},
+     "changeFacts": [],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "corridor"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "none|0|120s",
+     "fullSignature": "at*6+sanity*6|6|120s"
+    },
+    {
+     "pointId": "c8d06_p3",
+     "rawDelta": {
+      "person_c": {
+       "entityId": "person_c",
+       "tasksAchieved": [
+        "task_c_root"
+       ],
+       "personalityChanges": [
+        {
+         "id": "c8d06_relief",
+         "text": "暂时放松了对周围的警戒。",
+         "supersedes": []
+        }
+       ],
+       "sanitySet": 28
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "sanity_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "from": 30,
+       "to": 28,
+       "fieldPath": "characters.person_c.sanity",
+       "fromValue": 30,
+       "toValue": 28
+      },
+      {
+       "kind": "task_achieved",
+       "actorId": "person_c",
+       "name": "C",
+       "taskId": "task_c_root",
+       "goal": "安全度过校园中的这段时间。",
+       "fieldPath": "characters.person_c.tasks.task_c_root.status",
+       "fromValue": "pending",
+       "toValue": "achieved"
+      },
+      {
+       "kind": "personality_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "changeId": "c8d06_relief",
+       "text": "暂时放松了对周围的警戒。",
+       "fieldPath": "characters.person_c.personalityChanges",
+       "toValue": "c8d06_relief"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "corridor"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|180s",
+     "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|180s"
+    }
+   ]
+  }
+ ]
+}

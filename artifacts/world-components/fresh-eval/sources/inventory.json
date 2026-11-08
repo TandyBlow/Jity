@@ -3,7 +3,7 @@
  "purpose": "C8 独立评测场景：来源清点与排除依据",
  "worktree": {
   "branch": "exp/c-fresh-eval",
-  "head": "64405346fe63c2f05cf067f3b328893fa9e0d381"
+  "head": "ee16725640901bb66501134e83a68ac63ee80333"
  },
  "scopeSemantics": {
   "text": "贡献整句排除串（叙事文本）",

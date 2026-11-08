@@ -34,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import pathlib
 import re
@@ -48,63 +49,17 @@ NOTE = re.compile(r"（[^）]*）")
 TS_STR = re.compile(r"""'([^'\\\n]{2,})'|"([^"\\\n]{2,})"|`([^`\\\n]{2,})`""")
 
 
-def load_sources():
-    corpus = {}
-    path = OUT / "sources/exclusion-corpus.jsonl"
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        row = json.loads(line)
-        corpus[row["text"]] = row["sources"]
-    vocab = json.loads((OUT / "sources/vocab-used.json").read_text(encoding="utf-8"))
-    vocab_union = set()
-    for terms in vocab["buckets"].values():
-        vocab_union.update(terms)
-    scope = json.loads((OUT / "sources/exclusion-scope.json").read_text(encoding="utf-8"))
-    return corpus, vocab_union, scope
+_spec = importlib.util.spec_from_file_location("screening", HERE / "screening.py")
+_screening = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_screening)
+load_sources = _screening.load_sources
+norm_variants = _screening.norm_variants
+signature_of = _screening.signature_of
+write_artifact = _screening.write_artifact
 
 
-def norm_variants(text: str) -> list[str]:
-    """Source string plus its parentheses-stripped core (nv-cont-1 lesson)."""
-    out = [text]
-    if NOTE.search(text):
-        core = NOTE.sub("", text).strip()
-        if len(CJK.findall(core)) >= 4:
-            out.append(core)
-    return out
-
-
-def screen(cand: dict, corpus: dict, vocab: set[str], signatures: dict) -> dict:
-    reasons = []
-    texts = [t for t in cand.get("texts", []) if len(CJK.findall(t)) >= 4]
-    hits = []
-    for t in texts:
-        for src, sources in corpus.items():
-            # A note may interrupt the substring. Test stripped variants even
-            # when the original string has no containment match.
-            if any(t in variant or variant in t for variant in norm_variants(src)):
-                hits.append({"candidateText": t, "excluded": src,
-                             "sources": sources})
-                break
-    if hits:
-        reasons.append({"rule": "R1-substring", "hits": hits[:5],
-                        "hitCount": len(hits)})
-    terms = []
-    for key in ("characters", "locations", "tasks", "items", "terms"):
-        for v in cand.get(key, []) or []:
-            if v in vocab:
-                terms.append({"term": v, "field": key})
-    if terms:
-        reasons.append({"rule": "R2-vocabulary", "hits": terms})
-    kinds = sorted(f["kind"] for f in cand.get("facts", []) or [])
-    actors = {f.get("actor") for f in cand.get("facts", []) or [] if f.get("actor")}
-    time = cand.get("time") or {}
-    sig = f"{'+'.join(kinds) or 'none'}|{len(actors)}|{time.get('amount')}{time.get('unit')}"
-    if sig in signatures:
-        reasons.append({"rule": "R3-signature", "signature": sig,
-                        "matches": signatures[sig]})
-    return {"id": cand.get("id"), "verdict": "rejected" if reasons else "candidate",
-            "signature": sig, "reasons": reasons}
+def screen(cand, corpus, vocab, signatures, mode="new-world"):
+    return _screening.screen(cand, corpus, vocab, signatures, mode=mode)
 
 
 def parse_three_arm(path: pathlib.Path) -> list[dict]:
@@ -177,6 +132,10 @@ def main() -> int:
     paraphrase = {"id": "deriv-paraphrase-empty-5min",
                   "texts": ["檐下只剩风声，五分钟就这么过去，什么都没有改变。"],
                   "facts": [], "time": {"amount": 5, "unit": "minute"}}
+    # unit-renamed derivative of nv-empty-1: 5 minutes written as 300 seconds
+    unit_renamed = {"id": "deriv-unit-renamed-300s",
+                    "texts": ["檐下的风声一直没有停，时间就这么过去了。"],
+                    "facts": [], "time": {"amount": 300, "unit": "second"}}
     # synthetic fresh scenario: 3 actors, 2 locations, one task, unseen signature
     fresh = {"id": "synthetic-fresh-ok",
              "characters": ["寒枝", "沙行者", "砚台客"],
@@ -187,14 +146,15 @@ def main() -> int:
                        {"kind": "task_achieved", "actor": "b"},
                        {"kind": "sanity_changed", "actor": "c"}],
              "time": {"amount": 7, "unit": "minute"}}
-    extra = [screen(c, corpus, vocab, signatures) for c in (renamed, paraphrase, fresh)]
+    extra = [screen(c, corpus, vocab, signatures)
+             for c in (renamed, paraphrase, unit_renamed, fresh)]
 
     blocked = sum(1 for r in raw_check if r["verdict"] == "rejected")
-    deriv_ok = all(r["verdict"] == "rejected" for r in extra[:2])
-    fresh_ok = extra[2]["verdict"] == "candidate"
+    deriv_ok = all(r["verdict"] == "rejected" for r in extra[:3])
+    fresh_ok = extra[3]["verdict"] == "candidate"
     complete, independent_rules = baseline_checks(items, raw_check, scope)
     derivatives_signature_only = all(
-        [r["rule"] for r in row["reasons"]] == ["R3-signature"] for row in extra[:2])
+        [r["rule"] for r in row["reasons"]] == ["R3-signature"] for row in extra[:3])
     note_probe = screen(
         {"texts": ["寒枝从南堤来到旧坊"]},
         {"寒枝（测试注记）从南堤来到旧坊": ["regression-probe"]}, set(), {})
@@ -224,7 +184,8 @@ def main() -> int:
             "threeArmRejected": f"{blocked}/{len(items)}",
             "renamedDerivativeRejected": extra[0]["verdict"],
             "paraphraseDerivativeRejected": extra[1]["verdict"],
-            "syntheticFreshVerdict": extra[2]["verdict"],
+            "unitRenamedDerivativeRejected": extra[2]["verdict"],
+            "syntheticFreshVerdict": extra[3]["verdict"],
             "pass": ok,
         },
         "threeArm": raw_check,
@@ -236,8 +197,8 @@ def main() -> int:
             "新场景判定为 candidate 只表示未被这三条规则命中，不构成验收",
         ],
     }
-    (OUT / "selftest-report.json").write_text(
-        json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    write_artifact(OUT / "selftest-report.json", 
+        json.dumps(report, ensure_ascii=False, indent=1) + "\n")
 
     lines = ["# 排除规则自检（自动生成，勿手改）", "",
              f"工作树 HEAD：`{head}`；脚本 `tools/exclusion_selftest.py`。", "",
@@ -253,9 +214,10 @@ def main() -> int:
         lines.append(f"| `{r['id']}` | rejected | {r['verdict']} | {rules} |")
     for label, r in (("改名派生（nv-move-1 换名同形）", extra[0]),
                      ("改写派生（nv-empty-1 空点 5 分钟）", extra[1]),
-                     ("新场景（三条事实、7 分钟）", extra[2])):
+                     ("单位改名派生（5 分钟写成 300 秒）", extra[2]),
+                     ("新场景（三条事实、7 分钟）", extra[3])):
         rules = ", ".join(x["rule"] for x in r["reasons"]) or "（无）"
-        expected = "candidate" if r is extra[2] else "rejected"
+        expected = "candidate" if r is extra[3] else "rejected"
         lines.append(f"| {label} (`{r['id']}`) | {expected} | {r['verdict']} | {rules} |")
     lines += ["", f"十题完整性：{complete}；每题 R1/R3 独立命中：{independent_rules}；"
               f"派生仅 R3 命中：{derivatives_signature_only}；注记剥离回归：{note_ok}。"]
@@ -263,11 +225,12 @@ def main() -> int:
               f"（三臂 {blocked}/{len(items)} 被拦、两条派生均被拦、新场景未被误拦）。", "",
               "## 边界", ""]
     lines += [f"- {x}" for x in report["limits"]]
-    (OUT / "selftest-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    write_artifact(OUT / "selftest-report.md", "\n".join(lines) + "\n")
 
     print(f"head={head[:12]} corpus={len(corpus)} vocab={len(vocab)} items={len(items)} "
           f"blocked={blocked}/{len(items)} renamed={extra[0]['verdict']} "
-          f"paraphrase={extra[1]['verdict']} fresh={extra[2]['verdict']} PASS={ok}")
+          f"paraphrase={extra[1]['verdict']} unit-renamed={extra[2]['verdict']} "
+          f"fresh={extra[3]['verdict']} PASS={ok}")
     for r in raw_check:
         if r["verdict"] != "rejected":
             print("  MISSED", r["id"], r["signature"], r["reasons"])
