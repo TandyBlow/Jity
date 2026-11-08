@@ -50,7 +50,8 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `step6/references/` | 三题参照段落（人工写作，非模型输出）＋逐句来源表 |
 | `build_references.py` | 参照来源表的生成与路径校验 |
 | `step6/references/reference-paragraphs-v2.md` | 参照 v2：正文＋面板＋来源；删除语义越界，数值移入面板（仍为草稿，未作标尺） |
-| `step6/route-plan.md` | 段落生成路线方案：验收标准、A/B/C 路线、数据、排期、未决问题 |
+| `step6/route-plan.md` | 段落生成路线方案：验收标准（草稿未冻结）、A/B/C 路线、数据、排期、未决问题 |
+| `step6/context-audit.md` | 三题与现有数据库的上下文核查：缺玩家输入/上一段/触发事件，夹具只适合事实表达 |
 
 ## 复现
 
@@ -80,6 +81,7 @@ $PY -X utf8 experiments/world-components/parallel/scene_expression/measure_input
 ## 当前结论
 
 - 背景对照（A/B/C）：三臂均出现未授权动作（各 2 处，均为移动钥匙）；B、C 各新增两处目的地遗漏，A 无遗漏但以同一句钥匙动作构成事实错误；增补素材未显示叙事收益，自然度门槛 `not_evaluable`。
+- **叙事标尺：暂缺**。三题夹具只有状态变化，没有玩家输入、上一段叙事和触发事件；现有 `.local/` 数据库里的记录都是测试夹具（输入是“走到走廊”这类指令、叙事是机械句）。要定标尺须另取有完整上下文的真实片段（`step6/context-audit.md`）。
 - **整批文案验收：不合格**（产品负责人判定）。u240 逐事实生成＋直接拼接交不出合格段落；本轮不比较自然度，转入“能否生成合格段落”的路线方案（`step6/route-plan.md`）。
 
 ## 仓库约定
