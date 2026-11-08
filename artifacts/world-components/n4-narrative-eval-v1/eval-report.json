@@ -1,0 +1,629 @@
+{
+ "materials": {
+  "positives": 132,
+  "legitProbes": 528,
+  "mutations": 734,
+  "modelOutputs": 24
+ },
+ "results": {
+  "positives": {
+   "pass": 87,
+   "uncertain": 45,
+   "fail": 0,
+   "falsePositives": [],
+   "uncertain_rules": [
+    {
+     "id": "target:n4n-01",
+     "rules": [
+      "fabrication.item",
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-04",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-06",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-10",
+     "rules": [
+      "pov.innerOther"
+     ]
+    },
+    {
+     "id": "target:n4n-11",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-12",
+     "rules": [
+      "fact.moved.direction",
+      "fact.personality_changed.coverage"
+     ]
+    },
+    {
+     "id": "target:n4n-15",
+     "rules": [
+      "fact.moved.coverage",
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-17",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-18",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-24",
+     "rules": [
+      "fabrication.place"
+     ]
+    },
+    {
+     "id": "target:n4n-26",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-27",
+     "rules": [
+      "fabrication.item",
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-30",
+     "rules": [
+      "fact.sanity.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-32",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-34",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-36",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-37",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-40",
+     "rules": [
+      "fabrication.item"
+     ]
+    },
+    {
+     "id": "target:n4n-44",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    },
+    {
+     "id": "target:n4n-46",
+     "rules": [
+      "fact.moved.direction"
+     ]
+    }
+   ]
+  },
+  "legitProbes": {
+   "pass": 346,
+   "uncertain": 182,
+   "fail": 0,
+   "falsePositives": [],
+   "uncertain_byProbe": {
+    "scene-detail": 47,
+    "ellipsis-time": 45,
+    "pov-inner": 44,
+    "synonym": 46
+   }
+  },
+  "mutations": {
+   "swap-actor": {
+    "hit": 11,
+    "uncertain": 23,
+    "miss": 4,
+    "examples": [
+     {
+      "id": "swap-actor:n4n-33",
+      "why": [
+       {
+        "rule": "fact.moved.subject",
+        "verdict": "uncertain",
+        "factId": "f0",
+        "evidence": "正文没有写「沈砚」自己的移动短语"
+       }
+      ]
+     },
+     {
+      "id": "swap-actor:n4n-34",
+      "why": [
+       {
+        "rule": "fact.moved.subject",
+        "verdict": "uncertain",
+        "factId": "f0",
+        "evidence": "正文没有写「沈砚」自己的移动短语"
+       },
+       {
+        "rule": "fabrication.item",
+        "verdict": "uncertain",
+        "factId": null,
+        "span": "舟从潮渡回来，摸黑点亮桌角的蜡烛。木桌上",
+        "evidence": "物品表与场景里没有「黑点亮桌」"
+       }
+      ]
+     }
+    ]
+   },
+   "inner-thought-other": {
+    "hit": 132,
+    "uncertain": 0,
+    "miss": 0,
+    "examples": []
+   },
+   "goal-leak": {
+    "hit": 55,
+    "uncertain": 0,
+    "miss": 0,
+    "examples": []
+   },
+   "numeric-panel": {
+    "hit": 132,
+    "uncertain": 0,
+    "miss": 0,
+    "examples": []
+   },
+   "explicit-duration": {
+    "hit": 132,
+    "uncertain": 0,
+    "miss": 0,
+    "examples": []
+   },
+   "invented-name": {
+    "hit": 0,
+    "uncertain": 132,
+    "miss": 0,
+    "examples": [
+     {
+      "id": "invented-name:n4n-01",
+      "why": [
+       {
+        "rule": "fact.moved.direction",
+        "verdict": "uncertain",
+        "factId": "f0",
+        "span": "从石阶底下漫上来",
+        "evidence": "只有小地点/缩写层面的出发地，方向无法判定"
+       },
+       {
+        "rule": "fabrication.name",
+        "verdict": "uncertain",
+        "factId": null,
+        "span": "从黑暗里走出来。赵渡站在门口，没说话。",
+        "evidence": "像人名的未知词「赵渡站」出现 1 次，输入与场景里没有"
+       }
+      ]
+     },
+     {
+      "id": "invented-name:n4n-02",
+      "why": [
+       {
+        "rule": "fabrication.name",
+        "verdict": "uncertain",
+        "factId": null,
+        "span": "被海风吹得发僵。赵渡站在门口，没说话。",
+        "evidence": "像人名的未知词「赵渡站」出现 1 次，输入与场景里没有"
+       },
+       {
+        "rule": "fabrication.place",
+        "verdict": "uncertain",
+        "factId": null,
+        "span": "被海风吹得发僵。赵渡站在门口，没说话",
+        "evidence": "像地名的未知词「赵渡」，世界设定里没有"
+       }
+      ]
+     }
+    ]
+   },
+   "drop-fact": {
+    "hit": 42,
+    "uncertain": 24,
+    "miss": 18,
+    "examples": [
+     {
+      "id": "drop-fact:n4n-02",
+      "why": []
+     },
+     {
+      "id": "drop-fact:n4n-03",
+      "why": []
+     }
+    ]
+   },
+   "reverse-direction": {
+    "hit": 28,
+    "uncertain": 1,
+    "miss": 0,
+    "examples": [
+     {
+      "id": "reverse-direction:n4n-11",
+      "why": [
+       {
+        "rule": "fact.moved.direction",
+        "verdict": "uncertain",
+        "factId": "f0",
+        "evidence": "出发地与目的地都出现，但没有可判读的移动短语"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "modelOutputs": {
+   "rows": [
+    {
+     "id": "zero-shot:n4w-01",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "新增未保存事件：点亮铁链",
+      "铁盆/铁链不在世界物品表"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-02",
+     "checker": "fail",
+     "human": "fail",
+     "checkerFails": [
+      {
+       "rule": "fact.outcome.subject",
+       "verdict": "fail",
+       "factId": "f0",
+       "span": null,
+       "evidence": "结果事实的执行者「祁婶」整段未出现"
+      }
+     ],
+     "humanReasons": [
+      "人物归属错",
+      "必述外貌事实缺失",
+      "铜壶被烧得发白/被风撕碎属语义错"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-03",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "世界设定里没有巷子",
+      "铜铃出现在玻璃罩里，与世界物品不符"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-04",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "两处事实的人物归属都错",
+      "绳梯系在绳梯上属语义错"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-05",
+     "checker": "pass",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "结果动作与事实不符（翻出 vs 推向）"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-06",
+     "checker": "uncertain",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "重复句（弯腰摸了摸衣摆/手指已经结了一层薄冰）"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-07",
+     "checker": "uncertain",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "把风吹得发冷属语义错"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-08",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "无变化点上新增事件",
+      "风口岭的风口岭重复"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-09",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "理智方向与事实相反"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-10",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "下到云关驿之后又『往上走』，空间方向矛盾"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-11",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "无变化点上新增事件",
+      "同段自相矛盾"
+     ]
+    },
+    {
+     "id": "zero-shot:n4w-12",
+     "checker": "uncertain",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "结果动作被替换",
+      "捏造物品『冰箱』"
+     ]
+    },
+    {
+     "id": "slot-arm:n4w-01",
+     "checker": "pass",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-02",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "『铜壶烧得发软』属搭配错，需人工判断"
+     ]
+    },
+    {
+     "id": "slot-arm:n4w-03",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "世界里没有巷子（『夜里的巷子很暗』）；场景句重复"
+     ]
+    },
+    {
+     "id": "slot-arm:n4w-04",
+     "checker": "uncertain",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-05",
+     "checker": "pass",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-06",
+     "checker": "pass",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-07",
+     "checker": "uncertain",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-08",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "无变化点用了元叙述措辞，自然度需人工判断"
+     ]
+    },
+    {
+     "id": "slot-arm:n4w-09",
+     "checker": "pass",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-10",
+     "checker": "uncertain",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    },
+    {
+     "id": "slot-arm:n4w-11",
+     "checker": "pass",
+     "human": "uncertain",
+     "checkerFails": [],
+     "humanReasons": [
+      "元叙述措辞"
+     ]
+    },
+    {
+     "id": "slot-arm:n4w-12",
+     "checker": "uncertain",
+     "human": "pass",
+     "checkerFails": [],
+     "humanReasons": []
+    }
+   ],
+   "confusion": {
+    "agree": 5,
+    "falsePositive": 0,
+    "falseNegative": 1,
+    "missedUncertain": 6,
+    "abstain": 12
+   },
+   "falsePositiveDetail": [],
+   "falseNegativeDetail": [
+    {
+     "id": "zero-shot:n4w-05",
+     "checker": "pass",
+     "human": "fail",
+     "checkerFails": [],
+     "humanReasons": [
+      "结果动作与事实不符（翻出 vs 推向）"
+     ]
+    }
+   ],
+   "missedUncertainDetail": [
+    {
+     "id": "zero-shot:n4w-03",
+     "human": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-10",
+     "human": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-02",
+     "human": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-03",
+     "human": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-08",
+     "human": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-11",
+     "human": "uncertain"
+    }
+   ],
+   "abstainDetail": [
+    {
+     "id": "zero-shot:n4w-01",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-04",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-06",
+     "human": "uncertain",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-07",
+     "human": "uncertain",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-08",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-09",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-11",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "zero-shot:n4w-12",
+     "human": "fail",
+     "checker": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-04",
+     "human": "pass",
+     "checker": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-07",
+     "human": "pass",
+     "checker": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-10",
+     "human": "pass",
+     "checker": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-12",
+     "human": "pass",
+     "checker": "uncertain"
+    }
+   ],
+   "note": "人工标签为 assistant-draft（待人工复核）；这里只比较机器与草稿标签，不能当作判分器已通过验收"
+  }
+ },
+ "summary": {
+  "positives_falsePositiveRate": "0/132",
+  "legitProbes_falsePositiveRate": "0/528",
+  "mutations_detected": "532/734",
+  "modelOutputs_agreement": "5/24",
+  "verdict_ofJudge": "未通过人工复核：标签是草稿，误报/漏报数字只能说明当前规则状态"
+ }
+}
