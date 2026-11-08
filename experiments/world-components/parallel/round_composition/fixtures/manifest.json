@@ -1,0 +1,194 @@
+{
+ "version": "round-composition-manifest-v0.1",
+ "experiment": "C7 / R11 offline round composition",
+ "recordedAt": "2026-11-08T05:57:50.894753+00:00",
+ "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
+ "git": {
+  "branch": "exp/c-round-composition",
+  "head": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+  "headSubject": "design player-attention selection: six paired items, fixed rule gap 0/6",
+  "dirty": true
+ },
+ "environment": {
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0"
+ },
+ "sources": {
+  "N1_fact_extraction": [
+   {
+    "path": "experiments/world-components/narration_pipeline.py",
+    "sha256": "5f8e311d21a279f735bb84574dbb2fb1a6f00d641460263728db8f61e6c06866",
+    "bytes": 101408
+   }
+  ],
+  "N2_selection_rule": [
+   {
+    "path": "experiments/world-components/n2_perspective.py",
+    "sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+    "bytes": 20076
+   }
+  ],
+  "N3_organization_check": [
+   {
+    "path": "experiments/world-components/n3_organize.py",
+    "sha256": "12b6db4728505105a5805ed61c09c540f56c989755ad0b9688147346a4254913",
+    "bytes": 16551
+   }
+  ],
+  "N4_0_scene_and_packing": [
+   {
+    "path": "experiments/world-components/n4_input_renderer/__init__.py",
+    "sha256": "940564933d4460165a4b236f074b4d9b0a2aa4f0506ee79a4ddcb093d270bac3",
+    "bytes": 761
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/packer.py",
+    "sha256": "6e5d1e5e815740f49baa3d751fd455b2a3192499888f11e9472ddd0d0b67a1b7",
+    "bytes": 11696
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/renderer.py",
+    "sha256": "e43b28c3ec86394c3fefe0cfbb5395d4c470a0dd4819d493d52e0146cb947227",
+    "bytes": 13426
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/scene_context.py",
+    "sha256": "57d71610864c33084b90c81bf2b78a7afd3bcac3077e203b1cf9dafa35cc8a78",
+    "bytes": 7975
+   }
+  ],
+  "N5_rule_v2_aligner": [
+   {
+    "path": "experiments/world-components/n4_corpus_v2/eval_n4_v2.py",
+    "sha256": "b283c1a4c0c9e4eca3cec7065acdc1957760653b07cc19bcb8c7d6aabdfd6ea1",
+    "bytes": 21727
+   }
+  ],
+  "N5_rule_v7_recognizer_crosscheck": [
+   {
+    "path": "experiments/world-components/n4_corpus/corpus_check.py",
+    "sha256": "27197e681d978c7c6817e1cf67464ff5d072c7c43d97734df62ca61287088655",
+    "bytes": 29074
+   }
+  ],
+  "N3_plan_baselines_and_interface": [
+   {
+    "path": "experiments/world-components/n2_selection/n3_plan.py",
+    "sha256": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+    "bytes": 6618
+   },
+   {
+    "path": "experiments/world-components/n2_selection/n3_n4_fixture.py",
+    "sha256": "8c4d1943321429d5cfeb97bcdf28b563ccabeeb5c4c5490229b82f3d5e6a79d7",
+    "bytes": 38178
+   }
+  ],
+  "legacy_renderer_units": [
+   {
+    "path": "experiments/world-components/n4_corpus/n4_render.py",
+    "sha256": "b436d4b23ef059832740701fed83583a40b5809fe0e07fa19395ae7a98f352cd",
+    "bytes": 6380
+   }
+  ],
+  "contracts_and_rules": [
+   {
+    "path": "design/world-engine-reports/components/component-contracts.md",
+    "sha256": "17a99ae5f90603865848393b62f25427f5cf67c648a576e6b2be036a59c471c2",
+    "bytes": 42699
+   },
+   {
+    "path": "design/world-engine-reports/components/n4-input-packing.md",
+    "sha256": "04c9683b9bcf1fcc05fc5f878fd34a3de97e46c7103cc44d0a9d34e851f08a89",
+    "bytes": 9263
+   },
+   {
+    "path": "design/world-engine-reports/components/n4-narrative-dev.md",
+    "sha256": "d3b41f411fd6433df0be26f09a7af79edc3abc6bef3d80c60eeacb6053552e07",
+    "bytes": 50294
+   },
+   {
+    "path": "design/world-engine-reports/components/n2-annotation-rubric.md",
+    "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631",
+    "bytes": 5827
+   }
+  ],
+  "previous_composition_archives": [
+   {
+    "path": "artifacts/world-components/n1-n5-composition-r1.json",
+    "sha256": "2e7bcf42a477614b1a585ed497d368a8fd726008590abd7363ba94f4da05ae59",
+    "bytes": 5145
+   },
+   {
+    "path": "artifacts/world-components/n1-n5-composition-v2-r1.json",
+    "sha256": "fcdc4a35f555028aef3f386ee635295e01b45435416557f2a4776caaa4b37e56",
+    "bytes": 9226
+   },
+   {
+    "path": "artifacts/world-components/n4-input-packing-r1.json",
+    "sha256": "6feff5fbb18a6e86053523d84cc3fb6e6fe08510bdc20c111a5bf19dcbc650a9",
+    "bytes": 3599
+   }
+  ],
+  "this_experiment": [
+   {
+    "path": "experiments/world-components/parallel/round_composition/compose.py",
+    "sha256": "0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020",
+    "bytes": 24229
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_fixtures.py",
+    "sha256": "c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735",
+    "bytes": 14646
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/cases.json",
+    "sha256": "b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df",
+    "bytes": 164769
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/mocks.json",
+    "sha256": "6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627",
+    "bytes": 6440
+   }
+  ]
+ },
+ "outputs": [
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-run.json",
+   "sha256": "b594c0085d03cc783938d29570a35a02aacb748e155fecf06c67c79b8444dc8d",
+   "bytes": 172858
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
+   "sha256": "a991cbb4de3a0c11d3c0183faad901cc02cd39fe8d47ce48878413c363753004",
+   "bytes": 172865
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-b.json",
+   "sha256": "6436c42286ffe7f076d62cd9b70aef9e6f324aef3a94e3fe6ce6e665f254d026",
+   "bytes": 172866
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",
+   "sha256": "f93d847da324ca87478916891415637985d757db7a8fa963821f35b5dedbb4c2",
+   "bytes": 282
+  }
+ ],
+ "missing": [],
+ "n5Rule": {
+  "gating": "eval_n4_v2.judge_row (frozen v2 holdout gate): G1 alignment/must coverage, G2 residue name+goal scan, G3 exact time value, G4 conflict names (rowId-gated), G5 same-name bare (rowId-gated), G6 no truncation. P1/P2 pronoun gates are aggregate-level and not used per case.",
+  "recordedOnly": "corpus_check.check_narration via narration_pipeline.verify_text (v7 recognizer): must-coverage and unrecognized content are review-class, no truncation rule. Archived as n5CrossCheck; never gates, never auto-passes.",
+  "semanticReview": "not run in this experiment"
+ },
+ "gateScope": {
+  "G4_executed": false,
+  "G5_executed": false,
+  "G4_G5_reason": "only fire on rowId containing 'conflict'/'same-name'; no such case is part of this composition",
+  "G3_executed": true,
+  "G3_reason": "contract-time-conflict carries a time fact"
+ },
+ "tokenGate": {
+  "applied": false,
+  "reason": "mock ports take text, so no N4 token limit applies here; N4.0 packs measure 287-390 tokens with the T5 tokenizer in the archived n4-input-packing-r1 record, and no checkpoint is present in this worktree to recount"
+ }
+}

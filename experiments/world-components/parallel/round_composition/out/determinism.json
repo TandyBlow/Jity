@@ -1,0 +1,15 @@
+{
+ "version": "round-composition-determinism-v0.1",
+ "compared": [
+  "out\\determinism-a.json",
+  "out\\determinism-b.json"
+ ],
+ "strippedFields": [
+  "runAt",
+  "timings",
+  "*.stages.*.ms",
+  "*.stages.*.attempts[].ms"
+ ],
+ "identicalAfterStrip": true,
+ "firstDifference": null
+}

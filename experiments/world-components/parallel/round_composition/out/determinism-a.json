@@ -1,0 +1,6590 @@
+{
+ "version": "round-composition-v0.1",
+ "purpose": "offline round composition over the frozen N1/N2/N3/N4.0/N5 interfaces with MOCK selection/organization/sentence ports; verifies normal, module-failure and N5-rejection paths, fact provenance, retries, fallbacks and composer timing",
+ "caveat": "Mock ports are scripted JSON. Nothing here measures a model; no N4/N5 quality claim is made. 'ok' means the frozen hard gates passed on a scripted text. Semantic review is not run.",
+ "runAt": "2026-11-08T05:57:48.168749+00:00",
+ "environment": {
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "timingScope": "composer only; mock ports return immediately; no model inference"
+ },
+ "config": {
+  "maxSentenceAttempts": 2
+ },
+ "inputs": {
+  "cases": {
+   "path": "experiments\\world-components\\parallel\\round_composition\\fixtures\\cases.json",
+   "sha256": "b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df",
+   "version": "round-composition-cases-v0.1"
+  },
+  "mocks": {
+   "path": "experiments\\world-components\\parallel\\round_composition\\fixtures\\mocks.json",
+   "sha256": "6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627",
+   "version": "round-composition-mocks-v0.1",
+   "source": "scripted mock port responses; NOT model outputs and NOT evidence of model capability"
+  }
+ },
+ "summary": {
+  "total": 19,
+  "statusCounts": {
+   "ok": 4,
+   "incomplete": 2,
+   "stopped-at-selection": 4,
+   "stopped-at-organization": 2,
+   "n5-rejected": 4,
+   "sentence-port-failed": 1,
+   "n5-false-pass": 1,
+   "empty-output": 1
+  },
+  "expectMet": 19,
+  "retried": 7,
+  "fallbacksUsed": 4
+ },
+ "cases": [
+  {
+   "caseId": "normal-move-task",
+   "title": "移动 + 任务达成",
+   "expect": "ok",
+   "stages": {
+    "perspective": {
+     "ms": 0.021,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.117,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.068,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.045,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.059,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [],
+     "environment": {
+      "weather": "细雨",
+      "wind": "高",
+      "light": "昏暗",
+      "time": "傍晚",
+      "atmosphere": "海雾贴着塔壁"
+     }
+    },
+    "n4Input": {
+     "ms": 0.112,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧；细雨；傍晚；高；昏暗；海雾贴着塔壁\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 228
+    },
+    "n4n5": {
+     "ms": 1.497,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "normal-move-task",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧；细雨；傍晚；高；昏暗；海雾贴着塔壁\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 1.469,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。。"
+        },
+        "pass": true
+       },
+       "fixtureAnnotations": {},
+       "decision": "accept"
+      }
+     ],
+     "retryCount": 0,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 2.266,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": []
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.004,
+     "used": false
+    }
+   },
+   "notes": "N4.0 scene overlay supplied explicitly; N5 has no time fact. The overlay values are appended to 地点外貌 without labels, so they must already match the scene (see README gaps).",
+   "modelCalled": true,
+   "status": "ok",
+   "reason": null,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧；细雨；傍晚；高；昏暗；海雾贴着塔壁\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 4.318
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "normal-two-actors",
+   "title": "同地可见动作（他人移动）",
+   "expect": "ok",
+   "stages": {
+    "perspective": {
+     "ms": 0.024,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.116,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "moved",
+       "entityId": "char_pb",
+       "name": "管线乙",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pb",
+        "field": "positionSet"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.061,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "moved",
+        "entityId": "char_pb",
+        "name": "管线乙",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pb",
+         "field": "positionSet"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": true
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 1,
+       "may": 1,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "moved",
+        "class": "may",
+        "ground": "co-location",
+        "selected": true,
+        "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.037,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "moved",
+        "entityId": "char_pb",
+        "name": "管线乙",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pb",
+         "field": "positionSet"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲",
+       "char_pb": "管线乙"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0"
+        ],
+        "coreference": [],
+        "time": null
+       },
+       {
+        "index": 1,
+        "factIds": [
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.068,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.104,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 231
+    },
+    "n4n5": {
+     "ms": 0.843,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "normal-two-actors",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.827,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。。"
+        },
+        "pass": true
+       },
+       "fixtureAnnotations": {},
+       "decision": "accept"
+      }
+     ],
+     "retryCount": 0,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.816,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": []
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.003,
+     "used": false
+    }
+   },
+   "notes": "N2 visibleOtherActions=True; the other actor's move is may.",
+   "modelCalled": true,
+   "status": "ok",
+   "reason": null,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_pb",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pb",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      1
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 2.141
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "normal-inner-change",
+   "title": "外貌 + 个性 + 理智",
+   "expect": "ok",
+   "stages": {
+    "perspective": {
+     "ms": 0.017,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "管线镇",
+      "atPath": [
+       "loc_1"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.075,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 3,
+     "facts": [
+      {
+       "kind": "appearance_changed",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "text": "外袍被雨浸透",
+       "op": "added",
+       "at": "管线镇",
+       "source": {
+        "entityId": "char_pa",
+        "changeId": "ch_a1",
+        "field": "appearanceChanges"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_1"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "personality_changed",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "text": "话少了许多",
+       "op": "added",
+       "at": "管线镇",
+       "source": {
+        "entityId": "char_pa",
+        "changeId": "ch_p1",
+        "field": "personalityChanges"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_1"
+       ],
+       "ref": 1
+      },
+      {
+       "kind": "sanity_changed",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": 10,
+       "to": 14,
+       "at": "管线镇",
+       "source": {
+        "entityId": "char_pa",
+        "field": "sanitySet"
+       },
+       "factId": "f2",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_1"
+       ],
+       "ref": 2
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.072,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "appearance_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "text": "外袍被雨浸透",
+        "op": "added",
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "changeId": "ch_a1",
+         "field": "appearanceChanges"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "personality_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "text": "话少了许多",
+        "op": "added",
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "changeId": "ch_p1",
+         "field": "personalityChanges"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 1
+       },
+       {
+        "kind": "sanity_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": 10,
+        "to": 14,
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "field": "sanitySet"
+        },
+        "factId": "f2",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 2
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "管线镇",
+       "atPath": [
+        "loc_1"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1",
+       "f2"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 1,
+       "may": 2,
+       "invisible": 0,
+       "selected": 3,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "appearance_changed",
+        "class": "may",
+        "ground": "self-state",
+        "selected": true,
+        "reason": "视角人物自己的描述类变化，可见但可省"
+       },
+       {
+        "factId": "f1",
+        "kind": "personality_changed",
+        "class": "may",
+        "ground": "self-state",
+        "selected": true,
+        "reason": "视角人物自己的描述类变化，可见但可省"
+       },
+       {
+        "factId": "f2",
+        "kind": "sanity_changed",
+        "class": "must",
+        "ground": "self-safety",
+        "selected": true,
+        "reason": "视角人物自己的理智变化（安全），必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.031,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "appearance_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "text": "外袍被雨浸透",
+        "op": "added",
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "changeId": "ch_a1",
+         "field": "appearanceChanges"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "personality_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "text": "话少了许多",
+        "op": "added",
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "changeId": "ch_p1",
+         "field": "personalityChanges"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 1
+       },
+       {
+        "kind": "sanity_changed",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": 10,
+        "to": 14,
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pa",
+         "field": "sanitySet"
+        },
+        "factId": "f2",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 2
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1",
+         "f2"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.058,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.094,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜外貌｜管线甲｜外袍被雨浸透\nf1｜行为倾向｜管线甲｜话少了许多\nf2｜理智｜管线甲｜上升\n分组：\nG1｜f0 f1 f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 226
+    },
+    "n4n5": {
+     "ms": 0.763,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "normal-inner-change",
+        "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜外貌｜管线甲｜外袍被雨浸透\nf1｜行为倾向｜管线甲｜话少了许多\nf2｜理智｜管线甲｜上升\n分组：\nG1｜f0 f1 f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.748,
+       "response": {
+        "text": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1",
+          "f2"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。。。"
+        },
+        "pass": true
+       },
+       "fixtureAnnotations": {},
+       "decision": "accept"
+      }
+     ],
+     "retryCount": 0,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.521,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": [
+       "sentence '管线甲的精神值从10升到了14' not fully covered by plan recognizers (covered 11/15) — unrecognized content, needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.002,
+     "used": false
+    }
+   },
+   "notes": "All three facts are selected; the text follows the frozen N5 frames.",
+   "modelCalled": true,
+   "status": "ok",
+   "reason": null,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜外貌｜管线甲｜外袍被雨浸透\nf1｜行为倾向｜管线甲｜话少了许多\nf2｜理智｜管线甲｜上升\n分组：\nG1｜f0 f1 f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "changeId": "ch_a1",
+      "field": "appearanceChanges"
+     },
+     "at": "管线镇",
+     "atPath": [
+      "loc_1"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "personality_changed",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "changeId": "ch_p1",
+      "field": "personalityChanges"
+     },
+     "at": "管线镇",
+     "atPath": [
+      "loc_1"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "sanitySet"
+     },
+     "at": "管线镇",
+     "atPath": [
+      "loc_1"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 1.695
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n1-unregistered",
+   "title": "N1 未注册实体",
+   "expect": "incomplete",
+   "stages": {
+    "perspective": {
+     "ms": 0.014,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "管线镇",
+      "atPath": [
+       "loc_1"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.03,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 0,
+     "facts": [],
+     "diagnostics": [
+      {
+       "code": "entity-unregistered",
+       "entityId": "char_x"
+      }
+     ],
+     "blocking": [
+      {
+       "code": "entity-unregistered",
+       "entityId": "char_x"
+      }
+     ]
+    }
+   },
+   "notes": "N1 entity-unregistered is a blocking diagnostic.",
+   "modelCalled": false,
+   "status": "incomplete",
+   "reason": "n1-cannot-express",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "timings": {
+    "totalMs": 0.054
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-perspective",
+   "title": "视角人物不在册",
+   "expect": "incomplete",
+   "stages": {
+    "perspective": {
+     "ms": 0.006,
+     "request": {
+      "type": "protagonist",
+      "entityId": "char_missing"
+     },
+     "status": "stopped",
+     "perspective": null,
+     "problems": [
+      "perspective-subject-unregistered:char_missing"
+     ]
+    }
+   },
+   "notes": "resolve_perspective stops before N1.",
+   "modelCalled": false,
+   "status": "incomplete",
+   "reason": "perspective-unresolvable",
+   "timings": {
+    "totalMs": 0.01
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n2-invalid",
+   "title": "N2 未知事实引用",
+   "expect": "stopped-at-selection",
+   "stages": {
+    "perspective": {
+     "ms": 0.013,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.273,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.089,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f99"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [
+       "f99"
+      ],
+      "missingMust": [
+       "f1"
+      ],
+      "invisible": [
+       "f99"
+      ],
+      "shape": "ok"
+     }
+    }
+   },
+   "notes": "The composer validates the selection against N1 ids.",
+   "modelCalled": false,
+   "status": "stopped-at-selection",
+   "reason": "unknown-fact-references",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "timings": {
+    "totalMs": 0.42
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n2-missing-must",
+   "title": "N2 漏掉必述事实",
+   "expect": "stopped-at-selection",
+   "stages": {
+    "perspective": {
+     "ms": 0.02,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.094,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.05,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [
+       "f0"
+      ],
+      "invisible": [],
+      "shape": "ok"
+     }
+    }
+   },
+   "notes": "must (moved) is missing from selectedFactIds.",
+   "modelCalled": false,
+   "status": "stopped-at-selection",
+   "reason": "missing-must-facts",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "timings": {
+    "totalMs": 0.188
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n2-empty",
+   "title": "N2 空选择",
+   "expect": "stopped-at-selection",
+   "stages": {
+    "perspective": {
+     "ms": 0.024,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.077,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.064,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": []
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [
+       "f0",
+       "f1"
+      ],
+      "invisible": [],
+      "shape": "ok"
+     }
+    }
+   },
+   "notes": "An empty narration is not success.",
+   "modelCalled": false,
+   "status": "stopped-at-selection",
+   "reason": "missing-must-facts",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "timings": {
+    "totalMs": 0.191
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n3-coverage",
+   "title": "N3 计划漏事实",
+   "expect": "stopped-at-organization",
+   "stages": {
+    "perspective": {
+     "ms": 0.019,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.079,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.048,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.037,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": [
+       "plan ids != selected ids"
+      ]
+     }
+    }
+   },
+   "notes": "check_plan_v3: plan ids != selected ids.",
+   "modelCalled": false,
+   "status": "stopped-at-organization",
+   "reason": "plan-invariant-violation",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "timings": {
+    "totalMs": 0.214
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n3-unknown",
+   "title": "N3 计划未知引用",
+   "expect": "stopped-at-organization",
+   "stages": {
+    "perspective": {
+     "ms": 0.013,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.066,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.056,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.034,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1",
+         "f99"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": [
+       "plan ids != selected ids",
+       "unknown factId f99 in sentence group"
+      ]
+     }
+    }
+   },
+   "notes": "check_plan_v3: unknown factId in a sentence group.",
+   "modelCalled": false,
+   "status": "stopped-at-organization",
+   "reason": "plan-invariant-violation",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "timings": {
+    "totalMs": 0.192
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "retry-n5-success",
+   "title": "N5 失败后重生成功",
+   "expect": "ok",
+   "stages": {
+    "perspective": {
+     "ms": 0.012,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.065,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.043,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.035,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.077,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.176,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.347,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "retry-n5-success",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.184,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f1:task_achieved"
+         ],
+         "residue": "。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "retry-n5-success",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "uncovered:f1:task_achieved"
+       },
+       "ms": 0.122,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。。"
+        },
+        "pass": true
+       },
+       "fixtureAnnotations": {},
+       "decision": "accept"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.249,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": []
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.003,
+     "used": false
+    }
+   },
+   "notes": "Two sentence-mock attempts; the second is accepted.",
+   "modelCalled": true,
+   "status": "ok",
+   "reason": null,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 1.1
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "reject-n5",
+   "title": "N5 两次拒绝 + 回退",
+   "expect": "n5-rejected",
+   "stages": {
+    "perspective": {
+     "ms": 0.018,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.089,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.053,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.038,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 2.084,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.099,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.229,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "reject-n5",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.129,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f1:task_achieved"
+         ],
+         "residue": "。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "reject-n5",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "uncovered:f1:task_achieved"
+       },
+       "ms": 0.071,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
+        "finishReason": "length"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
+       "finishReason": "length",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": false
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.184,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": []
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.035,
+     "used": true,
+     "reason": "n5-rejected",
+     "source": "narration_pipeline.generate_reference_text",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "n5": {
+      "pass": true,
+      "gates": {
+       "G1_alignment": true,
+       "G2_no_fabrication": true,
+       "G3_time": true,
+       "G6_no_truncation": true
+      },
+      "problems": []
+     },
+     "note": "program template, not a model output; the case status stays the failure"
+    }
+   },
+   "notes": "Attempt 1 uncovered; attempt 2 truncated. Fallback text is recorded separately and is not a model success.",
+   "modelCalled": true,
+   "status": "n5-rejected",
+   "reason": "failed-gates:G6_no_truncation",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": false
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 3.036
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n5-extra-actor",
+   "title": "N5 额外行动者提及",
+   "expect": "n5-rejected",
+   "stages": {
+    "perspective": {
+     "ms": 0.012,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.067,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.057,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.027,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.052,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.075,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.202,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "fail-n5-extra-actor",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.114,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": false,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "residue-name:管线甲",
+          "residue-name:管线甲"
+         ],
+         "residue": "。。管线甲站在原地没动。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "fail-n5-extra-actor",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "residue-name:管线甲; residue-name:管线甲"
+       },
+       "ms": 0.064,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": false,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "residue-name:管线甲",
+          "residue-name:管线甲"
+         ],
+         "residue": "。。管线甲站在原地没动。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.237,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": [
+       "sentence '管线甲站在原地没动' not fully covered by plan recognizers (covered 0/9) — unrecognized content, needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.003,
+     "used": true,
+     "reason": "n5-rejected",
+     "source": "narration_pipeline.generate_reference_text",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "n5": {
+      "pass": true,
+      "gates": {
+       "G1_alignment": true,
+       "G2_no_fabrication": true,
+       "G3_time": true,
+       "G6_no_truncation": true
+      },
+      "problems": []
+     },
+     "note": "program template, not a model output; the case status stays the failure"
+    }
+   },
+   "notes": "G2 residue-name: the third sentence mentions the actor again outside any matched span.",
+   "modelCalled": true,
+   "status": "n5-rejected",
+   "reason": "residue-name:管线甲; residue-name:管线甲",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": false,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "residue-name:管线甲",
+     "residue-name:管线甲"
+    ],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 0.867
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-sentence-port",
+   "title": "成句端口超时",
+   "expect": "sentence-port-failed",
+   "stages": {
+    "perspective": {
+     "ms": 0.013,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.077,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.053,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.033,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.06,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.174,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.059,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "fail-sentence-port",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.026,
+       "portError": {
+        "code": "model-timeout",
+        "detail": "scripted sentence-port timeout (attempt 1)"
+       },
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "fail-sentence-port",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "port-error:model-timeout"
+       },
+       "ms": 0.007,
+       "portError": {
+        "code": "model-timeout",
+        "detail": "scripted sentence-port timeout (attempt 2)"
+       },
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "fallback": {
+     "ms": 0.005,
+     "used": true,
+     "reason": "sentence-port-failed",
+     "source": "narration_pipeline.generate_reference_text",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "n5": {
+      "pass": true,
+      "gates": {
+       "G1_alignment": true,
+       "G2_no_fabrication": true,
+       "G3_time": true,
+       "G6_no_truncation": true
+      },
+      "problems": []
+     },
+     "note": "program template, not a model output; the case status stays the failure"
+    }
+   },
+   "notes": "Both attempts raise model-timeout; the fallback is recorded.",
+   "modelCalled": true,
+   "status": "sentence-port-failed",
+   "reason": "model-timeout",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": null,
+    "problems": null,
+    "covered": null,
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 0.684
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "contract-time-conflict",
+   "title": "N4.0 模糊时间 vs N5 精确时间",
+   "expect": "n5-rejected",
+   "stages": {
+    "perspective": {
+     "ms": 0.015,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.08,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 3,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      },
+      {
+       "kind": "time",
+       "amount": 8,
+       "unit": "minute",
+       "at": null,
+       "source": {
+        "timeAdvance": true
+       },
+       "factId": "f2",
+       "ref": 2
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.048,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       },
+       {
+        "kind": "time",
+        "amount": 8,
+        "unit": "minute",
+        "at": null,
+        "source": {
+         "timeAdvance": true
+        },
+        "factId": "f2",
+        "ref": 2
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1",
+       "f2"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 1,
+       "invisible": 0,
+       "selected": 3,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       },
+       {
+        "factId": "f2",
+        "kind": "time",
+        "class": "may",
+        "ground": "global-time",
+        "selected": true,
+        "reason": "全局事实，可写可省"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.033,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       },
+       {
+        "kind": "time",
+        "amount": 8,
+        "unit": "minute",
+        "at": null,
+        "source": {
+         "timeAdvance": true
+        },
+        "factId": "f2",
+        "ref": 2
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1",
+         "f2"
+        ],
+        "coreference": [],
+        "time": {
+         "amount": 8,
+         "unit": "minute"
+        }
+       }
+      ],
+      "edges": {
+       "consecutive-time": true
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.048,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.076,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 236
+    },
+    "n4n5": {
+     "ms": 1.697,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "contract-time-conflict",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 1.458,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": false,
+         "G4_conflict_names": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f2:time"
+         ],
+         "residue": "。。过了一会儿。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "contract-time-conflict",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "uncovered:f2:time"
+       },
+       "ms": 0.197,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": false,
+         "G4_conflict_names": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f2:time"
+         ],
+         "residue": "。。过了一会儿。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 1.47,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": [
+       "sentence '过了一会儿' not fully covered by plan recognizers (covered 0/5) — unrecognized content, needs review",
+       "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.004,
+     "used": false,
+     "reason": "n5-rejected",
+     "unavailableReason": "disabled-for-case"
+    }
+   },
+   "notes": "The mock text follows N4.0 (no exact duration); the frozen v2 N5 G3 fails. Fallback disabled so the exact-time template is not presented as a compliant result.",
+   "modelCalled": true,
+   "status": "n5-rejected",
+   "reason": "uncovered:f2:time",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f2",
+     "kind": "time",
+     "entityId": null,
+     "entityGroup": null,
+     "source": {
+      "timeAdvance": true
+     },
+     "at": null,
+     "atPath": null,
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": false,
+     "G2_no_fabrication": true,
+     "G3_time": false,
+     "G4_conflict_names": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "uncovered:f2:time"
+    ],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 3.555
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "n5-false-pass-unregistered-actor",
+   "title": "N5 漏掉新增具名人物",
+   "expect": "n5-false-pass",
+   "stages": {
+    "perspective": {
+     "ms": 0.022,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.098,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.06,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.037,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.057,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.107,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.157,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "n5-false-pass-unregistered-actor",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.142,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
+        "finishReason": "eos",
+        "annotations": {
+         "addsUnregisteredEntity": "管线丙",
+         "addsEvent": true
+        }
+       },
+       "output": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": true,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0",
+          "f1"
+         ],
+         "pronounUsed": false,
+         "problems": [],
+         "residue": "。。这时管线丙从巷口走来。"
+        },
+        "pass": true
+       },
+       "fixtureAnnotations": {
+        "addsUnregisteredEntity": "管线丙",
+        "addsEvent": true
+       },
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 0,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.252,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": [
+       "sentence '这时管线丙从巷口走来' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.012,
+     "used": false,
+     "reason": "n5-false-pass",
+     "unavailableReason": "disabled-for-case"
+    }
+   },
+   "notes": "The sentence mock declares addsUnregisteredEntity; judge_row returns pass. Recorded as an N5 coverage failure.",
+   "modelCalled": true,
+   "status": "n5-false-pass",
+   "reason": "unregistered-entity-not-gated",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 0.878
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-sentence-empty",
+   "title": "成句返回空文本",
+   "expect": "empty-output",
+   "stages": {
+    "perspective": {
+     "ms": 0.017,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.082,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.055,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.033,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_1"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.057,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.085,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 210
+    },
+    "n4n5": {
+     "ms": 0.031,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "fail-sentence-empty",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.007,
+       "response": {
+        "text": "",
+        "finishReason": "eos"
+       },
+       "output": "",
+       "finishReason": "eos",
+       "n5": {
+        "pass": false,
+        "gates": {},
+        "align": {
+         "covered": [],
+         "problems": [
+          "empty-output"
+         ]
+        }
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "fail-sentence-empty",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "empty-output"
+       },
+       "ms": 0.005,
+       "response": {
+        "text": "   ",
+        "finishReason": "eos"
+       },
+       "output": "   ",
+       "finishReason": "eos",
+       "n5": {
+        "pass": false,
+        "gates": {},
+        "align": {
+         "covered": [],
+         "problems": [
+          "empty-output"
+         ]
+        }
+       },
+       "fixtureAnnotations": {},
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.321,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "   ",
+     "result": {
+      "status": "checked",
+      "fails": [
+       "mustExpress [0, 1] not covered by planRefs"
+      ],
+      "semanticUncertain": [
+       "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.005,
+     "used": true,
+     "reason": "empty-output",
+     "source": "narration_pipeline.generate_reference_text",
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "n5": {
+      "pass": true,
+      "gates": {
+       "G1_alignment": true,
+       "G2_no_fabrication": true,
+       "G3_time": true,
+       "G6_no_truncation": true
+      },
+      "problems": []
+     },
+     "note": "program template, not a model output; the case status stays the failure"
+    }
+   },
+   "notes": "Both attempts are empty; the template fallback is recorded separately.",
+   "modelCalled": true,
+   "status": "empty-output",
+   "reason": "empty-output",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_1"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {},
+    "problems": [
+     "empty-output"
+    ],
+    "covered": [],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 0.912
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fail-n2-invisible",
+   "title": "N2 选了不可见事实",
+   "expect": "stopped-at-selection",
+   "stages": {
+    "perspective": {
+     "ms": 0.017,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.09,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pb",
+       "name": "管线乙",
+       "goal": "补网",
+       "at": "管线镇",
+       "source": {
+        "entityId": "char_pb",
+        "taskId": "task_3"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_1"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.068,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "task_achieved",
+        "entityId": "char_pb",
+        "name": "管线乙",
+        "goal": "补网",
+        "at": "管线镇",
+        "source": {
+         "entityId": "char_pb",
+         "taskId": "task_3"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_1"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 1,
+       "may": 0,
+       "invisible": 1,
+       "selected": 1,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "invisible",
+        "ground": "other-location",
+        "selected": false,
+        "reason": "发生在视角人物感知范围之外，省略"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [
+       "f1"
+      ],
+      "shape": "ok"
+     }
+    }
+   },
+   "notes": "The other actor's non-tracked task is completed at 管线镇 while the viewpoint stands at 钟楼 -> invisible.",
+   "modelCalled": false,
+   "status": "stopped-at-selection",
+   "reason": "invisible-fact-selected",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "timings": {
+    "totalMs": 0.196
+   },
+   "expectMet": true
+  },
+  {
+   "caseId": "fallback-unsupported-kind",
+   "title": "回退不支持的新任务类型",
+   "expect": "n5-rejected",
+   "stages": {
+    "perspective": {
+     "ms": 0.014,
+     "request": {
+      "type": "protagonist"
+     },
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.103,
+     "program": "narration_pipeline.extract_facts",
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "subtask_added",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "找梯子",
+       "parentGoal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_9",
+        "field": "subtasksAdded"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.049,
+     "program": "n2_perspective.classify_facts + mock port",
+     "request": {
+      "facts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "subtask_added",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "找梯子",
+        "parentGoal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_9",
+         "field": "subtasksAdded"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "perspective": {
+       "type": "protagonist",
+       "entityId": "char_pa",
+       "at": "钟楼",
+       "atPath": [
+        "loc_2"
+       ]
+      },
+      "mayPolicy": "select",
+      "visibleOtherActions": false
+     },
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f1"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "refusals": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "subtask_added",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己接到的新任务，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [],
+      "missingMust": [],
+      "invisible": [],
+      "shape": "ok"
+     }
+    },
+    "organization": {
+     "ms": 0.034,
+     "program": "n3_organize.check_plan_v3 + mock port",
+     "request": {
+      "selectedFacts": [
+       {
+        "kind": "moved",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "from": "管线镇",
+        "to": "钟楼",
+        "at": "钟楼",
+        "heldBy": null,
+        "source": {
+         "entityId": "char_pa",
+         "field": "positionSet"
+        },
+        "factId": "f0",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "fromAmbiguous": false,
+        "toAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 0
+       },
+       {
+        "kind": "subtask_added",
+        "entityId": "char_pa",
+        "name": "管线甲",
+        "goal": "找梯子",
+        "parentGoal": "把铜铃挂回钟楼",
+        "at": "钟楼",
+        "source": {
+         "entityId": "char_pa",
+         "taskId": "task_9",
+         "field": "subtasksAdded"
+        },
+        "factId": "f1",
+        "entityGroup": "characters",
+        "nameAmbiguous": false,
+        "atAmbiguous": false,
+        "atPath": [
+         "loc_2"
+        ],
+        "ref": 1
+       }
+      ],
+      "names": {
+       "char_pa": "管线甲"
+      },
+      "genderHints": {},
+      "crossGroupGuard": true
+     },
+     "response": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1"
+        ],
+        "coreference": [],
+        "time": null
+       }
+      ],
+      "edges": {
+       "consecutive-time": false
+      }
+     },
+     "validation": {
+      "problems": []
+     }
+    },
+    "scene": {
+     "ms": 0.057,
+     "program": "n4_input_renderer.scene_context",
+     "status": "ok",
+     "reason": null,
+     "diagnostics": [
+      {
+       "code": "environment-field-missing",
+       "field": "time"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "weather"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "wind"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "light"
+      },
+      {
+       "code": "environment-field-missing",
+       "field": "atmosphere"
+      }
+     ],
+     "environment": null
+    },
+    "n4Input": {
+     "ms": 0.106,
+     "program": "n4_input_renderer.packer",
+     "version": "n4-input-pack-v0.1",
+     "status": "ok",
+     "code": null,
+     "detail": null,
+     "diagnostics": [],
+     "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+     "inputChars": 217
+    },
+    "n4n5": {
+     "ms": 0.663,
+     "program": "mock sentence port + eval_n4_v2.judge_row",
+     "attempts": [
+      {
+       "attempt": 1,
+       "request": {
+        "caseId": "fallback-unsupported-kind",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 1,
+        "feedback": null
+       },
+       "ms": 0.513,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f1:subtask_added"
+         ],
+         "residue": "。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "retry"
+      },
+      {
+       "attempt": 2,
+       "request": {
+        "caseId": "fallback-unsupported-kind",
+        "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+        "attempt": 2,
+        "feedback": "uncovered:f1:subtask_added"
+       },
+       "ms": 0.118,
+       "response": {
+        "text": "管线甲从管线镇来到了钟楼。",
+        "finishReason": "eos"
+       },
+       "output": "管线甲从管线镇来到了钟楼。",
+       "finishReason": "eos",
+       "n5": {
+        "gates": {
+         "G1_alignment": false,
+         "G2_no_fabrication": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "align": {
+         "covered": [
+          "f0"
+         ],
+         "pronounUsed": false,
+         "problems": [
+          "uncovered:f1:subtask_added"
+         ],
+         "residue": "。"
+        },
+        "pass": false
+       },
+       "fixtureAnnotations": {},
+       "decision": "stop"
+      }
+     ],
+     "retryCount": 1,
+     "maxAttempts": 2,
+     "semanticReview": "not-run",
+     "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
+    },
+    "n5CrossCheck": {
+     "ms": 0.178,
+     "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
+     "text": "管线甲从管线镇来到了钟楼。",
+     "result": {
+      "status": "checked",
+      "fails": [],
+      "semanticUncertain": [
+       "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+      ]
+     },
+     "note": "recorded only; never gates this composition"
+    },
+    "fallback": {
+     "ms": 0.004,
+     "used": false,
+     "reason": "n5-rejected",
+     "unavailableReason": "template-unsupported-kind",
+     "kinds": [
+      "subtask_added"
+     ]
+    }
+   },
+   "notes": "The text omits the subtask; the template has no subtask frame, so the fallback records unavailableReason and no text.",
+   "modelCalled": true,
+   "status": "n5-rejected",
+   "reason": "uncovered:f1:subtask_added",
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "selectedFactIds": [
+    "f0",
+    "f1"
+   ],
+   "modelInput": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "field": "positionSet"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": true
+    },
+    {
+     "factId": "f1",
+     "kind": "subtask_added",
+     "entityId": "char_pa",
+     "entityGroup": "characters",
+     "source": {
+      "entityId": "char_pa",
+      "taskId": "task_9",
+      "field": "subtasksAdded"
+     },
+     "at": "钟楼",
+     "atPath": [
+      "loc_2"
+     ],
+     "planGroups": [
+      0
+     ],
+     "n5Covered": false
+    }
+   ],
+   "n5": {
+    "rule": "eval_n4_v2.judge_row",
+    "gates": {
+     "G1_alignment": false,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "uncovered:f1:subtask_added"
+    ],
+    "covered": [
+     "f0"
+    ],
+    "autoPassed": false,
+    "semanticReview": "not-run"
+   },
+   "timings": {
+    "totalMs": 1.28
+   },
+   "expectMet": true
+  }
+ ],
+ "pass": true
+}
