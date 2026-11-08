@@ -42,6 +42,10 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `adjudicate.py`、`step5/clauses.jsonl`、`step5/adjudication.json` | 72 条分句的逐句核验（执行方 pre-check，待独立人工确认） |
 | `build_packet.py`、`step5/review-packet.md` | 盲评包：已提交事实背景＋甲/乙/丙，无臂名无评分 |
 | `step5/summary.md` | 人工核验与程序评分对照、责任划分、待定项 |
+| `step5/material-use-evidence.md` | 逐项核对增补素材是否真的进了正文（区分共用事实行） |
+| `step5/final-comparison.md` | 按样本列出三臂的遗漏／事实错误／未授权动作（不跨口径相加） |
+| `step5/independent-review/` | 独立评审记录位置：`clause-review.jsonl`、`naturalness-return.json`、改判说明；不覆盖初审 |
+| `build_independent_review.py`、`reveal_naturalness.py` | 生成独立评审模板；选票收齐后揭示映射并统计 |
 
 ## 复现
 
@@ -61,6 +65,16 @@ $PY -X utf8 experiments/world-components/parallel/scene_expression/measure_input
 - 旧契约没有时间、任务、理智数值事实行；这些由固定程序句承担，三臂同文同位置。
 - C 臂的“上一段叙事”在数据集里不存在，如实登记为缺口，不补造。
 - B 臂的素材包含本轮外貌事实原文，C 臂包含个性变化原文；对相应样本存在“把答案写进提示”的混杂，解释时保留。
+
+## 冻结清单与 README 的哈希差异（留档，不更新旧清单）
+
+`frozen/manifest.json` 里 `docs.README.md = 0e8d9efca55c72ef0dd07c4f141f0d55816535fbb3df1d48210b89962a473197`，对应冻结提交时的 README（当时只有第 1–2 步的文件表）。此后 README 为补充第 3–5 步文件表被多次追加，**当前文件的 SHA-256 已不等于清单值**（自指哈希无法在文件内写死，请用 `sha256sum README.md` 自行核对）。
+
+按协议“冻结文件保持原字节”，**不修改 `frozen/manifest.json` 去追平**；冻结证据以清单记录的版本为准，README 的后续增补不在冻结范围内。
+
+## 当前结论
+
+三臂均出现未授权动作（各 2 处，均为移动钥匙）；执行方初审发现 B、C 各新增两处目的地遗漏，A 无遗漏但把钥匙动作写进同一句并构成事实错误；尚无自然度改善证据（`step5/material-use-evidence.md` 只有 C 臂“外向”一处可归因）。独立评审待完成，自然度门槛 `not_evaluable`。
 
 ## 仓库约定
 
