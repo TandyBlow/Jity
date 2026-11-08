@@ -1,13 +1,19 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T05:57:50.894753+00:00",
+ "recordedAt": "2026-11-08T06:01:06.799951+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "head": "64405346fe63c2f05cf067f3b328893fa9e0d381",
-  "headSubject": "design player-attention selection: six paired items, fixed rule gap 0/6",
-  "dirty": true
+  "head": "ad28b0bb5f671e0ab82bb4ba64eab3025193fd41",
+  "headSubject": "C7 offline round composition: N1-N5 chain with mock ports, 19 cases, 19/19 expected",
+  "porcelain": [
+   "A  experiments/world-components/parallel/round_composition/.gitattributes",
+   " M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
+   " M experiments/world-components/parallel/round_composition/record_manifest.py",
+   "?? TASK.md"
+  ]
  },
  "environment": {
   "python": "3.11.15",
@@ -130,6 +136,21 @@
    }
   ],
   "this_experiment": [
+   {
+    "path": "experiments/world-components/parallel/round_composition/.gitattributes",
+    "sha256": "8f2fbdf4381c479ed6f6d318605df027842c04cd666ff64e10b6e8ecf58b0c88",
+    "bytes": 246
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/README.md",
+    "sha256": "18efdbb61a38f243f3c7365c4c0978ac102a463604267f663e3a9db6ad0ad5bb",
+    "bytes": 16895
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/conclusion.md",
+    "sha256": "6b63cb5506c0dc4c45f45fe62a65f5e85d61b791b72c09cfdf674eacce0d8505",
+    "bytes": 1554
+   },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
     "sha256": "0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020",

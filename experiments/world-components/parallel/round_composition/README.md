@@ -137,11 +137,15 @@ G1｜f0 f1
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | 两次运行比对 | `88406e52fcd9246fd59e1b39e1189ad94dd37f1732538ca8135113c3b5d82952` |
-| `record_manifest.py` | 记录输入/输出哈希与 git 身份 | `86469d43069323244c11dd58ca222fc955d89fdefbb0841f98d1d74c1bef2390` |
+| `record_manifest.py` | 记录输入/输出哈希与 git 身份 | `cee89d3666b3714a31f064f4c6c7069c94d91656d001652c55c5c9cf8187e449` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 
 运行归档不列入上表，因为它们的哈希每次重跑都会变（归档里带 `runAt` 和各阶段毫秒）；输出哈希统一由 `record_manifest.py` 写进 `fixtures/manifest.json` 的 `outputs[]`，与该文件里的上游源码/契约哈希、git HEAD、N5 口径、门覆盖范围放在一起。重跑只应该改变计时与 `runAt`：这一点由 `out/determinism.json` 证明（`identicalAfterStrip: true`）。
+
+本目录的 `.gitattributes` 把行尾固定为 LF（`* text eol=lf`），所以上面的哈希在任何平台检出后都对得上；不钉的话 Windows 检出会把 LF 换成 CRLF，字节哈希就变了。
+
+`fixtures/manifest.json` 是提交前一刻写的：`git.head` 记的是承载本目录实现的提交 `ad28b0b`，`git.porcelain` 原样列出写文件时仍未提交的项（本目录的整理改动，以及协调者按约定不入库的 `TASK.md`）。它绑定源码/夹具/契约的哈希，不绑定它自己。
 
 | 归档 | 作用 |
 | --- | --- |

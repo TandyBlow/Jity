@@ -53,6 +53,9 @@ SOURCES = {
         "artifacts/world-components/n1-n5-composition-v2-r1.json",
         "artifacts/world-components/n4-input-packing-r1.json"],
     "this_experiment": [
+        "experiments/world-components/parallel/round_composition/.gitattributes",
+        "experiments/world-components/parallel/round_composition/README.md",
+        "experiments/world-components/parallel/round_composition/conclusion.md",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",
@@ -104,7 +107,15 @@ def main() -> int:
         "git": {"branch": git("rev-parse", "--abbrev-ref", "HEAD"),
                 "head": git("rev-parse", "HEAD"),
                 "headSubject": git("log", "-1", "--pretty=%s"),
-                "dirty": bool(git("status", "--porcelain"))},
+                # The manifest is written just before it is committed, so
+                # HEAD is the PARENT of the commit that carries this
+                # directory and the porcelain list names this experiment's
+                # own files plus the coordinator's untracked TASK.md brief.
+                # The list is recorded verbatim so nothing is hidden behind
+                # a single boolean.
+                "porcelain": [line for line in
+                              git("status", "--porcelain").splitlines()
+                              if line.strip()]},
         "environment": {"python": sys.version.split()[0],
                         "platform": platform.platform()},
         "sources": files,

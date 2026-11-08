@@ -1,0 +1,4 @@
+# This directory publishes per-file SHA-256 (fixtures/manifest.json, README.md).
+# A checkout that rewrites line endings would change those bytes, so pin LF
+# for every file here, as the protocol/evidence paths at the repo root do.
+* text eol=lf
