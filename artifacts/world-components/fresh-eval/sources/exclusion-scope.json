@@ -1,6 +1,6 @@
 {
  "formatVersion": 2,
- "worktreeHead": "ee16725640901bb66501134e83a68ac63ee80333",
+ "worktreeHead": "01e0a92fd88a77a4b6aec5799bc9266170ab8be1",
  "rules": {
   "textMatch": "双向子串：候选串与排除串任一方向包含即命中；只比较 ≥4 个汉字的内容串",
   "noteStrip": "含（）注记的排除串，剥掉注记后的核心串同样入集（nv-cont-1 冒烟教训）",
@@ -186,6 +186,36 @@
    "fullSignature": "moved*2|2|3s"
   }
  ],
+ "signatureOwners": {
+  "moved*1|1|120s": [
+   "nv-move-1"
+  ],
+  "personality_changed*1+sanity_changed*1+task_achieved*1|1|60s": [
+   "nv-task-pers-sanity-1"
+  ],
+  "moved*1|1|60s": [
+   "nv-multi-1"
+  ],
+  "task_achieved*1|1|30s": [
+   "nv-task-only-1"
+  ],
+  "none|0|1s": [
+   "nv-refused-1"
+  ],
+  "none|0|300s": [
+   "nv-cont-3",
+   "nv-empty-1"
+  ],
+  "moved*1|1|2s": [
+   "nv-cont-1"
+  ],
+  "none|0|120s": [
+   "nv-cont-2"
+  ],
+  "moved*2|2|3s": [
+   "nv-multi-opposite-1"
+  ]
+ },
  "threeArmSiblings": {
   "hv-*": "narration-eval-validation.ts（事实核验题）",
   "ns-*": "narration-split-samples.ts（拆分四件套）",

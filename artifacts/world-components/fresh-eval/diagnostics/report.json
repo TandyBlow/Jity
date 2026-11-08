@@ -1,5 +1,5 @@
 {
- "worktreeHead": "ee16725640901bb66501134e83a68ac63ee80333",
+ "worktreeHead": "01e0a92fd88a77a4b6aec5799bc9266170ab8be1",
  "positioning": {
   "whatThisIs": "六条诊断夹具：用已登记夹具的初始状态构造假设点位，经 A 侧内核应用、跑排除规则、并给出人工核验要求。",
   "whatThisIsNot": "不是正式独立评测题，不冻结，不主张点位级独立，不计入任何能力成绩。",
@@ -48,7 +48,9 @@
     "item": "c8d06",
     "point": "c8d06_p2",
     "signature": "none|0|120s",
-    "matches": "nv-cont-2"
+    "matches": [
+     "nv-cont-2"
+    ]
    }
   ]
  },
@@ -89,6 +91,102 @@
     {
      "pointId": "c8d01_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:02:00",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "286e112598cc96b6b5d7123a42f4d44b9e14bdd2addf89e7abe5dbf22f10a4b1",
      "timeAdvance": "三分钟",
      "rawDelta": {
@@ -268,6 +366,102 @@
     {
      "pointId": "c8d02_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:00:30",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom2",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "floor2",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "0cbac3e6ce6b0c37331dfbb910ab400924f3c5e6b799a75d28429f2fcd4c939d",
      "timeAdvance": "90秒",
      "rawDelta": {
@@ -467,6 +661,102 @@
     {
      "pointId": "c8d03_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:50",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "067f3dbf15a7d7426161f742452b2f09de08d373bc38c2324fc1b9f94d2c4d85",
      "timeAdvance": "50秒",
      "rawDelta": {
@@ -649,6 +939,102 @@
     {
      "pointId": "c8d04_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:01:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 26,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "achieved"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "b2e9b24144f5ed7f0d9865a61cef779cf84bc0fdc2c9eb64032e49d433ae69f9",
      "timeAdvance": "两分钟",
      "rawDelta": {
@@ -886,6 +1272,102 @@
     {
      "pointId": "c8d05_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:40",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "29e512d6533a65509b9cc611f6c39c34e0e7b979651a7d73bd3d75292bc4865b",
      "timeAdvance": "40秒",
      "rawDelta": {},
@@ -1055,6 +1537,102 @@
     {
      "pointId": "c8d06_p1",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "42e1bc7833716c8af5ff1783a524e81469a2d1c7a795508d50ded081126f3e72",
      "timeAdvance": "四秒",
      "rawDelta": {
@@ -1176,6 +1754,102 @@
     {
      "pointId": "c8d06_p2",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:01:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "7139e6d7fc906b1ed2489031b29583a2cd4f74c7299b899e21ad0650d583494b",
      "timeAdvance": "两分钟",
      "rawDelta": {},
@@ -1285,6 +1959,102 @@
     {
      "pointId": "c8d06_p3",
      "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T12:01:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:04:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 28,
+        "tasks": {
+         "task_c_root": "achieved",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
      "stateDigestAfter": "be6c0fcc291b5b62e6e8834d30b08d75d194e8311ff6caad181866bf35d6e22a",
      "timeAdvance": "三分钟",
      "rawDelta": {
@@ -1472,7 +2242,12 @@
         {
          "rule": "R3-signature",
          "signature": "none|0|120s",
-         "matches": "nv-cont-2"
+         "matches": [
+          "nv-cont-2"
+         ],
+         "matchBasis": {
+          "nv-cont-2": "undetermined"
+         }
         }
        ],
        "warnings": []
@@ -1488,7 +2263,12 @@
         {
          "rule": "R3-signature",
          "signature": "none|0|120s",
-         "matches": "nv-cont-2"
+         "matches": [
+          "nv-cont-2"
+         ],
+         "matchBasis": {
+          "nv-cont-2": "undetermined"
+         }
         }
        ],
        "warnings": []
@@ -1577,6 +2357,17 @@
    "ownerAction": "需要产品口径：纯任务达成是否必须伴随理智/人格变化；若不必，投影应放宽为一类事实单独成立",
    "afterFix": "改口径后要重跑旧题剔除范围（nv-task-only-1 与该规则冲突，可能需要重写或降级）",
    "evidence": "committed-narration.ts 第 38 行"
+  },
+  {
+   "id": "g05",
+   "dimension": "手写包与生产投影的输入契约不一致（nv-task-only-1）",
+   "legalInput": "EntityDelta.tasksAchieved 单独出现；A 侧内核允许，三臂样本 nv-task-only-1 也正是这种形状（只有任务达成、没有理智/人格）",
+   "throwPoint": "frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause",
+   "condition": "tasksAchieved / personalityChanges / sanitySet 未同时出现（三者必须齐全）",
+   "impact": "nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致",
+   "ownerAction": "二选一：a) 生产投影放宽为允许纯任务达成（需要产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移除、只留在判分器单测里",
+   "afterFix": "任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线",
+   "evidence": "committed-narration.ts 第 35–38 行；frontend/src/lib/world-engine/runtime/narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved"
   }
  ]
 }

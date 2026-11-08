@@ -1,8 +1,8 @@
 {
- "worktreeHead": "ee16725640901bb66501134e83a68ac63ee80333",
+ "worktreeHead": "01e0a92fd88a77a4b6aec5799bc9266170ab8be1",
  "inputs": {
-  "checkerSha256": "3be347acb3a99581edc1202bde6df2c632e2441aced5ee18f3d433bb6d20be07",
-  "scopeSha256": "0f822971523b5c446e3073299abbbda94f52fbc53710fbbb88844fdebc1f6845",
+  "checkerSha256": "9386de0418b0e38737bfc7052ac9137fef1bd016537e88dfa87d044fc6180716",
+  "scopeSha256": "7ea3bc60c0d1cca4a12bf0c0fa9d9bf34ac2b9366dcccd11e0ceee9a51b79577",
   "exclusionCorpus": {
    "file": "sources/exclusion-corpus.jsonl",
    "sha256": "396685dd5ffab32c1c8654f129ac206868d2874f38ead79bbea6f6ad010454db",
@@ -10,7 +10,7 @@
   },
   "vocabulary": {
    "file": "sources/vocab-used.json",
-   "sha256": "d49595ee70fd616f68bdf806c13ae881591742e82142f6f8bdfecb3a5330369e",
+   "sha256": "e6d26bb8621da7ebbd39c05ecd4659b2bede3159f5c2cdb24993e05761b9a664",
    "terms": 4567
   },
   "threeArmItems": {
@@ -22,6 +22,13 @@
  "result": {
   "exactTenItemsParsed": true,
   "eachOldItemBlockedByR1AndR3": true,
+  "eachOldItemR3HitListsItself": true,
+  "signatureCollisions": {
+   "none|0|300s": [
+    "nv-cont-3",
+    "nv-empty-1"
+   ]
+  },
   "derivativesBlockedByR3Only": true,
   "noteStrippingRegression": true,
   "threeArmRejected": "10/10",
@@ -85,7 +92,9 @@
     {
      "rule": "R3-signature",
      "signature": "moved*1|1|120s",
-     "matches": "nv-move-1"
+     "matches": [
+      "nv-move-1"
+     ]
     }
    ],
    "warnings": []
@@ -135,7 +144,9 @@
     {
      "rule": "R3-signature",
      "signature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|60s",
-     "matches": "nv-task-pers-sanity-1"
+     "matches": [
+      "nv-task-pers-sanity-1"
+     ]
     }
    ],
    "warnings": [
@@ -222,7 +233,9 @@
     {
      "rule": "R3-signature",
      "signature": "moved*1|1|60s",
-     "matches": "nv-multi-1"
+     "matches": [
+      "nv-multi-1"
+     ]
     }
    ],
    "warnings": []
@@ -283,7 +296,9 @@
     {
      "rule": "R3-signature",
      "signature": "task_achieved*1|1|30s",
-     "matches": "nv-task-only-1"
+     "matches": [
+      "nv-task-only-1"
+     ]
     }
    ],
    "warnings": []
@@ -330,7 +345,9 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|1s",
-     "matches": "nv-refused-1"
+     "matches": [
+      "nv-refused-1"
+     ]
     }
    ],
    "warnings": []
@@ -379,7 +396,10 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|300s",
-     "matches": "nv-cont-3"
+     "matches": [
+      "nv-cont-3",
+      "nv-empty-1"
+     ]
     }
    ],
    "warnings": []
@@ -428,7 +448,9 @@
     {
      "rule": "R3-signature",
      "signature": "moved*1|1|2s",
-     "matches": "nv-cont-1"
+     "matches": [
+      "nv-cont-1"
+     ]
     }
    ],
    "warnings": []
@@ -486,7 +508,9 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|120s",
-     "matches": "nv-cont-2"
+     "matches": [
+      "nv-cont-2"
+     ]
     }
    ],
    "warnings": []
@@ -525,7 +549,10 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|300s",
-     "matches": "nv-cont-3"
+     "matches": [
+      "nv-cont-3",
+      "nv-empty-1"
+     ]
     }
    ],
    "warnings": []
@@ -583,7 +610,9 @@
     {
      "rule": "R3-signature",
      "signature": "moved*2|2|3s",
-     "matches": "nv-multi-opposite-1"
+     "matches": [
+      "nv-multi-opposite-1"
+     ]
     }
    ],
    "warnings": []
@@ -601,7 +630,9 @@
     {
      "rule": "R3-signature",
      "signature": "moved*1|1|120s",
-     "matches": "nv-move-1"
+     "matches": [
+      "nv-move-1"
+     ]
     }
    ],
    "warnings": []
@@ -617,7 +648,10 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|300s",
-     "matches": "nv-cont-3"
+     "matches": [
+      "nv-cont-3",
+      "nv-empty-1"
+     ]
     }
    ],
    "warnings": []
@@ -633,7 +667,10 @@
     {
      "rule": "R3-signature",
      "signature": "none|0|300s",
-     "matches": "nv-cont-3"
+     "matches": [
+      "nv-cont-3",
+      "nv-empty-1"
+     ]
     }
    ],
    "warnings": []
@@ -650,8 +687,9 @@
   }
  ],
  "limits": [
-  "只证明这十条旧题与两条构造派生被规则拦下；不证明排除集完整",
-  "R1 只做子串双向包含；改写后不共享子串的派生不会被 R1 抓到",
+  "只证明这十条旧题与三条构造派生被规则拦下；不证明排除集完整",
+  "R1 只做子串包含；改写后不共享子串的派生不会被 R1 抓到",
+  "签名相同只说明形状相同；旧题本身的变化事实依据见 sources/three-arm-provenance.md（十条均为 undetermined）",
   "R3 只比事实形状；换一种形状的语义派生仍需人工核验",
   "新场景判定为 candidate 只表示未被这三条规则命中，不构成验收"
  ]

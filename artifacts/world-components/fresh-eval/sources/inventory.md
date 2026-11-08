@@ -1,6 +1,6 @@
 # 来源清点（自动生成，勿手改）
 
-工作树 HEAD：`ee16725640901bb66501134e83a68ac63ee80333`；生成脚本 `tools/build_inventory.py`。
+工作树 HEAD：`01e0a92fd88a77a4b6aec5799bc9266170ab8be1`；生成脚本 `tools/build_inventory.py`。
 
 | 编号 | 来源 | 角色 | 范围 | 文件数 | 排除串 | 词表项 |
 |---|---|---|---|---:|---:|---:|

@@ -8,6 +8,7 @@
 | g03 | 外貌变化（人物 / 地点 / 物品） | `committed-narration.ts:28 → unsupported_narration_world_change（地点/物品）；:51 → unrecorded_appearance_change（人物）` | 外貌改写、衣物被雨打湿、黑板写满字、地点变暗等全部无法叙述；‘外貌’类覆盖在页面路径上不可测 |
 | g04 | 任务树新增（subtasksAdded） | `committed-narration.ts:35 → unsupported_committed_delta` | 新增子任务无法叙述，玩家看不到任务树扩张；已登记夹具 task-normalization.json 的整条路径在页面上不可达 |
 | g03b | 部分数值因果（只有任务达成、没有理智/人格） | `committed-narration.ts:38 → narration_requires_complete_numeric_cause` | 只达成任务、没有数值变化或人格变化的点无法进入页面叙事；三臂对照里的 nv-task-only-1 正是这种手写包，与投影规则不一致 |
+| g05 | 手写包与生产投影的输入契约不一致（nv-task-only-1） | `frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause` | nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致 |
 
 ## 明细
 
@@ -50,4 +51,14 @@
 - 需要：需要产品口径：纯任务达成是否必须伴随理智/人格变化；若不必，投影应放宽为一类事实单独成立
 - 补上之后：改口径后要重跑旧题剔除范围（nv-task-only-1 与该规则冲突，可能需要重写或降级）
 - 证据：committed-narration.ts 第 38 行
+
+### g05 手写包与生产投影的输入契约不一致（nv-task-only-1）
+
+- 合法输入：EntityDelta.tasksAchieved 单独出现；A 侧内核允许，三臂样本 nv-task-only-1 也正是这种形状（只有任务达成、没有理智/人格）
+- 触发条件：tasksAchieved / personalityChanges / sanitySet 未同时出现（三者必须齐全）
+- 抛错位置：`frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause`
+- 影响：nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致
+- 需要：二选一：a) 生产投影放宽为允许纯任务达成（需要产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移除、只留在判分器单测里
+- 补上之后：任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线
+- 证据：committed-narration.ts 第 35–38 行；frontend/src/lib/world-engine/runtime/narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved
 

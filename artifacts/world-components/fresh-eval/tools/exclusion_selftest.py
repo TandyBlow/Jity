@@ -99,7 +99,9 @@ def baseline_checks(items, rows, scope):
 
 def main() -> int:
     corpus, vocab, scope = load_sources()
-    signatures = {i["signature"]: i["id"] for i in scope["threeArmItems"]}
+    # signature -> ALL old item ids sharing it (a later id must not overwrite an
+    # earlier one: nv-empty-1 and nv-cont-3 share `none|0|300s`)
+    signatures = {sig: list(ids) for sig, ids in scope.get("signatureOwners", {}).items()}
     head = git_head()
 
     args = sys.argv[1:]
@@ -149,17 +151,27 @@ def main() -> int:
     extra = [screen(c, corpus, vocab, signatures)
              for c in (renamed, paraphrase, unit_renamed, fresh)]
 
+    # each old item's R3 hit must list that item itself
+    r3_self = {}
+    for row in raw_check:
+        owners = [o for reason in row["reasons"] if reason["rule"] == "R3-signature"
+                  for o in reason.get("matches", [])]
+        r3_self[row["id"]] = row["id"] in owners
+    collisions = {sig: ids for sig, ids in signatures.items() if len(ids) > 1}
+
     blocked = sum(1 for r in raw_check if r["verdict"] == "rejected")
     deriv_ok = all(r["verdict"] == "rejected" for r in extra[:3])
     fresh_ok = extra[3]["verdict"] == "candidate"
     complete, independent_rules = baseline_checks(items, raw_check, scope)
+    self_inclusion = all(r3_self.values())
     derivatives_signature_only = all(
         [r["rule"] for r in row["reasons"]] == ["R3-signature"] for row in extra[:3])
     note_probe = screen(
         {"texts": ["寒枝从南堤来到旧坊"]},
         {"寒枝（测试注记）从南堤来到旧坊": ["regression-probe"]}, set(), {})
     note_ok = any(r["rule"] == "R1-substring" for r in note_probe["reasons"])
-    ok = (complete and blocked == 10 and independent_rules and deriv_ok
+    ok = (complete and blocked == 10 and independent_rules and self_inclusion
+          and deriv_ok
           and derivatives_signature_only and fresh_ok and note_ok)
 
     report = {
@@ -179,6 +191,8 @@ def main() -> int:
         "result": {
             "exactTenItemsParsed": complete,
             "eachOldItemBlockedByR1AndR3": independent_rules,
+            "eachOldItemR3HitListsItself": self_inclusion,
+            "signatureCollisions": collisions,
             "derivativesBlockedByR3Only": derivatives_signature_only,
             "noteStrippingRegression": note_ok,
             "threeArmRejected": f"{blocked}/{len(items)}",
@@ -191,8 +205,9 @@ def main() -> int:
         "threeArm": raw_check,
         "derivatives": extra,
         "limits": [
-            "只证明这十条旧题与两条构造派生被规则拦下；不证明排除集完整",
-            "R1 只做子串双向包含；改写后不共享子串的派生不会被 R1 抓到",
+            "只证明这十条旧题与三条构造派生被规则拦下；不证明排除集完整",
+            "R1 只做子串包含；改写后不共享子串的派生不会被 R1 抓到",
+            "签名相同只说明形状相同；旧题本身的变化事实依据见 sources/three-arm-provenance.md（十条均为 undetermined）",
             "R3 只比事实形状；换一种形状的语义派生仍需人工核验",
             "新场景判定为 candidate 只表示未被这三条规则命中，不构成验收",
         ],
@@ -221,8 +236,16 @@ def main() -> int:
         lines.append(f"| {label} (`{r['id']}`) | {expected} | {r['verdict']} | {rules} |")
     lines += ["", f"十题完整性：{complete}；每题 R1/R3 独立命中：{independent_rules}；"
               f"派生仅 R3 命中：{derivatives_signature_only}；注记剥离回归：{note_ok}。"]
+    if collisions:
+        lines += ["", "## 签名碰撞（同一签名保留全部旧题 ID）", "",
+                  "| 签名 | 旧题 |", "|---|---|"]
+        for sig, ids in collisions.items():
+            lines.append(f"| `{sig}` | {', '.join(ids)} |")
+        lines += ["", "`nv-cont-3` 与 `nv-empty-1` 都只有时间流逝，按变化口径必然同形；"
+                  "两者是否能互相替代，取决于它们的变化事实依据（见 `sources/three-arm-provenance.md`）。"]
     lines += ["", f"**自检结论：{'通过' if ok else '未通过'}**"
-              f"（三臂 {blocked}/{len(items)} 被拦、两条派生均被拦、新场景未被误拦）。", "",
+              f"（三臂 {blocked}/{len(items)} 被拦、三条派生均被拦、新场景未被误拦、"
+              f"每题 R3 命中列表含自身：{self_inclusion}）。", "",
               "## 边界", ""]
     lines += [f"- {x}" for x in report["limits"]]
     write_artifact(OUT / "selftest-report.md", "\n".join(lines) + "\n")

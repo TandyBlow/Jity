@@ -28,7 +28,10 @@ R2 vocabulary  candidate terms vs the used-vocabulary union; the caller decides
                whether a hit blocks (formal item) or is only recorded
                (source-bound diagnostic).
 R3 signature   (change kinds with counts | distinct change actors | seconds)
-               equal to one of the ten three-arm signatures.
+               equal to one of the ten three-arm signatures. The map value is a
+               LIST of every item id sharing that signature (never a single id:
+               nv-empty-1 and nv-cont-3 share one), and a match is reported with
+               the basis of the old item (authoritative read vs undetermined).
 
 Fact provenance rule: only facts produced by this point's raw delta count as
 *changes*. Standing readings of untouched entities (`at`, plain `sanity`) are
@@ -168,8 +171,18 @@ def signature_of(cand: dict) -> str:
 
 
 # --------------------------------------------------------------- screen ---
+def _owners(signatures: dict, sig: str) -> list:
+    owners = signatures.get(sig)
+    if owners is None:
+        return []
+    if isinstance(owners, str):
+        return [owners]
+    return list(owners)
+
+
 def screen(cand: dict, corpus: dict, vocab: set, signatures: dict,
-           mode: str = "new-world", r1_version: str = "v2") -> dict:
+           mode: str = "new-world", r1_version: str = "v2",
+           basis: dict | None = None) -> dict:
     """mode: new-world -> vocabulary hit blocks;
              source-bound -> vocabulary hit is recorded only."""
     reasons, warnings = [], []
@@ -195,9 +208,12 @@ def screen(cand: dict, corpus: dict, vocab: set, signatures: dict,
                          "note": "source-bound：复用已登记来源的名字，记录范围，不表示独立"})
 
     sig = change_signature_of(cand)
-    if sig in signatures:
-        reasons.append({"rule": "R3-signature", "signature": sig,
-                        "matches": signatures[sig]})
+    owners = _owners(signatures, sig)
+    if owners:
+        reason = {"rule": "R3-signature", "signature": sig, "matches": owners}
+        if basis is not None:
+            reason["matchBasis"] = {i: basis.get(i, "unknown") for i in owners}
+        reasons.append(reason)
     verdict = "rejected" if reasons else (
         "source-bound" if mode == "source-bound" else "candidate")
     return {"id": cand.get("id"), "verdict": verdict, "signature": sig,
@@ -206,10 +222,12 @@ def screen(cand: dict, corpus: dict, vocab: set, signatures: dict,
 
 
 def screen_both(cand: dict, corpus: dict, vocab: set, signatures: dict,
-                mode: str = "source-bound") -> dict:
+                mode: str = "source-bound", basis: dict | None = None) -> dict:
     """Run v1 and v2 on the same candidate and record the difference."""
-    v1 = screen(cand, corpus, vocab, signatures, mode=mode, r1_version="v1")
-    v2 = screen(cand, corpus, vocab, signatures, mode=mode, r1_version="v2")
+    v1 = screen(cand, corpus, vocab, signatures, mode=mode, r1_version="v1",
+                basis=basis)
+    v2 = screen(cand, corpus, vocab, signatures, mode=mode, r1_version="v2",
+                basis=basis)
     return {"v1": v1, "v2": v2,
             "differs": v1["verdict"] != v2["verdict"],
             "v1Reasons": [r["rule"] for r in v1["reasons"]],

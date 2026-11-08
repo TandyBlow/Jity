@@ -45,6 +45,17 @@ REPO = OUT.parents[2]                  # .../c-fresh-eval
 CJK = re.compile(r"[\u4e00-\u9fff]")
 CJK_RUN = re.compile(r"[\u4e00-\u9fff]{2,8}")
 
+def _signature_owners() -> dict:
+    """signature -> every old item id that has it (collisions keep all ids)."""
+    owners = {}
+    for (item_id, kinds, actors, amount, unit) in NV_SIGNATURES:
+        sig = _screening.change_signature(
+            _three_arm_facts(kinds, actors, amount, unit),
+            {"amount": amount, "unit": unit})
+        owners.setdefault(sig, []).append(item_id)
+    return owners
+
+
 def _three_arm_facts(kinds, actors, amount, unit):
     """Build a fact list for the ten frozen items.
 
@@ -525,6 +536,9 @@ def main() -> int:
                  _three_arm_facts(k, a, t, u), {"amount": t, "unit": u})}
             for (i, k, a, t, u) in NV_SIGNATURES
         ],
+        "signatureOwners": {
+            sig: sorted(ids) for sig, ids in _signature_owners().items()
+        },
         "threeArmSiblings": {
             "hv-*": "narration-eval-validation.ts（事实核验题）",
             "ns-*": "narration-split-samples.ts（拆分四件套）",

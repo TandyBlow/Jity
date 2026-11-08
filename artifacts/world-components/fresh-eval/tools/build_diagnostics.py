@@ -136,6 +136,14 @@ def projection_problems(after, delta):
     return sorted(set(problems))
 
 
+def snapshot(state):
+    return {"time": state.time.dateTime,
+            "characters": {eid: {"position": c.position.containerId,
+                                 "sanity": c.sanity,
+                                 "tasks": {t: v.status for t, v in sorted(c.tasks.items())}}
+                           for eid, c in sorted(state.characters.items())}}
+
+
 def apply_points(item, before0, kernel):
     state, prev_id, steps = before0, "root_0", []
     for seq, pt in enumerate(item["points"], start=1):
@@ -159,6 +167,7 @@ def apply_points(item, before0, kernel):
         changes, standing = point_facts(state, after, pt["delta"], state.initial)
         steps.append({
             "pointId": pt["id"], "kernel": "ok",
+            "before": snapshot(state), "after": snapshot(after),
             "stateDigestAfter": kernel["state_digest"](after),
             "timeAdvance": time_text(pt["time"]),
             "rawDelta": pt["delta"],
@@ -175,7 +184,12 @@ def apply_points(item, before0, kernel):
 def main() -> int:
     data = json.loads((OUT / "diagnostics/diagnostics.json").read_text(encoding="utf-8"))
     corpus, vocab, scope = screening.load_sources()
-    signatures = {i["signature"]: i["id"] for i in scope["threeArmItems"]}
+    signatures = {sig: list(ids) for sig, ids in scope["signatureOwners"].items()}
+    prov_path = OUT / "sources/three-arm-provenance.json"
+    basis = {}
+    if prov_path.exists():
+        prov = json.loads(prov_path.read_text(encoding="utf-8"))
+        basis = {row["id"]: row["basis"] for row in prov["items"]}
     kernel = load_kernel()
 
     fixture_path = REPO / FIXTURE
@@ -197,7 +211,8 @@ def main() -> int:
                     "time": _time_of(item, st["pointId"])}
             checks.append({"pointId": st["pointId"],
                            "screening": screening.screen_both(
-                               cand, corpus, vocab, signatures, mode="source-bound")})
+                               cand, corpus, vocab, signatures,
+                               mode="source-bound", basis=basis)})
         rows.append({
             "id": item["id"], "title": item["title"], "module": item["module"],
             "kind": item["kind"],
@@ -271,11 +286,14 @@ def main() -> int:
     screening.write_artifact(OUT / "diagnostics/report.json",
                              json.dumps(report, ensure_ascii=False, indent=1) + NL)
 
-    write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_collisions)
+    write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_collisions,
+                    basis)
     write_rule_diff(rows)
     write_fact_provenance(rows)
     write_gaps()
     write_review_table(data)
+    write_review_packets(rows, data)
+    write_expectation_review(rows)
 
     accepted = report["summary"]["kernelAccepted"]
     print(f"head={report['worktreeHead'][:12]} diagnostics={len(rows)} "
@@ -292,7 +310,8 @@ def main() -> int:
 
 
 # ------------------------------------------------------------------ docs ----
-def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_collisions):
+def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_collisions,
+                    basis):
     lines = ["# 六条诊断夹具核验报告（自动生成，勿手改）", "",
              f"工作树 HEAD：`{report['worktreeHead'][:12]}`；脚本 `tools/build_diagnostics.py`。", "",
              "**定位**：六条诊断夹具、零条正式独立评测题、未冻结。内核通过只说明增量被接受，"
@@ -331,17 +350,24 @@ def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_co
         for sig, ids in old_collisions.items():
             lines.append(f"    - `{sig}` ← {', '.join(ids)}")
     if diag_collisions:
-        lines.append("- **诊断夹具与旧题同形**：")
+        lines.append("- **诊断夹具与旧题同形（口径同形，不写作派生）**：")
         for c in diag_collisions:
+            basis_note = "旧题变化依据 undetermined" if all(
+                (basis.get(m) == "undetermined") for m in c["matches"]) else "旧题有权威读取"
             lines.append(f"    - `{c['item']}` / `{c['point']}` 的 `{c['signature']}` "
-                         f"等于 `{c['matches']}`")
+                         f"等于 {', '.join('`'+m+'`' for m in c['matches'])}（{basis_note}）")
     else:
         lines.append("- 诊断夹具与旧题无变化签名重合。")
     lines += ["", "## 边界", "",
               "- 叙事事实是按 TS 规则在 Python 里重写的镜像，不是执行 TS；"
               "投影是否真的接受仍需在该路径上跑一次。",
               "- 本批全部为假设点，没有提交记录；不得用于任何独立性与能力结论。",
-              "- 未冻结；未做人工核验（表见 `review-table.md`）。"]
+              "- 未冻结；未做人工核验（表见 `review-table.md`，逐条材料见 `review-packets.md`）。",
+              "- 旧题的变化事实依据全部 `undetermined`（见 `sources/three-arm-provenance.md`）："
+              "签名相同只说明“按当前转换口径同形”。",
+              "- 预期复核见 `expectation-review.md`：两条预期目前只能人工判定。",
+              "- `nv-task-only-1` 是手写包与生产投影的输入契约不一致（`gaps.md` g05），"
+              "其失败不能算模型失败。"]
     screening.write_artifact(OUT / "diagnostics/report.md", NL.join(lines) + NL)
 
 
@@ -469,7 +495,10 @@ def write_review_table(data):
               "2. 每个核对项只判“成立/不成立/无法判断”，并写明依据文本位置。",
               "3. `c8d03` 只对 C 侧 N2 规则臂有效，不计入页面视角过滤或端到端能力成绩。",
               "4. `c8d04`／`c8d06` 是针对已知错误的回归诊断，不是独立留出。",
-              "5. 核验通过也不等于可以冻结：来源独立性仍未成立（见 report 的 independence 字段）。"]
+              "5. 核验通过也不等于可以冻结：来源独立性仍未成立（见 report 的 independence 字段）。",
+              "6. 逐条材料（before／Δ／after、事实、允许与禁止、程序检查）见 `review-packets.md`。",
+              "7. `c8d04` 的下降方向与 `c8d06` 的“不得说全部完成”目前**没有程序判定**，"
+              "只能由人工给结论（见 `expectation-review.md`）。"]
     screening.write_artifact(OUT / "diagnostics/review-table.md", NL.join(lines) + NL)
 
 
@@ -498,6 +527,128 @@ def git_head(path: pathlib.Path = REPO) -> str:
                               capture_output=True, text=True, check=True).stdout.strip()
     except Exception:
         return "unknown"
+
+
+
+
+def write_review_packets(rows, data):
+    """One packet per diagnostic: source+params, before/Δ/after, facts, checks."""
+    by_id = {item["id"]: item for item in data["items"]}
+    lines = ["# 六条诊断的人工核验包（自动生成，勿手改）", "",
+             "每条给出：来源与参数、before／原始 Δ／after、变化事实与现状引用、"
+             "允许与禁止的表述、程序检查结果。标注者、日期、结论留空，由人工填写。", "",
+             "`c8d06` 是三个点，按点分节。程序检查里的“投影支持”是按 "
+             "`committed-narration.ts` 的规则表判定的（见 report.json 的 projectionRuleSource），"
+             "不是执行 TS 的结果。", ""]
+    for row in rows:
+        item = by_id[row["id"]]
+        b = item["binding"]
+        lines += [f"## `{row['id']}` {row['title']}", "",
+                  f"- 模块：{row['module']}",
+                  f"- 类型：{row['kind']}",
+                  f"- 来源：`{b['fixture']}`（sha256 `{b['fixtureSha256'][:16]}…`），"
+                  f"before 为 `{b['statePointId']}`，摘要 `{b['stateDigest'][:16]}…`",
+                  f"- 提交状态：{row['statuses']['commitStatus']}",
+                  f"- 独立性：{row['statuses']['independence']}",
+                  f"- 人工指定参数：{'；'.join(item['declaredParameters'])}"]
+        if "perspective" in b:
+            lines.append(f"- 视角：`{b['perspective']['entityId']}` @ `{b['perspective']['at']}`")
+        for step, chk in zip(row["points"], row["screening"]):
+            pt = next(p for p in item["points"] if p["id"] == step["pointId"])
+            lines += ["", f"### `{step['pointId']}`（{step['timeAdvance']}）", "",
+                      "**before**", "",
+                      "| 实体 | 位置 | 理智 | 任务 |", "|---|---|---|---|"]
+            for eid, st in step["before"]["characters"].items():
+                tasks = "、".join(f"{k}={v}" for k, v in st["tasks"].items()) or "—"
+                lines.append(f"| {eid} | {st['position']} | {st['sanity']} | {tasks} |")
+            lines += ["", "**原始 Δ**", "", "```json",
+                      json.dumps(pt["delta"], ensure_ascii=False, indent=1), "```", "",
+                      "**after**", "", "| 实体 | 位置 | 理智 | 任务 |", "|---|---|---|---|"]
+            for eid, st in step["after"]["characters"].items():
+                tasks = "、".join(f"{k}={v}" for k, v in st["tasks"].items()) or "—"
+                lines.append(f"| {eid} | {st['position']} | {st['sanity']} | {tasks} |")
+            lines += ["", "**变化事实**（进签名）", ""]
+            if step["changeFacts"]:
+                lines += ["| 种类 | 实体 | 字段 | 从 | 到 |", "|---|---|---|---|---|"]
+                for f in step["changeFacts"]:
+                    lines.append(f"| {f['kind']} | {f['actorId']} | `{f['fieldPath']}` | "
+                                 f"{f.get('fromValue')} | {f.get('toValue')} |")
+            else:
+                lines.append("（本点没有变化事实）")
+            lines += ["", "**现状引用**（不进签名）", ""]
+            if step["standingRefs"]:
+                lines += ["| 种类 | 实体 | 字段 | 值 |", "|---|---|---|---|"]
+                for f in step["standingRefs"]:
+                    lines.append(f"| {f['kind']} | {f['actorId']} | `{f['fieldPath']}` | "
+                                 f"{f.get('value')} |")
+            else:
+                lines.append("（无）")
+            lines += ["", "**允许的表述**", ""]
+            for x in item["reviewChecks"]["mustHold"]:
+                lines.append(f"- {x}")
+            lines += ["", "**禁止的表述**", ""]
+            for x in item["reviewChecks"]["mustNotAppear"]:
+                lines.append(f"- {x}")
+            v1, v2 = chk["screening"]["v1"], chk["screening"]["v2"]
+            r3_text = "- R3：" + (
+                ", ".join(
+                    r["signature"] + " ← " + "/".join(r.get("matches", []))
+                    for r in v2["reasons"] if r["rule"] == "R3-signature")
+                or "无命中")
+            lines += ["", "**程序检查结果**", "",
+                      f"- 内核：{step['kernel']}；after 摘要 `{step['stateDigestAfter'][:16]}…`",
+                      f"- 投影支持：{'全部支持' if not step['projectionProblems'] else ', '.join(step['projectionProblems'])}",
+                      f"- 变化签名：`{step['changeSignature']}`；"
+                      f"全包签名（参考）：`{step['fullSignature']}`",
+                      f"- R1 v1：{v1['verdict']}；R1 v2：{v2['verdict']}；"
+                      f"R2 已登记复用 {len([w for w in v2['warnings'] if w['rule'] == 'R2-registered-overlap'])} 组；",
+                      r3_text, ""]
+        lines += ["**人工核验记录（待填）**", "",
+                  "| 标注者 | 日期 | 结论 | 依据 |", "|---|---|---|---|",
+                  "|  |  |  |  |", ""]
+    screening.write_artifact(OUT / "diagnostics/review-packets.md", NL.join(lines) + NL)
+
+
+def write_expectation_review(rows):
+    """Re-check whether each diagnostic's expectation is actually enforceable."""
+    coverage = [
+        ("c8d01", "移动方向（大堂→走廊），其余五人只写现状",
+         "可程序判定", "`narration-alignment.ts:364-369` 对 moved 做 direction_reversed；"
+         "state_claim_without_fact 覆盖无事实的站位声明"),
+        ("c8d02", "三条移动各自对应、不得互换",
+         "可程序判定", "direction_reversed + actor_swap（第 340-369 行）；换人物会被 actor_swap 拦下"),
+        ("c8d03", "N2 规则臂把视角外移动判为不可见",
+         "可程序判定（N2 侧）",
+         "直接调用 `n2_perspective._visibility_ground({\"kind\":\"moved\",\"entityId\":\"person_a\","
+         "\"at\":\"corridor\"}, {person_c @ classroom1})` 实测返回 `(False, 'other-location')`"),
+        ("c8d04", "理智必须写成下降（30→26）",
+         "**不可程序判定**",
+         "`narration-alignment.ts:396-403` 的 wrong_number 只检查数字是否属于 {from,to}，"
+         "“从26升到30”会通过；方向词没有检查。需人工核验或先扩展判定器"),
+        ("c8d05", "必须写出时间流逝、不得编造变化",
+         "可程序判定", "`timeRequired` + `mentionsTime`（第 303、314、488 行）；"
+         "无事实的主张走 state_claim_without_fact / added_event"),
+        ("c8d06", "只写父任务达成，不得表述为“全部任务完成”",
+         "**不可程序判定**",
+         "`narration-alignment.ts:439-444` 只要句子里绑上任意 task_achieved 事实就通过；"
+         "不点人物的总结句被明确排除在范围外（第 433 行注释）"),
+    ]
+    lines = ["# 六条诊断的预期复核（自动生成，勿手改）", "",
+             "问题：预期里写的“必须／不得”，现有工具真的能判吗？"
+             "下表按 `narration-alignment.ts`（sha256 309ca19f…）与 "
+             "`n2_perspective.py` 的规则逐条核对。", "",
+             "| 项 | 预期 | 判定能力 | 依据 |", "|---|---|---|---|"]
+    for item_id, expect, ability, why in coverage:
+        lines.append(f"| `{item_id}` | {expect} | {ability} | {why} |")
+    lines += ["", "## 结论", "",
+              "- 4 条预期可以被程序判定；`c8d04` 的“下降方向”和 `c8d06` 的“不得说全部完成”**目前只能人工核验**。",
+              "- 这不影响六条作为诊断材料的用途，但复核表里这两项的“通过”必须来自人，不能写成模型通过或判分器通过。",
+              "- 若要程序化，需先扩展判定器：理智方向词检查、任务树“全部完成”类总结句检查。"
+              "扩展后必须重跑旧题基线，不能直接沿用现有结论。",
+              "", "## 边界", "",
+              "- 上表的“可程序判定”来自阅读 TS 规则并做过一次 N2 直接调用，未执行整条页面路径。",
+              "- 判定器是否在真实输出上误判，仍以实际运行为准；本批没有运行模型。"]
+    screening.write_artifact(OUT / "diagnostics/expectation-review.md", NL.join(lines) + NL)
 
 
 if __name__ == "__main__":

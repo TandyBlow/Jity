@@ -1,6 +1,6 @@
 # 六条诊断夹具核验报告（自动生成，勿手改）
 
-工作树 HEAD：`ee1672564090`；脚本 `tools/build_diagnostics.py`。
+工作树 HEAD：`01e0a92fd88a`；脚本 `tools/build_diagnostics.py`。
 
 **定位**：六条诊断夹具、零条正式独立评测题、未冻结。内核通过只说明增量被接受，不说明该点已提交，也不说明它未参与训练或调参。
 
@@ -75,11 +75,14 @@
 
 - **旧题内部同形**（变化口径无法区分）：
     - `none|0|300s` ← nv-empty-1, nv-cont-3
-- **诊断夹具与旧题同形**：
-    - `c8d06` / `c8d06_p2` 的 `none|0|120s` 等于 `nv-cont-2`
+- **诊断夹具与旧题同形（口径同形，不写作派生）**：
+    - `c8d06` / `c8d06_p2` 的 `none|0|120s` 等于 `nv-cont-2`（旧题变化依据 undetermined）
 
 ## 边界
 
 - 叙事事实是按 TS 规则在 Python 里重写的镜像，不是执行 TS；投影是否真的接受仍需在该路径上跑一次。
 - 本批全部为假设点，没有提交记录；不得用于任何独立性与能力结论。
-- 未冻结；未做人工核验（表见 `review-table.md`）。
+- 未冻结；未做人工核验（表见 `review-table.md`，逐条材料见 `review-packets.md`）。
+- 旧题的变化事实依据全部 `undetermined`（见 `sources/three-arm-provenance.md`）：签名相同只说明“按当前转换口径同形”。
+- 预期复核见 `expectation-review.md`：两条预期目前只能人工判定。
+- `nv-task-only-1` 是手写包与生产投影的输入契约不一致（`gaps.md` g05），其失败不能算模型失败。
