@@ -23,5 +23,7 @@ d5-conflict-two-actors             n5-pass                expectMet=True quality
 d5-same-name-actors                n5-pass                expectMet=True quality=pending
 d5-same-name-grant                 n5-rejected            expectMet=True quality=pending
 d5-control-single-actor            n5-pass                expectMet=True quality=pending
+d2-time-value-strict               n5-pass                expectMet=True quality=pending
+d2-pronoun-grant                   n5-pass                expectMet=True quality=pending
 d1-outcome-judge-block             blocked-at-judge       expectMet=True quality=pending
-pass=True summary={'total': 26, 'statusCounts': {'n5-pass': 10, 'incomplete': 3, 'stopped-at-selection': 4, 'stopped-at-organization': 2, 'n5-rejected': 4, 'sentence-port-failed': 1, 'empty-output': 1, 'blocked-at-judge': 1}, 'expectMet': 26, 'qualityPending': 26, 'qualityPassed': 0, 'd4Labeled': 10, 'd4Positives': 1, 'd4Unchecked': 16, 'g4Triggered': 2, 'g5Triggered': 1, 'rowIdInvarianceFailures': 0} -> D:\others\Jity\.local\parallel\c-round-composition\experiments\world-components\parallel\round_composition\out\composition-v3-run.json
+pass=True summary={'total': 28, 'statusCounts': {'n5-pass': 12, 'incomplete': 3, 'stopped-at-selection': 4, 'stopped-at-organization': 2, 'n5-rejected': 4, 'sentence-port-failed': 1, 'empty-output': 1, 'blocked-at-judge': 1}, 'expectMet': 28, 'qualityPending': 28, 'qualityPassed': 0, 'd4Labeled': 10, 'd4Positives': 1, 'd4Unchecked': 18, 'g4Triggered': 2, 'g5Triggered': 1, 'rowIdInvarianceFailures': 0} -> D:\others\Jity\.local\parallel\c-round-composition\experiments\world-components\parallel\round_composition\out\composition-v3-run.json

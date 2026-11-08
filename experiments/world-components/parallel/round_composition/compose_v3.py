@@ -141,14 +141,15 @@ def run_case(case, mocks_case, annotations):
             must = [f["factId"] for f in facts]
             names = {f["entityId"]: f["name"] for f in facts
                      if f.get("entityId")}
+            hints = case.get("genderHints") or {}
             if case.get("planSource") == "tampered":
                 plan = case["planOverride"]
-                plan_problems = n3.check_plan_v3(plan, facts, names, None,
+                plan_problems = n3.check_plan_v3(plan, facts, names, hints,
                                                  cross_group_guard=False)
             else:
-                plan = n3.plan_v3(facts, names, None, cross_group_guard=True)
+                plan = n3.plan_v3(facts, names, hints, cross_group_guard=True)
                 plan_problems = (["plan-refusal"] if "refusal" in plan else
-                                 n3.check_plan_v3(plan, facts, names, None,
+                                 n3.check_plan_v3(plan, facts, names, hints,
                                                   cross_group_guard=True))
             stage(rec, "n1", t0, program="narration_pipeline.extract_facts",
                   facts=facts, diagnostics=n1["diagnostics"])
@@ -303,10 +304,11 @@ def run_case(case, mocks_case, annotations):
     # ---------- organization ----------
     t0 = time.perf_counter()
     names = {f["entityId"]: f["name"] for f in selected if f.get("entityId")}
+    hints = case.get("genderHints") or {}
     if case.get("planSource") == "program":
-        plan = n3.plan_v3(selected, names, None, cross_group_guard=True)
+        plan = n3.plan_v3(selected, names, hints, cross_group_guard=True)
         problems = (["plan-refusal"] if "refusal" in plan else
-                    n3.check_plan_v3(plan, selected, names, None,
+                    n3.check_plan_v3(plan, selected, names, hints,
                                      cross_group_guard=True))
         plan_resp = plan
     elif case.get("planSource") == "tampered":

@@ -2,7 +2,7 @@
  "version": "round-composition-v0.1",
  "purpose": "offline round composition over the frozen N1/N2/N3/N4.0/N5 interfaces with MOCK selection/organization/sentence ports; verifies normal, module-failure and N5-rejection paths, fact provenance, retries, fallbacks and composer timing",
  "caveat": "Mock ports are scripted JSON. Nothing here measures a model; no N4/N5 quality claim is made. 'ok' means the frozen hard gates passed on a scripted text. Semantic review is not run.",
- "runAt": "2026-11-08T06:22:47.374026+00:00",
+ "runAt": "2026-11-08T06:52:38.546161+00:00",
  "environment": {
   "python": "3.11.15",
   "platform": "Windows-10-10.0.26200-SP0",
@@ -47,7 +47,7 @@
    "expect": "ok",
    "stages": {
     "perspective": {
-     "ms": 0.023,
+     "ms": 0.032,
      "request": {
       "type": "protagonist"
      },
@@ -63,7 +63,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.127,
+     "ms": 0.172,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -114,7 +114,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.066,
+     "ms": 0.092,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -216,7 +216,7 @@
      }
     },
     "organization": {
-     "ms": 0.045,
+     "ms": 0.048,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -290,7 +290,7 @@
      }
     },
     "scene": {
-     "ms": 0.057,
+     "ms": 0.063,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -304,7 +304,7 @@
      }
     },
     "n4Input": {
-     "ms": 0.115,
+     "ms": 0.146,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -315,7 +315,7 @@
      "inputChars": 228
     },
     "n4n5": {
-     "ms": 1.65,
+     "ms": 1.732,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -326,7 +326,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 1.617,
+       "ms": 1.705,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
         "finishReason": "eos"
@@ -361,7 +361,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 2.042,
+     "ms": 1.722,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
      "result": {
@@ -372,7 +372,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.003,
      "used": false
     }
    },
@@ -448,7 +448,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 4.268
+    "totalMs": 4.202
    },
    "expectMet": true
   },
@@ -458,7 +458,7 @@
    "expect": "ok",
    "stages": {
     "perspective": {
-     "ms": 0.019,
+     "ms": 0.018,
      "request": {
       "type": "protagonist"
      },
@@ -474,7 +474,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.105,
+     "ms": 0.1,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -529,7 +529,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.06,
+     "ms": 0.061,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -635,7 +635,7 @@
      }
     },
     "organization": {
-     "ms": 0.036,
+     "ms": 0.038,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -721,7 +721,7 @@
      }
     },
     "scene": {
-     "ms": 0.066,
+     "ms": 0.067,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -750,7 +750,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.103,
+     "ms": 0.107,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -761,7 +761,7 @@
      "inputChars": 231
     },
     "n4n5": {
-     "ms": 0.816,
+     "ms": 0.784,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -772,7 +772,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.801,
+       "ms": 0.768,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -807,7 +807,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.833,
+     "ms": 0.821,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
      "result": {
@@ -894,7 +894,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 2.11
+    "totalMs": 2.066
    },
    "expectMet": true
   },
@@ -920,7 +920,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.075,
+     "ms": 0.087,
      "program": "narration_pipeline.extract_facts",
      "factCount": 3,
      "facts": [
@@ -993,7 +993,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.07,
+     "ms": 0.097,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -1126,7 +1126,7 @@
      }
     },
     "organization": {
-     "ms": 0.032,
+     "ms": 0.042,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -1223,7 +1223,7 @@
      }
     },
     "scene": {
-     "ms": 0.053,
+     "ms": 0.082,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -1252,7 +1252,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.091,
+     "ms": 0.124,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -1263,7 +1263,7 @@
      "inputChars": 226
     },
     "n4n5": {
-     "ms": 0.803,
+     "ms": 0.761,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -1274,7 +1274,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.789,
+       "ms": 0.746,
        "response": {
         "text": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。",
         "finishReason": "eos"
@@ -1421,7 +1421,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 1.734
+    "totalMs": 1.843
    },
    "expectMet": true
   },
@@ -1431,7 +1431,7 @@
    "expect": "incomplete",
    "stages": {
     "perspective": {
-     "ms": 0.015,
+     "ms": 0.019,
      "request": {
       "type": "protagonist"
      },
@@ -1447,7 +1447,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.033,
+     "ms": 0.041,
      "program": "narration_pipeline.extract_facts",
      "factCount": 0,
      "facts": [],
@@ -1478,7 +1478,7 @@
     ]
    },
    "timings": {
-    "totalMs": 0.058
+    "totalMs": 0.074
    },
    "expectMet": true
   },
@@ -1505,7 +1505,7 @@
    "status": "incomplete",
    "reason": "perspective-unresolvable",
    "timings": {
-    "totalMs": 0.011
+    "totalMs": 0.014
    },
    "expectMet": true
   },
@@ -1515,7 +1515,7 @@
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
-     "ms": 0.01,
+     "ms": 0.013,
      "request": {
       "type": "protagonist"
      },
@@ -1531,7 +1531,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.068,
+     "ms": 0.1,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -1582,7 +1582,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.066,
+     "ms": 0.075,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -1703,7 +1703,7 @@
     ]
    },
    "timings": {
-    "totalMs": 0.159
+    "totalMs": 0.207
    },
    "expectMet": true
   },
@@ -1729,7 +1729,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.067,
+     "ms": 0.07,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -1896,7 +1896,7 @@
     ]
    },
    "timings": {
-    "totalMs": 0.149
+    "totalMs": 0.151
    },
    "expectMet": true
   },
@@ -1906,7 +1906,7 @@
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
-     "ms": 0.02,
+     "ms": 0.015,
      "request": {
       "type": "protagonist"
      },
@@ -1922,7 +1922,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.065,
+     "ms": 0.067,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -1973,7 +1973,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.051,
+     "ms": 0.056,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -2088,7 +2088,7 @@
     ]
    },
    "timings": {
-    "totalMs": 0.156
+    "totalMs": 0.158
    },
    "expectMet": true
   },
@@ -2098,7 +2098,7 @@
    "expect": "stopped-at-organization",
    "stages": {
     "perspective": {
-     "ms": 0.015,
+     "ms": 0.018,
      "request": {
       "type": "protagonist"
      },
@@ -2114,7 +2114,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.046,
+     "ms": 0.065,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -2165,7 +2165,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.031,
+     "ms": 0.033,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -2267,7 +2267,7 @@
      }
     },
     "organization": {
-     "ms": 0.027,
+     "ms": 0.029,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -2359,7 +2359,7 @@
     "f1"
    ],
    "timings": {
-    "totalMs": 0.138
+    "totalMs": 0.166
    },
    "expectMet": true
   },
@@ -2369,7 +2369,7 @@
    "expect": "stopped-at-organization",
    "stages": {
     "perspective": {
-     "ms": 0.01,
+     "ms": 0.012,
      "request": {
       "type": "protagonist"
      },
@@ -2385,7 +2385,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.048,
+     "ms": 0.059,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -2436,7 +2436,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.034,
+     "ms": 0.037,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -2633,7 +2633,7 @@
     "f1"
    ],
    "timings": {
-    "totalMs": 0.131
+    "totalMs": 0.148
    },
    "expectMet": true
   },
@@ -2659,7 +2659,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.039,
+     "ms": 0.042,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -2710,7 +2710,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.047,
+     "ms": 0.041,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -2812,7 +2812,7 @@
      }
     },
     "organization": {
-     "ms": 0.019,
+     "ms": 0.025,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -2886,7 +2886,7 @@
      }
     },
     "scene": {
-     "ms": 0.052,
+     "ms": 0.071,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -2915,7 +2915,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.09,
+     "ms": 0.12,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -2926,7 +2926,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.209,
+     "ms": 0.291,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -2937,7 +2937,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.116,
+       "ms": 0.16,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -2974,7 +2974,7 @@
         "attempt": 2,
         "feedback": "uncovered:f1:task_achieved"
        },
-       "ms": 0.066,
+       "ms": 0.1,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
         "finishReason": "eos"
@@ -3009,7 +3009,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.147,
+     "ms": 0.221,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
      "result": {
@@ -3020,7 +3020,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.003,
      "used": false
     }
    },
@@ -3096,7 +3096,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.674
+    "totalMs": 0.897
    },
    "expectMet": true
   },
@@ -3106,7 +3106,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.011,
+     "ms": 0.013,
      "request": {
       "type": "protagonist"
      },
@@ -3122,7 +3122,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.058,
+     "ms": 0.075,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -3173,7 +3173,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.041,
+     "ms": 0.049,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -3349,7 +3349,7 @@
      }
     },
     "scene": {
-     "ms": 1.901,
+     "ms": 2.546,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -3378,7 +3378,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.102,
+     "ms": 0.146,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -3389,7 +3389,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.217,
+     "ms": 0.371,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -3400,7 +3400,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.121,
+       "ms": 0.209,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -3437,7 +3437,7 @@
         "attempt": 2,
         "feedback": "uncovered:f1:task_achieved"
        },
-       "ms": 0.068,
+       "ms": 0.106,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
         "finishReason": "length"
@@ -3472,7 +3472,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.152,
+     "ms": 0.239,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
      "result": {
@@ -3483,7 +3483,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.009,
+     "ms": 0.006,
      "used": true,
      "reason": "n5-rejected",
      "source": "narration_pipeline.generate_reference_text",
@@ -3573,7 +3573,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 2.7
+    "totalMs": 3.831
    },
    "expectMet": true
   },
@@ -3583,7 +3583,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.012,
+     "ms": 0.021,
      "request": {
       "type": "protagonist"
      },
@@ -3599,7 +3599,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.065,
+     "ms": 0.107,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -3650,7 +3650,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.04,
+     "ms": 0.064,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -3752,7 +3752,7 @@
      }
     },
     "organization": {
-     "ms": 0.026,
+     "ms": 0.038,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -3826,7 +3826,7 @@
      }
     },
     "scene": {
-     "ms": 0.041,
+     "ms": 0.068,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -3855,7 +3855,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.073,
+     "ms": 0.118,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -3866,7 +3866,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.195,
+     "ms": 0.434,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -3877,7 +3877,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.107,
+       "ms": 0.284,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
         "finishReason": "eos"
@@ -3916,7 +3916,7 @@
         "attempt": 2,
         "feedback": "residue-name:管线甲; residue-name:管线甲"
        },
-       "ms": 0.067,
+       "ms": 0.104,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
         "finishReason": "eos"
@@ -3954,7 +3954,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.157,
+     "ms": 0.377,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
      "result": {
@@ -3967,7 +3967,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.007,
      "used": true,
      "reason": "n5-rejected",
      "source": "narration_pipeline.generate_reference_text",
@@ -4060,7 +4060,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.754
+    "totalMs": 1.612
    },
    "expectMet": true
   },
@@ -4070,7 +4070,7 @@
    "expect": "sentence-port-failed",
    "stages": {
     "perspective": {
-     "ms": 0.01,
+     "ms": 0.021,
      "request": {
       "type": "protagonist"
      },
@@ -4086,7 +4086,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.056,
+     "ms": 0.109,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -4137,7 +4137,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.036,
+     "ms": 0.072,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -4239,7 +4239,7 @@
      }
     },
     "organization": {
-     "ms": 0.022,
+     "ms": 0.042,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -4313,7 +4313,7 @@
      }
     },
     "scene": {
-     "ms": 0.052,
+     "ms": 0.103,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -4342,7 +4342,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.07,
+     "ms": 0.136,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -4353,7 +4353,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.042,
+     "ms": 0.078,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -4364,7 +4364,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.02,
+       "ms": 0.033,
        "portError": {
         "code": "model-timeout",
         "detail": "scripted sentence-port timeout (attempt 1)"
@@ -4379,7 +4379,7 @@
         "attempt": 2,
         "feedback": "port-error:model-timeout"
        },
-       "ms": 0.005,
+       "ms": 0.01,
        "portError": {
         "code": "model-timeout",
         "detail": "scripted sentence-port timeout (attempt 2)"
@@ -4393,7 +4393,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.006,
      "used": true,
      "reason": "sentence-port-failed",
      "source": "narration_pipeline.generate_reference_text",
@@ -4475,7 +4475,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.418
+    "totalMs": 0.857
    },
    "expectMet": true
   },
@@ -4485,7 +4485,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.009,
+     "ms": 0.018,
      "request": {
       "type": "protagonist"
      },
@@ -4501,7 +4501,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.056,
+     "ms": 0.198,
      "program": "narration_pipeline.extract_facts",
      "factCount": 3,
      "facts": [
@@ -4563,7 +4563,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.04,
+     "ms": 0.086,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -4685,7 +4685,7 @@
      }
     },
     "organization": {
-     "ms": 0.033,
+     "ms": 0.048,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -4774,7 +4774,7 @@
      }
     },
     "scene": {
-     "ms": 0.036,
+     "ms": 0.077,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -4803,7 +4803,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.066,
+     "ms": 0.12,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -4814,7 +4814,7 @@
      "inputChars": 236
     },
     "n4n5": {
-     "ms": 1.09,
+     "ms": 2.234,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -4825,7 +4825,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.952,
+       "ms": 1.967,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
         "finishReason": "eos"
@@ -4864,7 +4864,7 @@
         "attempt": 2,
         "feedback": "uncovered:f2:time"
        },
-       "ms": 0.116,
+       "ms": 0.214,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
         "finishReason": "eos"
@@ -4902,7 +4902,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 1.112,
+     "ms": 1.344,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
      "result": {
@@ -4916,7 +4916,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.004,
      "used": false,
      "reason": "n5-rejected",
      "unavailableReason": "disabled-for-case"
@@ -5013,7 +5013,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 2.513
+    "totalMs": 4.261
    },
    "expectMet": true
   },
@@ -5023,7 +5023,7 @@
    "expect": "n5-false-pass",
    "stages": {
     "perspective": {
-     "ms": 0.013,
+     "ms": 0.02,
      "request": {
       "type": "protagonist"
      },
@@ -5039,7 +5039,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.069,
+     "ms": 0.099,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -5090,7 +5090,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.043,
+     "ms": 0.063,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -5192,7 +5192,7 @@
      }
     },
     "organization": {
-     "ms": 0.026,
+     "ms": 0.04,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -5266,7 +5266,7 @@
      }
     },
     "scene": {
-     "ms": 0.04,
+     "ms": 0.059,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -5295,7 +5295,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.084,
+     "ms": 0.113,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -5306,7 +5306,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.11,
+     "ms": 0.16,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -5317,7 +5317,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.098,
+       "ms": 0.143,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
         "finishReason": "eos",
@@ -5359,7 +5359,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.164,
+     "ms": 0.294,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
      "result": {
@@ -5372,7 +5372,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.009,
+     "ms": 0.013,
      "used": false,
      "reason": "n5-false-pass",
      "unavailableReason": "disabled-for-case"
@@ -5450,7 +5450,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.615
+    "totalMs": 0.943
    },
    "expectMet": true
   },
@@ -5460,7 +5460,7 @@
    "expect": "empty-output",
    "stages": {
     "perspective": {
-     "ms": 0.011,
+     "ms": 0.017,
      "request": {
       "type": "protagonist"
      },
@@ -5476,7 +5476,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.059,
+     "ms": 0.094,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -5527,7 +5527,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.038,
+     "ms": 0.057,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -5629,7 +5629,7 @@
      }
     },
     "organization": {
-     "ms": 0.023,
+     "ms": 0.031,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -5703,7 +5703,7 @@
      }
     },
     "scene": {
-     "ms": 0.035,
+     "ms": 0.047,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -5732,7 +5732,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.061,
+     "ms": 0.091,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -5743,7 +5743,7 @@
      "inputChars": 210
     },
     "n4n5": {
-     "ms": 0.021,
+     "ms": 0.034,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -5754,7 +5754,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.005,
+       "ms": 0.008,
        "response": {
         "text": "",
         "finishReason": "eos"
@@ -5782,7 +5782,7 @@
         "attempt": 2,
         "feedback": "empty-output"
        },
-       "ms": 0.003,
+       "ms": 0.005,
        "response": {
         "text": "   ",
         "finishReason": "eos"
@@ -5809,7 +5809,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.082,
+     "ms": 0.423,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "   ",
      "result": {
@@ -5824,7 +5824,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.006,
      "used": true,
      "reason": "empty-output",
      "source": "narration_pipeline.generate_reference_text",
@@ -5908,7 +5908,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.492
+    "totalMs": 1.124
    },
    "expectMet": true
   },
@@ -5918,7 +5918,7 @@
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
-     "ms": 0.011,
+     "ms": 0.024,
      "request": {
       "type": "protagonist"
      },
@@ -5934,7 +5934,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.158,
+     "ms": 0.1,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -5985,7 +5985,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.064,
+     "ms": 0.318,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -6102,7 +6102,7 @@
     ]
    },
    "timings": {
-    "totalMs": 0.264
+    "totalMs": 0.479
    },
    "expectMet": true
   },
@@ -6112,7 +6112,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.012,
+     "ms": 0.018,
      "request": {
       "type": "protagonist"
      },
@@ -6128,7 +6128,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.065,
+     "ms": 0.323,
      "program": "narration_pipeline.extract_facts",
      "factCount": 2,
      "facts": [
@@ -6181,7 +6181,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.038,
+     "ms": 0.072,
      "program": "n2_perspective.classify_facts + mock port",
      "request": {
       "facts": [
@@ -6285,7 +6285,7 @@
      }
     },
     "organization": {
-     "ms": 0.032,
+     "ms": 0.038,
      "program": "n3_organize.check_plan_v3 + mock port",
      "request": {
       "selectedFacts": [
@@ -6361,7 +6361,7 @@
      }
     },
     "scene": {
-     "ms": 0.04,
+     "ms": 0.058,
      "program": "n4_input_renderer.scene_context",
      "status": "ok",
      "reason": null,
@@ -6390,7 +6390,7 @@
      "environment": null
     },
     "n4Input": {
-     "ms": 0.085,
+     "ms": 0.123,
      "program": "n4_input_renderer.packer",
      "version": "n4-input-pack-v0.1",
      "status": "ok",
@@ -6401,7 +6401,7 @@
      "inputChars": 217
     },
     "n4n5": {
-     "ms": 0.444,
+     "ms": 0.842,
      "program": "mock sentence port + eval_n4_v2.judge_row",
      "attempts": [
       {
@@ -6412,7 +6412,7 @@
         "attempt": 1,
         "feedback": null
        },
-       "ms": 0.35,
+       "ms": 0.68,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -6449,7 +6449,7 @@
         "attempt": 2,
         "feedback": "uncovered:f1:subtask_added"
        },
-       "ms": 0.072,
+       "ms": 0.121,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -6485,7 +6485,7 @@
      "note": "semantic review is a separate human/model step and is never auto-passed; 'ok' means the frozen hard gates passed"
     },
     "n5CrossCheck": {
-     "ms": 0.121,
+     "ms": 0.191,
      "program": "narration_pipeline.verify_text -> corpus_check.check_narration",
      "text": "管线甲从管线镇来到了钟楼。",
      "result": {
@@ -6498,7 +6498,7 @@
      "note": "recorded only; never gates this composition"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.004,
      "used": false,
      "reason": "n5-rejected",
      "unavailableReason": "template-unsupported-kind",
@@ -6581,7 +6581,7 @@
     "semanticReview": "not-run"
    },
    "timings": {
-    "totalMs": 0.895
+    "totalMs": 1.845
    },
    "expectMet": true
   }

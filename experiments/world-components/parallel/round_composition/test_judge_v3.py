@@ -108,6 +108,75 @@ def test_d2():
           "D2: invented duration is named")
 
 
+def test_d2_regressions():
+    """Reviewer counter-examples (2026-11-08): the first duration scanner only
+    matched a trailing numeral and let wrong values through. Each case below
+    must fail; the compliant ones must still pass."""
+    facts = time_facts()
+    must = ["f0", "f1", "f2"]
+    base = "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。"
+
+    def g3(text):
+        r = j.judge(facts, must, PLAN, base + text)
+        return r["gates"]["G3_time"], r["problems"]
+
+    ok, _ = g3("8.8分钟过去了。")
+    check(not ok, "D2 regression: 8.8分钟 must not be read as 8分钟")
+    ok, probs = g3("8.8分钟过去了。")
+    check(any("time-value-mismatch" in p for p in probs),
+          "D2 regression: decimal mismatch is named")
+
+    ok, _ = g3("负八分钟过去了。")
+    check(not ok, "D2 regression: a negative duration must fail")
+
+    ok, probs = g3("过了一会儿，八分半钟过去了。")
+    check(not ok, "D2 regression: 八分半钟 must not pass via the vague clause")
+    check(any("time-value-mismatch" in p for p in probs),
+          "D2 regression: half-minute value is parsed (8.5) and compared")
+
+    ok, probs = g3("几分钟过去了。")
+    check(not ok, "D2 regression: an unparseable duration fails")
+    check(any("time-value-unparseable" in p for p in probs),
+          "D2 regression: unparseable duration is named")
+
+    ok, _ = g3("约八分钟过去了。")
+    check(ok, "D2 regression: the authoritative value still passes")
+    ok, _ = g3("过了一会儿。")
+    check(ok, "D2 regression: a pure vague clause still passes")
+
+
+def test_pronoun_grant():
+    """Reviewer finding (2026-11-08): v3 ignored plan grants and rejected a
+    legal 他 grant that v2 accepts."""
+    facts = [{"factId": "f0", "kind": "moved", "entityId": "char_pa",
+              "name": "管线甲", "from": "管线镇", "to": "钟楼",
+              "entityGroup": "characters"}]
+    plan = {"sentences": [{"index": 0, "factIds": ["f0"],
+                           "coreference": [{"mention": "他",
+                                            "refersTo": "char_pa",
+                                            "pronoun": "他"}],
+                           "time": None}]}
+    r = j.judge(facts, ["f0"], plan, "他从管线镇来到了钟楼。")
+    check(r["hardPass"], "grant: a legal 他 grant is matched")
+    r = j.judge(facts, ["f0"], plan, "管线甲从管线镇来到了钟楼。")
+    check(r["hardPass"], "grant: the plain name is still accepted")
+    r = j.judge(facts, ["f0"], plan, "他从管线镇来到了桥头。")
+    check(not r["hardPass"], "grant: a wrong destination still fails")
+
+    # same-name restriction survives: a grant on a same-name entity fails G5
+    facts2 = same_name_facts()
+    plan2 = {"sentences": [{"index": 0, "factIds": ["f0", "f1"],
+                            "coreference": [{"mention": "他",
+                                             "refersTo": "char_pb",
+                                             "pronoun": "他"}],
+                            "time": None}]}
+    r = j.judge(facts2, ["f0", "f1"], plan2,
+                "管线乙完成了任务「合力抬钟」。管线乙完成了任务「合力抬钟」。")
+    check(r["gates"].get("G5_same_name_discipline") is False,
+          "grant: same-name grant still fails G5")
+    check(not r["hardPass"], "grant: same-name grant still rejected")
+
+
 def same_name_facts():
     return [
         {"factId": "f0", "kind": "task_achieved", "entityId": "char_pb",
@@ -214,15 +283,16 @@ def test_d3_quality():
 
 
 def main() -> int:
-    for fn in (test_d1, test_d2, test_d5, test_case_id_invariance, test_d4,
-               test_d3_quality):
+    for fn in (test_d1, test_d2, test_d2_regressions, test_pronoun_grant,
+               test_d5, test_case_id_invariance, test_d4, test_d3_quality):
         fn()
     if FAILURES:
         print(f"FAIL ({len(FAILURES)})")
         for f in FAILURES:
             print("  -", f)
         return 1
-    print("PASS: judge_v3 unit checks (D1, D2, D3, D4, D5)")
+    print("PASS: judge_v3 unit checks (D1, D2, D2 regressions, grants, "
+          "D3, D4, D5)")
     return 0
 
 

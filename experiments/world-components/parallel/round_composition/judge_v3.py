@@ -51,8 +51,49 @@ VAGUE_TIME = (
     "一会儿", "片刻", "半晌", "一阵子", "一段时间", "过了一阵",
 )
 
-DURATION_RE = (rf"(?P<num>{CN_NUM})\s*"
-               rf"(?P<unit>秒钟|秒|分钟|小时|天|个月|年)")
+# Duration scanning must see the WHOLE numeric expression. The first version
+# matched only a trailing numeral and therefore let "8.8分钟", "负八分钟" and
+# "八分半钟" through (the reviewers' counter-examples). Now the scanner takes a
+# sign, a decimal or Chinese numeral (or 半/几/数) and a unit, and any match it
+# cannot convert to (value, unit) is an EXPLICIT duration that cannot be
+# checked -> hard failure, never a fallback to the vague expression.
+DURATION_RE = re.compile(
+    r"(?P<neg>负|－|-|−)?\s*"
+    r"(?P<num>\d+(?:\.\d+)?|[零一二两三四五六七八九十百]+|半|几|数)?\s*"
+    r"(?P<unit>个月|分钟|分半钟|分半|小时|钟头|秒钟|秒|天|日|年|月|时辰)")
+
+UNIT_MAP = {"秒钟": "second", "秒": "second", "分钟": "minute",
+            "分半钟": "minute", "分半": "minute", "小时": "hour",
+            "钟头": "hour", "天": "day", "日": "day", "个月": "month",
+            "月": "month", "年": "year"}
+HALF_UNITS = {"分半钟", "分半"}
+
+
+def _parse_duration(num, unit_cn, neg):
+    """-> (value, unit) or None when the expression is an explicit duration we
+    cannot convert exactly. None is a hard failure, not a vague pass."""
+    if unit_cn == "时辰":       # archaic unit, no exact minute mapping
+        return None
+    unit = UNIT_MAP.get(unit_cn)
+    if unit is None:
+        return None
+    extra = 0.5 if unit_cn in HALF_UNITS else 0.0
+    if num is None:
+        return None
+    if num == "半":
+        value = 0.5
+    elif num in ("几", "数"):
+        return None
+    elif re.fullmatch(r"\d+(?:\.\d+)?", num):
+        value = float(num)
+    elif re.fullmatch(r"[零一二两三四五六七八九十百]+", num):
+        value = float(cn_to_int(num))
+    else:
+        return None
+    value += extra
+    if neg:
+        value = -value
+    return value, unit
 
 BLOCKING_CODES = {"outcome-result-missing", "unsupported-kind"}
 
@@ -67,7 +108,7 @@ class JudgeBlocked(Exception):
         self.detail = detail
 
 
-def _outcome_patterns(fact):
+def _outcome_patterns(fact, pronoun=None):
     name = esc(fact.get("name") or "")
     result = fact.get("resultText")
     if not isinstance(result, str) or not result.strip():
@@ -75,56 +116,77 @@ def _outcome_patterns(fact):
     # The result appears with the acting subject in one sentence; the exact
     # result wording is required (it is the authoritative surface text), while
     # up to 8 characters of connective prose may sit between subject and text.
-    return [rf"{name}[^。]{{0,8}}?{esc(result.strip())}"]
+    subj = f"(?:{name}|{esc(pronoun)})" if pronoun else name
+    return [rf"{subj}[^。]{{0,8}}?{esc(result.strip())}"]
 
 
-def _patterns_for(fact):
+def _patterns_for(fact, pronoun=None):
+    """Frames for one fact. `pronoun` is the plan's appellation grant for the
+    fact's entity (Regression: the first version always passed None and so
+    rejected every legal 他/她 grant that v2 accepts)."""
     kind = fact.get("kind")
     if kind == "outcome":
-        return _outcome_patterns(fact)
+        return _outcome_patterns(fact, pronoun)
     try:
-        return fact_patterns(fact, None)
+        return fact_patterns(fact, pronoun)
     except ValueError:
         raise JudgeBlocked("unsupported-kind", kind)
 
 
 def _duration_mentions(text):
-    out = []
-    for m in re.finditer(DURATION_RE, text):
-        unit_cn = m.group("unit")
-        unit = UNIT_EN.get(unit_cn if unit_cn != "秒钟" else "秒")
-        out.append({"raw": m.group(0), "amount": cn_to_int(m.group("num")),
-                    "unit": unit, "start": m.start(), "end": m.end()})
-    return out
+    """-> (parsed, unparseable). `parsed` holds (value, unit) expressions we
+    can compare; `unparseable` holds explicit duration claims we cannot
+    convert (8.8分钟 stays parsed as 8.8; 八分半钟 as 8.5; 几分钟/时辰 land
+    here)."""
+    parsed, unparseable = [], []
+    for m in DURATION_RE.finditer(text):
+        raw = m.group(0)
+        got = _parse_duration(m.group("num"), m.group("unit"),
+                              bool(m.group("neg")))
+        entry = {"raw": raw, "start": m.start(), "end": m.end()}
+        if got is None:
+            unparseable.append(entry)
+        else:
+            entry["amount"], entry["unit"] = got
+            parsed.append(entry)
+    return parsed, unparseable
 
 
 def _time_gate(facts, must, text):
-    """D2: vague coverage allowed; any stated duration must match the
-    authoritative time fact numerically."""
+    """D2: a vague expression may cover the time fact ONLY when the text states
+    no duration at all. Every stated duration is compared numerically with the
+    authoritative time fact; an explicit duration that cannot be parsed is a
+    hard failure, not a vague pass."""
     time_facts = [f for f in facts if f.get("kind") == "time"
                   and f.get("factId") in must]
-    if not time_facts:
-        # a duration in a row with no time fact is an invented claim
-        mentions = _duration_mentions(text)
-        if mentions:
-            return False, [f"time-value-without-fact:{m['raw']}"
-                           for m in mentions], {"triggered": bool(mentions)}
-        return True, [], {"triggered": False}
+    parsed, unparseable = _duration_mentions(text)
     authorized = {(f.get("amount"), f.get("unit")) for f in time_facts}
-    mentions = _duration_mentions(text)
-    vague_hit = next((v for v in VAGUE_TIME if v in text), None)
+    info = {"triggered": bool(time_facts), "parsed": parsed,
+            "unparseable": [u["raw"] for u in unparseable],
+            "authorized": sorted(map(list, authorized))}
     problems = []
-    if mentions:
-        for m in mentions:
-            if (m["amount"], m["unit"]) not in authorized:
-                problems.append(
-                    f"time-value-mismatch:{m['raw']} not in "
-                    f"{sorted(authorized)}")
-    elif vague_hit is None:
-        problems.append("uncovered:time (no vague expression and no value)")
-    return not problems, problems, {"triggered": True, "vague": vague_hit,
-                                    "mentions": [m["raw"] for m in mentions],
-                                    "authorized": sorted(map(list, authorized))}
+    if unparseable:
+        # cannot check -> reject; never fall back to a vague expression
+        problems.extend(f"time-value-unparseable:{u['raw']}"
+                        for u in unparseable)
+    if parsed:
+        if not time_facts:
+            problems.extend(f"time-value-without-fact:{m['raw']}"
+                            for m in parsed)
+        else:
+            for m in parsed:
+                if (m["amount"], m["unit"]) not in authorized:
+                    problems.append(
+                        f"time-value-mismatch:{m['raw']}="
+                        f"{m['amount']}{m['unit']} not in "
+                        f"{sorted(authorized)}")
+    if not parsed and not unparseable:
+        vague_hit = next((v for v in VAGUE_TIME if v in text), None)
+        info["vague"] = vague_hit
+        if time_facts and vague_hit is None:
+            problems.append(
+                "uncovered:time (no vague expression and no value)")
+    return not problems, problems, info
 
 
 def _same_name_groups(facts):
@@ -151,17 +213,23 @@ def judge(facts, must_express, plan, text, finish_reason="eos"):
     if missing:
         raise JudgeBlocked("must-express-unknown", missing)
 
+    # plan grants (entityId -> pronoun) are honoured in fact matching; G5 uses
+    # the same map to reject grants on same-name entities
+    grants = (grants_by_entity({"plan": plan, "facts": facts})
+              if plan else {})
+
     # every must fact must be expressible by SOME frame, checked up front so a
     # missing authoritative field blocks instead of silently shrinking the row
     for fid in must:
-        _patterns_for(facts_by_id[fid])
+        _patterns_for(facts_by_id[fid],
+                      grants.get(facts_by_id[fid].get("entityId")))
 
     covered, problems, spans, claimed = [], [], [], []
     for fid in must:
         fact = facts_by_id[fid]
         if fact.get("kind") == "time":
             continue  # handled by G3
-        patterns = _patterns_for(fact)
+        patterns = _patterns_for(fact, grants.get(fact.get("entityId")))
         pool = []
         for pat in patterns:
             for m in re.finditer(pat, text):
@@ -219,7 +287,6 @@ def judge(facts, must_express, plan, text, finish_reason="eos"):
                     f"needs {len(ids)} mentions")
 
     # G5: data-triggered (a grant exists for an entity whose name is shared)
-    grants = grants_by_entity({"plan": plan, "facts": facts}) if plan else {}
     same_name_entities = {eid for ids in groups.values() for eid in ids}
     g5_trigger = bool(set(grants) & same_name_entities)
     g5 = not g5_trigger

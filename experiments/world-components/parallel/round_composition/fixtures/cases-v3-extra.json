@@ -8,6 +8,7 @@
    "title": "任务达成用结果表述",
    "expect": "n5-pass",
    "judgeOnly": false,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -389,6 +390,7 @@
    "title": "缺 resultText 必须阻断",
    "expect": "incomplete",
    "judgeOnly": false,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -767,6 +769,7 @@
    "title": "双人同目标（不同名）",
    "expect": "n5-pass",
    "judgeOnly": true,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -1160,6 +1163,7 @@
    "title": "同名两名角色",
    "expect": "n5-pass",
    "judgeOnly": true,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -1594,6 +1598,7 @@
    "title": "同名角色获得代词授权（篡改计划）",
    "expect": "n5-rejected",
    "judgeOnly": true,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -2043,6 +2048,7 @@
    "title": "普通对照：单人",
    "expect": "n5-pass",
    "judgeOnly": false,
+   "genderHints": null,
    "before": {
     "pointId": "pt-1",
     "version": 1,
@@ -2418,6 +2424,476 @@
     "alias:d5-control-single-actor"
    ],
    "notes": "Ordinary single-actor case: G4/G5 must NOT be triggered, so no conflict gate value is recorded."
+  },
+  {
+   "caseId": "d2-time-value-strict",
+   "title": "时长数值必须完整比对",
+   "expect": "n5-pass",
+   "judgeOnly": true,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_pa",
+     "name": "管线甲",
+     "from": "管线镇",
+     "to": "钟楼",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_pa",
+     "name": "管线甲",
+     "goal": "把铜铃挂回钟楼",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f2",
+     "kind": "time",
+     "amount": 8,
+     "unit": "minute"
+    }
+   ],
+   "mustExpress": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 8,
+       "unit": "minute"
+      }
+     }
+    ]
+   },
+   "sentenceTexts": [
+    "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。约八分钟过去了。"
+   ],
+   "counterTexts": [
+    {
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。8.8分钟过去了。",
+     "expect": "n5-rejected",
+     "why": "decimal truncated to 8 by the first scanner"
+    },
+    {
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。负八分钟过去了。",
+     "expect": "n5-rejected",
+     "why": "negative sign dropped by the first scanner"
+    },
+    {
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿，八分半钟过去了。",
+     "expect": "n5-rejected",
+     "why": "half-minute value hidden behind a vague clause"
+    },
+    {
+     "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。几分钟过去了。",
+     "expect": "n5-rejected",
+     "why": "explicit but unparseable duration"
+    }
+   ],
+   "rowIdAliases": [
+    "comp:d2-time-value-strict",
+    "alias:d2-time-value-strict"
+   ],
+   "notes": "Same authoritative value 8 minutes throughout. The first version passed 8.8 / 负八分钟 / 八分半钟 / 几分钟; all four must now fail, while 约八分钟 and a pure vague clause pass."
+  },
+  {
+   "caseId": "d2-pronoun-grant",
+   "title": "合法代词授权必须命中",
+   "expect": "n5-pass",
+   "judgeOnly": true,
+   "genderHints": {
+    "char_pa": "male"
+   },
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "planOverride": null,
+   "sentenceTexts": [
+    "他从管线镇来到了钟楼。"
+   ],
+   "counterTexts": [
+    {
+     "text": "他从管线镇来到了桥头。",
+     "expect": "n5-rejected",
+     "why": "wrong destination still fails"
+    }
+   ],
+   "narrativeOutcome": false,
+   "rowIdAliases": [
+    "comp:d2-pronoun-grant",
+    "alias:d2-pronoun-grant"
+   ],
+   "notes": "genderHints licenses 他 for char_pa (single entity, unique name). v2 accepts this; the first v3 build reported uncovered:f0:moved because it always passed pronoun=None."
   },
   {
    "caseId": "d1-outcome-judge-block",

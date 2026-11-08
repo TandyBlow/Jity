@@ -46,7 +46,7 @@ def moved(eid, container):
     return np_.moved_delta(eid, container)
 
 
-def base_case(cid, title, expect, pt, *, judge_only=False,
+def base_case(cid, title, expect, pt, *, judge_only=False, gender_hints=None,
               narrative_outcome=False,
               plan_source="program", texts=None, counters=None,
               row_id_aliases=None, notes=None, plan_override=None):
@@ -56,6 +56,7 @@ def base_case(cid, title, expect, pt, *, judge_only=False,
         # facts + a program plan, and only the gate is exercised. N2 visibility
         # is NOT applied, because these samples test the gate, not selection.
         "judgeOnly": judge_only,
+        "genderHints": gender_hints,
         "before": BEFORE, "point": pt,
         "perspective": {"type": "protagonist"},
         "options": {"mayPolicy": "select", "visibleOtherActions": False},
@@ -213,6 +214,57 @@ def main() -> int:
         texts=["管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。"],
         notes="Ordinary single-actor case: G4/G5 must NOT be triggered, so "
               "no conflict gate value is recorded."))
+
+    # ---- D2 regressions (reviewer counter-examples, archived) ----------
+    f8 = [{"factId": "f0", "kind": "moved", "entityId": "char_pa",
+           "name": "管线甲", "from": "管线镇", "to": "钟楼",
+           "entityGroup": "characters"},
+          {"factId": "f1", "kind": "task_achieved", "entityId": "char_pa",
+           "name": "管线甲", "goal": "把铜铃挂回钟楼",
+           "entityGroup": "characters"},
+          {"factId": "f2", "kind": "time", "amount": 8, "unit": "minute"}]
+    base = "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。"
+    cases.append({
+        "caseId": "d2-time-value-strict", "title": "时长数值必须完整比对",
+        "expect": "n5-pass", "judgeOnly": True,
+        "facts": f8, "mustExpress": ["f0", "f1", "f2"],
+        "plan": {"sentences": [{"index": 0, "factIds": ["f0", "f1", "f2"],
+                                "coreference": [],
+                                "time": {"amount": 8, "unit": "minute"}}]},
+        "sentenceTexts": [base + "约八分钟过去了。"],
+        "counterTexts": [
+            {"text": base + "8.8分钟过去了。", "expect": "n5-rejected",
+             "why": "decimal truncated to 8 by the first scanner"},
+            {"text": base + "负八分钟过去了。", "expect": "n5-rejected",
+             "why": "negative sign dropped by the first scanner"},
+            {"text": base + "过了一会儿，八分半钟过去了。",
+             "expect": "n5-rejected",
+             "why": "half-minute value hidden behind a vague clause"},
+            {"text": base + "几分钟过去了。", "expect": "n5-rejected",
+             "why": "explicit but unparseable duration"},
+        ],
+        "rowIdAliases": ["comp:d2-time-value-strict",
+                         "alias:d2-time-value-strict"],
+        "notes": "Same authoritative value 8 minutes throughout. The first "
+                 "version passed 8.8 / 负八分钟 / 八分半钟 / 几分钟; all four "
+                 "must now fail, while 约八分钟 and a pure vague clause pass.",
+    })
+
+    # ---- grant regression: legal pronoun must be matched ----------------
+    st6 = with_state(char_pa={
+        "position": {"containerId": "loc_2", "slotId": None,
+                     "relativeTo": None}})
+    cases.append(base_case(
+        "d2-pronoun-grant", "合法代词授权必须命中", "n5-pass",
+        point({"char_pa": moved("char_pa", "loc_2")}, st6), judge_only=True,
+        gender_hints={"char_pa": "male"},
+        texts=["他从管线镇来到了钟楼。"],
+        counters=[{"text": "他从管线镇来到了桥头。",
+                   "expect": "n5-rejected",
+                   "why": "wrong destination still fails"}],
+        notes="genderHints licenses 他 for char_pa (single entity, unique "
+              "name). v2 accepts this; the first v3 build reported "
+              "uncovered:f0:moved because it always passed pronoun=None."))
 
     # ---- D1 judge-level block (no chain; the row is built by the runner) --
     cases.append({

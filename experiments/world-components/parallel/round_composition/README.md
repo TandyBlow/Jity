@@ -153,10 +153,10 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | 裁决 | 实现 | 归档里怎么看得出来 |
 | --- | --- | --- |
 | D1 C | `outcome` 事实按「主体 + resultText 原文」判覆盖；事实没有 resultText 时抛 `JudgeBlocked(outcome-result-missing)`，**不退回任务目标** | `d1-outcome-result` 硬门通过；`d1-outcome-judge-block` 状态 `blocked-at-judge`；`probesUnderV3` 的 `outcome-result-v3` 通过、`outcome-goal-quoted-v3` 被拒（`uncovered:f1:outcome` + `residue-goal`） |
-| D2 A | 模糊时间表达（有词表）算覆盖；正文出现 `数字+单位` 时解析并与权威时间事实比对，写错就失败；没有时间事实却写时长也失败 | `contract-time-conflict` 从 `n5-rejected` 变为 `n5-pass`，`time.vague=过了一会儿`；`probesUnderV3` 的 `time-exact` 仍通过 |
+| D2 A | 模糊表达（有词表）只有在**正文没有出现任何时长**时才算覆盖；出现时长就完整解析（符号、小数、半、几/数）与权威值比对，解析不了就失败；没有时间事实却写时长也失败 | `contract-time-conflict` 从 `n5-rejected` 变为 `n5-pass`，`time.vague=过了一会儿`；`probesUnderV3` 的 `time-exact` 仍通过 |
 | D3 B | 硬门与语义分栏：`n5` 只放门结果，`n6` 单独记，`quality` 由 `quality()` 计算，N6 未跑时一律 `pending` | 26 例 `qualityPending=26`、`qualityPassed=0`；`n6.status=not-run` |
 | D4 B | 未登记名来自人工标注文件；没标注时 `count=null`，标注过且干净才是 `0` | `d4Labeled=10`、`d4Positives=1`、`d4Unchecked=16`；标注挂在具体正文上（`d4.text`） |
-| D5 C→A | G4/G5 改由数据触发（同名多实体 / 同名实体获授权）；判定器不接收 `rowId`；每个案例用两个假 rowId 各判一次并比对 | `g4Triggered=2`、`g5Triggered=1`、`rowIdInvarianceFailures=0`；`d5-same-name-grant` 因 G5 被拒 |
+| D5 C→A | G4/G5 改由数据触发（同名多实体 / 同名实体获授权）；判定器不接收 `rowId`；每个案例用两个假 rowId 各判一次并比对；**计划里的合法代词授权参与事实匹配**（同名实体的授权仍由 G5 拒绝） | `g4Triggered=2`、`g5Triggered=1`、`rowIdInvarianceFailures=0`；`d5-same-name-grant` 因 G5 被拒 |
 
 **新增样本族（D5 要求的「先登记样本」）**
 
@@ -169,11 +169,24 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 
 **结果（`out/composition-v3-run.json`）**
 
-26 例（19 原例 + 7 新例）全部落在预期：`n5-pass 10 / n5-rejected 4 / incomplete 3 / stopped-at-selection 4 / stopped-at-organization 2 / sentence-port-failed 1 / empty-output 1 / blocked-at-judge 1`；`qualityPending=26`、`qualityPassed=0`；`g4Triggered=2`、`g5Triggered=1`；`rowIdInvarianceFailures=0`；D4 标注 10 例、正例 1、未检查 16。
+28 例（19 原例 + 9 新例）全部落在预期：`n5-pass 12 / n5-rejected 4 / incomplete 3 / stopped-at-selection 4 / stopped-at-organization 2 / sentence-port-failed 1 / empty-output 1 / blocked-at-judge 1`；`qualityPending=28`、`qualityPassed=0`；`g4Triggered=2`、`g5Triggered=1`；`rowIdInvarianceFailures=0`；D4 标注 10 例、正例 1、未检查 18。
+
+**复核补正（2026-11-08，第二轮复核提出的两个反例）**
+
+| 问题 | 原来的行为 | 现在的行为 | 归档证据 |
+| --- | --- | --- | --- |
+| 时长只截取尾数 | `8.8分钟` 被读成 8 分钟通过；`负八分钟` 丢符号通过；`过了一会儿，八分半钟过去了` 没识别出时长，靠模糊表达通过；`几分钟` 也靠模糊表达通过 | 扫描完整表达式（符号、小数、中文数、半、几/数、时辰）；`8.8` → 8.8 与 8 不符、`负八分钟` → −8、`八分半钟` → 8.5，三者都判 `time-value-mismatch`；`几分钟` 判 `time-value-unparseable`；**只要出现时长就不再回退模糊表达** | `d2-time-value-strict` 主文本（约八分钟）通过，四条反例全部被拒，问题码写在归档里 |
+| 合法代词授权被忽略 | 匹配时固定传 `pronoun=None`，同一移动事实 + 合法「他」授权，v2 通过、v3 报 `uncovered:f0:moved` | 从计划取每个实体的授权代词参与匹配（`他/她/TA`），同名实体的授权仍由 G5 拒绝 | `d2-pronoun-grant`：`他从管线镇来到了钟楼。` 通过；`…来到了桥头。` 仍被拒；`d5-same-name-grant` 仍因 G5 失败 |
+
+两条都补了回归用例（`test_judge_v3.py` 的 `test_d2_regressions` 与 `test_pronoun_grant`），并且作为归档样本固定下来（`d2-time-value-strict`、`d2-pronoun-grant`）。
+
+**v2 的同类弱点（冻结，不改）**：旧对齐器同样会把 `8.8分钟` 读成 `8分钟`、把 `负八分钟` 读成 `8分钟` 并放行（实测）。它不认模糊表达，所以 `八分半钟`、`几分钟` 反而会因缺精确值被拒。按「旧门冻结」的规则本次不动 v2；**引用 v2 的时间类结果时，不能把它当成「数值被严格核对」的证据**。
 
 **确定性**：`check_determinism.py` 现在把 v2 与 v3 各跑两遍、去掉计时字段后逐字节比对，两节都是 `identicalAfterStrip=true`（`out/determinism.json`）。
 
 **旧版本未被改动**：`out/composition-run.json` 仍是 `b594c008…`。为确认 v2 路径没有因为新增文件而改变，我另外跑了一遍 `compose.py --out out/_parity-v2.json` 并与冻结归档逐案比对（状态、每次尝试的硬门、问题列表、回退是否产出）——完全相同，临时文件已删除。
+
+**已知的严格性代价**：任何时长表述都要对得上权威值，所以像「半天没动」这种习惯说法（视为 0.5 天）也会被判不符；模糊词表里收的是「半晌/一会儿/片刻」这类不含数值的说法。这是按裁决「出现时长必须核对」取的严格口径，如果真模型数据里误伤明显，需要另行裁决是否给固定的习惯说法开口子。
 
 **仍然不能证明的**：正文全部是脚本字符串；N6 未执行，所以没有任何一条是质量通过；D4 只有一个标注者，漏报率算不出来（见 `human-review-v1.md`）。
 
@@ -192,13 +205,13 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
 | `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `ca48d9dc00eaf896456aed3f881892df85bcaea785df9f9afcd6c6dcbfabb750` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
-| `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `a7ad1207ca360b1dde5f7f797d60b571e9f50cd1a5df32e7e85d4a0918cf28c1` |
-| `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `22a25b71f3fb3d81c41032cbeeaedabee7a0d0fab3b010fbb3222040a4d5bf1b` |
-| `compose_v3.py` | 26 例在 v3 下重跑，记录 n5/n6/quality/d4 与反例 | `9f873892b1204087ffff629d58b74503623823f0db6d199ee8f5663662e7a427` |
-| `make_v3_fixtures.py` | D1/D5 样本族生成 | `e0802dc797ec44307d8ff5d5947cbd443ccda3f1da7352758228edb82dc7831d` |
-| `test_judge_v3.py` | v3 单元检查（D1/D2/D3/D4/D5） | `261c1fae95086315b8f38facd457ceaa6049f210eeb36e6fc0df7181a1f2ad0c` |
+| `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `03f56475163ba1d54a579c26d38f8c2034d0733b7f46e268b65373e844fcecd2` |
+| `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `d3cfabea5027dfccdf7b72c5b8e845d2bf5ca0f61dc2f0f2a9bf7765a5c4215b` |
+| `compose_v3.py` | 26 例在 v3 下重跑，记录 n5/n6/quality/d4 与反例 | `f7ff9f37341f49c0a48becf67d5445976185204c8fd78727b7b4433082f77fc8` |
+| `make_v3_fixtures.py` | D1/D5 样本族生成 | `0d948d0362f8eab7b579ea46a1b67f4acb6daed1108a529243c9fbdbdcc8dbd9` |
+| `test_judge_v3.py` | v3 单元检查（D1/D2/D3/D4/D5） | `f5a474a763b66452dabffeb566c2af85b579e871bab374cfc4152edda69c1ed9` |
 | `human-review-v1.md` | D4 首批 10 条人工核验表 | `c7522ed3b1686c479f576f06a2fd00476627630490da8555620c732e3b4524fa` |
-| `fixtures/cases-v3-extra.json` | D1/D5 样本（7 例，含反例） | `3e9ed095fba0260e6a3fd61e39ef083bd2f389965953340c23c853e393baa0a4` |
+| `fixtures/cases-v3-extra.json` | D1/D5 样本（7 例，含反例） | `dc6c1dee153c804381596ca5ea9457dbd2831a703e3a674eee31a5cc10647d35` |
 | `fixtures/annotations-v1.json` | D4 人工标注（10 例，未标注为 null） | `3a3ede5e4b8064a732fadba2fb6ce776b87457870d2416dfe97ab800ff94e2e1` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
