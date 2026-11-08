@@ -1,53 +1,97 @@
-// c9 browser-side T5 encoder-decoder runtime (77M r3-direction, fp32 ONNX).
+// c9 browser-side T5 encoder-decoder runtime (77M r3-direction, fp32 or int8
+// ONNX).
 //
-// The generation loop is deliberately the same shape as the verified
-// batch-3 adapter (experiments/world-components/browser_probe/
-// n4_browser_adapter.mjs, sha256 dc6ea7800734604d70cff5914e7facf46c237f0d2931db2a67e2ed280860182c):
+// The generation loop is deliberately the same shape as the verified batch-3
+// adapter (experiments/world-components/browser_probe/n4_browser_adapter.mjs,
+// sha256 dc6ea7800734604d70cff5914e7facf46c237f0d2931db2a67e2ed280860182c):
 // one token per decoder step, self-attention KV cache, cross-attention K/V
 // recomputed inside the graph, greedy argmax, stop on </s>. What this copy
-// adds is measurement, not behaviour:
-//   - per-stage cold-start timing (module import / tokenizer / each session)
-//   - an onStep hook so a cancel can be issued deterministically at a step
-//     boundary, and per-step timings are kept
-//   - an explicit release() so memory can be sampled before and after
-// If any of that changed numerics, the token-parity gate against
-// ORT-python would fail — that is the check, not a promise.
+// adds is measurement, not behaviour: per-stage cold-start timing, per-step
+// timings, an onStep hook, an abort that reports when it was observed, and an
+// explicit release().
 //
-// Tokenizer: sentencepiece-js fed the real spiece.model bytes through a
-// stub-fs shim (the bundle has an unconditional require('fs')). T5 appends
-// </s>=1 after the raw sentencepiece ids; sentencepiece-js does not.
+// The tokenizer is separated from the model:
+//   createTokenizer()  sentencepiece-js + the real spiece.model bytes
+//   T5Browser.create() ORT sessions only, or with a pre-built tokenizer
+// Splitting them is what lets the model live in a worker (see t5_worker.mjs)
+// while the small, cheap tokenizer stays on the main thread. It also means a
+// worker-run probe measures the thing being reclaimed (the wasm heap), not a
+// CJS bundle loaded through a shim.
+//
+// Tokenizer note: the sentencepiece-js bundle is CJS and asks for Node
+// built-ins. The shim answers 'fs' (model bytes already fetched), and in a
+// worker the emscripten path also touches 'url'/'module'/__filename, so those
+// are stubbed too. Nothing is written to disk on either side.
 
-export const ADAPTER_ID = "c9-browser-t5-adapter-r1";
+export const ADAPTER_ID = "c9-browser-t5-adapter-r2";
 export const LOOP_SOURCE_SHA256 =
   "dc6ea7800734604d70cff5914e7facf46c237f0d2931db2a67e2ed280860182c";
 
-async function loadSentencePiece(bundleUrl, modelBytes) {
-  const src = await (await fetch(bundleUrl)).text();
+function instantiateSp(src, modelBytes) {
   const files = { "spiece.model": modelBytes };
-  const stubFs = { readFileSync: (p) => {
-    const key = String(p).split(/[\\/]/).pop();
-    if (!(key in files)) throw new Error("fs stub: no preloaded file " + key);
-    return new Uint8Array(files[key]); // emscripten FS.writeFile rejects ArrayBuffer
-  } };
-  const fakeRequire = (name) => {
-    if (name === "fs") return stubFs;
-    throw new Error("browser shim: require('" + name + "') unavailable");
+  const stubFs = {
+    readFileSync: (p) => {
+      const key = String(p).split(/[\\/]/).pop();
+      if (!(key in files)) throw new Error("fs stub: no preloaded file " + key);
+      return new Uint8Array(files[key]); // emscripten FS.writeFile rejects ArrayBuffer
+    },
   };
+  const stubPath = {
+    basename: (p) => String(p).split(/[\\/]/).pop(),
+    dirname: (p) => String(p).split(/[\\/]/).slice(0, -1).join("/") || ".",
+    join: (...xs) => xs.join("/").replace(/\/+/g, "/"),
+    sep: "/",
+  };
+  const mods = { fs: stubFs, path: stubPath, url: { URL },
+                 module: { createRequire: () => fakeRequire } };
+  function fakeRequire(name) {
+    const key = String(name).replace(/^node:/, "");
+    if (key in mods) return mods[key];
+    throw new Error("browser shim: require('" + name + "') unavailable");
+  }
   const module_ = { exports: {} };
+  // __filename/__dirname exist because emscripten's `typeof document ===
+  // "undefined"` branch (a worker) builds its module URL from __filename
   const factory = new Function("module", "require", "exports",
+                               "__filename", "__dirname",
                                src + "\nreturn module.exports;");
-  factory(module_, fakeRequire, module_.exports);
-  const smp = module_.exports;
+  factory(module_, fakeRequire, module_.exports, "/index.js", "/");
+  return module_.exports;
+}
+
+/** Main-thread tokenizer. encode() appends </s>=1 like T5Tokenizer. */
+export async function createTokenizer({ spBundleUrl, modelBytesUrl }) {
+  const t0 = performance.now();
+  const spSrc = await (await fetch(spBundleUrl)).arrayBuffer();
+  const fetchBundleMs = performance.now() - t0;
+  const t1 = performance.now();
+  const bytes = await (await fetch(modelBytesUrl)).arrayBuffer();
+  const fetchModelMs = performance.now() - t1;
+  const t2 = performance.now();
+  const smp = instantiateSp(new TextDecoder().decode(spSrc), bytes);
   const sp = new smp.SentencePieceProcessor();
   await sp.load("spiece.model");
-  return sp;
+  const loadMs = performance.now() - t2;
+  if (typeof sp.encodeIds !== "function") {
+    throw new Error("tokenizer: SentencePieceProcessor has no encodeIds " +
+                    "(exports: " + Object.keys(smp).slice(0, 8).join(",") + ")");
+  }
+  return {
+    sp,
+    stages: { fetchBundleMs: +fetchBundleMs.toFixed(1),
+              fetchModelMs: +fetchModelMs.toFixed(1),
+              loadMs: +loadMs.toFixed(1) },
+    encode(text) { const ids = Array.from(sp.encodeIds(text)); ids.push(1); return ids; },
+    decode(ids) { return sp.decodeIds(ids); },
+  };
 }
 
 export class T5Browser {
+  /** tokenizer: result of createTokenizer(); omit to run ids-only (worker). */
   static async create({ ortBundleUrl = "/ort/ort.bundle.min.mjs",
                         wasmPaths = "/ort/",
-                        spBundleUrl, modelBytesUrl,
-                        graphDir, heads, dKv, threads = 1 } = {}) {
+                        graphDir, heads, dKv, threads = 1,
+                        tokenizer = null } = {}) {
     const stages = {};
     let t = performance.now();
     const ort = await import(ortBundleUrl);
@@ -55,36 +99,6 @@ export class T5Browser {
 
     ort.env.wasm.numThreads = threads; // documented single-thread constraint
     ort.env.wasm.wasmPaths = wasmPaths;
-
-    t = performance.now();
-    const spSrc = await (await fetch(spBundleUrl)).arrayBuffer();
-    const spBundleFetchMs = performance.now() - t;
-    t = performance.now();
-    const bytes = await (await fetch(modelBytesUrl)).arrayBuffer();
-    stages.tokenizerFetchMs = +(spBundleFetchMs + (performance.now() - t)).toFixed(1);
-    t = performance.now();
-    const sp = await (async () => {
-      // same shim path as loadSentencePiece, but the bundle is already here
-      const src = new TextDecoder().decode(spSrc);
-      const files = { "spiece.model": bytes };
-      const stubFs = { readFileSync: (p) => {
-        const key = String(p).split(/[\\/]/).pop();
-        if (!(key in files)) throw new Error("fs stub: no preloaded file " + key);
-        return new Uint8Array(files[key]);
-      } };
-      const fakeRequire = (name) => {
-        if (name === "fs") return stubFs;
-        throw new Error("browser shim: require('" + name + "') unavailable");
-      };
-      const module_ = { exports: {} };
-      const factory = new Function("module", "require", "exports",
-                                   src + "\nreturn module.exports;");
-      factory(module_, fakeRequire, module_.exports);
-      const sp = new module_.exports.SentencePieceProcessor();
-      await sp.load("spiece.model");
-      return sp;
-    })();
-    stages.spLoadMs = +(performance.now() - t).toFixed(1);
 
     const so = { executionProviders: ["wasm"], graphOptimizationLevel: "all" };
     t = performance.now();
@@ -94,16 +108,16 @@ export class T5Browser {
     const dec = await ort.InferenceSession.create(`${graphDir}/decoder_kv.onnx`, so);
     stages.decoderCreateMs = +(performance.now() - t).toFixed(1);
 
-    const inst = new T5Browser(ort, sp, enc, dec, heads, dKv, stages);
+    const inst = new T5Browser(ort, tokenizer, enc, dec, heads, dKv, stages);
     inst.pastNames = dec.inputNames.slice(5);
-    inst.stages.createTotalMs = +(stages.ortImportMs + stages.tokenizerFetchMs +
-      stages.spLoadMs + stages.encoderCreateMs + stages.decoderCreateMs).toFixed(1);
+    inst.stages.createTotalMs = +(stages.ortImportMs + stages.encoderCreateMs +
+      stages.decoderCreateMs).toFixed(1);
     return inst;
   }
 
-  constructor(ort, sp, enc, dec, heads, dKv, stages) {
+  constructor(ort, tokenizer, enc, dec, heads, dKv, stages) {
     this.ort = ort;
-    this.sp = sp;
+    this.tok = tokenizer;
     this.enc = enc;
     this.dec = dec;
     this.heads = heads;
@@ -112,22 +126,22 @@ export class T5Browser {
     this.pastNames = [];
   }
 
+  // guarded so a worker (no tokenizer) fails loudly instead of half-working
   encode(text) {
-    const ids = Array.from(this.sp.encodeIds(text));
-    ids.push(1); // T5Tokenizer appends </s>
-    return ids;
+    if (!this.tok) throw new Error("no tokenizer attached");
+    return this.tok.encode(text);
   }
 
   decode(ids) {
-    return this.sp.decodeIds(ids);
+    if (!this.tok) throw new Error("no tokenizer attached");
+    return this.tok.decode(ids);
   }
 
-  /** Greedy generation. Returns raw ids + timings; no post-processing.
-   *  signal: checked before every step; a cancelled call throws AbortError
-   *  and hands back nothing usable (partial output is never returned). */
-  async generate(text, { maxTokens = 64, signal = null, onStep = null,
-                         macrotaskYield = true } = {}) {
-    const ids = this.encode(text);
+  /** Greedy generation from an id array. Returns raw ids + timings; no
+   *  post-processing. signal: checked before every step; a cancelled call
+   *  throws AbortError and hands back nothing usable. */
+  async generateFromIds(ids, { maxTokens = 64, signal = null, onStep = null,
+                               macrotaskYield = true } = {}) {
     if (ids.length > 128) {
       return { status: "unsupported", reason: "input-too-long",
                tokens: ids.length, modelCalled: false };
@@ -144,6 +158,8 @@ export class T5Browser {
 
     const eos = 1, pad = 0;
     const stepMs = [];
+    const t0Loop = performance.now();
+    const stepEndOffsetsMs = [];
     let prefix = [pad];
     const out = [];
     const empty = new this.ort.Tensor("float32", new Float32Array(0),
@@ -153,13 +169,17 @@ export class T5Browser {
     for (; step < maxTokens; step++) {
       if (signal && signal.aborted) {
         const e = new DOMException("aborted before step " + step, "AbortError");
-        e.detail = { completedSteps: step, partialIds: null };
+        // abortObservedAt is the instant the loop noticed the signal, i.e. a
+        // step boundary. The caller records when it issued abort(); the gap
+        // between the two is what cancel latency actually means here.
+        e.detail = { completedSteps: step, partialIds: null,
+                     abortObservedAt: performance.now(),
+                     stepEndOffsetsMs: stepEndOffsetsMs.slice() };
         throw e;
       }
-      // macrotask yield (switched off only for the "cost of yielding"
-      // measurement): ORT-web single-thread runs synchronously inside a
-      // microtask cascade, so without this the page cannot observe an abort
-      // or repaint mid-generation
+      // macrotask yield (off only for the "cost of yielding" measurement):
+      // ORT-web single-thread runs inside a microtask cascade, so without it
+      // the page cannot observe an abort, receive a cancel message, or repaint
       if (macrotaskYield) await new Promise((r) => setTimeout(r));
       if (onStep) onStep(step);
       const feeds = {
@@ -188,6 +208,7 @@ export class T5Browser {
         flat.push(res[this.dec.outputNames[i]]);
       }
       past = Object.fromEntries(this.pastNames.map((n, i) => [n, flat[i]]));
+      stepEndOffsetsMs.push(+(performance.now() - t0Loop).toFixed(1));
       if (best === eos) break;
       out.push(best);
       prefix.push(best);
@@ -195,15 +216,20 @@ export class T5Browser {
     return {
       status: "ok",
       ids: out,
-      text: this.decode(out),
+      text: this.tok ? this.tok.decode(out) : null,
       inputTokens: ids.length,
       timings: { encoderMs: +encMs.toFixed(1),
+                 stepEndOffsetsMs,
                  generationMs: +stepMs.reduce((a, b) => a + b, 0).toFixed(1),
                  meanStepMs: +(stepMs.reduce((a, b) => a + b, 0) /
                                Math.max(stepMs.length, 1)).toFixed(1),
                  steps: stepMs.length,
                  stepMs: stepMs.map((x) => +x.toFixed(1)) },
     };
+  }
+
+  generate(text, opts = {}) {
+    return this.generateFromIds(this.encode(text), opts);
   }
 
   release() {

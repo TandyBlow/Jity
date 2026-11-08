@@ -33,6 +33,8 @@ const { chromium } = require2("@playwright/test");
 
 const GRAPH_DIR = path.join(REPO, ".local", "world-components-worktree", "experiments",
   "world-components", "assets", "n4-onnx", "r3-direction");
+const GRAPH_DIR_INT8 = path.join(REPO, ".local", "world-components-worktree",
+  "experiments", "world-components", "assets", "n4-onnx", "r3-direction-int8");
 const CKPT_DIR = path.join(REPO, ".local", "world-components-worktree", "experiments",
   "world-components", "assets", "n4-finetune", "r3-direction");
 const FIXTURE = path.join(WT, "experiments", "world-components", "browser_probe",
@@ -49,6 +51,12 @@ const PORT = Number(arg("port", 3210));
 const STAMP = arg("stamp", new Date().toISOString().replace(/[:.]/g, "-"));
 const HEADED = args.includes("--headed");
 const DEEP_MEM = args.includes("--mem");
+const GRAPHS = arg("graphs", "fp32"); // fp32 | int8
+if (!["fp32", "int8"].includes(GRAPHS)) {
+  console.error("--graphs must be fp32 or int8");
+  process.exit(2);
+}
+const GRAPH_SRC = GRAPHS === "int8" ? GRAPH_DIR_INT8 : GRAPH_DIR;
 const RUN_DIR = path.join(HERE, "runs", STAMP);
 
 const MIME = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript",
@@ -59,8 +67,8 @@ const MIME = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript",
 const ROUTES = [
   [/^\/$/, () => path.join(HERE, "probe.html")],
   [/^\/app\/([A-Za-z0-9_.-]+)$/, (m) => path.join(HERE, m[1])],
-  [/^\/graphs\/encoder\.onnx$/, () => path.join(GRAPH_DIR, "encoder.onnx")],
-  [/^\/graphs\/decoder_kv\.onnx$/, () => path.join(GRAPH_DIR, "decoder_kv.onnx")],
+  [/^\/graphs\/encoder\.onnx$/, () => path.join(GRAPH_SRC, "encoder.onnx")],
+  [/^\/graphs\/decoder_kv\.onnx$/, () => path.join(GRAPH_SRC, "decoder_kv.onnx")],
   [/^\/graphs\/spiece\.model$/, () => path.join(CKPT_DIR, "spiece.model")],
   [/^\/graphs\/config\.json$/, () => path.join(CKPT_DIR, "config.json")],
   [/^\/fixtures\/probe_inputs\.json$/, () => FIXTURE],
@@ -140,7 +148,9 @@ page.on("requestfailed", (req) =>
   log("[requestfailed]", req.url(), req.failure() && req.failure().errorText));
 
 const tNav = Date.now();
-await page.goto(`http://127.0.0.1:${PORT}/${DEEP_MEM ? "?mem=1" : ""}`,
+const query = new URLSearchParams({ variant: GRAPHS });
+if (DEEP_MEM) query.set("mem", "1");
+await page.goto(`http://127.0.0.1:${PORT}/?${query}`,
                 { waitUntil: "domcontentloaded" });
 await page.waitForFunction("window.__C9_RESULT__ !== undefined", null,
                            { timeout: 900000 });
@@ -179,6 +189,8 @@ const archive = {
     executionProvider: "wasm, numThreads=1",
     serving: "localhost static server, COOP/COEP same-origin, no throttling",
     deepMemoryPass: DEEP_MEM,
+    graphs: GRAPHS,
+    graphDir: path.relative(REPO, GRAPH_SRC),
     routes: ROUTES.map(([re]) => String(re)),
   },
   result,

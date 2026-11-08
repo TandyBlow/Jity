@@ -26,6 +26,7 @@ REPO = HERE.parents[6]  # the main checkout (.../Jity)
 #   checkpoint      the fine-tune itself (config + tokenizer)
 #   fixture         batch-1 registered probe inputs (baked ids + references)
 #   base_snapshot   the untuned 77M base weights, for the parameter count
+GRAPH_DIR_INT8 = REPO / ".local" / "world-components-worktree" / "experiments" /     "world-components" / "assets" / "n4-onnx" / "r3-direction-int8"
 GRAPH_DIR = REPO / ".local" / "world-components-worktree" / "experiments" / \
     "world-components" / "assets" / "n4-onnx" / "r3-direction"
 CKPT_DIR = REPO / ".local" / "world-components-worktree" / "experiments" / \
@@ -78,6 +79,10 @@ def main() -> int:
         "graphs": {
             name: describe(GRAPH_DIR / name)
             for name in ("encoder.onnx", "decoder_kv.onnx", "decoder_step.onnx")
+        },
+        "graphs_int8": {
+            name: describe(GRAPH_DIR_INT8 / name)
+            for name in ("encoder.onnx", "decoder_kv.onnx")
         },
         "export_manifest": describe(GRAPH_DIR / "export_manifest.json"),
         "export_manifest_content": manifest,

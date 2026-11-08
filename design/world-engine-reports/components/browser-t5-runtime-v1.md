@@ -1,140 +1,161 @@
-# c9 浏览器 T5 运行验证（77M r3-direction）
+# c9 浏览器 T5 运行验证（77M r3-direction）· 第二轮
 
-日期：2026-11-08。对象：**冻结的 N4 成句组件 `r3-direction`**（Randeng-T5-77M 全参微调，77,440,384 参数）的 fp32 ONNX 导出。范围只有运行：加载、一次推理、取消、内存、浏览器与离线一致性。**不判断文本质量，不训练，不接正式页面**；`frontend/src/app/world/page.tsx`、`backend/app`、共享契约均未改动。
+日期：2026-11-08。版本：第二轮（在 `471fde9` 的第一轮基础上补三项：Worker 承载与终止释放、int8 图实测、取消延迟按「发出取消→抛错」重测；同时收紧第一轮两处结论）。对象：**冻结的 N4 成句组件 `r3-direction`**（Randeng-T5-77M 全参微调，77,440,384 参数）的 fp32 与 int8 ONNX 导出。
 
-结论分三类标注：**已证明**（有可复跑的原始输出）、**已失败**、**无法判断**。`undetermined` 不算通过。
+范围仍只有运行：加载、推理、取消、内存、浏览器与离线一致性。**不判断文本质量，不训练，不接正式页面**；`frontend/src/app/world/page.tsx`、`backend/app`、共享契约未改动。结论分 **已证明 / 已失败 / 无法判断**。
 
-- [x] **已证明**：这套 T5 编解码在真实 Edge 里能加载、能推理；4 轮 × 7 用例共 **28/28 与离线 ORT-python 逐 token 一致**；取消在步边界生效；取消后会话仍可用且输出不变。
-- [x] **已证明**（成本）：冷启动（导入运行时到两个会话就绪）中位数 **14.1 s**；热推理 **50.3 ms/步**（离线 41.1 ms/步）；整页可归因内存 **约 973 MB**，`release()` 之后不回收。
-- [ ] **无法判断**：wllama 能否端到端跑 T5——仓库里没有真实 T5 GGUF，也没有 HF→GGUF 转换器，跑不了。见 §7，这不算通过。
+## 0. 两处收紧（第一轮说错的地方）
 
-## 1. 这一轮谁给了谁什么
-
-参与者只有三个：一个本地静态服务器、一个 Edge 页面、一份已冻结的模型文件。
-
-1. **服务器**按固定路由把文件递给页面，不做算术：`/graphs/encoder.onnx`（142.4 MB）、`/graphs/decoder_kv.onnx`（234.5 MB）、`/graphs/spiece.model`（680 KB，分词表）、`/fixtures/probe_inputs.json`（7 个已登记用例）、`/ort/*`（onnxruntime-web 1.30.0 的 wasm）、`/sp/index.js`（sentencepiece-js 1.1.0）。同一份文件也可以从磁盘直接读，路由只是让浏览器能 `fetch`。本轮共传输 388.3 MiB，localhost 不节流。
-2. **页面**做三件事，顺序固定：先用 sentencepiece-js 把用例文本切成 id 并在末尾补 `</s>`=1；把 id 喂给 encoder 图换出 `encoder_hidden_states`；然后从 `<pad>`=0 起步，每步喂一个 token 给 `decoder_kv.onnx`，取最后一格 logits 的最大值作为下一个 token，遇 1 停止。解码器图只缓存自注意力 K/V，交叉注意力 K/V 每步在图内重算（`decoder_kv.onnx` 的输入契约）。
-3. **结果**：页面把每一步的毫秒数、token id、文本、取消结果、内存采样写进 `window.__C9_RESULT__`；驱动脚本把它连同浏览器版本、CDP 指标、每个 URL 的字节数落到 `runs/<stamp>/browser-result.json`。`compare.py` 再把它和离线参照逐位比对，写 `runs/comparison.json`。
-
-一个完整例子（用例 `n4h-loc-01`，冻结留出）：
-
-| 环节 | 值 |
+| 第一轮的说法 | 本轮的处理 |
 | --- | --- |
-| 输入文本 | `叙事生成任务。\n事实：\n1. 位置：陆知微 从柳堤到药圃\n2. 时间推进：约九分钟\n正文：` |
-| 分词 | 35 个 id（含尾部 `</s>`=1），与夹具里烘焙好的 id 逐位相同 |
-| encoder | 一次前向，热态 **141.2 ms** |
-| decoder | 17 次前向（16 个 token + 1 次撞到 `</s>`），热态 **54.7 ms/步**，合计 929.6 ms |
-| 输出 id | `259, 9375, 2894, 3786, 2772, 5650, 23880, 6043, 6094, 29782, 297, 25525, 24952, 3415, 2405, 297` |
-| 文本 | 陆知微由柳堤进入药圃。前后大约九分钟。 |
-| 与离线 | 16 个 id 全同，文本全同 |
+| 「`release()` 后 300 ms 未下降，说明只能重载页面」 | **收紧**。页面内 `release()` 确实不回收（973.9 MB 不降）；但把运行时放进 DedicatedWorker 后，`terminate()` 在 **+103 ms** 把可归因内存从 **973.3 MB 降到 4.46 MB**，并在后续 88 秒保持。正确说法是：**页面内释放无效，回收要靠终止承载运行时的 worker**，不是「只能重载页面」 |
+| 「最大取消延迟为 35–72 ms」 | **撤回**。那是单步耗时，第一轮记的 397 / 575 ms 又是从开始生成算起，两个都不对。本轮按 `abort()` 调用时刻到 `AbortError` 抛出的间隔测：page 内 **52.9–97.2 ms**，worker 内 **93.0–266.5 ms**。上界不是一步耗时，而是取消到达时**正在执行的那次 ORT 调用**的剩余时间——停在解码步约 50–100 ms，停在 encoder 上可到 266 ms |
 
-「17 次前向 / 16 个 token」的差别是最后那步：模型输出 `</s>`，循环在那一步停下，所以步数比 token 数多 1。
+## 1. 结论清单
 
-## 2. 输入登记（哈希来自 `runs/assets.json`）
+- [x] **已证明**：Worker 承载的运行时可以整体回收内存（fp32 973.3 → 4.46 MB，回收 968.8 MB；int8 713.1 → 4.46 MB，回收 708.9 MB），且**重建的 worker 输出与终止前、与离线参照逐 token 相同**（7/7）。
+- [x] **已证明**：fp32 的 token 一致性在前两轮合计 **6 次页面运行 + 2 次 worker 运行 × 7 用例**里全绿；分词器把 7 个用例切出的 id 每次都等于夹具里烘焙的 id。
+- [x] **已证明**（int8）：图体积 **376.96 MB → 220.46 MB**（−41.5%），创建会话 **13.71 s → 8.74 s**，每步 **51.9 → 48.1 ms** 中位，整页可归因内存 **973.3 → 713.4 MB**；token 与 fp32 有 **2/7 用例不同**，差异都集中在一处措辞（「从柳堤来到药圃」/「由柳堤进入药圃」），事实与数字不变。
+- [ ] **无法判断**：wllama 能否端到端跑 T5——仓库仍没有真实 T5 GGUF，也没有 HF→GGUF 转换器，与第一轮相同，不算通过。
 
-| 对象 | 位置（工作树外，只读） | sha256 | 大小 |
+## 2. 这一轮谁给了谁什么
+
+三样东西换了位置，其余不变。
+
+1. **分词器留在主线程**：`createTokenizer()` 取 sentencepiece-js 与 `spiece.model`，把文本切成 id（末尾补 `</s>`=1），也负责把 id 解回文本。这样做的原因不是性能，而是 sentencepiece-js 是 CJS 包、在 worker 里会走另一条 Node 兼容分支（要 `require('url')`、`__filename`），把它的加载路径搬进 worker 只会给内存测试添噪声。
+2. **模型搬进 DedicatedWorker**：`t5_worker.mjs` 只拿 id、只回 id 与计时，把两份 ONNX 会话和 wasm 线性内存全部关在 worker 里。这样主线程就有能力 `worker.terminate()`——页面内 `session.release()` 不还内存，只有终止整个 worker 才可能还。
+3. **同一套路由与同一批夹具**：服务器仍按固定路由把 `/graphs/…`（fp32）或 `/graphs-int8/…`（int8）递过去，页面照旧把每次运行的阶段计时、逐步时间、取消时刻、内存采样写进结果对象，驱动脚本再落到 `runs/<stamp>/`。
+
+一个完整的 worker 例子（fp32，`w-fp32-mem1`）：
+
+| 时刻 | 可归因字节 | 发生了什么 |
+| --- | --- | --- |
+| 基线 | 4.41 MB | 只有页面与分词器 |
+| worker A 初始化后 | 972.98 MB | 两个 ONNX 会话就绪（worker 内计时 10.09 s） |
+| A 跑完一次推理 | 973.25 MB | 17 步，worker 内计时 1762.9 ms |
+| A 上取消一次生成 | 973.28 MB | 抛 `AbortError`，1 步已完成，发出取消到抛错 120.0 ms |
+| A 终止后 +103 ms | **4.46 MB** | 释放 968.8 MB |
+| A 终止后 +88 s | 4.46 MB | 没有回涨 |
+| worker B 跑完 7 用例 | 973.52 MB | 重新初始化 13.81 s，7/7 与离线一致 |
+| B 终止后 | 4.50 MB | 再回收一次，可重复 |
+
+## 3. 输入登记（哈希来自 `runs/assets.json`）
+
+| 对象 | sha256 | 大小 |
+| --- | --- | --- |
+| fp32 `encoder.onnx` | `b49b3ad2…6b1bcc7324` | 142,418,864 B |
+| fp32 `decoder_kv.onnx` | `6905fc88…7c4a2d1a` | 234,545,169 B |
+| int8 `encoder.onnx` | `2a13b5fa…de766a58a` | 35,848,202 B |
+| int8 `decoder_kv.onnx` | `2f93e937…5f53f352` | 184,607,589 B |
+| 分词表 `spiece.model` | `c65feffa…46a3a12f` | 680,811 B |
+| 夹具 `probe_inputs.json` | `2f0babc8…` | 7 个用例 |
+
+fp32 两图的哈希与 `export_manifest.json` 一致；int8 图由 `n4_corpus/quantize_n4_onnx.py`（QInt8 动态量化）产出，本轮只登记哈希与实测数字，不重跑量化。解码参数不变：贪心、`max_new_tokens=64`、`eos=1`、`pad=0`、`decoder_start=0`、6 头、`d_kv=64`、`d_model=512`、词表 32,596、8+8 层。
+
+## 4. 加载与推理耗时
+
+页面运行（模型在页面里）：
+
+| 阶段 | fp32（6 轮） | int8（2 轮） |
+| --- | --- | --- |
+| 导入 ORT 运行时 | 54.6–844.9 ms | 52.7–56.3 ms |
+| 分词器（取 bundle+模型+初始化） | 217.2–328.5 ms | — |
+| encoder 会话 | 5103–6719 ms（冷盘那轮 10185） | 3016–3282 ms |
+| decoder 会话 | 5911–7664 ms（冷盘那轮 7947） | 5045–5366 ms |
+| **合计** | 中位 **13.71 s**（11.33–21.12） | 中位 **8.74 s**（8.72–8.76） |
+
+worker 运行（模型在 worker 里，分词器在主线程）：fp32 worker 初始化 10.09 / 14.09 s（两次），int8 worker 10.67 s。
+
+逐步推理（页面运行，7 用例）：
+
+| 量 | fp32 | int8 | 离线 ORT-python（fp32） |
 | --- | --- | --- | --- |
-| encoder | `.local/world-components-worktree/experiments/world-components/assets/n4-onnx/r3-direction/encoder.onnx` | `b49b3ad2…6b1bcc7324` | 142,418,864 B |
-| decoder_kv | 同上 | `6905fc88…7c4a2d1a` | 234,545,169 B |
-| 分词表 | `…/assets/n4-finetune/r3-direction/spiece.model` | `c65feffa…46a3a12f` | 680,811 B |
-| 夹具 | `experiments/world-components/browser_probe/probe_inputs.json` | `2f0babc8…` | 7 个用例 |
-| 基座快照（参数核对） | `.local/models/model.safetensors` | 77,440,384 参数 | — |
+| 每步中位 | 51.9 ms | 48.1 ms | 41.1 ms |
+| 每步范围 | 33.5–86.0 ms | 36.2–63.1 ms | 36.5–55.2 ms |
+| encoder 首枪 / 热态 | 285.6–476.4 / 113.8–213.7 ms | 239.9–260.1 / 69.1–82.6 ms | 89.5 ms（该用例） |
 
-两张 ONNX 图的哈希与 `export_manifest.json` 里记的一致（`exportManifestMatchesDisk: true`）。解码参数固定：贪心、`max_new_tokens=64`、`eos=1`、`pad=0`、`decoder_start=0`、6 头、`d_kv=64`、`d_model=512`、词表 32,596、8+8 层。夹具的 7 个用例 ID 与 `/s` 尾 token 的分词结果全部逐位相同（28/28 次检查）。
+运行间差异比配置差异更大：同一份 fp32 配置，`fp32-r2` 每步 40.1–54.2 ms，`fp32-r3` 57.9–86.0 ms。这一轮所有数字都在同一台机器上串行跑，没有隔离其它浏览器进程，所以**跨轮比较只到「同量级」这一精度**；同一轮内 fp32 与 int8 的对照才可比。
 
-## 3. 冷启动与推理耗时
+## 5. int8 与 fp32
 
-四轮同机同浏览器（Edge 157.0.0.0 headless，onnxruntime-web 1.30.0，wasm 单线程，`numThreads=1`）。`run1` 是机器首次读取这些文件（磁盘未热），后三轮是热磁盘。
+| 维度 | fp32 | int8 | 差异 |
+| --- | --- | --- | --- |
+| 两图字节 | 376.96 MB | 220.46 MB | −41.5% |
+| 页面会话创建（中位） | 13.71 s | 8.74 s | −36% |
+| 每步（中位） | 51.9 ms | 48.1 ms | −7% |
+| 整页可归因内存 | 973.3 MB | 713.4 MB | −260 MB |
+| 传输（页面运行） | 388.4 MiB | 239.1 MiB | — |
+| token 与 fp32 相同 | 7/7 | **5/7** | 2 例措辞不同 |
 
-| 阶段 | run1（冷磁盘） | run2 | run3 | mem1 | 中位数 |
-| --- | --- | --- | --- | --- | --- |
-| 导入 ORT 运行时 | 2381.3 ms | 54.6 | 58.9 | 71.6 | 60.3 ms |
-| 取分词表 + 分词 bundle | 328.5 ms | 61.3 | 59.5 | 55.3 | 58.9 ms |
-| 分词器初始化 | 279.0 ms | 245.1 | 248.6 | 292.8 | 270.8 ms |
-| encoder 会话创建 | 10184.8 ms | 5456.0 | 5507.3 | 6715.6 | 6110.8 ms |
-| decoder 会话创建 | 7946.6 ms | 7334.2 | 7609.6 | 7663.7 | 7636.7 ms |
-| **合计** | **21120.2 ms** | **13151.2** | **13483.9** | **14799.0** | **14141.5 ms** |
+两处 token 差异（页面两轮 + worker 一轮，三次运行结果相同，不是随机抖动）：
 
-推理（同一用例 `n4h-loc-01`）：
-
-| 量 | 浏览器 | 离线 ORT-python（CPU，单线程） |
+| 用例 | fp32 / 离线 | int8 |
 | --- | --- | --- |
-| 首次 encoder（进程内第一枪） | 285.6–473.0 ms | 89.5 ms |
-| 热态 encoder | 113.8–150.2 ms | 89.5 ms |
-| 每解码步（7 用例 28 次采样） | 中位 50.3 ms（35.6–72.1） | 中位 41.1 ms（36.5–55.2） |
-| 17 步合计（热） | 929.6–1001.8 ms | 650.5 ms |
+| `n4h-loc-01` | 陆知微由柳堤进入药圃。前后大约九分钟。 | 陆知微从柳堤来到药圃。前后大约九分钟。 |
+| `synthetic-ext-1` | 陆知微由柳堤进入药圃。前后大约四十秒。 | 陆知微从柳堤来到药圃。前后大约四十秒。 |
 
-浏览器每步比离线慢约 1.22 倍。逐步让出宏任务（取消要用）实测没有可分辨的代价：run2 热推理 54.7 ms/步，关掉让出的对照 48.9 ms/步，方向不稳定，落在噪声里。
+两处都是同一句的两种说法，人名、地点、方向、时长都没变。量化脚本自己的口径也写明 int8 **不要求 token 全等**，准入看的是判据洁净；c9 只报差异，不下质量结论。
 
-整页从导航到全部用例跑完：计时轮 27.6–28.8 s；冷盘轮 172.8 s（其中包含被内存采样拖慢的部分）。
+## 6. 取消
 
-## 4. 取消
+计时口径：`abort()` 调用的那一刻（主线程）到 `AbortError` 抛到调用者手中的间隔。worker 场景下用 `postMessage('cancel')` 发出，worker 在下一个步边界收到；worker 的 `performance.now()` 有自己的时间原点，**不与主线程时间戳相减**（第一轮一度想这么做，得到 −700 ms 的负数，已在实现里加注释说明）。
 
-两步真实做过的事：
+| 场景 | 取消落在什么位置 | 已完成步 | 发出→抛错 |
+| --- | --- | --- | --- |
+| page，定时 120 ms（`fp32-r2`） | 解码步中途 | 1 | **60.4 ms** |
+| page，第 5 步边界（`fp32-r2`） | 步边界 | 5 | **52.9 ms** |
+| page，定时 120 ms（`fp32-r3`） | 解码步中途 | 1 | **88.3 ms** |
+| page，第 5 步边界（`fp32-r3`） | 步边界 | 5 | **97.2 ms** |
+| worker，定时 120 ms（int8） | 编码或首步 | 1 | **93.0 ms** |
+| worker，定时 120 ms（fp32） | 编码阶段 | 1 | **120.0 ms** |
+| worker，定时 120 ms（fp32，非内存轮） | 编码阶段 | 1 | **266.5 ms** |
 
-| 场景 | 触发方式 | 结果 |
-| --- | --- | --- |
-| 定时取消 | 120 ms 后 `AbortController.abort()` | 抛 `AbortError`，已跑完 **2** 步，从发起到抛出 **397 ms**，不返回部分文本 |
-| 步边界取消 | 第 5 步回调里 `abort()` | 抛 `AbortError`，已完成 **5** 步，耗时 **575 ms**，不返回部分文本 |
+能解释全部数字的规则只有一条：**取消只能落在两次 ORT 调用之间**。一次 `run()` 不可中断，所以延迟 = 在飞调用的剩余时间 + 让出宏任务的时间 + 检查。停在解码步时在飞调用只有几十毫秒，延迟因此是 53–97 ms；停在 encoder 上时在飞调用是一整段编码（该用例 63 token，热态约 130–200 ms），延迟就到 120–266 ms。
 
-取消的粒度是「一步」：ORT 单次 `run()` 不可中断，只在步与步之间检查信号。取消后再用同一会话跑同一用例，输出 id 与冷态完全相同（4 轮都如此），说明取消不会污染 KV 缓存状态——因为它根本不复用上一次的缓存，每轮都从零长缓存重来。
+取消不会污染会话：取消后再跑同一用例，id 与冷态完全相同（页面四轮与 worker 轮都如此），因为每次生成都从零长缓存重来，不复用上一次的 KV。
 
-## 5. 内存
+## 7. 内存与释放
 
-`mem1` 轮，`performance.measureUserAgentSpecificMemory()`（COOP/COEP 同源隔离下才有），它统计的是**整个页面可归因的字节**，包括取下来的 388 MiB 图文件和 wasm 线性内存，不是「模型本体占用」。
+| 配置 | 就绪后 | 终止/释放后 | 结果 |
+| --- | --- | --- | --- |
+| page fp32 `release()` | 973.3 MB | 973.9 MB（+300 ms） | **不回收** |
+| page int8 `release()` | 713.4 MB | 714.0 MB（+300 ms） | **不回收** |
+| worker fp32 `terminate()` | 973.0 MB | 4.46 MB（+103 ms） | **回收 968.8 MB**，+88 s 不回涨 |
+| worker int8 `terminate()` | 713.1 MB | 4.46 MB（+102 ms） | **回收 708.9 MB**，+94 s 不回涨 |
 
-| 时刻 | 可归因字节 | JS 堆 |
-| --- | --- | --- |
-| 创建前 | 1.10 MB | 1.45 MB |
-| 两个会话创建后 | **973.3 MB** | 242.6 MB |
-| 热推理后 | 973.8 MB | 14.8 MB |
-| 释放前 | 973.9 MB | 15.7 MB |
-| `release()` 后 300 ms | **973.9 MB** | 15.1 MB |
+两个附带的账：
 
-两件事要看清：一是峰值在创建阶段就到位（约 973 MB），推理过程几乎不再增长；二是 `release()` 之后没有任何回收——wasm 线性内存只增不减，页面要真正释放只能重载。JS 堆那 242 MB 是创建阶段的临时数组，GC 后回落到 11–16 MB。
+- **终止不是免费的**：worker 初始化 10.1–14.1 s（fp32）与 10.7 s（int8），所以「终止再重建」是一次重载级别的事件，适合会话边界或内存告警，不适合每轮都做。
+- **JS 堆是小事**：页面内创建阶段临时堆 242.6 MB 会在 GC 后回落到 11–16 MB；真正占地方的是 wasm 线性内存，它只增不减，也就只能靠终止 worker 归还。
 
-## 6. 一致性
+worker 运行里传输量是 775.3 MiB（fp32）/ 476.8 MiB（int8），因为 A、B 两个 worker 各取一遍图；这是探测脚本的结构，不是产品形态。
 
-判定方式：`offline_reference.py` 在同一台机器用 ORT-python 1.25.1、单线程、同样的贪心循环和同样的 id，重跑 7 个用例；浏览器侧用 sentencepiece-js 重新分词（不直接喂烘焙 id），再从零缓存跑一遍。
+## 8. 一致性
 
-| 轮 | 用例 | token 与离线一致 | 与夹具存的 `referenceIds` 一致 | 文本一致 |
-| --- | --- | --- | --- | --- |
-| run1 / run2 / run3 / mem1 | 7×4 | **28/28** | 28/28 | 28/28 |
+| 组 | 运行次数 | 用例×次数 | token 与离线一致 |
+| --- | --- | --- | --- |
+| fp32 页面 | 6 | 42 | **42/42** |
+| fp32 worker | 2 | 14 | **14/14** |
+| int8 页面 | 2 | 14 | 10/14（4 处差异 = 2 个用例 × 2 轮，同一处措辞） |
+| int8 worker | 1 | 7 | 5/7（同两处） |
 
-离线侧自己也与夹具存的 `referenceIds` 逐 token 相同（7/7），说明夹具没有被改动过。这组一致性的意义是：**同一份 ONNX、同一份分词表、同一套贪心规则，走 wasm 和走 CPU 原生运行时得到逐位相同的 token**，浏览器不需要额外的数值容忍。
+fp32 的 8 次运行里，分词器切出的 id 每次都等于夹具烘焙的 id（7/7 × 8）。第二轮把分词器与模型拆开后（`t5_adapter.mjs` r2）又跑了一轮 fp32 页面运行（`fp32-r3`），仍 7/7 一致——说明拆分没有改动数值路径。
 
-## 7. wllama 这一支：做了什么、看到什么、为什么判不了
+## 9. wllama（与第一轮相同，未推进）
 
-任务里写明「不默认 wllama 能执行 T5」，所以单独查了一轮。
+仍判 **无法判断**：`llama-cli.exe` 认识 `t5` / `t5encoder` 架构，wllama 对手写的最小 GGUF 三个架构一律「加载成功 + 同一个 RuntimeError」，没有区分度；仓库没有真实 T5 GGUF，也没有 HF→GGUF 转换器。要关闭这一项，先转出一个 `t5` 架构的 GGUF 再跑加载 + 一次生成。
 
-已做的两件事：
+## 10. 没有做 / 不能断言
 
-1. **符号层**：`.local/llama-cpp/llama.dll` 与 wllama 3.8.1 自带的 `wllama.wasm` 里都能找到架构名 `t5encoder`；`wllama.wasm` 里还留有 `!cross->seq_ids_enc.empty() && "llama_encode must be called first"` 这条断言文本。也就是说 llama.cpp 核心里有编解码的编码入口。
-2. **架构分发实测**：手写三个最小 GGUF v3 头，只有一个元数据键不同（`general.architecture` = `t5` / `t5encoder` / `notanarch`），分别喂给 `llama-cli.exe` 和 wllama 3.8.1。
+- **int8 的质量**：只比 token 与体积/耗时/内存，没有判据、没有留出集评审。2/7 的措辞差异是否可接受，c9 不回答。
+- **网络口径**：全部 localhost，388.4 MiB / 239.1 MiB 没有经过真实网络。
+- **页面接线与共存**：没碰 `frontend/src/app/world/page.tsx`，也没测与其它模型同时加载时的内存账。
+- **其它浏览器**：只有 Edge 157（Chromium 内核 headless）。
+- **多次重复的统计强度**：内存与终止各 1 次独立运行（fp32、int8 各一），取消 7 个数据点；不是分布估计。
+- **终止后的重建耗时**：只测了 worker 初始化，没测「终止后立刻重建并立刻推理」的端到端冷启动。
 
-`llama-cli.exe` 的返回（`runs/wllama-arch-cli-*.txt`）：
+## 11. 复现
 
-| 架构名 | 加载器返回 |
-| --- | --- |
-| `t5` | `key not found in model: t5.context_length` —— 认识这个架构，往下查超参 |
-| `t5encoder` | `key not found in model: t5encoder.context_length` —— 同样认识 |
-| `notanarch` | `unknown model architecture: 'notanarch'` —— 不认识的架构确实会拒绝 |
-
-wllama 的返回则没有区分度：三个文件全都 `loadModel` 成功、`isModelLoaded()=true`，随后 `createCompletion` 全部抛同一个 `RuntimeError: Invalid typed array length: 1163217991`，连假架构也一样。这说明 wllama 在这个极薄的文件上根本没走到原生加载逻辑，**它的返回不能当证据**，正反都不能。
-
-因此这一支的结论是：**无法判断**。缺的那一步很具体——仓库里没有任何真实 T5 GGUF，也没有 HF→GGUF 转换器（`.local/llama-cpp` 只有 `llama-gguf-split.exe`）。要关闭这个问题，得先把 r3-direction 或基座 77M 转成 `t5` 架构的 GGUF，再在浏览器里重跑一次加载 + 一次生成。这一步没有做，所以 wllama 路线不计入「可行」。
-
-## 8. 没有做 / 不能断言
-
-- **质量**：本轮只比 token 是否一致，不比句子好不好。7 个用例里 4 个是冻结留出、3 个是批次扩展输入，样本量不足以支撑任何质量结论。
-- **网络口径**：全部在 localhost 上跑，388.3 MiB 没有经过真实网络，冷启动的 14 s 里不含下载时间。
-- **int8**：只跑了 fp32。`r3-direction-int8` 图存在但本轮未测，量化损失是另一个问题。
-- **页面接线**：没有碰 `frontend/src/app/world/page.tsx`，也没有测与其它模型共存的加载/切换开销。
-- **其它浏览器**：只测了 Edge 157（Chromium 内核 headless）。Firefox / Safari 未测。
-- **取消语义的边界**：单步 `run()` 不可中断，所以最大响应延迟等于一步耗时（本机 35–72 ms）；轮到下一个 token 的等待没有优化。
-
-## 9. 复现
-
-命令与文件作用见 `experiments/world-components/parallel/browser_t5/README.md`。四轮原始输出在 `runs/{run1,run2,run3,mem1}/`（不提交），汇总证据在 `artifacts/world-components/browser-t5-runtime-r1.json`，含每轮的阶段计时、逐用例 token、取消结果、内存采样和 wllama 的原始返回。
+命令见 `experiments/world-components/parallel/browser_t5/README.md`。原始输出在 `runs/`（不提交）：`run1/run2/run3/mem1/fp32-r2/fp32-r3`（页面，fp32）、`int8-r1/int8-mem1`（页面，int8）、`w-fp32-1/w-fp32-mem1`（worker，fp32）、`w-int8-mem1`（worker，int8）。汇总证据：`artifacts/world-components/browser-t5-runtime-r2.json`（本轮），第一轮为 `browser-t5-runtime-r1.json`。
 
 浏览器与运行时：Edge `157.0.0.0`（headless，`--enable-precise-memory-info`）、Playwright `1.63.0`、onnxruntime-web `1.30.0`（wasm，`numThreads=1`）、sentencepiece-js `1.1.0`、Node `v22.20.0`、win32 x64。

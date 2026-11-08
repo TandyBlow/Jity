@@ -40,7 +40,9 @@ const result = {
 // Expensive cross-origin-isolated memory accounting forces a full GC and
 // took ~18 s per call on this machine, so it runs only in the dedicated
 // memory pass (?mem=1). The cheap JS-heap read is always taken.
-const DEEP_MEM = new URLSearchParams(location.search).has("mem");
+const QS = new URLSearchParams(location.search);
+const DEEP_MEM = QS.has("mem");
+result.environment.graphVariant = QS.get("variant") || "fp32";
 result.environment.deepMemory = DEEP_MEM;
 
 async function sampleMemory(label) {
@@ -79,7 +81,7 @@ try {
   result.environment.measureUserAgentSpecificMemory =
     typeof performance.measureUserAgentSpecificMemory === "function";
 
-  const { T5Browser, ADAPTER_ID, LOOP_SOURCE_SHA256 } =
+  const { T5Browser, createTokenizer, ADAPTER_ID, LOOP_SOURCE_SHA256 } =
     await import("/app/t5_adapter.mjs");
   result.adapter = { id: ADAPTER_ID, loopSourceSha256: LOOP_SOURCE_SHA256 };
 
@@ -99,16 +101,23 @@ try {
   await sampleMemory("before-create");
   status("creating sessions…");
   const tCreate = performance.now();
+  const tTok = performance.now();
+  const tokenizer = await createTokenizer({
+    spBundleUrl: "/sp/index.js",
+    modelBytesUrl: "/graphs/spiece.model",
+  });
+  const tokenizerWallMs = +(performance.now() - tTok).toFixed(1);
   const t5 = await T5Browser.create({
     ortBundleUrl: "/ort/ort.bundle.min.mjs",
     wasmPaths: "/ort/",
-    spBundleUrl: "/sp/index.js",
-    modelBytesUrl: "/graphs/spiece.model",
     graphDir: "/graphs",
     heads: config.num_heads,
     dKv: config.d_kv,
+    tokenizer,
   });
-  result.stages = { ...t5.stages, measuredCreateMs: +(performance.now() - tCreate).toFixed(1) };
+  result.stages = { tokenizer: tokenizer.stages, tokenizerWallMs,
+                    ...t5.stages,
+                    measuredCreateMs: +(performance.now() - tCreate).toFixed(1) };
   await sampleMemory("after-create");
 
   // tokenizer parity is a precondition for everything else
@@ -155,37 +164,54 @@ try {
     await sampleMemory(`case-${c.name}`);
   }
 
-  // 5. cancellation
+  // 5. cancellation. The number that matters is (signal issued) ->
+  // (AbortError reached the caller): a step already inside ORT cannot be
+  // interrupted, so latency = remaining part of the in-flight step + the
+  // macrotask yield + the abort check.
   status("cancel: timer…");
   const ctrl = new AbortController();
-  const tCancel0 = performance.now();
-  setTimeout(() => ctrl.abort(), 120);
+  const tStart0 = performance.now();
+  let abortIssuedAt0 = null;
+  setTimeout(() => { abortIssuedAt0 = performance.now(); ctrl.abort(); }, 120);
   try {
     const g = await t5.generate(cases[3].renderText, { signal: ctrl.signal });
     result.cancel.timerAbort = { threw: false, steps: g.timings.steps,
-                                 wallMs: +(performance.now() - tCancel0).toFixed(0) };
+                                 wallMs: +(performance.now() - tStart0).toFixed(0) };
   } catch (e) {
+    const thrownAt = performance.now();
     result.cancel.timerAbort = { threw: true, name: e.name,
       completedSteps: e.detail ? e.detail.completedSteps : null,
-      wallMs: +(performance.now() - tCancel0).toFixed(0),
+      runWallMs: +(thrownAt - tStart0).toFixed(0),
+      abortIssuedAtMs: abortIssuedAt0 ? +abortIssuedAt0.toFixed(1) : null,
+      abortObservedAtMs: e.detail ? +e.detail.abortObservedAt.toFixed(1) : null,
+      // the honest latency: from the abort() call to the exception
+      issueToThrowMs: abortIssuedAt0 ? +(thrownAt - abortIssuedAt0).toFixed(1) : null,
+      stepEndOffsetsMs: e.detail ? e.detail.stepEndOffsetsMs : null,
       returnedPartialText: false };
   }
 
   status("cancel: step boundary…");
   const ctrl2 = new AbortController();
   let stepsSeen = 0;
+  let abortIssuedAt2 = null;
   const tCancel2 = performance.now();
   try {
     const g = await t5.generate(cases[3].renderText, {
       signal: ctrl2.signal,
-      onStep: (step) => { stepsSeen = step + 1; if (step + 1 === 5) ctrl2.abort(); },
+      onStep: (step) => { stepsSeen = step + 1;
+        if (step + 1 === 5) { abortIssuedAt2 = performance.now(); ctrl2.abort(); } },
     });
     result.cancel.stepAbort = { threw: false, steps: g.timings.steps,
                                 wallMs: +(performance.now() - tCancel2).toFixed(0) };
   } catch (e) {
+    const thrownAt = performance.now();
     result.cancel.stepAbort = { threw: true, name: e.name,
       completedSteps: e.detail ? e.detail.completedSteps : null,
-      stepsSeen, wallMs: +(performance.now() - tCancel2).toFixed(0),
+      stepsSeen, runWallMs: +(thrownAt - tCancel2).toFixed(0),
+      abortIssuedAtMs: abortIssuedAt2 ? +abortIssuedAt2.toFixed(1) : null,
+      abortObservedAtMs: e.detail ? +e.detail.abortObservedAt.toFixed(1) : null,
+      issueToThrowMs: abortIssuedAt2 ? +(thrownAt - abortIssuedAt2).toFixed(1) : null,
+      stepEndOffsetsMs: e.detail ? e.detail.stepEndOffsetsMs : null,
       returnedPartialText: false };
   }
 
