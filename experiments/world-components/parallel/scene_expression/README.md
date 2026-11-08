@@ -51,8 +51,8 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `build_references.py` | 参照来源表的生成与路径校验 |
 | `step6/references/reference-paragraphs-v2.md` | 参照 v2：正文＋面板＋来源；删除语义越界，数值移入面板（仍为草稿，未作标尺） |
 | `step6/route-plan.md` | 段落生成路线方案：验收标准（草稿未冻结）、A/B/C 路线、数据、排期、未决问题 |
-| `step6/scenes/art-room-three-points.md` | 编写的叙事质量样例 v3（开发草稿）：画夹与钥匙三点冲突；补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、环境连续与姓名；面板手工编写 |
-| `step6/scenes/art-room-clause-check.md` | 画夹场景逐句来源核验（执行方自检）：48 分句，支持 40、描写(c) 8、越权(a) 0、无 Δ 事件(b) 0 |
+| `step6/scenes/art-room-three-points.md` | 编写的叙事质量样例 v4（开发草稿）：画夹与钥匙三点冲突；补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、登记表来源、事件顺序、环境连续与姓名；面板手工编写 |
+| `step6/scenes/art-room-clause-check.md` | 画夹场景逐句来源核验 v2（执行方自检）：51 分句，支持 43、描写(c) 8、越权(a) 0、无 Δ 事件(b) 0；含事件顺序与道具来源核对 |
 | `step6/scenes/campus-three-points.md` | 编写的实验样例 v3（一致性样例，非叙事标尺）：校园三点连续结算（输入／事件／状态／正文＋面板）；已按审核修订玩家越权、柜位问答、双钥匙身份、面板位置 |
 | `step6/acceptance-boundaries.md` | 样例分两类、Q1/Q2 判分范围、面板由程序生成、玩家台词授权、叙事样例准入条件 |
 | `step6/n4-input-gap.md` | N4.0 输入缺口核对：缺玩家原话、上一段正文、说话/失败/交接事实；不直接接 C6 段落任务 |
