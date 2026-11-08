@@ -86,6 +86,20 @@ class PilotTests(unittest.TestCase):
                 qa.execute(self.run,self.run/"approval-templates/review.json",self.run/"approval-templates/budget.json")
         self.assertFalse((self.run/"budget.sqlite3").exists())
 
+    def test_preparation_records_frozen_source_validation_scope(self):
+        validation = read(self.run / "private/bank-validation.json")
+        self.assertEqual(validation["status"], "passed")
+        self.assertFalse(validation["original_seal_checked"])
+        qa.verify(self.run)
+
+    def test_explicit_original_audit_fails_before_creating_run(self):
+        target = Path(self.temp.name) / "original-audit"
+        with patch.object(qa.revision, "validate", side_effect=FileNotFoundError("Original recording unavailable")) as validate:
+            with self.assertRaisesRegex(FileNotFoundError, "Original recording unavailable"):
+                qa.prepare(BANK, CONFIG, target, JITY, check_original=True)
+        validate.assert_called_once_with(BANK.resolve(), check_original=True)
+        self.assertFalse(target.exists())
+
     def test_new_budget_required_even_after_review(self):
         review,_=self.approve()
         with self.assertRaises(qa.PilotBlocked):

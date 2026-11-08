@@ -120,14 +120,17 @@ def point_review_binding(bank, qid):
                    "audit": item("audit/points.json"), "evidence": [r for r in qb.read(bank / "audit/evidence.json")["records"] if r["id"].startswith(qid + ".")]})
 
 
-def prepare(bank, config, output, jity_root):
+def prepare(bank, config, output, jity_root, *, check_original=False):
     bank, root, jity_root = Path(bank).resolve(), Path(output).resolve(), Path(jity_root).resolve()
     qb.require(not root.exists(), "Output exists; use a new directory")
     qb.require(not root.is_relative_to(jity_root) and not root.is_relative_to(bank), "Run must be independent of Jity and the bank")
     source = Path(qb.read(bank / "manifest.json")["source_root"])
     qb.require(not root.is_relative_to(source), "Cannot write inside recordings")
     c = qb.read(config); config_validate(c)
-    validation = revision.validate(bank, check_original=True)
+    # Frozen source bytes and predecessor fingerprints are sufficient for a
+    # portable run. Rechecking the original recording is an explicit audit.
+    # Persist the selected scope in bank-validation.json with the frozen run.
+    validation = revision.validate(bank, check_original=check_original)
     delivery = qb.read(bank / "delivery.sha256.json")
     qb.require(sha(bank / "delivery.sha256.json") == (bank / "delivery.sha256").read_text().split()[0], "Bank delivery signature mismatch")
     for name, expected in delivery["files"].items():
@@ -546,6 +549,8 @@ def main():
     s = sub.add_parser("prepare")
     for flag in ("bank", "config", "output", "jity-root"):
         s.add_argument("--" + flag, required=True)
+    s.add_argument("--check-original", action="store_true",
+                   help="Also verify the original recordings at their recorded paths")
     for cmd in ("verify", "report", "status", "grade-template"):
         sub.add_parser(cmd).add_argument("run")
     for cmd in ("run", "resume"):
@@ -553,7 +558,7 @@ def main():
     s = sub.add_parser("import-grades"); s.add_argument("run"); s.add_argument("--file", required=True)
     a = p.parse_args()
     try:
-        if a.command == "prepare": result = prepare(a.bank, a.config, a.output, a.jity_root)
+        if a.command == "prepare": result = prepare(a.bank, a.config, a.output, a.jity_root, check_original=a.check_original)
         elif a.command in ("run", "resume"): result = execute(a.run, a.review, a.authorization, a.env_file, a.max_samples)
         elif a.command == "verify":
             verify(a.run); result = {"status":"passed", "paid_calls_made":0}

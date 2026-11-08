@@ -147,7 +147,13 @@ def validate(root, check_original=False):
     qb.require(file_sha(root / "manifest.json") == (root / "manifest.sha256").read_text().split()[0], "Manifest mismatch")
     for name, sha in m["files"].items():
         qb.require(file_sha(qb.safe_path(root, name)) == sha, "File mismatch: " + name)
-    prev = Path(m["previous_bank"])
+    # The recorded absolute path is provenance, not a required machine layout.
+    # Prefer the adjacent version when banks travel together; its recorded
+    # delivery and manifest hashes below must still match exactly. Never fall
+    # back to another copy if an adjacent bank exists but fails validation.
+    recorded_previous = Path(m["previous_bank"])
+    adjacent_previous = root.parent / recorded_previous.name
+    prev = adjacent_previous if adjacent_previous.is_dir() else recorded_previous
     provenance = qb.read(root / "audit/revision-provenance.json")
     qb.require(file_sha(prev / "delivery.sha256.json") == provenance["previous_delivery_sha256"], "Previous delivery changed")
     qb.require(file_sha(prev / "manifest.json") == provenance["previous_manifest_sha256"], "Previous manifest changed")

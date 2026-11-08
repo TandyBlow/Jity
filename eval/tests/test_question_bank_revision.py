@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from jity_eval import question_bank_revision as rev
 from jity_eval.question_bank import read
@@ -11,6 +12,7 @@ from jity_eval.storage import atomic_json
 
 ROOT = Path(__file__).resolve().parents[1]
 BANK = ROOT / "question_banks/full-games-20261106-v1.2"
+PREVIOUS = ROOT / "question_banks/full-games-20261106-v1.1"
 
 
 class RevisionContract(unittest.TestCase):
@@ -18,6 +20,8 @@ class RevisionContract(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="jity-v12-contract-")
         self.bank = Path(self.temp.name) / "bank"
         shutil.copytree(BANK, self.bank)
+        self.previous = Path(self.temp.name) / PREVIOUS.name
+        shutil.copytree(PREVIOUS, self.previous)
 
     def tearDown(self):
         self.temp.cleanup()
@@ -36,6 +40,32 @@ class RevisionContract(unittest.TestCase):
         result = rev.validate(self.bank)
         self.assertEqual((result["questions"], result["inputs"], result["scoring_points"]), (12, 36, 33))
         self.assertEqual(result["model_experiments"], "not_run")
+
+    def test_relocated_banks_do_not_read_original_machine_paths(self):
+        manifest = read(self.bank / "manifest.json")
+        original_roots = [Path(manifest[key]) for key in ("previous_bank", "source_root")]
+        original_open = Path.open
+
+        def relocated_open(path, *args, **kwargs):
+            if any(path == root or root in path.parents for root in original_roots):
+                raise FileNotFoundError("Original machine paths unavailable")
+            return original_open(path, *args, **kwargs)
+
+        with patch.object(Path, "open", relocated_open):
+            result = rev.validate(self.bank)
+            self.assertFalse(result["original_seal_checked"])
+            with self.assertRaisesRegex(FileNotFoundError, "Original machine paths unavailable"):
+                rev.validate(self.bank, check_original=True)
+
+    def test_changed_adjacent_delivery_cannot_fall_back_to_original(self):
+        (self.previous / "delivery.sha256.json").write_text("{}")
+        with self.assertRaisesRegex(ValueError, "Previous delivery changed"):
+            rev.validate(self.bank)
+
+    def test_changed_adjacent_manifest_is_rejected(self):
+        (self.previous / "manifest.json").write_text("{}")
+        with self.assertRaisesRegex(ValueError, "Previous manifest changed"):
+            rev.validate(self.bank)
 
     def test_question_must_change_in_all_groups(self):
         self.edit("public/inputs/JLC-20261106-G01-Q01/recent.json", lambda x: x.update(question="另一问题"))

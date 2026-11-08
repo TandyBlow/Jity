@@ -11,6 +11,7 @@
 - 仅基础离线模拟器可以使用本地 `eval/runs/`；该目录被忽略。
 - 不把 `.env`、数据库、缓存、嵌套 `.git` 或本地运行目录提交到 Git。
 - v1.1/v1.2 题库逐字复制，保留原始校验和、来源路径和待审标签。`private/` 表示禁止作为模型输入的评分材料，不表示 GitHub 访问控制。
+- 题库校验优先读取相邻目录中的前一版本，并严格核对记录的交付和清单指纹。原绝对路径保留为来源记录；相邻版本校验失败时不会改用原电脑上的副本绕过错误。
 
 ## 无付费调用的验证
 
@@ -35,6 +36,8 @@ python -m jity_eval.qa_pilot prepare \
   --output ../../jity-eval-runs/qa-new-preflight \
   --jity-root ..
 ```
+
+`prepare` 默认核验随仓库提供的冻结证据及前一题库版本，不要求访问原电脑的录制目录。若原录制仍可访问，可追加 `--check-original` 重新核对原始封存文件；缺失或变更时会拒绝准备。核验范围记录在新运行的 `private/bank-validation.json` 中。
 
 真实 `capture record/resume` 与问答 `run/resume` 仍需各自实验的明确预算与批准记录。将代码纳入仓库不构成新的付费实验授权。
 
