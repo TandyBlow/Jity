@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Build the human sign-off form for the r2 review round.
+"""Build the human sign-off form for the current round (runs/r4).
 
 The form is generated from what is already on disk, so the signer does not have
 to retype hashes. Every row keeps the AI verdict as a separate field: the human
 verdict is added next to it, never over it.
 
-    runs/r2/signoff-form.json   -> the file the project owner fills in
+    runs/r4/signoff-form.json   -> the file the project owner fills in
     fields: signer, date, commit, rows[].humanVerdict / humanNote
     allowed humanVerdict: paraphrase-ok / new-content-fail / unsure
                          ("unsure" is allowed and does NOT count as passing)
@@ -22,6 +22,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import pins as pins_mod
+
 HERE = Path(__file__).resolve().parent
 def newest_criteria() -> Path:
     found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
@@ -32,7 +34,10 @@ RUN = HERE / "runs" / "r4"
 FORM = RUN / "signoff-form.json"
 
 CRITERIA = newest_criteria()
-PROBES = HERE / "freeze" / "tamper-probes.json"
+# The round's own probe results, not the frozen probe set: the acceptance
+# identity is computed from these three files, so the form must pin exactly
+# the same three or its pins can never match the record it signs.
+PROBES = RUN / "tamper-probes.json"
 REVIEW = RUN / "manual-review.json"
 ACCEPTANCE = RUN / "acceptance.json"
 
@@ -69,6 +74,17 @@ def main() -> int:
             "humanNote": "",
         })
 
+    identity_now = pins_mod.acceptance_identity(CRITERIA, PROBES, REVIEW)
+    if identity_now != acceptance.get("identitySha256"):
+        print(json.dumps({
+            "status": "refused",
+            "reason": ("acceptance.json was built from different inputs than the ones on disk; "
+                       "re-run apply_review.py before generating the form"),
+            "acceptanceIdentity": acceptance.get("identitySha256"),
+            "recomputed": identity_now,
+        }, ensure_ascii=False, indent=1))
+        return 1
+
     form = {
         "formVersion": "c3-signoff-v1",
         "purpose": ("项目负责人逐条核对原文、证据与 AI 理由后签认；签认前 gate 状态保持 "
@@ -80,12 +96,13 @@ def main() -> int:
         "delegationNote": "",
         "date": "",
         "reviewedCommit": "",
+        # Every pin names the file its hash was taken from. Hardcoding the v2
+        # paths here is what made the r4 form unverifiable.
         "pinnedInputs": {
-            "criteria": {"file": "freeze/criteria-v2.json", "sha256": sha256(CRITERIA),
-                         "checkerVersion": criteria["checker"]["contractVersion"]},
+            "criteria": pins_mod.pin(CRITERIA, checkerVersion=criteria["checker"]["contractVersion"]),
             "checker": {"file": "text_conformance.py", "sha256": criteria["checker"]["sha256"]},
-            "tamperProbes": {"file": "freeze/tamper-probes.json", "sha256": sha256(PROBES)},
-            "manualReview": {"file": "runs/r2/manual-review.json", "sha256": sha256(REVIEW)},
+            "tamperProbes": pins_mod.pin(PROBES),
+            "manualReview": pins_mod.pin(REVIEW),
             "acceptanceIdentity": acceptance["identitySha256"],
         },
         "instructions": [

@@ -4,7 +4,7 @@
 Three independent prerequisites, in the order they can be satisfied:
 
   1. holdout delivered and frozen      freeze/holdout-v1-freeze.json
-  2. sign-off sealed (gate OPEN)       runs/r2/signoff.json + acceptance.json
+  2. sign-off sealed (gate OPEN)       runs/r4/signoff.json + acceptance.json
   3. attributable checkpoint adopted   freeze/checkpoint-adoption.json
 
 They are independent: any one can be ready while the others are not, and a
@@ -24,6 +24,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+
+import pins as pins_mod
 HERE = Path(__file__).resolve().parent
 HOLDOUT_FREEZE = HERE / "freeze" / "holdout-v1-freeze.json"
 # The current round is runs/r4 (v3 checker). runs/r2 is the v2 history: it keeps
@@ -134,15 +136,7 @@ def check_signoff() -> dict:
         return {"ready": False, "state": "人工签认待完成", "detail": "signoff.json 未标 signed"}
     if signed.get("satisfiesHumanSignoff") is not True:
         pins0 = signed.get("pinnedInputs") or {}
-        stale0 = []
-        for key, rel in (("criteria", "freeze/criteria-v2.json"),
-                         ("tamperProbes", "freeze/tamper-probes.json"),
-                         ("manualReview", "runs/r2/manual-review.json"),
-                         ("checker", "text_conformance.py")):
-            want = (pins0.get(key) or {}).get("sha256")
-            fp = HERE / rel
-            if want and fp.exists() and want != sha256(fp):
-                stale0.append(rel)
+        stale0 = pins_mod.pin_drift(pins0)
         extra = f"；且该记录钉定的文件已变（{stale0}），更加不能当作有效签认" if stale0 else ""
         return {
             "ready": False,
@@ -158,18 +152,17 @@ def check_signoff() -> dict:
     # Otherwise a later criteria/probe/review edit would silently keep the gate
     # open on inputs the signer never saw.
     pins = signed.get("pinnedInputs") or {}
-    stale = []
-    for key, rel in (("criteria", "freeze/criteria-v2.json"),
-                     ("tamperProbes", "freeze/tamper-probes.json"),
-                     ("manualReview", "runs/r2/manual-review.json"),
-                     ("checker", "text_conformance.py")):
-        want = (pins.get(key) or {}).get("sha256")
-        path = HERE / rel
-        if want and path.exists() and want != sha256(path):
-            stale.append(rel)
+    stale = pins_mod.pin_drift(pins)
+    # The signed record must also belong to the acceptance record on disk, not to
+    # a previous run of the same round.
+    pin_id = (pins.get("acceptanceIdentity") or "")
+    if ACCEPTANCE.exists():
+        acc = json.loads(ACCEPTANCE.read_text(encoding="utf-8"))
+        if pin_id and pin_id != acc.get("identitySha256"):
+            stale.append("acceptance.json is a different record than the one signed")
     if stale:
         return {"ready": False, "state": "签认已过期",
-                "detail": f"签认钉定的文件已改动：{stale}；需要重新生成签认表并重新签认"}
+                "detail": f"签认钉定的输入已变：{stale}；需要重新生成签认表并重新签认"}
 
     gate = json.loads(ACCEPTANCE.read_text(encoding="utf-8"))
     status = gate.get("gateStatus")

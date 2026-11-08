@@ -65,6 +65,15 @@
 
 另外：检查器升到 `c3-text-conformance-v3`，判据单列为 `freeze/criteria-v3.json`；`criteria-v2.json` 保持原样作为 R2 历史记录。R2 的 AI 审计签认因此显示“所钉文件已变”，仍只作审计。
 
+## 3c. 2026-11-08 第三次审阅后的修正
+
+| 问题 | 修法 | 验证 |
+| --- | --- | --- |
+| r4 签认表的 `file` 写的是 v2/r2、`sha256` 取自 v3/r4 | 新增 `pins.py`：核验按记录里的 `file` 找文件再比哈希；三个脚本改用 `pins_mod.pin()`；表里三个 pin 与 `acceptance.json` 同一组文件 | T13（路径/哈希/身份三者一致）、T14（路径写错必报） |
+| 签认表可能早于验收记录生成 | `build_signoff_form.py` 先复算验收身份，与 `acceptance.json` 不一致就拒绝生成；`apply_signoff.py` 与 `check_round_ready.py` 也比对 `acceptanceIdentity` | 临时目录端到端：填满即签成，改一个字节即报 drift |
+| 跨分支检查跳过仍计通过 | `SkipTest` 单独计数，汇总行写 `N passed, M skipped`，`--strict-cross` 把跳过判失败 | 指向空目录 → `13 passed, 1 skipped`；加 `--strict-cross` → 退出 1 |
+| 判据文件仍引用 r2 队列文件 | `build_criteria.py` 的 `queueFile` 改为 `runs/r4/manual-review.json`，重新生成 `criteria-v3.json` | 见文件 |
+
 ## 4. 只接收三类外部进展
 
 | 进展 | 到货后走哪条路径 | c3 是否会自己产生 |

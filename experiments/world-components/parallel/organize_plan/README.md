@@ -642,6 +642,60 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 
 留出包仍未通过：`blockedBy = PKG-no-semantic-signoff, PKG-semantic-signoff-incomplete`。六族（结构/点链/证据/授权/隔离/双计划）仍是 0 错。在有人签 `semantic-review-signoff.json` 之前，不冻结、不跑模型。
 
+## 8.12 2026-11-08 第三次审阅后的修正
+
+外部复审发现 r4 签认表把「文件路径」写死成 v2/r2，而哈希取自 v3/r4；另有一条回归检查把跳过计成通过。
+
+### 8.12.1 签认表里的路径、哈希必须是同一个文件（阻塞）
+
+**原来**：`build_signoff_form.py` 里写的是
+
+```json
+"criteria":     {"file": "freeze/criteria-v2.json", "sha256": sha256(criteria-v3)}
+"manualReview": {"file": "runs/r2/manual-review.json", "sha256": sha256(r4 的人工复核表)}
+```
+
+哈希对、路径错。`apply_signoff.py` 与 `check_round_ready.py` 也按 v2/r2 路径核验，人工填完必然哈希不匹配。你核对的三组差异（`c485bb45…` vs `762e6f66…`、`58a8ccf0…` vs `6dd99182…`、`bbcf35dc…` vs `2d7078af…`）都来自这一处。
+
+**现在**：
+
+- 新增 `pins.py`，规则只有一条：**核验时按记录里写的 `file` 去找文件，再比对 `sha256`**。路径写错就一定失败，不会“用对的哈希验了错的文件”。
+- `build_signoff_form.py`、`apply_review.py` 写 pin 时由 `pins_mod.pin(path)` 生成，`file` 和 `sha256` 出自同一个 `Path`。
+- 签认表里的三个 pin 与验收记录用**同一组文件**：`freeze/criteria-v3.json`、`runs/r4/tamper-probes.json`、`runs/r4/manual-review.json`。少一个或换一个，验收身份（`identitySha256`）就不同。
+- `build_signoff_form.py` 生成前先复算验收身份，与 `acceptance.json` 不一致就**拒绝生成**（`status: refused`），避免发出过期表。
+- `apply_signoff.py` 除了查 pin，还比对表里的 `acceptanceIdentity` 与当前 `acceptance.json`；对不上就报 `acceptance.json no longer matches the form's pinned inputs`。
+- `check_round_ready.py` 的“签认已过期”判定改用同一函数，并新增一条：签认记录的 `acceptanceIdentity` 必须等于当前 `acceptance.json` 的身份。
+
+实测（r4 重生成后）：
+
+| 字段 | 值 |
+| --- | --- |
+| 判据 | `freeze/criteria-v3.json` `7cbda3b4…` |
+| 探针结果 | `runs/r4/tamper-probes.json` `e0f353a5…` |
+| 人工复核表 | `runs/r4/manual-review.json` `6dd99182…` |
+| 验收身份 | `cb2cfa4e…`（与 `runs/r4/acceptance.json` 一致） |
+
+端到端验证（临时目录，不动仓库）：填满一张人类签认表 → `apply_signoff.py` 退出 0、`signoffClass=human`；再把 `manual-review.json` 追加一个字节 → 退出 1，`drift` 明确写出 `runs/r4/manual-review.json changed since the record was written` 与 `acceptance.json no longer matches the form's pinned inputs`。
+
+### 8.12.2 跳过不能算通过（回归检查可信度）
+
+**原来**：`T10`（跨分支包摘要核对）找不到留出包时打印 skipped 并 `return`，统计仍是 `12/12 passed`。
+
+**现在**：
+
+- 引入 `SkipTest`，跳过单独计数与打印；
+- 汇总行改成 `13 passed, 1 skipped, 0 failed (of 14 checks)`，并在下面列出跳过项及原因；
+- `--strict-cross` 把跳过当失败（在有包的机器/CI 上用）。
+
+实测：把测试包路径指向不存在的目录 → `13 passed, 1 skipped`，`--strict-cross` 退出 1；在有包的机器上 → `14 passed, 0 skipped`。
+
+### 8.12.3 新增回归
+
+| 编号 | 锁住什么 |
+| --- | --- |
+| T13 | r4 签认表的三个 pin 路径不含 `runs/r2`/`criteria-v2`、文件存在、哈希与 `acceptance.json` 一致、`pin_drift` 为空 |
+| T14 | 哈希对但路径错（`b.json` 装 `a.json` 的哈希）必须被报出；pin 没有 `file` 字段也必须被报出 |
+
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
 `model_smoke.py` 在 CPU 上加载**冻结基线** Randeng-T5-77M（`model.safetensors` sha256 `5cdc572109cf…`，与旧 controllability 的起点同一个哈希），跑 4 条提示（fixture-r1、fixture-r2 × 两份计划），greedy，`max_new_tokens=128`。
@@ -718,7 +772,8 @@ A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
 | `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点），含冻结材料重校验 | — |
-| `test_regressions.py` | 两轮审阅发现的 12 条回归检查 | — |
+| `test_regressions.py` | 三轮审阅发现的 14 条回归检查（跳过单独计） | — |
+| `pins.py` | pin 的路径/哈希一致性规则，四个脚本共用 | — |
 | `freeze/criteria-v3.json` | v3 检查器的判据（v2 保留为 R2 记录） | 见文件 |
 | `gate_rules.py` | 门规则纯函数 + 7 条回归检查（AI 签认、仅改 signerKind 都不能开门） | — |
 | `HANDOVER.md` | 交接页：三项状态、两条保留点、只接收三类外部进展 | — |
@@ -745,7 +800,8 @@ python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒�
 python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
 python -X utf8 gate_rules.py             # 门规则回归检查（7 条）
 python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
-python -X utf8 test_regressions.py        # 两轮审阅修正的 12 条回归（12/12）
+python -X utf8 test_regressions.py        # 三轮审阅修正的 14 条回归
+python -X utf8 test_regressions.py --strict-cross  # 跨分支检查缺包时判失败
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）

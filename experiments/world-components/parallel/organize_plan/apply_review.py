@@ -4,11 +4,11 @@
 Program output alone is not acceptance: a probe with no hard finding but with a
 review item is only decided after a human verdict. This script joins
 
-    freeze/criteria-v2.json         what the verdict values and gate are
-    runs/r2/tamper-probes.json      the program's hard findings per probe
-    runs/r2/manual-review.json      the filled-in verdicts per review row
+    freeze/criteria-v<N>.json         what the verdict values and gate are
+    runs/r<N>/tamper-probes.json      the program's hard findings per probe
+    runs/r<N>/manual-review.json      the filled-in verdicts per review row
 
-and writes runs/r2/acceptance.json: one outcome per probe, the counts, every
+and writes runs/r<N>/acceptance.json: one outcome per probe, the counts, every
 deviation from the frozen criteria, and the gate status.
 
 Outcome per probe (first match wins):
@@ -36,6 +36,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import gate_rules  # noqa: E402
+import pins as pins_mod  # noqa: E402
 
 def newest_criteria() -> Path:
     found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
@@ -166,22 +167,19 @@ def main() -> int:
     )
     gate = decision["gate"]
 
-    identity = hashlib.sha256(
-        (sha256(CRITERIA) + sha256(PROBES) + sha256(REVIEW)).encode("ascii")
-    ).hexdigest()
+    identity = pins_mod.acceptance_identity(CRITERIA, PROBES, REVIEW)
     doc = {
         # no wall-clock timestamp: the file is meant to be byte-stable across
         # re-runs so two reviewers can diff it. Identity is derived from inputs.
         "identitySha256": identity,
-        "criteria": {"file": "freeze/criteria-v2.json", "sha256": sha256(CRITERIA),
-                     "contractVersion": criteria["checker"]["contractVersion"]},
+        "criteria": pins_mod.pin(CRITERIA, contractVersion=criteria["checker"]["contractVersion"]),
         "inputs": {
-            "probes": {"file": "runs/r2/tamper-probes.json", "sha256": sha256(PROBES)},
-            "manualReview": {"file": "runs/r2/manual-review.json", "sha256": sha256(REVIEW)},
+            "probes": pins_mod.pin(PROBES),
+            "manualReview": pins_mod.pin(REVIEW),
         },
         "reviewer": reviewer,
         "signoff": None if not signoff else {
-            "file": "runs/r2/signoff.json", "sha256": sha256(SIGNOFF),
+            "file": pins_mod.rel(SIGNOFF), "sha256": sha256(SIGNOFF),
             "signer": signoff.get("signer"),
             "signerKind": signoff.get("signerKind"),
             "iReviewedEachRow": signoff.get("iReviewedEachRow") is True,

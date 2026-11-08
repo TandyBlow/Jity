@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Turn a filled sign-off form into runs/r2/signoff.json.
+"""Turn a filled sign-off form into runs/r4/signoff.json.
 
 Refuses to produce a signed record unless every required field is present and
 every row carries a verdict from the frozen value list. The AI verdicts are
@@ -18,6 +18,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import pins as pins_mod  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 def newest_criteria() -> Path:
     found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
@@ -27,6 +29,7 @@ def newest_criteria() -> Path:
 RUN = HERE / "runs" / "r4"
 FORM = RUN / "signoff-form.json"
 OUT = RUN / "signoff.json"
+ACCEPTANCE = RUN / "acceptance.json"
 CRITERIA = newest_criteria()
 
 
@@ -58,22 +61,21 @@ def main() -> int:
         if row.get("humanVerdict") not in allowed:
             missing.append(f"{row['queueId']}: humanVerdict")
 
-    # pinned inputs must still describe the files on disk
+    # Pinned inputs must still describe the files on disk. The check follows the
+    # path recorded in the form, so a form that pins the wrong round fails here
+    # instead of silently verifying some other file's hash.
     pins = form.get("pinnedInputs", {})
-    drift = []
-    checks = [
-        ("criteria", HERE / "freeze" / "criteria-v2.json"),
-        ("tamperProbes", HERE / "freeze" / "tamper-probes.json"),
-        ("manualReview", HERE / "runs" / "r2" / "manual-review.json"),
-    ]
-    for key, path in checks:
-        want = pins.get(key, {}).get("sha256")
-        if want and path.exists() and want != sha256(path):
-            drift.append(f"{path.relative_to(HERE)} changed since the form was generated")
-    checker_pin = pins.get("checker", {}).get("sha256")
-    actual_checker = sha256(HERE / "text_conformance.py")
-    if checker_pin and checker_pin != actual_checker:
-        drift.append("text_conformance.py changed since the form was generated")
+    drift = pins_mod.pin_drift(pins)
+    pinned_identity = pins.get("acceptanceIdentity")
+    current_identity = None
+    if ACCEPTANCE.exists():
+        current_identity = pins_mod.acceptance_identity(
+            HERE / pins["criteria"]["file"],
+            HERE / pins["tamperProbes"]["file"],
+            HERE / pins["manualReview"]["file"],
+        )
+        if pinned_identity and pinned_identity != current_identity:
+            drift.append("acceptance.json no longer matches the form's pinned inputs")
 
     if args.show or missing or drift:
         print(json.dumps({

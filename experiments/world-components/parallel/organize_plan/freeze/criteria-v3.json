@@ -1,6 +1,6 @@
 {
  "protocol": "c3-acceptance-criteria-c3-text-conformance-v3",
- "created": "2026-11-08T08:23:03.888565+00:00",
+ "created": "2026-11-08T08:41:47.153155+00:00",
  "supersedes": "runs/r1 (v1 checker) and runs/r2 (v2 checker). runs/r2 keeps its own criteria-v2 record; this file governs runs/r4 onward.",
  "checker": {
   "module": "text_conformance.py",
@@ -128,7 +128,7 @@
  },
  "manualReview": {
   "maxRowsPerBatch": 10,
-  "queueFile": "runs/r2/manual-review.json",
+  "queueFile": "runs/r4/manual-review.json",
   "fields": [
    "queueId",
    "code",

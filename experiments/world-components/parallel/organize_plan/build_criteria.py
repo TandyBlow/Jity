@@ -101,7 +101,7 @@ def main() -> int:
         },
         "manualReview": {
             "maxRowsPerBatch": 10,
-            "queueFile": "runs/r2/manual-review.json",
+            "queueFile": "runs/r4/manual-review.json",
             "fields": ["queueId", "code", "run", "outsideVocabulary", "text", "verdict", "reviewerNote"],
             "verdictValues": ["paraphrase-ok", "new-content-fail", "unsure"],
             "rule": "unsure 不计入通过；每批重新开表，不复用上一批结论",

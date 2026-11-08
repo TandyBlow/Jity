@@ -10,8 +10,8 @@
  "reviewedCommit": "",
  "pinnedInputs": {
   "criteria": {
-   "file": "freeze/criteria-v2.json",
-   "sha256": "c485bb45585d1b495d3f2f032912578ffe092cd9195eb9172a3f6fa45def6e7e",
+   "file": "freeze/criteria-v3.json",
+   "sha256": "7cbda3b4f2761c242dc75777604cdb06454307cd01162405fa717a29f19dbd0a",
    "checkerVersion": "c3-text-conformance-v3"
   },
   "checker": {
@@ -19,14 +19,14 @@
    "sha256": "714aeb46b05a8a410693f39be971e9778a22792927de6e50bf0513d418a1cca0"
   },
   "tamperProbes": {
-   "file": "freeze/tamper-probes.json",
-   "sha256": "75cad427564f24bbd768ff05b66cdd9762fdfee1ad460ac373a5df2ceffe3b12"
+   "file": "runs/r4/tamper-probes.json",
+   "sha256": "e0f353a5f1ede5230c4a26d2cec7edefe8d3890dcf9f60af2243824c5e3624b5"
   },
   "manualReview": {
-   "file": "runs/r2/manual-review.json",
-   "sha256": "58a8ccf0d223edd6e64d87f55770de4bdb72c656e23deb7b5c2ea1528494e4ff"
+   "file": "runs/r4/manual-review.json",
+   "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
   },
-  "acceptanceIdentity": "bbcf35dcc298bf9f68666de096064e1b65732fd45327142e480c03aa2e43d259"
+  "acceptanceIdentity": "cb2cfa4e0ced3eebbabf0d2bc4c7236deb44e41c4885ea1ac5f6153630e0403e"
  },
  "instructions": [
   "逐行填写 humanVerdict：paraphrase-ok / new-content-fail / unsure",

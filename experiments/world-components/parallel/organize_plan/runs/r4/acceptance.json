@@ -1,17 +1,17 @@
 {
- "identitySha256": "2d7078af3ead0d10c988b36784e9f00180fcd704bd90078be8576de2b74225a7",
+ "identitySha256": "cb2cfa4e0ced3eebbabf0d2bc4c7236deb44e41c4885ea1ac5f6153630e0403e",
  "criteria": {
-  "file": "freeze/criteria-v2.json",
-  "sha256": "762e6f663d6f6b5daa531a9e117ce16a9733be9fd8d79a46e69e7e97931ed3a8",
+  "file": "freeze/criteria-v3.json",
+  "sha256": "7cbda3b4f2761c242dc75777604cdb06454307cd01162405fa717a29f19dbd0a",
   "contractVersion": "c3-text-conformance-v3"
  },
  "inputs": {
   "probes": {
-   "file": "runs/r2/tamper-probes.json",
+   "file": "runs/r4/tamper-probes.json",
    "sha256": "e0f353a5f1ede5230c4a26d2cec7edefe8d3890dcf9f60af2243824c5e3624b5"
   },
   "manualReview": {
-   "file": "runs/r2/manual-review.json",
+   "file": "runs/r4/manual-review.json",
    "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
   }
  },

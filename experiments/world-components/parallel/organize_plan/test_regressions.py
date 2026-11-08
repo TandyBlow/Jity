@@ -15,6 +15,8 @@ Each test names the defect it locks down:
   T10 the digest prefilled by the producer equals the digest c3 recomputes
   T11 a changed or deleted world.db invalidates the freeze
   T12 build_criteria.py never overwrites an older frozen criteria file
+  T13 the r4 sign-off form pins the files it actually hashed
+  T14 a misnamed pin is caught (hash right, path wrong)
 
 Run:
     python -X utf8 test_regressions.py
@@ -23,15 +25,22 @@ Run:
 from __future__ import annotations
 
 import hashlib
+import argparse
 import json
 import shutil
 import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+
+class SkipTest(Exception):
+    """A check that could not run here. Reported separately, never as passed."""
+
 import check_round_ready  # noqa: E402
 import plan_contract as contract  # noqa: E402
 import text_conformance as tc  # noqa: E402
+import pins as pins_mod
 import validate_holdout as vh  # noqa: E402
 
 
@@ -190,6 +199,44 @@ def test_T8_frozen_holdout_must_match_its_material() -> None:
         assert state["state"] == "留出冻结件已过期", state
 
 
+def test_T13_signoff_form_pins_the_files_it_hashed() -> None:
+    """The form must pin r4 + criteria-v3, not the v2 names, and agree with acceptance."""
+    form_path = HERE / "runs" / "r4" / "signoff-form.json"
+    acc_path = HERE / "runs" / "r4" / "acceptance.json"
+    if not form_path.exists():
+        raise AssertionError(f"{form_path} missing; run build_signoff_form.py")
+    form = json.loads(form_path.read_text(encoding="utf-8"))
+    acc = json.loads(acc_path.read_text(encoding="utf-8"))
+    pins = form["pinnedInputs"]
+
+    for key in ("criteria", "tamperProbes", "manualReview"):
+        name = pins[key]["file"]
+        assert not name.startswith(("freeze/criteria-v2", "runs/r2/")), (
+            f"{key} pins {name}: that is the v2 round, not r4")
+        assert (HERE / name).exists(), f"{key} pins a file that does not exist: {name}"
+
+    assert pins["criteria"]["sha256"] == acc["criteria"]["sha256"], "criteria hash differs from acceptance"
+    assert pins["tamperProbes"]["sha256"] == acc["inputs"]["probes"]["sha256"], "probe hash differs"
+    assert pins["manualReview"]["sha256"] == acc["inputs"]["manualReview"]["sha256"], "review hash differs"
+    assert pins["acceptanceIdentity"] == acc["identitySha256"], "acceptance identity differs"
+    assert pins_mod.pin_drift(pins) == [], pins_mod.pin_drift(pins)
+
+
+def test_T14_misnamed_pin_is_caught() -> None:
+    """Right hash, wrong path: the exact defect the r4 form had."""
+    with tempfile.TemporaryDirectory() as tmp:
+        base = Path(tmp)
+        (base / "a.json").write_text("a", encoding="utf-8")
+        (base / "b.json").write_text("b", encoding="utf-8")
+        good = pins_mod.pin(base / "a.json")
+        assert pins_mod.pin_drift({"x": good}, base=base) == []
+        misnamed = {"x": {"file": "b.json", "sha256": good["sha256"]}}
+        problems = pins_mod.pin_drift(misnamed, base=base)
+        assert problems and "b.json changed" in problems[0], problems
+        no_path = {"x": {"sha256": good["sha256"]}}
+        assert pins_mod.pin_drift(no_path, base=base), "a pin without a path must be reported"
+
+
 PACKAGE_CANDIDATES = [
     Path("D:/others/Jity/artifacts/holdout-a-v1"),
     Path("artifacts/holdout-a-v1"),
@@ -204,8 +251,8 @@ def test_T10_producer_digest_equals_recomputed_digest() -> None:
     """
     pkg = next((p for p in PACKAGE_CANDIDATES if (p / "manifest.json").exists()), None)
     if pkg is None:
-        print("  (skipped: holdout package not present in this checkout)")
-        return
+        raise SkipTest("holdout package not present in this checkout; the cross-branch "
+                       "digest check did not run (use --strict-cross to fail instead)")
     manifest = json.loads((pkg / "manifest.json").read_text(encoding="utf-8"))
     assert "packageSha256" not in manifest, "the digest must not live inside manifest.json"
     template = json.loads((pkg / "semantic-review-signoff.template.json").read_text(encoding="utf-8"))
@@ -263,14 +310,32 @@ def test_T9_gate_threshold_is_preregistered() -> None:
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--strict-cross", action="store_true",
+                    help="treat a skipped cross-branch check as a failure")
+    args = ap.parse_args()
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
+    skipped = []
     for fn in tests:
         try:
             fn()
             print(f"PASS {fn.__name__}")
+        except SkipTest as exc:
+            skipped.append(f"{fn.__name__}: {exc}")
+            print(f"SKIP {fn.__name__}: {exc}")
         except AssertionError as exc:  # pragma: no cover - reported, not raised
             failed += 1
             print(f"FAIL {fn.__name__}: {exc}")
-    print(f"\n{len(tests) - failed}/{len(tests)} passed")
+    passed = len(tests) - failed - len(skipped)
+    # A skip is never folded into "passed": an unexecuted cross-branch check is
+    # not evidence.
+    print()
+    print(f"{passed} passed, {len(skipped)} skipped, {failed} failed (of {len(tests)} checks)")
+    if skipped:
+        print("skipped checks did not run and prove nothing:")
+        for line in skipped:
+            print(f"  - {line}")
+    if args.strict_cross and skipped:
+        failed += len(skipped)
     raise SystemExit(1 if failed else 0)
