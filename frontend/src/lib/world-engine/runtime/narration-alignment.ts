@@ -221,6 +221,16 @@ export function statedDirection(clause: string, from: number, to: number): 'forw
   return fromAt < toAt ? 'forward' : 'reverse';
 }
 
+/** A standing sanity value can be the from/to number of the named actor's
+ * committed change; the template "周宁的精神值从10变为8" contains 10 while 林川
+ * also stands at 10. The change must match the named actor's direction, else it
+ * is not their payload. */
+function ownsNumericPayload(fact: NarrationFact, other: NarrationFact, clause: string): boolean {
+  if (fact.kind !== 'sanity' || other.kind !== 'sanity_changed') return false;
+  return CHANGE_VERB.test(clause) && (fact.value === other.from || fact.value === other.to)
+    && statedDirection(clause, other.from, other.to) === 'forward';
+}
+
 /** Does this fact belong to the actor named in the clause with the SAME payload?
  * Two people with the same standing value, the same change, the same goal or the
  * same frozen text make the clause true for both; the surface cannot say which
@@ -405,8 +415,9 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       // it undecided instead of calling it a swap.
       const swapped = clauses.find((clause) => signature(fact, clause)
         && [...names].some((name) => name !== fact.name && bareOf(clause).includes(name)
-          && !packet.facts.some((other) => other.name === name && other.kind === fact.kind
-            && sameActorPayload(other, clause))));
+          && !packet.facts.some((other) => other.name === name
+            && (other.kind === fact.kind ? sameActorPayload(other, clause)
+              : ownsNumericPayload(fact, other, clause)))));
       if (swapped) {
         const attributed = [...names].filter((name) => bareOf(swapped).includes(name)).join('/');
         violations.push({ kind: 'actor_swap', sentence,

@@ -96,7 +96,7 @@ export function buildNaturalPrompt(sample: NarrationEvalSample, feedback?: strin
     ...sample.packet.facts.map((fact) => `- ${describeFact(fact)}`),
     sample.packet.facts.length === 0 ? '- 本点没有任何实体变化（只有时间推进）。' : '',
     sample.forbidden.length ? `不得出现：${sample.forbidden.join('；')}。` : '',
-    '最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。',
+    sample.time ? '最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。' : '',
     '只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。',
     feedback?.length ? `上一稿的问题：${feedback.join('；')}。请改写。` : '',
     '正文:',

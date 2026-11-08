@@ -123,6 +123,18 @@ describe('actor binding when two actors carry the same payload', () => {
     expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
   });
 
+  it('accepts the task template when a standing value coincides with another actor change', () => {
+    const facts = [standing('a', 10), changed('c', 10, 8),
+      { id: 'c:pos', actorId: 'c', name: '周宁', kind: 'at', locationId: 'corridor', location: '走廊' },
+      { id: 'c:task', actorId: 'c', name: '周宁', kind: 'task_achieved', taskId: 'task_pressure', goal: '完成压力试验' },
+      { id: 'c:personality', actorId: 'c', name: '周宁', kind: 'personality_changed', changeId: 'c1', text: '经历压力试验后更谨慎' }] as NarrationFact[];
+    const packet = factPacket([{ id: 'a:pos', actorId: 'a', name: '林川', kind: 'at', locationId: 'corridor', location: '走廊' }, ...facts]);
+    const text = '约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。';
+    const verdict = alignNarration(packet, text, { time: { amount: 1, unit: 'second' },
+      locations: ['走廊', '门厅'], roster: ['林川', '周宁'], requireTime: true });
+    expect(verdict.ok, JSON.stringify(verdict.violations)).toBe(true);
+  });
+
   it('reports a wrong value as a wrong number, not as a swap', () => {
     const verdict = alignNarration(factPacket([standing('a', 10), standing('c', 8)]), '林川的精神值为12。');
     expect(verdict.violations.map((violation) => violation.kind)).toEqual(['wrong_number']);

@@ -1,0 +1,4214 @@
+{
+ "status": "COMPLETED",
+ "recordedAt": "2026-11-08T07:20:25.012Z",
+ "config": {
+  "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+  "contextSize": 4096,
+  "numThreads": 4,
+  "channel": "msedge",
+  "seed": 42,
+  "temperature": 0,
+  "maxTokens": 160,
+  "cachePrompt": false,
+  "timeoutMs": 120000,
+  "runsPerPoint": 3
+ },
+ "input": {
+  "path": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-runs\\narration-model-r1\\reads.json",
+  "sha256": "fa479d541b12d836733c5ccdf4eae698ff9f3693f08ee2ea195241d7fd5a92f5",
+  "worldId": "world_1",
+  "points": 13
+ },
+ "source": {
+  "head": "b739b397e4c05f9a8164f49d339bb5811b76e51d",
+  "status": "M frontend/src/lib/world-engine/runtime/narration-eval.ts\n?? frontend/scripts/narration-experiment-world.mjs\n?? frontend/scripts/run-narration-model-r1.mjs\n?? frontend/src/lib/world-engine/runtime/narration-factcheck.test.ts\n?? frontend/src/lib/world-engine/runtime/narration-factcheck.ts",
+  "sha256": {
+   "frontend/scripts/run-narration-model-r1.mjs": "6bc53a0beaa26f51407e2e2804a389fecb1c0d072c4fdf7ce8c244b4134bb0c7",
+   "frontend/scripts/narration-experiment-world.mjs": "57c21551dca64d780b5f874317ed38bced0a61ffecb7868e8f635e8837343176",
+   "frontend/src/lib/world-engine/runtime/narration-factcheck.ts": "ab120b649e1d3f5cf0b6ad3c29fe3ca0453a98faf687a9ee62e9a11109ddd1c4",
+   "frontend/src/lib/world-engine/runtime/narration-alignment.ts": "21e2c75bc9df143837ccc25f97225419502e8c1aef75a21ef2687ceaf60631af",
+   "frontend/src/lib/world-engine/runtime/committed-narration.ts": "aab137f285cb6480d67fc1ea199d8431c2af01105cb04e02cdf79a791ab0dfe5",
+   "frontend/src/lib/world-engine/runtime/narration-eval.ts": "341a6317cd064f2484b3639d33f0126a9e63ef67de1c672f4e955af4347b88ba",
+   "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "070e970dfd0d365d5c0418164f7a044d75ea6067bfa81f2a667ed315e91ea3e9",
+   "frontend/src/lib/world-engine/runtime/engine.ts": "eadd0a2c8f98736f9ac37ed04ad118f3a04ce1850ec8c6c26e5490791c5ae28d"
+  }
+ },
+ "assets": {
+  "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+  "modelBytes": 396705472,
+  "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+  "wllamaVersion": "3.8.1",
+  "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+  "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c"
+ },
+ "device": {
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "logicalCpus": 20
+ },
+ "setup": {
+  "loadMs": 28800.454999923706,
+  "topology": {
+   "multithread": true,
+   "numThreads": 4
+  },
+  "points": [
+   {
+    "label": "initial-equal-sanity",
+    "pointId": "root_3",
+    "sequence": 0,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": null,
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 10\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+    "promptChars": 224
+   },
+   {
+    "label": "task-personality-sanity",
+    "pointId": "point_7",
+    "sequence": 1,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 10 → 8\n- 周宁 / 达成任务 = 「完成压力试验」\n- 周宁 / 个性变化 = 「经历压力试验后更谨慎」\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+    "promptChars": 331
+   },
+   {
+    "label": "first-appearance",
+    "pointId": "point_14",
+    "sequence": 2,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:appearance:change_17",
+      "kind": "appearance_changed",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 外貌变化 = 「面带微笑」\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 8\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。",
+    "promptChars": 297
+   },
+   {
+    "label": "refused-appearance-repeat",
+    "pointId": "point_21",
+    "sequence": 3,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 8\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。",
+    "promptChars": 276
+   },
+   {
+    "label": "move-corridor-to-hall",
+    "pointId": "point_27",
+    "sequence": 4,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 位置 = 从 走廊 到 门厅\n- 周宁 / 精神值 = 8\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。",
+    "promptChars": 281
+   },
+   {
+    "label": "refused-wrong-location",
+    "pointId": "point_33",
+    "sequence": 5,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 门厅\n- 周宁 / 精神值 = 8\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。",
+    "promptChars": 276
+   },
+   {
+    "label": "move-hall-to-corridor",
+    "pointId": "point_39",
+    "sequence": 6,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 位置 = 从 门厅 到 走廊\n- 周宁 / 精神值 = 8\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。",
+    "promptChars": 281
+   },
+   {
+    "label": "recover-task-personality-sanity",
+    "pointId": "point_45",
+    "sequence": 7,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:task:task_recover",
+      "kind": "task_achieved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:personality:change_48",
+      "kind": "personality_changed",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 8 → 9\n- 周宁 / 达成任务 = 「完成恢复练习」\n- 周宁 / 个性变化 = 「完成恢复练习后更善于自我调节」\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+    "promptChars": 334
+   },
+   {
+    "label": "refused-recover-repeat",
+    "pointId": "point_52",
+    "sequence": 8,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 9\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+    "promptChars": 276
+   },
+   {
+    "label": "move-corridor-to-hall-2",
+    "pointId": "point_58",
+    "sequence": 9,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 位置 = 从 走廊 到 门厅\n- 周宁 / 精神值 = 9\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+    "promptChars": 281
+   },
+   {
+    "label": "move-hall-to-corridor-2",
+    "pointId": "point_64",
+    "sequence": 10,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 位置 = 从 门厅 到 走廊\n- 周宁 / 精神值 = 9\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为9。",
+    "promptChars": 281
+   },
+   {
+    "label": "refused-strain-repeat",
+    "pointId": "point_70",
+    "sequence": 11,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 所在位置 = 走廊\n- 周宁 / 精神值 = 9\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+    "promptChars": 276
+   },
+   {
+    "label": "post-refresh-move",
+    "pointId": "point_76",
+    "sequence": 12,
+    "facts": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "name": "林川"
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "name": "林川"
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "name": "周宁"
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "name": "周宁"
+     }
+    ],
+    "time": {
+     "amount": 1,
+     "unit": "second"
+    },
+    "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 林川 / 所在位置 = 走廊\n- 林川 / 精神值 = 10\n- 周宁 / 位置 = 从 走廊 到 门厅\n- 周宁 / 精神值 = 9\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+    "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+    "promptChars": 281
+   }
+  ]
+ },
+ "runs": [
+  {
+   "pointId": "root_3",
+   "label": "initial-equal-sanity",
+   "sequence": 0,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+   "ms": 29133.510000228882,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+    "finishReason": "stop",
+    "firstTokenMs": 19551.795000076294,
+    "wallMs": 29132.914999961853,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 164,
+     "prompt_ms": 19308.115,
+     "prompt_per_token_ms": 117.73240853658538,
+     "prompt_per_second": 8.493837953627269,
+     "predicted_n": 52,
+     "predicted_ms": 9753.426,
+     "predicted_per_token_ms": 191.2436470588235,
+     "predicted_per_second": 5.228931864557132
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现没有事实背书的意图/因果/解释措辞「准备」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现了移动动词，但本点没有移动事实"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": false,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致"
+    ],
+    "repetition": null,
+    "timeExpressed": null
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+   }
+  },
+  {
+   "pointId": "root_3",
+   "label": "initial-equal-sanity",
+   "sequence": 0,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+   "ms": 28529.989999771118,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+    "finishReason": "stop",
+    "firstTokenMs": 17106.49499988556,
+    "wallMs": 28529.92499923706,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 164,
+     "prompt_ms": 16843.715,
+     "prompt_per_token_ms": 102.70557926829268,
+     "prompt_per_second": 9.736569396953108,
+     "predicted_n": 52,
+     "predicted_ms": 11643.86,
+     "predicted_per_token_ms": 228.31098039215686,
+     "predicted_per_second": 4.379990827783914
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现没有事实背书的意图/因果/解释措辞「准备」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现了移动动词，但本点没有移动事实"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": false,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致"
+    ],
+    "repetition": null,
+    "timeExpressed": null
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+   }
+  },
+  {
+   "pointId": "root_3",
+   "label": "initial-equal-sanity",
+   "sequence": 0,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+   "ms": 27057.015000343323,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+    "finishReason": "stop",
+    "firstTokenMs": 17849.189999580383,
+    "wallMs": 27056.934999465942,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 164,
+     "prompt_ms": 17629.485,
+     "prompt_per_token_ms": 107.49685975609756,
+     "prompt_per_second": 9.302597324879315,
+     "predicted_n": 52,
+     "predicted_ms": 9376.824,
+     "predicted_per_token_ms": 183.85929411764707,
+     "predicted_per_second": 5.4389417994834925
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现没有事实背书的意图/因果/解释措辞「准备」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现了移动动词，但本点没有移动事实"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": false,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致"
+    ],
+    "repetition": null,
+    "timeExpressed": null
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+   }
+  },
+  {
+   "pointId": "point_7",
+   "label": "task-personality-sanity",
+   "sequence": 1,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+   "ms": 41097.49499988556,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 25852.349999427795,
+    "wallMs": 41097.40499973297,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 237,
+     "prompt_ms": 25534.03,
+     "prompt_per_token_ms": 107.73852320675105,
+     "prompt_per_second": 9.281731085927289,
+     "predicted_n": 58,
+     "predicted_ms": 15510.361,
+     "predicted_per_token_ms": 272.11159649122806,
+     "predicted_per_second": 3.6749628200143114
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 10→8"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_pressure",
+      "detail": "任务目标必须原文出现：「完成压力试验」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_10",
+      "detail": "人格原文必须出现：「经历压力试验后更谨慎」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "violations": [],
+    "unverified": [
+     "周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎"
+    ],
+    "repetition": 0.12121212121212122,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+   }
+  },
+  {
+   "pointId": "point_7",
+   "label": "task-personality-sanity",
+   "sequence": 1,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+   "ms": 38568.73500061035,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 22809.52499961853,
+    "wallMs": 38568.594999313354,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 237,
+     "prompt_ms": 22533.191,
+     "prompt_per_token_ms": 95.0767552742616,
+     "prompt_per_second": 10.517817915802516,
+     "predicted_n": 58,
+     "predicted_ms": 15999.085,
+     "predicted_per_token_ms": 280.68570175438595,
+     "predicted_per_second": 3.5627037421202528
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 10→8"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_pressure",
+      "detail": "任务目标必须原文出现：「完成压力试验」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_10",
+      "detail": "人格原文必须出现：「经历压力试验后更谨慎」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "violations": [],
+    "unverified": [
+     "周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎"
+    ],
+    "repetition": 0.12121212121212122,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+   }
+  },
+  {
+   "pointId": "point_7",
+   "label": "task-personality-sanity",
+   "sequence": 1,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+   "ms": 35009.61499977112,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 21332.79999923706,
+    "wallMs": 35009.5549993515,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 237,
+     "prompt_ms": 21089.106,
+     "prompt_per_token_ms": 88.98356962025316,
+     "prompt_per_second": 11.23802972017875,
+     "predicted_n": 58,
+     "predicted_ms": 13876.664,
+     "predicted_per_token_ms": 243.4502456140351,
+     "predicted_per_second": 4.107615490293632
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 10→8"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_pressure",
+      "detail": "任务目标必须原文出现：「完成压力试验」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_10",
+      "detail": "人格原文必须出现：「经历压力试验后更谨慎」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "violations": [],
+    "unverified": [
+     "周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎"
+    ],
+    "repetition": 0.12121212121212122,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+   }
+  },
+  {
+   "pointId": "point_14",
+   "label": "first-appearance",
+   "sequence": 2,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+   "ms": 26566.964999198914,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+    "finishReason": "stop",
+    "firstTokenMs": 18066.34500026703,
+    "wallMs": 26566.895000457764,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 214,
+     "prompt_ms": 17807.42,
+     "prompt_per_token_ms": 83.2122429906542,
+     "prompt_per_second": 12.01746238365805,
+     "predicted_n": 40,
+     "predicted_ms": 8672.095,
+     "predicted_per_token_ms": 222.36141025641024,
+     "predicted_per_second": 4.497183206595408
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:appearance:change_17",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:appearance:change_17",
+      "kind": "appearance_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "时间推进自然地结束"
+    ],
+    "repetition": 0.16981132075471697,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_14",
+   "label": "first-appearance",
+   "sequence": 2,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+   "ms": 35458.74000072479,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+    "finishReason": "stop",
+    "firstTokenMs": 24915.795000076294,
+    "wallMs": 35458.53999996185,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 214,
+     "prompt_ms": 24360.429,
+     "prompt_per_token_ms": 113.83378037383177,
+     "prompt_per_second": 8.784738561049151,
+     "predicted_n": 40,
+     "predicted_ms": 11042.295,
+     "predicted_per_token_ms": 283.13576923076926,
+     "predicted_per_second": 3.531874488048001
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:appearance:change_17",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:appearance:change_17",
+      "kind": "appearance_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "时间推进自然地结束"
+    ],
+    "repetition": 0.16981132075471697,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_14",
+   "label": "first-appearance",
+   "sequence": 2,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+   "ms": 32461.465000152588,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+    "finishReason": "stop",
+    "firstTokenMs": 24480.430000305176,
+    "wallMs": 32461.140000343323,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 214,
+     "prompt_ms": 24185.821,
+     "prompt_per_token_ms": 113.01785514018691,
+     "prompt_per_second": 8.848159423655703,
+     "predicted_n": 40,
+     "predicted_ms": 8183.635,
+     "predicted_per_token_ms": 209.83679487179487,
+     "predicted_per_second": 4.765608436837664
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:appearance:change_17",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:appearance:change_17",
+      "kind": "appearance_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [
+     "时间推进自然地结束"
+    ],
+    "repetition": 0.16981132075471697,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_21",
+   "label": "refused-appearance-repeat",
+   "sequence": 3,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+   "ms": 26864.289999961853,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+    "finishReason": "stop",
+    "firstTokenMs": 18200.699999809265,
+    "wallMs": 26864.22500038147,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 17790.09,
+     "prompt_per_token_ms": 90.30502538071066,
+     "prompt_per_second": 11.073580853160383,
+     "predicted_n": 44,
+     "predicted_ms": 8920.456,
+     "predicted_per_token_ms": 207.4524651162791,
+     "predicted_per_second": 4.820381379606603
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊"
+    ],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.16,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_21",
+   "label": "refused-appearance-repeat",
+   "sequence": 3,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+   "ms": 25122.585000038147,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+    "finishReason": "stop",
+    "firstTokenMs": 17437.98500061035,
+    "wallMs": 25122.545000076294,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 17202.77,
+     "prompt_per_token_ms": 87.32370558375635,
+     "prompt_per_second": 11.451644124754328,
+     "predicted_n": 44,
+     "predicted_ms": 7875.98,
+     "predicted_per_token_ms": 183.16232558139535,
+     "predicted_per_second": 5.459638038694868
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊"
+    ],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.16,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_21",
+   "label": "refused-appearance-repeat",
+   "sequence": 3,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+   "ms": 30774.99499988556,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+    "finishReason": "stop",
+    "firstTokenMs": 22579.625,
+    "wallMs": 30774.95000076294,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 22293.645,
+     "prompt_per_token_ms": 113.16571065989848,
+     "prompt_per_second": 8.836598950059535,
+     "predicted_n": 44,
+     "predicted_ms": 8437.085,
+     "predicted_per_token_ms": 196.21127906976741,
+     "predicted_per_second": 5.096546970902866
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊"
+    ],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.16,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_27",
+   "label": "move-corridor-to-hall",
+   "sequence": 4,
+   "run": 1,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+   "ms": 28494.129999160767,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 19929.214999198914,
+    "wallMs": 28494.079999923706,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 19618.465,
+     "prompt_per_token_ms": 97.12111386138614,
+     "prompt_per_second": 10.296422273608053,
+     "predicted_n": 36,
+     "predicted_ms": 8762.195,
+     "predicted_per_token_ms": 250.34842857142857,
+     "predicted_per_second": 3.994432901801432
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_27",
+   "label": "move-corridor-to-hall",
+   "sequence": 4,
+   "run": 2,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+   "ms": 29616.664999961853,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 22689.525000572205,
+    "wallMs": 29616.590000152588,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 22453.405,
+     "prompt_per_token_ms": 111.1554702970297,
+     "prompt_per_second": 8.996408339848678,
+     "predicted_n": 36,
+     "predicted_ms": 7118.204,
+     "predicted_per_token_ms": 203.37725714285713,
+     "predicted_per_second": 4.916970629108129
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_27",
+   "label": "move-corridor-to-hall",
+   "sequence": 4,
+   "run": 3,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+   "ms": 26907.699999809265,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 19269.920000076294,
+    "wallMs": 26907.640000343323,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 19020.79,
+     "prompt_per_token_ms": 94.16232673267328,
+     "prompt_per_second": 10.619958477013835,
+     "predicted_n": 36,
+     "predicted_ms": 7840.601,
+     "predicted_per_token_ms": 224.01717142857143,
+     "predicted_per_second": 4.463943516574814
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_33",
+   "label": "refused-wrong-location",
+   "sequence": 5,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+   "ms": 26300.63999938965,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 18883.425000190735,
+    "wallMs": 26300.585000038147,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 196,
+     "prompt_ms": 18631.236,
+     "prompt_per_token_ms": 95.05732653061224,
+     "prompt_per_second": 10.51996765002601,
+     "predicted_n": 38,
+     "predicted_ms": 7623.79,
+     "predicted_per_token_ms": 206.04837837837837,
+     "predicted_per_second": 4.853229168169637
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2682926829268293,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_33",
+   "label": "refused-wrong-location",
+   "sequence": 5,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+   "ms": 28273.989999771118,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 19167.190000534058,
+    "wallMs": 28273.859999656677,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 196,
+     "prompt_ms": 18861.829,
+     "prompt_per_token_ms": 96.23382142857143,
+     "prompt_per_second": 10.391357062986838,
+     "predicted_n": 38,
+     "predicted_ms": 9372.531,
+     "predicted_per_token_ms": 253.31164864864868,
+     "predicted_per_second": 3.947706334606948
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2682926829268293,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_33",
+   "label": "refused-wrong-location",
+   "sequence": 5,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+   "ms": 23984.635000228882,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 17194.039999961853,
+    "wallMs": 23984.560000419617,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 196,
+     "prompt_ms": 16979.4,
+     "prompt_per_token_ms": 86.6295918367347,
+     "prompt_per_second": 11.543399648986417,
+     "predicted_n": 38,
+     "predicted_ms": 6961.959,
+     "predicted_per_token_ms": 188.16105405405406,
+     "predicted_per_second": 5.314596078488828
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2682926829268293,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_39",
+   "label": "move-hall-to-corridor",
+   "sequence": 6,
+   "run": 1,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+   "ms": 23893.97500038147,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 17748.835000038147,
+    "wallMs": 23893.090000152588,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 17548.494,
+     "prompt_per_token_ms": 86.87373267326733,
+     "prompt_per_second": 11.510959288016396,
+     "predicted_n": 36,
+     "predicted_ms": 6305.795,
+     "predicted_per_token_ms": 180.16557142857144,
+     "predicted_per_second": 5.550450022558614
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2222222222222222,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_39",
+   "label": "move-hall-to-corridor",
+   "sequence": 6,
+   "run": 2,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+   "ms": 24543.739999771118,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 18156.25500011444,
+    "wallMs": 24543.704999923706,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 17928.156,
+     "prompt_per_token_ms": 88.75324752475247,
+     "prompt_per_second": 11.267193346599617,
+     "predicted_n": 36,
+     "predicted_ms": 6579.295,
+     "predicted_per_token_ms": 187.97985714285716,
+     "predicted_per_second": 5.319718906053004
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2222222222222222,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_39",
+   "label": "move-hall-to-corridor",
+   "sequence": 6,
+   "run": 3,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+   "ms": 23870.20500087738,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 17891.854999542236,
+    "wallMs": 23870.164999961853,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 17641.221,
+     "prompt_per_token_ms": 87.33277722772277,
+     "prompt_per_second": 11.450454591550097,
+     "predicted_n": 36,
+     "predicted_ms": 6186.799,
+     "predicted_per_token_ms": 176.76568571428572,
+     "predicted_per_second": 5.657206578070501
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2222222222222222,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。"
+   }
+  },
+  {
+   "pointId": "point_45",
+   "label": "recover-task-personality-sanity",
+   "sequence": 7,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+   "ms": 29183.515000343323,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+    "finishReason": "stop",
+    "firstTokenMs": 18782.184999465942,
+    "wallMs": 29183.484999656677,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 238,
+     "prompt_ms": 18535.986,
+     "prompt_per_token_ms": 77.88229411764706,
+     "prompt_per_second": 12.839888851879797,
+     "predicted_n": 46,
+     "predicted_ms": 10584.374,
+     "predicted_per_token_ms": 235.2083111111111,
+     "predicted_per_second": 4.251550445968746
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 8→9"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_recover",
+      "detail": "任务目标必须原文出现：「完成恢复练习」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_48",
+      "detail": "人格原文必须出现：「完成恢复练习后更善于自我调节」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_recover",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_48",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊",
+     "周宁完成了任务「完成恢复练习」",
+     "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+    ],
+    "violations": [],
+    "unverified": [
+     "走廊的尽头，时间推进自然地流逝"
+    ],
+    "repetition": 0.14285714285714285,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+   }
+  },
+  {
+   "pointId": "point_45",
+   "label": "recover-task-personality-sanity",
+   "sequence": 7,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+   "ms": 37015.67499923706,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+    "finishReason": "stop",
+    "firstTokenMs": 23484.694999694824,
+    "wallMs": 37015.625,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 238,
+     "prompt_ms": 23232.425,
+     "prompt_per_token_ms": 97.61523109243697,
+     "prompt_per_second": 10.244302951585984,
+     "predicted_n": 46,
+     "predicted_ms": 13721.386,
+     "predicted_per_token_ms": 304.9196888888889,
+     "predicted_per_second": 3.27955208023446
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 8→9"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_recover",
+      "detail": "任务目标必须原文出现：「完成恢复练习」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_48",
+      "detail": "人格原文必须出现：「完成恢复练习后更善于自我调节」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_recover",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_48",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊",
+     "周宁完成了任务「完成恢复练习」",
+     "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+    ],
+    "violations": [],
+    "unverified": [
+     "走廊的尽头，时间推进自然地流逝"
+    ],
+    "repetition": 0.14285714285714285,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+   }
+  },
+  {
+   "pointId": "point_45",
+   "label": "recover-task-personality-sanity",
+   "sequence": 7,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+   "ms": 31942.50500011444,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+    "finishReason": "stop",
+    "firstTokenMs": 21797.564999580383,
+    "wallMs": 31942.454999923706,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 238,
+     "prompt_ms": 21564.43,
+     "prompt_per_token_ms": 90.6068487394958,
+     "prompt_per_second": 11.036693295394315,
+     "predicted_n": 46,
+     "predicted_ms": 10323.135,
+     "predicted_per_token_ms": 229.403,
+     "predicted_per_second": 4.359140900511328
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:position",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 8→9"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_recover",
+      "detail": "任务目标必须原文出现：「完成恢复练习」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_48",
+      "detail": "人格原文必须出现：「完成恢复练习后更善于自我调节」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": [
+     "person_a:position"
+    ]
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_recover",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_48",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "周宁位于走廊",
+     "周宁完成了任务「完成恢复练习」",
+     "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+    ],
+    "violations": [],
+    "unverified": [
+     "走廊的尽头，时间推进自然地流逝"
+    ],
+    "repetition": 0.14285714285714285,
+    "timeExpressed": false
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+   }
+  },
+  {
+   "pointId": "point_52",
+   "label": "refused-recover-repeat",
+   "sequence": 8,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 26597.949999809265,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 18981,
+    "wallMs": 26597.550000190735,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 18746.039,
+     "prompt_per_token_ms": 95.15755837563452,
+     "prompt_per_second": 10.508886704012513,
+     "predicted_n": 37,
+     "predicted_ms": 7820.916,
+     "predicted_per_token_ms": 217.24766666666667,
+     "predicted_per_second": 4.603041382876379
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.18181818181818182,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_52",
+   "label": "refused-recover-repeat",
+   "sequence": 8,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 29820.164999961853,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 20925.59500026703,
+    "wallMs": 29820.065000534058,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 20626.629,
+     "prompt_per_token_ms": 104.70370050761422,
+     "prompt_per_second": 9.550760815060958,
+     "predicted_n": 37,
+     "predicted_ms": 9150.141,
+     "predicted_per_token_ms": 254.17058333333333,
+     "predicted_per_second": 3.9343656015792545
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.18181818181818182,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_52",
+   "label": "refused-recover-repeat",
+   "sequence": 8,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 31562.75,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 22564.840000152588,
+    "wallMs": 31562.6950006485,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 22260.925,
+     "prompt_per_token_ms": 112.9996192893401,
+     "prompt_per_second": 8.849587337453407,
+     "predicted_n": 37,
+     "predicted_ms": 9243.735,
+     "predicted_per_token_ms": 256.7704166666667,
+     "predicted_per_second": 3.894529646295572
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.18181818181818182,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_58",
+   "label": "move-corridor-to-hall-2",
+   "sequence": 9,
+   "run": 1,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 32659.92499923706,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 24220.60000038147,
+    "wallMs": 32659.865000724792,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 23887.19,
+     "prompt_per_token_ms": 118.25341584158416,
+     "prompt_per_second": 8.456415342281785,
+     "predicted_n": 36,
+     "predicted_ms": 8712.85,
+     "predicted_per_token_ms": 248.93857142857144,
+     "predicted_per_second": 4.01705526894185
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_58",
+   "label": "move-corridor-to-hall-2",
+   "sequence": 9,
+   "run": 2,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 29437.199999809265,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 21206.51999950409,
+    "wallMs": 29437.14999961853,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 20918.475,
+     "prompt_per_token_ms": 103.55680693069306,
+     "prompt_per_second": 9.656535670023748,
+     "predicted_n": 36,
+     "predicted_ms": 8469.809,
+     "predicted_per_token_ms": 241.99454285714285,
+     "predicted_per_second": 4.13232458960999
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_58",
+   "label": "move-corridor-to-hall-2",
+   "sequence": 9,
+   "run": 3,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 25932.375,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 18789.210000038147,
+    "wallMs": 25932.324999809265,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 18589.346,
+     "prompt_per_token_ms": 92.02646534653466,
+     "prompt_per_second": 10.866439303459089,
+     "predicted_n": 36,
+     "predicted_ms": 7292.464,
+     "predicted_per_token_ms": 208.35611428571428,
+     "predicted_per_second": 4.799475184244996
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_64",
+   "label": "move-hall-to-corridor-2",
+   "sequence": 10,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+   "ms": 24107.27999973297,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 18036.635000228882,
+    "wallMs": 24107.224999427795,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 17810.984,
+     "prompt_per_token_ms": 88.17318811881188,
+     "prompt_per_second": 11.34131612268025,
+     "predicted_n": 38,
+     "predicted_ms": 6248.51,
+     "predicted_per_token_ms": 168.87864864864866,
+     "predicted_per_second": 5.921411664540827
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2631578947368421,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_64",
+   "label": "move-hall-to-corridor-2",
+   "sequence": 10,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+   "ms": 21409.10000038147,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 15296.465000152588,
+    "wallMs": 21409.050000190735,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 15093.985,
+     "prompt_per_token_ms": 74.72269801980198,
+     "prompt_per_second": 13.382814412496103,
+     "predicted_n": 38,
+     "predicted_ms": 6282.5,
+     "predicted_per_token_ms": 169.7972972972973,
+     "predicted_per_second": 5.889375248706725
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2631578947368421,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_64",
+   "label": "move-hall-to-corridor-2",
+   "sequence": 10,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+   "ms": 21697.150000572205,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 15886.27499961853,
+    "wallMs": 21697.11999988556,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 15687.99,
+     "prompt_per_token_ms": 77.66331683168316,
+     "prompt_per_second": 12.876091838406323,
+     "predicted_n": 38,
+     "predicted_ms": 5978.955,
+     "predicted_per_token_ms": 161.5933783783784,
+     "predicted_per_second": 6.188372382799335
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.2631578947368421,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_70",
+   "label": "refused-strain-repeat",
+   "sequence": 11,
+   "run": 1,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 21452.599999427795,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 15656.525000572205,
+    "wallMs": 21452.565000534058,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 15458.001,
+     "prompt_per_token_ms": 78.46701015228426,
+     "prompt_per_second": 12.744209293297367,
+     "predicted_n": 37,
+     "predicted_ms": 5959.224,
+     "predicted_per_token_ms": 165.534,
+     "predicted_per_second": 6.041055009846919
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.25,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_70",
+   "label": "refused-strain-repeat",
+   "sequence": 11,
+   "run": 2,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 22719.559999465942,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 16455.194999694824,
+    "wallMs": 22719.52499961853,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 16242.554,
+     "prompt_per_token_ms": 82.44951269035533,
+     "prompt_per_second": 12.128634449976278,
+     "predicted_n": 37,
+     "predicted_ms": 6443.68,
+     "predicted_per_token_ms": 178.9911111111111,
+     "predicted_per_second": 5.586869614878454
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.25,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_70",
+   "label": "refused-strain-repeat",
+   "sequence": 11,
+   "run": 3,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "ms": 22397.604999542236,
+   "completion": {
+    "raw": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+    "finishReason": "stop",
+    "firstTokenMs": 17081.11999988556,
+    "wallMs": 22397.555000305176,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 197,
+     "prompt_ms": 16869.385,
+     "prompt_per_token_ms": 85.63139593908629,
+     "prompt_per_second": 11.67795980707062,
+     "predicted_n": 37,
+     "predicted_ms": 5498.21,
+     "predicted_per_token_ms": 152.72805555555556,
+     "predicted_per_second": 6.547585486913014
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_c:position",
+     "person_c:sanity"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.25,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_76",
+   "label": "post-refresh-move",
+   "sequence": 12,
+   "run": 1,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 24311.090000152588,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 18173.990000724792,
+    "wallMs": 24311.045000076294,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 17952.464,
+     "prompt_per_token_ms": 88.87358415841584,
+     "prompt_per_second": 11.251937338517989,
+     "predicted_n": 36,
+     "predicted_ms": 6317.486,
+     "predicted_per_token_ms": 180.4996,
+     "predicted_per_second": 5.540178482389989
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_76",
+   "label": "post-refresh-move",
+   "sequence": 12,
+   "run": 2,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 23308.074999809265,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 17048.034999847412,
+    "wallMs": 23307.920000076294,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 16820.5,
+     "prompt_per_token_ms": 83.26980198019803,
+     "prompt_per_second": 12.009155494783151,
+     "predicted_n": 36,
+     "predicted_ms": 6444.47,
+     "predicted_per_token_ms": 184.1277142857143,
+     "predicted_per_second": 5.431012945983145
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  },
+  {
+   "pointId": "point_76",
+   "label": "post-refresh-move",
+   "sequence": 12,
+   "run": 3,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "ms": 22100.434999465942,
+   "completion": {
+    "raw": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+    "finishReason": "stop",
+    "firstTokenMs": 16208.719999313354,
+    "wallMs": 22100.375,
+    "timings": {
+     "cache_n": 0,
+     "prompt_n": 202,
+     "prompt_ms": 15996.815,
+     "prompt_per_token_ms": 79.19215346534654,
+     "prompt_per_second": 12.627513664438826,
+     "predicted_n": 36,
+     "predicted_ms": 6063.21,
+     "predicted_per_token_ms": 173.23457142857143,
+     "predicted_per_second": 5.772519836852096
+    }
+   },
+   "error": null,
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "moved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.19444444444444445,
+    "timeExpressed": true
+   },
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+   }
+  }
+ ],
+ "fallbacks": {
+  "pointId": "point_7",
+  "label": "task-personality-sanity",
+  "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+  "timeout": {
+   "adopted": false,
+   "reason": "generation_error: IncompleteGenerationError: generation deadline exceeded",
+   "raw": "",
+   "partial": {
+    "raw": "",
+    "finishReason": "timeout",
+    "firstTokenMs": null,
+    "wallMs": 42.920000076293945
+   },
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+  },
+  "empty": {
+   "adopted": false,
+   "reason": "empty_output",
+   "raw": "",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+  },
+  "wrong": {
+   "adopted": false,
+   "reason": "fact_check_failed",
+   "raw": "林川完成了任务「完成压力试验」，精神值从10变为8。",
+   "factsCheck": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "missing",
+      "factId": "person_a:position",
+      "detail": "位置 走廊 未出现"
+     },
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:position",
+      "detail": "周宁 的分句不存在"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:sanity",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:task:task_pressure",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:personality:change_10",
+      "detail": "周宁 的分句不存在"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": []
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": false
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "林川位于走廊",
+     "周宁位于走廊",
+     "周宁的精神值从10变为8",
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "violations": [
+     {
+      "kind": "actor_swap",
+      "sentence": "林川完成了任务「完成压力试验」，精神值从10变为8",
+      "detail": "payload of person_c:task:task_pressure attributed to 林川 instead of 周宁"
+     }
+    ],
+    "unverified": [],
+    "repetition": 0.2,
+    "timeExpressed": false
+   },
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+  },
+  "natural": {
+   "adopted": true,
+   "reason": null,
+   "raw": "约一秒过去了。林川留在走廊，精神值仍是10。周宁还在走廊，完成了任务「完成压力试验」并变得「经历压力试验后更谨慎」，精神值从10降到8。",
+   "factsCheck": {
+    "ok": true,
+    "problems": [],
+    "covered": [
+     "person_a:position",
+     "person_a:sanity",
+     "person_c:position",
+     "person_c:sanity",
+     "person_c:task:task_pressure",
+     "person_c:personality:change_10"
+    ]
+   },
+   "alignment": {
+    "ok": true,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": true
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": true
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": true
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": true
+     }
+    ],
+    "omissions": [],
+    "violations": [],
+    "unverified": [],
+    "repetition": 0.14583333333333334,
+    "timeExpressed": true
+   },
+   "text": "约一秒过去了。林川留在走廊，精神值仍是10。周宁还在走廊，完成了任务「完成压力试验」并变得「经历压力试验后更谨慎」，精神值从10降到8。"
+  },
+  "naturalPageGate": {
+   "accepted": false,
+   "reason": "unknown_or_ambiguous_clause",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+  }
+ },
+ "serverPort": 54429,
+ "browser": "157.0.4341.42",
+ "browserVersion": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+ "summary": {
+  "points": 13,
+  "generations": 39,
+  "distinctOutputs": 11,
+  "errors": 0,
+  "empty": 0,
+  "factCheckPass": 0,
+  "factCheckRate": 0,
+  "alignerPass": 27,
+  "alignerRate": 0.6923076923076923,
+  "pageGatePass": 0,
+  "pageGateRate": 0,
+  "factProblemKinds": {
+   "added": 78,
+   "missing": 6,
+   "frozen_text": 12,
+   "time": 6,
+   "actor": 6
+  },
+  "alignerViolationKinds": {},
+  "calls": 39,
+  "meanMs": 27953,
+  "p50Ms": 26908,
+  "minMs": 21409.10000038147,
+  "maxMs": 41097.49499988556,
+  "promptTokensTotal": 7950,
+  "completionTokensTotal": 1602,
+  "promptTokensMean": 204,
+  "completionTokensMean": 41,
+  "tokenCalls": 39,
+  "distinctTexts": [
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+   "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+   "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+   "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。"
+  ]
+ },
+ "completedAt": "2026-11-08T07:39:09.390Z",
+ "cleanup": {
+  "browserClosed": true,
+  "serverClosed": true
+ }
+}

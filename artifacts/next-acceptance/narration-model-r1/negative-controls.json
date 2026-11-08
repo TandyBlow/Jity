@@ -1,0 +1,378 @@
+{
+ "pointId": "point_7",
+ "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+ "cases": [
+  {
+   "id": "template",
+   "expected": "facts + aligner pass; page gate rejects the time clause",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+   "result": {
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+    "facts": {
+     "ok": true,
+     "problems": [],
+     "covered": [
+      "person_a:position",
+      "person_a:sanity",
+      "person_c:position",
+      "person_c:sanity",
+      "person_c:task:task_pressure",
+      "person_c:personality:change_10"
+     ]
+    },
+    "alignment": {
+     "ok": true,
+     "timeRequired": true,
+     "coverage": [
+      {
+       "id": "person_a:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_a:sanity",
+       "kind": "sanity",
+       "expressed": true
+      },
+      {
+       "id": "person_c:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_c:sanity",
+       "kind": "sanity_changed",
+       "expressed": true
+      },
+      {
+       "id": "person_c:task:task_pressure",
+       "kind": "task_achieved",
+       "expressed": true
+      },
+      {
+       "id": "person_c:personality:change_10",
+       "kind": "personality_changed",
+       "expressed": true
+      }
+     ],
+     "omissions": [],
+     "violations": [],
+     "unverified": [],
+     "repetition": null,
+     "timeExpressed": true
+    },
+    "pageGate": {
+     "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   }
+  },
+  {
+   "id": "actor-swap",
+   "expected": "both fail",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。林川完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+   "result": {
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。林川完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+    "facts": {
+     "ok": false,
+     "problems": [
+      {
+       "kind": "frozen_text",
+       "factId": "person_c:task:task_pressure",
+       "detail": "任务目标必须原文出现：「完成压力试验」"
+      }
+     ],
+     "covered": [
+      "person_a:position",
+      "person_a:sanity",
+      "person_c:position",
+      "person_c:sanity",
+      "person_c:personality:change_10"
+     ]
+    },
+    "alignment": {
+     "ok": false,
+     "timeRequired": true,
+     "coverage": [
+      {
+       "id": "person_a:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_a:sanity",
+       "kind": "sanity",
+       "expressed": true
+      },
+      {
+       "id": "person_c:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_c:sanity",
+       "kind": "sanity_changed",
+       "expressed": true
+      },
+      {
+       "id": "person_c:task:task_pressure",
+       "kind": "task_achieved",
+       "expressed": false
+      },
+      {
+       "id": "person_c:personality:change_10",
+       "kind": "personality_changed",
+       "expressed": true
+      }
+     ],
+     "omissions": [
+      "周宁完成了任务「完成压力试验」"
+     ],
+     "violations": [
+      {
+       "kind": "actor_swap",
+       "sentence": "林川完成了任务「完成压力试验」",
+       "detail": "payload of person_c:task:task_pressure attributed to 林川 instead of 周宁"
+      }
+     ],
+     "unverified": [],
+     "repetition": null,
+     "timeExpressed": true
+    },
+    "pageGate": {
+     "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   }
+  },
+  {
+   "id": "wrong-number",
+   "expected": "both fail",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为9。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+   "result": {
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为9。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+    "facts": {
+     "ok": false,
+     "problems": [
+      {
+       "kind": "missing",
+       "factId": "person_c:sanity",
+       "detail": "变化需要两个数值 10→8"
+      },
+      {
+       "kind": "number",
+       "sentence": "周宁的精神值从10变为9",
+       "detail": "多出未给出的数字 9"
+      }
+     ],
+     "covered": [
+      "person_a:position",
+      "person_a:sanity",
+      "person_c:position",
+      "person_c:task:task_pressure",
+      "person_c:personality:change_10"
+     ]
+    },
+    "alignment": {
+     "ok": false,
+     "timeRequired": true,
+     "coverage": [
+      {
+       "id": "person_a:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_a:sanity",
+       "kind": "sanity",
+       "expressed": true
+      },
+      {
+       "id": "person_c:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_c:sanity",
+       "kind": "sanity_changed",
+       "expressed": true
+      },
+      {
+       "id": "person_c:task:task_pressure",
+       "kind": "task_achieved",
+       "expressed": true
+      },
+      {
+       "id": "person_c:personality:change_10",
+       "kind": "personality_changed",
+       "expressed": true
+      }
+     ],
+     "omissions": [],
+     "violations": [
+      {
+       "kind": "actor_swap",
+       "sentence": "周宁的精神值从10变为9",
+       "detail": "payload of person_a:sanity attributed to 周宁 instead of 林川"
+      }
+     ],
+     "unverified": [],
+     "repetition": null,
+     "timeExpressed": true
+    },
+    "pageGate": {
+     "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   }
+  },
+  {
+   "id": "goal-rewrite",
+   "expected": "both fail",
+   "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力测试」。周宁的人格变化为「经历压力试验后更谨慎」。",
+   "result": {
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力测试」。周宁的人格变化为「经历压力试验后更谨慎」。",
+    "facts": {
+     "ok": false,
+     "problems": [
+      {
+       "kind": "frozen_text",
+       "factId": "person_c:task:task_pressure",
+       "detail": "任务目标必须原文出现：「完成压力试验」"
+      }
+     ],
+     "covered": [
+      "person_a:position",
+      "person_a:sanity",
+      "person_c:position",
+      "person_c:sanity",
+      "person_c:personality:change_10"
+     ]
+    },
+    "alignment": {
+     "ok": false,
+     "timeRequired": true,
+     "coverage": [
+      {
+       "id": "person_a:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_a:sanity",
+       "kind": "sanity",
+       "expressed": true
+      },
+      {
+       "id": "person_c:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_c:sanity",
+       "kind": "sanity_changed",
+       "expressed": true
+      },
+      {
+       "id": "person_c:task:task_pressure",
+       "kind": "task_achieved",
+       "expressed": false
+      },
+      {
+       "id": "person_c:personality:change_10",
+       "kind": "personality_changed",
+       "expressed": true
+      }
+     ],
+     "omissions": [
+      "周宁完成了任务「完成压力试验」"
+     ],
+     "violations": [
+      {
+       "kind": "task_claimed_without_fact",
+       "sentence": "周宁完成了任务「完成压力测试」",
+       "detail": "completion claim names an actor but no task_achieved fact binds this sentence"
+      }
+     ],
+     "unverified": [],
+     "repetition": null,
+     "timeExpressed": true
+    },
+    "pageGate": {
+     "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   }
+  },
+  {
+   "id": "semantic-correct-natural",
+   "expected": "facts + aligner pass; page gate rejects",
+   "text": "约一秒过去了。林川留在走廊，精神值仍是10。周宁还在走廊，完成了任务「完成压力试验」并变得「经历压力试验后更谨慎」，精神值从10降到8。",
+   "result": {
+    "text": "约一秒过去了。林川留在走廊，精神值仍是10。周宁还在走廊，完成了任务「完成压力试验」并变得「经历压力试验后更谨慎」，精神值从10降到8。",
+    "facts": {
+     "ok": true,
+     "problems": [],
+     "covered": [
+      "person_a:position",
+      "person_a:sanity",
+      "person_c:position",
+      "person_c:sanity",
+      "person_c:task:task_pressure",
+      "person_c:personality:change_10"
+     ]
+    },
+    "alignment": {
+     "ok": true,
+     "timeRequired": true,
+     "coverage": [
+      {
+       "id": "person_a:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_a:sanity",
+       "kind": "sanity",
+       "expressed": true
+      },
+      {
+       "id": "person_c:position",
+       "kind": "at",
+       "expressed": true
+      },
+      {
+       "id": "person_c:sanity",
+       "kind": "sanity_changed",
+       "expressed": true
+      },
+      {
+       "id": "person_c:task:task_pressure",
+       "kind": "task_achieved",
+       "expressed": true
+      },
+      {
+       "id": "person_c:personality:change_10",
+       "kind": "personality_changed",
+       "expressed": true
+      }
+     ],
+     "omissions": [],
+     "violations": [],
+     "unverified": [],
+     "repetition": null,
+     "timeExpressed": true
+    },
+    "pageGate": {
+     "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   }
+  }
+ ]
+}
