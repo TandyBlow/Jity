@@ -153,7 +153,7 @@ G1｜f0 f1
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | 两次运行比对 | `88406e52fcd9246fd59e1b39e1189ad94dd37f1732538ca8135113c3b5d82952` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `d632f87ec63334c04f00b4f40c13ed15226705dc2028266dcd39246d753f9b92` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `de65ea56b7da7dd28290e6229c0f7c11adbeea3bab82e533ab7cca0d24581e00` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656` |
 | `contract-decisions.md` | D1–D5 契约裁决项登记 | `5cf89248004853036e3a8e8b5b1e0b245ab96588abe429861e72376f842bf57e` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
@@ -163,7 +163,7 @@ G1｜f0 f1
 
 本目录的 `.gitattributes` 把行尾固定为 LF（`* text eol=lf`），所以上面的哈希在任何平台检出后都对得上；不钉的话 Windows 检出会把 LF 换成 CRLF，字节哈希就变了。
 
-`fixtures/manifest.json` 是提交前一刻写的：`git.head` 记的是承载本目录实现的提交 `ad28b0b`，`git.porcelain` 原样列出写文件时仍未提交的项（本目录的整理改动，以及协调者按约定不入库的 `TASK.md`）。它绑定源码/夹具/契约的哈希，不绑定它自己。
+`fixtures/manifest.json` 是提交前一刻写的，所以 `git.headAtRecording` 是发布它的那一笔的**父提交**（内容上就是上一笔，即承载当前实现的提交；历史改写会让这个字段变成悬空引用，此时以逐文件哈希为准）。`git.porcelain` 原样列出写文件时仍未提交的项（本目录的改动，以及协调者按约定不入库的 `TASK.md`）。它绑定源码/夹具/契约的哈希，不绑定它自己。
 
 | 归档 | 作用 |
 | --- | --- |

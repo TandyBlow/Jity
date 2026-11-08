@@ -160,7 +160,11 @@ def main() -> int:
         "recordedAt": datetime.now(timezone.utc).isoformat(),
         "worktree": str(REPO),
         "git": {"branch": git("rev-parse", "--abbrev-ref", "HEAD"),
-                "head": git("rev-parse", "HEAD"),
+                # This file is written BEFORE the commit that ships it, so
+                # this is that commit's PARENT. History rewrites (amend,
+                # squash) can leave it dangling; the per-file SHA-256 above
+                # is what binds the evidence, not this field.
+                "headAtRecording": git("rev-parse", "HEAD"),
                 "headSubject": git("log", "-1", "--pretty=%s"),
                 # The manifest is written just before it is committed, so
                 # HEAD is the PARENT of the commit that carries this
