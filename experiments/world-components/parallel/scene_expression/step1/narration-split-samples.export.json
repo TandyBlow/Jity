@@ -1,0 +1,4578 @@
+{
+ "source": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+ "sourceSha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+ "extractedBy": "tsc --target es2022 --module commonjs（typescript 取自 .local/world-components-worktree/frontend/node_modules）",
+ "extractedAt": "2026-11-08T06:27:53.526Z",
+ "samples": [
+  {
+   "id": "ns-pos-1",
+   "category": "position",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；位置变化",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:01:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "学生A 从走廊移动到了大厅"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "minute",
+     "phrase": "时间流逝约两分钟（Δ 守卫）"
+    },
+    {
+     "kind": "position",
+     "entityId": "person_a",
+     "fromName": "走廊",
+     "toName": "大厅",
+     "phrase": "学生A 从走廊移动到了大厅"
+    }
+   ],
+   "mustNotFabricate": [
+    "移动的方式与经过（奔跑、推门声等未保存内容）",
+    "其他实体未保存的变化"
+   ]
+  },
+  {
+   "id": "ns-appear-1",
+   "category": "appearance",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；外貌变化",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [
+       {
+        "id": "chg_key_1",
+        "text": "黄铜钥匙的表面蒙上了一层灰尘",
+        "supersedes": [],
+        "sourcePointId": "p_appear",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "item_key": {
+     "entityId": "item_key",
+     "appearanceChanges": [
+      {
+       "id": "chg_key_1",
+       "text": "黄铜钥匙的表面蒙上了一层灰尘",
+       "supersedes": []
+      }
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "钥匙表面蒙上了灰尘"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 1,
+     "unit": "minute",
+     "phrase": "时间流逝约一分钟（Δ 守卫）"
+    },
+    {
+     "kind": "appearanceText",
+     "entityId": "item_key",
+     "text": "黄铜钥匙的表面蒙上了一层灰尘",
+     "phrase": "钥匙表面蒙上了灰尘"
+    }
+   ],
+   "mustNotFabricate": [
+    "钥匙变脏的原因或经过"
+   ]
+  },
+  {
+   "id": "ns-loc-appear-1",
+   "category": "appearance",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；地点外貌变化（§9.2 字段权限：地点只接收外貌变化。此前 assertDeltaConsistent 缺地点分支会误拒这条合法增量——2026-10-25 复核补）",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": [
+       {
+        "id": "chg_corr_1",
+        "text": "两侧的储物柜都被关上了",
+        "supersedes": [],
+        "sourcePointId": "p_loc",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ]
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "corridor": {
+     "entityId": "corridor",
+     "appearanceChanges": [
+      {
+       "id": "chg_corr_1",
+       "text": "两侧的储物柜都被关上了",
+       "supersedes": []
+      }
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "两侧的储物柜都被关上了"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 1,
+     "unit": "minute",
+     "phrase": "时间流逝约一分钟（Δ 守卫）"
+    },
+    {
+     "kind": "appearanceText",
+     "entityId": "corridor",
+     "text": "两侧的储物柜都被关上了",
+     "phrase": "两侧的储物柜都被关上了"
+    }
+   ],
+   "mustNotFabricate": [
+    "柜门被谁关上等未保存经过"
+   ]
+  },
+  {
+   "id": "ns-task-1",
+   "category": "task_achieved",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；任务达成（行动驱动）",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:01:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "achieved"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "tasksAchieved": [
+      "task_shelf"
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "主角完成了任务「取回柜子里的东西」"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "minute",
+     "phrase": "时间流逝约两分钟（Δ 守卫）"
+    },
+    {
+     "kind": "taskGoal",
+     "entityId": "person_c",
+     "goal": "取回柜子里的东西",
+     "phrase": "主角完成了任务「取回柜子里的东西」"
+    }
+   ],
+   "mustNotFabricate": [
+    "为解释达成而编造的具体动作经过（§8.2）"
+   ]
+  },
+  {
+   "id": "ns-task-time-1",
+   "category": "task_achieved",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；纯时间达成变体（§8.2：时间推进可产生 tasksAchieved，无需动作证据即可叙述；§11.1 同型夹具）。task_noon 已登记在该样本 S₀ 的 person_a 初始任务中。「时间已到中午」是必述事实——规则基线若只述时间流逝与任务达成，按遗漏如实记录",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:00",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {
+        "task_noon": {
+         "id": "task_noon",
+         "ownerId": "person_a",
+         "parentTaskId": null,
+         "goal": "坚持到中午",
+         "status": "pending"
+        }
+       }
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_noon": {
+        "id": "task_noon",
+        "ownerId": "person_a",
+        "parentTaskId": null,
+        "goal": "坚持到中午",
+        "status": "pending"
+       }
+      }
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:00",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {
+        "task_noon": {
+         "id": "task_noon",
+         "ownerId": "person_a",
+         "parentTaskId": null,
+         "goal": "坚持到中午",
+         "status": "pending"
+        }
+       }
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_noon": {
+        "id": "task_noon",
+        "ownerId": "person_a",
+        "parentTaskId": null,
+        "goal": "坚持到中午",
+        "status": "achieved"
+       }
+      }
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "tasksAchieved": [
+      "task_noon"
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "时间已到中午",
+    "学生A 的任务「坚持到中午」达成"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timeReached",
+     "hour": 12,
+     "phrase": "时间已到中午"
+    },
+    {
+     "kind": "taskGoal",
+     "entityId": "person_a",
+     "goal": "坚持到中午",
+     "phrase": "学生A 的任务「坚持到中午」达成"
+    },
+    {
+     "kind": "timePassage",
+     "amount": 1,
+     "unit": "minute",
+     "phrase": "时间流逝约一分钟（Δ 守卫）"
+    }
+   ],
+   "mustNotFabricate": [
+    "无动作证据时复述动作经过——§8.2 只要求述时间与当前状态"
+   ]
+  },
+  {
+   "id": "ns-pers-1",
+   "category": "personality_sanity",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；个性与理智变化——补入合法触发：同一点内 task_intro 达成（§6.3 步骤 5：个性变化仅在存在新达成任务时执行）",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [
+       {
+        "id": "chg_b_1",
+        "text": "变得健谈",
+        "supersedes": [],
+        "sourcePointId": "p_pers",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "sanity": 12,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "achieved"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_b": {
+     "entityId": "person_b",
+     "tasksAchieved": [
+      "task_intro"
+     ],
+     "personalityChanges": [
+      {
+       "id": "chg_b_1",
+       "text": "变得健谈",
+       "supersedes": []
+      }
+     ],
+     "sanitySet": 12
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "学生B 的任务「帮主角熟悉校园」达成",
+    "学生B 的个性变得健谈",
+    "学生B 的理智值变为 12"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 1,
+     "unit": "minute",
+     "phrase": "时间流逝约一分钟（Δ 守卫）"
+    },
+    {
+     "kind": "taskGoal",
+     "entityId": "person_b",
+     "goal": "帮主角熟悉校园",
+     "phrase": "学生B 的任务「帮主角熟悉校园」达成"
+    },
+    {
+     "kind": "personalityText",
+     "entityId": "person_b",
+     "text": "变得健谈",
+     "phrase": "学生B 的个性变得健谈"
+    },
+    {
+     "kind": "sanityValue",
+     "entityId": "person_b",
+     "value": 12,
+     "phrase": "学生B 的理智值变为 12"
+    }
+   ],
+   "mustNotFabricate": [
+    "变化的未保存原因事件（任务达成如何具体发生的经过）"
+   ]
+  },
+  {
+   "id": "ns-multi-1",
+   "category": "multi_entity",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；同点多实体变化",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:01:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [
+       {
+        "id": "chg_key_1",
+        "text": "黄铜钥匙的表面蒙上了一层灰尘",
+        "supersedes": [],
+        "sourcePointId": "p_multi",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "achieved"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    },
+    "item_key": {
+     "entityId": "item_key",
+     "appearanceChanges": [
+      {
+       "id": "chg_key_1",
+       "text": "黄铜钥匙的表面蒙上了一层灰尘",
+       "supersedes": []
+      }
+     ]
+    },
+    "person_c": {
+     "entityId": "person_c",
+     "tasksAchieved": [
+      "task_shelf"
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "学生A 位于大厅",
+    "钥匙表面蒙上了灰尘",
+    "主角完成了任务「取回柜子里的东西」"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "minute",
+     "phrase": "时间流逝约两分钟（Δ 守卫）"
+    },
+    {
+     "kind": "position",
+     "entityId": "person_a",
+     "fromName": "走廊",
+     "toName": "大厅",
+     "phrase": "学生A 位于大厅"
+    },
+    {
+     "kind": "appearanceText",
+     "entityId": "item_key",
+     "text": "黄铜钥匙的表面蒙上了一层灰尘",
+     "phrase": "钥匙表面蒙上了灰尘"
+    },
+    {
+     "kind": "taskGoal",
+     "entityId": "person_c",
+     "goal": "取回柜子里的东西",
+     "phrase": "主角完成了任务「取回柜子里的东西」"
+    }
+   ],
+   "mustNotFabricate": [
+    "三条变化之间未保存的因果关联"
+   ]
+  },
+  {
+   "id": "ns-empty-1",
+   "category": "empty_delta",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；只有时间流逝的空增量（§8.2：必述=时间；现状为可选内容）",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T11:59:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:01:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {},
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "时间流逝了约两分钟"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "minute",
+     "phrase": "时间流逝了约两分钟"
+    }
+   ],
+   "mayMention": [
+    "当前场景（走廊中的学生A、学生B 与主角）"
+   ],
+   "mustNotFabricate": [
+    "任何未保存的动作经过（如「敲门但无人回应」）——§8.2"
+   ]
+  },
+  {
+   "id": "ns-cont-1",
+   "category": "continuity",
+   "series": "ns-cont",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；连续三时间点第 1 点（位置）——重复与指代检查序列",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:00",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "学生A 从走廊到了大厅"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "second",
+     "phrase": "时间流逝约两秒（Δ 守卫）"
+    },
+    {
+     "kind": "position",
+     "entityId": "person_a",
+     "fromName": "走廊",
+     "toName": "大厅",
+     "phrase": "学生A 从走廊到了大厅"
+    }
+   ],
+   "mustNotFabricate": [
+    "移动的方式与经过"
+   ]
+  },
+  {
+   "id": "ns-cont-2",
+   "category": "continuity",
+   "series": "ns-cont",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；连续三时间点第 2 点（外貌）",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:00:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:02:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [
+       {
+        "id": "chg_b_2",
+        "text": "额头上渗出了汗珠",
+        "supersedes": [],
+        "sourcePointId": "cp2",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {
+    "person_b": {
+     "entityId": "person_b",
+     "appearanceChanges": [
+      {
+       "id": "chg_b_2",
+       "text": "额头上渗出了汗珠",
+       "supersedes": []
+      }
+     ]
+    }
+   },
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "学生B 额头上渗出了汗珠"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 2,
+     "unit": "minute",
+     "phrase": "时间流逝约两分钟（Δ 守卫）"
+    },
+    {
+     "kind": "appearanceText",
+     "entityId": "person_b",
+     "text": "额头上渗出了汗珠",
+     "phrase": "学生B 额头上渗出了汗珠"
+    }
+   ],
+   "mustNotFabricate": [
+    "出汗的原因"
+   ]
+  },
+  {
+   "id": "ns-cont-3",
+   "category": "continuity",
+   "series": "ns-cont",
+   "note": "T01 school 世界派生（叙事表达拆分实验），2026-10-25 冻结；2026-10-25 schema 合规修正＋判分契约修正；连续三时间点第 3 点（空增量）——重复提及真实状态不算捏造，计入重复率/自然度；只有把旧变化说成本点再次发生才是事实错误",
+   "before": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:02:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [
+       {
+        "id": "chg_b_2",
+        "text": "额头上渗出了汗珠",
+        "supersedes": [],
+        "sourcePointId": "cp2",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "after": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_school",
+    "protagonistId": "person_c",
+    "time": {
+     "calendar": "gregorian",
+     "dateTime": "2026-09-01T12:07:02",
+     "instantOrdinal": 0
+    },
+    "initial": {
+     "worldId": "world_school",
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "protagonistId": "person_c",
+     "initialTime": {
+      "calendar": "gregorian",
+      "dateTime": "2026-09-01T08:00:00",
+      "instantOrdinal": 0
+     },
+     "locations": {
+      "corridor": {
+       "id": "corridor",
+       "name": "走廊",
+       "parentLocationId": null,
+       "initialAppearance": "两侧是储物柜。"
+      },
+      "hall": {
+       "id": "hall",
+       "name": "大厅",
+       "parentLocationId": null,
+       "initialAppearance": "空旷的大厅，光线明亮。"
+      }
+     },
+     "items": {
+      "item_key": {
+       "id": "item_key",
+       "name": "钥匙",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "一把黄铜钥匙。"
+      }
+     },
+     "characters": {
+      "person_a": {
+       "id": "person_a",
+       "name": "学生A",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "穿校服的学生。",
+       "initialPersonality": "谨慎",
+       "initialSanity": 10,
+       "tasks": {}
+      },
+      "person_b": {
+       "id": "person_b",
+       "name": "学生B",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "靠窗站着。",
+       "initialPersonality": "外向",
+       "initialSanity": 10,
+       "tasks": {
+        "task_intro": {
+         "id": "task_intro",
+         "ownerId": "person_b",
+         "parentTaskId": null,
+         "goal": "帮主角熟悉校园",
+         "status": "pending"
+        }
+       }
+      },
+      "person_c": {
+       "id": "person_c",
+       "name": "主角",
+       "initialPosition": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "initialAppearance": "刚转学来。",
+       "initialPersonality": "好奇",
+       "initialSanity": 10,
+       "tasks": {
+        "task_shelf": {
+         "id": "task_shelf",
+         "ownerId": "person_c",
+         "parentTaskId": null,
+         "goal": "取回柜子里的东西",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "locations": {
+     "corridor": {
+      "id": "corridor",
+      "appearanceChanges": []
+     },
+     "hall": {
+      "id": "hall",
+      "appearanceChanges": []
+     }
+    },
+    "items": {
+     "item_key": {
+      "id": "item_key",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    },
+    "characters": {
+     "person_a": {
+      "id": "person_a",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "hall",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {}
+     },
+     "person_b": {
+      "id": "person_b",
+      "appearanceChanges": [
+       {
+        "id": "chg_b_2",
+        "text": "额头上渗出了汗珠",
+        "supersedes": [],
+        "sourcePointId": "cp2",
+        "sourceSequence": 1,
+        "active": true
+       }
+      ],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_intro": {
+        "id": "task_intro",
+        "ownerId": "person_b",
+        "parentTaskId": null,
+        "goal": "帮主角熟悉校园",
+        "status": "pending"
+       }
+      }
+     },
+     "person_c": {
+      "id": "person_c",
+      "appearanceChanges": [],
+      "position": {
+       "containerId": "corridor",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "personalityChanges": [],
+      "sanity": 10,
+      "tasks": {
+       "task_shelf": {
+        "id": "task_shelf",
+        "ownerId": "person_c",
+        "parentTaskId": null,
+        "goal": "取回柜子里的东西",
+        "status": "pending"
+       }
+      }
+     }
+    }
+   },
+   "delta": {},
+   "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 5,
+     "unit": "minute"
+    }
+   },
+   "perspective": "主角视角（person_c「主角」）；只表达已结算的世界事实，允许选择性描述（§8.2）",
+   "mustExpress": [
+    "时间又过去了五分钟"
+   ],
+   "requiredFacts": [
+    {
+     "kind": "timePassage",
+     "amount": 5,
+     "unit": "minute",
+     "phrase": "时间又过去了五分钟"
+    }
+   ],
+   "mayMention": [
+    "当前现状陈述（学生A 在大厅、学生B 额头有汗）——作为现状合法，作为再次发生非法"
+   ],
+   "mustNotFabricate": [
+    "把旧变化说成本点再次发生（如「学生A 又移动了」）",
+    "未保存的动作经过"
+   ]
+  }
+ ]
+}
