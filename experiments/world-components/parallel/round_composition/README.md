@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `706aa61e13bb79f9711fc8c85f556f3f14ca3b88bd1a9411a3f14464a97d2f97` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `2e03e470d74784eca79bba0402ef388139680d3fc97f8ed6920dda5d01bab9d2` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -255,9 +255,11 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 
 按 D1–D5 裁决进入首批真模型批次：10 个样本，模型 `qwen2.5:7b`（digest `845dbda0…`，Q4_K_M），ollama 0.40.15 本机推理，`temperature=0 / seed=42 / num_predict=128`，程序负责 N1/N2/plan_v3/场景/N4.0，模型只做成句，N5 用 `judge_v3` 硬门，之后做 D4 标注与 N6 复核。预登记、触发线与 N6 口径都在 `fixtures/batch-v1.json`，逐样本结果见 `real-batch-v1.md`。
 
-结果：**10/10 硬门拒绝，0/10 n5-pass；20 次调用全部 `done_reason=length`、`eval_count=128`**，即每次都在预登记上限被截断；N6 10/10 执行、0 pass / 10 fail；D4 10/10 已检查，5 条标注中 2 条是真正新增（`铁环`、`广场`）。预登记触发线（`n5Pass<7`）触发，因此按规则暂停下一批。
+结果：**10/10 硬门拒绝，0/10 n5-pass；20 次调用全部 `done_reason=length`、`eval_count=128`**，即每次都在预登记上限被截断（正文内部有完整句子，被切断的是**整段末尾**）；N6 10/10 执行、0 pass / 10 fail；D4 10/10 已检查。预登记触发线（失败 ≥3/10）触发，因此按规则暂停下一批。
 
-这一批只证明机制（真实调用、重试、回退、硬门、D4/N6 全部留痕），不证明模型能力：所有正文都被 128 token 截断，没有一条完整句子，`n5-rejected` 不能读成「模型质量差」。下一步是单独预登记更大的输出预算与更明确的输出形态约束，再跑对照批（见 `real-batch-v1.md` 第 7 节）。
+这一批只证明机制（真实调用、重试、回退、硬门、D4/N6 全部留痕），不证明模型能力：所有正文的整段末尾都在 128 token 上限被截断，`n5-rejected` 不能读成「模型质量差」；第一人称、字段抄写、写他人内心是独立观察，归因待对照批。
+
+**勘误（2026-11-08 复核，详见 `fixtures/errata-v1.json`）**：触发线代码口径与预登记不一致（`<7` vs 预登记 `≤7`，端口失败按样本而非调用计数；本批结论不受影响）；措辞「没有一条完整句子」更正为「整段末尾截断」；提示词范围为 164–303 tokens；撤回「仿佛静止/过去了一会儿」的矛盾判定；D4 收紧为**只计专名**，`铁环`/`广场` 属普通名词、归 N6，按新口径本批 D4 专名新增为 0。v1 预登记、原始运行与合并归档均保留不改。
 
 | 文件 | 内容 |
 | --- | --- |
@@ -268,3 +270,13 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `fixtures/review-v1.json` | D4 标注 + N6 判定（单一复核者，待独立复核） |
 | `out/real-batch-v1-reviewed.json` | 合并后的归档（`d4`/`n6`/`quality`） |
 | `real-batch-v1.md` | 本批完整报告 |
+
+## 13. 输出预算对照：128 → 384（real-batch-v2）
+
+裁决：只把 `num_predict` 从 128 提到 384，样本、模型 digest、prompt、判定器与重试策略全部沿用 v1；主结果取**首次调用**，重试另列；截断样本留在分母。预登记 `fixtures/batch-v2.json`，v1 的五条勘误见 `fixtures/errata-v1.json`。
+
+**结果：** 首次调用自然结束从 0/10 升到 **8/10**，触顶从 10/10 降到 **2/10**（`rb-two-actors-move`、`rb-time-only`）；但硬门通过仍是 **0/10**，N6 仍 **10 fail**。所以 384 解决了「写不完」，没有解决「写的不是门要求的形态」：移动事实几乎从不以「从…来到…」出现，结果被改写，3 个样本还把小节标签或记录行抄进正文（其中 1 个篡改了记录里的起止地点）。D4 按收紧后的专名规则只有 1 条（`老李`）；物件/地点描写归 N6。
+
+触发线按预登记原文实现（失败样本 ≥3 或端口失败调用 ≥2，边界测试 `test_tripwire_v2.py`），本批失败样本 10 → 触发，仍不继续下一批，直到形态对照批的裁决。
+
+文件：`fixtures/batch-v2.json`、`fixtures/review-v2.json`、`out/real-batch-v2.json`、`out/real-batch-v2-raw.jsonl`、`out/real-batch-v2-reviewed.json`、`real-batch-v2.md`。

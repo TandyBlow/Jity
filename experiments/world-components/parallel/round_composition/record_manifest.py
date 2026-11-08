@@ -97,6 +97,27 @@ SOURCES = {
         "out/real-batch-v1-raw.jsonl",
         "experiments/world-components/parallel/round_composition/"
         "out/real-batch-v1-summary.txt",
+        # budget-control batch v2 (384) + v1 errata
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/errata-v1.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/batch-v2.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/review-v2.json",
+        "experiments/world-components/parallel/round_composition/"
+        "make_real_batch_v2.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real_batch_v2.py",
+        "experiments/world-components/parallel/round_composition/"
+        "write_review_v2.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_tripwire_v2.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real-batch-v2.md",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v2-raw.jsonl",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v2-summary.txt",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

@@ -1,16 +1,21 @@
-# Merge the D4 labels and N6 verdicts into the real-batch archive.
+# Merge D4 labels and N6 verdicts into a real-batch archive.
 #
-# The run archive (out/real-batch-v1.json) holds raw model output and starts
-# with d4 unchecked (count null) and n6 not-run. This script writes a SEPARATE
-# reviewed archive: it copies the run, attaches the labels/verdicts from
-# fixtures/review-v1.json, and computes `quality` with judge_v3.quality so that
-# a sample is reported as a quality pass only when an executed N6 says pass.
+# The run archive holds raw model output and starts with d4 unchecked (count
+# null) and n6 not-run. This script writes a SEPARATE reviewed archive: it copies
+# the run, attaches the labels/verdicts from the review file, and computes
+# `quality` with judge_v3.quality so that a sample is a quality pass only when an
+# executed N6 says pass.
 #
-# The raw run archive is left untouched, so any reader can still see the
+# The raw run archive is never modified, so a reader can always see the
 # unreviewed state and the exact texts the review refers to.
 #
-# Usage: python -X utf8 apply_review.py
+# Usage:
+#   python -X utf8 apply_review.py                     # v1 defaults
+#   python -X utf8 apply_review.py --run out/real-batch-v2.json \
+#       --review fixtures/review-v2.json \
+#       --out out/real-batch-v2-reviewed.json
 
+import argparse
 import json
 import pathlib
 import sys
@@ -20,20 +25,27 @@ sys.path.insert(0, str(HERE))
 
 import judge_v3  # noqa: E402
 
-RUN = HERE / "out" / "real-batch-v1.json"
-REVIEW = HERE / "fixtures" / "review-v1.json"
-OUT = HERE / "out" / "real-batch-v1-reviewed.json"
+DEFAULTS = {
+    "run": HERE / "out" / "real-batch-v1.json",
+    "review": HERE / "fixtures" / "review-v1.json",
+    "out": HERE / "out" / "real-batch-v1-reviewed.json",
+}
 
 
 def main() -> int:
-    run = json.loads(RUN.read_text(encoding="utf-8"))
-    review = json.loads(REVIEW.read_text(encoding="utf-8"))
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--run", default=str(DEFAULTS["run"]))
+    ap.add_argument("--review", default=str(DEFAULTS["review"]))
+    ap.add_argument("--out", default=str(DEFAULTS["out"]))
+    args = ap.parse_args()
+
+    run = json.loads(pathlib.Path(args.run).read_text(encoding="utf-8"))
+    review = json.loads(pathlib.Path(args.review).read_text(encoding="utf-8"))
     if review["batchId"] != run["batchId"]:
         raise SystemExit("review and run belong to different batches")
     reviewed = review["cases"]
 
-    missing = [c["caseId"] for c in run["cases"]
-               if c["caseId"] not in reviewed]
+    missing = [c["caseId"] for c in run["cases"] if c["caseId"] not in reviewed]
     if missing:
         raise SystemExit(f"samples without a review: {missing}")
 
@@ -55,14 +67,15 @@ def main() -> int:
         case["quality"] = judge_v3.quality(n6)
         quality_counts[case["quality"]] = quality_counts.get(
             case["quality"], 0) + 1
-        # the reviewed text must be the text the run produced
         if entry.get("text") and case["attempts"]:
-            if entry["text"] != case["attempts"][-1]["output"]:
-                raise SystemExit(f"{case['caseId']}: reviewed text is not the "
-                                 f"last model output")
+            reviewed_text = entry["text"]
+            produced = [a.get("output") for a in case["attempts"]]
+            if reviewed_text not in produced:
+                raise SystemExit(f"{case['caseId']}: reviewed text is not one "
+                                 f"of the model outputs")
 
     run["review"] = {
-        "source": "fixtures/review-v1.json",
+        "source": f"fixtures/{pathlib.Path(args.review).name}",
         "reviewer": review["reviewer"],
         "reviewStatus": review["reviewStatus"],
         "reviewedAt": review["reviewedAt"],
@@ -85,13 +98,14 @@ def main() -> int:
         "review attached here; an n5 failure is never a quality pass. The "
         "program-template fallbacks are recorded per sample but are not model "
         "output and are not reviewed.")
-    run["version"] = "real-batch-v1-reviewed"
+    run["version"] = run["version"].replace("-run", "-reviewed")
 
-    OUT.write_text(json.dumps(run, ensure_ascii=False, indent=1) + "\n",
-                   encoding="utf-8", newline="\n")
+    pathlib.Path(args.out).write_text(
+        json.dumps(run, ensure_ascii=False, indent=1) + "\n",
+        encoding="utf-8", newline="\n")
     print(f"quality={quality_counts} d4Labeled={s['d4Labeled']} "
           f"labels={s['d4LabelCount']} inventions={s['d4Inventions']}")
-    print(f"-> {OUT}")
+    print(f"-> {args.out}")
     return 0
 
 

@@ -1,0 +1,44 @@
+{
+ "version": "real-batch-v1-errata",
+ "batchId": "real-batch-2026-11-08-v1",
+ "recordedAt": "2026-11-08",
+ "status": "Errata only. The v1 registration (fixtures/batch-v1.json), the raw run (out/real-batch-v1.json), the raw HTTP log (out/real-batch-v1-raw.jsonl) and the reviewed archive (out/real-batch-v1-reviewed.json) are KEPT AS THEY ARE. Nothing below re-runs the batch or rewrites its numbers.",
+ "items": [
+  {
+   "id": "E1-tripwire-boundary",
+   "what": "The pre-registration says the tripwire fires when '>=3/10 samples fail the hard gates' (i.e. n5Pass <= 7). The v1 runner computed 'n5_pass < 7' (i.e. <= 6) and counted port failures by FINAL SAMPLE instead of by CALL.",
+   "effect": "No effect on the v1 conclusion: 0/10 passed, so the line fires under either reading, and there were 0 port failures. The boundary itself was wrong and must not be inherited.",
+   "fix": "real_batch_v2.py implements the registered text: hard_gate_fail_samples = samples whose final status is n5-rejected; port_failure_calls = attempts that raised a port error; tripwire = hard_gate_fail_samples >= 3 OR port_failure_calls >= 2. test_tripwire_v2.py covers both boundaries (2 vs 3 failures, 1 vs 2 port calls)."
+  },
+  {
+   "id": "E2-truncation-wording",
+   "what": "The v1 report said no output was a complete sentence and that all failures were caused by the cap.",
+   "effect": "The texts DO contain complete sentences; it is the END of the passage that is cut off at the cap (20/20 calls ended with done_reason=length). First-person narration, field copying and other-character inner states are independent observations and must not be attributed to the cap.",
+   "fix": "Wording corrected in real-batch-v1.md and README: 'the passage end is truncated at the cap'; the other failures are listed as observed, attribution left open ('current configuration') and to be separated by a controlled batch."
+  },
+  {
+   "id": "E3-prompt-token-range",
+   "what": "The v1 report stated the prompt range as 200-303 tokens.",
+   "effect": "The archived prompt_eval_count over the 20 calls is 164-303 tokens (attempt 2 is longer than attempt 1 because it appends the feedback line).",
+   "fix": "Report corrected to 164-303 tokens."
+  },
+  {
+   "id": "E4-time-contradiction-claim",
+   "what": "N6 said the v1 text for rb-time-vague contradicted itself ('时间在这一刻仿佛静止了' followed by '过去了一会儿').",
+   "effect": "'静止了' is a simile, not a factual claim about the clock; it cannot be judged a contradiction of elapsed time.",
+   "fix": "That reason is withdrawn. The N6 verdict for that sample stands on truncation and on the missing move/result facts only."
+  },
+  {
+   "id": "E5-d4-category",
+   "what": "The v1 D4 labels counted 铁环 and 广场 as invented names and 铜铃/梯子 as authority-quoted names.",
+   "effect": "They are ordinary nouns (an object and a place description), the same kind as the 木门/楼梯/窗户 that the rule already excluded. Counting them as new proper names inflated the D4 number (5 labels, 2 'inventions').",
+   "fix": "Tightened rule (used from batch v2 on): D4 counts ONLY proper names (person/item/place names) absent from the state registry AND absent from the authoritative text given to the model. Object/place descriptions are recorded under N6 ('new object or place description'), not as D4 labels. Under the tightened rule the v1 texts have 0 D4 proper-name additions; the two descriptions (铁环, 广场) and the two authority-quoted common nouns (铜铃 x2, 梯子) move to the N6 notes."
+  }
+ ],
+ "unchangedConclusions": [
+  "20/20 calls ended with done_reason=length at num_predict=128",
+  "0/10 samples passed the hard gates; N6 = 10 fail; 9 template fallbacks (rb-subtask has no frame)",
+  "no port failure; every call archived with request, raw response, finish reason, token counts and timing",
+  "the batch proves the mechanism and proves nothing about model capability"
+ ]
+}
