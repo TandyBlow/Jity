@@ -680,6 +680,14 @@ def main() -> int:
               "n2_perspective.py`，只读）逐条判定 must / may / invisible。",
               "不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**。"
               "唯一的非可见性排除是 `c8e06` 的玩家指令，单独标为 `player-instruction`。", "",
+              "## 页面投影实测（不是预测）", "",
+              "`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，"
+              "读已提交的 before/after 记录，结果写在 `projection-check.json`："
+              "接受/拒绝逐条与 `capability.stages` 比对，不一致即失败。"
+              "没有模型参与（`modelCalls=0`）。", "",
+              "`c8e02` 的实测结果尤其重要：页面投影**接受**该 Δ，并把 N2 判为不可见的那个人"
+              "的移动照样写了出来（`projectionNarratesWithheld=true`），"
+              "所以这条不计页面叙述成绩，理由是可复现的实测，不是推测。", "",
               "## 能力不支持的部分（单列，不算模型失败）", ""]
     limited = [r for r in rows if r["capability"]["flags"]]
     if limited:

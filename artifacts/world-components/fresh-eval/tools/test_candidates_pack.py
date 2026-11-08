@@ -128,6 +128,29 @@ class Capability(unittest.TestCase):
         self.assertFalse(stages["narrationGenerated"])
 
 
+class Projection(unittest.TestCase):
+    def setUp(self):
+        self.measured = load("projection-check.json")
+        self.pack = load("candidates.json")
+
+    def test_prediction_matches_the_real_projection(self):
+        verdicts = {c["id"]: c for c in self.measured["cases"]}
+        for row in self.pack["candidates"]:
+            self.assertEqual(
+                row["capability"]["stages"]["pageProjectionAcceptsDelta"],
+                verdicts[row["id"]]["accepted"], row["id"])
+
+    def test_perspective_item_really_leaks_in_the_page_path(self):
+        verdicts = {c["id"]: c for c in self.measured["cases"]}
+        self.assertTrue(verdicts["c8e02"]["accepted"])
+        self.assertTrue(verdicts["c8e02"]["projectionNarratesWithheld"])
+        row = next(r for r in self.pack["candidates"] if r["id"] == "c8e02")
+        self.assertFalse(row["capability"]["pagePathSatisfiesExpectation"])
+
+    def test_no_model_was_called(self):
+        self.assertEqual(self.measured["modelCalls"], 0)
+
+
 class Facts(unittest.TestCase):
     def test_item_move_keeps_both_ends_and_holder(self):
         facts = load("c8e05/facts.json")["changeFacts"]

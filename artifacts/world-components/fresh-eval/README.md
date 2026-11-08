@@ -188,9 +188,15 @@ python artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
 `c8e02` 视角过滤、`c8e04` 空间相对位置、`c8e05` 物品位移＋外貌、`c8e06` 纯任务达成。
 能力判定按人物逐一看任务/人格/理智三件套（页面投影就是这么检查的）。
 
+**页面投影实测**：`tools/run_projection_check.py` 用 Node 直接调用页面投影函数（模块
+sha256 `309ca19f…`，0 次模型调用），把已提交的 before/after 读进去跑，结果在
+`candidates-fresh/projection-check.json`。六条里 3 条接受、3 条拒绝，与预测完全一致。
+`c8e02` 实测会把 N2 判为不可见的那个人物的移动照样写出（`projectionNarratesWithheld=true`），
+所以“本条不计页面叙述成绩”是可复现的实测结论，不是推测。
+
 **v3 修订**：R1/R2/R3 回到完整变化集合；视野筛选改由 N2 判定；`c8e03` 用同一套 N2 判定
 （聂汀穗的移动是 may，不是必述）；能力检查改为按人物。回归测试 `tools/test_candidates_pack.py`
-（14 项，含“三件套分散在三个人身上时页面仍拒绝”的反例）。
+（17 项，含“三件套分散在三个人身上时页面仍拒绝”的反例，以及与实跑投影结果的一致性检查）。
 
 ---
 
@@ -229,6 +235,9 @@ artifacts/world-components/fresh-eval/
     ├── audit_world_sources.py    全分支/工作树审计与来源分类
     ├── build_fresh_sources.py    新建夹具并经服务提交、读回
     ├── build_candidates_fresh.py 候选包：事实、输入、筛选、核验项
+    ├── projection_check.ts       直接调用页面投影函数（Node 类型剥离）
+    ├── run_projection_check.py   跑投影实测并与预测比对
+    ├── test_candidates_pack.py   17 项回归测试
     └── test_exclusion_selftest.py 注记剥离和旧题漏解析的回归检查
 ```
 

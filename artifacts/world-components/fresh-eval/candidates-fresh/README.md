@@ -1,7 +1,7 @@
 # 首批候选（6 条，待人工核验）
 
 输入包版本 v3（2026-11-08 第二轮外部审查后修订，见 `report.md`）。
-工作树 `d950018ffb4c`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
+工作树 `d9afd9f2e6c8`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
 
 六条全部通过 A 侧 Python 服务提交并读回（独立数据库 `fresh/source/authority.sqlite3`，读回校验 6/6）。**未冻结**，人工核验通过后才做一次性冻结。
 
@@ -20,6 +20,12 @@
 
 可见性不由本包自定，而是导入真实 N2 规则（`experiments/world-components/n2_perspective.py`，只读）逐条判定 must / may / invisible。
 不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**。唯一的非可见性排除是 `c8e06` 的玩家指令，单独标为 `player-instruction`。
+
+## 页面投影实测（不是预测）
+
+`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，读已提交的 before/after 记录，结果写在 `projection-check.json`：接受/拒绝逐条与 `capability.stages` 比对，不一致即失败。没有模型参与（`modelCalls=0`）。
+
+`c8e02` 的实测结果尤其重要：页面投影**接受**该 Δ，并把 N2 判为不可见的那个人的移动照样写了出来（`projectionNarratesWithheld=true`），所以这条不计页面叙述成绩，理由是可复现的实测，不是推测。
 
 ## 能力不支持的部分（单列，不算模型失败）
 
