@@ -1,0 +1,524 @@
+{
+ "worktreeHead": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+ "inputs": {
+  "checkerSha256": "00f06f97e1eb28c754c9c6a27b63ba61b78142acbad3e44a6fd0f2b4ab358a9a",
+  "scopeSha256": "e2eda6d25426038234a8d54e8b52072ce2fe33973e3723923e3ee49238728916",
+  "exclusionCorpus": {
+   "file": "sources/exclusion-corpus.jsonl",
+   "sha256": "396685dd5ffab32c1c8654f129ac206868d2874f38ead79bbea6f6ad010454db",
+   "strings": 13341
+  },
+  "vocabulary": {
+   "file": "sources/vocab-used.json",
+   "sha256": "854fe6f14a45dbe616e2aeb63d461e31b3e77539101df554a59bf6cfca6e2f97",
+   "terms": 4567
+  },
+  "threeArmItems": {
+   "file": "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+   "sha256": "72b568f0476f6acfb2b471a16899495b0334d2f2edac0ae15bac4244e6b50224",
+   "parsed": 10
+  }
+ },
+ "result": {
+  "exactTenItemsParsed": true,
+  "eachOldItemBlockedByR1AndR3": true,
+  "derivativesBlockedByR3Only": true,
+  "noteStrippingRegression": true,
+  "threeArmRejected": "10/10",
+  "renamedDerivativeRejected": "rejected",
+  "paraphraseDerivativeRejected": "rejected",
+  "syntheticFreshVerdict": "candidate",
+  "pass": true
+ },
+ "threeArm": [
+  {
+   "id": "nv-move-1",
+   "verdict": "rejected",
+   "signature": "moved|1|2minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生A从走廊来到大厅。",
+       "excluded": "学生A从走廊来到大厅。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "学生A离开走廊，走进大厅，前后大约花了两分钟。",
+       "excluded": "学生A离开走廊，走进大厅，前后大约花了两分钟。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A从大厅走到走廊（方向反转）",
+       "excluded": "学生A从大厅走到走廊（两人方向互换）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A推开门冲进大厅（新增事件）",
+       "excluded": "学生A推开门冲进大厅（新增事件）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 4
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "moved|1|2minute",
+     "matches": "nv-move-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-task-pers-sanity-1",
+   "verdict": "rejected",
+   "signature": "personality_changed+sanity_changed+task_achieved|1|1minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生B已达成任务「帮主角熟悉校园」。学生B形成了新的人格描述「变得健谈」。学生B的精神值由10升至12。",
+       "excluded": "变得健谈",
+       "sources": [
+        "s01",
+        "s03"
+       ]
+      },
+      {
+       "candidateText": "带着主角在校园里转了一圈之后，学生B完成了任务「帮主角熟悉校园」。学生B也变得健谈起来，精神值从10升到了12。前后不过一分钟。",
+       "excluded": "变得健谈",
+       "sources": [
+        "s01",
+        "s03"
+       ]
+      },
+      {
+       "candidateText": "精神值从10变为8（数值错误）",
+       "excluded": "精神值从10变为8（数值错误）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角完成了任务「帮主角熟悉校园」（人物互换）",
+       "excluded": "主角完成了任务「帮主角熟悉校园」（人物互换）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生B完成了任务「取回柜子里的东西」（任务替换）",
+       "excluded": "取回柜子里的东西",
+       "sources": [
+        "s01",
+        "s03",
+        "s04"
+       ]
+      }
+     ],
+     "hitCount": 5
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "personality_changed+sanity_changed+task_achieved|1|1minute",
+     "matches": "nv-task-pers-sanity-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-multi-1",
+   "verdict": "rejected",
+   "signature": "at+moved|2|1minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生A从走廊来到大厅。主角现在在大厅。",
+       "excluded": "学生A从走廊来到大厅。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "学生A从走廊来到大厅时，主角已经在大厅里等着了。大约过了一分钟。",
+       "excluded": "学生A从走廊来到大厅时，主角已经在大厅里等着了。大约过了一分钟。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角从走廊走到大厅（人物互换＋方向）",
+       "excluded": "主角从走廊走到大厅（人物互换＋方向）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A位于大厅，主角从走廊走到大厅（人物互换）",
+       "excluded": "主角从走廊走到大厅（人物互换＋方向）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 4
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "at+moved|2|1minute",
+     "matches": "nv-multi-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-task-only-1",
+   "verdict": "rejected",
+   "signature": "task_achieved|1|30second",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "主角已达成任务「取回柜子里的东西」。",
+       "excluded": "主角已达成任务「取回柜子里的东西」。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "主角顺利完成了任务「取回柜子里的东西」，前后花了30秒。",
+       "excluded": "主角顺利完成了任务「取回柜子里的东西」，前后花了30秒。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角完成了任务「帮主角熟悉校园」（任务替换）",
+       "excluded": "主角完成了任务「帮主角熟悉校园」（人物互换）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生B完成了任务「取回柜子里的东西」（人物互换）",
+       "excluded": "取回柜子里的东西",
+       "sources": [
+        "s01",
+        "s03",
+        "s04"
+       ]
+      }
+     ],
+     "hitCount": 4
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "task_achieved|1|30second",
+     "matches": "nv-task-only-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-refused-1",
+   "verdict": "rejected",
+   "signature": "none|0|1second",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "主角停在原地，没有往前迈步。一秒钟就这样过去了。",
+       "excluded": "主角停在原地，没有往前迈步。一秒钟就这样过去了。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角走到了门厅（拒绝的行动被叙述成发生）",
+       "excluded": "主角走到了门厅（拒绝的行动被叙述成发生）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角推开走廊尽头的门（新增事件）",
+       "excluded": "主角推开走廊尽头的门（新增事件）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 3
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "none|0|1second",
+     "matches": "nv-refused-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-empty-1",
+   "verdict": "rejected",
+   "signature": "none|0|5minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "四周安静下来，五分钟过去了，没有新的变化。",
+       "excluded": "四周安静下来，五分钟过去了，没有新的变化。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A走进了大厅（无事实的移动）",
+       "excluded": "学生A走进了大厅（无事实的移动）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "主角完成了任务「取回柜子里的东西」（无事实的任务）",
+       "excluded": "主角完成了任务「取回柜子里的东西」",
+       "sources": [
+        "s03",
+        "s09"
+       ]
+      }
+     ],
+     "hitCount": 3
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "none|0|5minute",
+     "matches": "nv-empty-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-cont-1",
+   "verdict": "rejected",
+   "signature": "moved|1|2second",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生A从走廊来到大厅。",
+       "excluded": "学生A从走廊来到大厅。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "两秒钟后，学生A已经从走廊走到了大厅。",
+       "excluded": "两秒钟后，学生A已经从走廊走到了大厅。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A从大厅走到了走廊（方向反转）",
+       "excluded": "学生A从大厅走到了走廊（方向反转）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 3
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "moved|1|2second",
+     "matches": "nv-cont-1"
+    }
+   ]
+  },
+  {
+   "id": "nv-cont-2",
+   "verdict": "rejected",
+   "signature": "at|1|2minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生B现在在大厅。",
+       "excluded": "学生B现在在大厅。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "学生B还站在大厅里，两分钟就这么过去了。",
+       "excluded": "学生B还站在大厅里，两分钟就这么过去了。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生B从走廊走到大厅（本点没有移动事实）",
+       "excluded": "学生B从走廊走到大厅（两人方向互换）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A位于大厅（人物互换）",
+       "excluded": "学生A位于大厅（人物互换）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 4
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "at|1|2minute",
+     "matches": "nv-cont-2"
+    }
+   ]
+  },
+  {
+   "id": "nv-cont-3",
+   "verdict": "rejected",
+   "signature": "at|1|5minute",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生A仍然待在大厅，五分钟又过去了。",
+       "excluded": "学生A仍然待在大厅，五分钟又过去了。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A又从走廊走到了大厅（把旧变化说成再次发生）",
+       "excluded": "学生A又从走廊走到了大厅（把旧变化说成再次发生）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 2
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "at|1|5minute",
+     "matches": "nv-cont-3"
+    }
+   ]
+  },
+  {
+   "id": "nv-multi-opposite-1",
+   "verdict": "rejected",
+   "signature": "moved+moved|2|3second",
+   "reasons": [
+    {
+     "rule": "R1-substring",
+     "hits": [
+      {
+       "candidateText": "学生A从走廊来到大厅。学生B从大厅来到走廊。",
+       "excluded": "学生A从走廊来到大厅。",
+       "sources": [
+        "s01",
+        "s07",
+        "s08"
+       ]
+      },
+      {
+       "candidateText": "三秒钟里，学生A从走廊走进大厅，学生B正好从大厅出来，回到走廊。",
+       "excluded": "三秒钟里，学生A从走廊走进大厅，学生B正好从大厅出来，回到走廊。",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生A从大厅走到走廊（两人方向互换）",
+       "excluded": "学生A从大厅走到走廊（两人方向互换）",
+       "sources": [
+        "s01"
+       ]
+      },
+      {
+       "candidateText": "学生B从走廊走到大厅（两人方向互换）",
+       "excluded": "学生B从走廊走到大厅（两人方向互换）",
+       "sources": [
+        "s01"
+       ]
+      }
+     ],
+     "hitCount": 4
+    },
+    {
+     "rule": "R3-signature",
+     "signature": "moved+moved|2|3second",
+     "matches": "nv-multi-opposite-1"
+    }
+   ]
+  }
+ ],
+ "derivatives": [
+  {
+   "id": "deriv-renamed-move-2min",
+   "verdict": "rejected",
+   "signature": "moved|1|2minute",
+   "reasons": [
+    {
+     "rule": "R3-signature",
+     "signature": "moved|1|2minute",
+     "matches": "nv-move-1"
+    }
+   ]
+  },
+  {
+   "id": "deriv-paraphrase-empty-5min",
+   "verdict": "rejected",
+   "signature": "none|0|5minute",
+   "reasons": [
+    {
+     "rule": "R3-signature",
+     "signature": "none|0|5minute",
+     "matches": "nv-empty-1"
+    }
+   ]
+  },
+  {
+   "id": "synthetic-fresh-ok",
+   "verdict": "candidate",
+   "signature": "moved+sanity_changed+task_achieved|3|7minute",
+   "reasons": []
+  }
+ ],
+ "limits": [
+  "只证明这十条旧题与两条构造派生被规则拦下；不证明排除集完整",
+  "R1 只做子串双向包含；改写后不共享子串的派生不会被 R1 抓到",
+  "R3 只比事实形状；换一种形状的语义派生仍需人工核验",
+  "新场景判定为 candidate 只表示未被这三条规则命中，不构成验收"
+ ]
+}

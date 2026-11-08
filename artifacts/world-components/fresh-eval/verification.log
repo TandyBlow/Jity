@@ -1,0 +1,23 @@
+Date: 2026-11-08
+Working directory: D:/others/Jity/.local/parallel/c-fresh-eval
+Source checkout HEAD: 64405346fe63c2f05cf067f3b328893fa9e0d381
+Scope: source audit and screening mechanism only; no formal candidates or frozen evaluation set.
+
+Command: python -B artifacts/world-components/fresh-eval/tools/build_inventory.py --check
+Exit code: 0
+files old=571 new=571 drift=0 missingSources=[] blockedOld=13341
+corpusMatches=True vocabularyMatches=True scopeMatches=True knownGapsMatch=True
+CHECK OK
+Note: 571 distinct source paths, 573 source/file memberships because declared sources overlap.
+Known historical coverage gap: artifacts/world-chain/*.json, undetermined.
+
+Command: python -B artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
+Exit code: 0
+head=64405346fe63 corpus=13341 vocab=4567 items=10 blocked=10/10 renamed=rejected paraphrase=rejected fresh=candidate PASS=True
+Detailed rule hits, completeness flags and input hashes: selftest-report.json
+
+Command: python -B artifacts/world-components/fresh-eval/tools/test_exclusion_selftest.py
+Exit code: 0
+Ran 3 tests in 0.001s
+OK
+Regressions: note-only containment; zero/partial/duplicate/unexpected baseline IDs; missing independent rule hit.

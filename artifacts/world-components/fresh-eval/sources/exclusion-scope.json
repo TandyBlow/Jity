@@ -1,0 +1,175 @@
+{
+ "formatVersion": 2,
+ "worktreeHead": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+ "rules": {
+  "textMatch": "双向子串：候选串与排除串任一方向包含即命中；只比较 ≥4 个汉字的内容串",
+  "noteStrip": "含（）注记的排除串，剥掉注记后的核心串同样入集（nv-cont-1 冒烟教训）",
+  "castWords": "人物/地名等词表项：零命中才是目标，命中即改名，不按子串宽容量放过",
+  "signature": "事实签名=(kind 集合, 涉及人物数, 时间量, 时间单位)；与 nv-* 十题任一相同即判改名派生",
+  "signatureLimit": "签名只覆盖事实形状，不覆盖语义；形状不同也可能是派生，由人工核验补",
+  "excludedFields": "结构字段 kind/unit/ref/amount/entityId/scope 不参与文本比对",
+  "unknownProvenance": "来源或用途无法追到文件与哈希的场景记为 undetermined，不进入候选池"
+ },
+ "textScopeSources": [
+  "s01",
+  "s02",
+  "s03",
+  "s04",
+  "s05",
+  "s06",
+  "s07",
+  "s08",
+  "s09",
+  "s10",
+  "s11",
+  "s12",
+  "s13",
+  "s20",
+  "s21",
+  "s22",
+  "s23",
+  "s24",
+  "s25",
+  "s26",
+  "s27",
+  "s28",
+  "s29",
+  "s33",
+  "s50",
+  "s51",
+  "s52",
+  "s53",
+  "s54",
+  "s56",
+  "s57"
+ ],
+ "vocabScopeSources": [
+  "s30",
+  "s32",
+  "s34"
+ ],
+ "threeArmItems": [
+  {
+   "id": "nv-move-1",
+   "kinds": [
+    "moved"
+   ],
+   "actors": 1,
+   "timeAmount": 2,
+   "timeUnit": "minute",
+   "signature": "moved|1|2minute"
+  },
+  {
+   "id": "nv-task-pers-sanity-1",
+   "kinds": [
+    "personality_changed",
+    "sanity_changed",
+    "task_achieved"
+   ],
+   "actors": 1,
+   "timeAmount": 1,
+   "timeUnit": "minute",
+   "signature": "personality_changed+sanity_changed+task_achieved|1|1minute"
+  },
+  {
+   "id": "nv-multi-1",
+   "kinds": [
+    "at",
+    "moved"
+   ],
+   "actors": 2,
+   "timeAmount": 1,
+   "timeUnit": "minute",
+   "signature": "at+moved|2|1minute"
+  },
+  {
+   "id": "nv-task-only-1",
+   "kinds": [
+    "task_achieved"
+   ],
+   "actors": 1,
+   "timeAmount": 30,
+   "timeUnit": "second",
+   "signature": "task_achieved|1|30second"
+  },
+  {
+   "id": "nv-refused-1",
+   "kinds": [],
+   "actors": 0,
+   "timeAmount": 1,
+   "timeUnit": "second",
+   "signature": "none|0|1second"
+  },
+  {
+   "id": "nv-empty-1",
+   "kinds": [],
+   "actors": 0,
+   "timeAmount": 5,
+   "timeUnit": "minute",
+   "signature": "none|0|5minute"
+  },
+  {
+   "id": "nv-cont-1",
+   "kinds": [
+    "moved"
+   ],
+   "actors": 1,
+   "timeAmount": 2,
+   "timeUnit": "second",
+   "signature": "moved|1|2second"
+  },
+  {
+   "id": "nv-cont-2",
+   "kinds": [
+    "at"
+   ],
+   "actors": 1,
+   "timeAmount": 2,
+   "timeUnit": "minute",
+   "signature": "at|1|2minute"
+  },
+  {
+   "id": "nv-cont-3",
+   "kinds": [
+    "at"
+   ],
+   "actors": 1,
+   "timeAmount": 5,
+   "timeUnit": "minute",
+   "signature": "at|1|5minute"
+  },
+  {
+   "id": "nv-multi-opposite-1",
+   "kinds": [
+    "moved",
+    "moved"
+   ],
+   "actors": 2,
+   "timeAmount": 3,
+   "timeUnit": "second",
+   "signature": "moved+moved|2|3second"
+  }
+ ],
+ "threeArmSiblings": {
+  "hv-*": "narration-eval-validation.ts（事实核验题）",
+  "ns-*": "narration-split-samples.ts（拆分四件套）",
+  "b3-*": "b3-samples.ts / b3-short-samples.ts"
+ },
+ "knownLimits": [
+  "artifacts/world-chain/*.json 未纳入：当前工作树及主树未找到，历史覆盖记为 undetermined；不代表所有检出或 Git 历史均无此归档",
+  "TS 类型代码与注释不扫；Markdown 报告不参与整句排除",
+  "未登记的新文件不会自动进入排除集：改源清单必须重跑本脚本并更新哈希",
+  "签名只覆盖事实形状，语义派生（换地点、换任务但同形）仍需人工核验",
+  "词表来自结构化字段与渲染输入表头；只在正文散文里出现的人名可能漏收"
+ ],
+ "blockingStrings": 13341,
+ "vocabCounts": {
+  "characters": 75,
+  "locations": 225,
+  "tasks": 443,
+  "items": 103,
+  "other": 3674,
+  "protocolIds": 460
+ },
+ "vocabUnionCount": 4567
+}
