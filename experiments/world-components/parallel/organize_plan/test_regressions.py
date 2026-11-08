@@ -17,6 +17,8 @@ Each test names the defect it locks down:
   T12 build_criteria.py never overwrites an older frozen criteria file
   T13 the r4 sign-off form pins the files it actually hashed
   T14 a misnamed pin is caught (hash right, path wrong)
+  T15 editing one row of a signed file closes the gate again
+  T16 a pin without a sha256, or a missing pin, blocks readiness
 
 Run:
     python -X utf8 test_regressions.py
@@ -26,6 +28,7 @@ from __future__ import annotations
 
 import hashlib
 import argparse
+import importlib
 import json
 import shutil
 import tempfile
@@ -235,6 +238,105 @@ def test_T14_misnamed_pin_is_caught() -> None:
         assert problems and "b.json changed" in problems[0], problems
         no_path = {"x": {"sha256": good["sha256"]}}
         assert pins_mod.pin_drift(no_path, base=base), "a pin without a path must be reported"
+
+
+NL = chr(10)
+
+
+def _signed_round(tmp: Path) -> dict:
+    """Build a temp round where a human sign-off exists and the gate is OPEN."""
+    (tmp / "runs" / "r4").mkdir(parents=True)
+    (tmp / "freeze").mkdir(parents=True)
+    (tmp / "text_conformance.py").write_text("# checker" + NL, encoding="utf-8")
+    (tmp / "freeze" / "criteria-v3.json").write_text('{"gate": "x"}' + NL, encoding="utf-8")
+    (tmp / "runs" / "r4" / "tamper-probes.json").write_text('{"rows": []}' + NL, encoding="utf-8")
+    (tmp / "runs" / "r4" / "manual-review.json").write_text('{"rows": []}' + NL, encoding="utf-8")
+    pins = {
+        "criteria": pins_mod.pin(tmp / "freeze" / "criteria-v3.json"),
+        "checker": {"file": "text_conformance.py",
+                    "sha256": pins_mod.sha256(tmp / "text_conformance.py")},
+        "tamperProbes": pins_mod.pin(tmp / "runs" / "r4" / "tamper-probes.json"),
+        "manualReview": pins_mod.pin(tmp / "runs" / "r4" / "manual-review.json"),
+        "acceptanceIdentity": pins_mod.acceptance_identity(
+            tmp / "freeze" / "criteria-v3.json",
+            tmp / "runs" / "r4" / "tamper-probes.json",
+            tmp / "runs" / "r4" / "manual-review.json"),
+    }
+    signoff = {"signed": True, "satisfiesHumanSignoff": True, "signerKind": "human",
+               "signer": "T", "date": "2026-11-09", "reviewedCommit": "x",
+               "humanCounts": {"paraphrase-ok": 1},
+               "pinnedInputs": pins,
+               "rows": [{"humanVerdict": "paraphrase-ok"}]}
+    signoff_path = tmp / "runs" / "r4" / "signoff.json"
+    signoff_path.write_text(json.dumps(signoff, ensure_ascii=False, indent=1) + NL, encoding="utf-8")
+    acceptance = {
+        "identitySha256": pins["acceptanceIdentity"],
+        "gateStatus": "OPEN", "openItems": [],
+        "signoff": {"file": "runs/r4/signoff.json", "sha256": pins_mod.sha256(signoff_path)},
+    }
+    (tmp / "runs" / "r4" / "acceptance.json").write_text(
+        json.dumps(acceptance, ensure_ascii=False, indent=1) + NL, encoding="utf-8")
+    return {"pins": pins, "acceptance": acceptance, "signoff": signoff}
+
+
+def _write_signoff(tmp: Path, doc: dict) -> None:
+    (tmp / "runs" / "r4" / "signoff.json").write_text(
+        json.dumps(doc, ensure_ascii=False, indent=1) + NL, encoding="utf-8")
+
+
+def _ready_in(tmp: Path) -> dict:
+    importlib.reload(check_round_ready)
+    mod = check_round_ready
+    mod.SIGNOFF = tmp / "runs" / "r4" / "signoff.json"
+    mod.ACCEPTANCE = tmp / "runs" / "r4" / "acceptance.json"
+    mod.R2_SIGNOFF = tmp / "runs" / "r2" / "signoff.json"
+    mod.pins_mod.HERE = tmp
+    return mod.check_signoff()
+
+
+def test_T15_editing_a_signed_row_closes_the_gate() -> None:
+    with tempfile.TemporaryDirectory() as t:
+        tmp = Path(t)
+        built = _signed_round(tmp)
+        assert _ready_in(tmp)["ready"] is True, _ready_in(tmp)
+
+        doc = built["signoff"]
+        doc["rows"][0]["humanVerdict"] = "new-content-fail"
+        _write_signoff(tmp, doc)
+
+        state = _ready_in(tmp)
+        assert state["ready"] is False, state
+        assert "signoff.json changed after the acceptance record" in state["detail"], state
+
+
+def test_T16_missing_pin_hash_blocks_readiness() -> None:
+    with tempfile.TemporaryDirectory() as t:
+        tmp = Path(t)
+        built = _signed_round(tmp)
+
+        # (a) a pin whose sha256 was deleted
+        doc = json.loads(json.dumps(built["signoff"]))
+        del doc["pinnedInputs"]["manualReview"]["sha256"]
+        _write_signoff(tmp, doc)
+        state = _ready_in(tmp)
+        assert state["ready"] is False, state
+        assert "manualReview: pin has no sha256" in state["detail"], state
+
+        # (b) a pin that is gone completely
+        doc = json.loads(json.dumps(built["signoff"]))
+        del doc["pinnedInputs"]["manualReview"]
+        _write_signoff(tmp, doc)
+        state = _ready_in(tmp)
+        assert state["ready"] is False, state
+        assert "缺少 pin" in state["detail"] and "manualReview" in state["detail"], state
+
+        # (c) no acceptance identity at all
+        doc = json.loads(json.dumps(built["signoff"]))
+        doc["pinnedInputs"].pop("acceptanceIdentity", None)
+        _write_signoff(tmp, doc)
+        state = _ready_in(tmp)
+        assert state["ready"] is False, state
+        assert "acceptanceIdentity" in state["detail"], state
 
 
 PACKAGE_CANDIDATES = [

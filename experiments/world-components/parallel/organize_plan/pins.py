@@ -55,6 +55,8 @@ def pin_drift(pins: dict, base: Path | None = None) -> list[str]:
             continue
         want = entry.get("sha256")
         if not want:
+            # An unhashed pin proves nothing: it would let a later edit pass.
+            problems.append(f"{key}: pin has no sha256")
             continue
         name = entry.get("file")
         if not name:

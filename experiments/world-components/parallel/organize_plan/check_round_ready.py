@@ -33,6 +33,9 @@ HOLDOUT_FREEZE = HERE / "freeze" / "holdout-v1-freeze.json"
 SIGNOFF = HERE / "runs" / "r4" / "signoff.json"
 ACCEPTANCE = HERE / "runs" / "r4" / "acceptance.json"
 R2_SIGNOFF = HERE / "runs" / "r2" / "signoff.json"
+
+# A sign-off is only meaningful if it pins all of these.
+REQUIRED_PINS = ("criteria", "checker", "tamperProbes", "manualReview", "acceptanceIdentity")
 ADOPTION = HERE / "freeze" / "checkpoint-adoption.json"
 def newest_criteria() -> Path:
     found = sorted((HERE / "freeze").glob("criteria-v[0-9]*.json"))
@@ -123,6 +126,14 @@ def check_holdout(freeze_path: Path | None = None) -> dict:
                        f"包摘要 {doc['packageDigest']['sha256'][:12]}")}
 
 
+def _pin_value(pins: dict, key: str) -> str:
+    """The usable value of a pin: a raw digest for acceptanceIdentity, else its sha256."""
+    entry = pins.get(key)
+    if key == "acceptanceIdentity":
+        return str(entry or "")
+    return str((entry or {}).get("sha256") or "")
+
+
 def check_signoff() -> dict:
     if not SIGNOFF.exists():
         detail = (f"{SIGNOFF.relative_to(HERE).as_posix()} 不存在；先填 "
@@ -153,18 +164,33 @@ def check_signoff() -> dict:
     # open on inputs the signer never saw.
     pins = signed.get("pinnedInputs") or {}
     stale = pins_mod.pin_drift(pins)
+    # Every pin is mandatory. A missing one leaves the gate resting on something
+    # nobody hashed.
+    missing_pins = [key for key in REQUIRED_PINS if not _pin_value(pins, key).strip()]
+    if missing_pins:
+        stale.append(f"签认记录缺少 pin：{missing_pins}")
     # The signed record must also belong to the acceptance record on disk, not to
     # a previous run of the same round.
-    pin_id = (pins.get("acceptanceIdentity") or "")
-    if ACCEPTANCE.exists():
-        acc = json.loads(ACCEPTANCE.read_text(encoding="utf-8"))
-        if pin_id and pin_id != acc.get("identitySha256"):
-            stale.append("acceptance.json is a different record than the one signed")
+    pin_id = str(pins.get("acceptanceIdentity") or "")
+    acc = json.loads(ACCEPTANCE.read_text(encoding="utf-8"))
+    if not pin_id or pin_id != acc.get("identitySha256"):
+        stale.append("acceptance.json is a different record than the one signed")
+    # The acceptance record stores the hash of the sign-off it counted. If the
+    # sign-off file changed afterwards (e.g. one row's humanVerdict was edited),
+    # that hash no longer matches and the gate must close again.
+    acc_signoff = acc.get("signoff") or {}
+    if not acc_signoff:
+        stale.append("acceptance.json records no sign-off")
+    else:
+        if acc_signoff.get("file") and acc_signoff["file"] != pins_mod.rel(SIGNOFF):
+            stale.append(f"acceptance.json counts a different file: {acc_signoff['file']}")
+        if sha256(SIGNOFF) != acc_signoff.get("sha256"):
+            stale.append("signoff.json changed after the acceptance record was written")
     if stale:
         return {"ready": False, "state": "签认已过期",
                 "detail": f"签认钉定的输入已变：{stale}；需要重新生成签认表并重新签认"}
 
-    gate = json.loads(ACCEPTANCE.read_text(encoding="utf-8"))
+    gate = acc
     status = gate.get("gateStatus")
     detail = (f"签认人 {signed.get('signer')}（{signed.get('signerKind')}），"
               f"{signed.get('date')}，审阅 {signed.get('reviewedCommit')}；"

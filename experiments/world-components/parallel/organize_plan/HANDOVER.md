@@ -74,6 +74,16 @@
 | 跨分支检查跳过仍计通过 | `SkipTest` 单独计数，汇总行写 `N passed, M skipped`，`--strict-cross` 把跳过判失败 | 指向空目录 → `13 passed, 1 skipped`；加 `--strict-cross` → 退出 1 |
 | 判据文件仍引用 r2 队列文件 | `build_criteria.py` 的 `queueFile` 改为 `runs/r4/manual-review.json`，重新生成 `criteria-v3.json` | 见文件 |
 
+## 3d. 2026-11-08 第四次审阅后的修正
+
+| 问题 | 修法 | 验证 |
+| --- | --- | --- |
+| 签认后改一行 verdict，门仍可能开着 | `check_signoff()` 比对 `acceptance.signoff.sha256` 与当前签认文件哈希，并核对文件名 | T15；真实脚本端到端也跑过（改一行即 `签认已过期`） |
+| pin 缺 `sha256` 被静默跳过 | `pin_drift()` 报 `pin has no sha256`；五个 pin 必须齐全非空 | T16 |
+| `acceptanceIdentity` 为空时静默放行 | 空值即判过期 | T16(c) |
+
+反向验证：撤掉这两处修复后 T15/T16 均 FAIL，恢复后 16/16。
+
 ## 4. 只接收三类外部进展
 
 | 进展 | 到货后走哪条路径 | c3 是否会自己产生 |
