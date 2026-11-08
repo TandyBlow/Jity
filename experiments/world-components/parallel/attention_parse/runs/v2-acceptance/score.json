@@ -1,0 +1,280 @@
+{
+  "protocol": "c1-attention-granularity-v1",
+  "scope": "parse only; no fact filtering",
+  "hashes": {
+    "generatedAt": "2026-11-08T05:55:54+00:00",
+    "commit": "44a23687fc41522cae0bf6533033871c9f13b4e5",
+    "branch": "exp/c-attention-parse",
+    "trackedDirty": false,
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "files": {
+      "attention_parse_v2.py": "5142af00396e5e7c8c94a97e2e50fc6cdca76b021f580d2a63af13b79aaefdea",
+      "attention_parse.py": "f54af4010a162548ae9859c179a1edfd8f43a0b401a52c234644558cf0dce490",
+      "run_v2_acceptance.py": "9f3e012f56d4d71825395c3ec51f6ff21cd4bf05d3e9858346369c9778d6a975",
+      "freeze/acceptance-v1.json": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
+      "freeze/anchors-v1.json": "4995c449ad954a4eef1890ac8cf4b856311c44ca9cbd7c04dfd0c34758f5507b",
+      "freeze/rosters.json": "2e498291130a23c1bd5cb3c256d140196fb68c338276f8b132fc079631845d82",
+      "freeze/v2-extra-probes.json": "af5c7d955c59bcdbf5a696464c054e48fa0c56a5c937652e4081c4bf34a79be2"
+    }
+  },
+  "summary": {
+    "samples": 10,
+    "passed": 10,
+    "failed": 0,
+    "extraProbes": 2,
+    "extraProbesPassed": 2
+  },
+  "rows": [
+    {
+      "sampleId": "A01",
+      "category": "scope_object",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "object"
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "object"
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A02",
+      "category": "scope_position",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "position"
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "position"
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A03",
+      "category": "scope_appearance",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "person_c",
+          "scope": "appearance"
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "person_c",
+          "scope": "appearance"
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A04",
+      "category": "scope_task",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "task"
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "task"
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A05",
+      "category": "scope_part_anchored_initial",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "box",
+          "scope": "part",
+          "part": "盒盖",
+          "partAnchored": true
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "box",
+          "scope": "part",
+          "part": "盒盖",
+          "partAnchored": true
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A06",
+      "category": "scope_part_anchored_change",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "item_key",
+          "scope": "part",
+          "part": "表面",
+          "partAnchored": true
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "item_key",
+          "scope": "part",
+          "part": "表面",
+          "partAnchored": true
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A07",
+      "category": "scope_part_unanchored",
+      "expectedState": "resolved",
+      "actualState": "resolved",
+      "expectedTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "part",
+          "part": "袖口",
+          "partAnchored": false
+        }
+      ],
+      "actualTargets": [
+        {
+          "entityId": "person_a",
+          "scope": "part",
+          "part": "袖口",
+          "partAnchored": false
+        }
+      ],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A08",
+      "category": "state_ambiguous",
+      "expectedState": "ambiguous",
+      "actualState": "ambiguous",
+      "expectedTargets": [],
+      "actualTargets": [],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A09",
+      "category": "state_unresolved",
+      "expectedState": "unresolved",
+      "actualState": "unresolved",
+      "expectedTargets": [],
+      "actualTargets": [],
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "sampleId": "A10",
+      "category": "state_none",
+      "expectedState": "none",
+      "actualState": "none",
+      "expectedTargets": [],
+      "actualTargets": [],
+      "errors": [],
+      "detail": {},
+      "match": true
+    }
+  ],
+  "extraProbes": [
+    {
+      "probeId": "X1",
+      "mechanism": "任务目标原句 -> 负责人 + task 范围",
+      "utterance": "「取回柜子里的东西」做完了吗？",
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_c",
+            "scope": "task",
+            "surface": "取回柜子里的东西",
+            "scopeCue": "取回柜子里的东西"
+          }
+        ]
+      },
+      "actual": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_c",
+            "scope": "task"
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null
+      },
+      "errors": [],
+      "detail": {},
+      "match": true
+    },
+    {
+      "probeId": "X2",
+      "mechanism": "词表外局部 -> 保守空目标",
+      "utterance": "林川手背上的划痕还在吗？",
+      "expected": {
+        "state": "unresolved",
+        "targets": [],
+        "unresolvedMentions": [
+          "划痕"
+        ],
+        "reason": "part_outside_lexicon"
+      },
+      "actual": {
+        "state": "unresolved",
+        "targets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [
+          "划痕"
+        ],
+        "reason": "part_outside_lexicon"
+      },
+      "errors": [],
+      "detail": {},
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "protocol": "c1-n2-wiring-v1",
+  "scope": "scope filtering on the committed fact bundle; no model, no service, no page",
+  "hashes": {
+    "generatedAt": "2026-11-08T05:55:55+00:00",
+    "commit": "44a23687fc41522cae0bf6533033871c9f13b4e5",
+    "branch": "exp/c-attention-parse",
+    "trackedDirty": false,
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "files": {
+      "attention_parse_v2.py": "5142af00396e5e7c8c94a97e2e50fc6cdca76b021f580d2a63af13b79aaefdea",
+      "n2_attention_filter.py": "412556883634042ad5bb380fcc4ffbcc3f640f1246a4a5e917f5b467690e6f7e",
+      "run_wiring.py": "020875847126af2b433c5beccc40627a7ac590facb9a9dfe56fd267ba7ab30a6",
+      "freeze/facts-v1.json": "249059bb878bd15575d06e51c8467ab64b532781ec3065cfce86b1623ac5be4a",
+      "freeze/wiring-v1.json": "5f6509f4ce8ee8e86767dd022ecd40c4c3dda1634b610d309354128f863a2087"
+    }
+  },
+  "summary": {
+    "cases": 8,
+    "passed": 8,
+    "failed": 0,
+    "emptyTargetCases": 2,
+    "emptyTargetCasesWithNoOptional": 2,
+    "outOfScopeExclusions": 14,
+    "mustKeptInAllCases": true,
+    "forbiddenSelected": 0
+  },
+  "rows": [
+    {
+      "caseId": "W01",
+      "targets": "part 命中可选事实",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-appear-1#appearanceText"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-appear-1#appearanceText"
+      ],
+      "outOfScopeExcluded": [
+        "ns-pos-1#position",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W02",
+      "targets": "appearance 范围排除他者",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "outOfScopeExcluded": [
+        "ns-pos-1#position",
+        "ns-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W03",
+      "targets": "position 范围",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "outOfScopeExcluded": [
+        "ns-appear-1#appearanceText",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W04",
+      "targets": "part 未锚定不放大",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "outOfScopeExcluded": [
+        "ns-pos-1#position",
+        "ns-appear-1#appearanceText",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W05",
+      "targets": "空目标（歧义）",
+      "state": "ambiguous",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "outOfScopeExcluded": [],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W06",
+      "targets": "空目标（无关注）",
+      "state": "none",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "outOfScopeExcluded": [],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W07",
+      "targets": "object 范围",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "outOfScopeExcluded": [
+        "ns-appear-1#appearanceText",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    },
+    {
+      "caseId": "W08",
+      "targets": "task 范围无对应事实",
+      "state": "resolved",
+      "expectedSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "actualSelectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "outOfScopeExcluded": [
+        "ns-pos-1#position",
+        "ns-appear-1#appearanceText",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "mustKept": true,
+      "errors": [],
+      "match": true
+    }
+  ]
+}

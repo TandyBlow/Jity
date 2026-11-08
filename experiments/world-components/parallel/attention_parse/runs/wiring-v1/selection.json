@@ -1,0 +1,393 @@
+{
+  "protocol": "c1-n2-wiring-v1",
+  "rows": [
+    {
+      "caseId": "W01",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-appear-1#appearanceText"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "person_a",
+          "targetEntityIds": [
+            "item_key"
+          ]
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": true,
+          "reason": "in_scope",
+          "scope": "part",
+          "part": "表面"
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "corridor",
+          "targetEntityIds": [
+            "item_key"
+          ]
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W02",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-loc-appear-1#appearanceText"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "person_a",
+          "targetEntityIds": [
+            "corridor"
+          ]
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "item_key",
+          "targetEntityIds": [
+            "corridor"
+          ]
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": true,
+          "reason": "in_scope",
+          "scope": "appearance",
+          "part": null
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W03",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": true,
+          "reason": "in_scope",
+          "scope": "position",
+          "part": null
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "item_key",
+          "targetEntityIds": [
+            "person_a"
+          ]
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "corridor",
+          "targetEntityIds": [
+            "person_a"
+          ]
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W04",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "person_a",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "item_key",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "corridor",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W05",
+      "targetsEmpty": true,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W06",
+      "targetsEmpty": true,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "empty_targets"
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W07",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage",
+        "ns-pos-1#position"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": true,
+          "reason": "in_scope",
+          "scope": "object",
+          "part": null
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "item_key",
+          "targetEntityIds": [
+            "person_a"
+          ]
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "corridor",
+          "targetEntityIds": [
+            "person_a"
+          ]
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    },
+    {
+      "caseId": "W08",
+      "targetsEmpty": false,
+      "selectedFactIds": [
+        "ns-task-1#taskGoal",
+        "ns-task-1#timePassage"
+      ],
+      "decisions": [
+        {
+          "factId": "ns-task-1#taskGoal",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-task-1#timePassage",
+          "kept": true,
+          "reason": "must_kept"
+        },
+        {
+          "factId": "ns-pos-1#position",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "person_a",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "item_key",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-loc-appear-1#appearanceText",
+          "kept": false,
+          "reason": "out_of_scope",
+          "factEntityId": "corridor",
+          "targetEntityIds": [
+            "person_b"
+          ]
+        },
+        {
+          "factId": "ns-cont-2#appearanceText",
+          "kept": false,
+          "reason": "authorization_forbidden"
+        }
+      ]
+    }
+  ]
+}

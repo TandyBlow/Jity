@@ -1,0 +1,283 @@
+{
+  "protocol": "c1-attention-granularity-v1",
+  "rows": [
+    {
+      "sampleId": "A01",
+      "worldRef": "W2",
+      "utterance": "林川怎么样了？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_a",
+            "scope": "object",
+            "surface": "林川",
+            "scopeCue": null
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "person_a",
+            "surface": "林川",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A02",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_a",
+            "scope": "position",
+            "surface": "林川",
+            "scopeCue": "在哪儿"
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "person_a",
+            "surface": "林川",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A03",
+      "worldRef": "W2",
+      "utterance": "周宁今天穿的什么？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_c",
+            "scope": "appearance",
+            "surface": "周宁",
+            "scopeCue": "穿的"
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "person_c",
+            "surface": "周宁",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A04",
+      "worldRef": "W2",
+      "utterance": "林川的任务怎样了？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_a",
+            "scope": "task",
+            "surface": "林川",
+            "scopeCue": "任务"
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "person_a",
+            "surface": "林川",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A05",
+      "worldRef": "W2",
+      "utterance": "盒盖还关着吗？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "box",
+            "scope": "part",
+            "surface": "盒盖",
+            "scopeCue": "盒盖",
+            "part": "盒盖",
+            "partAnchored": true
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "box",
+            "surface": "盒盖",
+            "via": "descriptor",
+            "start": 0,
+            "end": 2,
+            "note": "from initialAppearance「盒盖关闭。」"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A06",
+      "worldRef": "W1",
+      "utterance": "钥匙表面的灰还在吗？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "item_key",
+            "scope": "part",
+            "surface": "钥匙",
+            "scopeCue": "表面",
+            "part": "表面",
+            "partAnchored": true
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "item_key",
+            "surface": "钥匙",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          },
+          {
+            "entityId": "item_key",
+            "surface": "钥匙",
+            "via": "descriptor",
+            "start": 0,
+            "end": 2,
+            "note": "from initialAppearance「一把黄铜钥匙。」"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A07",
+      "worldRef": "W2",
+      "utterance": "林川的袖口湿了吗？",
+      "parsed": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_a",
+            "scope": "part",
+            "surface": "林川",
+            "scopeCue": "袖口",
+            "part": "袖口",
+            "partAnchored": false
+          }
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": null,
+        "traces": [
+          {
+            "entityId": "person_a",
+            "surface": "林川",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A08",
+      "worldRef": "W1",
+      "utterance": "那个学生怎么样了？",
+      "parsed": {
+        "state": "ambiguous",
+        "targets": [],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_b"
+        ],
+        "unresolvedMentions": [],
+        "reason": "shared_name_stem",
+        "traces": [
+          {
+            "entityId": "person_a",
+            "surface": "学生",
+            "via": "name_stem",
+            "start": 2,
+            "end": 4,
+            "note": "shared stem of ['学生A', '学生B']"
+          },
+          {
+            "entityId": "person_b",
+            "surface": "学生",
+            "via": "name_stem",
+            "start": 2,
+            "end": 4,
+            "note": "shared stem of ['学生A', '学生B']"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "A09",
+      "worldRef": "W2",
+      "utterance": "老林的任务呢？",
+      "parsed": {
+        "state": "unresolved",
+        "targets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [
+          "老林"
+        ],
+        "reason": "nickname_not_in_committed_record",
+        "traces": []
+      }
+    },
+    {
+      "sampleId": "A10",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "parsed": {
+        "state": "none",
+        "targets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [],
+        "reason": "no_attention_mention",
+        "traces": []
+      }
+    }
+  ]
+}
