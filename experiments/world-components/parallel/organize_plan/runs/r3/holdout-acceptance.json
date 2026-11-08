@@ -1,0 +1,73 @@
+{
+ "receiptId": "holdout-a-v1",
+ "package": "D:\\others\\Jity\\artifacts\\holdout-a-v1",
+ "receivedFrom": "A (world-server) — backend/scripts/build_holdout_v1.py",
+ "packageFiles": {
+  "manifest.json": "998b4fe3b142d79065f2e0885a3a4b7a7b9199732411062f8a77885bb7e69f36",
+  "world.db": "2a1ece8e138c4d4ac33bddb70e30a2be9017983714e5b2f948dd6ac3613de332",
+  "semantic-review.json": "46939c1411613f31982beb39d81934d9f50895086d38a6122ffa94bc4574ebeb",
+  "semantic-review-evidence.json": "d3f0fff39268e523a43e6deb2b74881154f4f8b241e10d2ebcfa941b470e0eb2",
+  "pairs": {
+   "h01-authorized": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
+   "h02-authorized": "6d0c6fbfd233fb5f9f66143d7b7943a7681c2ec7a1a4576f3743f9db0d417afb",
+   "h03-authorized": "487e889ac700fc0670fe2607469958f0f2bcb6a1013de68505e78efb7465cae0",
+   "h04-authorized": "8e92d2dec6a9367c26bbe1e5a3ecdc1eaa6f5dc2148556f1e47b85dafe2c7872",
+   "h05-authorized": "220a0065977af840c954287b23c85e016a3705e1e9a51538fddb6b093399f008",
+   "h06-authorized": "f8174abd60e5f84b3fc2758e2cfe66cd520c912a8fade62dac3faf53e09de7c6",
+   "h07-authorized": "cd73d45a4816ec5a26e6b7f87af16e28a8ca0630daa2b9b40d4ffd8dae75ea97",
+   "h08-authorized": "c4f794d91a4e42e202e91db0e39d5f2da38b2b9c415a676aabbb2285a0bf87fb",
+   "h09-authorized": "65f63c4f4878316a2b1132ae98f995c6c7673304e0de3922c831d2f6337cf28a",
+   "h10-authorized": "087982bb2ce5096730bbbd93ac32c8b84a616ec0f5559b1da8ea8515e1b13102",
+   "h11-authorized": "5c8a0a9024281f604f0f310dc691bc4429cde6a8389d49fb668709486309a221",
+   "h12-authorized": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
+  }
+ },
+ "validatorExitCode": 1,
+ "validator": {
+  "status": "not-admissible",
+  "counts": {
+   "sources": 12,
+   "multiGroupSources": 12,
+   "edgeSources": 12
+  },
+  "errorsByFamily": {
+   "PKG": 1
+  },
+  "sampleErrors": [
+   {
+    "code": "PKG-semantic-review-not-human",
+    "detail": "reviewer.kind='ai'; the semantic independence verdict must come from a human"
+   }
+  ]
+ },
+ "gate": {
+  "admissible": false,
+  "frozen": false,
+  "blockedBy": [
+   "PKG-semantic-review-not-human"
+  ]
+ },
+ "whatPassed": {
+  "schemaAndChain": "0 errors (P/C families)",
+  "evidenceAndAuthorization": "0 errors (E/A families); 12/12 verdict=pass, world-relation-validator/1",
+  "isolationScreen": "0 errors (I family); 60/60 facts below the 0.8 bigram line, 0 identical",
+  "plans": "0 errors (M family); two legal plans per source",
+  "counts": {
+   "sources": 12,
+   "multiGroupSources": 12,
+   "edgeSources": 12
+  }
+ },
+ "whatBlocks": {
+  "code": "PKG-semantic-review-not-human",
+  "means": "the semantic independence verdict is an AI draft; c3's frozen holdout rule requires a human to confirm or rewrite every source verdict",
+  "notAProblemWith": [
+   "the world records",
+   "the evidence chain",
+   "the relation authorization",
+   "the plans"
+  ]
+ },
+ "nextAction": "a human reads artifacts/holdout-a-v1/pairs/*.json against the old material (evidence: artifacts/holdout-a-v1/semantic-review-evidence.json), sets reviewer.kind=human plus a per-source verdict, then re-runs validate_holdout.py --package ... --freeze",
+ "noModelRun": true
+}

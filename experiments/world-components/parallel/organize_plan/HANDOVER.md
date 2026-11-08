@@ -12,7 +12,7 @@
 
 | # | 状态 | 就绪 | 依据 |
 | --- | --- | --- | --- |
-| 1 | **留出待交付** | NO | `freeze/holdout-v1-freeze.json` 不存在 |
+| 1 | **留出待交付** | NO | 包已到（`artifacts/holdout-a-v1`，12 源），但卡在**人工语义复核**；`freeze/holdout-v1-freeze.json` 未生成 |
 | 2 | **人工签认待完成** | NO | 有签认记录，但 `signerKind='ai'`、`signoffClass='audit-only'` |
 | 3 | **计划训练检查点缺失** | NO | `freeze/checkpoint-adoption.json` 不存在；取证 `not-found-locally` |
 
@@ -56,7 +56,7 @@
 
 | 进展 | 到货后走哪条路径 | c3 是否会自己产生 |
 | --- | --- | --- |
-| A 的新留出包 | `validate_holdout.py --package` → `--freeze` | 不会（需 Python 侧新世界回合） |
+| A 的新留出包 | 已到 v1：`validate_holdout.py --package` 除人工语义复核外全部通过，见 `runs/r3/holdout-acceptance.json` | 不会 |
 | 实际人工签认 | 填表 → `apply_signoff.py` → `apply_review.py` | 不会（AI 草稿不算） |
 | 可归因检查点 | `freeze/checkpoint-adoption.json` + `check_adoption.py` | 不会（取证已结束） |
 

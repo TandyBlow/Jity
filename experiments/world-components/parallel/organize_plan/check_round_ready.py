@@ -42,6 +42,13 @@ import check_adoption as adoption  # noqa: E402
 
 def check_holdout() -> dict:
     if not HOLDOUT_FREEZE.exists():
+        receipt = HERE / "runs" / "r3" / "holdout-acceptance.json"
+        if receipt.exists():
+            r = json.loads(receipt.read_text(encoding="utf-8"))
+            gate = r.get("gate", {})
+            return {"ready": False, "state": "留出待交付",
+                    "detail": (f"包已收到（{r.get('receiptId')}），校验 blockedBy="
+                               f"{gate.get('blockedBy')}；冻结件未生成")}
         return {"ready": False, "state": "留出待交付",
                 "detail": "freeze/holdout-v1-freeze.json 不存在：A 的包未到，或未通过 --package 校验"}
     doc = json.loads(HOLDOUT_FREEZE.read_text(encoding="utf-8"))
