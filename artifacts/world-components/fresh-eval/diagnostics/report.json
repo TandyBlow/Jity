@@ -1,5 +1,5 @@
 {
- "worktreeHead": "cfea5835e85d6a7959dafb7abead23123b72964c",
+ "worktreeHead": "2afac96eab682889f0f3e5c98d4300527223eae8",
  "positioning": {
   "whatThisIs": "六条诊断夹具：用已登记夹具的初始状态构造假设点位，经 A 侧内核应用、跑排除规则、并给出人工核验要求。",
   "whatThisIsNot": "不是正式独立评测题，不冻结，不主张点位级独立，不计入任何能力成绩。",
@@ -1525,12 +1525,19 @@
    "reviewChecks": {
     "mustHold": [
      "第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成",
-     "必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’",
      "理智 30→28 为下降"
     ],
     "mustNotAppear": [
-     "把两个任务都写成已完成",
      "把 28 写成上升"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "子任务 task_wait_noon 的 pending 状态：本点事实包不提供，不得要求模型写出，也不得因省略扣分"
+    ],
+    "beyondInputSupport": [
+     "“全部任务完成”“两个任务都已完成”这类断言：输入只支持 task_c_root 达成，超出即没有输入支持，可作为人工判定项"
+    ],
+    "humanEvidenceOnly": [
+     "若用完整状态核对：task_wait_noon=pending，与“全部完成”矛盾；该矛盾单列为人工核验依据，不由判定器判、也不算模型漏述"
     ]
    },
    "points": [

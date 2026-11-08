@@ -29,15 +29,27 @@
 | `c8d05` | 2 | 必须成立 | 不得编造任何变化 | `school.initial-state.json` @ `root_0`；字段 — |  |  | 待核验 |
 | `c8d05` | 3 | 必须不出现 | 任何移动、任务、人格、理智变化 | `school.initial-state.json` @ `root_0`；字段 — |  |  | 待核验 |
 | `c8d06` | 1 | 必须成立 | 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
-| `c8d06` | 2 | 必须成立 | 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’ | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
-| `c8d06` | 3 | 必须成立 | 理智 30→28 为下降 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
-| `c8d06` | 4 | 必须不出现 | 把两个任务都写成已完成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
-| `c8d06` | 5 | 必须不出现 | 把 28 写成上升 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 2 | 必须成立 | 理智 30→28 为下降 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 3 | 必须不出现 | 把 28 写成上升 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+
+## 输入未提供、因此不要求模型写出的项
+
+这些项**不计入扣分**；只在人工核验里作为说明。
+
+- `c8d06`：子任务 task_wait_noon 的 pending 状态：本点事实包不提供，不得要求模型写出，也不得因省略扣分
+
+## 超出输入支持的断言（可人工判定）
+
+- `c8d06`：“全部任务完成”“两个任务都已完成”这类断言：输入只支持 task_c_root 达成，超出即没有输入支持，可作为人工判定项
+
+## 仅作人工依据（不由判定器判）
+
+- `c8d06`：若用完整状态核对：task_wait_noon=pending，与“全部完成”矛盾；该矛盾单列为人工核验依据，不由判定器判、也不算模型漏述
 
 ## 逐条提示
 
 - `c8d04`：明查**数值方向**（30→26 是下降，不是上升）。判定器目前不查方向词，所以这一项只能由人给结论。
-- `c8d06`：明查**父任务达成与子任务 pending 是否同时保留**（`task_c_root=achieved` 且 `task_wait_noon=pending`），不得只写“完成任务”或“全部完成”。事实包只带父任务那条 `task_achieved`，子任务状态不在包里，所以这项也必须由人核。
+- `c8d06`：只核**父任务达成是否写对**，以及是否出现**超出输入支持**的“全部任务完成”类断言。子任务 pending 不在输入里，**不要求模型写出，也不因省略扣分**；若核验者用完整状态确认句子与 pending 矛盾，把这条写在“仅作人工依据”里。
 - `c8d03`：只核 N2 规则臂的判定与理由，不核页面视角过滤，不计入端到端成绩。
 - `c8d05`：时间必述可程序检查；“没有编造”只能部分检查（见 `expectation-review.md`）。
 
@@ -50,7 +62,7 @@
 | `c8d03` | 0/4 | 0 | 0 | 0 | 4 |  |
 | `c8d04` | 0/6 | 0 | 0 | 0 | 6 |  |
 | `c8d05` | 0/3 | 0 | 0 | 0 | 3 |  |
-| `c8d06` | 0/5 | 0 | 0 | 0 | 5 |  |
+| `c8d06` | 0/3 | 0 | 0 | 0 | 3 |  |
 
 ## 结论口径
 

@@ -13,6 +13,17 @@
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：时长 3 分钟（本轮人工指定）；目的地 corridor（夹具既有地点）
 
+**允许的表述**
+
+- person_a 的移动方向必须是大堂→走廊
+- 其余五人只写现状，不写他们移动
+
+**禁止的表述**
+
+- 学生以外的人物
+- 任何任务达成
+- 任何人格或理智变化
+
 ### `c8d01_p1`（三分钟）
 
 **before**
@@ -74,17 +85,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- person_a 的移动方向必须是大堂→走廊
-- 其余五人只写现状，不写他们移动
-
-**禁止的表述**
-
-- 学生以外的人物
-- 任何任务达成
-- 任何人格或理智变化
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `286e112598cc96b6…`
@@ -107,6 +107,16 @@
 - 提交状态：not-committed: hypothetical point, no round/group/settle/points record
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：时长 90 秒（本轮人工指定）；三条目的地均为夹具既有地点
+
+**允许的表述**
+
+- 三条移动的起点与终点必须各自对应，不得互换
+- person_e 的终点是它的父地点二楼，不是同层教室
+
+**禁止的表述**
+
+- 第四条移动
+- 把三人写成同一目的地
 
 ### `c8d02_p1`（90秒）
 
@@ -185,16 +195,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- 三条移动的起点与终点必须各自对应，不得互换
-- person_e 的终点是它的父地点二楼，不是同层教室
-
-**禁止的表述**
-
-- 第四条移动
-- 把三人写成同一目的地
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `0cbac3e6ce6b0c37…`
@@ -218,6 +218,16 @@
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：时长 50 秒（本轮人工指定）；视角取夹具主角 person_c
 - 视角：`person_c` @ `classroom1`
+
+**允许的表述**
+
+- N2 规则臂把 person_a 的移动判为不可见（invisible），理由记录观察依据缺失
+- person_c 自身的现状可以进 must
+
+**禁止的表述**
+
+- 页面叙事臂的输出被当作视角过滤结果
+- 把本项计入端到端能力成绩
 
 ### `c8d03_p1`（50秒）
 
@@ -280,16 +290,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- N2 规则臂把 person_a 的移动判为不可见（invisible），理由记录观察依据缺失
-- person_c 自身的现状可以进 must
-
-**禁止的表述**
-
-- 页面叙事臂的输出被当作视角过滤结果
-- 把本项计入端到端能力成绩
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `067f3dbf15a7d742…`
@@ -312,6 +312,18 @@
 - 提交状态：not-committed: hypothetical point, no round/group/settle/points record
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：时长 2 分钟（本轮人工指定）；理智 30→26（本轮人工指定；夹具 time-only 用的是 35）；人格文本＝夹具原文
+
+**允许的表述**
+
+- 必须写成下降（30→26）
+- 任务目标原文必须逐字出现
+- 人格文本按夹具原文
+
+**禁止的表述**
+
+- 升到了 26
+- 把任务说成未完成
+- 把人格写成相反意思
 
 ### `c8d04_p1`（两分钟）
 
@@ -382,18 +394,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- 必须写成下降（30→26）
-- 任务目标原文必须逐字出现
-- 人格文本按夹具原文
-
-**禁止的表述**
-
-- 升到了 26
-- 把任务说成未完成
-- 把人格写成相反意思
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `b2e9b24144f5ed7f…`
@@ -416,6 +416,15 @@
 - 提交状态：not-committed: hypothetical point, no round/group/settle/points record
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：时长 40 秒（本轮人工指定）
+
+**允许的表述**
+
+- 必须写出时间流逝
+- 不得编造任何变化
+
+**禁止的表述**
+
+- 任何移动、任务、人格、理智变化
 
 ### `c8d05_p1`（40秒）
 
@@ -468,15 +477,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- 必须写出时间流逝
-- 不得编造任何变化
-
-**禁止的表述**
-
-- 任何移动、任务、人格、理智变化
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `29e512d6533a6550…`
@@ -499,6 +499,27 @@
 - 提交状态：not-committed: hypothetical point, no round/group/settle/points record
 - 独立性：undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning
 - 人工指定参数：三段时长 4 秒 / 2 分钟 / 3 分钟（本轮人工指定）；理智 30→28（本轮人工指定）；人格文本＝夹具原文
+
+**允许的表述**
+
+- 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成
+- 理智 30→28 为下降
+
+**禁止的表述**
+
+- 把 28 写成上升
+
+**不要求模型写出（输入未提供，不得因省略扣分）**
+
+- 子任务 task_wait_noon 的 pending 状态：本点事实包不提供，不得要求模型写出，也不得因省略扣分
+
+**超出输入支持的断言**
+
+- “全部任务完成”“两个任务都已完成”这类断言：输入只支持 task_c_root 达成，超出即没有输入支持，可作为人工判定项
+
+**仅作人工依据**
+
+- 若用完整状态核对：task_wait_noon=pending，与“全部完成”矛盾；该矛盾单列为人工核验依据，不由判定器判、也不算模型漏述
 
 ### `c8d06_p1`（四秒）
 
@@ -561,17 +582,6 @@
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
 
-**允许的表述**
-
-- 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成
-- 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’
-- 理智 30→28 为下降
-
-**禁止的表述**
-
-- 把两个任务都写成已完成
-- 把 28 写成上升
-
 **程序检查结果**
 
 - 内核：ok；after 摘要 `42e1bc7833716c8a…`
@@ -631,17 +641,6 @@
 | sanity | person_e | `characters.person_e.sanity` | 50 |
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
-
-**允许的表述**
-
-- 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成
-- 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’
-- 理智 30→28 为下降
-
-**禁止的表述**
-
-- 把两个任务都写成已完成
-- 把 28 写成上升
 
 **程序检查结果**
 
@@ -720,17 +719,6 @@
 | sanity | person_e | `characters.person_e.sanity` | 50 |
 | at | person_f | `characters.person_f.position.containerId` | classroom1 |
 | sanity | person_f | `characters.person_f.sanity` | 60 |
-
-**允许的表述**
-
-- 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成
-- 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’
-- 理智 30→28 为下降
-
-**禁止的表述**
-
-- 把两个任务都写成已完成
-- 把 28 写成上升
 
 **程序检查结果**
 

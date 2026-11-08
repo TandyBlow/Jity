@@ -319,6 +319,8 @@ def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_co
              "不说明该点已提交，也不说明它未参与训练或调参。", "",
              "**本轮范围**：没有模型输出，也没有人工结论。核验只到“题目与预期是否成立”，"
              "未核项一律记 `待核验`；不运行模型、不追加候选。", "",
+             "**通则**：模型只对给定输入负责——输入未提供的状态不作为必述项，"
+             "也不因省略扣分；超出输入支持的断言可以判“没有依据”。", "",
              "**两条不能外推的结论**：R3 自检通过只证明规则按当前口径工作，"
              "**不证明**历史变化事实可靠（十条旧题的依据全部 `undetermined`），"
              "**也不证明**任何新题独立。", "",
@@ -508,13 +510,26 @@ def write_review_table(data):
                 n += 1
                 lines.append(f"| `{item['id']}` | {n} | {kind} | {text} | {base} "
                              f"|  |  | 待核验 |")
+    lines += ["", "## 输入未提供、因此不要求模型写出的项", "",
+              "这些项**不计入扣分**；只在人工核验里作为说明。", ""]
+    for item in data["items"]:
+        for text in item["reviewChecks"].get("notRequiredBecauseNotInInput", []):
+            lines.append(f"- `{item['id']}`：{text}")
+    lines += ["", "## 超出输入支持的断言（可人工判定）", ""]
+    for item in data["items"]:
+        for text in item["reviewChecks"].get("beyondInputSupport", []):
+            lines.append(f"- `{item['id']}`：{text}")
+    lines += ["", "## 仅作人工依据（不由判定器判）", ""]
+    for item in data["items"]:
+        for text in item["reviewChecks"].get("humanEvidenceOnly", []):
+            lines.append(f"- `{item['id']}`：{text}")
     lines += ["", "## 逐条提示", "",
               "- `c8d04`：明查**数值方向**（30→26 是下降，不是上升）。"
               "判定器目前不查方向词，所以这一项只能由人给结论。",
-              "- `c8d06`：明查**父任务达成与子任务 pending 是否同时保留**"
-              "（`task_c_root=achieved` 且 `task_wait_noon=pending`），"
-              "不得只写“完成任务”或“全部完成”。事实包只带父任务那条 `task_achieved`，"
-              "子任务状态不在包里，所以这项也必须由人核。",
+              "- `c8d06`：只核**父任务达成是否写对**，以及是否出现**超出输入支持**的"
+              "“全部任务完成”类断言。子任务 pending 不在输入里，"
+              "**不要求模型写出，也不因省略扣分**；"
+              "若核验者用完整状态确认句子与 pending 矛盾，把这条写在“仅作人工依据”里。",
               "- `c8d03`：只核 N2 规则臂的判定与理由，不核页面视角过滤，不计入端到端成绩。",
               "- `c8d05`：时间必述可程序检查；“没有编造”只能部分检查（见 `expectation-review.md`）。",
               "",
@@ -571,13 +586,14 @@ def write_expectation_review(rows):
          "“没有变化”类总结句也不在检查范围",
          "是否存在检查器不认识的编造；空点叙述是否自然"),
         ("c8d06",
-         "第三点只写父任务达成；必须保留子任务仍为 pending；不得表述为“全部任务完成”",
+         "第三点只写父任务达成；不得把“两个任务都完成”当作有输入支持的事实",
          "只要句子绑定任意 `task_achieved` 事实即可通过；"
          "未绑定任务事实的完成说法会报 `task_claimed_without_fact`",
-         "**父/子任务区别不在检查范围**：事实包里只有父任务的 `task_achieved`，"
-         "子任务 pending 根本不在包里；不点人物的总结句（“全部任务完成”）"
-         "被显式排除在范围外",
-         "“全部完成”类总结句；父任务与子任务的同时保留"),
+         "**输入里没有子任务状态**：事实包只有父任务的 `task_achieved`，"
+         "所以不能要求模型写出“子任务仍 pending”，也不能因省略扣分；"
+         "不点人物的总结句（“全部任务完成”）被判定器显式排除在范围外",
+         "“全部任务完成”是否超出输入支持（人工判定）；"
+         "若用完整状态核对出与 pending 矛盾，单列为人工依据，不算模型漏述"),
     ]
     lines = ["# 六条诊断的预期复核（自动生成，勿手改）", "",
              "问题：预期里写的“必须／不得”，现有工具到底检查了哪一部分？"
@@ -585,6 +601,9 @@ def write_expectation_review(rows):
              "`n2_perspective.py` 的规则逐条对照，并列出剩余交人工的部分。", "",
              "**检查器存在 ≠ 预期被完整覆盖**。下表第三列是“程序实际检查什么”，"
              "第四列是“不覆盖什么”，第五列是“只能交人工的部分”。", "",
+             "**一条通则**：模型只对给定输入负责。输入没有提供的事实不得作为必述项，"
+             "也不得因省略扣分；超出输入支持的断言可以判，但那是“没有依据”，"
+             "不是“与隐藏事实矛盾”。", "",
              "| 项 | 预期 | 程序实际检查什么 | 程序不覆盖什么 | 交人工的部分 |",
              "|---|---|---|---|---|"]
     for item_id, expect, checks, not_covered, human in items:
@@ -643,9 +662,12 @@ def write_grader_handoff(rows):
              "```", "",
              "**输入句**："
              "`C完成了任务「安全度过校园中的这段时间」，校园里的所有任务都完成了。`", "",
-             "**应判结果**：违规。两点理由都要写到："
-             "（1）事实只支持 `task_c_root` 达成；"
-             "（2）子任务 `task_wait_noon` 仍为 pending，不能说“所有任务完成”。", "",
+             "**应判结果**：违规，理由是**超出输入支持**：事实只支持 `task_c_root` 达成，"
+             "“所有任务都完成了”不是本点事实能支持的说法。", "",
+             "**不要写成“与事实矛盾”**：子任务 `task_wait_noon` 仍为 pending 这件事"
+             "**不在事实包里**（`committed-narration.ts` 只发 `task_achieved`，不发任务状态），"
+             "模型也没有拿到它。因此不能要求模型写出这条 pending，也不能因为省略扣分。"
+             "“全部完成”与 pending 的矛盾，只能在人工用完整状态核对时单列为依据。", "",
              "**当前行为**：通过。`narration-alignment.ts:439-444` 只要句子里绑上任意 "
              "`task_achieved` 事实就放行；不点人物的总结句（“全部任务完成”）"
              "被第 433 行注释显式排除在检查范围外。", "",
@@ -717,6 +739,21 @@ def write_review_packets(rows, data):
                   f"- 人工指定参数：{'；'.join(item['declaredParameters'])}"]
         if "perspective" in b:
             lines.append(f"- 视角：`{b['perspective']['entityId']}` @ `{b['perspective']['at']}`")
+        lines += ["", "**允许的表述**", ""]
+        for x in item["reviewChecks"]["mustHold"]:
+            lines.append(f"- {x}")
+        lines += ["", "**禁止的表述**", ""]
+        for x in item["reviewChecks"]["mustNotAppear"]:
+            lines.append(f"- {x}")
+        for key, title in (("notRequiredBecauseNotInInput",
+                            "不要求模型写出（输入未提供，不得因省略扣分）"),
+                           ("beyondInputSupport", "超出输入支持的断言"),
+                           ("humanEvidenceOnly", "仅作人工依据")):
+            values = item["reviewChecks"].get(key, [])
+            if values:
+                lines += ["", f"**{title}**", ""]
+                for x in values:
+                    lines.append(f"- {x}")
         for step, chk in zip(row["points"], row["screening"]):
             pt = next(p for p in item["points"] if p["id"] == step["pointId"])
             lines += ["", f"### `{step['pointId']}`（{step['timeAdvance']}）", "",
@@ -747,12 +784,6 @@ def write_review_packets(rows, data):
                                  f"{f.get('value')} |")
             else:
                 lines.append("（无）")
-            lines += ["", "**允许的表述**", ""]
-            for x in item["reviewChecks"]["mustHold"]:
-                lines.append(f"- {x}")
-            lines += ["", "**禁止的表述**", ""]
-            for x in item["reviewChecks"]["mustNotAppear"]:
-                lines.append(f"- {x}")
             v1, v2 = chk["screening"]["v1"], chk["screening"]["v2"]
             r3_text = "- R3：" + (
                 ", ".join(
@@ -771,48 +802,6 @@ def write_review_packets(rows, data):
                   "| 标注者 | 日期 | 结论 | 依据 |", "|---|---|---|---|",
                   "|  |  |  |  |", ""]
     screening.write_artifact(OUT / "diagnostics/review-packets.md", NL.join(lines) + NL)
-
-
-def write_expectation_review(rows):
-    """Re-check whether each diagnostic's expectation is actually enforceable."""
-    coverage = [
-        ("c8d01", "移动方向（大堂→走廊），其余五人只写现状",
-         "可程序判定", "`narration-alignment.ts:364-369` 对 moved 做 direction_reversed；"
-         "state_claim_without_fact 覆盖无事实的站位声明"),
-        ("c8d02", "三条移动各自对应、不得互换",
-         "可程序判定", "direction_reversed + actor_swap（第 340-369 行）；换人物会被 actor_swap 拦下"),
-        ("c8d03", "N2 规则臂把视角外移动判为不可见",
-         "可程序判定（N2 侧）",
-         "直接调用 `n2_perspective._visibility_ground({\"kind\":\"moved\",\"entityId\":\"person_a\","
-         "\"at\":\"corridor\"}, {person_c @ classroom1})` 实测返回 `(False, 'other-location')`"),
-        ("c8d04", "理智必须写成下降（30→26）",
-         "**不可程序判定**",
-         "`narration-alignment.ts:396-403` 的 wrong_number 只检查数字是否属于 {from,to}，"
-         "“从26升到30”会通过；方向词没有检查。需人工核验或先扩展判定器"),
-        ("c8d05", "必须写出时间流逝、不得编造变化",
-         "可程序判定", "`timeRequired` + `mentionsTime`（第 303、314、488 行）；"
-         "无事实的主张走 state_claim_without_fact / added_event"),
-        ("c8d06", "只写父任务达成，不得表述为“全部任务完成”",
-         "**不可程序判定**",
-         "`narration-alignment.ts:439-444` 只要句子里绑上任意 task_achieved 事实就通过；"
-         "不点人物的总结句被明确排除在范围外（第 433 行注释）"),
-    ]
-    lines = ["# 六条诊断的预期复核（自动生成，勿手改）", "",
-             "问题：预期里写的“必须／不得”，现有工具真的能判吗？"
-             "下表按 `narration-alignment.ts`（sha256 309ca19f…）与 "
-             "`n2_perspective.py` 的规则逐条核对。", "",
-             "| 项 | 预期 | 判定能力 | 依据 |", "|---|---|---|---|"]
-    for item_id, expect, ability, why in coverage:
-        lines.append(f"| `{item_id}` | {expect} | {ability} | {why} |")
-    lines += ["", "## 结论", "",
-              "- 4 条预期可以被程序判定；`c8d04` 的“下降方向”和 `c8d06` 的“不得说全部完成”**目前只能人工核验**。",
-              "- 这不影响六条作为诊断材料的用途，但复核表里这两项的“通过”必须来自人，不能写成模型通过或判分器通过。",
-              "- 若要程序化，需先扩展判定器：理智方向词检查、任务树“全部完成”类总结句检查。"
-              "扩展后必须重跑旧题基线，不能直接沿用现有结论。",
-              "", "## 边界", "",
-              "- 上表的“可程序判定”来自阅读 TS 规则并做过一次 N2 直接调用，未执行整条页面路径。",
-              "- 判定器是否在真实输出上误判，仍以实际运行为准；本批没有运行模型。"]
-    screening.write_artifact(OUT / "diagnostics/expectation-review.md", NL.join(lines) + NL)
 
 
 if __name__ == "__main__":

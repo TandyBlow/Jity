@@ -115,6 +115,7 @@ python artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
 | 本批没有正式独立来源 | 六条只能作诊断，不能作正式评测题 | 已在 `diagnostics/report.md` 逐条写「独立性：undetermined」；正式评测题须另找可核实的独立来源（不必限定等 R01） |
 | 旧题十条的变化事实没有权威读取 | 签名只说明形状；不能拿它证明派生，也不能说旧题历史可靠 | `sources/three-arm-provenance.md`：十条全部 `undetermined`，锚点是占位值、`hall`/`task_intro`/`task_shelf` 在夹具里不存在 |
 | 判定器不查理智方向、不查“全部完成”类总结句 | 这两项预期无法程序判定 | 已交 `diagnostics/grader-handoff.md`（两个反例 + 修复后重跑旧题基线的要求） |
+| 子任务 pending 不在 `c8d06` 的事实包里 | 不能要求模型写出、也不因省略扣分；“全部完成”只按“超出输入支持”判 | `diagnostics/diagnostics.json` 的 `notRequiredBecauseNotInInput` / `beyondInputSupport` / `humanEvidenceOnly` 三栏；核验表与核验包同步 |
 
 ---
 
