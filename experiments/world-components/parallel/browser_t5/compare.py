@@ -52,30 +52,71 @@ def create_ms(archive: dict) -> float | None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=str(RUNS / "comparison.json"))
+    ap.add_argument("--out", default=None)
+    ap.add_argument("--runs", default=str(RUNS),
+                    help="run directory to judge (default: ./runs)")
     args = ap.parse_args()
+    runs_dir = pathlib.Path(args.runs)
+    out_path = pathlib.Path(args.out) if args.out else runs_dir / "comparison.json"
 
-    assets = load(RUNS / "assets.json")
-    offline = load(RUNS / "offline-reference.json")
+    assets = load(runs_dir / "assets.json")
+    expect = load(HERE / "expectations.json")
+    checks = []
+
+    def check(name: str, ok: bool, detail: str = "") -> bool:
+        checks.append({"name": name, "ok": bool(ok), "detail": detail})
+        return bool(ok)
+
+    # --- pinned inputs ------------------------------------------------------
+    check("fixture.sha256", assets["fixture"]["sha256"] == expect["fixture"]["sha256"],
+          f'{assets["fixture"]["sha256"]} vs {expect["fixture"]["sha256"]}')
+    check("checkpoint.params",
+          assets["checkpoint"]["params"] == expect["checkpoint"]["params"],
+          str(assets["checkpoint"]["params"]))
+    check("checkpoint.spiece",
+          assets["checkpoint"]["spiece"]["sha256"] == expect["checkpoint"]["spiece_sha256"])
+    for variant, key in (("fp32", "graphs"), ("int8", "graphs_int8")):
+        got = {k: v.get("sha256") for k, v in assets[key].items()
+               if k in expect["graphs"][variant]}
+        check(f"graphs.{variant}.sha256", got == expect["graphs"][variant],
+              f"{sorted(got)} vs {sorted(expect['graphs'][variant])}")
+
+    offline = load(runs_dir / "offline-reference.json")
     offline_by_name = {c["name"]: c for c in offline["cases"]}
     # int8 needs its own ORT-python reference: comparing browser-int8 against
     # fp32 mixes two questions (quantisation delta vs browser/offline drift)
-    offline_int8_p = RUNS / "offline-reference-int8.json"
+    offline_int8_p = runs_dir / "offline-reference-int8.json"
     offline_int8 = load(offline_int8_p) if offline_int8_p.exists() else None
     offline_int8_by_name = ({c["name"]: c for c in offline_int8["cases"]}
                             if offline_int8 else {})
 
     runs = []
-    for f in sorted(RUNS.glob("*/browser-result.json")) + sorted(RUNS.glob("*/worker-result.json")):
+    for f in sorted(runs_dir.glob("*/browser-result.json"))             + sorted(runs_dir.glob("*/worker-result.json")):
         archive = load(f)
         archive["_file"] = str(f)
         runs.append((f.parent.name, archive))
+
+    # --- reference completeness --------------------------------------------
+    expected_cases = set(expect["fixture"]["cases"])
+    check("offline.fp32.caseSet",
+          {c["name"] for c in offline["cases"]} == expected_cases,
+          str(sorted(c["name"] for c in offline["cases"])))
+    check("offline.fp32.tokenParity", offline["allMatchStoredReference"] is True)
+    off8_ok = offline_int8 is not None and (
+        {c["name"] for c in offline_int8["cases"]} == expected_cases)
+    check("offline.int8.present", off8_ok,
+          "runs/offline-reference-int8.json")
 
     per_run = []
     for name, archive in runs:
         r = archive["result"]
         variant = variant_of(archive)
         kind = kind_of(archive)
+        # a --no-rebuild run stops after terminating worker A: it exists to
+        # measure the reclaim timeline and deliberately has no case results
+        no_rebuild = bool(r.get("noRebuild"))
+        if no_rebuild:
+            kind = "worker_reclaim"
         cases = []
         parity_all = True
         for c in r.get("cases", []):
@@ -89,6 +130,8 @@ def main() -> int:
             else:
                 parity_all = parity_all and match_same
             cases.append({
+                "finishReason": c.get("finishReason"),
+                "status": c.get("status"),
                 "tokensMatchOfflineSameGraph": match_same,
                 "name": c["name"],
                 "steps": c["timings"]["steps"],
@@ -112,6 +155,7 @@ def main() -> int:
             "timingUsable": archive.get("rss") is None,
             "kind": kind,
             "variant": variant,
+            "noRebuild": no_rebuild,
             "deepMemoryPass": archive["environment"].get("deepMemoryPass"),
             "wallMs": archive["wallMs"],
             "servedMiB": round(archive["transfer"]["bytes"] / 1048576, 1),
@@ -133,6 +177,42 @@ def main() -> int:
                 if kind == "worker" else None),
         }
         per_run.append(entry)
+
+    # --- per-run completeness ----------------------------------------------
+    for x in per_run:
+        raw = next(a for n, a in runs if n == x["run"])
+        case_names = [c["name"] for c in raw["result"].get("cases", [])]
+        x["caseSetComplete"] = (
+            len(case_names) == expect["expected_cases_per_run"]
+            and set(case_names) == expected_cases
+            and all(c.get("timings", {}).get("steps", 0) > 0 and c.get("ids")
+                    for c in raw["result"].get("cases", []))
+        )
+        if x["noRebuild"]:
+            # exempt by design: no case loop runs after terminate in this mode
+            x["caseSetComplete"] = None
+            check(f"run.{x['run']}.reclaimOnly", x["terminate"] is not None,
+                  "terminate data present")
+            continue
+        check(f"run.{x['run']}.cases", x["caseSetComplete"],
+              f"{len(case_names)} case(s)")
+
+    def run_count(kind, variant=None):
+        return sum(1 for x in per_run
+                   if x["kind"] == kind and (variant is None or x["variant"] == variant))
+
+    counts = {
+        "page_fp32": run_count("page", "fp32"),
+        "worker_fp32": run_count("worker", "fp32"),
+        "int8_any": run_count("page", "int8") + run_count("worker", "int8"),
+        "worker_with_deep_memory": sum(
+            1 for x in per_run if x["kind"] == "worker" and x["deepMemoryPass"]),
+        "offline_fp32": 1 if offline.get("cases") else 0,
+        "offline_int8": 1 if off8_ok else 0,
+    }
+    for group, minimum in expect["min_runs"].items():
+        check(f"minRuns.{group}", counts.get(group, 0) >= minimum,
+              f"{counts.get(group, 0)} >= {minimum}")
 
     # --- summaries -----------------------------------------------------------
     def stat(vals):
@@ -253,28 +333,66 @@ def main() -> int:
         "cancelSummary": cancel_summary,
         "int8TokenDiffsDistinct": int8_distinct,
         "int8SameGraphFailures": int8_same_graph_failures,
+        "expectations": expect,
+        "checks": checks,
+        "checksFailed": [c for c in checks if not c["ok"]],
+        "runCounts": counts,
         "verdict": {
-            "fp32TokenParityAllPageRuns": all(
+            "allChecksPass": all(c["ok"] for c in checks),
+            "fp32TokenParityAllPageRuns": counts["page_fp32"] >= 1 and all(
                 x["tokensAllMatchOffline"] for x in per_run
-                if x["variant"] == "fp32" and x["kind"] == "page"),
-            "fp32TokenParityWorkerRuns": all(
+                if x["variant"] == "fp32" and x["kind"] == "page"
+                and x["caseSetComplete"]),
+            "fp32TokenParityWorkerRuns": counts["worker_fp32"] >= 1 and all(
                 x["tokensAllMatchOffline"] for x in per_run
-                if x["variant"] == "fp32" and x["kind"] == "worker"),
-            "workerTerminateReleasesMemory": all(
+                if x["variant"] == "fp32" and x["kind"] == "worker"
+                and x["caseSetComplete"]),
+            "workerTerminateReleasesMemory": counts["worker_with_deep_memory"] >= 1 and all(
                 (x["terminate"] or {}).get("reclaimedBytes", 0) > 500 * 1048576
                 for x in per_run if x["kind"] == "worker" and x["deepMemoryPass"]),
-            "rebuiltWorkerReproduces": all(
-                x["rebuiltWorkerTokens"] is not False
-                for x in per_run if x["kind"] == "worker"),
-            "int8SameGraphParity": not int8_same_graph_failures and any(
-                x["variant"] == "int8" for x in per_run),
+            "rebuiltWorkerReproduces": counts["worker_fp32"] >= 1 and all(
+                x["rebuiltWorkerTokens"] is True for x in per_run
+                if x["kind"] == "worker" and x["variant"] == "fp32"),
+            "int8SameGraphParity": counts["int8_any"] >= 1 and off8_ok and not
+                int8_same_graph_failures and all(
+                    x["caseSetComplete"] for x in per_run if x["variant"] == "int8"),
             "int8SameGraphFailures": int8_same_graph_failures,
             "int8TokenIdenticalToFp32": sum(
                 1 for x in per_run if x["variant"] == "int8"
                 for c in x["cases"] if c["tokensMatchOfflineFp32"]),
         },
     }
-    out = pathlib.Path(args.out)
+    # Decisions made below are themselves checks: without this the process
+    # could report a parity failure and still exit 0 (a tamper test did exactly
+    # that before this block existed).
+    vd = comparison["verdict"]
+    check("verdict.fp32TokenParityAllPageRuns", vd["fp32TokenParityAllPageRuns"])
+    check("verdict.fp32TokenParityWorkerRuns", vd["fp32TokenParityWorkerRuns"])
+    check("verdict.int8SameGraphParity", vd["int8SameGraphParity"],
+          f'{len(int8_same_graph_failures)} failure(s)')
+    check("verdict.workerTerminateReleasesMemory",
+          vd["workerTerminateReleasesMemory"])
+    check("verdict.rebuiltWorkerReproduces", vd["rebuiltWorkerReproduces"])
+
+    # generation must end on EOS, never by hitting the 64-token cap
+    finishes = [(x["run"], c["name"], c.get("finishReason"))
+                for x in per_run for c in x["cases"]]
+    with_reason = [(r, n, f) for r, n, f in finishes if f is not None]
+    check("finish.eosOnly",
+          all(f == "eos" for _, _, f in with_reason),
+          f"{sum(1 for _, _, f in with_reason if f == 'eos')}/{len(with_reason)} eos")
+    check("finish.observed", len(with_reason) > 0,
+          "no run recorded finishReason (adapter r3+ required)")
+
+    # cancellation must actually abort in every run that attempted it
+    cancels = [c for c in comparison["cancelSummary"]]
+    check("cancel.threw", bool(cancels) and all(c["threw"] for c in cancels),
+          f"{sum(1 for c in cancels if c['threw'])}/{len(cancels)} threw")
+
+    comparison["checksFailed"] = [c for c in checks if not c["ok"]]
+    vd["allChecksPass"] = all(c["ok"] for c in checks)
+
+    out = out_path
     out.write_text(json.dumps(comparison, indent=1, ensure_ascii=False) + "\n",
                    encoding="utf-8")
     print("wrote", out)
@@ -282,10 +400,13 @@ def main() -> int:
     print("verdict:", json.dumps(comparison["verdict"], ensure_ascii=False))
     print("create:", json.dumps(timing["createMs"], ensure_ascii=False))
     print("step:", json.dumps({k: (v or {}).get("median") for k, v in timing["stepMs"].items()}))
+    print("checks:", f"{len(checks) - len(comparison['checksFailed'])}/{len(checks)} pass")
+    for c in comparison["checksFailed"]:
+        print("  FAIL", c["name"], c["detail"])
     print("int8 diffs (distinct):", len(int8_distinct))
     for d in int8_distinct:
         print("  ", d["case"], "|", d["browser"], "|", d["offline"])
-    return 0
+    return 0 if comparison["verdict"]["allChecksPass"] else 1
 
 
 if __name__ == "__main__":

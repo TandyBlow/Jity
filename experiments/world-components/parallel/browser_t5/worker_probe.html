@@ -25,6 +25,7 @@ const status = (t) => { document.getElementById("status").textContent = t; };
 const memEl = document.getElementById("mem");
 const QS = new URLSearchParams(location.search);
 const DEEP_MEM = QS.has("mem");
+const NOREBUILD = QS.has("norebuild");
 const GRAPH_DIR = QS.get("graphs") === "int8" ? "/graphs-int8" : "/graphs";
 const VARIANT = QS.get("graphs") === "int8" ? "int8" : "fp32";
 
@@ -121,7 +122,9 @@ try {
   const genA = await a.call("generate", { ids: tokenizer.encode(cases[0].renderText) });
   result.workerA.firstInference = {
     timings: genA.result.timings, workerWallMs: genA.workerWallMs,
-    ids: genA.result.ids, text: tokenizer.decode(genA.result.ids), mem: genA.mem,
+    ids: genA.result.ids, text: tokenizer.decode(genA.result.ids),
+    status: genA.result.status, finishReason: genA.result.finishReason,
+    mem: genA.mem,
   };
   await sampleMemory("after-A-inference");
 
@@ -200,6 +203,15 @@ try {
       ? memBeforeTerminate - last.isolatedBytes : null,
   };
 
+  if (NOREBUILD) {
+    // reclaim-time mode: keep sampling for a while with nothing else running,
+    // so the RSS series reflects the terminate alone. No worker B, so this run
+    // cannot also test rebuild parity.
+    status("no-rebuild: sampling reclaim window…");
+    await new Promise((r) => setTimeout(r, 12000));
+    await sampleMemory("after-terminate-window");
+    result.noRebuild = true;
+  } else {
   // --- worker B: rebuild, verify the same tokens ---
   status("worker B: rebuild…");
   const b = spawnWorker();
@@ -213,6 +225,7 @@ try {
     result.cases.push({
       name: c.name, scope: c.scope,
       ids: g.result.ids, text: tokenizer.decode(g.result.ids),
+      status: g.result.status, finishReason: g.result.finishReason,
       idsMatchBakedInput: JSON.stringify(ids) === JSON.stringify(c.inputIds),
       inputTokens: g.result.inputTokens,
       timings: g.result.timings,
@@ -226,6 +239,7 @@ try {
   b.worker.terminate();
   await wait(500);
   await sampleMemory("after-B-terminate");
+  }
 
   result.ok = true;
   window.__C9_WORKER_RESULT__ = result;

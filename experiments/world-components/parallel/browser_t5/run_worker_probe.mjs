@@ -50,6 +50,10 @@ const MEM = args.includes("--mem");
 // with the caveat that "freed by the allocator" and "returned to the OS" are
 // different things.
 const RSS = args.includes("--rss");
+// --no-rebuild: stop after terminating worker A, so the RSS series is not
+// contaminated by worker B's re-initialisation. Used for the reclaim-time
+// question; it cannot also test rebuild parity.
+const NO_REBUILD = args.includes("--no-rebuild");
 const GRAPHS = arg("graphs", "fp32");
 const RUN_DIR = path.join(HERE, "runs", STAMP);
 
@@ -171,6 +175,7 @@ page.on("worker", (w) => log("[worker started]", w.url()));
 
 const query = new URLSearchParams({ graphs: GRAPHS });
 if (MEM) query.set("mem", "1");
+if (NO_REBUILD) query.set("norebuild", "1");
 const tNav = Date.now();
 await page.goto(`http://127.0.0.1:${PORT}/?${query}`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction("window.__C9_WORKER_RESULT__ !== undefined", null,
@@ -212,17 +217,52 @@ const archive = {
               perPath: transfers },
 };
 if (RSS && result.terminate?.terminateWallClockMs) {
+  const MiB = (b) => +(b / 1048576).toFixed(1);
   const tT = result.terminate.terminateWallClockMs;
-  const before = rssSamples.filter((x) => x.t <= tT).at(-1) || null;
-  const after = rssSamples.filter((x) => x.t > tT);
+  // A sample of 0 bytes means the OS query failed (the PowerShell spawn can
+  // time out while the browser is busy). Keep those out of the analysis but
+  // report how many there were.
+  const valid = rssSamples.filter((x) => x.bytes > 0);
+  const invalid = rssSamples.length - valid.length;
+  const before = valid.filter((x) => x.t <= tT).at(-1) || null;
+  const after = valid.filter((x) => x.t > tT);
+  const preWorker = valid[0] || null;
   archive.rss.atTerminate = before;
+  archive.rss.preWorkerBaseline = preWorker;
   archive.rss.afterTerminate = after.map((x) => ({
-    offsetMs: x.t - tT,
-    mib: +(x.bytes / 1048576).toFixed(1),
+    offsetMs: x.t - tT, mib: MiB(x.bytes),
   }));
-  const drop = after.find((x) => before && x.bytes < before.bytes - 400 * 1048576);
-  archive.rss.firstDropSample = drop
-    ? { offsetMs: drop.t - tT, mib: +(drop.bytes / 1048576).toFixed(1) } : null;
+
+  // Three separate questions, previously collapsed into one "firstDrop":
+  //   1. first visible drop  - the big chunk is gone
+  //   2. lowest point        - how far the tree ever gets
+  //   3. level at end        - what it settles at over the sampled window
+  // "Reached baseline" is deliberately NOT claimed: whole-tree RSS includes
+  // the page, tokenizer, GPU/utility processes and allocator retention, so a
+  // level below the pre-worker sample proves nothing about the model's heap.
+  const firstDrop = before
+    ? after.find((x) => x.bytes < before.bytes - 400 * 1048576) : null;
+  const lowest = after.length
+    ? after.reduce((a, x) => (x.bytes < a.bytes ? x : a)) : null;
+  const tail = after.slice(-3);
+  const settled = tail.length
+    ? tail.reduce((a, x) => a + x.bytes, 0) / tail.length : null;
+  archive.rss.summary = {
+    preWorkerMiB: preWorker ? MiB(preWorker.bytes) : null,
+    atTerminateMiB: before ? MiB(before.bytes) : null,
+    firstVisibleDrop: firstDrop
+      ? { offsetMs: firstDrop.t - tT, mib: MiB(firstDrop.bytes) } : null,
+    lowestAfterTerminate: lowest
+      ? { offsetMs: lowest.t - tT, mib: MiB(lowest.bytes) } : null,
+    settledLastThree: settled == null ? null
+      : { mib: +MiB(settled), offsetsMs: tail.map((x) => x.t - tT) },
+    invalidSamples: invalid,
+    samplingResolutionMs: 1000,
+    claimLimit: "the drop happening is proven; the instant the model's heap is "
+                + "fully released is not, because the series is whole-tree RSS "
+                + "at 1 s resolution and the final level mixes in the page, "
+                + "tokenizer, other browser processes and allocator retention",
+  };
 }
 await writeFile(path.join(RUN_DIR, "worker-result.json"),
                 JSON.stringify(archive, null, 1) + "\n", "utf-8");
@@ -236,8 +276,10 @@ if (GRAPHS === "fp32" && badRef.length) {
 if (!result.cancel?.outcome || result.cancel.outcome.type !== "cancelled") {
   fails.push("cancel did not produce a cancelled outcome");
 }
-const sameAfterRebuild = (result.cases || []).find((c) => c.sameAsWorkerACase0 === true);
-if (!sameAfterRebuild) fails.push("rebuilt worker did not reproduce case-0 tokens");
+if (!NO_REBUILD) {
+  const sameAfterRebuild = (result.cases || []).find((c) => c.sameAsWorkerACase0 === true);
+  if (!sameAfterRebuild) fails.push("rebuilt worker did not reproduce case-0 tokens");
+}
 
 log(`wall ${wallMs}ms | graphs ${GRAPHS}`);
 log(`A stages ${JSON.stringify(result.workerA?.stages)}`);

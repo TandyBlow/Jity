@@ -36,7 +36,7 @@ def file_sha(p: pathlib.Path) -> str | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(
-        WT / "artifacts" / "world-components" / "browser-t5-runtime-r3.json"))
+        WT / "artifacts" / "world-components" / "browser-t5-runtime-r4.json"))
     args = ap.parse_args()
 
     assets = load(RUNS / "assets.json")
@@ -45,34 +45,32 @@ def main() -> int:
     offline_int8 = load(offline_int8_p) if offline_int8_p.exists() else None
     comparison = load(RUNS / "comparison.json")
 
-    rss_runs = []
-    for d in sorted(RUNS.glob("*/worker-result.json")):
-        archive = load(d)
-        if not archive.get("rss"):
-            continue
-        r = archive["result"]
-        after = archive["rss"].get("afterTerminate") or []
-        rss_runs.append({
-            "run": d.parent.name,
-            "terminateWallClockMs": (r.get("terminate") or {}).get("terminateWallClockMs"),
-            "beforeTerminateMiB": round((archive["rss"].get("atTerminate") or {}).get("bytes", 0) / 1048576, 1),
-            "firstSamplesAfterTerminate": after[:6],
-            "firstDropSample": archive["rss"].get("firstDropSample"),
-            "pageReportedFirstSample": (r.get("terminate") or {}).get("firstSample"),
-            "timingUsable": False,
-            "note": "--rss runs sample the OS process tree every second from the "
-                    "driver; that steals CPU from the browser, so load/inference "
-                    "timings from these runs are excluded",
-        })
-
     wllama_runs = {}
     for d in sorted(RUNS.glob("wllama*")):
         f = d / "wllama-result.json"
         if f.exists():
             wllama_runs[d.name] = load(f)["result"]
 
+    rss_runs = []
+    for d in sorted(RUNS.glob("*/worker-result.json")):
+        archive = load(d)
+        if not archive.get("rss") or not archive["rss"].get("summary"):
+            continue
+        r = archive["result"]
+        rss_runs.append({
+            "run": d.parent.name,
+            "noRebuild": bool(r.get("noRebuild")),
+            "summary": archive["rss"]["summary"],
+            "afterTerminate": archive["rss"].get("afterTerminate"),
+            "timingUsable": False,
+            "note": "--rss runs sample the OS process tree every second from the "
+                    "driver; that steals CPU from the browser, so load/inference "
+                    "timings from these runs are excluded",
+        })
+
     page = [r for r in comparison["runs"] if r["kind"] == "page"]
     worker = [r for r in comparison["runs"] if r["kind"] == "worker"]
+    reclaim = [r for r in comparison["runs"] if r["kind"] == "worker_reclaim"]
 
     def slim_page(r):
         return {
@@ -104,8 +102,8 @@ def main() -> int:
         }
 
     evidence = {
-        "round": 3,
-        "supersedes": "browser-t5-runtime-r2.json (round 2) and r1",
+        "round": 4,
+        "supersedes": "browser-t5-runtime-r3.json (round 3), r2, r1",
         "task": {
             "id": "c9", "branch": "exp/c-browser-t5",
             "exclusive_dir": "experiments/world-components/parallel/browser_t5/",
@@ -147,6 +145,27 @@ def main() -> int:
         "offlineReferenceInt8": offline_int8,
         "pageRuns": [slim_page(r) for r in page],
         "workerRuns": [slim_worker(r) for r in worker],
+        "reclaimRuns": [{"run": r["run"], "terminate": r["terminate"]}
+                        for r in reclaim],
+        "acceptance": {
+            "expectationsFile": "experiments/world-components/parallel/browser_t5/expectations.json",
+            "checks": comparison["checks"],
+            "checksFailed": comparison["checksFailed"],
+            "allChecksPass": comparison["verdict"]["allChecksPass"],
+            "exitPolicy": {
+                "compare.py": "exit 0 only when every check passes; missing run "
+                              "groups, wrong case sets, hash drift, parity failure, "
+                              "a non-eos finish and a failed abort all produce exit 1",
+                "offline_reference.py": "exit 0 when the reference run is complete; "
+                                        "fp32 must also reproduce the stored fixture ids, "
+                                        "int8 is only required to be complete (it is "
+                                        "expected to differ from the fp32 fixture)",
+                "run_probe.mjs": "exit 1 on parity failure (fp32 only), missing "
+                                 "abort, or a run that stopped at maxTokens",
+                "run_worker_probe.mjs": "exit 1 on parity failure, missing abort, "
+                                        "or (unless --no-rebuild) failed rebuild parity",
+            },
+        },
         "timingSummary": comparison["timingSummary"],
         "memorySummary": comparison["memorySummary"],
         "cancelSummary": comparison["cancelSummary"],
@@ -226,6 +245,18 @@ def main() -> int:
                                     "因此差异来自量化本身，不是浏览器",
                 "remainingClaim": "int8 的浏览器/离线一致性成立；"
                                   "int8 与 fp32 的 2 处措辞差异是量化效应",
+            },
+            {
+                "claimInRound3": "terminate 后 +1.21 s 内存降到 378.6 MB，据此说「回收在约 1 秒内完成」",
+                "status": "撤回「完成」这一半（本轮的修正）",
+                "whatTheDataShows": "r3 用的是「比终止时低 400 MiB」这一个阈值，它只能证明已经掉了一大块。"
+                                    "拆成三个数重测（两次 no-rebuild 轮）：首次明显下降在 +0.81 s / +0.86 s，"
+                                    "此时仍有约 996 MiB；之后继续缓降，到 +15 s 左右稳定在 597–606 MiB，"
+                                    "而 worker 创建前是 620–623 MiB。每轮还有 2 次采样失败（计为 invalidSamples）。"
+                                    "旧轮次的稳定值曾到 379 MiB，说明整树 RSS 受其它进程影响，只能同轮内比",
+                "remainingClaim": "terminate 能大幅释放已证明（页面可归因 973.3 → 4.46 MB，"
+                                  "int8 713.1 → 4.46 MB）；「模型堆何时全部释放」仍未确定，"
+                                  "需更细采样或进程内记账才能给完成时刻",
             },
         ],
         "rssRuns": rss_runs,

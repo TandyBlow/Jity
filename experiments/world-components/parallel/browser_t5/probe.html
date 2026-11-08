@@ -133,12 +133,14 @@ try {
   status("cold inference…");
   const cold = await t5.generate(cases[0].renderText);
   result.cold = { name: cases[0].name, ids: cold.ids, text: cold.text,
+                  status: cold.status, finishReason: cold.finishReason,
                   timings: cold.timings, inputTokens: cold.inputTokens };
 
   // 2. warm inference, same input (session + wasm memory hot)
   status("warm inference…");
   const warm = await t5.generate(cases[0].renderText);
   result.warm = { name: cases[0].name, ids: warm.ids,
+                  status: warm.status, finishReason: warm.finishReason,
                   timings: warm.timings, sameIdsAsCold:
                   JSON.stringify(warm.ids) === JSON.stringify(cold.ids) };
   await sampleMemory("after-warm");
@@ -157,6 +159,7 @@ try {
     result.cases.push({
       name: c.name, scope: c.scope,
       ids: g.ids, text: g.text, inputTokens: g.inputTokens,
+      status: g.status, finishReason: g.finishReason,
       timings: g.timings,
       tokenMatchVsBakedReference:
         JSON.stringify(g.ids) === JSON.stringify(c.referenceIds),

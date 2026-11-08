@@ -166,6 +166,7 @@ export class T5Browser {
                                       [1, this.heads, 0, this.dKv]);
     let past = Object.fromEntries(this.pastNames.map((n) => [n, empty]));
     let step = 0;
+    let finishReason = "max_tokens";
     for (; step < maxTokens; step++) {
       if (signal && signal.aborted) {
         const e = new DOMException("aborted before step " + step, "AbortError");
@@ -181,6 +182,17 @@ export class T5Browser {
       // ORT-web single-thread runs inside a microtask cascade, so without it
       // the page cannot observe an abort, receive a cancel message, or repaint
       if (macrotaskYield) await new Promise((r) => setTimeout(r));
+      // re-check AFTER the yield: an abort or a worker cancel message can
+      // arrive during it, and without this check the loop would run one more
+      // full decoder step before noticing
+      if (signal && signal.aborted) {
+        const e = new DOMException("aborted before step " + step, "AbortError");
+        e.detail = { completedSteps: step, partialIds: null,
+                     abortObservedAt: performance.now(),
+                     abortObservedAfterYield: true,
+                     stepEndOffsetsMs: stepEndOffsetsMs.slice() };
+        throw e;
+      }
       if (onStep) onStep(step);
       const feeds = {
         decoder_input_ids: new this.ort.Tensor("int64",
@@ -209,12 +221,20 @@ export class T5Browser {
       }
       past = Object.fromEntries(this.pastNames.map((n, i) => [n, flat[i]]));
       stepEndOffsetsMs.push(+(performance.now() - t0Loop).toFixed(1));
-      if (best === eos) break;
+      if (best === eos) {
+        finishReason = "eos";
+        break;
+      }
       out.push(best);
       prefix.push(best);
     }
+    // A run that stops because maxTokens ran out is NOT the same result as one
+    // that produced </s>: the text is a prefix, not a finished sentence. Keep
+    // status "ok" only for a real end and say so explicitly.
     return {
-      status: "ok",
+      status: finishReason === "eos" ? "ok" : "truncated",
+      finishReason,
+      maxTokens,
       ids: out,
       text: this.tok ? this.tok.decode(out) : null,
       inputTokens: ids.length,

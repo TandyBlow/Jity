@@ -14,10 +14,11 @@
 | `run_probe.mjs` | 页面探测驱动：固定路由本地服务器（COOP/COEP，不节流）+ headless Edge，`--graphs fp32\|int8`、`--mem` |
 | `t5_worker.mjs` | 把模型搬进 DedicatedWorker 的运行时：只收 id、只回 id 与计时，`cancel` 以消息形式到达 |
 | `worker_probe.html` | worker 探测：A 初始化 → 推理 → 取消 → 采样 → terminate（立即 / +0.8 s / +5 s，每次记录测量起止时刻）→ B 重建跑 7 用例 → 再 terminate |
-| `run_worker_probe.mjs` | worker 探测驱动，`--graphs`、`--mem`，`--rss`（1 s 粒度采浏览器进程树工作集，用于看终止后内存何时下降；该轮计时不可用） |
+| `run_worker_probe.mjs` | worker 探测驱动，`--graphs`、`--mem`，`--rss`（1 s 粒度采进程树工作集）、`--no-rebuild`（终止 A 后只采样，用于回收时点；该轮无用例结果且计时不可用） |
 | `wllama_probe.mjs` / `.html` | wllama 一支：三个只改 `general.architecture` 的最小 GGUF 头喂给 wllama，记录加载与生成返回 |
-| `compare.py` | 判定：fp32 与离线 fp32 严格比对；int8 与离线 int8（同图）严格比对，另列与 fp32 的量化差异；汇总计时/内存/取消/终止回收 → `runs/comparison.json` |
-| `distill.py` | 汇总成可提交的证据文件 `artifacts/world-components/browser-t5-runtime-r3.json`（含 RSS 时序轮与 int8 同图对照） |
+| `expectations.json` | 钉住的验收前提：夹具/分词表/参数/两套图哈希、7 个用例名、最少运行组数。`compare.py` 缺任何一项即失败 |
+| `compare.py` | 判定：先查 `expectations.json` 与每组运行的用例完整性（缺数据不放过），再比 fp32↔离线 fp32、int8↔离线 int8（同图），另列与 fp32 的量化差异；判决本身也是 check，`allChecksPass` 决定退出码 → `runs/comparison.json` |
+| `distill.py` | 汇总成可提交的证据文件 `artifacts/world-components/browser-t5-runtime-r4.json`（含 acceptance 全量 check、RSS 三轮摘要、int8 同图对照） |
 
 `runs/` 是机器本地原始输出（大文件、不提交）；结论与哈希在被 `distill.py` 汇总的证据文件里。
 
@@ -35,7 +36,8 @@ node experiments/world-components/parallel/browser_t5/run_probe.mjs --stamp i2 -
 node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w1            # worker, fp32
 node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w2 --mem       # worker, fp32 + 内存/终止
 node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w3 --mem --graphs int8
-node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w4 --rss             # 回收时点（1 s 分辨率）
+node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w4 --rss                                        # 回收时点（1 s 分辨率）
+node experiments/world-components/parallel/browser_t5/run_worker_probe.mjs --stamp w5 --rss --no-rebuild                          # 纯回收时点（不重建 worker B）
 
 D:/software/Anaconda/python.exe experiments/world-components/parallel/browser_t5/assets.py
 D:/software/Anaconda/python.exe experiments/world-components/parallel/browser_t5/offline_reference.py
@@ -49,7 +51,7 @@ node experiments/world-components/parallel/browser_t5/wllama_probe.mjs w4
 ## 结论在哪
 
 - 报告：`design/world-engine-reports/components/browser-t5-runtime-v1.md`
-- 证据：`artifacts/world-components/browser-t5-runtime-r3.json`（前两轮为 `…-r2.json` / `…-r1.json`）
+- 证据：`artifacts/world-components/browser-t5-runtime-r4.json`（前三轮为 `…-r3.json` / `…-r2.json` / `…-r1.json`）
 - 原始：`runs/{run1,run2,run3,mem1,fp32-r2,fp32-r3,int8-r1,int8-mem1,w-fp32-1,w-fp32-mem1,w-int8-mem1,wllama1,wllama2}/`
 
-一句话：fp32 走 ORT-web 已验证（页面 6 轮 + worker 2 轮，42+14 次逐 token 与离线一致）；页面内 `release()` 不还内存，但把模型放进 worker 后 `terminate()` 把 973 MB 还到 4.46 MB（回收发生在 terminate 后约 1 秒内，1 s 采样分辨率；`--rss` 轮测），重建后输出不变；int8 把两图从 376.96 MB 降到 220.46 MB、会话创建 13.7 s → 8.7 s、内存 973 MB → 713 MB，代价是 2/7 用例一处措辞不同，且这 2 处在与浏览器同图的 ORT-python int8 参照上完全一致（浏览器 int8 21/21 与离线 int8 逐 token 相同）；取消延迟按「发出取消→抛错」为 53–266 ms，上界是在飞 ORT 调用的剩余时间；wllama 因缺真实 T5 GGUF 判为未验证。
+一句话：fp32 走 ORT-web 已验证（页面 6 轮 + worker 2 轮，42+14 次逐 token 与离线一致）；页面内 `release()` 不还内存，但把模型放进 worker 后 `terminate()` 把 973 MB 还到 4.46 MB；回收时点只能说到「0.8 s 出现首次大幅下降、15 s 左右稳定」，**整体释放的完成时刻未确定**；重建后输出不变；int8 把两图从 376.96 MB 降到 220.46 MB、会话创建 13.7 s → 8.7 s、内存 973 MB → 713 MB，代价是 2/7 用例一处措辞不同，且这 2 处在与浏览器同图的 ORT-python int8 参照上完全一致（浏览器 int8 21/21 与离线 int8 逐 token 相同）；取消延迟按「发出取消→抛错」为 53–266 ms，上界是在飞 ORT 调用的剩余时间；wllama 因缺真实 T5 GGUF 判为未验证。

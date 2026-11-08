@@ -155,7 +155,30 @@ def main() -> int:
         print(f"{c['name']:16s} steps={c['steps']:2d} "
               f"enc={c['encoderMs']:7.1f}ms gen={c['generationMs']:7.1f}ms "
               f"stored={c['matchStoredReference']} | {c['text'][:40]}")
-    return 0 if all_match_stored else 1
+
+    # Exit status answers "did this reference run produce a usable result",
+    # not "does it equal the fp32 fixture". The stored referenceIds come from
+    # the fp32 graphs, so int8 is EXPECTED to differ on some cases; failing
+    # the process for that would make an automated check read a normal int8
+    # run as a crash. Same-graph agreement is checked by compare.py against
+    # this file, not here.
+    complete = (
+        len(out_cases) == len(cases)
+        and all(c["steps"] > 0 for c in out_cases)
+        and all(c["ids"] for c in out_cases)
+    )
+    expected_stored_match = args.graphs == "fp32"
+    stored_ok = all_match_stored if expected_stored_match else True
+    ok = complete and stored_ok
+    if not complete:
+        print("FAIL: incomplete reference (missing cases or empty ids)")
+    if expected_stored_match and not all_match_stored:
+        print("FAIL: fp32 reference does not reproduce the stored fixture ids")
+    if not expected_stored_match and not all_match_stored:
+        print(f"note: int8 differs from the stored fp32 ids on "
+              f"{sum(1 for c in out_cases if not c['matchStoredReference'])}/"
+              f"{len(out_cases)} case(s) - expected for a quantised graph set")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

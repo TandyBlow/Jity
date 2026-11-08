@@ -210,7 +210,17 @@ if (!result.ok) fails.push("page fatal");
 const badTok = (result.tokenizer || []).filter((t) => !t.matchesBakedIds);
 if (badTok.length) fails.push(`tokenizer mismatch on ${badTok.length} case(s)`);
 const badRef = (result.cases || []).filter((c) => !c.tokenMatchVsBakedReference);
-if (badRef.length) fails.push(`stored-reference mismatch on ${badRef.length} case(s)`);
+// The stored referenceIds are fp32. int8 is expected to diverge on some cases
+// (documented quantisation contract), so it reports the count instead of
+// failing the process; same-graph parity is judged by compare.py.
+if (badRef.length && GRAPHS === "fp32") {
+  fails.push(`stored-reference mismatch on ${badRef.length} case(s)`);
+}
+if (badRef.length && GRAPHS === "int8") {
+  log(`int8 differs from the stored fp32 ids on ${badRef.length}/${result.cases.length} case(s) - expected`);
+}
+const truncated = (result.cases || []).filter((c) => c.finishReason && c.finishReason !== "eos");
+if (truncated.length) fails.push(`generation hit maxTokens on ${truncated.length} case(s)`);
 if (!result.cancel?.timerAbort?.threw) fails.push("timer abort did not throw");
 if (!result.cancel?.stepAbort?.threw) fails.push("step abort did not throw");
 
