@@ -52,5 +52,6 @@
   "w-int8-mem1",
   "w-rss-1"
  ],
- "finish_reason_note": "runs listed in pre_finish_reason_runs were produced before the adapter reported finishReason/status; every other run must carry BOTH fields on EVERY case with finishReason=eos and status=ok. A missing field on a post-adapter run is a failure, not something to filter out. Coverage minimums for these runs live in compare.py (finish.reportedByPage / finish.reportedByWorker), not in min_runs."
+ "finish_reason_note": "runs listed in pre_finish_reason_runs were produced before the adapter reported finishReason/status; every other run must carry BOTH fields on EVERY case with finishReason=eos and status=ok. A missing field on a post-adapter run is a failure, not something to filter out. Coverage minimums for these runs live in compare.py (finish.reportedByPage / finish.reportedByWorker), not in min_runs.",
+ "pre_finish_reason_runs_caveat": "exemption is keyed by run directory name. A NEW run must not reuse a name listed here, otherwise it would silently inherit the exemption; use fresh --stamp names for every run."
 }
