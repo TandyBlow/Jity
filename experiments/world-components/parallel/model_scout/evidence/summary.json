@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T06:41:01.271Z",
+  "generatedAt": "2026-11-08T06:53:25.862Z",
   "generator": "evidence/summarize.mjs",
   "prompt": {
     "file": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\experiments\\world-components\\parallel\\model_scout\\inputs\\nv-move-1.prompt.txt",
@@ -23,11 +23,13 @@
       "browser": "157.0.4341.42",
       "threads": 4,
       "multithread": true,
-      "webgpuVisible": null,
+      "webgpuVisible": false,
       "webgpuSupported": false,
+      "templateMentionsEnableThinking": false,
       "crossOriginIsolated": true,
       "loadMs": 13491,
-      "memoryAfterLoadMB": 707.5,
+      "memoryApi": "performance.measureUserAgentSpecificMemory() agent-cluster total",
+      "memoryAfterLoadMiB": 707.5,
       "cpuLoadPercent": 53,
       "pageErrors": 0,
       "requestFailures": 0,
@@ -60,14 +62,8 @@
       "medianPrefillTps": 8.75,
       "medianDecodeTps": 6.02,
       "outputSha256": [
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        },
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        }
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54",
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54"
       ],
       "outputs": [
         "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
@@ -89,11 +85,13 @@
       "browser": "157.0.4341.42",
       "threads": 4,
       "multithread": true,
-      "webgpuVisible": null,
+      "webgpuVisible": false,
       "webgpuSupported": false,
+      "templateMentionsEnableThinking": false,
       "crossOriginIsolated": true,
       "loadMs": 17735,
-      "memoryAfterLoadMB": 707.5,
+      "memoryApi": "performance.measureUserAgentSpecificMemory() agent-cluster total",
+      "memoryAfterLoadMiB": 707.5,
       "cpuLoadPercent": 4,
       "pageErrors": 0,
       "requestFailures": 0,
@@ -126,14 +124,8 @@
       "medianPrefillTps": 7.56,
       "medianDecodeTps": 4.34,
       "outputSha256": [
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        },
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        }
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54",
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54"
       ],
       "outputs": [
         "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
@@ -155,11 +147,13 @@
       "browser": "157.0.4341.42",
       "threads": 4,
       "multithread": true,
-      "webgpuVisible": null,
+      "webgpuVisible": false,
       "webgpuSupported": false,
+      "templateMentionsEnableThinking": false,
       "crossOriginIsolated": true,
       "loadMs": 18409,
-      "memoryAfterLoadMB": 727.5,
+      "memoryApi": "performance.measureUserAgentSpecificMemory() agent-cluster total",
+      "memoryAfterLoadMiB": 727.5,
       "cpuLoadPercent": 38,
       "pageErrors": 0,
       "requestFailures": 0,
@@ -192,14 +186,8 @@
       "medianPrefillTps": 7.23,
       "medianDecodeTps": 4.26,
       "outputSha256": [
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        },
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        }
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54",
+        "11a7220423acf943c329c4a702503ec6fb7081c860ac9ee500d1753d67b8de54"
       ],
       "outputs": [
         "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
@@ -221,11 +209,13 @@
       "browser": "157.0.4341.42",
       "threads": 4,
       "multithread": true,
-      "webgpuVisible": null,
+      "webgpuVisible": false,
       "webgpuSupported": false,
+      "templateMentionsEnableThinking": false,
       "crossOriginIsolated": true,
       "loadMs": 28220,
-      "memoryAfterLoadMB": 1101.2,
+      "memoryApi": "performance.measureUserAgentSpecificMemory() agent-cluster total",
+      "memoryAfterLoadMiB": 1101.2,
       "cpuLoadPercent": 79,
       "pageErrors": 0,
       "requestFailures": 0,
@@ -258,14 +248,8 @@
       "medianPrefillTps": 12.43,
       "medianDecodeTps": 6.76,
       "outputSha256": [
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        },
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        }
+        "60462a34abe68422f990ab10ce392b7291b8dca4969dfa9b9b2a0eea80433526",
+        "60462a34abe68422f990ab10ce392b7291b8dca4969dfa9b9b2a0eea80433526"
       ],
       "outputs": [
         "学生A沿着走廊前行，脚步轻缓地踏在石板上，脚步声在空旷的走廊中回响。  \n时间推进，时长数值为2分钟。",
@@ -287,11 +271,13 @@
       "browser": "157.0.4341.42",
       "threads": 4,
       "multithread": true,
-      "webgpuVisible": null,
+      "webgpuVisible": false,
       "webgpuSupported": false,
+      "templateMentionsEnableThinking": true,
       "crossOriginIsolated": true,
       "loadMs": 32312,
-      "memoryAfterLoadMB": 1337.5,
+      "memoryApi": "performance.measureUserAgentSpecificMemory() agent-cluster total",
+      "memoryAfterLoadMiB": 1337.5,
       "cpuLoadPercent": 79,
       "pageErrors": 0,
       "requestFailures": 0,
@@ -324,14 +310,8 @@
       "medianPrefillTps": 10.47,
       "medianDecodeTps": 5.14,
       "outputSha256": [
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        },
-        {
-          "sha256": null,
-          "note": "raw text kept in the probe file"
-        }
+        "982c0453ea447f43d7cd34384dae6ec9ec6c8df0f19753150729cc9746cea09a",
+        "982c0453ea447f43d7cd34384dae6ec9ec6c8df0f19753150729cc9746cea09a"
       ],
       "outputs": [
         "学生A从走廊走到大厅。",

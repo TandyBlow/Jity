@@ -2,6 +2,7 @@
 // report can be re-derived instead of typed by hand.
 //
 //   node evidence/summarize.mjs
+import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +24,7 @@ const median = (values) => {
 const rows = FILES.map(([label, file]) => {
   const report = JSON.parse(readFileSync(resolve(here, file), 'utf8'));
   const runs = report.runs ?? [];
-  const totalMemoryMB = report.memorySamples?.afterLoad?.wall?.totalMB ?? null;
+  const totalMemoryMiB = report.memorySamples?.afterLoad?.wall?.totalMB ?? null;
   return {
     label, file, status: report.status,
     model: report.config.model, modelBytes: report.config.modelBytes, modelSha256: report.config.modelSha256,
@@ -32,10 +33,15 @@ const rows = FILES.map(([label, file]) => {
     fileType: report.modelMetadata?.meta?.['general.file_type'] ?? null,
     libllama: report.libllamaVersion, wllama: report.assets.wllamaVersion, browser: report.browser?.version,
     threads: report.topology?.numThreads ?? null, multithread: report.topology?.multithread ?? null,
-    webgpuVisible: report.environment?.webgpuVisible ?? null,
+    webgpuVisible: report.environment?.gpuVisible ?? null,
     webgpuSupported: report.webgpuSupported,
+    // Does the GGUF's own chat template reference the enable_thinking variable?
+    // For MNN-Pocket this stays false, which is why passing the flag cannot
+    // change the rendered prompt; token counts alone would not prove that.
+    templateMentionsEnableThinking: (report.chatTemplate ?? '').includes('enable_thinking'),
     crossOriginIsolated: report.environment?.crossOriginIsolated ?? null,
-    loadMs: report.loadMs, memoryAfterLoadMB: totalMemoryMB,
+    loadMs: report.loadMs, memoryApi: 'performance.measureUserAgentSpecificMemory() agent-cluster total',
+    memoryAfterLoadMiB: totalMemoryMiB,
     cpuLoadPercent: report.device?.cpuLoadPercentAtStart ?? null,
     pageErrors: report.pageErrors?.length ?? 0, requestFailures: report.requestFailures?.length ?? 0,
     calls: runs.length,
@@ -48,7 +54,7 @@ const rows = FILES.map(([label, file]) => {
     medianWallMs: runs.length ? median(runs.map((run) => run.wallMs)) : null,
     medianPrefillTps: runs.length ? +median(runs.map((run) => run.prefillTokensPerSec)).toFixed(2) : null,
     medianDecodeTps: runs.length ? +median(runs.map((run) => run.decodeTokensPerSec)).toFixed(2) : null,
-    outputSha256: runs.map((run) => ({ sha256: null, note: 'raw text kept in the probe file' })),
+    outputSha256: runs.map((run) => createHash('sha256').update(run.text, 'utf8').digest('hex')),
     outputs: runs.map((run) => run.text),
   };
 });
@@ -61,10 +67,10 @@ const summary = {
 };
 writeFileSync(resolve(here, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
 
-const md = ['| run | load s | mem MB | prefill tok/s | decode tok/s | wall s | finish |',
+const md = ['| run | load s | mem MiB | prefill tok/s | decode tok/s | wall s | finish |',
   '|---|---|---|---|---|---|---|'];
 for (const row of rows) {
-  md.push(`| ${row.label} | ${(row.loadMs / 1000).toFixed(1)} | ${row.memoryAfterLoadMB ?? '-'} | `
+  md.push(`| ${row.label} | ${(row.loadMs / 1000).toFixed(1)} | ${row.memoryAfterLoadMiB ?? '-'} | `
     + `${row.prefillTokensPerSec.join(' / ')} | ${row.decodeTokensPerSec.join(' / ')} | `
     + `${(row.wallMs.map((ms) => ms / 1000).join(' / '))} | ${row.finishReasons.join(' / ')} |`);
 }

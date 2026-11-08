@@ -1,4 +1,4 @@
-| run | load s | mem MB | prefill tok/s | decode tok/s | wall s | finish |
+| run | load s | mem MiB | prefill tok/s | decode tok/s | wall s | finish |
 |---|---|---|---|---|---|---|
 | MNN-Pocket-0.3B Q4_1 (QAT, recommended) | 13.5 | 707.5 | 8.07 / 9.44 | 6 / 6.03 | 28.26 / 24.95 | stop / stop |
 | MNN-Pocket-0.3B Q4_1, world-page settings (ctx 2048, enable_thinking kwarg) | 17.7 | 707.5 | 7.51 / 7.61 | 4.23 / 4.45 | 32.446 / 31.654 | stop / stop |

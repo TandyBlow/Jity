@@ -36,9 +36,12 @@ for (const [name, url] of SOURCES) {
   const file = `${name}.body`;
   const started = Date.now();
   const meta = spawnSync('curl', ['-sS', '-L', '--max-time', '90', '--retry', '2',
-    '-o', resolve(here, file), '-w', '%{http_code} %{content_type} %{url_effective}', url], { encoding: 'utf8' });
+    '-o', resolve(here, file), '-w', '%{http_code}\\n%{content_type}\\n%{url_effective}', url], { encoding: 'utf8' });
   if (meta.status !== 0) throw new Error(`curl failed for ${url}: ${meta.stderr}`);
-  const [status, contentType, finalUrl] = meta.stdout.trim().split(' ');
+  // curl -w prints exactly what we asked for, one field per line: a content
+  // type such as "text/plain; charset=utf-8" contains spaces, so splitting on
+  // spaces silently shifted every field (found in review of 84e4ca8).
+  const [status, contentType, finalUrl] = meta.stdout.trim().split(String.fromCharCode(10)).map((field) => field.trim());
   const body = readFileSync(resolve(here, file));
   report.entries.push({
     name, url, file, status: Number(status), finalUrl, contentType,
