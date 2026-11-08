@@ -1,11 +1,13 @@
 {
  "receiptId": "holdout-a-v1",
+ "receiptVersion": "r3b (after the 2026-11-08 review)",
  "package": "D:\\others\\Jity\\artifacts\\holdout-a-v1",
  "receivedFrom": "A (world-server) — backend/scripts/build_holdout_v1.py",
  "packageFiles": {
-  "manifest.json": "998b4fe3b142d79065f2e0885a3a4b7a7b9199732411062f8a77885bb7e69f36",
-  "world.db": "2a1ece8e138c4d4ac33bddb70e30a2be9017983714e5b2f948dd6ac3613de332",
+  "manifest.json": "9fc0187fcb2a64a864c670c133d9d211492ad77d38e5d349c7201f826884876c",
+  "world.db": "268023927a0523a760eabed72ab0cc8c0b55d4fcc944f1e16a8fd844d35d5045",
   "semantic-review.json": "46939c1411613f31982beb39d81934d9f50895086d38a6122ffa94bc4574ebeb",
+  "semantic-review-signoff.template.json": "47ac50c7ffd356a1928d56e7732a3490a698cad9f74e3c24e95891282d8c6132",
   "semantic-review-evidence.json": "d3f0fff39268e523a43e6deb2b74881154f4f8b241e10d2ebcfa941b470e0eb2",
   "pairs": {
    "h01-authorized": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
@@ -22,6 +24,7 @@
    "h12-authorized": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
   }
  },
+ "packageSha256": "7624273e78b434c69eacc20e509305fe6b8101911bed4dfa2889a6466c1e9e8e",
  "validatorExitCode": 1,
  "validator": {
   "status": "not-admissible",
@@ -31,12 +34,37 @@
    "edgeSources": 12
   },
   "errorsByFamily": {
-   "PKG": 1
+   "PKG": 13
   },
   "sampleErrors": [
    {
-    "code": "PKG-semantic-review-not-human",
-    "detail": "reviewer.kind='ai'; the semantic independence verdict must come from a human"
+    "code": "PKG-no-semantic-signoff",
+    "detail": "semantic-review-signoff.json is missing; the AI draft (semantic-review.json) cannot close the semantic review"
+   },
+   {
+    "sourceId": "h01",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h01 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h02",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h02 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h03",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h03 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h04",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h04 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h05",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h05 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
    }
   ]
  },
@@ -44,7 +72,8 @@
   "admissible": false,
   "frozen": false,
   "blockedBy": [
-   "PKG-semantic-review-not-human"
+   "PKG-no-semantic-signoff",
+   "PKG-semantic-signoff-incomplete"
   ]
  },
  "whatPassed": {
@@ -59,8 +88,8 @@
   }
  },
  "whatBlocks": {
-  "code": "PKG-semantic-review-not-human",
-  "means": "the semantic independence verdict is an AI draft; c3's frozen holdout rule requires a human to confirm or rewrite every source verdict",
+  "code": "PKG-no-semantic-signoff / PKG-semantic-signoff-incomplete",
+  "means": "after the review fix, the AI draft is never read for verdicts: c3 requires a separate human sign-off bound to the package digest, with identity, date, reviewed commit and a per-source reason that is not the draft template",
   "notAProblemWith": [
    "the world records",
    "the evidence chain",
@@ -68,6 +97,6 @@
    "the plans"
   ]
  },
- "nextAction": "a human reads artifacts/holdout-a-v1/pairs/*.json against the old material (evidence: artifacts/holdout-a-v1/semantic-review-evidence.json), sets reviewer.kind=human plus a per-source verdict, then re-runs validate_holdout.py --package ... --freeze",
+ "nextAction": "a human copies semantic-review-signoff.template.json to semantic-review-signoff.json, fills every verdict/reason plus identity/date/reviewed commit, then re-runs validate_holdout.py --package ... --freeze",
  "noModelRun": true
 }

@@ -13,7 +13,7 @@
   "legal": 18
  },
  "referenceTexts": 18,
- "checkerVersion": "c3-text-conformance-v2",
+ "checkerVersion": "c3-text-conformance-v3",
  "conformance": {
   "selfPass": 18,
   "selfTotal": 18,

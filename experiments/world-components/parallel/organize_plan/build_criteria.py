@@ -18,7 +18,8 @@ from pathlib import Path
 import text_conformance as tc
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "freeze" / "criteria-v2.json"
+import sys
+OUT = Path(sys.argv[sys.argv.index("--out") + 1]) if "--out" in sys.argv else HERE / "freeze" / "criteria-v2.json"
 
 
 def sha256(path: Path) -> str:
@@ -61,7 +62,7 @@ REVIEW_RULES = [
 def main() -> int:
     probe_path = HERE / "freeze" / "tamper-probes.json"
     doc = {
-        "protocol": "c3-acceptance-criteria-v2",
+        "protocol": f"c3-acceptance-criteria-{tc.CONTRACT_VERSION}",
         "created": datetime.now(timezone.utc).isoformat(),
         "supersedes": "runs/r1 (v1 checker accepted reversed order, out-of-scope 随后, and added content)",
         "checker": {

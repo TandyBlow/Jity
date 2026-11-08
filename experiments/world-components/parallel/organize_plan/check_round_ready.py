@@ -24,7 +24,6 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-
 HERE = Path(__file__).resolve().parent
 HOLDOUT_FREEZE = HERE / "freeze" / "holdout-v1-freeze.json"
 SIGNOFF = HERE / "runs" / "r2" / "signoff.json"
@@ -40,8 +39,9 @@ def sha256(path: Path) -> str:
 import check_adoption as adoption  # noqa: E402
 
 
-def check_holdout() -> dict:
-    if not HOLDOUT_FREEZE.exists():
+def check_holdout(freeze_path: Path | None = None) -> dict:
+    freeze = freeze_path or HOLDOUT_FREEZE
+    if not freeze.exists():
         receipt = HERE / "runs" / "r3" / "holdout-acceptance.json"
         if receipt.exists():
             r = json.loads(receipt.read_text(encoding="utf-8"))
@@ -51,9 +51,10 @@ def check_holdout() -> dict:
                                f"{gate.get('blockedBy')}；冻结件未生成")}
         return {"ready": False, "state": "留出待交付",
                 "detail": "freeze/holdout-v1-freeze.json 不存在：A 的包未到，或未通过 --package 校验"}
-    doc = json.loads(HOLDOUT_FREEZE.read_text(encoding="utf-8"))
+    doc = json.loads(freeze.read_text(encoding="utf-8"))
     missing = []
-    for key in ("package", "manifestSha256", "semanticReview", "plans", "sources"):
+    for key in ("package", "manifestSha256", "semanticSignoff", "pairFiles",
+                "packageDigest", "gateRule", "plans", "sources"):
         if not doc.get(key):
             missing.append(key)
     if missing:
@@ -61,9 +62,35 @@ def check_holdout() -> dict:
                 "detail": f"冻结件缺字段：{missing}"}
     if doc.get("status") != "admissible":
         return {"ready": False, "state": "留出不通过", "detail": f"status={doc.get('status')}"}
+
+    # A frozen record is only valid while the material it froze is unchanged.
+    package = Path(doc["package"])
+    problems = []
+    for rel, want in (doc.get("pairFiles") or {}).items():
+        path = package / rel
+        if not path.exists():
+            problems.append(f"missing {rel}")
+        elif sha256(path) != want:
+            problems.append(f"changed {rel}")
+    if problems:
+        return {"ready": False, "state": "留出冻结件已过期",
+                "detail": "冻结后材料变了：" + "；".join(problems[:4])}
+    recomputed = hashlib.sha256(json.dumps(
+        {rel: sha256(package / rel) for rel in (doc.get("pairFiles") or {})},
+        ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    if recomputed != (doc.get("packageDigest") or {}).get("sha256"):
+        return {"ready": False, "state": "留出冻结件已过期",
+                "detail": "冻结件的 packageDigest 与重算值不一致"}
+    signoff = doc.get("semanticSignoff") or {}
+    signoff_path = package / signoff.get("file", "")
+    if not signoff_path.exists() or sha256(signoff_path) != signoff.get("sha256"):
+        return {"ready": False, "state": "留出冻结件已过期",
+                "detail": "语义签认文件缺失或与冻结记录不一致"}
+    rule = doc["gateRule"]
     return {"ready": True, "state": "留出已冻结",
-            "detail": f"{len(doc.get('sources', []))} 源；manifest {doc['manifestSha256'][:12]}；"
-                      f"semanticReview {doc['semanticReview']['sha256'][:12]}"}
+            "detail": (f"{len(doc.get('sources', []))} 源；门线 {rule.get('minimumPairedSuccess')}/"
+                       f"{rule.get('sources')}（{rule.get('formula')}，冻结时预登记）；"
+                       f"包摘要 {doc['packageDigest']['sha256'][:12]}")}
 
 
 def check_signoff() -> dict:
@@ -74,13 +101,24 @@ def check_signoff() -> dict:
     if not signed.get("signed"):
         return {"ready": False, "state": "人工签认待完成", "detail": "signoff.json 未标 signed"}
     if signed.get("satisfiesHumanSignoff") is not True:
+        pins0 = signed.get("pinnedInputs") or {}
+        stale0 = []
+        for key, rel in (("criteria", "freeze/criteria-v2.json"),
+                         ("tamperProbes", "freeze/tamper-probes.json"),
+                         ("manualReview", "runs/r2/manual-review.json"),
+                         ("checker", "text_conformance.py")):
+            want = (pins0.get(key) or {}).get("sha256")
+            fp = HERE / rel
+            if want and fp.exists() and want != sha256(fp):
+                stale0.append(rel)
+        extra = f"；且该记录钉定的文件已变（{stale0}），更加不能当作有效签认" if stale0 else ""
         return {
             "ready": False,
             "state": "人工签认待完成",
             "detail": (f"已有签认记录，但 signerKind={signed.get('signerKind')!r}、"
                        f"signoffClass={signed.get('signoffClass')!r}：仅作审计材料，"
                        f"不满足人工签认要求；签认人 {signed.get('signer')}，{signed.get('date')}，"
-                       f"审阅 {signed.get('reviewedCommit')}"),
+                       f"审阅 {signed.get('reviewedCommit')}{extra}"),
         }
     if not ACCEPTANCE.exists():
         return {"ready": False, "state": "人工签认待完成", "detail": "acceptance.json 不存在，门状态未计算"}
@@ -137,7 +175,9 @@ def check_checkpoint() -> dict:
 
 
 def main() -> int:
-    criteria = json.loads(CRITERIA.read_text(encoding="utf-8")) if CRITERIA.exists() else {}
+    newest = sorted((HERE / "freeze").glob("criteria-v*.json"))
+    criteria_path = newest[-1] if newest else CRITERIA
+    criteria = json.loads(criteria_path.read_text(encoding="utf-8")) if criteria_path.exists() else {}
     states = [check_holdout(), check_signoff(), check_checkpoint()]
     ready = all(s["ready"] for s in states)
 

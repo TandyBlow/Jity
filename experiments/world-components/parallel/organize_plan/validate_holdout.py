@@ -12,7 +12,9 @@ Package layout (a directory):
 
     manifest.json                         must include generationProcess
     pairs/<sourceId>-authorized.json      same shape as artifacts/world-provenance/pairs
-    semantic-review.json                  per-source human verdict on independence
+    semantic-review.json                  AI draft (never decides anything)
+    semantic-review-signoff.json          HUMAN sign-off: per-source verdict + reason,
+                                          identity/date/reviewedCommit, bound package digest
     world.db                              optional but expected: lets the chain be
                                           re-checked against world_evidence and
                                           world_points.delta_json
@@ -28,7 +30,8 @@ E  evidence       with a DB: world_evidence row matches unit (id/point/entity/
 A  authorization  verdict=pass, validatorVersion pinned, endpoints exist,
                   evidence ids point at the two endpoints, elapsedSeconds > 0
 I  isolation      byte-identical / bigram-similar facts against ALL old material,
-                  PLUS a per-source semantic verdict (bigram is a screen, not proof)
+                  PLUS a human sign-off bound to the package digest (a low bigram
+                  score is a screen, not proof)
 M  plans          two legal plans exist, differ, and pass plan_contract
 N  counts         >=10 sources, >=3 with a multi-fact group, >=2 with an edge
 
@@ -43,6 +46,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sqlite3
 import sys
 from pathlib import Path
@@ -59,6 +63,9 @@ PROV = Path("D:/others/Jity/artifacts/world-provenance/pairs")
 
 GENERATION_KEYS = ("method", "worldRounds", "dedupeMethod", "producedAt", "producerCommit")
 SEMANTIC_VERDICTS = ("independent", "semantic-duplicate", "unsure")
+SEMANTIC_SIGNOFF = "semantic-review-signoff.json"
+SEMANTIC_DRAFT = "semantic-review.json"
+MIN_REASON_CHARS = 8
 MIN_SOURCES = 10
 MIN_MULTI_GROUP_SOURCES = 3
 MIN_EDGE_SOURCES = 2
@@ -106,6 +113,102 @@ def old_fingerprints() -> dict:
     return {"facts": facts, "texts": texts,
             "exact": set(texts),
             "sha256": hashlib.sha256("\n".join(texts).encode("utf-8")).hexdigest()}
+
+
+def package_digest(package: Path, source_ids: list[str]) -> dict:
+    """Digest the artifacts a human actually reviews.
+
+    Bound inputs: manifest.json and every pairs/<id>-authorized.json. The
+    database is deliberately excluded: SQLite rewrites pages on open, so its
+    bytes are not a stable identity for the reviewed content.
+    """
+    files = {}
+    manifest = package / "manifest.json"
+    if manifest.exists():
+        files["manifest.json"] = sha256(manifest)
+    for sid in source_ids:
+        path = package / "pairs" / f"{sid}-authorized.json"
+        if path.exists():
+            files[f"pairs/{sid}-authorized.json"] = sha256(path)
+    canonical = json.dumps(files, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return {"files": files,
+            "sha256": hashlib.sha256(canonical.encode("utf-8")).hexdigest()}
+
+
+def is_template_reason(reason: str, draft_note: str) -> bool:
+    """A reason that is empty, too short, or copied from the AI draft."""
+    if len(reason.strip()) < MIN_REASON_CHARS:
+        return True
+    return bool(draft_note) and reason.strip() == draft_note.strip()
+
+
+def load_semantic_signoff(package: Path, draft: dict, digest: dict,
+                          errors: list[dict]) -> dict:
+    """Read the human sign-off. The AI draft never decides anything.
+
+    Rules that stop a one-field edit from upgrading the draft:
+      * verdicts must come from semantic-review-signoff.json, not the draft;
+      * the sign-off must name a human reviewer with identity and date;
+      * it must declare explicit per-source review and a reviewed commit;
+      * it must bind the exact pair files it reviewed (digest match), so either
+        editing a pair or reusing an old sign-off invalidates it;
+      * every reason must be present and must differ from the draft template.
+    """
+    path = package / SEMANTIC_SIGNOFF
+    if not path.exists():
+        errors.append({"code": "PKG-no-semantic-signoff",
+                       "detail": f"{SEMANTIC_SIGNOFF} is missing; the AI draft "
+                                 f"({SEMANTIC_DRAFT}) cannot close the semantic review"})
+        return {}
+    try:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append({"code": "PKG-semantic-signoff-unreadable", "detail": str(exc)})
+        return {}
+
+    reviewer = doc.get("reviewer") or {}
+    if reviewer.get("kind") != "human":
+        errors.append({"code": "PKG-semantic-signoff-not-human",
+                       "detail": f"signoff reviewer.kind={reviewer.get('kind')!r}; editing the AI "
+                                 f"draft's kind field does not create a human review"})
+    for field in ("identity", "date"):
+        if not str(reviewer.get(field) or "").strip():
+            errors.append({"code": "PKG-semantic-signoff-incomplete",
+                           "detail": f"signoff reviewer.{field} is empty"})
+    if doc.get("iReviewedEachSource") is not True:
+        errors.append({"code": "PKG-semantic-signoff-no-attestation",
+                       "detail": "signoff must set iReviewedEachSource=true"})
+    if not str(doc.get("reviewedCommit") or "").strip():
+        errors.append({"code": "PKG-semantic-signoff-incomplete",
+                       "detail": "signoff.reviewedCommit is empty"})
+    if doc.get("packageSha256") != digest["sha256"]:
+        errors.append({"code": "PKG-semantic-signoff-stale",
+                       "detail": f"signoff bound package {str(doc.get('packageSha256'))[:12]} but the "
+                                 f"package digest is {digest['sha256'][:12]}; a pair file changed "
+                                 f"after the review"})
+    return doc
+
+
+def signoff_source_error(source_id: str, signoff: dict, draft: dict) -> dict | None:
+    """The per-source rule, kept as a function so it can be tested alone."""
+    row = (signoff.get("sources") or {}).get(source_id) or {}
+    draft_note = ((draft.get("sources") or {}).get(source_id) or {}).get("note", "")
+    verdict = row.get("verdict")
+    reason = str(row.get("reason") or "")
+    if verdict not in SEMANTIC_VERDICTS:
+        return {"code": "PKG-semantic-signoff-incomplete",
+                "detail": f"{source_id} has no verdict in the human sign-off ({SEMANTIC_VERDICTS})"}
+    if is_template_reason(reason, draft_note):
+        return {"code": "PKG-semantic-signoff-template-reason",
+                "detail": f"{source_id} reason is empty, too short, or copied from the AI draft; a "
+                          f"real review states what was compared and why"}
+    if verdict == "semantic-duplicate":
+        return {"code": "I-semantic-duplicate",
+                "detail": f"{source_id} judged semantically equivalent to old material: {reason}"}
+    if verdict == "unsure":
+        return {"code": "I-semantic-unsure",
+                "detail": f"{source_id} independence undecided: {reason}"}
+    return None
 
 
 def check_source(source_id: str, auth: dict, db_path: Path | None,
@@ -330,26 +433,17 @@ def run(package: Path, freeze: bool) -> int:
                            "detail": "manifest.generationProcess.worldRounds must be a list"})
 
     # PKG: a separate semantic review. bigram Jaccard is a screen, not proof of
-    # independence, so a human/AI record per source is required before freezing.
-    semantic = {}
-    semantic_path = package / "semantic-review.json"
-    if not semantic_path.exists():
-        all_errors.append({"code": "PKG-no-semantic-review",
-                           "detail": "semantic-review.json is missing; byte-similarity alone is not "
-                                     "evidence of independence"})
-    else:
+    # independence, so a HUMAN sign-off file is required before freezing. The AI
+    # draft is read only to detect copy-pasted reasons; it never decides anything.
+    draft = {}
+    draft_path = package / SEMANTIC_DRAFT
+    if draft_path.exists():
         try:
-            semantic = json.loads(semantic_path.read_text(encoding="utf-8"))
+            draft = json.loads(draft_path.read_text(encoding="utf-8"))
         except Exception as exc:
-            all_errors.append({"code": "PKG-semantic-review-unreadable", "detail": str(exc)})
-        if not semantic.get("reviewer"):
-            all_errors.append({"code": "PKG-semantic-review-incomplete",
-                               "detail": "semantic-review.json has no reviewer"})
-        elif semantic["reviewer"].get("kind") != "human":
-            # AI review is allowed to prepare the table but not to close it.
-            all_errors.append({"code": "PKG-semantic-review-not-human",
-                               "detail": f"reviewer.kind={semantic['reviewer'].get('kind')!r}; "
-                                         f"the semantic independence verdict must come from a human"})
+            all_errors.append({"code": "PKG-semantic-draft-unreadable", "detail": str(exc)})
+    digest = package_digest(package, manifest.get("sources", []))
+    semantic = load_semantic_signoff(package, draft, digest, all_errors)
     infos, plans = [], {}
     for source_id in manifest.get("sources", []):
         auth_path = pair_dir / f"{source_id}-authorized.json"
@@ -361,20 +455,12 @@ def run(package: Path, freeze: bool) -> int:
         errors, info = check_source(source_id, auth, this_db if this_db.exists() else None, old)
         # A low bigram score is only a screen. The per-source verdict is what
         # decides independence, and it must be present.
-        verdict_row = (semantic.get("sources") or {}).get(source_id) or {}
-        v = verdict_row.get("verdict")
-        info["semanticVerdict"] = v
-        info["semanticNote"] = verdict_row.get("note", "")
-        if v not in SEMANTIC_VERDICTS:
-            errors.append({"code": "PKG-semantic-review-incomplete",
-                           "detail": f"{source_id} has no semantic verdict in {SEMANTIC_VERDICTS}"})
-        elif v == "semantic-duplicate":
-            errors.append({"code": "I-semantic-duplicate",
-                           "detail": f"{source_id} judged semantically equivalent to old material: "
-                                     f"{verdict_row.get('note', '')}"})
-        elif v == "unsure":
-            errors.append({"code": "I-semantic-unsure",
-                           "detail": f"{source_id} independence undecided: {verdict_row.get('note', '')}"})
+        row = (semantic.get("sources") or {}).get(source_id) or {}
+        info["semanticVerdict"] = row.get("verdict")
+        info["semanticReason"] = row.get("reason", "")
+        source_error = signoff_source_error(source_id, semantic, draft)
+        if source_error:
+            errors.append(source_error)
         all_errors.extend({"sourceId": source_id, **e} for e in errors)
         infos.append(info)
 
@@ -436,8 +522,19 @@ def run(package: Path, freeze: bool) -> int:
         return 1
     if freeze:
         frozen = dict(doc)
-        frozen["semanticReview"] = {"file": "semantic-review.json",
-                                   "sha256": sha256(semantic_path)}
+        signoff_path = package / SEMANTIC_SIGNOFF
+        frozen["semanticSignoff"] = {"file": SEMANTIC_SIGNOFF,
+                                     "sha256": sha256(signoff_path)}
+        frozen["packageDigest"] = digest
+        frozen["pairFiles"] = digest["files"]
+        frozen["gateRule"] = {
+            "sources": len(plans),
+            "minimumPairedSuccess": max(8, math.ceil(0.8 * len(plans))),
+            "formula": "max(8, ceil(0.8 * N)) with N = number of frozen sources",
+            "mustUseAllSources": True,
+            "noSubsetSelection": True,
+            "preregisteredAtFreeze": True,
+        }
         frozen["plans"] = plans
         frozen["frozenAt"] = manifest.get("createdAt")
         FREEZE_OUT.write_text(json.dumps(frozen, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -490,6 +587,28 @@ def self_test() -> int:
         },
         "note": ("these sources are old material on purpose: schema/chain/evidence/plans should pass, "
                  "isolation must reject every fact"),
+    }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    # The sign-off is filled in completely but marked "ai" on purpose: c3 cannot
+    # claim a human review, so PKG-semantic-signoff-not-human stays visible while
+    # the isolation errors (the real point) remain the bulk of the output.
+    (tmp / "semantic-review.json").write_text(json.dumps({
+        "protocol": "c3-holdout-semantic-review-v1",
+        "reviewer": {"identity": "c3 self-test fixture", "kind": "ai"},
+        "note": "self-test draft only",
+        "sources": {sid: {"verdict": "independent", "note": "self-test draft placeholder"}
+                    for sid in sources},
+    }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    digest = package_digest(tmp, sources)
+    (tmp / "semantic-review-signoff.json").write_text(json.dumps({
+        "protocol": "c3-holdout-semantic-signoff-v1",
+        "packageId": "c3-holdout-selftest",
+        "packageSha256": digest["sha256"],
+        "reviewedCommit": "self-test",
+        "iReviewedEachSource": True,
+        "reviewer": {"identity": "c3 self-test fixture", "kind": "ai", "date": "n/a"},
+        "sources": {sid: {"verdict": "independent",
+                          "reason": f"self-test fixture for {sid}: isolation is expected to reject it"}
+                    for sid in sources},
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"built self-test package at {tmp}")
     return run(tmp, freeze=False)

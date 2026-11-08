@@ -1,19 +1,19 @@
 {
- "created": "2026-11-08T07:34:37.890158+00:00",
- "runtimeHead": "a0be084509b92dfa6a24edf2482ae79146d486e5",
+ "created": "2026-11-08T07:53:19.023380+00:00",
+ "runtimeHead": "8e666e2f35519b1932a6f88e302cb8de81093a7a",
  "runtimeBranch": "exp/c-organize-plan",
- "runtimeStatus": "?? TASK.md",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/build_criteria.py\n M experiments/world-components/parallel/organize_plan/check_round_ready.py\n M experiments/world-components/parallel/organize_plan/run_experiment.py\n M experiments/world-components/parallel/organize_plan/runs/r2/summary.json\n M experiments/world-components/parallel/organize_plan/text_conformance.py\n M experiments/world-components/parallel/organize_plan/validate_holdout.py\n?? TASK.md",
  "python": "3.12.3",
  "platform": "Windows-11-10.0.26200-SP0",
  "code": {
   "plan_contract.py": "2788e95559cdfa128afe67dfccb38251e71c1a8ff22e4bf43f2a1680b2360c46",
   "build_freeze.py": "a0f7eb4d8f30b27e570c0d8759eb46284e503c82d4ff73da7f5616a174160620",
   "build_tamper_probes.py": "bd54e88e8afb501f95541525730ac21181bb2550fb29320430e82490b32a4940",
-  "build_criteria.py": "7a67418d2f04004b4be8c8def376c0bcabe0a104c52b11c64e0a60677f37a100",
+  "build_criteria.py": "d528030a881712bfeb120bcf97a674d7d12555dbbe793336894586bc5aefae61",
   "reference_compose.py": "9bd893bd727a2d97ef9c46ba661b1ffb38b5503bbf4ca26652961207135bef09",
-  "text_conformance.py": "a4444195f6ce6ee6c5ad9d30fd6536a3161510125fed036c1011e1e21cc76d90",
+  "text_conformance.py": "714aeb46b05a8a410693f39be971e9778a22792927de6e50bf0513d418a1cca0",
   "render_input.py": "143548e16df10c644d9e7638e6bb7d0ec74efd1579278330e225d67132363c05",
-  "run_experiment.py": "d30edb0dbb0bc3bc074e467f7c40b0e0b8fe8018d09b7c47106c8b555f605c14",
+  "run_experiment.py": "de6d0be61f6fa47bfc093b20c3b3e910f7b64d346d60e07c57cfa77f9583b7a6",
   "model_smoke.py": "de6769d40bbedc374162c81fe5272c4da16c65eb6eaf4e02176a51f073b48e80"
  },
  "freeze": {

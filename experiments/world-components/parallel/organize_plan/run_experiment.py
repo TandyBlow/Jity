@@ -190,7 +190,9 @@ def write_manual_review(queue: list[dict]) -> dict:
 
 def check_frozen_criteria() -> list[str]:
     """Refuse to run when the frozen criteria no longer describe this code."""
-    path = HERE / "freeze" / "criteria-v2.json"
+    # Prefer the newest frozen criteria file; criteria-v2 stays as the R2 record.
+    candidates = sorted((HERE / "freeze").glob("criteria-v*.json"))
+    path = candidates[-1] if candidates else HERE / "freeze" / "criteria-v2.json"
     if not path.exists():
         return []          # first run: criteria are generated afterwards
     doc = json.loads(path.read_text(encoding="utf-8"))
@@ -198,7 +200,7 @@ def check_frozen_criteria() -> list[str]:
     want = doc["checker"]["sha256"]
     got = sha256(HERE / "text_conformance.py")
     if want != got:
-        problems.append(f"text_conformance.py hash {got[:12]} != frozen {want[:12]}")
+        problems.append(f"text_conformance.py hash {got[:12]} != frozen in {path.name}: {want[:12]}")
     want_probes = doc["probeSet"]["sha256"]
     got_probes = sha256(HERE / "freeze" / "tamper-probes.json")
     if want_probes != got_probes:

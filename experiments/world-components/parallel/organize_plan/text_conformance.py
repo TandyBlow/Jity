@@ -60,7 +60,16 @@ import json
 import re
 from pathlib import Path
 
-CONTRACT_VERSION = "c3-text-conformance-v2"
+CONTRACT_VERSION = "c3-text-conformance-v3"
+
+# Symptom vocabulary for sanity facts (from the frozen convention: a sanity
+# change is narrated as a feeling, never as a number).
+SANITY_SYMPTOMS = ("心里", "脑子", "胸口", "发紧", "发沉", "松快", "清亮",
+                   "发慌", "清醒", "发凉", "喘不上气")
+
+
+class UnsupportedFactKind(ValueError):
+    """The plan contract accepts this kind but the text checker cannot read it."""
 
 # Connectors that claim something the plan may not carry.
 SIMULTANEITY = ("同时", "与此同时")
@@ -103,7 +112,13 @@ def _sent_of_offset(sents: list[str], pos: int) -> int:
 
 
 def fact_span(fact: dict, sents: list[str]) -> tuple[bool, int, float, int]:
-    """-> (supported, sentenceIndex, score, charOffsetWithinSentence)."""
+    """-> (supported, sentenceIndex, score, charOffsetWithinSentence).
+
+    Every branch here must cover a kind that plan_contract accepts. A kind that
+    plan_contract allows but this function cannot check would crash the run, so
+    the last branch raises a named error instead of a bare ValueError and the
+    test file asserts that the two inventories agree.
+    """
     kind = fact.get("kind")
     if kind in ("appearance_changed", "outcome", "personality_changed", "position_relative"):
         needle = fact.get("text", "")
@@ -115,19 +130,20 @@ def fact_span(fact: dict, sents: list[str]) -> tuple[bool, int, float, int]:
         pos = sents[bi].find(needle) if bi < len(sents) else -1
         return best >= 0.5, bi, best, max(0, pos)
     if kind == "moved":
-        joined = "".join(sents)
-        i, j = joined.find(fact["from"]), joined.find(fact["to"])
-        ok = i >= 0 and j > i
-        pos = j if j >= 0 else 0
-        si = _sent_of_offset(sents, pos)
-        inner = pos - sum(len(s) for s in sents[:si])
-        return ok, si, 1.0 if ok else 0.0, max(0, inner)
+        # from and to must be asserted in the SAME sentence, from first. Two
+        # unrelated sentences that happen to contain both place names do not
+        # express a move.
+        for i, s in enumerate(sents):
+            start, end = s.find(fact["from"]), s.find(fact["to"])
+            if start >= 0 and end > start:
+                return True, i, 1.0, start
+        return False, 0, 0.0, 0
     if kind == "positioned_at":
-        joined = "".join(sents)
-        pos = joined.find(fact["at"])
-        si = _sent_of_offset(sents, max(0, pos))
-        inner = max(0, pos) - sum(len(s) for s in sents[:si])
-        return pos >= 0, si, 1.0 if pos >= 0 else 0.0, max(0, inner)
+        for i, s in enumerate(sents):
+            pos = s.find(fact["at"])
+            if pos >= 0:
+                return True, i, 1.0, pos
+        return False, 0, 0.0, 0
     if kind == "task_achieved":
         best, bi = 0.0, 0
         for i, s in enumerate(sents):
@@ -137,7 +153,17 @@ def fact_span(fact: dict, sents: list[str]) -> tuple[bool, int, float, int]:
         needle = fact.get("goal", "")
         pos = sents[bi].find(needle) if bi < len(sents) else -1
         return best >= 0.5, bi, best, max(0, pos)
-    raise ValueError(f"no conformance span for kind {kind!r}")
+    if kind == "sanity_changed":
+        # Frozen convention (same as the earlier checker): a sanity change is
+        # expressed as a symptom, never as a number. "from/to" are integers.
+        for i, s in enumerate(sents):
+            if re.search(r"\d", s):
+                continue
+            hit = next((w for w in SANITY_SYMPTOMS if w in s), None)
+            if hit:
+                return True, i, 1.0, s.find(hit)
+        return False, 0, 0.0, 0
+    raise UnsupportedFactKind(f"no conformance span for kind {kind!r}")
 
 
 def licensed_vocabulary(facts: list[dict], visible: str | None) -> set[str]:

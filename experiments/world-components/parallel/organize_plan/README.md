@@ -530,6 +530,66 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 
 一句话：**bigram 低于 0.8 不是独立性证明**，只是没被筛掉；独立性由人工逐源判定，且 c3 不能自己签这一栏（标成 `ai` 会被 `PKG-semantic-review-not-human` 拒绝）。
 
+## 8.10 2026-11-08 审阅后的修正
+
+外部审阅指出五处，逐条修在代码里，并补了回归检查 `test_regressions.py`（9/9）。
+
+### 8.10.1 留出语义复核不能靠改一个字段放行（严重）
+
+**原来的漏洞**：`validate_holdout.py` 读 `semantic-review.json` 的 `reviewer.kind` 与逐源 `verdict`。A 侧草稿已预填 12 个 `independent` 且理由同模板，所以把 `kind` 从 `ai` 改成 `human` 就足以解阻。
+
+**现在**：
+
+- c3 **完全不读草稿的结论**，只读 `semantic-review-signoff.json`；
+- 该文件必须带：`reviewer.identity`、`reviewer.date`、`reviewedCommit`、`iReviewedEachSource: true`，以及**绑定包摘要** `packageSha256`；
+- `packageSha256` = manifest.json + 12 个 pair 文件的哈希集合再哈希；签认后再改任何一个 pair 文件 → `PKG-semantic-signoff-stale`；
+- 每个来源必须有 `verdict` 与 `reason`，`reason` 不能为空、不能短于 8 字、**不能与草稿里那句模板相同**（`PKG-semantic-signoff-template-reason`）。
+
+新增错误码：`PKG-no-semantic-signoff`、`PKG-semantic-signoff-not-human`、`PKG-semantic-signoff-incomplete`、`PKG-semantic-signoff-no-attestation`、`PKG-semantic-signoff-stale`、`PKG-semantic-signoff-template-reason`。
+
+回归：T1（只改 kind 不放行）、T2（旧摘要=过期）、T3（照抄模板理由）、T4（缺 attestation / 缺身份）。
+
+### 8.10.2 去重预检缺语料时不得“通过”（严重）
+
+A 侧 `old_texts()` 原来遇到不存在的语料直接跳过。现在：三个语料缺任何一个、或任何一个抽出 0 条事实，**生成器直接拒绝运行**，不产出包。
+
+`manifest.generationProcess` 新增 `dedupeCorpora`（每个文件的路径、sha256、事实条数）与 `dedupeFactTexts`（总数）。本次：120 + 137 + 45 = **302 条**。
+
+### 8.10.3 检查器的事实类型要覆盖计划契约（较严重）
+
+- `sanity_changed` 之前没有分支，会抛 `ValueError`；现在按冻结约定检查“症状词、无数字”，症状词表写在文件里。未知类型抛命名错误 `UnsupportedFactKind`。
+- `moved` 之前把所有句子拼起来找 `from`/`to`，两句无关的句子也能凑成一次移动；现在要求**同一句内 from 在 to 之前**。
+
+回归：T5 断言 `plan_contract.ENTITY_KINDS` 里每个类型都能被 `fact_span` 处理（防再漏），T6/T7 覆盖移动与理智。
+
+检查器版本升为 `c3-text-conformance-v3`；判据另存 `freeze/criteria-v3.json`，`criteria-v2.json` 原样保留为 R2 记录。
+
+### 8.10.4 冻结件要能发现材料变动（较严重）
+
+`--freeze` 现在写入 `pairFiles`（manifest + 每个 pair 的哈希）、`packageDigest`、`semanticSignoff` 哈希。`check_round_ready.check_holdout()` 每次重算并比对：任一文件缺失或哈希不符 → `留出冻结件已过期`；签认文件哈希不符同样过期。
+
+回归：T8（冻结后追加一个字节 → 不再就绪）。
+
+### 8.10.5 12 源的门线在冻结时预登记
+
+`--freeze` 写入：
+
+```json
+"gateRule": {"sources": 12, "minimumPairedSuccess": 10,
+             "formula": "max(8, ceil(0.8 * N))", "mustUseAllSources": true,
+             "noSubsetSelection": true, "preregisteredAtFreeze": true}
+```
+
+12 源对应 **10/12**，在冻结时登记，不允许看到结果后挑 10 个算。回归：T9。
+
+### 8.10.6 A 侧生成日期
+
+`createdAt` / `producedAt` 改为构建时的 UTC 时间（本次 `2026-11-08T07:51:38+00:00`）；游戏内时间单列 `worldInternalTime: 2027-01-16T05:00:00`。
+
+### 8.10.7 适用范围（报告口径）
+
+本轮实验只回答“**能否按计划组织事实并把它写成文字**”。12 个来源的事实类型全部是外观变化 + 一条时间先后关系，没有任务完成、位置移动、理智/个性变化、多线剧情。因此**不能**把结果外推为 Jity 的互动叙事能力；那需要在真实游戏回合里另做一轮（事实表达准确性 + 剧情连贯），与本轮是两个问题。
+
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
 `model_smoke.py` 在 CPU 上加载**冻结基线** Randeng-T5-77M（`model.safetensors` sha256 `5cdc572109cf…`，与旧 controllability 的起点同一个哈希），跑 4 条提示（fixture-r1、fixture-r2 × 两份计划），greedy，`max_new_tokens=128`。
@@ -605,7 +665,9 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | `build_signoff_form.py` / `apply_signoff.py` | 生成/校验人工签认表 | — |
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
-| `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点） | — |
+| `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点），含冻结材料重校验 | — |
+| `test_regressions.py` | 2026-11-08 审阅发现的 9 条回归检查 | — |
+| `freeze/criteria-v3.json` | v3 检查器的判据（v2 保留为 R2 记录） | 见文件 |
 | `gate_rules.py` | 门规则纯函数 + 7 条回归检查（AI 签认、仅改 signerKind 都不能开门） | — |
 | `HANDOVER.md` | 交接页：三项状态、两条保留点、只接收三类外部进展 | — |
 | `check_adoption.py` | 检查点采纳规则（三处挂接、拒绝基座哈希、`--explain`） | — |
@@ -631,6 +693,7 @@ python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒�
 python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
 python -X utf8 gate_rules.py             # 门规则回归检查（7 条）
 python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
+python -X utf8 test_regressions.py        # 审阅修正的 9 条回归（9/9）
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）
