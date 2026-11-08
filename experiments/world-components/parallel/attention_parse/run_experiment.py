@@ -267,7 +267,7 @@ def main() -> int:
     (RUN_DIR / "score.json").write_text(json.dumps(score, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     lines = [
-        f"commit {hashes['commit'][:12]} branch {hashes['branch']} dirty={hashes['dirty']}",
+        f"commit {hashes['commit'][:12]} branch {hashes['branch']} trackedDirty={hashes['trackedDirty']}",
         f"python {hashes['python']} {hashes['platform']}",
         "",
         "sample  category            status(expected/actual)  targets(expected -> actual)          errors",
