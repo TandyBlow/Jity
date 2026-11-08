@@ -1,0 +1,1458 @@
+{
+ "run": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4",
+ "rows": 170,
+ "judgedRows": 170,
+ "summary": {
+  "greedy": {
+   "units": 85,
+   "passCount": 70,
+   "failCount": 11,
+   "undeterminedCount": 4,
+   "passUnits": [
+    "t01:f0",
+    "t01:f1",
+    "t01:f2",
+    "t02:f0",
+    "t02:f1",
+    "t02:f2",
+    "t03:f0",
+    "t03:f1",
+    "t03:f2",
+    "t04:f0",
+    "t04:f1",
+    "t04:f2",
+    "t05:f0",
+    "t05:f1",
+    "t05:f2",
+    "t06:f0",
+    "t06:f1",
+    "t06:f2",
+    "t07:f2",
+    "t07:f3",
+    "t08:f0",
+    "t08:f1",
+    "t08:f2",
+    "t08:f3",
+    "t09:f0",
+    "t09:f1",
+    "t09:f2",
+    "t09:f3",
+    "t10:f0",
+    "t10:f1",
+    "t10:f2",
+    "t11:f2",
+    "t11:f3",
+    "t12:f1",
+    "t12:f2",
+    "t12:f3",
+    "t13:f0",
+    "t13:f1",
+    "t13:f2",
+    "t14:f1",
+    "t14:f2",
+    "t15:f1",
+    "t15:f2",
+    "t16:f0",
+    "t16:f1",
+    "t17:f1",
+    "t17:f2",
+    "t18:f1",
+    "t18:f2",
+    "t18:f3",
+    "t19:f0",
+    "t19:f1",
+    "t19:f2",
+    "t19:f3",
+    "t20:f0",
+    "t20:f1",
+    "t20:f2",
+    "t20:f3",
+    "t21:f1",
+    "t21:f2",
+    "t21:f3",
+    "t22:f1",
+    "t22:f2",
+    "t22:f3",
+    "t23:f0",
+    "t23:f1",
+    "t23:f3",
+    "t24:f0",
+    "t24:f2",
+    "t24:f3"
+   ],
+   "failUnits": [
+    "t07:f0",
+    "t07:f1",
+    "t11:f0",
+    "t11:f1",
+    "t12:f0",
+    "t15:f0",
+    "t17:f0",
+    "t21:f0",
+    "t22:f0",
+    "t23:f2",
+    "t24:f1"
+   ],
+   "undeterminedUnits": [
+    "t10:f3",
+    "t14:f0",
+    "t16:f2",
+    "t18:f0"
+   ],
+   "categories": {
+    "subject": {
+     "count": 2,
+     "units": [
+      "t07:f0",
+      "t15:f0"
+     ]
+    },
+    "direction": {
+     "count": 2,
+     "units": [
+      "t14:f0",
+      "t18:f0"
+     ]
+    },
+    "sanity_value": {
+     "count": 2,
+     "units": [
+      "t10:f3",
+      "t16:f2"
+     ]
+    },
+    "position": {
+     "count": 2,
+     "units": [
+      "t07:f0",
+      "t15:f0"
+     ]
+    },
+    "extra_action_state": {
+     "count": 6,
+     "units": [
+      "t07:f0",
+      "t07:f1",
+      "t11:f0",
+      "t12:f0",
+      "t15:f0",
+      "t17:f0"
+     ]
+    },
+    "repetition": {
+     "count": 2,
+     "units": [
+      "t11:f1",
+      "t23:f2"
+     ]
+    },
+    "language": {
+     "count": 3,
+     "units": [
+      "t21:f0",
+      "t22:f0",
+      "t24:f1"
+     ]
+    }
+   },
+   "timing": {
+    "medianSeconds": 1.719,
+    "p95Seconds": 2.985,
+    "maxSeconds": 3.609,
+    "budgetHits": 0,
+    "capHits": 0
+   }
+  },
+  "beam2": {
+   "units": 85,
+   "passCount": 74,
+   "failCount": 7,
+   "undeterminedCount": 4,
+   "passUnits": [
+    "t01:f0",
+    "t01:f1",
+    "t01:f2",
+    "t02:f0",
+    "t02:f1",
+    "t02:f2",
+    "t03:f0",
+    "t03:f1",
+    "t03:f2",
+    "t04:f0",
+    "t04:f1",
+    "t04:f2",
+    "t05:f0",
+    "t05:f1",
+    "t05:f2",
+    "t06:f0",
+    "t06:f1",
+    "t06:f2",
+    "t07:f1",
+    "t07:f2",
+    "t07:f3",
+    "t08:f0",
+    "t08:f1",
+    "t08:f2",
+    "t08:f3",
+    "t09:f0",
+    "t09:f1",
+    "t09:f2",
+    "t09:f3",
+    "t10:f0",
+    "t10:f1",
+    "t10:f2",
+    "t11:f2",
+    "t11:f3",
+    "t12:f1",
+    "t12:f2",
+    "t12:f3",
+    "t13:f0",
+    "t13:f1",
+    "t13:f2",
+    "t14:f1",
+    "t14:f2",
+    "t15:f0",
+    "t15:f1",
+    "t15:f2",
+    "t16:f0",
+    "t16:f1",
+    "t17:f0",
+    "t17:f1",
+    "t17:f2",
+    "t18:f1",
+    "t18:f2",
+    "t18:f3",
+    "t19:f0",
+    "t19:f1",
+    "t19:f2",
+    "t19:f3",
+    "t20:f0",
+    "t20:f1",
+    "t20:f2",
+    "t20:f3",
+    "t21:f1",
+    "t21:f2",
+    "t21:f3",
+    "t22:f1",
+    "t22:f2",
+    "t22:f3",
+    "t23:f0",
+    "t23:f1",
+    "t23:f2",
+    "t23:f3",
+    "t24:f0",
+    "t24:f2",
+    "t24:f3"
+   ],
+   "failUnits": [
+    "t07:f0",
+    "t11:f0",
+    "t11:f1",
+    "t12:f0",
+    "t21:f0",
+    "t22:f0",
+    "t24:f1"
+   ],
+   "undeterminedUnits": [
+    "t10:f3",
+    "t14:f0",
+    "t16:f2",
+    "t18:f0"
+   ],
+   "categories": {
+    "subject": {
+     "count": 0,
+     "units": []
+    },
+    "direction": {
+     "count": 2,
+     "units": [
+      "t14:f0",
+      "t18:f0"
+     ]
+    },
+    "sanity_value": {
+     "count": 2,
+     "units": [
+      "t10:f3",
+      "t16:f2"
+     ]
+    },
+    "position": {
+     "count": 1,
+     "units": [
+      "t07:f0"
+     ]
+    },
+    "extra_action_state": {
+     "count": 3,
+     "units": [
+      "t07:f0",
+      "t11:f0",
+      "t12:f0"
+     ]
+    },
+    "repetition": {
+     "count": 1,
+     "units": [
+      "t11:f1"
+     ]
+    },
+    "language": {
+     "count": 3,
+     "units": [
+      "t21:f0",
+      "t22:f0",
+      "t24:f1"
+     ]
+    }
+   },
+   "timing": {
+    "medianSeconds": 4.687,
+    "p95Seconds": 6.703,
+    "maxSeconds": 8.0,
+    "budgetHits": 0,
+    "capHits": 0
+   }
+  }
+ },
+ "paired": {
+  "improved": 4,
+  "regressed": 0,
+  "unchanged": 77,
+  "undetermined": 4
+ },
+ "pairedDetail": {
+  "t01:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t01:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t01:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t02:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t02:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t02:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t03:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t03:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t03:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t04:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t04:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t04:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t05:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t05:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t05:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t06:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t06:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t06:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t07:f0": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "subject",
+    "position",
+    "extra_action_state"
+   ],
+   "beamCats": [
+    "position",
+    "extra_action_state"
+   ]
+  },
+  "t07:f1": {
+   "level": "improved",
+   "greedy": "fail",
+   "beam2": "pass",
+   "greedyCats": [
+    "extra_action_state"
+   ],
+   "beamCats": []
+  },
+  "t07:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t07:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t08:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t08:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t08:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t08:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t09:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t09:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t09:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t09:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t10:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t10:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t10:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t10:f3": {
+   "level": "undetermined",
+   "greedy": "undetermined",
+   "beam2": "undetermined",
+   "greedyCats": [
+    "sanity_value"
+   ],
+   "beamCats": [
+    "sanity_value"
+   ]
+  },
+  "t11:f0": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "extra_action_state"
+   ],
+   "beamCats": [
+    "extra_action_state"
+   ]
+  },
+  "t11:f1": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "repetition"
+   ],
+   "beamCats": [
+    "repetition"
+   ]
+  },
+  "t11:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t11:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t12:f0": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "extra_action_state"
+   ],
+   "beamCats": [
+    "extra_action_state"
+   ]
+  },
+  "t12:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t12:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t12:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t13:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t13:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t13:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t14:f0": {
+   "level": "undetermined",
+   "greedy": "undetermined",
+   "beam2": "undetermined",
+   "greedyCats": [
+    "direction"
+   ],
+   "beamCats": [
+    "direction"
+   ]
+  },
+  "t14:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t14:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t15:f0": {
+   "level": "improved",
+   "greedy": "fail",
+   "beam2": "pass",
+   "greedyCats": [
+    "subject",
+    "position",
+    "extra_action_state"
+   ],
+   "beamCats": []
+  },
+  "t15:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t15:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t16:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t16:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t16:f2": {
+   "level": "undetermined",
+   "greedy": "undetermined",
+   "beam2": "undetermined",
+   "greedyCats": [
+    "sanity_value"
+   ],
+   "beamCats": [
+    "sanity_value"
+   ]
+  },
+  "t17:f0": {
+   "level": "improved",
+   "greedy": "fail",
+   "beam2": "pass",
+   "greedyCats": [
+    "extra_action_state"
+   ],
+   "beamCats": []
+  },
+  "t17:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t17:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t18:f0": {
+   "level": "undetermined",
+   "greedy": "undetermined",
+   "beam2": "undetermined",
+   "greedyCats": [
+    "direction"
+   ],
+   "beamCats": [
+    "direction"
+   ]
+  },
+  "t18:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t18:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t18:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t19:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t19:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t19:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t19:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t20:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t20:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t20:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t20:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t21:f0": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "language"
+   ],
+   "beamCats": [
+    "language"
+   ]
+  },
+  "t21:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t21:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t21:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t22:f0": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "language"
+   ],
+   "beamCats": [
+    "language"
+   ]
+  },
+  "t22:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t22:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t22:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t23:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t23:f1": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t23:f2": {
+   "level": "improved",
+   "greedy": "fail",
+   "beam2": "pass",
+   "greedyCats": [
+    "repetition"
+   ],
+   "beamCats": []
+  },
+  "t23:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t24:f0": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t24:f1": {
+   "level": "unchanged",
+   "greedy": "fail",
+   "beam2": "fail",
+   "greedyCats": [
+    "language"
+   ],
+   "beamCats": [
+    "language"
+   ]
+  },
+  "t24:f2": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  },
+  "t24:f3": {
+   "level": "unchanged",
+   "greedy": "pass",
+   "beam2": "pass",
+   "greedyCats": [],
+   "beamCats": []
+  }
+ },
+ "sourceLevel": {
+  "greedy": {
+   "cleanSources": 11,
+   "totalSources": 24,
+   "detail": [
+    {
+     "source": "t01",
+     "clean": true,
+     "units": [
+      "t01:f0",
+      "t01:f1",
+      "t01:f2"
+     ]
+    },
+    {
+     "source": "t02",
+     "clean": true,
+     "units": [
+      "t02:f0",
+      "t02:f1",
+      "t02:f2"
+     ]
+    },
+    {
+     "source": "t03",
+     "clean": true,
+     "units": [
+      "t03:f0",
+      "t03:f1",
+      "t03:f2"
+     ]
+    },
+    {
+     "source": "t04",
+     "clean": true,
+     "units": [
+      "t04:f0",
+      "t04:f1",
+      "t04:f2"
+     ]
+    },
+    {
+     "source": "t05",
+     "clean": true,
+     "units": [
+      "t05:f0",
+      "t05:f1",
+      "t05:f2"
+     ]
+    },
+    {
+     "source": "t06",
+     "clean": true,
+     "units": [
+      "t06:f0",
+      "t06:f1",
+      "t06:f2"
+     ]
+    },
+    {
+     "source": "t07",
+     "clean": false,
+     "units": [
+      "t07:f0",
+      "t07:f1",
+      "t07:f2",
+      "t07:f3"
+     ]
+    },
+    {
+     "source": "t08",
+     "clean": true,
+     "units": [
+      "t08:f0",
+      "t08:f1",
+      "t08:f2",
+      "t08:f3"
+     ]
+    },
+    {
+     "source": "t09",
+     "clean": true,
+     "units": [
+      "t09:f0",
+      "t09:f1",
+      "t09:f2",
+      "t09:f3"
+     ]
+    },
+    {
+     "source": "t10",
+     "clean": false,
+     "units": [
+      "t10:f0",
+      "t10:f1",
+      "t10:f2",
+      "t10:f3"
+     ]
+    },
+    {
+     "source": "t11",
+     "clean": false,
+     "units": [
+      "t11:f0",
+      "t11:f1",
+      "t11:f2",
+      "t11:f3"
+     ]
+    },
+    {
+     "source": "t12",
+     "clean": false,
+     "units": [
+      "t12:f0",
+      "t12:f1",
+      "t12:f2",
+      "t12:f3"
+     ]
+    },
+    {
+     "source": "t13",
+     "clean": true,
+     "units": [
+      "t13:f0",
+      "t13:f1",
+      "t13:f2"
+     ]
+    },
+    {
+     "source": "t14",
+     "clean": false,
+     "units": [
+      "t14:f0",
+      "t14:f1",
+      "t14:f2"
+     ]
+    },
+    {
+     "source": "t15",
+     "clean": false,
+     "units": [
+      "t15:f0",
+      "t15:f1",
+      "t15:f2"
+     ]
+    },
+    {
+     "source": "t16",
+     "clean": false,
+     "units": [
+      "t16:f0",
+      "t16:f1",
+      "t16:f2"
+     ]
+    },
+    {
+     "source": "t17",
+     "clean": false,
+     "units": [
+      "t17:f0",
+      "t17:f1",
+      "t17:f2"
+     ]
+    },
+    {
+     "source": "t18",
+     "clean": false,
+     "units": [
+      "t18:f0",
+      "t18:f1",
+      "t18:f2",
+      "t18:f3"
+     ]
+    },
+    {
+     "source": "t19",
+     "clean": true,
+     "units": [
+      "t19:f0",
+      "t19:f1",
+      "t19:f2",
+      "t19:f3"
+     ]
+    },
+    {
+     "source": "t20",
+     "clean": true,
+     "units": [
+      "t20:f0",
+      "t20:f1",
+      "t20:f2",
+      "t20:f3"
+     ]
+    },
+    {
+     "source": "t21",
+     "clean": false,
+     "units": [
+      "t21:f0",
+      "t21:f1",
+      "t21:f2",
+      "t21:f3"
+     ]
+    },
+    {
+     "source": "t22",
+     "clean": false,
+     "units": [
+      "t22:f0",
+      "t22:f1",
+      "t22:f2",
+      "t22:f3"
+     ]
+    },
+    {
+     "source": "t23",
+     "clean": false,
+     "units": [
+      "t23:f0",
+      "t23:f1",
+      "t23:f2",
+      "t23:f3"
+     ]
+    },
+    {
+     "source": "t24",
+     "clean": false,
+     "units": [
+      "t24:f0",
+      "t24:f1",
+      "t24:f2",
+      "t24:f3"
+     ]
+    }
+   ]
+  },
+  "beam2": {
+   "cleanSources": 14,
+   "totalSources": 24,
+   "detail": [
+    {
+     "source": "t01",
+     "clean": true,
+     "units": [
+      "t01:f0",
+      "t01:f1",
+      "t01:f2"
+     ]
+    },
+    {
+     "source": "t02",
+     "clean": true,
+     "units": [
+      "t02:f0",
+      "t02:f1",
+      "t02:f2"
+     ]
+    },
+    {
+     "source": "t03",
+     "clean": true,
+     "units": [
+      "t03:f0",
+      "t03:f1",
+      "t03:f2"
+     ]
+    },
+    {
+     "source": "t04",
+     "clean": true,
+     "units": [
+      "t04:f0",
+      "t04:f1",
+      "t04:f2"
+     ]
+    },
+    {
+     "source": "t05",
+     "clean": true,
+     "units": [
+      "t05:f0",
+      "t05:f1",
+      "t05:f2"
+     ]
+    },
+    {
+     "source": "t06",
+     "clean": true,
+     "units": [
+      "t06:f0",
+      "t06:f1",
+      "t06:f2"
+     ]
+    },
+    {
+     "source": "t07",
+     "clean": false,
+     "units": [
+      "t07:f0",
+      "t07:f1",
+      "t07:f2",
+      "t07:f3"
+     ]
+    },
+    {
+     "source": "t08",
+     "clean": true,
+     "units": [
+      "t08:f0",
+      "t08:f1",
+      "t08:f2",
+      "t08:f3"
+     ]
+    },
+    {
+     "source": "t09",
+     "clean": true,
+     "units": [
+      "t09:f0",
+      "t09:f1",
+      "t09:f2",
+      "t09:f3"
+     ]
+    },
+    {
+     "source": "t10",
+     "clean": false,
+     "units": [
+      "t10:f0",
+      "t10:f1",
+      "t10:f2",
+      "t10:f3"
+     ]
+    },
+    {
+     "source": "t11",
+     "clean": false,
+     "units": [
+      "t11:f0",
+      "t11:f1",
+      "t11:f2",
+      "t11:f3"
+     ]
+    },
+    {
+     "source": "t12",
+     "clean": false,
+     "units": [
+      "t12:f0",
+      "t12:f1",
+      "t12:f2",
+      "t12:f3"
+     ]
+    },
+    {
+     "source": "t13",
+     "clean": true,
+     "units": [
+      "t13:f0",
+      "t13:f1",
+      "t13:f2"
+     ]
+    },
+    {
+     "source": "t14",
+     "clean": false,
+     "units": [
+      "t14:f0",
+      "t14:f1",
+      "t14:f2"
+     ]
+    },
+    {
+     "source": "t15",
+     "clean": true,
+     "units": [
+      "t15:f0",
+      "t15:f1",
+      "t15:f2"
+     ]
+    },
+    {
+     "source": "t16",
+     "clean": false,
+     "units": [
+      "t16:f0",
+      "t16:f1",
+      "t16:f2"
+     ]
+    },
+    {
+     "source": "t17",
+     "clean": true,
+     "units": [
+      "t17:f0",
+      "t17:f1",
+      "t17:f2"
+     ]
+    },
+    {
+     "source": "t18",
+     "clean": false,
+     "units": [
+      "t18:f0",
+      "t18:f1",
+      "t18:f2",
+      "t18:f3"
+     ]
+    },
+    {
+     "source": "t19",
+     "clean": true,
+     "units": [
+      "t19:f0",
+      "t19:f1",
+      "t19:f2",
+      "t19:f3"
+     ]
+    },
+    {
+     "source": "t20",
+     "clean": true,
+     "units": [
+      "t20:f0",
+      "t20:f1",
+      "t20:f2",
+      "t20:f3"
+     ]
+    },
+    {
+     "source": "t21",
+     "clean": false,
+     "units": [
+      "t21:f0",
+      "t21:f1",
+      "t21:f2",
+      "t21:f3"
+     ]
+    },
+    {
+     "source": "t22",
+     "clean": false,
+     "units": [
+      "t22:f0",
+      "t22:f1",
+      "t22:f2",
+      "t22:f3"
+     ]
+    },
+    {
+     "source": "t23",
+     "clean": true,
+     "units": [
+      "t23:f0",
+      "t23:f1",
+      "t23:f2",
+      "t23:f3"
+     ]
+    },
+    {
+     "source": "t24",
+     "clean": false,
+     "units": [
+      "t24:f0",
+      "t24:f1",
+      "t24:f2",
+      "t24:f3"
+     ]
+    }
+   ]
+  }
+ },
+ "caveats": [
+  "cf24 is an old, repeatedly-inspected set; results describe these 85 units only",
+  "verdicts are assistant blind judging, not human review",
+  "five units (t01:f0 t07:f0 t11:f1 t22:f0 t24:f1) were seen during preflight, so their judging may be partially unblinded",
+  "categories overlap and must not be summed",
+  "width-2 beam is an approximation; limitHit rows count as U"
+ ]
+}

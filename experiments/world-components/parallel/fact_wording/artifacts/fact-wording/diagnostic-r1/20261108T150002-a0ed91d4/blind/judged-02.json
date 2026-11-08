@@ -1,0 +1,76 @@
+{
+ "pack": "cf24-r1-batch-02",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0115",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0069",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0168",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0074",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0110",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0024",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0031",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0065",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0063",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0085",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

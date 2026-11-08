@@ -1,0 +1,32 @@
+{
+  "protocol": "c4-failure-taxonomy-v1",
+  "scope": "Archive classification only; no new model generation, no rescoring of the archived factSupported label.",
+  "review_author": "The archived cf24 review explicitly says assistant. This is not a new human review.",
+  "statuses": {"failed": "已有明确缺陷；不意味着核心事实必然错误", "undetermined": "风险或覆盖不足，不算通过"},
+  "categories": {
+    "subject": "区分核心事实归属和新增小句中的病态主语；鞋底站住不等于人物互换",
+    "direction": "起终点与高低措辞分开；方向=平时写上来仅登记风险；未覆盖关系双方互换",
+    "sanity_value": "当前输入只给发紧，不给12→9；两条同方向样本不能验收数值保真",
+    "position": "物件存在不授权人物在物件旁停留；已有抵达别名口径不改",
+    "extra_action_state": "包括事实之外的新动作和新状态，不能只数动作而漏状态",
+    "repetition": "保留归档复述标签，不硬塞进五类事实错误",
+    "language": "保留归档语病标签，不把所有格语病直接改判核心归属错误"
+  },
+  "added_annotations": {
+    "t07:f0": {"kind": "action", "subject_fragment": "鞋底在石阶边站了一会儿", "position_fragment": "在石阶边站了一会儿"},
+    "t07:f1": {"kind": "state"},
+    "t11:f0": {"kind": "action"},
+    "t12:f0": {"kind": "action"},
+    "t15:f0": {"kind": "action", "subject_fragment": "鞋底在木桩旁站住", "position_fragment": "在木桩旁站住"},
+    "t17:f0": {"kind": "state"}
+  },
+  "direction_scan": {"kind": "moved", "fact_direction": "平", "markers": ["上来", "下去"], "status": "undetermined"},
+  "manual_batches": {"max_items": 10, "order": "unitId ascending", "initial_status": "pending-human-review"},
+  "restrictions": [
+    "No annotation or category changes archived text, factSupported, independence or flags.",
+    "Category membership can overlap; category counts must not be summed as unique failures.",
+    "Do not infer pointId, entityId or world fieldPath from a character name.",
+    "An archived signature-independent label is not a new held-out scene and does not establish phrase-level independence.",
+    "Do not transfer static fragment review labels to changed moved-rule output."
+  ]
+}

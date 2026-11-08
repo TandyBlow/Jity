@@ -1,0 +1,84 @@
+{
+ "pack": "cf24-r1-batch-17",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0021",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0109",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0141",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0004",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0142",
+   "verdict": "fail",
+   "categories": [
+    "language"
+   ],
+   "flags": [],
+   "reason": "“排水沟的里面”所有格错位（归档同类）"
+  },
+  {
+   "code": "c0099",
+   "verdict": "fail",
+   "categories": [
+    "language"
+   ],
+   "flags": [],
+   "reason": "同 c0142"
+  },
+  {
+   "code": "c0077",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0058",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0116",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [
+    "fact_visible_conflict"
+   ],
+   "reason": "事实本身写的就是“放在门槛边”；门槛不在可见清单，属输入/事实与可见清单不一致，输出忠实表达事实，不计生成缺陷"
+  },
+  {
+   "code": "c0084",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [
+    "fact_visible_conflict"
+   ],
+   "reason": "事实本身写的就是“放在门槛边”；门槛不在可见清单，属输入/事实与可见清单不一致，输出忠实表达事实，不计生成缺陷"
+  }
+ ]
+}

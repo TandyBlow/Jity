@@ -1,0 +1,38 @@
+{
+ "rows": 170,
+ "batches": 17,
+ "batchSize": 10,
+ "seed": 20261109,
+ "sources": {
+  "r1-greedy": "artifacts\\fact-wording\\diagnostic-r1\\20261108T150002-a0ed91d4",
+  "T1-greedy": "artifacts\\fact-wording\\diagnostic-r2-cand-t1\\20261108T152314-d8c16de6"
+ },
+ "hides": [
+  "scheme",
+  "score",
+  "seconds",
+  "stopReason",
+  "unitId",
+  "earlier verdicts"
+ ],
+ "batchHashes": {
+  "batch-01.json": "6c54d712d99b586aebf9180c4a85ad8217f12b407b1289da6649832ddf7f8a4a",
+  "batch-02.json": "7c9efe0bff658d43b79cd113f5a8bcae25b4aece890d9c7a0daed3ca184b459c",
+  "batch-03.json": "e0725ae4a5bb168f0ca858792fd8ae380d1f431237f9f91f24f739700c73f2d9",
+  "batch-04.json": "e87daf531c64f1cca49c4a4b3280adf2e83c152769a774ea41c4f4aacc37aa4e",
+  "batch-05.json": "16d0a1e846aa39667d18170a40d333a6d8513433c67cd6f35086e4c0ab85b516",
+  "batch-06.json": "973bff722dfe63ddf043a530b08b940d7d45a5c5b3c99996ab999ce26c7492b2",
+  "batch-07.json": "42bed1dc3e3411bb04c9de3848d5fa25385c9426da4819a832637df1d7eb87bf",
+  "batch-08.json": "0915b1af2b0f0e0404c24a840a28e50cfdeb80736a20e2a5e335249320b6d93f",
+  "batch-09.json": "6d2a6866134020670148ec6ca7589fe176dccd44bbcae84744bff13175849799",
+  "batch-10.json": "ee762966713c920e0915b80d58130fe74dea238bc3a7866c06ff912d7a093957",
+  "batch-11.json": "88c60eea2420553947b5e13b14f0817bb6973346b89b991781601932a82f3207",
+  "batch-12.json": "355d035902bcadd5509e97d34d8e080e9f308553b051d6ff509328f6beda73f5",
+  "batch-13.json": "5fad4f591fb9aebd57745a555d2fbc7c3ae992194e7c17c705288ec91e1f5e71",
+  "batch-14.json": "b0794e7a73594778d9690501c80a24e1308af251af2ce71b4b56ecf31d6a0e99",
+  "batch-15.json": "fc32e894919fd5eb3adf6ae3b520f1b3e9a2371d3040ce9aef3dd6dc88350f5b",
+  "batch-16.json": "951ed47b41578adae4c3472e9b4b6112c1a1c862058806e9d32f39a67cc04303",
+  "batch-17.json": "fdfe00c13b0939fc335908820c9a1b87b83b965b01c0d7a0392d0922c201ddb2"
+ },
+ "mapSha256": "b58b8de0d35a704b764173ef0093d6ddd889d8c4ea90221d53198a4a0ec7012f"
+}
