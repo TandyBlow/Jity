@@ -1,8 +1,8 @@
 {
- "created": "2026-11-08T06:58:24.455217+00:00",
- "runtimeHead": "3431678b4f40709ba423d9184e5acf1f7318248c",
+ "created": "2026-11-08T07:06:33.812230+00:00",
+ "runtimeHead": "4dd9df433745a3a69d5f35f7b0871e9d1657418e",
  "runtimeBranch": "exp/c-organize-plan",
- "runtimeStatus": "M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/__pycache__/apply_review.cpython-312.pyc\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/freeze/criteria-v2-amendment-1.json\n M experiments/world-components/parallel/organize_plan/run_experiment.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n M experiments/world-components/parallel/organize_plan/runs/r2/input-hashes.json\n M experiments/world-components/parallel/organize_plan/runs/r2/manual-review.json\n?? TASK.md",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/HOLDOUT-HANDOFF.md\n M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/apply_signoff.py\n M experiments/world-components/parallel/organize_plan/build_signoff_form.py\n M experiments/world-components/parallel/organize_plan/freeze/checkpoint-forensics.json\n M experiments/world-components/parallel/organize_plan/recover_checkpoint.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n M experiments/world-components/parallel/organize_plan/runs/r2/input-hashes.json\n M experiments/world-components/parallel/organize_plan/runs/r2/signoff-form.json\n M experiments/world-components/parallel/organize_plan/validate_holdout.py\n?? TASK.md",
  "python": "3.12.3",
  "platform": "Windows-11-10.0.26200-SP0",
  "code": {

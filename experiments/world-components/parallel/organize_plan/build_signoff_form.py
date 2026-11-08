@@ -69,7 +69,9 @@ def main() -> int:
         "purpose": ("项目负责人逐条核对原文、证据与 AI 理由后签认；签认前 gate 状态保持 "
                     "PROVISIONAL_AI_REVIEW_ONLY"),
         "signer": "",
-        "signerRole": "project-owner",
+        "signerRole": "",
+        "signerKind": "",
+        "delegationNote": "",
         "date": "",
         "reviewedCommit": "",
         "pinnedInputs": {

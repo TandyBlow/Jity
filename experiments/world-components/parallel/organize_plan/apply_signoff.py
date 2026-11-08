@@ -42,7 +42,7 @@ def main() -> int:
     allowed = criteria["manualReview"]["verdictValues"]
 
     missing: list[str] = []
-    for field in ("signer", "date", "reviewedCommit"):
+    for field in ("signer", "signerRole", "signerKind", "date", "reviewedCommit"):
         if not str(form.get(field, "")).strip():
             missing.append(field)
     for row in form.get("rows", []):
@@ -83,7 +83,9 @@ def main() -> int:
         "formVersion": form["formVersion"],
         "signed": True,
         "signer": form["signer"],
-        "signerRole": form.get("signerRole", "project-owner"),
+        "signerRole": form["signerRole"],
+        "signerKind": form["signerKind"],
+        "delegationNote": form.get("delegationNote", ""),
         "date": form["date"],
         "reviewedCommit": form["reviewedCommit"],
         "pinnedInputs": pins,

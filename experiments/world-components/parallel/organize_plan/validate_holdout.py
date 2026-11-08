@@ -10,8 +10,9 @@ package and never calls a model. Two outcomes:
 
 Package layout (a directory):
 
-    manifest.json
+    manifest.json                         must include generationProcess
     pairs/<sourceId>-authorized.json      same shape as artifacts/world-provenance/pairs
+    semantic-review.json                  per-source human verdict on independence
     world.db                              optional but expected: lets the chain be
                                           re-checked against world_evidence and
                                           world_points.delta_json
@@ -26,7 +27,8 @@ E  evidence       with a DB: world_evidence row matches unit (id/point/entity/
                   without a DB: unit.inlineDelta must match text
 A  authorization  verdict=pass, validatorVersion pinned, endpoints exist,
                   evidence ids point at the two endpoints, elapsedSeconds > 0
-I  isolation      against the frozen fingerprints of ALL old material
+I  isolation      byte-identical / bigram-similar facts against ALL old material,
+                  PLUS a per-source semantic verdict (bigram is a screen, not proof)
 M  plans          two legal plans exist, differ, and pass plan_contract
 N  counts         >=10 sources, >=3 with a multi-fact group, >=2 with an edge
 
@@ -55,6 +57,8 @@ PAIRS_V2 = HERE.parents[3] / "artifacts/world-components/organize-wording/pairs-
 FREEZE_OUT = HERE / "freeze" / "holdout-v1-freeze.json"
 PROV = Path("D:/others/Jity/artifacts/world-provenance/pairs")
 
+GENERATION_KEYS = ("method", "worldRounds", "dedupeMethod", "producedAt", "producerCommit")
+SEMANTIC_VERDICTS = ("independent", "semantic-duplicate", "unsure")
 MIN_SOURCES = 10
 MIN_MULTI_GROUP_SOURCES = 3
 MIN_EDGE_SOURCES = 2
@@ -313,6 +317,39 @@ def run(package: Path, freeze: bool) -> int:
     old = old_fingerprints()
 
     all_errors: list[dict] = []
+
+    # PKG: the generation process must be documented. Without it, "new source"
+    # is unverifiable even when the texts look different.
+    gen = manifest.get("generationProcess") or {}
+    for key in GENERATION_KEYS:
+        if not gen.get(key):
+            all_errors.append({"code": "PKG-no-generation-process",
+                               "detail": f"manifest.generationProcess.{key} is missing"})
+    if gen.get("worldRounds") is not None and not isinstance(gen.get("worldRounds"), list):
+        all_errors.append({"code": "PKG-generation-process-shape",
+                           "detail": "manifest.generationProcess.worldRounds must be a list"})
+
+    # PKG: a separate semantic review. bigram Jaccard is a screen, not proof of
+    # independence, so a human/AI record per source is required before freezing.
+    semantic = {}
+    semantic_path = package / "semantic-review.json"
+    if not semantic_path.exists():
+        all_errors.append({"code": "PKG-no-semantic-review",
+                           "detail": "semantic-review.json is missing; byte-similarity alone is not "
+                                     "evidence of independence"})
+    else:
+        try:
+            semantic = json.loads(semantic_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            all_errors.append({"code": "PKG-semantic-review-unreadable", "detail": str(exc)})
+        if not semantic.get("reviewer"):
+            all_errors.append({"code": "PKG-semantic-review-incomplete",
+                               "detail": "semantic-review.json has no reviewer"})
+        elif semantic["reviewer"].get("kind") != "human":
+            # AI review is allowed to prepare the table but not to close it.
+            all_errors.append({"code": "PKG-semantic-review-not-human",
+                               "detail": f"reviewer.kind={semantic['reviewer'].get('kind')!r}; "
+                                         f"the semantic independence verdict must come from a human"})
     infos, plans = [], {}
     for source_id in manifest.get("sources", []):
         auth_path = pair_dir / f"{source_id}-authorized.json"
@@ -322,6 +359,22 @@ def run(package: Path, freeze: bool) -> int:
         auth = json.loads(auth_path.read_text(encoding="utf-8"))
         this_db = db_for(source_id)
         errors, info = check_source(source_id, auth, this_db if this_db.exists() else None, old)
+        # A low bigram score is only a screen. The per-source verdict is what
+        # decides independence, and it must be present.
+        verdict_row = (semantic.get("sources") or {}).get(source_id) or {}
+        v = verdict_row.get("verdict")
+        info["semanticVerdict"] = v
+        info["semanticNote"] = verdict_row.get("note", "")
+        if v not in SEMANTIC_VERDICTS:
+            errors.append({"code": "PKG-semantic-review-incomplete",
+                           "detail": f"{source_id} has no semantic verdict in {SEMANTIC_VERDICTS}"})
+        elif v == "semantic-duplicate":
+            errors.append({"code": "I-semantic-duplicate",
+                           "detail": f"{source_id} judged semantically equivalent to old material: "
+                                     f"{verdict_row.get('note', '')}"})
+        elif v == "unsure":
+            errors.append({"code": "I-semantic-unsure",
+                           "detail": f"{source_id} independence undecided: {verdict_row.get('note', '')}"})
         all_errors.extend({"sourceId": source_id, **e} for e in errors)
         infos.append(info)
 
@@ -367,7 +420,8 @@ def run(package: Path, freeze: bool) -> int:
         "status": status,
         "errorsByFamily": by_family,
         "familyMeaning": {
-            "PKG": "package layout", "P": "schema", "C": "point chain", "E": "evidence / delta",
+            "PKG": "package layout / generation process / semantic review", "P": "schema",
+            "C": "point chain", "E": "evidence / delta",
             "A": "authorization", "I": "isolation from old material", "M": "two legal plans",
             "N": "counts",
         },
@@ -382,6 +436,8 @@ def run(package: Path, freeze: bool) -> int:
         return 1
     if freeze:
         frozen = dict(doc)
+        frozen["semanticReview"] = {"file": "semantic-review.json",
+                                   "sha256": sha256(semantic_path)}
         frozen["plans"] = plans
         frozen["frozenAt"] = manifest.get("createdAt")
         FREEZE_OUT.write_text(json.dumps(frozen, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -408,12 +464,30 @@ def self_test() -> int:
         (pair_dir / f"{s['sourceId']}-authorized.json").write_text(
             json.dumps(auth, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         sources.append(s["sourceId"])
+    # The semantic reviewer is marked "ai" on purpose: c3 cannot claim a human
+    # review, so PKG-semantic-review-not-human stays in the output as a reminder
+    # while the isolation errors (the real point) remain visible.
+    (tmp / "semantic-review.json").write_text(json.dumps({
+        "protocol": "c3-holdout-semantic-review-v1",
+        "reviewer": {"identity": "c3 self-test fixture", "kind": "ai"},
+        "note": "self-test only: these 9 sources are old material by construction",
+        "sources": {sid: {"verdict": "independent",
+                          "note": "self-test placeholder; the bigram check is expected to reject it"}
+                    for sid in sources},
+    }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (tmp / "manifest.json").write_text(json.dumps({
         "packageId": "c3-holdout-selftest",
         "producedBy": "c3 self-test (the 9 already-used sources)",
         "createdAt": "n/a",
         "sources": sources,
         "databases": {"fixture-": str(PROV / "fixture.db"), "train-": str(PROV / "train.db")},
+        "generationProcess": {
+            "method": "self-test: copied from the 9 already-used sources",
+            "worldRounds": [f"{sid}_p1..p3" for sid in sources],
+            "dedupeMethod": "none (self-test)",
+            "producedAt": "n/a",
+            "producerCommit": "n/a",
+        },
         "note": ("these sources are old material on purpose: schema/chain/evidence/plans should pass, "
                  "isolation must reject every fact"),
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

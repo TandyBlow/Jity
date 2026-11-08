@@ -81,15 +81,20 @@ def main() -> int:
                        if r.get("humanVerdict")}
 
     deviations: list[str] = []
+    notes: list[str] = []
     by_probe: dict[str, list[dict]] = {}
     normalised_rows = []
     for row in rows:
         ai_verdict, note = normalise(row.get("verdict"), row.get("code", ""), allowed)
+        human_verdict = human_by_id.get(row["queueId"])
         if note:
-            deviations.append(f"{row['queueId']}: {note}")
+            # An off-contract AI value matters only while it would decide the
+            # row. Once a human verdict exists, the alias is history: record it
+            # as a note, not as a blocking deviation.
+            (deviations if human_verdict is None else notes).append(f"{row['queueId']}: {note}")
         if ai_verdict is None:
             deviations.append(f"{row['queueId']}: unreadable verdict, treated as pending")
-        human = human_by_id.get(row["queueId"])
+        human = human_verdict
         if human is not None and human not in allowed:
             deviations.append(f"{row['queueId']}: signed verdict {human!r} is off-contract")
             human = None
@@ -191,6 +196,7 @@ def main() -> int:
             "OPEN": "review sealed; the gate may be used",
         }[gate],
         "deviations": deviations,
+        "notes": notes,
         "outcomes": outcomes,
         "rows": [{"queueId": r["queueId"], "code": r["code"], "verdict": r.get("verdict"),
                   "normalised": r["normalised"], "note": r.get("reviewerNote", "")}

@@ -1,6 +1,6 @@
 {
  "protocol": "c3-checkpoint-forensics-a1",
- "created": "2026-11-08T06:57:56.662102+00:00",
+ "created": "2026-11-08T07:04:48.133478+00:00",
  "route": "A (recover the old trained weights); B and C are explicitly out of scope",
  "claimsInRecords": {
   "controllabilityReport": {
@@ -112,7 +112,7 @@
    "n4group"
   ],
   "maxDepth": 8,
-  "searchSeconds": 105.8,
+  "searchSeconds": 88.1,
   "dirsWithWeights": [],
   "matchingRunRecordDirs": [
    {
@@ -149,14 +149,6 @@
    },
    {
     "dir": "D:\\others\\Jity\\.local\\parallel\\c-group-wording\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
-    "files": [
-     "results.json",
-     "run.log"
-    ],
-    "weightFiles": []
-   },
-   {
-    "dir": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
     "files": [
      "results.json",
      "run.log"
@@ -219,11 +211,12 @@
  "verdict": {
   "found": false,
   "verdict": "not-found-locally",
+  "scope": "the committed training script has no checkpoint-writing call, and no attributable weight file exists in the searched local roots; this does NOT prove no copy ever existed elsewhere",
   "reason": [
-   "no committed version of the training script contains save_pretrained/torch.save; it keeps the best state in memory only and reloads it with load_state_dict",
+   "no committed version of the training script contains save_pretrained/torch.save; it keeps the best state in memory only and reloads it with load_state_dict, so running that script cannot produce a weight file (scope: this committed script, not every possible run)",
    "the frozen record pins only base model hashes; there is no trained-checkpoint field",
    "the controllability report never mentions weights at all, so it neither claims nor denies saving them; the script's missing save call is the decisive evidence",
-   "10 name-matching directories exist, but every one of them is a run record (results.json/run.log); none contains model.safetensors, pytorch_model.bin, model.bin",
+   "9 name-matching directories exist, but every one of them is a run record (results.json/run.log); none contains model.safetensors, pytorch_model.bin, model.bin",
    "the only pinned weight is the base model 5cdc5721…, which is present locally and unchanged"
   ]
  }

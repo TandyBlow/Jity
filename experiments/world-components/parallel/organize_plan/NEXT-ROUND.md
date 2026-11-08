@@ -17,7 +17,7 @@
 
 工具：`recover_checkpoint.py`，只读，不加载模型。结果：`freeze/checkpoint-forensics.json`。
 
-### 1.1 决定性证据：训练脚本从来没有保存权重的调用
+### 1.1 已提交脚本没有落盘逻辑
 
 `train_controllability.py` 在**所有已提交版本**（本仓库只有 1 个版本，`80ed473`）里都没有 `save_pretrained`、也没有 `torch.save`。它做的是：
 
@@ -28,7 +28,9 @@ best = {"success": ns, "loss": dl, "epoch": epoch, "updates": update,
 model.load_state_dict(best["state"])   # 只在内存里恢复，然后直接评估
 ```
 
-也就是说：最好的一轮状态只存在于进程内存里，选点后立刻 `load_state_dict` 再跑留出，**没有落盘这一步**。所以“旧 controllability 检查点”不是丢失，而是**从未产生过文件**。
+也就是说：最好的一轮状态只存在于进程内存里，选点后立刻 `load_state_dict` 再跑留出，没有落盘这一步。
+
+能说的只有：**这份已提交的脚本跑一遍不会写出权重**，本地扫描也没发现可归因的权重。不能说成“任何地方都不存在过”——未提交的脚本变体、手工导出的副本、别的机器上的临时文件，都不在本次证据范围内。
 
 对照：后来那个 784M 成句脚本（`train_sentence_scale_784.py`）确实有 `model.save_pretrained(...)`，所以那批检查点在本地能找到。
 
@@ -65,7 +67,9 @@ model.load_state_dict(best["state"])   # 只在内存里恢复，然后直接评
 
 ### 1.5 结论口径
 
-**取证结果：本地未发现可归因于“读过计划块”的检查点。** 这不是“模型能力失败”，也不是“接口无效”——只是没有可用的权重来问这个问题。按决定，到此停止，不自动转 B 重训。
+**取证结果：已提交的 controllability 训练脚本没有检查点落盘逻辑，本地未发现可归因于“读过计划块”的检查点。**
+
+边界：结论只覆盖①这份已提交脚本②本地文件系统。它不能证明“任何机器、任何时间都不曾存在过权重”。这不是“模型能力失败”，也不是“接口无效”——只是没有可用的权重来问这个问题。按决定，到此停止，不自动转 B 重训。
 
 ---
 
@@ -109,10 +113,32 @@ c3 会跑两个自检，证明工具不是“只会通过”也不是“只会�
 - 没有把 AI 复核当成人工签认。
 - 没有为了凑数把 `fail` 写进判据：生成器改为对这些行写 `verdict: null` + `alreadyFailedHard: true`，旧值只在 `apply_review` 里做窄口映射并记录偏差。
 
-## 5. 下一步（等两件东西）
+## 5. 三个独立状态（当前）
+
+`python -X utf8 check_round_ready.py` 输出：
+
+| # | 状态 | 就绪 | 依据 |
+| --- | --- | --- | --- |
+| 1 | **留出待交付** | NO | `freeze/holdout-v1-freeze.json` 不存在 |
+| 2 | 签认完成，门 OPEN | yes | 委托签认：`pi（AI 编码代理）`，2026-11-08，审阅 `4dd9df4`；8 × `new-content-fail`、2 × `unsure`；T09 未通过 |
+| 3 | **计划训练检查点缺失** | NO | `freeze/checkpoint-adoption.json` 不存在；取证 `not-found-locally` |
+
+```
+模型能力实验：BLOCKED（未就绪：留出待交付、计划训练检查点缺失）
+```
+
+**门 OPEN 不等于可以跑模型。** 三项独立判定，缺一即 BLOCKED。
+
+## 6. 下一步
 
 | 等什么 | 谁 | 到货后 c3 的动作 |
 | --- | --- | --- |
-| 留出包 | A | `validate_holdout.py --package` → `--freeze` → `render_input.py` → 再冻一份输入 |
-| 检查点（若走回头） | 用户/A | 必须先给出权重的 sha256 并能对上某个记录；对不上就不跑 |
-| 人工签认 | 项目负责人 | 填表 → `apply_signoff.py` → `apply_review.py`，门状态才可能变 `OPEN` |
+| 留出包 | A | `validate_holdout.py --package`（含生成过程与人工语义复核两道闸）→ `--freeze` → `render_input.py` → 再冻一份输入 |
+| 检查点（若决定走回头） | 用户 / A | 必须先给出 `freeze/checkpoint-adoption.json`：权重 sha256 + 能对上的一份记录；对不上判“不可归因”，不跑 |
+| B 重训是否批准 | 用户 | 另行决定；c3 不自动进入，不申请 GPU |
+
+## 7. 本轮之后的禁止项
+
+- 即使留出到货、门 OPEN，只要 `check_round_ready.py` 仍报 BLOCKED，就不启动模型能力实验。
+- 不擅自把“门 OPEN”写成“能力已验证”。
+- 不用低于 0.8 的 bigram 分数当作留出独立性的证明。

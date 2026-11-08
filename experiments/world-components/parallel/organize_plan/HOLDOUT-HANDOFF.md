@@ -70,7 +70,7 @@ python -X utf8 validate_holdout.py --package <packageDir> --freeze # 校验通�
 | C | 前驱链、序号严格递增、unit 顺序随点序 | `C-chain`、`C-sequence`、`C-unit-order` |
 | E | `world_evidence` 行与 unit 对齐；`world_points.delta_json` 含同一条条目 | `E-missing`、`E-text`、`E-delta` |
 | A | 授权 verdict/validator 版本、端点、证据号、`elapsedSeconds`、申请与结果一致 | `A-verdict`、`A-evidence`、`A-request` |
-| I | **隔离**：与全部旧材料的事实文本比对 | `I-exact-fact`、`I-near-duplicate-fact` |
+| I | **隔离**：byte 相同 / bigram ≥ 0.8 的筛查，**加上**逐源人工语义结论 | `I-exact-fact`、`I-near-duplicate-fact`、`I-semantic-duplicate`、`I-semantic-unsure` |
 | M | 能构造两份合法且不同的计划 | `M-no-merge-pair`、`M-illegal-plan`、`M-identical-plans` |
 | N | 数量门槛 | `N-too-few-sources`、`N-too-few-multi-group`、`N-too-few-edges` |
 
@@ -85,10 +85,55 @@ python -X utf8 validate_holdout.py --package <packageDir> --freeze # 校验通�
 判据：
 
 - 新来源某条事实文本**与旧文本完全相同** → `I-exact-fact`；
-- 与任一旧文本的**bigram Jaccard ≥ 0.8** → `I-near-duplicate-fact`（这就是“只改一两个字”的拦截线）；
-- 只比对事实文本，不比对姓名：换名字、换地点但事实描述不变，仍会被抓。
+- 与任一旧文本的**bigram Jaccard ≥ 0.8** → `I-near-duplicate-fact`（“只改一两个字”的拦截线）；
+- 只比对事实文本，不比对姓名：换名字、换地点但事实描述不变，仍会被抓；
+- 以上两条只是筛查，**低于 0.8 不等于独立**；独立性由 `semantic-review.json` 的逐源人工结论决定（§4.1b）。
 
 `--unit-test` 是这条规则的对照：一段全新事实通过；把“袖口沾了雨”改成“袖口沾了雨水”被判 `I-near-duplicate-fact`。
+
+### 4.1b bigram 只是筛查，不是独立性证明
+
+`I-near-duplicate-fact` 的 0.8 线只做一件事：把“改一两个字”的复制品挡在门外。**低于 0.8 不代表独立**——换一批同义说法、把同一事件拆成两条事实、把 A 的动作改写成 B 的动作，都可能落在 0.8 以下，但语义上仍是同一件事。
+
+所以包必须再带一份 `semantic-review.json`，且必须由**人**签：
+
+```json
+{
+  "protocol": "c3-holdout-semantic-review-v1",
+  "reviewer": {"identity": "<谁>", "kind": "human"},
+  "sources": {
+    "h01": {"verdict": "independent", "note": "与旧材料的哪一条不同、为什么不同"},
+    "h02": {"verdict": "semantic-duplicate", "note": "对应旧材料的 f2，只是换了措辞"},
+    "h03": {"verdict": "unsure", "note": "分不出是不是同一事件"}
+  }
+}
+```
+
+规则：
+
+| verdict | 结果 |
+| --- | --- |
+| `independent` | 通过 |
+| `semantic-duplicate` | `I-semantic-duplicate`，整包拒绝 |
+| `unsure` | `I-semantic-unsure`，整包拒绝（待定不算通过） |
+
+`reviewer.kind` 必须是 `human`。AI 可以帮忙列表、写备注，但**不能把这一栏签成 human**；写成 `ai` 会被 `PKG-semantic-review-not-human` 拒绝。这样 c3 不可能自己证明自己的留出是独立的。
+
+`--freeze` 会额外要求这份文件存在，并把它的哈希写进冻结件。
+
+### 4.1c 生成过程必须留痕
+
+`manifest.generationProcess` 五个字段缺一不可，否则 `PKG-no-generation-process`：
+
+| 字段 | 内容 |
+| --- | --- |
+| `method` | 这些回合是怎么产生的（谁行动、按什么输入、几条点） |
+| `worldRounds` | 每个来源对应的世界回合列表 |
+| `dedupeMethod` | 生成时怎么去重（与旧材料怎么比对的） |
+| `producedAt` | 产生日期 |
+| `producerCommit` | A 侧提交 SHA |
+
+没有这五项，“新来源”无法核验——文本看起来不同，也可能只是同一批事实换了个说法。
 
 ### 4.2 隔离**不检查**什么
 
@@ -118,8 +163,8 @@ python -X utf8 validate_holdout.py --package <packageDir> --freeze # 校验通�
 
 ## 6. 现在的状态
 
-- `validate_holdout.py --self-test`：用现有 9 个来源搭一个包，schema/链/证据/授权/计划全过（0 错），隔离把 45 条事实全部判重、来源数 9 未达 10 —— 说明“现有材料不能当留出”这件事是**机器判出来的**，不是我口头说的。
-- `validate_holdout.py --unit-test`：全新事实通过、改一字被判近似重复。
+- `validate_holdout.py --self-test`：用现有 9 个来源搭一个包（人造 `generationProcess` 与 `semantic-review`，复核者标成 `ai`），schema/链/证据/授权/计划全过（0 错），隔离把 45 条事实全部判重、来源数 9 未达 10、语义复核因非 human 被拒 —— 说明“现有材料不能当留出”和“c3 不能自证独立”都是**机器判出来的**。
+- `validate_holdout.py --unit-test`：全新事实通过；`袖口沾了雨`→`袖口沾了雨水` 被判近似重复。
 - 还没有真实的新包；本分支不会自己生成世界回合。
 
 ## 7. 到货后 c3 的固定动作

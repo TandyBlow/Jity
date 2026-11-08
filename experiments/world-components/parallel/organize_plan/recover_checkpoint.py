@@ -184,12 +184,17 @@ def main() -> int:
     verdict = {
         "found": bool(weight_dirs),
         "verdict": "not-found-locally",
+        "scope": ("the committed training script has no checkpoint-writing call, and no attributable "
+                  "weight file exists in the searched local roots; this does NOT prove no copy ever "
+                  "existed elsewhere"),
         "reason": [],
     }
     if not any_save:
         verdict["reason"].append(
             "no committed version of the training script contains save_pretrained/torch.save; "
-            "it keeps the best state in memory only and reloads it with load_state_dict")
+            "it keeps the best state in memory only and reloads it with load_state_dict, so running "
+            "that script cannot produce a weight file (scope: this committed script, not every "
+            "possible run)")
     if not trained_pins:
         verdict["reason"].append(
             "the frozen record pins only base model hashes; there is no trained-checkpoint field")
