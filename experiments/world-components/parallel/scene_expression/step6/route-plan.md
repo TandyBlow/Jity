@@ -47,7 +47,7 @@
 ## 3b. 样例角色
 
 - `step6/scenes/campus-three-points.md`（v3）：**一致性样例**——只检查事件 ↔ Δ ↔ 面板、玩家动作授权、失败/交接落账；不评人物声音，不作为叙事标尺。
-- 叙事质量样例：尚未写。准入条件见 `step6/acceptance-boundaries.md` §6；须另起完整上下文场景，重点看人物声音、场景描写、玩家控制、收尾钩子。
+- 叙事质量样例：`step6/scenes/art-room-three-points.md`——旧教学楼画夹与钥匙，三点连续冲突；**待人工评价文本**，之后再做逐句来源检查。准入条件见 `step6/acceptance-boundaries.md` §6。
 
 ## 3c. 已知数据交接缺口（决定路线可行性）
 
