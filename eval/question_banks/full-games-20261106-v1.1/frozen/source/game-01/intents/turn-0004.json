@@ -1,0 +1,48 @@
+{
+  "before_sha256": "cf4c3759aca4f14b469c6c246e6777732a4b7da041f02864f74285d469a34647",
+  "created_at": "2026-11-06T05:15:54.806923+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "不再追问闷响，顺着她让开的方向出示通行卡，请她带路办入校手续",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 4
+  },
+  "selection": {
+    "action": "不再追问闷响，顺着她让开的方向出示通行卡，请她带路办入校手续",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 18,
+    "scores": [
+      {
+        "action": "不再追问闷响，顺着她让开的方向出示通行卡，请她带路办入校手续",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8932462214443916
+      },
+      {
+        "action": "把泥里那枚金属徽记捡起来，当着她的面问这是不是学院的东西",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8035888796267484
+      },
+      {
+        "action": "借口避雨，先走进大门内侧，靠近主楼方向看清那声响的来源",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.21199182809627204
+      },
+      {
+        "action": "直接问她是不是不想让自己知道主楼那边的事",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.09195943285205066
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 4
+}

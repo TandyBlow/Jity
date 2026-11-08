@@ -1,0 +1,46 @@
+{
+  "before_sha256": "1957000620095fa189b4c55bed8084213c5201eb92944336b6d1232cbfae767f",
+  "created_at": "2026-11-06T05:20:54.984828+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 18
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "拾起那几页观测记录，逐页辨认上面的字迹与编号",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 35
+  },
+  "selection": {
+    "action": "拾起那几页观测记录，逐页辨认上面的字迹与编号",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 18,
+    "scores": [
+      {
+        "action": "拾起那几页观测记录，逐页辨认上面的字迹与编号",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3470535934145387
+      },
+      {
+        "action": "查看金属牌上的编号，与观测记录上的编号对照",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.12306582892114548
+      },
+      {
+        "action": "沿夹层向深处摸索，寻找通往其他区域的出口",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.27443987792886215
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 35
+}

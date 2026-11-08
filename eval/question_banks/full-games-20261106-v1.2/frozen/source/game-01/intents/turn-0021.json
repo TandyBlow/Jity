@@ -1,0 +1,46 @@
+{
+  "before_sha256": "0f8da234e48798908ab48c9b88517a5f4d1f14be4957375acabfb0ab283635a9",
+  "created_at": "2026-11-06T05:18:36.653989+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁应急灯刚灭，压低身体冲向铁门，抢在门外的东西之前把门拉开",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 21
+  },
+  "selection": {
+    "action": "趁应急灯刚灭，压低身体冲向铁门，抢在门外的东西之前把门拉开",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "趁应急灯刚灭，压低身体冲向铁门，抢在门外的东西之前把门拉开",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.9767880568707242
+      },
+      {
+        "action": "贴着玻璃隔断的墙根横移，避开缺口正对的视线，先看清门外那道影子是什么",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.503533309075602
+      },
+      {
+        "action": "把黄铜钥匙握在掌心，用钥匙柄敲击铁门旁的金属管道，试探门外异响的反应",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.6197775218105195
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 21
+}

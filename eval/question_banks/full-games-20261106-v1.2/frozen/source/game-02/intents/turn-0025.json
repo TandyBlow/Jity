@@ -1,0 +1,46 @@
+{
+  "before_sha256": "56b2287c541f5bed6747a8df57b1b827c26e941f4166e12df0d75a1c8977f55c",
+  "created_at": "2026-11-06T05:27:56.931327+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 20
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "把七枚烟蒂和铁架擦痕的位置记下，回头用这处痕迹去逼诺诺说出她上个月看见的搬箱人是谁",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 25
+  },
+  "selection": {
+    "action": "把七枚烟蒂和铁架擦痕的位置记下，回头用这处痕迹去逼诺诺说出她上个月看见的搬箱人是谁",
+    "option_index": 1,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 20,
+    "scores": [
+      {
+        "action": "侧身挤过铁架后的缝隙，顺着土腥味的风追进去，抢在对方把后半截序列送走前截住",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8205711692630022
+      },
+      {
+        "action": "把七枚烟蒂和铁架擦痕的位置记下，回头用这处痕迹去逼诺诺说出她上个月看见的搬箱人是谁",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.44888006787692614
+      },
+      {
+        "action": "不再追缝隙，先逼诺诺交代调档序列后半截到底对应哪批封存件，问清再决定走哪条路",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.21818573795367402
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 25
+}

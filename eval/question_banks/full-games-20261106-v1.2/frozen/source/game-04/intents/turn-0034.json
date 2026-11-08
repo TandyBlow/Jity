@@ -1,0 +1,52 @@
+{
+  "before_sha256": "f81358986d4bf94c1427e990396e7e2eeb28f0b281dbb10f3638ed4b3d77b419",
+  "created_at": "2026-11-06T06:10:15.731912+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 8
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "先检查铁门周围和通风井撬痕，确认有没有人守在门后",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 34
+  },
+  "selection": {
+    "action": "先检查铁门周围和通风井撬痕，确认有没有人守在门后",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "让诺诺留在门外望风，自己推门进去查看红光来源",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.8298128440431041
+      },
+      {
+        "action": "先检查铁门周围和通风井撬痕，确认有没有人守在门后",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.9925338846630191
+      },
+      {
+        "action": "问诺诺三年前那次档案库封禁到底发生了什么",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.6865587870736187
+      },
+      {
+        "action": "不进门，沿走廊往回摸，找另一条通往档案库的路",
+        "index": 3,
+        "score": 4,
+        "tie_break": 0.41623955936020607
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 34
+}

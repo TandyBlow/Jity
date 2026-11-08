@@ -1,0 +1,46 @@
+{
+  "before_sha256": "470245bd879883a261b3abc2f784c3304b2fd41274f9513f6e1e44e2f2a60831",
+  "created_at": "2026-11-06T06:04:49.336976+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 10
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "反问她既然知道柱脚有东西，为什么一直守在门口不进去",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 4
+  },
+  "selection": {
+    "action": "反问她既然知道柱脚有东西，为什么一直守在门口不进去",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 10,
+    "scores": [
+      {
+        "action": "干脆承认自己什么都不知道，请她带你走完入校流程",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3953989444709636
+      },
+      {
+        "action": "不接她的话，直接问门内现在能不能进，把话题拉回通行卡",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.9879197918107152
+      },
+      {
+        "action": "反问她既然知道柱脚有东西，为什么一直守在门口不进去",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.7513792255743813
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 4
+}

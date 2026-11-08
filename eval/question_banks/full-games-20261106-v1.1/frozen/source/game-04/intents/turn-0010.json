@@ -1,0 +1,46 @@
+{
+  "before_sha256": "0599975436c53c5fe86c96a3cb492f9c54fe5add79b32d047b70c445aa4527a6",
+  "created_at": "2026-11-06T06:05:40.059212+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 7
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "先不碰屏幕，环视灯下的长桌，看报到流程还留下了什么",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 10
+  },
+  "selection": {
+    "action": "先不碰屏幕，环视灯下的长桌，看报到流程还留下了什么",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "凑近投影屏，仔细辨认名字旁那片鳞片状红色标记的形状",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.32212680245092395
+      },
+      {
+        "action": "转身问诺诺，这个红色标记在学院里代表什么",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6229553425564118
+      },
+      {
+        "action": "先不碰屏幕，环视灯下的长桌，看报到流程还留下了什么",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.4044479956328856
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 10
+}

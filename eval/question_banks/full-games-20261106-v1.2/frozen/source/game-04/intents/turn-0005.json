@@ -1,0 +1,46 @@
+{
+  "before_sha256": "a85b83fc189cb5f1dcd12777a8932ff0357208f347ef6d284909413bfb4f77ca",
+  "created_at": "2026-11-06T06:04:57.754397+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 11
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "把通行卡递向诺诺，让她先碰一碰这发烫的卡",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 5
+  },
+  "selection": {
+    "action": "把通行卡递向诺诺，让她先碰一碰这发烫的卡",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 11,
+    "scores": [
+      {
+        "action": "不再纠缠，握紧发烫的通行卡转身走向大门",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.027111522737452542
+      },
+      {
+        "action": "把通行卡递向诺诺，让她先碰一碰这发烫的卡",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.7030675744615447
+      },
+      {
+        "action": "退开半步，低头查看卡片边缘的暗红是否在扩散",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.4008692506448448
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 5
+}

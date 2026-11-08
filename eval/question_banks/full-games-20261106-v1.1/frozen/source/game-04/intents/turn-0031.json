@@ -1,0 +1,46 @@
+{
+  "before_sha256": "20b0c27ad3e31163ef19df6d84ab90e9492a2966d098af6b4e12ded1be45c1c9",
+  "created_at": "2026-11-06T06:09:35.799303+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 12
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "不急着走，先把残印的编号段抄在任务单背面，再撤离",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 31
+  },
+  "selection": {
+    "action": "不急着走，先把残印的编号段抄在任务单背面，再撤离",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 12,
+    "scores": [
+      {
+        "action": "跟着诺诺立刻撤离楼梯间，边跑边问她那个撤销科室的档案现在归谁管",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.28227731435892345
+      },
+      {
+        "action": "不急着走，先把残印的编号段抄在任务单背面，再撤离",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.32041101505886405
+      },
+      {
+        "action": "把档案袋塞给诺诺保管，自己空手先出去探执行部折返的路线",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.15431502953667453
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 31
+}

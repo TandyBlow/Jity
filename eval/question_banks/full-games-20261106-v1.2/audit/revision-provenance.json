@@ -1,0 +1,9 @@
+{
+  "human_review": "pending_human_review",
+  "model_answers": "not_run",
+  "preservation": "All context values and source bytes must match v1.1; only question and common instruction change inside each input.",
+  "previous_bank": "/Users/davidz/Documents/GitHub/jity-eval/question_banks/full-games-20261106-v1.1",
+  "previous_delivery_sha256": "e9b2080462fd17741bdf8a5b4d7d1eb02517331a4446be1fa183ace6899558b8",
+  "previous_manifest_sha256": "4c3d4f66c6e6b1a18d21ce68db51ce82da58fd45a445ab5b6cea4999c9c99d48",
+  "spec_sha256": "b10432d23ebf65d82989466ccc0cd381a28b2be8ffe0e81eaadc6877b46b49f8"
+}

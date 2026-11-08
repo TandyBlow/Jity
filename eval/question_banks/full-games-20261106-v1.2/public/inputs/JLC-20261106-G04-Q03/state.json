@@ -1,0 +1,1694 @@
+{
+  "checkpoint": {
+    "action_index": 47,
+    "campaign_turn": 46,
+    "checkpoint_sha256": "d6ca43d1ccf53bf5c48f19c1be707f848dc67168744d74177e19a04d9f17e830",
+    "state_sha256": "d040ff5a2509572a7350cde9cb587bf67ad4b58dfe2b4662316371c496af84d1",
+    "state_turn": 47,
+    "timeline_node": 48
+  },
+  "context": {
+    "recent_context": [
+      {
+        "action_index": 42,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功看清门后拖痕来源与封存编号线索，失败被门后之物察觉或留下更多痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 11
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+          "dialogue": [
+            {
+              "speaker": "兜帽人",
+              "text": "别看了，那是我。三年前他们就给我盖过这个章。现在他们来收的，是这张纸，还有你手上那点血。"
+            },
+            {
+              "speaker": "门外执行部成员",
+              "text": "血迹到这儿就断了，门缝底下有光，里面有人。"
+            },
+            {
+              "speaker": "兜帽人",
+              "text": "通风管，现在。爬进去别回头，我在后面把格栅装回去。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [
+            {
+              "description": "被血浸透的半页纸，印着兜帽人侧脸素描和已注销红色印章，边缘残缺。",
+              "name": "执行部通缉令残页",
+              "status": "owned"
+            }
+          ],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被血浸透的半页通缉令，印有兜帽人侧脸素描与已注销红章。",
+                "location": "玩家手中",
+                "name": "执行部通缉令残页",
+                "notes": "从帆布包内取得，是执行部来收的目标之一。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家进入维护间发现兜帽人的已注销通缉令残页，执行部停在门外，兜帽人催促从通风管撤离。",
+            "npcs_upserted": [
+              {
+                "current_location": "维护间内玩家身后",
+                "description": "三年前被注销科室的末批外勤，档案记为殉职。",
+                "name": "兜帽人",
+                "notes": "通缉令上的对象就是他，催促玩家从通风管撤离。",
+                "relationship": "暂时合作",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手指伤口渗血，被门后之物察觉，痕迹增多",
+              "current_goal": "从维护间后方通风管撤离",
+              "danger_level": "critical",
+              "notes": "执行部停在维护门外，血迹暴露行踪。"
+            },
+            "quests_upserted": [
+              {
+                "description": "甩开执行部并查清维护门后的拖拽痕迹。",
+                "name": "新生入学调查",
+                "notes": "已发现通缉令残页，执行部停在维护门外。",
+                "objective": "从维护间后方通风管撤离，保住通缉令残页。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "帆布包内的执行部通缉令残页印着兜帽人侧脸素描和已注销红章。",
+                "name": "兜帽人的通缉令",
+                "notes": "执行部来收的东西之一。",
+                "source": "维护间帆布包",
+                "status": "known"
+              },
+              {
+                "description": "兜帽人称执行部不是来抓玩家，是来收东西。",
+                "name": "执行部来意",
+                "notes": "收的目标包括通缉令残页和玩家的血迹。",
+                "source": "兜帽人低语",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你侧身挤过维护门，门轴发出一声干涩的摩擦。维护间比通道更窄，两侧是裸露的管线和积灰的配电箱，空气里混着铁锈和某种更甜腻的气味。地上的拖拽痕迹从门口一直延伸到房间深处，两道平行的暗色擦痕，中间夹着断续的深色斑点。你蹲下去看，指腹的伤口被冷空气一激，疼得发麻，血又渗出来，滴在痕迹旁边，和旧的斑点混在一起。你顺着痕迹往里走，尽头是一张被掀翻的金属桌，桌腿朝天，压着一只撕裂的帆布包。包口翻卷，里面散落着几张被血浸透的纸片，边缘发硬，颜色发黑。你伸手去够，指尖刚碰到纸片，身后传来一声极轻的响动，像是金属被踩了一下，又立刻收住。你回头，维护间里空着，只有管线在暗处延伸。可你刚才进来时，门缝的光是斜的，现在那道光的边缘多了一道影子，停着不动。你屏住呼吸，把最上面那张纸片抽出来，纸面洇着暗红，能看清的只剩半页，上面印着一张侧脸素描，兜帽压得很低，旁边盖着一枚红色印章，字迹被血晕开，但已注销三个字还认得出来。这是执行部的内部通缉令，被通缉的人，就是带你进来的那个兜帽人。门外传来脚步声，停在维护门外，手电光从门缝扫过，有人低声说血迹到这儿就断了。兜帽人的声音从你身后极近的地方响起，压得几乎听不见，让你立刻从维护间后方的通风管撤，又说他们不是来抓你的，是来收东西的。你这才发现维护间后墙下方有一截通风管，管口的格栅已经被人卸掉，靠在墙边。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "暂时合作，紧张",
+              "name": "兜帽人",
+              "notes": "通缉令上的对象就是他，催促玩家从通风管撤离，称执行部是来收东西的。"
+            },
+            {
+              "disposition": "紧张自责",
+              "name": "诺诺",
+              "notes": "留在通道拐角望风，未进入维护间。"
+            }
+          ],
+          "option_checks": [
+            null,
+            null,
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功取得更多封存编号线索，失败被门外执行部确认位置并留下更多血迹。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "立刻钻进通风管，按兜帽人说的撤，把通缉令残页攥在手里带走",
+            "先追问兜帽人通缉令上已注销的含义，再决定是否撤离",
+            "不撤，把帆布包里剩下的纸片全部抽出来，赌执行部拆门前能看清更多内容"
+          ],
+          "quests_updated": [
+            {
+              "description": "甩开执行部并查清维护门后的拖拽痕迹，已发现通缉令残页，需从通风管撤离。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Narrow maintenance room, overturned metal table, torn canvas bag, blood-soaked papers, ventilation duct opening in wall, flashlight beam through door crack, horror atmosphere"
+        },
+        "player_action": "推开维护门进去，顺着拖拽痕迹查清是谁留下的",
+        "timeline_node": 43
+      },
+      {
+        "action_index": 43,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功取得更多封存编号线索，失败被门外执行部确认位置并留下更多血迹。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 16
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+          "dialogue": [
+            {
+              "speaker": "兜帽人",
+              "text": "够了，你留下的血比纸上的字还多。他们知道你在里面了，现在走。"
+            },
+            {
+              "speaker": "门外执行部成员",
+              "text": "门缝有光，血迹到这儿没断，人就在维护间里。撬开。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [
+            {
+              "description": "从帆布包纸片中撕下的一角，印有兜帽人侧脸素描旁的附加三角标记，旁注血统检测归档字样，编号被血污遮盖。",
+              "name": "带三角标记的通缉令残角",
+              "status": "owned"
+            }
+          ],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "印有附加三角标记与血统检测归档字样的纸角，编号被血污遮盖。",
+                "location": "玩家手中",
+                "name": "带三角标记的通缉令残角",
+                "notes": "从帆布包纸片中撕下。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家强抽帆布包纸片失败，只取得带三角标记的残角，执行部确认位置并开始撬门。",
+            "npcs_upserted": [
+              {
+                "current_location": "维护间内",
+                "description": "三年前殉职的外勤，通缉令对象。",
+                "name": "兜帽人",
+                "notes": "催促撤离，身份暴露加深。",
+                "relationship": "暂时合作，焦急",
+                "status": "present"
+              },
+              {
+                "current_location": "维护门外",
+                "description": "正在撬门的执行部人员。",
+                "name": "执行部成员",
+                "notes": "已确认玩家位置。",
+                "relationship": "敌对",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手指伤口渗血，痕迹增多",
+              "current_goal": "从维护间后方通风管撤离",
+              "danger_level": "critical",
+              "notes": "执行部即将破门。"
+            },
+            "quests_upserted": [
+              {
+                "description": "从维护间后方通风管撤离。",
+                "name": "新生入学调查",
+                "notes": "执行部即将破门。",
+                "objective": "带残页与残角撤离",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "通缉令残角上兜帽人素描旁有一枚被划掉又重描的三角标记，旁注血统检测归档字样。",
+                "name": "通缉令附加三角标记",
+                "notes": "编号被血污遮盖。",
+                "source": "帆布包纸片",
+                "status": "known"
+              },
+              {
+                "description": "门外执行部成员喊出确认了，人在里面，并开始撬门。",
+                "name": "执行部确认玩家位置",
+                "notes": "血迹引导。",
+                "source": "维护门外",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你没有退。兜帽人压低声音催你走，你只把手伸进那只撕裂的帆布包，指腹的伤口在纸片边缘蹭过，疼得你动作一滞。你抽出第一张，纸面被血浸得发硬，大半字迹糊成一片暗褐，只剩一个编号的尾数还能辨认，和簧片上的半截对不上。你抽第二张，纸片黏在一起，撕开时带下一小块纤维，上面印着通缉令的边角，兜帽人的侧脸素描旁多了一枚你之前没注意的附加标记，一个被划掉又重描的三角。门外传来金属撬棍插进缝里的声响，门板向内凸起一道弧线，灰尘簌簌落下。你伸手去够第三张，指尖的血顺着纸边淌下去，在纸角洇开新的红点。兜帽人一把攥住你的后领，把你从桌边拖开，说门要开了。你只来得及看清那枚三角标记旁的一行小字，写着与血统检测相关的归档字样，后面的编号被血污彻底盖住。门缝里透进手电的白光，有人在外面喊，确认了，人在里面。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "焦急但仍在合作",
+              "name": "兜帽人",
+              "notes": "身份进一步暴露，通缉令上的附加标记被玩家看到。"
+            },
+            {
+              "disposition": "敌对",
+              "name": "执行部成员",
+              "notes": "已确认玩家在维护间内，正在撬门。"
+            }
+          ],
+          "option_checks": [
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功带走全部纸片，失败在管口留下更多血迹和痕迹。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功争取时间，失败被破门的气流掀翻并暴露在光下。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "抓起那张带三角标记的纸片，跟兜帽人钻进后方通风管撤离",
+            "把帆布包整个塞进通风管口，先撤再在里面翻找剩余纸片",
+            "回头用身体顶住维护门，替兜帽人争取几秒封住通风管入口"
+          ],
+          "quests_updated": [
+            {
+              "description": "从维护间后方通风管撤离，保住通缉令残页与新增残角。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Blood-stained papers scattered on a metal floor, flashlight beam through a cracked maintenance door, dim emergency light, horror atmosphere"
+        },
+        "player_action": "不撤，把帆布包里剩下的纸片全部抽出来，赌执行部拆门前能看清更多内容",
+        "timeline_node": 44
+      },
+      {
+        "action_index": 44,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功争取时间，失败被破门的气流掀翻并暴露在光下。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 17
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+          "dialogue": [
+            {
+              "speaker": "执行部成员",
+              "text": "东西在，人也在。别动，手放在看得见的地方。"
+            },
+            {
+              "speaker": "兜帽人",
+              "text": "格栅我只拆了一半，管子口窄，你钻不进去。现在你得选，是让我把光挡一挡，还是我先把这半截格栅塞回去。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "拐角这边还有一条岔道，我不知道通到哪，但总比站在光里强。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -4,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·维护间",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "顶门失败被气流掀翻，执行部看清玩家与血纸并呼叫增援，兜帽人被迫抉择。",
+            "npcs_upserted": [
+              {
+                "current_location": "维护间门口",
+                "description": "执行部外勤，奉命回收物品",
+                "name": "执行部成员",
+                "notes": "喊出东西在人也 在，并呼叫增援",
+                "relationship": "敌对",
+                "status": "present"
+              },
+              {
+                "current_location": "通风管口",
+                "description": "三年前殉职外勤",
+                "name": "兜帽人",
+                "notes": "格栅拆到一半，被迫选择掩护或自保",
+                "relationship": "暂时合作但动摇",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "被气流掀翻，后背撞伤，短暂眩晕，手指伤口渗血",
+              "current_goal": "在被合围前脱身并保住血纸证据",
+              "danger_level": "critical",
+              "notes": "暴露在手电光下，增援正在接近"
+            },
+            "quests_upserted": [
+              {
+                "description": "带残页与残角撤离",
+                "name": "新生入学调查",
+                "notes": "执行部确认玩家与物品同时在场，增援正在赶来",
+                "objective": "在被执行部合围前脱身并保住血纸证据",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "执行部成员喊出东西在，人也在，表明他们首要目标是回收物品而非单纯抓人。",
+                "name": "执行部的真实目的",
+                "notes": "玩家与血纸同时暴露",
+                "source": "维护间破门现场",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你把肩膀抵上维护门内侧，脚跟蹬住地面，想替兜帽人挤出几秒。撬棍在外侧第二次发力，门板猛地向内弹开，一股被压缩的空气顺着门缝炸进来，直接掀在你的胸口。你整个人被推得向后翻倒，后背撞上翻倒的金属桌腿，眼前白了一瞬，耳朵里全是嗡鸣。手电光从门口灌进来，扫过地面，扫过散落的血纸，最后停在你脸上。你抬手挡光，指缝里的血在光柱里看得清清楚楚。门口站着两个执行部成员，其中一个的视线从你身上移到满地纸片，又移回你身上，声音陡然拔高：东西在，人也在。另一个已经按住耳侧，低声报出位置和人数。兜帽人半跪在通风管口，手里还攥着刚拆下一半的格栅，动作僵在那里。他抬头看你，又看门口，喉咙动了一下，没有立刻扑向任何一边。走廊尽头传来第二组脚步声，不止一个人，鞋底踩在铁屑上的声音一层压一层，正往这边合拢。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对",
+              "name": "执行部成员",
+              "notes": "已确认玩家与血纸同时在场，呼叫了第二组增援。"
+            },
+            {
+              "disposition": "暂时合作",
+              "name": "兜帽人",
+              "notes": "格栅只拆了一半，被迫在掩护玩家与自保之间做选择。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功挤进通风管脱身，失败被卡住并彻底暴露在增援面前。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "敏捷检定",
+              "requires_check": true,
+              "skill": "敏捷",
+              "stakes": "成功冲进岔道甩开第一波人，失败在光下被截住并丢失部分纸片。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出对方对血统检测归档的回应，失败被当场控制并没收物品。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功拖桌堵门争取撤退时间，失败被增援看清去向。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "让兜帽人挡住门口的光，自己扑向通风管口，把剩下半截格栅扯开硬钻进去",
+            "抓起地上散落的血纸塞进怀里，朝诺诺说的岔道方向冲，赌那条路没被增援堵死",
+            "不再跑，举起双手，把临时通行卡和档案袋亮给执行部，要求见能解释血统检测归档的人",
+            "低声喊兜帽人一起退向岔道，让他带路，自己断后拖开金属桌堵住门口"
+          ],
+          "quests_updated": [
+            {
+              "description": "执行部已锁定玩家与血纸，调查转入被追捕状态。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Narrow maintenance room, flashlight beam cutting through dust, blood-stained papers scattered on floor, figure sprawled against overturned metal table, hooded man at half-open vent"
+        },
+        "player_action": "回头用身体顶住维护门，替兜帽人争取几秒封住通风管入口",
+        "timeline_node": 45
+      },
+      {
+        "action_index": 45,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功拖桌堵门争取撤退时间，失败被增援看清去向。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "大成功",
+            "option_index": 3,
+            "outcome": "critical",
+            "roll": 20
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+          "dialogue": [
+            {
+              "speaker": "诺诺",
+              "text": "桌卡住了，他们得撬一阵。你手怎么样？"
+            },
+            {
+              "speaker": "兜帽人",
+              "text": "别停太久。这条岔道我认得一半，再往里是旧维护通道，能绕回上面。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "墙上那是什么？你抄的编号段，拿出来对一下。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -2,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家拖桌堵门成功，随兜帽人撤入岔道，发现墙上有与残印相关的旧漆标记和模糊编号。",
+            "npcs_upserted": [
+              {
+                "current_location": "岔道口",
+                "description": "红发女生，行动直接，观察力敏锐",
+                "name": "诺诺",
+                "notes": "接应玩家并注意到墙上旧标记",
+                "relationship": "同盟，紧张自责",
+                "status": "present"
+              },
+              {
+                "current_location": "岔道拐角",
+                "description": "档案上殉职的外勤，被通缉",
+                "name": "兜帽人",
+                "notes": "认得岔道一半，提议继续深入",
+                "relationship": "暂时合作",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "后背撞伤，手指伤口渗血，短暂喘息",
+              "current_goal": "比对墙上标记，确认撤退路线并保住血纸证据",
+              "danger_level": "high",
+              "notes": "追兵被桌板暂时挡住"
+            },
+            "quests_upserted": [
+              {
+                "description": "在被执行部合围前脱身并保住血纸证据",
+                "name": "新生入学调查",
+                "notes": "拖桌堵门成功，争取到喘息时间",
+                "objective": "比对墙上旧标记与残印编号，确认撤退路线",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "岔道墙壁上有一道被灰尘覆盖的旧漆标记，形状与档案残印的边角相似，旁边刻着一串模糊的编号。",
+                "name": "岔道墙上的旧漆标记",
+                "notes": "与残印编号段可能相关",
+                "source": "玩家断后撤入岔道后观察",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你压低嗓子喊了一声，让兜帽人别管格栅，先走。他愣了一瞬，随即把半拆的格栅往地上一扔，抓起帆布包和那几张血纸，侧身钻进诺诺指的岔道。你转身抓住翻倒金属桌的桌腿，后背的撞伤在发力时抽紧，疼得你牙关发酸。你把桌子拖到门内侧，斜着卡进门框，桌角抵住墙，桌腿撑住地面，金属与水泥摩擦出刺耳的尖响。门外的撬棍第三次发力，门板撞在桌面上，只向内凹了一指宽就卡死。手电光被桌板切断，门口传来一声闷响，有人撞在门上，接着是咒骂和撬桌的声响。你不再看，转身追进岔道。岔道比维护间更窄，两侧是裸露的旧管道，头顶的灯早坏了，只有尽头透进来一点微弱的气流。诺诺在岔道口接应，一把拽住你的胳膊往里带。兜帽人已经蹲在拐角，把帆布包按在膝上，胸口起伏得厉害。你们停下来喘气，气流从岔道深处涌出来，带着旧管道特有的铁腥味。你靠着墙滑坐下去，手指的伤口还在渗血，滴在积灰的地面上。就在你抬手擦汗的时候，应急灯的余光扫过身侧的墙面，灰尘底下有一道旧漆标记，形状和档案残印的边角对得上，旁边还刻着一串模糊的编号，被灰盖了大半。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "紧张但镇定",
+              "name": "诺诺",
+              "notes": "在岔道口接应，注意到墙上的旧标记"
+            },
+            {
+              "disposition": "暂时合作",
+              "name": "兜帽人",
+              "notes": "认得岔道一半，提议继续往里走"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功辨认编号段与残印的对应关系，失败只辨出部分字符并耽误时间。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功完整拓下标记，失败留下痕迹且被追兵逼近。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "拿出预备任务单背面的编号抄录，蹲下比对墙上那串模糊编号",
+            "先问兜帽人这条岔道通往哪里，确认撤退路线再动",
+            "让诺诺和兜帽人先走，自己留下把墙上的标记拓下来"
+          ],
+          "quests_updated": [
+            {
+              "description": "在被执行部合围前脱身并保住血纸证据，同时追查墙上旧标记与残印编号的关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "narrow dusty maintenance tunnel, old pipes, faint emergency light, faded painted mark on wall, three figures catching breath"
+        },
+        "player_action": "低声喊兜帽人一起退向岔道，让他带路，自己断后拖开金属桌堵住门口",
+        "timeline_node": 46
+      },
+      {
+        "action_index": 46,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功辨认编号段与残印的对应关系，失败只辨出部分字符并耽误时间。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "成功",
+            "option_index": 0,
+            "outcome": "success",
+            "roll": 19
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+          "dialogue": [
+            {
+              "speaker": "诺诺",
+              "text": "这串编号对上了，可它指向的地方不该有归档点。你确定要走进去？"
+            },
+            {
+              "speaker": "兜帽人",
+              "text": "另一头有人绕过来了，脚步很稳，不是普通巡逻。要么往里，要么现在退，没第三条路。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "写在预备任务单背面的残印编号段，已与墙上旧漆编号比对吻合。",
+                "location": "预备任务单背面",
+                "name": "残印编号抄录",
+                "notes": "指向旧维护通道深处被封闭的隔间",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "",
+            "npcs_upserted": [
+              {
+                "current_location": "岔道",
+                "description": "红发女生，行动直接、观察敏锐",
+                "name": "诺诺",
+                "notes": "协助比对编号，递出绷带",
+                "relationship": "同盟",
+                "status": "present"
+              },
+              {
+                "current_location": "岔道口",
+                "description": "档案上殉职的外勤",
+                "name": "兜帽人",
+                "notes": "察觉第二组人绕路逼近",
+                "relationship": "暂时合作",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "后背撞伤，手指伤口渗血，已获绷带",
+              "current_goal": "决定是否深入旧维护通道前往封闭隔间",
+              "danger_level": "high",
+              "notes": "第二组脚步声从岔道另一头逼近"
+            },
+            "quests_upserted": [
+              {
+                "description": "比对墙上旧标记与残印编号，确认撤退路线",
+                "name": "新生入学调查",
+                "notes": "编号段已确认对应关系",
+                "objective": "前往旧维护通道深处被封闭的隔间，取回缺失编号的归档物",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "这串编号不是随机的，它指向旧维护通道深处一个被封闭的隔间，正是任务单第二项所缺的那一位编号的归档点。",
+                "name": "探索：钟楼地下二层·禁入铁门后通道·岔道",
+                "notes": "归档点位置确认",
+                "source": "玩家比对墙上编号与残印抄录",
+                "status": "known"
+              },
+              {
+                "description": "墙上旧漆编号段与预备任务单背面的残印抄录逐位吻合，指向旧维护通道深处被封闭的隔间。",
+                "name": "墙上编号与残印的对应关系",
+                "notes": "任务单第二项缺失编号的归档点",
+                "source": "调查检定成功",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你蹲下去，膝盖抵住岔道冰冷的混凝土地面，后背的撞伤在弯腰时抽紧，疼得你呼吸短了一截。你把预备任务单翻到背面，那串用铅笔抄下的残印编号在应急灯的余光里发灰，几个字符被汗浸得有些晕开。诺诺会意，把灯举高，光柱贴着墙面斜斜扫过去，照亮那串被旧漆盖住的模糊编号。你逐位比对，前四位的字形和抄录完全吻合，第五位在墙上被一道划痕劈开，你侧过头换了个角度，划痕下的笔画终于接上。你的手指停在纸面最后一段，心跳慢了一拍。这串编号不是随机的，它指向旧维护通道深处一个被封闭的隔间，正是任务单第二项所缺的那一位编号的归档点。诺诺凑近看了一眼，低声说这地方不该有归档点。兜帽人背对着你们守在岔道口，忽然抬手示意噤声。远处撬门的声响弱了下去，执行部似乎放弃了硬拆，可岔道另一头传来第二组脚步声，不急不缓，一步一步压过来，带着金属鞋跟磕在管道上的回响。兜帽人回过头，声音压得极低，说他们绕路了，从另一头堵。诺诺把灯往墙上一按，光收成一小圈，她另一只手摸出绷带塞进你掌心，说先把手指缠上，血别滴在地上留痕。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "同盟",
+              "name": "诺诺",
+              "notes": "举灯协助比对编号，递出绷带，对归档点存在表示疑虑"
+            },
+            {
+              "disposition": "暂时合作",
+              "name": "兜帽人",
+              "notes": "警戒岔道深处，察觉第二组人从另一头绕近"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抵达隔间并抢在追兵前取得归档物，失败被第二组人堵在通道中段。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功避开第二组人并观察其去向，失败暴露位置被迫正面遭遇。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null
+          ],
+          "options": [
+            "让兜帽人带路深入旧维护通道，直奔那个被封闭的隔间",
+            "先让诺诺熄灯，三人贴墙伏低，等第二组脚步声过去再决定",
+            "把编号抄录和簧片交给兜帽人核对，确认隔间位置后再行动"
+          ],
+          "quests_updated": [
+            {
+              "description": "已确认墙上编号段与残印对应，指向旧维护通道深处被封闭的隔间，即任务单第二项所缺编号的归档点。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "narrow maintenance tunnel, flickering emergency light, three figures crouching by numbered wall markings, distant footsteps approaching"
+        },
+        "player_action": "拿出预备任务单背面的编号抄录，蹲下比对墙上那串模糊编号",
+        "timeline_node": 47
+      },
+      {
+        "action_index": 47,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抵达隔间并抢在追兵前取得归档物，失败被第二组人堵在通道中段。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 14
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+          "dialogue": [
+            {
+              "speaker": "追兵",
+              "text": "隔间里的东西，你们拿不走。"
+            },
+            {
+              "speaker": "追兵",
+              "text": "封条是S级旧档的封条，撕开的人要一并带回去。"
+            },
+            {
+              "speaker": "兜帽人",
+              "text": "他们知道隔间，也知道封条。左侧壁上有一条旧检修口，我当年走过半条，能不能找到，看你的了。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "兜帽人带路深入岔道，第二组追兵从另一头堵住中段，透露隔间与S级旧档封条，兜帽人指出左侧旧检修口。",
+            "npcs_upserted": [
+              {
+                "current_location": "岔道另一头约十步处",
+                "description": "执行部第二组人员",
+                "name": "追兵",
+                "notes": "知道隔间与S级旧档封条，堵住通道中段",
+                "relationship": "敌对",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "后背撞伤，手指伤口渗血，被前后夹击",
+              "current_goal": "在通道中段找到脱身路线，抵达封闭隔间",
+              "danger_level": "critical",
+              "notes": "应急灯熄灭，追兵停在十步外等待合拢"
+            },
+            "quests_upserted": [
+              {
+                "description": "前往旧维护通道深处被封闭的隔间，取回缺失编号的归档物。",
+                "name": "新生入学调查",
+                "notes": "第二组追兵堵住去路，退路正被清开",
+                "objective": "在被前后夹击的通道中段找到脱身路线，抵达封闭隔间",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "追兵称隔间里的东西拿不走，封条是S级旧档的封条，撕开的人要一并带回去。",
+                "name": "追兵知晓隔间与封条",
+                "notes": "证实隔间归档物与S级旧档封条直接相关",
+                "source": "岔道中段追兵对话",
+                "status": "known"
+              },
+              {
+                "description": "兜帽人称岔道左侧壁上有半条他当年走过的旧检修口。",
+                "name": "岔道左侧旧检修口",
+                "notes": "可能的脱身路线，尚未找到入口",
+                "source": "兜帽人低语",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你收起任务单，示意兜帽人带路。他没多问，侧身越过你，脚步压得极低，沿着岔道往深处走。诺诺跟在你身后半步，手电贴着地面扫。通道越走越窄，两侧的旧管道上凝着水珠，滴在铁皮上，声音在封闭空间里被放大。你们走了不到二十步，头顶的应急灯忽然闪了一下，随即彻底熄灭。黑暗压下来，只剩诺诺的手电光柱。几乎同时，岔道另一头亮起几束白光，从深处扫过来，光柱里浮着灰尘，脚步声停在离你们不到十步的地方。兜帽人猛地抬手，示意所有人贴墙。你后背抵上冰冷的管道，撞伤处一阵抽痛。光柱没有继续逼近，那些人停在那里，不急着上前，像在等什么。诺诺把手电按灭，黑暗里只剩呼吸声。对面有人开口，声音不高，却清清楚楚传过来：隔间里的东西，你们拿不走。另一个人接话，说封条是S级旧档的封条，撕开的人要一并带回去。兜帽人的手在黑暗里攥紧，低声说他们知道隔间，也知道封条。你身后，来路方向传来金属桌被推开的闷响，退路正在被清开。前后都有人，你们被夹在通道中段。兜帽人贴近你耳边，说这条岔道左侧壁上有半条他当年走过的旧检修口，能不能找到，看你的了。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对",
+              "name": "追兵",
+              "notes": "第二组执行部人员，从岔道另一头堵住通道中段，知道隔间与S级旧档封条"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功找到检修口并钻入，失败被追兵逼近，暴露位置。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null,
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清侧壁结构找到入口，失败浪费宝贵时间，追兵更近。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "摸黑沿左侧壁摸索兜帽人说的旧检修口，抢在追兵合拢前钻进去",
+            "压低声音逼问兜帽人：那条旧检修口通向哪里，值不值得赌",
+            "让诺诺用手电短暂照向追兵方向制造威慑，争取时间观察侧壁结构"
+          ],
+          "quests_updated": [
+            {
+              "description": "前往旧维护通道深处被封闭的隔间，取回缺失编号的归档物；现被第二组追兵堵在通道中段，需另寻路线。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Dark narrow maintenance tunnel, flashlight beams cutting dust, two groups closing in, pipes on walls, tense standoff"
+        },
+        "player_action": "让兜帽人带路深入旧维护通道，直奔那个被封闭的隔间",
+        "timeline_node": 48
+      }
+    ],
+    "structured_state": {
+      "current_location": "钟楼地下二层·禁入铁门后通道·岔道",
+      "health": 90,
+      "item_ledger": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 40,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 31,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "牛皮纸档案袋",
+          "last_seen_turn": 34,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "残印编号抄录",
+          "last_seen_turn": 46,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "旧档案室异常记录",
+          "last_seen_turn": 32,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "半截铜色簧片",
+          "last_seen_turn": 41,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "执行部通缉令残页",
+          "last_seen_turn": 42,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "带三角标记的通缉令残角",
+          "last_seen_turn": 43,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "items": [
+        {
+          "aliases": [],
+          "description": "边缘暗红的临时通行卡，裂纹扩大，暗红渗光",
+          "location": "玩家手中",
+          "name": "临时通行卡",
+          "notes": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "对折纸单，列有三个预备任务，边缘有执行部暗纹压印，背面新增残印编号抄录。",
+          "location": "玩家怀中",
+          "name": "预备任务单",
+          "notes": "背面写有残印编号段",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "封口被扯坏，露出水渍编号和半截残印",
+          "location": "玩家怀中",
+          "name": "牛皮纸档案袋",
+          "notes": "被压得纸角发皱",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "写在预备任务单背面的残印编号段，已与墙上旧漆编号比对吻合。",
+          "location": "预备任务单背面",
+          "name": "残印编号抄录",
+          "notes": "指向旧维护通道深处被封闭的隔间",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "旧档案室异常记录",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "从锁芯掰下的铜色簧片，刻有半截编号，断口带毛刺。",
+          "location": "玩家手中",
+          "name": "半截铜色簧片",
+          "notes": "掰取时划伤手指，簧片本身带血。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "被血浸透的半页通缉令，印有兜帽人侧脸素描与已注销红章。",
+          "location": "玩家手中",
+          "name": "执行部通缉令残页",
+          "notes": "从帆布包内取得，是执行部来收的目标之一。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "印有附加三角标记与血统检测归档字样的纸角，编号被血污遮盖。",
+          "location": "玩家手中",
+          "name": "带三角标记的通缉令残角",
+          "notes": "从帆布包纸片中撕下。",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "current_location": "岔道",
+          "description": "红发女生，行动直接、观察敏锐",
+          "name": "诺诺",
+          "notes": "协助比对编号，递出绷带",
+          "relationship": "同盟",
+          "status": "present"
+        },
+        {
+          "current_location": "无编号铁门前",
+          "description": "三年前被撤销科室的末批外勤，档案记为殉职",
+          "name": "门后之人",
+          "notes": "指出门后封存编号，催促玩家在有限时间内开门。",
+          "relationship": "暂时合作，条件不明",
+          "status": "present"
+        },
+        {
+          "current_location": "岔道口",
+          "description": "档案上殉职的外勤",
+          "name": "兜帽人",
+          "notes": "察觉第二组人绕路逼近",
+          "relationship": "暂时合作",
+          "status": "present"
+        },
+        {
+          "current_location": "维护间门口",
+          "description": "执行部外勤，奉命回收物品",
+          "name": "执行部成员",
+          "notes": "喊出东西在人也 在，并呼叫增援",
+          "relationship": "敌对",
+          "status": "present"
+        },
+        {
+          "current_location": "岔道另一头约十步处",
+          "description": "执行部第二组人员",
+          "name": "追兵",
+          "notes": "知道隔间与S级旧档封条，堵住通道中段",
+          "relationship": "敌对",
+          "status": "present"
+        }
+      ],
+      "player_status": {
+        "condition": "后背撞伤，手指伤口渗血，被前后夹击",
+        "current_goal": "在通道中段找到脱身路线，抵达封闭隔间",
+        "danger_level": "critical",
+        "notes": "应急灯熄灭，追兵停在十步外等待合拢"
+      },
+      "quests": [
+        {
+          "description": "诺诺已让开门口，玩家必须自行决定是否进门",
+          "name": "与诺诺交谈，了解入校流程",
+          "notes": "交涉失败，诺诺拒绝透露等待者身份",
+          "objective": "决定是否迈步进入门厅",
+          "status": "active"
+        },
+        {
+          "description": "前往旧维护通道深处被封闭的隔间，取回缺失编号的归档物。",
+          "name": "新生入学调查",
+          "notes": "第二组追兵堵住去路，退路正被清开",
+          "objective": "在被前后夹击的通道中段找到脱身路线，抵达封闭隔间",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "完成三个预备任务",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "调查档案冒充事件",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        }
+      ],
+      "sanity": 69,
+      "turn": 47,
+      "world_facts": [
+        {
+          "description": "诺诺承认柱脚确实有东西，但拒绝说明具体是什么",
+          "name": "门柱旁的雨水冲刷痕迹",
+          "notes": "玩家未能看清形态",
+          "source": "诺诺的回应",
+          "status": "suspected"
+        },
+        {
+          "description": "临时通行卡边缘泛起不自然的暗红，诺诺警告再攥着不放会烫到人",
+          "name": "通行卡发烫异常",
+          "notes": "发烫原因未明",
+          "source": "诺诺的提醒与玩家观察",
+          "status": "known"
+        },
+        {
+          "description": "门厅深处原本沉在暗里的地方忽然亮起一盏灯，光从走廊尽头漫出来，没有人走动",
+          "name": "门内亮起的灯",
+          "notes": "暗示门内有人在等敢自己走进去的人",
+          "source": "诺诺让开门口后",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称卡发烫不是卡的问题，而是玩家被派到门口这件事本身的问题",
+          "name": "通行卡发烫的缘由",
+          "notes": "尚未证实",
+          "source": "诺诺的讥讽",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家蹲下查看柱脚痕迹，只看到被雨水冲刷得模糊不清的暗色沟痕，无法辨认真相",
+          "name": "柱脚痕迹的真相",
+          "notes": "痕迹被雨水冲散，需其他手段才能辨明",
+          "source": "玩家调查失败",
+          "status": "suspected"
+        },
+        {
+          "description": "门厅深处那盏灯忽然闪了一下，光晃过走廊，像有人从灯下走过，可走廊上分明空着",
+          "name": "门厅深处那盏灯",
+          "notes": "灯亮与通行卡发烫同步加剧",
+          "source": "玩家蹲下时观察到的环境变化",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称灯不是她点的，她也没资格点，能点这盏灯的人就在门里",
+          "name": "门厅深处那盏灯的来历",
+          "notes": "灯会因玩家的迟疑而失去耐心",
+          "source": "诺诺的对话",
+          "status": "suspected"
+        },
+        {
+          "description": "通行卡的热度随门厅灯光明灭而变化，隔着布料仍烫手",
+          "name": "通行卡热度与灯光的关联",
+          "notes": "尚未验证具体机制",
+          "source": "玩家自身感受",
+          "status": "suspected"
+        },
+        {
+          "description": "你名字旁那片暗红鳞纹的边缘，那圈细密的纹路正在缓慢地往外扩散",
+          "name": "发现红色标记",
+          "notes": "鳞纹在回应走廊里退去的刮擦声",
+          "source": "投影屏观察",
+          "status": "known"
+        },
+        {
+          "description": "进入门厅靠近投影屏后，通行卡热度明显下降",
+          "name": "通行卡热度与门厅的关联",
+          "notes": "热度变化与位置有关",
+          "source": "玩家体验",
+          "status": "suspected"
+        },
+        {
+          "description": "长桌已被清空，只剩空桌和零星无关杂物，桌面中央有一圈尚未干透的水渍，抹痕朝桌内收拢，像是刚被人匆忙擦过",
+          "name": "报到桌被提前清空",
+          "notes": "诺诺目光在水渍上停了一瞬随即移开，未作解释",
+          "source": "玩家环视长桌的调查",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺称清空桌子的人不想让新生看到某些东西，但拒绝进一步解释",
+          "name": "清桌者的动机",
+          "notes": "线索模糊，指向投影屏或走廊深处",
+          "source": "诺诺的回避与暗示",
+          "status": "suspected"
+        },
+        {
+          "description": "走廊深处传来湿布擦过石面的摩擦声与门轴转动声，诺诺称暗处那东西不是新生该碰的",
+          "name": "走廊深处的威胁",
+          "notes": "暗处有东西被惊动，门轴声后归于沉寂",
+          "source": "玩家潜行失败被诺诺拦下",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹在玩家凝视时蠕动扩散，颜色由暗红转深，屏幕随之闪烁",
+          "name": "鳞纹的活性",
+          "notes": "凝视会引来走廊深处的回应",
+          "source": "玩家观察失败",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹变化时走廊深处传来一声低沉的回应，诺诺称是玩家把某物叫醒了",
+          "name": "走廊深处的回应",
+          "notes": "回应来源尚未定位",
+          "source": "诺诺反应",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家转身凝视走廊深处，未能定位回应来源的门，暗处之物明确回望并贴地挪近一寸",
+          "name": "暗处之物察觉注视",
+          "notes": "诺诺称玩家那一眼等于朝它招手",
+          "source": "玩家观察检定失败",
+          "status": "known"
+        },
+        {
+          "description": "诺诺指出走廊左侧第三道门框原本有门，现在只剩墙，门被藏了起来",
+          "name": "走廊左侧第三道门框的门已消失",
+          "notes": "通行卡在此时骤然发烫",
+          "source": "诺诺的警告",
+          "status": "suspected"
+        },
+        {
+          "description": "墙面没有门，但触感温热，有鳞片般的凹凸，通行卡贴近时剧烈发烫",
+          "name": "消失的门墙面异常",
+          "notes": "墙从里面顶了一下，有东西贴着墙另一侧按在同一位置",
+          "source": "玩家贴墙摸索",
+          "status": "known"
+        },
+        {
+          "description": "湿漉漉的呼吸声贴到耳后，暗处之物已察觉并锁定玩家位置",
+          "name": "暗处之物锁定玩家",
+          "notes": "诺诺称它已经锁住玩家",
+          "source": "潜行失败",
+          "status": "known"
+        },
+        {
+          "description": "通行卡按上墙面鳞纹后，鳞纹剧烈反应并朝错误方向翻卷，墙内传来撞击，通行卡出现裂纹",
+          "name": "通行卡与墙面鳞纹的关联",
+          "notes": "两者存在某种认主关系",
+          "source": "玩家行动",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称见过类似反应，上一次是在三年前，也是在这条走廊",
+          "name": "诺诺三年前的经历",
+          "notes": "需进一步追问",
+          "source": "诺诺对话",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家追问三年前走廊上发生的事，诺诺别过脸去拒绝回答，称现在不是说这个的时候，并把话题转到通行卡裂纹上",
+          "name": "诺诺回避三年前的走廊旧事",
+          "notes": "她显然知道内情，但不愿在此刻说",
+          "source": "本回合对话",
+          "status": "known"
+        },
+        {
+          "description": "走廊灯闪时墙内传来极轻刮擦，从玩家按过的墙面往深处缓慢退去",
+          "name": "墙内之物退去",
+          "notes": "退去不等于离开，危险未解除",
+          "source": "本回合环境描写",
+          "status": "suspected"
+        },
+        {
+          "description": "被诺诺催促分神，只瞥见第二道门框模糊刻痕，未能记全实墙位置",
+          "name": "门框编号与实墙位置",
+          "notes": "漏看，需另寻机会补记",
+          "source": "走廊观察失败",
+          "status": "suspected"
+        },
+        {
+          "description": "鳞纹从名字边缘起笔，绕过半个弧，收束到屏幕左下角一块边缘残缺的暗影缺口，聚到近前就淡下去被吞掉。",
+          "name": "鳞纹扩散规律",
+          "notes": "缺口方向与走廊深处无门之墙一致",
+          "source": "玩家在投影屏前观察",
+          "status": "known"
+        },
+        {
+          "description": "屏幕左下角有一块边缘残缺的模糊暗影，鳞纹朝它汇聚并被吞没。",
+          "name": "屏幕左下角缺口符号",
+          "notes": "诺诺称鳞纹在找东西或被牵引",
+          "source": "玩家观察投影屏",
+          "status": "suspected"
+        },
+        {
+          "description": "从外套内袋里抽出一张对折的纸单，塞进你空着的那只手，说拿着，三个预备任务",
+          "name": "接受三个预备任务",
+          "notes": "S级观察对象身份同时被确认。",
+          "source": "诺诺在侧廊交付任务单",
+          "status": "known"
+        },
+        {
+          "description": "通行卡靠近投影屏缺口时微微发烫，诺诺称不是光烤的。",
+          "name": "通行卡在屏幕光下发热",
+          "notes": "与之前灼人的烫不同，更轻更持续",
+          "source": "比对失败时的观察",
+          "status": "suspected"
+        },
+        {
+          "description": "强光下缺口处的暗影短暂朝左侧滑开，像被从屏幕另一侧推了一下。",
+          "name": "缺口暗影会偏移",
+          "notes": "暗影位置与先前所见不同",
+          "source": "比对失败时的观察",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺称发热不是卡的事，是卡在认主或者被标记。",
+          "name": "通行卡发热的缘由",
+          "notes": "她不愿在投影屏前多说",
+          "source": "诺诺在走廊压低声音的交底",
+          "status": "known"
+        },
+        {
+          "description": "诺诺警告继续在投影屏前追问会引来墙里的注意，它听得见。",
+          "name": "墙内存在的听觉",
+          "notes": "走廊对话可能被墙内存在感知",
+          "source": "诺诺的警告",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称被标记的卡会把玩家在这栋楼里的每一步都报给墙内之物，站得越久它认得越清",
+          "name": "被标记的卡会报信",
+          "notes": "解释了墙内之物对玩家气息的锁定",
+          "source": "诺诺在走廊被逼问时的只言片语",
+          "status": "known"
+        },
+        {
+          "description": "玩家拒绝离开后墙内温热加重、鳞纹重新亮起并朝玩家方向聚拢，诺诺称它已锁上玩家气息",
+          "name": "墙内之物对玩家气息的锁定",
+          "notes": "玩家停留越久锁定越强",
+          "source": "走廊墙面的异常反应",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹聚在拱门门槛内侧，没有越过那道极淡的旧灼痕，侧廊暂时是安全区。",
+          "name": "鳞纹的边界",
+          "notes": "旧灼痕来历不明，但确实拦住了鳞纹。",
+          "source": "玩家在拱门口回头观察",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称玩家是S级观察对象，学院盯着玩家，墙里的东西也盯着玩家。",
+          "name": "S级观察对象身份",
+          "notes": "具体含义尚未展开。",
+          "source": "诺诺在侧廊的说明",
+          "status": "known"
+        },
+        {
+          "description": "诺诺只含糊称学院对每个新生都有记录，你的那份记得细一点，未透露实质",
+          "name": "S级观察对象的含义",
+          "notes": "敷衍，未获实质信息",
+          "source": "玩家追问诺诺",
+          "status": "suspected"
+        },
+        {
+          "description": "侧廊尽头一扇半掩的门，门缝透暖黄光，内有纸张翻动声，诺诺停在门外不肯进",
+          "name": "档案室位置",
+          "notes": "第一个预备任务地点",
+          "source": "诺诺带路",
+          "status": "known"
+        },
+        {
+          "description": "玩家被学院流程标记为 S级观察对象。",
+          "name": "S级观察对象",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "柜内本该紧挨着的位置空了一格，柜底灰尘上留着一道干净的矩形印子，说明有份档案被抽走没多久。",
+          "name": "档案柜内的空位",
+          "notes": "空位旁的索引标签编号与任务单第二项只差最后一位。",
+          "source": "玩家在档案室柜前观察",
+          "status": "known"
+        },
+        {
+          "description": "空位内侧的金属滑轨上有一道新鲜的刮痕，边缘还带着未干的指纹油渍",
+          "name": "发现冒充者痕迹",
+          "notes": "取走档案的人动作很急，刚离开不久",
+          "source": "档案室空位旁的索引标签与滑轨",
+          "status": "known"
+        },
+        {
+          "description": "滑轨尽头有一小片灰尘被蹭掉了，露出底下的金属本色，说明档案被抽出后是贴着柜面向左带走的。",
+          "name": "滑轨灰尘被蹭掉的方向",
+          "notes": "方向指向左侧死墙，与门的方位相反，仍不明确",
+          "source": "玩家检查滑轨油渍",
+          "status": "known"
+        },
+        {
+          "description": "门禁面板连响三声，诺诺称记录已经留痕，执行部可能前来。",
+          "name": "门禁记录已留痕",
+          "notes": "时间压力上升",
+          "source": "诺诺推门进入档案室时的警告",
+          "status": "known"
+        },
+        {
+          "description": "诺诺把你按进楼梯间的凹处，背贴着消防栓的铁皮，抬手示意你别出声。",
+          "name": "侧廊楼梯间的安全窗口",
+          "notes": "执行部脚步经过岔口后继续往档案室方向，暂未回头搜侧廊。",
+          "source": "本回合撤离过程",
+          "status": "known"
+        },
+        {
+          "description": "撕口处露出被水渍晕开的编号，前几位可辨，后段模糊，另压着半个暗红残印。",
+          "name": "档案袋封口撕口内容",
+          "notes": "编号与任务单索引相关，残印来历不明",
+          "source": "玩家拆封时扯坏纸页",
+          "status": "known"
+        },
+        {
+          "description": "诺诺辨认出残印属于学院早期执行部一个已撤销科室的封条",
+          "name": "残印来历",
+          "notes": "该科室名册与印章本应封存",
+          "source": "诺诺辨认档案袋残印",
+          "status": "known"
+        },
+        {
+          "description": "诺诺暗示残印编号段与玩家的S级观察身份挂在同一批旧档里",
+          "name": "残印与S级观察身份关联",
+          "notes": "非巧合",
+          "source": "诺诺吐露",
+          "status": "known"
+        },
+        {
+          "description": "执行部学生正在观察玩家，但不一定被允许主动接触。",
+          "name": "执行部观察玩家",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "玩家在诺诺掩护下把残印可辨的编号段抄在任务单背面，部分字符因水渍无法辨认。",
+          "name": "残印编号段已抄录",
+          "notes": "可用于比对已撤销执行部科室旧档",
+          "source": "楼梯间抄录",
+          "status": "known"
+        },
+        {
+          "description": "上面楼梯间的门被推开，两名执行部人员折返并可能一路搜下来。",
+          "name": "执行部折返楼梯间",
+          "notes": "迫使玩家向地下二层通道撤离",
+          "source": "楼梯间脚步声",
+          "status": "known"
+        },
+        {
+          "description": "两名执行部成员下楼时交谈，说档案室封条被撕，编号段与S级观察对象有关，上面要求今晚必须把东西收回去。",
+          "name": "执行部正在追回被取走的档案袋",
+          "notes": "对方知道档案袋已被取走",
+          "source": "楼梯拐角窃听",
+          "status": "known"
+        },
+        {
+          "description": "执行部成员抱怨不该把新生档案和旧科室的封存件混放在一排柜子里。",
+          "name": "新生档案与旧科室封存件混放",
+          "notes": "解释了残印为何出现在新生档案袋上",
+          "source": "楼梯拐角窃听",
+          "status": "known"
+        },
+        {
+          "description": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "name": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了个人档案",
+          "name": "旧档案室中有人冒充你取走了个人档案",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "学院对你的特殊关注源于血统检测异常",
+          "name": "学院对你的特殊关注源于血统检测异常",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "井口铁栅栏歪向一侧，撬痕从里往外翻，金属边缘挂着新鲜碎屑，说明今晚有人比玩家更早进入地下二层。",
+          "name": "通风井铁栅栏被从内部撬开",
+          "notes": "暗示有第三方在禁入区域内活动。",
+          "source": "诺诺现场指认",
+          "status": "known"
+        },
+        {
+          "description": "铁门缝下透出微弱红光，明暗节奏很慢，诺诺称三年前见过一次，之后档案库封了半年。",
+          "name": "禁入铁门缝下的红光",
+          "notes": "红光与档案库封禁事件直接相关。",
+          "source": "现场观察与诺诺陈述",
+          "status": "known"
+        },
+        {
+          "description": "通风井撬痕一处朝外一处朝内，深浅不一，无法判断撬门者去向",
+          "name": "铁门撬痕方向矛盾",
+          "notes": "检查失败只得到模糊线索",
+          "source": "玩家检查铁门与通风井",
+          "status": "known"
+        },
+        {
+          "description": "走廊尽头传来金属摩擦声，像是有人从另一侧转动铁门的把手，红光骤然亮了一瞬",
+          "name": "铁门后传来转动把手声",
+          "notes": "门后是否有人仍无法确认",
+          "source": "玩家检查时",
+          "status": "known"
+        },
+        {
+          "description": "门后确实有呼吸，压得极浅，一吸一停，停得比正常人长。",
+          "name": "门后有人屏息",
+          "notes": "那口气松开后把手被从里面按住",
+          "source": "玩家贴近门缝聆听",
+          "status": "known"
+        },
+        {
+          "description": "诺诺在走廊口发出警告，执行部的人已接近通风井。",
+          "name": "执行部已接近通风井",
+          "notes": "撤离时机已被耽误",
+          "source": "诺诺的警告",
+          "status": "known"
+        },
+        {
+          "description": "执行部成员从通风井方向合围，手电光照到撬开的铁栅栏断口，退路被封。",
+          "name": "通风井已被执行部封锁",
+          "notes": "诺诺确认退不回去",
+          "source": "执行部成员脚步声与手电光",
+          "status": "known"
+        },
+        {
+          "description": "拐角处执行部成员低声报出档案袋封口被撕开，人应该还在这一层。",
+          "name": "执行部已知档案袋被撕开",
+          "notes": "搜身威胁的直接来源",
+          "source": "执行部成员对话",
+          "status": "known"
+        },
+        {
+          "description": "门后之人借着应急灯扫了一眼档案袋，低声说那串编号他见过，就在这层某扇不该存在的门后面。",
+          "name": "门后之人认得档案袋编号",
+          "notes": "编号与撤销科室旧档的关联可能指向一扇未登记的门。",
+          "source": "门后之人",
+          "status": "known"
+        },
+        {
+          "description": "门后之人说执行部不会一直走，他们只是去拿工具，最多有一刻钟。",
+          "name": "执行部去拿工具",
+          "notes": "时间压力，执行部可能破门。",
+          "source": "门后之人",
+          "status": "known"
+        },
+        {
+          "description": "他是三年前被撤销科室的末批外勤，档案上写的是殉职，脸上有从眉骨延伸到下颌的旧疤。",
+          "name": "门后之人的身份",
+          "notes": "帮你的理由只说了半句，与编号中一个数字有关。",
+          "source": "门后之人自述",
+          "status": "known"
+        },
+        {
+          "description": "门板粉笔数字被擦掉一半，与残印编号抄录前四位吻合，第五位仅剩斜痕但可对应。",
+          "name": "无编号铁门的粉笔数字",
+          "notes": "门后封存编号。",
+          "source": "玩家比对预备任务单背面抄录",
+          "status": "known"
+        },
+        {
+          "description": "诺诺碰倒抽屉留下脚印与纤维，执行部成员已发现并确认方向，正带工具靠近。",
+          "name": "执行部追踪痕迹",
+          "notes": "时间有限。",
+          "source": "通道深处交谈",
+          "status": "known"
+        },
+        {
+          "description": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+          "name": "锁芯内的铜色簧片",
+          "notes": "暗示通行卡与这扇门存在更深层联系",
+          "source": "玩家用临时通行卡试锁失败",
+          "status": "known"
+        },
+        {
+          "description": "通道更深处半掩的维护门前有新鲜拖拽痕迹，兜帽人否认是自己留下的。",
+          "name": "维护门前的拖拽痕迹",
+          "notes": "痕迹从门缝延伸到玩家脚下。",
+          "source": "玩家撤离途中亲眼所见",
+          "status": "known"
+        },
+        {
+          "description": "掰下的铜色簧片刻有半截编号，与任务单背面抄录的编号段部分吻合。",
+          "name": "簧片上的半截编号",
+          "notes": "断口不齐，需比对抄录。",
+          "source": "玩家从锁芯掰取簧片",
+          "status": "known"
+        },
+        {
+          "description": "帆布包内的执行部通缉令残页印着兜帽人侧脸素描和已注销红章。",
+          "name": "兜帽人的通缉令",
+          "notes": "执行部来收的东西之一。",
+          "source": "维护间帆布包",
+          "status": "known"
+        },
+        {
+          "description": "兜帽人称执行部不是来抓玩家，是来收东西。",
+          "name": "执行部来意",
+          "notes": "收的目标包括通缉令残页和玩家的血迹。",
+          "source": "兜帽人低语",
+          "status": "suspected"
+        },
+        {
+          "description": "通缉令残角上兜帽人素描旁有一枚被划掉又重描的三角标记，旁注血统检测归档字样。",
+          "name": "通缉令附加三角标记",
+          "notes": "编号被血污遮盖。",
+          "source": "帆布包纸片",
+          "status": "known"
+        },
+        {
+          "description": "门外执行部成员喊出确认了，人在里面，并开始撬门。",
+          "name": "执行部确认玩家位置",
+          "notes": "血迹引导。",
+          "source": "维护门外",
+          "status": "known"
+        },
+        {
+          "description": "执行部成员喊出东西在，人也在，表明他们首要目标是回收物品而非单纯抓人。",
+          "name": "执行部的真实目的",
+          "notes": "玩家与血纸同时暴露",
+          "source": "维护间破门现场",
+          "status": "known"
+        },
+        {
+          "description": "岔道墙壁上有一道被灰尘覆盖的旧漆标记，形状与档案残印的边角相似，旁边刻着一串模糊的编号。",
+          "name": "岔道墙上的旧漆标记",
+          "notes": "与残印编号段可能相关",
+          "source": "玩家断后撤入岔道后观察",
+          "status": "known"
+        },
+        {
+          "description": "这串编号不是随机的，它指向旧维护通道深处一个被封闭的隔间，正是任务单第二项所缺的那一位编号的归档点。",
+          "name": "探索：钟楼地下二层·禁入铁门后通道·岔道",
+          "notes": "归档点位置确认",
+          "source": "玩家比对墙上编号与残印抄录",
+          "status": "known"
+        },
+        {
+          "description": "墙上旧漆编号段与预备任务单背面的残印抄录逐位吻合，指向旧维护通道深处被封闭的隔间。",
+          "name": "墙上编号与残印的对应关系",
+          "notes": "任务单第二项缺失编号的归档点",
+          "source": "调查检定成功",
+          "status": "known"
+        },
+        {
+          "description": "追兵称隔间里的东西拿不走，封条是S级旧档的封条，撕开的人要一并带回去。",
+          "name": "追兵知晓隔间与封条",
+          "notes": "证实隔间归档物与S级旧档封条直接相关",
+          "source": "岔道中段追兵对话",
+          "status": "known"
+        },
+        {
+          "description": "兜帽人称岔道左侧壁上有半条他当年走过的旧检修口。",
+          "name": "岔道左侧旧检修口",
+          "notes": "可能的脱身路线，尚未找到入口",
+          "source": "兜帽人低语",
+          "status": "suspected"
+        }
+      ]
+    }
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-04",
+  "instruction": "仅依据本次提供的记录回答；无法确定时明确说明，不补造事实。行动题只判断和解释，不执行行动。",
+  "mode": "state",
+  "question": "要评估临时通行卡能否打开先前那道旧式机械锁门，目前有哪些已知尝试结果和限制？请判断并解释，不实际开门。",
+  "question_id": "JLC-20261106-G04-Q03",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

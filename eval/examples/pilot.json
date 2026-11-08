@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "description": "离线工具验收：2 个剧本 × 3 组 × 24 个探针 = 144 个样本，零真实模型调用。",
+  "suite": "pilot.suite.json",
+  "gold": "pilot.gold.json",
+  "adapter": "offline",
+  "modes": [
+    "full",
+    "recent",
+    "state"
+  ],
+  "repeats": 1,
+  "seed": 20261105,
+  "recent_window": 5
+}

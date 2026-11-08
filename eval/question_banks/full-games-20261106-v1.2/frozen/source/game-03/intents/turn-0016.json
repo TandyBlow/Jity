@@ -1,0 +1,46 @@
+{
+  "before_sha256": "544080ac227ab6d1ec8bd470c58c78ad1390d0e9fd155f7d32f96a4e8abc6138",
+  "created_at": "2026-11-06T05:35:36.124194+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 5
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁核查组未到，把半枚接入凭证的残留编号与通行卡里的备份日志逐位比对，锁定旧终端归属",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 16
+  },
+  "selection": {
+    "action": "趁核查组未到，把半枚接入凭证的残留编号与通行卡里的备份日志逐位比对，锁定旧终端归属",
+    "option_index": 0,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 5,
+    "scores": [
+      {
+        "action": "趁核查组未到，把半枚接入凭证的残留编号与通行卡里的备份日志逐位比对，锁定旧终端归属",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.2577718932348364
+      },
+      {
+        "action": "走向那排发出声响的铁皮柜，拉开柜门查看灰白光亮的来源",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.3867669543849227
+      },
+      {
+        "action": "让诺诺带路，从档案室另一侧的出口绕向钟楼方向，抢在核查组封场前确认S级标记的关联",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9625266953033638
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 16
+}

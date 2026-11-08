@@ -1,0 +1,46 @@
+{
+  "before_sha256": "b9a87280576f4957c028127e6af648048b07d78623e6a6cdf0dfc751f05ecc3c",
+  "created_at": "2026-11-06T05:29:42.451417+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "把封条残片举到光柱里，让监视者看清撬痕，直接问他三年前封存箱里到底装了什么",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 34
+  },
+  "selection": {
+    "action": "把封条残片举到光柱里，让监视者看清撬痕，直接问他三年前封存箱里到底装了什么",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "把封条残片举到光柱里，让监视者看清撬痕，直接问他三年前封存箱里到底装了什么",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.964299590294632
+      },
+      {
+        "action": "趁他刚对清货人撒谎、心神不稳，低声提出交换：你替他圆住岔口的事，他告诉你钟楼归位的路线",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.25308182711790406
+      },
+      {
+        "action": "不再等，让诺诺把残片收好，你侧身挤回裂口边缘，赌他不敢在清货人靠近时动手，强行往外突",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.347661846598469
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 34
+}

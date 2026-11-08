@@ -1,0 +1,42 @@
+{
+  "before_sha256": "9388fa1dcef098ce06c1c3a5934134da5f3ccbfdd778dcced3b7745a853715ca",
+  "created_at": "2026-11-06T06:00:48.532726+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 35
+  },
+  "selection": {
+    "action": "承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看",
+    "option_index": 1,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "顺着诺诺的暗示，咬定手背数字与纸条编号无关，反过来要求审查者先解释纸条为何被截走",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.0480199280522583
+      },
+      {
+        "action": "承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.24371411468969806
+      },
+      {
+        "action": "不回答审查者，转向门边的诺诺，当着所有人的面问她纸条上除了编号还写了什么",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.13599620710874427
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 35
+}

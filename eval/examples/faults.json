@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "description": "离线故障演示：首次尝试注入一次适配器错误与一次评分错误；用于验证错误不会被当作通过及显式重试恢复。",
+  "suite": "pilot.suite.json",
+  "gold": "pilot.gold.json",
+  "adapter": "offline",
+  "modes": [
+    "full",
+    "recent",
+    "state"
+  ],
+  "repeats": 1,
+  "seed": 20261105,
+  "recent_window": 5,
+  "failure_injections": [
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d10-recall",
+      "mode": "full",
+      "repeat": 1,
+      "stage": "adapter",
+      "attempt": 1
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d20-action",
+      "mode": "full",
+      "repeat": 1,
+      "stage": "grader",
+      "attempt": 1
+    }
+  ]
+}

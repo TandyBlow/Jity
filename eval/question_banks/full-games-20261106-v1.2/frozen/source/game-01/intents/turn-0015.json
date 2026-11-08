@@ -1,0 +1,46 @@
+{
+  "before_sha256": "e9cd4ccde9abc68221b534a513d9d87bc1419be212130aae510bcf3047545997",
+  "created_at": "2026-11-06T05:17:50.412141+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 11
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "贴着左侧玻璃隔断缓慢靠近缺口，在灯照得到的边缘停下，先看清发光碎屑和缺口后面的东西再决定进退",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 15
+  },
+  "selection": {
+    "action": "贴着左侧玻璃隔断缓慢靠近缺口，在灯照得到的边缘停下，先看清发光碎屑和缺口后面的东西再决定进退",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 11,
+    "scores": [
+      {
+        "action": "贴着左侧玻璃隔断缓慢靠近缺口，在灯照得到的边缘停下，先看清发光碎屑和缺口后面的东西再决定进退",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.23892366990971403
+      },
+      {
+        "action": "不理会嗡鸣，直接穿过缺口进入后半段黑暗，抢在光源变化前找到声源本体",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.14836393566302153
+      },
+      {
+        "action": "退回铁门外，把门虚掩留一条缝，用钥匙柄敲击铁门制造响动，观察嗡鸣是否对声音作出反应",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.10594083135996035
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 15
+}

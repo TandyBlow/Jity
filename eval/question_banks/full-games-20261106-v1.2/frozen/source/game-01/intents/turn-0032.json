@@ -1,0 +1,46 @@
+{
+  "before_sha256": "f6825d609ca04f665bafeb98f4cd79962bb1c2f1698100a43b6418efda95e768",
+  "created_at": "2026-11-06T05:20:25.034051+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 19
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "抓起散落在地的残片碎片，再试一次对准影子纹路的断口",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 32
+  },
+  "selection": {
+    "action": "抓起散落在地的残片碎片，再试一次对准影子纹路的断口",
+    "option_index": 1,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 19,
+    "scores": [
+      {
+        "action": "趁影子搏动紊乱的间隙，扑向灰光深处的铁梯向上攀爬",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.7146294045990509
+      },
+      {
+        "action": "抓起散落在地的残片碎片，再试一次对准影子纹路的断口",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8448664898322387
+      },
+      {
+        "action": "贴着砖壁向铁梯方向翻滚，避开影子尖臂的横扫",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.5584186247645351
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 32
+}

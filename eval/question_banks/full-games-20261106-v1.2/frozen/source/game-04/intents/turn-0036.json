@@ -1,0 +1,46 @@
+{
+  "before_sha256": "43f25143ff3f64303cb3468a84ac498ed3b02099856e7b5cdb39d4fed59f96ad",
+  "created_at": "2026-11-06T06:10:39.187613+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 7
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "退回通风井，抢在执行部合围前另寻路线",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 36
+  },
+  "selection": {
+    "action": "退回通风井，抢在执行部合围前另寻路线",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "推开铁门闯进去，直面门后那个刚刚松开呼吸的人",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.35126460856483177
+      },
+      {
+        "action": "退回通风井，抢在执行部合围前另寻路线",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.7756315008546114
+      },
+      {
+        "action": "先压低声音问诺诺门后的人是谁，再决定进退",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.21359470117219947
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 36
+}

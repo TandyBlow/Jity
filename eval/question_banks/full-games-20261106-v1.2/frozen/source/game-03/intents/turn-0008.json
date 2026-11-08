@@ -1,0 +1,42 @@
+{
+  "before_sha256": "366daa1d8902df0ce3e3e1f2eb45639d0b489bfb1460be94f2afc7887e1d63ed",
+  "created_at": "2026-11-06T05:34:05.465744+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "把任务单收好，要求工作人员先把登记手续办完",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 8
+  },
+  "selection": {
+    "action": "把任务单收好，要求工作人员先把登记手续办完",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "当场展开任务单，逐条读完三个预备任务",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.669736226556474
+      },
+      {
+        "action": "先问诺诺，S级观察对象在学院里通常意味着什么",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.2874535970914539
+      },
+      {
+        "action": "把任务单收好，要求工作人员先把登记手续办完",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7901907947514096
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 8
+}

@@ -1,0 +1,22 @@
+{
+  "before_sha256": "24ac27d2fa25e51c24918f3c83322b7391d76524a26f9c7ee80dc40287d624d6",
+  "created_at": "2026-11-06T06:04:31.152784+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "player_action": "开始游戏",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 1
+  },
+  "selection": {
+    "action": "开始游戏",
+    "option_index": null,
+    "policy": "risk",
+    "reason": "No offered options; passive continuation is resolved by Jity.",
+    "roll": 5,
+    "scores": [],
+    "seed": 7304
+  },
+  "turn": 1
+}

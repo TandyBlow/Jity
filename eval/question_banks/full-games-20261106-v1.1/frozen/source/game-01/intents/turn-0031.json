@@ -1,0 +1,46 @@
+{
+  "before_sha256": "84b6cc053581cf0a041ab6d26d7c9ae78d7abd367d84bb6292564fede0917bab",
+  "created_at": "2026-11-06T05:20:14.734487+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 17
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "握紧残片，把缺了一段的回勾对准影子皮下纹路的断口，赌它能再次扰乱搏动",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 31
+  },
+  "selection": {
+    "action": "握紧残片，把缺了一段的回勾对准影子皮下纹路的断口，赌它能再次扰乱搏动",
+    "option_index": 1,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 17,
+    "scores": [
+      {
+        "action": "把残片塞回暗格，借着影子搏动紊乱的间隙贴墙向灰光处猛冲",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.008072951574158327
+      },
+      {
+        "action": "握紧残片，把缺了一段的回勾对准影子皮下纹路的断口，赌它能再次扰乱搏动",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.2856254528819584
+      },
+      {
+        "action": "不再管残片，转身沿通道往回爬，试着在铁门合拢处找缝隙",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.12720110097099901
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 31
+}

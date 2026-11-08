@@ -1,0 +1,52 @@
+{
+  "before_sha256": "f5d8dc53738e517776455c324de779ae8529c290200b59f7fb9949de49b123f6",
+  "created_at": "2026-11-06T05:25:40.995177+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 10
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁迎接者退却，弯腰捡起门缝下的取档凭条仔细查看",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 13
+  },
+  "selection": {
+    "action": "趁迎接者退却，弯腰捡起门缝下的取档凭条仔细查看",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 10,
+    "scores": [
+      {
+        "action": "趁迎接者退却，弯腰捡起门缝下的取档凭条仔细查看",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.24448569691253152
+      },
+      {
+        "action": "让诺诺守住任务台，自己推开档案室门进去确认档案是否还在",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.21996103695935987
+      },
+      {
+        "action": "先问诺诺，执行部印章登记之后，取档记录会不会同步更新",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.25031209159872037
+      },
+      {
+        "action": "退到诺诺身边，和她一起盯着迎接者，等他彻底离开再行动",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.23693695557266414
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 13
+}

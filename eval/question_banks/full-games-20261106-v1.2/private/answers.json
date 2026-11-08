@@ -1,0 +1,528 @@
+{
+  "bank_version": "1.2.0-review",
+  "records": [
+    {
+      "acceptable_phrasings": [
+        "温室异常光源调查/确认性质并记录规律；3天",
+        "夜间巡逻，和指定高年级生组队；7天/一周",
+        "第三项待导师面谈解锁，内容/期限尚未公布"
+      ],
+      "answer": "第一项是调查东侧旧温室夜间不明光源，期限三天；第二项是与指定高年级生组队夜间巡逻，期限一周；第三项待定，要导师面谈后解锁，当时未给出具体内容或期限。",
+      "id": "JLC-20261106-G01-Q01",
+      "required_points": [
+        "东侧旧温室夜间异常光源调查（观察/记录其性质或规律）。",
+        "该调查当时期限为三天。",
+        "夜间巡逻，与指定高年级生组队。",
+        "夜间巡逻期限为一周/七天。",
+        "第三项当时待定，尚未给出具体任务和期限。",
+        "第三项需导师面谈后解锁。"
+      ],
+      "rubric": {
+        "max_score": 3.0,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "东侧旧温室夜间异常光源调查（观察/记录其性质或规律）。",
+            "id": "JLC-20261106-G01-Q01.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "greenhouse_task"
+          },
+          {
+            "criterion": "该调查当时期限为三天。",
+            "id": "JLC-20261106-G01-Q01.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "greenhouse_deadline"
+          },
+          {
+            "criterion": "夜间巡逻，与指定高年级生组队。",
+            "id": "JLC-20261106-G01-Q01.p03",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "patrol_task"
+          },
+          {
+            "criterion": "夜间巡逻期限为一周/七天。",
+            "id": "JLC-20261106-G01-Q01.p04",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "patrol_deadline"
+          },
+          {
+            "criterion": "第三项当时待定，尚未给出具体任务和期限。",
+            "id": "JLC-20261106-G01-Q01.p05",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "third_pending"
+          },
+          {
+            "criterion": "第三项需导师面谈后解锁。",
+            "id": "JLC-20261106-G01-Q01.p06",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "third_unlock"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "把三晚观测误读为三项任务都三天",
+        "给第三项虚构具体任务或期限；该要点0分"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "钥匙丢了，现在不在身上，不能用。",
+        "已经遗失，当前没有可用钥匙。"
+      ],
+      "answer": "钥匙已经遗失，当前不持有可用钥匙。A25提交后账本转为lost；至检查点A40没有重新获得。精确掉落位置未证实。",
+      "id": "JLC-20261106-G01-Q02",
+      "required_points": [
+        "钥匙已遗失，因此当前不持有可用钥匙。"
+      ],
+      "rubric": {
+        "max_score": 1,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "钥匙已遗失，因此当前不持有可用钥匙。",
+            "id": "JLC-20261106-G01-Q02.p01",
+            "partial_credit": "只说目前不持有/不能用但未说明遗失，0.5；明确钥匙丢失已蕴含当前不持有，1；声称仍持有或已找回，0。",
+            "score": 1,
+            "semantic_key": "key_current_lost"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "仅复述第12次获得而答现在持有:0",
+        "把lost说成consumed:状态项0",
+        "声称已找回:0"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "她既不确认也不否认，让我问导师。",
+        "她没有给出肯定或否定的答复，表示应由档案室导师来说。"
+      ],
+      "answer": "诺诺既不否认也不确认关联，说有些事要让该说的人说；她指向档案室的导师，自己只负责把玩家送到门口。这是诺诺的表态，当时不是对两者关联的证实。",
+      "id": "JLC-20261106-G01-Q03",
+      "required_points": [
+        "诺诺既不确认也不否认刻痕与任务的关联。",
+        "她让玩家向档案室导师了解。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "诺诺既不确认也不否认刻痕与任务的关联。",
+            "id": "JLC-20261106-G01-Q03.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "nono_reservation"
+          },
+          {
+            "criterion": "她让玩家向档案室导师了解。",
+            "id": "JLC-20261106-G01-Q03.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "refer_to_mentor"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "说诺诺已确认关联：态度点0。",
+        "问询对象说成门房：导师点0。"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "不能作为已经查明的退路；后来的摸查发现墙缝后填实，推翻了根据有风作出的初步判断。"
+      ],
+      "answer": "不支持。诺诺最初根据墙后有风判断不是死墙；后来剥开灰泥摸索，确认缝后填实、撬不开，再掰会塌。没有后续已打通证据，不能把它当作已确认退路。",
+      "id": "JLC-20261106-G02-Q01",
+      "required_points": [
+        "依据已有检查结果，不能直接把该墙缝作为可通行退路。",
+        "后续实际摸查发现缝后填实、撬不开，更新了先前“有风”的判断。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "依据已有检查结果，不能直接把该墙缝作为可通行退路。",
+            "id": "JLC-20261106-G02-Q01.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "wall_feasibility"
+          },
+          {
+            "criterion": "后续实际摸查发现缝后填实、撬不开，更新了先前“有风”的判断。",
+            "id": "JLC-20261106-G02-Q01.p02",
+            "partial_credit": "说清后续实查填实/撬不开即可1分；不强制重复早先有风原话。只复述有风而未给实查结果，0。",
+            "score": 1,
+            "semantic_key": "wall_revised_evidence"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "只复述有风，所以可以通行",
+        "把另一处工具间的通路当成这道墙缝",
+        "把此刻无法确认偷换成永久不可能打开"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "本次提供的信息不足以确定名字。（仅结论1分）",
+        "不知道名字。诺诺只说一个执行部的人旁观没动手；芬格尔是搬箱的人。（3分）"
+      ],
+      "answer": "不能确定姓名。诺诺只说楼梯拐角有个穿执行部外套的人旁观、没有动手；没有名字，也没有可靠证据把此人等同于之后的监视者、守卫或其他人物。芬格尔是她所说搬箱的人，不应把他的名字填成旁观者。",
+      "id": "JLC-20261106-G02-Q02",
+      "required_points": [
+        "本次提供的信息不足以确定该旁观者的名字。",
+        "诺诺描述的是穿执行部外套、在拐角旁观而未动手的人。",
+        "芬格尔是诺诺所说搬箱的人，与被问姓名的旁观角色不同。"
+      ],
+      "rubric": {
+        "max_score": 3,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "本次提供的信息不足以确定该旁观者的名字。",
+            "id": "JLC-20261106-G02-Q02.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "observer_name_unknown"
+          },
+          {
+            "criterion": "诺诺描述的是穿执行部外套、在拐角旁观而未动手的人。",
+            "id": "JLC-20261106-G02-Q02.p02",
+            "partial_credit": "明确诺诺说执行部人员在旁观/没有动手得1；仅泛称执行部人员而无旁观行为得0.5；只说不知道得0。",
+            "score": 1,
+            "semantic_key": "observer_role"
+          },
+          {
+            "criterion": "芬格尔是诺诺所说搬箱的人，与被问姓名的旁观角色不同。",
+            "id": "JLC-20261106-G02-Q02.p03",
+            "partial_credit": "明确芬格尔是搬箱人得1；只说“不是芬格尔”或没有提及角色内容得0。",
+            "score": 1,
+            "semantic_key": "mover_fengel"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "把芬格尔当成执行部旁观者",
+        "凭后续监视者身份推定两人同一",
+        "以未知为由否认已经知道的旁观角色"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "总共7枚，其中3枚较新。",
+        "七枚烟蒂，三枚灰未浸透、边缘发白。"
+      ],
+      "answer": "共七枚，其中三枚较新（灰尚未被潮气浸透、边缘发白）。",
+      "id": "JLC-20261106-G02-Q03",
+      "required_points": [
+        "烟蒂总数七枚。",
+        "其中三枚较新。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "烟蒂总数七枚。",
+            "id": "JLC-20261106-G02-Q03.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "cigarette_total"
+          },
+          {
+            "criterion": "其中三枚较新。",
+            "id": "JLC-20261106-G02-Q03.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "cigarette_new"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "把三枚当总数",
+        "把七枚都说成新烟蒂",
+        "仅说有人来过而未回答数量"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "卡交给核查员，后来没取回，所以现在不能出示。"
+      ],
+      "answer": "当前不持有，不能直接出示。第24次行动玩家将卡交给执行部核查员；提交后清单移除该卡，账本为lost，至第35次行动未重新获得。lost在此表示从玩家持有状态移除，不是已消耗或销毁。",
+      "id": "JLC-20261106-G03-Q01",
+      "required_points": [
+        "移交后尚未取回，当前不持有卡，不能直接出示。",
+        "卡交给了执行部核查员。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "移交后尚未取回，当前不持有卡，不能直接出示。",
+            "id": "JLC-20261106-G03-Q01.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "card_no_possession"
+          },
+          {
+            "criterion": "卡交给了执行部核查员。",
+            "id": "JLC-20261106-G03-Q01.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "card_transfer"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "因为备份在卡中就说卡仍在身上",
+        "把被收走解释成消耗",
+        "用其他游戏的通行卡恢复覆盖本局证据"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "报告被收走且未取回，所以不能递交。",
+        "不行，报告原件被执行部核查员抽走了，尚未拿回来。"
+      ],
+      "answer": "不具备。报告原件已被执行部核查员抽走，当前物品清单没有它，账本持续为lost；记得内容或见过桌上原件不等于持有。需要先实际取回原件，不能直接递交。",
+      "id": "JLC-20261106-G03-Q02",
+      "required_points": [
+        "当前不具备亲手直接递交报告原件的持有条件。",
+        "报告被核查员收走，尚未实际取回。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "当前不具备亲手直接递交报告原件的持有条件。",
+            "id": "JLC-20261106-G03-Q02.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "report_unavailable"
+          },
+          {
+            "criterion": "报告被核查员收走，尚未实际取回。",
+            "id": "JLC-20261106-G03-Q02.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "report_confiscation"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "按早期取得记录直接递交",
+        "把脑中的样本编号或别的纸条当报告原件",
+        "主动执行取回或推进游戏"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "本次提供的信息不足。（仅结论1分）",
+        "无法确定。记录只说手背上有个数字，角色声称知道，但没有给出具体值。（2分）"
+      ],
+      "answer": "无法从这段记录确定具体数字。历史只记她在手背划了“一个数字”，之后说玩家记住它、审查者声称知道它，并提到与编号相关，但没有把数字的值写出来，也没有唯一可推导的映射。不能猜一个数字。",
+      "id": "JLC-20261106-G03-Q03",
+      "required_points": [
+        "本次提供的信息不足以确定具体数值。",
+        "记录只提到一个数字、角色记住/声称知道或编号关联，却未给出足以确定数值的内容。"
+      ],
+      "rubric": {
+        "max_score": 2,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "本次提供的信息不足以确定具体数值。",
+            "id": "JLC-20261106-G03-Q03.p01",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "hand_digit_unknown"
+          },
+          {
+            "criterion": "记录只提到一个数字、角色记住/声称知道或编号关联，却未给出足以确定数值的内容。",
+            "id": "JLC-20261106-G03-Q03.p02",
+            "partial_credit": "准确指出记录中的无值描述或角色知道不等于文本披露，可得1；仅重复不知道而无依据，0。不要求机械罗列所有线索。",
+            "score": 1,
+            "semantic_key": "hand_digit_justification"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "将一个数字答成1",
+        "把三年前答成3",
+        "因玩家记住而声称记录已给出具体数字"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "他称自己是三年前撤销科室的最后一批外勤，档案记作殉职；提到编号中有他亲手封在门后的数字，作为部分帮助理由。"
+      ],
+      "answer": "他自称是三年前被撤销科室的末批外勤，档案上记为殉职；他说编号中的一个数字是自己亲手封进那扇门后的。这只是帮助理由已透露的一部分，不是完整动机，也不是实际死亡或复活的独立证明。",
+      "id": "JLC-20261106-G04-Q01",
+      "required_points": [
+        "他自述为三年前被撤销科室的末批外勤。",
+        "他称档案把自己记为殉职；这不是实际死亡的独立证明。",
+        "他称编号里的一个数字是自己亲手封进那扇门后的，这是帮助理由已透露的一部分。"
+      ],
+      "rubric": {
+        "max_score": 3,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "他自述为三年前被撤销科室的末批外勤。",
+            "id": "JLC-20261106-G04-Q01.p01",
+            "partial_credit": "仅正确说曾是外勤但缺科室/时间/末批限定，0.5；准确还原身份1。",
+            "score": 1,
+            "semantic_key": "hooded_identity"
+          },
+          {
+            "criterion": "他称档案把自己记为殉职；这不是实际死亡的独立证明。",
+            "id": "JLC-20261106-G04-Q01.p02",
+            "partial_credit": "“他称档案上已殉职”即满分，已表达来源边界，不另需免责声明；明确断言实际死亡复活则0。",
+            "score": 1,
+            "semantic_key": "hooded_recorded_death"
+          },
+          {
+            "criterion": "他称编号里的一个数字是自己亲手封进那扇门后的，这是帮助理由已透露的一部分。",
+            "id": "JLC-20261106-G04-Q01.p03",
+            "partial_credit": "只准确说明帮助与编号中的数字有关，0.5；亲手封存数字及同一门后的含义表达完整，1；不要求额外免责声明，但不得声称完整动机已揭晓。",
+            "score": 1,
+            "semantic_key": "hooded_partial_reason"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "直接断言他确实死亡又复活",
+        "把档案记载当真实死亡证明",
+        "编造他亲手封存的具体数字"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "检定没过，但簧片拿到了、还在手里；手指划伤流血，留下了痕迹。"
+      ],
+      "answer": "检定失败，但仍取得并持有半截铜色簧片。掰取时手指被铜屑划伤出血，并留下血迹与更多追踪痕迹。若报告数值，骰点为2、目标为12。",
+      "id": "JLC-20261106-G04-Q02",
+      "required_points": [
+        "取簧片检定失败。",
+        "虽然检定失败，仍取得并持有半截铜色簧片。",
+        "掰取时手指被划伤、出血。",
+        "留下血迹/铜屑等可暴露行踪的痕迹。"
+      ],
+      "rubric": {
+        "max_score": 3.0,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "取簧片检定失败。",
+            "id": "JLC-20261106-G04-Q02.p01",
+            "partial_credit": "自然说明失败即1；无需主动报骰点。若主动报错骰点/目标，或将结果说成成功，检定说明点为0。",
+            "score": 1,
+            "semantic_key": "spring_check_failure"
+          },
+          {
+            "criterion": "虽然检定失败，仍取得并持有半截铜色簧片。",
+            "id": "JLC-20261106-G04-Q02.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "spring_owned"
+          },
+          {
+            "criterion": "掰取时手指被划伤、出血。",
+            "id": "JLC-20261106-G04-Q02.p03",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "finger_injury"
+          },
+          {
+            "criterion": "留下血迹/铜屑等可暴露行踪的痕迹。",
+            "id": "JLC-20261106-G04-Q02.p04",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "blood_traces"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "检定失败所以空手而归",
+        "把目标12当骰点",
+        "把受伤说成物品已消耗"
+      ]
+    },
+    {
+      "acceptable_phrasings": [
+        "先前把卡插入旧式机械锁没有开门，锁舌未动；卡裂纹扩大并引出响声、铜簧片。兜帽人解释这锁不靠权限开。即使当前仍持有卡、卡会发热，也不能据此把它当成已经验证能开这道锁的钥匙；没有后续成功开锁证据，不断言所有门都永远无法用卡。"
+      ],
+      "answer": "先前把卡插入旧式机械锁没有开门，锁舌未动；卡裂纹扩大并引出响声、铜簧片。兜帽人解释这锁不靠权限开。即使当前仍持有卡、卡会发热，也不能据此把它当成已经验证能开这道锁的钥匙；没有后续成功开锁证据，不断言所有门都永远无法用卡。",
+      "id": "JLC-20261106-G04-Q03",
+      "required_points": [
+        "已有试卡尝试未打开这道锁，不能据此认定通行卡已验证可开门。",
+        "试卡后出现裂纹扩大、响声或锁芯弹出铜簧片等实际反应，至少准确一项。",
+        "当时的解释是这锁不靠权限打开，或卡认得门、门不认卡。",
+        "将上一解释正确归属于兜帽人的说法。"
+      ],
+      "rubric": {
+        "max_score": 3.0,
+        "partial_credit": "逐要点评分，适用统一语义规则；不奖励未犯错、不重复计分。",
+        "points": [
+          {
+            "criterion": "已有试卡尝试未打开这道锁，不能据此认定通行卡已验证可开门。",
+            "id": "JLC-20261106-G04-Q03.p01",
+            "partial_credit": "说明试卡没有开门即清楚支持未验证可开，得1；只给无依据否定而无已知尝试结果得0.5；声称已开门/已验证能开为0。",
+            "score": 1,
+            "semantic_key": "card_lock_result"
+          },
+          {
+            "criterion": "试卡后出现裂纹扩大、响声或锁芯弹出铜簧片等实际反应，至少准确一项。",
+            "id": "JLC-20261106-G04-Q03.p02",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 1,
+            "semantic_key": "card_lock_observation"
+          },
+          {
+            "criterion": "当时的解释是这锁不靠权限打开，或卡认得门、门不认卡。",
+            "id": "JLC-20261106-G04-Q03.p03",
+            "partial_credit": "未完整表达该语义点为0；准确同义或清楚蕴含给满分。",
+            "score": 0.5,
+            "semantic_key": "hooded_lock_explanation"
+          },
+          {
+            "criterion": "将上一解释正确归属于兜帽人的说法。",
+            "id": "JLC-20261106-G04-Q03.p04",
+            "partial_credit": "准确归属已表达的相关解释才得0.5；仅罗列“兜帽人”名字却未说明他解释什么，不得分。",
+            "score": 0.5,
+            "semantic_key": "hooded_lock_source"
+          }
+        ],
+        "policy": "private/scoring-policy.json"
+      },
+      "typical_errors": [
+        "发热就是权限生效所以已经能开",
+        "把仍持有卡当成开锁可行的充分证据",
+        "声称已把门打开或执行新行动"
+      ]
+    }
+  ],
+  "schema_version": "jity.capture-question-bank.revision.v1"
+}

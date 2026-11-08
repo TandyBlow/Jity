@@ -1,0 +1,5066 @@
+{
+  "bank_id": "jity-long-consistency-full-games-20261106",
+  "records": [
+    {
+      "category": "early_narrative_fact",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "actual_full_memory_note": "NSB本身遗漏第二项一周期限与第三项框架，但实际full的recap_compressed明确保留三天、一周、第三项待导师面谈，因此full历史记忆通道整体可答全。",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "last_structured_exposure": 24,
+        "narrative_memory_note": "T24 NSB摘要保留首任务，但遗漏第二项一周期限与第三项框架；不可保证仅NSB能答全。",
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "scene_prev→scene_curr: 玩家在T7确认预备任务框架后，诺诺按导师指示带路前往档案室，引出T8-T9的导师面谈。",
+            "json_pointer": "/nsb/level1/1/causal_links/0",
+            "terms": [
+              "导师面谈"
+            ]
+          },
+          {
+            "excerpt": "前情提要：\n\n雨夜，你站在卡塞尔学院大门前，手里攥着一张发烫的临时通行卡。红发女生诺诺在门柱旁等你已久——你借观察的时机，注意到门柱基座有一道整齐刻痕，泥里还踩着半枚金属徽记。你试探主楼方向的闷响，诺诺立刻竖起边界，只丢下一句“卡塞尔的事不是靠听就能懂的”。你识相地出示通行卡，她带你穿过大门，到报到处办登记。\n\n登记时，投影屏滚过你的名字，右侧浮出一枚红色鳞片状标记，一闪即逝，值班人员毫无反应，诺诺却看见了。她带你到走廊尽头的小办公室，递来任务单——你被标为“S级观察对象”，需完成三个预备任务才能正式入学：东侧旧温室异常光源调查（三天）、夜间巡逻（一周）、第三项待导师面谈解锁。她暗示第一个任务与门柱刻痕并非无关，却不肯多说。\n\n档案室里，年长导师告诉你：你的档案几分钟前已被人取走，取件簿上签着你的名字——笔迹不是你的。他交代温室任务细节：光源出现前有嗡鸣预兆，任何发光体都不可触碰。临别他又丢下一句：签名的人可能还在楼里。你在门外检查任务单，背面只有一行潦草红字“别碰光”，走廊深处随即传来金属门开合的轻响。\n\n你赶往门房领了黄铜钥匙，摸黑穿过东侧回廊，推开锈蚀铁门进入旧温室连廊。中段玻璃隔断整块碎裂，青灰色碎屑散落一地，嗡鸣从缺口后传来。你贴墙靠近，却在灯照边缘踩碎了一片晶体——嗡鸣骤变锐响，淡光横移，缺口后一只嵌着发光纹路的金属匣显露出来，支架旁还有一道影子正朝缺口偏转。\n\n当前目标：看清匣子与影子的真面目，同时保住退路。你半蹲在碎屑中，退路在身后三步之外。",
+            "json_pointer": "/recap_compressed",
+            "terms": [
+              "夜间巡逻",
+              "导师面谈"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          19,
+          24
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": true,
+        "structured_locations": [
+          "/state/items/2/notes",
+          "/state/world_facts/7/description"
+        ],
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "任务单列出：东侧旧温室夜间不明光源初步调查（三天）、与指定高年级生组队夜间巡逻（一周）、待定由导师面谈解锁。",
+            "json_pointer": "/world_facts/7/description",
+            "terms": [
+              "夜间巡逻",
+              "导师面谈"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "第二项期限与第三项框架最后明确披露T7；第一项三天期限T9再次出现，因此整题按最近分项T9算。后续泛称任务单不视为重给三个任务及期限。",
+        "first_action": 7,
+        "last_public_topic_mention_action": 9,
+        "mention_terms": [
+          "夜间巡逻",
+          "期限三天",
+          "期限一周",
+          "三天内",
+          "导师面谈"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 7,
+            "excerpt": "已逐条确认：旧温室异常光源调查（三天）、夜间巡逻（一周）、待定（导师面谈解锁）。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "夜间巡逻",
+              "导师面谈"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 7,
+            "excerpt": "任务单列出：东侧旧温室夜间不明光源初步调查（三天）、与指定高年级生组队夜间巡逻（一周）、待定由导师面谈解锁。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "夜间巡逻",
+              "导师面谈"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 7,
+            "excerpt": "你翻开任务单，纸页在指间发出干脆的声响。第一行字迹工整：校园内异常现象初步调查，期限三天。描述只有一句话，说东侧旧温室夜间有不明光源，要求确认光源性质并记录出现规律。第二行是夜间巡逻，期限一周，要求与指定高年级生组队，巡逻路线由对方决定，你只负责观察和记录。第三行只有一行字：待定，由导师面谈后解锁。你逐条读完，诺诺靠在桌沿，双臂交叉，视线一直停在你脸上，没有催促。办公室里很安静，走廊外偶尔传来远处门轴转动的声响。你把任务单合上时，她开口了，语气平淡，说任务单只是框架，具体细节要等导师分配。她顿了顿，又补了一句，说第一个任务的地点离你报到时经过的门柱不远。说完她直起身，从桌沿离开，朝门口偏了偏头，示意你跟她走。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "夜间巡逻",
+              "期限三天",
+              "期限一周",
+              "导师面谈"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 7,
+            "excerpt": "先不急着走，追问诺诺夜间巡逻的指定高年级生是谁",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "夜间巡逻"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 7,
+            "excerpt": "确认并完成三个预备任务。第一个任务为东侧旧温室异常光源调查，期限三天；第二个为夜间巡逻，期限一周；第三个待导师面谈解锁。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "夜间巡逻",
+              "期限三天",
+              "期限一周",
+              "导师面谈"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 8,
+            "excerpt": "进入档案室与导师面谈，获取任务细节",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "导师面谈"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "进入档案室与导师面谈",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "导师面谈"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 9,
+            "excerpt": "第一个任务，东侧旧温室。连续三晚有不明光源，你去记录时间、位置和颜色变化，三天内交初步报告。夜间单独前往，注意安全。",
+            "json_pointer": "/output/dialogue/1/text",
+            "terms": [
+              "三天内"
+            ],
+            "timeline_node": 10
+          },
+          {
+            "action_index": 9,
+            "excerpt": "导师签发的任务表格，标注东侧旧温室方位与记录要求，三天内提交初步报告。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "三天内"
+            ],
+            "timeline_node": 10
+          },
+          {
+            "action_index": 9,
+            "excerpt": "导师签发的任务表格，标注东侧旧温室方位与记录要求，三天内提交初步报告。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "三天内"
+            ],
+            "timeline_node": 10
+          },
+          {
+            "action_index": 9,
+            "excerpt": "门轴发出一声低哑的呻吟，你推门而入。旧档案室的空气比走廊更沉，混着纸张、皮革和某种陈年木料的气味。昏黄灯光从天花板上一盏罩着铁网的吊灯里漏下来，把整间屋子照成一片浑浊的琥珀色。翻纸声在你进门后停了半拍，随即又续上，节奏不紧不慢。一张宽大的橡木桌横在房间中央，桌面几乎被文件淹没，高高低低的纸堆之间只留出一小片空地。桌后坐着一位年长的导师，灰白头发向后梳得整齐，深色西装外套搭在椅背上，衬衫袖口卷到小臂中段。他抬起头，目光在你脸上停了两秒，没有惊讶，只是把手里那页纸翻过去扣在桌上。你报上名字，说明来意，询问第一个任务。他点了点头，从纸堆边缘抽出一张薄薄的表格，却没有立刻递过来。他的视线越过你，落在身后那排档案架上，像是想起了什么。你顺着他的目光回头。档案架贴着整面墙，密密麻麻的档案盒按编号排列，其中一个盒子被抽出了一半，盒脊上贴着你的名字。盒口边缘有几枚新鲜的指纹印，在灯光下泛着浅浅的油光。导师的声音从你背后传来，语气平淡，说你的档案已经有人替你取走了，就在几分钟前。他顿了顿，补了一句，取件登记簿上签的是你的名字。你转过身，他已经把登记簿推到桌角，翻开的那一页上，签名栏里确实写着你的名字，笔迹工整，每一笔都收得干净利落。那不是你的字。导师没有追问，只是把那张表格递过来，说第一个任务是东侧旧温室，连续三晚出现不明光源，需要你去记录光源出现的时间、位置和颜色变化，三天内交一份初步报告。表格下方用红笔标注了温室的大致方位，旁边一行小字写着夜间单独前往，注意安全。他收回手，靠回椅背，目光在你和那个被抽出一半的档案盒之间来回了一次。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "三天内"
+            ],
+            "timeline_node": 10
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G01-Q01.e01",
+        "JLC-20261106-G01-Q01.e02",
+        "JLC-20261106-G01-Q01.e03"
+      ],
+      "id": "JLC-20261106-G01-Q01",
+      "interval": {
+        "ancestor_edges_since_last": 15,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 17,
+        "since_first_campaign_turns": 14,
+        "since_last_campaign_turns": 12,
+        "since_last_public_mention_actions": 15
+      },
+      "review": {
+        "ambiguities": [],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "回忆早期任务框架与期限，区分当时已给信息和未解锁内容",
+      "unknown_audit": null,
+      "validity": {
+        "from_submitted_action": 7,
+        "future_status": "not used",
+        "through_checkpoint": 24
+      }
+    },
+    {
+      "category": "item_lost",
+      "channels": {
+        "actual_full_memory_note": "NSB旧摘要保留领钥匙历史也保留丢钥匙更新；以当前score_tracker与items为准。",
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "last_structured_exposure": 40,
+        "narrative_memory_note": "NSB旧摘要保留领钥匙历史也保留丢钥匙更新；以当前score_tracker与items为准。",
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "黄铜钥匙",
+            "json_pointer": "/nsb/level2/0/entities_involved/7",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "预备任务单（受潮）、金属残片；失去黄铜钥匙",
+            "json_pointer": "/nsb/level2/0/state_changes/inventory",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "受伤，丢失铁门钥匙，处于维修通道中被影子追击",
+            "json_pointer": "/nsb/level2/0/state_changes/player_status",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "从门房处领取，钥匙柄缠有褪色布条。",
+            "json_pointer": "/nsb/level2/0/state_changes/温室连廊铁门钥匙",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ]
+          },
+          {
+            "excerpt": "左肩受伤，行动受限；获得同形金属残片；铁门钥匙丢失。",
+            "json_pointer": "/nsb/level2/0/state_changes/玩家",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "玩家持临时通行卡进入卡塞尔学院，登记时名字旁闪现红色鳞片标记，被列为“S级观察对象”，需完成预备任务方可正式入学。首个任务为调查旧温室连续三晚的不明光源，导师同时透露玩家档案已被冒名取走，并留下“别碰光”的警告。玩家进入温室连廊后触发警报，遭遇畸形影子追击，退路被铁门封死，只能贴墙深入维修通道。途中发现墙上金属匣与影子纹路同源，匣缝微光可牵制影子，但玩家丢失钥匙、撬匣失败并受伤，仅找到不完整的同源金属残片，反光暴露位置后影子加速逼近，危机持续升级。",
+            "json_pointer": "/nsb/level2/0/summary",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "[T37 玩家]: 退回铁梯，沿原路返回维修通道，离开这个夹层\n[T37 主持人]: 你把那半页纸按在胸口，转身朝梯口挪去。铁板上的薄灰在你膝下被蹭出两道浅痕，左肩每动一下都牵扯着撕裂伤，热辣感顺着锁骨往上爬。你先把右腿探进方口，脚尖去够第一级梯级，锈蚀的铁面在鞋底下滑了一下，你及时扣住方口边缘，才没让整条腿坠下去。可就在你把重心移上去的瞬间，铁梯在砖壁里发出一声刺耳的金属摩擦，那声音又长又尖，在狭窄的通道里来回撞了几次才散。你僵在梯级上，低头看去。梯脚下方，影子猛然抬头，轮廓里那对没有眼睛的位置直直朝上。皮下暗红纹路骤然亮了一瞬，比先前任何一次都亮，把半截通道照成暗红色。它开始动了，贴着地面向梯脚缓缓移来，尖臂抬起，一寸一寸逼近那道锈线。你不敢再停，一级一级往下退，膝盖磕伤处在铁棱上又撞了一下，疼得你咬住牙关。退到中段时，你听见夹层深处传来一声更清晰的气流声，从砖壁暗缝里挤出来，短促，带着回响，像墙后有什么东西被这声金属摩擦惊动了，正朝缝隙靠近。那声音和你脚下影子的搏动叠在一起，一上一下，逼得你加快动作。你落到通道地面时，影子已挪到锈线边缘，纹路亮得几乎刺眼，尖臂悬在界线外半寸，反复试探。你贴着砖壁往维修通道退，眼睛不敢离开它。它没有越过锈线，可每一次搏动都比上一次更靠前，那道界线在暗红的光里显得越来越薄。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\", \"预备任务单\": \"active\", \"温室调查任务单\": \"active\", \"温室连廊铁门钥匙\": \"lost\", \"旧档案室异常记录\": \"active\", \"同形金属残片\": \"destroyed\", \"被撕下的观测记录\": \"active\", \"被撕下的半页记录\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/0",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "[T38 玩家]: 折返夹层方向，趁影子注意力被梯口吸引，摸向那道漏风的砖壁暗缝\n[T38 主持人]: 你贴着铁板往回挪，膝盖压着薄灰，每一步都把灰蹭出一道浅痕。左肩的撕裂伤在爬行时被反复拉扯，热辣的痛感顺着锁骨往上钻，你只能靠右臂撑住大半体重。梯口下方，影子的注意力被那声金属摩擦牢牢钉住，轮廓朝着梯脚倾去，皮下暗红纹路一明一暗，把通道照成一片浑浊的暗红。你趁着这个间隙转向夹层深处，朝那道漏风的砖壁摸去。气流声越来越清楚，旧纸和铁锈的味道浓得发闷，砖缝里不断有细碎的灰簌簌落下，落在你手背上。你伸手去探那处接缝，指尖刚触到砖面，一块松动的砖就向内陷了半寸，缝里透出一线更深的黑。可就在你重心前压的瞬间，膝下的铁板发出一声短促的吱呀。下方那团暗红猛地一滞，随即转向，尖臂抬起，贴着地面朝梯脚移来，比先前任何一次都更靠近那道锈线。你不敢再动，手指却已经探进缝里，摸到砖壁后一块冰凉的金属边缘，牌面似的，嵌在墙后，边缘有细密的刻痕。气流从它旁边挤出来，墙后传来一声极轻的窸窣，纸页翻动的那种，只响了一下就断了。你指尖顺着金属边缘摸过去，触到一处凹槽，槽里卡着半截断掉的铆钉，铆钉旁有一道被反复刮擦过的痕迹，像是有人从这一侧试图把什么东西补回去。下方影子又逼近半寸，锈线在它尖臂前微微发暗，界线显得比刚才更薄。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\", \"预备任务单\": \"active\", \"温室调查任务单\": \"active\", \"温室连廊铁门钥匙\": \"lost\", \"旧档案室异常记录\": \"active\", \"同形金属残片\": \"destroyed\", \"被撕下的观测记录\": \"active\", \"被撕下的半页记录\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/1",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "[T39 玩家]: 放弃暗缝，立刻沿铁梯撤回维修通道，趁影子还在梯脚试探\n[T39 主持人]: 你不再看那道暗缝，把重心从砖壁前撤回来，右臂撑住铁板，一寸一寸退向梯口。左肩的撕裂伤被这个动作扯得发烫，你咬住牙，把喘息压进喉咙里。梯脚下方，影子仍朝着梯口方向倾着轮廓，皮下暗红一明一暗，尖臂悬在锈线内侧，注意力还钉在那声金属摩擦的余响上。你抓住这个间隙，右腿先探进方口，脚尖稳稳踩住第一级梯级，这一次你让鞋底贴着铁面慢慢碾下去，没让它再发出声响。第二级、第三级，锈屑从梯级边缘簌簌落下，落在你手背上。你下到通道地面时，影子还在梯脚那头试探，没有回头。你贴着砖壁往通道深处退，退出十几步，才敢把憋着的那口气吐出来。就在这时，你注意到身侧的砖壁上有一道被灰尘盖住的旧刻痕，形状和门柱基座上那道浅淡刻痕对得上，边缘同样整齐。刻痕旁边卡着一小片金属碎屑，断面发亮，像是从某块牌子上崩下来的。你伸手去够，指腹的割伤在砖面上蹭出一道淡红。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\", \"预备任务单\": \"active\", \"温室调查任务单\": \"active\", \"温室连廊铁门钥匙\": \"lost\", \"旧档案室异常记录\": \"active\", \"同形金属残片\": \"destroyed\", \"被撕下的观测记录\": \"active\", \"被撕下的半页记录\": \"active\", \"墙上的旧刻痕\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/2",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "[T40 玩家]: 不再停留，沿维修通道继续往出口方向撤，把刻痕位置记在心里\n[T40 主持人]: 你不再看那道旧刻痕，把它的位置在心里钉牢：通道中段，砖壁齐胸高处，灰尘被蹭开的那一块，形状与门柱基座上的浅痕完全重合，旁边还卡着一小片断面发亮的金属碎屑。你把这个坐标默念了两遍，才转身朝出口方向挪。通道里的空气又闷又潮，脚下的碎砖和锈屑被你的鞋底碾出细响，你尽量让每一步都落在砖缝的实地上。左肩的撕裂伤随着走动一阵阵抽紧，膝盖的磕伤在弯折时发酸，指腹的割伤被冷风一激，又渗出一层薄薄的湿意。你走出十几步，忍不住回头瞥了一眼。梯脚那团暗红的轮廓还停在原处，皮下纹路一明一暗，尖臂垂着，没有跟上来，可它朝向的方向始终没有变。你继续往前，通道两侧的砖壁渐渐从夹层的旧砖换成刷过灰浆的墙，头顶的管线也从裸铁变成包着胶皮的电缆。前方拐角处透进一线灰白的光，是出口方向的应急灯。你扶着墙拐过弯，那线光落在地上，照出一小片干燥的地面。你停下脚步，把背靠上墙，让呼吸慢慢平下来。刻痕的位置、碎屑的形状、门柱基座上的浅痕，这三样东西在你脑子里并排放着，越看越像同一套记号。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\", \"预备任务单\": \"active\", \"温室调查任务单\": \"active\", \"温室连廊铁门钥匙\": \"lost\", \"旧档案室异常记录\": \"active\", \"同形金属残片\": \"destroyed\", \"被撕下的观测记录\": \"active\", \"被撕下的半页记录\": \"active\", \"墙上的旧刻痕\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/3",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "前情提要：\n\n雨夜，你站在卡塞尔学院大门前，手里攥着一张发烫的临时通行卡。红发女生诺诺在门柱旁等你已久——你借观察的时机，注意到门柱基座有一道整齐刻痕，泥里还踩着半枚金属徽记。你试探主楼方向的闷响，诺诺立刻竖起边界，只丢下一句“卡塞尔的事不是靠听就能懂的”。你识相地出示通行卡，她带你穿过大门，到报到处办登记。\n\n登记时，投影屏滚过你的名字，右侧浮出一枚红色鳞片状标记，一闪即逝，值班人员毫无反应，诺诺却看见了。她带你到走廊尽头的小办公室，递来任务单——你被标为“S级观察对象”，需完成三个预备任务才能正式入学：东侧旧温室异常光源调查（三天）、夜间巡逻（一周）、第三项待导师面谈解锁。她暗示第一个任务与门柱刻痕并非无关，却不肯多说。\n\n档案室里，年长导师告诉你：你的档案几分钟前已被人取走，取件簿上签着你的名字——笔迹不是你的。他交代温室任务细节：光源出现前有嗡鸣预兆，任何发光体都不可触碰。临别他又丢下一句：签名的人可能还在楼里。你在门外检查任务单，背面只有一行潦草红字“别碰光”，走廊深处随即传来金属门开合的轻响。\n\n你赶往门房领了黄铜钥匙，摸黑穿过东侧回廊，推开锈蚀铁门进入旧温室连廊。中段玻璃隔断整块碎裂，青灰色碎屑散落一地，嗡鸣从缺口后传来。你贴墙靠近，却在灯照边缘踩碎了一片晶体——嗡鸣骤变锐响，淡光横移，缺口后一只嵌着发光纹路的金属匣显露出来，支架旁还有一道影子正朝缺口偏转。\n\n当前目标：看清匣子与影子的真面目，同时保住退路。你半蹲在碎屑中，退路在身后三步之外。",
+            "json_pointer": "/recap_compressed",
+            "terms": [
+              "钥匙"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          35,
+          40
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_locations": [
+          "/state/_memory_controller/score_tracker/4",
+          "/state/items"
+        ],
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "东侧回廊尽头铁门，钥匙在门房领取；夜间温室温度骤降，光源出现前有预兆性嗡鸣，不可触碰任何发光体。",
+            "json_pointer": "/world_facts/11/description",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "门房交付钥匙时的叮嘱",
+            "json_pointer": "/world_facts/15/source",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "钥匙转动时，门后嗡鸣忽然清晰，从门缝底下渗出。",
+            "json_pointer": "/world_facts/16/description",
+            "terms": [
+              "钥匙"
+            ]
+          },
+          {
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/item_ledger/4/item_name",
+            "terms": [
+              "钥匙"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "T25 narration与option1提到遗失钥匙；T26–40公开行动/叙事/对话/选项均未再提钥匙。账本每检查点仍保留lost，不把这种状态持久化当叙事长间隔。",
+        "first_action": 12,
+        "last_public_topic_mention_action": 25,
+        "mention_terms": [
+          "钥匙",
+          "褪色布条"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 10,
+            "excerpt": "东侧回廊尽头，铁门。钥匙去门房领，报任务单编号。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "交代温室入口在门房领钥匙，提醒夜间温度骤降、光源前有嗡鸣、不可触碰发光体；并暗示档案签名者可能仍在楼里。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "到门房领取钥匙，前往东侧旧温室调查异常光源。",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "到门房领取铁门钥匙，进入东侧旧温室调查异常光源。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "东侧回廊尽头铁门，钥匙在门房领取；夜间温室温度骤降，光源出现前有预兆性嗡鸣，不可触碰任何发光体。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "你没有去碰档案那个话头，只是把桌上那张温室调查任务单拿起来，对折，塞进外套内袋。导师看着你这个动作，眼皮抬了抬，嘴角有一丝几乎看不出的松动。他伸出一根手指，点在桌面摊开的校园平面图上，指甲沿着主楼东侧划过去。东侧回廊走到尽头，有一扇铁门，门后就是旧温室的连廊入口。钥匙不在他这里，在门房，报任务单编号就能领。他说得很慢，像在核对一份清单。夜里温室温度会骤降，进去之前把外套扣好。光源出现之前会有一段嗡鸣，从低到高，那是预兆，不是故障。还有一条，他说到这里停了一下，手指从平面图上收回来，任何发光的东西都不要碰，不管它看起来多像玻璃、多像水。你点头，把这几条在心里过了一遍。转身之前，他忽然又开口，语气随意得像在说天气。档案的事，你不想问，我就不说。但记住，签名的人可能还在楼里。他说完就低下头，重新翻起那页扣着的纸，好像刚才那句话不属于这场谈话。你站在门口，走廊的风从门缝里钻进来，吹得吊灯轻轻晃了一下。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 10,
+            "excerpt": "直接去门房领钥匙，趁夜色还早赶去东侧回廊",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 11
+          },
+          {
+            "action_index": 11,
+            "excerpt": "到门房领取钥匙，前往东侧旧温室调查异常光源；同时留意楼内可疑动静。",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 12
+          },
+          {
+            "action_index": 11,
+            "excerpt": "不再停留，立刻前往门房领取钥匙，离开这层楼",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 12
+          },
+          {
+            "action_index": 11,
+            "excerpt": "到门房领取铁门钥匙，进入东侧旧温室调查异常光源；走廊深处出现可疑动静。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 12
+          },
+          {
+            "action_index": 12,
+            "excerpt": "编号对上了。钥匙拿好，别弄丢，这锁配一把不容易。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "黄铜钥匙，柄上缠着一圈褪色布条，门房按任务单编号交付。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/items_gained/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "黄铜钥匙，柄上缠着褪色布条，门房按任务单编号交付。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "玩家到门房核实编号领到黄铜钥匙，获知连廊后半段无灯、闻嗡鸣即退，站在东侧回廊岔路口。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "夜间值班的门房，负责钥匙发放与登记。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "已交付温室连廊铁门钥匙并给出夜间提醒。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "持钥匙进入东侧旧温室连廊，调查异常光源。",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "钥匙已到手，回廊深处一片黑。",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "到门房领取铁门钥匙，进入东侧旧温室调查异常光源。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "钥匙已到手，站在通往东侧回廊的岔路口。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "持钥匙进入东侧旧温室连廊，调查异常光源。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "门房交付钥匙时的叮嘱",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/source",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "你不再看那扇门，转身沿楼梯上行。石阶在脚下发出干燥的摩擦声，每一层转角处的壁灯都比上一层更暗，光晕缩成一小团，照不亮脚下的台阶。二层走廊空着，窗玻璃上映出你自己的影子，被拉得又细又长。你穿过主楼东侧回廊，廊柱之间的夜色浓得化不开，远处草坪上有风掠过，草叶的响动停得比风更早。门房的灯是这一路上唯一暖的东西，从半掩的窗里漏出来，在石板上铺开一小块黄。值班的是个上了年纪的男人，戴着老花镜，正对着一本厚册子核数。你报上任务单编号，他翻了两页，指尖停在一行上，抬眼看了看你，又低头把编号对了一遍。他从抽屉里取出一把黄铜钥匙，钥匙柄上缠着一圈褪色的布条，放在柜台上推过来。他叮嘱你，温室的门锁涩，往里推的时候要抬一下把手；夜里连廊的灯只亮前一半，后一半得自己摸过去；还有，听见嗡鸣就往回走，别想着看清楚是什么在响。你拿起钥匙，铜的凉意从掌心渗进来。走出门房，你站在通往东侧回廊的岔路口，钥匙在手里沉甸甸的，回廊深处一片黑。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "核实任务单编号后交付钥匙，提醒夜间温室注意事项。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "成功发现钥匙或布条上的细节，失败只是多花时间，门房会催你。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "握紧钥匙，直接走进东侧回廊，前往旧温室连廊铁门",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "先在岔路口停下来，借门房的灯检查这把钥匙和布条上的痕迹",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "已领取铁门钥匙，下一步进入东侧旧温室调查异常光源。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "不再停留，立刻前往门房领取钥匙，离开这层楼",
+            "json_pointer": "/player_action",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 13,
+            "excerpt": "黄铜钥匙，柄上缠着褪色布条，已插入铁门锁孔。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "玩家摸黑抵达旧温室铁门，钥匙插入锈涩锁孔，门后嗡鸣清晰起来。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "钥匙已插入锁孔。",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "持钥匙进入东侧旧温室连廊，调查异常光源。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "钥匙转动时，门后嗡鸣忽然清晰，从门缝底下渗出。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "你把黄铜钥匙攥进掌心，布条被体温焐得发软，齿尖硌着指根。东侧回廊从岔路口向右折去，前半段还亮着，壁灯一盏接一盏，光落在石板上，把廊柱的影子排成整齐的斜线。你走得不快，鞋跟声在拱顶下被放大，又在前方被吞掉。走到第七盏灯下时，光忽然断了。后面的回廊沉进一片浓黑，连灯罩的轮廓都看不见。你停了一步，伸手贴住左侧墙面，石面冰凉，指腹能摸到砖缝里积的细灰。你扶着墙往前挪，步子压得很低，呼吸也放轻。风从回廊尽头灌进来，带着湿土和腐叶的气味，掠过耳侧时有一阵短促的呜咽。远处有嗡鸣，很低，断断续续，像被什么隔着。你数着墙上的砖缝走，摸到一处凸起的铁箍，再往前，指尖撞上冷硬的金属。铁门到了。门板比想象中厚，表面浮着一层粗糙的锈。你摸到锁孔，把钥匙对准，插进去时涩得厉害，齿槽卡在锈层里，你左右晃了两下才推进去。钥匙转动的一瞬，门后那阵嗡鸣忽然清晰了一分，从门缝底下渗出来，贴着地面爬到你脚边。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "转动钥匙推门进入温室连廊，直接面对嗡鸣声源",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "退后半步，用钥匙柄敲三下铁门，试探门后是否有回应",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "持钥匙进入东侧旧温室连廊，调查异常光源。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "已抵达铁门，钥匙插入锁孔，门后嗡鸣清晰。",
+            "json_pointer": "/output/quests_updated/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "握紧钥匙，直接走进东侧回廊，前往旧温室连廊铁门",
+            "json_pointer": "/player_action",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 14,
+            "excerpt": "黄铜钥匙，柄上缠着褪色布条，已从锁孔拔出握在手中。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "铁门已开，钥匙仍可用。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "钥匙在锁孔里转到底，发出一声干涩的咔哒，锁舌弹开，铁门被你的掌心顶出一道缝。门后涌出的空气比回廊更冷，带着湿土、腐叶和一丝铁锈的甜味。你把门推开到能侧身通过，铁皮边缘刮过地面，声音在门后那片空间里被拉长。连廊在眼前展开，前半段还挂着几盏灯，光晕发黄，照出两侧玻璃隔断上厚厚的绿苔和干枯的藤蔓。嗡鸣就在前面，不在深处，就在你跨过门槛后十几步的位置，低而稳，像有什么东西在玻璃后面持续震颤。你停下，让眼睛适应。连廊中段有一处玻璃隔断整块碎了，缺口边缘挂着水珠，缺口内侧的地面上散着几片反光的碎屑，颜色偏青，不是玻璃该有的颜色。嗡鸣正是从那个缺口后面传出来的，节奏没有变化，也没有因为你的进入而停顿。门房的话在耳边回响，听见嗡鸣须立即折返。可你已经站在这里，缺口就在十几步外，光从那里渗出来，很淡，贴着地面铺开。你注意到连廊后半段的灯全是灭的，黑暗从缺口之后开始，一直吞到看不见的尽头。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "退回铁门外，把门虚掩留一条缝，用钥匙柄敲击铁门制造响动，观察嗡鸣是否对声音作出反应",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "转动钥匙推门进入温室连廊，直接面对嗡鸣声源",
+            "json_pointer": "/player_action",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 20,
+            "excerpt": "你放弃了用纸面反光的念头，纸页太软，碎屑灼出的焦痕还在发红，举起来只会暴露自己的位置。你把任务单收回口袋，指腹蹭过那道划口，纸边已经卷了。嗡鸣没有回落，反而在连廊里叠出一层更低的底音，压得耳膜发闷。缺口后的影子朝你的方向挪了半步，青灰色的光在它轮廓上流动，碎屑被它带起几粒，飘在半空又落下。就在你判断距离的时候，铁门方向传来第二声轻响，比第一声更近，金属碰金属，短促而干脆，像有人在外面用钥匙试探锁孔。连廊尽头的应急灯闪了一下又灭了，那一下光把整条走廊的轮廓照出来：铁门在你身后约十步，门缝下有一线更暗的影子在动。你半蹲的位置夹在两者之间，退路正在被收窄。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "把黄铜钥匙握在掌心，用钥匙柄敲击铁门旁的金属管道，试探门外异响的反应",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 21,
+            "excerpt": "黄铜钥匙，柄上缠着褪色布条，仍握在手中。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "铁门锁舌卡死，钥匙尚未尝试撬动。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "成功撬开锁舌夺回退路，失败钥匙受损且门外之物彻底锁死门板。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "握紧黄铜钥匙，把钥匙柄上的褪色布条缠在灼痛的手掌上，再试着撬动锁舌",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 23,
+            "excerpt": "成功验证钥匙与纹路同源并获得关键线索，失败触发匣内机关或灼伤。",
+            "json_pointer": "/output/option_checks/2/stakes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "在通道口停下，用黄铜钥匙柄去碰金属匣侧面亮过的那道纹路，试探两者是否同源",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 24,
+            "excerpt": "你目前没有可用的“黄铜钥匙柄去碰金属匣侧面亮过的那道纹路”，无法使用它。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "在通道口停下，用黄铜钥匙柄去碰金属匣侧面亮过的那道纹路，试探两者是否同源",
+            "json_pointer": "/player_action",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 25,
+            "excerpt": "黄铜钥匙，柄上缠着褪色布条，在贴墙横移途中脱手遗失。",
+            "json_pointer": "/output/items_lost/0/description",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "温室连廊铁门钥匙",
+            "json_pointer": "/output/items_lost/0/name",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "玩家发现黄铜钥匙已遗失，确认金属匣纹路与铁门灼痕同源，通道尽头灰光前有东西移动。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "手掌灼痛，钥匙遗失，退路被封",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "确认金属匣纹路与铁门把手灼痕走向一致，钥匙遗失。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "你伸手探向腰间，指腹先摸到任务单卷起的纸边，再往下，是空荡荡的布带。你换了口袋去摸，临时通行卡还在，硬质卡角硌着指节，可那枚缠着褪色布条、一直握在手里的黄铜钥匙，不在了。你回想最后一次触到它的位置，是铁门锁孔，是门房递给你的时候，之后你一路贴墙横移，它大概在某次松手或撞上砖面时脱了出去，落在连廊某段黑暗里。掌心那道灼痛还在，提醒你刚才碰过什么。你收回手，把注意力重新放回嵌在墙里的金属匣。匣盖侧面那道暗红纹路在冷光下几乎不显，只有凑近才看得出细密的走向，边缘锐利，收笔处有一道短促的回勾。你盯着那道回勾，忽然想起铁门把手上的灼痕，同样的走向，同样的收笔，连粗细变化都一致。两处痕迹出自同一只手，或同一件东西。通道尽头的灰光在这时暗了一瞬，又亮起来，像有什么东西从光源前走过，遮了一下又移开。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "钥匙",
+              "褪色布条"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "成功找回钥匙，失败在黑暗中耗时并让影子重新定位你。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "退回连廊，在刚才横移过的墙根一带摸找遗失的黄铜钥匙",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "钥匙"
+            ],
+            "timeline_node": 26
+          }
+        ],
+        "update_actions": [
+          25
+        ]
+      },
+      "evidence_ids": [
+        "JLC-20261106-G01-Q02.e01",
+        "JLC-20261106-G01-Q02.e02",
+        "JLC-20261106-G01-Q02.e03",
+        "JLC-20261106-G01-Q02.e04",
+        "JLC-20261106-G01-Q02.e05",
+        "JLC-20261106-G01-Q02.e06",
+        "JLC-20261106-G01-Q02.e07"
+      ],
+      "id": "JLC-20261106-G01-Q02",
+      "interval": {
+        "ancestor_edges_since_last": 15,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 28,
+        "since_first_campaign_turns": 25,
+        "since_last_campaign_turns": 15,
+        "since_last_public_mention_actions": 15
+      },
+      "review": {
+        "ambiguities": [
+          "T24本地审查因物品名切分误判黄铜钥匙柄不可用，但T24账本仍active；不能把T24拒绝当作遗失依据。真正遗失更新为T25。",
+          "T25叙事只推测钥匙落在某段连廊，不能给出精确遗失位置。"
+        ],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "区分曾经获得与当前遗失，按提交状态和物品账本回答",
+      "unknown_audit": null,
+      "validity": {
+        "current_status_from_action": 25,
+        "from_submitted_action": 12,
+        "future_status": "not used",
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "character_relation_and_claim",
+      "channels": {
+        "actual_full_memory_note": "NSB T30保留诺诺未确认关联与送门口，导师对象可从早期叙事和结构化fact源获得。",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "last_structured_exposure": 30,
+        "narrative_memory_note": "NSB T30保留诺诺未确认关联与送门口，导师对象可从早期叙事和结构化fact源获得。",
+        "narrative_memory_snapshot_topic_hits": [],
+        "recent_action_range": [
+          25,
+          30
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_locations": [
+          "/state/world_facts/9"
+        ],
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "诺诺对刻痕与第一个任务的关联不否认也不确认，暗示档案室导师才是该问的人。",
+            "json_pointer": "/world_facts/9/description",
+            "terms": [
+              "不否认",
+              "不确认",
+              "该问的人"
+            ]
+          },
+          {
+            "excerpt": "门柱刻痕与第一个任务的潜在关联",
+            "json_pointer": "/world_facts/9/name",
+            "terms": [
+              "门柱刻痕与第一个任务的潜在关联"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 8,
+        "last_public_topic_mention_action": 8,
+        "mention_terms": [
+          "不否认",
+          "不确认",
+          "该问的人",
+          "门柱刻痕与第一个任务的潜在关联"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 8,
+            "excerpt": "刻痕和任务是不是有关，我不否认，也不确认。有些事得让该说的人说。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "不否认",
+              "不确认"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "诺诺带玩家到档案室门口，对刻痕与任务的关联不否认也不确认，门内导师已在翻纸等候。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "不否认",
+              "不确认"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "对门柱刻痕与任务的关联不否认也不确认，把问题推给导师。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "不否认",
+              "不确认"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "诺诺对刻痕与第一个任务的关联不否认也不确认，暗示档案室导师才是该问的人。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "不否认",
+              "不确认",
+              "该问的人"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "门柱刻痕与第一个任务的潜在关联",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/name",
+            "terms": [
+              "门柱刻痕与第一个任务的潜在关联"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "你跟着诺诺拐进主楼西侧的窄廊，这里的壁灯更稀疏，光晕只够照亮脚前三步。你开口问她，第一个任务的地点既然离门柱不远，那门柱基座上的刻痕和任务之间有没有关联。诺诺没有立刻否认。她走在你前面半步，红发在暗处几乎发黑，脚步放慢了一拍。她说有些东西不是巧合，但也不是你现在该弄明白的，声音很平，像在陈述一条校规。她偏过头，补了一句，说档案室里的导师才是该问的人，她只负责把你送到门口。窄廊尽头是一扇包铁边的旧木门，门缝下透出昏黄的光。你还没走近，门内就传来翻动纸张的声音，一页接一页，节奏不紧不慢，随后是一声合上文件夹的轻响，仿佛里面的人早已等着你们。诺诺在门前停下，抬手敲了两下，没有等你回应便侧身让开，把门的位置留给你。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "该问的人"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "把玩家送到档案室门口，暗示导师才是该问的人，自己留在门外。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "该问的人"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "拉住诺诺，追问她刚才那句不否认也不确认到底什么意思",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "不否认",
+              "不确认"
+            ],
+            "timeline_node": 9
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G01-Q03.e01",
+        "JLC-20261106-G01-Q03.e02",
+        "JLC-20261106-G01-Q03.e03"
+      ],
+      "id": "JLC-20261106-G01-Q03",
+      "interval": {
+        "ancestor_edges_since_last": 22,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 22,
+        "since_first_campaign_turns": 19,
+        "since_last_campaign_turns": 19,
+        "since_last_public_mention_actions": 22
+      },
+      "review": {
+        "ambiguities": [],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "人物关系和表态回忆，不把角色保留态度升级为已证实事实",
+      "unknown_audit": null,
+      "validity": {
+        "from_submitted_action": 8,
+        "future_status": "not used",
+        "through_checkpoint": 30
+      }
+    },
+    {
+      "category": "updated_information_action",
+      "channels": {
+        "actual_full_memory_note": [
+          "与烟草味工具间铁架后的通道不是同一处；不得混同。",
+          "状态保留旧suspected风判断及新known填实，需按证据更新处理。",
+          "当前NSB摘要重复答案；这里只称公开叙事间隔7，不能称全部通道7回合无重复。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_world_facts"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "scene_prev→scene_curr: 诺诺摸墙发现裂缝并撬开灰泥，但缝被填死，声响暴露位置，监视者呼叫清货增援，迫使玩家改变策略。",
+            "json_pointer": "/nsb/level1/0/causal_links/0",
+            "terms": [
+              "填死"
+            ]
+          },
+          {
+            "excerpt": "确认裂缝后墙填死，无法撬开；指出撬痕与搬运单封条编号吻合",
+            "json_pointer": "/nsb/level1/0/state_changes/诺诺",
+            "terms": [
+              "填死",
+              "缝后"
+            ]
+          },
+          {
+            "excerpt": "诺诺在岔口摸墙发现裂缝，但撬开灰泥后确认缝被填死，声响引来监视者呼叫清货增援。玩家试图逼问情报失败，转而观察发现监视者同样害怕清货人员看到岔口内幕。玩家举起黄铜封条残片，监视者失言“那箱子不该还在”，并透露箱子今晚要归位钟楼。诺诺指出撬痕与搬运单封条编号吻合，且取件柜包裹备注“别让他一个人去钟楼”。趁监视者侧身让出缝隙，玩家挤出岔口直奔便利店，用电子锁打开取件柜取得三年前的包裹，随后从后门避开手电光，冒雨前往钟楼，诺诺强调零点前必须将箱子放回。",
+            "json_pointer": "/nsb/level1/0/summary",
+            "terms": [
+              "填死"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          35,
+          40
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "诺诺掰开灰泥后确认裂缝后面是实的，撬不开，再掰只会塌。",
+            "json_pointer": "/world_facts/58/description",
+            "terms": [
+              "缝后"
+            ]
+          },
+          {
+            "excerpt": "岔口裂缝后为实心填土",
+            "json_pointer": "/world_facts/58/name",
+            "terms": [
+              "缝后",
+              "岔口裂缝"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+        "first_action": 30,
+        "last_public_topic_mention_action": 33,
+        "mention_terms": [
+          "死墙",
+          "墙缝",
+          "填死",
+          "缝后",
+          "岔口裂缝",
+          "那面墙"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 30,
+            "excerpt": "这划痕和封条残片上的断口走向一样。墙后面有风，不是死墙。",
+            "json_pointer": "/output/dialogue/1/text",
+            "terms": [
+              "死墙"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "你压低身体，朝诺诺消失的方向退去，膝盖的旧伤在窄缝里每一步都抽紧。岔口就在柜壁尽头，一道只容侧身挤过的裂口，诺诺的红发在裂口深处一闪。你刚把肩膀塞进去，身后的手电光就追了上来，白得发烫，把你的影子钉在裂口内壁上。监视者没有喊，只是加快脚步，鞋底碾过浮灰，一步比一步近。你侧身挤进裂口，石壁刮过肩头的擦伤，疼得你倒吸一口气，可还没等你把另一条腿收进去，裂口外的光就停住了。监视者站在岔口前，手电压低，光柱正卡在裂口的入口，他伸出一只手撑住裂口一侧的石壁，整个人堵在那里，把退路封得严严实实。你听见他腰间的对讲机又响了，沙沙的电流声里，那个压低的声音说，钟楼那边催了，三年前那箱东西今晚必须归位，别再拖。监视者的头偏了一下，应了一声，脚却没有挪开。裂口深处，诺诺忽然停住，她的手贴在内壁上，指尖摸到一道刻痕。她回过头，声音很轻，说这里的划痕和封条残片上的断口走向一样，是同一把东西划的。你侧过脸，看见那道刻痕在光柱边缘露出来，短而深，末端有一个小小的回勾。监视者听见了诺诺的声音，手电往裂口深处探了探，光柱扫过那道刻痕，又扫过诺诺的脸。他没有进来，只是把撑在石壁上的手收紧，说你们跑不了，这岔口另一头是死墙。诺诺的手指还停在刻痕上，她低声说，这墙后面有风。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "死墙"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 31,
+            "excerpt": "缝是假的，后面填死了。他喊人了，清货的马上到，我们没时间再摸墙。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "填死"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "诺诺撬灰泥发现裂缝后填死，声响惊动监视者，他喊出位置并呼叫清货人合围。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "填死",
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "确认裂缝后填死，催促突围。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/1/notes",
+            "terms": [
+              "填死",
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "诺诺掰开灰泥后确认裂缝后面是实的，撬不开，再掰只会塌。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "岔口裂缝后为实心填土",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/name",
+            "terms": [
+              "缝后",
+              "岔口裂缝"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "诺诺把指尖重新按回那道刻痕，顺着石壁往下摸。你贴在她身后，能听见墙里那阵风在某个位置忽然变细，像被什么堵住了。她的指腹停在一处灰泥鼓起的地方，低声说这里有缝，风是从这后面漏出来的。她抠住灰泥边缘，用力一掰，一块干硬的灰壳剥落下来，露出后面一道窄得只容手掌探入的裂缝。可灰泥碎裂的声音在岔口里被放大了，脆响顺着石壁传出去。岔口外的手电光猛地定住，不再晃动，直直照进裂口深处，正落在诺诺的红发上。监视者的呼吸停了一拍，随即对讲机被按响，他的声音压得很低却清楚：她就在岔口里，两个人都在。你听见后门雨棚方向传来铁架拖过水泥地的刺耳声，有人在那边清货，金属碰撞一下接一下。对讲机里另一个声音回话说清货的人马上到岔口。监视者应了一声，把身体更沉地压进裂口入口，手电光死死钉住你们。就在他低头按对讲机的那几秒，岔口里忽然静下来，雨声从很远的地方浮上来，你才发觉自己的膝盖一直在抖，旧伤的抽痛顺着骨头往上爬，肩头的擦伤被石壁蹭开，血把衣料黏在皮肤上。诺诺把手从裂缝里抽回来，指尖沾着灰，冲你摇头，那道缝后面是实的，撬不开，再掰只会塌。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "确认裂缝后是实心填土，撬动失败，催促突围。",
+            "json_pointer": "/output/npcs_encountered/1/notes",
+            "terms": [
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "裂缝后为实心填土，墙后通道不可行，须转向逼问或突围。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "缝后"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 33,
+            "excerpt": "你不再去碰那面墙。灰泥碎屑还挂在诺诺的指缝里，岔口外的光柱却已经稳住了，不再乱晃，像一根钉子钉在你们之间。你听见监视者把对讲机从腰间拿下来，拇指按在按键上，却迟迟没有按下去。后门雨棚那边铁架拖地的声音又响了一记，他整个人明显绷了一下，肩膀往走廊那头偏了半寸，又硬生生转回来。诺诺贴着你的耳朵，声音压得极低：他喊人的时候声音在抖，他怕的不是我们跑，是清货的人进来看到什么。你盯着岔口外那只撑在石壁上的手，指节泛白，手电在微微打颤。他第三次去按对讲机，这次按下去，却只说了一句：这边没事，岔口堵住了，你们先清你们的。说完他立刻松开按键，像怕那头多问一个字。你膝盖的旧伤在冷石上抽了一下，肩头的擦伤把衣服黏在皮肤上，可你忽然看清了，他堵着你们，也在堵着外面的人。他不敢挤进来，也不敢让你们出去，他在等一个不会有人多看一眼的时机。诺诺把黄铜封条残片从掌心翻出来，在微光里晃了一下，残片边缘的撬痕正对着岔口外的方向。她没说话，只把残片往你手边递了递，眼神落在监视者那只按在对讲机上的手上。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "那面墙"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "你不再去碰那面墙。",
+            "json_pointer": "/output/narration",
+            "method": "editor_semantic",
+            "timeline_node": 34
+          }
+        ],
+        "update_actions": [
+          31
+        ]
+      },
+      "evidence_ids": [
+        "JLC-20261106-G02-Q01.e01",
+        "JLC-20261106-G02-Q01.e02",
+        "JLC-20261106-G02-Q01.e03",
+        "JLC-20261106-G02-Q01.e04",
+        "JLC-20261106-G02-Q01.e05",
+        "JLC-20261106-G02-Q01.e06"
+      ],
+      "id": "JLC-20261106-G02-Q01",
+      "interval": {
+        "ancestor_edges_since_last": 7,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 10,
+        "since_first_campaign_turns": 9,
+        "since_last_campaign_turns": 7,
+        "since_last_public_mention_actions": 7
+      },
+      "review": {
+        "ambiguities": [
+          "与烟草味工具间铁架后的通道不是同一处；不得混同。",
+          "状态保留旧suspected风判断及新known填实，需按证据更新处理。",
+          "当前NSB摘要重复答案；这里只称公开叙事间隔7，不能称全部通道7回合无重复。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": [
+        "updated_information",
+        "action_feasibility",
+        "claim_vs_observation"
+      ],
+      "unknown_audit": null,
+      "validity": {
+        "from_action": 31,
+        "future_information_used": false,
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "unknown_person_identity",
+      "channels": {
+        "actual_full_memory_note": [
+          "未知审查范围为initial公共状态及行动1–42的intents/player_action、output全文、提交状态与记忆；阅读相关实体线索后未见具体姓名或唯一身份映射。不是对整个世界断言无人知道。",
+          "诺诺关于上个月现场的描述本身是角色证言，问“诺诺所说”以避免当作独立证实。",
+          "持久world_facts/43每个后续检查点保留身份未明；不是40回合后的新剧情。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_world_facts",
+          "bounded_history_audit"
+        ],
+        "narrative_memory_snapshot_topic_hits": [],
+        "recent_action_range": [
+          37,
+          42
+        ],
+        "recent_answer_coverage": "no_known_answer",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "诺诺称芬格尔搬箱时楼梯拐角还站着个穿执行部外套的人，只旁观未动手。",
+            "json_pointer": "/world_facts/43/description",
+            "terms": [
+              "穿执行部外套",
+              "旁观未动手"
+            ]
+          },
+          {
+            "excerpt": "执行部旁观者",
+            "json_pointer": "/world_facts/43/name",
+            "terms": [
+              "执行部旁观者"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+        "first_action": 25,
+        "last_public_topic_mention_action": 26,
+        "mention_terms": [
+          "执行部旁观者",
+          "光看不动手",
+          "穿执行部外套",
+          "旁观未动手"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 25,
+            "excerpt": "芬格尔。上个月搬箱子的是芬格尔，箱子上缠着黄铜色的封条。他不是一个人，拐角还站着个执行部的，光看不动手。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "光看不动手"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "找到芬格尔，查清黄铜封条箱子与执行部旁观者的关系。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "执行部旁观者"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "诺诺称芬格尔搬箱时楼梯拐角还站着个穿执行部外套的人，只旁观未动手。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/description",
+            "terms": [
+              "穿执行部外套",
+              "旁观未动手"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "执行部旁观者",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/name",
+            "terms": [
+              "执行部旁观者"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "你直起身，把七枚烟蒂一枚一枚按原样摆回铁架脚边，滤嘴朝向一致，掐灭的焦口都对着铁架后的缝隙。你退后半步，让诺诺看清这个位置，看清擦痕从横杆上斜着划进去的方向。你开口，声音压得很低，说这堆烟不是今天留下的，说有人蹲在这里等过，等完就往铁架后头去了。诺诺的视线从烟蒂移到擦痕，再移回你脸上，她的下颌绷了一下。她说她上个月看见有人搬箱子，从旧档案室后门出来，箱角磕在门框上，掉了一地灰。你追问是谁，她别开脸，说记不清了。你把手指点在擦痕最亮的那一段上，说这痕迹和那箱角磕出来的印子是一个方向，说她当时站得比现在近。诺诺沉默了几秒，红发垂下来遮住半张脸。她终于开口，说搬箱的人叫芬格尔，高年级，总在新生报到处附近兜售情报，那天他搬的箱子外面缠着黄铜色的封条。她顿了一下，又补了一句，说芬格尔当时不是一个人，楼梯拐角还站着个穿执行部外套的人，那人没动手，只在看。她说完就闭上嘴，像是把什么咽了回去。工具间外，楼梯井深处传来一声闷响，不是脚步，是重物落地的声音，从铁架后那条缝隙的方向传过来。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "穿执行部外套"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "追查搬箱人芬格尔与黄铜封条箱子的去向，以及执行部旁观者的身份。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "执行部旁观者"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 26,
+            "excerpt": "追查黄铜封条箱子与执行部旁观者的关系。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/description",
+            "terms": [
+              "执行部旁观者"
+            ],
+            "timeline_node": 27
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G02-Q02.e01",
+        "JLC-20261106-G02-Q02.e02",
+        "JLC-20261106-G02-Q02.e03"
+      ],
+      "id": "JLC-20261106-G02-Q02",
+      "interval": {
+        "ancestor_edges_since_last": 16,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 17,
+        "since_first_campaign_turns": 16,
+        "since_last_campaign_turns": 15,
+        "since_last_public_mention_actions": 16
+      },
+      "review": {
+        "ambiguities": [
+          "未知审查范围为initial公共状态及行动1–42的intents/player_action、output全文、提交状态与记忆；阅读相关实体线索后未见具体姓名或唯一身份映射。不是对整个世界断言无人知道。",
+          "诺诺关于上个月现场的描述本身是角色证言，问“诺诺所说”以避免当作独立证实。",
+          "持久world_facts/43每个后续检查点保留身份未明；不是40回合后的新剧情。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": [
+        "unknown_with_bounded_scope",
+        "claim_vs_confirmed",
+        "person_roles"
+      ],
+      "unknown_audit": {
+        "inference_review": "0–42前缀内只有诺诺对上个月搬箱现场的证言。芬格尔角色是搬箱者；后来的守卫和监视者没有唯一映射。当前world_facts/43身份未明。不能由衣着或同属执行部推出姓名。",
+        "negative_claim": "本历史范围未提供可确定该姓名的证据；不主张故事世界中无人知道。",
+        "range": [
+          0,
+          42
+        ],
+        "reviewed_fields": [
+          "initial/output/state",
+          "intents/request/player_action",
+          "checkpoints/output (all leaves including options/check stakes/memory_updates)",
+          "checkpoints/state including world_facts/npcs/NSB/PCB/narrative_pool",
+          "progress/recap_compressed"
+        ],
+        "search_terms": [
+          "执行部旁观者",
+          "执行部外套",
+          "光看不动手",
+          "芬格尔",
+          "旁观",
+          "名字",
+          "姓名"
+        ],
+        "status": "editor_reviewed_pending_human"
+      },
+      "validity": {
+        "from_action": 25,
+        "future_information_used": false,
+        "through_checkpoint": 42
+      }
+    },
+    {
+      "category": "early_narrative_detail",
+      "channels": {
+        "actual_full_memory_answer_available": false,
+        "actual_full_memory_note": [
+          "cp42持久world_facts仅记近期有人待过，不含数量。已检查cp42 NSB/PCB/narrative_pool中不含七枚或三枚，可能答案已从实际full记忆丢失；题库答案仍来自历史原证据。必须标answer_available_in_actual_full_memory=false，而不能人工补入摘要。",
+          "T25玩家叙述“这堆烟不是今天留下的”与T24新鲜观察有张力；本题只测数目，不测准确停留时长。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative"
+        ],
+        "narrative_memory_snapshot_topic_hits": [],
+        "recent_action_range": [
+          37,
+          42
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "retention_warning": "历史有标准答案，但cp42实际NSB/PCB/recap与结构化状态未检出两项数量。保留为记忆保留缺口题；不得把它计成纯粹回答模型忘记。",
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": false,
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "工具间地上有被踩扁的烟蒂和一支镜片带余温的手电筒。",
+            "json_pointer": "/world_facts/39/description",
+            "terms": [
+              "烟蒂"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+        "first_action": 24,
+        "last_public_topic_mention_action": 25,
+        "mention_terms": [
+          "烟蒂",
+          "七枚",
+          "三枚新的"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 23,
+            "excerpt": "工具间地上有被踩扁的烟蒂和一支镜片带余温的手电筒。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/description",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "你不再开口，反手扣住诺诺的手腕，把她往侧面那条窄口带。断掉的警示带横在口沿，塑料带面落满灰，你伸手把它拨开，带子只发出一点被布料压住的轻响，没有弹动，也没有金属扣碰撞。你侧身挤进去，肩膀擦过口沿的石壁，擦伤处被粗石面刮了一下，你忍住没出声。诺诺跟在你身后，红发在黑暗里收成一小团，她把警示带重新拨回原位，动作很轻。窄口比看上去更深，两侧石壁向内收，最窄处只容一人侧身通过，头顶压得很低，你得微微低头。空气里有陈年的灰和一股淡淡的烟草味，混着铁锈。身后的楼梯井里，脚步声到了岔口，停住了。你屏住呼吸。那脚步在岔口来回挪了两下，鞋底蹭着石面，然后继续往下，一级一级，沉进更深的黑里，渐渐听不见了。诺诺在你背后吐出一口气，气息贴着你后颈。窄口尽头是一间被遗弃的维护工具间，门板半挂在铰链上，里面堆着空铁架和卷起的旧管线。地上有痕迹，一小堆烟蒂被踩扁，旁边躺着一支手电筒，镜片还留着一点余温。铁架边缘压着半张纸条，撕口很新，上面印着一串调档序列号，后半截被人撕走了。诺诺凑过来看了一眼，声音压得极低，说这串号她见过，是听证室调原始记录用的，但后面那半截，才是真正要调的东西。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "不碰手电筒，先检查工具间里那堆烟蒂和铁架，判断待在这里的人离开多久、往哪个方向去了",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 24,
+            "excerpt": "七枚，三枚新的。他在这儿等了不止一会儿，等的是调档序列的后半截被人送下来。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "七枚",
+              "三枚新的"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "玩家检查烟蒂与铁架，判断对方不久前经铁架后通道离开，诺诺透露搬箱人线索。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "烟蒂新鲜，铁架后有通道，诺诺掌握搬箱人线索。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "你蹲下去，膝盖的伤让你不得不把动作放慢。烟蒂堆在铁架脚边，你捏起最上面一枚，滤嘴还留着一点潮气，指腹一压，烟丝没散，说明掐灭得不久。你数了数，一共七枚，三枚的灰还没被潮气浸透，边缘发白。铁架横杆上有一道新鲜的擦痕，金属被蹭亮，方向朝里，朝工具间更深处。你顺着擦痕看过去，铁架背后堆着几只空木箱，箱缝里透出一线更暗的黑，不是墙。你伸手探进去，指尖碰到冷风，风从背后灌出来，带着楼梯井里没有的土腥味。手电筒的镜片你刚才没碰，但余光里那点余温还在，说明有人不久前还握着它，蹲在这个位置，抽完烟，起身，往铁架后去了。你回头，诺诺正盯着你手里的烟蒂，脸色不太对。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "烟蒂",
+              "七枚"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "把七枚烟蒂和铁架擦痕的位置记下，回头用这处痕迹去逼诺诺说出她上个月看见的搬箱人是谁",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "烟蒂",
+              "七枚"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "不碰手电筒，先检查工具间里那堆烟蒂和铁架，判断待在这里的人离开多久、往哪个方向去了",
+            "json_pointer": "/player_action",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 25,
+            "excerpt": "玩家用烟蒂与擦痕逼问诺诺，诺诺交出搬箱人芬格尔，并透露有执行部的人在场旁观。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "烟蒂"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "你直起身，把七枚烟蒂一枚一枚按原样摆回铁架脚边，滤嘴朝向一致，掐灭的焦口都对着铁架后的缝隙。你退后半步，让诺诺看清这个位置，看清擦痕从横杆上斜着划进去的方向。你开口，声音压得很低，说这堆烟不是今天留下的，说有人蹲在这里等过，等完就往铁架后头去了。诺诺的视线从烟蒂移到擦痕，再移回你脸上，她的下颌绷了一下。她说她上个月看见有人搬箱子，从旧档案室后门出来，箱角磕在门框上，掉了一地灰。你追问是谁，她别开脸，说记不清了。你把手指点在擦痕最亮的那一段上，说这痕迹和那箱角磕出来的印子是一个方向，说她当时站得比现在近。诺诺沉默了几秒，红发垂下来遮住半张脸。她终于开口，说搬箱的人叫芬格尔，高年级，总在新生报到处附近兜售情报，那天他搬的箱子外面缠着黄铜色的封条。她顿了一下，又补了一句，说芬格尔当时不是一个人，楼梯拐角还站着个穿执行部外套的人，那人没动手，只在看。她说完就闭上嘴，像是把什么咽了回去。工具间外，楼梯井深处传来一声闷响，不是脚步，是重物落地的声音，从铁架后那条缝隙的方向传过来。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "烟蒂",
+              "七枚"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "把七枚烟蒂和铁架擦痕的位置记下，回头用这处痕迹去逼诺诺说出她上个月看见的搬箱人是谁",
+            "json_pointer": "/player_action",
+            "terms": [
+              "烟蒂",
+              "七枚"
+            ],
+            "timeline_node": 26
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G02-Q03.e01",
+        "JLC-20261106-G02-Q03.e02",
+        "JLC-20261106-G02-Q03.e03",
+        "JLC-20261106-G02-Q03.e04"
+      ],
+      "id": "JLC-20261106-G02-Q03",
+      "interval": {
+        "ancestor_edges_since_last": 17,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 18,
+        "since_first_campaign_turns": 17,
+        "since_last_campaign_turns": 16,
+        "since_last_public_mention_actions": 17
+      },
+      "review": {
+        "ambiguities": [
+          "cp42持久world_facts仅记近期有人待过，不含数量。已检查cp42 NSB/PCB/narrative_pool中不含七枚或三枚，可能答案已从实际full记忆丢失；题库答案仍来自历史原证据。必须标answer_available_in_actual_full_memory=false，而不能人工补入摘要。",
+          "T25玩家叙述“这堆烟不是今天留下的”与T24新鲜观察有张力；本题只测数目，不测准确停留时长。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": [
+        "early_narrative_detail"
+      ],
+      "unknown_audit": null,
+      "validity": {
+        "from_action": 24,
+        "future_information_used": false,
+        "through_checkpoint": 42
+      }
+    },
+    {
+      "category": "item_transfer_state",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "补记行为被核查员发现，导致报告被没收、通行卡被扣",
+            "json_pointer": "/nsb/level2/0/causal_links/6",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "玩家以备份记录反问编号关联，导致被扣手腕并最终交出通行卡",
+            "json_pointer": "/nsb/level2/0/causal_links/7",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "临时通行卡",
+            "json_pointer": "/nsb/level2/0/entities_involved/9",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "临时通行卡被没收，听证室被封场，玩家行动受限",
+            "json_pointer": "/nsb/level2/0/state_changes/access",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "从持临时通行卡的新生变为被没收通行卡、被押送侧厅的受控对象，手背被诺诺划下数字",
+            "json_pointer": "/nsb/level2/0/state_changes/player",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "没收报告和通行卡，注意到玩家取证行为",
+            "json_pointer": "/nsb/level2/0/state_changes/执行部核查员",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "玩家在雨夜抵达卡塞尔学院，由诺诺接引从侧门入校，随即在报到区被发现带有暗红鳞形S级观察对象标记。诺诺提前交付预备任务单，玩家坚持完成登记后前往执行部核对任务编号，发现泛黄条目被遮挡、管道异响，被诺诺带入旧档案室。档案在三分钟前被伪造签名取走，操作终端已报废一年，玩家备份记录时进度异常停顿，决定前往维护通道调查。铁门被铁楔卡死，对方已逃离并留下半枚接入凭证；玩家比对发现旧终端注销时间早于最后接入，证明记录被篡改，遂赶往钟楼听证室。桌上名单印有玩家名字并被湿墨重描，笔迹与玩家一致；血统检测报告显示S级标记及与通行卡登记号仅差两位的样本编号。执行部封场，玩家补记编号时被核查员当场发现，报告被没收，通行卡被扣，玩家记住核查员先看签发栏的顺序。玩家借诺诺争执要求对质，核查员暗示编号涉及三年前旧案并警告勿碰包裹，玩家被押送侧厅，途中试图传递补全编号被截获，对方认出编号与三年前封存样本及钟楼地下屋子有关。玩家与诺诺会合，诺诺低声透露地下屋子涉及样本编号及有人隐瞒新生，并在玩家手背划下数字，走廊传来急促脚步。",
+            "json_pointer": "/nsb/level2/0/summary",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "[T31 玩家]: 把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置\n[T31 主持人]: 你把手背贴在裤缝上，指腹一遍遍描过那道被划下的痕迹，把数字压进记忆里。走廊的灯管又闪了一下，最近的看守正背对着你，视线落在走廊尽头。你侧过脸，嘴唇几乎不动，把问题递向诺诺，问她这个数字对应什么，钟楼地下那间屋子到底在哪。诺诺的睫毛动了一下，刚要开口，门边那名看守忽然转身。他的鞋底在地面碾出半圈，两步就跨到你们之间，肩膀一横，把你和诺诺隔成两段。他抬手在你胸前虚按一下，声音不高却硬：不许交谈。另外两人跟着挪动位置，一左一右把你往侧厅另一角带，你的后背贴上冰冷的墙。诺诺被留在原地，红发垂下来，她没再出声，只在你被推走的最后一刻抬眼看你，视线往下压了压，又极轻地朝地面偏了一下头。那一下太短，你只来得及看见她指尖在身侧比了个向下的手势。看守在你面前站定，双臂抱在胸前，把走廊和诺诺都挡在身后。就在这时，侧厅的门被人从外面敲响，三下，间隔很短。门边看守皱眉过去，门缝里递进来一张折起的纸条。他展开看了几秒，脸色沉下去，回头扫了你一眼，又看了看诺诺，压低声音对同伴说，听证室要提前开始，先带编号对得上的那个进去。两名看守立刻朝你走来，脚步比刚才急。\n看守: 不许交谈。退到那边去，靠墙站好。\n看守: 听证室提前了，先带编号对得上的那个进去。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/0",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "[T32 玩家]: 不反抗，被带进听证室，路上留意那张纸条被谁收起、上面还写了什么\n[T32 主持人]: 你没有再挣，肩膀顺着那几只手的方向松下来，脚步跟着他们走。四名看守的队形立刻变了，两人在前，两人贴在你两侧偏后半步，诺诺被隔在最后，红发在走廊半明半暗的光里晃了一下就看不见了。走廊尽头那扇门比侧厅的更厚，门框上嵌着一圈黄铜边，被雨水和岁月磨得发暗。就在队伍经过门边时，你看见最靠门的那名看守腾出一只手，从内袋里摸出那张被截走的纸，对折，再对折，塞回自己胸前的内袋。纸角露在外面，被走廊高窗飘进来的雨洇开一小片，墨迹散成毛边，你只来得及看清几个残字：样本编号，后面跟着提前两个字，再往后就糊成一片。那名看守察觉你的视线，抬手把纸角按进衣料里，侧脸没有表情。黄铜门被推开，一股陈旧的暖风涌出来，混着纸张、灰尘和某种更冷的气味。听证室比你预想的深，长桌沿房间中轴铺开，桌面上摊着几份文件，最上面那份的边角压着一枚铜镇纸。你被按在长桌一侧的椅子上，手腕被要求放在桌面上。桌对面坐着三个人，中间那个面前摊着一份血统检测报告，S级标记那一栏被红笔圈过，旁边用更细的笔迹写着一串编号，末尾两位与你登记号相同。报告下方压着那张名单，你的名字还在，湿墨重描的痕迹在灯下泛着一点光。门在你背后合上，锁舌落下的声音很轻，却让整间屋子的空气沉了一沉。\n中间的审查者: 坐下就好。我们不问你来历，只问一件事，这份报告上的编号，是谁补全的。\n门边看守: 他身上搜出来的那张纸，末尾和登记号对得上。我没让他再碰。\n中间的审查者: 那就从这张名单开始。名字旁边这道红痕，你见过没有。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/1",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "[T33 玩家]: 要求先说明那张被收走的纸条上写了什么，否则不回答任何问题\n[T33 主持人]: 你坐在长桌这一侧，肩膀的钝痛还在，后背贴着椅背，把双手平放在桌面上。四名看守分站两角，门在你身后合拢，黄铜边发出一声闷响。诺诺被隔在门外，走廊的光从门缝底下渗进来一线。你抬起头，直视中间那名审查者，把话放得很平：先告诉我那张被收走的纸条上写了什么，否则我一个字也不答。\n\n桌后三人没有立刻回应。左边那个翻动文件的手停了一拍，右边那个把笔搁下，视线越过你，和中间的人对了一下。就这一下，很短，短到几乎可以当作没发生。中间那名审查者没有看他们，他的目光一直落在你脸上，手指从桌沿收回来，缓缓按在铜镇纸上。铜面被他的指腹压出一小片暗影。\n\n铜镇纸下面压着一叠文件，最上面那张露出一角，纸边有折痕，折痕的位置和你被截走的那张纸对折的方式一样。审查者没有把文件抽出来，也没有把铜镇纸挪开，他只是让手指停在那里，像把什么东西钉在桌上。\n\n他开口了，声音不高，每个字都放得很稳：纸条？它现在在我们手里，但上面的字，取决于你接下来怎么回答。\n\n你盯着他按在铜镇纸上的手。他没有否认纸条上有字，也没有说那字和你无关。他把纸条从一件被没收的东西，变成了一件还在谈条件的东西。右边那名审查者这时把笔重新拿起来，笔尖悬在听证会决议书上方，没有落下去。\n\n中间的审查者微微前倾，铜镇纸下的文件随着他的动作发出一点纸页摩擦的轻响。他补了一句：你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。\n\n门边看守的视线从你脸上移到铜镇纸，又移回去。房间里的空气沉下来，雨声隔着钟楼的厚墙传进来，闷闷的。你意识到那张纸条没有被销毁，它就在这间屋子里，压在铜镇纸下面，或者就在那叠文件里。而审查者把它的内容和你手背上的数字绑在了一起，等你先开口。\n中间的审查者: 纸条？它现在在我们手里，但上面的字，取决于你接下来怎么回答。\n中间的审查者: 你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。\n右边的审查者: 决议书还没落笔。你每沉默一次，我就多写一行。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/2",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "[T34 玩家]: 提出条件：让门外的诺诺进来旁听，否则不回答任何关于数字的问题\n[T34 主持人]: 你把双手平放在桌面上，声音不高，却把条件摆得清清楚楚：让门外的诺诺进来旁听，否则关于那个数字，你一个字也不会说。中间那名审查者的手指停在铜镇纸上，指腹压出的暗影没有移开。他看了你几秒，然后偏过头，与左右两侧的人交换了一个极短的眼神。左边那个翻文件的手彻底停了，右边那个把笔搁下，笔尖在纸面点出一个小墨点。中间的人收回视线，开口时语气没有起伏：可以让她进来，戴手铐，由看守押在门边，不许靠近长桌。他顿了顿，补了一句，这是最后的让步。门在你身后被推开，走廊的冷风先一步灌进来。诺诺被两名看守夹在中间带进听证室，红发湿漉漉地贴在脸侧，手铐的金属链在灯下晃了一下。她被押到门边站定，离长桌有七八步远。进门时她的目光扫过铜镇纸下那叠文件，嘴唇几乎没动，只吐出两个字：别认。声音轻得只有离她最近的你能听见。门重新合上。中间那名审查者把铜镇纸往旁边挪了半寸，露出下面压着的纸条一角，然后抬眼看你：人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。\n中间的审查者: 可以让她进来，戴手铐，由看守押在门边，不许靠近长桌。这是最后的让步。\n诺诺: 别认。\n中间的审查者: 人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/3",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "[T35 玩家]: 承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看\n[T35 主持人]: 你目前没有可用的“剩下的信息换取纸条原件到手查看”，无法使用它。\n\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/4",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "前情提要：\n\n雨夜，你站在卡塞尔学院门前，红发女生诺诺带你从侧门入校，一路警告你远离钟楼。报到登记时，你的名字旁浮出一片暗红鳞形印记——S级观察对象的识别标记。诺诺提前交给你三个预备任务，你坚持先办完手续，随后在东翼通告栏核对编号，发现一张被压住的旧条目，归档号与你任务单完全一致。墙后管道异响，诺诺将你拽往旧档案室。\n\n档案室的登记台显示：三分钟前，有人以你的名字、你的笔迹取走了你的档案——签名收尾处却在发抖。你备份日志时进度条一度卡死，诺诺判断对方正在另一头读取同一份记录。你们追至维护通道，铁门被从内侧楔死，人已撤离，只留下半枚接入凭证。比对后你发现：那台旧终端的注销时间比它最后一次接入还早十一天——有人提前把它从账面上抹掉了。执行部核查组即将封场，你们从侧梯抢上钟楼东翼，听证室桌上摊着一份名单，你的名字被手写了一遍，墨迹未干。名单下压着一份血统检测报告，S级标记与登记板上那片鳞纹同色，样本编号与你通行卡登记号只差两位；折痕处还藏着一组被划掉的编号，末尾与你的登记号完全一致。\n\n核查员当场扣住你，收走通行卡，诺诺被带往侧厅。他绕开了签发日期那一栏，也绕开了编号——他知道的比你多。听证室封场，只进不出。你手无寸铁，退路正在合拢。",
+            "json_pointer": "/recap_compressed",
+            "terms": [
+              "通行卡"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          30,
+          35
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": true,
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "临时通行卡与回执在手。",
+            "json_pointer": "/quests/0/notes",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+            "json_pointer": "/world_facts/8/description",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "备份完成后临时通行卡边缘多出一道极细暗纹，触感比别处凉。",
+            "json_pointer": "/world_facts/14/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "临时通行卡暗纹",
+            "json_pointer": "/world_facts/14/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "报告样本编号末尾两位与临时通行卡登记号仅差两位，折痕处被划掉的第二组编号末尾与登记号完全一致。",
+            "json_pointer": "/world_facts/31/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "核查员没有看通行卡上的备份，而是伸手扣住你的手腕，说擅自取证四个字时，走廊尽头的铁闸又落下一道。",
+            "json_pointer": "/world_facts/33/description",
+            "terms": [
+              "通行卡"
+            ]
+          },
+          {
+            "excerpt": "核查员接过通行卡后先看卡背签发栏而非正面编号，拇指在签发日期一行停留。",
+            "json_pointer": "/world_facts/35/description",
+            "terms": [
+              "通行卡",
+              "卡背签发栏"
+            ]
+          },
+          {
+            "excerpt": "临时通行卡",
+            "json_pointer": "/item_ledger/0/item_name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 1,
+        "last_public_topic_mention_action": 27,
+        "mention_terms": [
+          "临时通行卡",
+          "通行卡",
+          "卡背签发栏"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 1,
+            "excerpt": "你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 2
+          },
+          {
+            "action_index": 1,
+            "excerpt": "向诺诺出示临时通行卡并询问入校流程",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 2
+          },
+          {
+            "action_index": 2,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 2,
+            "excerpt": "诺诺查看通行卡后带玩家走侧门入校，并提醒避开钟楼。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 2,
+            "excerpt": "你把临时通行卡递过去。诺诺接过卡片，用指尖弹了弹卡面，发出一声清脆的响。她低头看了一眼，眉梢挑了一下，那表情只停留了半秒。她说行政楼今晚已经关门，不过她可以带你走侧门。说完她转身，红发在雨里甩出一道弧线，示意你跟紧。她一边走一边提醒，校园里有些地方晚上不该去，尤其是钟楼那一带，别因为听见什么就凑过去。你注意到她走路的节奏很稳，像是对这条夜路熟得不能再熟。侧门藏在主楼侧面一段矮墙后面，铁门上挂着一盏昏黄的灯，灯罩里积着雨水。诺诺伸手推门，门轴发出一声低哑的呻吟。她回头看你一眼，说进去之后别乱碰墙上的东西，那些投影屏有时候会自己亮起来。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 2,
+            "excerpt": "已查看临时通行卡，称权限有点意思，提醒避开钟楼",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 2,
+            "excerpt": "追问诺诺通行卡权限有什么问题",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 2,
+            "excerpt": "向诺诺出示临时通行卡并询问入校流程",
+            "json_pointer": "/player_action",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 3
+          },
+          {
+            "action_index": 3,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 3,
+            "excerpt": "拒绝解释通行卡异常，催促进门",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 3,
+            "excerpt": "通行卡异常未获解释，走廊投影屏留下疑点",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 3,
+            "excerpt": "你捏着那张还在发烫的通行卡，追问卡面到底有什么问题。诺诺把卡片翻了个面，指尖在边缘蹭了一下，随即塞回你手里，动作快得不容你再看第二眼。她说卡片都这样，新生总爱盯着卡面瞎想，别把发烫当成什么征兆。她的语气轻飘飘的，眼睛却已经越过你的肩膀，看向侧门里面。你顺着她的视线望过去，走廊深处一块投影屏无声地亮起，映出一座钟楼的轮廓，轮廓歪斜，钟面缺了一角，随即又熄了，只剩一点残光在墙上慢慢褪去。雨声在这时变了，从均匀的敲打变成忽轻忽重的拍击，像是风换了方向。诺诺抬手按住铁门，门缝里透出的暖光落在她脸上。她说别站在雨里研究卡片了，进去再说，报到区的人不会等太久。你注意到她说这话时没有再看你，而是盯着走廊深处那块已经暗下去的投影屏。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 3,
+            "excerpt": "对通行卡异常含糊带过，催促玩家进门，视线多次飘向走廊深处",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 3,
+            "excerpt": "追问诺诺通行卡权限有什么问题",
+            "json_pointer": "/player_action",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 4
+          },
+          {
+            "action_index": 5,
+            "excerpt": "新生？名字，还有临时通行卡，给我看一下。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "玩家随诺诺抵达报到区门口，工作人员要求出示通行卡登记，走廊投影屏再次映出钟楼。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "要求玩家报名字并出示通行卡",
+            "json_pointer": "/output/memory_updates/npcs_upserted/1/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "向工作人员出示通行卡并完成报到登记",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "向工作人员出示通行卡并完成登记",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "你加快半步跟上诺诺，把注意力从身后的铁门挪到两侧墙面。那些深色玻璃面板一块接一块从你视野里滑过，大多沉在黑暗里，只剩走廊顶灯在表面拖出一道道昏黄。走到中段时，其中一块忽然亮起，没有声音，光从玻璃内部渗出来，映出一座钟楼的轮廓，钟面缺了一角，塔尖歪向一侧。它只维持了两三秒，随即熄灭，墙面重新变回一块普通的黑玻璃。诺诺没有停，脚步甚至没有乱，只是肩线绷了一下，随即又松开。你放慢半拍，她立刻察觉，头也不回地说了句别掉队。走廊尽头传来第二声钟响，比第一声更近，闷闷地压在墙里，诺诺的脚步骤然顿了一下，只有一瞬，接着继续往前。报到区的门就在前面，门缝里漏出白光，一名穿深色制服的工作人员站在门口，手里拿着一块登记板。她抬头看你，目光先落在你的脸上，再落到你手里那张临时通行卡上，问你叫什么名字，通行卡带了吗。诺诺退到一旁，背靠着墙，把位置让给你，眼睛却看向走廊深处那块已经熄灭的玻璃。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "在报到区门口负责登记，注意到玩家的临时通行卡",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "把临时通行卡递过去，如实报上姓名，完成登记并留意登记板上自己的名字",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 5,
+            "excerpt": "已到报到区门口，工作人员要求出示通行卡并登记姓名",
+            "json_pointer": "/output/quests_updated/0/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 6
+          },
+          {
+            "action_index": 6,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 7
+          },
+          {
+            "action_index": 6,
+            "excerpt": "你把临时通行卡递过去，报上自己的姓名。工作人员接过卡片，指尖在卡面边缘捻了一下，随即低头翻开登记板，笔尖在纸面上划出细碎的沙沙声。报到区的白光从头顶压下来，照得登记板表面泛着一层冷光。你按他示意的位置站定，视线落在登记板上自己名字那一行。笔迹还没干透，名字旁边忽然浮出一点暗红，起初只是一小片，接着向两侧舒展，边缘裂成细密的纹路，一片鳞的形状在纸面上成形，颜色深得发黑，像被什么从纸背渗上来。工作人员的手停住了，笔尖悬在名字上方，没有落下。他抬眼看了你一下，又低头看那片红鳞，喉结动了动，什么也没说。诺诺站在你侧后方半步的位置，双臂抱在胸前，红发垂下来遮住半边脸，你能看见她的目光也钉在那块标记上，抱臂的手指收紧了一点。报到区里很安静，只有远处走廊里某盏灯管在轻微地嗡鸣。工作人员把通行卡放回台面，推到你面前，动作比刚才慢了许多。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 7
+          },
+          {
+            "action_index": 6,
+            "excerpt": "把临时通行卡递过去，如实报上姓名，完成登记并留意登记板上自己的名字",
+            "json_pointer": "/player_action",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 7
+          },
+          {
+            "action_index": 8,
+            "excerpt": "登记完成，回执和通行卡收好，别弄丢。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/1/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "玩家坚持先办完登记，工作人员绕开红色标记完成手续并归还通行卡与回执，诺诺挑眉评价。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "临时通行卡与回执在手。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "你把那张对折的任务单按原样折好，塞进外套内袋，纸面擦过指尖时带着一点细微的凸起，暗纹在指腹下像一道极浅的刻痕。然后你转回柜台，对工作人员说，手续还没办完。他愣了一下，视线从诺诺脸上移开，落回登记板，喉结又动了一下，才重新拾起笔。笔尖悬在名字旁那片暗红鳞形上方，他犹豫了一瞬，最终绕开标记，在旁边的空白处补上日期与签章，动作比先前快了不少，像在赶一个不愿多看的流程。他撕下回执联，连同临时通行卡一起推回你面前，说登记完成，卡收好，别弄丢。卡片落进你掌心时已经不再发烫，只剩一点余温。诺诺靠在柜台边，挑了下眉，红发从肩头滑下来，她说你倒是沉得住气，别人撞见这种标记，第一反应都是伸手去摸。她的语气里有一点意外，也有一点打量。你收好卡片与回执，内袋里那张任务单贴着胸口，纸面暗纹的微光隔着布料透不出来，却让你一直能感觉到它的存在。工作人员低头整理登记板，把那一页翻了过去，动作很轻，像不想让任何人再看见。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 8,
+            "excerpt": "登记手续已完成，临时通行卡与回执在手。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 9
+          },
+          {
+            "action_index": 9,
+            "excerpt": "你把回执对折，和临时通行卡一起收进内袋，纸边贴着胸口，隔着一层布料仍能感觉到一点硬。诺诺看你收拾完，没再多说什么，只抬下巴朝走廊深处一偏，说执行部通告栏在主楼东翼，顺路。她走在前面，红发在灯下晃成一小团暗火。东翼的走廊比报到区冷，墙上的灯只亮一半，另一半沉在暗处。拐过两个弯后，一面嵌在墙里的玻璃通告栏出现在尽头，栏内钉着十几张纸，边角被图钉压得翘起，纸面在通风口的气流里轻轻掀动。诺诺停在栏前两步远，抱臂靠墙，说你自己对。你抽出任务单，借着栏顶那盏灯的光，把纸面右上角那串编号逐位读过去。栏内第三排靠左的位置，一张边缘泛黄的条目上，编号与你手里的完全一致。那张纸比周围的都旧，纸角卷起，标题栏只印着一个代号和一串归档号，正文被另一张新贴的通知压住了大半，露出的部分写着观察对象分级，末尾一个字母是S。你伸手想把压住的那张掀开，指尖刚碰到纸角，通告栏背后的墙里传来一声极轻的响动，像有什么在管道里挪了半寸。诺诺的声音从侧后方过来，说别在这儿翻，档案室才有原件。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 10
+          },
+          {
+            "action_index": 11,
+            "excerpt": "你把临时通行卡按在登记台侧面的读取槽上，指尖在冰凉的触控面板上敲出一串指令。屏幕闪了两下，取件记录一层层展开，像被掀开的旧账本。诺诺凑过来，红发垂在屏幕边缘，呼吸压得很轻。记录显示你的档案确实在三分钟前被取走，取件人一栏的签名赫然是你的名字。你盯着那几笔，笔画走向和你自己写的一模一样，可收尾处有一丝极细的抖动，墨迹也比旁边的打印字新，边缘还泛着没干透的湿润。时间戳精确到秒，就在你踏进这扇门之前。你往下翻，系统日志里那笔操作挂在一个终端ID后面，那串编号你从没见过。诺诺的手指停在屏幕上方，没有落下去。她的声音低了一截，说那个终端一年前就报废了，编号早该从系统里清掉。她转头看你，眼神里第一次有了不确定。旧终端的位置在日志末尾标着，指向档案室深处那条维护通道。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 12
+          },
+          {
+            "action_index": 11,
+            "excerpt": "先把取件记录和终端日志完整备份到临时通行卡里，再决定下一步",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 12
+          },
+          {
+            "action_index": 12,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "玩家将取件记录与终端日志备份到通行卡，进度条卡顿后完成，卡面出现暗纹，诺诺提出追查或分析两条路线。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "备份完成后临时通行卡边缘多出一道极细暗纹，触感比别处凉。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "临时通行卡暗纹",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "你把临时通行卡重新按回读取槽，指尖在触控面板上划出备份指令。屏幕应声暗了一瞬，随即亮起一条细长的进度条。诺诺没有退开，肩膀贴着你的手臂，目光钉在那条缓慢爬升的绿线上。进度条走到三成时忽然停住，数字卡在原地，屏幕边缘泛起一圈极淡的波纹，像水面被什么从底下顶了一下。诺诺的呼吸停了半拍。你听见档案室深处传来一声轻响，来自那排铁皮柜的方向，短促，随即归于安静。进度条又动了，从三成跳到四成，屏幕闪了一下，取件记录里那行伪造签名的墨迹在闪烁中显得比刚才更湿。诺诺低声说别碰屏幕，让它自己走完。绿线爬过七成、八成，最后停在满格，终端轻轻一响，提示备份完成。你抽回通行卡，卡面边缘多了一道极细的暗纹，摸上去比别处凉。诺诺盯着那道纹路看了两秒，才把视线移回你脸上。她说备份是拿到了，可这间屋子刚才那声响不对劲。她抬手指了指档案室尽头那扇半掩的维护通道门，又指了指你手里的卡。两条路，她说，现在得挑一条。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "留在档案室，先分析通行卡里的备份日志",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 12,
+            "excerpt": "先把取件记录和终端日志完整备份到临时通行卡里，再决定下一步",
+            "json_pointer": "/player_action",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 13
+          },
+          {
+            "action_index": 13,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "你把临时通行卡重新按进登记台的读取槽，调出那份备份日志。屏幕亮起，解析程序一层层剥开数据，诺诺站在你侧后方，替你盯着档案室的门。前几行还算完整，取件时间、操作序列、签名哈希都清清楚楚。可再往下翻，关键字段开始断裂，终端ID的后半截变成一串乱码，归属部门那一栏只剩几个残缺的字符，拼起来勉强能认出执行部三个字里的两个。你反复尝试重建，进度条每次走到同一处就卡住，屏幕边缘泛起的波纹比备份时更明显。诺诺低声说别耗了，对方动过手脚的地方不会让你轻易读全。你不甘心，把日志按时间轴倒推，在一段被截断的访问记录里抓到半行残留：维护通道方向，接入时间就在你踏进这扇门之前几分钟。字段到此为止，后面全被抹平。你正要再试，档案室深处的铁皮柜方向传来第二声轻响，比刚才更近，金属柜门被什么从里面顶了一下。诺诺的手按上你的手臂，力道收紧。我们在这儿待太久了，她说，声音压得极低，眼睛没离开那排柜子。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 13,
+            "excerpt": "留在档案室，先分析通行卡里的备份日志",
+            "json_pointer": "/player_action",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 14
+          },
+          {
+            "action_index": 14,
+            "excerpt": "你拔下通行卡就往档案室深处冲，诺诺在身后喊了一声，脚步声紧跟上来。铁皮柜之间的过道很窄，你侧身挤过去，肩膀撞在一只柜角上，柜门弹开又合上，发出一声闷响。维护通道的入口在档案室最里侧，一扇灰绿色的铁门，门缝里透出终端断电后余留的焦糊味。你伸手去拉，门纹丝不动。门被从另一侧用铁楔卡死了，楔子露出的尾端还带着新鲜的刮痕。你和诺诺一起用力，铁门只挪动了一指宽，又卡回去。门轴发出干涩的呻吟，通道里传来一声轻响，是脚步踩在金属格栅上的余音，正在远去。诺诺把耳朵贴在门缝上听了几秒，摇头，说刚走不久，追不上了。你低头，地上散落着几截被扯断的线缆，断口参差，其中一截末端还挂着半枚没来得及带走的接入凭证，塑料外壳被扯裂，露出里面一小片金属触点。诺诺蹲下去看，没伸手碰，说对方走得急，连这个都顾不上。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 14,
+            "excerpt": "用通行卡读取那半枚接入凭证上的残留编号，验证它指向哪台终端",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 15
+          },
+          {
+            "action_index": 15,
+            "excerpt": "你退开半步，把通行卡从读取槽里抽出来，转向诺诺。她看你一眼，没多问，从外套内袋取出通讯器，拇指按住侧键。频道接通的提示音很短，她把维护通道被侵入、旧终端被接入、铁楔卡门这几件事一口气报完，语速快，用词却克制。对面沉默了两秒，回了一句确认收到，说核查组会派人下来，让你们不要破坏现场。诺诺应了一声，补了一句那台终端的编号一年前就该清掉了。对面又静了一下，说知道了，然后切断。她把通讯器收回去，说执行部介入要走流程，先封现场，再调终端日志，最后才轮到问话，快的话半小时，慢的话到天亮。她朝那扇灰绿色的铁门抬了抬下巴，说这里交给他们，我们留在这儿只会碍事。话音刚落，那排铁皮柜深处又响了一声，比刚才更近，柜门缝里透出一线灰白的光，随即熄灭。诺诺的手停在通讯器上，没有立刻动。门被铁楔卡着，从这侧打不开，核查组来之前，这间档案室还得再待一会儿。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 16
+          },
+          {
+            "action_index": 15,
+            "excerpt": "趁核查组未到，把半枚接入凭证的残留编号与通行卡里的备份日志逐位比对，锁定旧终端归属",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 16
+          },
+          {
+            "action_index": 16,
+            "excerpt": "你把半枚接入凭证摊在登记台的冷光下，外壳开裂的断面朝向屏幕，残留的编号只剩前几位和后两位，中间被硬生生磨掉。诺诺把通行卡按进读取槽，备份日志重新铺开，你把凭证上的数字一位一位往终端ID的乱码段上贴。前四位对上了，第五位开始分叉，日志里那一截恰好是解析程序反复卡死的地方。你换了个顺序，从尾部倒推，后两位又和另一台早已注销的终端撞在一起。屏幕上的光标闪了三次，诺诺的手指在台面上轻轻敲了一下，说时间在走。你重新调出通行卡的刷卡日志做交叉比对，这一次终于拼出一条残缺的归属链：编号指向的旧终端确实登记在执行部名下，注销记录写着一年前报废，可注销操作的时间戳比它最后一次接入还早了十一天。诺诺盯着那行字，眉头慢慢皱起来，说注销记录被人动过，有人提前把它从系统里摘了出去，好让这台终端在账面上变成不存在的机器。她话音刚落，铁皮柜深处传来第三声闷响，比前两次都近，紧接着是一阵金属摩擦声，从柜子之间的缝隙里挤出来，缓慢地挪动。诺诺压低声音，说核查组至少还要二十分钟，我们得在封场前决定往哪走。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 17
+          },
+          {
+            "action_index": 16,
+            "excerpt": "把残缺编号和注销记录矛盾一并写进通行卡备份，立刻动身从档案室侧梯前往钟楼，赶在核查组封场前接触听证线索",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 17
+          },
+          {
+            "action_index": 16,
+            "excerpt": "趁核查组未到，把半枚接入凭证的残留编号与通行卡里的备份日志逐位比对，锁定旧终端归属",
+            "json_pointer": "/player_action",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 17
+          },
+          {
+            "action_index": 17,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 18
+          },
+          {
+            "action_index": 17,
+            "excerpt": "你把半枚接入凭证的残缺编号、那条自相矛盾的注销时间戳，连同比对失败的记录一并写进通行卡的备份区。屏幕闪了两下，卡面边缘的暗纹又深了一线。诺诺没有拦你，只把通讯器塞回内袋，说侧梯能通到钟楼后廊，但维护通道刚被人动过，那道半落的铁闸不一定还开着。她先一步推开档案室侧面的窄门，冷风从楼梯井里灌下来，带着铁锈和旧灰的味道。侧梯很陡，应急灯每隔几级才亮一盏，光晕之间是大片昏黑。你们上到第三层平台时，头顶传来金属摩擦的钝响，一道铁闸半落着卡在通道中段，底边离地只剩半人高。诺诺蹲下去看闸底的刮痕，说有人从这儿钻过去，还刮掉了漆。她先伏身钻过，回头伸手拉你，你的肩膀擦过闸底，衣料被毛刺勾出一道口子。再往上，应急灯开始不规则地闪烁，亮一下，暗两下，楼梯在明灭之间像被抽走了几级。就在这时，钟楼方向传来一声钟响，清晰，沉稳，比走廊里那些投影屏的余音要近得多，也实得多。诺诺的脚步在钟声里停了一瞬，随即加快，说听证室在钟楼东翼，这声钟说明里面有人。你们绕过最后一段回旋梯，一扇对开的木门出现在平台尽头，门缝下透出暖黄的灯光。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 18
+          },
+          {
+            "action_index": 17,
+            "excerpt": "把残缺编号和注销记录矛盾一并写进通行卡备份，立刻动身从档案室侧梯前往钟楼，赶在核查组封场前接触听证线索",
+            "json_pointer": "/player_action",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 18
+          },
+          {
+            "action_index": 19,
+            "excerpt": "你迈过门槛，鞋底在木地板上压出一声轻响。台灯的光落在名单上，那行手写的名字在纸面微微凸起。你伸出食指，指腹按上最后一笔的收尾处。墨迹是湿的，触感微凉，蹭在指纹里，晕开一小片深色。你抬起手，指尖沾着墨，颜色比纸上的更深。这不是旧墨，是刚刚写上去的，就在你推门之前。你低头看那笔迹，横折的起势、竖钩的收笔，和你的字几乎一样，只有最后一笔拖得太长，末端抖了一下，像落笔的人手腕在那一刻失了力。台灯的光在纸面上晃了晃。你注意到名单下面还压着东西，纸角从名单边缘露出一线，比名单更厚，颜色偏灰。你抽出来，是一份检测报告，页眉印着执行部的暗纹。报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记，印泥的颜色和登记板上那片鳞纹一模一样。报告末尾附着一行小字，写着样本编号，那串编号你认得，和你临时通行卡背面的登记号只差最后两位。屏风后面传来一声极轻的摩擦，像布料蹭过木框，随即停住。门外走廊里，诺诺的声音压得很低，隔着门板传进来，她说里面有人动过东西，让你别碰桌上的任何纸张。她的声音没有推门，也没有走近，像是被什么拦在了门外。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 20,
+            "excerpt": "你把报告按在台灯下，指尖压住纸角，红笔圈出的那圈颜色在灯下泛着暗光。你开始逐位默念样本编号，前四位还算清楚，读到第五位时，台灯的光晕在纸面上晃了一下，那串数字的边缘开始发虚。你眨了下眼，重新从头读，可刚才记住的前半段已经和后半段搅在一起。血统数值那一栏被红笔圈了两道，你只来得及抓住一个大致量级，具体到小数点后的位数，怎么盯都像在往纸面深处沉。你伸手去摸内袋里的临时通行卡，想借着卡面把数字刻下来，可指尖沾着墨，蹭在卡面上只留下一道模糊的痕。时间在台灯下走得很慢，又走得很快。走廊尽头传来一声金属闸门落锁的闷响，沉得让桌面的纸都轻轻一跳。你抬头，屏风后的响动停了。诺诺的声音从门缝外挤进来，压得极低。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 21,
+            "excerpt": "凭记忆补全的样本编号后半段，末尾两位与临时通行卡登记号仅差两位；报告折痕处另有一组被划掉的编号，末尾与登记号完全一致。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "凭记忆补全的样本编号后半段，末尾两位与临时通行卡登记号仅差两位；折痕处另有被划掉的第二组编号，末尾与登记号完全一致。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "报告样本编号末尾两位与临时通行卡登记号仅差两位，折痕处被划掉的第二组编号末尾与登记号完全一致。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "你把报告重新按回台灯正下方，纸角压平，红笔圈出的那串样本编号在灯下摊开。这一次你不再从头读，而是把目光直接钉在第五位之后。数字一位一位落进脑子里，像钉子敲进木板，稳，不再晃。后半段补全的瞬间，整串编号在你脑中合拢，你无声地念了一遍，又倒着念了一遍，两遍都对得上。你正要松手，视线扫到编号末尾，忽然停住。那最后两位，和你临时通行卡上的登记号末尾只差两个数字，其余各位完全一致。你的呼吸慢了半拍。你顺手把报告翻了个面，折痕处有一道更深的旧折，展开时纸面裂开一线，露出下面被划掉的一行编号，笔迹用力，划痕几乎透纸。那行被划掉的编号，前段和报告上这串不同，末尾却和你的登记号一模一样。走廊里金属闸门落锁的闷响之后，脚步声从东翼传来，不止一个人，鞋底踩在石板上，节奏整齐。门框外侧传来一声轻响，像有人用手掌试了试门板。诺诺的声音贴着门缝挤进来，压得很低，快走，他们封到这一层了。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 22,
+            "excerpt": "不辩解，趁核查员低头看报告的间隙，把临时通行卡里的备份记录亮出来，反问他这份报告的样本编号为什么和新生登记号只差两位",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 23,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "核查员要求收缴通行卡。",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "核查员没有看通行卡上的备份，而是伸手扣住你的手腕，说擅自取证四个字时，走廊尽头的铁闸又落下一道。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "你把手伸进内袋，指尖勾住临时通行卡的边缘，抽出来时卡面在台灯下反了一下光。你把卡举到核查员视线里，屏幕上的备份记录还亮着，那串补全的样本编号停在最上面一行。你开口，声音压得很稳，问他这份报告的样本编号为什么和新生登记号只差两位。核查员没有看卡。他的视线从报告上移开，落在你脸上，停了一瞬，然后伸手扣住你的手腕。他的指节压在你腕骨上，力道不重，却让你动弹不得。他说，擅自取证。四个字落下来的时候，走廊尽头的铁闸又落下一道，闷响顺着地板传过来，桌面的纸角轻轻一跳。你注意到他始终没有低头去看那串编号。他的目光绕开了卡面，绕开了报告上被红笔圈出的那一栏，像是那串数字本身有什么他不愿碰的东西。门外，诺诺的声音被铁闸截断，她喊了半句，后半句被金属摩擦声吞掉。走廊里传来更多脚步声，不止一个，从两个方向同时靠近。核查员的手没有松，他侧过头，朝门外说了句什么，语气平得没有起伏。第二个人从门框边探进半个身子，手按在门把上，把门缝压得更窄。你被夹在长桌和门之间，退路正在一寸一寸地合拢。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "回避编号矛盾，认定玩家擅自取证，要求收缴通行卡并呼叫第二人封门。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "成功挣脱与诺诺汇合，失败则被当场按住并收缴通行卡。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "把通行卡按在桌上推给他，换取他松手，同时记住他接过卡时先看哪一栏",
+            "json_pointer": "/output/options/3",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "不辩解，趁核查员低头看报告的间隙，把临时通行卡里的备份记录亮出来，反问他这份报告的样本编号为什么和新生登记号只差两位",
+            "json_pointer": "/player_action",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 24,
+            "excerpt": "临时通行卡",
+            "json_pointer": "/output/items_lost/0/name",
+            "terms": [
+              "临时通行卡",
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "被核查员收走，卡背签发栏被他重点查看。",
+            "json_pointer": "/output/items_lost/0/notes",
+            "terms": [
+              "卡背签发栏"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "玩家交出通行卡换得松手，发现核查员先查卡背签发栏，门外诺诺与执行部成员争执。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "通行卡",
+              "卡背签发栏"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "接过通行卡后先看卡背签发栏，对签发日期有明显反应。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "通行卡",
+              "卡背签发栏"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "手腕已松，通行卡被收走，退路仍被封死",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "核查员回避编号问题，却对卡背签发栏格外在意。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "卡背签发栏"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "利用核查员对签发栏的异常反应，追查通行卡签发日期与三年前包裹的关联。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "核查员接过通行卡后先看卡背签发栏而非正面编号，拇指在签发日期一行停留。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "通行卡",
+              "卡背签发栏"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "你没有挣，手腕被他扣着，另一只手慢慢把通行卡从内袋里抽出来，卡面朝下按在桌面上，指尖一推，让它滑到他手边。核查员的指节在你腕上停了一拍，然后松开了。他拿起卡，动作不快，却有一个很明确的顺序：卡面朝上翻过来之后，他的视线没有落在正面那串编号上，而是先把卡翻到背面，去看签发栏。他的拇指压在签发日期那一行，停了两秒，眉头动了一下，又翻回正面，像是刚才那一眼已经确认了什么。你记住了这个顺序。他把卡捏在手里，没有还给你，说，留在原地，别碰桌上的东西。走廊里忽然传来争执声，诺诺的声音拔高了一截，另一个执行部成员在压她，说听证室已经封了，谁都不能进。诺诺回了一句什么，被门板削掉一半，只剩尾音。核查员侧头朝门口看了一眼，脚步没动，但捏着卡的手指收紧了些。铁闸在走廊尽头又响了一声，这次更近。台灯的光落在名单上，你那行手写的名字还湿着，墨迹的边缘在灯下泛出一点暗红。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "收走通行卡，要求玩家留在原地，注意力被门外争执牵动。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 24,
+            "excerpt": "把通行卡按在桌上推给他，换取他松手，同时记住他接过卡时先看哪一栏",
+            "json_pointer": "/player_action",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 25
+          },
+          {
+            "action_index": 25,
+            "excerpt": "手腕已松，通行卡被收走，退路封死，诺诺被带离",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 25,
+            "excerpt": "你朝门口迈了半步，声音抬起来，说既然封场程序有问题，就该让门外那个被拦下的人进来当面对质，把流程摆到台面上。核查员没有立刻回答。他把通行卡收进外套内袋，动作很慢，慢到你能听见布料摩擦的声响。门外的争执还在继续，诺诺的声音又拔高了一截，紧接着是一声短促的闷响，那句话被硬生生截断。你听见拖拽的脚步声，鞋底在走廊地面上蹭出两道不情愿的痕，然后是铁闸再次落下的声音，沉，干脆，把走廊和听证室彻底隔成两半。核查员这才开口，对门外说，带她去侧厅等。他没有回头看你。他说，程序没有问题，有问题的是你身边的人。你站在原地，退路被封死，通行卡不在手上，桌上那份报告也不在你这一侧。核查员走回桌边，把名单往自己面前挪了挪，指尖顺着栏目往下滑，滑到某一栏时忽然停住，又若无其事地跳了过去。他跳过去的那一栏，正是签发日期。他抬眼，说，上面的命令是封场到核查结束，编号的事不归你问。这句话落下来，你听见自己心跳的间隙里多了一点东西：编号的事，他知道，而且他知道得比你多。他转身去整理桌角的文件，背对着你，台灯的光把他的影子压在名单上。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 26,
+            "excerpt": "手腕已松，通行卡被收走，退路封死，诺诺被带离",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 27
+          },
+          {
+            "action_index": 27,
+            "excerpt": "被两名执行部人员押送，通行卡被收走",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "通行卡"
+            ],
+            "timeline_node": 28
+          }
+        ],
+        "update_actions": [
+          24
+        ]
+      },
+      "evidence_ids": [
+        "JLC-20261106-G03-Q01.e01",
+        "JLC-20261106-G03-Q01.e02",
+        "JLC-20261106-G03-Q01.e03",
+        "JLC-20261106-G03-Q01.e04",
+        "JLC-20261106-G03-Q01.e05",
+        "JLC-20261106-G03-Q01.e06"
+      ],
+      "id": "JLC-20261106-G03-Q01",
+      "interval": {
+        "ancestor_edges_since_last": 8,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 34,
+        "since_first_campaign_turns": 33,
+        "since_last_campaign_turns": 7,
+        "since_last_public_mention_actions": 8
+      },
+      "review": {
+        "ambiguities": [
+          "只断言玩家当前无卡，不推定核查员此后每一刻的物理位置；lost不等于消耗。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "区分曾持有/备份与后来的移交；当前物品状态以提交清单和SCORE为准。",
+      "unknown_audit": null,
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 24,
+        "first_event_action": 1,
+        "through_checkpoint": 35
+      }
+    },
+    {
+      "category": "item_action_feasibility",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/nsb/level1/0/entities_involved/9",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "名单湿墨笔迹与玩家一致及血统检测报告编号关联，促使玩家补记样本编号",
+            "json_pointer": "/nsb/level2/0/causal_links/5",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "补记行为被核查员发现，导致报告被没收、通行卡被扣",
+            "json_pointer": "/nsb/level2/0/causal_links/6",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "血统检测报告",
+            "json_pointer": "/nsb/level2/0/entities_involved/10",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "从任务编号核对升级为对档案篡改、血统检测报告及三年前旧案的追查",
+            "json_pointer": "/nsb/level2/0/state_changes/investigation",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "没收报告和通行卡，注意到玩家取证行为",
+            "json_pointer": "/nsb/level2/0/state_changes/执行部核查员",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "玩家在雨夜抵达卡塞尔学院，由诺诺接引从侧门入校，随即在报到区被发现带有暗红鳞形S级观察对象标记。诺诺提前交付预备任务单，玩家坚持完成登记后前往执行部核对任务编号，发现泛黄条目被遮挡、管道异响，被诺诺带入旧档案室。档案在三分钟前被伪造签名取走，操作终端已报废一年，玩家备份记录时进度异常停顿，决定前往维护通道调查。铁门被铁楔卡死，对方已逃离并留下半枚接入凭证；玩家比对发现旧终端注销时间早于最后接入，证明记录被篡改，遂赶往钟楼听证室。桌上名单印有玩家名字并被湿墨重描，笔迹与玩家一致；血统检测报告显示S级标记及与通行卡登记号仅差两位的样本编号。执行部封场，玩家补记编号时被核查员当场发现，报告被没收，通行卡被扣，玩家记住核查员先看签发栏的顺序。玩家借诺诺争执要求对质，核查员暗示编号涉及三年前旧案并警告勿碰包裹，玩家被押送侧厅，途中试图传递补全编号被截获，对方认出编号与三年前封存样本及钟楼地下屋子有关。玩家与诺诺会合，诺诺低声透露地下屋子涉及样本编号及有人隐瞒新生，并在玩家手背划下数字，走廊传来急促脚步。",
+            "json_pointer": "/nsb/level2/0/summary",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "[T37 玩家]: 借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条\n[T37 主持人]: 你等诺诺被押到门边、看守换手的那个空隙，肩膀猛地一沉，整个人从椅面上弹起来，右手越过桌沿去够那张翘起的纸条。指尖擦到纸角，纸面在你指下弯了一下，随即被另一股力量扯走。你身后那名看守的反应比声音还快，一只手掌扣住你的后颈，另一只手反剪你的右臂，膝盖顶进你的腿弯。你被按回桌面，脸侧贴着冰凉的木面，肩膀传来一阵钝痛，手腕被别在背后，骨节发出细响。铜镇纸被审查者收回，纸条重新压回文件堆下，只留一角露在外面。诺诺在门边喊了一声，被看守按住肩膀，手铐链子撞在门框上。审查者俯身，声音贴着你的耳侧：你刚才还有东西可以换，现在没有了。他直起身，把文件堆往自己面前拢了拢，继续说，编号和手背上的数字，你最好一次说清楚，否则下一次就不是按在桌上这么简单。你脸侧贴着桌面，视线正好落在纸条背面。灯光从纸背透过来，那行被划掉的编号下面，还有一行更淡的墨痕，被划痕压着，末两位和你的登记号一模一样。\n审查者: 你刚才还有东西可以换。现在没有了。编号，手背上的数字，一次说清楚。\n诺诺: 别认！他们连纸条背面都没擦干净，你看见了吗？\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/0",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "[T38 玩家]: 不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号\n[T38 主持人]: 你不再挣动。脸侧贴着冰凉的木面，呼吸把桌面洇出一小片雾。你开口，声音被压得有些闷，却一个字一个字放得很稳：纸条背面还有一行更淡的墨，末两位和我的登记号一样。被划掉的那行下面，压着另一个编号。为什么。\n\n按着你后颈的手没有立刻加力。中间那名审查者的手指停在纸条边缘，指腹压着纸角，停住了。他没有马上回答。房间里静下来，静到能听见雨点敲在窗玻璃上，一下，又一下。左边那名审查者的笔尖悬在记录纸上，迟迟没有落下，墨在笔尖聚成一点，终于洇开，在纸面留下一个圆形的墨点。右边那个把视线从你脸上移开，很短地看了一眼门边的看守，又收回来。\n\n诺诺被押在门边，手铐链子贴着门框。她没有出声，只是抬眼看你，目光在你脸上停了一瞬，然后极轻地摇了一下头，又点了一下。那不是一个意思。\n\n中间那名审查者终于把手从纸条上收回去，十指交叠搁在文件堆上。他开口时语速比之前慢：编号被划掉，是为了从账面上抹去。他说到这里停了一下，像在斟酌下一个词。底层记录抹不干净。\n\n左边那名审查者忽然低声插了一句，声音压得很紧：这不该在这里说。中间的人没有看他，只把交叠的手指收紧了一分。右边那个把记录纸往自己面前挪了挪，笔尖悬着，始终没有写下去。\n\n你后颈上的手松了一点。中间那名审查者俯身，声音只够你听见：三年前有一份封存样本，登记号和你只差两位。有人希望它从来没有存在过。他直起身，把文件堆往自己面前拢，动作里第一次有了迟疑。\n\n雨声填满了这段沉默。诺诺在门边极轻地动了一下，看守立刻看过去，她只是换了个站姿。你的手腕还别在背后，肩膀的钝痛一阵一阵，但桌面上那叠文件里，有一页的边角露在外面，纸色比其他的旧。\n中间的审查者: 编号被划掉，是为了从账面上抹去。底层记录抹不干净。\n左边的审查者: 这不该在这里说。\n中间的审查者: 三年前有一份封存样本，登记号和你只差两位。有人希望它从来没有存在过。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/1",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "[T39 玩家]: 趁审查者迟疑，要求他说明那份三年前封存样本与你的登记号为何只差两位\n[T39 主持人]: 你趁着他指腹还压在纸角上的那点迟疑，把问题递了出去：那份三年前封存的样本，为什么编号和你的登记号只差两位。中间那名审查者的手指从纸角上抬起来，很慢，像在收回一件不该给人看的东西。他把纸条重新压回文件堆底，铜镇纸落回去，声音比先前重。他没有回答，反而把面前的文件合拢，说程序到此为止，编号问题不在听证范围内。左边那名审查者立刻接话，宣布本次问询终止，处置升级为隔离看押。你身后的看守把你从桌面上提起来，手腕上的束缚收紧了一格。诺诺在门边被两名看守架住往外推，她回头看了你一眼，嘴唇无声地动了三个字，底层。你来不及确认，就被推着往门外走。经过长桌侧面时，你的视线扫到一名审查者正把一页旧纸往文件袋里塞，动作很急，袋口没合严，露出半截泛黄的纸角，上面一串编号只看得清前几位，和你登记号的前几位一模一样，只差末尾两位。那名审查者察觉到你的目光，把文件袋往怀里一收，侧身挡住。走廊的灯比听证室暗，雨声从窗缝里渗进来。看守押着你往楼梯方向走，脚步在石阶上敲出回声。你听见身后听证室的门被关上，锁舌落下的声音很干脆。\n中间的审查者: 编号问题不在本次听证范围内。问询终止，转入隔离看押。\n诺诺: （被推出门时回头，嘴唇无声地动）底层。\n看守: 别停，往下走。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/2",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "[T40 玩家]: 不再反抗，顺从地被带往隔离看押处，保存体力观察沿途的守卫布置与门锁\n[T40 主持人]: 你不再挣动，任由身后的手把你往走廊深处推。手腕上的束缚勒进皮肉，肩膀的钝痛随着每一步轻轻荡开，你把呼吸压得又浅又匀，眼睛开始干活。\n\n走廊两侧每隔七八步就有一名看守，站姿松散，视线却都朝着同一个方向，楼梯口。他们不看你，只看押送你的这个人。左侧第一扇门是木框包铁，锁舌外露，老式的插销锁，从外面能直接拨开。第二扇门换成了电子锁，面板上有一道细长的划痕，指示灯是暗的。\n\n楼梯在走廊尽头拐了个弯。押送的人先下，你被夹在中间，诺诺被另一名看守带在最后，隔着半层的高度。楼梯转折处的墙壁上有一道新近的刮擦痕迹，灰泥被蹭掉一层，露出底下发白的石面，高度恰好齐你的视线，横向拖出去半尺，末端有一处凹痕，像是被什么硬物顶住过。\n\n你的脚在下一级台阶边缘停了一瞬。石阶边缘卡着一小片撕碎的纸角，纸色发黄，边缘的纤维和听证室里那页旧纸一模一样。押送的人推了你一把，你顺势把那片纸角踩进鞋底和石阶的缝里，没有弯腰。\n\n下到下一层平台，走廊在这里分岔。左手那条通向更深处，尽头有一扇半开的门，门内透出的光很暗，能看见一排旧档案柜的轮廓，柜门上的标签纸翘着边。右手那条通向一扇包着铁皮的厚门，门缝底下透出灯光，有人说话的声音从里面漏出来。\n\n押送的人往右手那条走。你经过分岔口时，雨声从头顶某处渗下来，盖住了另一种声音，很轻，有节奏，从左手那条走廊的深处传出来，一下，又一下，间隔均匀，不像水滴。\n\n诺诺在最后面被推下最后一级台阶，她的鞋跟磕在石面上，声音在楼梯间里弹了一下。她没有看你，视线落在左手那条走廊尽头的半开门上，停了半秒，然后被推着往右手走。\n\n厚门前的看守从腰后摸出一串钥匙，挑了一把黄铜色的，插进锁孔转了两圈，锁芯发出干涩的响声。门开了一条缝，里面的灯光斜着切出来，照在你脚前的地面上。\n押送的看守: 进去。别磨蹭。\n门内的声音: 人到了就带进来，登记表在桌上。\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\", \"踩进鞋缝的旧纸角\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/3",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "前情提要：\n\n雨夜，你站在卡塞尔学院门前，红发女生诺诺带你从侧门入校，一路警告你远离钟楼。报到登记时，你的名字旁浮出一片暗红鳞形印记——S级观察对象的识别标记。诺诺提前交给你三个预备任务，你坚持先办完手续，随后在东翼通告栏核对编号，发现一张被压住的旧条目，归档号与你任务单完全一致。墙后管道异响，诺诺将你拽往旧档案室。\n\n档案室的登记台显示：三分钟前，有人以你的名字、你的笔迹取走了你的档案——签名收尾处却在发抖。你备份日志时进度条一度卡死，诺诺判断对方正在另一头读取同一份记录。你们追至维护通道，铁门被从内侧楔死，人已撤离，只留下半枚接入凭证。比对后你发现：那台旧终端的注销时间比它最后一次接入还早十一天——有人提前把它从账面上抹掉了。执行部核查组即将封场，你们从侧梯抢上钟楼东翼，听证室桌上摊着一份名单，你的名字被手写了一遍，墨迹未干。名单下压着一份血统检测报告，S级标记与登记板上那片鳞纹同色，样本编号与你通行卡登记号只差两位；折痕处还藏着一组被划掉的编号，末尾与你的登记号完全一致。\n\n核查员当场扣住你，收走通行卡，诺诺被带往侧厅。他绕开了签发日期那一栏，也绕开了编号——他知道的比你多。听证室封场，只进不出。你手无寸铁，退路正在合拢。",
+            "json_pointer": "/recap_compressed",
+            "terms": [
+              "报告"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          35,
+          40
+        ],
+        "recent_answer_coverage": "none",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": true,
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记",
+            "json_pointer": "/world_facts/28/description",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "听证室名单下的检测报告",
+            "json_pointer": "/world_facts/28/source",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "报告样本编号末尾两位与临时通行卡登记号仅差两位，折痕处被划掉的第二组编号末尾与登记号完全一致。",
+            "json_pointer": "/world_facts/31/description",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "暗示报告与玩家身份存在直接关联。",
+            "json_pointer": "/world_facts/31/notes",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "听证室报告",
+            "json_pointer": "/world_facts/31/source",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "执行部核查员推门目击玩家手上的墨痕，抽走了被翻动过的血统检测异常报告。",
+            "json_pointer": "/world_facts/32/description",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "报告被核查员当场截获",
+            "json_pointer": "/world_facts/32/name",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "报告折痕处露出被划掉的第二组编号。",
+            "json_pointer": "/world_facts/32/notes",
+            "terms": [
+              "报告"
+            ]
+          },
+          {
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/item_ledger/5/item_name",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 19,
+        "last_public_topic_mention_action": 32,
+        "mention_terms": [
+          "血统检测异常报告",
+          "血统报告",
+          "报告"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 19,
+            "excerpt": "报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记",
+            "json_pointer": "/output/anchor_completions/0/evidence",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "执行部暗纹纸面的检测报告，血统数值被红笔圈出，盖有S级标记，附样本编号与玩家登记号相近。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/output/items_gained/0/name",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "玩家触碰未干手写名字，从名单下抽出盖有S级标记的血统检测异常报告，诺诺被拦在门外。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "发现名单下压着血统检测异常报告。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "听证室名单下的检测报告",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/source",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "你迈过门槛，鞋底在木地板上压出一声轻响。台灯的光落在名单上，那行手写的名字在纸面微微凸起。你伸出食指，指腹按上最后一笔的收尾处。墨迹是湿的，触感微凉，蹭在指纹里，晕开一小片深色。你抬起手，指尖沾着墨，颜色比纸上的更深。这不是旧墨，是刚刚写上去的，就在你推门之前。你低头看那笔迹，横折的起势、竖钩的收笔，和你的字几乎一样，只有最后一笔拖得太长，末端抖了一下，像落笔的人手腕在那一刻失了力。台灯的光在纸面上晃了晃。你注意到名单下面还压着东西，纸角从名单边缘露出一线，比名单更厚，颜色偏灰。你抽出来，是一份检测报告，页眉印着执行部的暗纹。报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记，印泥的颜色和登记板上那片鳞纹一模一样。报告末尾附着一行小字，写着样本编号，那串编号你认得，和你临时通行卡背面的登记号只差最后两位。屏风后面传来一声极轻的摩擦，像布料蹭过木框，随即停住。门外走廊里，诺诺的声音压得很低，隔着门板传进来，她说里面有人动过东西，让你别碰桌上的任何纸张。她的声音没有推门，也没有走近，像是被什么拦在了门外。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "辨认报告数值",
+            "json_pointer": "/output/option_checks/2/name",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "把检测报告折好收进内袋，先退到门边问诺诺门框上有什么",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 19,
+            "excerpt": "留在桌前，就着台灯把报告上被红笔圈出的数值和样本编号逐位记下",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 20
+          },
+          {
+            "action_index": 20,
+            "excerpt": "辨认报告数值",
+            "json_pointer": "/output/action_check/check/name",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "玩家强记报告失败，只记下残缺编号与数值量级，核查组开始从东翼封场。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "在封场前带着残缺信息撤离或补全报告数据。",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "补全残缺的样本编号与血统数值，或带报告原件撤离。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "你把报告按在台灯下，指尖压住纸角，红笔圈出的那圈颜色在灯下泛着暗光。你开始逐位默念样本编号，前四位还算清楚，读到第五位时，台灯的光晕在纸面上晃了一下，那串数字的边缘开始发虚。你眨了下眼，重新从头读，可刚才记住的前半段已经和后半段搅在一起。血统数值那一栏被红笔圈了两道，你只来得及抓住一个大致量级，具体到小数点后的位数，怎么盯都像在往纸面深处沉。你伸手去摸内袋里的临时通行卡，想借着卡面把数字刻下来，可指尖沾着墨，蹭在卡面上只留下一道模糊的痕。时间在台灯下走得很慢，又走得很快。走廊尽头传来一声金属闸门落锁的闷响，沉得让桌面的纸都轻轻一跳。你抬头，屏风后的响动停了。诺诺的声音从门缝外挤进来，压得极低。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "取走报告",
+            "json_pointer": "/output/option_checks/2/name",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "再盯一次报告，只补记样本编号的后半段",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "把报告折好塞进内袋带走，连同未干的墨迹一起",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "报告数值只记下部分，样本编号残缺，需另寻途径补全。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 20,
+            "excerpt": "留在桌前，就着台灯把报告上被红笔圈出的数值和样本编号逐位记下",
+            "json_pointer": "/player_action",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 21
+          },
+          {
+            "action_index": 21,
+            "excerpt": "凭记忆补全的样本编号后半段，末尾两位与临时通行卡登记号仅差两位；报告折痕处另有一组被划掉的编号，末尾与登记号完全一致。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "带着补全的编号与报告原件在封场前撤离。",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "带着补全的编号与报告原件撤离，或继续追查第二组编号。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "报告样本编号末尾两位与临时通行卡登记号仅差两位，折痕处被划掉的第二组编号末尾与登记号完全一致。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "暗示报告与玩家身份存在直接关联。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/notes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "听证室报告",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/source",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "你把报告重新按回台灯正下方，纸角压平，红笔圈出的那串样本编号在灯下摊开。这一次你不再从头读，而是把目光直接钉在第五位之后。数字一位一位落进脑子里，像钉子敲进木板，稳，不再晃。后半段补全的瞬间，整串编号在你脑中合拢，你无声地念了一遍，又倒着念了一遍，两遍都对得上。你正要松手，视线扫到编号末尾，忽然停住。那最后两位，和你临时通行卡上的登记号末尾只差两个数字，其余各位完全一致。你的呼吸慢了半拍。你顺手把报告翻了个面，折痕处有一道更深的旧折，展开时纸面裂开一线，露出下面被划掉的一行编号，笔迹用力，划痕几乎透纸。那行被划掉的编号，前段和报告上这串不同，末尾却和你的登记号一模一样。走廊里金属闸门落锁的闷响之后，脚步声从东翼传来，不止一个人，鞋底踩在石板上，节奏整齐。门框外侧传来一声轻响，像有人用手掌试了试门板。诺诺的声音贴着门缝挤进来，压得很低，快走，他们封到这一层了。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "把报告原件折好塞进内袋，立刻从诺诺守着的门口撤离",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "把报告放回原处，抹掉自己碰过的痕迹，装作没来过",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 21,
+            "excerpt": "再盯一次报告，只补记样本编号的后半段",
+            "json_pointer": "/player_action",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 22
+          },
+          {
+            "action_index": 22,
+            "excerpt": "手别动。这间屋子今晚封场，名单和报告都不该有人碰。你手上那是什么墨？",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "任务单不在这张桌上。这报告被翻过，折痕是新的。你最好想清楚再答。",
+            "json_pointer": "/output/dialogue/2/text",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "血统检测异常报告",
+            "json_pointer": "/output/items_lost/0/name",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "抹痕失败，核查员推门目击墨手并抽走报告，当场盘问，诺诺在门外接应。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "执行部封场核查人员，持手电与报告。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "当场目击玩家手上的墨痕与翻动过的报告。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "报告原件已被核查员掌握。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "执行部核查员推门目击玩家手上的墨痕，抽走了被翻动过的血统检测异常报告。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "血统检测异常报告",
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "报告被核查员当场截获",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/name",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "报告折痕处露出被划掉的第二组编号。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/notes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "你把报告按回名单下面，纸角对齐，指腹在台面上来回抹了两下，想把自己留下的那点湿墨蹭掉。墨没干透，反而被抹成一道更长的痕，横在名单边缘，颜色深得刺眼。你缩回手，指尖还沾着，往衣角上蹭，蹭不干净。走廊里的脚步声忽然停了。门缝下透进的光被什么挡住一截，接着一道手电光从半开的门框边缘扫进来，正落在你还没来得及收回的手上。光柱里浮着细尘，你的手指僵在光里，指腹那道墨痕清清楚楚。门被推开半尺，一个穿执行部深色外套的人站在门口，手电压低，光从你手上移到桌面，又移到那份被翻动过的报告上。他身后还有第二个人，脚步停在走廊里，堵住了退路。诺诺的声音从更远处传来，被门板隔得发闷，她在叫你的名字，语气比平时急。门口那人开口，声音不高，问你是谁批准进这间屋子的，手为什么是黑的。他的目光落在报告折痕上，那处旧折被你翻过，裂口比原来更开，露出下面被划掉的编号。他伸手把报告抽走，翻到那一页，眉头动了一下。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "封场人员，已发现报告被翻动，持有报告原件。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "成功稳住对方并观察到报告细节，失败则被当场扣下盘问。",
+            "json_pointer": "/output/option_checks/0/stakes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "顺着诺诺的话承认是来取任务单，主动把手上的墨解释成碰了名单，同时盯住核查员手里那份报告，看他翻到被划掉编号那一页时的反应",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "不辩解，趁核查员低头看报告的间隙，把临时通行卡里的备份记录亮出来，反问他这份报告的样本编号为什么和新生登记号只差两位",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "报告原件落入核查员手中，需在盘问中争取主动或夺回线索。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 22,
+            "excerpt": "把报告放回原处，抹掉自己碰过的痕迹，装作没来过",
+            "json_pointer": "/player_action",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 23
+          },
+          {
+            "action_index": 23,
+            "excerpt": "编号的事不归你问。你现在要交代的是，谁让你碰这份报告的。",
+            "json_pointer": "/output/dialogue/1/text",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "你把手伸进内袋，指尖勾住临时通行卡的边缘，抽出来时卡面在台灯下反了一下光。你把卡举到核查员视线里，屏幕上的备份记录还亮着，那串补全的样本编号停在最上面一行。你开口，声音压得很稳，问他这份报告的样本编号为什么和新生登记号只差两位。核查员没有看卡。他的视线从报告上移开，落在你脸上，停了一瞬，然后伸手扣住你的手腕。他的指节压在你腕骨上，力道不重，却让你动弹不得。他说，擅自取证。四个字落下来的时候，走廊尽头的铁闸又落下一道，闷响顺着地板传过来，桌面的纸角轻轻一跳。你注意到他始终没有低头去看那串编号。他的目光绕开了卡面，绕开了报告上被红笔圈出的那一栏，像是那串数字本身有什么他不愿碰的东西。门外，诺诺的声音被铁闸截断，她喊了半句，后半句被金属摩擦声吞掉。走廊里传来更多脚步声，不止一个，从两个方向同时靠近。核查员的手没有松，他侧过头，朝门外说了句什么，语气平得没有起伏。第二个人从门框边探进半个身子，手按在门把上，把门缝压得更窄。你被夹在长桌和门之间，退路正在一寸一寸地合拢。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "顺着核查员的话头承认碰过报告，但坚持要求他当着第二人的面核对样本编号与登记号，把矛盾摊到台面上",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 23,
+            "excerpt": "不辩解，趁核查员低头看报告的间隙，把临时通行卡里的备份记录亮出来，反问他这份报告的样本编号为什么和新生登记号只差两位",
+            "json_pointer": "/player_action",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 24
+          },
+          {
+            "action_index": 25,
+            "excerpt": "你朝门口迈了半步，声音抬起来，说既然封场程序有问题，就该让门外那个被拦下的人进来当面对质，把流程摆到台面上。核查员没有立刻回答。他把通行卡收进外套内袋，动作很慢，慢到你能听见布料摩擦的声响。门外的争执还在继续，诺诺的声音又拔高了一截，紧接着是一声短促的闷响，那句话被硬生生截断。你听见拖拽的脚步声，鞋底在走廊地面上蹭出两道不情愿的痕，然后是铁闸再次落下的声音，沉，干脆，把走廊和听证室彻底隔成两半。核查员这才开口，对门外说，带她去侧厅等。他没有回头看你。他说，程序没有问题，有问题的是你身边的人。你站在原地，退路被封死，通行卡不在手上，桌上那份报告也不在你这一侧。核查员走回桌边，把名单往自己面前挪了挪，指尖顺着栏目往下滑，滑到某一栏时忽然停住，又若无其事地跳了过去。他跳过去的那一栏，正是签发日期。他抬眼，说，上面的命令是封场到核查结束，编号的事不归你问。这句话落下来，你听见自己心跳的间隙里多了一点东西：编号的事，他知道，而且他知道得比你多。他转身去整理桌角的文件，背对着你，台灯的光把他的影子压在名单上。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 26
+          },
+          {
+            "action_index": 32,
+            "excerpt": "坐下就好。我们不问你来历，只问一件事，这份报告上的编号，是谁补全的。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "玩家被带入听证室，途中看见纸条残字，桌上血统报告与名单同时摊开，审查者追问编号来源。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "血统报告",
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "听证室三名审查者中居中的一位，掌握血统报告与名单。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "血统报告",
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "血统报告与名单同时摆在听证桌上。",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/description",
+            "terms": [
+              "血统报告",
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "你没有再挣，肩膀顺着那几只手的方向松下来，脚步跟着他们走。四名看守的队形立刻变了，两人在前，两人贴在你两侧偏后半步，诺诺被隔在最后，红发在走廊半明半暗的光里晃了一下就看不见了。走廊尽头那扇门比侧厅的更厚，门框上嵌着一圈黄铜边，被雨水和岁月磨得发暗。就在队伍经过门边时，你看见最靠门的那名看守腾出一只手，从内袋里摸出那张被截走的纸，对折，再对折，塞回自己胸前的内袋。纸角露在外面，被走廊高窗飘进来的雨洇开一小片，墨迹散成毛边，你只来得及看清几个残字：样本编号，后面跟着提前两个字，再往后就糊成一片。那名看守察觉你的视线，抬手把纸角按进衣料里，侧脸没有表情。黄铜门被推开，一股陈旧的暖风涌出来，混着纸张、灰尘和某种更冷的气味。听证室比你预想的深，长桌沿房间中轴铺开，桌面上摊着几份文件，最上面那份的边角压着一枚铜镇纸。你被按在长桌一侧的椅子上，手腕被要求放在桌面上。桌对面坐着三个人，中间那个面前摊着一份血统检测报告，S级标记那一栏被红笔圈过，旁边用更细的笔迹写着一串编号，末尾两位与你登记号相同。报告下方压着那张名单，你的名字还在，湿墨重描的痕迹在灯下泛着一点光。门在你背后合上，锁舌落下的声音很轻，却让整间屋子的空气沉了一沉。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "成功看出名单与报告之间的关联细节，失败则被审查者打断并失去观察时机。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "直接承认编号是自己补的，但反问他们为什么三年前的样本编号会出现在新生报告上",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "报告"
+            ],
+            "timeline_node": 33
+          },
+          {
+            "action_index": 32,
+            "excerpt": "血统报告与名单同时摆在听证桌上，编号末尾与登记号吻合。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "血统报告",
+              "报告"
+            ],
+            "timeline_node": 33
+          }
+        ],
+        "update_actions": [
+          22
+        ]
+      },
+      "evidence_ids": [
+        "JLC-20261106-G03-Q02.e01",
+        "JLC-20261106-G03-Q02.e02",
+        "JLC-20261106-G03-Q02.e03",
+        "JLC-20261106-G03-Q02.e04",
+        "JLC-20261106-G03-Q02.e05",
+        "JLC-20261106-G03-Q02.e06"
+      ],
+      "id": "JLC-20261106-G03-Q02",
+      "interval": {
+        "ancestor_edges_since_last": 8,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 21,
+        "since_first_campaign_turns": 20,
+        "since_last_campaign_turns": 7,
+        "since_last_public_mention_actions": 8
+      },
+      "review": {
+        "ambiguities": [
+          "报告在听证桌上再次出现不代表重新获得。其他纸条的owned与物理位置有冲突，本题不把那些物品等同报告。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "使用当前物品状态限制行动，不因历史拥有或见过原件就虚构可递交。",
+      "unknown_audit": null,
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 22,
+        "first_event_action": 19,
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "unknown_exact_value",
+      "channels": {
+        "actual_full_memory_answer_available": false,
+        "answer_in_recent": false,
+        "expected": [
+          "bounded_history_audit",
+          "historical_narrative",
+          "structured_state"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "被带入听证室，手背数字被审查者知晓，处于被审问状态。",
+            "json_pointer": "/nsb/level1/0/state_changes/玩家",
+            "terms": [
+              "手背"
+            ]
+          },
+          {
+            "excerpt": "玩家默记诺诺划在手背的数字并试图询问其含义，但被看守制止并分隔。听证室提前开始，玩家被带入，途中观察到看守收起一张写有“样本编号”和“提前”的纸条。听证室内，审查者以纸条内容为条件要求玩家解释手背数字与编号的关系。玩家要求诺诺旁听，审查者同意但戴手铐。诺诺低声警告“别认”。玩家试图用部分信息交换纸条原件，但未成功。审查者主动展示被划掉的登记号，逼迫玩家回答，诺诺再次提醒“别急着把整条都交出去”。",
+            "json_pointer": "/nsb/level1/0/summary",
+            "terms": [
+              "手背"
+            ]
+          },
+          {
+            "excerpt": "诺诺透露地下屋子涉及样本编号及有人隐瞒新生，并在玩家手背划下数字",
+            "json_pointer": "/nsb/level2/0/causal_links/10",
+            "terms": [
+              "手背",
+              "划下数字"
+            ]
+          },
+          {
+            "excerpt": "从持临时通行卡的新生变为被没收通行卡、被押送侧厅的受控对象，手背被诺诺划下数字",
+            "json_pointer": "/nsb/level2/0/state_changes/player",
+            "terms": [
+              "手背",
+              "划下数字"
+            ]
+          },
+          {
+            "excerpt": "被押送至侧厅，与诺诺会合，获得诺诺手背划下的数字线索",
+            "json_pointer": "/nsb/level2/0/state_changes/玩家",
+            "terms": [
+              "手背"
+            ]
+          },
+          {
+            "excerpt": "玩家在雨夜抵达卡塞尔学院，由诺诺接引从侧门入校，随即在报到区被发现带有暗红鳞形S级观察对象标记。诺诺提前交付预备任务单，玩家坚持完成登记后前往执行部核对任务编号，发现泛黄条目被遮挡、管道异响，被诺诺带入旧档案室。档案在三分钟前被伪造签名取走，操作终端已报废一年，玩家备份记录时进度异常停顿，决定前往维护通道调查。铁门被铁楔卡死，对方已逃离并留下半枚接入凭证；玩家比对发现旧终端注销时间早于最后接入，证明记录被篡改，遂赶往钟楼听证室。桌上名单印有玩家名字并被湿墨重描，笔迹与玩家一致；血统检测报告显示S级标记及与通行卡登记号仅差两位的样本编号。执行部封场，玩家补记编号时被核查员当场发现，报告被没收，通行卡被扣，玩家记住核查员先看签发栏的顺序。玩家借诺诺争执要求对质，核查员暗示编号涉及三年前旧案并警告勿碰包裹，玩家被押送侧厅，途中试图传递补全编号被截获，对方认出编号与三年前封存样本及钟楼地下屋子有关。玩家与诺诺会合，诺诺低声透露地下屋子涉及样本编号及有人隐瞒新生，并在玩家手背划下数字，走廊传来急促脚步。",
+            "json_pointer": "/nsb/level2/0/summary",
+            "terms": [
+              "手背",
+              "划下数字"
+            ]
+          },
+          {
+            "excerpt": "[T37 玩家]: 借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条\n[T37 主持人]: 你等诺诺被押到门边、看守换手的那个空隙，肩膀猛地一沉，整个人从椅面上弹起来，右手越过桌沿去够那张翘起的纸条。指尖擦到纸角，纸面在你指下弯了一下，随即被另一股力量扯走。你身后那名看守的反应比声音还快，一只手掌扣住你的后颈，另一只手反剪你的右臂，膝盖顶进你的腿弯。你被按回桌面，脸侧贴着冰凉的木面，肩膀传来一阵钝痛，手腕被别在背后，骨节发出细响。铜镇纸被审查者收回，纸条重新压回文件堆下，只留一角露在外面。诺诺在门边喊了一声，被看守按住肩膀，手铐链子撞在门框上。审查者俯身，声音贴着你的耳侧：你刚才还有东西可以换，现在没有了。他直起身，把文件堆往自己面前拢了拢，继续说，编号和手背上的数字，你最好一次说清楚，否则下一次就不是按在桌上这么简单。你脸侧贴着桌面，视线正好落在纸条背面。灯光从纸背透过来，那行被划掉的编号下面，还有一行更淡的墨痕，被划痕压着，末两位和你的登记号一模一样。\n审查者: 你刚才还有东西可以换。现在没有了。编号，手背上的数字，一次说清楚。\n诺诺: 别认！他们连纸条背面都没擦干净，你看见了吗？\n[权威物品状态] {\"临时通行卡\": \"lost\", \"预备任务单\": \"active\", \"登记回执\": \"active\", \"半枚接入凭证\": \"active\", \"旧档案室异常记录\": \"active\", \"血统检测异常报告\": \"lost\", \"补全的样本编号记录\": \"lost\", \"听证会决议书\": \"active\", \"被收走的纸条\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/0",
+            "terms": [
+              "手背"
+            ]
+          },
+          {
+            "excerpt": "玩家要求先说明纸条内容，审查者以铜镇纸下的纸条为筹码，暗示其与手背数字相关并施压。",
+            "json_pointer": "/recent_events/2",
+            "terms": [
+              "手背"
+            ]
+          },
+          {
+            "excerpt": "审查者抽出纸条，露出与玩家登记号一致的被划编号，逼其解释手背数字。",
+            "json_pointer": "/recent_events/5",
+            "terms": [
+              "手背"
+            ]
+          }
+        ],
+        "recent_action_range": [
+          33,
+          38
+        ],
+        "recent_answer_coverage": "no_known_answer",
+        "recent_topic_present": true,
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": false,
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "诺诺的话被截断，她垂在身侧的手却悄悄挪过来，指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。",
+            "json_pointer": "/world_facts/49/description",
+            "terms": [
+              "手背"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 30,
+        "last_public_topic_mention_action": 37,
+        "mention_terms": [
+          "手背",
+          "那个数字",
+          "划下数字"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 7,
+            "excerpt": "你转过身，正对诺诺，把登记板上那片暗红鳞形指给她看，问她这标记到底意味着什么，又为什么刚才要拦你。报到区的白光压在你手背上，那片鳞纹的边缘还在纸面上微微发亮。工作人员的手仍悬在笔尖上方，没有落下，视线在你和诺诺之间来回。诺诺沉默了几秒，红发遮着半边脸，你能看见她下颌线绷了一下。她终于开口，声音压得很低，说这标记不是装饰，是S级观察对象的识别印记，任务单上会写明。她说完从外套内袋抽出一张对折的纸，纸面边缘有执行部的暗纹，递到你面前，却没有立刻松手。她说本来该等你办完手续再给，现在既然你自己撞见了，就提前看吧。工作人员这时把笔放下，退开半步，像是被排除在某个流程之外。诺诺把任务单塞进你手里，指尖冰凉，说三个预备任务都在上面，看完再决定要不要继续站在这里。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 8
+          },
+          {
+            "action_index": 30,
+            "excerpt": "诺诺的话被截断，她垂在身侧的手却悄悄挪过来，指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。",
+            "json_pointer": "/output/anchor_completions/0/evidence",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "诺诺低声透露钟楼地下屋子与样本编号有关，被看守咳嗽打断，并在玩家手背划下一个数字。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "低声透露钟楼地下屋子与样本编号有关，并在玩家手背划下一个数字。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "手背被诺诺划下一个数字。",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "诺诺的话被截断，她垂在身侧的手却悄悄挪过来，指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "你被按在墙边，四名看守刚在门两侧站定，走廊的灯管闪了一下。你侧过头，嘴唇几乎不动，声音压到只剩气音，问诺诺她被带进来时听到了什么，尤其是钟楼地下那间屋子。诺诺靠着侧厅里侧的墙，红发垂下来遮住半张脸。她没有看你，目光落在门缝方向，嘴唇微动，声音比你还低：他们提到地下那间屋子的时候，说了样本编号，还说有人不想让新生知道那批东西还在。她停了一下，像是要再补一句，门边最近的看守忽然咳了一声，短促而刻意，鞋底在地面转了半圈。诺诺的话被截断，她垂在身侧的手却悄悄挪过来，指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。走廊尽头传来另一串脚步，比刚才更急，灯管又闪了一次，暗下去的半秒里，侧厅里有人从椅子上站了起来。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "透露钟楼地下屋子与样本编号有关，并在玩家手背划下一个数字。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 30,
+            "excerpt": "把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 31
+          },
+          {
+            "action_index": 31,
+            "excerpt": "手背数字已默记，诺诺给出向下的手势",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "你把手背贴在裤缝上，指腹一遍遍描过那道被划下的痕迹，把数字压进记忆里。走廊的灯管又闪了一下，最近的看守正背对着你，视线落在走廊尽头。你侧过脸，嘴唇几乎不动，把问题递向诺诺，问她这个数字对应什么，钟楼地下那间屋子到底在哪。诺诺的睫毛动了一下，刚要开口，门边那名看守忽然转身。他的鞋底在地面碾出半圈，两步就跨到你们之间，肩膀一横，把你和诺诺隔成两段。他抬手在你胸前虚按一下，声音不高却硬：不许交谈。另外两人跟着挪动位置，一左一右把你往侧厅另一角带，你的后背贴上冰冷的墙。诺诺被留在原地，红发垂下来，她没再出声，只在你被推走的最后一刻抬眼看你，视线往下压了压，又极轻地朝地面偏了一下头。那一下太短，你只来得及看见她指尖在身侧比了个向下的手势。看守在你面前站定，双臂抱在胸前，把走廊和诺诺都挡在身后。就在这时，侧厅的门被人从外面敲响，三下，间隔很短。门边看守皱眉过去，门缝里递进来一张折起的纸条。他展开看了几秒，脸色沉下去，回头扫了你一眼，又看了看诺诺，压低声音对同伴说，听证室要提前开始，先带编号对得上的那个进去。两名看守立刻朝你走来，脚步比刚才急。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "在被带走前，把诺诺那个向下的手势和手背数字联系起来，主动向看守承认编号对得上，争取被带进听证室看清里面的人",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 31,
+            "excerpt": "把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置",
+            "json_pointer": "/player_action",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 32
+          },
+          {
+            "action_index": 33,
+            "excerpt": "你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。",
+            "json_pointer": "/output/dialogue/1/text",
+            "terms": [
+              "手背",
+              "那个数字"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "审查者以纸条内容为筹码，暗示与玩家手背数字相关。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "玩家要求先说明纸条内容，审查者以铜镇纸下的纸条为筹码，暗示其与手背数字相关并施压。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "手指按在铜镇纸上，将纸条内容与玩家手背数字绑定。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "以纸条内容为条件拒绝配合，审查者反将纸条与手背数字绑定。",
+            "json_pointer": "/output/memory_updates/player_status_patch/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "你坐在长桌这一侧，肩膀的钝痛还在，后背贴着椅背，把双手平放在桌面上。四名看守分站两角，门在你身后合拢，黄铜边发出一声闷响。诺诺被隔在门外，走廊的光从门缝底下渗进来一线。你抬起头，直视中间那名审查者，把话放得很平：先告诉我那张被收走的纸条上写了什么，否则我一个字也不答。\n\n桌后三人没有立刻回应。左边那个翻动文件的手停了一拍，右边那个把笔搁下，视线越过你，和中间的人对了一下。就这一下，很短，短到几乎可以当作没发生。中间那名审查者没有看他们，他的目光一直落在你脸上，手指从桌沿收回来，缓缓按在铜镇纸上。铜面被他的指腹压出一小片暗影。\n\n铜镇纸下面压着一叠文件，最上面那张露出一角，纸边有折痕，折痕的位置和你被截走的那张纸对折的方式一样。审查者没有把文件抽出来，也没有把铜镇纸挪开，他只是让手指停在那里，像把什么东西钉在桌上。\n\n他开口了，声音不高，每个字都放得很稳：纸条？它现在在我们手里，但上面的字，取决于你接下来怎么回答。\n\n你盯着他按在铜镇纸上的手。他没有否认纸条上有字，也没有说那字和你无关。他把纸条从一件被没收的东西，变成了一件还在谈条件的东西。右边那名审查者这时把笔重新拿起来，笔尖悬在听证会决议书上方，没有落下去。\n\n中间的审查者微微前倾，铜镇纸下的文件随着他的动作发出一点纸页摩擦的轻响。他补了一句：你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。\n\n门边看守的视线从你脸上移到铜镇纸，又移回去。房间里的空气沉下来，雨声隔着钟楼的厚墙传进来，闷闷的。你意识到那张纸条没有被销毁，它就在这间屋子里，压在铜镇纸下面，或者就在那叠文件里。而审查者把它的内容和你手背上的数字绑在了一起，等你先开口。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背",
+              "那个数字"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "以纸条为筹码施压，暗示纸条内容与玩家手背数字相关。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 33,
+            "excerpt": "在被质询时保住编号线索并观察审查者反应，纸条内容与手背数字被审查者绑定。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 34
+          },
+          {
+            "action_index": 34,
+            "excerpt": "人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。",
+            "json_pointer": "/output/dialogue/2/text",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 35
+          },
+          {
+            "action_index": 34,
+            "excerpt": "你把双手平放在桌面上，声音不高，却把条件摆得清清楚楚：让门外的诺诺进来旁听，否则关于那个数字，你一个字也不会说。中间那名审查者的手指停在铜镇纸上，指腹压出的暗影没有移开。他看了你几秒，然后偏过头，与左右两侧的人交换了一个极短的眼神。左边那个翻文件的手彻底停了，右边那个把笔搁下，笔尖在纸面点出一个小墨点。中间的人收回视线，开口时语气没有起伏：可以让她进来，戴手铐，由看守押在门边，不许靠近长桌。他顿了顿，补了一句，这是最后的让步。门在你身后被推开，走廊的冷风先一步灌进来。诺诺被两名看守夹在中间带进听证室，红发湿漉漉地贴在脸侧，手铐的金属链在灯下晃了一下。她被押到门边站定，离长桌有七八步远。进门时她的目光扫过铜镇纸下那叠文件，嘴唇几乎没动，只吐出两个字：别认。声音轻得只有离她最近的你能听见。门重新合上。中间那名审查者把铜镇纸往旁边挪了半寸，露出下面压着的纸条一角，然后抬眼看你：人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背",
+              "那个数字"
+            ],
+            "timeline_node": 35
+          },
+          {
+            "action_index": 34,
+            "excerpt": "顺着诺诺的暗示，咬定手背数字与纸条编号无关，反过来要求审查者先解释纸条为何被截走",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 35
+          },
+          {
+            "action_index": 36,
+            "excerpt": "编号在这里，划掉了也还是编号。你手背上那个数字，和它是什么关系。我给你一次机会，说清楚。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "手背",
+              "那个数字"
+            ],
+            "timeline_node": 37
+          },
+          {
+            "action_index": 36,
+            "excerpt": "审查者抽出纸条，露出与玩家登记号一致的被划编号，逼其解释手背数字。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 37
+          },
+          {
+            "action_index": 36,
+            "excerpt": "只承认手背数字是这张纸条编号的后半段，要求把纸条推过来核对，再谈其余部分",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 37
+          },
+          {
+            "action_index": 36,
+            "excerpt": "纸条编号与玩家登记号完全一致，需解释手背数字与编号的关系。",
+            "json_pointer": "/output/quests_updated/0/description",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 37
+          },
+          {
+            "action_index": 37,
+            "excerpt": "你刚才还有东西可以换。现在没有了。编号，手背上的数字，一次说清楚。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 38
+          },
+          {
+            "action_index": 37,
+            "excerpt": "你等诺诺被押到门边、看守换手的那个空隙，肩膀猛地一沉，整个人从椅面上弹起来，右手越过桌沿去够那张翘起的纸条。指尖擦到纸角，纸面在你指下弯了一下，随即被另一股力量扯走。你身后那名看守的反应比声音还快，一只手掌扣住你的后颈，另一只手反剪你的右臂，膝盖顶进你的腿弯。你被按回桌面，脸侧贴着冰凉的木面，肩膀传来一阵钝痛，手腕被别在背后，骨节发出细响。铜镇纸被审查者收回，纸条重新压回文件堆下，只留一角露在外面。诺诺在门边喊了一声，被看守按住肩膀，手铐链子撞在门框上。审查者俯身，声音贴着你的耳侧：你刚才还有东西可以换，现在没有了。他直起身，把文件堆往自己面前拢了拢，继续说，编号和手背上的数字，你最好一次说清楚，否则下一次就不是按在桌上这么简单。你脸侧贴着桌面，视线正好落在纸条背面。灯光从纸背透过来，那行被划掉的编号下面，还有一行更淡的墨痕，被划痕压着，末两位和你的登记号一模一样。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 38
+          },
+          {
+            "action_index": 37,
+            "excerpt": "转向门边的诺诺，大声问她手背上的数字到底是谁划的，把审查者的追问引向数字来源",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "手背"
+            ],
+            "timeline_node": 38
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G03-Q03.e01",
+        "JLC-20261106-G03-Q03.e02",
+        "JLC-20261106-G03-Q03.e03",
+        "JLC-20261106-G03-Q03.e04",
+        "JLC-20261106-G03-Q03.e05"
+      ],
+      "id": "JLC-20261106-G03-Q03",
+      "interval": {
+        "ancestor_edges_since_last": 1,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 8,
+        "since_first_campaign_turns": 7,
+        "since_last_campaign_turns": 1,
+        "since_last_public_mention_actions": 1
+      },
+      "review": {
+        "ambiguities": [
+          "玩家在故事内可能知道，但记录文本没有值；本题不等价于角色失忆。近期33–38反复出现该话题，属于近期未知控制题。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "人物在故事内知道某数，不等于读者记录给出了该数；检验有界拒答。",
+      "unknown_audit": {
+        "inference_review": "逐项审阅30–38涉及手背的正文/对话/选项，另检索初始至38完整公开输出、状态和记忆。只有未具值的“一个数字”；编号文本也未给可计算数串。前四位、末两位/只差两位和三年前等是长度或时间，不能唯一推出手背数值。",
+        "negative_claim": "仅断言提供的历史范围不能确定数值，不主张玩家或诺诺不知道。",
+        "range": [
+          0,
+          38
+        ],
+        "reviewed_fields": [
+          "initial/output/state",
+          "intents/request/player_action",
+          "checkpoints/output all leaves including options/check stakes/memory_updates",
+          "checkpoints/state including NSB/PCB/narrative_pool/world_facts",
+          "progress/recap_compressed"
+        ],
+        "search_terms": [
+          "手背",
+          "数字",
+          "划下",
+          "划了",
+          "登记号",
+          "编号"
+        ],
+        "status": "editor_reviewed_pending_human"
+      },
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 30,
+        "first_event_action": 30,
+        "through_checkpoint": 38
+      }
+    },
+    {
+      "category": "character_claim_and_relation",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": true,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "T37→T38: 玩家接受条件后要求说明身份，兜帽人揭示殉职外勤身份及封存编号的动机，建立有限信任。",
+            "json_pointer": "/nsb/level1/1/causal_links/0",
+            "terms": [
+              "殉职"
+            ]
+          },
+          {
+            "excerpt": "身份揭露为三年前被撤销科室的末批外勤，档案标注殉职，实为执行部通缉对象。",
+            "json_pointer": "/nsb/level1/1/state_changes/兜帽人",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ]
+          },
+          {
+            "excerpt": "玩家在铁门后接受兜帽人条件，得知其是档案上“殉职”的外勤，因编号中一个数字由他亲手封存而协助。诺诺望风时碰倒抽屉暴露行踪，执行部逼近。玩家用临时通行卡试开旧锁失败，卡面裂纹扩大，锁芯弹出刻有半截编号的铜簧片。玩家掰下簧片受伤，随兜帽人撤入维护间，发现新鲜拖拽痕迹和一张执行部通缉令残页，通缉对象正是兜帽人。执行部追至门外，兜帽人指引玩家从通风管撤离。",
+            "json_pointer": "/nsb/level1/1/summary",
+            "terms": [
+              "殉职",
+              "亲手封"
+            ]
+          },
+          {
+            "excerpt": "逼出门后之人身份：三年前殉职外勤，帮你的理由与编号中一个数字有关。",
+            "json_pointer": "/recent_events/0",
+            "terms": [
+              "殉职"
+            ]
+          }
+        ],
+        "note": "recent40–45通过人物更新重提档案上殉职/被通缉，但未含完整自述和亲手封存动机；结构化也只保留与数字有关，完整亲手封进的信息在实际NSB.summary中。",
+        "recent_action_range": [
+          40,
+          45
+        ],
+        "recent_answer_coverage": "partial",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": "partial",
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "三年前被撤销科室的末批外勤，档案记为殉职",
+            "json_pointer": "/npcs/1/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ]
+          },
+          {
+            "excerpt": "档案上殉职的外勤，被通缉",
+            "json_pointer": "/npcs/2/description",
+            "terms": [
+              "殉职"
+            ]
+          },
+          {
+            "excerpt": "他是三年前被撤销科室的末批外勤，档案上写的是殉职，脸上有从眉骨延伸到下颌的旧疤。",
+            "json_pointer": "/world_facts/64/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 38,
+        "last_public_topic_mention_action": 45,
+        "mention_terms": [
+          "末批外勤",
+          "殉职",
+          "亲手封",
+          "封进那扇门"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 38,
+            "excerpt": "名字你记不记都行，档案上我三年前就殉职了。那串编号里有一个数字，是我亲手封进那扇门后的。就这一句，够不够你跟我走。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "殉职",
+              "亲手封",
+              "封进那扇门"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "殉职的外勤……执行部要是知道你还在这层，来的就不只是拿工具的人了。",
+            "json_pointer": "/output/dialogue/1/text",
+            "terms": [
+              "殉职"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "逼出门后之人身份：三年前殉职外勤，帮你的理由与编号中一个数字有关。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "殉职"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "三年前被撤销科室的末批外勤，档案记为殉职，脸上有从眉骨到下颌的旧疤。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "透露帮你的理由与编号中一个数字有关，那数字是他亲手封进门后的。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "亲手封"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "他是三年前被撤销科室的末批外勤，档案上写的是殉职，脸上有从眉骨延伸到下颌的旧疤。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "你停在原地，没有跟着他迈出下一步。通道里的应急灯把你的影子压在锈蚀的抽屉堆上，你开口，声音压得很低，要求他先说明身份，再说清楚为什么帮你。诺诺在你身后轻轻碰了碰你的手肘，示意你压低声音。他停下脚步，半张脸仍在兜帽阴影里。他先不答，只把兜帽往上推了一寸，露出一道从眉骨延伸到下颌的旧疤。那道疤在暗光里泛着不自然的浅色，边缘已经长平，是很多年前的伤。他低声报出一个名字，又补了一句简短的身份说明，他是三年前被撤销科室的末批外勤，档案上写的是殉职。你听见殉职两个字时，诺诺的呼吸在你身后顿了一下。他没有解释自己为什么还活着，只把兜帽重新压低，说帮你的理由只有半句，那串编号里有一个数字，是他亲手封进那扇门后的。说完他提醒你时间在走，执行部拿完工具就会回来。远处通风井方向传来金属工具箱落地的闷响，声音在管道里滚了一圈才散。他侧过身，让出通道，等你决定。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "末批外勤",
+              "殉职",
+              "亲手封",
+              "封进那扇门"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 38,
+            "excerpt": "自曝为三年前被撤销科室的末批外勤，档案记为殉职，脸上有旧疤。",
+            "json_pointer": "/output/npcs_encountered/0/notes",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 39
+          },
+          {
+            "action_index": 39,
+            "excerpt": "三年前被撤销科室的末批外勤，档案记为殉职",
+            "json_pointer": "/output/memory_updates/npcs_upserted/1/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 40,
+            "excerpt": "三年前被撤销科室的末批外勤，档案记为殉职",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 41,
+            "excerpt": "三年前被撤销科室的末批外勤，档案记为殉职。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 42,
+            "excerpt": "三年前被注销科室的末批外勤，档案记为殉职。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "末批外勤",
+              "殉职"
+            ],
+            "timeline_node": 43
+          },
+          {
+            "action_index": 43,
+            "excerpt": "三年前殉职的外勤，通缉令对象。",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/description",
+            "terms": [
+              "殉职"
+            ],
+            "timeline_node": 44
+          },
+          {
+            "action_index": 44,
+            "excerpt": "三年前殉职外勤",
+            "json_pointer": "/output/memory_updates/npcs_upserted/1/description",
+            "terms": [
+              "殉职"
+            ],
+            "timeline_node": 45
+          },
+          {
+            "action_index": 45,
+            "excerpt": "档案上殉职的外勤，被通缉",
+            "json_pointer": "/output/memory_updates/npcs_upserted/1/description",
+            "terms": [
+              "殉职"
+            ],
+            "timeline_node": 46
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G04-Q01.e01",
+        "JLC-20261106-G04-Q01.e02",
+        "JLC-20261106-G04-Q01.e03"
+      ],
+      "id": "JLC-20261106-G04-Q01",
+      "interval": {
+        "ancestor_edges_since_last": 0,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 7,
+        "since_first_campaign_turns": 7,
+        "since_last_campaign_turns": 0,
+        "since_last_public_mention_actions": 0
+      },
+      "review": {
+        "ambiguities": [
+          "后来发现已注销通缉令只增加记录线索，不能据此证明他说的全部历史。叙事与结构化NPC有重复别名；不能算多个独立人物。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "记住角色身份自述、与编号的关系，避免将自述或摘要断言升级成独立证实。",
+      "unknown_audit": null,
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 38,
+        "first_event_action": 38,
+        "through_checkpoint": 45
+      }
+    },
+    {
+      "category": "item_acquisition_and_check",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": true,
+        "expected": [
+          "recent_context",
+          "structured_state"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "[T39 玩家]: 让诺诺留在通道拐角望风，自己跟他靠近那扇门\n[T39 主持人]: 你压低声音让诺诺留在通道拐角望风，她点头退到那堆锈蚀抽屉旁，背贴着墙。你转身跟上兜帽人的脚步，鞋底在铁屑上碾出细碎的响。走出七八步，身后忽然传来一声闷响，是铁皮抽屉被碰倒后砸在地上的声音，紧接着是抽屉里散落的旧纸片簌簌滑开的动静。你回头，诺诺僵在拐角，一只手还悬在半空，脚边倒着一只抽屉，锈屑和纸片撒了一地。她朝你无声地比了个口型，脸色发白。通道深处立刻有了回应，通风井方向传来压低的交谈，两个声音，一个在说这边有脚印，另一个说纤维挂在这根钉子上，往这边。手电光在拐角后的墙面上晃了一下，又收回去，他们在确认方向，还没有直接冲进来。兜帽人没有回头，只加快半步，把你带到通道尽头那扇没有编号的铁门前。门板上用粉笔写过一串数字，被擦掉了一半，剩下的残痕在应急灯下泛着灰白。你摸出预备任务单，把背面的残印编号抄录凑到光下比对，前四位吻合，第五位被擦得只剩一道斜痕，和抄录上的字符对得上。兜帽人抬手示意你别出声，指了指门板，说封存编号的东西就在这后面。你这才看清门上的锁，一把旧式机械锁，锁芯周围有新鲜的划痕，门板侧面还有一道被撬开又焊死的缝隙，焊疤粗糙，颜色比周围的铁皮浅。他低声说，这扇门本该不存在，编号也不该存在，执行部去拿切割工具了，留给你的时间不多。通道拐角那边，手电光又亮了一次，这次更近。\n诺诺: 我踩到东西了，抽屉倒了，他们听见了。对不起，我该更小心的。\n门后之人: 别管后面了。这扇门上的数字和你手里的对得上，封存编号的东西就在门后。锁是旧的，那道缝被撬过又焊死，硬来会响。你只有一次机会，要么开锁，要么问我。\n执行部成员: 脚印到这儿变浅了，纤维是新的。再往前就是尽头，把工具带上，别让他们把门打开。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\", \"牛皮纸档案袋\": \"active\", \"残印编号抄录\": \"active\", \"旧档案室异常记录\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/2",
+            "terms": [
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "[T40 玩家]: 用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯\n[T40 主持人]: 你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。你把卡缘对准旧式机械锁的槽口，慢慢推了进去。卡身卡进一半就停住，槽口比卡厚，你只能斜着用力，手腕的旧紧劲顺着小臂爬上来。锁芯里传来一声干涩的咔嗒，你屏住呼吸，以为对上了。下一秒，锁芯内部弹出一声脆响，像有什么金属弹片被顶开，声音在铁皮通道里炸开，撞上两侧锈蚀的抽屉堆，又折回来，滚进通道深处。你手里的卡猛地一烫，裂纹从边缘往里扩了一截，暗红的光沿着裂口渗出来，照得你指节发白。锁没有开，锁舌纹丝不动，可锁芯里多了一点不该有的东西，一小片铜色的簧片从槽口边缘翘出来，上面刻着半截编号，和你抄在任务单背面的那串字符对得上。通道拐角后的手电光猛地定住。脚步声从试探变成奔跑，鞋底砸在铁阶上，一下比一下近。兜帽人从你身后伸手，把卡从锁槽里拔出来，塞回你掌心，声音压得极低。\n兜帽人: 这锁不是靠权限开的。你的卡能烫，说明它认得这扇门，可门不认卡。别再试了，声音已经出去了。\n诺诺: 他们跑起来了，两个，不，三个。抽屉那边挡不住多久。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\", \"牛皮纸档案袋\": \"active\", \"残印编号抄录\": \"active\", \"旧档案室异常记录\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/3",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "[T41 玩家]: 把翘出的铜色簧片掰下来带走，放弃开门，跟兜帽人往通道更深处撤\n[T41 主持人]: 你捏住那片翘出的铜色簧片，指腹刚搭上边缘，锁芯内部就传来一声细碎的崩裂。簧片没有顺着你的力道松脱，反而在槽口里猛地一弹，断口处的铜屑像针一样扎进你的食指和中指。你咬住牙没出声，血从指缝里渗出来，滴在锁面下方的铁皮上，一小串暗红的点。簧片终于被你掰了下来，半截编号在应急灯下泛着旧铜的哑光，可它断得不齐，边缘全是毛刺。兜帽人一把扣住你的手腕，把你往通道深处拽，低声说别停。你回头，锁面上、铁皮上、你刚才站过的地面，血迹和铜屑混在一起，痕迹比之前多了一倍。通道更深处出现一扇半掩的维护门，门缝里透出微光，地上有一道新鲜的拖拽痕迹，从门缝一直延伸到你们脚下。兜帽人脚步顿了一下，说这痕迹不是他留下的。通风井方向传来金属被撬动的声响，执行部在拆栅栏，声音越来越近。\n兜帽人: 你手在流血。别管了，先走。那扇维护门后面有东西，拖痕是新的，今晚有人进去过。\n诺诺: 他们开始拆栅栏了。血迹一路滴过去，等于给他们画了条线。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\", \"牛皮纸档案袋\": \"active\", \"残印编号抄录\": \"active\", \"旧档案室异常记录\": \"active\", \"半截铜色簧片\": \"active\"}",
+            "json_pointer": "/nsb/turn_buffer/4",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "玩家行动：用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯；结果：你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。",
+            "json_pointer": "/recent_events/6",
+            "terms": [
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "玩家掰簧片失败被划伤，留下血迹，获半截编号簧片，随兜帽人撤向维护门。",
+            "json_pointer": "/recent_events/7",
+            "terms": [
+              "簧片",
+              "划伤"
+            ]
+          }
+        ],
+        "note": "这是0间隔近期状态控制题，保留自然重复，不标成长间隔。",
+        "recent_action_range": [
+          36,
+          41
+        ],
+        "recent_answer_coverage": "full",
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": "partial_without_recent_check",
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "手指被铜屑划伤，轻微出血",
+            "json_pointer": "/player_status/condition",
+            "terms": [
+              "划伤"
+            ]
+          },
+          {
+            "excerpt": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+            "json_pointer": "/items/0/notes",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "从锁芯掰下的铜色簧片，刻有半截编号，断口带毛刺。",
+            "json_pointer": "/items/5/description",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "半截铜色簧片",
+            "json_pointer": "/items/5/name",
+            "terms": [
+              "簧片"
+            ]
+          },
+          {
+            "excerpt": "掰取时划伤手指，簧片本身带血。",
+            "json_pointer": "/items/5/notes",
+            "terms": [
+              "簧片",
+              "划伤"
+            ]
+          },
+          {
+            "excerpt": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+            "json_pointer": "/world_facts/67/description",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "锁芯内的铜色簧片",
+            "json_pointer": "/world_facts/67/name",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "掰下的铜色簧片刻有半截编号，与任务单背面抄录的编号段部分吻合。",
+            "json_pointer": "/world_facts/69/description",
+            "terms": [
+              "簧片"
+            ]
+          },
+          {
+            "excerpt": "簧片上的半截编号",
+            "json_pointer": "/world_facts/69/name",
+            "terms": [
+              "簧片"
+            ]
+          },
+          {
+            "excerpt": "玩家从锁芯掰取簧片",
+            "json_pointer": "/world_facts/69/source",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ]
+          },
+          {
+            "excerpt": "半截铜色簧片",
+            "json_pointer": "/item_ledger/5/item_name",
+            "terms": [
+              "簧片"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 40,
+        "last_public_topic_mention_action": 41,
+        "mention_terms": [
+          "簧片",
+          "锁芯",
+          "划伤"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 39,
+            "excerpt": "你压低声音让诺诺留在通道拐角望风，她点头退到那堆锈蚀抽屉旁，背贴着墙。你转身跟上兜帽人的脚步，鞋底在铁屑上碾出细碎的响。走出七八步，身后忽然传来一声闷响，是铁皮抽屉被碰倒后砸在地上的声音，紧接着是抽屉里散落的旧纸片簌簌滑开的动静。你回头，诺诺僵在拐角，一只手还悬在半空，脚边倒着一只抽屉，锈屑和纸片撒了一地。她朝你无声地比了个口型，脸色发白。通道深处立刻有了回应，通风井方向传来压低的交谈，两个声音，一个在说这边有脚印，另一个说纤维挂在这根钉子上，往这边。手电光在拐角后的墙面上晃了一下，又收回去，他们在确认方向，还没有直接冲进来。兜帽人没有回头，只加快半步，把你带到通道尽头那扇没有编号的铁门前。门板上用粉笔写过一串数字，被擦掉了一半，剩下的残痕在应急灯下泛着灰白。你摸出预备任务单，把背面的残印编号抄录凑到光下比对，前四位吻合，第五位被擦得只剩一道斜痕，和抄录上的字符对得上。兜帽人抬手示意你别出声，指了指门板，说封存编号的东西就在这后面。你这才看清门上的锁，一把旧式机械锁，锁芯周围有新鲜的划痕，门板侧面还有一道被撬开又焊死的缝隙，焊疤粗糙，颜色比周围的铁皮浅。他低声说，这扇门本该不存在，编号也不该存在，执行部去拿切割工具了，留给你的时间不多。通道拐角那边，手电光又亮了一次，这次更近。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 39,
+            "excerpt": "成功打开或触发锁芯反应，失败让锁发出声响引来执行部。",
+            "json_pointer": "/output/option_checks/1/stakes",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 39,
+            "excerpt": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 40,
+            "excerpt": "成功打开或触发锁芯反应，失败让锁发出声响引来执行部。",
+            "json_pointer": "/output/action_check/check/stakes",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "在执行部到达前决定带走簧片撤离还是继续尝试开门",
+            "json_pointer": "/output/memory_updates/player_status_patch/current_goal",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "锁芯弹出刻有半截编号的铜色簧片",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/notes",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "在执行部到达前决定带走簧片撤离还是继续尝试开门",
+            "json_pointer": "/output/memory_updates/quests_upserted/0/objective",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "锁芯内的铜色簧片",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/name",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。你把卡缘对准旧式机械锁的槽口，慢慢推了进去。卡身卡进一半就停住，槽口比卡厚，你只能斜着用力，手腕的旧紧劲顺着小臂爬上来。锁芯里传来一声干涩的咔嗒，你屏住呼吸，以为对上了。下一秒，锁芯内部弹出一声脆响，像有什么金属弹片被顶开，声音在铁皮通道里炸开，撞上两侧锈蚀的抽屉堆，又折回来，滚进通道深处。你手里的卡猛地一烫，裂纹从边缘往里扩了一截，暗红的光沿着裂口渗出来，照得你指节发白。锁没有开，锁舌纹丝不动，可锁芯里多了一点不该有的东西，一小片铜色的簧片从槽口边缘翘出来，上面刻着半截编号，和你抄在任务单背面的那串字符对得上。通道拐角后的手电光猛地定住。脚步声从试探变成奔跑，鞋底砸在铁阶上，一下比一下近。兜帽人从你身后伸手，把卡从锁槽里拔出来，塞回你掌心，声音压得极低。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "成功带走簧片并撤入深处，失败被碎片划伤且留下更多痕迹。",
+            "json_pointer": "/output/option_checks/0/stakes",
+            "terms": [
+              "簧片",
+              "划伤"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "成功触发锁芯机关，失败彻底惊动执行部并可能损坏通行卡。",
+            "json_pointer": "/output/option_checks/2/stakes",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "把翘出的铜色簧片掰下来带走，放弃开门，跟兜帽人往通道更深处撤",
+            "json_pointer": "/output/options/0",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "让诺诺把倒下的抽屉堆成路障拖延执行部，自己再试一次锁芯里翘出的簧片",
+            "json_pointer": "/output/options/2",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+            "json_pointer": "/player_action",
+            "terms": [
+              "锁芯"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 41,
+            "excerpt": "成功带走簧片并撤入深处，失败被碎片划伤且留下更多痕迹。",
+            "json_pointer": "/output/action_check/check/stakes",
+            "terms": [
+              "簧片",
+              "划伤"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "从旧式机械锁芯里掰下的铜色簧片，断口带毛刺，表面刻着半截编号，与任务单背面的抄录部分吻合。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "半截铜色簧片",
+            "json_pointer": "/output/items_gained/0/name",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "从锁芯掰下的铜色簧片，刻有半截编号，断口带毛刺。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/description",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "半截铜色簧片",
+            "json_pointer": "/output/memory_updates/items_upserted/0/name",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "掰取时划伤手指，簧片本身带血。",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "簧片",
+              "划伤"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "玩家掰簧片失败被划伤，留下血迹，获半截编号簧片，随兜帽人撤向维护门。",
+            "json_pointer": "/output/memory_updates/key_event",
+            "terms": [
+              "簧片",
+              "划伤"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "手指被铜屑划伤，轻微出血",
+            "json_pointer": "/output/memory_updates/player_status_patch/condition",
+            "terms": [
+              "划伤"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "掰下的铜色簧片刻有半截编号，与任务单背面抄录的编号段部分吻合。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/description",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "簧片上的半截编号",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/name",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "玩家从锁芯掰取簧片",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/1/source",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "你捏住那片翘出的铜色簧片，指腹刚搭上边缘，锁芯内部就传来一声细碎的崩裂。簧片没有顺着你的力道松脱，反而在槽口里猛地一弹，断口处的铜屑像针一样扎进你的食指和中指。你咬住牙没出声，血从指缝里渗出来，滴在锁面下方的铁皮上，一小串暗红的点。簧片终于被你掰了下来，半截编号在应急灯下泛着旧铜的哑光，可它断得不齐，边缘全是毛刺。兜帽人一把扣住你的手腕，把你往通道深处拽，低声说别停。你回头，锁面上、铁皮上、你刚才站过的地面，血迹和铜屑混在一起，痕迹比之前多了一倍。通道更深处出现一扇半掩的维护门，门缝里透出微光，地上有一道新鲜的拖拽痕迹，从门缝一直延伸到你们脚下。兜帽人脚步顿了一下，说这痕迹不是他留下的。通风井方向传来金属被撬动的声响，执行部在拆栅栏，声音越来越近。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "簧片",
+              "锁芯"
+            ],
+            "timeline_node": 42
+          },
+          {
+            "action_index": 41,
+            "excerpt": "把翘出的铜色簧片掰下来带走，放弃开门，跟兜帽人往通道更深处撤",
+            "json_pointer": "/player_action",
+            "terms": [
+              "簧片"
+            ],
+            "timeline_node": 42
+          }
+        ],
+        "update_actions": [
+          41
+        ]
+      },
+      "evidence_ids": [
+        "JLC-20261106-G04-Q02.e01",
+        "JLC-20261106-G04-Q02.e02",
+        "JLC-20261106-G04-Q02.e03",
+        "JLC-20261106-G04-Q02.e04",
+        "JLC-20261106-G04-Q02.e05",
+        "JLC-20261106-G04-Q02.e06"
+      ],
+      "id": "JLC-20261106-G04-Q02",
+      "interval": {
+        "ancestor_edges_since_last": 0,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 1,
+        "since_first_campaign_turns": 1,
+        "since_last_campaign_turns": 0,
+        "since_last_public_mention_actions": 0
+      },
+      "review": {
+        "ambiguities": [
+          "本题当前持有判断取state+SCORE；检定取已提交action_check，不取未提交模型草稿。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "检定失败不自动等于没有获得物品；核对权威检定与提交状态。",
+      "unknown_audit": null,
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 41,
+        "first_event_action": 40,
+        "through_checkpoint": 41
+      }
+    },
+    {
+      "category": "action_from_observed_limit",
+      "channels": {
+        "actual_full_memory_answer_available": "partial",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "narrative_memory_snapshot_topic_hits": [
+          {
+            "excerpt": "旧式机械锁",
+            "json_pointer": "/nsb/level1/1/entities_involved/11",
+            "terms": [
+              "旧式机械锁"
+            ]
+          },
+          {
+            "excerpt": "锁芯弹出铜色簧片，锁舌未开，锁面留下血迹和铜屑。",
+            "json_pointer": "/nsb/level1/1/state_changes/旧式机械锁",
+            "terms": [
+              "锁舌"
+            ]
+          },
+          {
+            "excerpt": "玩家行动：用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯；结果：你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。",
+            "json_pointer": "/recent_events/0",
+            "terms": [
+              "旧式机械锁"
+            ]
+          }
+        ],
+        "note": "state和实际NSB均保留试锁失败及裂纹/簧片。cp47实际full没有保留兜帽人“不靠权限开/门不认卡”的完整解释及归属；该评分细节依赖已未保留的历史，须区分记忆保留缺口与回答错误，不人为补入。",
+        "recent_action_range": [
+          42,
+          47
+        ],
+        "recent_answer_coverage": "none",
+        "recent_related_entity_hints": {
+          "actions": [
+            43,
+            46
+          ],
+          "description": "叙事/选项提到簧片，但未重复它的来源及试锁结果；属于实体提示，不等于全部答案重提。"
+        },
+        "recent_window": 6,
+        "snapshot_note": "持久状态/摘要在当前检查点仍可见不等于最近剧情重提；原始近期 output 可能合法包含 memory_updates。题目相关字面命中不自动等于答案齐全。",
+        "structured_answer_available": "partial",
+        "structured_snapshot_topic_hits": [
+          {
+            "excerpt": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+            "json_pointer": "/items/0/notes",
+            "terms": [
+              "旧式机械锁"
+            ]
+          },
+          {
+            "excerpt": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+            "json_pointer": "/world_facts/67/description",
+            "terms": [
+              "旧式机械锁"
+            ]
+          }
+        ]
+      },
+      "chronology": {
+        "author_notes": "",
+        "first_action": 40,
+        "last_public_topic_mention_action": 41,
+        "mention_terms": [
+          "旧式机械锁",
+          "锁舌",
+          "门不认卡",
+          "这锁不是靠权限"
+        ],
+        "public_mentions": [
+          {
+            "action_index": 37,
+            "excerpt": "你侧过身，肩膀撞开铁门，挤进那道只容一人通过的缝隙。门后的人立刻从你背后伸手，把门板拉回，锁舌落进槽里，发出一声闷响。走廊里的手电光被切断，只剩门缝底下一条细线。你背贴着冰冷的铁板，听见外面脚步声停在门前，有人用指节敲了两下，又敲了三下，节奏很规整。门后的人没有回应，只是把手按在你肩上，把你往旁边推。应急灯在墙角亮着，光很暗，只够照出脚下窄窄一条通道。空气里是金属和旧纸混在一起的气味，通道两侧堆着拆下来的档案柜抽屉，铁皮边缘都生了锈。门后的人比你矮半个头，兜帽压得很低，声音也压得很低，让你别出声，跟着走。你跟着他绕过一堆抽屉，通道拐了个弯，尽头是一扇没有编号的铁门，门板上用粉笔写着一个数字，又被擦掉了一半。他停下脚步，回头看你怀里的档案袋，目光在封口那道撕痕上停了一瞬。他说那串编号他见过，就在这层某扇不该存在的门后面。外面的敲击声停了，脚步声开始往通风井方向退。他补了一句，执行部不会一直走，他们只是去拿工具。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "锁舌"
+            ],
+            "timeline_node": 38
+          },
+          {
+            "action_index": 39,
+            "excerpt": "你压低声音让诺诺留在通道拐角望风，她点头退到那堆锈蚀抽屉旁，背贴着墙。你转身跟上兜帽人的脚步，鞋底在铁屑上碾出细碎的响。走出七八步，身后忽然传来一声闷响，是铁皮抽屉被碰倒后砸在地上的声音，紧接着是抽屉里散落的旧纸片簌簌滑开的动静。你回头，诺诺僵在拐角，一只手还悬在半空，脚边倒着一只抽屉，锈屑和纸片撒了一地。她朝你无声地比了个口型，脸色发白。通道深处立刻有了回应，通风井方向传来压低的交谈，两个声音，一个在说这边有脚印，另一个说纤维挂在这根钉子上，往这边。手电光在拐角后的墙面上晃了一下，又收回去，他们在确认方向，还没有直接冲进来。兜帽人没有回头，只加快半步，把你带到通道尽头那扇没有编号的铁门前。门板上用粉笔写过一串数字，被擦掉了一半，剩下的残痕在应急灯下泛着灰白。你摸出预备任务单，把背面的残印编号抄录凑到光下比对，前四位吻合，第五位被擦得只剩一道斜痕，和抄录上的字符对得上。兜帽人抬手示意你别出声，指了指门板，说封存编号的东西就在这后面。你这才看清门上的锁，一把旧式机械锁，锁芯周围有新鲜的划痕，门板侧面还有一道被撬开又焊死的缝隙，焊疤粗糙，颜色比周围的铁皮浅。他低声说，这扇门本该不存在，编号也不该存在，执行部去拿切割工具了，留给你的时间不多。通道拐角那边，手电光又亮了一次，这次更近。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 39,
+            "excerpt": "指出门后封存编号，门上有旧式机械锁与焊死缝隙，警告时间有限。",
+            "json_pointer": "/output/npcs_encountered/1/notes",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 39,
+            "excerpt": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+            "json_pointer": "/output/options/1",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 40
+          },
+          {
+            "action_index": 40,
+            "excerpt": "这锁不是靠权限开的。你的卡能烫，说明它认得这扇门，可门不认卡。别再试了，声音已经出去了。",
+            "json_pointer": "/output/dialogue/0/text",
+            "terms": [
+              "门不认卡",
+              "这锁不是靠权限"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+            "json_pointer": "/output/memory_updates/items_upserted/0/notes",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "指出通行卡认得门但门不认卡",
+            "json_pointer": "/output/memory_updates/npcs_upserted/0/notes",
+            "terms": [
+              "门不认卡"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+            "json_pointer": "/output/memory_updates/world_facts_upserted/0/description",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。你把卡缘对准旧式机械锁的槽口，慢慢推了进去。卡身卡进一半就停住，槽口比卡厚，你只能斜着用力，手腕的旧紧劲顺着小臂爬上来。锁芯里传来一声干涩的咔嗒，你屏住呼吸，以为对上了。下一秒，锁芯内部弹出一声脆响，像有什么金属弹片被顶开，声音在铁皮通道里炸开，撞上两侧锈蚀的抽屉堆，又折回来，滚进通道深处。你手里的卡猛地一烫，裂纹从边缘往里扩了一截，暗红的光沿着裂口渗出来，照得你指节发白。锁没有开，锁舌纹丝不动，可锁芯里多了一点不该有的东西，一小片铜色的簧片从槽口边缘翘出来，上面刻着半截编号，和你抄在任务单背面的那串字符对得上。通道拐角后的手电光猛地定住。脚步声从试探变成奔跑，鞋底砸在铁阶上，一下比一下近。兜帽人从你身后伸手，把卡从锁槽里拔出来，塞回你掌心，声音压得极低。",
+            "json_pointer": "/output/narration",
+            "terms": [
+              "旧式机械锁",
+              "锁舌"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 40,
+            "excerpt": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+            "json_pointer": "/player_action",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 41
+          },
+          {
+            "action_index": 41,
+            "excerpt": "从旧式机械锁芯里掰下的铜色簧片，断口带毛刺，表面刻着半截编号，与任务单背面的抄录部分吻合。",
+            "json_pointer": "/output/items_gained/0/description",
+            "terms": [
+              "旧式机械锁"
+            ],
+            "timeline_node": 42
+          }
+        ],
+        "update_actions": []
+      },
+      "evidence_ids": [
+        "JLC-20261106-G04-Q03.e01",
+        "JLC-20261106-G04-Q03.e02",
+        "JLC-20261106-G04-Q03.e03",
+        "JLC-20261106-G04-Q03.e04"
+      ],
+      "id": "JLC-20261106-G04-Q03",
+      "interval": {
+        "ancestor_edges_since_last": 6,
+        "definition": "checkpoint.action_index - last_public_topic_mention_action; 含选项/检定条件/提交后输出全部字符串及实际玩家行动，保守话题扫描，不将持续状态算作新事件",
+        "interpretation": "未知题仅衡量话题间隔，不代表已知答案被遗忘；语义重提待人工复核。",
+        "primary_unit": "submitted_action",
+        "since_first_actions": 7,
+        "since_first_campaign_turns": 7,
+        "since_last_campaign_turns": 6,
+        "since_last_public_mention_actions": 6
+      },
+      "review": {
+        "ambiguities": [
+          "问题指定先前同一道锁，不把后来维护门/检修口当同一门。不能据一次失败推出物理上永久不可能。",
+          "完整记忆快照对第二要点只能部分支持；问题仍可由检查点之前的真实历史确定，待人工决定后续是否作为完整答案评分项。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "回忆失败尝试与角色说明，区分持有工具/发生反应与验证成功。",
+      "unknown_audit": null,
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 40,
+        "first_event_action": 40,
+        "through_checkpoint": 47
+      }
+    }
+  ],
+  "schema_version": "jity.capture-question-bank.v1"
+}

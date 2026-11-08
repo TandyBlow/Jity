@@ -1,0 +1,718 @@
+{
+  "checkpoint": {
+    "action_index": 30,
+    "campaign_turn": 27,
+    "checkpoint_sha256": "84b6cc053581cf0a041ab6d26d7c9ae78d7abd367d84bb6292564fede0917bab",
+    "state_sha256": "5e1f245f9eed391b35a718eb0e6b7c8b3f65c9367a8af3f61e78df144042b50e",
+    "state_turn": 30,
+    "timeline_node": 31
+  },
+  "context": {
+    "recent_context": [
+      {
+        "action_index": 25,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [
+            {
+              "aliases": [],
+              "description": "黄铜钥匙，柄上缠着褪色布条，在贴墙横移途中脱手遗失。",
+              "location": "旧温室连廊中段墙根一带",
+              "name": "温室连廊铁门钥匙",
+              "notes": "需返回寻找。",
+              "status": "lost",
+              "transition": ""
+            }
+          ],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家发现黄铜钥匙已遗失，确认金属匣纹路与铁门灼痕同源，通道尽头灰光前有东西移动。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "手掌灼痛，钥匙遗失，退路被封",
+              "current_goal": "沿维修通道深入，确认新路线并查明纹路关联",
+              "danger_level": "medium",
+              "notes": "已拉开与影子的距离，获得喘息空间。"
+            },
+            "quests_upserted": [
+              {
+                "description": "沿维修通道深入，确认新路线是否通向连廊之外，并查明金属匣暗红纹路与铁门灼痕的关联。",
+                "name": "新生入学调查",
+                "notes": "确认金属匣纹路与铁门把手灼痕走向一致，钥匙遗失。",
+                "objective": "查明纹路同源并找到出路",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "匣盖侧面暗红纹路与铁门把手灼痕走向、收笔回勾一致，出自同一来源。",
+                "name": "金属匣纹路与铁门灼痕同源",
+                "notes": "两处痕迹可作关联证据。",
+                "source": "玩家近距离观察金属匣",
+                "status": "known"
+              },
+              {
+                "description": "通道尽头的灰光暗了一瞬又亮起，似有东西从光源前走过。",
+                "name": "通道尽头灰光前有移动之物",
+                "notes": "深处存在活动目标。",
+                "source": "玩家在通道口观察",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你伸手探向腰间，指腹先摸到任务单卷起的纸边，再往下，是空荡荡的布带。你换了口袋去摸，临时通行卡还在，硬质卡角硌着指节，可那枚缠着褪色布条、一直握在手里的黄铜钥匙，不在了。你回想最后一次触到它的位置，是铁门锁孔，是门房递给你的时候，之后你一路贴墙横移，它大概在某次松手或撞上砖面时脱了出去，落在连廊某段黑暗里。掌心那道灼痛还在，提醒你刚才碰过什么。你收回手，把注意力重新放回嵌在墙里的金属匣。匣盖侧面那道暗红纹路在冷光下几乎不显，只有凑近才看得出细密的走向，边缘锐利，收笔处有一道短促的回勾。你盯着那道回勾，忽然想起铁门把手上的灼痕，同样的走向，同样的收笔，连粗细变化都一致。两处痕迹出自同一只手，或同一件东西。通道尽头的灰光在这时暗了一瞬，又亮起来，像有什么东西从光源前走过，遮了一下又移开。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功接近灰光看清移动之物，失败被察觉并失去退路。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "搜索检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功找回钥匙，失败在黑暗中耗时并让影子重新定位你。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "操作检定",
+              "requires_check": true,
+              "skill": "巧手",
+              "stakes": "成功撬开匣盖获得线索，失败触发匣内机关或警报。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "侧身沿维修通道向尽头灰光处推进，确认光源前移动的是什么",
+            "退回连廊，在刚才横移过的墙根一带摸找遗失的黄铜钥匙",
+            "用临时通行卡的硬质卡角去刮金属匣纹路旁的匣盖边缘，试探匣盖能否开启"
+          ],
+          "quests_updated": [
+            {
+              "description": "沿维修通道深入，确认新路线是否通向连廊之外，并查明金属匣暗红纹路与铁门灼痕的关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Narrow brick maintenance corridor, dim grey light at far end flickering, metal box embedded in wall with faint red veins, horror atmosphere"
+        },
+        "player_action": "重新尝试其他行动",
+        "timeline_node": 26
+      },
+      {
+        "action_index": 26,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功接近灰光看清移动之物，失败被察觉并失去退路。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 13
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "潜行失败，影子完全转向玩家，铁门合拢封死退路，玩家看清其肩背纹路与尖状手臂。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "手掌灼痛，退路被封，被移动之物正面察觉",
+              "current_goal": "在无退路下应对移动之物并查明纹路关联",
+              "danger_level": "high",
+              "notes": "灰光被影子遮去大半，通道变暗。"
+            },
+            "quests_upserted": [
+              {
+                "description": "查明纹路同源并找到出路。",
+                "name": "新生入学调查",
+                "notes": "潜行失败，影子完全转向玩家，铁门合拢封死退路。",
+                "objective": "在退路被封、移动之物已察觉的情况下脱身并查明纹路关联",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "影子偏转时显出肩背一侧高出一截，皮下有与金属匣同源的暗红纹路，手臂末端是一段发亮的尖。",
+                "name": "移动之物的局部轮廓",
+                "notes": "纹路走向与铁门灼痕、金属匣侧面回勾一致。",
+                "source": "玩家在维修通道内被察觉时看清",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你侧过身，肩胛贴着维修通道的砖壁往里挪。通道窄得只能容一人，头顶断掉的线缆垂下来，蹭过你的额角。灰光就在前方十几步处，冷而稳定，把通道尽头照成一片模糊的亮。你压住脚步，尽量让鞋底不擦出声。走到第七步，脚下踩到一截松动的线缆皮，发出一声轻响。灰光前的影子立刻停住。它偏转过来，整个轮廓正对你，光源被它遮去大半，通道骤然暗下去。你看清了它的一部分：肩背的线条不对，一侧高出一截，边缘有细密的暗红纹路在皮下走，和金属匣侧面那道回勾同源。它抬起的那只手臂末端没有手指，是一段收窄的、发亮的尖。与此同时，身后传来铁门缓缓合拢的闷响，锁舌落下的声音在砖壁间来回撞。退路断了。影子朝你这边倾了倾，灰光在它背后一明一暗。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清纹路走向与它行动的规律，失败被它逼近并承受一次冲击。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "探索检定",
+              "requires_check": true,
+              "skill": "探索",
+              "stakes": "成功找到侧向缝隙脱身，失败在狭窄处被它堵住。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功撬开匣盖获得线索，失败弄出响声把它引到近前。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "不退，正面盯住那东西的轮廓，把它身上的暗红纹路和金属匣的走向逐段比对",
+            "贴着通道壁摸索侧向岔口或可攀的缝隙，找一条绕开它的路",
+            "退回金属匣旁，试着撬开匣盖，看匣里的东西能否牵制它"
+          ],
+          "quests_updated": [
+            {
+              "description": "查明纹路同源并找到出路；退路已被封死，移动之物已察觉玩家。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -4,
+          "scene_prompt": "Narrow brick maintenance tunnel, dim grey glow ahead, tall distorted silhouette blocking light, cables hanging, claustrophobic horror"
+        },
+        "player_action": "侧身沿维修通道向尽头灰光处推进，确认光源前移动的是什么",
+        "timeline_node": 27
+      },
+      {
+        "action_index": 27,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功撬开匣盖获得线索，失败弄出响声把它引到近前。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 2
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -2,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "纸面被晶体划破，背面灼出焦痕字迹：别用纸接。",
+                "location": "玩家身上",
+                "name": "预备任务单",
+                "notes": "未变",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "撬匣失败发出尖响，影子加速逼近至近身，匣缝透出与影子同源的暗红微光。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "手掌灼痛，指腹割伤，退路被封，影子近身",
+              "current_goal": "在影子近身下抉择：掀匣、钻缝或举卡",
+              "danger_level": "critical",
+              "notes": "匣盖卡死，缝隙透光"
+            },
+            "quests_upserted": [],
+            "world_facts_upserted": [
+              {
+                "description": "匣盖缝隙透出的暗红微光随影子逼近的节奏明暗，缝隙内壁纹路与影子皮下暗红走向一致。",
+                "name": "匣内微光与影子同源",
+                "notes": "暗示匣内之物与影子同源",
+                "source": "撬匣失败时瞥见",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你退回金属匣旁，后背抵着砖壁，把手指扣进匣盖与匣身之间那道细缝。金属冷得刺骨，缝里积着陈年的灰。你屈起指节发力，匣盖只抬起一线，卡角立刻刮在匣身上，发出一声尖利的金属摩擦响。那声音在窄通道里被放大，来回撞了几次才散。通道尽头的影子骤然停住。它偏转过来，整个轮廓正对你，随即迈开步子朝你压来，步幅不自然，一步跨得比常人多出半截，灰光被它整个吞到背后，通道暗下去一层。你手上没停，又撬了一次，匣盖卡得更死，指腹被边缘割开一道口子。就在这一线缝隙里，有微光透出来，极淡的暗红，随着影子逼近的节奏一明一暗，缝隙内壁浮出细密纹路，走向和匣侧那道回勾、和影子皮下的暗红完全一致。它离你只剩几步，尖状的手臂抬了起来。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功掀开匣盖获得匣内之物，失败被影子近身重创。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功挤进裂缝脱身，失败卡在缝口被追上。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功看出卡面纹路与影子的关联，失败暴露自己引来扑击。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "把匣盖彻底掀开，赌匣里的东西能牵制它",
+            "放弃匣子，侧身钻进通道壁上一处更窄的裂缝",
+            "举起临时通行卡迎向影子，看卡面纹路是否有反应"
+          ],
+          "quests_updated": [
+            {
+              "description": "在退路被封、移动之物已察觉的情况下脱身并查明纹路关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -4,
+          "scene_prompt": "narrow brick maintenance corridor, dim red glow leaking from a jammed metal box, tall distorted shadow closing in"
+        },
+        "player_action": "退回金属匣旁，试着撬开匣盖，看匣里的东西能否牵制它",
+        "timeline_node": 28
+      },
+      {
+        "action_index": 28,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "力量检定",
+              "requires_check": true,
+              "skill": "力量",
+              "stakes": "成功掀开匣盖获得匣内之物，失败被影子近身重创。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 3
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -5,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "撬匣失败被影子尖臂重创左肩，却发现匣内微光与影子纹路同频搏动，影子短暂迟滞。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩外侧撕裂伤，手臂发麻，靠墙滑坐，意识清醒",
+              "current_goal": "利用影子迟滞的窗口脱身或查明牵引关系",
+              "danger_level": "critical",
+              "notes": "匣盖卡死未能掀开，退路仍被封。"
+            },
+            "quests_upserted": [
+              {
+                "description": "在退路被封、影子近身的情况下脱身并查明纹路关联。",
+                "name": "新生入学调查",
+                "notes": "撬匣失败被重创，但发现匣内微光与影子纹路同频搏动，影子出现迟滞。",
+                "objective": "利用影子迟滞的窗口脱身或查明匣内之物与影子的牵引关系",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "匣缝透出的暗红微光与影子皮下纹路同时亮起又同时暗下，节奏一致，影子因此出现短暂迟滞。",
+                "name": "匣内微光与影子纹路同频",
+                "notes": "暗示匣内之物对影子存在牵引作用。",
+                "source": "撬匣失败被影子击中时的观察",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你把全身的重量压上匣盖，指节扣进那道细缝，肩背绷成一条直线。匣盖抬起半寸，卡角在匣身上刮出一声长响，随即咬死，纹丝不动。你换了个角度再顶，掌心那道灼痛炸开，指腹的伤口被金属边缘又割深一层，血顺着匣面往下淌。就在这一瞬，通道尽头的影子已经贴到近前。它抬起的那段发亮尖臂横着扫来，你侧身避让，肩头慢了半拍，尖端擦过左肩外侧，衣料和皮肉一起被撕开，一股烧灼般的剧痛顺着锁骨窜到后颈。你被这一击带得撞上砖壁，半边身子发麻，手臂抬不起来。可就在尖臂触到你的同一刻，匣缝里那线暗红微光猛地亮了一下，影子皮下那些细密纹路也同时亮起，明暗的节奏完全一致，随后又一起暗下去。影子停住了。它收臂后退半步，轮廓偏转，像被什么从背后牵住了线，动作出现一段不自然的迟滞。你靠着墙滑坐下去，喘着气，看清它肩背的纹路正随着匣内那点微光一明一暗地搏动，那搏动很轻，一下，又一下，和心跳同频。退路仍被合拢的铁门封死，但你和它之间，第一次空出了几步的距离。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功看清搏动与牵引的规律，失败则耽误时间让影子恢复。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功绕过影子接近灰光，失败则被它重新锁定。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "试探检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功可能干扰牵引，失败会激怒影子或损坏通行卡。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "趁影子迟滞的间隙，观察匣内微光与影子纹路的搏动节奏，判断两者牵引的方向",
+            "忍痛沿维修通道向尽头灰光处爬行，绕开影子寻找另一侧出口",
+            "用临时通行卡贴向匣面纹路，试探学院的权限标记能否干扰这种牵引"
+          ],
+          "quests_updated": [
+            {
+              "description": "在退路被封、影子近身的情况下脱身并查明纹路关联；已确认匣内微光与影子纹路同频搏动。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Narrow brick maintenance corridor, wounded figure slumped against wall, shadowy clawed figure halted mid-step, faint crimson glow from wall-mounted metal box"
+        },
+        "player_action": "把匣盖彻底掀开，赌匣里的东西能牵制它",
+        "timeline_node": 29
+      },
+      {
+        "action_index": 29,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功绕过影子接近灰光，失败则被它重新锁定。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 1,
+            "outcome": "failure",
+            "roll": 10
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [
+            {
+              "description": "从墙内暗格取出的金属残片，边缘有新鲜刮痕，形状与门柱基座刻痕同形。",
+              "name": "同形金属残片",
+              "status": "owned"
+            }
+          ],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "从墙内暗格取出的金属残片，边缘有新鲜刮痕，形状与门柱基座刻痕同形。",
+                "location": "玩家手中",
+                "name": "同形金属残片",
+                "notes": "暗格内壁另有旧维修记录字迹。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "爬行绕影失败被重新锁定，摸到松动砖块发现暗格与同形金属残片，影子因微光迟滞。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤，指腹割伤，爬行中体力消耗",
+              "current_goal": "利用影子迟滞的窗口脱身或查明牵引关系",
+              "danger_level": "critical",
+              "notes": "影子被匣内微光短暂迟滞。"
+            },
+            "quests_upserted": [
+              {
+                "description": "利用影子迟滞的窗口脱身或查明匣内之物与影子的牵引关系。",
+                "name": "新生入学调查",
+                "notes": "爬行失败被影子重新锁定，但发现暗格与金属残片。",
+                "objective": "利用影子迟滞的窗口脱身或查明牵引关系",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "墙根松动砖块后有一个浅浅的暗格，格底嵌着与门柱刻痕同形的金属残片，内壁刻有旧维修记录字迹。",
+                "name": "维修通道暗格",
+                "notes": "残片边缘有新鲜刮痕。",
+                "source": "玩家爬行时摸到松动砖块",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你把牙关咬紧，左肩的撕裂伤在每一次撑地时都扯出一股热辣的疼。你压低身体，沿着维修通道的砖壁向尽头那片灰光爬去，膝盖和手肘交替着蹭过积灰的地面。爬出五六步，通道尽头的影子忽然停住，它皮下那些暗红纹路开始一明一暗地搏动，节奏和身后金属匣缝里透出的微光完全同步。搏动加快，影子的轮廓随之绷紧，它偏转过来，重新把你锁进它的方向。灰光被它整个遮住，通道暗下去一层。它迈开步子追来，步幅不自然，一步跨得比常人多出半截，鞋底擦过砖面的声音越来越近。你加快爬行，右手在墙根摸索着借力，指腹忽然撞上一处松动的砖块，砖面往里陷了半寸。你顺势一抠，砖块脱落，墙里露出一个浅浅的暗格，格底嵌着一小片金属残片，边缘带着新鲜的刮痕，形状和门柱基座上的刻痕同形。你把它捏在指间，残片冰凉。身后影子的脚步已经贴到近处，可就在这一瞬，匣缝里的暗红微光又闪了一下，影子皮下的纹路跟着一亮一暗，它的动作明显迟滞了半拍，抬起的尖臂停在半空。你得到了一线喘息，也看清了暗格内壁还刻着几道旧维修记录的字迹。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功拉开距离接近灰光，失败被影子再次锁定并付出代价。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功读出维修记录线索，失败只辨认出零星字迹并耽误时间。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功确认同源关系并找到牵制方法，失败残片反光惊动影子。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "趁影子迟滞，抓起暗格里的金属残片，继续向灰光处爬",
+            "借着喘息窗口，辨认暗格内壁的旧维修记录字迹",
+            "把金属残片举向匣缝的微光，比对它与影子纹路的同源关系"
+          ],
+          "quests_updated": [
+            {
+              "description": "利用影子迟滞的窗口脱身或查明匣内之物与影子的牵引关系。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Narrow brick maintenance tunnel, dim gray light ahead, shadowy figure with red veins, loose brick alcove with metal shard, horror atmosphere"
+        },
+        "player_action": "忍痛沿维修通道向尽头灰光处爬行，绕开影子寻找另一侧出口",
+        "timeline_node": 30
+      },
+      {
+        "action_index": 30,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功确认同源关系并找到牵制方法，失败残片反光惊动影子。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 10
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "从墙内暗格取出的金属残片，边缘有新鲜刮痕，形状与门柱基座刻痕同形。",
+                "location": "玩家手中",
+                "name": "同形金属残片",
+                "notes": "反光下浮现与影子纹路部分吻合的图案，回勾末端缺一小段，同源但不完整。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "残片反光浮现与影子部分吻合但缺一段的图案，惊动影子，影子搏动紊乱后加速逼近。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤，指腹割伤，爬行中体力消耗，残片反光暴露位置",
+              "current_goal": "在影子重新逼近前脱身或找到牵制方法",
+              "danger_level": "critical",
+              "notes": "影子搏动紊乱后加速逼近"
+            },
+            "quests_upserted": [
+              {
+                "description": "利用影子迟滞的窗口脱身或查明牵引关系。",
+                "name": "新生入学调查",
+                "notes": "残片反光惊动影子，影子搏动紊乱后重新加速逼近。",
+                "objective": "在影子重新逼近前脱身或找到牵制方法",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "残片反光下浮现与影子皮下纹路部分吻合的图案，回勾末端缺一小段，暗示同源关系存在关键差异或干扰。",
+                "name": "残片与影子纹路同源但不完整",
+                "notes": "缺口可能是牵制的关键，也可能是陷阱。",
+                "source": "玩家举残片比对匣缝微光",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你把那枚同形金属残片从暗格里抠出来，捏在指间，慢慢举向匣缝透出的那线暗红微光。残片边缘的刮痕在光里泛出冷白，你把它的平面转到正对缝隙的角度。光落在残片表面，折出一道细窄的反光，斜斜打上通道的砖壁。就在这一瞬，残片表面浮起一层极淡的图案，细密的走向，收笔处一道短促的回勾，和匣侧纹路、和影子皮下那些暗红几乎重合。你屏住呼吸想看得更清，却发现有一处对不上：回勾的末端在这里是断的，缺了一小段，像是被人从中间削去。同源，但不完整。你还没来得及想这意味着什么，那道反光已经扫过通道尽头。影子的轮廓猛地一颤，皮下纹路剧烈搏动起来，节奏乱了，随即又猛地收紧。它发出一声低沉的嗡鸣，从喉咙深处挤出来，灰光被它整个吞到背后，通道彻底暗下去。它迈开步子朝你压来，步幅比先前更快，鞋底擦过砖面的声音一下一下逼近。你手里的残片还举在半空，反光已经暴露了你的位置。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功拉开距离接近灰光，失败被影子追上再受一击。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功找到干扰搏动的办法，失败残片被影子击落或损毁。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功退回铁门处并发现缝隙线索，失败被影子逼近。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "把残片塞回暗格，借着影子搏动紊乱的间隙贴墙向灰光处猛冲",
+            "握紧残片，把缺了一段的回勾对准影子皮下纹路的断口，赌它能再次扰乱搏动",
+            "不再管残片，转身沿通道往回爬，试着在铁门合拢处找缝隙"
+          ],
+          "quests_updated": [
+            {
+              "description": "利用影子迟滞的窗口脱身或查明牵引关系，残片反光已暴露位置，影子重新逼近。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Narrow brick maintenance corridor, dim red glow from a wall-mounted metal box, small metal shard reflecting light, a deformed shadow silhouette advancing in darkness, horror atmosphere"
+        },
+        "player_action": "把金属残片举向匣缝的微光，比对它与影子纹路的同源关系",
+        "timeline_node": 31
+      }
+    ]
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-01",
+  "instruction": "仅依据所提供的检查点记录回答问题；区分观察、角色说法与推断。信息不足时说明无法确定。只判断和解释，不执行游戏行动。",
+  "mode": "recent",
+  "question": "在带你去档案室的那段路上，诺诺对门柱刻痕和第一个任务的关联作了什么表态？她让你向谁了解？",
+  "question_id": "JLC-20261106-G01-Q03",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

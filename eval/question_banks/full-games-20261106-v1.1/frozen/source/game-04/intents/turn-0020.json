@@ -1,0 +1,46 @@
+{
+  "before_sha256": "91d793806bda84e7f6b37622214e98085de97e51f20977d86e4f63201995bf32",
+  "created_at": "2026-11-06T06:07:29.382485+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 10
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "把通行卡举到屏幕左下角的缺口前比对，看卡上的裂纹和那块暗影是否吻合",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 20
+  },
+  "selection": {
+    "action": "把通行卡举到屏幕左下角的缺口前比对，看卡上的裂纹和那块暗影是否吻合",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 10,
+    "scores": [
+      {
+        "action": "问诺诺屏幕左下角那个缺口符号代表什么，逼她把三年前的事和这个符号连起来说",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.38167921409775707
+      },
+      {
+        "action": "把通行卡举到屏幕左下角的缺口前比对，看卡上的裂纹和那块暗影是否吻合",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.6973169955133753
+      },
+      {
+        "action": "不再看屏幕，转身朝走廊深处那面没有门的墙走回去，顺着鳞纹指引的方向查证",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.16881055669549516
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 20
+}

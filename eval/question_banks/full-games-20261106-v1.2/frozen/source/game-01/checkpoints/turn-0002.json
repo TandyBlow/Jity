@@ -1,0 +1,255 @@
+{
+  "head": 3,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": {
+      "check": {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "观察检定",
+        "requires_check": true,
+        "skill": "调查",
+        "stakes": "成功注意到诺诺的细微反应或门柱旁的异常痕迹，失败则被诺诺察觉你的打量并可能改变态度。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      "degree": "成功",
+      "option_index": 1,
+      "outcome": "success",
+      "roll": 16
+    },
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院大门前",
+    "dialogue": [],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院大门前",
+      "items_removed": [],
+      "items_upserted": [
+        {
+          "aliases": [],
+          "description": "半截被踩进泥里的金属徽记，边缘沾着新鲜湿泥，位置在门柱基座旁。",
+          "location": "大门门柱基座旁的泥地",
+          "name": "泥中的金属徽记",
+          "notes": "诺诺视线曾短暂扫过此处。",
+          "status": "owned",
+          "transition": ""
+        }
+      ],
+      "key_event": "玩家观察到诺诺对门柱旁痕迹的细微回避，并发现泥中金属徽记与石面刻痕。",
+      "npcs_upserted": [
+        {
+          "current_location": "卡塞尔学院大门门柱旁",
+          "description": "红发女生，行动直接、观察力敏锐，被安排接应新生。",
+          "name": "诺诺",
+          "notes": "对门柱旁的痕迹有细微回避反应，尚未主动开口。",
+          "relationship": "初次接触，态度未明",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常",
+        "current_goal": "从诺诺处获得入校指引，并弄清门柱旁痕迹的来历",
+        "danger_level": "medium",
+        "notes": "掌握观察所得的信息优势。"
+      },
+      "quests_upserted": [],
+      "world_facts_upserted": [
+        {
+          "description": "门柱基座石面上有边缘整齐的浅淡刻痕，旁边泥里踩着一枚金属徽记，与环境不符。",
+          "name": "门柱旁的异常痕迹",
+          "notes": "诺诺的视线曾短暂偏移至此。",
+          "source": "玩家观察成功",
+          "status": "suspected"
+        }
+      ]
+    },
+    "narration": "雨丝斜斜地切过门廊的灯光，你借着抬手挡雨的姿势，把目光从诺诺脸上移开。她的视线在你手里的通行卡上停了半秒，随即滑向门柱基座，又若无其事地收回。那半秒太短，短到像是雨水迷了眼。她的右手食指在臂弯处轻轻收紧，指节泛白，随即松开。你顺着她刚才瞥过的方向看去，门柱基座与地面接缝处，石面上有一道浅淡的刻痕，被雨水冲刷得几乎看不清，但边缘整齐，不像风化。刻痕旁边，一枚金属徽记被踩进泥里，只露出半截边缘，上面沾着新鲜的湿泥。诺诺没有开口，只是歪了歪头，雨水从她发梢滴落。她似乎在等你先说话，或者等你先注意到什么。大门内侧的灯忽然闪了一下，又稳住。远处主楼的方向传来一声闷响，像是什么重物落地，随即归于雨声。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "观察中，尚未表态",
+        "name": "诺诺",
+        "notes": "注意到玩家在打量，但未点破；对门柱旁的痕迹有所回避。"
+      }
+    ],
+    "option_checks": [
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功让诺诺给出关于徽记的线索，失败则她反问你的观察力并转移话题。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      {
+        "difficulty": "容易",
+        "expression": "1d20 ≥ 8",
+        "name": "调查检定",
+        "requires_check": true,
+        "skill": "调查",
+        "stakes": "成功看清刻痕与徽记细节，失败则被诺诺先一步打断。",
+        "system": "通用 d20",
+        "target": 8
+      },
+      null,
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "观察检定",
+        "requires_check": true,
+        "skill": "观察",
+        "stakes": "成功从诺诺反应中判断她是否知情，失败则她察觉你在试探并改变态度。",
+        "system": "通用 d20",
+        "target": 16
+      }
+    ],
+    "options": [
+      "直接问诺诺：门柱下那枚徽记是什么，为什么被踩进泥里",
+      "蹲下查看刻痕和徽记，不急着开口",
+      "出示临时通行卡，按正常流程请诺诺带你入校",
+      "先问诺诺刚才主楼方向那声闷响是什么"
+    ],
+    "quests_updated": [
+      {
+        "description": "诺诺在门柱旁等待，玩家需要从她那里获得入校指引，同时门柱旁出现了异常痕迹。",
+        "name": "与诺诺交谈并了解入校流程",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": 0,
+    "scene_prompt": "rainy night gothic gate, red-haired girl leaning on pillar, faint carved mark and metal badge in mud, dim flickering light"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-01",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 3,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 2,
+    "turns_total": 2
+  },
+  "session_id": "game-01",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {
+        "泥中的金属徽记": "泥中的金属徽记"
+      },
+      "narrative_pool": [],
+      "nsb": {
+        "episode_counter": 0,
+        "level1": [],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T1 玩家]: 开始游戏\n[T1 主持人]: 你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。\n\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T2 玩家]: 观察诺诺的举止和门柱周围的环境\n[T2 主持人]: 雨丝斜斜地切过门廊的灯光，你借着抬手挡雨的姿势，把目光从诺诺脸上移开。她的视线在你手里的通行卡上停了半秒，随即滑向门柱基座，又若无其事地收回。那半秒太短，短到像是雨水迷了眼。她的右手食指在臂弯处轻轻收紧，指节泛白，随即松开。你顺着她刚才瞥过的方向看去，门柱基座与地面接缝处，石面上有一道浅淡的刻痕，被雨水冲刷得几乎看不清，但边缘整齐，不像风化。刻痕旁边，一枚金属徽记被踩进泥里，只露出半截边缘，上面沾着新鲜的湿泥。诺诺没有开口，只是歪了歪头，雨水从她发梢滴落。她似乎在等你先说话，或者等你先注意到什么。大门内侧的灯忽然闪了一下，又稳住。远处主楼的方向传来一声闷响，像是什么重物落地，随即归于雨声。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 2
+      },
+      "pending": false,
+      "protected_turns": [
+        2
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 0,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "泥中的金属徽记",
+          "last_seen_turn": 2,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "3781e559a09c5825a1984c028874fe4f"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院大门前",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "",
+        "location": "",
+        "name": "临时通行卡",
+        "notes": "",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "半截被踩进泥里的金属徽记，边缘沾着新鲜湿泥，位置在门柱基座旁。",
+        "location": "大门门柱基座旁的泥地",
+        "name": "泥中的金属徽记",
+        "notes": "诺诺视线曾短暂扫过此处。",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "卡塞尔学院大门门柱旁",
+        "description": "红发女生，行动直接、观察力敏锐，被安排接应新生。",
+        "name": "诺诺",
+        "notes": "对门柱旁的痕迹有细微回避反应，尚未主动开口。",
+        "relationship": "初次接触，态度未明",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "正常",
+      "current_goal": "从诺诺处获得入校指引，并弄清门柱旁痕迹的来历",
+      "danger_level": "medium",
+      "notes": "掌握观察所得的信息优势。"
+    },
+    "quests": [
+      {
+        "description": "诺诺在门柱旁等待，玩家需要从她那里获得入校指引，同时门柱旁出现了异常痕迹。",
+        "name": "与诺诺交谈并了解入校流程",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "玩家观察到诺诺对门柱旁痕迹的细微回避，并发现泥中金属徽记与石面刻痕。"
+    ],
+    "sanity": 82,
+    "turn": 2,
+    "world_facts": [
+      {
+        "description": "门柱基座石面上有边缘整齐的浅淡刻痕，旁边泥里踩着一枚金属徽记，与环境不符。",
+        "name": "门柱旁的异常痕迹",
+        "notes": "诺诺的视线曾短暂偏移至此。",
+        "source": "玩家观察成功",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 2,
+  "uuid_counter": 7
+}

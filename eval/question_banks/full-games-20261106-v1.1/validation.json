@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-11-06T06:36:32.830594+00:00",
+  "checks": {
+    "checkpoint_ancestor_chain": true,
+    "checkpoint_fingerprints": true,
+    "evidence_exists": true,
+    "frozen_input_fingerprints": true,
+    "last_literal_rementions": true,
+    "no_future_evidence": true,
+    "private_gold_separation": true,
+    "same_questions_and_checkpoints_in_three_groups": true,
+    "source_only_model_inputs": true,
+    "unique_ids": true,
+    "unknown_bounded_review": true
+  },
+  "evidence_references": 56,
+  "frozen_inputs": 36,
+  "games": 4,
+  "limitations": [
+    "问句泄题、隐含推导、别名和语义重提仍需人工审核；不以字面扫描代替语义审计。",
+    "原始历史里出现答案是合法上下文，不等于私有标准答案泄漏；验证从源重建而非禁止答案字串。"
+  ],
+  "model_answers": 0,
+  "original_source_checked": true,
+  "paid_api_calls": 0,
+  "questions": 12,
+  "schema_version": "jity.capture-question-bank.v1",
+  "scores": null,
+  "semantic_review": "pending_human_review",
+  "status": "passed"
+}

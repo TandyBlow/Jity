@@ -1,0 +1,46 @@
+{
+  "before_sha256": "d37e0176198a5e5d7cedffff23385d9b9734eb2cdfdbdc37a7cfe58afa4be7f0",
+  "created_at": "2026-11-06T05:29:54.467226+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 12
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁监视者侧身让出缝隙，立刻挤出去直奔便利店取件柜取那个包裹",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 35
+  },
+  "selection": {
+    "action": "趁监视者侧身让出缝隙，立刻挤出去直奔便利店取件柜取那个包裹",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 12,
+    "scores": [
+      {
+        "action": "趁监视者侧身让出缝隙，立刻挤出去直奔便利店取件柜取那个包裹",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8768267061835364
+      },
+      {
+        "action": "先逼监视者把封存箱里装的东西说清楚，再决定去向",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6685021263894738
+      },
+      {
+        "action": "让诺诺拖住监视者，你独自绕回便利店后门取包裹",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.40142154637643046
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 35
+}

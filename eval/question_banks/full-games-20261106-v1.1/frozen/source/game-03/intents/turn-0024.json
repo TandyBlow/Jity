@@ -1,0 +1,48 @@
+{
+  "before_sha256": "aeb0e764623228b67ade99a6fc5f1355141a3e38459a9f9b0b0f3de9fabb6cf7",
+  "created_at": "2026-11-06T05:58:05.725700+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 3,
+    "player_action": "把通行卡按在桌上推给他，换取他松手，同时记住他接过卡时先看哪一栏",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 24
+  },
+  "selection": {
+    "action": "把通行卡按在桌上推给他，换取他松手，同时记住他接过卡时先看哪一栏",
+    "option_index": 3,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 4,
+    "scores": [
+      {
+        "action": "顺着核查员的话头承认碰过报告，但坚持要求他当着第二人的面核对样本编号与登记号，把矛盾摊到台面上",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.9887743530130074
+      },
+      {
+        "action": "不再争辩，趁他扣腕的力道还没收紧，猛地抽手撞开半掩的门，去和诺诺汇合",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.31109205628605807
+      },
+      {
+        "action": "压低声音告诉核查员，编号末尾与登记号完全一致的那组被划掉的数字你已经记下了，问他是不是也见过",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.5954325788335366
+      },
+      {
+        "action": "把通行卡按在桌上推给他，换取他松手，同时记住他接过卡时先看哪一栏",
+        "index": 3,
+        "score": 3,
+        "tie_break": 0.6753913212386561
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 24
+}

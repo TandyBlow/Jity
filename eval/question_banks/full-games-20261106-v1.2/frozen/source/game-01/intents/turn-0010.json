@@ -1,0 +1,42 @@
+{
+  "before_sha256": "31ffed6abe0bfc4803e600628906eee7a50f91d7e1d66de2ac68704517151e7d",
+  "created_at": "2026-11-06T05:16:59.161079+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "先不追问档案的事，接过任务单，向导师确认温室的具体入口和注意事项",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 10
+  },
+  "selection": {
+    "action": "先不追问档案的事，接过任务单，向导师确认温室的具体入口和注意事项",
+    "option_index": 1,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "拿起登记簿仔细比对签名笔迹，并检查那个被抽出一半的档案盒",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8111822045016605
+      },
+      {
+        "action": "先不追问档案的事，接过任务单，向导师确认温室的具体入口和注意事项",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.8280056641173563
+      },
+      {
+        "action": "直接问导师，取走档案的人长什么样，有没有留下其他信息",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9408165667148172
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 10
+}

@@ -1,0 +1,46 @@
+{
+  "before_sha256": "b267d80f541e9575344d502bd243d2c45cc2db6324a17ec0ebb1ebfef48dd33d",
+  "created_at": "2026-11-06T06:10:27.806431+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 6
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "让诺诺守住走廊口，自己贴近门缝再听一次，赌门后的人会先动",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 35
+  },
+  "selection": {
+    "action": "让诺诺守住走廊口，自己贴近门缝再听一次，赌门后的人会先动",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "不再检查，直接推铁门进去，趁门后那点动静还没停",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.7259152098174213
+      },
+      {
+        "action": "放弃铁门，退回通风井，从撬开的栅栏另找一条路",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.1711050584512025
+      },
+      {
+        "action": "让诺诺守住走廊口，自己贴近门缝再听一次，赌门后的人会先动",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.7402046130606887
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 35
+}

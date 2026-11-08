@@ -1,0 +1,46 @@
+{
+  "before_sha256": "9c26fb03d89bfb05fdf0aef8a24089389a72f2ad5ad474128b5d5d17cffd33e6",
+  "created_at": "2026-11-06T05:18:46.375828+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 16
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "贴着左侧墙壁横移，避开缺口影子的正面，摸向连廊更深处",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 22
+  },
+  "selection": {
+    "action": "贴着左侧墙壁横移，避开缺口影子的正面，摸向连廊更深处",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 16,
+    "scores": [
+      {
+        "action": "贴着左侧墙壁横移，避开缺口影子的正面，摸向连廊更深处",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8143965499524619
+      },
+      {
+        "action": "握紧黄铜钥匙，把钥匙柄上的褪色布条缠在灼痛的手掌上，再试着撬动锁舌",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.473271499441291
+      },
+      {
+        "action": "蹲下观察门缝下那圈暗影的起伏规律，找出它压门的间隙",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7261375290807476
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 22
+}

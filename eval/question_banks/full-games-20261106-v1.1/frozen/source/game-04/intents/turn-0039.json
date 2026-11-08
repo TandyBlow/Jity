@@ -1,0 +1,46 @@
+{
+  "before_sha256": "2d19fd5715d2ff68d8c40c8c4e692bbf432efc73f6edb54536c3100be184d18b",
+  "created_at": "2026-11-06T06:11:17.727127+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 10
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "让诺诺留在通道拐角望风，自己跟他靠近那扇门",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 39
+  },
+  "selection": {
+    "action": "让诺诺留在通道拐角望风，自己跟他靠近那扇门",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 10,
+    "scores": [
+      {
+        "action": "不再追问，跟他穿过通道去找那扇没有编号的铁门",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.0406290533234952
+      },
+      {
+        "action": "先问他那个数字具体是什么，再决定是否跟上",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.46298616666405057
+      },
+      {
+        "action": "让诺诺留在通道拐角望风，自己跟他靠近那扇门",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.6672819207711513
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 39
+}

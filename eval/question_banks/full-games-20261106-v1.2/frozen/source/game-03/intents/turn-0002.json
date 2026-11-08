@@ -1,0 +1,48 @@
+{
+  "before_sha256": "dd2f9e36a27c645cf1966eb23fed16da0717166b181422182f081650dd826dde",
+  "created_at": "2026-11-06T05:33:09.352443+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "向诺诺出示临时通行卡并询问入校流程",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 2
+  },
+  "selection": {
+    "action": "向诺诺出示临时通行卡并询问入校流程",
+    "option_index": 0,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 20,
+    "scores": [
+      {
+        "action": "向诺诺出示临时通行卡并询问入校流程",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.1468784000460216
+      },
+      {
+        "action": "观察诺诺的举止和门柱周围的环境",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.3183932251146355
+      },
+      {
+        "action": "直接问诺诺为什么在雨里等你",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.780069291410826
+      },
+      {
+        "action": "提议先找个避雨处再谈",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.9944814918865087
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 2
+}

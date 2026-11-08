@@ -1,0 +1,34 @@
+{
+  "schema_version": "jity.qa-pilot.v1",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "api_key_env": "DEEPSEEK_API_KEY",
+  "parameters": {
+    "temperature": 0,
+    "max_tokens": 1024,
+    "stream": false,
+    "thinking": {"type": "disabled"},
+    "response_format": {"type": "json_object"}
+  },
+  "seed": 20261106,
+  "context_budget_tokens": 131072,
+  "timeout_seconds": 120,
+  "limits": {
+    "max_attempts": 36,
+    "max_attempts_per_sample": 1,
+    "max_input_tokens": 2200000,
+    "max_output_tokens": 36864,
+    "max_cost_usd": 1.0
+  },
+  "prices": {"deepseek-flash": {"input_per_million": 0.3, "output_per_million": 1.2}},
+  "pricing_source": {
+    "checked_date": "2026-11-06",
+    "url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "api_docs": "https://api-docs.deepseek.com/api/create-chat-completion/",
+    "token_docs": "https://api-docs.deepseek.com/quick_start/token_usage/",
+    "documented_revision": "DeepSeek-V4.1-Flash-1017",
+    "rate_basis": "peak_cache_miss_no_discounts; estimate_not_invoice",
+    "immutable_snapshot": false,
+    "new_budget_authorized": false
+  }
+}

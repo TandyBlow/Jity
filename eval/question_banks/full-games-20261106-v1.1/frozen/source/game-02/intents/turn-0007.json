@@ -1,0 +1,46 @@
+{
+  "before_sha256": "1bf04e821eab332bea6a8dd764ad0a6b4ed8672b33372c213b5960b091879a24",
+  "created_at": "2026-11-06T05:24:26.628642+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 13
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "接过任务单，但把临时通行卡按在投影屏下方的感应区，看名单会不会有反应",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 7
+  },
+  "selection": {
+    "action": "接过任务单，但把临时通行卡按在投影屏下方的感应区，看名单会不会有反应",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 13,
+    "scores": [
+      {
+        "action": "接过任务单，同时盯住投影屏上自己名字旁的位置，确认那个宿舍楼编号旁是否还有其他标记",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.17031817275449534
+      },
+      {
+        "action": "先不接任务单，直接问诺诺那个宿舍楼编号是怎么回事，以及是谁分配的",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.9091329200078567
+      },
+      {
+        "action": "接过任务单，但把临时通行卡按在投影屏下方的感应区，看名单会不会有反应",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9379177315852523
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 7
+}

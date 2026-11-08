@@ -1,0 +1,52 @@
+{
+  "before_sha256": "970933cec02f32ed44f83c414250d9bd603d4314d6144f1cf0fdbc24c4a206b2",
+  "created_at": "2026-11-06T06:11:32.277850+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 15
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 40
+  },
+  "selection": {
+    "action": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 15,
+    "scores": [
+      {
+        "action": "让兜帽人说清楚门后封存的是什么，以及那串编号里和他有关的数字，再决定怎么开门",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6478427170922356
+      },
+      {
+        "action": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.65306444022917
+      },
+      {
+        "action": "蹲下检查门板侧面那道焊死的缝隙，找有没有能撬开或塞进东西的薄弱处",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.007961522804707855
+      },
+      {
+        "action": "先退回拐角帮诺诺处理痕迹，抢在执行部逼近前把脚印和纤维清掉",
+        "index": 3,
+        "score": 4,
+        "tie_break": 0.35071440637628715
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 40
+}

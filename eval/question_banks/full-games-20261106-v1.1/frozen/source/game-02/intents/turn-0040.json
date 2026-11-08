@@ -1,0 +1,46 @@
+{
+  "before_sha256": "ab6f51cb043b070f27ace2df4f8777045595e3817bde47de3c2cd740920ac36d",
+  "created_at": "2026-11-06T05:30:56.750243+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 19
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "保持举手后退的姿势，顺着声音去看祭坛边缘那份被红线缠紧的档案",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 40
+  },
+  "selection": {
+    "action": "保持举手后退的姿势，顺着声音去看祭坛边缘那份被红线缠紧的档案",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 19,
+    "scores": [
+      {
+        "action": "保持举手后退的姿势，顺着声音去看祭坛边缘那份被红线缠紧的档案",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.3392908167533276
+      },
+      {
+        "action": "先不理会声音，盯着窄窗后的人影，判断里面的人是否在等守卫的下一步动作",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.4958875521080244
+      },
+      {
+        "action": "趁守卫注意力被侧门内声音分走，低声问守卫那份档案为什么写着我的名字",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.10780645755258544
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 40
+}

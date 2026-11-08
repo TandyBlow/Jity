@@ -1,0 +1,258 @@
+{
+  "head": 9,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": null,
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院大门前",
+    "dialogue": [],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "",
+      "items_removed": [],
+      "items_upserted": [],
+      "key_event": "",
+      "npcs_upserted": [],
+      "player_status_patch": {
+        "condition": "",
+        "current_goal": "",
+        "danger_level": "",
+        "notes": ""
+      },
+      "quests_upserted": [],
+      "world_facts_upserted": []
+    },
+    "narration": "你目前没有可用的“来举到灯的方”，无法使用它。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [],
+    "option_checks": [
+      null
+    ],
+    "options": [
+      "重新尝试其他行动"
+    ],
+    "quests_updated": [],
+    "sanity_delta": 0,
+    "scene_prompt": ""
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-04",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 9,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 7,
+    "turns_total": 7
+  },
+  "session_id": "game-04",
+  "source": "examiner_blocked",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {},
+      "narrative_pool": [
+        {
+          "content": "雨夜卡塞尔学院门前，新生持发烫的临时通行卡与红发女生诺诺对峙。玩家观察门柱柱脚的可疑痕迹被诺诺察觉，诺诺以言语试探通行卡来源，玩家反问其守门原因。玩家递卡被拒，诺诺暗示门内有人等待敢独自进入者，门厅深处随即亮起一盏灯。玩家蹲下查看柱脚痕迹，诺诺指出此举暴露其不敢进门，灯闪后催促行动。",
+          "created_round": 6,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_1",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [
+            6,
+            7
+          ],
+          "score": 0.798500449838059
+        }
+      ],
+      "nsb": {
+        "episode_counter": 1,
+        "level1": [
+          {
+            "causal_links": [
+              "scene_T1→scene_T2: 玩家抵达大门后开始观察诺诺与环境，引发诺诺注意",
+              "scene_T2→scene_T3: 诺诺质问观察意图，玩家坦白柱脚痕迹并反问，诺诺转而追问通行卡来源",
+              "scene_T3→scene_T4: 玩家反问诺诺守门原因，诺诺以通行卡来源不明反制并警告卡发烫",
+              "scene_T4→scene_T5: 玩家递卡试探，诺诺拒绝并揭示门内有人等待，门厅灯亮起",
+              "scene_T5→scene_T6: 玩家选择不进门而蹲查柱脚，诺诺指出其暴露犹豫，灯闪催促"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "临时通行卡",
+              "卡塞尔学院大门",
+              "门柱柱脚",
+              "门厅灯"
+            ],
+            "episode_id": "ep_L1_1",
+            "importance": 0.6,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "持续发烫，热度加剧，边缘泛暗红",
+              "玩家": "被诺诺言语压制，暴露犹豫，未进入大门",
+              "诺诺": "从等待转为试探与施压，揭示门内有人等待",
+              "门厅灯": "从暗处亮起，随后闪烁一次"
+            },
+            "summary": "雨夜卡塞尔学院门前，新生持发烫的临时通行卡与红发女生诺诺对峙。玩家观察门柱柱脚的可疑痕迹被诺诺察觉，诺诺以言语试探通行卡来源，玩家反问其守门原因。玩家递卡被拒，诺诺暗示门内有人等待敢独自进入者，门厅深处随即亮起一盏灯。玩家蹲下查看柱脚痕迹，诺诺指出此举暴露其不敢进门，灯闪后催促行动。",
+            "tags": [
+              "悬疑",
+              "社交"
+            ],
+            "turn_end": 6,
+            "turn_start": 1
+          }
+        ],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T7 玩家]: 把通行卡塞回口袋隔开热度，先问诺诺那盏灯是谁点的、门里等的人是谁\n[T7 主持人]: 你把通行卡塞回口袋，隔着一层布料，那股热度仍在贴着腿根往上渗，像有东西在口袋里慢慢呼吸。你抬起头，把问题抛出去：那盏灯是谁点的，门里等的人又是谁。诺诺歪了歪头，红发从肩头滑下来，她没有回答，反而把问题轻轻推了回来。她说你连灯是谁点的都不知道，就敢问等的人是谁。这句话落下来，你才发觉自己刚才那点试探有多空。门厅深处那盏灯就在这时候暗了一瞬，走廊尽头的光缩成一线，又慢慢涨回来，仿佛有人从灯下走过，又停住脚步。诺诺的目光跟着那点明灭移过去，嘴角的弧度淡了。她说灯不是她点的，她也没资格点，能点这盏灯的人这会儿就在门里。她转回来看你，声音压低了些，说你再这么站着问下去，灯会先失去耐心。雨声忽然显得很吵，你口袋里的卡又烫了一度，隔着布料都烫得你指尖发麻。她退开半步，把门口彻底让出来，不再说话，只看着你。\n诺诺: 你连灯是谁点的都不知道，就敢问等的人是谁？\n诺诺: 灯不是我点的，我也没资格点。能点这盏灯的人，这会儿就在门里。\n诺诺: 你再这么站着问下去，灯会先失去耐心。\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T8 玩家]: 把口袋里发烫的通行卡掏出来举到灯的方向，看它会不会有反应\n[T8 主持人]: 你目前没有可用的“来举到灯的方”，无法使用它。\n\n[权威物品状态] {\"临时通行卡\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 8
+      },
+      "pending": false,
+      "protected_turns": [
+        7
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 7,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "40abc015252255b7ae330347e3dc3d05"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院大门前",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "边缘泛着不自然暗红的临时通行卡，热度持续升高",
+        "location": "玩家口袋中",
+        "name": "临时通行卡",
+        "notes": "隔着布料仍烫手，热度随门厅灯光明灭而变化",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "卡塞尔学院大门前门柱旁",
+        "description": "行动直接、观察力敏锐的红发女生",
+        "name": "诺诺",
+        "notes": "明确表示灯不是她点的，能点灯的人在门里，并警告灯会失去耐心",
+        "relationship": "审视与试探，耐心正在流失",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "被诺诺反将一军，口袋里的通行卡持续发烫",
+      "current_goal": "决定是否自行迈步进门",
+      "danger_level": "medium",
+      "notes": "诺诺已让开门口，时间正在流逝"
+    },
+    "quests": [
+      {
+        "description": "诺诺已让开门口，玩家必须自行决定是否进门",
+        "name": "与诺诺交谈，了解入校流程",
+        "notes": "交涉失败，诺诺拒绝透露等待者身份",
+        "objective": "决定是否迈步进入门厅",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "玩家暗中观察诺诺与门柱被察觉，诺诺主动点破并反问玩家看出了什么。",
+      "玩家坦白柱脚痕迹，诺诺承认有东西却反追问玩家来历与通行卡来源，玩家暴露更多无知。",
+      "诺诺拒绝回答守门原因，反将玩家一军，并警告通行卡发烫异常。",
+      "诺诺拒碰通行卡，反讥玩家怯懦，让开门口并透露门内有人在等敢自己走进去的人，门厅深处亮起一盏灯。",
+      "玩家蹲下查看柱脚痕迹失败，被诺诺点破不敢进门，门厅灯闪、通行卡骤烫逼其抉择。",
+      "玩家追问灯与等待者，被诺诺反将一军，灯暗了一瞬，诺诺让开门口逼其抉择。",
+      "玩家行动：把口袋里发烫的通行卡掏出来举到灯的方向，看它会不会有反应；结果：你目前没有可用的“来举到灯的方”，无法使用它。"
+    ],
+    "sanity": 86,
+    "turn": 8,
+    "world_facts": [
+      {
+        "description": "诺诺承认柱脚确实有东西，但拒绝说明具体是什么",
+        "name": "门柱旁的雨水冲刷痕迹",
+        "notes": "玩家未能看清形态",
+        "source": "诺诺的回应",
+        "status": "suspected"
+      },
+      {
+        "description": "临时通行卡边缘泛起不自然的暗红，诺诺警告再攥着不放会烫到人",
+        "name": "通行卡发烫异常",
+        "notes": "发烫原因未明",
+        "source": "诺诺的提醒与玩家观察",
+        "status": "known"
+      },
+      {
+        "description": "门厅深处原本沉在暗里的地方忽然亮起一盏灯，光从走廊尽头漫出来，没有人走动",
+        "name": "门内亮起的灯",
+        "notes": "暗示门内有人在等敢自己走进去的人",
+        "source": "诺诺让开门口后",
+        "status": "known"
+      },
+      {
+        "description": "诺诺称卡发烫不是卡的问题，而是玩家被派到门口这件事本身的问题",
+        "name": "通行卡发烫的缘由",
+        "notes": "尚未证实",
+        "source": "诺诺的讥讽",
+        "status": "suspected"
+      },
+      {
+        "description": "玩家蹲下查看柱脚痕迹，只看到被雨水冲刷得模糊不清的暗色沟痕，无法辨认真相",
+        "name": "柱脚痕迹的真相",
+        "notes": "痕迹被雨水冲散，需其他手段才能辨明",
+        "source": "玩家调查失败",
+        "status": "suspected"
+      },
+      {
+        "description": "门厅深处那盏灯忽然闪了一下，光晃过走廊，像有人从灯下走过，可走廊上分明空着",
+        "name": "门厅深处那盏灯",
+        "notes": "灯亮与通行卡发烫同步加剧",
+        "source": "玩家蹲下时观察到的环境变化",
+        "status": "known"
+      },
+      {
+        "description": "诺诺称灯不是她点的，她也没资格点，能点这盏灯的人就在门里",
+        "name": "门厅深处那盏灯的来历",
+        "notes": "灯会因玩家的迟疑而失去耐心",
+        "source": "诺诺的对话",
+        "status": "suspected"
+      },
+      {
+        "description": "通行卡的热度随门厅灯光明灭而变化，隔着布料仍烫手",
+        "name": "通行卡热度与灯光的关联",
+        "notes": "尚未验证具体机制",
+        "source": "玩家自身感受",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 8,
+  "uuid_counter": 25
+}

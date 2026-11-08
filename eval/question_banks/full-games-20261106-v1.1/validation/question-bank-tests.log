@@ -1,0 +1,29 @@
+test_bad_pointer_or_invented_quote_is_rejected (test_question_bank.QuestionBankTests.test_bad_pointer_or_invented_quote_is_rejected) ... ok
+test_broken_ancestor_chain_is_rejected (test_question_bank.QuestionBankTests.test_broken_ancestor_chain_is_rejected) ... ok
+test_build_is_offline_readonly_and_gold_is_separate (test_question_bank.QuestionBankTests.test_build_is_offline_readonly_and_gold_is_separate) ... ok
+test_coordinated_public_question_change_is_bound_to_authoring (test_question_bank.QuestionBankTests.test_coordinated_public_question_change_is_bound_to_authoring) ... ok
+test_duplicate_ids_are_rejected (test_question_bank.QuestionBankTests.test_duplicate_ids_are_rejected) ... ok
+test_duplicate_json_keys_and_path_escape_are_rejected (test_question_bank.QuestionBankTests.test_duplicate_json_keys_and_path_escape_are_rejected) ... ok
+test_evidence_node_and_value_fingerprints_are_checked (test_question_bank.QuestionBankTests.test_evidence_node_and_value_fingerprints_are_checked) ... ok
+test_existing_output_and_recording_destination_are_rejected (test_question_bank.QuestionBankTests.test_existing_output_and_recording_destination_are_rejected) ... ok
+test_extra_private_field_in_public_question_is_rejected (test_question_bank.QuestionBankTests.test_extra_private_field_in_public_question_is_rejected) ... ok
+test_future_chronology_is_rejected (test_question_bank.QuestionBankTests.test_future_chronology_is_rejected) ... ok
+test_future_evidence_is_rejected_even_when_frozen_file_exists (test_question_bank.QuestionBankTests.test_future_evidence_is_rejected_even_when_frozen_file_exists) ... ok
+test_invalid_id_cannot_write_outside_bank (test_question_bank.QuestionBankTests.test_invalid_id_cannot_write_outside_bank) ... ok
+test_manifest_and_frozen_input_tampering_fail (test_question_bank.QuestionBankTests.test_manifest_and_frozen_input_tampering_fail) ... ok
+test_modes_share_question_checkpoint_and_recent_window (test_question_bank.QuestionBankTests.test_modes_share_question_checkpoint_and_recent_window) ... ok
+test_original_recording_change_detected_by_optional_check (test_question_bank.QuestionBankTests.test_original_recording_change_detected_by_optional_check) ... ok
+test_private_context_injection_is_rejected_even_with_updated_file_hash (test_question_bank.QuestionBankTests.test_private_context_injection_is_rejected_even_with_updated_file_hash) ... ok
+test_question_change_in_one_mode_is_rejected (test_question_bank.QuestionBankTests.test_question_change_in_one_mode_is_rejected) ... ok
+test_rementions_include_unselected_options_and_not_snapshot_copies (test_question_bank.QuestionBankTests.test_rementions_include_unselected_options_and_not_snapshot_copies) ... ok
+test_repeated_timeline_node_is_rejected (test_question_bank.QuestionBankTests.test_repeated_timeline_node_is_rejected) ... ok
+test_semantic_mentions_must_refer_to_real_source_quotes (test_question_bank.QuestionBankTests.test_semantic_mentions_must_refer_to_real_source_quotes) ... ok
+test_uninventoried_public_file_is_rejected (test_question_bank.QuestionBankTests.test_uninventoried_public_file_is_rejected) ... ok
+test_unknown_question_cannot_omit_history_review (test_question_bank.QuestionBankTests.test_unknown_question_cannot_omit_history_review) ... ok
+test_unknown_question_requires_bounded_review (test_question_bank.QuestionBankTests.test_unknown_question_requires_bounded_review) ... ok
+test_unknown_question_with_bounded_review_is_allowed (test_question_bank.QuestionBankTests.test_unknown_question_with_bounded_review_is_allowed) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.647s
+
+OK

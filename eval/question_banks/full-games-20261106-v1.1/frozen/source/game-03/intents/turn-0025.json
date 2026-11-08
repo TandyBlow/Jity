@@ -1,0 +1,46 @@
+{
+  "before_sha256": "14cec02cde0f6de9f8044735514dc9e6b3ec134eddbdfd4079650a610294bc3b",
+  "created_at": "2026-11-06T05:58:37.316095+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 3
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "借诺诺在门外争执的由头，要求核查员让诺诺进来对质，把封场程序摆到台面上",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 25
+  },
+  "selection": {
+    "action": "借诺诺在门外争执的由头，要求核查员让诺诺进来对质，把封场程序摆到台面上",
+    "option_index": 1,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 3,
+    "scores": [
+      {
+        "action": "趁核查员被门外争执分神，低声问他签发栏上那行日期是不是三年前的",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.1416905214201163
+      },
+      {
+        "action": "借诺诺在门外争执的由头，要求核查员让诺诺进来对质，把封场程序摆到台面上",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8498271265940278
+      },
+      {
+        "action": "不再等，趁他注意力在门口，绕到屏风后去看刚才响动的来源",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.6694049321770813
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 25
+}

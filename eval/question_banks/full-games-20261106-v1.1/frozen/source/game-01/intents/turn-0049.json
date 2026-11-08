@@ -1,0 +1,46 @@
+{
+  "before_sha256": "af4db46c1bbee883108c3a017c071c0bb34ac158769595c66fa36a6c6b77fde1",
+  "created_at": "2026-11-06T05:23:13.754455+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 6
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "不再后退，伸手去推那扇几步外的铁门，赌门后的冷白光能挡住影子",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 49
+  },
+  "selection": {
+    "action": "不再后退，伸手去推那扇几步外的铁门，赌门后的冷白光能挡住影子",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "不再后退，伸手去推那扇几步外的铁门，赌门后的冷白光能挡住影子",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6462397106759171
+      },
+      {
+        "action": "把临时通行卡举到门缝的冷白光下，看卡面纹路是否与门后嗡鸣呼应",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.5151071903828024
+      },
+      {
+        "action": "压低身体从影子贴附的侧下方硬挤出去，退回旧砖段拉开距离",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.13431836878093784
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 49
+}

@@ -1,0 +1,17 @@
+{
+  "changes": [
+    "Remove unknown tag from public question type",
+    "Allow accurate natural-language state explanations without field names",
+    "Correct actual full/state partial availability",
+    "Distinguish related entity hints from answer rementions",
+    "Require bounded unknown audit and verify semantic mention quotes"
+  ],
+  "editor_review": "Two independent offline agent reviews; all proposed changes integrated. This is not human approval.",
+  "model_scoring_performed": false,
+  "status": "pending_human_review",
+  "tests": {
+    "full_suite": 210,
+    "passed": true,
+    "question_bank": 24
+  }
+}

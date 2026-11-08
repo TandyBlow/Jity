@@ -1,0 +1,635 @@
+{
+  "checkpoint": {
+    "action_index": 40,
+    "campaign_turn": 37,
+    "checkpoint_sha256": "fb499012cd60b0438237ed1a11a36786264fa02a445edfcc48846cf65595d0c1",
+    "state_sha256": "a8a922b803412bd5fc3528d5066cdcdf947b56ee741364e76ecaf154fb4818d4",
+    "state_turn": 40,
+    "timeline_node": 41
+  },
+  "context": {
+    "recent_context": [
+      {
+        "action_index": 35,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "辨认记录",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功读出记录内容，失败只辨认出部分字迹并耗费时间。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "成功",
+            "option_index": 0,
+            "outcome": "success",
+            "roll": 18
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口上方的维修夹层",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口上方的维修夹层",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "几页发脆的手写纸页，反复出现光源一词，记有嗡鸣预兆、不可触碰、与门柱刻痕及影纹同源、编号须与牌对、别让它补全等字句。",
+                "location": "玩家手中",
+                "name": "被撕下的观测记录",
+                "notes": "末尾编号与金属牌第二行几乎逐位吻合，仅差最后一位。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "读出夹层观测记录：光源有嗡鸣预兆、不可触碰、与门柱刻痕及影纹同源，编号须与牌对，末尾数字与金属牌仅差一位。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，夹层暂时安全",
+              "current_goal": "核对金属牌编号与记录末尾数字的差异",
+              "danger_level": "medium",
+              "notes": "已读出观测记录全部内容。"
+            },
+            "quests_upserted": [
+              {
+                "description": "辨认观测记录与金属牌上的编号关联。",
+                "name": "新生入学调查",
+                "notes": "记录已读出，编号比对尚差最后一位。",
+                "objective": "核对金属牌编号与记录末尾数字的最后一位差异。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "记录反复出现光源一词，记有光源出现前约十息有低沉嗡鸣自砖内来、不可触碰触碰者纹路会应答、光源与门柱刻痕及影纹同源、编号须与牌对、别让它补全。",
+                "name": "观测记录内容",
+                "notes": "记录末尾编号与金属牌第二行几乎逐位吻合。",
+                "source": "夹层中被撕下的观测记录",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你蹲在夹层的铁板上，把那几页发脆的纸页拢到膝前，借着从梯口漏上来的灰光，一页一页翻过去。纸页边缘一碰就掉渣，指腹的伤口在纸面上蹭出几道淡红的印子。第一页的字迹潦草，笔画被潮气泡得发胀，可你逐行辨认下去，还是读通了：反复出现的一个词是光源，前后被圈了又圈，旁边写着出现前约十息，有嗡鸣，低沉，自砖内来。第二页记着观测日期与时刻，末尾一行字被划掉又重写：不可触碰，触碰者纹路会应答。你翻到第三页，字迹更急，写着光源与门柱刻痕同源，与影纹同源，编号须与牌对。最后半页只剩几个断句：它记得被削去的那一段，别让它补全。你把纸页按顺序摊开，抬头看向靠墙那块同源回勾的金属牌。牌面刻着几行细密编号，你凑近比对，第三页记录末尾那串数字与牌面第二行几乎逐位吻合，只差最后一位。你数了两遍，确认不是看错。夹层里静得能听见自己的心跳，梯口下方那道暗红搏动仍停在锈线之外，一明一暗。你忽然意识到，这些记录不是随手写的，是有人在这里蹲守了很多夜，一笔一笔记下来的。而记录里那句别让它补全，正对着你掌心那几片再也拼不回去的碎屑。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "核对编号",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功确认编号关联，失败惊动牌后暗藏的机关或耗费时间。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "摸索夹层深处",
+              "requires_check": true,
+              "skill": "探索",
+              "stakes": "成功找到新出口或记录，失败触发夹层结构松动。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null
+          ],
+          "options": [
+            "把金属牌从墙边取下，逐位核对牌面编号与记录末尾那串数字的差异",
+            "顺着记录里提到的门柱刻痕线索，回想门柱基座那枚金属徽记的纹路",
+            "不再停留，沿夹层深处摸索是否还有别的出口或更多记录",
+            "撕下记录中写着别让它补全的那半页收好，先退回梯口观察影子动向"
+          ],
+          "quests_updated": [
+            {
+              "description": "辨认观测记录与金属牌上的编号关联，记录内容已读出，编号比对尚差最后一位。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "dusty maintenance crawlspace, brittle handwritten observation pages, engraved metal plate with serial numbers, dim grey light from ladder shaft"
+        },
+        "player_action": "拾起那几页观测记录，逐页辨认上面的字迹与编号",
+        "timeline_node": 36
+      },
+      {
+        "action_index": 36,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道口上方的维修夹层",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [
+            {
+              "description": "从观测记录中撕下的半页，写着别让它补全的警告，纸页发脆，边缘沾有指腹血印。",
+              "name": "被撕下的半页记录",
+              "status": "owned"
+            }
+          ],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道口上方的维修夹层",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "从观测记录中撕下的半页，写着别让它补全的警告。",
+                "location": "贴身口袋",
+                "name": "被撕下的半页记录",
+                "notes": "纸页发脆，边缘沾有指腹血印。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "撕下别让它补全的半页记录收好，退回梯口确认影子被锈线拦住，发现夹层深处有漏风暗缝。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，夹层暂时安全",
+              "current_goal": "核对金属牌编号与记录末尾数字的差异，并决定是否探查暗缝。",
+              "danger_level": "medium",
+              "notes": "影子仍被锈线约束在梯脚下方。"
+            },
+            "quests_upserted": [
+              {
+                "description": "核对金属牌编号与记录末尾数字的差异，并查明夹层暗缝后的通路。",
+                "name": "新生入学调查",
+                "notes": "发现夹层深处有漏风暗缝，可能通向另一条路。",
+                "objective": "核对金属牌编号与记录末尾数字的差异。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "夹层深处砖壁接缝处有极细微气流声，带旧纸和铁锈味，暗示另一条通路。",
+                "name": "夹层深处漏风暗缝",
+                "notes": "尚未探查。",
+                "source": "玩家在夹层观察",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你把那半页纸从整叠记录里撕下来，纸页脆得几乎一扯就断，边缘的碎屑沾在指腹的血印上。你把它折了两折，塞进贴身的口袋，其余几页留在原处。然后你退回梯口，伏低身体，从方口边缘探出视线。下方通道里，影子仍停在梯脚那道锈线之外，皮下暗红纹路一明一暗地搏动，节奏比先前更慢，尖臂垂着，没有再向上试探。它被那条看不见的界线牢牢拴住，你看了十几息，确认它不会追上来。你正要收回视线，夹层深处忽然传来一阵极细微的气流声，带着旧纸和铁锈的味道，从砖壁的某个缝隙里挤出来。那声音断断续续，像有什么东西在墙后轻轻推动。你转过头，夹层靠里的黑暗里，砖壁的接缝处似乎有一线更深的暗影，风就是从那里漏出来的。金属牌还立在墙边，牌面的编号在灰光里泛着冷意。你手边有撕下的半页记录，身后是退回去的铁梯，面前是那道漏风的暗缝。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "探索检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功发现暗缝后的通路或线索，失败则惊动夹层结构或留下痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功安全退回通道，失败则影子被惊动或铁梯发出声响。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "顺着漏风的暗缝摸过去，查看砖壁接缝后是否有通路",
+            "先核对金属牌编号与记录末尾数字的差异，再决定去向",
+            "退回铁梯，沿原路返回维修通道，离开这个夹层"
+          ],
+          "quests_updated": [
+            {
+              "description": "核对金属牌编号与记录末尾数字的差异，并查明夹层暗缝后的通路。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Cramped rusty maintenance crawlspace, torn paper scraps, faint draft from brick seam, dim grey light, shadow below, horror atmosphere"
+        },
+        "player_action": "撕下记录中写着别让它补全的那半页收好，先退回梯口观察影子动向",
+        "timeline_node": 37
+      },
+      {
+        "action_index": 37,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功安全退回通道，失败则影子被惊动或铁梯发出声响。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 14
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -3,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "撤退时铁梯发出刺耳摩擦，影子被惊动逼近梯脚，暗缝气流声同时加剧。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，体力消耗明显",
+              "current_goal": "决定是撤离维修通道还是折返探查暗缝。",
+              "danger_level": "high",
+              "notes": "影子被锈线拦住但持续逼近，界线显得越来越薄。"
+            },
+            "quests_upserted": [
+              {
+                "description": "核对金属牌编号与记录末尾数字的差异，并查明维修夹层暗缝的来历。",
+                "name": "新生入学调查",
+                "notes": "撤退时铁梯发出刺耳摩擦，影子被惊动并向梯脚逼近，暗缝气流声加剧。",
+                "objective": "在影子被锈线约束的间隙，决定撤离还是探查暗缝。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "铁梯在砖壁里发出一声刺耳的金属摩擦，梯脚下的影子猛然抬头，暗红纹路骤然亮了一瞬，开始向梯脚缓缓移动。",
+                "name": "铁梯声响惊动影子",
+                "notes": "影子仍被锈线拦住，但每次搏动都更靠前。",
+                "source": "撤退过程",
+                "status": "known"
+              },
+              {
+                "description": "夹层深处传来一声更清晰的气流声，从砖壁暗缝里挤出来，短促，带着回响，像墙后有什么东西被金属摩擦惊动。",
+                "name": "暗缝气流声加剧",
+                "notes": "暗缝方向存在未被探索的线索。",
+                "source": "撤退途中",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你把那半页纸按在胸口，转身朝梯口挪去。铁板上的薄灰在你膝下被蹭出两道浅痕，左肩每动一下都牵扯着撕裂伤，热辣感顺着锁骨往上爬。你先把右腿探进方口，脚尖去够第一级梯级，锈蚀的铁面在鞋底下滑了一下，你及时扣住方口边缘，才没让整条腿坠下去。可就在你把重心移上去的瞬间，铁梯在砖壁里发出一声刺耳的金属摩擦，那声音又长又尖，在狭窄的通道里来回撞了几次才散。你僵在梯级上，低头看去。梯脚下方，影子猛然抬头，轮廓里那对没有眼睛的位置直直朝上。皮下暗红纹路骤然亮了一瞬，比先前任何一次都亮，把半截通道照成暗红色。它开始动了，贴着地面向梯脚缓缓移来，尖臂抬起，一寸一寸逼近那道锈线。你不敢再停，一级一级往下退，膝盖磕伤处在铁棱上又撞了一下，疼得你咬住牙关。退到中段时，你听见夹层深处传来一声更清晰的气流声，从砖壁暗缝里挤出来，短促，带着回响，像墙后有什么东西被这声金属摩擦惊动了，正朝缝隙靠近。那声音和你脚下影子的搏动叠在一起，一上一下，逼得你加快动作。你落到通道地面时，影子已挪到锈线边缘，纹路亮得几乎刺眼，尖臂悬在界线外半寸，反复试探。你贴着砖壁往维修通道退，眼睛不敢离开它。它没有越过锈线，可每一次搏动都比上一次更靠前，那道界线在暗红的光里显得越来越薄。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            null,
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看出锈线约束的规律，失败则被影子逼近，付出受伤或暴露的代价。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功接近暗缝并窥见墙后线索，失败则惊动影子或触发新的危险。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "趁影子还被锈线拦着，立刻沿维修通道撤回连廊，脱离这片区域",
+            "退到通道口后停下，回头观察影子试探锈线的规律，找出它被约束的边界",
+            "折返夹层方向，趁影子注意力被梯口吸引，摸向那道漏风的砖壁暗缝"
+          ],
+          "quests_updated": [
+            {
+              "description": "核对金属牌编号与记录末尾数字的差异，并查明维修夹层暗缝的来历。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Rusty iron ladder in a dim brick maintenance shaft, red glowing shadow creeping below, dust and fear"
+        },
+        "player_action": "退回铁梯，沿原路返回维修通道，离开这个夹层",
+        "timeline_node": 38
+      },
+      {
+        "action_index": 38,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功接近暗缝并窥见墙后线索，失败则惊动影子或触发新的危险。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 6
+          },
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -3,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "潜行失败惊动影子，玩家仍摸到暗缝墙后的金属牌与补全痕迹，影子逼近锈线。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，体力消耗明显",
+              "current_goal": "决定是撬取墙后金属牌还是撤离维修通道",
+              "danger_level": "high",
+              "notes": "影子逼近锈线，界线变薄，时间紧迫。"
+            },
+            "quests_upserted": [
+              {
+                "description": "在影子被锈线约束的间隙，玩家已摸到夹层暗缝，墙后嵌有金属牌，需决定是否取出。",
+                "name": "新生入学调查",
+                "notes": "潜行失败惊动影子，影子逼近锈线，界线变薄。",
+                "objective": "决定是撬取墙后金属牌还是撤离",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "指尖探进砖壁暗缝，摸到墙后一块冰凉的金属边缘，牌面似的，嵌在墙后，边缘有细密刻痕，凹槽里卡着半截断铆钉，旁有反复刮擦的补全痕迹。",
+                "name": "暗缝墙后的金属牌",
+                "notes": "气流从金属牌旁挤出，墙后有纸页翻动声。",
+                "source": "玩家折返夹层摸向暗缝",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你贴着铁板往回挪，膝盖压着薄灰，每一步都把灰蹭出一道浅痕。左肩的撕裂伤在爬行时被反复拉扯，热辣的痛感顺着锁骨往上钻，你只能靠右臂撑住大半体重。梯口下方，影子的注意力被那声金属摩擦牢牢钉住，轮廓朝着梯脚倾去，皮下暗红纹路一明一暗，把通道照成一片浑浊的暗红。你趁着这个间隙转向夹层深处，朝那道漏风的砖壁摸去。气流声越来越清楚，旧纸和铁锈的味道浓得发闷，砖缝里不断有细碎的灰簌簌落下，落在你手背上。你伸手去探那处接缝，指尖刚触到砖面，一块松动的砖就向内陷了半寸，缝里透出一线更深的黑。可就在你重心前压的瞬间，膝下的铁板发出一声短促的吱呀。下方那团暗红猛地一滞，随即转向，尖臂抬起，贴着地面朝梯脚移来，比先前任何一次都更靠近那道锈线。你不敢再动，手指却已经探进缝里，摸到砖壁后一块冰凉的金属边缘，牌面似的，嵌在墙后，边缘有细密的刻痕。气流从它旁边挤出来，墙后传来一声极轻的窸窣，纸页翻动的那种，只响了一下就断了。你指尖顺着金属边缘摸过去，触到一处凹槽，槽里卡着半截断掉的铆钉，铆钉旁有一道被反复刮擦过的痕迹，像是有人从这一侧试图把什么东西补回去。下方影子又逼近半寸，锈线在它尖臂前微微发暗，界线显得比刚才更薄。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "撬取检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功取出墙后金属牌，失败则发出声响让影子进一步逼近锈线。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功等到影子退开，失败则影子试探加剧，界线更薄。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null
+          ],
+          "options": [
+            "把手指探进凹槽，试着撬动墙后那块金属牌，看它能否被取出",
+            "先缩回手，伏低不动，等影子重新被锈线牵住再继续",
+            "放弃暗缝，立刻沿铁梯撤回维修通道，趁影子还在梯脚试探"
+          ],
+          "quests_updated": [
+            {
+              "description": "在影子被锈线约束的间隙，玩家已摸到夹层暗缝，墙后嵌有金属牌，需决定是否取出。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Dark brick maintenance crawlspace, rusted ladder, faint red glow below, loose brick seam with metal edge, dust falling"
+        },
+        "player_action": "折返夹层方向，趁影子注意力被梯口吸引，摸向那道漏风的砖壁暗缝",
+        "timeline_node": 39
+      },
+      {
+        "action_index": 39,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -2,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "维修通道砖壁上被灰尘覆盖的旧刻痕，形状与门柱基座刻痕一致，旁边卡着一小片断面发亮的金属碎屑。",
+                "location": "维修通道中段砖壁",
+                "name": "墙上的旧刻痕",
+                "notes": "尚未取走碎屑",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "放弃暗缝撤回维修通道，发现砖壁旧刻痕与门柱同形，旁边卡着金属碎屑。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，体力消耗明显",
+              "current_goal": "决定是取走碎屑比对刻痕，还是先撤离处理伤口",
+              "danger_level": "high",
+              "notes": "影子仍在梯脚试探，界线变薄"
+            },
+            "quests_upserted": [
+              {
+                "description": "维修通道砖壁上的旧刻痕与门柱基座刻痕同形，旁边卡着金属碎屑，需判断其与影子、金属牌的关联。",
+                "name": "新生入学调查",
+                "notes": "已退回维修通道中段，影子仍在梯脚试探",
+                "objective": "决定是取走碎屑比对刻痕，还是先撤离处理伤口",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "身侧的砖壁上有一道被灰尘盖住的旧刻痕，形状和门柱基座上那道浅淡刻痕对得上，边缘同样整齐。刻痕旁边卡着一小片金属碎屑，断面发亮",
+                "name": "探索：旧温室连廊中段维修通道",
+                "notes": "刻痕与门柱基座同形，碎屑来源待查",
+                "source": "玩家撤回维修通道时的观察",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你不再看那道暗缝，把重心从砖壁前撤回来，右臂撑住铁板，一寸一寸退向梯口。左肩的撕裂伤被这个动作扯得发烫，你咬住牙，把喘息压进喉咙里。梯脚下方，影子仍朝着梯口方向倾着轮廓，皮下暗红一明一暗，尖臂悬在锈线内侧，注意力还钉在那声金属摩擦的余响上。你抓住这个间隙，右腿先探进方口，脚尖稳稳踩住第一级梯级，这一次你让鞋底贴着铁面慢慢碾下去，没让它再发出声响。第二级、第三级，锈屑从梯级边缘簌簌落下，落在你手背上。你下到通道地面时，影子还在梯脚那头试探，没有回头。你贴着砖壁往通道深处退，退出十几步，才敢把憋着的那口气吐出来。就在这时，你注意到身侧的砖壁上有一道被灰尘盖住的旧刻痕，形状和门柱基座上那道浅淡刻痕对得上，边缘同样整齐。刻痕旁边卡着一小片金属碎屑，断面发亮，像是从某块牌子上崩下来的。你伸手去够，指腹的割伤在砖面上蹭出一道淡红。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功读出刻痕与碎屑的关联，失败则惊动通道里的东西。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            null
+          ],
+          "options": [
+            "抠下那片金属碎屑，就着灰光比对刻痕与门柱基座的形状",
+            "不再停留，沿维修通道继续往出口方向撤，把刻痕位置记在心里",
+            "停下来处理左肩和指腹的伤口，趁影子还没追来喘口气"
+          ],
+          "quests_updated": [
+            {
+              "description": "维修通道砖壁上的旧刻痕与门柱基座刻痕同形，旁边卡着金属碎屑，需判断其与影子、金属牌的关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Narrow brick maintenance corridor, dim grey light, dusty wall with old carved marks and a small metal shard, distant red glow behind"
+        },
+        "player_action": "放弃暗缝，立刻沿铁梯撤回维修通道，趁影子还在梯脚试探",
+        "timeline_node": 40
+      },
+      {
+        "action_index": 40,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "旧温室连廊中段维修通道",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "旧温室连廊中段维修通道",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "维修通道砖壁齐胸高处被灰尘覆盖的旧刻痕，形状与门柱基座刻痕一致，旁边卡着一小片断面发亮的金属碎屑。",
+                "location": "维修通道中段砖壁",
+                "name": "墙上的旧刻痕",
+                "notes": "玩家已记住其位置，未取走碎屑。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家撤离维修通道，记下砖壁刻痕位置，确认其与门柱刻痕形状一致，影子未追来。",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "左肩撕裂伤、膝盖磕伤、指腹割伤，体力消耗明显",
+              "current_goal": "决定是比对刻痕碎屑，还是先撤离处理伤口",
+              "danger_level": "high",
+              "notes": "影子仍被界线拦在梯脚，未追击。"
+            },
+            "quests_upserted": [
+              {
+                "description": "确认学院隐藏秘密的初步调查。",
+                "name": "新生入学调查",
+                "notes": "已撤离至出口附近，刻痕位置已记牢。",
+                "objective": "比对刻痕与碎屑，或先处理伤口再决定下一步。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "通道中段砖壁的旧刻痕形状与门柱基座上的浅痕一致，旁边卡着断面发亮的金属碎屑。",
+                "name": "维修通道刻痕与门柱刻痕同形",
+                "notes": "尚未完成比对确认。",
+                "source": "玩家撤离途中观察",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你不再看那道旧刻痕，把它的位置在心里钉牢：通道中段，砖壁齐胸高处，灰尘被蹭开的那一块，形状与门柱基座上的浅痕完全重合，旁边还卡着一小片断面发亮的金属碎屑。你把这个坐标默念了两遍，才转身朝出口方向挪。通道里的空气又闷又潮，脚下的碎砖和锈屑被你的鞋底碾出细响，你尽量让每一步都落在砖缝的实地上。左肩的撕裂伤随着走动一阵阵抽紧，膝盖的磕伤在弯折时发酸，指腹的割伤被冷风一激，又渗出一层薄薄的湿意。你走出十几步，忍不住回头瞥了一眼。梯脚那团暗红的轮廓还停在原处，皮下纹路一明一暗，尖臂垂着，没有跟上来，可它朝向的方向始终没有变。你继续往前，通道两侧的砖壁渐渐从夹层的旧砖换成刷过灰浆的墙，头顶的管线也从裸铁变成包着胶皮的电缆。前方拐角处透进一线灰白的光，是出口方向的应急灯。你扶着墙拐过弯，那线光落在地上，照出一小片干燥的地面。你停下脚步，把背靠上墙，让呼吸慢慢平下来。刻痕的位置、碎屑的形状、门柱基座上的浅痕，这三样东西在你脑子里并排放着，越看越像同一套记号。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "回忆比对",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功确认刻痕同源并得到比对结论，失败则只留下模糊印象。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "潜行取物",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功取回碎屑，失败则惊动影子并加重伤势。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "在应急灯下停一停，把刻痕的形状和门柱基座刻痕的细节在脑中比对，确认是否同源",
+            "先离开维修通道回到连廊，处理左肩的撕裂伤，再决定下一步",
+            "折回去取那片卡在砖缝里的金属碎屑，趁影子还没越过界线"
+          ],
+          "quests_updated": [
+            {
+              "description": "已撤离至维修通道出口附近，刻痕位置已记下，待比对碎屑或处理伤口。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Narrow maintenance corridor, dim emergency light ahead, brick wall with old carved mark, distant red glow behind"
+        },
+        "player_action": "不再停留，沿维修通道继续往出口方向撤，把刻痕位置记在心里",
+        "timeline_node": 41
+      }
+    ]
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-01",
+  "instruction": "仅依据所提供的检查点记录回答问题；区分观察、角色说法与推断。信息不足时说明无法确定。只判断和解释，不执行游戏行动。",
+  "mode": "recent",
+  "question": "门房交给你的温室连廊铁门钥匙现在是什么状态？请说明目前是否还在可用物品中。",
+  "question_id": "JLC-20261106-G01-Q02",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

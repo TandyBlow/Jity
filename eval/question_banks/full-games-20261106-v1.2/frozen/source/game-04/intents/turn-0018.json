@@ -1,0 +1,46 @@
+{
+  "before_sha256": "b88162f356f9c9223f8287827c15f1bef8f3a0007f62f783e6f2d8474d2a190c",
+  "created_at": "2026-11-06T06:07:04.907026+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 5
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "趁诺诺带路，留意走廊两侧门框的编号，记下哪几扇门是实墙",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 18
+  },
+  "selection": {
+    "action": "趁诺诺带路，留意走廊两侧门框的编号，记下哪几扇门是实墙",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 5,
+    "scores": [
+      {
+        "action": "跟着诺诺退回投影屏前，把通行卡裂纹和屏幕上新增的纹路对照着看",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.675992424388271
+      },
+      {
+        "action": "不急着走，先问诺诺墙里退去的东西是什么，逼她给一个说法",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.6107453796858864
+      },
+      {
+        "action": "趁诺诺带路，留意走廊两侧门框的编号，记下哪几扇门是实墙",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.6224423187341973
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 18
+}

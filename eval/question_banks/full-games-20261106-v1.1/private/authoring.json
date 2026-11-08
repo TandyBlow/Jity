@@ -1,0 +1,2759 @@
+{
+  "bank_id": "jity-long-consistency-full-games-20261106",
+  "bank_version": "1.0.1-review",
+  "candidates": [
+    {
+      "checkpoint_action": 35,
+      "game_id": "game-01",
+      "id": "fg20261106-g01-q003",
+      "original_candidate": {
+        "acceptable": [
+          "目前不知道是谁；只有冒名签字和可能还在楼内的线索",
+          "没有足够证据识别冒领者，不能断定诺诺、导师或门房"
+        ],
+        "ambiguities": [
+          "T9证明观察到签名不是玩家笔迹；档案取走时间来自导师陈述，不声称独立核验。",
+          "结构化entry_state反复写有人冒充你，不提供冒充者身份。"
+        ],
+        "answer": "不能确定具体身份。导师说档案在玩家抵达前几分钟被取走，登记簿签玩家姓名，但玩家看到笔迹不是自己的；导师又说签名者可能仍在楼里。这些仅支持有人冒名取档，未识别出具体人物，也没有证据把走廊金属声直接归给签名者。",
+        "channels": {
+          "answer_in_recent": false,
+          "expected": [
+            "bounded_history_audit",
+            "structured_state",
+            "historical_narrative"
+          ],
+          "last_structured_topic_exposure": 35,
+          "narrative_memory_note": "NSB保留档案冒名，但未标出真实身份；未知答案不是任何通道里存在一个隐藏身份。",
+          "structured_locations": [
+            "/state/world_facts/10",
+            "/state/world_facts/12",
+            "/state/world_facts/14",
+            "/state/world_facts/22"
+          ]
+        },
+        "checkpoint": {
+          "campaign_progress_turn": 32,
+          "file_sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27",
+          "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+          "state_hash_algorithm": "sha256 compact sorted UTF-8 JSON ensure_ascii=false",
+          "state_sha256": "5bf51166878d7079927bcdda2d9c331fa48f697d482adb49288058eda9e85ce3",
+          "state_turn": 35,
+          "submitted_action": 35,
+          "timeline_node": 36
+        },
+        "data_version": "full-games-20261106 (parent must bind seal SHA-256)",
+        "evidence": [
+          {
+            "campaign_progress_turn": 9,
+            "evidence_role": "committed_history",
+            "excerpt": "你的档案已经有人替你取走了，就在几分钟前。取件登记簿上签的是你的名字。",
+            "file_sha256": "31ffed6abe0bfc4803e600628906eee7a50f91d7e1d66de2ac68704517151e7d",
+            "json_pointer": "/output/dialogue/0/text",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0009.json",
+            "relative_path": "game-01/checkpoints/turn-0009.json",
+            "submitted_action": 9,
+            "timeline_node": 10
+          },
+          {
+            "campaign_progress_turn": 9,
+            "evidence_role": "committed_history",
+            "excerpt": "那不是你的字。",
+            "file_sha256": "31ffed6abe0bfc4803e600628906eee7a50f91d7e1d66de2ac68704517151e7d",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0009.json",
+            "relative_path": "game-01/checkpoints/turn-0009.json",
+            "submitted_action": 9,
+            "timeline_node": 10
+          },
+          {
+            "campaign_progress_turn": 10,
+            "evidence_role": "committed_history",
+            "excerpt": "档案的事，你不想问，我就不说。但记住，签名的人可能还在楼里。",
+            "file_sha256": "1024f495cdfebdcd2309023f2956e7edc21f0ec8ede6b99c0cd37e6b8e834af1",
+            "json_pointer": "/output/dialogue/2/text",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0010.json",
+            "relative_path": "game-01/checkpoints/turn-0010.json",
+            "submitted_action": 10,
+            "timeline_node": 11
+          },
+          {
+            "campaign_progress_turn": 11,
+            "evidence_role": "committed_history",
+            "excerpt": "签名者可能还没走远。",
+            "file_sha256": "18580f6c96f29c6a1ebd54f5365e7564d48a0c2f1a19098c34e7af5cd5c4699b",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0011.json",
+            "relative_path": "game-01/checkpoints/turn-0011.json",
+            "submitted_action": 11,
+            "timeline_node": 12
+          },
+          {
+            "campaign_progress_turn": 32,
+            "evidence_role": "persisted_known_clue",
+            "excerpt": "{\"description\": \"其中一个盒子被抽出了一半，盒脊上贴着你的名字。盒口边缘有几枚新鲜的指纹印，在灯光下泛着浅浅的油光。\", \"name\": \"发现冒充者痕迹\", \"notes\": \"取件登记簿上的签名笔迹与玩家不符，档案在玩家到达前几分钟被冒领。\", \"source\": \"旧档案室现场\", \"status\": \"known\"}",
+            "file_sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27",
+            "json_pointer": "/state/world_facts/10",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+            "relative_path": "game-01/checkpoints/turn-0035.json",
+            "submitted_action": 35,
+            "timeline_node": 36
+          },
+          {
+            "campaign_progress_turn": 32,
+            "evidence_role": "persisted_suspected_claim",
+            "excerpt": "{\"description\": \"导师临走前提醒，档案冒领签名的人可能还在主楼内。\", \"name\": \"签名者可能仍在楼里\", \"notes\": \"保留悬念，未强制追问。\", \"source\": \"导师口述\", \"status\": \"suspected\"}",
+            "file_sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27",
+            "json_pointer": "/state/world_facts/12",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+            "relative_path": "game-01/checkpoints/turn-0035.json",
+            "submitted_action": 35,
+            "timeline_node": 36
+          },
+          {
+            "campaign_progress_turn": 32,
+            "evidence_role": "unconfirmed_sound_clue",
+            "excerpt": "{\"description\": \"档案室相反方向的楼梯间传来轻微金属摩擦声，像门被推开又合上，签名者可能仍在附近。\", \"name\": \"走廊深处的金属摩擦声\", \"notes\": \"声音来源未确认。\", \"source\": \"玩家在门外听到\", \"status\": \"suspected\"}",
+            "file_sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27",
+            "json_pointer": "/state/world_facts/14",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+            "relative_path": "game-01/checkpoints/turn-0035.json",
+            "submitted_action": 35,
+            "timeline_node": 36
+          }
+        ],
+        "expected_value": null,
+        "first_public_appearance": 9,
+        "game_id": "game-01",
+        "human_review": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "id": "fg20261106-g01-q003",
+        "interval": {
+          "formula": "checkpoint.submitted_action - source.submitted_action",
+          "from_first": 26,
+          "from_last_public_mention": 24,
+          "note": "Public mention scans committed player actions, narration, dialogue and options; repeated persisted state/NSB is tracked as a separate exposure channel.",
+          "unit": "submitted_action"
+        },
+        "last_public_answer_mention": 11,
+        "last_public_mention_detail": "T11为签名者主题最后公开重提；unknown间隔24是主题间隔，不是已知答案遗忘间隔。",
+        "question": "仅依据从开场至当前检查点已经提交的剧情、对话、行动及记录状态，能否确定取走你个人档案并在登记簿签名的人具体是谁？请说明依据。",
+        "recent_window": {
+          "end": 35,
+          "size": 6,
+          "start": 30,
+          "unit": "submitted_action"
+        },
+        "required_points": [
+          "明确身份未确定",
+          "区分签名姓名/笔迹不符和真实身份",
+          "不把导师的可能判断或未确认声音当实证"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "points": [
+            {
+              "criterion": "明确无法确定具体身份",
+              "score": 1
+            },
+            {
+              "criterion": "引用冒名签字/笔迹不符等真实线索",
+              "score": 1
+            },
+            {
+              "criterion": "不把可能在楼里/声响当具体身份实证，或说明证据仍缺",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "断言任一具体人物为冒领者:总分0",
+            "只答不知道，无说明:1分",
+            "说玩家本人取走:0"
+          ]
+        },
+        "status": "draft_pending_human_review",
+        "test_target": "检查信息不足时承认未知，避免把嫌疑或NPC话语升级为身份实证",
+        "type": "unknown_bounded_history",
+        "unknown_audit": {
+          "conclusion": "没有真实身份、姓名、或可唯一推出身份的线索；听声仅支持疑似活动，不能唯一识别人。",
+          "coverage": [
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/initial.json",
+              "sha256": "f94fb88682667f985ae753f11bbef3f3ec89150c9db1b3841c0a42931533d0b4"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0001.json",
+              "sha256": "0e4b1f774fcdf4dfc4778df8bd0575b4e4a4f6b7f4c178b802f367069f5b32af"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0002.json",
+              "sha256": "d21e97bf27e07b57467f15f0adfd9606853c886d01f73dda5349328504316595"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0003.json",
+              "sha256": "cf4c3759aca4f14b469c6c246e6777732a4b7da041f02864f74285d469a34647"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0004.json",
+              "sha256": "b5b5d8cecf9af59d1652a0554199689f75ba50e4e8d2f1966e921459967e58d5"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0005.json",
+              "sha256": "cb4a6d51e507bc720760ee0800748528224c8a91a2bf0081d6e160d6dced9220"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0006.json",
+              "sha256": "649dd79ef1cb137cd943491d35348b6277453f3b8c95a444241710eaf0d41040"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0007.json",
+              "sha256": "0fba492170ba13455ba0dcad77528253a74fb4d6b775acb582adca155c736627"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0008.json",
+              "sha256": "5392c2ae8c025b8006e81e32b8ddb3ac7d0f1614124669c36c0dd251487e0a26"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0009.json",
+              "sha256": "31ffed6abe0bfc4803e600628906eee7a50f91d7e1d66de2ac68704517151e7d"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0010.json",
+              "sha256": "1024f495cdfebdcd2309023f2956e7edc21f0ec8ede6b99c0cd37e6b8e834af1"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0011.json",
+              "sha256": "18580f6c96f29c6a1ebd54f5365e7564d48a0c2f1a19098c34e7af5cd5c4699b"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0012.json",
+              "sha256": "93bc2b2d59e1b7398a33c7e2d48af87c5f43712e45fd4ca3de474e182e791fcb"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0013.json",
+              "sha256": "db5b7422d65cfaf4a296a72229a31f8ad8c69eb363f057244a76606a405ece6a"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0014.json",
+              "sha256": "e9cd4ccde9abc68221b534a513d9d87bc1419be212130aae510bcf3047545997"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0015.json",
+              "sha256": "bd8a4d203be4f38130a891061833031490418b5c23b96551abe1d56592943e32"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0016.json",
+              "sha256": "2080a88471d985d3e244bd8a4b48bbba42e9466eca0776dee2629fb5d2fe3213"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0017.json",
+              "sha256": "68066ddf0482f7227028b09adb01f99bf0624559af80c84985b4d75d06835289"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0018.json",
+              "sha256": "8cb3fb7c57d030f4c3086c2f94d7b4a8ef673489cf2c8112762e54972ede505f"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0019.json",
+              "sha256": "f714c287675d9c91ae8fca92da20d62003d33b557a086054671ed4b3daf71669"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0020.json",
+              "sha256": "0f8da234e48798908ab48c9b88517a5f4d1f14be4957375acabfb0ab283635a9"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0021.json",
+              "sha256": "9c26fb03d89bfb05fdf0aef8a24089389a72f2ad5ad474128b5d5d17cffd33e6"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0022.json",
+              "sha256": "5cc11e4ca5cae7942f3b14bacb96f3e8b23485c496b7bb8e086747ad029f9352"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0023.json",
+              "sha256": "5dbffb700f133be84eb16225819909b4fc59837e6519a6119d4e5d1cb3db0e48"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0024.json",
+              "sha256": "df07152adfe15424fbb19b0cd9229c9a4f81bafef2ed679461de05b4c00fb6e3"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0025.json",
+              "sha256": "01ec6eb33bf088800d7d5ba76c88e8fb3483d0318bd8c526b6b4df785744409b"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0026.json",
+              "sha256": "5251518e86eddc59d05b5dd1e2604171746afb9a5d7d9a19b52c4d035d9d2db4"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0027.json",
+              "sha256": "6884fe0e7f9098eceafd5a7869e2ca66fe7c3b608d66e16691b10e722a7bf927"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0028.json",
+              "sha256": "83a9ccced2e32aae0a602c285eafc4a7f532462eae268bc867324cdbd061b3fa"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0029.json",
+              "sha256": "6fa8c5071a6b7231d1d1241f8cc11aeeb0129e2ba340e2f109e885ba0b92884f"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0030.json",
+              "sha256": "84b6cc053581cf0a041ab6d26d7c9ae78d7abd367d84bb6292564fede0917bab"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0031.json",
+              "sha256": "f6825d609ca04f665bafeb98f4cd79962bb1c2f1698100a43b6418efda95e768"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0032.json",
+              "sha256": "d9cc826a6bb83ee4e707b39a99ab912c7f9c119a139fbbb9a74d7be7b6c4f7ce"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0033.json",
+              "sha256": "2b10b0057f05b0f60f9966bd42b402e3e4264958d8538465e43798c50451080c"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0034.json",
+              "sha256": "1957000620095fa189b4c55bed8084213c5201eb92944336b6d1232cbfae767f"
+            },
+            {
+              "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+              "sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27"
+            }
+          ],
+          "method": "逐回合阅读公开剧情/对话/选项；核查冒名、签名、登记簿、档案的状态记录和NSB。人物线索仅诺诺/导师/门房，没有身份绑定。",
+          "pending_human_confirmation": "需人工再次确认同义暗示不足以唯一识别；未知限定本录制已提交历史，不宣称原著或战役设计里没有答案。",
+          "scope": "initial.json and committed checkpoint/intents 1–35; narration/dialogue/options/player_action plus state including world_facts/NPCs/quests/items/NSB/PCB and progress recap; excludes private campaign instructions, uncommitted drafts and future turns"
+        },
+        "updates": [],
+        "validity": {
+          "from_submitted_action": 9,
+          "future_status": "not used",
+          "through_checkpoint": 35
+        }
+      },
+      "reason": "备选/冲突，未编入首批正式来源题。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 45,
+      "game_id": "game-01",
+      "id": "fg20261106-g01-q004",
+      "original_candidate": {
+        "acceptable": [
+          "不行，原残片已毁，不能恢复成可用原物",
+          "原同形金属残片destroyed，碎片拼不回，需另找方法而非直接宣称可用"
+        ],
+        "ambiguities": [
+          "故事仍提及碎片，不等于原物处于可用状态；问句限定暗格原件以排除后续别处金属碎屑。"
+        ],
+        "answer": "不能按原方法直接使用原来的同形金属残片。它在第31次提交行动被影子打飞撞碎，第32次拼合失败；到此检查点权威账本仍为destroyed，且物品清单已无原残片。后续看到的别处金属碎屑不能自动等同于这件原物或证明修复。",
+        "channels": {
+          "answer_in_recent": false,
+          "expected": [
+            "structured_state",
+            "historical_narrative"
+          ],
+          "last_structured_exposure": 45,
+          "structured_locations": [
+            "/state/_memory_controller/score_tracker/6",
+            "/state/items"
+          ]
+        },
+        "checkpoint": {
+          "campaign_progress_turn": 41,
+          "file_sha256": "0eb6f98c6826d83675109d964f0ad7e6156e8e996d3900006449fdfb139ab266",
+          "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0045.json",
+          "state_hash_algorithm": "sha256 compact sorted UTF-8 JSON ensure_ascii=false",
+          "state_sha256": "5bb984b09fc36980f7e641fb929b3e468f32bbbbb58eb59fb2d457b227b08763",
+          "state_turn": 45,
+          "submitted_action": 45,
+          "timeline_node": 46
+        },
+        "data_version": "full-games-20261106 (parent must bind seal SHA-256)",
+        "evidence": [
+          {
+            "campaign_progress_turn": 26,
+            "evidence_role": "committed_history",
+            "excerpt": "格底嵌着一小片金属残片，边缘带着新鲜的刮痕，形状和门柱基座上的刻痕同形。",
+            "file_sha256": "6fa8c5071a6b7231d1d1241f8cc11aeeb0129e2ba340e2f109e885ba0b92884f",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0029.json",
+            "relative_path": "game-01/checkpoints/turn-0029.json",
+            "submitted_action": 29,
+            "timeline_node": 30
+          },
+          {
+            "campaign_progress_turn": 28,
+            "evidence_role": "committed_history",
+            "excerpt": "残片脱手飞出，撞上砖壁，碎成数片，散落在积灰里。",
+            "file_sha256": "f6825d609ca04f665bafeb98f4cd79962bb1c2f1698100a43b6418efda95e768",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0031.json",
+            "relative_path": "game-01/checkpoints/turn-0031.json",
+            "submitted_action": 31,
+            "timeline_node": 32
+          },
+          {
+            "campaign_progress_turn": 29,
+            "evidence_role": "committed_history",
+            "excerpt": "它们再也回不到原来的形状了，那道回勾永远缺着一角。",
+            "file_sha256": "d9cc826a6bb83ee4e707b39a99ab912c7f9c119a139fbbb9a74d7be7b6c4f7ce",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0032.json",
+            "relative_path": "game-01/checkpoints/turn-0032.json",
+            "submitted_action": 32,
+            "timeline_node": 33
+          },
+          {
+            "campaign_progress_turn": 32,
+            "evidence_role": "committed_history",
+            "excerpt": "而记录里那句别让它补全，正对着你掌心那几片再也拼不回去的碎屑。",
+            "file_sha256": "629cc97a229c331034dd8e929f61702be0376d755101fd8345ce4f763272bb27",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0035.json",
+            "relative_path": "game-01/checkpoints/turn-0035.json",
+            "submitted_action": 35,
+            "timeline_node": 36
+          },
+          {
+            "campaign_progress_turn": 41,
+            "evidence_role": "authoritative_current_item_ledger",
+            "excerpt": "{\"item_name\": \"同形金属残片\", \"last_seen_turn\": 31, \"notes\": \"\", \"state\": \"destroyed\"}",
+            "file_sha256": "0eb6f98c6826d83675109d964f0ad7e6156e8e996d3900006449fdfb139ab266",
+            "json_pointer": "/state/_memory_controller/score_tracker/6",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0045.json",
+            "relative_path": "game-01/checkpoints/turn-0045.json",
+            "submitted_action": 45,
+            "timeline_node": 46
+          },
+          {
+            "campaign_progress_turn": 41,
+            "evidence_role": "authoritative_current_inventory_absence",
+            "excerpt": "[{\"aliases\": [], \"description\": \"\", \"location\": \"\", \"name\": \"临时通行卡\", \"notes\": \"\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"半截被踩进泥里的金属徽记，边缘沾着新鲜湿泥，位置在门柱基座旁。\", \"location\": \"大门门柱基座旁泥地\", \"name\": \"泥中的金属徽记\", \"notes\": \"经过时仍在原处，湿泥被雨冲薄，露出暗沉纹路\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"纸面被晶体划破，背面灼出焦痕字迹：别用纸接。\", \"location\": \"玩家身上\", \"name\": \"预备任务单\", \"notes\": \"未变\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"导师签发的任务表格，背面右下角有红笔潦草字迹，可辨认为别碰光。\", \"location\": \"玩家外套内袋\", \"name\": \"温室调查任务单\", \"notes\": \"红笔字迹为导师口头警告的重复，非隐藏线索。\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"\", \"location\": \"\", \"name\": \"旧档案室异常记录\", \"notes\": \"\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"几页发脆的手写纸页，反复出现光源一词，记有嗡鸣预兆、不可触碰、与门柱刻痕及影纹同源、编号须与牌对、别让它补全等字句。\", \"location\": \"玩家手中\", \"name\": \"被撕下的观测记录\", \"notes\": \"末尾编号与金属牌第二行几乎逐位吻合，仅差最后一位。\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"从观测记录中撕下的半页，写着别让它补全的警告。\", \"location\": \"贴身口袋\", \"name\": \"被撕下的半页记录\", \"notes\": \"纸页发脆，边缘沾有指腹血印。\", \"status\": \"owned\"}, {\"aliases\": [], \"description\": \"维修通道砖壁齐胸高处被灰尘覆盖的旧刻痕，形状与门柱基座刻痕一致，旁边卡着一小片断面发亮的金属碎屑。本回合在灯光下又发现同源浅刻痕与两道细短痕，排列成序列。\", \"location\": \"旧温室连廊中段维修通道砖壁\", \"name\": \"墙上的旧刻痕\", \"notes\": \"浅刻痕与两道细短痕间隔均匀，疑似序列前几节。\", \"status\": \"owned\"}]",
+            "file_sha256": "0eb6f98c6826d83675109d964f0ad7e6156e8e996d3900006449fdfb139ab266",
+            "json_pointer": "/state/items",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0045.json",
+            "relative_path": "game-01/checkpoints/turn-0045.json",
+            "submitted_action": 45,
+            "timeline_node": 46
+          }
+        ],
+        "first_public_appearance": 29,
+        "game_id": "game-01",
+        "human_review": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "id": "fg20261106-g01-q004",
+        "interval": {
+          "formula": "checkpoint.submitted_action - source.submitted_action",
+          "from_first": 16,
+          "from_last_public_mention": 10,
+          "note": "Public mention scans committed player actions, narration, dialogue and options; repeated persisted state/NSB is tracked as a separate exposure channel.",
+          "unit": "submitted_action"
+        },
+        "last_public_answer_mention": 35,
+        "last_public_mention_detail": "T35的“掌心那几片再也拼不回去的碎屑”是对同一原残片毁坏的语义重提；不能以T31作最近重提。T39/41另处砖缝碎屑没有被取得，非该原残片。",
+        "question": "现在能否直接拿出你从维修通道暗格里取得的同形金属残片，按先前的方法让它与影子纹路断口咬合？只判断并解释，不执行行动。",
+        "recent_window": {
+          "end": 45,
+          "size": 6,
+          "start": 40,
+          "unit": "submitted_action"
+        },
+        "required_points": [
+          "不可直接使用原残片",
+          "明确毁坏/拼合失败依据",
+          "不把新看到的金属碎屑等同原残片复原"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "points": [
+            {
+              "criterion": "判断不可直接按原方法使用",
+              "score": 1
+            },
+            {
+              "criterion": "以destroyed/击碎且拼不回解释",
+              "score": 1
+            },
+            {
+              "criterion": "明确不能凭历史获得或其他碎屑复活原物",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "宣称现在仍完整持有并执行:0",
+            "仅说危险/不建议而未识别毁坏:0",
+            "有碎片所以原物恢复:0"
+          ]
+        },
+        "status": "draft_pending_human_review",
+        "test_target": "应用当前物品毁坏状态，防止历史获得物品复活",
+        "type": "action_feasibility",
+        "updates": [
+          {
+            "event": "destroyed",
+            "turn": 31
+          },
+          {
+            "event": "拼合失败确认不可复原",
+            "turn": 32
+          }
+        ],
+        "validity": {
+          "from_submitted_action": 29,
+          "future_status": "not used",
+          "through_checkpoint": 45
+        }
+      },
+      "reason": "备选/冲突，未编入首批正式来源题。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 50,
+      "game_id": "game-01",
+      "id": "fg20261106-g01-q006",
+      "original_candidate": {
+        "acceptable": [
+          "不是绝对屏障；影子后来穿过光边并伤人，最多短暂迟滞",
+          "不能保证安全，原来的似乎拦住已被后续越界推翻"
+        ],
+        "ambiguities": [
+          "state.world_facts同时保留T46“冷白光拦住影子”旧条目与T47“并非绝对屏障”新条目；不能将旧条目当最终结论。"
+        ],
+        "answer": "不能。最初它似乎把影子拦在灰浆与旧砖交界，但后来影子已刺入冷白光并越过界线，且擦伤玩家；冷白光能迟滞或吸引影子，不能保证完全挡住。",
+        "channels": {
+          "answer_in_recent": true,
+          "expected": [
+            "recent_context",
+            "structured_state",
+            "historical_narrative"
+          ],
+          "last_structured_exposure": 50,
+          "structured_locations": [
+            "/state/world_facts/59"
+          ]
+        },
+        "checkpoint": {
+          "campaign_progress_turn": 46,
+          "file_sha256": "d7929632b184298ff01d0ac52300de3194f89f682b9272876f42695ca9f18143",
+          "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0050.json",
+          "state_hash_algorithm": "sha256 compact sorted UTF-8 JSON ensure_ascii=false",
+          "state_sha256": "27e69e2c6efa50fb14db92f6eb38d56026f9e7fcf23740ed8ccfcc35e1b29ac3",
+          "state_turn": 50,
+          "submitted_action": 50,
+          "timeline_node": 51
+        },
+        "data_version": "full-games-20261106 (parent must bind seal SHA-256)",
+        "evidence": [
+          {
+            "campaign_progress_turn": 41,
+            "evidence_role": "committed_history",
+            "excerpt": "它似乎被那道冷白光拦住了。",
+            "file_sha256": "0eb6f98c6826d83675109d964f0ad7e6156e8e996d3900006449fdfb139ab266",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0045.json",
+            "relative_path": "game-01/checkpoints/turn-0045.json",
+            "submitted_action": 45,
+            "timeline_node": 46
+          },
+          {
+            "campaign_progress_turn": 43,
+            "evidence_role": "committed_history",
+            "excerpt": "它已经越过灰浆交界，尖臂离你不到三步。",
+            "file_sha256": "92999d5377bebaea1865d17ab1cd4172279ed574675fa0693a32021a1f182aaf",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0047.json",
+            "relative_path": "game-01/checkpoints/turn-0047.json",
+            "submitted_action": 47,
+            "timeline_node": 48
+          },
+          {
+            "campaign_progress_turn": 44,
+            "evidence_role": "committed_history",
+            "excerpt": "尖臂从冷白光的边缘斜斜切过来，擦过你的左前臂。",
+            "file_sha256": "af4db46c1bbee883108c3a017c071c0bb34ac158769595c66fa36a6c6b77fde1",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0048.json",
+            "relative_path": "game-01/checkpoints/turn-0048.json",
+            "submitted_action": 48,
+            "timeline_node": 49
+          },
+          {
+            "campaign_progress_turn": 46,
+            "evidence_role": "committed_history",
+            "excerpt": "皮下纹路被那道从缝隙里漏出的冷白光牵住，一胀一缩的节奏慢了下来。",
+            "file_sha256": "d7929632b184298ff01d0ac52300de3194f89f682b9272876f42695ca9f18143",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0050.json",
+            "relative_path": "game-01/checkpoints/turn-0050.json",
+            "submitted_action": 50,
+            "timeline_node": 51
+          },
+          {
+            "campaign_progress_turn": 46,
+            "evidence_role": "persisted_updated_fact",
+            "excerpt": "{\"description\": \"影子尖臂刺入冷白光边缘，光面第一次出现抖动，影子在光中行动迟缓但能推进。\", \"name\": \"冷白光并非绝对屏障\", \"notes\": \"冷白光只能迟滞影子，不能完全拦住。\", \"source\": \"玩家观察失败后的直接后果\", \"status\": \"known\"}",
+            "file_sha256": "d7929632b184298ff01d0ac52300de3194f89f682b9272876f42695ca9f18143",
+            "json_pointer": "/state/world_facts/59",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0050.json",
+            "relative_path": "game-01/checkpoints/turn-0050.json",
+            "submitted_action": 50,
+            "timeline_node": 51
+          }
+        ],
+        "first_public_appearance": 45,
+        "game_id": "game-01",
+        "human_review": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "id": "fg20261106-g01-q006",
+        "interval": {
+          "formula": "checkpoint.submitted_action - source.submitted_action",
+          "from_first": 5,
+          "from_last_public_mention": 0,
+          "note": "Public mention scans committed player actions, narration, dialogue and options; repeated persisted state/NSB is tracked as a separate exposure channel.",
+          "unit": "submitted_action"
+        },
+        "last_public_answer_mention": 50,
+        "last_public_mention_detail": "T47首次反证，T48直接伤害，T50再次展示仅牵制效果；按保守语义相关最近提及T50，间隔0。属于近期更新对照，不标长期延迟题。",
+        "question": "根据目前的经历，能否把铁门缝下的冷白光当成保证影子无法接近你的屏障？请解释。",
+        "recent_window": {
+          "end": 50,
+          "size": 6,
+          "start": 45,
+          "unit": "submitted_action"
+        },
+        "required_points": [
+          "不能视为绝对屏障",
+          "提及从最初停住到后来越过界线/伤人的更新",
+          "光仍可迟滞/牵制而非完全无效"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "points": [
+            {
+              "criterion": "否定保证无法接近",
+              "score": 1
+            },
+            {
+              "criterion": "用已发生越界/伤人证据修正原判断",
+              "score": 1
+            },
+            {
+              "criterion": "保留迟滞/牵制的有限作用",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "只用T45旧印象说绝对安全:0",
+            "说光完全没作用:有限作用项0"
+          ]
+        },
+        "status": "draft_pending_human_review",
+        "test_target": "用后续直接证据更新最初似乎阻挡的判断",
+        "type": "updated_information",
+        "updates": [
+          {
+            "event": "影子越过灰浆交界，证明光并非绝对屏障",
+            "turn": 47
+          },
+          {
+            "event": "越光边擦伤玩家",
+            "turn": 48
+          },
+          {
+            "event": "光仍使影子注意转向/节奏慢下来",
+            "turn": 50
+          }
+        ],
+        "validity": {
+          "from_submitted_action": 45,
+          "future_status": "not used",
+          "through_checkpoint": 50
+        }
+      },
+      "reason": "备选/冲突，未编入首批正式来源题。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 20,
+      "game_id": "game-01",
+      "id": "fg20261106-g01-q007",
+      "original_candidate": {
+        "ambiguities": [
+          "系统owned/active不等于可从叙事证实拾取；现有模型摘要也记active但未拾取。"
+        ],
+        "answer": null,
+        "channels": {
+          "answer_in_recent": false,
+          "expected": [
+            "historical_narrative",
+            "structured_state"
+          ],
+          "last_structured_exposure": 20
+        },
+        "checkpoint": {
+          "campaign_progress_turn": 18,
+          "file_sha256": "0f8da234e48798908ab48c9b88517a5f4d1f14be4957375acabfb0ab283635a9",
+          "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0020.json",
+          "state_hash_algorithm": "sha256 compact sorted UTF-8 JSON ensure_ascii=false",
+          "state_sha256": "4ad0b3cb7536ce46db71dc1e13ea73fba9de2df9ccb44375982bf3417eeb01b0",
+          "state_turn": 20,
+          "submitted_action": 20,
+          "timeline_node": 21
+        },
+        "data_version": "full-games-20261106 (parent must bind seal SHA-256)",
+        "evidence": [
+          {
+            "campaign_progress_turn": 4,
+            "evidence_role": "committed_history",
+            "excerpt": "那枚半截埋进泥里的金属徽记还在原处",
+            "file_sha256": "b5b5d8cecf9af59d1652a0554199689f75ba50e4e8d2f1966e921459967e58d5",
+            "json_pointer": "/output/narration",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0004.json",
+            "relative_path": "game-01/checkpoints/turn-0004.json",
+            "submitted_action": 4,
+            "timeline_node": 5
+          },
+          {
+            "campaign_progress_turn": 18,
+            "evidence_role": "authoritative_inventory_conflicts_with_narration",
+            "excerpt": "{\"aliases\": [], \"description\": \"半截被踩进泥里的金属徽记，边缘沾着新鲜湿泥，位置在门柱基座旁。\", \"location\": \"大门门柱基座旁泥地\", \"name\": \"泥中的金属徽记\", \"notes\": \"经过时仍在原处，湿泥被雨冲薄，露出暗沉纹路\", \"status\": \"owned\"}",
+            "file_sha256": "0f8da234e48798908ab48c9b88517a5f4d1f14be4957375acabfb0ab283635a9",
+            "json_pointer": "/state/items/1",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0020.json",
+            "relative_path": "game-01/checkpoints/turn-0020.json",
+            "submitted_action": 20,
+            "timeline_node": 21
+          },
+          {
+            "campaign_progress_turn": 18,
+            "evidence_role": "authoritative_ledger_conflicts_with_narration",
+            "excerpt": "{\"item_name\": \"泥中的金属徽记\", \"last_seen_turn\": 4, \"notes\": \"\", \"state\": \"active\"}",
+            "file_sha256": "0f8da234e48798908ab48c9b88517a5f4d1f14be4957375acabfb0ab283635a9",
+            "json_pointer": "/state/_memory_controller/score_tracker/1",
+            "path": "/Users/davidz/Documents/GitHub/jity-eval/runs/full-games-20261106/game-01/checkpoints/turn-0020.json",
+            "relative_path": "game-01/checkpoints/turn-0020.json",
+            "submitted_action": 20,
+            "timeline_node": 21
+          }
+        ],
+        "first_public_appearance": 2,
+        "game_id": "game-01",
+        "human_review": [
+          "需限定问系统记账还是剧情持有，否则候选不进正式题。"
+        ],
+        "id": "fg20261106-g01-q007",
+        "interval": {
+          "formula": "checkpoint.submitted_action - source.submitted_action",
+          "from_first": 18,
+          "from_last_public_mention": 16,
+          "note": "Public mention scans committed player actions, narration, dialogue and options; repeated persisted state/NSB is tracked as a separate exposure channel.",
+          "unit": "submitted_action"
+        },
+        "last_public_answer_mention": 4,
+        "question": "门柱基座旁的金属徽记现在是否由你随身持有？",
+        "reason": "叙事T4明确仍在门柱旁且未拾取；提交state.items却owned，score_tracker active。不能给“剧情中实际随身持有”的可靠单一答案。若改为只问系统记账可答owned，但题目不应把此当真实剧情持有。",
+        "recent_window": {
+          "end": 20,
+          "size": 6,
+          "start": 15,
+          "unit": "submitted_action"
+        },
+        "status": "candidate_conflict_do_not_score",
+        "test_target": "识别叙事与权威物品结构化状态不一致",
+        "type": "conflict_candidate",
+        "updates": [],
+        "validity": {
+          "from_submitted_action": 2,
+          "future_status": "not used",
+          "through_checkpoint": 20
+        }
+      },
+      "reason": "备选/冲突，未编入首批正式来源题。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 40,
+      "game_id": "game-02",
+      "id": "FG26-G02-Q02",
+      "original_candidate": {
+        "checkpoint": {
+          "campaign_turn": 39,
+          "file_sha256": "2febf5471b0bbcb951dbaf564252d664782df6baa0bf529995e3fdbb06612dac",
+          "path": "game-02/checkpoints/turn-0040.json",
+          "state_sha256_canonical": "2bf8839f7baba35341d8fe6883591e07f9e15bed8c2407f69d354900a22321bc",
+          "submitted_action": 40,
+          "timeline_node": 41
+        },
+        "evidence": [
+          {
+            "campaign_turn": 17,
+            "excerpt": {
+              "description": "从取档者怀里滑落的一页纸片，边缘带红标，落在维护通道的管线上，内容尚未看清。",
+              "name": "红标纸片",
+              "status": "owned"
+            },
+            "json_pointer": "/output/items_gained/0",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0017.json",
+            "submitted_action": 17,
+            "timeline_node": 18
+          },
+          {
+            "campaign_turn": 20,
+            "excerpt": {
+              "aliases": [],
+              "description": "从取档者怀里滑落的红标纸片，本已被门后的人抽回。",
+              "location": "听证室内",
+              "name": "红标纸片",
+              "notes": "被门后的人迅速抽走，玩家失去获取机会。",
+              "status": "lost",
+              "transition": ""
+            },
+            "json_pointer": "/output/items_lost/0",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0020.json",
+            "submitted_action": 20,
+            "timeline_node": 21
+          },
+          {
+            "campaign_turn": 20,
+            "excerpt": {
+              "item_name": "红标纸片",
+              "last_seen_turn": 20,
+              "notes": "",
+              "state": "lost"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/4",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0020.json",
+            "submitted_action": 20,
+            "timeline_node": 21
+          },
+          {
+            "campaign_turn": 39,
+            "excerpt": {
+              "item_name": "红标纸片",
+              "last_seen_turn": 20,
+              "notes": "",
+              "state": "lost"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/4",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0040.json",
+            "submitted_action": 40,
+            "timeline_node": 41
+          },
+          {
+            "campaign_turn": 39,
+            "excerpt": "\"红标纸片\": \"lost\"",
+            "json_pointer": "/state/_memory_controller/nsb/turn_buffer/3",
+            "note": "full的NSB记录持续附带权威物品状态；不是recent公共正文",
+            "path": "game-02/checkpoints/turn-0040.json",
+            "submitted_action": 40,
+            "timeline_node": 41
+          }
+        ],
+        "first_occurrence_action": 17,
+        "game_id": "game-02",
+        "id": "FG26-G02-Q02",
+        "information_channels": [
+          "authoritative_items",
+          "score_ledger",
+          "historical_narrative"
+        ],
+        "interval": {
+          "campaign_turn_delta": 19,
+          "formula": "checkpoint.submitted_action - last_public_remention_action",
+          "note": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+          "timeline_node_delta": 20,
+          "unit": "submitted_action",
+          "value": 20
+        },
+        "kind": "current_item_state",
+        "last_public_remention_action": 20,
+        "question": "按当前已提交的物品状态，红标纸片是否仍能作为玩家持有的实物使用？请说明当前状态及依据。",
+        "recent_window": {
+          "answer_in_recent_public_output": false,
+          "inclusive_range": [
+            35,
+            40
+          ],
+          "size": 6,
+          "unit": "submitted_action"
+        },
+        "review_notes": [
+          "仅问指定物品名称的权威登记状态。早期行动17输出已得但叙事说仍在管线上，行动18说没有捡，行动20又把听证室纸片标为同一红标纸片，身份/真正拾取过程存在冲突。不能据此讲成无歧义的物理流转历史。",
+          "如题目改问这两张纸片是否同一实物，应进入候选区而非沿用此答案。",
+          "当前持久NSB.turn_buffer刚重复lost；公开原始近期正文35-40未重复，不宣称全通道长期无人提醒。"
+        ],
+        "review_status": "pending_human_review",
+        "rubric": {
+          "max_points": 3,
+          "necessary_points": [
+            "当前不能当作持有物使用。",
+            "准确区分lost/不在持有清单与consumed；不说已经消耗。",
+            "以行动20后的提交状态/账本为依据，不恢复早期owned。"
+          ],
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。"
+        },
+        "standard_answer": "不能。当前物品清单不含红标纸片，权威SCORE账本记录它为lost，最后状态更新在行动20；不能因早先曾记为owned/active而当成现在持有。",
+        "targets": [
+          "item_removed_or_lost",
+          "current_state"
+        ],
+        "updates": [
+          20
+        ],
+        "validity": {
+          "from_action": 20,
+          "future_information_used": false,
+          "through_checkpoint": 40
+        }
+      },
+      "reason": "备选，不增加独立游戏样本数。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 40,
+      "game_id": "game-02",
+      "id": "FG26-G02-Q05",
+      "original_candidate": {
+        "checkpoint": {
+          "campaign_turn": 39,
+          "file_sha256": "2febf5471b0bbcb951dbaf564252d664782df6baa0bf529995e3fdbb06612dac",
+          "path": "game-02/checkpoints/turn-0040.json",
+          "state_sha256_canonical": "2bf8839f7baba35341d8fe6883591e07f9e15bed8c2407f69d354900a22321bc",
+          "submitted_action": 40,
+          "timeline_node": 41
+        },
+        "evidence": [
+          {
+            "campaign_turn": 25,
+            "excerpt": "芬格尔。上个月搬箱子的是芬格尔，箱子上缠着黄铜色的封条。他不是一个人，拐角还站着个执行部的，光看不动手。",
+            "json_pointer": "/output/dialogue/0/text",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0025.json",
+            "submitted_action": 25,
+            "timeline_node": 26
+          },
+          {
+            "campaign_turn": 33,
+            "excerpt": "诺诺贴在你肩后，声音压得极低，说撬痕跟芬格尔那张搬运单上的封条编号对得上",
+            "json_pointer": "/output/narration",
+            "note": "只重提芬格尔/搬运单，保守主题last34；搬箱角色答案最后26",
+            "path": "game-02/checkpoints/turn-0034.json",
+            "submitted_action": 34,
+            "timeline_node": 35
+          },
+          {
+            "campaign_turn": 39,
+            "excerpt": {
+              "description": "诺诺承认上个月看见芬格尔搬一只缠黄铜封条的箱子从旧档案室后门出来。",
+              "name": "搬箱人是芬格尔",
+              "notes": "芬格尔是高年级，常在新生报到处兜售情报。",
+              "source": "诺诺在工具间被证据逼问后交代",
+              "status": "known"
+            },
+            "json_pointer": "/state/world_facts/42",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0040.json",
+            "submitted_action": 40,
+            "timeline_node": 41
+          },
+          {
+            "campaign_turn": 39,
+            "excerpt": {
+              "description": "诺诺称芬格尔搬箱时楼梯拐角还站着个穿执行部外套的人，只旁观未动手。",
+              "name": "执行部旁观者",
+              "notes": "身份未明。",
+              "source": "诺诺的补充",
+              "status": "suspected"
+            },
+            "json_pointer": "/state/world_facts/43",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0040.json",
+            "submitted_action": 40,
+            "timeline_node": 41
+          }
+        ],
+        "first_occurrence_action": 25,
+        "game_id": "game-02",
+        "id": "FG26-G02-Q05",
+        "information_channels": [
+          "historical_narrative",
+          "structured_world_facts"
+        ],
+        "interval": {
+          "campaign_turn_delta": 6,
+          "formula": "checkpoint.submitted_action - last_public_remention_action",
+          "note": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+          "timeline_node_delta": 6,
+          "unit": "submitted_action",
+          "value": 6
+        },
+        "kind": "recall",
+        "last_public_remention_action": 34,
+        "question": "诺诺先前在工具间谈起上个月搬箱事件时，指认了谁搬箱？她说现场另一个人起什么作用？",
+        "recent_window": {
+          "answer_in_recent_public_output": false,
+          "inclusive_range": [
+            35,
+            40
+          ],
+          "size": 6,
+          "unit": "submitted_action"
+        },
+        "review_notes": [
+          "与未知旁观者姓名题相关；未来必须独立作答，答案不得串联。"
+        ],
+        "review_status": "pending_human_review",
+        "rubric": {
+          "max_points": 3,
+          "necessary_points": [
+            "说出芬格尔是搬箱人。",
+            "另一人是执行部装束的旁观者，未动手。",
+            "以据诺诺所说限定证言，不假称已独立确认。"
+          ],
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。"
+        },
+        "standard_answer": "据诺诺所说，芬格尔搬一只缠着黄铜封条的箱子；另有一名穿执行部外套的人站在楼梯拐角，只旁观而不动手。这是诺诺的证言。",
+        "targets": [
+          "earlier_person_relation",
+          "claim_attribution"
+        ],
+        "updates": [],
+        "validity": {
+          "from_action": 25,
+          "future_information_used": false,
+          "through_checkpoint": 40
+        }
+      },
+      "reason": "备选，不增加独立游戏样本数。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 51,
+      "game_id": "game-02",
+      "id": "FG26-G02-Q06",
+      "original_candidate": {
+        "checkpoint": {
+          "campaign_turn": 49,
+          "file_sha256": "2560d958acff9155521e89cdd25fb63f2c9f2c9e327688d380143948a6c2237c",
+          "path": "game-02/checkpoints/turn-0051.json",
+          "state_sha256_canonical": "9cbc61ef9a402e6585a8d2fad1b0efc728cd917c6e98bf1f45bbc756cca4506d",
+          "submitted_action": 51,
+          "timeline_node": 52
+        },
+        "evidence": [
+          {
+            "campaign_turn": 49,
+            "excerpt": {
+              "description": "被守卫拧腕时脱手，滚进祭坛边缘的阴影里，暂时无法取回。",
+              "name": "黄铜钥匙",
+              "status": "lost"
+            },
+            "json_pointer": "/output/items_lost/0",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0051.json",
+            "submitted_action": 51,
+            "timeline_node": 52
+          },
+          {
+            "campaign_turn": 49,
+            "excerpt": {
+              "item_name": "黄铜钥匙",
+              "last_seen_turn": 51,
+              "notes": "",
+              "state": "lost"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/13",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0051.json",
+            "submitted_action": 51,
+            "timeline_node": 52
+          },
+          {
+            "campaign_turn": 49,
+            "excerpt": "他一把攥住你的手腕，往上一拧，钥匙从你指间脱手，磕在黑石上弹了两下，滚进祭坛边缘的阴影里。",
+            "json_pointer": "/output/narration",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0051.json",
+            "submitted_action": 51,
+            "timeline_node": 52
+          }
+        ],
+        "first_occurrence_action": 38,
+        "game_id": "game-02",
+        "id": "FG26-G02-Q06",
+        "information_channels": [
+          "recent_context",
+          "authoritative_items",
+          "score_ledger"
+        ],
+        "interval": {
+          "campaign_turn_delta": 0,
+          "formula": "checkpoint.submitted_action - last_public_remention_action",
+          "note": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+          "timeline_node_delta": 0,
+          "unit": "submitted_action",
+          "value": 0
+        },
+        "kind": "action_judgment",
+        "last_public_remention_action": 51,
+        "question": "现在能否直接把黄铜钥匙当作手中可用工具，再去撬开祭坛边的档案？只判断可行性和前提，不执行行动。",
+        "recent_window": {
+          "answer_in_recent_public_output": true,
+          "inclusive_range": [
+            46,
+            51
+          ],
+          "size": 6,
+          "unit": "submitted_action"
+        },
+        "review_notes": [
+          "这是零行动间隔的状态更新控制题，不应称长期记忆题。",
+          "钥匙最初以chapter entry_state进入结构化物品，不能编造已实际完成拆包获取事件。"
+        ],
+        "review_status": "pending_human_review",
+        "rubric": {
+          "max_points": 3,
+          "necessary_points": [
+            "不能直接当成当前持有工具使用。",
+            "指出钥匙脱手遗失而非被消耗。",
+            "重新取得是必要前提，不保证行动成功。"
+          ],
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。"
+        },
+        "standard_answer": "不能直接按手中现有工具使用。钥匙刚被守卫拧腕时打脱，滚进祭坛边阴影里；物品清单移除且账本为lost。若要再次使用，须先重新取得；现有证据不保证取回或撬取成功。",
+        "targets": [
+          "current_lost_item",
+          "action_feasibility",
+          "short_interval_control"
+        ],
+        "updates": [
+          51
+        ],
+        "validity": {
+          "from_action": 51,
+          "future_information_used": false,
+          "through_checkpoint": 51
+        }
+      },
+      "reason": "备选，不增加独立游戏样本数。",
+      "status": "candidate_only_pending_human_review"
+    },
+    {
+      "checkpoint_action": 20,
+      "game_id": "game-02",
+      "id": "FG26-G02-C01",
+      "original_candidate": {
+        "checkpoint_action": 20,
+        "evidence": [
+          {
+            "campaign_turn": 11,
+            "excerpt": {
+              "description": "被迎接者拍落，旋到走廊地面上，当前不在玩家手中。",
+              "name": "临时通行卡",
+              "status": "lost"
+            },
+            "json_pointer": "/output/items_lost/0",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0011.json",
+            "submitted_action": 11,
+            "timeline_node": 12
+          },
+          {
+            "campaign_turn": 11,
+            "excerpt": {
+              "item_name": "临时通行卡",
+              "last_seen_turn": 7,
+              "notes": "",
+              "state": "active"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/0",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0011.json",
+            "submitted_action": 11,
+            "timeline_node": 12
+          },
+          {
+            "campaign_turn": 20,
+            "excerpt": {
+              "aliases": [],
+              "description": "",
+              "location": "",
+              "name": "临时通行卡",
+              "notes": "",
+              "status": "owned"
+            },
+            "json_pointer": "/state/items/3",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0020.json",
+            "submitted_action": 20,
+            "timeline_node": 21
+          }
+        ],
+        "id": "FG26-G02-C01",
+        "reason": "行动11 narration/items_lost为脱手lost，state/items移除但同检查点SCORE仍active；行动18起临时通行卡被entry_state恢复owned，未见明确捡回叙事。不得给单一物理持有答案。",
+        "status": "candidate_conflict",
+        "suggested_question": "临时通行卡当前到底在谁手里？"
+      },
+      "reason": "行动11 narration/items_lost为脱手lost，state/items移除但同检查点SCORE仍active；行动18起临时通行卡被entry_state恢复owned，未见明确捡回叙事。不得给单一物理持有答案。",
+      "status": "candidate_conflict_not_scored"
+    },
+    {
+      "checkpoint_action": 30,
+      "game_id": "game-02",
+      "id": "FG26-G02-C02",
+      "original_candidate": {
+        "checkpoint_action": 30,
+        "evidence": [
+          {
+            "campaign_turn": 28,
+            "excerpt": "你把黄铜封条残片塞进诺诺掌心，手指在她手背上按了一下，示意她先走。",
+            "json_pointer": "/output/narration",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0028.json",
+            "submitted_action": 28,
+            "timeline_node": 29
+          },
+          {
+            "campaign_turn": 30,
+            "excerpt": {
+              "item_name": "黄铜封条残片",
+              "last_seen_turn": 26,
+              "notes": "",
+              "state": "active"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/8",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0030.json",
+            "submitted_action": 30,
+            "timeline_node": 31
+          },
+          {
+            "campaign_turn": 30,
+            "excerpt": {
+              "item_name": "第二枚黄铜封条残片",
+              "last_seen_turn": 27,
+              "notes": "",
+              "state": "active"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/10",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0030.json",
+            "submitted_action": 30,
+            "timeline_node": 31
+          }
+        ],
+        "id": "FG26-G02-C02",
+        "reason": "行动27有两种残片，28叙事说塞给诺诺但未明确哪一枚；两件物品在state仍owned/score active。要问真实持有人存在实体与状态冲突，不作为无歧义移交题。",
+        "status": "candidate_conflict",
+        "suggested_question": "交给诺诺的封条残片是否仍在玩家手中？"
+      },
+      "reason": "行动27有两种残片，28叙事说塞给诺诺但未明确哪一枚；两件物品在state仍owned/score active。要问真实持有人存在实体与状态冲突，不作为无歧义移交题。",
+      "status": "candidate_conflict_not_scored"
+    },
+    {
+      "checkpoint_action": 30,
+      "game_id": "game-02",
+      "id": "FG26-G02-C03",
+      "original_candidate": {
+        "checkpoint_action": 30,
+        "evidence": [
+          {
+            "campaign_turn": 29,
+            "excerpt": "整张单子还压在柜顶，你够不到，也抽不走。",
+            "json_pointer": "/output/narration",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0029.json",
+            "submitted_action": 29,
+            "timeline_node": 30
+          },
+          {
+            "campaign_turn": 29,
+            "excerpt": {
+              "item_name": "搬运单",
+              "last_seen_turn": 29,
+              "notes": "",
+              "state": "active"
+            },
+            "json_pointer": "/state/_memory_controller/score_tracker/11",
+            "note": "",
+            "path": "game-02/checkpoints/turn-0029.json",
+            "submitted_action": 29,
+            "timeline_node": 30
+          }
+        ],
+        "id": "FG26-G02-C03",
+        "reason": "行动29叙事明确够不到抽不走，物品账本同回合却新增active；当前state有owned搬运单。不能把模型输出/错误状态当成无歧义叙事获取事实。",
+        "status": "candidate_conflict",
+        "suggested_question": "是否已成功拿到搬运单？"
+      },
+      "reason": "行动29叙事明确够不到抽不走，物品账本同回合却新增active；当前state有owned搬运单。不能把模型输出/错误状态当成无歧义叙事获取事实。",
+      "status": "candidate_conflict_not_scored"
+    }
+  ],
+  "coverage": {
+    "covered": [
+      "早期叙事细节/任务与人物转述",
+      "物品获取、移交、遗失当前状态",
+      "后续调查推翻角色初步判断",
+      "有界未知(姓名/数值)",
+      "依据记忆判断行动条件而不执行",
+      "近期检定失败但仍取得物品控制题"
+    ],
+    "formal_question_count": 12,
+    "limits": [
+      "4局为同一战役的固定录制，12题是局内相关观察，不能视作12个独立游戏或进行独立样本显著性推断。",
+      "36份文件是冻结输入，不是三组模型回答。没有计算模型记忆成绩。",
+      "全体状态组含world_facts/npcs等叙事语义，这是自然状态内容。",
+      "G02-Q03的数量已不在实际检查点记忆中；用于标注记忆保留缺口，后续应区分系统记忆遗漏与回答模型错误。",
+      "问句/标准答案/证据来自人工式离线编写，所有题仍待用户人工审阅。",
+      "G04-Q03实际完整记忆只保留部分标准要点，兜帽人解释已遗漏；已标partial，不能误称三组均得到全部所需证据。"
+    ],
+    "per_game": {
+      "game-01": 3,
+      "game-02": 3,
+      "game-03": 3,
+      "game-04": 3
+    },
+    "review_status": "pending_human_review",
+    "source_game_count": 4,
+    "uncovered": [
+      "明确consumed物品消耗：四局均无权威账本证据",
+      "多个不同配置结局/完成全部主线",
+      "真实PCB人物记忆提取调用",
+      "系统性10/20/40长间隔分层：目前按实际最近重提报告，未人为制造",
+      "人类确认的语义重提与未知推导审查"
+    ]
+  },
+  "questions": [
+    {
+      "category": "early_narrative_fact",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "actual_full_memory_note": "NSB本身遗漏第二项一周期限与第三项框架，但实际full的recap_compressed明确保留三天、一周、第三项待导师面谈，因此full历史记忆通道整体可答全。",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "last_structured_exposure": 24,
+        "narrative_memory_note": "T24 NSB摘要保留首任务，但遗漏第二项一周期限与第三项框架；不可保证仅NSB能答全。",
+        "recent_answer_coverage": "none",
+        "structured_answer_available": true,
+        "structured_locations": [
+          "/state/items/2/notes",
+          "/state/world_facts/7/description"
+        ]
+      },
+      "checkpoint_action": 24,
+      "chronology_notes": "第二项期限与第三项框架最后明确披露T7；第一项三天期限T9再次出现，因此整题按最近分项T9算。后续泛称任务单不视为重给三个任务及期限。",
+      "evidence": [
+        {
+          "action_index": 7,
+          "evidence_role": "committed_history",
+          "excerpt": "第一行字迹工整：校园内异常现象初步调查，期限三天。描述只有一句话，说东侧旧温室夜间有不明光源，要求确认光源性质并记录出现规律。第二行是夜间巡逻，期限一周，要求与指定高年级生组队，巡逻路线由对方决定，你只负责观察和记录。第三行只有一行字：待定，由导师面谈后解锁。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 9,
+          "evidence_role": "committed_history",
+          "excerpt": "第一个任务，东侧旧温室。连续三晚有不明光源，你去记录时间、位置和颜色变化，三天内交初步报告。夜间单独前往，注意安全。",
+          "json_pointer": "/output/dialogue/1/text"
+        },
+        {
+          "action_index": 24,
+          "evidence_role": "persisted_world_fact",
+          "excerpt": "任务单列出：东侧旧温室夜间不明光源初步调查（三天）、与指定高年级生组队夜间巡逻（一周）、待定由导师面谈解锁。",
+          "json_pointer": "/state/world_facts/7/description"
+        }
+      ],
+      "first_action": 7,
+      "game_id": "game-01",
+      "gold": {
+        "acceptable_phrasings": [
+          "温室异常光源调查/确认性质并记录规律；3天",
+          "夜间巡逻，和指定高年级生组队；7天/一周",
+          "第三项待导师面谈解锁，内容/期限尚未公布"
+        ],
+        "answer": "第一项是调查东侧旧温室夜间不明光源，期限三天；第二项是与指定高年级生组队夜间巡逻，期限一周；第三项待定，要导师面谈后解锁，当时未给出具体内容或期限。",
+        "required_points": [
+          "温室光源调查及三天",
+          "组队夜巡及一周",
+          "第三项当时待定，不能编造期限"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "points": [
+            {
+              "criterion": "正确给出温室调查和三天期限",
+              "score": 1
+            },
+            {
+              "criterion": "正确给出组队夜巡和一周期限",
+              "score": 1
+            },
+            {
+              "criterion": "正确指出第三项待定、导师面谈后解锁且无已知期限",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "把三晚观测误读为三项任务都三天",
+            "给第三项虚构具体任务或期限；该要点0分"
+          ]
+        },
+        "typical_errors": [
+          "把三晚观测误读为三项任务都三天",
+          "给第三项虚构具体任务或期限；该要点0分"
+        ]
+      },
+      "id": "JLC-20261106-G01-Q01",
+      "kind": "recall",
+      "mention_terms": [
+        "夜间巡逻",
+        "期限三天",
+        "期限一周",
+        "三天内",
+        "导师面谈"
+      ],
+      "question": "最初发下的三个预备任务分别是什么？当时已经给出的期限分别是多少？",
+      "review": {
+        "ambiguities": [],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "回忆早期任务框架与期限，区分当时已给信息和未解锁内容",
+      "update_actions": [],
+      "validity": {
+        "from_submitted_action": 7,
+        "future_status": "not used",
+        "through_checkpoint": 24
+      }
+    },
+    {
+      "category": "item_lost",
+      "channels": {
+        "actual_full_memory_note": "NSB旧摘要保留领钥匙历史也保留丢钥匙更新；以当前score_tracker与items为准。",
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "last_structured_exposure": 40,
+        "narrative_memory_note": "NSB旧摘要保留领钥匙历史也保留丢钥匙更新；以当前score_tracker与items为准。",
+        "recent_answer_coverage": "none",
+        "structured_locations": [
+          "/state/_memory_controller/score_tracker/4",
+          "/state/items"
+        ]
+      },
+      "checkpoint_action": 40,
+      "chronology_notes": "T25 narration与option1提到遗失钥匙；T26–40公开行动/叙事/对话/选项均未再提钥匙。账本每检查点仍保留lost，不把这种状态持久化当叙事长间隔。",
+      "evidence": [
+        {
+          "action_index": 12,
+          "evidence_role": "authoritative_committed_inventory",
+          "excerpt": {
+            "aliases": [],
+            "description": "黄铜钥匙，柄上缠着褪色布条，门房按任务单编号交付。",
+            "location": "玩家手中",
+            "name": "温室连廊铁门钥匙",
+            "notes": "门锁涩，推门时需抬一下把手。",
+            "status": "owned"
+          },
+          "json_pointer": "/state/items/4"
+        },
+        {
+          "action_index": 24,
+          "evidence_role": "authoritative_item_ledger_before",
+          "excerpt": {
+            "item_name": "温室连廊铁门钥匙",
+            "last_seen_turn": 21,
+            "notes": "",
+            "state": "active"
+          },
+          "json_pointer": "/state/_memory_controller/score_tracker/4"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "committed_history",
+          "excerpt": "可那枚缠着褪色布条、一直握在手里的黄铜钥匙，不在了。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "committed_history",
+          "excerpt": "退回连廊，在刚才横移过的墙根一带摸找遗失的黄铜钥匙",
+          "json_pointer": "/output/options/1"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "authoritative_item_ledger_update",
+          "excerpt": {
+            "item_name": "温室连廊铁门钥匙",
+            "last_seen_turn": 25,
+            "notes": "",
+            "state": "lost"
+          },
+          "json_pointer": "/state/_memory_controller/score_tracker/4"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "authoritative_item_ledger_current",
+          "excerpt": {
+            "item_name": "温室连廊铁门钥匙",
+            "last_seen_turn": 25,
+            "notes": "",
+            "state": "lost"
+          },
+          "json_pointer": "/state/_memory_controller/score_tracker/4"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "authoritative_committed_inventory_absence",
+          "json_pointer": "/state/items",
+          "projection": "names"
+        }
+      ],
+      "first_action": 12,
+      "game_id": "game-01",
+      "gold": {
+        "acceptable_phrasings": [
+          "钥匙丢了/遗失；现在没有可用钥匙",
+          "账本lost，当前物品列表无此钥匙"
+        ],
+        "answer": "已经遗失，当前不在可用物品清单里。第25次提交行动确认找不到钥匙，权威物品账本从active变为lost，此后到第40次提交行动没有重新获得。",
+        "required_points": [
+          "当前是lost/遗失",
+          "当前不再持有/不可直接使用；解释遗失或无当前持有证据，不要求说清单或账本字段。"
+        ],
+        "rubric": {
+          "max_score": 2,
+          "points": [
+            {
+              "criterion": "遗失而非仍拥有/已消耗/毁坏",
+              "score": 1
+            },
+            {
+              "criterion": "当前不可作为持有工具使用，依据遗失经过或当前持有状态解释即可；不要求提字段名称。",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "仅复述第12次获得而答现在持有:0",
+            "把lost说成consumed:状态项0",
+            "声称已找回:0"
+          ]
+        },
+        "typical_errors": [
+          "仅复述第12次获得而答现在持有:0",
+          "把lost说成consumed:状态项0",
+          "声称已找回:0"
+        ]
+      },
+      "id": "JLC-20261106-G01-Q02",
+      "kind": "recall",
+      "mention_terms": [
+        "钥匙",
+        "褪色布条"
+      ],
+      "question": "门房交给你的温室连廊铁门钥匙现在是什么状态？请说明目前是否还在可用物品中。",
+      "review": {
+        "ambiguities": [
+          "T24本地审查因物品名切分误判黄铜钥匙柄不可用，但T24账本仍active；不能把T24拒绝当作遗失依据。真正遗失更新为T25。",
+          "T25叙事只推测钥匙落在某段连廊，不能给出精确遗失位置。"
+        ],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "区分曾经获得与当前遗失，按提交状态和物品账本回答",
+      "update_actions": [
+        25
+      ],
+      "validity": {
+        "current_status_from_action": 25,
+        "from_submitted_action": 12,
+        "future_status": "not used",
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "character_relation_and_claim",
+      "channels": {
+        "actual_full_memory_note": "NSB T30保留诺诺未确认关联与送门口，导师对象可从早期叙事和结构化fact源获得。",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "last_structured_exposure": 30,
+        "narrative_memory_note": "NSB T30保留诺诺未确认关联与送门口，导师对象可从早期叙事和结构化fact源获得。",
+        "recent_answer_coverage": "none",
+        "structured_locations": [
+          "/state/world_facts/9"
+        ]
+      },
+      "checkpoint_action": 30,
+      "chronology_notes": "",
+      "evidence": [
+        {
+          "action_index": 8,
+          "evidence_role": "committed_history",
+          "excerpt": "刻痕和任务是不是有关，我不否认，也不确认。有些事得让该说的人说。",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 8,
+          "evidence_role": "committed_history",
+          "excerpt": "她偏过头，补了一句，说档案室里的导师才是该问的人，她只负责把你送到门口。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 30,
+          "evidence_role": "persisted_suspected_claim",
+          "excerpt": {
+            "description": "诺诺对刻痕与第一个任务的关联不否认也不确认，暗示档案室导师才是该问的人。",
+            "name": "门柱刻痕与第一个任务的潜在关联",
+            "notes": "未证实，需向导师求证。",
+            "source": "诺诺在走廊上的回应",
+            "status": "suspected"
+          },
+          "json_pointer": "/state/world_facts/9"
+        }
+      ],
+      "first_action": 8,
+      "game_id": "game-01",
+      "gold": {
+        "acceptable_phrasings": [
+          "不否认不确认；问档案室导师",
+          "她没有确认关联，把问题交给导师，负责带路送到门口"
+        ],
+        "answer": "诺诺既不否认也不确认关联，说有些事要让该说的人说；她指向档案室的导师，自己只负责把玩家送到门口。这是诺诺的表态，当时不是对两者关联的证实。",
+        "required_points": [
+          "不否认也不确认",
+          "应问导师",
+          "归属为诺诺陈述而非客观已证实关联"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "points": [
+            {
+              "criterion": "正确还原保留态度",
+              "score": 1
+            },
+            {
+              "criterion": "指出导师是被指向的询问对象",
+              "score": 1
+            },
+            {
+              "criterion": "明确这不是已证实关联",
+              "score": 1
+            }
+          ],
+          "zero_or_errors": [
+            "说诺诺已经确认刻痕就是任务核心:保留态度和边界两项0",
+            "把导师说成门房:对象项0"
+          ]
+        },
+        "typical_errors": [
+          "说诺诺已经确认刻痕就是任务核心:保留态度和边界两项0",
+          "把导师说成门房:对象项0"
+        ]
+      },
+      "id": "JLC-20261106-G01-Q03",
+      "kind": "recall",
+      "mention_terms": [
+        "不否认",
+        "不确认",
+        "该问的人",
+        "门柱刻痕与第一个任务的潜在关联"
+      ],
+      "question": "在带你去档案室的那段路上，诺诺对门柱刻痕和第一个任务的关联作了什么表态？她让你向谁了解？",
+      "review": {
+        "ambiguities": [],
+        "required": [
+          "复核语义近义转述与选项的最近重提；不把结构化世界事实误归为只有叙事记忆可见。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "人物关系和表态回忆，不把角色保留态度升级为已证实事实",
+      "update_actions": [],
+      "validity": {
+        "from_submitted_action": 8,
+        "future_status": "not used",
+        "through_checkpoint": 30
+      }
+    },
+    {
+      "category": "updated_information_action",
+      "channels": {
+        "actual_full_memory_note": [
+          "与烟草味工具间铁架后的通道不是同一处；不得混同。",
+          "状态保留旧suspected风判断及新known填实，需按证据更新处理。",
+          "当前NSB摘要重复答案；这里只称公开叙事间隔7，不能称全部通道7回合无重复。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_world_facts"
+        ],
+        "recent_answer_coverage": "none"
+      },
+      "checkpoint_action": 40,
+      "chronology_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+      "evidence": [
+        {
+          "action_index": 30,
+          "evidence_role": "诺诺最初声称",
+          "excerpt": "这划痕和封条残片上的断口走向一样。墙后面有风，不是死墙。",
+          "json_pointer": "/output/dialogue/1/text"
+        },
+        {
+          "action_index": 31,
+          "evidence_role": "",
+          "excerpt": "诺诺把手从裂缝里抽回来，指尖沾着灰，冲你摇头，那道缝后面是实的，撬不开，再掰只会塌。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 31,
+          "evidence_role": "",
+          "excerpt": "缝是假的，后面填死了。",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 33,
+          "evidence_role": "保守按此主题重提计算7行动间隔；明确答案最近重述31",
+          "excerpt": "你不再去碰那面墙。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "",
+          "excerpt": {
+            "description": "诺诺掰开灰泥后确认裂缝后面是实的，撬不开，再掰只会塌。",
+            "name": "岔口裂缝后为实心填土",
+            "notes": "墙后通道方案失败。",
+            "source": "诺诺现场摸索",
+            "status": "known"
+          },
+          "json_pointer": "/state/world_facts/58"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "完整记忆摘要中仍可见，不属于40时发生新事件",
+          "excerpt": "诺诺在岔口摸墙发现裂缝，但撬开灰泥后确认缝被填死",
+          "json_pointer": "/state/_memory_controller/nsb/level1/0/summary"
+        }
+      ],
+      "first_action": 30,
+      "game_id": "game-02",
+      "gold": {
+        "acceptable_phrasings": [
+          "不能作为已经查明的退路；后来的摸查发现墙缝后填实，推翻了根据有风作出的初步判断。"
+        ],
+        "answer": "不支持。诺诺最初根据墙后有风判断不是死墙；后来剥开灰泥摸索，确认缝后填实、撬不开，再掰会塌。没有后续已打通证据，不能把它当作已确认退路。",
+        "required_points": [
+          "明确否定把该墙缝当作已确认通路。",
+          "解释后续实查发现填实/撬不开，覆盖早先有风的猜测。",
+          "不声称绝对永久不可通行；此判断限于已知检查结果。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。",
+          "points": [
+            {
+              "criterion": "明确否定把该墙缝当作已确认通路。",
+              "score": 1
+            },
+            {
+              "criterion": "解释后续实查发现填实/撬不开，覆盖早先有风的猜测。",
+              "score": 1
+            },
+            {
+              "criterion": "不声称绝对永久不可通行；此判断限于已知检查结果。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "只复述有风，所以可以通行",
+          "把另一处工具间的通路当成这道墙缝",
+          "把此刻无法确认偷换成永久不可能打开"
+        ]
+      },
+      "id": "JLC-20261106-G02-Q01",
+      "kind": "action",
+      "mention_terms": [
+        "死墙",
+        "墙缝",
+        "填死",
+        "缝后",
+        "岔口裂缝",
+        "那面墙"
+      ],
+      "question": "如果计划返回先前躲避监视者的岔口，直接把诺诺检查过的墙缝当作已查明可通行的退路，已有信息是否支持？请解释，不执行行动。",
+      "review": {
+        "ambiguities": [
+          "与烟草味工具间铁架后的通道不是同一处；不得混同。",
+          "状态保留旧suspected风判断及新known填实，需按证据更新处理。",
+          "当前NSB摘要重复答案；这里只称公开叙事间隔7，不能称全部通道7回合无重复。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "semantic_mentions": [
+        {
+          "action_index": 33,
+          "excerpt": "你不再去碰那面墙。",
+          "json_pointer": "/output/narration"
+        }
+      ],
+      "test_target": [
+        "updated_information",
+        "action_feasibility",
+        "claim_vs_observation"
+      ],
+      "update_actions": [
+        31
+      ],
+      "validity": {
+        "from_action": 31,
+        "future_information_used": false,
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "unknown_person_identity",
+      "channels": {
+        "actual_full_memory_note": [
+          "未知审查范围为initial公共状态及行动1–42的intents/player_action、output全文、提交状态与记忆；阅读相关实体线索后未见具体姓名或唯一身份映射。不是对整个世界断言无人知道。",
+          "诺诺关于上个月现场的描述本身是角色证言，问“诺诺所说”以避免当作独立证实。",
+          "持久world_facts/43每个后续检查点保留身份未明；不是40回合后的新剧情。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_world_facts",
+          "bounded_history_audit"
+        ],
+        "recent_answer_coverage": "no_known_answer"
+      },
+      "checkpoint_action": 42,
+      "chronology_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+      "evidence": [
+        {
+          "action_index": 25,
+          "evidence_role": "",
+          "excerpt": "芬格尔。上个月搬箱子的是芬格尔，箱子上缠着黄铜色的封条。他不是一个人，拐角还站着个执行部的，光看不动手。",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "",
+          "excerpt": "楼梯拐角还站着个穿执行部外套的人，那人没动手，只在看。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 42,
+          "evidence_role": "",
+          "excerpt": {
+            "description": "诺诺称芬格尔搬箱时楼梯拐角还站着个穿执行部外套的人，只旁观未动手。",
+            "name": "执行部旁观者",
+            "notes": "身份未明。",
+            "source": "诺诺的补充",
+            "status": "suspected"
+          },
+          "json_pointer": "/state/world_facts/43"
+        }
+      ],
+      "first_action": 25,
+      "game_id": "game-02",
+      "gold": {
+        "acceptable_phrasings": [
+          "无法确定名字；只知道诺诺称有个穿执行部外套的人在旁观。",
+          "芬格尔是搬箱人，旁观的执行部人员未具名，不能把两人混同。"
+        ],
+        "answer": "不能确定姓名。诺诺只说楼梯拐角有个穿执行部外套的人旁观、没有动手；没有名字，也没有可靠证据把此人等同于之后的监视者、守卫或其他人物。芬格尔是她所说搬箱的人，不应把他的名字填成旁观者。",
+        "required_points": [
+          "明确承认无法从该范围确定姓名。",
+          "准确说明唯一相关描述来自诺诺：执行部装束、拐角旁观不动手。",
+          "不把芬格尔（搬箱人）或后来的监视者/守卫武断等同该人。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。",
+          "points": [
+            {
+              "criterion": "明确承认无法从该范围确定姓名。",
+              "score": 1
+            },
+            {
+              "criterion": "准确说明唯一相关描述来自诺诺：执行部装束、拐角旁观不动手。",
+              "score": 1
+            },
+            {
+              "criterion": "不把芬格尔（搬箱人）或后来的监视者/守卫武断等同该人。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "把芬格尔当成执行部旁观者",
+          "凭后续监视者身份推定两人同一",
+          "以未知为由否认已经知道的旁观角色"
+        ]
+      },
+      "id": "JLC-20261106-G02-Q02",
+      "kind": "unknown",
+      "mention_terms": [
+        "执行部旁观者",
+        "光看不动手",
+        "穿执行部外套",
+        "旁观未动手"
+      ],
+      "question": "仅依据本局开始至当前检查点已经出现的记录，能否确定诺诺所说上个月在搬箱现场旁观的执行部人员的姓名？请说明知道和不知道的边界。",
+      "review": {
+        "ambiguities": [
+          "未知审查范围为initial公共状态及行动1–42的intents/player_action、output全文、提交状态与记忆；阅读相关实体线索后未见具体姓名或唯一身份映射。不是对整个世界断言无人知道。",
+          "诺诺关于上个月现场的描述本身是角色证言，问“诺诺所说”以避免当作独立证实。",
+          "持久world_facts/43每个后续检查点保留身份未明；不是40回合后的新剧情。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": [
+        "unknown_with_bounded_scope",
+        "claim_vs_confirmed",
+        "person_roles"
+      ],
+      "unknown_audit": {
+        "inference_review": "0–42前缀内只有诺诺对上个月搬箱现场的证言。芬格尔角色是搬箱者；后来的守卫和监视者没有唯一映射。当前world_facts/43身份未明。不能由衣着或同属执行部推出姓名。",
+        "negative_claim": "本历史范围未提供可确定该姓名的证据；不主张故事世界中无人知道。",
+        "range": [
+          0,
+          42
+        ],
+        "reviewed_fields": [
+          "initial/output/state",
+          "intents/request/player_action",
+          "checkpoints/output (all leaves including options/check stakes/memory_updates)",
+          "checkpoints/state including world_facts/npcs/NSB/PCB/narrative_pool",
+          "progress/recap_compressed"
+        ],
+        "search_terms": [
+          "执行部旁观者",
+          "执行部外套",
+          "光看不动手",
+          "芬格尔",
+          "旁观",
+          "名字",
+          "姓名"
+        ],
+        "status": "editor_reviewed_pending_human"
+      },
+      "update_actions": [],
+      "validity": {
+        "from_action": 25,
+        "future_information_used": false,
+        "through_checkpoint": 42
+      }
+    },
+    {
+      "category": "early_narrative_detail",
+      "channels": {
+        "actual_full_memory_answer_available": false,
+        "actual_full_memory_note": [
+          "cp42持久world_facts仅记近期有人待过，不含数量。已检查cp42 NSB/PCB/narrative_pool中不含七枚或三枚，可能答案已从实际full记忆丢失；题库答案仍来自历史原证据。必须标answer_available_in_actual_full_memory=false，而不能人工补入摘要。",
+          "T25玩家叙述“这堆烟不是今天留下的”与T24新鲜观察有张力；本题只测数目，不测准确停留时长。"
+        ],
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative"
+        ],
+        "recent_answer_coverage": "none",
+        "retention_warning": "历史有标准答案，但cp42实际NSB/PCB/recap与结构化状态未检出两项数量。保留为记忆保留缺口题；不得把它计成纯粹回答模型忘记。",
+        "structured_answer_available": false
+      },
+      "checkpoint_action": 42,
+      "chronology_notes": "公开重提扫描包括行动、narration、dialogue、options、memory_updates；持久状态/摘要的重复单独记，不冒充新的游戏事件。",
+      "evidence": [
+        {
+          "action_index": 24,
+          "evidence_role": "",
+          "excerpt": "你数了数，一共七枚，三枚的灰还没被潮气浸透，边缘发白。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 24,
+          "evidence_role": "",
+          "excerpt": "七枚，三枚新的。",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "七枚的最后公开重提；三枚最近24",
+          "excerpt": "你直起身，把七枚烟蒂一枚一枚按原样摆回铁架脚边",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 42,
+          "evidence_role": "",
+          "excerpt": {
+            "description": "工具间地上有被踩扁的烟蒂和一支镜片带余温的手电筒。",
+            "name": "工具间近期有人待过",
+            "notes": "说明有人近期在此停留。",
+            "source": "窄口工具间发现",
+            "status": "known"
+          },
+          "json_pointer": "/state/world_facts/39"
+        }
+      ],
+      "first_action": 24,
+      "game_id": "game-02",
+      "gold": {
+        "acceptable_phrasings": [
+          "总共7枚，其中3枚较新。",
+          "七枚烟蒂，三枚灰未浸透、边缘发白。"
+        ],
+        "answer": "共七枚，其中三枚较新（灰尚未被潮气浸透、边缘发白）。",
+        "required_points": [
+          "总数七枚。",
+          "其中三枚较新/灰未浸透边缘发白。"
+        ],
+        "rubric": {
+          "max_score": 2,
+          "partial_credit": "每满足一项得1分；与当前权威证据直接相反的结论该项0分，不因无依据的额外猜测加分。",
+          "points": [
+            {
+              "criterion": "总数七枚。",
+              "score": 1
+            },
+            {
+              "criterion": "其中三枚较新/灰未浸透边缘发白。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "把三枚当总数",
+          "把七枚都说成新烟蒂",
+          "仅说有人来过而未回答数量"
+        ]
+      },
+      "id": "JLC-20261106-G02-Q03",
+      "kind": "recall",
+      "mention_terms": [
+        "烟蒂",
+        "七枚",
+        "三枚新的"
+      ],
+      "question": "在遗弃维护工具间检查烟蒂时，一共数到了多少枚？其中当时有多少枚显得较新？",
+      "review": {
+        "ambiguities": [
+          "cp42持久world_facts仅记近期有人待过，不含数量。已检查cp42 NSB/PCB/narrative_pool中不含七枚或三枚，可能答案已从实际full记忆丢失；题库答案仍来自历史原证据。必须标answer_available_in_actual_full_memory=false，而不能人工补入摘要。",
+          "T25玩家叙述“这堆烟不是今天留下的”与T24新鲜观察有张力；本题只测数目，不测准确停留时长。"
+        ],
+        "required": [
+          "核对语义重提、最近窗口和证言边界；评分按要点，不要求逐字相同。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": [
+        "early_narrative_detail"
+      ],
+      "update_actions": [],
+      "validity": {
+        "from_action": 24,
+        "future_information_used": false,
+        "through_checkpoint": 42
+      }
+    },
+    {
+      "category": "item_transfer_state",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "recent_answer_coverage": "none",
+        "structured_answer_available": true
+      },
+      "checkpoint_action": 35,
+      "evidence": [
+        {
+          "action_index": 1,
+          "evidence_role": "committed_evidence",
+          "excerpt": "手里的临时通行卡正在发烫。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 24,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/items_lost/0"
+        },
+        {
+          "action_index": 24,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/0"
+        },
+        {
+          "action_index": 25,
+          "evidence_role": "committed_evidence",
+          "excerpt": "他把通行卡收进外套内袋",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 35,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/0"
+        },
+        {
+          "action_index": 35,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/items",
+          "projection": "names"
+        }
+      ],
+      "first_action": 1,
+      "game_id": "game-03",
+      "gold": {
+        "acceptable_phrasings": [
+          "当前不持有，不能直接出示。第24次行动玩家将卡交给执行部核查员；提交后清单移除该卡，账本为lost，至第35次行动未重新获得。lost在此表示从玩家持有状态移除，不是已消耗或销毁。"
+        ],
+        "answer": "当前不持有，不能直接出示。第24次行动玩家将卡交给执行部核查员；提交后清单移除该卡，账本为lost，至第35次行动未重新获得。lost在此表示从玩家持有状态移除，不是已消耗或销毁。",
+        "required_points": [
+          "当前不在玩家可用持有物品中，不能直接出示。",
+          "交给执行部核查员；不能因之前备份在卡中就认为还持有。",
+          "正确区分移交后不持有与物品消耗/销毁；可用自然语言，无需提lost或账本字段。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "当前不在玩家可用持有物品中，不能直接出示。",
+              "score": 1
+            },
+            {
+              "criterion": "交给执行部核查员；不能因之前备份在卡中就认为还持有。",
+              "score": 1
+            },
+            {
+              "criterion": "正确区分移交后不持有与物品消耗/销毁；可用自然语言，无需提lost或账本字段。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "因为备份在卡中就说卡仍在身上",
+          "把被收走解释成消耗",
+          "用其他游戏的通行卡恢复覆盖本局证据"
+        ]
+      },
+      "id": "JLC-20261106-G03-Q01",
+      "kind": "recall",
+      "mention_terms": [
+        "临时通行卡",
+        "通行卡",
+        "卡背签发栏"
+      ],
+      "question": "先前用于备份取件记录与终端日志的临时通行卡，现在是否仍由你持有并可直接出示？请说明状态变化的依据。",
+      "review": {
+        "ambiguities": [
+          "只断言玩家当前无卡，不推定核查员此后每一刻的物理位置；lost不等于消耗。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "区分曾持有/备份与后来的移交；当前物品状态以提交清单和SCORE为准。",
+      "update_actions": [
+        24
+      ],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 24,
+        "first_event_action": 1,
+        "through_checkpoint": 35
+      }
+    },
+    {
+      "category": "item_action_feasibility",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": false,
+        "expected": [
+          "structured_state",
+          "historical_narrative"
+        ],
+        "recent_answer_coverage": "none",
+        "structured_answer_available": true
+      },
+      "checkpoint_action": 40,
+      "evidence": [
+        {
+          "action_index": 19,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/items_gained/0"
+        },
+        {
+          "action_index": 22,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/items_lost/0"
+        },
+        {
+          "action_index": 22,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/5"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/5"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/items",
+          "projection": "names"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/world_facts/32"
+        }
+      ],
+      "first_action": 19,
+      "game_id": "game-03",
+      "gold": {
+        "acceptable_phrasings": [
+          "不具备。报告原件已被执行部核查员抽走，当前物品清单没有它，账本持续为lost；记得内容或见过桌上原件不等于持有。需要先实际取回原件，不能直接递交。"
+        ],
+        "answer": "不具备。报告原件已被执行部核查员抽走，当前物品清单没有它，账本持续为lost；记得内容或见过桌上原件不等于持有。需要先实际取回原件，不能直接递交。",
+        "required_points": [
+          "否定此刻可直接递交原件。",
+          "解释报告被核查员抽走且至今未取回；自然语言即可，不要求报清单或账本名。",
+          "区分记忆/编号记录与报告原件；不得假定取回已经发生。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "否定此刻可直接递交原件。",
+              "score": 1
+            },
+            {
+              "criterion": "解释报告被核查员抽走且至今未取回；自然语言即可，不要求报清单或账本名。",
+              "score": 1
+            },
+            {
+              "criterion": "区分记忆/编号记录与报告原件；不得假定取回已经发生。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "按早期取得记录直接递交",
+          "把脑中的样本编号或别的纸条当报告原件",
+          "主动执行取回或推进游戏"
+        ]
+      },
+      "id": "JLC-20261106-G03-Q02",
+      "kind": "action",
+      "mention_terms": [
+        "血统检测异常报告",
+        "血统报告",
+        "报告"
+      ],
+      "question": "现在若想亲手把血统检测异常报告的原件递给诺诺核对，你是否具备直接执行所需的物品条件？请解释；只判断，不执行。",
+      "review": {
+        "ambiguities": [
+          "报告在听证桌上再次出现不代表重新获得。其他纸条的owned与物理位置有冲突，本题不把那些物品等同报告。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "使用当前物品状态限制行动，不因历史拥有或见过原件就虚构可递交。",
+      "update_actions": [
+        22
+      ],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 22,
+        "first_event_action": 19,
+        "through_checkpoint": 40
+      }
+    },
+    {
+      "category": "unknown_exact_value",
+      "channels": {
+        "actual_full_memory_answer_available": false,
+        "answer_in_recent": false,
+        "expected": [
+          "bounded_history_audit",
+          "historical_narrative",
+          "structured_state"
+        ],
+        "recent_answer_coverage": "no_known_answer",
+        "recent_topic_present": true,
+        "structured_answer_available": false
+      },
+      "checkpoint_action": 38,
+      "evidence": [
+        {
+          "action_index": 30,
+          "evidence_role": "committed_evidence",
+          "excerpt": "指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 31,
+          "evidence_role": "committed_evidence",
+          "excerpt": "把数字压进记忆里",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 33,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/dialogue/1/text"
+        },
+        {
+          "action_index": 36,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 38,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/world_facts/49"
+        }
+      ],
+      "first_action": 30,
+      "game_id": "game-03",
+      "gold": {
+        "acceptable_phrasings": [
+          "无法从这段记录确定具体数字。历史只记她在手背划了“一个数字”，之后说玩家记住它、审查者声称知道它，并提到与编号相关，但没有把数字的值写出来，也没有唯一可推导的映射。不能猜一个数字。"
+        ],
+        "answer": "无法从这段记录确定具体数字。历史只记她在手背划了“一个数字”，之后说玩家记住它、审查者声称知道它，并提到与编号相关，但没有把数字的值写出来，也没有唯一可推导的映射。不能猜一个数字。",
+        "required_points": [
+          "明确无法从0–38提交历史确定具体数值，不编造数字。",
+          "知道诺诺确实划过数字，并区分角色记住与记录披露。",
+          "编号有关、末两位相同等线索不足以唯一推导手背数字。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "明确无法从0–38提交历史确定具体数值，不编造数字。",
+              "score": 1
+            },
+            {
+              "criterion": "知道诺诺确实划过数字，并区分角色记住与记录披露。",
+              "score": 1
+            },
+            {
+              "criterion": "编号有关、末两位相同等线索不足以唯一推导手背数字。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "将一个数字答成1",
+          "把三年前答成3",
+          "因玩家记住而声称记录已给出具体数字"
+        ]
+      },
+      "id": "JLC-20261106-G03-Q03",
+      "kind": "unknown",
+      "mention_terms": [
+        "手背",
+        "那个数字",
+        "划下数字"
+      ],
+      "question": "仅依据本局开始至当前检查点已经出现的记录，诺诺曾在你手背划下的具体数字是多少？如果无法确定，请说明依据和范围。",
+      "review": {
+        "ambiguities": [
+          "玩家在故事内可能知道，但记录文本没有值；本题不等价于角色失忆。近期33–38反复出现该话题，属于近期未知控制题。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "人物在故事内知道某数，不等于读者记录给出了该数；检验有界拒答。",
+      "unknown_audit": {
+        "inference_review": "逐项审阅30–38涉及手背的正文/对话/选项，另检索初始至38完整公开输出、状态和记忆。只有未具值的“一个数字”；编号文本也未给可计算数串。前四位、末两位/只差两位和三年前等是长度或时间，不能唯一推出手背数值。",
+        "negative_claim": "仅断言提供的历史范围不能确定数值，不主张玩家或诺诺不知道。",
+        "range": [
+          0,
+          38
+        ],
+        "reviewed_fields": [
+          "initial/output/state",
+          "intents/request/player_action",
+          "checkpoints/output all leaves including options/check stakes/memory_updates",
+          "checkpoints/state including NSB/PCB/narrative_pool/world_facts",
+          "progress/recap_compressed"
+        ],
+        "search_terms": [
+          "手背",
+          "数字",
+          "划下",
+          "划了",
+          "登记号",
+          "编号"
+        ],
+        "status": "editor_reviewed_pending_human"
+      },
+      "update_actions": [],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 30,
+        "first_event_action": 30,
+        "through_checkpoint": 38
+      }
+    },
+    {
+      "category": "character_claim_and_relation",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": true,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "note": "recent40–45通过人物更新重提档案上殉职/被通缉，但未含完整自述和亲手封存动机；结构化也只保留与数字有关，完整亲手封进的信息在实际NSB.summary中。",
+        "recent_answer_coverage": "partial",
+        "structured_answer_available": "partial"
+      },
+      "checkpoint_action": 45,
+      "evidence": [
+        {
+          "action_index": 38,
+          "evidence_role": "committed_evidence",
+          "excerpt": "他低声报出一个名字，又补了一句简短的身份说明，他是三年前被撤销科室的末批外勤，档案上写的是殉职。",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 38,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 45,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/world_facts/64"
+        }
+      ],
+      "first_action": 38,
+      "game_id": "game-04",
+      "gold": {
+        "acceptable_phrasings": [
+          "他自称是三年前被撤销科室的末批外勤，档案上记作殉职；他称编号中的一个数字是自己亲手封进那扇门后的，因此给出与帮助玩家有关的解释。这是他的自述，不证明真实死而复生，也没有给出那个数字的具体值。"
+        ],
+        "answer": "他自称是三年前被撤销科室的末批外勤，档案上记作殉职；他称编号中的一个数字是自己亲手封进那扇门后的，因此给出与帮助玩家有关的解释。这是他的自述，不证明真实死而复生，也没有给出那个数字的具体值。",
+        "required_points": [
+          "他自称三年前被撤销科室的末批外勤。",
+          "档案记为殉职，是其自述/档案说法而非独立证实实际死亡。",
+          "称编号里一个数字由自己亲手封进那扇门后；不编具体数值。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "他自称三年前被撤销科室的末批外勤。",
+              "score": 1
+            },
+            {
+              "criterion": "档案记为殉职，是其自述/档案说法而非独立证实实际死亡。",
+              "score": 1
+            },
+            {
+              "criterion": "称编号里一个数字由自己亲手封进那扇门后；不编具体数值。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "直接断言他确实死亡又复活",
+          "把档案记载当真实死亡证明",
+          "编造他亲手封存的具体数字"
+        ]
+      },
+      "id": "JLC-20261106-G04-Q01",
+      "kind": "recall",
+      "mention_terms": [
+        "末批外勤",
+        "殉职",
+        "亲手封",
+        "封进那扇门"
+      ],
+      "question": "门后那位兜帽人在首次说明身份时，怎样描述自己的外勤经历、档案记载，以及帮助你的理由？请保留信息来源的界限。",
+      "review": {
+        "ambiguities": [
+          "后来发现已注销通缉令只增加记录线索，不能据此证明他说的全部历史。叙事与结构化NPC有重复别名；不能算多个独立人物。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "记住角色身份自述、与编号的关系，避免将自述或摘要断言升级成独立证实。",
+      "update_actions": [],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 38,
+        "first_event_action": 38,
+        "through_checkpoint": 45
+      }
+    },
+    {
+      "category": "item_acquisition_and_check",
+      "channels": {
+        "actual_full_memory_answer_available": true,
+        "answer_in_recent": true,
+        "expected": [
+          "recent_context",
+          "structured_state"
+        ],
+        "note": "这是0间隔近期状态控制题，保留自然重复，不标成长间隔。",
+        "recent_answer_coverage": "full",
+        "structured_answer_available": "partial_without_recent_check"
+      },
+      "checkpoint_action": 41,
+      "evidence": [
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "excerpt": "一小片铜色的簧片从槽口边缘翘出来，上面刻着半截编号",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 41,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/action_check"
+        },
+        {
+          "action_index": 41,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/items/5"
+        },
+        {
+          "action_index": 41,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/5"
+        },
+        {
+          "action_index": 41,
+          "evidence_role": "committed_evidence",
+          "excerpt": "簧片终于被你掰了下来",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 41,
+          "evidence_role": "committed_evidence",
+          "excerpt": "血迹和铜屑混在一起，痕迹比之前多了一倍。",
+          "json_pointer": "/output/narration"
+        }
+      ],
+      "first_action": 40,
+      "game_id": "game-04",
+      "gold": {
+        "acceptable_phrasings": [
+          "检定失败（d20为2，目标12），但仍取得半截铜色簧片，当前items为owned、账本active。代价是手指被划伤、留下血迹和更多追踪痕迹；不能把失败概括成没有拿到。"
+        ],
+        "answer": "检定失败（d20为2，目标12），但仍取得半截铜色簧片，当前items为owned、账本active。代价是手指被划伤、留下血迹和更多追踪痕迹；不能把失败概括成没有拿到。",
+        "required_points": [
+          "检定为失败；若给骰点应为2，目标12。",
+          "仍持有半截铜色簧片，清单owned且账本active。",
+          "手指划伤流血并留下痕迹，不编造永久伤残或物品消耗。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "检定为失败；若给骰点应为2，目标12。",
+              "score": 1
+            },
+            {
+              "criterion": "仍持有半截铜色簧片，清单owned且账本active。",
+              "score": 1
+            },
+            {
+              "criterion": "手指划伤流血并留下痕迹，不编造永久伤残或物品消耗。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "检定失败所以空手而归",
+          "把目标12当骰点",
+          "把受伤说成物品已消耗"
+        ]
+      },
+      "id": "JLC-20261106-G04-Q02",
+      "kind": "recall",
+      "mention_terms": [
+        "簧片",
+        "锁芯",
+        "划伤"
+      ],
+      "question": "刚才取锁芯铜色簧片的检定结果如何？现在是否持有簧片，发生了什么代价？",
+      "review": {
+        "ambiguities": [
+          "本题当前持有判断取state+SCORE；检定取已提交action_check，不取未提交模型草稿。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "检定失败不自动等于没有获得物品；核对权威检定与提交状态。",
+      "update_actions": [
+        41
+      ],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 41,
+        "first_event_action": 40,
+        "through_checkpoint": 41
+      }
+    },
+    {
+      "category": "action_from_observed_limit",
+      "channels": {
+        "actual_full_memory_answer_available": "partial",
+        "answer_in_recent": false,
+        "expected": [
+          "historical_narrative",
+          "structured_state"
+        ],
+        "note": "state和实际NSB均保留试锁失败及裂纹/簧片。cp47实际full没有保留兜帽人“不靠权限开/门不认卡”的完整解释及归属；该评分细节依赖已未保留的历史，须区分记忆保留缺口与回答错误，不人为补入。",
+        "recent_answer_coverage": "none",
+        "recent_related_entity_hints": {
+          "actions": [
+            43,
+            46
+          ],
+          "description": "叙事/选项提到簧片，但未重复它的来源及试锁结果；属于实体提示，不等于全部答案重提。"
+        },
+        "structured_answer_available": "partial"
+      },
+      "checkpoint_action": 47,
+      "evidence": [
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "excerpt": "锁没有开，锁舌纹丝不动",
+          "json_pointer": "/output/narration"
+        },
+        {
+          "action_index": 40,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/output/dialogue/0/text"
+        },
+        {
+          "action_index": 47,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/items/0"
+        },
+        {
+          "action_index": 47,
+          "evidence_role": "committed_evidence",
+          "json_pointer": "/state/_memory_controller/score_tracker/0"
+        }
+      ],
+      "first_action": 40,
+      "game_id": "game-04",
+      "gold": {
+        "acceptable_phrasings": [
+          "先前把卡插入旧式机械锁没有开门，锁舌未动；卡裂纹扩大并引出响声、铜簧片。兜帽人解释这锁不靠权限开。即使当前仍持有卡、卡会发热，也不能据此把它当成已经验证能开这道锁的钥匙；没有后续成功开锁证据，不断言所有门都永远无法用卡。"
+        ],
+        "answer": "先前把卡插入旧式机械锁没有开门，锁舌未动；卡裂纹扩大并引出响声、铜簧片。兜帽人解释这锁不靠权限开。即使当前仍持有卡、卡会发热，也不能据此把它当成已经验证能开这道锁的钥匙；没有后续成功开锁证据，不断言所有门都永远无法用卡。",
+        "required_points": [
+          "回忆试卡未开门、锁舌未动；不能把发热当开锁成功。",
+          "指出卡裂纹扩大/响声或锁芯簧片的实际结果，并把不靠权限的解释归给兜帽人。",
+          "结论限于这道锁已有尝试；当前持有卡不等于验证可开，不执行行动。"
+        ],
+        "rubric": {
+          "max_score": 3,
+          "partial_credit": "每要点1分；不要求措辞相同。与该要点直接矛盾或编造依据，该要点0分；完全相反的核心判断不得获得该判断分。",
+          "points": [
+            {
+              "criterion": "回忆试卡未开门、锁舌未动；不能把发热当开锁成功。",
+              "score": 1
+            },
+            {
+              "criterion": "指出卡裂纹扩大/响声或锁芯簧片的实际结果，并把不靠权限的解释归给兜帽人。",
+              "score": 1
+            },
+            {
+              "criterion": "结论限于这道锁已有尝试；当前持有卡不等于验证可开，不执行行动。",
+              "score": 1
+            }
+          ]
+        },
+        "typical_errors": [
+          "发热就是权限生效所以已经能开",
+          "把仍持有卡当成开锁可行的充分证据",
+          "声称已把门打开或执行新行动"
+        ]
+      },
+      "id": "JLC-20261106-G04-Q03",
+      "kind": "action",
+      "mention_terms": [
+        "旧式机械锁",
+        "锁舌",
+        "门不认卡",
+        "这锁不是靠权限"
+      ],
+      "question": "要评估临时通行卡能否打开先前那道旧式机械锁门，目前有哪些已知尝试结果和限制？请判断并解释，不实际开门。",
+      "review": {
+        "ambiguities": [
+          "问题指定先前同一道锁，不把后来维护门/检修口当同一门。不能据一次失败推出物理上永久不可能。",
+          "完整记忆快照对第二要点只能部分支持；问题仍可由检查点之前的真实历史确定，待人工决定后续是否作为完整答案评分项。"
+        ],
+        "required": [
+          "核对同义/隐含重提和证据到要点的覆盖；本题只用于独立只读作答。"
+        ],
+        "status": "pending_human_review"
+      },
+      "test_target": "回忆失败尝试与角色说明，区分持有工具/发生反应与验证成功。",
+      "update_actions": [],
+      "validity": {
+        "after_checkpoint": "未审查且不可据此回答本题",
+        "current_claim_from_action": 40,
+        "first_event_action": 40,
+        "through_checkpoint": 47
+      }
+    }
+  ],
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

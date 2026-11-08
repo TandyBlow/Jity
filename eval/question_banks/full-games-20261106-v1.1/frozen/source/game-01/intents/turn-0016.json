@@ -1,0 +1,42 @@
+{
+  "before_sha256": "bd8a4d203be4f38130a891061833031490418b5c23b96551abe1d56592943e32",
+  "created_at": "2026-11-06T05:18:01.015902+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "蹲下抓起一把青灰色碎屑，用任务单包住，边退边观察碎屑在纸上的反应",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 16
+  },
+  "selection": {
+    "action": "蹲下抓起一把青灰色碎屑，用任务单包住，边退边观察碎屑在纸上的反应",
+    "option_index": 2,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 1,
+    "scores": [
+      {
+        "action": "趁嗡鸣变调、光源移开的间隙冲过缺口，绕到支架侧面看清匣子和移动的影子",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8216632400232057
+      },
+      {
+        "action": "立刻后撤，退回铁门处，把门带上，在门外听嗡鸣是否追出来",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.929521519630242
+      },
+      {
+        "action": "蹲下抓起一把青灰色碎屑，用任务单包住，边退边观察碎屑在纸上的反应",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.8535957019102793
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 16
+}

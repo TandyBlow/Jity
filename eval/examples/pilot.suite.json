@@ -1,0 +1,946 @@
+{
+  "schema_version": 1,
+  "suite_id": "offline-memory-pilot-v1",
+  "title": "长期一致性评测工具离线示例",
+  "description": "仅用于验证调度、隔离、恢复和报告。历史、事实注释及回复均为离线模拟，不代表真实模型记忆能力或真实游戏结果。",
+  "cases": [
+    {
+      "id": "campus-archive",
+      "title": "校园档案：离线模拟用例",
+      "history": [
+        {
+          "turn": 1,
+          "text": "第 1 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 2,
+          "text": "诺诺将档案藏在西塔第三个抽屉，交代你以后需要时去取。",
+          "facts": [
+            {
+              "id": "archive_location",
+              "value": "西塔第三个抽屉",
+              "storage": "narrative"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "text": "第 3 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 4,
+          "text": "你收到一瓶治疗药水并放入背包。",
+          "facts": [
+            {
+              "id": "potion_state",
+              "value": "持有",
+              "storage": "both"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "text": "林岚持有蓝钥匙，名字只差一个字的林澜持有红钥匙。",
+          "facts": [
+            {
+              "id": "red_key_holder",
+              "value": "林澜",
+              "storage": "structured"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "text": "第 6 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 7,
+          "text": "第 7 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 8,
+          "text": "你喝掉了唯一一瓶治疗药水。管理员接待了来访者，但未透露自己的生日。",
+          "facts": [
+            {
+              "id": "potion_state",
+              "value": "已消耗",
+              "storage": "both"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "text": "第 9 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 10,
+          "text": "第 10 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 11,
+          "text": "第 11 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 12,
+          "text": "第 12 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 13,
+          "text": "第 13 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 14,
+          "text": "第 14 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 15,
+          "text": "第 15 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 16,
+          "text": "第 16 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 17,
+          "text": "第 17 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 18,
+          "text": "第 18 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 19,
+          "text": "第 19 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 20,
+          "text": "第 20 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 21,
+          "text": "第 21 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 22,
+          "text": "第 22 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 23,
+          "text": "第 23 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 24,
+          "text": "第 24 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 25,
+          "text": "第 25 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 26,
+          "text": "第 26 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 27,
+          "text": "第 27 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 28,
+          "text": "第 28 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 29,
+          "text": "第 29 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 30,
+          "text": "第 30 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 31,
+          "text": "第 31 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 32,
+          "text": "第 32 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 33,
+          "text": "第 33 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 34,
+          "text": "第 34 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 35,
+          "text": "第 35 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 36,
+          "text": "第 36 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 37,
+          "text": "第 37 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 38,
+          "text": "第 38 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 39,
+          "text": "第 39 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 40,
+          "text": "第 40 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 41,
+          "text": "第 41 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 42,
+          "text": "第 42 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 43,
+          "text": "第 43 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 44,
+          "text": "第 44 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 45,
+          "text": "第 45 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 46,
+          "text": "第 46 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 47,
+          "text": "第 47 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 48,
+          "text": "第 48 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 49,
+          "text": "第 49 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        }
+      ],
+      "probes": [
+        {
+          "id": "archive-location-d10-recall",
+          "fact_id": "archive_location",
+          "kind": "recall",
+          "question": "诺诺之前把档案藏在哪里？",
+          "source_turn": 2,
+          "delay": 10
+        },
+        {
+          "id": "archive-location-d10-action",
+          "fact_id": "archive_location",
+          "kind": "action",
+          "question": "现在需要那份档案，请决定接下来去哪里取。",
+          "source_turn": 2,
+          "delay": 10
+        },
+        {
+          "id": "archive-location-d20-recall",
+          "fact_id": "archive_location",
+          "kind": "recall",
+          "question": "诺诺之前把档案藏在哪里？",
+          "source_turn": 2,
+          "delay": 20
+        },
+        {
+          "id": "archive-location-d20-action",
+          "fact_id": "archive_location",
+          "kind": "action",
+          "question": "现在需要那份档案，请决定接下来去哪里取。",
+          "source_turn": 2,
+          "delay": 20
+        },
+        {
+          "id": "archive-location-d40-recall",
+          "fact_id": "archive_location",
+          "kind": "recall",
+          "question": "诺诺之前把档案藏在哪里？",
+          "source_turn": 2,
+          "delay": 40
+        },
+        {
+          "id": "archive-location-d40-action",
+          "fact_id": "archive_location",
+          "kind": "action",
+          "question": "现在需要那份档案，请决定接下来去哪里取。",
+          "source_turn": 2,
+          "delay": 40
+        },
+        {
+          "id": "potion-state-d10-recall",
+          "fact_id": "potion_state",
+          "kind": "recall",
+          "question": "治疗药水目前是什么状态？",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "potion-state-d10-action",
+          "fact_id": "potion_state",
+          "kind": "action",
+          "question": "现在有人受伤，请根据药水的实际状态安排救治。",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "potion-state-d20-recall",
+          "fact_id": "potion_state",
+          "kind": "recall",
+          "question": "治疗药水目前是什么状态？",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "potion-state-d20-action",
+          "fact_id": "potion_state",
+          "kind": "action",
+          "question": "现在有人受伤，请根据药水的实际状态安排救治。",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "potion-state-d40-recall",
+          "fact_id": "potion_state",
+          "kind": "recall",
+          "question": "治疗药水目前是什么状态？",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "potion-state-d40-action",
+          "fact_id": "potion_state",
+          "kind": "action",
+          "question": "现在有人受伤，请根据药水的实际状态安排救治。",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "key-holder-d10-recall",
+          "fact_id": "red_key_holder",
+          "kind": "recall",
+          "question": "红钥匙目前由谁持有？",
+          "source_turn": 5,
+          "delay": 10
+        },
+        {
+          "id": "key-holder-d10-action",
+          "fact_id": "red_key_holder",
+          "kind": "action",
+          "question": "现在需要红钥匙，请决定向谁借用。",
+          "source_turn": 5,
+          "delay": 10
+        },
+        {
+          "id": "key-holder-d20-recall",
+          "fact_id": "red_key_holder",
+          "kind": "recall",
+          "question": "红钥匙目前由谁持有？",
+          "source_turn": 5,
+          "delay": 20
+        },
+        {
+          "id": "key-holder-d20-action",
+          "fact_id": "red_key_holder",
+          "kind": "action",
+          "question": "现在需要红钥匙，请决定向谁借用。",
+          "source_turn": 5,
+          "delay": 20
+        },
+        {
+          "id": "key-holder-d40-recall",
+          "fact_id": "red_key_holder",
+          "kind": "recall",
+          "question": "红钥匙目前由谁持有？",
+          "source_turn": 5,
+          "delay": 40
+        },
+        {
+          "id": "key-holder-d40-action",
+          "fact_id": "red_key_holder",
+          "kind": "action",
+          "question": "现在需要红钥匙，请决定向谁借用。",
+          "source_turn": 5,
+          "delay": 40
+        },
+        {
+          "id": "unknown-birthday-d10-recall",
+          "fact_id": "administrator_birthday",
+          "kind": "recall",
+          "question": "管理员的生日是哪天？",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "unknown-birthday-d10-action",
+          "fact_id": "administrator_birthday",
+          "kind": "action",
+          "question": "请根据已知信息决定能否安排管理员的生日庆祝日期。",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "unknown-birthday-d20-recall",
+          "fact_id": "administrator_birthday",
+          "kind": "recall",
+          "question": "管理员的生日是哪天？",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "unknown-birthday-d20-action",
+          "fact_id": "administrator_birthday",
+          "kind": "action",
+          "question": "请根据已知信息决定能否安排管理员的生日庆祝日期。",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "unknown-birthday-d40-recall",
+          "fact_id": "administrator_birthday",
+          "kind": "recall",
+          "question": "管理员的生日是哪天？",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "unknown-birthday-d40-action",
+          "fact_id": "administrator_birthday",
+          "kind": "action",
+          "question": "请根据已知信息决定能否安排管理员的生日庆祝日期。",
+          "source_turn": 8,
+          "delay": 40
+        }
+      ]
+    },
+    {
+      "id": "harbor-workshop",
+      "title": "港口工坊：离线模拟用例",
+      "history": [
+        {
+          "turn": 1,
+          "text": "第 1 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 2,
+          "text": "第 2 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 3,
+          "text": "工匠将保险匣留在二号码头的石凳下面，嘱咐你需要时自行取回。",
+          "facts": [
+            {
+              "id": "box_location",
+              "value": "二号码头的石凳下面",
+              "storage": "narrative"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "text": "登记员给出的旧门禁口令是松涛。",
+          "facts": [
+            {
+              "id": "gate_phrase",
+              "value": "松涛",
+              "storage": "both"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "text": "第 5 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 6,
+          "text": "周晴负责保管银色扳手，周青负责保管黑色扳手，两人各有自己的工具柜。",
+          "facts": [
+            {
+              "id": "black_wrench_holder",
+              "value": "周青",
+              "storage": "structured"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "text": "第 7 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 8,
+          "text": "门禁口令已改为潮汐，旧口令即刻失效。新来的守夜人只做了工作交接，没有介绍故乡。",
+          "facts": [
+            {
+              "id": "gate_phrase",
+              "value": "潮汐",
+              "storage": "both"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "text": "第 9 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 10,
+          "text": "第 10 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 11,
+          "text": "第 11 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 12,
+          "text": "第 12 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 13,
+          "text": "第 13 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 14,
+          "text": "第 14 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 15,
+          "text": "第 15 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 16,
+          "text": "第 16 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 17,
+          "text": "第 17 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 18,
+          "text": "第 18 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 19,
+          "text": "第 19 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 20,
+          "text": "第 20 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 21,
+          "text": "第 21 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 22,
+          "text": "第 22 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 23,
+          "text": "第 23 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 24,
+          "text": "第 24 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 25,
+          "text": "第 25 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 26,
+          "text": "第 26 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 27,
+          "text": "第 27 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 28,
+          "text": "第 28 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 29,
+          "text": "第 29 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 30,
+          "text": "第 30 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 31,
+          "text": "第 31 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 32,
+          "text": "第 32 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 33,
+          "text": "第 33 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 34,
+          "text": "第 34 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 35,
+          "text": "第 35 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 36,
+          "text": "第 36 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 37,
+          "text": "第 37 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 38,
+          "text": "第 38 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 39,
+          "text": "第 39 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 40,
+          "text": "第 40 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 41,
+          "text": "第 41 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 42,
+          "text": "第 42 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 43,
+          "text": "第 43 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 44,
+          "text": "第 44 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 45,
+          "text": "第 45 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 46,
+          "text": "第 46 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 47,
+          "text": "第 47 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 48,
+          "text": "第 48 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        },
+        {
+          "turn": 49,
+          "text": "第 49 回合，你沿值班路线检查照明、整理公共登记页，并继续处理当日的普通事务；没有新增上述目标事实。",
+          "facts": []
+        }
+      ],
+      "probes": [
+        {
+          "id": "box-location-d10-recall",
+          "fact_id": "box_location",
+          "kind": "recall",
+          "question": "工匠把保险匣留在哪里？",
+          "source_turn": 3,
+          "delay": 10
+        },
+        {
+          "id": "box-location-d10-action",
+          "fact_id": "box_location",
+          "kind": "action",
+          "question": "现在需要保险匣，请决定去哪里取回。",
+          "source_turn": 3,
+          "delay": 10
+        },
+        {
+          "id": "box-location-d20-recall",
+          "fact_id": "box_location",
+          "kind": "recall",
+          "question": "工匠把保险匣留在哪里？",
+          "source_turn": 3,
+          "delay": 20
+        },
+        {
+          "id": "box-location-d20-action",
+          "fact_id": "box_location",
+          "kind": "action",
+          "question": "现在需要保险匣，请决定去哪里取回。",
+          "source_turn": 3,
+          "delay": 20
+        },
+        {
+          "id": "box-location-d40-recall",
+          "fact_id": "box_location",
+          "kind": "recall",
+          "question": "工匠把保险匣留在哪里？",
+          "source_turn": 3,
+          "delay": 40
+        },
+        {
+          "id": "box-location-d40-action",
+          "fact_id": "box_location",
+          "kind": "action",
+          "question": "现在需要保险匣，请决定去哪里取回。",
+          "source_turn": 3,
+          "delay": 40
+        },
+        {
+          "id": "updated-phrase-d10-recall",
+          "fact_id": "gate_phrase",
+          "kind": "recall",
+          "question": "现在有效的门禁口令是什么？",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "updated-phrase-d10-action",
+          "fact_id": "gate_phrase",
+          "kind": "action",
+          "question": "你抵达门禁处，请决定应使用哪个口令。",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "updated-phrase-d20-recall",
+          "fact_id": "gate_phrase",
+          "kind": "recall",
+          "question": "现在有效的门禁口令是什么？",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "updated-phrase-d20-action",
+          "fact_id": "gate_phrase",
+          "kind": "action",
+          "question": "你抵达门禁处，请决定应使用哪个口令。",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "updated-phrase-d40-recall",
+          "fact_id": "gate_phrase",
+          "kind": "recall",
+          "question": "现在有效的门禁口令是什么？",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "updated-phrase-d40-action",
+          "fact_id": "gate_phrase",
+          "kind": "action",
+          "question": "你抵达门禁处，请决定应使用哪个口令。",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "wrench-holder-d10-recall",
+          "fact_id": "black_wrench_holder",
+          "kind": "recall",
+          "question": "黑色扳手现在由谁保管？",
+          "source_turn": 6,
+          "delay": 10
+        },
+        {
+          "id": "wrench-holder-d10-action",
+          "fact_id": "black_wrench_holder",
+          "kind": "action",
+          "question": "维修需要黑色扳手，请决定向谁借用。",
+          "source_turn": 6,
+          "delay": 10
+        },
+        {
+          "id": "wrench-holder-d20-recall",
+          "fact_id": "black_wrench_holder",
+          "kind": "recall",
+          "question": "黑色扳手现在由谁保管？",
+          "source_turn": 6,
+          "delay": 20
+        },
+        {
+          "id": "wrench-holder-d20-action",
+          "fact_id": "black_wrench_holder",
+          "kind": "action",
+          "question": "维修需要黑色扳手，请决定向谁借用。",
+          "source_turn": 6,
+          "delay": 20
+        },
+        {
+          "id": "wrench-holder-d40-recall",
+          "fact_id": "black_wrench_holder",
+          "kind": "recall",
+          "question": "黑色扳手现在由谁保管？",
+          "source_turn": 6,
+          "delay": 40
+        },
+        {
+          "id": "wrench-holder-d40-action",
+          "fact_id": "black_wrench_holder",
+          "kind": "action",
+          "question": "维修需要黑色扳手，请决定向谁借用。",
+          "source_turn": 6,
+          "delay": 40
+        },
+        {
+          "id": "unknown-hometown-d10-recall",
+          "fact_id": "watchman_hometown",
+          "kind": "recall",
+          "question": "守夜人的故乡是哪座城市？",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "unknown-hometown-d10-action",
+          "fact_id": "watchman_hometown",
+          "kind": "action",
+          "question": "有人要给守夜人的故乡寄信，请决定现在能否填写城市地址。",
+          "source_turn": 8,
+          "delay": 10
+        },
+        {
+          "id": "unknown-hometown-d20-recall",
+          "fact_id": "watchman_hometown",
+          "kind": "recall",
+          "question": "守夜人的故乡是哪座城市？",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "unknown-hometown-d20-action",
+          "fact_id": "watchman_hometown",
+          "kind": "action",
+          "question": "有人要给守夜人的故乡寄信，请决定现在能否填写城市地址。",
+          "source_turn": 8,
+          "delay": 20
+        },
+        {
+          "id": "unknown-hometown-d40-recall",
+          "fact_id": "watchman_hometown",
+          "kind": "recall",
+          "question": "守夜人的故乡是哪座城市？",
+          "source_turn": 8,
+          "delay": 40
+        },
+        {
+          "id": "unknown-hometown-d40-action",
+          "fact_id": "watchman_hometown",
+          "kind": "action",
+          "question": "有人要给守夜人的故乡寄信，请决定现在能否填写城市地址。",
+          "source_turn": 8,
+          "delay": 40
+        }
+      ]
+    }
+  ]
+}

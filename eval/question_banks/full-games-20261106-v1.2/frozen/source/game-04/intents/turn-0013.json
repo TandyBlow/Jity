@@ -1,0 +1,46 @@
+{
+  "before_sha256": "5364df043c6d02be599914de3013d7584f82fe48d36ca0b6553a82305151e8fb",
+  "created_at": "2026-11-06T06:06:10.993635+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 4
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "退回投影屏前，仔细看清自己名字旁那片红色鳞纹的完整形状",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 13
+  },
+  "selection": {
+    "action": "退回投影屏前，仔细看清自己名字旁那片红色鳞纹的完整形状",
+    "option_index": 0,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 4,
+    "scores": [
+      {
+        "action": "退回投影屏前，仔细看清自己名字旁那片红色鳞纹的完整形状",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.36157327554184004
+      },
+      {
+        "action": "追问诺诺走廊深处那扇门后是什么，逼她给出具体说法",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.2585405135554246
+      },
+      {
+        "action": "不再靠近暗处，转而检查长桌内侧被抹开的水渍通向哪里",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.89994951434989
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 13
+}

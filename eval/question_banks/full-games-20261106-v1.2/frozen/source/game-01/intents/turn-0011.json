@@ -1,0 +1,46 @@
+{
+  "before_sha256": "1024f495cdfebdcd2309023f2956e7edc21f0ec8ede6b99c0cd37e6b8e834af1",
+  "created_at": "2026-11-06T05:17:08.759645+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 8
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "在档案室门外停一停，回想导师那句关于签名者的话，检查任务单背面有无其他标记",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 11
+  },
+  "selection": {
+    "action": "在档案室门外停一停，回想导师那句关于签名者的话，检查任务单背面有无其他标记",
+    "option_index": 2,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "直接去门房领钥匙，趁夜色还早赶去东侧回廊",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8303708364536527
+      },
+      {
+        "action": "先绕到东侧回廊尽头看一眼那扇铁门，确认位置再回门房",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.833353239469966
+      },
+      {
+        "action": "在档案室门外停一停，回想导师那句关于签名者的话，检查任务单背面有无其他标记",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.16217696490252687
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 11
+}

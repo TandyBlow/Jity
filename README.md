@@ -52,6 +52,7 @@ Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约�
 | `docs/branching_timeline.md` | 分支时间线、跨幕上下文和回归测试维护说明 |
 | `knowledge/` | RAG 知识库源文件 |
 | `scripts/auto_play.py` | 自动长回合跑测与日志记录 |
+| `eval/` | 长期一致性评测工具、冻结题库和独立回归测试 |
 
 ## 环境要求
 
@@ -286,6 +287,8 @@ python scripts/campaign_transition_smoke.py
 - 已归档的 Examiner 与幕间转换历史报告位于 [`docs/research/reports/`](docs/research/README.md)。运行日志与新跑测输出保持独立，历史实验结论不代表当前版本的效果。
 
 ## 测试与构建
+
+长期一致性评测已整合到 [`eval/`](eval/README.md)。从仓库根目录执行 `cd eval` 后可使用 `python -m jity_eval`；完整用法见 [评测集成说明](eval/docs/repository-integration.md)。评测的真实组件回放和录制数据必须保存在仓库外，不写入游戏存档。历史运行数据库继续留在原本地目录，不随源码上传。
 
 后端：
 

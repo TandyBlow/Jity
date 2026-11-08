@@ -1,0 +1,1545 @@
+{
+  "checkpoint": {
+    "action_index": 41,
+    "campaign_turn": 40,
+    "checkpoint_sha256": "893a21423ffa02a4f6609b0a0b5d49e6f56bcad8cba09f539462e30ac9c8ba1d",
+    "state_sha256": "258893c0614f00336f722da7a90825771d0513085dde0e64aac5b6610cabc9f4",
+    "state_turn": 41,
+    "timeline_node": 42
+  },
+  "context": {
+    "recent_context": [
+      {
+        "action_index": 36,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "撤离检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功避开执行部视线退回通风井，失败被堵在通道里。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 1,
+            "outcome": "failure",
+            "roll": 7
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门外走廊",
+          "dialogue": [
+            {
+              "speaker": "诺诺",
+              "text": "退不回去了。他们连栅栏断口都在看，说明早就知道我们从哪儿下来的。"
+            },
+            {
+              "speaker": "门后之人",
+              "text": "别往通风井走，那边已经封了。进来，或者站在那儿等他们搜身，你自己选。"
+            },
+            {
+              "speaker": "执行部成员",
+              "text": "档案袋封口被撕开了，人应该还在这一层。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门外走廊",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "撤退失败，通风井被封锁，执行部确认档案袋被撕开，铁门后之人主动开门要求玩家选择。",
+            "npcs_upserted": [
+              {
+                "current_location": "禁入铁门后",
+                "description": "铁门后压低声音说话的人，知道通风井已被封",
+                "name": "门后之人",
+                "notes": "主动开门一线，要求玩家选择进来或留下",
+                "relationship": "不明，主动提供退路但附带条件",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手腕发紧，膝盖发麻，呼吸变浅，被夹在走廊中段",
+              "current_goal": "在推门闯入与退回通风井之间做出抉择",
+              "danger_level": "critical",
+              "notes": "退路已封，门后之人主动开门"
+            },
+            "quests_upserted": [
+              {
+                "description": "执行部已确认档案袋封口被撕开，正在这一层合围。",
+                "name": "新生入学调查",
+                "notes": "退路被封，门后之人主动开口",
+                "objective": "在铁门与通风井之间做出选择并脱离合围",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "执行部成员从通风井方向合围，手电光照到撬开的铁栅栏断口，退路被封。",
+                "name": "通风井已被执行部封锁",
+                "notes": "诺诺确认退不回去",
+                "source": "执行部成员脚步声与手电光",
+                "status": "known"
+              },
+              {
+                "description": "拐角处执行部成员低声报出档案袋封口被撕开，人应该还在这一层。",
+                "name": "执行部已知档案袋被撕开",
+                "notes": "搜身威胁的直接来源",
+                "source": "执行部成员对话",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你拽住诺诺的手腕往回撤，脚底刚在走廊地面上转了半圈，通风井方向就亮起一道手电光。光柱贴着拐角扫过来，把你们两个人的影子钉在墙上，拉得又长又扁。脚步声不再掩饰，至少两个人，鞋底踩在铁阶上，一下一下，节奏很稳。诺诺猛地收住脚，把你往墙边一按，低声说退不回去了。你回头，通风井口那圈撬开的铁栅栏已经被手电光照得发白，光后面有人影在动，有人正蹲下来查看栅栏的断口。走廊中段就这么被夹住了，前有铁门，后有执行部。你手腕的旧紧劲顺着小臂往上爬，膝盖发麻，呼吸浅得几乎听不见。就在这时，铁门后的把手开始缓慢转动，金属摩擦的声音很轻，却在这条走廊里格外清楚。门缝里的红光已经灭了，门板却向内让开一线，一线之后是更深的黑。门后有人开口，声音压得很低，语速不快，说别往通风井走，那边已经封了。诺诺的手在你背后收紧，她没有出声，只是把预备任务单往你手心里塞了塞。走廊拐角处的手电光停了一下，执行部的人似乎在确认什么，有人低声报了一句，档案袋封口被撕开了。这句话顺着走廊传过来，清楚得不需要再听第二遍。门后的声音又响了一次，说进来，或者站在那儿等他们搜身，你自己选。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "紧张但配合",
+              "name": "诺诺",
+              "notes": "被夹在走廊中段，把预备任务单塞给玩家，未替玩家做决定"
+            },
+            {
+              "disposition": "不明",
+              "name": "门后之人",
+              "notes": "主动开门并开口，知道通风井已被封，催促玩家选择"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功进入铁门脱离视线，失败被门后之人或执行部任一方先一步控制。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功骗过拐角处的确认，失败当场暴露并被合围。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功拖住执行部并保住档案袋，失败被识破并失去主动权。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "推开铁门挤进去，接受门后之人的条件，先脱离执行部的视线",
+            "不退不进，贴着墙压低身子，等执行部的人从拐角走过再赌一次",
+            "把撕开的档案袋塞给诺诺，自己朝通风井方向迎上去，用身份拖住执行部"
+          ],
+          "quests_updated": [
+            {
+              "description": "执行部已确认档案袋封口被撕开，正在这一层合围，玩家必须在铁门与通风井之间做出选择。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -4,
+          "scene_prompt": "Dark stone corridor, flashlight beam from ventilation shaft, iron door ajar with black gap, two figures pressed against wall"
+        },
+        "player_action": "退回通风井，抢在执行部合围前另寻路线",
+        "timeline_node": 37
+      },
+      {
+        "action_index": 37,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功进入铁门脱离视线，失败被门后之人或执行部任一方先一步控制。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "成功",
+            "option_index": 0,
+            "outcome": "success",
+            "roll": 12
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "dialogue": [
+            {
+              "speaker": "门后之人",
+              "text": "别出声，跟着我走。你怀里那串编号，我见过，就在这层，一扇不该存在的门后面。"
+            },
+            {
+              "speaker": "门后之人",
+              "text": "执行部不会一直走，他们去拿工具了。你最多有一刻钟。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家推门挤入禁入区域，门后之人掩门隔绝执行部，透露编号对应这层一扇不该存在的门，并警告执行部去拿工具。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼地下二层·禁入铁门后通道",
+                "description": "藏身禁入铁门后的神秘人，认得档案袋上的编号。",
+                "name": "门后之人",
+                "notes": "透露编号对应这层一扇不该存在的门，并警告执行部去拿工具，时间有限。",
+                "relationship": "暂时合作，条件不明",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手腕发紧，膝盖发麻，呼吸变浅，但已脱离合围",
+              "current_goal": "跟随门后之人找到那扇不该存在的门，追查编号关联",
+              "danger_level": "high",
+              "notes": "执行部去拿工具，时间有限。"
+            },
+            "quests_upserted": [
+              {
+                "description": "追查编号与撤销科室的关联。",
+                "name": "新生入学调查",
+                "notes": "已脱离执行部视线，进入铁门后通道。",
+                "objective": "跟随门后之人找到那扇不该存在的门。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "门后之人借着应急灯扫了一眼档案袋，低声说那串编号他见过，就在这层某扇不该存在的门后面。",
+                "name": "门后之人认得档案袋编号",
+                "notes": "编号与撤销科室旧档的关联可能指向一扇未登记的门。",
+                "source": "门后之人",
+                "status": "known"
+              },
+              {
+                "description": "门后之人说执行部不会一直走，他们只是去拿工具，最多有一刻钟。",
+                "name": "执行部去拿工具",
+                "notes": "时间压力，执行部可能破门。",
+                "source": "门后之人",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你侧过身，肩膀撞开铁门，挤进那道只容一人通过的缝隙。门后的人立刻从你背后伸手，把门板拉回，锁舌落进槽里，发出一声闷响。走廊里的手电光被切断，只剩门缝底下一条细线。你背贴着冰冷的铁板，听见外面脚步声停在门前，有人用指节敲了两下，又敲了三下，节奏很规整。门后的人没有回应，只是把手按在你肩上，把你往旁边推。应急灯在墙角亮着，光很暗，只够照出脚下窄窄一条通道。空气里是金属和旧纸混在一起的气味，通道两侧堆着拆下来的档案柜抽屉，铁皮边缘都生了锈。门后的人比你矮半个头，兜帽压得很低，声音也压得很低，让你别出声，跟着走。你跟着他绕过一堆抽屉，通道拐了个弯，尽头是一扇没有编号的铁门，门板上用粉笔写着一个数字，又被擦掉了一半。他停下脚步，回头看你怀里的档案袋，目光在封口那道撕痕上停了一瞬。他说那串编号他见过，就在这层某扇不该存在的门后面。外面的敲击声停了，脚步声开始往通风井方向退。他补了一句，执行部不会一直走，他们只是去拿工具。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "暂时合作",
+              "name": "门后之人",
+              "notes": "兜帽压低，声音很低，认得档案袋上的编号，知道这层有一扇不该存在的门，警告执行部去拿工具了。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功问出具体位置和编号关联，失败只得到含糊暗示且他加快脚步。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "容易",
+              "expression": "1d20 ≥ 8",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功发现抽屉上的旧标签和粉笔数字的对应关系，失败被催着往前走漏掉细节。",
+              "system": "通用 d20",
+              "target": 8
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出部分身份信息，失败他沉默以对并继续走，时间被消耗。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "追问门后之人那扇不该存在的门在哪，以及编号与撤销科室的关系",
+            "先跟着他走到那扇粉笔数字的铁门前，路上观察通道里的抽屉和粉笔痕迹",
+            "要求他先说明身份和为什么帮自己，否则不跟他走"
+          ],
+          "quests_updated": [
+            {
+              "description": "已脱离执行部视线，跟随门后之人深入禁入区域，追查编号与撤销科室的关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "narrow dark service corridor behind iron door, dim emergency light, stacked rusty file drawers, hooded figure leading, tense"
+        },
+        "player_action": "推开铁门挤进去，接受门后之人的条件，先脱离执行部的视线",
+        "timeline_node": 38
+      },
+      {
+        "action_index": 38,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出部分身份信息，失败他沉默以对并继续走，时间被消耗。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "成功",
+            "option_index": 2,
+            "outcome": "success",
+            "roll": 17
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "dialogue": [
+            {
+              "speaker": "门后之人",
+              "text": "名字你记不记都行，档案上我三年前就殉职了。那串编号里有一个数字，是我亲手封进那扇门后的。就这一句，够不够你跟我走。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "殉职的外勤……执行部要是知道你还在这层，来的就不只是拿工具的人了。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "逼出门后之人身份：三年前殉职外勤，帮你的理由与编号中一个数字有关。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼地下二层·禁入铁门后通道",
+                "description": "三年前被撤销科室的末批外勤，档案记为殉职，脸上有从眉骨到下颌的旧疤。",
+                "name": "门后之人",
+                "notes": "透露帮你的理由与编号中一个数字有关，那数字是他亲手封进门后的。",
+                "relationship": "暂时合作，条件不明",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手腕发紧，膝盖发麻，呼吸变浅，但已脱离合围",
+              "current_goal": "跟随门后之人找到那扇不该存在的门，追查编号关联",
+              "danger_level": "high",
+              "notes": "执行部去拿工具，时间有限。"
+            },
+            "quests_upserted": [
+              {
+                "description": "跟随门后之人找到那扇不该存在的门，追查编号关联。",
+                "name": "新生入学调查",
+                "notes": "门后之人身份部分揭示，时间因执行部取工具而紧迫。",
+                "objective": "跟随门后之人找到那扇不该存在的门。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "他是三年前被撤销科室的末批外勤，档案上写的是殉职，脸上有从眉骨延伸到下颌的旧疤。",
+                "name": "门后之人的身份",
+                "notes": "帮你的理由只说了半句，与编号中一个数字有关。",
+                "source": "门后之人自述",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你停在原地，没有跟着他迈出下一步。通道里的应急灯把你的影子压在锈蚀的抽屉堆上，你开口，声音压得很低，要求他先说明身份，再说清楚为什么帮你。诺诺在你身后轻轻碰了碰你的手肘，示意你压低声音。他停下脚步，半张脸仍在兜帽阴影里。他先不答，只把兜帽往上推了一寸，露出一道从眉骨延伸到下颌的旧疤。那道疤在暗光里泛着不自然的浅色，边缘已经长平，是很多年前的伤。他低声报出一个名字，又补了一句简短的身份说明，他是三年前被撤销科室的末批外勤，档案上写的是殉职。你听见殉职两个字时，诺诺的呼吸在你身后顿了一下。他没有解释自己为什么还活着，只把兜帽重新压低，说帮你的理由只有半句，那串编号里有一个数字，是他亲手封进那扇门后的。说完他提醒你时间在走，执行部拿完工具就会回来。远处通风井方向传来金属工具箱落地的闷响，声音在管道里滚了一圈才散。他侧过身，让出通道，等你决定。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "暂时合作，条件不明",
+              "name": "门后之人",
+              "notes": "自曝为三年前被撤销科室的末批外勤，档案记为殉职，脸上有旧疤。"
+            }
+          ],
+          "option_checks": [
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功问出数字含义，失败他闭口并加快脚步消耗时间。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功让诺诺安全望风，失败留下可被追踪的痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "不再追问，跟他穿过通道去找那扇没有编号的铁门",
+            "先问他那个数字具体是什么，再决定是否跟上",
+            "让诺诺留在通道拐角望风，自己跟他靠近那扇门"
+          ],
+          "quests_updated": [
+            {
+              "description": "跟随门后之人找到那扇不该存在的门，追查编号关联。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Dim emergency-lit underground passage, rusted file drawers stacked along walls, hooded scarred man, red-haired girl, tense narrow corridor"
+        },
+        "player_action": "要求他先说明身份和为什么帮自己，否则不跟他走",
+        "timeline_node": 39
+      },
+      {
+        "action_index": 39,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功让诺诺安全望风，失败留下可被追踪的痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 10
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "dialogue": [
+            {
+              "speaker": "诺诺",
+              "text": "我踩到东西了，抽屉倒了，他们听见了。对不起，我该更小心的。"
+            },
+            {
+              "speaker": "门后之人",
+              "text": "别管后面了。这扇门上的数字和你手里的对得上，封存编号的东西就在门后。锁是旧的，那道缝被撬过又焊死，硬来会响。你只有一次机会，要么开锁，要么问我。"
+            },
+            {
+              "speaker": "执行部成员",
+              "text": "脚印到这儿变浅了，纤维是新的。再往前就是尽头，把工具带上，别让他们把门打开。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "诺诺望风碰倒抽屉留下痕迹，执行部循迹逼近；玩家抵达无编号铁门，粉笔数字与抄录吻合。",
+            "npcs_upserted": [
+              {
+                "current_location": "通道拐角",
+                "description": "红发女生，行动直接，观察力敏锐",
+                "name": "诺诺",
+                "notes": "望风失败，碰倒抽屉留下脚印与纤维。",
+                "relationship": "紧张但配合，因留下痕迹而自责",
+                "status": "present"
+              },
+              {
+                "current_location": "无编号铁门前",
+                "description": "三年前被撤销科室的末批外勤，档案记为殉职",
+                "name": "门后之人",
+                "notes": "指出门后封存编号，催促玩家在有限时间内开门。",
+                "relationship": "暂时合作，条件不明",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手腕发紧，膝盖发麻，呼吸变浅，已脱离合围但执行部正在逼近",
+              "current_goal": "在執行部逼近前决定如何打开无编号铁门或从门后之人处获取更多信息",
+              "danger_level": "high",
+              "notes": "诺诺望风失败留下痕迹。"
+            },
+            "quests_upserted": [
+              {
+                "description": "追查编号关联与封存门后的秘密",
+                "name": "新生入学调查",
+                "notes": "门板粉笔数字与残印编号抄录前四位吻合。",
+                "objective": "在執行部逼近前决定如何打开无编号铁门",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "门板粉笔数字被擦掉一半，与残印编号抄录前四位吻合，第五位仅剩斜痕但可对应。",
+                "name": "无编号铁门的粉笔数字",
+                "notes": "门后封存编号。",
+                "source": "玩家比对预备任务单背面抄录",
+                "status": "known"
+              },
+              {
+                "description": "诺诺碰倒抽屉留下脚印与纤维，执行部成员已发现并确认方向，正带工具靠近。",
+                "name": "执行部追踪痕迹",
+                "notes": "时间有限。",
+                "source": "通道深处交谈",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你压低声音让诺诺留在通道拐角望风，她点头退到那堆锈蚀抽屉旁，背贴着墙。你转身跟上兜帽人的脚步，鞋底在铁屑上碾出细碎的响。走出七八步，身后忽然传来一声闷响，是铁皮抽屉被碰倒后砸在地上的声音，紧接着是抽屉里散落的旧纸片簌簌滑开的动静。你回头，诺诺僵在拐角，一只手还悬在半空，脚边倒着一只抽屉，锈屑和纸片撒了一地。她朝你无声地比了个口型，脸色发白。通道深处立刻有了回应，通风井方向传来压低的交谈，两个声音，一个在说这边有脚印，另一个说纤维挂在这根钉子上，往这边。手电光在拐角后的墙面上晃了一下，又收回去，他们在确认方向，还没有直接冲进来。兜帽人没有回头，只加快半步，把你带到通道尽头那扇没有编号的铁门前。门板上用粉笔写过一串数字，被擦掉了一半，剩下的残痕在应急灯下泛着灰白。你摸出预备任务单，把背面的残印编号抄录凑到光下比对，前四位吻合，第五位被擦得只剩一道斜痕，和抄录上的字符对得上。兜帽人抬手示意你别出声，指了指门板，说封存编号的东西就在这后面。你这才看清门上的锁，一把旧式机械锁，锁芯周围有新鲜的划痕，门板侧面还有一道被撬开又焊死的缝隙，焊疤粗糙，颜色比周围的铁皮浅。他低声说，这扇门本该不存在，编号也不该存在，执行部去拿切割工具了，留给你的时间不多。通道拐角那边，手电光又亮了一次，这次更近。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "紧张自责",
+              "name": "诺诺",
+              "notes": "望风时碰倒抽屉，留下可被追踪的痕迹，执行部正在确认方向。"
+            },
+            {
+              "disposition": "催促合作",
+              "name": "门后之人",
+              "notes": "指出门后封存编号，门上有旧式机械锁与焊死缝隙，警告时间有限。"
+            }
+          ],
+          "option_checks": [
+            null,
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "权限尝试",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功打开或触发锁芯反应，失败让锁发出声响引来执行部。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "缝隙检查",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功找到薄弱处，失败浪费时间并让执行部更近。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "痕迹清理",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功拖延追踪，失败暴露位置。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "让兜帽人说清楚门后封存的是什么，以及那串编号里和他有关的数字，再决定怎么开门",
+            "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+            "蹲下检查门板侧面那道焊死的缝隙，找有没有能撬开或塞进东西的薄弱处",
+            "先退回拐角帮诺诺处理痕迹，抢在执行部逼近前把脚印和纤维清掉"
+          ],
+          "quests_updated": [
+            {
+              "description": "跟随门后之人找到那扇不该存在的门，追查编号关联，现需在執行部逼近前决定如何开门。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Dim emergency-lit iron corridor, rusted drawers spilled, unnumbered door with half-erased chalk digits, welding scar, flashlight glow approaching"
+        },
+        "player_action": "让诺诺留在通道拐角望风，自己跟他靠近那扇门",
+        "timeline_node": 40
+      },
+      {
+        "action_index": 40,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "权限尝试",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功打开或触发锁芯反应，失败让锁发出声响引来执行部。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 1,
+            "outcome": "failure",
+            "roll": 15
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "dialogue": [
+            {
+              "speaker": "兜帽人",
+              "text": "这锁不是靠权限开的。你的卡能烫，说明它认得这扇门，可门不认卡。别再试了，声音已经出去了。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "他们跑起来了，两个，不，三个。抽屉那边挡不住多久。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "边缘暗红的临时通行卡，裂纹扩大，暗红渗光",
+                "location": "玩家手中",
+                "name": "临时通行卡",
+                "notes": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼地下二层·禁入铁门后通道",
+                "description": "三年前被撤销科室的末批外勤，档案记为殉职",
+                "name": "兜帽人",
+                "notes": "指出通行卡认得门但门不认卡",
+                "relationship": "暂时合作",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手腕发紧，呼吸变浅，通行卡裂纹扩大",
+              "current_goal": "在执行部到达前决定带走簧片撤离还是继续尝试开门",
+              "danger_level": "critical",
+              "notes": "锁声已引来执行部，脚步声正在逼近"
+            },
+            "quests_upserted": [
+              {
+                "description": "执行部正在逼近",
+                "name": "新生入学调查",
+                "notes": "锁芯弹出刻有半截编号的铜色簧片",
+                "objective": "在执行部到达前决定带走簧片撤离还是继续尝试开门",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+                "name": "锁芯内的铜色簧片",
+                "notes": "暗示通行卡与这扇门存在更深层联系",
+                "source": "玩家用临时通行卡试锁失败",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你从口袋里抽出临时通行卡，卡面那道细如发丝的裂纹在应急灯下泛着暗红。你把卡缘对准旧式机械锁的槽口，慢慢推了进去。卡身卡进一半就停住，槽口比卡厚，你只能斜着用力，手腕的旧紧劲顺着小臂爬上来。锁芯里传来一声干涩的咔嗒，你屏住呼吸，以为对上了。下一秒，锁芯内部弹出一声脆响，像有什么金属弹片被顶开，声音在铁皮通道里炸开，撞上两侧锈蚀的抽屉堆，又折回来，滚进通道深处。你手里的卡猛地一烫，裂纹从边缘往里扩了一截，暗红的光沿着裂口渗出来，照得你指节发白。锁没有开，锁舌纹丝不动，可锁芯里多了一点不该有的东西，一小片铜色的簧片从槽口边缘翘出来，上面刻着半截编号，和你抄在任务单背面的那串字符对得上。通道拐角后的手电光猛地定住。脚步声从试探变成奔跑，鞋底砸在铁阶上，一下比一下近。兜帽人从你身后伸手，把卡从锁槽里拔出来，塞回你掌心，声音压得极低。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "紧迫但合作",
+              "name": "兜帽人",
+              "notes": "知道这扇门与通行卡的关系，拒绝在此刻细说"
+            },
+            {
+              "disposition": "紧张自责",
+              "name": "诺诺",
+              "notes": "望风失败后一直盯着通道拐角"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功带走簧片并撤入深处，失败被碎片划伤且留下更多痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null,
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "权限尝试",
+              "requires_check": true,
+              "skill": "权限",
+              "stakes": "成功触发锁芯机关，失败彻底惊动执行部并可能损坏通行卡。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "把翘出的铜色簧片掰下来带走，放弃开门，跟兜帽人往通道更深处撤",
+            "追问兜帽人这扇门和通行卡之间到底有什么关系，逼他在执行部到达前说清楚",
+            "让诺诺把倒下的抽屉堆成路障拖延执行部，自己再试一次锁芯里翘出的簧片"
+          ],
+          "quests_updated": [
+            {
+              "description": "执行部正在逼近，必须在通道内做出抉择",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Rusty iron corridor, dim emergency light, hooded figure pulling card from old lock, flashlight beams approaching around corner, scattered metal drawers"
+        },
+        "player_action": "用临时通行卡去试那把旧式机械锁，赌卡上的异常权限能对上锁芯",
+        "timeline_node": 41
+      },
+      {
+        "action_index": 41,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功带走簧片并撤入深处，失败被碎片划伤且留下更多痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 2
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "dialogue": [
+            {
+              "speaker": "兜帽人",
+              "text": "你手在流血。别管了，先走。那扇维护门后面有东西，拖痕是新的，今晚有人进去过。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "他们开始拆栅栏了。血迹一路滴过去，等于给他们画了条线。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -4,
+          "items_gained": [
+            {
+              "description": "从旧式机械锁芯里掰下的铜色簧片，断口带毛刺，表面刻着半截编号，与任务单背面的抄录部分吻合。",
+              "name": "半截铜色簧片",
+              "status": "owned"
+            }
+          ],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼地下二层·禁入铁门后通道",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "从锁芯掰下的铜色簧片，刻有半截编号，断口带毛刺。",
+                "location": "玩家手中",
+                "name": "半截铜色簧片",
+                "notes": "掰取时划伤手指，簧片本身带血。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家掰簧片失败被划伤，留下血迹，获半截编号簧片，随兜帽人撤向维护门。",
+            "npcs_upserted": [
+              {
+                "current_location": "通道深处维护门前",
+                "description": "三年前被撤销科室的末批外勤，档案记为殉职。",
+                "name": "兜帽人",
+                "notes": "确认维护门前的拖拽痕迹不是自己留下的。",
+                "relationship": "暂时合作",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "手指被铜屑划伤，轻微出血",
+              "current_goal": "在执行部拆开栅栏前决定进入维护门或绕行旧通道",
+              "danger_level": "critical",
+              "notes": "血迹可能暴露行踪。"
+            },
+            "quests_upserted": [
+              {
+                "description": "执行部逼近，玩家需决定进入维护门或绕行旧通道。",
+                "name": "新生入学调查",
+                "notes": "血迹与铜屑留下更多追踪痕迹。",
+                "objective": "甩开执行部并查清维护门后的拖拽痕迹",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "通道更深处半掩的维护门前有新鲜拖拽痕迹，兜帽人否认是自己留下的。",
+                "name": "维护门前的拖拽痕迹",
+                "notes": "痕迹从门缝延伸到玩家脚下。",
+                "source": "玩家撤离途中亲眼所见",
+                "status": "known"
+              },
+              {
+                "description": "掰下的铜色簧片刻有半截编号，与任务单背面抄录的编号段部分吻合。",
+                "name": "簧片上的半截编号",
+                "notes": "断口不齐，需比对抄录。",
+                "source": "玩家从锁芯掰取簧片",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你捏住那片翘出的铜色簧片，指腹刚搭上边缘，锁芯内部就传来一声细碎的崩裂。簧片没有顺着你的力道松脱，反而在槽口里猛地一弹，断口处的铜屑像针一样扎进你的食指和中指。你咬住牙没出声，血从指缝里渗出来，滴在锁面下方的铁皮上，一小串暗红的点。簧片终于被你掰了下来，半截编号在应急灯下泛着旧铜的哑光，可它断得不齐，边缘全是毛刺。兜帽人一把扣住你的手腕，把你往通道深处拽，低声说别停。你回头，锁面上、铁皮上、你刚才站过的地面，血迹和铜屑混在一起，痕迹比之前多了一倍。通道更深处出现一扇半掩的维护门，门缝里透出微光，地上有一道新鲜的拖拽痕迹，从门缝一直延伸到你们脚下。兜帽人脚步顿了一下，说这痕迹不是他留下的。通风井方向传来金属被撬动的声响，执行部在拆栅栏，声音越来越近。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "暂时合作，警惕",
+              "name": "兜帽人",
+              "notes": "注意到维护门前的拖拽痕迹并非自己所留，催促撤离。"
+            },
+            {
+              "disposition": "紧张自责",
+              "name": "诺诺",
+              "notes": "在拐角望风，指出血迹会给执行部指路。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "调查检定",
+              "requires_check": true,
+              "skill": "调查",
+              "stakes": "成功看清门后拖痕来源与封存编号线索，失败被门后之物察觉或留下更多痕迹。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功争取时间抹掉追踪线索，失败在清理时被手电光扫到。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null
+          ],
+          "options": [
+            "推开维护门进去，顺着拖拽痕迹查清是谁留下的",
+            "先撕下衣角裹住伤口，抹掉锁面附近最明显的血迹再撤",
+            "让兜帽人带路绕开维护门，走他熟悉的旧通道甩开追兵"
+          ],
+          "quests_updated": [
+            {
+              "description": "执行部正在拆通风井栅栏逼近，玩家需在维护门与旧通道之间做出选择。",
+              "name": "新生入学调查",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Narrow rusted service corridor, half-open maintenance door glowing faintly, fresh drag marks on metal floor, blood droplets, distant flashlight"
+        },
+        "player_action": "把翘出的铜色簧片掰下来带走，放弃开门，跟兜帽人往通道更深处撤",
+        "timeline_node": 42
+      }
+    ],
+    "structured_state": {
+      "current_location": "钟楼地下二层·禁入铁门后通道",
+      "health": 96,
+      "item_ledger": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 40,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 31,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "牛皮纸档案袋",
+          "last_seen_turn": 34,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "残印编号抄录",
+          "last_seen_turn": 31,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "旧档案室异常记录",
+          "last_seen_turn": 32,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "半截铜色簧片",
+          "last_seen_turn": 41,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "items": [
+        {
+          "aliases": [],
+          "description": "边缘暗红的临时通行卡，裂纹扩大，暗红渗光",
+          "location": "玩家手中",
+          "name": "临时通行卡",
+          "notes": "插入旧式机械锁后裂纹扩了一截，锁芯弹出铜色簧片",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "对折纸单，列有三个预备任务，边缘有执行部暗纹压印，背面新增残印编号抄录。",
+          "location": "玩家怀中",
+          "name": "预备任务单",
+          "notes": "背面写有残印编号段",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "封口被扯坏，露出水渍编号和半截残印",
+          "location": "玩家怀中",
+          "name": "牛皮纸档案袋",
+          "notes": "被压得纸角发皱",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "写在预备任务单背面的残印编号段，部分字符可辨。",
+          "location": "玩家怀中",
+          "name": "残印编号抄录",
+          "notes": "可用于比对已撤销执行部科室的旧档",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "旧档案室异常记录",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "从锁芯掰下的铜色簧片，刻有半截编号，断口带毛刺。",
+          "location": "玩家手中",
+          "name": "半截铜色簧片",
+          "notes": "掰取时划伤手指，簧片本身带血。",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "current_location": "钟楼地下二层·禁入铁门后通道",
+          "description": "红发女生，行动直接，观察力敏锐",
+          "name": "诺诺",
+          "notes": "在拐角望风，指出血迹会给执行部指路。",
+          "relationship": "紧张自责",
+          "status": "present"
+        },
+        {
+          "current_location": "无编号铁门前",
+          "description": "三年前被撤销科室的末批外勤，档案记为殉职",
+          "name": "门后之人",
+          "notes": "指出门后封存编号，催促玩家在有限时间内开门。",
+          "relationship": "暂时合作，条件不明",
+          "status": "present"
+        },
+        {
+          "current_location": "通道深处维护门前",
+          "description": "三年前被撤销科室的末批外勤，档案记为殉职。",
+          "name": "兜帽人",
+          "notes": "确认维护门前的拖拽痕迹不是自己留下的。",
+          "relationship": "暂时合作",
+          "status": "present"
+        }
+      ],
+      "player_status": {
+        "condition": "手指被铜屑划伤，轻微出血",
+        "current_goal": "在执行部拆开栅栏前决定进入维护门或绕行旧通道",
+        "danger_level": "critical",
+        "notes": "血迹可能暴露行踪。"
+      },
+      "quests": [
+        {
+          "description": "诺诺已让开门口，玩家必须自行决定是否进门",
+          "name": "与诺诺交谈，了解入校流程",
+          "notes": "交涉失败，诺诺拒绝透露等待者身份",
+          "objective": "决定是否迈步进入门厅",
+          "status": "active"
+        },
+        {
+          "description": "执行部逼近，玩家需决定进入维护门或绕行旧通道。",
+          "name": "新生入学调查",
+          "notes": "血迹与铜屑留下更多追踪痕迹。",
+          "objective": "甩开执行部并查清维护门后的拖拽痕迹",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "完成三个预备任务",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "调查档案冒充事件",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        }
+      ],
+      "sanity": 73,
+      "turn": 41,
+      "world_facts": [
+        {
+          "description": "诺诺承认柱脚确实有东西，但拒绝说明具体是什么",
+          "name": "门柱旁的雨水冲刷痕迹",
+          "notes": "玩家未能看清形态",
+          "source": "诺诺的回应",
+          "status": "suspected"
+        },
+        {
+          "description": "临时通行卡边缘泛起不自然的暗红，诺诺警告再攥着不放会烫到人",
+          "name": "通行卡发烫异常",
+          "notes": "发烫原因未明",
+          "source": "诺诺的提醒与玩家观察",
+          "status": "known"
+        },
+        {
+          "description": "门厅深处原本沉在暗里的地方忽然亮起一盏灯，光从走廊尽头漫出来，没有人走动",
+          "name": "门内亮起的灯",
+          "notes": "暗示门内有人在等敢自己走进去的人",
+          "source": "诺诺让开门口后",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称卡发烫不是卡的问题，而是玩家被派到门口这件事本身的问题",
+          "name": "通行卡发烫的缘由",
+          "notes": "尚未证实",
+          "source": "诺诺的讥讽",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家蹲下查看柱脚痕迹，只看到被雨水冲刷得模糊不清的暗色沟痕，无法辨认真相",
+          "name": "柱脚痕迹的真相",
+          "notes": "痕迹被雨水冲散，需其他手段才能辨明",
+          "source": "玩家调查失败",
+          "status": "suspected"
+        },
+        {
+          "description": "门厅深处那盏灯忽然闪了一下，光晃过走廊，像有人从灯下走过，可走廊上分明空着",
+          "name": "门厅深处那盏灯",
+          "notes": "灯亮与通行卡发烫同步加剧",
+          "source": "玩家蹲下时观察到的环境变化",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称灯不是她点的，她也没资格点，能点这盏灯的人就在门里",
+          "name": "门厅深处那盏灯的来历",
+          "notes": "灯会因玩家的迟疑而失去耐心",
+          "source": "诺诺的对话",
+          "status": "suspected"
+        },
+        {
+          "description": "通行卡的热度随门厅灯光明灭而变化，隔着布料仍烫手",
+          "name": "通行卡热度与灯光的关联",
+          "notes": "尚未验证具体机制",
+          "source": "玩家自身感受",
+          "status": "suspected"
+        },
+        {
+          "description": "你名字旁那片暗红鳞纹的边缘，那圈细密的纹路正在缓慢地往外扩散",
+          "name": "发现红色标记",
+          "notes": "鳞纹在回应走廊里退去的刮擦声",
+          "source": "投影屏观察",
+          "status": "known"
+        },
+        {
+          "description": "进入门厅靠近投影屏后，通行卡热度明显下降",
+          "name": "通行卡热度与门厅的关联",
+          "notes": "热度变化与位置有关",
+          "source": "玩家体验",
+          "status": "suspected"
+        },
+        {
+          "description": "长桌已被清空，只剩空桌和零星无关杂物，桌面中央有一圈尚未干透的水渍，抹痕朝桌内收拢，像是刚被人匆忙擦过",
+          "name": "报到桌被提前清空",
+          "notes": "诺诺目光在水渍上停了一瞬随即移开，未作解释",
+          "source": "玩家环视长桌的调查",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺称清空桌子的人不想让新生看到某些东西，但拒绝进一步解释",
+          "name": "清桌者的动机",
+          "notes": "线索模糊，指向投影屏或走廊深处",
+          "source": "诺诺的回避与暗示",
+          "status": "suspected"
+        },
+        {
+          "description": "走廊深处传来湿布擦过石面的摩擦声与门轴转动声，诺诺称暗处那东西不是新生该碰的",
+          "name": "走廊深处的威胁",
+          "notes": "暗处有东西被惊动，门轴声后归于沉寂",
+          "source": "玩家潜行失败被诺诺拦下",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹在玩家凝视时蠕动扩散，颜色由暗红转深，屏幕随之闪烁",
+          "name": "鳞纹的活性",
+          "notes": "凝视会引来走廊深处的回应",
+          "source": "玩家观察失败",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹变化时走廊深处传来一声低沉的回应，诺诺称是玩家把某物叫醒了",
+          "name": "走廊深处的回应",
+          "notes": "回应来源尚未定位",
+          "source": "诺诺反应",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家转身凝视走廊深处，未能定位回应来源的门，暗处之物明确回望并贴地挪近一寸",
+          "name": "暗处之物察觉注视",
+          "notes": "诺诺称玩家那一眼等于朝它招手",
+          "source": "玩家观察检定失败",
+          "status": "known"
+        },
+        {
+          "description": "诺诺指出走廊左侧第三道门框原本有门，现在只剩墙，门被藏了起来",
+          "name": "走廊左侧第三道门框的门已消失",
+          "notes": "通行卡在此时骤然发烫",
+          "source": "诺诺的警告",
+          "status": "suspected"
+        },
+        {
+          "description": "墙面没有门，但触感温热，有鳞片般的凹凸，通行卡贴近时剧烈发烫",
+          "name": "消失的门墙面异常",
+          "notes": "墙从里面顶了一下，有东西贴着墙另一侧按在同一位置",
+          "source": "玩家贴墙摸索",
+          "status": "known"
+        },
+        {
+          "description": "湿漉漉的呼吸声贴到耳后，暗处之物已察觉并锁定玩家位置",
+          "name": "暗处之物锁定玩家",
+          "notes": "诺诺称它已经锁住玩家",
+          "source": "潜行失败",
+          "status": "known"
+        },
+        {
+          "description": "通行卡按上墙面鳞纹后，鳞纹剧烈反应并朝错误方向翻卷，墙内传来撞击，通行卡出现裂纹",
+          "name": "通行卡与墙面鳞纹的关联",
+          "notes": "两者存在某种认主关系",
+          "source": "玩家行动",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称见过类似反应，上一次是在三年前，也是在这条走廊",
+          "name": "诺诺三年前的经历",
+          "notes": "需进一步追问",
+          "source": "诺诺对话",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家追问三年前走廊上发生的事，诺诺别过脸去拒绝回答，称现在不是说这个的时候，并把话题转到通行卡裂纹上",
+          "name": "诺诺回避三年前的走廊旧事",
+          "notes": "她显然知道内情，但不愿在此刻说",
+          "source": "本回合对话",
+          "status": "known"
+        },
+        {
+          "description": "走廊灯闪时墙内传来极轻刮擦，从玩家按过的墙面往深处缓慢退去",
+          "name": "墙内之物退去",
+          "notes": "退去不等于离开，危险未解除",
+          "source": "本回合环境描写",
+          "status": "suspected"
+        },
+        {
+          "description": "被诺诺催促分神，只瞥见第二道门框模糊刻痕，未能记全实墙位置",
+          "name": "门框编号与实墙位置",
+          "notes": "漏看，需另寻机会补记",
+          "source": "走廊观察失败",
+          "status": "suspected"
+        },
+        {
+          "description": "鳞纹从名字边缘起笔，绕过半个弧，收束到屏幕左下角一块边缘残缺的暗影缺口，聚到近前就淡下去被吞掉。",
+          "name": "鳞纹扩散规律",
+          "notes": "缺口方向与走廊深处无门之墙一致",
+          "source": "玩家在投影屏前观察",
+          "status": "known"
+        },
+        {
+          "description": "屏幕左下角有一块边缘残缺的模糊暗影，鳞纹朝它汇聚并被吞没。",
+          "name": "屏幕左下角缺口符号",
+          "notes": "诺诺称鳞纹在找东西或被牵引",
+          "source": "玩家观察投影屏",
+          "status": "suspected"
+        },
+        {
+          "description": "从外套内袋里抽出一张对折的纸单，塞进你空着的那只手，说拿着，三个预备任务",
+          "name": "接受三个预备任务",
+          "notes": "S级观察对象身份同时被确认。",
+          "source": "诺诺在侧廊交付任务单",
+          "status": "known"
+        },
+        {
+          "description": "通行卡靠近投影屏缺口时微微发烫，诺诺称不是光烤的。",
+          "name": "通行卡在屏幕光下发热",
+          "notes": "与之前灼人的烫不同，更轻更持续",
+          "source": "比对失败时的观察",
+          "status": "suspected"
+        },
+        {
+          "description": "强光下缺口处的暗影短暂朝左侧滑开，像被从屏幕另一侧推了一下。",
+          "name": "缺口暗影会偏移",
+          "notes": "暗影位置与先前所见不同",
+          "source": "比对失败时的观察",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺称发热不是卡的事，是卡在认主或者被标记。",
+          "name": "通行卡发热的缘由",
+          "notes": "她不愿在投影屏前多说",
+          "source": "诺诺在走廊压低声音的交底",
+          "status": "known"
+        },
+        {
+          "description": "诺诺警告继续在投影屏前追问会引来墙里的注意，它听得见。",
+          "name": "墙内存在的听觉",
+          "notes": "走廊对话可能被墙内存在感知",
+          "source": "诺诺的警告",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称被标记的卡会把玩家在这栋楼里的每一步都报给墙内之物，站得越久它认得越清",
+          "name": "被标记的卡会报信",
+          "notes": "解释了墙内之物对玩家气息的锁定",
+          "source": "诺诺在走廊被逼问时的只言片语",
+          "status": "known"
+        },
+        {
+          "description": "玩家拒绝离开后墙内温热加重、鳞纹重新亮起并朝玩家方向聚拢，诺诺称它已锁上玩家气息",
+          "name": "墙内之物对玩家气息的锁定",
+          "notes": "玩家停留越久锁定越强",
+          "source": "走廊墙面的异常反应",
+          "status": "known"
+        },
+        {
+          "description": "鳞纹聚在拱门门槛内侧，没有越过那道极淡的旧灼痕，侧廊暂时是安全区。",
+          "name": "鳞纹的边界",
+          "notes": "旧灼痕来历不明，但确实拦住了鳞纹。",
+          "source": "玩家在拱门口回头观察",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称玩家是S级观察对象，学院盯着玩家，墙里的东西也盯着玩家。",
+          "name": "S级观察对象身份",
+          "notes": "具体含义尚未展开。",
+          "source": "诺诺在侧廊的说明",
+          "status": "known"
+        },
+        {
+          "description": "诺诺只含糊称学院对每个新生都有记录，你的那份记得细一点，未透露实质",
+          "name": "S级观察对象的含义",
+          "notes": "敷衍，未获实质信息",
+          "source": "玩家追问诺诺",
+          "status": "suspected"
+        },
+        {
+          "description": "侧廊尽头一扇半掩的门，门缝透暖黄光，内有纸张翻动声，诺诺停在门外不肯进",
+          "name": "档案室位置",
+          "notes": "第一个预备任务地点",
+          "source": "诺诺带路",
+          "status": "known"
+        },
+        {
+          "description": "玩家被学院流程标记为 S级观察对象。",
+          "name": "S级观察对象",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "柜内本该紧挨着的位置空了一格，柜底灰尘上留着一道干净的矩形印子，说明有份档案被抽走没多久。",
+          "name": "档案柜内的空位",
+          "notes": "空位旁的索引标签编号与任务单第二项只差最后一位。",
+          "source": "玩家在档案室柜前观察",
+          "status": "known"
+        },
+        {
+          "description": "空位内侧的金属滑轨上有一道新鲜的刮痕，边缘还带着未干的指纹油渍",
+          "name": "发现冒充者痕迹",
+          "notes": "取走档案的人动作很急，刚离开不久",
+          "source": "档案室空位旁的索引标签与滑轨",
+          "status": "known"
+        },
+        {
+          "description": "滑轨尽头有一小片灰尘被蹭掉了，露出底下的金属本色，说明档案被抽出后是贴着柜面向左带走的。",
+          "name": "滑轨灰尘被蹭掉的方向",
+          "notes": "方向指向左侧死墙，与门的方位相反，仍不明确",
+          "source": "玩家检查滑轨油渍",
+          "status": "known"
+        },
+        {
+          "description": "门禁面板连响三声，诺诺称记录已经留痕，执行部可能前来。",
+          "name": "门禁记录已留痕",
+          "notes": "时间压力上升",
+          "source": "诺诺推门进入档案室时的警告",
+          "status": "known"
+        },
+        {
+          "description": "诺诺把你按进楼梯间的凹处，背贴着消防栓的铁皮，抬手示意你别出声。",
+          "name": "侧廊楼梯间的安全窗口",
+          "notes": "执行部脚步经过岔口后继续往档案室方向，暂未回头搜侧廊。",
+          "source": "本回合撤离过程",
+          "status": "known"
+        },
+        {
+          "description": "撕口处露出被水渍晕开的编号，前几位可辨，后段模糊，另压着半个暗红残印。",
+          "name": "档案袋封口撕口内容",
+          "notes": "编号与任务单索引相关，残印来历不明",
+          "source": "玩家拆封时扯坏纸页",
+          "status": "known"
+        },
+        {
+          "description": "诺诺辨认出残印属于学院早期执行部一个已撤销科室的封条",
+          "name": "残印来历",
+          "notes": "该科室名册与印章本应封存",
+          "source": "诺诺辨认档案袋残印",
+          "status": "known"
+        },
+        {
+          "description": "诺诺暗示残印编号段与玩家的S级观察身份挂在同一批旧档里",
+          "name": "残印与S级观察身份关联",
+          "notes": "非巧合",
+          "source": "诺诺吐露",
+          "status": "known"
+        },
+        {
+          "description": "执行部学生正在观察玩家，但不一定被允许主动接触。",
+          "name": "执行部观察玩家",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "玩家在诺诺掩护下把残印可辨的编号段抄在任务单背面，部分字符因水渍无法辨认。",
+          "name": "残印编号段已抄录",
+          "notes": "可用于比对已撤销执行部科室旧档",
+          "source": "楼梯间抄录",
+          "status": "known"
+        },
+        {
+          "description": "上面楼梯间的门被推开，两名执行部人员折返并可能一路搜下来。",
+          "name": "执行部折返楼梯间",
+          "notes": "迫使玩家向地下二层通道撤离",
+          "source": "楼梯间脚步声",
+          "status": "known"
+        },
+        {
+          "description": "两名执行部成员下楼时交谈，说档案室封条被撕，编号段与S级观察对象有关，上面要求今晚必须把东西收回去。",
+          "name": "执行部正在追回被取走的档案袋",
+          "notes": "对方知道档案袋已被取走",
+          "source": "楼梯拐角窃听",
+          "status": "known"
+        },
+        {
+          "description": "执行部成员抱怨不该把新生档案和旧科室的封存件混放在一排柜子里。",
+          "name": "新生档案与旧科室封存件混放",
+          "notes": "解释了残印为何出现在新生档案袋上",
+          "source": "楼梯拐角窃听",
+          "status": "known"
+        },
+        {
+          "description": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "name": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了个人档案",
+          "name": "旧档案室中有人冒充你取走了个人档案",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "学院对你的特殊关注源于血统检测异常",
+          "name": "学院对你的特殊关注源于血统检测异常",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "井口铁栅栏歪向一侧，撬痕从里往外翻，金属边缘挂着新鲜碎屑，说明今晚有人比玩家更早进入地下二层。",
+          "name": "通风井铁栅栏被从内部撬开",
+          "notes": "暗示有第三方在禁入区域内活动。",
+          "source": "诺诺现场指认",
+          "status": "known"
+        },
+        {
+          "description": "铁门缝下透出微弱红光，明暗节奏很慢，诺诺称三年前见过一次，之后档案库封了半年。",
+          "name": "禁入铁门缝下的红光",
+          "notes": "红光与档案库封禁事件直接相关。",
+          "source": "现场观察与诺诺陈述",
+          "status": "known"
+        },
+        {
+          "description": "通风井撬痕一处朝外一处朝内，深浅不一，无法判断撬门者去向",
+          "name": "铁门撬痕方向矛盾",
+          "notes": "检查失败只得到模糊线索",
+          "source": "玩家检查铁门与通风井",
+          "status": "known"
+        },
+        {
+          "description": "走廊尽头传来金属摩擦声，像是有人从另一侧转动铁门的把手，红光骤然亮了一瞬",
+          "name": "铁门后传来转动把手声",
+          "notes": "门后是否有人仍无法确认",
+          "source": "玩家检查时",
+          "status": "known"
+        },
+        {
+          "description": "门后确实有呼吸，压得极浅，一吸一停，停得比正常人长。",
+          "name": "门后有人屏息",
+          "notes": "那口气松开后把手被从里面按住",
+          "source": "玩家贴近门缝聆听",
+          "status": "known"
+        },
+        {
+          "description": "诺诺在走廊口发出警告，执行部的人已接近通风井。",
+          "name": "执行部已接近通风井",
+          "notes": "撤离时机已被耽误",
+          "source": "诺诺的警告",
+          "status": "known"
+        },
+        {
+          "description": "执行部成员从通风井方向合围，手电光照到撬开的铁栅栏断口，退路被封。",
+          "name": "通风井已被执行部封锁",
+          "notes": "诺诺确认退不回去",
+          "source": "执行部成员脚步声与手电光",
+          "status": "known"
+        },
+        {
+          "description": "拐角处执行部成员低声报出档案袋封口被撕开，人应该还在这一层。",
+          "name": "执行部已知档案袋被撕开",
+          "notes": "搜身威胁的直接来源",
+          "source": "执行部成员对话",
+          "status": "known"
+        },
+        {
+          "description": "门后之人借着应急灯扫了一眼档案袋，低声说那串编号他见过，就在这层某扇不该存在的门后面。",
+          "name": "门后之人认得档案袋编号",
+          "notes": "编号与撤销科室旧档的关联可能指向一扇未登记的门。",
+          "source": "门后之人",
+          "status": "known"
+        },
+        {
+          "description": "门后之人说执行部不会一直走，他们只是去拿工具，最多有一刻钟。",
+          "name": "执行部去拿工具",
+          "notes": "时间压力，执行部可能破门。",
+          "source": "门后之人",
+          "status": "known"
+        },
+        {
+          "description": "他是三年前被撤销科室的末批外勤，档案上写的是殉职，脸上有从眉骨延伸到下颌的旧疤。",
+          "name": "门后之人的身份",
+          "notes": "帮你的理由只说了半句，与编号中一个数字有关。",
+          "source": "门后之人自述",
+          "status": "known"
+        },
+        {
+          "description": "门板粉笔数字被擦掉一半，与残印编号抄录前四位吻合，第五位仅剩斜痕但可对应。",
+          "name": "无编号铁门的粉笔数字",
+          "notes": "门后封存编号。",
+          "source": "玩家比对预备任务单背面抄录",
+          "status": "known"
+        },
+        {
+          "description": "诺诺碰倒抽屉留下脚印与纤维，执行部成员已发现并确认方向，正带工具靠近。",
+          "name": "执行部追踪痕迹",
+          "notes": "时间有限。",
+          "source": "通道深处交谈",
+          "status": "known"
+        },
+        {
+          "description": "旧式机械锁芯被通行卡触发后弹出一小片铜色簧片，上面刻着半截编号，与任务单背面抄录的字符吻合。",
+          "name": "锁芯内的铜色簧片",
+          "notes": "暗示通行卡与这扇门存在更深层联系",
+          "source": "玩家用临时通行卡试锁失败",
+          "status": "known"
+        },
+        {
+          "description": "通道更深处半掩的维护门前有新鲜拖拽痕迹，兜帽人否认是自己留下的。",
+          "name": "维护门前的拖拽痕迹",
+          "notes": "痕迹从门缝延伸到玩家脚下。",
+          "source": "玩家撤离途中亲眼所见",
+          "status": "known"
+        },
+        {
+          "description": "掰下的铜色簧片刻有半截编号，与任务单背面抄录的编号段部分吻合。",
+          "name": "簧片上的半截编号",
+          "notes": "断口不齐，需比对抄录。",
+          "source": "玩家从锁芯掰取簧片",
+          "status": "known"
+        }
+      ]
+    }
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-04",
+  "instruction": "仅依据所提供的检查点记录回答问题；区分观察、角色说法与推断。信息不足时说明无法确定。只判断和解释，不执行游戏行动。",
+  "mode": "state",
+  "question": "刚才取锁芯铜色簧片的检定结果如何？现在是否持有簧片，发生了什么代价？",
+  "question_id": "JLC-20261106-G04-Q02",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

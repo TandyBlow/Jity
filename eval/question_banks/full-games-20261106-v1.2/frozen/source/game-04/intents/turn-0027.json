@@ -1,0 +1,46 @@
+{
+  "before_sha256": "a9ad74cb2244716ad90161b98ad2c3c9226dc779c53ff63ce09ac520afbd44ab",
+  "created_at": "2026-11-06T06:08:48.787282+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 9
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "先检查滑轨上的指纹油渍，判断取走档案的人往哪个方向离开",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 27
+  },
+  "selection": {
+    "action": "先检查滑轨上的指纹油渍，判断取走档案的人往哪个方向离开",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 9,
+    "scores": [
+      {
+        "action": "立刻追出门，问诺诺三分钟前有没有人从档案室出去",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.05623151303577034
+      },
+      {
+        "action": "先检查滑轨上的指纹油渍，判断取走档案的人往哪个方向离开",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.3841017365282883
+      },
+      {
+        "action": "打开自己取出的档案袋，确认里面是否就是任务单所指的内容",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.6921922455225237
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 27
+}

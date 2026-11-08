@@ -1,0 +1,187 @@
+{
+  "bank_id": "jity-long-consistency-full-games-20261106",
+  "bank_version": "1.2.0-review",
+  "records": [
+    {
+      "checkpoint": {
+        "action_index": 24,
+        "campaign_turn": 21,
+        "checkpoint_sha256": "df07152adfe15424fbb19b0cd9229c9a4f81bafef2ed679461de05b4c00fb6e3",
+        "state_sha256": "6688a17dec3b8c35688d05ed938741d9c62c8525a030b49945c56992612b46d3",
+        "state_turn": 24,
+        "timeline_node": 25
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-01",
+      "id": "JLC-20261106-G01-Q01",
+      "kind": "recall",
+      "question": "最初发下的三个预备任务分别是什么？当时已经给出的期限分别是多少？"
+    },
+    {
+      "checkpoint": {
+        "action_index": 40,
+        "campaign_turn": 37,
+        "checkpoint_sha256": "fb499012cd60b0438237ed1a11a36786264fa02a445edfcc48846cf65595d0c1",
+        "state_sha256": "a8a922b803412bd5fc3528d5066cdcdf947b56ee741364e76ecaf154fb4818d4",
+        "state_turn": 40,
+        "timeline_node": 41
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-01",
+      "id": "JLC-20261106-G01-Q02",
+      "kind": "recall",
+      "question": "门房交给你的温室连廊铁门钥匙现在是什么状态？请说明目前是否还在可用物品中。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 30,
+        "campaign_turn": 27,
+        "checkpoint_sha256": "84b6cc053581cf0a041ab6d26d7c9ae78d7abd367d84bb6292564fede0917bab",
+        "state_sha256": "5e1f245f9eed391b35a718eb0e6b7c8b3f65c9367a8af3f61e78df144042b50e",
+        "state_turn": 30,
+        "timeline_node": 31
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-01",
+      "id": "JLC-20261106-G01-Q03",
+      "kind": "recall",
+      "question": "在带你去档案室的那段路上，诺诺对门柱刻痕和第一个任务的关联作了什么表态？她让你向谁了解？"
+    },
+    {
+      "checkpoint": {
+        "action_index": 40,
+        "campaign_turn": 39,
+        "checkpoint_sha256": "2febf5471b0bbcb951dbaf564252d664782df6baa0bf529995e3fdbb06612dac",
+        "state_sha256": "a067f74458f1967f3342144e0f3bdc3352fecaf815b4b8fe968027aeae612cca",
+        "state_turn": 40,
+        "timeline_node": 41
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-02",
+      "id": "JLC-20261106-G02-Q01",
+      "kind": "action",
+      "question": "如果返回先前躲避监视者的岔口，诺诺检查过的那处墙缝能否直接作为退路通行？请依据已有检查结果判断并解释。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 42,
+        "campaign_turn": 41,
+        "checkpoint_sha256": "74dd8e3963d77ea9f9c0e393ea03de5af0e1dbcd4361b3899d78a0eee298dfba",
+        "state_sha256": "b7a54f65ced10598317b489dcf62bc1b1b7c5a0075e1eb4f7e49138ca3e0b6ab",
+        "state_turn": 42,
+        "timeline_node": 43
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-02",
+      "id": "JLC-20261106-G02-Q02",
+      "kind": "recall",
+      "question": "诺诺提到上个月在搬箱现场旁观的那名执行部人员叫什么名字？请说明依据。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 42,
+        "campaign_turn": 41,
+        "checkpoint_sha256": "74dd8e3963d77ea9f9c0e393ea03de5af0e1dbcd4361b3899d78a0eee298dfba",
+        "state_sha256": "b7a54f65ced10598317b489dcf62bc1b1b7c5a0075e1eb4f7e49138ca3e0b6ab",
+        "state_turn": 42,
+        "timeline_node": 43
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-02",
+      "id": "JLC-20261106-G02-Q03",
+      "kind": "recall",
+      "question": "在遗弃维护工具间检查烟蒂时，一共数到了多少枚？其中当时有多少枚显得较新？"
+    },
+    {
+      "checkpoint": {
+        "action_index": 35,
+        "campaign_turn": 34,
+        "checkpoint_sha256": "1eedd39fe76a23cd178a62ecceae6494a3cbf19310669491b986d137d27fe77f",
+        "state_sha256": "a62daf41bae6a55c42b3c0e481128450595111a4a9eebf25f120f7721920c686",
+        "state_turn": 35,
+        "timeline_node": 36
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-03",
+      "id": "JLC-20261106-G03-Q01",
+      "kind": "recall",
+      "question": "先前用于备份取件记录与终端日志的临时通行卡，现在是否仍由你持有并可直接出示？请说明状态变化的依据。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 40,
+        "campaign_turn": 39,
+        "checkpoint_sha256": "728f37be66e3b1a4c19ca14b5b307052d5de994b1316ca7c23f7a918452d2c9a",
+        "state_sha256": "5b88adeb8f6966590dfc96749bfdc62a42cab70ba97dfb945768d7856fc0884a",
+        "state_turn": 40,
+        "timeline_node": 41
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-03",
+      "id": "JLC-20261106-G03-Q02",
+      "kind": "action",
+      "question": "现在若想亲手把血统检测异常报告的原件递给诺诺核对，你是否具备直接执行所需的物品条件？请解释。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 38,
+        "campaign_turn": 37,
+        "checkpoint_sha256": "05c4bb2b3952611ab761019a1c1c87e7f21883656321ebe0e7d8003b401222f1",
+        "state_sha256": "bc011f8164ded0ff7148740eeef83cb8e5a7cce989a578c0e535fd9a3c8edcb2",
+        "state_turn": 38,
+        "timeline_node": 39
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-03",
+      "id": "JLC-20261106-G03-Q03",
+      "kind": "recall",
+      "question": "诺诺在你手背划下的具体数字是多少？请说明依据。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 45,
+        "campaign_turn": 44,
+        "checkpoint_sha256": "df28e22b7d081f89c9ba3ad83ea80752ccd485b565c229df5941225b245f90ef",
+        "state_sha256": "50fb3d3ad72acc202afa97994bcacd6e03a7f8006fa5dcdd474a33ecf3edb287",
+        "state_turn": 45,
+        "timeline_node": 46
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-04",
+      "id": "JLC-20261106-G04-Q01",
+      "kind": "recall",
+      "question": "门后那位兜帽人在首次说明身份时，怎样描述自己的外勤经历、档案记载，以及帮助你的理由？请保留信息来源的界限。"
+    },
+    {
+      "checkpoint": {
+        "action_index": 41,
+        "campaign_turn": 40,
+        "checkpoint_sha256": "893a21423ffa02a4f6609b0a0b5d49e6f56bcad8cba09f539462e30ac9c8ba1d",
+        "state_sha256": "258893c0614f00336f722da7a90825771d0513085dde0e64aac5b6610cabc9f4",
+        "state_turn": 41,
+        "timeline_node": 42
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-04",
+      "id": "JLC-20261106-G04-Q02",
+      "kind": "recall",
+      "question": "刚才取锁芯铜色簧片的检定结果如何？现在是否持有簧片，发生了什么代价？"
+    },
+    {
+      "checkpoint": {
+        "action_index": 47,
+        "campaign_turn": 46,
+        "checkpoint_sha256": "d6ca43d1ccf53bf5c48f19c1be707f848dc67168744d74177e19a04d9f17e830",
+        "state_sha256": "d040ff5a2509572a7350cde9cb587bf67ad4b58dfe2b4662316371c496af84d1",
+        "state_turn": 47,
+        "timeline_node": 48
+      },
+      "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+      "game_id": "game-04",
+      "id": "JLC-20261106-G04-Q03",
+      "kind": "action",
+      "question": "要评估临时通行卡能否打开先前那道旧式机械锁门，目前有哪些已知尝试结果和限制？请判断并解释，不实际开门。"
+    }
+  ],
+  "schema_version": "jity.capture-question-bank.v1"
+}

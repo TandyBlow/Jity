@@ -1,0 +1,46 @@
+{
+  "before_sha256": "87e0a18f5e2d10c25137a8bd19224ba3cd82d085f12d1b5a4c2959097f717a33",
+  "created_at": "2026-11-06T05:24:59.889758+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 2
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "不跑，反而抓住诺诺探进外套的手，问清楚她到底准备拿什么对付迎接者",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 10
+  },
+  "selection": {
+    "action": "不跑，反而抓住诺诺探进外套的手，问清楚她到底准备拿什么对付迎接者",
+    "option_index": 1,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 2,
+    "scores": [
+      {
+        "action": "照诺诺说的冲向任务台后方，用任务单上的执行部印章争取一个正式登记的机会",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3665748587822053
+      },
+      {
+        "action": "不跑，反而抓住诺诺探进外套的手，问清楚她到底准备拿什么对付迎接者",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6911985960463048
+      },
+      {
+        "action": "侧身绕向投影屏侧面，趁红光还在，看清自己名字旁那圈红色标记的完整形状",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.47628668866855695
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 10
+}

@@ -1,0 +1,42 @@
+{
+  "before_sha256": "a07b26aac1bbe997d2d4a70811b259668843470ff514eba723955c3eea44574f",
+  "created_at": "2026-11-06T06:08:58.389055+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "抓起档案袋跟诺诺冲出门，先离开留痕现场再拆封",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 28
+  },
+  "selection": {
+    "action": "抓起档案袋跟诺诺冲出门，先离开留痕现场再拆封",
+    "option_index": 0,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 2,
+    "scores": [
+      {
+        "action": "抓起档案袋跟诺诺冲出门，先离开留痕现场再拆封",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6535236720364737
+      },
+      {
+        "action": "不理会催促，当场撕开牛皮纸档案袋的火漆封口",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.1537428157064532
+      },
+      {
+        "action": "问诺诺左边那面死墙后面是什么，为什么档案会被往那个方向带走",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.41388413972346805
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 28
+}

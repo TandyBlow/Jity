@@ -1,0 +1,46 @@
+{
+  "before_sha256": "893a21423ffa02a4f6609b0a0b5d49e6f56bcad8cba09f539462e30ac9c8ba1d",
+  "created_at": "2026-11-06T06:11:54.848606+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 11
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "推开维护门进去，顺着拖拽痕迹查清是谁留下的",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 42
+  },
+  "selection": {
+    "action": "推开维护门进去，顺着拖拽痕迹查清是谁留下的",
+    "option_index": 0,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 11,
+    "scores": [
+      {
+        "action": "推开维护门进去，顺着拖拽痕迹查清是谁留下的",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.9803968654621241
+      },
+      {
+        "action": "先撕下衣角裹住伤口，抹掉锁面附近最明显的血迹再撤",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.24746545961892807
+      },
+      {
+        "action": "让兜帽人带路绕开维护门，走他熟悉的旧通道甩开追兵",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9570323060502576
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 42
+}

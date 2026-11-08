@@ -1,0 +1,52 @@
+{
+  "before_sha256": "2cb9beb1c82ea1ff608ea557342247ae2286bb0b317cefcca5884715965e6e40",
+  "created_at": "2026-11-06T05:32:50.312343+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 8
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "不再逼问沉睡者，转而向增援者施压，逼他解释三年前序列为何还缠着红线",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 50
+  },
+  "selection": {
+    "action": "不再逼问沉睡者，转而向增援者施压，逼他解释三年前序列为何还缠着红线",
+    "option_index": 1,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "趁红线反噬未退，把窄窗后那圈编号的前两位数字与封皮残片对照，确认抄录者身份",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3593771591344117
+      },
+      {
+        "action": "不再逼问沉睡者，转而向增援者施压，逼他解释三年前序列为何还缠着红线",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6735254289529929
+      },
+      {
+        "action": "用黄铜钥匙割断连在自己手背上的那根红线，切断反噬",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.08864566217029368
+      },
+      {
+        "action": "放弃逼问，向守卫提出用黄铜钥匙换一次不被送进听证室的机会",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.5672688742443079
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 50
+}

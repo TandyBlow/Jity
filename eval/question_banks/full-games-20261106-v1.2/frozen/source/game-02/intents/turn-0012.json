@@ -1,0 +1,52 @@
+{
+  "before_sha256": "d9ece5ad491a58a2450c969eef90a93eb9e49f08b67fe4ceeca9fa01c9dcf746",
+  "created_at": "2026-11-06T05:25:24.916624+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 3,
+      "roll": 19
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 3,
+    "player_action": "把诺诺推向任务台方向，自己转身面对迎接者，为登记争取时间",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 12
+  },
+  "selection": {
+    "action": "把诺诺推向任务台方向，自己转身面对迎接者，为登记争取时间",
+    "option_index": 3,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 19,
+    "scores": [
+      {
+        "action": "放弃通行卡，趁迎接者还在辨认手掌时冲向任务台，用任务单上的执行部印章完成登记",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.39981331207075566
+      },
+      {
+        "action": "先弯腰捡起门缝下那张取档凭条，看清签名栏里被蹭花的字迹",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.20651114908628543
+      },
+      {
+        "action": "抓住诺诺被衣料缠住的那只手，帮她把外套内侧的东西掏出来",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.4727908399120855
+      },
+      {
+        "action": "把诺诺推向任务台方向，自己转身面对迎接者，为登记争取时间",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.5150309267194528
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 12
+}

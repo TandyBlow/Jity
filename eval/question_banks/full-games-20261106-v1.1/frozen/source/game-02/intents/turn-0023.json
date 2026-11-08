@@ -1,0 +1,46 @@
+{
+  "before_sha256": "910981a0e8ffee15963be2342403e092196789bab44687035598cbd84e29cc27",
+  "created_at": "2026-11-06T05:27:30.681703+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 16
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "不再追问，带诺诺拐进侧面那条挂着断警示带的窄口",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 23
+  },
+  "selection": {
+    "action": "不再追问，带诺诺拐进侧面那条挂着断警示带的窄口",
+    "option_index": 1,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 16,
+    "scores": [
+      {
+        "action": "压低声音追问诺诺，她把哪半句话咽了回去，同时盯住岔口的动静",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.0945529849340756
+      },
+      {
+        "action": "不再追问，带诺诺拐进侧面那条挂着断警示带的窄口",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.564737665736151
+      },
+      {
+        "action": "让诺诺留在转角盯住上方，自己摸下主楼梯探清岔口那声异响的来源",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.3130632779476372
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 23
+}

@@ -1,0 +1,42 @@
+{
+  "before_sha256": "b5b5d8cecf9af59d1652a0554199689f75ba50e4e8d2f1966e921459967e58d5",
+  "created_at": "2026-11-06T05:16:04.235205+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "向窗口值班人员出示通行卡，配合完成入校登记",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 5
+  },
+  "selection": {
+    "action": "向窗口值班人员出示通行卡，配合完成入校登记",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "向窗口值班人员出示通行卡，配合完成入校登记",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.7521396926464274
+      },
+      {
+        "action": "趁登记时向值班人员打听主楼方向的异响",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.13028419769544264
+      },
+      {
+        "action": "登记前先回头确认门柱旁那枚徽记是否还在原处",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.1617837560747153
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 5
+}

@@ -1,0 +1,1926 @@
+{
+  "checkpoint": {
+    "action_index": 42,
+    "campaign_turn": 41,
+    "checkpoint_sha256": "74dd8e3963d77ea9f9c0e393ea03de5af0e1dbcd4361b3899d78a0eee298dfba",
+    "state_sha256": "b7a54f65ced10598317b489dcf62bc1b1b7c5a0075e1eb4f7e49138ca3e0b6ab",
+    "state_turn": 42,
+    "timeline_node": 43
+  },
+  "context": {
+    "historical_narrative_memory": {
+      "nsb": {
+        "level1": [
+          {
+            "causal_links": [
+              "scene_prev→scene_curr: 诺诺摸墙发现裂缝并撬开灰泥，但缝被填死，声响暴露位置，监视者呼叫清货增援，迫使玩家改变策略。",
+              "scene_prev→scene_curr: 玩家逼问失败后，观察到监视者同样忌惮清货人员，转而利用封条残片撬痕逼其失言，获得钟楼与封存箱的关键信息。",
+              "scene_prev→scene_curr: 监视者侧身让出缝隙，玩家趁机挤出岔口，直奔便利店取件柜取得包裹，并避开手电光从后门离开。"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "监视者",
+              "黄铜封条残片",
+              "三年前的包裹",
+              "搬运单",
+              "取件柜",
+              "便利店",
+              "钟楼",
+              "岔口",
+              "手电光"
+            ],
+            "episode_id": "ep_L1_7",
+            "importance": 0.85,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "三年前的包裹": "从便利店取件柜取得，处于active状态",
+              "玩家": "获得三年前的包裹；膝盖旧伤抽痛，肩头擦伤加重",
+              "监视者": "失言透露箱子不该还在，并让出岔口缝隙，未追击玩家",
+              "诺诺": "确认裂缝后墙填死，无法撬开；指出撬痕与搬运单封条编号吻合",
+              "黄铜封条残片": "被举入手电光中展示撬痕，仍为active"
+            },
+            "summary": "诺诺在岔口摸墙发现裂缝，但撬开灰泥后确认缝被填死，声响引来监视者呼叫清货增援。玩家试图逼问情报失败，转而观察发现监视者同样害怕清货人员看到岔口内幕。玩家举起黄铜封条残片，监视者失言“那箱子不该还在”，并透露箱子今晚要归位钟楼。诺诺指出撬痕与搬运单封条编号吻合，且取件柜包裹备注“别让他一个人去钟楼”。趁监视者侧身让出缝隙，玩家挤出岔口直奔便利店，用电子锁打开取件柜取得三年前的包裹，随后从后门避开手电光，冒雨前往钟楼，诺诺强调零点前必须将箱子放回。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 36,
+            "turn_start": 31
+          },
+          {
+            "causal_links": [
+              "scene_prev→scene_curr: 玩家为送还封存箱绕行钟楼外围，被守卫发现，引发对峙",
+              "守卫吹哨→沉睡者现身: 哨声惊动钟楼内部，沉睡者通过门缝发声指引玩家",
+              "沉睡者指引→玩家质问: 玩家看到写有自己名字的档案后，试图逼问真相",
+              "沉睡者拒绝回答→玩家强抢: 沉睡者将档案拖入阴影，玩家被迫采取暴力手段",
+              "玩家冲门→守卫制服: 守卫为保护档案将玩家按倒，冲突升级"
+            ],
+            "entities_involved": [
+              "玩家",
+              "诺诺",
+              "钟楼守卫",
+              "沉睡者",
+              "封存箱",
+              "黄铜封条残片",
+              "红线档案",
+              "祭坛",
+              "钟楼侧门",
+              "窄窗"
+            ],
+            "episode_id": "ep_L1_8",
+            "importance": 0.85,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "封存箱": "被放置在侧门石阶上",
+              "沉睡者": "从审视转为冷漠，将档案拖入阴影",
+              "玩家": "被守卫制服，膝盖旧伤复发，未能夺得档案",
+              "红线档案": "被拖入祭坛阴影，红线收紧",
+              "诺诺": "留在矮墙后，未跟进侧门",
+              "钟楼守卫": "从阻拦转为压制玩家，哨子已吹响"
+            },
+            "summary": "玩家携封存箱绕至钟楼侧门，被守卫发现。玩家主动现身，试图用封条残片换取放行，但守卫吹哨示警，并透露门内有人等候。玩家放下箱子后退，门内沉睡者指引其观看祭坛边缘一份被红线缠紧的档案，封皮上竟有玩家自己的名字和三年前的日期。玩家质问沉睡者，沉睡者称“红线只认血，不认名字”，并将档案拖入阴影。玩家趁守卫分神冲入侧门抢夺档案，被守卫制服，指尖擦过红线却未能抓住。楼梯传来脚步声，窄窗后的人即将抵达。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交",
+              "战斗"
+            ],
+            "turn_end": 42,
+            "turn_start": 37
+          }
+        ],
+        "level2": [
+          {
+            "causal_links": [
+              "临时通行卡异常发烫导致诺诺警告玩家已被注意",
+              "玩家误触感应区导致名单冻结与名字被标记，引发迎接者逼近",
+              "取档凭条签名与玩家一致且时间戳为三分钟前，促使玩家追入档案室",
+              "目击取档者携带与通行卡编号一致的档案逃逸，确认冒名取档与玩家身份关联",
+              "听证室调查血统检测原始记录，将事件指向更深的学院内部审查",
+              "维护工具间调档序列与旧档案室封存件相关，引导二人追查封存箱",
+              "黄铜封条残片与墙上刻痕关联，确认封存箱搬运路径",
+              "监视者透露封存箱今晚必须归位，制造时间压力并引出暗道线索"
+            ],
+            "entities_involved": [
+              "玩家",
+              "诺诺",
+              "高年级迎接者",
+              "取档者",
+              "监视者",
+              "芬格尔",
+              "卡塞尔学院",
+              "执行部",
+              "临时通行卡",
+              "取档凭条",
+              "红标记录",
+              "黄铜封条残片",
+              "调档序列纸条",
+              "旧档案室",
+              "听证室",
+              "维护工具间"
+            ],
+            "episode_id": "ep_L2_6",
+            "importance": 0.7,
+            "level": 2,
+            "protected": true,
+            "source_ids": [
+              "ep_L1_1",
+              "ep_L1_2",
+              "ep_L1_3",
+              "ep_L1_4",
+              "ep_L1_5"
+            ],
+            "state_changes": {
+              "investigation_focus": "从通行卡异常升级为封存档案与血统检测原始记录的追查",
+              "knowledge_gained": "确认冒名取档、封存箱归位时限、芬格尔与执行部关联及暗道存在线索",
+              "nono_relationship": "从警告与催促者转为协作者与关键信息提供者",
+              "player_status": "从被动报到的新生转为主动引开监视者、承担风险的调查者",
+              "threat_level": "从迎接者的身份审视升级为不明取档势力与监视者的直接对抗",
+              "临时通行卡": "被迎接者拍落在地，仍为active。",
+              "半张调档序列纸条": "获得，上面印有调档序列号，后半截被撕走",
+              "取档凭条": "新获得，签名栏笔迹与玩家一致，时间戳三分钟前。",
+              "取档者": "成功逃脱至旧楼梯间上层，掉落红标纸片。",
+              "搬运单": "仍在柜顶，玩家未能取得。",
+              "玩家": "肩头擦伤加重，膝盖旧伤抽痛；未能取得搬运单。",
+              "第二枚黄铜封条残片": "玩家在窄缝深处发现并持有。",
+              "红标纸片": "被门内人抽走，丢失",
+              "诺诺": "获得黄铜封条残片（由玩家塞给她），发现岔口墙壁有风。",
+              "遗留的手电筒": "发现，镜片有余温，玩家未触碰",
+              "预备任务单": "已由诺诺盖章登记，仍为active。",
+              "高年级迎接者": "从逼近转为站定，最终后退半步，敌意减弱转为困惑。",
+              "黄铜封条残片": "由玩家转交给诺诺。"
+            },
+            "summary": "玩家持临时通行卡雨夜抵达卡塞尔学院，因卡片异常发烫被诺诺提示已被某方注意，报到时误触感应区导致名单冻结、名字被标记，高年级迎接者以压迫姿态逼近，玩家在诺诺协助下完成登记并发现三分钟前有人冒名取档的凭条。二人追入档案室目击取档者携与通行卡编号一致的档案逃逸，追击失败后转而在听证室外窃听，得知调查指向血统检测原始记录，并在废弃维护工具间发现近期有人蹲守的痕迹与关联旧档案室封存件的调档序列。最终二人循封存箱搬运痕迹找到黄铜封条残片，诺诺透露芬格尔与执行部有关，玩家引开监视者时被堵于窄缝，对方透露三年前封存箱今晚必须归位，诺诺发现暗道线索。整体叙事由入学异常逐步升级为围绕封存档案与血统记录的主动调查，玩家从被动应对转为主动引敌、承担风险，诺诺由警告者变为协作者与信息提供者，主要冲突从迎接者的身份审视演变为与不明取档势力及监视者的时间赛跑。",
+            "tags": [
+              "卡塞尔学院",
+              "临时通行卡",
+              "档案窃取",
+              "血统检测",
+              "封存箱",
+              "听证室",
+              "监视者",
+              "诺诺",
+              "芬格尔"
+            ],
+            "turn_end": 30,
+            "turn_start": 1
+          }
+        ],
+        "level3": [],
+        "turn_buffer": []
+      },
+      "pcb": {
+        "player": {
+          "entries": {}
+        }
+      },
+      "recap_compressed": "前情提要：\n\n雨夜，你站在卡塞尔学院门前，一张发烫的临时通行卡让你还没报到就被“什么东西”注意到了。红发女生诺诺验过卡，带你入校，一路提醒你收好卡、别乱看窗。报到大厅里，你误将通行卡按上感应区，名单骤然冻结，你的名字旁浮起红标，一名动作僵硬的迎接者盯上了你，低鸣声接连响起。诺诺护着你完成登记，你却在档案室门缝下捡到一张三分钟前用你名字取档的凭条——你人还站在这儿。追查中，你们撞见取档者，得知有人用执行部内部权限动过你的档案，听证室正在查血统检测记录与名单红标。诺诺透露上个月搬封存箱的是高年级的芬格尔，拐角还站着个只看不动的执行部人员。你们从便利店取件柜取出一只缠着黄铜封条的旧箱，收件人是你，备注写着“别让他一个人去钟楼”。如今钟楼侧门有守卫把守，零点前箱子必须归位，否则撬痕的事瞒不住。",
+      "recent_events": [
+        "玩家主动现身交涉失败，守卫吹哨并透露侧门另有暗哨、里面的人已知玩家到来。",
+        "玩家放下箱子举手后退，沉睡者开口指引查看祭坛边缘写有玩家名字的档案，窄窗后有人影观察。",
+        "玩家隔门缝看清祭坛档案封皮写着自己的名字与三年前日期，沉睡者开口确认档案认得他。",
+        "玩家逼问沉睡者失败，沉睡者收回指引称红线认血不认名字，守卫推搡施压，窄窗后有人正快步下楼。",
+        "玩家冲门抢档案失败，被守卫扣在祭坛边，守卫脱口说出红线认血，楼梯脚步声逼近。"
+      ]
+    },
+    "recent_context": [
+      {
+        "action_index": 37,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清侧门守卫情况，失败暴露行踪。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "失败",
+            "option_index": 1,
+            "outcome": "failure",
+            "roll": 9
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼北侧外墙，侧门附近",
+          "dialogue": [
+            {
+              "speaker": "诺诺",
+              "text": "别动。他还没看清你的脸，光打在你身上，你一跑他就记住你了。"
+            },
+            {
+              "speaker": "侧门守卫",
+              "text": "谁在那儿？钟楼这边今晚不开放，退回去。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼北侧外墙，侧门附近",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家绕行观察钟楼侧门被守卫手电照到，行踪暴露，瞥见单人守卫与黄铜挂锁封条。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼北侧侧门",
+                "description": "值守钟楼北侧门的雨衣守卫，单人，持手电。",
+                "name": "侧门守卫",
+                "notes": "手电光已锁定玩家，出声喝问。",
+                "relationship": "敌对警觉",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "膝盖旧伤抽痛、肩头擦伤渗血，行踪已暴露",
+              "current_goal": "在守卫注视下进入钟楼",
+              "danger_level": "high",
+              "notes": "手电光锁定，需即时抉择"
+            },
+            "quests_upserted": [
+              {
+                "description": "零点前把包裹放回钟楼原位。",
+                "name": "调查三年前寄来的包裹",
+                "notes": "侧门为黄铜挂锁，挂有与残片同色的封条。",
+                "objective": "在守卫察觉的情况下进入钟楼",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "侧门前有一名穿深色雨衣的守卫，门锁为黄铜老式挂锁，锁鼻上挂着未剪断的封条，颜色与黄铜封条残片一致。",
+                "name": "钟楼侧门守卫与锁具",
+                "notes": "守卫单人值守，右手垂在身侧。",
+                "source": "玩家绕行观察时被手电照到，借光瞥见",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "雨顺着钟楼外墙的排水槽往下淌，在墙角积成一片浅浅的水洼。你抱着箱子贴着外围的矮墙绕行，膝盖每弯一次都抽一下。北侧侧门在钟楼背阴的一面，门框上方悬着一盏不亮的旧灯。你刚把身子探出矮墙半尺，一道手电光就从侧门方向扫过来，光柱贴着地面滑，直直定在你脚边的水洼上，水面被照得发白。你僵在原地。光柱没有移开，反而往上抬了抬，压在你胸口。雨幕里传来一声短促的喝问，问的是谁在那儿，声音不高，却带着不容含糊的硬度。你借着这道光瞥见了侧门前的状况：门边站着一个穿深色雨衣的人，手电在他左手，右手垂在身侧，门锁是黄铜的老式挂锁，锁鼻上挂着一截还没剪断的封条，封条的颜色和你怀里那半枚残片一致。诺诺在你身后半步，手指已经扣住你的袖口，往矮墙后拽。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "警觉敌对",
+              "name": "侧门守卫",
+              "notes": "穿深色雨衣，单人值守北侧门，手电在左手，门为黄铜挂锁并挂有未剪断的封条。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让他犹豫并透露侧门情况，失败他会吹哨或直接动手。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "潜行检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功绕开视线找到另一入口，失败被追上并暴露更多行踪。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功夺锁开门，失败受伤且惊动更多人。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "抱着箱子从矮墙后站出来，主动开口说自己是来送还封存箱的，试着用包裹和封条残片换取他放行",
+            "不理会喝问，趁光柱还没锁定，拽着诺诺沿矮墙往钟楼另一侧绕，找别的入口",
+            "把箱子塞给诺诺，自己迎着光柱走过去，硬闯侧门，趁守卫只有一人夺下挂锁"
+          ],
+          "quests_updated": [
+            {
+              "description": "零点前把包裹放回钟楼原位，侧门守卫已察觉玩家行踪。",
+              "name": "调查三年前寄来的包裹",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Rain-soaked gothic clock tower side door, flashlight beam on puddle, dark raincoat guard, night storm"
+        },
+        "player_action": "先绕到钟楼外围观察侧门有没有人守着，再决定从哪个入口进去",
+        "timeline_node": 38
+      },
+      {
+        "action_index": 38,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让他犹豫并透露侧门情况，失败他会吹哨或直接动手。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 14
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼侧门外",
+          "dialogue": [
+            {
+              "speaker": "钟楼守卫",
+              "text": "里面的人，你们等的那位自己送上门了。"
+            },
+            {
+              "speaker": "钟楼守卫",
+              "text": "侧门台阶下还蹲着两个，你从矮墙后一露头他们就看见你了。你以为这箱子是你想送就能送的？"
+            },
+            {
+              "speaker": "钟楼守卫",
+              "text": "现在想走也晚了，里面已经知道你来了。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼侧门外",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家主动现身交涉失败，守卫吹哨并透露侧门另有暗哨、里面的人已知玩家到来。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼侧门门边",
+                "description": "把守钟楼侧门的守卫，警觉且强硬。",
+                "name": "钟楼守卫",
+                "notes": "已吹哨，透露侧门台阶下有两名暗哨，里面的人已知玩家到来。",
+                "relationship": "敌对",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "膝盖旧伤抽痛、肩头擦伤渗血，行踪已暴露",
+              "current_goal": "在守卫与暗哨的围堵下决定如何处置封存箱",
+              "danger_level": "critical",
+              "notes": "哨声已传开，侧门内有人被惊动。"
+            },
+            "quests_upserted": [
+              {
+                "description": "守卫拒绝放行并吹哨，侧门内已有人被惊动。",
+                "name": "调查三年前寄来的包裹",
+                "notes": "守卫透露侧门另有暗哨，里面的人已知玩家到来。",
+                "objective": "在冲突升级中决定如何处置封存箱。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "守卫称侧门台阶下还蹲着两个暗哨，玩家从矮墙后一露头就被看见。",
+                "name": "侧门另有暗哨",
+                "notes": "撤离路线可能已被封堵。",
+                "source": "钟楼守卫",
+                "status": "known"
+              },
+              {
+                "description": "守卫朝门内喊话后，侧门上方窄窗亮起灯，守卫称里面已经知道你来了。",
+                "name": "钟楼内已知玩家到来",
+                "notes": "内部人员正在响应。",
+                "source": "钟楼守卫与亮灯窄窗",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你抱着箱子从矮墙后站出来，雨水顺着箱角的黄铜封条往下淌。守卫的视线先落在你脸上，再落到你怀里的箱子上，瞳孔缩了一下。你开口说自己是来送还封存箱的，把封条残片举到雨里给他看。他没有犹豫，也没有伸手来接。他后退半步，右手探进雨衣内侧，抽出一只金属哨子，含进嘴里，腮帮子一鼓。哨声尖利地撕开雨幕，在钟楼墙面上撞出回音，一声接一声往校园深处传。你还没来得及再开口，他已经把哨子吐出来，左手反手扣住侧门的铁环，把门拉开一条缝，冲里面喊了一句：里面的人，你们等的那位自己送上门了。门缝里透出的不是灯光，是一股干燥的、带着旧纸和铁锈味的气流。他转回头盯着你，声音压得很低：侧门台阶下还蹲着两个，你从矮墙后一露头他们就看见你了。你以为这箱子是你想送就能送的？他往门边让了半步，手却始终没离开门环，像是在等里面的人出来接手。就在这时，钟楼侧门上方一扇窄窗亮起了灯，昏黄的光从雨里透下来，照见你脚边水洼里晃动的影子。守卫抬头看了一眼那扇窗，喉结动了一下，低声补了一句：现在想走也晚了，里面已经知道你来了。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌意",
+              "name": "钟楼守卫",
+              "notes": "已吹哨示警，透露侧门台阶下另有两名暗哨，并称里面的人已知玩家到来。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "硬闯检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功挤进门内，失败被守卫和暗哨合力拦下并受伤。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "撤离检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功甩开暗哨保住箱子，失败被追上并暴露退路。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": false,
+              "skill": "观察",
+              "stakes": "放下箱子换取观察窗口，成败都会改变守卫与暗哨的站位。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "喊话检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让守卫迟疑并透露内情，失败他直接动手扣人。",
+              "system": "通用 d20",
+              "target": 16
+            }
+          ],
+          "options": [
+            "趁守卫手还扣着门环、里面的人未出来，抱着箱子硬闯侧门",
+            "转身退回矮墙后，沿雨幕掩护撤离，先甩开台阶下那两个暗哨",
+            "把箱子往守卫脚边一放，举起双手后退，争取时间观察侧门和那扇亮灯的窗",
+            "冲守卫喊出箱子里封条编号与三年前寄件的事，逼他在里面的人出来前表态"
+          ],
+          "quests_updated": [
+            {
+              "description": "守卫拒绝放行并吹哨，侧门内已有人被惊动，需在冲突升级中决定如何把箱子送进去或带走。",
+              "name": "调查三年前寄来的包裹",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Rain-soaked bell tower side door, guard blowing whistle, dim window lighting up above, player holding brass-sealed box, tense night"
+        },
+        "player_action": "抱着箱子从矮墙后站出来，主动开口说自己是来送还封存箱的，试着用包裹和封条残片换取他放行",
+        "timeline_node": 39
+      },
+      {
+        "action_index": 39,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "钟楼侧门外",
+          "dialogue": [
+            {
+              "speaker": "沉睡者",
+              "text": "你退得够远了。现在抬头，看祭坛边缘，红线缠得最紧的那一份。"
+            },
+            {
+              "speaker": "守卫",
+              "text": "别动。里面的人没让你靠近，你就站着。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼侧门外",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "黄铜封条封存的箱子，已放在守卫脚边的石阶上。",
+                "location": "钟楼侧门石阶",
+                "name": "三年前的包裹",
+                "notes": "玩家主动交出以争取时间。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家放下箱子举手后退，沉睡者开口指引查看祭坛边缘写有玩家名字的档案，窄窗后有人影观察。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼侧门内",
+                "description": "与玩家同脸的沉睡者，声音从侧门内传出。",
+                "name": "沉睡者",
+                "notes": "指引玩家查看祭坛边缘的档案。",
+                "relationship": "审视",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼侧门外",
+                "description": "守卫侧门的执行部人员。",
+                "name": "钟楼守卫",
+                "notes": "哨声已传开，警告玩家不要靠近。",
+                "relationship": "敌对",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "膝盖旧伤抽痛、肩头擦伤渗血，双手举起后退中",
+              "current_goal": "在守卫与暗哨的围堵下决定如何处置封存箱",
+              "danger_level": "critical",
+              "notes": "沉睡者给出指引，窄窗后有人观察。"
+            },
+            "quests_upserted": [
+              {
+                "description": "封存箱已交出，沉睡者指引玩家查看祭坛边缘的档案。",
+                "name": "调查三年前寄来的包裹",
+                "notes": "沉睡者开口给出第二句指引。",
+                "objective": "查看祭坛边缘写有玩家名字、日期为三年前的档案。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "钟楼侧墙高处的窄窗亮着灯，窗后有人影移动，似乎在评估玩家。",
+                "name": "窄窗后有人影",
+                "notes": "里面的人没有急着下楼。",
+                "source": "玩家观察",
+                "status": "suspected"
+              }
+            ]
+          },
+          "narration": "你把箱子放到守卫脚边的石阶上，黄铜封条磕在湿石上发出一声闷响。你举起双手，掌心朝外，一步一步往后退，靴底碾过积水。守卫没有动，哨子还捏在手里，视线在你和箱子之间来回切。侧门那条缝里，干燥的旧纸气味涌出来，门后有人影贴着门框停住，没有出来，也没有关门。你退到第三步时，余光扫到钟楼侧墙高处那扇窄窗，窗里亮着灯，灯光是暖的，和这栋楼其他黑洞洞的窗格完全不同。窗后有人影移动，先靠近玻璃，又退开半步，像在衡量什么。守卫的哨声余音还在墙面上打转，可那扇窗后的人没有急着下楼。你退到第五步，膝盖的旧伤在湿滑的石面上打了个趔趄，你稳住身形，没有放下手。就在这时，侧门里传出一个声音，不高，却压过了雨声，也压过了守卫的呼吸。那声音说：把箱子放下是对的，可你还没问对问题。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "审视",
+              "name": "沉睡者",
+              "notes": "声音从侧门内传出，指引玩家去看祭坛边缘的档案。"
+            },
+            {
+              "disposition": "敌对",
+              "name": "钟楼守卫",
+              "notes": "哨声已传开，仍守在侧门旁，警告玩家不要靠近。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清档案封皮上的名字与日期，失败则被守卫喝止、只看到模糊轮廓。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "洞察检定",
+              "requires_check": true,
+              "skill": "洞察",
+              "stakes": "成功判断窗后人的意图与守卫的从属关系，失败则窗后灯灭、线索中断。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null
+          ],
+          "options": [
+            "保持举手后退的姿势，顺着声音去看祭坛边缘那份被红线缠紧的档案",
+            "先不理会声音，盯着窄窗后的人影，判断里面的人是否在等守卫的下一步动作",
+            "趁守卫注意力被侧门内声音分走，低声问守卫那份档案为什么写着我的名字"
+          ],
+          "quests_updated": [
+            {
+              "description": "封存箱已放在守卫脚边，沉睡者指引玩家查看祭坛边缘一份写有玩家名字、日期为三年前的档案。",
+              "name": "调查三年前寄来的包裹",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Rain-soaked bell tower side door, brass-bound box at guard's feet, lit narrow window above, figure watching"
+        },
+        "player_action": "把箱子往守卫脚边一放，举起双手后退，争取时间观察侧门和那扇亮灯的窗",
+        "timeline_node": 40
+      },
+      {
+        "action_index": 40,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清档案封皮上的名字与日期，失败则被守卫喝止、只看到模糊轮廓。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            "degree": "成功",
+            "option_index": 0,
+            "outcome": "success",
+            "roll": 19
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼侧门外",
+          "dialogue": [
+            {
+              "speaker": "沉睡者",
+              "text": "看清了？那份东西在这里躺了三年，红线一天比一天紧。你今晚把它带进来，它就该认得你了。"
+            },
+            {
+              "speaker": "钟楼守卫",
+              "text": "别乱动。里面那位既然开了口，我就不动手。但箱子留在台阶上，你也不许再往前一步。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼侧门外",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家隔门缝看清祭坛档案封皮写着自己的名字与三年前日期，沉睡者开口确认档案认得他。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼侧门外",
+                "description": "钟楼侧门守卫，持哨子，受沉睡者约束。",
+                "name": "钟楼守卫",
+                "notes": "看见祭坛档案后收手，要求箱子留在台阶上。",
+                "relationship": "敌对但暂缓动手",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼侧门内祭坛",
+                "description": "与玩家同脸的沉睡人影，祭坛红线汇向其身。",
+                "name": "沉睡者",
+                "notes": "开口确认档案认得玩家。",
+                "relationship": "审视并主动指引",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "膝盖旧伤抽痛、肩头擦伤渗血，双手举起后退中",
+              "current_goal": "在守卫与暗哨的围堵下决定如何处置封存箱，并追问档案与自身的关联",
+              "danger_level": "critical",
+              "notes": "已看清祭坛档案名字与日期。"
+            },
+            "quests_upserted": [
+              {
+                "description": "祭坛档案与包裹、血统的关联待查。",
+                "name": "调查三年前寄来的包裹",
+                "notes": "已看清封皮名字与日期。",
+                "objective": "查明写有玩家名字、日期为三年前的档案含义。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "门缝里透出的干燥气流掀动那份档案的封皮一角，你看见封皮上墨迹未干的名字，和你的一模一样，日期栏写着三年前的今天。",
+                "name": "祭坛档案与玩家同名同日",
+                "notes": "档案被红线缠得最紧，压在祭坛台沿。",
+                "source": "钟楼侧门外观察",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你保持着双手举起的姿势，脚跟又往后挪了半步，视线却越过守卫的肩头，顺着那个从门缝里渗出来的声音望进去。侧门只开了一线，门后的空气干燥得反常，贴着地面涌出来，把你裤脚上的雨水吹得微微发凉。就在这一线光里，祭坛的边缘露出来一角，黑石台面上摊着无数份档案，每一份都被一根细如血管的红线缠住，红线汇向中央那个沉睡的人影。缠得最紧的那一份被单独压在台沿，红线绕了不知多少圈，把封皮勒出深深的凹痕。门缝里的气流掀动了封皮的一角，纸页翻起来，又落回去。你看清了。封皮上的名字墨迹未干，笔画、结构、连笔的收尾，和你自己写下的名字一模一样。日期栏里那一行字也清清楚楚，三年前的今天。你的呼吸在喉咙里卡了一下，举着的双手没有放下来，指尖却开始发麻。守卫的视线跟着你的目光转过去，他显然也看见了那份档案，喉结动了一下，握着哨子的手收紧，却没有再吹，也没有上前。门缝里那个声音又响起来，比刚才低，带着一种被长久压在石头底下的沙哑。窄窗后的人影贴到了玻璃上，一动不动。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "紧张戒备，暂不动手",
+              "name": "钟楼守卫",
+              "notes": "因沉睡者发话而收手，仍守着侧门与台阶上的箱子。"
+            },
+            {
+              "disposition": "审视，主动指引",
+              "name": "沉睡者",
+              "notes": "从门缝内开口，确认祭坛档案与玩家同名同日。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出档案与血统关联的关键真相，失败则沉睡者收回指引、守卫重新施压。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功把箱子送进门缝并换来进入资格，失败则箱子被守卫扣下、门被关上。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让守卫吐露高层知情的内幕，失败则他吹哨召来暗哨、局势升级。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "隔着门缝向沉睡者发问，逼它说清那份档案为何写着你的名字和三年前的日期，以及它与你血统的关系",
+            "不再后退，弯腰抱起台阶上的封存箱，当着守卫的面把箱子推进门缝，用归位换取进入侧门的资格",
+            "转向守卫，把黄铜钥匙和三年前的警告信摊在雨里给他看，逼他交代学院高层对祭坛知情多少"
+          ],
+          "quests_updated": [
+            {
+              "description": "已看清祭坛边缘档案封皮写着自己的名字与三年前的日期，需查明其与包裹、血统的关联。",
+              "name": "调查三年前寄来的包裹",
+              "status": "active"
+            },
+            {
+              "description": "沉睡者暗示档案与玩家血统相连，冒充者身份仍待确认。",
+              "name": "查明冒充者身份",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Rain-soaked bell tower side door ajar, dry air curling out, black altar edge with red-threaded files, guard holding whistle, narrow lit window above"
+        },
+        "player_action": "保持举手后退的姿势，顺着声音去看祭坛边缘那份被红线缠紧的档案",
+        "timeline_node": 41
+      },
+      {
+        "action_index": 41,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出档案与血统关联的关键真相，失败则沉睡者收回指引、守卫重新施压。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 13
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼侧门外",
+          "dialogue": [
+            {
+              "speaker": "沉睡者",
+              "text": "你问错了地方。红线只认血，不认名字。"
+            },
+            {
+              "speaker": "钟楼守卫",
+              "text": "问够了。现在把箱子推过来，退到雨里。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -2,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼侧门外",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家逼问沉睡者失败，沉睡者收回指引称红线认血不认名字，守卫推搡施压，窄窗后有人正快步下楼。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼地下祭坛",
+                "description": "与玩家同脸的沉睡人影，红线汇于其身。",
+                "name": "沉睡者",
+                "notes": "收回指引，称红线只认血不认名字。",
+                "relationship": "拒绝进一步指引",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼侧门外",
+                "description": "持哨子的钟楼守卫。",
+                "name": "钟楼守卫",
+                "notes": "推搡玩家，要求交箱退离侧门。",
+                "relationship": "敌对施压",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "被守卫推搡，膝盖旧伤抽痛，肩头擦伤渗血",
+              "current_goal": "在守卫施压与窄窗人影下楼之间做出取舍",
+              "danger_level": "critical",
+              "notes": "沉睡者拒绝回答，守卫重新施压。"
+            },
+            "quests_upserted": [
+              {
+                "description": "沉睡者拒绝回答档案与血统关联。",
+                "name": "查明冒充者身份",
+                "notes": "线索从祭坛转向钟楼内部下楼者。",
+                "objective": "转向窄窗后正下楼的人影。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "沉睡者称红线只认血，不认名字，随后红线收紧拖走写有玩家名字的档案。",
+                "name": "红线认血不认名字",
+                "notes": "暗示档案与玩家血统的关联比名字更深。",
+                "source": "沉睡者隔门缝的回应",
+                "status": "suspected"
+              },
+              {
+                "description": "窄窗后的人影突然离开玻璃，窗内灯光晃动，钟楼侧墙里传来楼梯被踩响的闷声。",
+                "name": "窄窗后有人正下楼",
+                "notes": "新的动向，可能截住下楼者。",
+                "source": "玩家在侧门外观察",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你隔着门缝把问题抛进去，声音在干燥的旧纸气味里显得单薄。祭坛边缘那份缠满红线的档案静了一瞬，随后，缠在封皮上的红线开始收紧，一圈一圈勒进纸页，发出细密的、纤维被扯断的声响。沉睡者没有回答。它只是把脸偏回祭坛中央，那点审视的光从门缝里退走，像一扇窗被从里面合上。你听见它极轻地吐出一句：你问错了地方。紧接着，红线猛地一抽，那份档案被拖离台沿，滑进祭坛的阴影里，封皮上你的名字最后露了一角，日期栏那一行三年前的今天被红线彻底盖住。门缝里的气流骤然变冷，侧门被人从里面推得更开，守卫一步跨上前，哨子重新抵在唇边，另一只手已经按上你的胸口，把你往后推。他低声说：问够了。现在把箱子推过来，退到雨里。你被推得踉跄，视线却在这一刻被高处那扇窄窗攫住。窗后的人影突然离开玻璃，暖黄的灯光剧烈晃动，一道影子贴着窗框往下坠，像有人正快步下楼。守卫的哨子还没吹响，钟楼侧墙里已经传来楼梯被踩响的闷声，一下比一下近。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对施压",
+              "name": "钟楼守卫",
+              "notes": "重新上前推搡玩家，要求交出箱子并退离侧门。"
+            },
+            {
+              "disposition": "拒绝回答",
+              "name": "沉睡者",
+              "notes": "收回指引，只留下关于红线认血的模糊话语。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "突入检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抢到档案一角，失败被守卫扣住并激化冲突。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "截人检定",
+              "requires_check": true,
+              "skill": "潜行",
+              "stakes": "成功堵到下楼者，失败被对方先一步脱身。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让守卫分心转向窄窗，失败他仍只盯着箱子和你。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "不再纠缠沉睡者，趁守卫分神去按箱子时冲进侧门，直奔祭坛边缘抢回那份被红线拖走的档案",
+            "把箱子推向守卫，退进雨里，转而绕向钟楼侧墙那扇窄窗下方，截住正快步下楼的人",
+            "抓住守卫按上胸口的手，压低声音告诉他窗后有人正下楼，逼他决定先拦谁"
+          ],
+          "quests_updated": [
+            {
+              "description": "沉睡者拒绝回答档案与血统关联，但窄窗后有人正下楼，冒充者线索转向钟楼内部。",
+              "name": "查明冒充者身份",
+              "status": "active"
+            },
+            {
+              "description": "守卫施压要求交箱退离，玩家须在侧门与窄窗之间做出取舍。",
+              "name": "决定封印与血统筛选系统的命运",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Rain-soaked bell tower side door, guard pushing player back, warm window light flickering above, red threads visible through door crack"
+        },
+        "player_action": "隔着门缝向沉睡者发问，逼它说清那份档案为何写着你的名字和三年前的日期，以及它与你血统的关系",
+        "timeline_node": 42
+      },
+      {
+        "action_index": 42,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "突入检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抢到档案一角，失败被守卫扣住并激化冲突。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 0,
+            "outcome": "failure",
+            "roll": 7
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼侧门内祭坛边缘",
+          "dialogue": [
+            {
+              "speaker": "钟楼守卫",
+              "text": "红线认血，你越碰它越紧。那东西不是给你抢的，是给你认的。"
+            },
+            {
+              "speaker": "沉睡者",
+              "text": "你终于肯用身体来问了。可惜，问得还是太急。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -4,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼侧门内祭坛边缘",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "玩家冲门抢档案失败，被守卫扣在祭坛边，守卫脱口说出红线认血，楼梯脚步声逼近。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼侧门内祭坛边",
+                "description": "钟楼侧门守卫",
+                "name": "钟楼守卫",
+                "notes": "扣住玩家并透露红线认血，哨声已召人。",
+                "relationship": "敌对压制",
+                "status": "present"
+              },
+              {
+                "current_location": "祭坛中央",
+                "description": "祭坛中央沉睡的人影",
+                "name": "沉睡者",
+                "notes": "开口评价玩家用身体发问。",
+                "relationship": "审视",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "被守卫按在祭坛边，膝盖旧伤抽痛，肩头擦伤渗血",
+              "current_goal": "在守卫压制与逼近的脚步声之间做出取舍",
+              "danger_level": "critical",
+              "notes": "突入失败，冲突激化。"
+            },
+            "quests_upserted": [
+              {
+                "description": "玩家被守卫扣在祭坛边，须在压制与逼近的脚步声之间做出取舍。",
+                "name": "决定封印与血统筛选系统的命运",
+                "notes": "突入失败，被守卫扣住。",
+                "objective": "在守卫施压与窄窗人影下楼之间做出取舍。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "守卫在压制中脱口说出红线认血，玩家越碰它越紧，档案不是用来抢的。",
+                "name": "红线认血不认名字",
+                "notes": "暗示档案与玩家血统存在绑定关系。",
+                "source": "守卫压制时的原话",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你不再看沉睡者，也不再等守卫的哨子。守卫的左手刚离开你的胸口去够石阶上的箱子，你整个人已经侧身撞向那条门缝。肩膀顶开铁门的瞬间，门轴发出一声闷响，干燥的旧纸气味扑面灌进肺里。你冲进去两步，脚底踩到祭坛外围散落的档案，纸页在靴下打滑。祭坛边缘那份被红线拖走的档案就在阴影里，封皮上你的名字被勒出一道深凹，红线末端垂在台沿外，离你的指尖不到一臂。你伸手去够。守卫从你身后扑上来，一条手臂横过你的喉咙，另一只手扣住你的手腕，把你整个人往后拽。你的指尖擦过红线末端，红线一缩，档案滑进更深的阴影，你什么也没抓住。守卫把你按在祭坛边的石台上，膝盖顶住你的后腰，喘着粗气说：红线认血，你越碰它越紧，那东西不是给你抢的。他的哨子还咬在齿间，发出一声短促的尖响。就在这时，楼梯方向传来脚步声，急促、沉重，正贴着侧门逼近。窄窗后下楼的人快到了。守卫压着你，侧门被从外面又推上一道，门缝只剩一线。半拍静默里，你听见祭坛深处红线绷紧的细响，还有守卫压低的呼吸。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对压制",
+              "name": "钟楼守卫",
+              "notes": "将玩家按在祭坛边，透露红线认血，哨声已引来人。"
+            },
+            {
+              "disposition": "审视",
+              "name": "沉睡者",
+              "notes": "开口评价玩家用身体发问，仍未直接回答。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出红线与筛选的关键信息，失败则守卫收紧压制并叫来增援。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "说服检定",
+              "requires_check": true,
+              "skill": "说服",
+              "stakes": "成功换来短暂松手与祭坛视野，失败被当作拖延并激怒守卫。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "巧手检定",
+              "requires_check": true,
+              "skill": "巧手",
+              "stakes": "成功翻到一份档案内容，失败碰响红线引来更紧的束缚。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null
+          ],
+          "options": [
+            "不再挣扎，顺着守卫的压制开口问它红线认血是什么意思，逼它说出档案与筛选的关联",
+            "趁守卫压着你、楼梯脚步声逼近，低声提出合作：你帮它挡住上楼的人，它松开你让你看清祭坛",
+            "用还能活动的那只手去够祭坛台沿散落的档案，赌一份没被红线缠紧的能翻出内容",
+            "放弃祭坛，反手抓住守卫扣你手腕的那只手，把它的注意力引向即将抵达侧门的人"
+          ],
+          "quests_updated": [
+            {
+              "description": "玩家被守卫扣在祭坛边，须在压制与逼近的脚步声之间做出取舍。",
+              "name": "决定封印与血统筛选系统的命运",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -3,
+          "scene_prompt": "Rain-soaked bell tower side door, guard pinning intruder against black altar, red threads, dim narrow window light, horror"
+        },
+        "player_action": "不再纠缠沉睡者，趁守卫分神去按箱子时冲进侧门，直奔祭坛边缘抢回那份被红线拖走的档案",
+        "timeline_node": 43
+      }
+    ],
+    "structured_state": {
+      "current_location": "钟楼侧门内祭坛边缘",
+      "health": 69,
+      "item_ledger": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 7,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "取档凭条",
+          "last_seen_turn": 13,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "散落的旧卷宗",
+          "last_seen_turn": 14,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "红标纸片",
+          "last_seen_turn": 20,
+          "notes": "",
+          "state": "lost"
+        },
+        {
+          "item_name": "旧档案室异常记录",
+          "last_seen_turn": 18,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "半张调档序列纸条",
+          "last_seen_turn": 23,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "遗留的手电筒",
+          "last_seen_turn": 24,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "黄铜封条残片",
+          "last_seen_turn": 34,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "听证会决议书",
+          "last_seen_turn": 26,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "第二枚黄铜封条残片",
+          "last_seen_turn": 27,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "搬运单",
+          "last_seen_turn": 29,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "三年前的包裹",
+          "last_seen_turn": 39,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "黄铜钥匙",
+          "last_seen_turn": 37,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "三年前的警告信",
+          "last_seen_turn": 37,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "items": [
+        {
+          "aliases": [],
+          "description": "诺诺交给玩家的薄纸，列着三项预备任务，边缘有执行部印章。",
+          "location": "玩家手中",
+          "name": "预备任务单",
+          "notes": "即将在任务台核对",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "签名笔迹与玩家一致、时间戳为三分钟前的取档凭条。",
+          "location": "玩家手中",
+          "name": "取档凭条",
+          "notes": "已确认签名笔迹与玩家本人一致，时间戳早于玩家到达。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "档案室地上散落的一页旧卷宗，露出名单红标相关记录，墨迹被人用指甲划过。",
+          "location": "玩家手中",
+          "name": "散落的旧卷宗",
+          "notes": "记录与名单红标有关，需进一步查看。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "临时通行卡",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "旧档案室异常记录",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "印有调档序列号的半张纸条，后半截被撕走。",
+          "location": "玩家身上",
+          "name": "半张调档序列纸条",
+          "notes": "诺诺称后半截才是真正要调的东西。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "工具间地上的手电筒，镜片有余温。",
+          "location": "工具间地面",
+          "name": "遗留的手电筒",
+          "notes": "余温佐证有人不久前在此停留。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "半枚黄铜封条残片，边缘有撬痕，背面有指甲划痕。",
+          "location": "玩家手中",
+          "name": "黄铜封条残片",
+          "notes": "已举给监视者看清，撬痕与搬运单封条编号对得上。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "听证会决议书",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "从铁皮柜后窄缝深处摸到的半枚封条残片，断口新，划痕浅得几乎看不出走向。",
+          "location": "玩家手中",
+          "name": "第二枚黄铜封条残片",
+          "notes": "与之前那枚残片不是同一块，划痕走向无法辨认。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "柜顶那张搬运单，监视者已将其推回柜顶更深处，玩家未能得手。",
+          "location": "铁皮柜顶",
+          "name": "搬运单",
+          "notes": "对讲机称其为三年前那批封存箱的搬运单。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "黄铜封条封存的箱子，已放在守卫脚边的石阶上。",
+          "location": "钟楼侧门石阶",
+          "name": "三年前的包裹",
+          "notes": "玩家主动交出以争取时间。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "黄铜钥匙",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "三年前的警告信",
+          "notes": "",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "current_location": "钟楼侧门内祭坛边",
+          "description": "钟楼侧门守卫",
+          "name": "钟楼守卫",
+          "notes": "扣住玩家并透露红线认血，哨声已召人。",
+          "relationship": "敌对压制",
+          "status": "present"
+        },
+        {
+          "current_location": "祭坛中央",
+          "description": "祭坛中央沉睡的人影",
+          "name": "沉睡者",
+          "notes": "开口评价玩家用身体发问。",
+          "relationship": "审视",
+          "status": "present"
+        }
+      ],
+      "player_status": {
+        "condition": "被守卫按在祭坛边，膝盖旧伤抽痛，肩头擦伤渗血",
+        "current_goal": "在守卫压制与逼近的脚步声之间做出取舍",
+        "danger_level": "critical",
+        "notes": "突入失败，冲突激化。"
+      },
+      "quests": [
+        {
+          "description": "用任务单上的执行部印章完成正式登记。",
+          "name": "完成入校报到",
+          "notes": "锁扣未闭合，登记生效。",
+          "objective": "已达成",
+          "status": "completed"
+        },
+        {
+          "description": "调查校园中的异常现象。",
+          "name": "调查校园异常",
+          "notes": "追逐失败，取档者锁死上层门，玩家在转角平台发现刻痕线索。",
+          "objective": "查清旧楼梯间墙上刻痕与三天前日期的含义。",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "完成三个预备任务",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "查清箱子被转移到何处，确认监视者身份。",
+          "name": "调查档案冒充事件",
+          "notes": "窄缝痕迹模糊，未能推断箱子去向，时间被消耗。",
+          "objective": "在监视者逼近前决定撤离或冒险。",
+          "status": "active"
+        },
+        {
+          "description": "祭坛档案与包裹、血统的关联待查。",
+          "name": "调查三年前寄来的包裹",
+          "notes": "已看清封皮名字与日期。",
+          "objective": "查明写有玩家名字、日期为三年前的档案含义。",
+          "status": "active"
+        },
+        {
+          "description": "沉睡者拒绝回答档案与血统关联。",
+          "name": "查明冒充者身份",
+          "notes": "线索从祭坛转向钟楼内部下楼者。",
+          "objective": "转向窄窗后正下楼的人影。",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "准备面对古老邪恶的真相",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "玩家被守卫扣在祭坛边，须在压制与逼近的脚步声之间做出取舍。",
+          "name": "决定封印与血统筛选系统的命运",
+          "notes": "突入失败，被守卫扣住。",
+          "objective": "在守卫施压与窄窗人影下楼之间做出取舍。",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "让同伴活着离开钟楼",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        }
+      ],
+      "sanity": 68,
+      "turn": 42,
+      "world_facts": [
+        {
+          "description": "诺诺指出临时通行卡刚才烫得不太正常，卡面曾泛出微光。",
+          "name": "通行卡异常发烫",
+          "notes": "可能与血统反应或权限异常有关",
+          "source": "诺诺的观察",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺称通行卡认的是登记过的气息，未登记者会先引发反应。",
+          "name": "通行卡感应未登记气息",
+          "notes": "她未说明具体会引来什么",
+          "source": "诺诺在回廊下的解释",
+          "status": "suspected"
+        },
+        {
+          "description": "卡面纹路在雨声中微微震颤，节奏与雨声对不上，暗示有东西仍在注意。",
+          "name": "通行卡纹路震颤",
+          "notes": "温度无法确定，但震颤可感知",
+          "source": "玩家在回廊检查通行卡",
+          "status": "suspected"
+        },
+        {
+          "description": "玩家追查车灯方向失败，只捕捉到模糊尾灯残影与远去引擎声，无法确认是否有人跟来。",
+          "name": "车灯来源未能确认",
+          "notes": "诺诺察觉玩家迟疑并出言警告",
+          "source": "回廊观察失败",
+          "status": "suspected"
+        },
+        {
+          "description": "投影屏新生名单末尾，你的名字旁标注了一个你从未申请过的宿舍楼编号。",
+          "name": "名单上的未申请宿舍楼编号",
+          "notes": "编号来源不明。",
+          "source": "报到大厅投影屏",
+          "status": "known"
+        },
+        {
+          "description": "进门时迎接者侧过脸，嘴角似乎动了一下，但被诺诺催促打断，未能看清细节。",
+          "name": "迎接者的异常残影",
+          "notes": "需要进一步确认。",
+          "source": "主楼入口",
+          "status": "suspected"
+        },
+        {
+          "description": "投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。",
+          "name": "发现红色标记",
+          "notes": "红色鳞片状标记出现在玩家名字旁。",
+          "source": "报到大厅投影屏",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称那槽子不是给玩家刷卡的，按上去等于在门上敲了一记。",
+          "name": "感应区并非通行卡读卡器",
+          "notes": "感应区触发低鸣与名单冻结。",
+          "source": "诺诺的警告",
+          "status": "suspected"
+        },
+        {
+          "description": "迎接者转头时整个上半身一起转，脖颈没有先动。",
+          "name": "迎接者动作异常",
+          "notes": "被低鸣惊动后看向玩家。",
+          "source": "玩家观察",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺的手重新扣住你的小臂，往任务台的方向带",
+          "name": "接受三个预备任务",
+          "notes": "任务单即将在任务台核对",
+          "source": "报到大厅对峙",
+          "status": "known"
+        },
+        {
+          "description": "迎接者称感应区只认名单，名单已经记住玩家，投影屏边缘淡红扩散",
+          "name": "名单已经记住玩家",
+          "notes": "感应区与未申请宿舍编号的关联被点明",
+          "source": "迎接者原话",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称迎接者每逼近一步都在量距离，追问只会让他更近，他不需要回答。",
+          "name": "迎接者以步幅量距",
+          "notes": "迎接者逼近时地砖震动与其步频对上。",
+          "source": "诺诺在撤离前的警告",
+          "status": "suspected"
+        },
+        {
+          "description": "迎接者逼近时大厅低鸣转为持续嗡响，两侧走廊灯逐盏熄灭，投影屏红光成为唯一光源。",
+          "name": "迎接者干扰环境",
+          "notes": "其存在本身干扰灯光与声音。",
+          "source": "对峙现场",
+          "status": "known"
+        },
+        {
+          "description": "玩家名字、临时通行卡或学院系统中出现红色标记，可能代表监控、权限或警告。",
+          "name": "红色标记",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "迎接者的脚步声突然停止，他站定在不到三步处，投影屏红光开始脉动",
+          "name": "迎接者站定于三步之内",
+          "notes": "站定意味着他已到达某个位置，不再需要继续逼近",
+          "source": "本回合叙事",
+          "status": "known"
+        },
+        {
+          "description": "迎接者拍落通行卡后发出刺耳声响，站定辨认掌心，重复名单已记住玩家。",
+          "name": "迎接者被举卡激怒",
+          "notes": "撤离窗口收窄。",
+          "source": "玩家举卡试探失败",
+          "status": "known"
+        },
+        {
+          "description": "门缝下卡着一张被踩皱的取档凭条，取档时间为三分钟前，签名栏字迹被蹭花。",
+          "name": "档案室门缝下的取档凭条",
+          "notes": "暗示有人冒充取档。",
+          "source": "玩家被推倒时视线扫到",
+          "status": "suspected"
+        },
+        {
+          "description": "档案室门缝下的取档凭条签名栏被蹭花，起笔习惯与玩家一致，时间戳为三分钟前，暗示有人冒充玩家取走档案。",
+          "name": "取档凭条签名异常",
+          "notes": "与玩家实际到达时间矛盾。",
+          "source": "玩家断后对峙成功后低头发现",
+          "status": "known"
+        },
+        {
+          "description": "签名栏的笔迹被蹭花了一半，可起笔的顿点、收尾时习惯性往上一挑的弧度，和你自己写字的力道一模一样。",
+          "name": "发现冒充者痕迹",
+          "notes": "有人冒充玩家在三分钟前取走了档案。",
+          "source": "取档凭条",
+          "status": "known"
+        },
+        {
+          "description": "档案室门缝里透出一线冷光，门缝深处有纸页翻动声，间隔很匀。",
+          "name": "档案室门缝冷光与翻动声",
+          "notes": "暗示档案室内仍有东西在活动。",
+          "source": "玩家观察",
+          "status": "suspected"
+        },
+        {
+          "description": "档案室深处身影塞入怀中的档案标签编号，起首几位与玩家临时通行卡编号一致。",
+          "name": "被取走档案的编号与玩家相关",
+          "notes": "暗示冒充者取走的正是玩家相关档案。",
+          "source": "玩家潜入档案室所见",
+          "status": "known"
+        },
+        {
+          "description": "散落卷宗中一页露出名单红标相关记录，墨迹被人用指甲划过。",
+          "name": "名单红标记录散落在地",
+          "notes": "红标记录与玩家名字被标记一事可能相关。",
+          "source": "玩家在档案室地上所见",
+          "status": "known"
+        },
+        {
+          "description": "玩家挤入档案室时肩膀撞到门框，在门框上留下明显擦痕，惊动了取档者。",
+          "name": "档案室潜入留下痕迹",
+          "notes": "痕迹可能被后续调查者发现。",
+          "source": "潜行失败后果",
+          "status": "known"
+        },
+        {
+          "description": "档案室内身影塞进怀里的档案标签编号起首几位与玩家临时通行卡完全一致",
+          "name": "取档者带走编号与玩家一致的档案",
+          "notes": "取档者从侧门遁走",
+          "source": "玩家潜入档案室目击",
+          "status": "known"
+        },
+        {
+          "description": "沉重脚步声间隔缩短、逐渐靠近档案室门外",
+          "name": "逼近的脚步声来自走廊尽头",
+          "notes": "时间压力来源",
+          "source": "走廊听觉",
+          "status": "known"
+        },
+        {
+          "description": "诺诺认出档案标签编号格式属于执行部内部临时调档序列，新生档案不该走这个口子。",
+          "name": "档案编号属于执行部内部临时调档序列",
+          "notes": "暗示有人在你报到前就伪造或调用了你的档案。",
+          "source": "诺诺在维护通道入口的判断",
+          "status": "known"
+        },
+        {
+          "description": "取档者在维护通道察觉玩家藏身，撞上铁梯后向旧楼梯间上层逃窜。",
+          "name": "取档者察觉玩家并逃向旧楼梯间上层",
+          "notes": "慌乱中掉落一页红标纸片。",
+          "source": "本回合潜行失败",
+          "status": "known"
+        },
+        {
+          "description": "取档者怀里档案的边角刮过栏杆，一页带红标的纸片飘落在积灰的管线上。",
+          "name": "红标纸片掉落",
+          "notes": "纸片内容尚未看清。",
+          "source": "本回合潜行失败",
+          "status": "known"
+        },
+        {
+          "description": "转角平台墙壁上有一排被反复描过的刻痕，最下面一个标记旁用铅笔写着三天前的日期。",
+          "name": "旧楼梯间墙上的刻痕与日期",
+          "notes": "可能与取档者或更早的调档行为有关。",
+          "source": "玩家追逐失败后停在转角平台时发现",
+          "status": "known"
+        },
+        {
+          "description": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "name": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了个人档案",
+          "name": "旧档案室中有人冒充你取走了个人档案",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "学院对你的特殊关注源于血统检测异常",
+          "name": "学院对你的特殊关注源于血统检测异常",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "另一个声音应了一句，说检测曲线不对，血统读数在常规区间外，得赶在听证开始前把结论定下来。",
+          "name": "听证会上的真相",
+          "notes": "门后为听证会准备室",
+          "source": "门缝偷听",
+          "status": "known"
+        },
+        {
+          "description": "门缝光中一张纸片边缘颤动，印有玩家名字与从未见过的检测编号，编号末尾被红笔圈了一道。",
+          "name": "门缝下的检测编号纸片",
+          "notes": "纸片仍在门后地板",
+          "source": "门缝侦察",
+          "status": "known"
+        },
+        {
+          "description": "纸片被门后的人迅速抽走，门后随即有人起身走向门口。",
+          "name": "听证室内有人持有检测编号纸片",
+          "notes": "纸片实物已不在玩家手中。",
+          "source": "门缝勾取失败",
+          "status": "known"
+        },
+        {
+          "description": "听证室的门板向内收开，暖黄的光从门缝里泄出来，然后是脚步，正朝楼梯口来。",
+          "name": "听证室门后有人追出",
+          "notes": "追兵脚步不快但踩得实",
+          "source": "本回合撤离",
+          "status": "known"
+        },
+        {
+          "description": "诺诺承认听证室两人在查血统检测的原始记录，查谁把编号对不上的人放进名单。",
+          "name": "听证室调查血统检测原始记录",
+          "notes": "她知情但话只说一半",
+          "source": "诺诺在楼梯井中的回答",
+          "status": "known"
+        },
+        {
+          "description": "楼梯下方传来金属被磕的短促异响，诺诺判断不是风，岔口下方可能有人。",
+          "name": "岔口下方有异响",
+          "notes": "迫使诺诺中断解释",
+          "source": "楼梯井半层转角的声响",
+          "status": "suspected"
+        },
+        {
+          "description": "工具间铁架边缘压着半张纸条，印着一串调档序列号，后半截被人撕走。",
+          "name": "调档序列纸条",
+          "notes": "诺诺称这串号是听证室调原始记录用的，后半截才是真正要调的东西。",
+          "source": "窄口工具间发现",
+          "status": "known"
+        },
+        {
+          "description": "工具间地上有被踩扁的烟蒂和一支镜片带余温的手电筒。",
+          "name": "工具间近期有人待过",
+          "notes": "说明有人近期在此停留。",
+          "source": "窄口工具间发现",
+          "status": "known"
+        },
+        {
+          "description": "铁架横杆擦痕朝里，铁架背后木箱缝透出带土腥味的冷风，说明有通道。",
+          "name": "铁架后存在通道",
+          "notes": "通道通向工具间更深处。",
+          "source": "玩家检查工具间痕迹",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称上个月有人从铁架后缝隙搬过旧档案室封存件，编号能与半张调档序列对上。",
+          "name": "诺诺知道搬箱人",
+          "notes": "她可能知道搬箱人身份。",
+          "source": "诺诺对话",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺承认上个月看见芬格尔搬一只缠黄铜封条的箱子从旧档案室后门出来。",
+          "name": "搬箱人是芬格尔",
+          "notes": "芬格尔是高年级，常在新生报到处兜售情报。",
+          "source": "诺诺在工具间被证据逼问后交代",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称芬格尔搬箱时楼梯拐角还站着个穿执行部外套的人，只旁观未动手。",
+          "name": "执行部旁观者",
+          "notes": "身份未明。",
+          "source": "诺诺的补充",
+          "status": "suspected"
+        },
+        {
+          "description": "旧档案室后门走廊浮灰上有清晰拖痕，箱角磕落灰块，拖痕拐向铁皮柜后。",
+          "name": "箱子在后门走廊被拖走",
+          "notes": "箱子在铁皮柜后窄缝停留过，灰面有方正压痕。",
+          "source": "玩家调查",
+          "status": "known"
+        },
+        {
+          "description": "铁皮柜后灰面上留有半枚黄铜封条残片，边缘有撬痕，背面指甲划痕与档案室卷宗一致。",
+          "name": "黄铜封条被撬开",
+          "notes": "封条为执行部封存件所用。",
+          "source": "玩家调查",
+          "status": "known"
+        },
+        {
+          "description": "走廊尽头传来铁皮柜被推的轻响，诺诺判断有人在后门那头看着。",
+          "name": "后门走廊有监视者",
+          "notes": "监视者身份未明。",
+          "source": "诺诺警告",
+          "status": "suspected"
+        },
+        {
+          "description": "新生报到时发现的红色鳞片标记与你的S级血统有关",
+          "name": "新生报到时发现的红色鳞片标记与你的S级血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了档案——至今身份不明",
+          "name": "旧档案室中有人冒充你取走了档案——至今身份不明",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "听证会揭示了学院对你血统异常的担忧",
+          "name": "听证会揭示了学院对你血统异常的担忧",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "你已完成了三个预备任务，获得了执行部的初步认可",
+          "name": "你已完成了三个预备任务，获得了执行部的初步认可",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "铁皮柜后窄缝里只有压实的灰面、半枚封条残片和几道无法确定方向的刮痕，无法据此推断箱子被搬往何处。",
+          "name": "窄缝痕迹模糊",
+          "notes": "调查失败，只得到模糊痕迹并多耗时间。",
+          "source": "玩家检查窄缝",
+          "status": "known"
+        },
+        {
+          "description": "铁皮柜后传来第二声轻响，比第一声更近，柜脚在地面上蹭出半寸，诺诺说监视者数到三就会过来。",
+          "name": "监视者第二次声响逼近",
+          "notes": "时间压力升级，必须做出移动决定。",
+          "source": "窄缝检查时的声响",
+          "status": "known"
+        },
+        {
+          "description": "铁皮柜被推开后，墙面露出一道粉笔画的箭头，指向便利店后门外的雨棚，是芬格尔惯用的交接标记。",
+          "name": "柜后粉笔箭头",
+          "notes": "箭头线条已有些模糊。",
+          "source": "玩家在窄缝中亲眼看见",
+          "status": "known"
+        },
+        {
+          "description": "监视者腰间对讲机传出压低声音，说后门雨棚下那批货今晚必须清走。",
+          "name": "监视者对讲机内容",
+          "notes": "与搬运单和包裹去向直接相关。",
+          "source": "玩家在窄缝口听见",
+          "status": "known"
+        },
+        {
+          "description": "对讲机传出三年前那批封存箱的搬运单还在柜顶，别让人碰，后门雨棚今晚清货，清完就封通道。",
+          "name": "搬运单与三年前封存箱的关联",
+          "notes": "为追查芬格尔与三年前包裹提供线索。",
+          "source": "监视者腰间对讲机",
+          "status": "known"
+        },
+        {
+          "description": "监视者对讲机传出钟楼那边催了，三年前那箱东西今晚必须归位。",
+          "name": "钟楼催促封存箱归位",
+          "notes": "将包裹线索导向钟楼。",
+          "source": "监视者腰间对讲机",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称岔口内壁刻痕与黄铜封条残片断口走向一致，墙后有风。",
+          "name": "岔口刻痕与封条残片同源",
+          "notes": "可能指向墙后通道。",
+          "source": "诺诺在岔口深处的发现",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺掰开灰泥后确认裂缝后面是实的，撬不开，再掰只会塌。",
+          "name": "岔口裂缝后为实心填土",
+          "notes": "墙后通道方案失败。",
+          "source": "诺诺现场摸索",
+          "status": "known"
+        },
+        {
+          "description": "监视者通过对讲机喊出她就在岔口里，清货的人马上到岔口。",
+          "name": "监视者已呼叫清货人合围",
+          "notes": "合围在即，时间压力升级。",
+          "source": "监视者对讲机",
+          "status": "known"
+        },
+        {
+          "description": "监视者按对讲机后只说这边没事，岔口堵住了，你们先清你们的，声音发抖。",
+          "name": "监视者对清货人隐瞒岔口",
+          "notes": "他怕清货人进来看到岔口内的东西。",
+          "source": "本回合对话与叙事",
+          "status": "known"
+        },
+        {
+          "description": "监视者认出封条撬痕后失言称那箱子不该还在，随即收口。",
+          "name": "封存箱不该还在",
+          "notes": "暗示封存箱三年前就该被清走。",
+          "source": "监视者失言",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称取件柜包裹收件人备注写着别让他一个人去钟楼。",
+          "name": "包裹收件人备注指向钟楼",
+          "notes": "与封存箱归位钟楼的时间线呼应。",
+          "source": "诺诺",
+          "status": "known"
+        },
+        {
+          "description": "有一份三年前寄出的新生包裹在当前入学流程中出现。",
+          "name": "三年前寄出的包裹",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "里面躺着一个纸箱，四角磨得发毛，缠着褪色的黄铜封条，封条上的印记和残片上的撬痕对得上。箱面贴着一张手写运单，收件人一栏是你的名字，备注栏里一行字被雨水洇过又干透，笔画发皱：别让他一个人去钟楼。",
+          "name": "三年前的包裹",
+          "notes": "锚点已揭示",
+          "source": "便利店取件柜",
+          "status": "known"
+        },
+        {
+          "description": "诺诺低声说钟楼在校园北侧，零点前必须把箱子放回去，否则封条残片上的撬痕会被人顺着查回来。",
+          "name": "包裹须零点前归位钟楼",
+          "notes": "归位时限与封条撬痕关联。",
+          "source": "诺诺提示",
+          "status": "known"
+        },
+        {
+          "description": "侧门前有一名穿深色雨衣的守卫，门锁为黄铜老式挂锁，锁鼻上挂着未剪断的封条，颜色与黄铜封条残片一致。",
+          "name": "钟楼侧门守卫与锁具",
+          "notes": "守卫单人值守，右手垂在身侧。",
+          "source": "玩家绕行观察时被手电照到，借光瞥见",
+          "status": "known"
+        },
+        {
+          "description": "学院用新生血统筛选产生的精神共鸣维持钟楼封印",
+          "name": "学院用新生血统筛选产生的精神共鸣维持钟楼封印",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "档案冒充者是封印实验体制造的另一个你",
+          "name": "档案冒充者是封印实验体制造的另一个你",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "黄铜钥匙既能关闭筛选核心，也能让持有者继承封印力量",
+          "name": "黄铜钥匙既能关闭筛选核心，也能让持有者继承封印力量",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "守卫称侧门台阶下还蹲着两个暗哨，玩家从矮墙后一露头就被看见。",
+          "name": "侧门另有暗哨",
+          "notes": "撤离路线可能已被封堵。",
+          "source": "钟楼守卫",
+          "status": "known"
+        },
+        {
+          "description": "守卫朝门内喊话后，侧门上方窄窗亮起灯，守卫称里面已经知道你来了。",
+          "name": "钟楼内已知玩家到来",
+          "notes": "内部人员正在响应。",
+          "source": "钟楼守卫与亮灯窄窗",
+          "status": "known"
+        },
+        {
+          "description": "钟楼侧墙高处的窄窗亮着灯，窗后有人影移动，似乎在评估玩家。",
+          "name": "窄窗后有人影",
+          "notes": "里面的人没有急着下楼。",
+          "source": "玩家观察",
+          "status": "suspected"
+        },
+        {
+          "description": "门缝里透出的干燥气流掀动那份档案的封皮一角，你看见封皮上墨迹未干的名字，和你的一模一样，日期栏写着三年前的今天。",
+          "name": "祭坛档案与玩家同名同日",
+          "notes": "档案被红线缠得最紧，压在祭坛台沿。",
+          "source": "钟楼侧门外观察",
+          "status": "known"
+        },
+        {
+          "description": "守卫在压制中脱口说出红线认血，玩家越碰它越紧，档案不是用来抢的。",
+          "name": "红线认血不认名字",
+          "notes": "暗示档案与玩家血统存在绑定关系。",
+          "source": "守卫压制时的原话",
+          "status": "known"
+        },
+        {
+          "description": "窄窗后的人影突然离开玻璃，窗内灯光晃动，钟楼侧墙里传来楼梯被踩响的闷声。",
+          "name": "窄窗后有人正下楼",
+          "notes": "新的动向，可能截住下楼者。",
+          "source": "玩家在侧门外观察",
+          "status": "known"
+        }
+      ]
+    }
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-02",
+  "instruction": "仅依据所提供的检查点记录回答问题；区分观察、角色说法与推断。信息不足时说明无法确定。只判断和解释，不执行游戏行动。",
+  "mode": "full",
+  "question": "在遗弃维护工具间检查烟蒂时，一共数到了多少枚？其中当时有多少枚显得较新？",
+  "question_id": "JLC-20261106-G02-Q03",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

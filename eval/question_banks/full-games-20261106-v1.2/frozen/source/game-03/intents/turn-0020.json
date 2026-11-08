@@ -1,0 +1,46 @@
+{
+  "before_sha256": "ffac9251d96d66d6902f489c498ba5d5aa7f6d4fa6d4c7b7b4c337263858b288",
+  "created_at": "2026-11-06T05:36:27.570781+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 9
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "留在桌前，就着台灯把报告上被红笔圈出的数值和样本编号逐位记下",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 20
+  },
+  "selection": {
+    "action": "留在桌前，就着台灯把报告上被红笔圈出的数值和样本编号逐位记下",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 9,
+    "scores": [
+      {
+        "action": "把检测报告折好收进内袋，先退到门边问诺诺门框上有什么",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.15352149475617216
+      },
+      {
+        "action": "不理会诺诺的警告，绕到屏风后查看那声摩擦的来源",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.30507237926325403
+      },
+      {
+        "action": "留在桌前，就着台灯把报告上被红笔圈出的数值和样本编号逐位记下",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.37539049431846583
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 20
+}

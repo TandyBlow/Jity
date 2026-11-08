@@ -1,0 +1,26 @@
+{
+  "brokenLinks": [],
+  "desktop": {
+    "points": 33,
+    "questions": 12,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  "errors": [],
+  "externalRequests": [],
+  "filterCounts": {
+    "long_term_fact": 8,
+    "mixed_fact_diagnostic": 1,
+    "recent_state_control": 1,
+    "recent_unknown_control": 1,
+    "retention_diagnostic": 1
+  },
+  "mobile": {
+    "points": 33,
+    "questions": 12,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  "report_sha256": "5e149659eb71f65d46d42875a806f4458f325b4043240110c1d611e3536d4709",
+  "status": "passed"
+}

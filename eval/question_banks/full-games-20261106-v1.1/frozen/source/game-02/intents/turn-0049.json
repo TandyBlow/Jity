@@ -1,0 +1,52 @@
+{
+  "before_sha256": "222b1b45c550ca5fe3ac56a94a2d41a4d402d8d0fbe4470ce2a69b0cbcdc9ee7",
+  "created_at": "2026-11-06T05:32:38.888440+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 6
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "不再挣扎，直接问沉睡者抄录者到底有几个，逼它点名",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 49
+  },
+  "selection": {
+    "action": "不再挣扎，直接问沉睡者抄录者到底有几个，逼它点名",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "趁增援者望向窄窗，喊出窗后有人，逼守卫先松手去查",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.0895389450263675
+      },
+      {
+        "action": "把黄铜钥匙推给增援者，让他看清钥匙上的纹路与红线是否同源",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6216973706130808
+      },
+      {
+        "action": "不再挣扎，直接问沉睡者抄录者到底有几个，逼它点名",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8503604542981019
+      },
+      {
+        "action": "拼着腕骨被折，用钥匙去割断最近的一根红线",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.07649013940984872
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 49
+}

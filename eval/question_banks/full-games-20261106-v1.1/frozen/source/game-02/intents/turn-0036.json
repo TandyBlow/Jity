@@ -1,0 +1,46 @@
+{
+  "before_sha256": "4633373242fb7a6a2568a72780d076b3de340e2414653825894bfd594a07bfc9",
+  "created_at": "2026-11-06T05:30:06.218615+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 17
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "抱起箱子从便利店后门离开，避开走廊尽头扫来的手电光",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 36
+  },
+  "selection": {
+    "action": "抱起箱子从便利店后门离开，避开走廊尽头扫来的手电光",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 17,
+    "scores": [
+      {
+        "action": "抱起箱子从便利店后门离开，避开走廊尽头扫来的手电光",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.9059731664200407
+      },
+      {
+        "action": "当场撕开封条拆箱，趁监视者还没到先看清里面是什么",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8235559975269411
+      },
+      {
+        "action": "把箱子塞进外套里，让诺诺去收银台那边制造点动静引开注意",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.3334475646466839
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 36
+}

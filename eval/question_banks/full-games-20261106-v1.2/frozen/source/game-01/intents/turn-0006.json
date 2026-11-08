@@ -1,0 +1,46 @@
+{
+  "before_sha256": "cb4a6d51e507bc720760ee0800748528224c8a91a2bf0081d6e160d6dced9220",
+  "created_at": "2026-11-06T05:16:12.792648+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "跟诺诺去取任务单，路上试探她对红色标记的态度",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 6
+  },
+  "selection": {
+    "action": "跟诺诺去取任务单，路上试探她对红色标记的态度",
+    "option_index": 2,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "直接问诺诺投影屏上自己名字旁的红色标记是什么，要求她给出解释",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3480713296896071
+      },
+      {
+        "action": "先不声张，把登记表交回窗口，同时留意值班人员对投影屏的反应",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.13303231249861935
+      },
+      {
+        "action": "跟诺诺去取任务单，路上试探她对红色标记的态度",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.5437887974747908
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 6
+}

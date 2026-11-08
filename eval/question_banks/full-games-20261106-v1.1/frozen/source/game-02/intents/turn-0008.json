@@ -1,0 +1,46 @@
+{
+  "before_sha256": "e16bc428cb57e588760e688feb473f915826d5c4e1298b8e2ad65b673c7af711",
+  "created_at": "2026-11-06T05:24:37.688883+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 12
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "趁迎接者还没走近，主动朝他走过去，先开口解释自己按错了地方",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 8
+  },
+  "selection": {
+    "action": "趁迎接者还没走近，主动朝他走过去，先开口解释自己按错了地方",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 12,
+    "scores": [
+      {
+        "action": "顺着诺诺的力道退向任务台，边走边低声问她那槽子到底是做什么用的",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.36670298152212566
+      },
+      {
+        "action": "不退，先盯着投影屏上自己名字旁那圈红边，看它会不会再亮起来",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.5979303760375511
+      },
+      {
+        "action": "趁迎接者还没走近，主动朝他走过去，先开口解释自己按错了地方",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8476541202661729
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 8
+}

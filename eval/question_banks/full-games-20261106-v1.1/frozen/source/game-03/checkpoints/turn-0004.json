@@ -1,0 +1,257 @@
+{
+  "head": 5,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": {
+      "check": {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功让诺诺解释投影屏内容，失败则她直接把你推进门内并闭口不谈。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      "degree": "失败",
+      "option_index": 2,
+      "outcome": "failure",
+      "roll": 10
+    },
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院主楼侧门",
+    "dialogue": [
+      {
+        "speaker": "诺诺",
+        "text": "别问，进去。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "报到区在前面，别迟到。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院主楼侧门",
+      "items_removed": [],
+      "items_upserted": [],
+      "key_event": "追问投影屏被诺诺推进侧门，她闭口不谈，走廊深处传来一声钟响。",
+      "npcs_upserted": [
+        {
+          "current_location": "卡塞尔学院主楼侧门走廊",
+          "description": "红发女生，行动直接，观察力敏锐",
+          "name": "诺诺",
+          "notes": "拒绝解释投影屏，听到钟响时肩线绷紧",
+          "relationship": "带路引导，态度转为不耐烦并回避投影屏话题",
+          "status": "following"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常",
+        "current_goal": "跟随诺诺进入主楼报到区",
+        "danger_level": "medium",
+        "notes": "投影屏疑点未解，走廊钟响留下新线索"
+      },
+      "quests_upserted": [
+        {
+          "description": "跟随诺诺进入主楼报到区",
+          "name": "完成入校报到",
+          "notes": "走廊深处传来一声钟响，诺诺未作解释",
+          "objective": "抵达报到区完成手续",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "侧门走廊深处传来一声极轻的钟响，诺诺肩线绷紧但未解释",
+          "name": "走廊钟响",
+          "notes": "可能与钟楼有关",
+          "source": "玩家追问投影屏后被推进门内",
+          "status": "suspected"
+        }
+      ]
+    },
+    "narration": "你在门槛前收住脚，雨水顺着发梢滴进衣领，问诺诺那块投影屏上为什么映出一座缺角的钟楼。她的表情没有变化，手掌却已经抵上你的后背，力道平稳，不容你再多站一秒。她说别问，进去，声音压得很低，尾音被雨声吞掉。你被推得向前一步，鞋底在湿石上滑了一下，侧门在你身后合拢，铁轴的低吟截断了外面的雨。走廊里只剩两个人的脚步声，暖光从头顶一盏盏落下来，把墙面照成陈旧的黄色。你回头，门板上没有窗，只有一道被磨得发亮的横闩。诺诺已经走到前面，红发在昏暗里显得格外沉，她没有再提投影屏，也没有解释那座钟楼。你开口，她抬手做了个往下压的动作，示意你把话咽回去。走廊两侧的墙面上嵌着几块深色玻璃，此刻全是黑的，像闭上的眼睛。空气里有旧纸和铜锈混在一起的气味，越往里走越浓。就在你数到第七盏灯的时候，走廊深处传来一声极轻的钟响，短促，干净，只响了一下就断了。诺诺的脚步没有停，但她的肩线绷紧了半分。她说报到区在前面，别迟到。你注意到她说话时没有回头，也没有看那些黑着的投影屏。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "不耐烦，回避投影屏话题",
+        "name": "诺诺",
+        "notes": "把玩家推进侧门，拒绝解释投影屏，听到钟响时肩线绷紧"
+      }
+    ],
+    "option_checks": [
+      null,
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "调查检定",
+        "requires_check": true,
+        "skill": "调查",
+        "stakes": "成功发现面板上的痕迹，失败则被诺诺发现并催促。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功逼出一点回应，失败则她彻底闭口并加快脚步。",
+        "system": "通用 d20",
+        "target": 16
+      }
+    ],
+    "options": [
+      "跟上诺诺，先到报到区完成手续，路上留意那些黑着的投影屏",
+      "在走廊里放慢脚步，贴近墙面查看那些深色玻璃面板",
+      "问诺诺刚才那声钟响是不是从钟楼传来的"
+    ],
+    "quests_updated": [
+      {
+        "description": "跟随诺诺进入主楼报到区，路上出现钟响与投影屏疑点",
+        "name": "完成入校报到",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": -1,
+    "scene_prompt": "dim gothic academy corridor, warm lamps, dark glass panels on walls, red-haired girl walking ahead, rainy night"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-03",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 5,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 4,
+    "turns_total": 4
+  },
+  "session_id": "game-03",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {},
+      "narrative_pool": [],
+      "nsb": {
+        "episode_counter": 0,
+        "level1": [],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T1 玩家]: 开始游戏\n[T1 主持人]: 你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。\n\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T2 玩家]: 向诺诺出示临时通行卡并询问入校流程\n[T2 主持人]: 你把临时通行卡递过去。诺诺接过卡片，用指尖弹了弹卡面，发出一声清脆的响。她低头看了一眼，眉梢挑了一下，那表情只停留了半秒。她说行政楼今晚已经关门，不过她可以带你走侧门。说完她转身，红发在雨里甩出一道弧线，示意你跟紧。她一边走一边提醒，校园里有些地方晚上不该去，尤其是钟楼那一带，别因为听见什么就凑过去。你注意到她走路的节奏很稳，像是对这条夜路熟得不能再熟。侧门藏在主楼侧面一段矮墙后面，铁门上挂着一盏昏黄的灯，灯罩里积着雨水。诺诺伸手推门，门轴发出一声低哑的呻吟。她回头看你一眼，说进去之后别乱碰墙上的东西，那些投影屏有时候会自己亮起来。\n诺诺: 卡面没问题，就是权限有点意思。行政楼关了，我带你走侧门。\n诺诺: 记住，晚上别往钟楼那边去。听见什么动静也别凑热闹，这学校不太平。\n诺诺: 进去之后别乱碰墙上的东西，那些投影屏有时候会自己亮起来。\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T3 玩家]: 追问诺诺通行卡权限有什么问题\n[T3 主持人]: 你捏着那张还在发烫的通行卡，追问卡面到底有什么问题。诺诺把卡片翻了个面，指尖在边缘蹭了一下，随即塞回你手里，动作快得不容你再看第二眼。她说卡片都这样，新生总爱盯着卡面瞎想，别把发烫当成什么征兆。她的语气轻飘飘的，眼睛却已经越过你的肩膀，看向侧门里面。你顺着她的视线望过去，走廊深处一块投影屏无声地亮起，映出一座钟楼的轮廓，轮廓歪斜，钟面缺了一角，随即又熄了，只剩一点残光在墙上慢慢褪去。雨声在这时变了，从均匀的敲打变成忽轻忽重的拍击，像是风换了方向。诺诺抬手按住铁门，门缝里透出的暖光落在她脸上。她说别站在雨里研究卡片了，进去再说，报到区的人不会等太久。你注意到她说这话时没有再看你，而是盯着走廊深处那块已经暗下去的投影屏。\n诺诺: 卡片都这样，新生总爱盯着卡面瞎想。别把发烫当成什么征兆。\n诺诺: 别站在雨里研究卡片了，进去再说。报到区的人不会等太久。\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T4 玩家]: 在门口停一下，问诺诺投影屏上为什么是钟楼\n[T4 主持人]: 你在门槛前收住脚，雨水顺着发梢滴进衣领，问诺诺那块投影屏上为什么映出一座缺角的钟楼。她的表情没有变化，手掌却已经抵上你的后背，力道平稳，不容你再多站一秒。她说别问，进去，声音压得很低，尾音被雨声吞掉。你被推得向前一步，鞋底在湿石上滑了一下，侧门在你身后合拢，铁轴的低吟截断了外面的雨。走廊里只剩两个人的脚步声，暖光从头顶一盏盏落下来，把墙面照成陈旧的黄色。你回头，门板上没有窗，只有一道被磨得发亮的横闩。诺诺已经走到前面，红发在昏暗里显得格外沉，她没有再提投影屏，也没有解释那座钟楼。你开口，她抬手做了个往下压的动作，示意你把话咽回去。走廊两侧的墙面上嵌着几块深色玻璃，此刻全是黑的，像闭上的眼睛。空气里有旧纸和铜锈混在一起的气味，越往里走越浓。就在你数到第七盏灯的时候，走廊深处传来一声极轻的钟响，短促，干净，只响了一下就断了。诺诺的脚步没有停，但她的肩线绷紧了半分。她说报到区在前面，别迟到。你注意到她说话时没有回头，也没有看那些黑着的投影屏。\n诺诺: 别问，进去。\n诺诺: 报到区在前面，别迟到。\n[权威物品状态] {\"临时通行卡\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 4
+      },
+      "pending": false,
+      "protected_turns": [
+        2,
+        3,
+        4
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 3,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "35c64aa8ec915dc4a5cee6a23ad7f993"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院主楼侧门",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "新生报到期间的受限权限凭证",
+        "location": "玩家手中",
+        "name": "临时通行卡",
+        "notes": "卡面发烫，诺诺回避其异常",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "卡塞尔学院主楼侧门走廊",
+        "description": "红发女生，行动直接，观察力敏锐",
+        "name": "诺诺",
+        "notes": "拒绝解释投影屏，听到钟响时肩线绷紧",
+        "relationship": "带路引导，态度转为不耐烦并回避投影屏话题",
+        "status": "following"
+      }
+    ],
+    "player_status": {
+      "condition": "正常",
+      "current_goal": "跟随诺诺进入主楼报到区",
+      "danger_level": "medium",
+      "notes": "投影屏疑点未解，走廊钟响留下新线索"
+    },
+    "quests": [
+      {
+        "description": "跟随诺诺进入主楼报到区",
+        "name": "完成入校报到",
+        "notes": "走廊深处传来一声钟响，诺诺未作解释",
+        "objective": "抵达报到区完成手续",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "诺诺查看通行卡后带玩家走侧门入校，并提醒避开钟楼。",
+      "玩家行动：追问诺诺通行卡权限有什么问题；结果：你捏着那张还在发烫的通行卡，追问卡面到底有什么问题。",
+      "追问投影屏被诺诺推进侧门，她闭口不谈，走廊深处传来一声钟响。"
+    ],
+    "sanity": 82,
+    "turn": 4,
+    "world_facts": [
+      {
+        "description": "诺诺提醒校园里有些地方晚上不该去，尤其是钟楼那一带",
+        "name": "钟楼夜间禁区",
+        "notes": "尚未验证原因",
+        "source": "诺诺的提醒",
+        "status": "suspected"
+      },
+      {
+        "description": "侧门内走廊深处一块投影屏无声亮起，映出缺角钟楼的轮廓后熄灭",
+        "name": "走廊投影屏异常",
+        "notes": "诺诺对此避而不谈",
+        "source": "玩家亲眼所见",
+        "status": "suspected"
+      },
+      {
+        "description": "侧门走廊深处传来一声极轻的钟响，诺诺肩线绷紧但未解释",
+        "name": "走廊钟响",
+        "notes": "可能与钟楼有关",
+        "source": "玩家追问投影屏后被推进门内",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 4,
+  "uuid_counter": 13
+}

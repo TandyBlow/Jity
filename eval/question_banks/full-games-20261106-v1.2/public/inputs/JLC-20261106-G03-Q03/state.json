@@ -1,0 +1,1536 @@
+{
+  "checkpoint": {
+    "action_index": 38,
+    "campaign_turn": 37,
+    "checkpoint_sha256": "05c4bb2b3952611ab761019a1c1c87e7f21883656321ebe0e7d8003b401222f1",
+    "state_sha256": "bc011f8164ded0ff7148740eeef83cb8e5a7cce989a578c0e535fd9a3c8edcb2",
+    "state_turn": 38,
+    "timeline_node": 39
+  },
+  "context": {
+    "recent_context": [
+      {
+        "action_index": 33,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [
+            {
+              "speaker": "中间的审查者",
+              "text": "纸条？它现在在我们手里，但上面的字，取决于你接下来怎么回答。"
+            },
+            {
+              "speaker": "中间的审查者",
+              "text": "你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。"
+            },
+            {
+              "speaker": "右边的审查者",
+              "text": "决议书还没落笔。你每沉默一次，我就多写一行。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼听证室",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被看守截走的纸条，残字可见样本编号与提前二字，现压在听证室铜镇纸下的文件中。",
+                "location": "钟楼听证室桌面铜镇纸下",
+                "name": "被收走的纸条",
+                "notes": "审查者以纸条内容为筹码，暗示与玩家手背数字相关。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家要求先说明纸条内容，审查者以铜镇纸下的纸条为筹码，暗示其与手背数字相关并施压。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼听证室",
+                "description": "听证室主审，以纸条为筹码施压。",
+                "name": "中间的审查者",
+                "notes": "手指按在铜镇纸上，将纸条内容与玩家手背数字绑定。",
+                "relationship": "敌对但审慎",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼听证室",
+                "description": "听证室审查者之一，持笔记录。",
+                "name": "右边的审查者",
+                "notes": "以决议书落笔威胁玩家开口。",
+                "relationship": "敌对",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "肩膀轻伤，被按坐在听证室长桌一侧",
+              "current_goal": "在被质询时保住编号线索并观察审查者与桌上文件",
+              "danger_level": "critical",
+              "notes": "以纸条内容为条件拒绝配合，审查者反将纸条与手背数字绑定。"
+            },
+            "quests_upserted": [],
+            "world_facts_upserted": [
+              {
+                "description": "被收走的纸条没有销毁，压在听证室桌面铜镇纸下的文件中，审查者以此作为交涉筹码。",
+                "name": "纸条被压在铜镇纸下",
+                "notes": "纸条残字含样本编号与提前二字。",
+                "source": "听证室对峙",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你坐在长桌这一侧，肩膀的钝痛还在，后背贴着椅背，把双手平放在桌面上。四名看守分站两角，门在你身后合拢，黄铜边发出一声闷响。诺诺被隔在门外，走廊的光从门缝底下渗进来一线。你抬起头，直视中间那名审查者，把话放得很平：先告诉我那张被收走的纸条上写了什么，否则我一个字也不答。\n\n桌后三人没有立刻回应。左边那个翻动文件的手停了一拍，右边那个把笔搁下，视线越过你，和中间的人对了一下。就这一下，很短，短到几乎可以当作没发生。中间那名审查者没有看他们，他的目光一直落在你脸上，手指从桌沿收回来，缓缓按在铜镇纸上。铜面被他的指腹压出一小片暗影。\n\n铜镇纸下面压着一叠文件，最上面那张露出一角，纸边有折痕，折痕的位置和你被截走的那张纸对折的方式一样。审查者没有把文件抽出来，也没有把铜镇纸挪开，他只是让手指停在那里，像把什么东西钉在桌上。\n\n他开口了，声音不高，每个字都放得很稳：纸条？它现在在我们手里，但上面的字，取决于你接下来怎么回答。\n\n你盯着他按在铜镇纸上的手。他没有否认纸条上有字，也没有说那字和你无关。他把纸条从一件被没收的东西，变成了一件还在谈条件的东西。右边那名审查者这时把笔重新拿起来，笔尖悬在听证会决议书上方，没有落下去。\n\n中间的审查者微微前倾，铜镇纸下的文件随着他的动作发出一点纸页摩擦的轻响。他补了一句：你手背上那个数字，我们已经知道了。纸条上写的东西，和它有关。你想知道，就得先让我们确认，你到底是记得，还是有人在你耳边说过。\n\n门边看守的视线从你脸上移到铜镇纸，又移回去。房间里的空气沉下来，雨声隔着钟楼的厚墙传进来，闷闷的。你意识到那张纸条没有被销毁，它就在这间屋子里，压在铜镇纸下面，或者就在那叠文件里。而审查者把它的内容和你手背上的数字绑在了一起，等你先开口。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对但审慎",
+              "name": "中间的审查者",
+              "notes": "以纸条为筹码施压，暗示纸条内容与玩家手背数字相关。"
+            },
+            {
+              "disposition": "敌对",
+              "name": "右边的审查者",
+              "notes": "持笔悬在决议书上，以落笔威胁玩家开口。"
+            },
+            {
+              "disposition": "敌对，警觉",
+              "name": "门边看守",
+              "notes": "视线在玩家与铜镇纸之间移动。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让审查者翻开文件露出纸条内容，失败则暴露自己记得的编号范围。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功确认纸条在文件中的位置，失败引起审查者警觉并收紧文件。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功迫使对方考虑让诺诺进门，失败被视为拖延并加速决议书落笔。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抢到文件一角看到纸条，失败被当场制住并失去所有交涉余地。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "不再僵持，先说出自己记得的编号片段，换取审查者翻开铜镇纸下的文件",
+            "拒绝先开口，转而观察铜镇纸下露出的文件折痕和审查者按纸的手势，寻找纸条位置的破绽",
+            "提出条件：让门外的诺诺进来旁听，否则不回答任何关于数字的问题",
+            "突然伸手去够铜镇纸下的文件，赌看守反应慢半拍"
+          ],
+          "quests_updated": [
+            {
+              "description": "在被质询时保住编号线索并观察审查者反应，纸条内容与手背数字被审查者绑定。",
+              "name": "查明S级标记与血统检测异常的关联",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Hearing room in a gothic bell tower, rain-streaked windows, brass paperweight on stacked files, four guards, dim yellow light, tense interrogation"
+        },
+        "player_action": "要求先说明那张被收走的纸条上写了什么，否则不回答任何问题",
+        "timeline_node": 34
+      },
+      {
+        "action_index": 34,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功迫使对方考虑让诺诺进门，失败被视为拖延并加速决议书落笔。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "成功",
+            "option_index": 2,
+            "outcome": "success",
+            "roll": 18
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [
+            {
+              "speaker": "中间的审查者",
+              "text": "可以让她进来，戴手铐，由看守押在门边，不许靠近长桌。这是最后的让步。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "别认。"
+            },
+            {
+              "speaker": "中间的审查者",
+              "text": "人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼听证室",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被看守截走的纸条，残字可见样本编号与提前二字，现压在听证室铜镇纸下的文件中。",
+                "location": "听证室长桌铜镇纸下",
+                "name": "被收走的纸条",
+                "notes": "审查者挪开铜镇纸露出纸条一角作为筹码。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "交涉成功，诺诺被押进门边旁听并提示别认，审查者重新施压追问数字与纸条编号关联。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼听证室门边",
+                "description": "红发女生，行动直接、观察力敏锐。",
+                "name": "诺诺",
+                "notes": "被戴手铐押在门边，进门时用口型提示别认。",
+                "relationship": "同伴",
+                "status": "present"
+              },
+              {
+                "current_location": "听证室长桌后",
+                "description": "听证会主审，掌控节奏。",
+                "name": "中间的审查者",
+                "notes": "同意诺诺进门旁听，随即重新施压追问数字与编号关联。",
+                "relationship": "敌对但审慎",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "肩膀轻伤，被按坐在听证室长桌一侧",
+              "current_goal": "应对审查者对数字与纸条编号关联的追问，保住编号线索。",
+              "danger_level": "critical",
+              "notes": "诺诺在门边，纸条压在铜镇纸下。"
+            },
+            "quests_upserted": [
+              {
+                "description": "在被质询时保住编号线索并观察审查者反应。",
+                "name": "查明S级标记与血统检测异常的关联",
+                "notes": "诺诺被允许进门旁听，审查者重新施压。",
+                "objective": "应对审查者对数字与纸条编号关联的追问。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "审查者同意诺诺戴手铐由看守押在门边旁听，不得靠近长桌。",
+                "name": "诺诺被允许旁听",
+                "notes": "有限让步，审查者随即重新施压。",
+                "source": "听证室交涉",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你把双手平放在桌面上，声音不高，却把条件摆得清清楚楚：让门外的诺诺进来旁听，否则关于那个数字，你一个字也不会说。中间那名审查者的手指停在铜镇纸上，指腹压出的暗影没有移开。他看了你几秒，然后偏过头，与左右两侧的人交换了一个极短的眼神。左边那个翻文件的手彻底停了，右边那个把笔搁下，笔尖在纸面点出一个小墨点。中间的人收回视线，开口时语气没有起伏：可以让她进来，戴手铐，由看守押在门边，不许靠近长桌。他顿了顿，补了一句，这是最后的让步。门在你身后被推开，走廊的冷风先一步灌进来。诺诺被两名看守夹在中间带进听证室，红发湿漉漉地贴在脸侧，手铐的金属链在灯下晃了一下。她被押到门边站定，离长桌有七八步远。进门时她的目光扫过铜镇纸下那叠文件，嘴唇几乎没动，只吐出两个字：别认。声音轻得只有离她最近的你能听见。门重新合上。中间那名审查者把铜镇纸往旁边挪了半寸，露出下面压着的纸条一角，然后抬眼看你：人已经进来了。现在回答我，你手背上的数字，和这张纸条上的编号，是什么关系。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "同伴，被押在门边",
+              "name": "诺诺",
+              "notes": "戴手铐由看守押在门边，进门时用口型提示别认。"
+            },
+            {
+              "disposition": "敌对但审慎",
+              "name": "中间的审查者",
+              "notes": "做出有限让步后重新施压，追问数字与纸条编号的关联。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功把压力推回审查者一侧，失败则被视为抵赖并加速决议书落笔。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "欺瞒检定",
+              "requires_check": true,
+              "skill": "欺瞒",
+              "stakes": "成功套出纸条部分内容，失败则暴露你有所隐瞒。",
+              "system": "通用 d20",
+              "target": 12
+            },
+            null
+          ],
+          "options": [
+            "顺着诺诺的暗示，咬定手背数字与纸条编号无关，反过来要求审查者先解释纸条为何被截走",
+            "承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看",
+            "不回答审查者，转向门边的诺诺，当着所有人的面问她纸条上除了编号还写了什么"
+          ],
+          "quests_updated": [
+            {
+              "description": "在被质询时保住编号线索并观察审查者反应。",
+              "name": "查明S级标记与血统检测异常的关联",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Hearing room in a gothic clock tower, rain-streaked windows, red-haired girl handcuffed by the door, examiners at a long table, brass paperweight, dim yellow light, tense horror atmosphere"
+        },
+        "player_action": "提出条件：让门外的诺诺进来旁听，否则不回答任何关于数字的问题",
+        "timeline_node": 35
+      },
+      {
+        "action_index": 35,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "",
+            "items_removed": [],
+            "items_upserted": [],
+            "key_event": "",
+            "npcs_upserted": [],
+            "player_status_patch": {
+              "condition": "",
+              "current_goal": "",
+              "danger_level": "",
+              "notes": ""
+            },
+            "quests_upserted": [],
+            "world_facts_upserted": []
+          },
+          "narration": "你目前没有可用的“剩下的信息换取纸条原件到手查看”，无法使用它。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [],
+          "option_checks": [
+            null
+          ],
+          "options": [
+            "重新尝试其他行动"
+          ],
+          "quests_updated": [],
+          "sanity_delta": 0,
+          "scene_prompt": ""
+        },
+        "player_action": "承认数字与编号有关，但只说出部分，用剩下的信息换取纸条原件到手查看",
+        "timeline_node": 36
+      },
+      {
+        "action_index": 36,
+        "output": {
+          "action_check": null,
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [
+            {
+              "speaker": "中间的审查者",
+              "text": "编号在这里，划掉了也还是编号。你手背上那个数字，和它是什么关系。我给你一次机会，说清楚。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "（隔着看守，声音很轻）别急着把整条都交出去。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼听证室",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被看守截走的纸条，末尾编号被划掉，与玩家登记号完全一致。",
+                "location": "听证室长桌，铜镇纸旁",
+                "name": "被收走的纸条",
+                "notes": "审查者抽出半寸展示，尚未交到玩家手中。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "审查者抽出纸条，露出与玩家登记号一致的被划编号，逼其解释手背数字。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼听证室",
+                "description": "主持听证的审查者",
+                "name": "中间的审查者",
+                "notes": "耐心有限，已亮出纸条编号作为筹码。",
+                "relationship": "敌对但审慎",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "肩膀轻伤，被按坐长桌一侧",
+              "current_goal": "应对审查者对数字与纸条编号关联的追问，保住编号线索。",
+              "danger_level": "medium",
+              "notes": "纸条已摊开在眼前，诺诺被押门边。"
+            },
+            "quests_upserted": [],
+            "world_facts_upserted": [
+              {
+                "description": "纸条末尾被划掉的编号与玩家登记号完全一致。",
+                "name": "纸条编号与登记号一致",
+                "notes": "编号被重划，但仍可辨认。",
+                "source": "审查者抽出纸条展示",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你把手从桌面上收回来，指节抵着桌沿，没有立刻开口。中间那名审查者等了三秒，然后自己动了。他的手指扣住铜镇纸的边缘，往旁边一推，铜块在木面上刮出一声低哑的摩擦。压在下面的文件散开半寸，最上面那张纸条被抽出来一截，纸角翘起，正对着你的方向。\n\n纸条末尾有一行编号，被一道横线划掉，划痕很重，几乎割破纸面。可那些数字仍然清楚。你认得它们。那是你自己的登记号，一位不差。\n\n审查者的手停在纸条上方，没有把它推近，也没有收回去。他让那行被划掉的编号摊在灯下，摊在你眼前，然后抬起眼。他的耐心已经薄得能看见底，声音压得很低：你刚才说，数字和编号有关。现在编号在这里。说。\n\n门边传来手铐链条轻碰的声响。诺诺被两名看守夹着站在门框内侧，红发贴在脸侧，她没有出声，视线却落在纸条上，又极快地移回你脸上。她离长桌有整整五步，中间隔着看守的肩背。\n\n左边那名审查者把笔重新拿起来，笔尖悬在记录纸上方。右边那个身体微微前倾。三个人都在等你的下一句话，而铜镇纸已经挪开，纸条就摊在那里，只要你伸手，或者只要你说出足够的东西。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对但审慎，耐心见底",
+              "name": "中间的审查者",
+              "notes": "主动抽出纸条展示被划掉的编号，逼玩家开口"
+            },
+            {
+              "disposition": "同伴，被押在门边",
+              "name": "诺诺",
+              "notes": "低声提醒别把整条信息交出去"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让纸条推近到手边，失败则审查者收回纸条并加重看管。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null,
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抢到纸条一角，失败则被看守按住并失去所有让步。",
+              "system": "通用 d20",
+              "target": 19
+            }
+          ],
+          "options": [
+            "只承认手背数字是这张纸条编号的后半段，要求把纸条推过来核对，再谈其余部分",
+            "直接说出完整编号，换取审查者当场解释这张纸条为何在三年前被封存",
+            "借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条"
+          ],
+          "quests_updated": [
+            {
+              "description": "纸条编号与玩家登记号完全一致，需解释手背数字与编号的关系。",
+              "name": "查明S级标记与血统检测异常的关联",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": 0,
+          "scene_prompt": "Hearing room, brass paperweight pushed aside, a slip of paper with a struck-through number exposed under lamplight, three examiners leaning in, red-haired girl handcuffed by the door."
+        },
+        "player_action": "重新尝试其他行动",
+        "timeline_node": 37
+      },
+      {
+        "action_index": 37,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功抢到纸条一角，失败则被看守按住并失去所有让步。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            "degree": "失败",
+            "option_index": 2,
+            "outcome": "failure",
+            "roll": 15
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [
+            {
+              "speaker": "审查者",
+              "text": "你刚才还有东西可以换。现在没有了。编号，手背上的数字，一次说清楚。"
+            },
+            {
+              "speaker": "诺诺",
+              "text": "别认！他们连纸条背面都没擦干净，你看见了吗？"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": -3,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼听证室",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被看守截走的纸条，末尾编号被划掉，与玩家登记号完全一致；背面透出更淡的墨痕，末两位与登记号相同。",
+                "location": "听证室长桌文件堆下",
+                "name": "被收走的纸条",
+                "notes": "玩家被按在桌上时看见背面墨痕。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家抢纸条失败被按在桌上，失去让步，但看见纸条背面淡墨末两位与登记号相同。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼听证室",
+                "description": "听证室中间的审查者。",
+                "name": "审查者",
+                "notes": "收回铜镇纸，宣布玩家失去所有让步。",
+                "relationship": "敌对但审慎",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼听证室门边",
+                "description": "红发女生，被押在门边旁听。",
+                "name": "诺诺",
+                "notes": "提醒玩家纸条背面墨痕未擦净。",
+                "relationship": "同伴",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "肩膀轻伤，被按在桌上，手腕被反剪",
+              "current_goal": "利用纸条背面墨痕应对审查者追问，保住编号线索。",
+              "danger_level": "high",
+              "notes": "失去所有谈判让步。"
+            },
+            "quests_upserted": [
+              {
+                "description": "应对审查者对数字与纸条编号关联的追问。",
+                "name": "查明S级标记与血统检测异常的关联",
+                "notes": "玩家抢纸条失败，失去让步，但看见背面淡墨末两位与登记号相同。",
+                "objective": "利用纸条背面新发现的墨痕争取主动。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "被划掉的编号下面还有一行更淡的墨痕，末两位与玩家登记号相同。",
+                "name": "纸条背面淡墨编号",
+                "notes": "失败带来的新信息。",
+                "source": "玩家被按在桌上时看见",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你等诺诺被押到门边、看守换手的那个空隙，肩膀猛地一沉，整个人从椅面上弹起来，右手越过桌沿去够那张翘起的纸条。指尖擦到纸角，纸面在你指下弯了一下，随即被另一股力量扯走。你身后那名看守的反应比声音还快，一只手掌扣住你的后颈，另一只手反剪你的右臂，膝盖顶进你的腿弯。你被按回桌面，脸侧贴着冰凉的木面，肩膀传来一阵钝痛，手腕被别在背后，骨节发出细响。铜镇纸被审查者收回，纸条重新压回文件堆下，只留一角露在外面。诺诺在门边喊了一声，被看守按住肩膀，手铐链子撞在门框上。审查者俯身，声音贴着你的耳侧：你刚才还有东西可以换，现在没有了。他直起身，把文件堆往自己面前拢了拢，继续说，编号和手背上的数字，你最好一次说清楚，否则下一次就不是按在桌上这么简单。你脸侧贴着桌面，视线正好落在纸条背面。灯光从纸背透过来，那行被划掉的编号下面，还有一行更淡的墨痕，被划痕压着，末两位和你的登记号一模一样。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对但审慎",
+              "name": "审查者",
+              "notes": "收回铜镇纸，以失去让步为筹码逼问编号。"
+            },
+            {
+              "disposition": "同伴",
+              "name": "诺诺",
+              "notes": "被押门边，提醒纸条背面有未擦净的墨痕。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功迫使审查者回应编号重叠，失败则被认定为拖延并升级处置。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            {
+              "difficulty": "极难",
+              "expression": "1d20 ≥ 19",
+              "name": "行动检定",
+              "requires_check": true,
+              "skill": "行动",
+              "stakes": "成功扯下纸条一角，失败则被彻底制伏并失去纸条。",
+              "system": "通用 d20",
+              "target": 19
+            },
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功让诺诺说出数字来源，失败则看守封住她的口。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号",
+            "趁看守按着你、审查者低头拢文件的间隙，用还能动的左手去够桌沿下露出的纸条一角",
+            "转向门边的诺诺，大声问她手背上的数字到底是谁划的，把审查者的追问引向数字来源"
+          ],
+          "quests_updated": [
+            {
+              "description": "应对审查者对数字与纸条编号关联的追问，并利用纸条背面新发现的墨痕。",
+              "name": "查明S级标记与血统检测异常的关联",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Rain-streaked gothic hearing room, brass-edged door, player pinned face-down on long wooden table, guards holding arms, examiner leaning over papers, dim lamp light."
+        },
+        "player_action": "借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条",
+        "timeline_node": 38
+      },
+      {
+        "action_index": 38,
+        "output": {
+          "action_check": {
+            "check": {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功迫使审查者回应编号重叠，失败则被认定为拖延并升级处置。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            "degree": "大成功",
+            "option_index": 0,
+            "outcome": "critical",
+            "roll": 20
+          },
+          "anchor_completions": [],
+          "current_location": "钟楼听证室",
+          "dialogue": [
+            {
+              "speaker": "中间的审查者",
+              "text": "编号被划掉，是为了从账面上抹去。底层记录抹不干净。"
+            },
+            {
+              "speaker": "左边的审查者",
+              "text": "这不该在这里说。"
+            },
+            {
+              "speaker": "中间的审查者",
+              "text": "三年前有一份封存样本，登记号和你只差两位。有人希望它从来没有存在过。"
+            }
+          ],
+          "game_over": false,
+          "game_over_reason": "",
+          "health_delta": 0,
+          "items_gained": [],
+          "items_lost": [],
+          "memory_updates": {
+            "current_location": "钟楼听证室",
+            "items_removed": [],
+            "items_upserted": [
+              {
+                "aliases": [],
+                "description": "被看守截走的纸条，末尾编号被划掉，与玩家登记号完全一致；背面透出更淡的墨痕，末两位与登记号相同。",
+                "location": "听证桌文件堆下",
+                "name": "被收走的纸条",
+                "notes": "玩家当众指出背面淡墨编号，审查者被迫承认编号被划掉是为从账面抹去。",
+                "status": "owned",
+                "transition": ""
+              }
+            ],
+            "key_event": "玩家指出纸条背面淡墨编号，逼审查者承认编号被划掉是为抹账，并透露三年前封存样本与登记号只差两位。",
+            "npcs_upserted": [
+              {
+                "current_location": "钟楼听证室",
+                "description": "听证室主审，语气克制，掌握编号与旧案的关键。",
+                "name": "中间的审查者",
+                "notes": "被迫承认底层记录抹不干净，透露三年前封存样本与玩家登记号只差两位。",
+                "relationship": "敌对但被动摇",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼听证室",
+                "description": "左侧审查者，负责记录。",
+                "name": "左边的审查者",
+                "notes": "低声制止中间审查者继续说下去。",
+                "relationship": "敌对且紧张",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼听证室",
+                "description": "右侧审查者，沉默寡言。",
+                "name": "右边的审查者",
+                "notes": "视线短暂看向门边看守，笔尖始终未落。",
+                "relationship": "敌对",
+                "status": "present"
+              },
+              {
+                "current_location": "钟楼听证室门边",
+                "description": "红发女生，被戴手铐押在门边旁听。",
+                "name": "诺诺",
+                "notes": "用手势向玩家传递摇头与点头的混合信号。",
+                "relationship": "同伴",
+                "status": "present"
+              }
+            ],
+            "player_status_patch": {
+              "condition": "肩膀轻伤，被按在桌上，手腕被反剪",
+              "current_goal": "利用审查者内部裂痕，追查三年前封存样本与登记号的关联。",
+              "danger_level": "high",
+              "notes": "交涉大成功，审查者被迫回应编号重叠。"
+            },
+            "quests_upserted": [
+              {
+                "description": "编号与三年前旧案相关，上面有人不想让编号被追查。",
+                "name": "查明冒充者身份",
+                "notes": "审查者承认三年前有一份封存样本，登记号与玩家只差两位。",
+                "objective": "追查三年前封存样本与玩家登记号的关联。",
+                "status": "active"
+              },
+              {
+                "description": "在押送交接前找到通往便利店取件柜的路。",
+                "name": "调查三年前寄来的包裹",
+                "notes": "三年前封存样本的时间线与三年前的包裹重合。",
+                "objective": "找到通往便利店取件柜的路并打开包裹。",
+                "status": "active"
+              }
+            ],
+            "world_facts_upserted": [
+              {
+                "description": "编号被划掉是为了从账面上抹去，但底层记录抹不干净。",
+                "name": "编号被划掉的真相",
+                "notes": "审查者内部对是否该说出此事出现分歧。",
+                "source": "中间审查者被迫承认",
+                "status": "known"
+              },
+              {
+                "description": "三年前有一份封存样本，登记号与玩家只差两位，有人希望它从未存在过。",
+                "name": "三年前封存样本",
+                "notes": "与三年前的包裹时间线重合。",
+                "source": "中间审查者低声透露",
+                "status": "known"
+              }
+            ]
+          },
+          "narration": "你不再挣动。脸侧贴着冰凉的木面，呼吸把桌面洇出一小片雾。你开口，声音被压得有些闷，却一个字一个字放得很稳：纸条背面还有一行更淡的墨，末两位和我的登记号一样。被划掉的那行下面，压着另一个编号。为什么。\n\n按着你后颈的手没有立刻加力。中间那名审查者的手指停在纸条边缘，指腹压着纸角，停住了。他没有马上回答。房间里静下来，静到能听见雨点敲在窗玻璃上，一下，又一下。左边那名审查者的笔尖悬在记录纸上，迟迟没有落下，墨在笔尖聚成一点，终于洇开，在纸面留下一个圆形的墨点。右边那个把视线从你脸上移开，很短地看了一眼门边的看守，又收回来。\n\n诺诺被押在门边，手铐链子贴着门框。她没有出声，只是抬眼看你，目光在你脸上停了一瞬，然后极轻地摇了一下头，又点了一下。那不是一个意思。\n\n中间那名审查者终于把手从纸条上收回去，十指交叠搁在文件堆上。他开口时语速比之前慢：编号被划掉，是为了从账面上抹去。他说到这里停了一下，像在斟酌下一个词。底层记录抹不干净。\n\n左边那名审查者忽然低声插了一句，声音压得很紧：这不该在这里说。中间的人没有看他，只把交叠的手指收紧了一分。右边那个把记录纸往自己面前挪了挪，笔尖悬着，始终没有写下去。\n\n你后颈上的手松了一点。中间那名审查者俯身，声音只够你听见：三年前有一份封存样本，登记号和你只差两位。有人希望它从来没有存在过。他直起身，把文件堆往自己面前拢，动作里第一次有了迟疑。\n\n雨声填满了这段沉默。诺诺在门边极轻地动了一下，看守立刻看过去，她只是换了个站姿。你的手腕还别在背后，肩膀的钝痛一阵一阵，但桌面上那叠文件里，有一页的边角露在外面，纸色比其他的旧。",
+          "npc_relations_delta": null,
+          "npcs_encountered": [
+            {
+              "disposition": "敌对但被动摇",
+              "name": "中间的审查者",
+              "notes": "被迫承认编号被划掉是为从账面抹去，底层记录抹不干净，并透露三年前封存样本与玩家登记号只差两位。"
+            },
+            {
+              "disposition": "敌对且紧张",
+              "name": "左边的审查者",
+              "notes": "低声制止中间审查者继续说下去，笔尖在记录纸上洇出墨点。"
+            },
+            {
+              "disposition": "敌对",
+              "name": "右边的审查者",
+              "notes": "视线短暂看向门边看守，记录纸挪近自己，笔尖始终未落。"
+            },
+            {
+              "disposition": "同伴",
+              "name": "诺诺",
+              "notes": "被押在门边，用手势向玩家传递了摇头与点头的混合信号。"
+            }
+          ],
+          "option_checks": [
+            {
+              "difficulty": "困难",
+              "expression": "1d20 ≥ 16",
+              "name": "交涉检定",
+              "requires_check": true,
+              "skill": "交涉",
+              "stakes": "成功逼出封存样本的更多细节，失败则审查者重新收紧口径并升级处置。",
+              "system": "通用 d20",
+              "target": 16
+            },
+            null,
+            {
+              "difficulty": "普通",
+              "expression": "1d20 ≥ 12",
+              "name": "观察检定",
+              "requires_check": true,
+              "skill": "观察",
+              "stakes": "成功看清旧页边角上的字迹，失败则被看守察觉并截走文件。",
+              "system": "通用 d20",
+              "target": 12
+            }
+          ],
+          "options": [
+            "趁审查者迟疑，要求他说明那份三年前封存样本与你的登记号为何只差两位",
+            "借审查者内部出现分歧，压低声音向诺诺确认她刚才那个摇头和点头的意思",
+            "不再追问编号，转而要求查看文件堆里那页纸色发旧的边角"
+          ],
+          "quests_updated": [
+            {
+              "description": "编号与三年前旧案相关，上面有人不想让编号被追查。",
+              "name": "查明冒充者身份",
+              "notes": "审查者承认三年前有一份封存样本，登记号与玩家只差两位。",
+              "status": "active"
+            },
+            {
+              "description": "在押送交接前找到通往便利店取件柜的路。",
+              "name": "调查三年前寄来的包裹",
+              "notes": "三年前封存样本的信息与三年前的包裹时间线重合。",
+              "status": "active"
+            }
+          ],
+          "sanity_delta": -2,
+          "scene_prompt": "Rain-streaked gothic hearing room, three examiners at a long table, one leaning close, dim lamp, wet window"
+        },
+        "player_action": "不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号",
+        "timeline_node": 39
+      }
+    ],
+    "structured_state": {
+      "current_location": "钟楼听证室",
+      "health": 92,
+      "item_ledger": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 24,
+          "notes": "",
+          "state": "lost"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "登记回执",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "半枚接入凭证",
+          "last_seen_turn": 16,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "旧档案室异常记录",
+          "last_seen_turn": 17,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "血统检测异常报告",
+          "last_seen_turn": 22,
+          "notes": "",
+          "state": "lost"
+        },
+        {
+          "item_name": "补全的样本编号记录",
+          "last_seen_turn": 28,
+          "notes": "",
+          "state": "lost"
+        },
+        {
+          "item_name": "听证会决议书",
+          "last_seen_turn": 32,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "被收走的纸条",
+          "last_seen_turn": 38,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "items": [
+        {
+          "aliases": [],
+          "description": "执行部暗纹纸面，列有三个预备任务。",
+          "location": "玩家外套内袋",
+          "name": "预备任务单",
+          "notes": "已收好，尚未展开阅读。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "报到区签发的登记完成回执，附日期与签章。",
+          "location": "玩家身上",
+          "name": "登记回执",
+          "notes": "可作身份与流程凭证。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "破损的接入凭证，外壳开裂，残留部分编号。",
+          "location": "玩家手中",
+          "name": "半枚接入凭证",
+          "notes": "编号残缺，仅前四位与后两位可辨，与备份日志只能部分匹配。",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "",
+          "location": "",
+          "name": "旧档案室异常记录",
+          "notes": "",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "听证桌上摊开的文件之一，尚未宣读。",
+          "location": "听证室长桌",
+          "name": "听证会决议书",
+          "notes": "被铜镇纸压住边角",
+          "status": "owned"
+        },
+        {
+          "aliases": [],
+          "description": "被看守截走的纸条，末尾编号被划掉，与玩家登记号完全一致；背面透出更淡的墨痕，末两位与登记号相同。",
+          "location": "听证桌文件堆下",
+          "name": "被收走的纸条",
+          "notes": "玩家当众指出背面淡墨编号，审查者被迫承认编号被划掉是为从账面抹去。",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "current_location": "听证室内",
+          "description": "执行部核查员，负责封场与文件核查。",
+          "name": "核查员",
+          "notes": "被追问包裹位置后按铃叫来押送人员，彻底闭嘴。",
+          "relationship": "敌对但已脱手",
+          "status": "away"
+        },
+        {
+          "current_location": "侧厅门口",
+          "description": "押送玩家的两名执行部成员之一。",
+          "name": "执行部人员",
+          "notes": "认出编号末尾与玩家登记号吻合，质问来源。",
+          "relationship": "敌对，但已对编号产生警觉",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室门边",
+          "description": "红发女生，被戴手铐押在门边旁听。",
+          "name": "诺诺",
+          "notes": "用手势向玩家传递摇头与点头的混合信号。",
+          "relationship": "同伴",
+          "status": "present"
+        },
+        {
+          "current_location": "侧厅门边",
+          "description": "从侧厅内走出、认出样本编号来历的执行部人员。",
+          "name": "侧厅走出的男人",
+          "notes": "提到三年前封存样本与钟楼地下编号排列。",
+          "relationship": "敌对但审慎",
+          "status": "present"
+        },
+        {
+          "current_location": "听证室外走廊，侧厅内",
+          "description": "执行部看守",
+          "name": "看守",
+          "notes": "喝止交谈并收紧看管，接到纸条后宣布听证室提前开始",
+          "relationship": "敌对，警觉",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室",
+          "description": "听证室主审，语气克制，掌握编号与旧案的关键。",
+          "name": "中间的审查者",
+          "notes": "被迫承认底层记录抹不干净，透露三年前封存样本与玩家登记号只差两位。",
+          "relationship": "敌对但被动摇",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室",
+          "description": "",
+          "name": "门边看守",
+          "notes": "视线在玩家与铜镇纸之间移动。",
+          "relationship": "敌对，警觉",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室",
+          "description": "右侧审查者，沉默寡言。",
+          "name": "右边的审查者",
+          "notes": "视线短暂看向门边看守，笔尖始终未落。",
+          "relationship": "敌对",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室",
+          "description": "听证室中间的审查者。",
+          "name": "审查者",
+          "notes": "收回铜镇纸，宣布玩家失去所有让步。",
+          "relationship": "敌对但审慎",
+          "status": "present"
+        },
+        {
+          "current_location": "钟楼听证室",
+          "description": "左侧审查者，负责记录。",
+          "name": "左边的审查者",
+          "notes": "低声制止中间审查者继续说下去。",
+          "relationship": "敌对且紧张",
+          "status": "present"
+        }
+      ],
+      "player_status": {
+        "condition": "肩膀轻伤，被按在桌上，手腕被反剪",
+        "current_goal": "利用审查者内部裂痕，追查三年前封存样本与登记号的关联。",
+        "danger_level": "high",
+        "notes": "交涉大成功，审查者被迫回应编号重叠。"
+      },
+      "quests": [
+        {
+          "description": "登记手续已完成。",
+          "name": "完成入校报到",
+          "notes": "临时通行卡与回执在手。",
+          "objective": "已达成",
+          "status": "completed"
+        },
+        {
+          "description": "接触钟楼听证室内的名单线索。",
+          "name": "三个预备任务",
+          "notes": "名单上玩家名字被打印一次、手写一次，手写墨迹未干，字迹颤抖。",
+          "objective": "查明名单上手写名字的来源与书写者。",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "完成三个预备任务",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "调查档案冒充事件",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        },
+        {
+          "description": "核查员回避签发日期栏，暗示编号与上面命令有关。",
+          "name": "查明名单上手写名字的来源与书写者",
+          "notes": "诺诺被带离，玩家被单独留在听证室。",
+          "objective": "追查签发日期栏与编号的关联。",
+          "status": "active"
+        },
+        {
+          "description": "应对审查者对数字与纸条编号关联的追问。",
+          "name": "查明S级标记与血统检测异常的关联",
+          "notes": "玩家抢纸条失败，失去让步，但看见背面淡墨末两位与登记号相同。",
+          "objective": "利用纸条背面新发现的墨痕争取主动。",
+          "status": "active"
+        },
+        {
+          "description": "在押送交接前找到通往便利店取件柜的路。",
+          "name": "调查三年前寄来的包裹",
+          "notes": "三年前封存样本的时间线与三年前的包裹重合。",
+          "objective": "找到通往便利店取件柜的路并打开包裹。",
+          "status": "active"
+        },
+        {
+          "description": "编号与三年前旧案相关，上面有人不想让编号被追查。",
+          "name": "查明冒充者身份",
+          "notes": "审查者承认三年前有一份封存样本，登记号与玩家只差两位。",
+          "objective": "追查三年前封存样本与玩家登记号的关联。",
+          "status": "active"
+        },
+        {
+          "description": "",
+          "name": "准备面对古老邪恶的真相",
+          "notes": "",
+          "objective": "",
+          "status": "active"
+        }
+      ],
+      "sanity": 69,
+      "turn": 38,
+      "world_facts": [
+        {
+          "description": "诺诺提醒校园里有些地方晚上不该去，尤其是钟楼那一带",
+          "name": "钟楼夜间禁区",
+          "notes": "尚未验证原因",
+          "source": "诺诺的提醒",
+          "status": "suspected"
+        },
+        {
+          "description": "侧门内走廊中段一块深色玻璃面板再次亮起，映出缺角钟楼轮廓后熄灭",
+          "name": "走廊投影屏异常",
+          "notes": "诺诺肩线绷紧但未解释",
+          "source": "玩家亲眼所见",
+          "status": "suspected"
+        },
+        {
+          "description": "走廊尽头传来第二声钟响，比第一声更近，诺诺脚步几不可察地顿了一下",
+          "name": "走廊钟响",
+          "notes": "钟声来源仍未查明",
+          "source": "玩家亲耳所闻",
+          "status": "suspected"
+        },
+        {
+          "description": "名字旁边忽然浮出一点暗红，起初只是一小片，接着向两侧舒展，边缘裂成细密的纹路，一片鳞的形状在纸面上成形",
+          "name": "发现红色标记",
+          "notes": "工作人员与诺诺均注意到，诺诺警告不要触碰",
+          "source": "报到区登记板",
+          "status": "known"
+        },
+        {
+          "description": "诺诺把任务单塞进你手里，指尖冰凉，说三个预备任务都在上面",
+          "name": "接受三个预备任务",
+          "notes": "S级观察对象识别印记与任务单相关",
+          "source": "诺诺坦白",
+          "status": "known"
+        },
+        {
+          "description": "标记是S级观察对象的识别印记，任务单上会有对应说明",
+          "name": "红色鳞片标记与S级观察对象相关",
+          "notes": "登记板上的暗红鳞形",
+          "source": "诺诺坦白",
+          "status": "known"
+        },
+        {
+          "description": "玩家被学院流程标记为 S级观察对象。",
+          "name": "S级观察对象",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "执行部学生正在观察玩家，但不一定被允许主动接触。",
+          "name": "执行部观察玩家",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+          "name": "登记完成",
+          "notes": "登记页被翻过，工作人员不愿多看。",
+          "source": "报到区登记流程",
+          "status": "known"
+        },
+        {
+          "description": "通告栏第三排靠左的泛黄条目编号与任务单完全一致，条目关联S级观察对象，原件在旧档案室。",
+          "name": "通告栏条目与任务单编号对应",
+          "notes": "条目被新通知压住大半。",
+          "source": "玩家核对通告栏",
+          "status": "known"
+        },
+        {
+          "description": "诺诺透露档案室登记系统最近被人动过手脚，登记台显示玩家档案三分钟前被取走，但玩家刚抵达。",
+          "name": "档案室登记系统异常",
+          "notes": "取件人一栏写着玩家自己的名字。",
+          "source": "诺诺的警告与登记台屏幕记录",
+          "status": "known"
+        },
+        {
+          "description": "记录显示你的档案确实在三分钟前被取走，取件人一栏的签名赫然是你的名字",
+          "name": "发现冒充者痕迹",
+          "notes": "签名笔迹有细微抖动，墨迹未干；操作来自已注销旧终端ID",
+          "source": "登记台取件记录",
+          "status": "known"
+        },
+        {
+          "description": "旧终端的位置在日志末尾标着，指向档案室深处那条维护通道",
+          "name": "旧终端位置指向维护通道",
+          "notes": "该终端一年前已报废",
+          "source": "系统日志",
+          "status": "known"
+        },
+        {
+          "description": "备份进度条卡顿时，档案室深处铁皮柜方向传来轻响，诺诺判断有人在另一头读取同一份记录。",
+          "name": "备份时对方同步读取",
+          "notes": "暗示冒充者或同伙仍在附近",
+          "source": "诺诺的推断与现场声响",
+          "status": "suspected"
+        },
+        {
+          "description": "备份完成后临时通行卡边缘多出一道极细暗纹，触感比别处凉。",
+          "name": "临时通行卡暗纹",
+          "notes": "可能与备份内容或权限异常有关",
+          "source": "玩家观察",
+          "status": "suspected"
+        },
+        {
+          "description": "备份日志中终端ID归属部门字段残缺，仅能辨认出执行部字样的一部分。",
+          "name": "旧终端归属指向执行部",
+          "notes": "字段损坏，未能完全确认",
+          "source": "档案室日志解析",
+          "status": "known"
+        },
+        {
+          "description": "日志中残留半行被截断的访问记录，显示有人在你到达前几分钟从维护通道方向接入。",
+          "name": "维护通道访问记录残留",
+          "notes": "后半段被抹平",
+          "source": "档案室日志解析",
+          "status": "known"
+        },
+        {
+          "description": "维护通道的铁门被从另一侧用铁楔卡死，门缝透出终端断电后的焦糊味。",
+          "name": "维护通道门被卡死",
+          "notes": "对方先行撤离并留下阻碍。",
+          "source": "玩家行动失败",
+          "status": "known"
+        },
+        {
+          "description": "地上散落着几截被扯断的线缆，其中一截末端还挂着半枚没来得及带走的接入凭证。",
+          "name": "断线缆上的半枚接入凭证",
+          "notes": "可能残留接入编号，指向下一调查方向。",
+          "source": "玩家行动失败",
+          "status": "known"
+        },
+        {
+          "description": "诺诺用通讯器通报维护通道被侵入及旧终端被接入，执行部确认收到并表示会派人核查",
+          "name": "执行部已接手维护通道核查",
+          "notes": "核查流程为先封现场、再调日志、最后问话",
+          "source": "诺诺通讯",
+          "status": "known"
+        },
+        {
+          "description": "旧终端的注销操作时间戳比它最后一次接入还早十一天，注销记录被人提前动过手脚。",
+          "name": "旧终端注销记录矛盾",
+          "notes": "暗示有人提前将终端从系统中抹除。",
+          "source": "登记台比对凭证编号与备份日志",
+          "status": "known"
+        },
+        {
+          "description": "铁皮柜深处传来第三声闷响，伴随金属摩擦声，有东西在柜子之间移动。",
+          "name": "铁皮柜异响逼近",
+          "notes": "声响比之前更近。",
+          "source": "档案室现场",
+          "status": "known"
+        },
+        {
+          "description": "侧梯通道中段铁闸半落，闸底有新鲜刮痕，有人从下方钻过。",
+          "name": "侧梯铁闸被撬",
+          "notes": "印证维护通道侵入者曾走此路",
+          "source": "玩家与诺诺上行途中观察",
+          "status": "known"
+        },
+        {
+          "description": "上行途中钟楼方向传来一声清晰沉稳的钟响，诺诺判断东翼有人。",
+          "name": "钟楼东翼钟声",
+          "notes": "非整点报时",
+          "source": "侧梯行进",
+          "status": "known"
+        },
+        {
+          "description": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "name": "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了个人档案",
+          "name": "旧档案室中有人冒充你取走了个人档案",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "学院对你的特殊关注源于血统检测异常",
+          "name": "学院对你的特殊关注源于血统检测异常",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "听证室长桌上名单中玩家名字被手写重复一次，墨迹未干，字迹颤抖，暗示刚刚有人在此书写。",
+          "name": "听证室名单上的手写名字",
+          "notes": "手写名字可能触发锚点。",
+          "source": "玩家推门进入听证室所见",
+          "status": "known"
+        },
+        {
+          "description": "报告正文被折过，展开时纸面发出细碎的响声。血统检测一栏，数值被红笔圈了两道，旁边盖着一枚S级标记",
+          "name": "听证会上的真相",
+          "notes": "学院对玩家的特殊关注源于血统检测异常。",
+          "source": "听证室名单下的检测报告",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称门框上有东西，刚才还没有，她被拦在门外。",
+          "name": "听证室门框异常",
+          "notes": "来源不明。",
+          "source": "诺诺隔门警告",
+          "status": "suspected"
+        },
+        {
+          "description": "走廊尽头传来金属闸门落锁的闷响，诺诺说他们开始封场了，从东翼往这边推。",
+          "name": "核查组封场推进",
+          "notes": "撤离窗口正在关闭。",
+          "source": "听证室门外",
+          "status": "known"
+        },
+        {
+          "description": "报告样本编号末尾两位与临时通行卡登记号仅差两位，折痕处被划掉的第二组编号末尾与登记号完全一致。",
+          "name": "样本编号末尾与登记号接近",
+          "notes": "暗示报告与玩家身份存在直接关联。",
+          "source": "听证室报告",
+          "status": "known"
+        },
+        {
+          "description": "执行部核查员推门目击玩家手上的墨痕，抽走了被翻动过的血统检测异常报告。",
+          "name": "报告被核查员当场截获",
+          "notes": "报告折痕处露出被划掉的第二组编号。",
+          "source": "听证室盘问",
+          "status": "known"
+        },
+        {
+          "description": "核查员没有看通行卡上的备份，而是伸手扣住你的手腕，说擅自取证四个字时，走廊尽头的铁闸又落下一道。",
+          "name": "核查员回避编号矛盾",
+          "notes": "他对编号矛盾的反应是回避而非惊讶，暗示知情或受命不得深究。",
+          "source": "听证室对峙",
+          "status": "known"
+        },
+        {
+          "description": "走廊里传来更多脚步声，不止一个，从两个方向同时靠近。",
+          "name": "封场范围扩大",
+          "notes": "退路正在合拢。",
+          "source": "听证室对峙",
+          "status": "known"
+        },
+        {
+          "description": "核查员接过通行卡后先看卡背签发栏而非正面编号，拇指在签发日期一行停留。",
+          "name": "核查员先查签发栏",
+          "notes": "签发日期可能牵出三年前的旧记录。",
+          "source": "玩家观察",
+          "status": "known"
+        },
+        {
+          "description": "核查员提到上面的命令是封场到核查结束，编号的事不归玩家问。",
+          "name": "上面命令封场",
+          "notes": "暗示封场背后有更高层介入。",
+          "source": "核查员对话",
+          "status": "known"
+        },
+        {
+          "description": "核查员指尖滑到签发日期栏时停住又跳过，刻意回避。",
+          "name": "核查员回避签发日期栏",
+          "notes": "签发日期栏可能藏有关键线索。",
+          "source": "听证室观察",
+          "status": "known"
+        },
+        {
+          "description": "新生报到时发现的红色鳞片标记与你的S级血统有关",
+          "name": "新生报到时发现的红色鳞片标记与你的S级血统有关",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "旧档案室中有人冒充你取走了档案——至今身份不明",
+          "name": "旧档案室中有人冒充你取走了档案——至今身份不明",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "听证会揭示了学院对你血统异常的担忧",
+          "name": "听证会揭示了学院对你血统异常的担忧",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "你已完成了三个预备任务，获得了执行部的初步认可",
+          "name": "你已完成了三个预备任务，获得了执行部的初步认可",
+          "notes": "",
+          "source": "entry_state",
+          "status": "known"
+        },
+        {
+          "description": "核查员承认编号与三年前的旧案有关，上面有人不想让编号被追查。",
+          "name": "编号与三年前旧案相关",
+          "notes": "关键信息仍被保留。",
+          "source": "核查员松口",
+          "status": "known"
+        },
+        {
+          "description": "核查员提到编号对应的东西早该被取走了，那个包裹在便利店，警告别去碰。",
+          "name": "便利店包裹早该被取走",
+          "notes": "引导玩家返回便利店。",
+          "source": "核查员松口",
+          "status": "known"
+        },
+        {
+          "description": "有一份三年前寄出的新生包裹在当前入学流程中出现。",
+          "name": "三年前寄出的包裹",
+          "notes": "",
+          "source": "system_inference",
+          "status": "known"
+        },
+        {
+          "description": "核查员被追问包裹位置后按下桌下呼叫钮，两名执行部人员将玩家押往侧厅与诺诺会合。",
+          "name": "核查员叫来押送",
+          "notes": "押送途中可见便利店灯牌与侧厅门缝暖光。",
+          "source": "听证室对峙",
+          "status": "known"
+        },
+        {
+          "description": "押送者展开记录后脸色骤变，指出末尾两位与玩家登记号对得上。",
+          "name": "执行部人员认得样本编号",
+          "notes": "说明编号并非只有核查员一人知情。",
+          "source": "押送者当场质问",
+          "status": "known"
+        },
+        {
+          "description": "侧厅的门从里面被推开，暖光顺着门缝铺出来",
+          "name": "探索：听证室外走廊，侧厅门口",
+          "notes": "侧厅内有人走出并制住玩家。",
+          "source": "本回合叙事",
+          "status": "known"
+        },
+        {
+          "description": "侧厅人员称钟楼底下那间屋子的编号按顺序排列，玩家手中编号不该出现在外面。",
+          "name": "钟楼地下编号排列",
+          "notes": "与三年前封存样本相关。",
+          "source": "侧厅走出的男人",
+          "status": "suspected"
+        },
+        {
+          "description": "诺诺的话被截断，她垂在身侧的手却悄悄挪过来，指尖在你手背上快速划了一下，一个数字，只划了一遍就收回去。",
+          "name": "探索：听证室外走廊，侧厅内",
+          "notes": "数字含义待查。",
+          "source": "诺诺低声透露",
+          "status": "known"
+        },
+        {
+          "description": "诺诺听到看守提到地下那间屋子时说了样本编号，且有人不想让新生知道那批东西还在。",
+          "name": "钟楼地下屋子与样本编号相关",
+          "notes": "只听到片段。",
+          "source": "诺诺",
+          "status": "known"
+        },
+        {
+          "description": "侧厅门被敲响，外面递进一张纸条，看守看后脸色变了，低声说听证室要提前开始，先带编号对得上的那个进去。",
+          "name": "听证室提前开始",
+          "notes": "玩家将被优先带入听证室",
+          "source": "看守与纸条",
+          "status": "known"
+        },
+        {
+          "description": "诺诺在被隔开前极轻地朝地面偏了一下头，指尖在身侧比了个向下的手势。",
+          "name": "诺诺的向下手势",
+          "notes": "暗示数字与钟楼地下屋子有关",
+          "source": "诺诺",
+          "status": "suspected"
+        },
+        {
+          "description": "被收走的纸条边角被雨洇开，隐约可见样本编号与提前几个字。",
+          "name": "纸条上的残字",
+          "notes": "纸条被门边看守收进内袋",
+          "source": "押送途中观察",
+          "status": "known"
+        },
+        {
+          "description": "被收走的纸条没有销毁，压在听证室桌面铜镇纸下的文件中，审查者以此作为交涉筹码。",
+          "name": "纸条被压在铜镇纸下",
+          "notes": "纸条残字含样本编号与提前二字。",
+          "source": "听证室对峙",
+          "status": "known"
+        },
+        {
+          "description": "审查者同意诺诺戴手铐由看守押在门边旁听，不得靠近长桌。",
+          "name": "诺诺被允许旁听",
+          "notes": "有限让步，审查者随即重新施压。",
+          "source": "听证室交涉",
+          "status": "known"
+        },
+        {
+          "description": "纸条末尾被划掉的编号与玩家登记号完全一致。",
+          "name": "纸条编号与登记号一致",
+          "notes": "编号被重划，但仍可辨认。",
+          "source": "审查者抽出纸条展示",
+          "status": "known"
+        },
+        {
+          "description": "被划掉的编号下面还有一行更淡的墨痕，末两位与玩家登记号相同。",
+          "name": "纸条背面淡墨编号",
+          "notes": "失败带来的新信息。",
+          "source": "玩家被按在桌上时看见",
+          "status": "known"
+        },
+        {
+          "description": "编号被划掉是为了从账面上抹去，但底层记录抹不干净。",
+          "name": "编号被划掉的真相",
+          "notes": "审查者内部对是否该说出此事出现分歧。",
+          "source": "中间审查者被迫承认",
+          "status": "known"
+        },
+        {
+          "description": "三年前有一份封存样本，登记号与玩家只差两位，有人希望它从未存在过。",
+          "name": "三年前封存样本",
+          "notes": "与三年前的包裹时间线重合。",
+          "source": "中间审查者低声透露",
+          "status": "known"
+        }
+      ]
+    }
+  },
+  "data_version": "full-games-20261106.seal-9d6cdcc3e7622531",
+  "game_id": "game-03",
+  "instruction": "仅依据本次提供的记录回答；无法确定时明确说明，不补造事实。行动题只判断和解释，不执行行动。",
+  "mode": "state",
+  "question": "诺诺在你手背划下的具体数字是多少？请说明依据。",
+  "question_id": "JLC-20261106-G03-Q03",
+  "recent_window": 6,
+  "schema_version": "jity.capture-question-bank.v1"
+}

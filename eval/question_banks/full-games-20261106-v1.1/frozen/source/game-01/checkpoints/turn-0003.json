@@ -1,0 +1,278 @@
+{
+  "head": 4,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": {
+      "check": {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "观察检定",
+        "requires_check": true,
+        "skill": "观察",
+        "stakes": "成功从诺诺反应中判断她是否知情，失败则她察觉你在试探并改变态度。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      "degree": "失败",
+      "option_index": 3,
+      "outcome": "failure",
+      "roll": 15
+    },
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院大门前",
+    "dialogue": [
+      {
+        "speaker": "诺诺",
+        "text": "你耳朵倒挺灵。不过卡塞尔的事，不是靠听就能懂的。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "主楼那边每晚都有动静，你要是每一声都问，报到手续能办到天亮。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "通行卡还在你手里发烫吧？先管好它，比管那声响有用。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院大门前",
+      "items_removed": [],
+      "items_upserted": [],
+      "key_event": "玩家试探闷响来源被诺诺识破，她态度转冷并推回话题，主楼再传金属摩擦声。",
+      "npcs_upserted": [
+        {
+          "current_location": "大门门柱旁",
+          "description": "行动直接、观察力敏锐的红发女生",
+          "name": "诺诺",
+          "notes": "用反问把闷响的话题推回给玩家，侧身让开半步",
+          "relationship": "戒备，认为玩家在试探她",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常",
+        "current_goal": "在诺诺态度转冷的情况下拿到入校指引，并弄清主楼异响",
+        "danger_level": "medium",
+        "notes": "试探被识破，信息优势部分流失"
+      },
+      "quests_upserted": [
+        {
+          "description": "从诺诺处获得入校指引",
+          "name": "与诺诺交谈并了解入校流程",
+          "notes": "试探失败，诺诺不再正面回应主楼异响",
+          "objective": "在诺诺态度转冷的情况下仍拿到入校指引",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "主楼方向再次传来更清晰的金属摩擦声，拖得长，尾音夹着短促撞击。",
+          "name": "主楼方向的金属摩擦声",
+          "notes": "诺诺称主楼每晚都有动静，态度回避",
+          "source": "玩家在大门前的直接听觉",
+          "status": "suspected"
+        }
+      ]
+    },
+    "narration": "你把问题抛出去，语气尽量随意，像只是被那声响吓了一跳。诺诺没有立刻回答。她偏过头，雨水顺着下巴滴落，目光在你脸上停了一拍，那一拍里有什么东西合上了。她抱起手臂，肩膀微微后撤，原本松散的站姿变得有了边界。你意识到自己问得太准，也太早。她听出了试探的味道。主楼方向又传来一声金属摩擦，比刚才更清晰，拖得也更长，像某种沉重的东西在地面上被缓慢推动，尾音里还夹着一下短促的撞击。诺诺的视线朝那边偏了半寸，随即收回来，落回你身上，眼神里多了点审视。她没有回答闷响的事，反而把话头推回给你。门廊的灯又闪了一下，雨声忽然显得很吵。她侧身让开半步，把大门内侧那条湿漉漉的石板路露出来，姿态像是让路，又像是把你往某个方向推。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "冷淡、带刺",
+        "name": "诺诺",
+        "notes": "察觉玩家在试探，拒绝回答闷响，把话题推回玩家身上"
+      }
+    ],
+    "option_checks": [
+      null,
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功逼出她对徽记的反应，失败则她彻底冷下来并可能叫来别人。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "潜行检定",
+        "requires_check": true,
+        "skill": "潜行",
+        "stakes": "成功靠近主楼看清异常，失败则被她拦下并记上一笔。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "洞察检定",
+        "requires_check": true,
+        "skill": "洞察",
+        "stakes": "成功从她的回避里读出立场，失败则她反将一军，态度更冷。",
+        "system": "通用 d20",
+        "target": 12
+      }
+    ],
+    "options": [
+      "不再追问闷响，顺着她让开的方向出示通行卡，请她带路办入校手续",
+      "把泥里那枚金属徽记捡起来，当着她的面问这是不是学院的东西",
+      "借口避雨，先走进大门内侧，靠近主楼方向看清那声响的来源",
+      "直接问她是不是不想让自己知道主楼那边的事"
+    ],
+    "quests_updated": [
+      {
+        "description": "诺诺态度转冷，入校指引尚未拿到，主楼方向出现新的异常声响。",
+        "name": "与诺诺交谈并了解入校流程",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": 0,
+    "scene_prompt": "rainy gothic academy gate at night, red-haired girl with crossed arms, wet stone path leading inside, dim flickering lamp"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-01",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 4,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 3,
+    "turns_total": 3
+  },
+  "session_id": "game-01",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {
+        "泥中的金属徽记": "泥中的金属徽记"
+      },
+      "narrative_pool": [],
+      "nsb": {
+        "episode_counter": 0,
+        "level1": [],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T1 玩家]: 开始游戏\n[T1 主持人]: 你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。\n\n[权威物品状态] {\"临时通行卡\": \"active\"}",
+          "[T2 玩家]: 观察诺诺的举止和门柱周围的环境\n[T2 主持人]: 雨丝斜斜地切过门廊的灯光，你借着抬手挡雨的姿势，把目光从诺诺脸上移开。她的视线在你手里的通行卡上停了半秒，随即滑向门柱基座，又若无其事地收回。那半秒太短，短到像是雨水迷了眼。她的右手食指在臂弯处轻轻收紧，指节泛白，随即松开。你顺着她刚才瞥过的方向看去，门柱基座与地面接缝处，石面上有一道浅淡的刻痕，被雨水冲刷得几乎看不清，但边缘整齐，不像风化。刻痕旁边，一枚金属徽记被踩进泥里，只露出半截边缘，上面沾着新鲜的湿泥。诺诺没有开口，只是歪了歪头，雨水从她发梢滴落。她似乎在等你先说话，或者等你先注意到什么。大门内侧的灯忽然闪了一下，又稳住。远处主楼的方向传来一声闷响，像是什么重物落地，随即归于雨声。\n\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\"}",
+          "[T3 玩家]: 先问诺诺刚才主楼方向那声闷响是什么\n[T3 主持人]: 你把问题抛出去，语气尽量随意，像只是被那声响吓了一跳。诺诺没有立刻回答。她偏过头，雨水顺着下巴滴落，目光在你脸上停了一拍，那一拍里有什么东西合上了。她抱起手臂，肩膀微微后撤，原本松散的站姿变得有了边界。你意识到自己问得太准，也太早。她听出了试探的味道。主楼方向又传来一声金属摩擦，比刚才更清晰，拖得也更长，像某种沉重的东西在地面上被缓慢推动，尾音里还夹着一下短促的撞击。诺诺的视线朝那边偏了半寸，随即收回来，落回你身上，眼神里多了点审视。她没有回答闷响的事，反而把话头推回给你。门廊的灯又闪了一下，雨声忽然显得很吵。她侧身让开半步，把大门内侧那条湿漉漉的石板路露出来，姿态像是让路，又像是把你往某个方向推。\n诺诺: 你耳朵倒挺灵。不过卡塞尔的事，不是靠听就能懂的。\n诺诺: 主楼那边每晚都有动静，你要是每一声都问，报到手续能办到天亮。\n诺诺: 通行卡还在你手里发烫吧？先管好它，比管那声响有用。\n[权威物品状态] {\"临时通行卡\": \"active\", \"泥中的金属徽记\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 3
+      },
+      "pending": false,
+      "protected_turns": [
+        2,
+        3
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 0,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "泥中的金属徽记",
+          "last_seen_turn": 2,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "81fa915f4607527e8b605608e7a6aca5"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院大门前",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "",
+        "location": "",
+        "name": "临时通行卡",
+        "notes": "",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "半截被踩进泥里的金属徽记，边缘沾着新鲜湿泥，位置在门柱基座旁。",
+        "location": "大门门柱基座旁的泥地",
+        "name": "泥中的金属徽记",
+        "notes": "诺诺视线曾短暂扫过此处。",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "大门门柱旁",
+        "description": "行动直接、观察力敏锐的红发女生",
+        "name": "诺诺",
+        "notes": "用反问把闷响的话题推回给玩家，侧身让开半步",
+        "relationship": "戒备，认为玩家在试探她",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "正常",
+      "current_goal": "在诺诺态度转冷的情况下拿到入校指引，并弄清主楼异响",
+      "danger_level": "medium",
+      "notes": "试探被识破，信息优势部分流失"
+    },
+    "quests": [
+      {
+        "description": "从诺诺处获得入校指引",
+        "name": "与诺诺交谈并了解入校流程",
+        "notes": "试探失败，诺诺不再正面回应主楼异响",
+        "objective": "在诺诺态度转冷的情况下仍拿到入校指引",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "玩家观察到诺诺对门柱旁痕迹的细微回避，并发现泥中金属徽记与石面刻痕。",
+      "玩家试探闷响来源被诺诺识破，她态度转冷并推回话题，主楼再传金属摩擦声。"
+    ],
+    "sanity": 83,
+    "turn": 3,
+    "world_facts": [
+      {
+        "description": "门柱基座石面上有边缘整齐的浅淡刻痕，旁边泥里踩着一枚金属徽记，与环境不符。",
+        "name": "门柱旁的异常痕迹",
+        "notes": "诺诺的视线曾短暂偏移至此。",
+        "source": "玩家观察成功",
+        "status": "suspected"
+      },
+      {
+        "description": "主楼方向再次传来更清晰的金属摩擦声，拖得长，尾音夹着短促撞击。",
+        "name": "主楼方向的金属摩擦声",
+        "notes": "诺诺称主楼每晚都有动静，态度回避",
+        "source": "玩家在大门前的直接听觉",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 3,
+  "uuid_counter": 10
+}

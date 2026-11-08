@@ -1,0 +1,46 @@
+{
+  "before_sha256": "fb499012cd60b0438237ed1a11a36786264fa02a445edfcc48846cf65595d0c1",
+  "created_at": "2026-11-06T05:21:57.761007+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 6
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "折回去取那片卡在砖缝里的金属碎屑，趁影子还没越过界线",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 41
+  },
+  "selection": {
+    "action": "折回去取那片卡在砖缝里的金属碎屑，趁影子还没越过界线",
+    "option_index": 2,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "在应急灯下停一停，把刻痕的形状和门柱基座刻痕的细节在脑中比对，确认是否同源",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.48647375648446445
+      },
+      {
+        "action": "先离开维修通道回到连廊，处理左肩的撕裂伤，再决定下一步",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.07842386342566732
+      },
+      {
+        "action": "折回去取那片卡在砖缝里的金属碎屑，趁影子还没越过界线",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7380969959814956
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 41
+}

@@ -1,0 +1,42 @@
+{
+  "before_sha256": "ca4a8d4aa05982b79d8f7a4cc588ac595f7e5e25e5ebcc8b59c7b97130aa89a3",
+  "created_at": "2026-11-06T06:00:10.330912+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "不反抗，被带进听证室，路上留意那张纸条被谁收起、上面还写了什么",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 32
+  },
+  "selection": {
+    "action": "不反抗，被带进听证室，路上留意那张纸条被谁收起、上面还写了什么",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "在被带走前，把诺诺那个向下的手势和手背数字联系起来，主动向看守承认编号对得上，争取被带进听证室看清里面的人",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.48781914624237976
+      },
+      {
+        "action": "趁两名看守走近、队形未成，猛地撞开最近的人，朝诺诺那边冲，试图在分开前拿到她最后一句话",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.31423600704389154
+      },
+      {
+        "action": "不反抗，被带进听证室，路上留意那张纸条被谁收起、上面还写了什么",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7947174489442742
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 32
+}

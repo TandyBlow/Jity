@@ -1,0 +1,52 @@
+{
+  "before_sha256": "096f6362d089c7b5c82cb7712faa67a77bd781768170b8795640a992a886af53",
+  "created_at": "2026-11-06T05:26:52.445812+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 20
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "让诺诺守在转角，自己试着从门缝下方查看门后是否有光或声音",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 19
+  },
+  "selection": {
+    "action": "让诺诺守在转角，自己试着从门缝下方查看门后是否有光或声音",
+    "option_index": 1,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 20,
+    "scores": [
+      {
+        "action": "蹲下细看墙上那排刻痕和三天前的日期，辨认标记的含义",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6945554280467646
+      },
+      {
+        "action": "让诺诺守在转角，自己试着从门缝下方查看门后是否有光或声音",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.34513219046087595
+      },
+      {
+        "action": "放弃上层，退回管线处捡起那页红标纸片，先弄清纸片上的内容",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.2173441369897967
+      },
+      {
+        "action": "问诺诺这栋楼的旧楼梯间通往哪里，判断取档者可能的去向",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.19128812285785868
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 19
+}

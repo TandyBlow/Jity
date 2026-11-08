@@ -1,0 +1,46 @@
+{
+  "before_sha256": "462050f95b6936778c749f7d03625e4ee858e5fbbfbad6554c06acc7db5203e4",
+  "created_at": "2026-11-06T06:01:16.353601+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 20
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 38
+  },
+  "selection": {
+    "action": "不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号",
+    "option_index": 0,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 20,
+    "scores": [
+      {
+        "action": "不再挣扎，把纸条背面那行淡墨末两位与登记号相同的事实说出来，逼审查者解释为什么被划掉的编号下面还压着另一个编号",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8530563948888441
+      },
+      {
+        "action": "趁看守按着你、审查者低头拢文件的间隙，用还能动的左手去够桌沿下露出的纸条一角",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.17254827569054176
+      },
+      {
+        "action": "转向门边的诺诺，大声问她手背上的数字到底是谁划的，把审查者的追问引向数字来源",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8338086677578708
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 38
+}

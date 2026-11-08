@@ -1,0 +1,52 @@
+{
+  "before_sha256": "8ef3e78ee38780deba67de1425b6fd3060498ae2c2e01dc262660bfc6fd88038",
+  "created_at": "2026-11-06T05:34:41.086602+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 17
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "直接调出登记台的取件记录，核对取件人签名与时间戳",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 11
+  },
+  "selection": {
+    "action": "直接调出登记台的取件记录，核对取件人签名与时间戳",
+    "option_index": 1,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 17,
+    "scores": [
+      {
+        "action": "先不动登记台，绕到档案架之间查看有没有人刚离开的痕迹",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.39047260250227933
+      },
+      {
+        "action": "直接调出登记台的取件记录，核对取件人签名与时间戳",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8092541089106883
+      },
+      {
+        "action": "问诺诺，档案室系统的异常她到底知道多少",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7741288011349435
+      },
+      {
+        "action": "守在门口，观察通风管道风声是否随登记台的操作而变化",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.3695814244832134
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 11
+}

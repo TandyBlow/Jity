@@ -1,0 +1,42 @@
+{
+  "before_sha256": "9bf1b4e5d1777bd71a0e2233c603ae070a0a7fdec1996ecb90b06a93e83a815e",
+  "created_at": "2026-11-06T05:22:08.763663+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁影子被出口方向的灯光吸引，贴着墙朝出口方向退，先脱离它的逼近",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 42
+  },
+  "selection": {
+    "action": "趁影子被出口方向的灯光吸引，贴着墙朝出口方向退，先脱离它的逼近",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "趁影子被出口方向的灯光吸引，贴着墙朝出口方向退，先脱离它的逼近",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6675521858270405
+      },
+      {
+        "action": "不再管碎屑，抓起砖缝旁松动的砖块砸向影子，试探那道锈线是否还能拦住它",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.07937116899556063
+      },
+      {
+        "action": "冒险再探一次砖缝，用指甲或随身硬物把碎屑撬出来，赌影子分神的时间够用",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.4100480052162542
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 42
+}

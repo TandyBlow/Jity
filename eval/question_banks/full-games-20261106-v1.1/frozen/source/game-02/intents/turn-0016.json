@@ -1,0 +1,42 @@
+{
+  "before_sha256": "eb2c338d2c7b11e383681aba9386a3bdd05143462c5576c11944e9a1f258bdf1",
+  "created_at": "2026-11-06T05:26:12.962436+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "把档案标签编号的细节和散落卷宗上的红标记录完整告诉诺诺，让她判断这份档案与你的关联",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 16
+  },
+  "selection": {
+    "action": "把档案标签编号的细节和散落卷宗上的红标记录完整告诉诺诺，让她判断这份档案与你的关联",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "把档案标签编号的细节和散落卷宗上的红标记录完整告诉诺诺，让她判断这份档案与你的关联",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.6056027426141435
+      },
+      {
+        "action": "不再解释，拉上诺诺立刻从侧门追进旧楼梯间，抢在脚步声主人之前截住取档者",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.36495739334010147
+      },
+      {
+        "action": "让诺诺守住走廊正门方向，你自己折回档案室，抢在来人之前把散落卷宗里的红标记录页带走",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.18733977080229314
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 16
+}

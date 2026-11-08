@@ -1,0 +1,46 @@
+{
+  "before_sha256": "b8f6ff53187cd63ba84fe5e349fb3bdd41d06dd87b55d0dabefe8758d664111d",
+  "created_at": "2026-11-06T06:08:12.980907+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 3
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "问诺诺S级观察对象到底意味着什么，学院会怎么盯着自己",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 24
+  },
+  "selection": {
+    "action": "问诺诺S级观察对象到底意味着什么，学院会怎么盯着自己",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 3,
+    "scores": [
+      {
+        "action": "边走边展开任务单，先看清第一个图书馆任务的具体要求",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.014759608802727087
+      },
+      {
+        "action": "追问诺诺第三个任务为什么现在不能讲，逼她把话说完",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.761946025111392
+      },
+      {
+        "action": "问诺诺S级观察对象到底意味着什么，学院会怎么盯着自己",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.9721694403524864
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 24
+}

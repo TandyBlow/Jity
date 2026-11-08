@@ -1,0 +1,56 @@
+{
+  "head": 1,
+  "model": "deepseek-flash",
+  "output": {},
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-02",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": null,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 0,
+    "turns_total": 0
+  },
+  "session_id": "game-02",
+  "source": "scripted",
+  "state": {
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院大门前",
+    "health": 100,
+    "items": [
+      {
+        "name": "临时通行卡",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "卡塞尔学院大门前",
+        "description": "靠在门柱旁等待的红发女生。",
+        "name": "诺诺",
+        "relationship": "等待你的红发女生",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "刚到学院门外",
+      "current_goal": "与门柱旁的红发女生交谈，了解如何入校",
+      "danger_level": "medium",
+      "notes": ""
+    },
+    "quests": [],
+    "recent_events": [],
+    "sanity": 80,
+    "turn": 0,
+    "world_facts": []
+  },
+  "turn": 0,
+  "uuid_counter": 0
+}

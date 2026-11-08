@@ -1,0 +1,46 @@
+{
+  "before_sha256": "00d8b121f3d46000356681d04fe11a4a28c553642a4b0c23a812897353f52780",
+  "created_at": "2026-11-06T06:01:03.108245+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 15
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 37
+  },
+  "selection": {
+    "action": "借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 15,
+    "scores": [
+      {
+        "action": "只承认手背数字是这张纸条编号的后半段，要求把纸条推过来核对，再谈其余部分",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8230251909094265
+      },
+      {
+        "action": "直接说出完整编号，换取审查者当场解释这张纸条为何在三年前被封存",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8583556954279101
+      },
+      {
+        "action": "借诺诺开口的瞬间制造争执，趁审查者分神去够那张纸条",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9020846445106802
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 37
+}

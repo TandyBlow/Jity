@@ -1,0 +1,12 @@
+{
+  "all_calls_consumed": true,
+  "calls_replayed": 120,
+  "ending_match": true,
+  "errors": [],
+  "execution_adapter_version": "attachments/recovery-version-v2.json",
+  "key_state_match": true,
+  "network_attempts": 0,
+  "reload_match": true,
+  "status": "passed",
+  "turns": 52
+}

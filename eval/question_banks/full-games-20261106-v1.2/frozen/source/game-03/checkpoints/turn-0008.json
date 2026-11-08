@@ -1,0 +1,439 @@
+{
+  "head": 9,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": null,
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院主楼报到区",
+    "dialogue": [
+      {
+        "speaker": "工作人员",
+        "text": "登记完成，回执和通行卡收好，别弄丢。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "你倒是沉得住气。别人撞见这种标记，第一反应都是伸手去摸。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [
+      {
+        "description": "报到区工作人员签发的登记完成回执，附日期与签章，可作身份与流程凭证。",
+        "name": "登记回执",
+        "status": "owned"
+      }
+    ],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院主楼报到区",
+      "items_removed": [],
+      "items_upserted": [
+        {
+          "aliases": [],
+          "description": "报到区签发的登记完成回执，附日期与签章。",
+          "location": "玩家身上",
+          "name": "登记回执",
+          "notes": "可作身份与流程凭证。",
+          "status": "owned",
+          "transition": ""
+        },
+        {
+          "aliases": [],
+          "description": "新生报到期间的受限权限凭证。",
+          "location": "玩家身上",
+          "name": "临时通行卡",
+          "notes": "登记后已归还，余温消退。",
+          "status": "owned",
+          "transition": ""
+        },
+        {
+          "aliases": [],
+          "description": "执行部暗纹纸面，列有三个预备任务。",
+          "location": "玩家外套内袋",
+          "name": "预备任务单",
+          "notes": "已收好，尚未展开阅读。",
+          "status": "owned",
+          "transition": ""
+        }
+      ],
+      "key_event": "玩家坚持先办完登记，工作人员绕开红色标记完成手续并归还通行卡与回执，诺诺挑眉评价。",
+      "npcs_upserted": [
+        {
+          "current_location": "报到区柜台边",
+          "description": "红发女生，行动直接，观察力敏锐。",
+          "name": "诺诺",
+          "notes": "对玩家先办完手续的务实态度挑眉评价。",
+          "relationship": "不情愿的引导者，态度略有松动",
+          "status": "present"
+        },
+        {
+          "current_location": "报到区柜台后",
+          "description": "穿深色制服的报到区工作人员。",
+          "name": "报到区工作人员",
+          "notes": "绕开红色标记完成登记，翻过登记页。",
+          "relationship": "戒备但配合",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常",
+        "current_goal": "阅读任务单，决定三个预备任务的执行方式",
+        "danger_level": "medium",
+        "notes": "登记完成，任务单在内袋。"
+      },
+      "quests_upserted": [
+        {
+          "description": "登记手续已完成。",
+          "name": "完成入校报到",
+          "notes": "临时通行卡与回执在手。",
+          "objective": "已达成",
+          "status": "completed"
+        },
+        {
+          "description": "任务单列有三个预备任务。",
+          "name": "三个预备任务",
+          "notes": "任务单已收进内袋。",
+          "objective": "阅读任务单全文并决定执行方式",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+          "name": "登记完成",
+          "notes": "登记页被翻过，工作人员不愿多看。",
+          "source": "报到区登记流程",
+          "status": "known"
+        }
+      ]
+    },
+    "narration": "你把那张对折的任务单按原样折好，塞进外套内袋，纸面擦过指尖时带着一点细微的凸起，暗纹在指腹下像一道极浅的刻痕。然后你转回柜台，对工作人员说，手续还没办完。他愣了一下，视线从诺诺脸上移开，落回登记板，喉结又动了一下，才重新拾起笔。笔尖悬在名字旁那片暗红鳞形上方，他犹豫了一瞬，最终绕开标记，在旁边的空白处补上日期与签章，动作比先前快了不少，像在赶一个不愿多看的流程。他撕下回执联，连同临时通行卡一起推回你面前，说登记完成，卡收好，别弄丢。卡片落进你掌心时已经不再发烫，只剩一点余温。诺诺靠在柜台边，挑了下眉，红发从肩头滑下来，她说你倒是沉得住气，别人撞见这种标记，第一反应都是伸手去摸。她的语气里有一点意外，也有一点打量。你收好卡片与回执，内袋里那张任务单贴着胸口，纸面暗纹的微光隔着布料透不出来，却让你一直能感觉到它的存在。工作人员低头整理登记板，把那一页翻了过去，动作很轻，像不想让任何人再看见。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "略带意外与打量",
+        "name": "诺诺",
+        "notes": "对玩家先办完手续的务实态度挑眉评价，态度略有松动。"
+      },
+      {
+        "disposition": "戒备但配合",
+        "name": "报到区工作人员",
+        "notes": "绕开红色标记完成登记，翻过登记页，不愿多看。"
+      }
+    ],
+    "option_checks": [
+      null,
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功问出档案室位置与进入条件，失败则诺诺只给模糊方向并提高她的警觉。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      null
+    ],
+    "options": [
+      "在报到区角落展开任务单，先读完三个预备任务的全文",
+      "向诺诺打听档案室的位置，说你想从那里开始查",
+      "把回执收好，直接去执行部通告栏核对任务单上的编号"
+    ],
+    "quests_updated": [
+      {
+        "description": "登记手续已完成，临时通行卡与回执在手。",
+        "name": "完成入校报到",
+        "status": "completed"
+      },
+      {
+        "description": "任务单已在手，需阅读全文并决定执行方式。",
+        "name": "三个预备任务",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": 0,
+    "scene_prompt": "Gothic registration hall, white overhead light, clerk stamping a ledger, red-haired girl leaning on counter, folded paper in coat pocket"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-03",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_closing",
+    "head_turn_id": 9,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[\"anchor-discover-mark\", \"anchor-receive-tasks\"]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 8,
+    "turns_total": 8
+  },
+  "session_id": "game-03",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {
+        "登记回执": "登记回执",
+        "预备任务单": "预备任务单"
+      },
+      "narrative_pool": [
+        {
+          "content": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺接引其走侧门入校。诺诺警告勿近钟楼，并回避通行卡权限问题。走廊中投影屏两次闪现缺角钟楼，伴随钟声，诺诺神色紧绷。抵达报到区后，工作人员登记时，玩家名字旁浮现暗红鳞片状标记，工作人员惊愕，诺诺制止触碰。",
+          "created_round": 6,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_1",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [
+            6,
+            7
+          ],
+          "score": 0.798500449838059
+        }
+      ],
+      "nsb": {
+        "episode_counter": 1,
+        "level1": [
+          {
+            "causal_links": [
+              "scene_prev→scene_curr: 玩家出示通行卡并追问权限，引发诺诺对钟楼的警告与投影屏异象",
+              "scene_prev→scene_curr: 玩家坚持询问投影屏钟楼，诺诺推其入门并回避解释，走廊钟声加剧紧张",
+              "scene_prev→scene_curr: 玩家跟随诺诺至报到区，登记时触发红鳞标记，将悬疑推向高潮"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "工作人员",
+              "临时通行卡",
+              "登记板",
+              "投影屏",
+              "钟楼",
+              "侧门",
+              "报到区"
+            ],
+            "episode_id": "ep_L1_1",
+            "importance": 0.8,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "保持active，已交还玩家",
+              "玩家": "完成登记，名字旁出现未知红鳞标记",
+              "诺诺": "对玩家态度从随意转为警惕，肩线紧绷"
+            },
+            "summary": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺接引其走侧门入校。诺诺警告勿近钟楼，并回避通行卡权限问题。走廊中投影屏两次闪现缺角钟楼，伴随钟声，诺诺神色紧绷。抵达报到区后，工作人员登记时，玩家名字旁浮现暗红鳞片状标记，工作人员惊愕，诺诺制止触碰。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 6,
+            "turn_start": 1
+          }
+        ],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T7 玩家]: 转向诺诺，要她说明这个标记意味着什么，以及她为什么让你别碰\n[T7 主持人]: 你转过身，正对诺诺，把登记板上那片暗红鳞形指给她看，问她这标记到底意味着什么，又为什么刚才要拦你。报到区的白光压在你手背上，那片鳞纹的边缘还在纸面上微微发亮。工作人员的手仍悬在笔尖上方，没有落下，视线在你和诺诺之间来回。诺诺沉默了几秒，红发遮着半边脸，你能看见她下颌线绷了一下。她终于开口，声音压得很低，说这标记不是装饰，是S级观察对象的识别印记，任务单上会写明。她说完从外套内袋抽出一张对折的纸，纸面边缘有执行部的暗纹，递到你面前，却没有立刻松手。她说本来该等你办完手续再给，现在既然你自己撞见了，就提前看吧。工作人员这时把笔放下，退开半步，像是被排除在某个流程之外。诺诺把任务单塞进你手里，指尖冰凉，说三个预备任务都在上面，看完再决定要不要继续站在这里。\n诺诺: 那不是装饰。S级观察对象的识别印记，任务单上会写明。本来想等你办完手续再给你，现在你自己撞见了，就提前看吧。\n诺诺: 三个预备任务都在上面。看完再决定要不要继续站在这里。\n工作人员: 登记我先搁着。你们的事，你们自己处理。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\"}",
+          "[T8 玩家]: 把任务单收好，要求工作人员先把登记手续办完\n[T8 主持人]: 你把那张对折的任务单按原样折好，塞进外套内袋，纸面擦过指尖时带着一点细微的凸起，暗纹在指腹下像一道极浅的刻痕。然后你转回柜台，对工作人员说，手续还没办完。他愣了一下，视线从诺诺脸上移开，落回登记板，喉结又动了一下，才重新拾起笔。笔尖悬在名字旁那片暗红鳞形上方，他犹豫了一瞬，最终绕开标记，在旁边的空白处补上日期与签章，动作比先前快了不少，像在赶一个不愿多看的流程。他撕下回执联，连同临时通行卡一起推回你面前，说登记完成，卡收好，别弄丢。卡片落进你掌心时已经不再发烫，只剩一点余温。诺诺靠在柜台边，挑了下眉，红发从肩头滑下来，她说你倒是沉得住气，别人撞见这种标记，第一反应都是伸手去摸。她的语气里有一点意外，也有一点打量。你收好卡片与回执，内袋里那张任务单贴着胸口，纸面暗纹的微光隔着布料透不出来，却让你一直能感觉到它的存在。工作人员低头整理登记板，把那一页翻了过去，动作很轻，像不想让任何人再看见。\n工作人员: 登记完成，回执和通行卡收好，别弄丢。\n诺诺: 你倒是沉得住气。别人撞见这种标记，第一反应都是伸手去摸。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\", \"登记回执\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 8
+      },
+      "pending": false,
+      "protected_turns": [
+        7,
+        8
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "登记回执",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "02ed2409709d50749094715ad94f150b"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院主楼报到区",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "新生报到期间的受限权限凭证。",
+        "location": "玩家身上",
+        "name": "临时通行卡",
+        "notes": "登记后已归还，余温消退。",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "执行部暗纹纸面，列有三个预备任务。",
+        "location": "玩家外套内袋",
+        "name": "预备任务单",
+        "notes": "已收好，尚未展开阅读。",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "报到区签发的登记完成回执，附日期与签章。",
+        "location": "玩家身上",
+        "name": "登记回执",
+        "notes": "可作身份与流程凭证。",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "报到区柜台边",
+        "description": "红发女生，行动直接，观察力敏锐。",
+        "name": "诺诺",
+        "notes": "对玩家先办完手续的务实态度挑眉评价。",
+        "relationship": "不情愿的引导者，态度略有松动",
+        "status": "present"
+      },
+      {
+        "current_location": "报到区柜台后",
+        "description": "穿深色制服的报到区工作人员。",
+        "name": "报到区工作人员",
+        "notes": "绕开红色标记完成登记，翻过登记页。",
+        "relationship": "戒备但配合",
+        "status": "present"
+      },
+      {
+        "current_location": "报到区",
+        "description": "报到区登记人员",
+        "name": "工作人员",
+        "notes": "暂停登记，退开半步",
+        "relationship": "戒备退让",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "正常",
+      "current_goal": "阅读任务单，决定三个预备任务的执行方式",
+      "danger_level": "medium",
+      "notes": "登记完成，任务单在内袋。"
+    },
+    "quests": [
+      {
+        "description": "登记手续已完成。",
+        "name": "完成入校报到",
+        "notes": "临时通行卡与回执在手。",
+        "objective": "已达成",
+        "status": "completed"
+      },
+      {
+        "description": "任务单列有三个预备任务。",
+        "name": "三个预备任务",
+        "notes": "任务单已收进内袋。",
+        "objective": "阅读任务单全文并决定执行方式",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "诺诺查看通行卡后带玩家走侧门入校，并提醒避开钟楼。",
+      "玩家行动：追问诺诺通行卡权限有什么问题；结果：你捏着那张还在发烫的通行卡，追问卡面到底有什么问题。",
+      "追问投影屏被诺诺推进侧门，她闭口不谈，走廊深处传来一声钟响。",
+      "玩家随诺诺抵达报到区门口，工作人员要求出示通行卡登记，走廊投影屏再次映出钟楼。",
+      "玩家行动：把临时通行卡递过去，如实报上姓名，完成登记并留意登记板上自己的名字；结果：你把临时通行卡递过去，报上自己的姓名。",
+      "诺诺松口，红色鳞片标记是S级观察对象识别印记，她提前交出列有三个预备任务的任务单。",
+      "玩家坚持先办完登记，工作人员绕开红色标记完成手续并归还通行卡与回执，诺诺挑眉评价。"
+    ],
+    "sanity": 82,
+    "turn": 8,
+    "world_facts": [
+      {
+        "description": "诺诺提醒校园里有些地方晚上不该去，尤其是钟楼那一带",
+        "name": "钟楼夜间禁区",
+        "notes": "尚未验证原因",
+        "source": "诺诺的提醒",
+        "status": "suspected"
+      },
+      {
+        "description": "侧门内走廊中段一块深色玻璃面板再次亮起，映出缺角钟楼轮廓后熄灭",
+        "name": "走廊投影屏异常",
+        "notes": "诺诺肩线绷紧但未解释",
+        "source": "玩家亲眼所见",
+        "status": "suspected"
+      },
+      {
+        "description": "走廊尽头传来第二声钟响，比第一声更近，诺诺脚步几不可察地顿了一下",
+        "name": "走廊钟响",
+        "notes": "钟声来源仍未查明",
+        "source": "玩家亲耳所闻",
+        "status": "suspected"
+      },
+      {
+        "description": "名字旁边忽然浮出一点暗红，起初只是一小片，接着向两侧舒展，边缘裂成细密的纹路，一片鳞的形状在纸面上成形",
+        "name": "发现红色标记",
+        "notes": "工作人员与诺诺均注意到，诺诺警告不要触碰",
+        "source": "报到区登记板",
+        "status": "known"
+      },
+      {
+        "description": "诺诺把任务单塞进你手里，指尖冰凉，说三个预备任务都在上面",
+        "name": "接受三个预备任务",
+        "notes": "S级观察对象识别印记与任务单相关",
+        "source": "诺诺坦白",
+        "status": "known"
+      },
+      {
+        "description": "标记是S级观察对象的识别印记，任务单上会有对应说明",
+        "name": "红色鳞片标记与S级观察对象相关",
+        "notes": "登记板上的暗红鳞形",
+        "source": "诺诺坦白",
+        "status": "known"
+      },
+      {
+        "description": "玩家被学院流程标记为 S级观察对象。",
+        "name": "S级观察对象",
+        "notes": "",
+        "source": "system_inference",
+        "status": "known"
+      },
+      {
+        "description": "执行部学生正在观察玩家，但不一定被允许主动接触。",
+        "name": "执行部观察玩家",
+        "notes": "",
+        "source": "system_inference",
+        "status": "known"
+      },
+      {
+        "description": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+        "name": "登记完成",
+        "notes": "登记页被翻过，工作人员不愿多看。",
+        "source": "报到区登记流程",
+        "status": "known"
+      }
+    ]
+  },
+  "turn": 8,
+  "uuid_counter": 25
+}

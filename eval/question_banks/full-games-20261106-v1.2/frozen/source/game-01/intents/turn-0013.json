@@ -1,0 +1,42 @@
+{
+  "before_sha256": "93bc2b2d59e1b7398a33c7e2d48af87c5f43712e45fd4ca3de474e182e791fcb",
+  "created_at": "2026-11-06T05:17:31.372037+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "握紧钥匙，直接走进东侧回廊，前往旧温室连廊铁门",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 13
+  },
+  "selection": {
+    "action": "握紧钥匙，直接走进东侧回廊，前往旧温室连廊铁门",
+    "option_index": 0,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 1,
+    "scores": [
+      {
+        "action": "握紧钥匙，直接走进东侧回廊，前往旧温室连廊铁门",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.21938941473501117
+      },
+      {
+        "action": "先在岔路口停下来，借门房的灯检查这把钥匙和布条上的痕迹",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.303977741422217
+      },
+      {
+        "action": "绕回主楼东侧回廊入口，先确认走廊里有没有人跟着你",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8742160966787892
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 13
+}

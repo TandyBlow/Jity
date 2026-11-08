@@ -1,0 +1,52 @@
+{
+  "before_sha256": "55e89c4380a8122d6d83c79e58ef4a5b670c65aac8d9233a8311bfae1e1d30e6",
+  "created_at": "2026-11-06T05:59:24.790071+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "趁侧厅门被里面的人推开、押送者分神的瞬间，挣脱往便利店方向跑",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 29
+  },
+  "selection": {
+    "action": "趁侧厅门被里面的人推开、押送者分神的瞬间，挣脱往便利店方向跑",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "不回答编号来源，反问押送者：他认得这串编号，说明他见过同一份东西，逼他先开口",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.5848412619646601
+      },
+      {
+        "action": "承认记录是从听证室桌上抄下来的，把核查员刚才松口提到三年前旧案和包裹的事捅出来，让押送者去质疑上级",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.1342177151630526
+      },
+      {
+        "action": "趁侧厅门被里面的人推开、押送者分神的瞬间，挣脱往便利店方向跑",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.9338313217950494
+      },
+      {
+        "action": "顺着门内传来的声音喊话，让侧厅里的人听见编号的事，把对峙拉到门内",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.8401287888098303
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 29
+}

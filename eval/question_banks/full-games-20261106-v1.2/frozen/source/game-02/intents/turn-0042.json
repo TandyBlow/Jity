@@ -1,0 +1,46 @@
+{
+  "before_sha256": "fdf6f39998273bf7caeceaaf4c9babac1221f045a3a14483efb848eca65f3aae",
+  "created_at": "2026-11-06T05:31:20.833271+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 7
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "不再纠缠沉睡者，趁守卫分神去按箱子时冲进侧门，直奔祭坛边缘抢回那份被红线拖走的档案",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 42
+  },
+  "selection": {
+    "action": "不再纠缠沉睡者，趁守卫分神去按箱子时冲进侧门，直奔祭坛边缘抢回那份被红线拖走的档案",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "不再纠缠沉睡者，趁守卫分神去按箱子时冲进侧门，直奔祭坛边缘抢回那份被红线拖走的档案",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.022448132868886916
+      },
+      {
+        "action": "把箱子推向守卫，退进雨里，转而绕向钟楼侧墙那扇窄窗下方，截住正快步下楼的人",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6357056936794592
+      },
+      {
+        "action": "抓住守卫按上胸口的手，压低声音告诉他窗后有人正下楼，逼他决定先拦谁",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8767006970959913
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 42
+}

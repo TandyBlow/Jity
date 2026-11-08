@@ -1,0 +1,44 @@
+{
+  "desktop": {
+    "title": "Jity · 长期一致性题库审阅",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "text": "JITY / LONG-TERM CONSISTENCY\n检查点＋问题＋证据答案\n首批题库 · 待人工审阅\n\n检查事实边界、最近重提、信息通道和标准答案。此页只展示题库及离线完整性验证，不计算或宣称模型记忆成绩。\n\njity-long-consistency-full-games-20261106\n私有审阅报告：包含标准答案与完整审计证据，请勿作为待测模型输入。\n未来每题须独立作答，三组共享同一检查点和同一问题。完整记忆、近期上下文、结构化状态三组尚未生成模型回答。\n12\n待审题目 · 非独立游戏样本\n4\n题目来源游戏\n0\n本次模型回答 · 0 付费 API 调用\npassed\n离线结构验证状态 · 非模型成绩\n来源、覆盖与限制\n\n多题来自同一游戏、同一检查点时具有相关性；来自四局的多道题不能视为大量独立游戏样本。严格重放通过仅说明录制可重现。提交行动、战役有效推进与时间线节点分别计数。\n\n游戏\t录制状态\t提交行动\t有效推进\t节点（含初始）\t严格重放\t结局\t来源资格\ngame-01\tcompleted\t55\t50\t56\tpassed\t未竟的追寻\tformal_source_pending_question_review\ngame-02\tcompleted\t52\t50\t53\tpassed\t未竟的追寻\tformal_source_pending_question_review\ngame-03\tcompleted\t52\t50\t53\tpassed\t未竟的追寻\tformal_source_pending_question_review\ngame-04\tcompleted\t51\t50\t52\tpassed\t未竟的追寻\tformal_source_pending_question_review\naction_from_observed_limit\n1\ncharacter_claim_and_relation\n1\ncharacter_relation_and_claim\n1\nearly_narrative_detail\n1\nearly_narrative_fact\n1\nitem_acquisition_and_check\n1\nitem_action_feasibility\n1\nitem_lost\n1\nitem_transfer_state\n1\nunknown_exact_value\n1\nunknown_person_identity\n1\nupdated_information_action\n1\n实际覆盖、未覆盖目标及限制\n{\n  \"covered\": [\n    \"早期叙事细节/任务与人物转述\",\n    \"物品获取、移交、遗失当前状态\",\n    \"后续调查推翻角色初步判断\",\n    \"有界未知(姓名/数值)\",\n    \"依据记忆判断行动条件而不执行\",\n    \"近期",
+    "selects": [
+      {
+        "id": "game",
+        "values": [
+          "",
+          "game-01",
+          "game-02",
+          "game-03",
+          "game-04"
+        ]
+      },
+      {
+        "id": "kind",
+        "values": [
+          "",
+          "action",
+          "recall"
+        ]
+      }
+    ],
+    "questions": 12
+  },
+  "mobile": {
+    "width": 390,
+    "scrollWidth": 390
+  },
+  "filterCount": 3,
+  "expanded": 3,
+  "detailWidth": {
+    "width": 390,
+    "scrollWidth": 390
+  },
+  "errors": [],
+  "requests": [
+    "file:///Users/davidz/Documents/GitHub/jity-eval/question_banks/full-games-20261106-v1.1/reports/review.html"
+  ],
+  "externalRequests": []
+}

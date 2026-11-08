@@ -1,0 +1,46 @@
+{
+  "before_sha256": "7cec5e2aec8b2d5187c68ee25de1712055f2b8172372252a20dc2ec9ad3980bd",
+  "created_at": "2026-11-06T05:26:23.910429+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 5
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "在维护通道的管线间找一处能藏住身形的位置，等取档者经过时看清他怀里档案的完整标签",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 17
+  },
+  "selection": {
+    "action": "在维护通道的管线间找一处能藏住身形的位置，等取档者经过时看清他怀里档案的完整标签",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 5,
+    "scores": [
+      {
+        "action": "跟着诺诺沿维护通道抢到旧楼梯间上层，在取档者必经的转角处设伏截住他",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.5042463372300761
+      },
+      {
+        "action": "让诺诺先上铁梯，自己留在通道拐角拖住跟来的脚步声，逼对方暴露身份",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.9273761151084485
+      },
+      {
+        "action": "在维护通道的管线间找一处能藏住身形的位置，等取档者经过时看清他怀里档案的完整标签",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.361619476151087
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 17
+}

@@ -1,0 +1,46 @@
+{
+  "before_sha256": "9effc4907cb899bb73b101a366ed2232fcedbbebe9887409e16e217a1de65828",
+  "created_at": "2026-11-06T06:07:48.625813+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 12
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "不挪步，逼她现在就给一个有限度的解释，哪怕只回答一句",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 22
+  },
+  "selection": {
+    "action": "不挪步，逼她现在就给一个有限度的解释，哪怕只回答一句",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 12,
+    "scores": [
+      {
+        "action": "跟诺诺去侧廊暗处，听她把认主和被标记说清楚",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.7863403916116587
+      },
+      {
+        "action": "不挪步，逼她现在就给一个有限度的解释，哪怕只回答一句",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.4549512702480446
+      },
+      {
+        "action": "先问清楚她口袋里那个方正的硬物是什么，再决定走不走",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.01781027868254581
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 22
+}

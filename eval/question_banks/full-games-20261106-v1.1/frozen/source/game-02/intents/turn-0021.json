@@ -1,0 +1,42 @@
+{
+  "before_sha256": "be58f562158cf4bed110bcab25fce2fbb2cba471e0f3266a9a06fd33f3b2a393",
+  "created_at": "2026-11-06T05:27:11.191627+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "跟着诺诺往楼梯口撤，先离开这一层",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 21
+  },
+  "selection": {
+    "action": "跟着诺诺往楼梯口撤，先离开这一层",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 17,
+    "scores": [
+      {
+        "action": "跟着诺诺往楼梯口撤，先离开这一层",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.8528759577282786
+      },
+      {
+        "action": "贴到门侧墙后，等开门的人出来再判断",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.35608685222616576
+      },
+      {
+        "action": "不退，正面迎上开门的人，直接问纸片上的检测编号",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.013929720355871145
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 21
+}

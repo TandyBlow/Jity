@@ -1,0 +1,46 @@
+{
+  "before_sha256": "68066ddf0482f7227028b09adb01f99bf0624559af80c84985b4d75d06835289",
+  "created_at": "2026-11-06T05:18:15.229714+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 8
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "把预备任务单从口袋里抽出来，快速包起一小撮碎屑，然后边退边看纸上的反应",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 18
+  },
+  "selection": {
+    "action": "把预备任务单从口袋里抽出来，快速包起一小撮碎屑，然后边退边看纸上的反应",
+    "option_index": 1,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 8,
+    "scores": [
+      {
+        "action": "放弃抓取，立刻起身后撤到前半段灯光下，先保住退路再回头观察缺口",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.4088512146871428
+      },
+      {
+        "action": "把预备任务单从口袋里抽出来，快速包起一小撮碎屑，然后边退边看纸上的反应",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.4061252865774668
+      },
+      {
+        "action": "不退，压低身体贴近缺口边缘，趁光源偏移的空档看清支架上的金属匣和那道影子",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.20357571356311044
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 18
+}

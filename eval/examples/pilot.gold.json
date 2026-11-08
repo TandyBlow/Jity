@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "description": "评分器私有答案；不要交给被测适配器。答案仅校验离线协议，不构成真实模型评测。",
+  "records": [
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d10-recall",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d10-action",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d20-recall",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d20-action",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d40-recall",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "archive-location-d40-action",
+      "expected_value": "西塔第三个抽屉"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d10-recall",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d10-action",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d20-recall",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d20-action",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d40-recall",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "potion-state-d40-action",
+      "expected_value": "已消耗"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d10-recall",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d10-action",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d20-recall",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d20-action",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d40-recall",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "key-holder-d40-action",
+      "expected_value": "林澜"
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d10-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d10-action",
+      "expected_value": null
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d20-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d20-action",
+      "expected_value": null
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d40-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "campus-archive",
+      "probe_id": "unknown-birthday-d40-action",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d10-recall",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d10-action",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d20-recall",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d20-action",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d40-recall",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "box-location-d40-action",
+      "expected_value": "二号码头的石凳下面"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d10-recall",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d10-action",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d20-recall",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d20-action",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d40-recall",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "updated-phrase-d40-action",
+      "expected_value": "潮汐"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d10-recall",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d10-action",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d20-recall",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d20-action",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d40-recall",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "wrench-holder-d40-action",
+      "expected_value": "周青"
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d10-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d10-action",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d20-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d20-action",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d40-recall",
+      "expected_value": null
+    },
+    {
+      "case_id": "harbor-workshop",
+      "probe_id": "unknown-hometown-d40-action",
+      "expected_value": null
+    }
+  ]
+}

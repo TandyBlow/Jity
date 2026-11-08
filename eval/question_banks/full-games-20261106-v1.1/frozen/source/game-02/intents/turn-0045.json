@@ -1,0 +1,42 @@
+{
+  "before_sha256": "82cb3b0177afbe6818bccf45ca599a092871251fa4c38a4a0ea12dfadeb942bf",
+  "created_at": "2026-11-06T05:32:02.433559+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "趁两人注意力都在封皮上，用还能活动的那只手去够祭坛台沿下另一份散落的档案",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 45
+  },
+  "selection": {
+    "action": "趁两人注意力都在封皮上，用还能活动的那只手去够祭坛台沿下另一份散落的档案",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 6,
+    "scores": [
+      {
+        "action": "趁增援者与守卫都在看编号，开口追问寄出包裹的人是谁，逼他们说出镜像人格的真相",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.07347791842401119
+      },
+      {
+        "action": "不再挣扎，向沉睡者承认自己就是被筛出的血，要求它说清红线筛选的下一步",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8354658197979964
+      },
+      {
+        "action": "趁两人注意力都在封皮上，用还能活动的那只手去够祭坛台沿下另一份散落的档案",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.8440352432020376
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 45
+}

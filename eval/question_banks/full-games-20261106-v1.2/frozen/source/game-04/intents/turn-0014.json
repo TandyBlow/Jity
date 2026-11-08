@@ -1,0 +1,46 @@
+{
+  "before_sha256": "55943b5933a2ebd86d04439bcbf2f5cb66555bb8bd07415e81ad99e5218ea1d0",
+  "created_at": "2026-11-06T06:06:21.629983+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 10
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "转身面向走廊深处，看清那声回应是从哪扇门后传来的",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 14
+  },
+  "selection": {
+    "action": "转身面向走廊深处，看清那声回应是从哪扇门后传来的",
+    "option_index": 2,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 10,
+    "scores": [
+      {
+        "action": "听诺诺的，退到灯下远离投影屏，问她这鳞纹到底是什么",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.4956362145808082
+      },
+      {
+        "action": "趁诺诺分神，伸手去按投影屏上那片鳞纹，看它会不会有反应",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.7478898928687034
+      },
+      {
+        "action": "转身面向走廊深处，看清那声回应是从哪扇门后传来的",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.863096093951816
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 14
+}

@@ -1,0 +1,12 @@
+{
+  "bank_version": "1.2.0-review",
+  "evidence_references": 200,
+  "inputs": 36,
+  "limits": "Structural/provenance validation only. Semantic audit and rubrics remain pending human review.",
+  "model_experiments": "not_run",
+  "original_seal_checked": true,
+  "questions": 12,
+  "review_status": "pending_human_review",
+  "scoring_points": 33,
+  "status": "passed"
+}

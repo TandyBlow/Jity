@@ -1,0 +1,52 @@
+{
+  "before_sha256": "5074f7a48b237d71b2ad35bfabc305dc5a7a0892d0f77a17113f12582a53da75",
+  "created_at": "2026-11-06T05:31:47.961237+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 15
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "趁守卫回头分神、压制松动的瞬间，伸手去够台沿外那半截露出编号的档案封皮",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 44
+  },
+  "selection": {
+    "action": "趁守卫回头分神、压制松动的瞬间，伸手去够台沿外那半截露出编号的档案封皮",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 15,
+    "scores": [
+      {
+        "action": "趁守卫回头分神、压制松动的瞬间，伸手去够台沿外那半截露出编号的档案封皮",
+        "index": 0,
+        "score": 3,
+        "tie_break": 0.6837546635504208
+      },
+      {
+        "action": "不再挣扎，向来人开口，把守卫刚说的红线筛选和编号的事摆到台面上",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.3770363693009887
+      },
+      {
+        "action": "放弃档案，趁压制松动翻身脱离守卫，退向侧门外的雨里",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.667766102743602
+      },
+      {
+        "action": "低声追问守卫，那个编号对应的宿舍楼里住过谁",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.5682077137948099
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 44
+}

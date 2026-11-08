@@ -1,0 +1,46 @@
+{
+  "before_sha256": "bbfbfe6371fb0d6eefbee86ca9d21d977d59a2061e941f12c044fa9319fefd7c",
+  "created_at": "2026-11-06T06:13:00.521816+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "让兜帽人带路深入旧维护通道，直奔那个被封闭的隔间",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 47
+  },
+  "selection": {
+    "action": "让兜帽人带路深入旧维护通道，直奔那个被封闭的隔间",
+    "option_index": 0,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "让兜帽人带路深入旧维护通道，直奔那个被封闭的隔间",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.9457635029116743
+      },
+      {
+        "action": "先让诺诺熄灯，三人贴墙伏低，等第二组脚步声过去再决定",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.29776274607039477
+      },
+      {
+        "action": "把编号抄录和簧片交给兜帽人核对，确认隔间位置后再行动",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.31717978784299283
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 47
+}

@@ -1,0 +1,475 @@
+{
+  "head": 13,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": null,
+    "anchor_completions": [],
+    "current_location": "主楼地下二层旧档案室",
+    "dialogue": [
+      {
+        "speaker": "诺诺",
+        "text": "进度条卡那一下，不是卡，是有人在另一头读同一份记录。你备份成功，对方大概也知道你备份成功了。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "维护通道通向旧终端那片区域，现在过去，趁对方还没收拾干净。或者留在这儿，先把卡里的日志拆开看，弄明白那串报废编号到底挂在哪。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "主楼地下二层旧档案室",
+      "items_removed": [],
+      "items_upserted": [
+        {
+          "aliases": [],
+          "description": "新生报到期间的受限权限凭证，现存有取件记录与终端日志备份。",
+          "location": "玩家手中",
+          "name": "临时通行卡",
+          "notes": "卡面边缘新增一道极细暗纹，触感偏凉",
+          "status": "owned",
+          "transition": ""
+        }
+      ],
+      "key_event": "玩家将取件记录与终端日志备份到通行卡，进度条卡顿后完成，卡面出现暗纹，诺诺提出追查或分析两条路线。",
+      "npcs_upserted": [
+        {
+          "current_location": "主楼地下二层旧档案室",
+          "description": "红发女生，行动直接、观察敏锐",
+          "name": "诺诺",
+          "notes": "察觉备份时对方也在读取记录，提出追查或分析两条路线",
+          "relationship": "同行引导者，态度警觉",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常",
+        "current_goal": "在追查旧终端与分析备份日志之间做出选择",
+        "danger_level": "medium",
+        "notes": "备份成功，但可能已被对方察觉"
+      },
+      "quests_upserted": [
+        {
+          "description": "追查已报废终端的位置，确认冒充者身份",
+          "name": "三个预备任务",
+          "notes": "备份已完成，卡面出现异常暗纹",
+          "objective": "选择追查维护通道旧终端或分析备份日志",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "备份进度条卡顿时，档案室深处铁皮柜方向传来轻响，诺诺判断有人在另一头读取同一份记录。",
+          "name": "备份时对方同步读取",
+          "notes": "暗示冒充者或同伙仍在附近",
+          "source": "诺诺的推断与现场声响",
+          "status": "suspected"
+        },
+        {
+          "description": "备份完成后临时通行卡边缘多出一道极细暗纹，触感比别处凉。",
+          "name": "临时通行卡暗纹",
+          "notes": "可能与备份内容或权限异常有关",
+          "source": "玩家观察",
+          "status": "suspected"
+        }
+      ]
+    },
+    "narration": "你把临时通行卡重新按回读取槽，指尖在触控面板上划出备份指令。屏幕应声暗了一瞬，随即亮起一条细长的进度条。诺诺没有退开，肩膀贴着你的手臂，目光钉在那条缓慢爬升的绿线上。进度条走到三成时忽然停住，数字卡在原地，屏幕边缘泛起一圈极淡的波纹，像水面被什么从底下顶了一下。诺诺的呼吸停了半拍。你听见档案室深处传来一声轻响，来自那排铁皮柜的方向，短促，随即归于安静。进度条又动了，从三成跳到四成，屏幕闪了一下，取件记录里那行伪造签名的墨迹在闪烁中显得比刚才更湿。诺诺低声说别碰屏幕，让它自己走完。绿线爬过七成、八成，最后停在满格，终端轻轻一响，提示备份完成。你抽回通行卡，卡面边缘多了一道极细的暗纹，摸上去比别处凉。诺诺盯着那道纹路看了两秒，才把视线移回你脸上。她说备份是拿到了，可这间屋子刚才那声响不对劲。她抬手指了指档案室尽头那扇半掩的维护通道门，又指了指你手里的卡。两条路，她说，现在得挑一条。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "警觉、催促",
+        "name": "诺诺",
+        "notes": "确认备份成功，注意到卡面暗纹，提出两条路线"
+      }
+    ],
+    "option_checks": [
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "潜行检定",
+        "requires_check": true,
+        "skill": "潜行",
+        "stakes": "成功接近旧终端并保留先机，失败则惊动对方或暴露行踪。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "调查检定",
+        "requires_check": true,
+        "skill": "调查",
+        "stakes": "成功解析日志定位终端，失败只得到部分线索并耗费时间。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      null
+    ],
+    "options": [
+      "立刻沿维护通道追查旧终端的位置",
+      "留在档案室，先分析通行卡里的备份日志",
+      "先问诺诺那道卡面暗纹意味着什么，再决定去向"
+    ],
+    "quests_updated": [
+      {
+        "description": "追查已报废终端的位置，确认冒充者身份；备份日志已取得，待分析或追查",
+        "name": "三个预备任务",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": -2,
+    "scene_prompt": "Dim underground archive room, flickering terminal screen, red-haired girl beside nervous student, iron cabinets, maintenance door ajar"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-03",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 13,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "前情提要：\n\n雨夜，你站在卡塞尔学院大门前，手里那张临时通行卡正发着烫。红发女生诺诺在门柱旁等了你很久，验过卡后只说“权限有点意思”，便带你从侧门入了校。她一路警告：夜里别靠近钟楼，听见动静也别凑热闹。走廊里那些深色投影屏在你经过时无声亮起，映出一座缺角歪斜的钟楼，随即熄灭；深处还传来两声短促的钟响，诺诺的肩线每次都绷紧半分。\n\n报到区里，工作人员在登记板上写下你的名字，名字旁却渗出一片暗红鳞形——诺诺说那是“S级观察对象的识别印记”，并提前把任务单塞给了你。你沉住气，坚持先办完手续，才收下回执与通行卡。随后你到东翼通告栏核对编号，果然找到一张泛黄旧条目，编号一致，分级末尾标着S，正文却被一张新通知压住大半。你指尖刚碰到纸角，墙内管道便传来一声轻响。诺诺拦住你，说抄件不算数，原件在旧档案室——但那里的登记系统“最近不太对劲”，进去前得想清楚：你要查的是任务，还是你自己。\n\n当前目标：前往旧档案室查原件。悬而未决：钟楼异象、S级标记的来历、档案室系统的异常。",
+    "recap_full": "前情提要：\n\n雨夜，你站在卡塞尔学院大门前，手里那张临时通行卡正发着烫。红发女生诺诺在门柱旁等了你很久，验过卡后只说“权限有点意思”，便带你从侧门入了校。她一路警告：夜里别靠近钟楼，听见动静也别凑热闹。走廊里那些深色投影屏在你经过时无声亮起，映出一座缺角歪斜的钟楼，随即熄灭；深处还传来两声短促的钟响，诺诺的肩线每次都绷紧半分。\n\n报到区里，工作人员在登记板上写下你的名字，名字旁却渗出一片暗红鳞形——诺诺说那是“S级观察对象的识别印记”，并提前把任务单塞给了你。你沉住气，坚持先办完手续，才收下回执与通行卡。随后你到东翼通告栏核对编号，果然找到一张泛黄旧条目，编号一致，分级末尾标着S，正文却被一张新通知压住大半。你指尖刚碰到纸角，墙内管道便传来一声轻响。诺诺拦住你，说抄件不算数，原件在旧档案室——但那里的登记系统“最近不太对劲”，进去前得想清楚：你要查的是任务，还是你自己。\n\n当前目标：前往旧档案室查原件。悬而未决：钟楼异象、S级标记的来历、档案室系统的异常。",
+    "revealed_anchors": "[\"anchor-discover-mark\", \"anchor-receive-tasks\", \"anchor-archive-intruder\"]",
+    "session_index": 1,
+    "slot_name": "capture",
+    "turn_in_session": 3,
+    "turns_total": 12
+  },
+  "session_id": "game-03",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 1,
+    "_memory_controller": {
+      "item_aliases": {
+        "登记回执": "登记回执",
+        "预备任务单": "预备任务单"
+      },
+      "narrative_pool": [
+        {
+          "content": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺接引其走侧门入校。诺诺警告勿近钟楼，并回避通行卡权限问题。走廊中投影屏两次闪现缺角钟楼，伴随钟声，诺诺神色紧绷。抵达报到区后，工作人员登记时，玩家名字旁浮现暗红鳞片状标记，工作人员惊愕，诺诺制止触碰。",
+          "created_round": 6,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_1",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "score": 1.4790835393340704
+        },
+        {
+          "content": "玩家在报到区发现暗红鳞形标记，诺诺揭示其为S级观察对象识别印记，并提前交出预备任务单。玩家坚持办完登记手续，获得临时通行卡与回执。随后前往执行部通告栏核对任务编号，发现编号匹配的泛黄条目被部分遮挡，墙后管道异响。诺诺阻止玩家探查，带其进入旧档案室。登记台显示玩家档案在三分钟前被取走，签名伪造但笔迹相似，操作终端ID已报废一年。玩家将取件记录与终端日志备份至临时通行卡，备份过程中进度条异常停顿，档案室深处传来响动。诺诺指出备份可能已被对方察觉，玩家面临选择：前往维护通道调查旧终端，或留下分析日志。",
+          "created_round": 12,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_2",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [],
+          "score": 0.05
+        }
+      ],
+      "nsb": {
+        "episode_counter": 2,
+        "level1": [
+          {
+            "causal_links": [
+              "scene_prev→scene_curr: 玩家出示通行卡并追问权限，引发诺诺对钟楼的警告与投影屏异象",
+              "scene_prev→scene_curr: 玩家坚持询问投影屏钟楼，诺诺推其入门并回避解释，走廊钟声加剧紧张",
+              "scene_prev→scene_curr: 玩家跟随诺诺至报到区，登记时触发红鳞标记，将悬疑推向高潮"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "工作人员",
+              "临时通行卡",
+              "登记板",
+              "投影屏",
+              "钟楼",
+              "侧门",
+              "报到区"
+            ],
+            "episode_id": "ep_L1_1",
+            "importance": 0.8,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "保持active，已交还玩家",
+              "玩家": "完成登记，名字旁出现未知红鳞标记",
+              "诺诺": "对玩家态度从随意转为警惕，肩线紧绷"
+            },
+            "summary": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺接引其走侧门入校。诺诺警告勿近钟楼，并回避通行卡权限问题。走廊中投影屏两次闪现缺角钟楼，伴随钟声，诺诺神色紧绷。抵达报到区后，工作人员登记时，玩家名字旁浮现暗红鳞片状标记，工作人员惊愕，诺诺制止触碰。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 6,
+            "turn_start": 1
+          },
+          {
+            "causal_links": [
+              "scene_prev→scene_curr: 玩家在报到区发现标记并追问诺诺，导致诺诺提前交出任务单，进而促使玩家前往通告栏核对编号。",
+              "scene_prev→scene_curr: 通告栏条目被遮挡且墙后异响，诺诺阻止探查并引导玩家进入档案室，从而发现伪造取件记录。",
+              "scene_prev→scene_curr: 取件记录显示玩家档案被冒领，玩家决定备份日志，备份过程中的异常停顿暗示对方察觉，引出后续路线选择。"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "工作人员",
+              "临时通行卡",
+              "预备任务单",
+              "登记回执",
+              "S级观察对象识别印记",
+              "执行部通告栏",
+              "旧档案室",
+              "登记台",
+              "维护通道",
+              "报废终端ID"
+            ],
+            "episode_id": "ep_L1_2",
+            "importance": 0.8,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "获得并激活，备份后卡面边缘新增一道极细暗纹，触感冰凉",
+              "玩家": "被记录为三分钟前取走自己档案的取件人（签名伪造），实际刚进入档案室",
+              "登记回执": "登记完成后获得，玩家收好",
+              "诺诺": "对玩家的沉着感到意外并流露打量，在档案室事件中首次表现出不确定",
+              "预备任务单": "由诺诺提前交给玩家，玩家收好"
+            },
+            "summary": "玩家在报到区发现暗红鳞形标记，诺诺揭示其为S级观察对象识别印记，并提前交出预备任务单。玩家坚持办完登记手续，获得临时通行卡与回执。随后前往执行部通告栏核对任务编号，发现编号匹配的泛黄条目被部分遮挡，墙后管道异响。诺诺阻止玩家探查，带其进入旧档案室。登记台显示玩家档案在三分钟前被取走，签名伪造但笔迹相似，操作终端ID已报废一年。玩家将取件记录与终端日志备份至临时通行卡，备份过程中进度条异常停顿，档案室深处传来响动。诺诺指出备份可能已被对方察觉，玩家面临选择：前往维护通道调查旧终端，或留下分析日志。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 12,
+            "turn_start": 7
+          }
+        ],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": []
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 12
+      },
+      "pending": true,
+      "protected_turns": [],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 12,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "登记回执",
+          "last_seen_turn": 8,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "fdaa459604d158258aac9fb4acde24dd"
+    },
+    "_scene_prompt": "",
+    "current_location": "主楼地下二层旧档案室",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "新生报到期间的受限权限凭证，现存有取件记录与终端日志备份。",
+        "location": "玩家手中",
+        "name": "临时通行卡",
+        "notes": "卡面边缘新增一道极细暗纹，触感偏凉",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "执行部暗纹纸面，列有三个预备任务。",
+        "location": "玩家外套内袋",
+        "name": "预备任务单",
+        "notes": "已收好，尚未展开阅读。",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "报到区签发的登记完成回执，附日期与签章。",
+        "location": "玩家身上",
+        "name": "登记回执",
+        "notes": "可作身份与流程凭证。",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "主楼地下二层旧档案室",
+        "description": "红发女生，行动直接、观察敏锐",
+        "name": "诺诺",
+        "notes": "察觉备份时对方也在读取记录，提出追查或分析两条路线",
+        "relationship": "同行引导者，态度警觉",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "正常",
+      "current_goal": "在追查旧终端与分析备份日志之间做出选择",
+      "danger_level": "medium",
+      "notes": "备份成功，但可能已被对方察觉"
+    },
+    "quests": [
+      {
+        "description": "登记手续已完成。",
+        "name": "完成入校报到",
+        "notes": "临时通行卡与回执在手。",
+        "objective": "已达成",
+        "status": "completed"
+      },
+      {
+        "description": "追查已报废终端的位置，确认冒充者身份",
+        "name": "三个预备任务",
+        "notes": "备份已完成，卡面出现异常暗纹",
+        "objective": "选择追查维护通道旧终端或分析备份日志",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "诺诺拽走玩家，透露档案室系统被人动过；抵达后登记台显示档案三分钟前被玩家本人取走。",
+      "调出取件记录，确认签名系伪造，操作来自一年前报废的旧终端，位置指向维护通道。",
+      "玩家将取件记录与终端日志备份到通行卡，进度条卡顿后完成，卡面出现暗纹，诺诺提出追查或分析两条路线。"
+    ],
+    "sanity": 78,
+    "turn": 12,
+    "world_facts": [
+      {
+        "description": "诺诺提醒校园里有些地方晚上不该去，尤其是钟楼那一带",
+        "name": "钟楼夜间禁区",
+        "notes": "尚未验证原因",
+        "source": "诺诺的提醒",
+        "status": "suspected"
+      },
+      {
+        "description": "侧门内走廊中段一块深色玻璃面板再次亮起，映出缺角钟楼轮廓后熄灭",
+        "name": "走廊投影屏异常",
+        "notes": "诺诺肩线绷紧但未解释",
+        "source": "玩家亲眼所见",
+        "status": "suspected"
+      },
+      {
+        "description": "走廊尽头传来第二声钟响，比第一声更近，诺诺脚步几不可察地顿了一下",
+        "name": "走廊钟响",
+        "notes": "钟声来源仍未查明",
+        "source": "玩家亲耳所闻",
+        "status": "suspected"
+      },
+      {
+        "description": "名字旁边忽然浮出一点暗红，起初只是一小片，接着向两侧舒展，边缘裂成细密的纹路，一片鳞的形状在纸面上成形",
+        "name": "发现红色标记",
+        "notes": "工作人员与诺诺均注意到，诺诺警告不要触碰",
+        "source": "报到区登记板",
+        "status": "known"
+      },
+      {
+        "description": "诺诺把任务单塞进你手里，指尖冰凉，说三个预备任务都在上面",
+        "name": "接受三个预备任务",
+        "notes": "S级观察对象识别印记与任务单相关",
+        "source": "诺诺坦白",
+        "status": "known"
+      },
+      {
+        "description": "标记是S级观察对象的识别印记，任务单上会有对应说明",
+        "name": "红色鳞片标记与S级观察对象相关",
+        "notes": "登记板上的暗红鳞形",
+        "source": "诺诺坦白",
+        "status": "known"
+      },
+      {
+        "description": "玩家被学院流程标记为 S级观察对象。",
+        "name": "S级观察对象",
+        "notes": "",
+        "source": "system_inference",
+        "status": "known"
+      },
+      {
+        "description": "执行部学生正在观察玩家，但不一定被允许主动接触。",
+        "name": "执行部观察玩家",
+        "notes": "",
+        "source": "system_inference",
+        "status": "known"
+      },
+      {
+        "description": "工作人员绕开红色标记完成登记，撕下回执联连同通行卡推回玩家面前。",
+        "name": "登记完成",
+        "notes": "登记页被翻过，工作人员不愿多看。",
+        "source": "报到区登记流程",
+        "status": "known"
+      },
+      {
+        "description": "通告栏第三排靠左的泛黄条目编号与任务单完全一致，条目关联S级观察对象，原件在旧档案室。",
+        "name": "通告栏条目与任务单编号对应",
+        "notes": "条目被新通知压住大半。",
+        "source": "玩家核对通告栏",
+        "status": "known"
+      },
+      {
+        "description": "诺诺透露档案室登记系统最近被人动过手脚，登记台显示玩家档案三分钟前被取走，但玩家刚抵达。",
+        "name": "档案室登记系统异常",
+        "notes": "取件人一栏写着玩家自己的名字。",
+        "source": "诺诺的警告与登记台屏幕记录",
+        "status": "known"
+      },
+      {
+        "description": "记录显示你的档案确实在三分钟前被取走，取件人一栏的签名赫然是你的名字",
+        "name": "发现冒充者痕迹",
+        "notes": "签名笔迹有细微抖动，墨迹未干；操作来自已注销旧终端ID",
+        "source": "登记台取件记录",
+        "status": "known"
+      },
+      {
+        "description": "旧终端的位置在日志末尾标着，指向档案室深处那条维护通道",
+        "name": "旧终端位置指向维护通道",
+        "notes": "该终端一年前已报废",
+        "source": "系统日志",
+        "status": "known"
+      },
+      {
+        "description": "备份进度条卡顿时，档案室深处铁皮柜方向传来轻响，诺诺判断有人在另一头读取同一份记录。",
+        "name": "备份时对方同步读取",
+        "notes": "暗示冒充者或同伙仍在附近",
+        "source": "诺诺的推断与现场声响",
+        "status": "suspected"
+      },
+      {
+        "description": "备份完成后临时通行卡边缘多出一道极细暗纹，触感比别处凉。",
+        "name": "临时通行卡暗纹",
+        "notes": "可能与备份内容或权限异常有关",
+        "source": "玩家观察",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 12,
+  "uuid_counter": 42
+}

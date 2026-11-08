@@ -1,0 +1,414 @@
+{
+  "head": 8,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": {
+      "check": {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "操作检定",
+        "requires_check": true,
+        "skill": "操作",
+        "stakes": "成功让名单产生反应并暴露线索，失败则触发警报或引起迎接者注意。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      "degree": "失败",
+      "option_index": 2,
+      "outcome": "failure",
+      "roll": 13
+    },
+    "anchor_completions": [
+      {
+        "anchor_id": "anchor-discover-mark",
+        "evidence": "投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。"
+      }
+    ],
+    "current_location": "卡塞尔学院新生报到处",
+    "dialogue": [
+      {
+        "speaker": "诺诺",
+        "text": "手拿开。那槽子不是给你刷卡的，你刚才等于在门上敲了一记。"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "名单冻住了，他看过来了。别回头，跟我往任务台那边走，脚步别快。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院新生报到处",
+      "items_removed": [],
+      "items_upserted": [
+        {
+          "aliases": [],
+          "description": "新生报到期间的受限权限凭证，卡面曾泛出异常微光并发烫。",
+          "location": "玩家手中",
+          "name": "临时通行卡",
+          "notes": "按在感应区后无反应，反而触发低鸣，卡面微光被吸走。",
+          "status": "owned",
+          "transition": ""
+        }
+      ],
+      "key_event": "通行卡按上感应区触发低鸣，名单冻结，玩家名字旁浮现红色鳞片状标记，迎接者转头靠近。",
+      "npcs_upserted": [
+        {
+          "current_location": "报到大厅投影屏旁",
+          "description": "红发女生，行动直接、观察力敏锐。",
+          "name": "诺诺",
+          "notes": "按住玩家手腕，警告感应区不是读卡用的，示意往任务台移动。",
+          "relationship": "引导中带警觉，开始主动护着你",
+          "status": "present"
+        },
+        {
+          "current_location": "报到大厅另一侧",
+          "description": "报到大厅的迎接者，动作异于常人。",
+          "name": "高年级迎接者",
+          "notes": "听到低鸣后整个上半身一起转头看向玩家。",
+          "relationship": "被惊动，态度未明",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "正常，手腕被诺诺按住",
+        "current_goal": "在迎接者靠近前决定如何应对警报",
+        "danger_level": "high",
+        "notes": "感应区触发警报，名单冻结，迎接者已被惊动。"
+      },
+      "quests_upserted": [
+        {
+          "description": "查看任务单内容并确认宿舍楼编号来源。",
+          "name": "完成入校报到",
+          "notes": "感应区触发警报，名单冻结后红边褪去但未恢复滚动。",
+          "objective": "在迎接者靠近前决定如何应对警报",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。",
+          "name": "发现红色标记",
+          "notes": "红色鳞片状标记出现在玩家名字旁。",
+          "source": "报到大厅投影屏",
+          "status": "known"
+        },
+        {
+          "description": "诺诺称那槽子不是给玩家刷卡的，按上去等于在门上敲了一记。",
+          "name": "感应区并非通行卡读卡器",
+          "notes": "感应区触发低鸣与名单冻结。",
+          "source": "诺诺的警告",
+          "status": "suspected"
+        },
+        {
+          "description": "迎接者转头时整个上半身一起转，脖颈没有先动。",
+          "name": "迎接者动作异常",
+          "notes": "被低鸣惊动后看向玩家。",
+          "source": "玩家观察",
+          "status": "suspected"
+        }
+      ]
+    },
+    "narration": "你左手接过那叠预备任务单，右手顺势把临时通行卡按向投影屏下方的感应区。卡面贴上凹槽的一瞬，什么也没有发生。没有亮灯，没有提示音，连卡面那层微光都像被吸走了。你正要收回手，感应区内部忽然传出一声短促的低鸣，声音不大，却像从地砖底下钻上来，顺着脚踝一路爬进膝盖。投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。大厅另一侧，一直垂手站立的迎接者转过头来。动作不快，但整个上半身一起转，脖颈没有先动。诺诺的手已经压在你手腕上，力道很重，把你从感应区往回拽了半步。她压低声音，气息扫过你耳侧，说别按了，那东西不是读卡的。她的视线越过你的肩膀，落在迎接者身上，又迅速收回来。投影屏上的红边正在一点点褪去，名单却迟迟没有恢复滚动。你听见大厅深处有第二声低鸣，比第一声更沉，像有什么在回应。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "警觉、护着你",
+        "name": "诺诺",
+        "notes": "及时按住你的手腕，警告感应区不是读卡用的，并示意你往任务台移动。"
+      },
+      {
+        "disposition": "被惊动、正在靠近",
+        "name": "高年级迎接者",
+        "notes": "听到低鸣后整个上半身一起转头看向你，尚未开口。"
+      }
+    ],
+    "option_checks": [
+      null,
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "观察检定",
+        "requires_check": true,
+        "skill": "观察",
+        "stakes": "成功看清红边的形状与规律，失败则被迎接者逼近并暴露意图。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      {
+        "difficulty": "极难",
+        "expression": "1d20 ≥ 19",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功稳住迎接者并套出感应区用途，失败则引起更明确的注意。",
+        "system": "通用 d20",
+        "target": 19
+      }
+    ],
+    "options": [
+      "顺着诺诺的力道退向任务台，边走边低声问她那槽子到底是做什么用的",
+      "不退，先盯着投影屏上自己名字旁那圈红边，看它会不会再亮起来",
+      "趁迎接者还没走近，主动朝他走过去，先开口解释自己按错了地方"
+    ],
+    "quests_updated": [
+      {
+        "description": "查看任务单内容并确认宿舍楼编号来源；感应区触发警报后，迎接者已被惊动。",
+        "name": "完成入校报到",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": -2,
+    "scene_prompt": "Gothic registration hall, frozen projection screen with faint red edge, red-haired girl pulling player's wrist, tall attendant turning head, dim light"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-02",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 8,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[\"anchor-discover-mark\"]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 7,
+    "turns_total": 7
+  },
+  "session_id": "game-02",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {
+        "预备任务单": "预备任务单"
+      },
+      "narrative_pool": [
+        {
+          "content": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺验卡后指出卡发烫异常，暗示有东西已注意到玩家。玩家跟随诺诺穿过回廊，途中检查卡片时纹路颤动，并注意到一道车灯熄灭后有人可能窥视。诺诺催促进入主楼，玩家故意落后半步观察，但被诺诺叫住，只瞥见迎接者侧脸残影。进入报到大厅后，投影屏显示玩家名字及未申请的宿舍编号，诺诺递给玩家一叠预备任务单，要求先拿任务单再问缘由。",
+          "created_round": 6,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_1",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [
+            6
+          ],
+          "score": 0.49925005624493796
+        }
+      ],
+      "nsb": {
+        "episode_counter": 1,
+        "level1": [
+          {
+            "causal_links": [
+              "scene_T1→scene_T2: 玩家主动向诺诺出示通行卡并询问流程，触发诺诺验卡并指出卡发烫异常。",
+              "scene_T2→scene_T3: 诺诺的警告引发玩家追问卡烫的含义，诺诺解释通行卡感应未登记气息，暗示有东西已注意到玩家。",
+              "scene_T3→scene_T4: 玩家在回廊停步检查卡片，确认纹路颤动与雨声节奏不符，加深悬疑。",
+              "scene_T4→scene_T5: 检查卡片时远处车灯扫过并熄灭，玩家警觉并追踪车灯方向，诺诺提醒不要暴露观察意图。",
+              "scene_T5→scene_T6: 主楼入口灯闪、门开，诺诺催促进入；玩家故意落后观察迎接者，但被诺诺叫住，仅见残影；进入大厅后获得预备任务单和未申请的宿舍编号。"
+            ],
+            "entities_involved": [
+              "玩家",
+              "诺诺",
+              "临时通行卡",
+              "预备任务单",
+              "卡塞尔学院",
+              "主楼报到大厅",
+              "投影屏",
+              "迎接者"
+            ],
+            "episode_id": "ep_L1_1",
+            "importance": 0.7,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "保持active，但纹路颤动，显示对未登记气息的感应。",
+              "玩家": "获得预备任务单；被分配未申请的宿舍楼编号；名字已列入新生名单。",
+              "诺诺": "从等待者变为引导者，对玩家态度从戏谑转为严肃提醒。"
+            },
+            "summary": "雨夜，玩家持临时通行卡抵达卡塞尔学院，红发女生诺诺验卡后指出卡发烫异常，暗示有东西已注意到玩家。玩家跟随诺诺穿过回廊，途中检查卡片时纹路颤动，并注意到一道车灯熄灭后有人可能窥视。诺诺催促进入主楼，玩家故意落后半步观察，但被诺诺叫住，只瞥见迎接者侧脸残影。进入报到大厅后，投影屏显示玩家名字及未申请的宿舍编号，诺诺递给玩家一叠预备任务单，要求先拿任务单再问缘由。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 6,
+            "turn_start": 1
+          }
+        ],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": [
+          "[T7 玩家]: 接过任务单，但把临时通行卡按在投影屏下方的感应区，看名单会不会有反应\n[T7 主持人]: 你左手接过那叠预备任务单，右手顺势把临时通行卡按向投影屏下方的感应区。卡面贴上凹槽的一瞬，什么也没有发生。没有亮灯，没有提示音，连卡面那层微光都像被吸走了。你正要收回手，感应区内部忽然传出一声短促的低鸣，声音不大，却像从地砖底下钻上来，顺着脚踝一路爬进膝盖。投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。大厅另一侧，一直垂手站立的迎接者转过头来。动作不快，但整个上半身一起转，脖颈没有先动。诺诺的手已经压在你手腕上，力道很重，把你从感应区往回拽了半步。她压低声音，气息扫过你耳侧，说别按了，那东西不是读卡的。她的视线越过你的肩膀，落在迎接者身上，又迅速收回来。投影屏上的红边正在一点点褪去，名单却迟迟没有恢复滚动。你听见大厅深处有第二声低鸣，比第一声更沉，像有什么在回应。\n诺诺: 手拿开。那槽子不是给你刷卡的，你刚才等于在门上敲了一记。\n诺诺: 名单冻住了，他看过来了。别回头，跟我往任务台那边走，脚步别快。\n[权威物品状态] {\"临时通行卡\": \"active\", \"预备任务单\": \"active\"}"
+        ]
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 7
+      },
+      "pending": false,
+      "protected_turns": [
+        7
+      ],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 7,
+          "notes": "",
+          "state": "active"
+        },
+        {
+          "item_name": "预备任务单",
+          "last_seen_turn": 6,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "99f69fdb381f5bfa94920387b19785bd"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院新生报到处",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "新生报到期间的受限权限凭证，卡面曾泛出异常微光并发烫。",
+        "location": "玩家手中",
+        "name": "临时通行卡",
+        "notes": "按在感应区后无反应，反而触发低鸣，卡面微光被吸走。",
+        "status": "owned"
+      },
+      {
+        "aliases": [],
+        "description": "诺诺交给你的薄纸，列着三项预备任务，边缘有执行部印章。",
+        "location": "你手中",
+        "name": "预备任务单",
+        "notes": "尚未细看内容。",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "报到大厅投影屏旁",
+        "description": "红发女生，行动直接、观察力敏锐。",
+        "name": "诺诺",
+        "notes": "按住玩家手腕，警告感应区不是读卡用的，示意往任务台移动。",
+        "relationship": "引导中带警觉，开始主动护着你",
+        "status": "present"
+      },
+      {
+        "current_location": "报到大厅另一侧",
+        "description": "报到大厅的迎接者，动作异于常人。",
+        "name": "高年级迎接者",
+        "notes": "听到低鸣后整个上半身一起转头看向玩家。",
+        "relationship": "被惊动，态度未明",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "正常，手腕被诺诺按住",
+      "current_goal": "在迎接者靠近前决定如何应对警报",
+      "danger_level": "high",
+      "notes": "感应区触发警报，名单冻结，迎接者已被惊动。"
+    },
+    "quests": [
+      {
+        "description": "查看任务单内容并确认宿舍楼编号来源。",
+        "name": "完成入校报到",
+        "notes": "感应区触发警报，名单冻结后红边褪去但未恢复滚动。",
+        "objective": "在迎接者靠近前决定如何应对警报",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "玩家行动：开始游戏；结果：你站在卡塞尔学院的大门前。",
+      "玩家向诺诺出示通行卡，诺诺确认卡为真但指出发烫异常，示意跟其入校。",
+      "诺诺边走边解释通行卡发烫与未登记气息有关，提醒收好卡，二人抵达主楼回廊。",
+      "玩家在回廊检查通行卡，雨声与光线干扰判断，仅察觉卡面纹路震颤，诺诺催促进入主楼报到。",
+      "玩家行动：在回廊里留意那道车灯熄灭的方向，看看有没有人跟过来；结果：你侧过身，目光追着那道车灯熄灭的方向探去。",
+      "诺诺催促你进门，你只看到迎接者侧脸残影；名单末尾你的名字旁标着未申请的宿舍楼编号，诺诺递来任务单。",
+      "通行卡按上感应区触发低鸣，名单冻结，玩家名字旁浮现红色鳞片状标记，迎接者转头靠近。"
+    ],
+    "sanity": 85,
+    "turn": 7,
+    "world_facts": [
+      {
+        "description": "诺诺指出临时通行卡刚才烫得不太正常，卡面曾泛出微光。",
+        "name": "通行卡异常发烫",
+        "notes": "可能与血统反应或权限异常有关",
+        "source": "诺诺的观察",
+        "status": "suspected"
+      },
+      {
+        "description": "诺诺称通行卡认的是登记过的气息，未登记者会先引发反应。",
+        "name": "通行卡感应未登记气息",
+        "notes": "她未说明具体会引来什么",
+        "source": "诺诺在回廊下的解释",
+        "status": "suspected"
+      },
+      {
+        "description": "卡面纹路在雨声中微微震颤，节奏与雨声对不上，暗示有东西仍在注意。",
+        "name": "通行卡纹路震颤",
+        "notes": "温度无法确定，但震颤可感知",
+        "source": "玩家在回廊检查通行卡",
+        "status": "suspected"
+      },
+      {
+        "description": "玩家追查车灯方向失败，只捕捉到模糊尾灯残影与远去引擎声，无法确认是否有人跟来。",
+        "name": "车灯来源未能确认",
+        "notes": "诺诺察觉玩家迟疑并出言警告",
+        "source": "回廊观察失败",
+        "status": "suspected"
+      },
+      {
+        "description": "投影屏新生名单末尾，你的名字旁标注了一个你从未申请过的宿舍楼编号。",
+        "name": "名单上的未申请宿舍楼编号",
+        "notes": "编号来源不明。",
+        "source": "报到大厅投影屏",
+        "status": "known"
+      },
+      {
+        "description": "进门时迎接者侧过脸，嘴角似乎动了一下，但被诺诺催促打断，未能看清细节。",
+        "name": "迎接者的异常残影",
+        "notes": "需要进一步确认。",
+        "source": "主楼入口",
+        "status": "suspected"
+      },
+      {
+        "description": "投影屏上的新生名单猛地停住，滚动的行次僵在半空，你的名字和那个未申请的宿舍楼编号被钉在光里，边缘泛起一层极淡的红。",
+        "name": "发现红色标记",
+        "notes": "红色鳞片状标记出现在玩家名字旁。",
+        "source": "报到大厅投影屏",
+        "status": "known"
+      },
+      {
+        "description": "诺诺称那槽子不是给玩家刷卡的，按上去等于在门上敲了一记。",
+        "name": "感应区并非通行卡读卡器",
+        "notes": "感应区触发低鸣与名单冻结。",
+        "source": "诺诺的警告",
+        "status": "suspected"
+      },
+      {
+        "description": "迎接者转头时整个上半身一起转，脖颈没有先动。",
+        "name": "迎接者动作异常",
+        "notes": "被低鸣惊动后看向玩家。",
+        "source": "玩家观察",
+        "status": "suspected"
+      }
+    ]
+  },
+  "turn": 7,
+  "uuid_counter": 22
+}

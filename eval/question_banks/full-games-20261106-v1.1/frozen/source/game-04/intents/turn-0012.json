@@ -1,0 +1,46 @@
+{
+  "before_sha256": "9bac604efd4c07690f6dff4a8b26b19a9f5b2946eafb3dd8682ce7c3a2a073b4",
+  "created_at": "2026-11-06T06:05:58.955858+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 5
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "顺着诺诺刚才望向的方向，走向走廊深处那片暗处，看灯照不到的地方有什么",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 12
+  },
+  "selection": {
+    "action": "顺着诺诺刚才望向的方向，走向走廊深处那片暗处，看灯照不到的地方有什么",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 5,
+    "scores": [
+      {
+        "action": "不再追问诺诺，走近投影屏，仔细看清自己名字旁那片鳞纹的走向与范围",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.09780851765445642
+      },
+      {
+        "action": "顺着诺诺刚才望向的方向，走向走廊深处那片暗处，看灯照不到的地方有什么",
+        "index": 1,
+        "score": 4,
+        "tie_break": 0.551914438838396
+      },
+      {
+        "action": "把话题从清桌的人转到诺诺身上，问她既然没资格点灯，为什么偏偏守在这里等新生",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.886413434269124
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 12
+}

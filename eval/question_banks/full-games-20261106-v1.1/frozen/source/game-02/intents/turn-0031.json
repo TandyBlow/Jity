@@ -1,0 +1,46 @@
+{
+  "before_sha256": "69c60efd68ec75a1f11751dc7f9a0664bcfac5d5d85b1c116e8aaf4b93e0996c",
+  "created_at": "2026-11-06T05:29:17.475087+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 4
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "让诺诺继续摸那道刻痕，顺着墙后的风找能推开或撬开的缝，赌监视者不敢挤进窄岔口",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 31
+  },
+  "selection": {
+    "action": "让诺诺继续摸那道刻痕，顺着墙后的风找能推开或撬开的缝，赌监视者不敢挤进窄岔口",
+    "option_index": 0,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 4,
+    "scores": [
+      {
+        "action": "让诺诺继续摸那道刻痕，顺着墙后的风找能推开或撬开的缝，赌监视者不敢挤进窄岔口",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.7684895926493639
+      },
+      {
+        "action": "转身面对监视者，用搬运单和三年前封存箱的事逼他开口，问清钟楼那边到底是谁在催",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.32301151099420644
+      },
+      {
+        "action": "把黄铜封条残片从诺诺手里要回来，拿残片断口去对墙上刻痕，当场验证这面墙和三年前包裹的关系",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.6565123056077116
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 31
+}

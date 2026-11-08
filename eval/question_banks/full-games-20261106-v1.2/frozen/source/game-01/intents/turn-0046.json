@@ -1,0 +1,46 @@
+{
+  "before_sha256": "0eb6f98c6826d83675109d964f0ad7e6156e8e996d3900006449fdfb139ab266",
+  "created_at": "2026-11-06T05:22:42.554788+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 1,
+      "roll": 7
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "先靠在墙边喘息，观察影子是否真的被冷白光拦住",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 46
+  },
+  "selection": {
+    "action": "先靠在墙边喘息，观察影子是否真的被冷白光拦住",
+    "option_index": 1,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 7,
+    "scores": [
+      {
+        "action": "推开铁门，进入冷白光透出的区域",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6356924191699134
+      },
+      {
+        "action": "先靠在墙边喘息，观察影子是否真的被冷白光拦住",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.9889259491014907
+      },
+      {
+        "action": "回头再确认一次刻痕序列的局部特征，趁影子停住",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7465237084073039
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 46
+}

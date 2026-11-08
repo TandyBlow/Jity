@@ -1,0 +1,48 @@
+{
+  "before_sha256": "aacc92a754ba02dd5a8a65f33ff9bc8a8f34a2115cf7669ed80d3dc5831dac93",
+  "created_at": "2026-11-06T05:30:45.636940+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "把箱子往守卫脚边一放，举起双手后退，争取时间观察侧门和那扇亮灯的窗",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 39
+  },
+  "selection": {
+    "action": "把箱子往守卫脚边一放，举起双手后退，争取时间观察侧门和那扇亮灯的窗",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 2,
+    "scores": [
+      {
+        "action": "趁守卫手还扣着门环、里面的人未出来，抱着箱子硬闯侧门",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.4753963867301947
+      },
+      {
+        "action": "转身退回矮墙后，沿雨幕掩护撤离，先甩开台阶下那两个暗哨",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.5924167061469168
+      },
+      {
+        "action": "把箱子往守卫脚边一放，举起双手后退，争取时间观察侧门和那扇亮灯的窗",
+        "index": 2,
+        "score": 3,
+        "tie_break": 0.4635421205768334
+      },
+      {
+        "action": "冲守卫喊出箱子里封条编号与三年前寄件的事，逼他在里面的人出来前表态",
+        "index": 3,
+        "score": 0,
+        "tie_break": 0.2192024552021249
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 39
+}

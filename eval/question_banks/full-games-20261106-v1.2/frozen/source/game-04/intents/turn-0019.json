@@ -1,0 +1,46 @@
+{
+  "before_sha256": "1ec2d93f0d3a4a5cd42aff63361b9f844ea0f7df39c614e16b60c328a03b54df",
+  "created_at": "2026-11-06T06:07:19.299224+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 17
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "站到投影屏正前方，把名字旁那片正在扩散的鳞纹完整看一遍，记下它蔓延的方向",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 19
+  },
+  "selection": {
+    "action": "站到投影屏正前方，把名字旁那片正在扩散的鳞纹完整看一遍，记下它蔓延的方向",
+    "option_index": 0,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 17,
+    "scores": [
+      {
+        "action": "站到投影屏正前方，把名字旁那片正在扩散的鳞纹完整看一遍，记下它蔓延的方向",
+        "index": 0,
+        "score": 4,
+        "tie_break": 0.9773159603679198
+      },
+      {
+        "action": "先不碰屏幕，问诺诺这标记以前有没有在别的名字旁出现过",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.9234145259677059
+      },
+      {
+        "action": "把裂开的通行卡举到投影屏的光下，比对卡面裂纹和鳞纹的走向",
+        "index": 2,
+        "score": 4,
+        "tie_break": 0.2598864541313456
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 19
+}

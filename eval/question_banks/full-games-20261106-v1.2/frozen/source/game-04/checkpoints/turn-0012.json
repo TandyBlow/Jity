@@ -1,0 +1,434 @@
+{
+  "head": 13,
+  "model": "deepseek-flash",
+  "output": {
+    "action_check": {
+      "check": {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "潜行检定",
+        "requires_check": true,
+        "skill": "潜行",
+        "stakes": "成功靠近暗处发现线索，失败则惊动走廊里的东西或让诺诺出手拦你。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      "degree": "失败",
+      "option_index": 1,
+      "outcome": "failure",
+      "roll": 5
+    },
+    "anchor_completions": [],
+    "current_location": "卡塞尔学院门厅",
+    "dialogue": [
+      {
+        "speaker": "诺诺",
+        "text": "暗处那东西不是新生该碰的。你连它是什么都没弄明白，就想一个人摸过去？"
+      },
+      {
+        "speaker": "诺诺",
+        "text": "灯下还有你该看的东西。别把命丢在灯照不到的地方。"
+      }
+    ],
+    "game_over": false,
+    "game_over_reason": "",
+    "health_delta": 0,
+    "items_gained": [],
+    "items_lost": [],
+    "memory_updates": {
+      "current_location": "卡塞尔学院门厅",
+      "items_removed": [],
+      "items_upserted": [
+        {
+          "aliases": [],
+          "description": "边缘暗红的临时通行卡，热度随门厅灯光明灭变化",
+          "location": "玩家口袋",
+          "name": "临时通行卡",
+          "notes": "被拦回灯下时再度发烫",
+          "status": "owned",
+          "transition": ""
+        }
+      ],
+      "key_event": "玩家潜行走向走廊暗处失败，被诺诺拦回灯下，暗处传来摩擦声与门轴转动声。",
+      "npcs_upserted": [
+        {
+          "current_location": "卡塞尔学院门厅",
+          "description": "红发女生，观察敏锐，负责引导新生",
+          "name": "诺诺",
+          "notes": "拦下玩家并警告暗处之物非新生可碰",
+          "relationship": "审视中带警示，开始主动保护玩家",
+          "status": "present"
+        }
+      ],
+      "player_status_patch": {
+        "condition": "被诺诺拦回灯下，心跳未平",
+        "current_goal": "在灯下弄清红色鳞纹含义，避开走廊深处",
+        "danger_level": "high",
+        "notes": "潜行失败惊动暗处之物"
+      },
+      "quests_upserted": [
+        {
+          "description": "查明红色鳞片状标记的含义与清桌者的动机",
+          "name": "新生入学调查",
+          "notes": "走廊深处传来门轴转动声，暗处有东西被惊动",
+          "objective": "在灯下弄清鳞纹含义，避开走廊深处的威胁",
+          "status": "active"
+        }
+      ],
+      "world_facts_upserted": [
+        {
+          "description": "走廊深处传来湿布擦过石面的摩擦声与门轴转动声，诺诺称暗处那东西不是新生该碰的",
+          "name": "走廊深处的威胁",
+          "notes": "暗处有东西被惊动，门轴声后归于沉寂",
+          "source": "玩家潜行失败被诺诺拦下",
+          "status": "known"
+        }
+      ]
+    },
+    "narration": "你顺着诺诺刚才望过去的方向迈开步子，想走进走廊深处那片灯光够不到的暗里。鞋底刚在石板上压出第二步，暗处就传来一声极轻的摩擦，湿布擦过石面，短促，随即停住。那声音离你比预想中近得多。你还没来得及判断方位，一条手臂已经横在你胸前，力道干脆，把你整个人挡回灯下。诺诺不知何时到了你身侧，红发扫过你的肩，她没有看你，眼睛盯着走廊深处。灯光落在她半张脸上，另外半张沉在暗里。你退回来时，通行卡在口袋里又烫了一下，热度贴着布料往上爬。走廊深处静了几秒，然后传来一声门轴转动的低响，缓慢，像有什么正把一扇门推开一条缝。诺诺的手仍横在你胸前，声音压得很低，说暗处那东西不是新生该碰的，你连它是什么都还没弄明白，就想一个人摸过去。她收回手，往投影屏的方向偏了偏头，说灯下还有你该看的东西，别把命丢在灯照不到的地方。走廊深处的门轴声停了，可那片暗比刚才更沉，仿佛有什么正贴着墙，一动不动地等着。",
+    "npc_relations_delta": null,
+    "npcs_encountered": [
+      {
+        "disposition": "审视中带警示",
+        "name": "诺诺",
+        "notes": "出手拦下玩家，警告暗处之物非新生可碰，把注意力引回投影屏"
+      }
+    ],
+    "option_checks": [
+      {
+        "difficulty": "普通",
+        "expression": "1d20 ≥ 12",
+        "name": "观察检定",
+        "requires_check": true,
+        "skill": "观察",
+        "stakes": "成功看清鳞纹细节并得到线索，失败则鳞纹变化或引来注意。",
+        "system": "通用 d20",
+        "target": 12
+      },
+      {
+        "difficulty": "困难",
+        "expression": "1d20 ≥ 16",
+        "name": "交涉检定",
+        "requires_check": true,
+        "skill": "交涉",
+        "stakes": "成功逼出诺诺的具体说法，失败则她反将一军并收紧信息。",
+        "system": "通用 d20",
+        "target": 16
+      },
+      null
+    ],
+    "options": [
+      "退回投影屏前，仔细看清自己名字旁那片红色鳞纹的完整形状",
+      "追问诺诺走廊深处那扇门后是什么，逼她给出具体说法",
+      "不再靠近暗处，转而检查长桌内侧被抹开的水渍通向哪里"
+    ],
+    "quests_updated": [
+      {
+        "description": "查明红色鳞片状标记的含义与清桌者的动机，走廊深处出现新的威胁",
+        "name": "新生入学调查",
+        "status": "active"
+      }
+    ],
+    "sanity_delta": -3,
+    "scene_prompt": "Gothic academy corridor at night, dim lamp glow, dark hallway depth, red-haired girl blocking a new student, tense horror atmosphere"
+  },
+  "progress": {
+    "arc_index": 0,
+    "campaign_id": "game-04",
+    "completed_arcs": "[]",
+    "fsm_state": "active/session_active",
+    "head_turn_id": 13,
+    "id": 1,
+    "npc_relations": "[]",
+    "recap_compressed": "",
+    "recap_full": "",
+    "revealed_anchors": "[]",
+    "session_index": 0,
+    "slot_name": "capture",
+    "turn_in_session": 11,
+    "turns_total": 11
+  },
+  "session_id": "game-04",
+  "source": "llm",
+  "state": {
+    "_campaign_session_index": 0,
+    "_memory_controller": {
+      "item_aliases": {},
+      "narrative_pool": [
+        {
+          "content": "雨夜卡塞尔学院门前，新生持发烫的临时通行卡与红发女生诺诺对峙。玩家观察门柱柱脚的可疑痕迹被诺诺察觉，诺诺以言语试探通行卡来源，玩家反问其守门原因。玩家递卡被拒，诺诺暗示门内有人等待敢独自进入者，门厅深处随即亮起一盏灯。玩家蹲下查看柱脚痕迹，诺诺指出此举暴露其不敢进门，灯闪后催促行动。",
+          "created_round": 6,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_1",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "score": 1.4790835393340704
+        },
+        {
+          "content": "玩家在门厅追问诺诺灯与门内之人，诺诺反诘并暗示灯认主。玩家持发烫通行卡进入门厅，投影屏显示新生名单，自己名字旁浮现暗红鳞纹。报到桌被清空，仅剩水渍与旧通告，诺诺透露有人抢先清桌以隐藏信息。玩家欲探走廊暗处，被诺诺拦下，暗处传来摩擦与门轴声，诺诺警告危险并引导回灯下。",
+          "created_round": 12,
+          "inhibition": 1.0,
+          "memory_id": "ep_L1_2",
+          "memory_type": "narrative",
+          "protected": true,
+          "retrieved_rounds": [],
+          "score": 0.05
+        }
+      ],
+      "nsb": {
+        "episode_counter": 2,
+        "level1": [
+          {
+            "causal_links": [
+              "scene_T1→scene_T2: 玩家抵达大门后开始观察诺诺与环境，引发诺诺注意",
+              "scene_T2→scene_T3: 诺诺质问观察意图，玩家坦白柱脚痕迹并反问，诺诺转而追问通行卡来源",
+              "scene_T3→scene_T4: 玩家反问诺诺守门原因，诺诺以通行卡来源不明反制并警告卡发烫",
+              "scene_T4→scene_T5: 玩家递卡试探，诺诺拒绝并揭示门内有人等待，门厅灯亮起",
+              "scene_T5→scene_T6: 玩家选择不进门而蹲查柱脚，诺诺指出其暴露犹豫，灯闪催促"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "临时通行卡",
+              "卡塞尔学院大门",
+              "门柱柱脚",
+              "门厅灯"
+            ],
+            "episode_id": "ep_L1_1",
+            "importance": 0.6,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "持续发烫，热度加剧，边缘泛暗红",
+              "玩家": "被诺诺言语压制，暴露犹豫，未进入大门",
+              "诺诺": "从等待转为试探与施压，揭示门内有人等待",
+              "门厅灯": "从暗处亮起，随后闪烁一次"
+            },
+            "summary": "雨夜卡塞尔学院门前，新生持发烫的临时通行卡与红发女生诺诺对峙。玩家观察门柱柱脚的可疑痕迹被诺诺察觉，诺诺以言语试探通行卡来源，玩家反问其守门原因。玩家递卡被拒，诺诺暗示门内有人等待敢独自进入者，门厅深处随即亮起一盏灯。玩家蹲下查看柱脚痕迹，诺诺指出此举暴露其不敢进门，灯闪后催促行动。",
+            "tags": [
+              "悬疑",
+              "社交"
+            ],
+            "turn_end": 6,
+            "turn_start": 1
+          },
+          {
+            "causal_links": [
+              "T7→T9: 诺诺的警告促使玩家不再纠缠，持卡进入门厅",
+              "T9→T10: 玩家看到名单异象后，转而检查报到桌寻找流程线索",
+              "T10→T11: 发现桌子被清空，玩家追问诺诺清空者身份",
+              "T11→T12: 诺诺暗示隐藏信息，玩家试图探索走廊暗处，被诺诺拦下"
+            ],
+            "entities_involved": [
+              "诺诺",
+              "临时通行卡",
+              "投影屏",
+              "报到桌",
+              "走廊暗处"
+            ],
+            "episode_id": "ep_L1_2",
+            "importance": 0.7,
+            "level": 1,
+            "protected": true,
+            "source_ids": [],
+            "state_changes": {
+              "临时通行卡": "热度波动，靠近灯时降温，暗处再升温",
+              "玩家": "名字旁出现暗红鳞纹，被诺诺拦下避免进入暗处"
+            },
+            "summary": "玩家在门厅追问诺诺灯与门内之人，诺诺反诘并暗示灯认主。玩家持发烫通行卡进入门厅，投影屏显示新生名单，自己名字旁浮现暗红鳞纹。报到桌被清空，仅剩水渍与旧通告，诺诺透露有人抢先清桌以隐藏信息。玩家欲探走廊暗处，被诺诺拦下，暗处传来摩擦与门轴声，诺诺警告危险并引导回灯下。",
+            "tags": [
+              "悬疑",
+              "探索",
+              "社交"
+            ],
+            "turn_end": 12,
+            "turn_start": 7
+          }
+        ],
+        "level2": [],
+        "level3": [],
+        "turn_buffer": []
+      },
+      "pcb": {
+        "sketches": {
+          "player": {
+            "entries": {}
+          }
+        },
+        "turns_since": 12
+      },
+      "pending": true,
+      "protected_turns": [],
+      "round_unit": "turn",
+      "score_tracker": [
+        {
+          "item_name": "临时通行卡",
+          "last_seen_turn": 12,
+          "notes": "",
+          "state": "active"
+        }
+      ],
+      "version": "d09817176c7a542282fa2be76b05f263"
+    },
+    "_scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting",
+    "current_location": "卡塞尔学院门厅",
+    "health": 100,
+    "items": [
+      {
+        "aliases": [],
+        "description": "边缘暗红的临时通行卡，热度随门厅灯光明灭变化",
+        "location": "玩家口袋",
+        "name": "临时通行卡",
+        "notes": "被拦回灯下时再度发烫",
+        "status": "owned"
+      }
+    ],
+    "npcs": [
+      {
+        "current_location": "卡塞尔学院门厅",
+        "description": "红发女生，观察敏锐，负责引导新生",
+        "name": "诺诺",
+        "notes": "拦下玩家并警告暗处之物非新生可碰",
+        "relationship": "审视中带警示，开始主动保护玩家",
+        "status": "present"
+      }
+    ],
+    "player_status": {
+      "condition": "被诺诺拦回灯下，心跳未平",
+      "current_goal": "在灯下弄清红色鳞纹含义，避开走廊深处",
+      "danger_level": "high",
+      "notes": "潜行失败惊动暗处之物"
+    },
+    "quests": [
+      {
+        "description": "诺诺已让开门口，玩家必须自行决定是否进门",
+        "name": "与诺诺交谈，了解入校流程",
+        "notes": "交涉失败，诺诺拒绝透露等待者身份",
+        "objective": "决定是否迈步进入门厅",
+        "status": "active"
+      },
+      {
+        "description": "查明红色鳞片状标记的含义与清桌者的动机",
+        "name": "新生入学调查",
+        "notes": "走廊深处传来门轴转动声，暗处有东西被惊动",
+        "objective": "在灯下弄清鳞纹含义，避开走廊深处的威胁",
+        "status": "active"
+      }
+    ],
+    "recent_events": [
+      "诺诺拒碰通行卡，反讥玩家怯懦，让开门口并透露门内有人在等敢自己走进去的人，门厅深处亮起一盏灯。",
+      "玩家蹲下查看柱脚痕迹失败，被诺诺点破不敢进门，门厅灯闪、通行卡骤烫逼其抉择。",
+      "玩家追问灯与等待者，被诺诺反将一军，灯暗了一瞬，诺诺让开门口逼其抉择。",
+      "玩家行动：把口袋里发烫的通行卡掏出来举到灯的方向，看它会不会有反应；结果：你目前没有可用的“来举到灯的方”，无法使用它。",
+      "玩家迈进门厅，投影屏上自己名字旁浮现红色鳞片状标记，通行卡热度下降。",
+      "玩家环视报到长桌，只见空桌与未干水渍，诺诺暗示有人提前清空了桌面。",
+      "追问清桌者被诺诺反将一军，她暗示清桌者不想让新生看到某些东西，把话题引向投影屏与走廊深处。",
+      "玩家潜行走向走廊暗处失败，被诺诺拦回灯下，暗处传来摩擦声与门轴转动声。"
+    ],
+    "sanity": 83,
+    "turn": 12,
+    "world_facts": [
+      {
+        "description": "诺诺承认柱脚确实有东西，但拒绝说明具体是什么",
+        "name": "门柱旁的雨水冲刷痕迹",
+        "notes": "玩家未能看清形态",
+        "source": "诺诺的回应",
+        "status": "suspected"
+      },
+      {
+        "description": "临时通行卡边缘泛起不自然的暗红，诺诺警告再攥着不放会烫到人",
+        "name": "通行卡发烫异常",
+        "notes": "发烫原因未明",
+        "source": "诺诺的提醒与玩家观察",
+        "status": "known"
+      },
+      {
+        "description": "门厅深处原本沉在暗里的地方忽然亮起一盏灯，光从走廊尽头漫出来，没有人走动",
+        "name": "门内亮起的灯",
+        "notes": "暗示门内有人在等敢自己走进去的人",
+        "source": "诺诺让开门口后",
+        "status": "known"
+      },
+      {
+        "description": "诺诺称卡发烫不是卡的问题，而是玩家被派到门口这件事本身的问题",
+        "name": "通行卡发烫的缘由",
+        "notes": "尚未证实",
+        "source": "诺诺的讥讽",
+        "status": "suspected"
+      },
+      {
+        "description": "玩家蹲下查看柱脚痕迹，只看到被雨水冲刷得模糊不清的暗色沟痕，无法辨认真相",
+        "name": "柱脚痕迹的真相",
+        "notes": "痕迹被雨水冲散，需其他手段才能辨明",
+        "source": "玩家调查失败",
+        "status": "suspected"
+      },
+      {
+        "description": "门厅深处那盏灯忽然闪了一下，光晃过走廊，像有人从灯下走过，可走廊上分明空着",
+        "name": "门厅深处那盏灯",
+        "notes": "灯亮与通行卡发烫同步加剧",
+        "source": "玩家蹲下时观察到的环境变化",
+        "status": "known"
+      },
+      {
+        "description": "诺诺称灯不是她点的，她也没资格点，能点这盏灯的人就在门里",
+        "name": "门厅深处那盏灯的来历",
+        "notes": "灯会因玩家的迟疑而失去耐心",
+        "source": "诺诺的对话",
+        "status": "suspected"
+      },
+      {
+        "description": "通行卡的热度随门厅灯光明灭而变化，隔着布料仍烫手",
+        "name": "通行卡热度与灯光的关联",
+        "notes": "尚未验证具体机制",
+        "source": "玩家自身感受",
+        "status": "suspected"
+      },
+      {
+        "description": "名字右侧慢慢浮出一小片暗红色的纹路，边缘呈鳞片状，一层压着一层",
+        "name": "发现红色标记",
+        "notes": "出现在玩家名字旁",
+        "source": "投影屏",
+        "status": "known"
+      },
+      {
+        "description": "进入门厅靠近投影屏后，通行卡热度明显下降",
+        "name": "通行卡热度与门厅的关联",
+        "notes": "热度变化与位置有关",
+        "source": "玩家体验",
+        "status": "suspected"
+      },
+      {
+        "description": "长桌已被清空，只剩空桌和零星无关杂物，桌面中央有一圈尚未干透的水渍，抹痕朝桌内收拢，像是刚被人匆忙擦过",
+        "name": "报到桌被提前清空",
+        "notes": "诺诺目光在水渍上停了一瞬随即移开，未作解释",
+        "source": "玩家环视长桌的调查",
+        "status": "suspected"
+      },
+      {
+        "description": "诺诺称清空桌子的人不想让新生看到某些东西，但拒绝进一步解释",
+        "name": "清桌者的动机",
+        "notes": "线索模糊，指向投影屏或走廊深处",
+        "source": "诺诺的回避与暗示",
+        "status": "suspected"
+      },
+      {
+        "description": "走廊深处传来湿布擦过石面的摩擦声与门轴转动声，诺诺称暗处那东西不是新生该碰的",
+        "name": "走廊深处的威胁",
+        "notes": "暗处有东西被惊动，门轴声后归于沉寂",
+        "source": "玩家潜行失败被诺诺拦下",
+        "status": "known"
+      }
+    ]
+  },
+  "turn": 12,
+  "uuid_counter": 41
+}

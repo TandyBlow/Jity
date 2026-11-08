@@ -1,0 +1,46 @@
+{
+  "before_sha256": "319f3a59cc15c69ce902a4f656fd4def1bbab565ca9e12c1adc2d535212a5fb4",
+  "created_at": "2026-11-06T05:25:12.795906+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 14
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "迎着站定的迎接者，把临时通行卡举到身前，看他会不会对卡片有反应",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 11
+  },
+  "selection": {
+    "action": "迎着站定的迎接者，把临时通行卡举到身前，看他会不会对卡片有反应",
+    "option_index": 2,
+    "policy": "explore",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 14,
+    "scores": [
+      {
+        "action": "不再纠缠诺诺，立刻转身冲向任务台后方，用任务单上的执行部印章争取正式登记",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.1354915058988745
+      },
+      {
+        "action": "拉着诺诺一起退，边退边低声追问她外套里那件硬物到底是什么",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.3463929719450809
+      },
+      {
+        "action": "迎着站定的迎接者，把临时通行卡举到身前，看他会不会对卡片有反应",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.35152360253197257
+      }
+    ],
+    "seed": 7302
+  },
+  "turn": 11
+}

@@ -1,0 +1,42 @@
+{
+  "before_sha256": "bf1be40365bd35344f6f5b93825189ca09dddba85564f2d736b44801871987c8",
+  "created_at": "2026-11-06T05:34:50.762943+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "先把取件记录和终端日志完整备份到临时通行卡里，再决定下一步",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 12
+  },
+  "selection": {
+    "action": "先把取件记录和终端日志完整备份到临时通行卡里，再决定下一步",
+    "option_index": 1,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 13,
+    "scores": [
+      {
+        "action": "让诺诺守住登记台，自己沿维护通道追查旧终端的位置",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.3056688787481775
+      },
+      {
+        "action": "先把取件记录和终端日志完整备份到临时通行卡里，再决定下一步",
+        "index": 1,
+        "score": 3,
+        "tie_break": 0.03859570591325534
+      },
+      {
+        "action": "追问诺诺这个报废终端当年是谁负责拆的，从人身上找线索",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.12220848448805521
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 12
+}

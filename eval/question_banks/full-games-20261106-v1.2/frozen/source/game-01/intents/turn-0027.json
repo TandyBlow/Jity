@@ -1,0 +1,46 @@
+{
+  "before_sha256": "5251518e86eddc59d05b5dd1e2604171746afb9a5d7d9a19b52c4d035d9d2db4",
+  "created_at": "2026-11-06T05:19:28.690136+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 2
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "退回金属匣旁，试着撬开匣盖，看匣里的东西能否牵制它",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 27
+  },
+  "selection": {
+    "action": "退回金属匣旁，试着撬开匣盖，看匣里的东西能否牵制它",
+    "option_index": 2,
+    "policy": "mission",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 2,
+    "scores": [
+      {
+        "action": "不退，正面盯住那东西的轮廓，把它身上的暗红纹路和金属匣的走向逐段比对",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.003116241734647307
+      },
+      {
+        "action": "贴着通道壁摸索侧向岔口或可攀的缝隙，找一条绕开它的路",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.42214822065936675
+      },
+      {
+        "action": "退回金属匣旁，试着撬开匣盖，看匣里的东西能否牵制它",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.8627275338969492
+      }
+    ],
+    "seed": 7301
+  },
+  "turn": 27
+}

@@ -1,0 +1,46 @@
+{
+  "before_sha256": "613c1f26ba3df4f69ddba5bc2e68fbcef986199f84ba00e49cb5142fb389752d",
+  "created_at": "2026-11-06T05:36:47.541588+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 2,
+      "roll": 5
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 2,
+    "player_action": "把报告放回原处，抹掉自己碰过的痕迹，装作没来过",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 22
+  },
+  "selection": {
+    "action": "把报告放回原处，抹掉自己碰过的痕迹，装作没来过",
+    "option_index": 2,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 5,
+    "scores": [
+      {
+        "action": "把报告原件折好塞进内袋，立刻从诺诺守着的门口撤离",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.6838700381052539
+      },
+      {
+        "action": "先记下折痕处被划掉的第二组编号，再决定走不走",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.6800807361546535
+      },
+      {
+        "action": "把报告放回原处，抹掉自己碰过的痕迹，装作没来过",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.7955182399741841
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 22
+}

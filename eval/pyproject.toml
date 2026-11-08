@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jity-eval"
+version = "0.1.0"
+description = "Offline-first, independent long-term memory evaluation workbench"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+jity-eval = "jity_eval.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["jity_eval*"]

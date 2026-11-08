@@ -1,0 +1,46 @@
+{
+  "before_sha256": "4609c0c7ea7fe6ef391a9f0a73b126723f9ff09841778b9ae20356a2a0cdb95f",
+  "created_at": "2026-11-06T05:59:58.308753+00:00",
+  "request": {
+    "action_check": {
+      "option_index": 0,
+      "roll": 11
+    },
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 0,
+    "player_action": "把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 31
+  },
+  "selection": {
+    "action": "把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置",
+    "option_index": 0,
+    "policy": "items",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 11,
+    "scores": [
+      {
+        "action": "把诺诺划在你手背上的数字默记下来，趁看守转身时低声问她这数字对应什么，逼出钟楼地下屋子的具体位置",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.9364485899580096
+      },
+      {
+        "action": "不再等，直接朝门边看守开口，说侧厅里有人刚站起来，要求把所有人带去听证室当面对质，把编号的事摆到明面上",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.7380760935531433
+      },
+      {
+        "action": "借灯闪的间隙贴近诺诺，让她把听到的样本编号片段完整复述一遍，你负责盯住门边看守的视线方向",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.45451027493023577
+      }
+    ],
+    "seed": 7303
+  },
+  "turn": 31
+}

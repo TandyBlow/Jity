@@ -1,0 +1,42 @@
+{
+  "before_sha256": "00fb34b1b10d7b13c2697a30d2d04ba7c08191f51818d48a6e35baf2c8ef59b3",
+  "created_at": "2026-11-06T06:07:39.002741+00:00",
+  "request": {
+    "constraints": "",
+    "model": "deepseek-flash",
+    "option_index": 1,
+    "player_action": "问诺诺，卡在光下发热意味着什么，她是不是早就知道会这样",
+    "slot_name": "capture",
+    "style": "horror",
+    "timeline_node_id": 21
+  },
+  "selection": {
+    "action": "问诺诺，卡在光下发热意味着什么，她是不是早就知道会这样",
+    "option_index": 1,
+    "policy": "risk",
+    "reason": "Highest keyword/check score among current offered actions; seeded tie-break.",
+    "roll": 20,
+    "scores": [
+      {
+        "action": "退到灯柱旁，等眼睛恢复，把刚才暗影偏移的方向和鳞纹收束的路径一起记下来",
+        "index": 0,
+        "score": 0,
+        "tie_break": 0.4127363445248253
+      },
+      {
+        "action": "问诺诺，卡在光下发热意味着什么，她是不是早就知道会这样",
+        "index": 1,
+        "score": 0,
+        "tie_break": 0.8124441181132309
+      },
+      {
+        "action": "不再比对，直接把通行卡收回口袋，要求诺诺现在就把任务单交出来",
+        "index": 2,
+        "score": 0,
+        "tie_break": 0.2422963415894337
+      }
+    ],
+    "seed": 7304
+  },
+  "turn": 21
+}
