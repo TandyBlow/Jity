@@ -1,0 +1,22 @@
+{
+ "v1": {
+  "id": "c8e03",
+  "verdict": "candidate",
+  "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "fullSignature": "at*3+moved*2+personality_changed*1+sanity*4+sanity_changed*1+task_achieved*2+task_pending*5|5|180s",
+  "mode": "new-world",
+  "r1Version": "v1",
+  "reasons": [],
+  "warnings": []
+ },
+ "v2": {
+  "id": "c8e03",
+  "verdict": "candidate",
+  "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "fullSignature": "at*3+moved*2+personality_changed*1+sanity*4+sanity_changed*1+task_achieved*2+task_pending*5|5|180s",
+  "mode": "new-world",
+  "r1Version": "v2",
+  "reasons": [],
+  "warnings": []
+ }
+}

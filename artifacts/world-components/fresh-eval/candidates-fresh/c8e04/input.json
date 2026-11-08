@@ -1,0 +1,124 @@
+{
+ "pointId": "point_36",
+ "worldId": "world_30",
+ "stateDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452",
+ "timeAdvance": {
+  "amount": 30,
+  "unit": "second"
+ },
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "fy_cal"
+ },
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "from": "玄藻泵舱",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position"
+  },
+  {
+   "kind": "moved_entity",
+   "phase": "change",
+   "entityId": "fi_gauge",
+   "actor": "fi_gauge",
+   "name": "瓷铯量规",
+   "to": "砾脊校准间",
+   "relativeTo": {
+    "entityId": "fe_nie",
+    "relation": "beside"
+   },
+   "fieldPath": "state.items.fi_gauge.position"
+  }
+ ],
+ "currentState": [
+  {
+   "entityId": "fe_nie",
+   "kind": "at",
+   "value": "砾脊校准间"
+  },
+  {
+   "entityId": "fe_nie",
+   "kind": "sanity",
+   "value": 61
+  },
+  {
+   "entityId": "fe_nie",
+   "kind": "task_pending",
+   "value": "将未拆封阀芯按批次分入陶格"
+  },
+  {
+   "entityId": "fe_pu",
+   "kind": "at",
+   "value": "弧砂观测台"
+  },
+  {
+   "entityId": "fe_pu",
+   "kind": "sanity",
+   "value": 38
+  },
+  {
+   "entityId": "fe_pu",
+   "kind": "task_pending",
+   "value": "读出弧砂刻槽的偏移刻度"
+  },
+  {
+   "entityId": "fe_shao",
+   "kind": "at",
+   "value": "霜珀备件库"
+  },
+  {
+   "entityId": "fe_shao",
+   "kind": "sanity",
+   "value": 57
+  },
+  {
+   "entityId": "fe_shao",
+   "kind": "task_pending",
+   "value": "复核穹榛机架背面的联接编号"
+  },
+  {
+   "entityId": "fe_wen",
+   "kind": "sanity",
+   "value": 43
+  },
+  {
+   "entityId": "fe_wen",
+   "kind": "task_pending",
+   "value": "核验瓷铯量规的双区刻度"
+  },
+  {
+   "entityId": "fe_wen",
+   "kind": "task_pending",
+   "value": "登记量规右区的第三条刻线"
+  },
+  {
+   "entityId": "fe_wen",
+   "kind": "task_pending",
+   "value": "更换绛纹阀芯上的锆丝封签"
+  },
+  {
+   "entityId": "fe_yu",
+   "kind": "at",
+   "value": "苔铎栈桥"
+  },
+  {
+   "entityId": "fe_yu",
+   "kind": "sanity",
+   "value": 72
+  },
+  {
+   "entityId": "fe_yu",
+   "kind": "task_pending",
+   "value": "登记苔铎挡板的紧固次序"
+  }
+ ],
+ "playerInstruction": null,
+ "note": "只给事实与视角；完整状态不作为输入。未提供的状态不作为必述项。"
+}

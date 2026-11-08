@@ -1,0 +1,190 @@
+{
+ "rawDelta": {
+  "fe_wen": {
+   "entityId": "fe_wen",
+   "positionSet": {
+    "containerId": "fy_cal",
+    "slotId": null,
+    "relativeTo": null
+   }
+  },
+  "fe_shao": {
+   "entityId": "fe_shao",
+   "positionSet": {
+    "containerId": "fy_relay",
+    "slotId": null,
+    "relativeTo": null
+   }
+  }
+ },
+ "changeFacts": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "name": "邵苇衡",
+   "from": "霜珀备件库",
+   "to": "穹榛中继室",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_shao.position"
+  },
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "from": "玄藻泵舱",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position"
+  }
+ ],
+ "standingRefs": [
+  {
+   "kind": "at",
+   "phase": "standing",
+   "entityId": "fe_nie",
+   "actor": "fe_nie",
+   "name": "聂汀穗",
+   "location": "砾脊校准间",
+   "fieldPath": "state.characters.fe_nie.position"
+  },
+  {
+   "kind": "sanity",
+   "phase": "standing",
+   "entityId": "fe_nie",
+   "actor": "fe_nie",
+   "name": "聂汀穗",
+   "value": 61,
+   "fieldPath": "state.characters.fe_nie.sanity"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_nie",
+   "actor": "fe_nie",
+   "name": "聂汀穗",
+   "taskId": "ft_sort",
+   "goal": "将未拆封阀芯按批次分入陶格",
+   "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+  },
+  {
+   "kind": "at",
+   "phase": "standing",
+   "entityId": "fe_pu",
+   "actor": "fe_pu",
+   "name": "蒲砺弦",
+   "location": "弧砂观测台",
+   "fieldPath": "state.characters.fe_pu.position"
+  },
+  {
+   "kind": "sanity",
+   "phase": "standing",
+   "entityId": "fe_pu",
+   "actor": "fe_pu",
+   "name": "蒲砺弦",
+   "value": 38,
+   "fieldPath": "state.characters.fe_pu.sanity"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_pu",
+   "actor": "fe_pu",
+   "name": "蒲砺弦",
+   "taskId": "ft_watch",
+   "goal": "读出弧砂刻槽的偏移刻度",
+   "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+  },
+  {
+   "kind": "sanity",
+   "phase": "standing",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "name": "邵苇衡",
+   "value": 57,
+   "fieldPath": "state.characters.fe_shao.sanity"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "name": "邵苇衡",
+   "taskId": "ft_relay",
+   "goal": "复核穹榛机架背面的联接编号",
+   "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+  },
+  {
+   "kind": "sanity",
+   "phase": "standing",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "value": 43,
+   "fieldPath": "state.characters.fe_wen.sanity"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "taskId": "ft_check",
+   "goal": "核验瓷铯量规的双区刻度",
+   "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "taskId": "ft_mark",
+   "goal": "登记量规右区的第三条刻线",
+   "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "taskId": "ft_seal",
+   "goal": "更换绛纹阀芯上的锆丝封签",
+   "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+  },
+  {
+   "kind": "at",
+   "phase": "standing",
+   "entityId": "fe_yu",
+   "actor": "fe_yu",
+   "name": "郁棠序",
+   "location": "苔铎栈桥",
+   "fieldPath": "state.characters.fe_yu.position"
+  },
+  {
+   "kind": "sanity",
+   "phase": "standing",
+   "entityId": "fe_yu",
+   "actor": "fe_yu",
+   "name": "郁棠序",
+   "value": 72,
+   "fieldPath": "state.characters.fe_yu.sanity"
+  },
+  {
+   "kind": "task_pending",
+   "phase": "standing",
+   "entityId": "fe_yu",
+   "actor": "fe_yu",
+   "name": "郁棠序",
+   "taskId": "ft_bridge",
+   "goal": "登记苔铎挡板的紧固次序",
+   "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+  }
+ ],
+ "beforeDigest": "4a66f7b59b6765106a5aa4466b97ac8c62bf2b9f39c7963e2148005843667856",
+ "afterDigest": "3567903a66787a00c4bfe063557ee8ebd977e176239fe4390be83cd057957204"
+}

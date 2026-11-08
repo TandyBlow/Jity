@@ -3,11 +3,13 @@
 | 字段 | 值 |
 |---|---|
 | 对应设计 | R16（新评测集与验收数据） |
-| 当前档位 | **方案 + 工具自检通过**；没有模型实验结果，没有接线 |
-| 工作树 | `exp/c-fresh-eval`（编号 `c8`），HEAD `64405346fe63` |
+| 当前档位 | **首批候选已提交、待人工核验**；六条诊断材料在 `diagnostics/` |
+| 工作树 | `exp/c-fresh-eval`（编号 `c8`），HEAD `7706026` 之后的本轮提交 |
 | 本目录 | `artifacts/world-components/fresh-eval/` |
 
-本目录目前只做第一件事：**把「哪些材料已经用过」清点成可复算的清单，并把它们变成能拦人的排除规则**。新场景本身还没写，人工核验表还没建，冻结还没做——这三件排在后面，见 §7。
+本目录现在有三块：**排除清单与规则**（`sources/`、`selftest-report.*`）、**六条诊断夹具**（`diagnostics/`）、
+**全项目来源审计 + 新建评测来源 + 首批六条候选**（`source-search/`、`fresh/`、`candidates-fresh/`）。
+候选尚未冻结：人工核验完成前，本任务仍为未完成。
 
 ---
 
@@ -119,6 +121,67 @@ python artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
 
 ---
 
+## 5b. 全项目来源审计（本轮新增）
+
+`source-search/README.md`，数据在 `audit.json`。做法：先 `git fetch --all --prune`，再读
+**全部 63 条分支与远端引用**（去重后 24 个尖端、
+3350 个 blob）与**全部 67 个工作树**的未提交文件；
+世界按身份集合合并，共 11 个。
+
+分类不看统一标签，而是看**这个名字被哪些角色的文件提到**：训练/调参语料、调参运行、评测样本、
+真机归档、旧产品内容、判分器、运行时、夹具/测试、协议夹具、设计文档。
+
+| 结论 | 数量 |
+|---|---|
+| 可用作独立来源的世界 | **0** |
+| 已被训练/调参使用 | 多数（见逐条表） |
+| 名字跨世界共用、无法判断 | 4 个 |
+| 仅定义级但覆盖不足 | 1 个（`world_fixture`，1 人物/1 地点，单元测试夹具） |
+
+**没有任何现有世界能当独立来源**，也没有把任何旧世界改名冒充新来源。详见
+`source-search/README.md` 的“入选与排除理由”表。
+
+---
+
+## 5c. 新建评测来源（本轮新增）
+
+`fresh/source/`：
+
+- 注册：`c8-eval-geothermal-v1`，作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，
+  类型 `newly-authored-synthetic-registered-fixture`；不是 R01 生成、不是真实玩家记录、没有训练/调参使用。
+- 世界：7 个地点、5 个人物、3 件物品、9 个任务（含父子任务），全部由本会话人工编写。
+- 提交：用 A 侧 `WorldService` 在**独立数据库** `fresh/source/authority.sqlite3`
+  （sha256 `04878c4f6ca9f39b…`）创建 6 个世界，逐点完成
+  checkpoint → settlement → commit，再用**新的服务实例**重新打开数据库读回，6/6 一致。
+- 证据：`registration.json`（各输入哈希）、`service-transcript.json`（完整请求/响应）、
+  `cases.json`、`<id>.before.json` / `<id>.after.json`、`reopen-check.json`、
+  `authority-dependencies.json`（导入的 A 侧文件哈希）。
+
+---
+
+## 5d. 首批候选（6 条，待人工核验）
+
+`candidates-fresh/`。每条都保留：排除检查、事实来源、**模型实际输入**、人工核验项；
+页面投影不支持的部分单列，不改生产代码。
+
+| 编号 | 场景 | 覆盖 | 视角 | 时长 | 页面投影 | 变化签名 |
+|---|---|---|---|---|---|---|
+| `c8e01` | 三项转运，各有起终点 | 多人物、多地点 | omniscient | 90s | 支持 | `moved*3|3|90s` |
+| `c8e02` | 两栋建筑，视角只在校准间 | 多人物、多地点、可见性 | protagonist | 45s | 支持 | `moved*2|2|45s` |
+| `c8e03` | 父子任务同时校准，另有人完成转移 | 任务、多人物、多地点 | protagonist | 180s | 支持 | `moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s` |
+| `c8e04` | 持有人与参照物，明确空间关系 | 关系、多人物 | protagonist | 30s | 不支持 | `moved*1+moved_entity*1|2|30s` |
+| `c8e05` | 封签的持有转移和外貌变化 | 关系、多人物、外貌 | protagonist | 60s | 不支持 | `appearance_changed*1+moved*1+moved_entity*1|2|60s` |
+| `c8e06` | 关注指令与世界事实分开 | 玩家关注、任务、多人物 | omniscient | 120s | 不支持 | `moved*2+task_achieved*1|2|120s` |
+
+排除检查：六条在 R1 v1、R1 v2、R2（new-world，不豁免名字）、R3 上**全部零命中**；
+`v1Rejected={cands["summary"]["v1Rejected"]}`、`v2Rejected={cands["summary"]["v2Rejected"]}`。
+R3 只证明形状，不证明来源关系；旧题十条的变化事实依据仍是 `undetermined`。
+
+页面投影支持 3 条（`c8e01`–`c8e03`），不支持 3 条（`c8e04` 空间相对位置、`c8e05` 物品位移+外貌、
+`c8e06` 纯任务达成），后者只作内核/接口层与 N2 关注解析用，不计页面叙述成绩。
+
+---
+
 ## 6. 产物清单
 
 ```
@@ -131,6 +194,9 @@ artifacts/world-components/fresh-eval/
 │   ├── exclusion-scope.json      规则文本、十题签名（含全部同形 ID）、已知限制
 │   └── three-arm-provenance.json/.md  十条旧题的变化事实依据核对
 ├── selftest-report.json / .md    自检逐项结果与输入哈希
+├── source-search/                全分支与工作树来源审计（audit.json / README.md）
+├── fresh/                        评测专用新建来源（PROTOCOL.md / source/ 证据与数据库）
+├── candidates-fresh/             首批 6 条候选（facts / input / screening / checks）
 ├── diagnostics/                  六条诊断夹具 + 缺口 + 核验表（0 条正式题，未冻结）
 │   ├── diagnostics.json          六条定义（来源、参数声明、核对要求）
 │   ├── report.json / .md         内核结果、三种状态、两版判定
@@ -148,6 +214,9 @@ artifacts/world-components/fresh-eval/
     ├── exclusion_selftest.py     规则自检；--candidates <json> 可对候选批量判
     ├── build_diagnostics.py      诊断夹具核验：内核 + 事实对账 + 两版规则 + 核验包
     ├── build_three_arm_provenance.py  旧题变化事实的权威来源核对
+    ├── audit_world_sources.py    全分支/工作树审计与来源分类
+    ├── build_fresh_sources.py    新建夹具并经服务提交、读回
+    ├── build_candidates_fresh.py 候选包：事实、输入、筛选、核验项
     └── test_exclusion_selftest.py 注记剥离和旧题漏解析的回归检查
 ```
 
@@ -155,13 +224,13 @@ artifacts/world-components/fresh-eval/
 
 ## 7. 当前状态与下一步
 
-**已交付**：六条诊断夹具、零条正式独立评测题、未冻结（见 `diagnostics/`）；核验材料已整理完毕，等待人工逐项判定。诊断不等于评测：`source-bound` 只表示来源绑定状态，`accepted by apply_point` 只表示增量被内核接受，`not-committed` 表示本批全是假设点、没有 round/group/settle/points 记录，独立性一律 `undetermined`。
+**当前状态**：来源审计完成（0 个现成世界可用）→ 新建评测专用注册夹具并通过 A 侧服务提交读回 →
+首批 6 条候选已出。**未冻结**，人工核验未做；核验完成前本任务仍未完成。
 
-**下一步**：
-1. 按 `diagnostics/review-table.md` 做人工核验（标注者不得参与调参），逐项填「通过／不通过／无法判断」；`无法判断` 不算通过。
-2. 正式评测题另找可核实的独立来源：要能追到来源文件、点位身份和使用历史，且能证明未参与训练或调参。不限定只能等 R01。
-3. 缺口（`diagnostics/gaps.md`）交对应模块；能力补齐后必须重新核验来源独立性，不能自动晋升为正式题。
-4. `c8d04` 的数值方向、`c8d06` 的父/子任务同时保留：目前只能人工判定；判分缺口已交维护方，修复后要重跑受影响旧题基线并记录判分器版本变化。
-5. 未核项一律记 `待核验`；本轮不追加候选、不运行模型。
+**待用户核验**（`candidates-fresh/review-table.md`）：
+1. 逐项判定“必须成立／必须不出现／不要求（输入未提供）”，结论只填通过／不通过／无法判断。
+2. `c8e04`／`c8e05`／`c8e06` 的能力不支持部分单列，不计页面叙述成绩。
+3. 核验通过后才做一次性冻结（来源、输入、生成器、依赖、审计、读回记录一起固化）。
 
-来源历史无法核实、缺失归档影响无法排除时，保持 `undetermined`。本目录的合成自检输入只是规则探针，不进入正式评测集。本轮提交只归档来源审计、规则机制与六条诊断夹具，不表示新评测集已冻结或独立性已获证明。
+**不做**：不运行模型、不代填通过、不扩题、不改生产投影或判分器；判分缺口仍由
+`diagnostics/grader-handoff.md` 交维护方。
