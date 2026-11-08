@@ -142,6 +142,8 @@ python -X utf8 run_experiment.py    # 跑 10 样本 + 6 单元 + 5 探针，覆�
 python -X utf8 attention_parse.py --out /tmp/raw.json   # 输出全部样本原始结果
 ```
 
+注意：重跑会用**当前提交**重写 `runs/r1/input-hashes.json`、`run.log`、`score.json`（里面记录的是运行时的提交号）。本轮已验证重跑后 `raw-output.json` 逐字节不变，变动的只有这三份元数据的提交号字段。
+
 ## 12. 产物清单
 
 | 文件 | 内容 |
