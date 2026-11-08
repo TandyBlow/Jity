@@ -1,0 +1,217 @@
+{
+  "protocol": "c1-attention-parse-roster-v1",
+  "note": "对象/字段逐字来自已登记夹具；行号为该夹具当前版本中的 1 基行号。",
+  "rosters": {
+    "W1": {
+      "rosterRef": "W1",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceSha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+      "worldId": "world_school",
+      "protagonistId": "person_c",
+      "entities": [
+        {
+          "entityId": "corridor",
+          "kind": "location",
+          "name": "走廊",
+          "descriptor": "两侧是储物柜。",
+          "nameLine": 80,
+          "descriptorLine": 80,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 80,
+            "nameFieldPath": "initial.locations.corridor.name",
+            "descriptorFieldPath": "initial.locations.corridor.initialAppearance",
+            "descriptorLine": 80
+          }
+        },
+        {
+          "entityId": "hall",
+          "kind": "location",
+          "name": "大厅",
+          "descriptor": "空旷的大厅，光线明亮。",
+          "nameLine": 81,
+          "descriptorLine": 81,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 81,
+            "nameFieldPath": "initial.locations.hall.name",
+            "descriptorFieldPath": "initial.locations.hall.initialAppearance",
+            "descriptorLine": 81
+          }
+        },
+        {
+          "entityId": "item_key",
+          "kind": "item",
+          "name": "钥匙",
+          "descriptor": "一把黄铜钥匙。",
+          "nameLine": 83,
+          "descriptorLine": 83,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 83,
+            "nameFieldPath": "initial.items.item_key.name",
+            "descriptorFieldPath": "initial.items.item_key.initialAppearance",
+            "descriptorLine": 83
+          }
+        },
+        {
+          "entityId": "person_a",
+          "kind": "character",
+          "name": "学生A",
+          "descriptor": "穿校服的学生。",
+          "nameLine": 85,
+          "descriptorLine": 85,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 85,
+            "nameFieldPath": "initial.characters.person_a.name",
+            "descriptorFieldPath": "initial.characters.person_a.initialAppearance",
+            "descriptorLine": 85
+          }
+        },
+        {
+          "entityId": "person_b",
+          "kind": "character",
+          "name": "学生B",
+          "descriptor": "靠窗站着。",
+          "nameLine": 86,
+          "descriptorLine": 86,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 86,
+            "nameFieldPath": "initial.characters.person_b.name",
+            "descriptorFieldPath": "initial.characters.person_b.initialAppearance",
+            "descriptorLine": 86
+          }
+        },
+        {
+          "entityId": "task_intro",
+          "kind": "task",
+          "name": "帮主角熟悉校园",
+          "ownerId": "person_b",
+          "goal": "帮主角熟悉校园",
+          "nameLine": 86,
+          "descriptorLine": null,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 86,
+            "nameFieldPath": "initial.characters.task_intro.tasks.task_intro.goal"
+          }
+        },
+        {
+          "entityId": "person_c",
+          "kind": "character",
+          "name": "主角",
+          "descriptor": "刚转学来。",
+          "nameLine": 87,
+          "descriptorLine": 87,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 87,
+            "nameFieldPath": "initial.characters.person_c.name",
+            "descriptorFieldPath": "initial.characters.person_c.initialAppearance",
+            "descriptorLine": 87
+          }
+        },
+        {
+          "entityId": "task_shelf",
+          "kind": "task",
+          "name": "取回柜子里的东西",
+          "ownerId": "person_c",
+          "goal": "取回柜子里的东西",
+          "nameLine": 87,
+          "descriptorLine": null,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+            "line": 87,
+            "nameFieldPath": "initial.characters.task_shelf.tasks.task_shelf.goal"
+          }
+        }
+      ]
+    },
+    "W2": {
+      "rosterRef": "W2",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+      "sourceSha256": "c7bde5867e7be2bb0e7222a7360ea82fa4d8abe4a33832f20fae6332f7d8d7f5",
+      "worldId": "world_short",
+      "protagonistId": "person_c",
+      "entities": [
+        {
+          "entityId": "corridor",
+          "kind": "location",
+          "name": "走廊",
+          "descriptor": "明亮的走廊，通往门厅。",
+          "nameLine": 12,
+          "descriptorLine": 12,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+            "line": 12,
+            "nameFieldPath": "initial.locations.corridor.name",
+            "descriptorFieldPath": "initial.locations.corridor.initialAppearance",
+            "descriptorLine": 12
+          }
+        },
+        {
+          "entityId": "hall",
+          "kind": "location",
+          "name": "门厅",
+          "descriptor": "安静的门厅。",
+          "nameLine": 13,
+          "descriptorLine": 13,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+            "line": 13,
+            "nameFieldPath": "initial.locations.hall.name",
+            "descriptorFieldPath": "initial.locations.hall.initialAppearance",
+            "descriptorLine": 13
+          }
+        },
+        {
+          "entityId": "box",
+          "kind": "item",
+          "name": "盒子",
+          "descriptor": "盒盖关闭。",
+          "nameLine": 14,
+          "descriptorLine": 14,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+            "line": 14,
+            "nameFieldPath": "initial.items.box.name",
+            "descriptorFieldPath": "initial.items.box.initialAppearance",
+            "descriptorLine": 14
+          }
+        },
+        {
+          "entityId": "person_a",
+          "kind": "character",
+          "name": "林川",
+          "descriptor": "穿灰衣。",
+          "nameLine": 16,
+          "descriptorLine": 16,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+            "line": 16,
+            "nameFieldPath": "initial.characters.person_a.name",
+            "descriptorFieldPath": "initial.characters.person_a.initialAppearance",
+            "descriptorLine": 16
+          }
+        },
+        {
+          "entityId": "person_c",
+          "kind": "character",
+          "name": "周宁",
+          "descriptor": "穿蓝衣。",
+          "nameLine": 17,
+          "descriptorLine": 17,
+          "provenance": {
+            "file": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+            "line": 17,
+            "nameFieldPath": "initial.characters.person_c.name",
+            "descriptorFieldPath": "initial.characters.person_c.initialAppearance",
+            "descriptorLine": 17
+          }
+        }
+      ]
+    }
+  }
+}

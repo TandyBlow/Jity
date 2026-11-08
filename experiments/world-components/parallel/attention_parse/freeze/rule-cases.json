@@ -1,0 +1,118 @@
+{
+  "protocol": "c1-attention-parse-unit-v1",
+  "note": "规则单元夹具：用于单独检验某条机制是否按声明工作。这里的 roster 是实验构造，不是世界记录，也不来自已登记夹具，因此不计入 10 条主样本成绩。",
+  "cases": [
+    {
+      "caseId": "U1",
+      "targets": "M1 完全同名",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "dup_a", "kind": "character", "name": "张伟", "descriptor": "穿灰衣。" },
+          { "entityId": "dup_b", "kind": "character", "name": "张伟", "descriptor": "穿蓝衣。" }
+        ]
+      },
+      "utterance": "张伟呢？",
+      "priorNarration": null,
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": ["dup_a", "dup_b"]
+      }
+    },
+    {
+      "caseId": "U2",
+      "targets": "M3 描述词不唯一",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "x1", "kind": "character", "name": "甲", "descriptor": "穿校服。" },
+          { "entityId": "x2", "kind": "character", "name": "乙", "descriptor": "穿校服。" }
+        ]
+      },
+      "utterance": "穿校服的呢？",
+      "priorNarration": null,
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": ["x1", "x2"]
+      },
+      "note": "实现期修正：原标签写的 unresolved；第一次跑出 none，因为不唯一描述词被静默丢弃。改为报歧义（表面词同时指向两个对象），两者都不选。主样本 10 条不受影响。"
+    },
+    {
+      "caseId": "U3",
+      "targets": "M1/M3 无关语句",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "p1", "kind": "character", "name": "甲", "descriptor": "刚进来。" },
+          { "entityId": "l1", "kind": "location", "name": "走廊", "descriptor": "空的。" }
+        ]
+      },
+      "utterance": "嗯，继续。",
+      "priorNarration": null,
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": []
+      }
+    },
+    {
+      "caseId": "U4",
+      "targets": "M4 代词无前文",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "p1", "kind": "character", "name": "甲", "descriptor": "刚进来。" },
+          { "entityId": "p2", "kind": "character", "name": "乙", "descriptor": "站着。" }
+        ]
+      },
+      "utterance": "他呢？",
+      "priorNarration": null,
+      "expected": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "ambiguousCandidates": []
+      }
+    },
+    {
+      "caseId": "U5",
+      "targets": "M4 地点代词唯一",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "p1", "kind": "character", "name": "甲", "descriptor": "刚进来。" },
+          { "entityId": "l1", "kind": "location", "name": "走廊", "descriptor": "空的。" },
+          { "entityId": "l2", "kind": "location", "name": "门厅", "descriptor": "安静。" }
+        ]
+      },
+      "utterance": "那里呢？",
+      "priorNarration": "乙走进门厅。",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["l2"],
+        "ambiguousCandidates": []
+      }
+    },
+    {
+      "caseId": "U6",
+      "targets": "非全选回退",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "p1", "kind": "character", "name": "甲", "descriptor": "刚进来。" },
+          { "entityId": "p2", "kind": "character", "name": "乙", "descriptor": "站着。" },
+          { "entityId": "l1", "kind": "location", "name": "走廊", "descriptor": "空的。" }
+        ]
+      },
+      "utterance": "不知道。",
+      "priorNarration": null,
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": [],
+        "assertTargetsStrictlySmallerThanRoster": true
+      }
+    }
+  ]
+}
