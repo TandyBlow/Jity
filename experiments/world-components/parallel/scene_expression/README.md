@@ -6,7 +6,7 @@
 | 父分支 | `world-components` @ `64405346fe63c2f05cf067f3b328893fa9e0d381` |
 | 任务书 | 工作树根 `TASK.md`（未跟踪）；实验方案见根目录 `SCENE-CONTEXT-ABLATION-v3.md` |
 | 对应 R | R11（叙事选择/组织/生成）／R03（人物与世界变化） |
-| 当前档位 | **输入已冻结，尚未生成**：材料、三臂提示、每事实调用与拼接规则全部固定，等待第 3 步生成 30 份初稿 |
+| 当前档位 | **本轮收口：生成与执行方初审完成，整批文案验收不合格；自然度评审停止，转入段落生成路线方案** |
 | 独占目录 | `experiments/world-components/parallel/scene_expression/` |
 
 ## 目录差异（必须写清）
@@ -45,7 +45,11 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `step5/material-use-evidence.md` | 逐项核对增补素材是否真的进了正文（区分共用事实行） |
 | `step5/final-comparison.md` | 按样本列出三臂的遗漏／事实错误／未授权动作（不跨口径相加） |
 | `step5/independent-review/` | 独立评审记录位置：`clause-review.jsonl`、`naturalness-return.json`、改判说明；不覆盖初审 |
-| `build_independent_review.py`、`reveal_naturalness.py` | 生成独立评审模板；选票收齐后揭示映射并统计 |
+| `build_independent_review.py`、`reveal_naturalness.py` | 生成独立评审模板；选票收齐后揭示映射并统计（当前已停止评审，模板留空） |
+| `step6/verdict-stop-naturalness.md` | 失败结论与评审停止记录 |
+| `step6/references/` | 三题参照段落（人工写作，非模型输出）＋逐句来源表 |
+| `build_references.py` | 参照来源表的生成与路径校验 |
+| `step6/route-plan.md` | 段落生成路线方案：验收标准、A/B/C 路线、数据、排期、未决问题 |
 
 ## 复现
 
@@ -74,7 +78,8 @@ $PY -X utf8 experiments/world-components/parallel/scene_expression/measure_input
 
 ## 当前结论
 
-三臂均出现未授权动作（各 2 处，均为移动钥匙）；执行方初审发现 B、C 各新增两处目的地遗漏，A 无遗漏但把钥匙动作写进同一句并构成事实错误；尚无自然度改善证据（`step5/material-use-evidence.md` 只有 C 臂“外向”一处可归因）。独立评审待完成，自然度门槛 `not_evaluable`。
+- 背景对照（A/B/C）：三臂均出现未授权动作（各 2 处，均为移动钥匙）；B、C 各新增两处目的地遗漏，A 无遗漏但以同一句钥匙动作构成事实错误；增补素材未显示叙事收益，自然度门槛 `not_evaluable`。
+- **整批文案验收：不合格**（产品负责人判定）。u240 逐事实生成＋直接拼接交不出合格段落；本轮不比较自然度，转入“能否生成合格段落”的路线方案（`step6/route-plan.md`）。
 
 ## 仓库约定
 

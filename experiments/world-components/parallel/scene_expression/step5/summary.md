@@ -70,6 +70,7 @@
 
 ## 6. 门槛与待定
 
+- **2026-11-08 收口：** 产品负责人判定整批文案验收不合格，自然度评审停止（`step6/verdict-stop-naturalness.md`）；该判断取代“有效配对不足”作为本次 `not_evaluable` 的主因。
 - 自然度：**未投票**，选票仍为空（`step4/ballot/ballot.json`）；盲评包 `step5/review-packet.md` 只含已提交事实背景与 甲/乙/丙 文本，不含臂名、评分或预判。独立评审的记录位置与流程见 `step5/independent-review/README.md`，与初审分开保存。
 - 因此自然度门槛保持 `not_evaluable`（有效配对 6 < 10）。
 - 事实合法性本轮给出执行方结论，仍需独立人工确认；`step5/clauses.jsonl` 的 `human.reviewStatus` 已标为 `pending-independent-human`。
