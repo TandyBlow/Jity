@@ -365,7 +365,11 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | smoke:fixture-r1:P1 | — | `fail` | 归档输出本就硬判失败，列为留档 |
 | smoke:fixture-r1:P2 | — | `fail` | 同上 |
 
-**一处与冻结判据的偏差**：`freeze/criteria-v2.json` 只允许 `paraphrase-ok / new-content-fail / unsure` 三个取值，这里用了第四个 `fail`，且只出现在两行**已经硬判失败**的归档输出上。处理办法不是改写冻结件，而是：
+**一处与冻结判据的偏差**：`freeze/criteria-v2.json` 只允许 `paraphrase-ok / new-content-fail / unsure` 三个取值，这里出现了第四个 `fail`，只落在两行**已经硬判失败**的归档输出上。
+
+来源要写清：这两个值是**生成队列的脚本**写进去的（`run_experiment.py` 当时对 `archived-output-hard-fail` 行直接填了 `"fail"`），不是复核者新写的；复核者填其余 8 行时保留了这两个原值，当时也没有指出契约冲突。生成器现改为对这些行写 `verdict: null` 并加 `alreadyFailedHard: true`，重跑仍保留已填值。
+
+处理办法不是改写冻结件，而是：
 
 - `apply_review.py` 只在行的 `code == archived-output-hard-fail` 时接受 `fail`，把它当作 `new-content-fail`；
 - 其它场合出现 `fail` 一律记为偏差并按“待定”处理；
@@ -378,11 +382,11 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | 结论 | 数量 | 是哪几条 |
 | --- | --- | --- |
 | `rejected-hard`（程序硬判失败） | 9 | T01、T02、T04、T05、T06、T07、T08、T10、T11 |
-| `rejected-review`（程序放过、人工判新内容） | 1 | T03（`刀`、`拿走`） |
-| `pending-review`（程序放过、人工 `unsure`） | 1 | T09（`墨`、`干纸`） |
+| `rejected-review`（无 hard、转入 review，人工判新内容） | 1 | T03（`刀`、`拿走`） |
+| `pending-review`（无 hard、转入 review，人工 `unsure`） | 1 | T09（`墨`、`干纸`） |
 | `accepted` | 0 | — |
 
-对照：**只看程序**的话，11 条里有 2 条没有硬判问题（T03、T09），会被放过；加入人工结论后，1 条被判失败、1 条卡在 `unsure`。这就是“程序 + 人工”两级判据的实际作用。
+对照：**只看程序**的话，11 条里有 2 条没有 hard 发现（T03、T09），但这**不等于通过**——冻结的接受定义本来就要求 review 项有人工结论，未核验的 review 不算通过。加入人工结论后：1 条被判新内容（T03），1 条停在 `unsure`（T09），**没有任何一条被算作通过**。这正是“程序 + 人工”两级判据的作用：程序只负责把可以机械判定的部分判死，剩下的必须由人补。
 
 **门状态**：`acceptance.json` 的 `gateStatus` 是 `PROVISIONAL_AI_REVIEW_ONLY`，不是 `OPEN`。含义写在文件里：结论来自 AI 复核、人工签认为 `pending`，所以这份结论**不能**直接当作下一轮模型验收门；它只说明“这套判据 + 核验流程是可用的”，并给出每一行的具体理由供人工核对。
 
@@ -396,6 +400,47 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 
 实测：先备份当前文件，重跑 `run_experiment.py`，10 条 `verdict` 全部保留、`reviewer` 块一致、`summary.json` 记录 `manualReviewPreservedVerdicts: 10`、`manualReviewOrphaned: 0`。
 
+
+## 8.6 检查点取证（决定 1：走 A，已结束）
+
+工具 `recover_checkpoint.py`，只读。结果 `freeze/checkpoint-forensics.json`。
+
+**决定性证据**：`train_controllability.py` 在所有已提交版本里都没有 `save_pretrained` / `torch.save`。它把最好的一轮 `state_dict` 克隆到内存，评估前 `load_state_dict` 回去，然后结束——**没有落盘这一步**。所以“旧检查点丢失”这个说法不准确：它从来就没有文件。
+
+配套核对：
+
+| 检查 | 结果 |
+| --- | --- |
+| 冻结记录里的 trained-checkpoint 字段 | 无；`base_hashes` 只钉基座 `5cdc5721…` |
+| 运行记录里的哈希字段 | 只有 `material_sha256`、`freeze_sha256`；没有权重 |
+| 运行目录内容 | 只有 `results.json`、`run.log` |
+| 名字匹配的目录（`ckpt-group`/`controllab`/`n4group`） | 10 个，全是运行记录目录，0 个含权重 |
+| 本地 30 个权重目录 | 29 个哈希；能对上记录只有基座；可归因于计划训练 **0** |
+
+一处引用更正：`权重未提交` 出自 `design/world-engine-reports/components/README.md`，讲的是 **A/B_h 句组臂**，不是 controllability。此前 `NEXT-ROUND.md` 把它当成 controllability 的自述，已改。
+
+**口径**：取证结果＝本地未发现可归因检查点；不是模型能力失败，也不构成“接口无效”。按决定到此停止，不自动转 B 重训，C 不复跑。
+
+## 8.7 新留出交接（决定 2）
+
+契约 `HOLDOUT-HANDOFF.md`，接收工具 `validate_holdout.py`（只读）。分族校验：包结构、schema、点链、证据/`delta_json`、授权、**隔离**、双计划、数量门槛。
+
+两个自检都跑了：
+
+| 自检 | 结果 |
+| --- | --- |
+| `--self-test` 把现有 9 个来源当包 | schema/链/证据/授权/计划 0 错；隔离 45 条全判重；来源 9 < 10 → `not-admissible` |
+| `--unit-test` 两条合成事实 | 全新事实 0 错；`袖口沾了雨`→`袖口沾了雨水` 被判 `I-near-duplicate-fact` |
+
+隔离线是 bigram Jaccard ≥ 0.8，只比事实文本、不比姓名：换个名字但事实描述照抄会被抓。
+
+## 8.8 人工签认（决定 3）
+
+`build_signoff_form.py` 生成 `runs/r2/signoff-form.json`：10 行，AI 结论放在 `aiVerdict`/`aiNote`（只读），留 `humanVerdict`/`humanNote` 给负责人；表头钉 4 个哈希 + `acceptance.json` 的 `identitySha256`。
+
+`apply_signoff.py` 校验完备性并生成 `runs/r2/signoff.json`；缺字段或哈希漂移直接拒绝（`--show` 现在报 `incomplete`）。`apply_review.py` 读到签认记录后改用人工结论，签认后无偏差则 `gateStatus` 变 `OPEN`；`unsure` 行进 `openItems`，**不计通过**。
+
+现在：`gateStatus = PROVISIONAL_AI_REVIEW_ONLY`，`openItems = ["T09-props-only-addition"]`。
 
 ## 9. 真实模型 smoke：只证明测量路径能跑
 
@@ -464,7 +509,14 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | `runs/r2/acceptance.json` | 程序硬判 + 人工结论合成的逐条验收结果与门状态 | — |
 | `freeze/criteria-v2-amendment-1.json` | `fail` 取值的窄口修正记录（不改冻结件） | — |
 | `freeze/checkpoint-inventory.json` | 30 个本地权重目录的清点（29 个哈希，0 个可归因计划训练） | — |
-| `NEXT-ROUND.md` | 检查点与新留出的现状、三条路线、阻塞点 | — |
+| `freeze/checkpoint-forensics.json` | 取证记录：脚本无保存调用、记录无可比哈希、目录与文件系统扫描 | — |
+| `freeze/criteria-v2-amendment-1.json` | `fail` 取值的来源与窄口映射（生成器所致，非复核者） | — |
+| `recover_checkpoint.py` | 只读取证脚本（git 各版本 + 文件系统） | — |
+| `validate_holdout.py` | 留出包接收校验（8 族，含隔离与双计划） | — |
+| `HOLDOUT-HANDOFF.md` | 留出交接契约：A 交付什么、c3 怎么查、怎么冻结 | — |
+| `build_signoff_form.py` / `apply_signoff.py` | 生成/校验人工签认表 | — |
+| `runs/r2/signoff-form.json` | 人工签认表（10 行，未签） | — |
+| `NEXT-ROUND.md` | 三项决定的执行状态与下一步 | — |
 | `runs/r2/controls.json` | 4 个固定策略 × 9 个来源 | — |
 | `runs/r2/downstream-inputs.jsonl` | 18 条 N4 模拟输入（与 r1 逐字节一致） | — |
 | `runs/r2/summary.json` | 头部数字 | — |
@@ -481,6 +533,11 @@ python -X utf8 run_experiment.py      # 合法性 + 旧计划复检 + 参考正�
 python -X utf8 render_input.py --out runs/r2/downstream-inputs.jsonl
 python -X utf8 apply_review.py        # 把 manual-review.json 的结论并进 acceptance.json
 python -X utf8 inventory_checkpoints.py  # 只读清点本地权重（约 35 秒，不算模型）
+python -X utf8 recover_checkpoint.py     # 只读取证旧检查点（约 60 秒）
+python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒绝覆盖）
+python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json
+python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
+python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）
 ```
 
@@ -505,7 +562,8 @@ python -X utf8 text_conformance.py --texts runs/r1/reference-output.jsonl
 - **已证明**：在这 9 个可追溯来源、18 份计划上，合法性校验 18/18 通过；20 个负例全部按预期被拦下；确定性参考执行器 18/18 按计划生成，交叉检查 18/18 能区分两份计划；四个固定策略没有一对能同时通过两份计划；v2 文本检查器 11/11 探针按预期处置（9 硬判、2 转人工）。
 - **已证明（限定范围）**：上述 9 个重叠来源上的旧 A/B 计划 18/18 合法；这不等于旧固定留出 10 源全部合法（其中只有 2 源有证据链）。
 - **已失败**：不训练的 77M 基线在 4 条 smoke 上 0/4 通过文本一致性（只说明基线不读计划，不是接口结论）。
-- **已证明（判据层面，AI 复核待人工签认）**：v2 判据加人工核验后，11 条篡改探针 10 条被判失败、1 条（T09“墨/干纸”）停在 `unsure`；只看程序会放过 2 条，加入复核后放过 0 条。门状态 `PROVISIONAL_AI_REVIEW_ONLY`，尚不能当模型验收门。
-- **已失败**：本地 30 个权重目录里，没有一个能证明“训练时读过计划块”（29 个算了哈希，只有基座 `5cdc5721…` 出现在旧记录里）。
+- **已证明（判据层面，AI 复核待人工签认）**：v2 判据加人工核验后，11 条篡改探针 10 条被判失败、1 条（T09“墨/干纸”）停在 `unsure`；只看程序时有 2 条没有 hard、转入 review，加入复核后没有任何一条被算作通过。门状态 `PROVISIONAL_AI_REVIEW_ONLY`，尚不能当模型验收门。
+- **取证结果（不是能力失败）**：本地 30 个权重目录里，没有一个能证明“训练时读过计划块”（29 个算了哈希，只有基座 `5cdc5721…` 出现在旧记录里）。旧训练脚本本身没有保存权重的调用，所以这批权重从未落盘；这属于“取证未发现”，不能记成模型能力失败。
 - **无法判断**：计划训练过的模型（旧 controllability 检查点或新检查点）能否执行计划；真实浏览器端到端质量；更长计划、更多事实类型、跨组省略、真实玩家回合下的表现。
-- **阻塞**：新留出无法从现有材料产生——9 个来源全部在旧训练/选点/复核里出现过，主工作区也只有这 10 组 provenance；新一组需要 Python 侧提交新世界回合与授权关系。详见 `NEXT-ROUND.md`。
+- **阻塞（已排期）**：新留出不能从现有材料产生——9 个来源全部在旧训练/选点/复核里出现过，`validate_holdout.py --self-test` 已机器判出这一点。新留出由 A 在 Python 侧生成 ≥10 个新来源，c3 只读接收；契约见 `HOLDOUT-HANDOFF.md`，工具已用两个自检验过。
+- **未签**：`runs/r2/signoff-form.json` 等你逐条填 `humanVerdict`；签认前 `gateStatus` 保持 `PROVISIONAL_AI_REVIEW_ONLY`。

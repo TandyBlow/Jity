@@ -1,5 +1,5 @@
 {
- "identitySha256": "90ba21f42339226a27a96e3813aaf8680834ce1c3b23f42421daaa8f44f1d277",
+ "identitySha256": "d3767818d78c89b4f2941c067ea6d0074a33e73531a2cfa73862492634f74a9c",
  "criteria": {
   "file": "freeze/criteria-v2.json",
   "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
@@ -12,7 +12,7 @@
   },
   "manualReview": {
    "file": "runs/r2/manual-review.json",
-   "sha256": "57dc73d0cc642165741b683f1db0eef1c06a5c5efbedc822b9515ac21e956886"
+   "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
   }
  },
  "reviewer": {
@@ -23,6 +23,10 @@
   "humanSignoff": "pending",
   "scope": "AI逐条复核；不冒充人工签认，不改变冻结判据、程序硬判或模型能力结论。"
  },
+ "signoff": null,
+ "openItems": [
+  "T09-props-only-addition"
+ ],
  "counts": {
   "probes": 11,
   "rejectedHard": 9,

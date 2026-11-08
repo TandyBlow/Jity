@@ -441,7 +441,11 @@ def main() -> int:
                 "detail": f"{len(result['hard'])} hard finding(s): "
                           + ", ".join(sorted({h['code'] for h in result['hard']})[:6]),
                 "text": row["output"],
-                "verdict": "fail" if result["hard"] else None,
+                # leave the verdict empty: acceptance criteria allow only
+                # paraphrase-ok / new-content-fail / unsure, and these rows are
+                # already decided by the program's hard checks.
+                "verdict": None,
+                "alreadyFailedHard": bool(result["hard"]),
                 "reviewerNote": "archived output already fails hard; listed for completeness",
             })
     queue = queue[:10]

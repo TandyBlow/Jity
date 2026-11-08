@@ -37,6 +37,7 @@ RUN = HERE / "runs" / "r2"
 CRITERIA = HERE / "freeze" / "criteria-v2.json"
 PROBES = RUN / "tamper-probes.json"
 REVIEW = RUN / "manual-review.json"
+SIGNOFF = RUN / "signoff.json"
 OUT = RUN / "acceptance.json"
 
 # The frozen criteria allow three verdict values. Archived-output rows that
@@ -70,18 +71,33 @@ def main() -> int:
     rows = review_doc["rows"]
     reviewer = review_doc.get("reviewer") or {}
 
+    # A signed record, when present, is authoritative for the rows it covers.
+    # The AI verdict is kept beside it, never replaced.
+    signoff = None
+    human_by_id: dict[str, str] = {}
+    if SIGNOFF.exists():
+        signoff = json.loads(SIGNOFF.read_text(encoding="utf-8"))
+        human_by_id = {r["queueId"]: r["humanVerdict"] for r in signoff.get("rows", [])
+                       if r.get("humanVerdict")}
+
     deviations: list[str] = []
     by_probe: dict[str, list[dict]] = {}
     normalised_rows = []
     for row in rows:
-        verdict, note = normalise(row.get("verdict"), row.get("code", ""), allowed)
+        ai_verdict, note = normalise(row.get("verdict"), row.get("code", ""), allowed)
         if note:
             deviations.append(f"{row['queueId']}: {note}")
-        if verdict is None:
+        if ai_verdict is None:
             deviations.append(f"{row['queueId']}: unreadable verdict, treated as pending")
+        human = human_by_id.get(row["queueId"])
+        if human is not None and human not in allowed:
+            deviations.append(f"{row['queueId']}: signed verdict {human!r} is off-contract")
+            human = None
+        effective = human if human is not None else ai_verdict
         if row.get("probeId"):
-            by_probe.setdefault(row["probeId"], []).append({**row, "normalised": verdict})
-        normalised_rows.append({**row, "normalised": verdict})
+            by_probe.setdefault(row["probeId"], []).append(
+                {**row, "ai": ai_verdict, "human": human, "normalised": effective})
+        normalised_rows.append({**row, "ai": ai_verdict, "human": human, "normalised": effective})
 
     outcomes = []
     for p in probes:
@@ -126,14 +142,18 @@ def main() -> int:
         "detail": "probes the v2 program alone would let through (no hard finding)",
     }
 
-    signed = reviewer.get("humanSignoff") == "signed"
-    if reviewer.get("kind") == "ai" and not signed:
-        gate = "PROVISIONAL_AI_REVIEW_ONLY"
-    elif not signed:
-        gate = "BLOCKED_PENDING_HUMAN_SIGNOFF"
-    elif counts["pendingReview"] or deviations:
+    signoff_complete = bool(signoff) and signoff.get("signed") is True
+    unsigned = not signoff_complete
+    if unsigned:
+        if reviewer.get("kind") == "ai":
+            gate = "PROVISIONAL_AI_REVIEW_ONLY"
+        else:
+            gate = "BLOCKED_PENDING_HUMAN_SIGNOFF"
+    elif deviations or any(r["normalised"] is None for r in normalised_rows):
         gate = "BLOCKED_REVIEW_INCOMPLETE"
     else:
+        # unsure is allowed inside a sealed review; it just does not pass, and
+        # the affected probes stay listed as open items.
         gate = "OPEN"
 
     identity = hashlib.sha256(
@@ -150,6 +170,13 @@ def main() -> int:
             "manualReview": {"file": "runs/r2/manual-review.json", "sha256": sha256(REVIEW)},
         },
         "reviewer": reviewer,
+        "signoff": None if not signoff else {
+            "file": "runs/r2/signoff.json", "sha256": sha256(SIGNOFF),
+            "signer": signoff.get("signer"), "date": signoff.get("date"),
+            "reviewedCommit": signoff.get("reviewedCommit"),
+            "humanCounts": signoff.get("humanCounts"),
+        },
+        "openItems": [o["probeId"] for o in outcomes if o["outcome"] == "pending-review"],
         "counts": counts,
         "programOnly": program_only,
         "gateStatus": gate,
@@ -157,6 +184,8 @@ def main() -> int:
             "PROVISIONAL_AI_REVIEW_ONLY":
                 "verdicts are AI review; human sign-off is still pending, so this cannot be used as "
                 "the acceptance gate for a model round yet",
+            "OPEN": "review sealed by the project owner; openItems (e.g. an 'unsure' probe) remain "
+                    "not-passing but do not block using the gate on new model output",
             "BLOCKED_PENDING_HUMAN_SIGNOFF": "reviewer did not sign",
             "BLOCKED_REVIEW_INCOMPLETE": "some review row is unsure/unfilled or a verdict is off-contract",
             "OPEN": "review sealed; the gate may be used",

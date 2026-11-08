@@ -132,6 +132,7 @@
    "detail": "19 hard finding(s): edge-endpoints-share-sentence, fact-omitted, group-out-of-order, groups-merged, ref-missing-antecedent, ref-name-missing",
    "text": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
    "verdict": "fail",
+   "alreadyFailedHard": true,
    "reviewerNote": "archived output already fails hard; listed for completeness"
   },
   {
@@ -146,6 +147,7 @@
    "detail": "21 hard finding(s): edge-endpoints-share-sentence, fact-omitted, group-out-of-order, groups-merged, ref-name-missing, sentence-count-mismatch",
    "text": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
    "verdict": "fail",
+   "alreadyFailedHard": true,
    "reviewerNote": "archived output already fails hard; listed for completeness"
   }
  ]

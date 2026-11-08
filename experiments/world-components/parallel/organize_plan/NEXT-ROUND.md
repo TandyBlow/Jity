@@ -1,88 +1,118 @@
-# 下一轮：可用检查点与新留出（本轮不启动训练）
+# 下一轮：检查点取证结果与留出交接（本轮不训练）
 
-日期：2026-11-08。基线提交：`8a93f45`（v2 检查器）＋本轮复核应用。
-状态：**只做清点与门槛定义，没有训练、没有申请 GPU、没有调用模型、没有生成新世界回合。**
+日期：2026-11-08。基线：`3431678` 之后的 c3 工作树。
+状态：**取证结束（未发现）；留出交接契约与接收工具已就绪（材料未到）；签认表已生成（未签）。没有训练、没有申请 GPU、没有调用模型生成。**
 
-本文回答两件事：**拿什么权重跑**、**拿什么材料当留出**。两件都还没有落实，因此“模型能否执行计划”仍然无法判断。
+三项决定已定：
 
-## 1. 检查点：本地 30 个权重目录，没有一个有“读过计划”的证据
+| 决定 | 内容 | 本轮状态 |
+| --- | --- | --- |
+| 1 检查点 | 走 A 取证；找不到就记录缺失并停止，不自动转 B 重训；C 不复跑（零样本 smoke 已有证据） | **已执行，结论：本地未发现可归因检查点** |
+| 2 新留出 | 由 A 在 Python 侧生成 ≥10 个新来源；c3 只读接收、核查隔离、构造双计划、推理前冻结 | **契约与工具就绪；材料未到** |
+| 3 人工签认 | 由项目负责人逐条核对并另存签认记录；保留 AI 标注；T09 可留 `unsure`；签认前维持 `PROVISIONAL_AI_REVIEW_ONLY` | **签认表已生成，未签** |
 
-`inventory_checkpoints.py` 只读扫描 7 个根目录，读 `config.json` 与 `model.safetensors` 的字节，**不加载模型**。结果在 `freeze/checkpoint-inventory.json`。
+---
+
+## 1. 取证（决定 1）
+
+工具：`recover_checkpoint.py`，只读，不加载模型。结果：`freeze/checkpoint-forensics.json`。
+
+### 1.1 决定性证据：训练脚本从来没有保存权重的调用
+
+`train_controllability.py` 在**所有已提交版本**（本仓库只有 1 个版本，`80ed473`）里都没有 `save_pretrained`、也没有 `torch.save`。它做的是：
+
+```python
+best = {"success": ns, "loss": dl, "epoch": epoch, "updates": update,
+        "state": {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}}
+...
+model.load_state_dict(best["state"])   # 只在内存里恢复，然后直接评估
+```
+
+也就是说：最好的一轮状态只存在于进程内存里，选点后立刻 `load_state_dict` 再跑留出，**没有落盘这一步**。所以“旧 controllability 检查点”不是丢失，而是**从未产生过文件**。
+
+对照：后来那个 784M 成句脚本（`train_sentence_scale_784.py`）确实有 `model.save_pretrained(...)`，所以那批检查点在本地能找到。
+
+### 1.2 记录里没有可比的哈希
+
+| 检查 | 结果 |
+| --- | --- |
+| 冻结记录 `controllability-freeze-v1.json` 的字段 | `base_hashes` 只钉基座（`5cdc5721…`）、`base`、`training`、`selection`、`acceptance`、`no`；**没有任何 trained-checkpoint 字段** |
+| 运行记录 `controllability-run-v1/results.json` 的字段 | `material`、`material_sha256`、`freeze`、`freeze_sha256`、`config`、`counts`、`history`、`selected`、`holdout`、`holdout_success`；**哈希字段只有材料与冻结记录，没有权重** |
+| 运行目录内容 | 只有 `results.json`（40 KB）与 `run.log`（5 KB），没有 `*.safetensors`/`*.bin` |
+| `controllability-report-v1.md` | **全文没有出现“权重”二字**，所以它既没声称保存、也没声称丢弃 |
+
+更正一处此前的错误引用：`权重未提交` 这句话出自 `design/world-engine-reports/components/README.md`，说的是 **A/B_h 句组臂**那次 120 次更新的运行，不是 controllability。两者不能混引；已单独记在 `freeze/checkpoint-forensics.json` 的 `claimsInRecords.otherRunStatement` 里。
+
+### 1.3 文件系统：30 个权重目录，0 个可归因
+
+`inventory_checkpoints.py`（只读、只含 `config.json` 与权重字节）扫 7 个根目录：
 
 | 项 | 数字 |
 | --- | --- |
-| 找到的权重目录 | 30 |
-| 完成 sha256 的 | 29（跳过一个 942 MB 的 Qwen GGUF，超过 500 MB 上限） |
-| 记录里能对上哈希的 | **1**：Randeng-T5-77M 基座 `5cdc572109cf…`，出现在 `controllability-freeze-v1.json` 的 `base_hashes` 里 |
-| 有“训练时消费过计划块”证据的 | **0** |
+| 权重目录 | 30 |
+| 完成 sha256 | 29（跳过一个 942 MB 的 Qwen 副本） |
+| 记录里能对上哈希 | **1**：基座 `5cdc5721…` |
+| 有“训练时消费过计划块”证据 | **0** |
 
-为什么 0：旧 controllability 的冻结记录里，`base_hashes` 只钉了**基座**的哈希；它的训练产物在报告里写明**没有保存**（`controllability-report-v1.md`：「权重未提交」；`README` 记的 `ckpt-group` 只有 `~/n4group_run/ckpt-group` 这种路径，没有文件哈希，且当时 HPC 公钥登录被拒）。
+另外，名字里含 `ckpt-group`/`controllab`/`n4group` 的目录有 10 个，**全部是运行记录目录**（`results.json`/`run.log`），没有一个含权重文件。
 
-本地这 29 个有权重的目录分别是什么（摘自清点结果）：
+### 1.4 没检查到的通道
 
-| 目录 | 大小 | 是什么 |
+| 通道 | 状态 | 说明 |
 | --- | --- | --- |
-| `.local/models` | 295 MB | u240 成句检查点（`ab8a9826…`；`.local/models/u240-model.safetensors` 是同目录的另一份拷贝） |
-| `.local/demo-n1n4/ckpt-{asm,rewrite,rw60,rw100}` | 295 MB × 4 | 早期 n1→n4 演示的装配/改写臂 |
-| `.local/world-components-worktree/.../n4-finetune/*` | 295 MB × 14 | N4 单句/方向/路由臂 |
-| `.local/.../n4_corpus_v2/ckpt-{v2,v3,v3a,n5,extractor-v1}` | 295 MB × 4 + 39 MB × 1 | N4 语料 v2/v3、N5 抽取 |
-| `.local/world-components-next-worktree/artifacts/next-runs/*` | 295 MB × 2 | cf24 对照/处理臂 |
-| `.local/world-components-worktree/ckpt-scenevb` | 295 MB | 场景词表臂 |
-| `.local/demo-n1n4/.qwen05` | 942 MB | Qwen2.5-0.5B 的 GGUF/权重副本，超过 500 MB 上限，未算哈希 |
-| `.local/mockremote/base` | 295 MB | 测试桩（与 `n4_corpus_v2/ckpt-v2` 同哈希 `e89739ec…`） |
+| HPC `~/n4group_run/ckpt-group` | 未检查 | 本环境无 SSH 凭据；且记录里没有该文件的哈希，即使取回也无法归因 |
+| 离线归档/备份 | 未发现 | 搜索范围内没有这类归档；日后若有人提供副本，必须带一个能与记录对上的哈希，否则仍不可归因 |
 
-这些权重**都不是**在“事实 + 计划块”的输入上训练的。拿它们跑 18 条计划提示，得到的只能是“零样本/其它训练任务的行为”，不能回答计划执行问题——和本轮 `model_smoke.py` 的基线 smoke（0/4）同一类证据。
+### 1.5 结论口径
 
-### 1.1 要落实检查点，只有三条路，各有代价
+**取证结果：本地未发现可归因于“读过计划块”的检查点。** 这不是“模型能力失败”，也不是“接口无效”——只是没有可用的权重来问这个问题。按决定，到此停止，不自动转 B 重训。
 
-| 路线 | 具体做法 | 代价 / 风险 | 是否满足“可归因” |
-| --- | --- | --- | --- |
-| A. 找回旧检查点 | 按记录里的 `~/n4group_run/ckpt-group` 去 HPC 找；找到后必须核出 `model.safetensors` 的 sha256，并与任何记录对上 | 该路径的历史记录没有哈希，找到也无法证明就是当时那个；公钥登录此前被拒 | 只有拿到哈希且能对上记录才算 |
-| B. 重训一次可控性臂 | 复现 `controllability-v1` 的冻结配置（77M、120 更新、20/6/10 划分） | **需要 GPU，本任务禁止**；且旧材料本身有“B 全是同一形状”的缺陷，重训也只能在同一批材料上回答 | 是（配方+哈希齐全） |
-| C. 换一个已发布的中文 instruction 模型零样本测试 | 例如 0.5B–1B 档的通用模型，直接读计划提示 | 不是“计划训练”，只能测“提示里写了计划，通用模型会不会照做”；不能替代计划执行能力结论 | 是，但结论范围要改写 |
+---
 
-本轮不做任何一条。**下一步需要用户裁决走哪条**；其中 A 只是取证、B 需要 GPU 批准、C 需要明确接受“零样本”这个范围限定。
+## 2. 新留出（决定 2）
 
-## 2. 新留出：现有 9 个来源不能当能力留出
+契约与接收工具：`HOLDOUT-HANDOFF.md`、`validate_holdout.py`。
 
-`freeze/sources.json` 的 9 个来源都有完整证据链（`*-authorized.json` + `world_evidence` + `world_points.delta_json` + 授权关系），但：
+A 需要交付：≥10 个新来源，每个来源的提交点、`delta_json`、`world_evidence` 行、前驱链、`world-relation-validator/1` 的授权记录，外加一个 `manifest.json`。
 
-1. 它们**全部出现在旧材料里**（`controllability-v1.jsonl` 与 `pairs-v2.jsonl`），历史上被用于训练、选点或复核，`fixture-r5`、`train-r4` 还是旧固定留出——按“见过就不能当新留出”的规矩，不能拿来出能力结论。
-2. 主工作区 `artifacts/world-provenance/pairs/` 只有这 10 组（`fixture-r1..r5`、`train-r1..r5`），没有第 11 组。
-3. 生成新的一组需要**新的世界回合**：提交点、`delta_json`、`world_evidence` 行、`world_point_evidence` 前驱链、`world-relation-validator/1` 的关系授权。这是 Python 侧的权威写入，属 A 的职责范围，不在本分支。
+c3 会跑两个自检，证明工具不是“只会通过”也不是“只会拒绝”：
 
-所以新留出目前是**阻塞状态**，不是“还没跑”。一个可用的新留出至少需要：
-
-| 要求 | 为什么 |
+| 自检 | 结果 |
 | --- | --- |
-| ≥10 个来源（含至少 3 个多事实组、2 个带授权 `before` 边） | 成对成功门的 8/10 需要分母 |
-| 每源两份合法计划，形状**随源变化**（不能一份永远“全拆”） | 否则固定策略能白拿，旧实验就是这么失败的 |
-| 每个事实能追到 `pointId` / `evidenceId` / `delta_json` | 本轮的来源核验链条，缺一不可 |
-| 关系授权来自 `world-relation-validator/1` 的 `verdict=pass` | 计划里的边只能搬运授权，不能自造 |
-| 从未出现在任何旧训练/选点/复核材料里 | 否则不能称留出 |
+| `--self-test`（把现有 9 个来源当成包） | schema/链/证据/授权/计划 **0 错**；隔离把 45 条事实全部判重；来源数 9 未达 10 → `not-admissible` |
+| `--unit-test`（两条合成事实） | 全新事实 0 错；把“袖口沾了雨”改成“袖口沾了雨水” → `I-near-duplicate-fact` |
 
-## 3. 判据与工具已经就绪，缺的只是权重和材料
+隔离线是 bigram Jaccard ≥ 0.8，只比事实文本、不比姓名，所以“只改人名/地点、事实描述不变”会被抓。
 
-| 环节 | 状态 | 文件 |
-| --- | --- | --- |
-| 计划合法性校验 | 就绪，18/18 + 20 负例 | `plan_contract.py`、`freeze/negative-cases.json` |
-| 文本一致性（顺序/关系词作用域/新增内容） | 就绪，11/11 探针 | `text_conformance.py`、`freeze/tamper-probes.json` |
-| 验收判据（含两级判据与门线） | 冻结 | `freeze/criteria-v2.json` |
-| 人工核验流程 | 就绪，已收到一轮 AI 复核（待人工签认） | `runs/r2/manual-review.json`、`apply_review.py` |
-| 下游模拟输入 | 冻结 18 条 | `runs/r2/downstream-inputs.jsonl` |
-| 固定策略对照 | 就绪，当前 0 成对 | `runs/r2/controls.json` |
-| 可用检查点 | **缺** | `freeze/checkpoint-inventory.json` |
-| 新留出材料 | **缺（阻塞，需 Python 侧新回合）** | — |
+---
+
+## 3. 签认（决定 3）
+
+签认表：`runs/r2/signoff-form.json`（10 行，已把 AI 结论放在 `aiVerdict`/`aiNote`，留出 `humanVerdict`/`humanNote`）。
+
+表里钉了四个哈希，防止“签的时候看的东西”和“跑的时候用的东西”不是一份：判据文件、检查器代码、探针集、人工核验表，外加 `acceptance.json` 的 `identitySha256`。
+
+流程：
+
+1. 负责人逐行填 `humanVerdict`（`paraphrase-ok` / `new-content-fail` / `unsure`）和签名、日期、提交 SHA；
+2. `python -X utf8 apply_signoff.py` 生成 `runs/r2/signoff.json`；缺字段或哈希漂移会拒绝；
+3. `python -X utf8 apply_review.py` 重算门状态：签认后若没有偏差，`gateStatus` 变 `OPEN`；`unsure` 的行仍记在 `openItems`，**不计通过**。
+
+现在 `apply_signoff.py --show` 的输出是 `status: incomplete`，缺 3 个签名字段和 10 行结论；`acceptance.json` 的 `gateStatus` 保持 `PROVISIONAL_AI_REVIEW_ONLY`。
+
+---
 
 ## 4. 本轮明确没做什么
 
-- 没有训练，没有申请 GPU，没有加载权重跑推理（`inventory_checkpoints.py` 只读 `config.json` 和权重字节）。
-- 没有生成新世界回合，没有改任何夹具、没有改计划、没有改判据。
-- 没有把 AI 复核当成人工签认：`runs/r2/acceptance.json` 的 `gateStatus` 是 `PROVISIONAL_AI_REVIEW_ONLY`，不是 `OPEN`。
-- 没有改写已冻结的 `criteria-v2.json`；`fail` 这个第四个取值单独立了修正记录 `freeze/criteria-v2-amendment-1.json`。
+- 没有训练、没有申请 GPU、没有用任何权重生成文本。
+- 没有生成新的世界回合、没有改夹具、没有改计划、没有改判据。
+- 没有把 AI 复核当成人工签认。
+- 没有为了凑数把 `fail` 写进判据：生成器改为对这些行写 `verdict: null` + `alreadyFailedHard: true`，旧值只在 `apply_review` 里做窄口映射并记录偏差。
 
-## 5. 需要用户决定的三件事
+## 5. 下一步（等两件东西）
 
-1. 检查点走 A（取证）、B（重训，需 GPU 批准）还是 C（零样本，需接受范围限定）？
-2. 新留出由谁生成：是否把“新世界回合 + 授权关系”排进 A 的排期？
-3. 人工签认由谁做、按什么形式留痕（当前 `manual-review.json` 的 `reviewer` 块是 AI 复核，`humanSignoff: pending`）。
+| 等什么 | 谁 | 到货后 c3 的动作 |
+| --- | --- | --- |
+| 留出包 | A | `validate_holdout.py --package` → `--freeze` → `render_input.py` → 再冻一份输入 |
+| 检查点（若走回头） | 用户/A | 必须先给出权重的 sha256 并能对上某个记录；对不上就不跑 |
+| 人工签认 | 项目负责人 | 填表 → `apply_signoff.py` → `apply_review.py`，门状态才可能变 `OPEN` |
