@@ -1,16 +1,16 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:08:37.197260+00:00",
+ "recordedAt": "2026-11-08T06:09:04.093490+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "4a9028bee35c8832c2958feb27e1e09da7c76725",
-  "headSubject": "C7 round composition: correct the N5 gate record and register the contract conflicts",
+  "headAtRecording": "8d8487cc74f37493dbda1f862384a0b9b8f22150",
+  "headSubject": "C7 round composition: stop the manifest's git head from going dangling",
   "porcelain": [
    "M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/contract-decisions.md",
    " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
-   " M experiments/world-components/parallel/round_composition/record_manifest.py",
    "?? TASK.md"
   ]
  },
@@ -142,8 +142,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "1be3b309b2826829b9d362bfc313f75f63c32132bd87fc0b3a177809a2a2b874",
-    "bytes": 20110
+    "sha256": "8686b3c228915eace11291dee3ca61b0671d8c6b5e0e237a7c84f4e699b078bb",
+    "bytes": 20157
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -152,8 +152,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
-    "sha256": "5cf89248004853036e3a8e8b5b1e0b245ab96588abe429861e72376f842bf57e",
-    "bytes": 9932
+    "sha256": "ae6a0a3d044431f2dd780df8e8868fb77ff4bba49c70398027f393ac1e806b73",
+    "bytes": 9992
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract_probes.py",

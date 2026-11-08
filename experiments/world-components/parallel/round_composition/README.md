@@ -115,7 +115,7 @@ G1｜f0 f1
 6. N5 硬门确实在判：`reject-n5`、`fail-n5-extra-actor`、`contract-time-conflict` 三例的脚本正文都被拒，说明 `ok` 不是恒真。
 
 **已失败（本实验暴露的问题）**
-1. **任务标题契约冲突。** N4.0 的要求行写着「不写任务标题」，但 v2 N5 对任务类事实只有一种帧：`完成任务「目标原文」`。照 N4.0 写（把结果写成动作）必然挂 G1；照 N5 写就违反 N4.0。定点探针：`out/contract-probes.json` 的 `task-title-quoted`（pass）与 `task-title-paraphrased`（`uncovered:f1:task_achieved`）。本组合 4 个 `ok` 场景里的任务类事实全部选了后者（写标题）。登记为 D1。
+1. **任务标题契约冲突。** N4.0 的要求行写着「不写任务标题」，但 v2 N5 对任务类事实只有一种帧：`完成任务「目标原文」`。照 N4.0 写（把结果写成动作）必然挂 G1；照 N5 写就违反 N4.0。定点探针：`out/contract-probes.json` 的 `task-title-quoted`（pass）与 `task-title-paraphrased`（`uncovered:f1:task_achieved`）。4 个 `ok` 场景里含任务类事实的是 `normal-move-task` 与 `retry-n5-success`，这两个都选了后者（写标题）。登记为 D1。
 2. **两套 N5 程序核不一致。** 本组合用 v2 对齐器（`eval_n4_v2.judge_row`）。同一批正文再用 v7 识别器（`corpus_check.check_narration`，`verify_text` 调用）看：`reject-n5` 第 2 次截断文本 `fails=[] reviews=0`（v7 没有截断规则），`fail-n5-extra-actor` 的残留人名只算 review，不算 fail。也就是说，「N5 拒绝」目前取决于用哪套核。
 3. **时间契约冲突。** N4.0 契约明确要求时间只模糊表达、不写具体时长；v2 N5 的 G3 要求正文出现计划里的精确数值。照 N4.0 写的合规文本（`…过了一会儿。`）必然挂 G3（`uncovered:f2:time`）。本实验没有放宽任何门，只把这个冲突固定成一个场景。
 4. **N5 不硬拒新增具名人物。** v2 G2 只扫 `facts` 里已登记的人名和任务目标，新出现的名字（`管线丙`）不在扫描范围；v7 核也只给 review。本场景靠夹具自带的 `annotations.addsUnregisteredEntity` 才标成 `n5-false-pass`，不是判定器自己发现的。
@@ -155,7 +155,7 @@ G1｜f0 f1
 | `check_determinism.py` | 两次运行比对 | `88406e52fcd9246fd59e1b39e1189ad94dd37f1732538ca8135113c3b5d82952` |
 | `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `de65ea56b7da7dd28290e6229c0f7c11adbeea3bab82e533ab7cca0d24581e00` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656` |
-| `contract-decisions.md` | D1–D5 契约裁决项登记 | `5cf89248004853036e3a8e8b5b1e0b245ab96588abe429861e72376f842bf57e` |
+| `contract-decisions.md` | D1–D5 契约裁决项登记 | `ae6a0a3d044431f2dd780df8e8868fb77ff4bba49c70398027f393ac1e806b73` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 
