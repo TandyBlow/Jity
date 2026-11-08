@@ -1,0 +1,164 @@
+{
+  "protocol": "c1-attention-anchors-v1",
+  "note": "锚点文本逐字来自已登记夹具；行号为该夹具当前版本的 1 基行号。用于验证 part 词是否属于该实体，不用于生成叙事。",
+  "sources": {
+    "W1": {
+      "rosterRef": "W1",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceSha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+      "anchors": [
+        {
+          "entityId": "corridor",
+          "kind": "initial_appearance",
+          "text": "两侧是储物柜。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 80
+        },
+        {
+          "entityId": "hall",
+          "kind": "initial_appearance",
+          "text": "空旷的大厅，光线明亮。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 81
+        },
+        {
+          "entityId": "item_key",
+          "kind": "initial_appearance",
+          "text": "一把黄铜钥匙。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 83
+        },
+        {
+          "entityId": "person_a",
+          "kind": "initial_appearance",
+          "text": "穿校服的学生。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 85
+        },
+        {
+          "entityId": "person_b",
+          "kind": "initial_appearance",
+          "text": "靠窗站着。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 86
+        },
+        {
+          "entityId": "person_c",
+          "kind": "initial_appearance",
+          "text": "刚转学来。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 87
+        },
+        {
+          "entityId": "item_key",
+          "kind": "appearance_change",
+          "text": "黄铜钥匙的表面蒙上了一层灰尘",
+          "changeId": "chg_key_1",
+          "sourcePointId": "p_appear",
+          "line": 162
+        },
+        {
+          "entityId": "corridor",
+          "kind": "appearance_change",
+          "text": "两侧的储物柜都被关上了",
+          "changeId": "chg_corr_1",
+          "sourcePointId": "p_loc",
+          "line": 175
+        },
+        {
+          "entityId": "person_b",
+          "kind": "personality_change",
+          "text": "变得健谈",
+          "changeId": "chg_b_1",
+          "sourcePointId": "p_pers",
+          "line": 215
+        },
+        {
+          "entityId": "item_key",
+          "kind": "appearance_change",
+          "text": "黄铜钥匙的表面蒙上了一层灰尘",
+          "changeId": "chg_key_1",
+          "sourcePointId": "p_multi",
+          "line": 231
+        },
+        {
+          "entityId": "person_b",
+          "kind": "appearance_change",
+          "text": "额头上渗出了汗珠",
+          "changeId": "chg_b_2",
+          "sourcePointId": "cp2",
+          "line": 279
+        },
+        {
+          "entityId": "person_b",
+          "kind": "appearance_change",
+          "text": "额头上渗出了汗珠",
+          "changeId": "chg_b_2",
+          "sourcePointId": "cp2",
+          "line": 293
+        },
+        {
+          "entityId": "person_b",
+          "kind": "appearance_change",
+          "text": "额头上渗出了汗珠",
+          "changeId": "chg_b_2",
+          "sourcePointId": "cp2",
+          "line": 296
+        }
+      ]
+    },
+    "W2": {
+      "rosterRef": "W2",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+      "sourceSha256": "c7bde5867e7be2bb0e7222a7360ea82fa4d8abe4a33832f20fae6332f7d8d7f5",
+      "anchors": [
+        {
+          "entityId": "corridor",
+          "kind": "initial_appearance",
+          "text": "明亮的走廊，通往门厅。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 12
+        },
+        {
+          "entityId": "hall",
+          "kind": "initial_appearance",
+          "text": "安静的门厅。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 13
+        },
+        {
+          "entityId": "box",
+          "kind": "initial_appearance",
+          "text": "盒盖关闭。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 14
+        },
+        {
+          "entityId": "person_a",
+          "kind": "initial_appearance",
+          "text": "穿灰衣。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 16
+        },
+        {
+          "entityId": "person_c",
+          "kind": "initial_appearance",
+          "text": "穿蓝衣。",
+          "changeId": null,
+          "sourcePointId": null,
+          "line": 17
+        }
+      ]
+    }
+  }
+}

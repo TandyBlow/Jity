@@ -3,7 +3,7 @@
 日期：2026-11-08。分支 `exp/c-attention-parse`，工作树 `.local/parallel/c-attention-parse`。
 
 - **对应原设计**：R11（叙事只写玩家当前可知道、且值得说的世界事实）的上游输入——先要知道玩家在关注什么。
-- **当前档位**：**有实验结果**。离线固定规则基线，没有训练、没有模型、没有改服务端、没有改 N2 选择规则、未接入正式页面。
+- **当前档位**：对象层 **有实验结果**（固定规则基线，未接线）；关注粒度契约 v1 **已冻结**（接口 + 10 条验收标签），解析器与 N2 接线**未实现**。没有训练、没有模型、没有改服务端、没有改 N2 选择规则、未接入正式页面。
 - **补的缺口**：上一轮 [attention-selection-v1](../../../../design/world-engine-reports/components/attention-selection-v1.md) 的六个条件里，`attentionTargets` 是直接给定的输入，没有验证能否从玩家原话里得到它。c1 只做这一环。
 
 ## 1. 一句话结论
@@ -102,15 +102,21 @@ frontend/src/lib/.../                freeze/rosters.json  ──►  attention_p
 3. **U2 标注改写**：U2 原标签写的是 `unresolved`，改标签发生在第一次跑出 `none` 之后，理由和日期写在该 case 的 `note` 里；这是本任务唯一一处看过输出后改的标签，且改后行为更保守（两个候选都不选）。
 4. **环境不是仓库文档里的 3.12**：实际跑在 Python 3.11.15（`uv` 自带解释器）。本轮只用标准库，结果文件里如实记录了版本，没有声称与 3.12 等价。
 
-## 8. 接口影响（未验证，留给下一轮）
+## 8. 关注粒度契约 v1（已冻结，未实现）
 
-上一轮六条件里的 `attentionTargets` 不全是实体名：G2-B 的 `铜锁` 在 `loc_404.initialAppearance` 里，G3 的 `袖口`/`指节` 在人物外观文本里。c1 现在输出的是**对象 id 和对象名**（`attentionTargets` / `targetNames`），不是字段级词。
+上一轮六条件里的 `attentionTargets` 不全是实体名：G2-B 的 `铜锁` 在 `loc_404.initialAppearance` 里，G3 的 `袖口`/`指节` 在人物外观文本里。c1 第一轮只输出对象 id 和对象名，没有“关注这个人的哪一部分”。
 
-所以：
+这一轮把粒度写死：
 
-- 若把 c1 直接接到**未改动的** R-attention-v1（拿对象词去事实字段里做子串匹配），需要把 `targetNames` 传下去，不能用 id；
-- 若玩家关注的是“袖口”这种部位/属性，c1 只能给到“沈砚”，事实级筛选仍要靠 N2；
-- 这两点都**没有跑过**，列在下面待办，不算通过。
+- **契约**：`freeze/contract-v1.md`。每个目标 = `entityId` + `scope`（`object`/`position`/`appearance`/`task`/`part`）+ `part`（仅局部）+ `partAnchored` + `surface` + `scopeCue`。每个 scope 列出 N2 可以保留哪些 kind 的事实。
+- **锚点**：`freeze/anchors-v1.json`，由 `build_anchors.py` 从两个夹具里逐字抽取初始外观、外观变化、性格变化文本，带文件、行号、`changeId`、`sourcePointId`。用来判定“袖口是不是林川的”。 
+- **验收样本**：`freeze/acceptance-v1.json`，10 条，在 v2 解析器存在**之前**冻结。覆盖三层：整人 1、字段 3（位置/外观/任务）、局部 3（初始外观里的盒盖、变化文本里的表面、提交文本里没有的袖口），以及歧义/无法解析/无关注三态。
+- **本轮做了什么**：`validate_acceptance.py` 只校验标签与提交数据是否自洽（实体在 roster 里、部分词是否真能在该实体文本里找到、三态的字段约束、歧义候选是否真的共用形式）。10/10 通过；把 A07 的 `partAnchored` 故意改成 `true` 后报 9/10、错误项为 `target0_part_anchored_matches_fixture`，说明检查有效。
+- **本轮没做**：v2 解析器、N2 接线、任何提取器运行。验收样本是下一轮“独立接线实验”的判据。
+
+用户给的例子在这套契约下的结果：“林川的袖口湿了吗？”→ `person_a` / `part` / `袖口` / `partAnchored=false`。范围不会退回整人；N2 按字面匹配不到「袖口」就不选可选事实。
+
+**r1 不受影响**：`runs/r1/` 保持原样，是对象层证据；v2 会改变带字段线索的原话的期望（r1 的 S01「在哪儿」应收窄为 position，S09 的任务目标提及应为 task），这属于粒度升级，记录在契约 §7。
 
 ## 9. 限制
 
@@ -122,18 +128,28 @@ frontend/src/lib/.../                freeze/rosters.json  ──►  attention_p
 - 规则没有否定、疑问、条件、比较等语义；P5 已证明会多选。
 - 单次运行可复现（同输入两次输出字节一致，已验证），但只在本机 Windows + Python 3.11.15 跑过。
 
+粒度契约（§8）另外带来的限制：
+
+- `part` 词表是固定清单，词表外的局部（“手背上的划痕”）会落到 `object` 或 `appearance`，范围会被放大。
+- scope 只靠线索词：没有线索词的问法（“他看起来怎么样”）一律落到 `object`。
+- 一句话里既有整人又有局部时的合并规则没定；同一实体的 `appearance` 与 `part` 同时命中也没定。
+- 任务 `goal` 原句 → `ownerId / task` 的映射本批没入验收（契约 §8 列为待补）。
+
 ## 10. 结论分类
 
 - **已证明**：给定这两份提交夹具和 10 条原话，固定规则能稳定输出“候选／歧义／无结果”三档，三档都不回退全选；M1–M5 五条机制按声明工作（单元 6/6）。
+- **已证明（仅标注层）**：关注粒度契约 v1 的 10 条验收标签与提交数据自洽（10/10 通过结构、锚点、三态约束检查）；这不是提取器能输出这些标签的证据。
 - **已失败**：作为通用提取器，规则已在 5 个预登记点上失败（描述词前驱、同名消解、昵称、指示词、否定），失败方式与预测一致。
-- **无法判断**：真实玩家原话上的覆盖率；同名实体的真实世界；接 N2 之后的叙事收益；对浏览器的性能影响（本轮没有模型）。
+- **无法判断**：真实玩家原话上的覆盖率；同名实体的真实世界；v2 解析器能否命中断言标签；接 N2 之后的叙事收益；对浏览器的性能影响（本轮没有模型）。
 
 ## 11. 复跑
 
 ```bash
 cd experiments/world-components/parallel/attention_parse
-python -X utf8 build_rosters.py     # 从夹具重建 roster（会校验字面与哈希）
-python -X utf8 run_experiment.py    # 跑 10 样本 + 6 单元 + 5 探针，覆盖 runs/r1/
+python -X utf8 build_rosters.py        # 从夹具重建 roster（校验字面与哈希）
+python -X utf8 run_experiment.py       # 跑 r1 的 10 样本 + 6 单元 + 5 探针
+python -X utf8 build_anchors.py        # 从夹具抽取 part 锚点文本
+python -X utf8 validate_acceptance.py  # 校验 v2 验收标签（不跑提取器）
 ```
 
 只跑引擎看单条：
@@ -159,10 +175,17 @@ python -X utf8 attention_parse.py --out /tmp/raw.json   # 输出全部样本原�
 | `runs/r1/score.json` | 逐条比对、错误类别、接口与输入哈希 |
 | `runs/r1/input-hashes.json` | 提交、分支、Python 版本、代码与输入哈希 |
 | `runs/r1/run.log` | 人读表格 |
+| `freeze/contract-v1.md` | c1 → N2 关注粒度契约：目标形状、5 个 scope 对应的事实 kind、三态、N2 空目标行为 |
+| `freeze/anchors-v1.json` | part 锚点文本（初始外观、外观变化、性格变化），带行号、`changeId`、`sourcePointId` |
+| `freeze/acceptance-v1.json` | 10 条粒度验收样本（对象/字段/局部 + 三态），在 v2 解析器之前冻结 |
+| `build_anchors.py` | 从夹具抽取并校验锚点文本 |
+| `validate_acceptance.py` | 校验验收标签与提交数据是否自洽（不跑提取器） |
+| `runs/contract-v1/validation.json` | 逐条检查、哈希、汇总 |
+| `runs/contract-v1/run.log` | 人读表格 |
 
 ## 13. 下一轮建议（不扩大本轮结论）
 
-1. **先定粒度**：`attentionTargets` 到底是对象 id、对象名，还是字段级词（袖口、铜锁）。这决定 c1 接 N2 时传什么，也决定是否需要第 6 类机制。
+1. **v2 解析器 + 接线实验**：用冻结的 10 条验收样本做判据，实现 scope 判定与 part 锚定；再把 targets 用法应用到 N2 的可选事实过滤上（必须先写死“空目标 = 可选事实一条不选”），并单独记分。
 2. **换真实原话**：从正式页面的行动记录里取真实玩家输入（只读），替换自写样本，重新冻结一批 ≤10 条。
 3. **补同名实体**：找一个或构造一个**已提交**世界，里面真的有两个同名对象，再测 M1/M2 的组合，而不是靠合成 roster。
-4. **补变化文本**：把 `appearanceChanges` / `personalityChanges` 当前值纳入描述词来源，看能否覆盖“刚才那个变了的”这类指向。
+4. **补任务目标映射**：把 `goal` 原句 → `ownerId / task` 纳入验收，补上本批的缺口。
