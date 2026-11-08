@@ -228,16 +228,42 @@ def adapt_point(db, world_id, point_id, names=None, backend=DEFAULT_BACKEND):
                                   'provenance': dict(base, fieldsRead=fields + ['previous.sanity'],
                                                      adapted='previous value read from %s' % previous_id)})
 
-        for change_list, kind in (('appearanceChanges', 'appearance_changed'),
-                                  ('personalityChanges', 'personality_changed')):
-            for entry in change.get(change_list) or []:
-                text = entry.get('text')
-                if text:
-                    facts.append({'kind': kind, 'sentence': '%s：%s。' % (name_of(names, entity_id), text),
-                                  'complete': True,
-                                  'note': 'the record carries the text only; no direction is verified',
-                                  'provenance': dict(base, fieldsRead=fields + [change_list],
-                                                     adapted='text copied verbatim')})
+        for entry in change.get('appearanceChanges') or []:
+            # The delta names the change; the stored record is what fixes its text, source point and active state.
+            text = entry.get('text')
+            change_id = entry.get('id')
+            entity = (current['state'].get('characters') or {}).get(entity_id) or \
+                     (current['state'].get('items') or {}).get(entity_id) or {}
+            stored = [item for item in entity.get('appearanceChanges') or [] if item.get('id') == change_id]
+            if not change_id or not text:
+                gaps.append(dict(base, gap='an appearance change in the delta has no id or text'))
+            elif len(stored) != 1:
+                gaps.append(dict(base, gap='the delta names appearance change %s, but the committed state has %d such entries'
+                                              % (change_id, len(stored))))
+            elif any((stored[0].get('text') != text,
+                      stored[0].get('supersedes') != (entry.get('supersedes') or []),
+                      stored[0].get('active') is not True,
+                      stored[0].get('sourcePointId') != point_id,
+                      stored[0].get('sourceSequence') != point['sequence'])):
+                gaps.append(dict(base, gap='committed appearance change %s differs from the delta or is not active at this point'
+                                              % change_id))
+            else:
+                facts.append({'kind': 'appearance_changed', 'changeId': change_id, 'complete': True,
+                              'sentence': '%s：%s。' % (name_of(names, entity_id), text),
+                              'provenance': dict(base, fieldsRead=fields + [
+                                                                            'appearanceChanges.%s.text' % change_id,
+                                                                            'appearanceChanges.%s.sourcePointId' % change_id,
+                                                                            'appearanceChanges.%s.sourceSequence' % change_id,
+                                                                            'appearanceChanges.%s.active' % change_id],
+                                                 adapted='text, source point and active state read from the committed state')})
+
+        for entry in change.get('personalityChanges') or []:
+            text = entry.get('text')
+            if text:
+                facts.append({'kind': 'personality_changed', 'sentence': '%s：%s。' % (name_of(names, entity_id), text),
+                              'complete': True,
+                              'note': 'the record carries the text only; no direction is verified',
+                              'provenance': dict(base, fieldsRead=fields, adapted='text copied verbatim')})
 
         # Task text is never copied from the action or from the delta alone: the delta holds only IDs,
         # so the goal and the achieved status are read back from the committed state at this point.

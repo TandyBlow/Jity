@@ -11,6 +11,7 @@ export type NarrationFact = { id: string; actorId: Id; name: string } & (
   | { kind: 'sanity_changed'; from: number; to: number }
   | { kind: 'task_achieved'; taskId: Id; goal: string }
   | { kind: 'personality_changed'; changeId: Id; text: string }
+  | { kind: 'appearance_changed'; changeId: Id; text: string }
 );
 export interface CommittedNarration {
   anchor: { worldId: Id; pointId: Id; version: number; stateDigest: string; previousPointId: Id | null };
@@ -32,7 +33,7 @@ export function projectCommittedNarration(after: CommittedRead, before: Committe
   if (before && !same(characters, Object.keys(before.state.characters).sort())) throw new Error('narration_roster_changed');
   for (const [id, delta] of Object.entries(after.entityDeltas)) {
     if (delta.entityId !== id || !after.state.characters[id]
-      || Object.keys(delta).some((key) => !['entityId', 'positionSet', 'sanitySet', 'tasksAchieved', 'personalityChanges'].includes(key))) throw new Error('unsupported_committed_delta');
+      || Object.keys(delta).some((key) => !['entityId', 'positionSet', 'sanitySet', 'tasksAchieved', 'personalityChanges', 'appearanceChanges'].includes(key))) throw new Error('unsupported_committed_delta');
     if (delta.positionSet === null || delta.sanitySet === null) throw new Error('unsupported_null_delta');
     if ((delta.tasksAchieved?.length || delta.personalityChanges?.length || delta.sanitySet !== undefined)
       && !(delta.tasksAchieved?.length && delta.personalityChanges?.length && delta.sanitySet !== undefined)) throw new Error('narration_requires_complete_numeric_cause');
@@ -48,7 +49,23 @@ export function projectCommittedNarration(after: CommittedRead, before: Committe
     const location = after.state.initial.locations[actor.position.containerId]?.name;
     if (!location || actor.position.slotId != null || actor.position.relativeTo != null) throw new Error('unsupported_narration_position');
     const base = { actorId, name };
-    if (previous && !same(previous.appearanceChanges, actor.appearanceChanges)) throw new Error('unrecorded_appearance_change');
+    // This rule subset adds descriptions; replacement/removal remains unsupported.
+    const appearanceIds = new Set(previous?.appearanceChanges.map((change) => change.id) ?? []);
+    for (const change of delta?.appearanceChanges ?? []) {
+      const stored = actor.appearanceChanges.find((entry) => entry.id === change.id);
+      if (!previous || !change.text?.trim() || !stored || appearanceIds.has(change.id)
+        || stored.text !== change.text || !same(stored.supersedes, change.supersedes)
+        || stored.sourcePointId !== after.pointId || stored.sourceSequence !== after.version || !stored.active
+        || change.supersedes.length) throw new Error('committed_appearance_delta_disagrees');
+      appearanceIds.add(change.id);
+      facts.push({ ...base, id: `${actorId}:appearance:${change.id}`, kind: 'appearance_changed', changeId: change.id, text: change.text });
+    }
+    if (previous) {
+      const oldIds = new Set(previous.appearanceChanges.map((change) => change.id));
+      if (!same(actor.appearanceChanges.filter((change) => oldIds.has(change.id)), previous.appearanceChanges)
+        || !same(actor.appearanceChanges.filter((change) => !oldIds.has(change.id)).map((change) => change.id),
+          (delta?.appearanceChanges ?? []).map((change) => change.id))) throw new Error('unrecorded_appearance_change');
+    }
     if (delta?.positionSet !== undefined) {
       if (!previous || !same(delta.positionSet, actor.position)) throw new Error('committed_position_delta_disagrees');
       const from = before!.state.initial.locations[previous.position.containerId]?.name;
@@ -104,6 +121,7 @@ export function factPhrases(fact: NarrationFact): string[] {
       `${fact.name}的精神值由${fact.from}${fact.to < fact.from ? '降至' : '升至'}${fact.to}`];
     case 'task_achieved': return [`${fact.name}完成了任务「${fact.goal}」`, `${fact.name}已达成任务「${fact.goal}」`];
     case 'personality_changed': return [`${fact.name}的人格变化为「${fact.text}」`, `${fact.name}形成了新的人格描述「${fact.text}」`];
+    case 'appearance_changed': return [`${fact.name}的外貌变化为「${fact.text}」`, `${fact.name}的外貌描述变为「${fact.text}」`];
   }
 }
 const TIME_UNIT_CN: Record<TimeAdvance['duration']['unit'], string> =

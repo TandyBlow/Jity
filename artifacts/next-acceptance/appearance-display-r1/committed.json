@@ -1,0 +1,149 @@
+{
+ "worldId": "world_1",
+ "points": [
+  {
+   "pointId": "root_3",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null
+  },
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_3",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "personalityChanges": [
+      {
+       "id": "change_10",
+       "text": "经历压力试验后更谨慎",
+       "supersedes": []
+      }
+     ],
+     "sanitySet": 8,
+     "tasksAchieved": [
+      "task_pressure"
+     ]
+    }
+   }
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "point_7",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "appearanceChanges": [
+      {
+       "id": "change_17",
+       "text": "面带微笑",
+       "supersedes": []
+      }
+     ]
+    }
+   }
+  },
+  {
+   "pointId": "point_21",
+   "sequence": 3,
+   "kind": "normal",
+   "previousPointId": "point_14",
+   "delta": {}
+  },
+  {
+   "pointId": "point_27",
+   "sequence": 4,
+   "kind": "normal",
+   "previousPointId": "point_21",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   }
+  },
+  {
+   "pointId": "point_33",
+   "sequence": 5,
+   "kind": "normal",
+   "previousPointId": "point_27",
+   "delta": {}
+  },
+  {
+   "pointId": "point_39",
+   "sequence": 6,
+   "kind": "normal",
+   "previousPointId": "point_33",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "corridor",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   }
+  },
+  {
+   "pointId": "point_45",
+   "sequence": 7,
+   "kind": "normal",
+   "previousPointId": "point_39",
+   "delta": {}
+  },
+  {
+   "pointId": "point_51",
+   "sequence": 8,
+   "kind": "normal",
+   "previousPointId": "point_45",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   }
+  }
+ ],
+ "appearanceChangeAllocations": [
+  {
+   "allocation_key": "candidates:2449d32c5d31ac9604c94c4bdd7480a7",
+   "slot_key": "change:4c43acb1e91707162ebafbc988f2fb03",
+   "kind": "change",
+   "allocated_id": "change_10"
+  },
+  {
+   "allocation_key": "candidates:40a9dfbb8844bf43e594b80dc6348ebc",
+   "slot_key": "change:f922fa0bf875f65d906a9c1687ccac48",
+   "kind": "change",
+   "allocated_id": "change_17"
+  }
+ ],
+ "point14CommittedAppearance": [
+  {
+   "id": "change_17",
+   "text": "面带微笑",
+   "supersedes": [],
+   "sourcePointId": "point_14",
+   "sourceSequence": 2,
+   "active": true
+  }
+ ],
+ "database": {
+  "path": "artifacts/next-runs/appearance-display-r1/world.db",
+  "sha256": "03c5f871dad334a791f1399149f34e9b065620327737c42dd4f1657346140331"
+ }
+}

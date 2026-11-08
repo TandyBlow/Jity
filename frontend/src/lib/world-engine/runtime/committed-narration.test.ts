@@ -5,6 +5,8 @@ import { checkFactNarration, projectCommittedNarration, renderCommittedNarration
 import type { Json, WorldState } from '../types';
 import { projectTaskInput } from './focused-input';
 import { buildTaskPrompt } from './prompts';
+import { alignNarration } from './narration-alignment';
+import { describeFact } from './narration-eval';
 
 function reads() {
   const before: CommittedRead = { pointId: 'root', previousPointId: null, version: 0, stateDigest: 'root_digest',
@@ -36,7 +38,46 @@ describe('saved facts, template baseline and bounded polish', () => {
     const wrongValue = structuredClone(after); wrongValue.state.characters.person_c.position.containerId = 'corridor';
     expect(() => projectCommittedNarration(wrongValue, before)).toThrow(/position_delta_disagrees/);
     const unsupported = structuredClone(after); unsupported.entityDeltas.person_c.appearanceChanges = [{ id: 'c', text: '受伤', supersedes: [] }];
-    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/unsupported_committed_delta/);
+    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/appearance_delta_disagrees/);
+  });
+
+  test('appearance narration requires an allocated change with matching text, source and unchanged history', () => {
+    const { before, after } = reads();
+    const change = { id: 'allocated_smile', text: '面带微笑', supersedes: [] };
+    after.entityDeltas.person_c.appearanceChanges = [change];
+    after.state.characters.person_c.appearanceChanges = [{ ...change, active: true, sourcePointId: after.pointId, sourceSequence: after.version }];
+    const packet = projectCommittedNarration(after, before);
+    const text = renderCommittedNarration(packet);
+    expect(text).toContain('周宁的外貌变化为「面带微笑」。');
+    expect(checkFactNarration(packet, text).ok).toBe(true);
+    // 外貌事实确实被对齐器认下；整包 ok 不在这里断言：两人精神值同为 10，
+    // 既有数值签名会把同值句互判成 actor_swap（与本轮外貌无关，另记限制）。
+    const appearanceFact = packet.facts.find((fact) => fact.kind === 'appearance_changed')!;
+    const aligned = alignNarration(packet, text);
+    expect(aligned.coverage.find((entry) => entry.id === appearanceFact.id)?.expressed).toBe(true);
+    expect(aligned.violations.filter((violation) => violation.sentence.includes('外貌'))).toEqual([]);
+    const swappedAppearance = alignNarration(packet, '林川的外貌变化为「面带微笑」。');
+    expect(swappedAppearance.violations.some((violation) => violation.kind === 'actor_swap')).toBe(true);
+    expect(describeFact(appearanceFact)).toBe('周宁 / 外貌变化 = 「面带微笑」');
+    expect(checkFactNarration(packet, text.replace('面带微笑', '脸色苍白')).ok).toBe(false);
+    for (const mutate of [
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].text = '脸色苍白'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourcePointId = 'another_point'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourceSequence = 0; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].active = false; },
+      (read: CommittedRead) => { read.entityDeltas.person_c.appearanceChanges!.push(change); },
+    ]) {
+      const bad = structuredClone(after); mutate(bad);
+      expect(() => projectCommittedNarration(bad, before)).toThrow(/appearance_delta_disagrees/);
+    }
+    const unrecorded = structuredClone(after); delete unrecorded.entityDeltas.person_c.appearanceChanges;
+    expect(() => projectCommittedNarration(unrecorded, before)).toThrow(/unrecorded_appearance_change/);
+    const oldChange = { id: 'old', text: '神色平静', supersedes: [], active: true, sourcePointId: 'root', sourceSequence: 0 };
+    before.state.characters.person_c.appearanceChanges = [oldChange];
+    after.state.characters.person_c.appearanceChanges.unshift(structuredClone(oldChange));
+    expect(() => projectCommittedNarration(after, before)).not.toThrow();
+    after.state.characters.person_c.appearanceChanges[0].active = false;
+    expect(() => projectCommittedNarration(after, before)).toThrow(/unrecorded_appearance_change/);
   });
 
   test('numeric facts require the saved task and allocated personality cause', () => {

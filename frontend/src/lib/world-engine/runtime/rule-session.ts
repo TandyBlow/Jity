@@ -234,6 +234,8 @@ export class RuleWorldSession {
           const delta = authority.deltas(issued.receipt, scope.world, scope.work.pointId, data.workingState);
           const calls = Object.values(delta).flatMap<UpdatesCall>((change) => change.positionSet
             ? [{ stage: 'position', changes: { [change.entityId]: { entityId: change.entityId, positionSet: change.positionSet } } }]
+            : change.appearanceChanges
+            ? [{ stage: 'appearance', changes: { [change.entityId]: { entityId: change.entityId, appearanceChanges: change.appearanceChanges } } }]
             : [{ stage: 'tasks', changes: { [change.entityId]: { entityId: change.entityId, tasksAchieved: change.tasksAchieved } } },
               { stage: 'personality', changes: { [change.entityId]: { entityId: change.entityId, personalityChanges: change.personalityChanges } } },
               { stage: 'sanity', changes: { [change.entityId]: { entityId: change.entityId, sanitySet: change.sanitySet } } }]);

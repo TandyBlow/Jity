@@ -157,13 +157,15 @@ class AdapterCases(unittest.TestCase):
                 self.assertIn(key, provenance)
 
 
-class TaskCases(unittest.TestCase):
-    """A task sentence may only restate what the committed point actually holds."""
+class CommittedStateCases(unittest.TestCase):
+    """A task or appearance sentence may only restate what the committed point actually holds."""
 
     names = {'person_a': '林川', 'person_c': '周宁'}
 
-    def state(self, tasks):
-        return {'characters': {'person_c': {'id': 'person_c', 'tasks': tasks}}, 'items': {}, 'locations': {}}
+    def state(self, tasks=None, appearance=None, items=None):
+        return {'characters': {'person_c': {'id': 'person_c', 'tasks': tasks or {},
+                                            'appearanceChanges': appearance or []}},
+                'items': items or {}, 'locations': {}}
 
     def adapt(self, delta, state):
         path = os.path.join(tempfile.mkdtemp(), 'fixture.db')
@@ -227,6 +229,56 @@ class TaskCases(unittest.TestCase):
         self.assertEqual([f['sentence'] for f in facts],
                          ['周宁新增小任务：完成恢复练习（上级：完成压力试验）。'])
         self.assertEqual(facts[0]['parentTaskId'], 'task_pressure')
+        self.assertEqual(gaps, [])
+
+    def appearance_delta(self, change_id='ac_smile', text='面带微笑'):
+        return {'person_c': {'entityId': 'person_c', 'appearanceChanges': [
+            {'id': change_id, 'text': text, 'supersedes': []}]}}
+
+    def stored(self, change_id='ac_smile', text='面带微笑', **overrides):
+        entry = {'id': change_id, 'text': text, 'supersedes': [], 'active': True,
+                 'sourcePointId': 'p1', 'sourceSequence': 1}
+        entry.update(overrides)
+        return entry
+
+    def test_appearance_text_and_source_come_from_the_committed_state(self):
+        facts, gaps, unshown = self.adapt(self.appearance_delta(), self.state(appearance=[self.stored()]))
+        self.assertEqual([f['kind'] for f in facts], ['appearance_changed'])
+        self.assertEqual(facts[0]['sentence'], '周宁：面带微笑。')
+        self.assertEqual(facts[0]['changeId'], 'ac_smile')
+        self.assertIn('appearanceChanges.ac_smile.sourcePointId', facts[0]['provenance']['fieldsRead'])
+        self.assertEqual(gaps, [])
+        self.assertEqual(unshown, [])
+
+    def test_appearance_from_another_point_is_a_gap(self):
+        facts, gaps, _ = self.adapt(self.appearance_delta(),
+                                    self.state(appearance=[self.stored(sourcePointId='p0')]))
+        self.assertEqual(facts, [])
+        self.assertIn('differs from the delta', gaps[0]['gap'])
+
+    def test_appearance_text_that_differs_from_the_committed_state_is_a_gap(self):
+        facts, gaps, _ = self.adapt(self.appearance_delta(text='脸色苍白'),
+                                    self.state(appearance=[self.stored()]))
+        self.assertEqual(facts, [])
+        self.assertIn('differs from the delta', gaps[0]['gap'])
+
+    def test_appearance_missing_from_the_committed_state_is_a_gap(self):
+        facts, gaps, _ = self.adapt(self.appearance_delta(), self.state(appearance=[]))
+        self.assertEqual(facts, [])
+        self.assertIn('has 0 such entries', gaps[0]['gap'])
+
+    def test_inactive_appearance_is_a_gap(self):
+        facts, gaps, _ = self.adapt(self.appearance_delta(),
+                                    self.state(appearance=[self.stored(active=False)]))
+        self.assertEqual(facts, [])
+        self.assertIn('differs from the delta', gaps[0]['gap'])
+
+    def test_item_appearance_is_read_from_the_item_record(self):
+        items = {'box': {'id': 'box', 'appearanceChanges': [self.stored(change_id='ac_box', text='盒盖半开')]}}
+        delta = {'box': {'entityId': 'box', 'appearanceChanges': [
+            {'id': 'ac_box', 'text': '盒盖半开', 'supersedes': []}]}}
+        facts, gaps, _ = self.adapt(delta, self.state(items=items))
+        self.assertEqual([f['sentence'] for f in facts], ['box：盒盖半开。'])
         self.assertEqual(gaps, [])
 
     def test_subtask_whose_committed_goal_differs_is_a_gap(self):

@@ -5,12 +5,15 @@
 import type { EntityDelta, Id, Json, WorldContext, WorldState } from '../types';
 
 export type RuleProposal = { kind: 'move'; actorId: Id; destinationId: Id }
-  | { kind: 'sanity'; actorId: Id; effect: 'strain' | 'recover' };
+  | { kind: 'sanity'; actorId: Id; effect: 'strain' | 'recover' }
+  | { kind: 'appearance'; actorId: Id; effect: 'smile' };
 export interface RuleScope {
   worldId: Id; advanceId: Id; inputId: Id; roundId: Id; pointId: Id;
   baselinePointId: Id; baselineVersion: number; baselineDigest: string; fenceEpoch: number;
 }
 export interface RulePolicy {
+  /** The application supplies the resulting description, never the command/model. */
+  appearance?: { smile: { text: string } };
   /** Directed edges are installed by the application, never generated. */
   routes: readonly { from: Id; to: Id; minimumSanity?: number }[];
   /** Explicit simulation bounds. No clamping or model-selected magnitude. */
@@ -19,6 +22,8 @@ export interface RulePolicy {
       minimumElapsedSeconds: number; personalityText: string }> };
 }
 export type RuleEffect = { kind: 'moved'; actorId: Id; from: Id; to: Id }
+  | { kind: 'appearance_changed'; actorId: Id; text: string; draftChangeId: Id;
+    beforeChanges: WorldState['characters'][Id]['appearanceChanges'] }
   | { kind: 'sanity_changed'; actorId: Id; from: number; to: number;
     achievedTaskId: Id; goal: string; personalityText: string; draftChangeId: Id };
 export type RuleDecision = { outcome: 'allowed'; effects: readonly RuleEffect[] }
@@ -38,6 +43,7 @@ export function validateRuleProposal(value: unknown): RuleProposal {
   if (typeof p.actorId !== 'string' || !p.actorId) throw new Error('rule_actor_missing');
   if (p.kind === 'move' && exact(p, ['kind', 'actorId', 'destinationId']) && typeof p.destinationId === 'string' && p.destinationId) return clone(p) as RuleProposal;
   if (p.kind === 'sanity' && exact(p, ['kind', 'actorId', 'effect']) && (p.effect === 'strain' || p.effect === 'recover')) return clone(p) as RuleProposal;
+  if (p.kind === 'appearance' && exact(p, ['kind', 'actorId', 'effect']) && p.effect === 'smile') return clone(p) as RuleProposal;
   throw new Error('unsupported_rule_proposal');
 }
 
@@ -45,6 +51,7 @@ export function validateRuleProposal(value: unknown): RuleProposal {
  * simulation. Natural-language model outputs are never parsed as results. */
 export function parseRuleCommand(text: string, state: WorldState): RuleProposal | null {
   const command = text.trim().replace(/[。！]$/, '');
+  if (command === '露出微笑') return { kind: 'appearance', actorId: state.protagonistId, effect: 'smile' };
   if (command === '完成压力试验') return { kind: 'sanity', actorId: state.protagonistId, effect: 'strain' };
   if (command === '完成恢复练习') return { kind: 'sanity', actorId: state.protagonistId, effect: 'recover' };
   const match = /^(?:我)?走到(.+)$/.exec(command);
@@ -67,6 +74,8 @@ export class RuleAuthority {
   private readonly policy: RulePolicy;
   constructor(policy: RulePolicy) {
     this.policy = clone(policy);
+    if (this.policy.appearance && (typeof this.policy.appearance.smile?.text !== 'string'
+      || !this.policy.appearance.smile.text.trim())) throw new Error('invalid_appearance_policy');
     const { minimum, maximum, effects } = this.policy.sanity;
     if (![minimum, maximum, effects.strain, effects.recover].every(Number.isSafeInteger)
       || minimum >= maximum || effects.strain >= 0 || effects.recover <= 0) throw new Error('invalid_rule_policy');
@@ -99,6 +108,14 @@ export class RuleAuthority {
       else if (!edge) decision = { outcome: 'refused', reason: 'route_not_allowed', effects: [] };
       else if (edge.minimumSanity !== undefined && actor.sanity < edge.minimumSanity) decision = { outcome: 'refused', reason: 'sanity_below_route_minimum', effects: [] };
       else decision = { outcome: 'allowed', effects: [{ kind: 'moved', actorId: proposal.actorId, from: actor.position.containerId, to: proposal.destinationId }] };
+    } else if (proposal.kind === 'appearance') {
+      const appearance = this.policy.appearance?.[proposal.effect];
+      decision = !appearance ? { outcome: 'refused', reason: 'appearance_rule_not_configured', effects: [] }
+        : actor.appearanceChanges.some((change) => change.active && change.text === appearance.text)
+          ? { outcome: 'refused', reason: 'appearance_already_applied', effects: [] }
+          : { outcome: 'allowed', effects: [{ kind: 'appearance_changed', actorId: proposal.actorId,
+            text: appearance.text, draftChangeId: `rule_${proposal.effect}_${world.advance.inputId}`,
+            beforeChanges: clone(actor.appearanceChanges) }] };
     } else {
       const { minimum, maximum, effects } = this.policy.sanity;
       const milestone = this.policy.sanity.milestones[proposal.effect];
@@ -142,6 +159,10 @@ export class RuleAuthority {
       if (effect.kind === 'moved') {
         if (actor.position.containerId !== effect.from || actor.position.slotId != null || actor.position.relativeTo != null) throw new Error('rule_effect_precondition_changed');
         deltas[effect.actorId] = { entityId: effect.actorId, positionSet: { containerId: effect.to, slotId: null, relativeTo: null } };
+      } else if (effect.kind === 'appearance_changed') {
+        if (!same(actor.appearanceChanges, effect.beforeChanges)) throw new Error('rule_effect_precondition_changed');
+        deltas[effect.actorId] = { entityId: effect.actorId,
+          appearanceChanges: [{ id: effect.draftChangeId, text: effect.text, supersedes: [] }] };
       } else {
         if (actor.sanity !== effect.from) throw new Error('rule_effect_precondition_changed');
         const task = actor.tasks[effect.achievedTaskId];
@@ -157,9 +178,10 @@ export class RuleAuthority {
 }
 
 export function describeRuleDecision(decision: RuleDecision, state: WorldState): string {
-  if (decision.outcome === 'refused') return `规则拒绝执行（${decision.reason}）；没有位置或数值变化。`;
+  if (decision.outcome === 'refused') return `规则拒绝执行（${decision.reason}）；没有实体变化。`;
   return decision.effects.map((effect) => {
     const name = state.initial.characters[effect.actorId].name;
+    if (effect.kind === 'appearance_changed') return `${name}：${effect.text}。`;
     return effect.kind === 'moved'
       ? `${name}从${state.initial.locations[effect.from].name}走到${state.initial.locations[effect.to].name}。`
       : `${name}完成任务「${effect.goal}」，${effect.personalityText}；精神值从${effect.from}变为${effect.to}。`;

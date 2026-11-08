@@ -1,0 +1,13 @@
+{
+ "wrong-text": {
+  "changed": "every appearance sentence in the captured record and in the captured facts response",
+  "from": "周宁：面带微笑。 / 周宁的外貌变化为「面带微笑」",
+  "to": "周宁：面带冷笑。 / 周宁的外貌变化为「面带冷笑」",
+  "expected": "the independent check must report the missing committed sentence and the mismatched facts response"
+ },
+ "wrong-source": {
+  "changed": "point_14 checkpoint: characters.person_c.appearanceChanges[0].sourcePointId = 'point_7'",
+  "expected": "the independent check must report delta/checkpoint disagreement and the broken history at the next point"
+ },
+ "note": "Negative controls mutate copies only; the accepted world and record are untouched."
+}

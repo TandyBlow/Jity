@@ -1,0 +1,43 @@
+{
+ "kept": [
+  {
+   "port": 8021,
+   "pid": 134332,
+   "role": "previous task-display backend, task-display-r1/world.db, untouched"
+  },
+  {
+   "port": 3111,
+   "pid": 132152,
+   "role": "previous production build page, untouched"
+  }
+ ],
+ "thisRound": [
+  {
+   "port": 8023,
+   "pid": 21356,
+   "role": "fresh backend on appearance-display-r1/world.db (explicit env)",
+   "env": {
+    "WORLD_SQLITE_PATH": "artifacts/next-runs/appearance-display-r1/world.db",
+    "WORLD_FACTS_ADAPTER": "experiments/world-components/adapt_facts.py",
+    "WORLD_FACTS_BACKEND": ".local/ws-facts-005ea5b/backend",
+    "WORLD_ALLOWED_ORIGINS": "http://127.0.0.1:3111,http://localhost:3111,http://127.0.0.1:3113,http://localhost:3113"
+   }
+  },
+  {
+   "port": 3113,
+   "pid": 101808,
+   "role": "production build from .local/scratch/appearance-r1"
+  }
+ ],
+ "leftoverChecked": {
+  "port": 8023,
+  "pid": 125036,
+  "started": "2026-11-08 13:49:32 (before this round, by the unfinished attempt)",
+  "command": "D:\\software\\Anaconda\\python.exe -X utf8 -m uvicorn app.world_app:create_persistent_world_app --factory --host 127.0.0.1 --port 8023",
+  "database": "artifacts/next-runs/appearance-display-r1/world.db",
+  "databaseState": "worlds=0, world_points=0, world_advances=0, world_rounds=0 (created 13:49:37, never used)",
+  "action": "stopped, then the same port was restarted with explicit env so the evidence is reproducible"
+ },
+ "buildTestProcessesAtCheck": "no next build / vitest / tsc / pytest process was running; this round started its own build and suites and they exited",
+ "untouched": "port 3000 (next dev from .local/world-components-worktree) and port 8000 (world-live) belong to other work, not this task"
+}

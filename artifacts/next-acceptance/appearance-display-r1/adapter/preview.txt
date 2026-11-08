@@ -1,0 +1,31 @@
+[world_1 root_3 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_7 seq=1] prev=root_3 delta={"person_c": {"entityId": "person_c", "personalityChanges": [{"id": "change_10", "text": "经历压力试验后更谨慎", "supersedes": []}], "sanitySet": 8, "tasksAchieved": ["task_pressure"]}}
+    show  周宁的理智下降（10→8）。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved,previous.sanity replayOk=True agrees=True
+    show  周宁：经历压力试验后更谨慎。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved replayOk=True agrees=True
+    show  周宁达成任务：完成压力试验。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved,tasks.task_pressure.goal,tasks.task_pressure.status replayOk=True agrees=True
+[world_1 point_14 seq=2] prev=point_7 delta={"person_c": {"entityId": "person_c", "appearanceChanges": [{"id": "change_17", "text": "面带微笑", "supersedes": []}]}}
+    show  周宁：面带微笑。
+          source=replay fields=appearanceChanges,appearanceChanges.change_17.text,appearanceChanges.change_17.sourcePointId,appearanceChanges.change_17.sourceSequence,appearanceChanges.change_17.active replayOk=True agrees=True
+[world_1 point_21 seq=3] prev=point_14 delta={}
+    show  第3点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_27 seq=4] prev=point_21 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  周宁从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_1 point_33 seq=5] prev=point_27 delta={}
+    show  第5点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_39 seq=6] prev=point_33 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "corridor", "slotId": null, "relativeTo": null}}}
+    show  周宁从门厅到走廊。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_1 point_45 seq=7] prev=point_39 delta={}
+    show  第7点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_51 seq=8] prev=point_45 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  周宁从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True

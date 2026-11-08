@@ -170,6 +170,7 @@ function binds(fact: NarrationFact, sentence: string, names: Set<string>): boole
       && (mentionsNumber(scope, fact.from) || mentionsNumber(scope, fact.to));
     case 'task_achieved': return named && scope.includes(fact.goal) && COMPLETION.test(scope);
     case 'personality_changed': return named && (scope.includes(fact.text) || loosePhrase(fact.text).test(scope));
+    case 'appearance_changed': return named && scope.includes(fact.text);
   }
   return false;
   };
@@ -193,6 +194,7 @@ function signature(fact: NarrationFact, sentence: string): boolean {
     case 'sanity_changed': return mentionsNumber(sentence, fact.from) && mentionsNumber(sentence, fact.to);
     case 'task_achieved': return sentence.includes(fact.goal);
     case 'personality_changed': return sentence.includes(fact.text);
+    case 'appearance_changed': return sentence.includes(fact.text);
   }
 }
 
@@ -304,7 +306,7 @@ export function alignNarration(packet: CommittedNarration, text: string, options
   // 逐字一致的冻结原文引用才豁免（任务目标/人格文本）；自拟引号内容照扫。
   const frozenQuotes = new Set(packet.facts.flatMap((fact) =>
     fact.kind === 'task_achieved' ? [`「${fact.goal}」`]
-      : fact.kind === 'personality_changed' ? [`「${fact.text}」`] : []));
+      : fact.kind === 'personality_changed' || fact.kind === 'appearance_changed' ? [`「${fact.text}」`] : []));
   const maskFrozenQuotes = (masked: string): string =>
     [...frozenQuotes].reduce((text, quote) => text.split(quote).join('「」'), masked);
   if (!parts.length) {

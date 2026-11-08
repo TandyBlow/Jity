@@ -65,7 +65,9 @@
 
 截图：`screenshots/rounds-after-run.png`、`rounds-after-refresh.png`、`rounds-after-more.png`。
 
-## 4. 一个必须说清的限制：外貌变化还没有正常操作路径
+## 4. 一个必须说清的限制：外貌变化当时还没有正常操作路径
+
+（本节记录当时的验收范围；后续补丁见本节末尾。）
 
 规则词汇表只产出四种增量（`rule-facts.ts` 第 144–152 行）：
 
@@ -78,7 +80,9 @@ positionSet / sanitySet / tasksAchieved + personalityChanges
 但“外貌变化经由玩家操作产生”这件事，本轮**没有验证**，需要一个会写外貌的规则或输入源。
 
 任务变化后来已补：目标和达成状态从该点已提交状态读回，页面直接显示「谁达成任务：目标原文」。
-见 [task-display-r1-2026-11-06.md](task-display-r1-2026-11-06.md)。外貌这条仍然开放。
+见 [task-display-r1-2026-11-06.md](task-display-r1-2026-11-06.md)。
+外貌随后补了正常命令「露出微笑」（规则策略固定描述原文），经结算、ID 分配、Python 提交后进入回合展示；
+见 [appearance-display-r1-2026-11-06.md](appearance-display-r1-2026-11-06.md)。外貌的模型生成与替换分支仍未做。
 
 ## 5. 完成标准对照
 

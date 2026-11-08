@@ -1,0 +1,156 @@
+{
+ "purpose": "an explicit appearance command produces appearanceChanges through settlement, ID allocation and the Python commit; the round log and the facts route show the committed description",
+ "noTraining": true,
+ "modelSentencesNotUsed": true,
+ "readOnly": true,
+ "pins": {
+  "worldServer": "005ea5b (GET /world/facts/{worldId}/{pointId})",
+  "componentsBranch": "world-components-next, this commit",
+  "baseCommit": "fd6c52e",
+  "backendCheckout": ".local/ws-facts-005ea5b (clean)",
+  "pageBuild": ".local/scratch/appearance-r1 (detached at fd6c52e + working patch, see build.json)"
+ },
+ "flow": {
+  "world": "isolated SQLite at artifacts/next-runs/appearance-display-r1/world.db, created by the page itself",
+  "commands": [
+   "完成压力试验",
+   "露出微笑",
+   "露出微笑（拒绝）",
+   "走到门厅",
+   "完成压力试验（拒绝）",
+   "走到走廊",
+   "刷新",
+   "露出微笑（刷新后仍拒绝）",
+   "走到门厅"
+  ]
+ },
+ "appearanceFact": {
+  "command": "露出微笑",
+  "policyText": "面带微笑",
+  "delta": "appearanceChanges=[{id: <allocated>, text: 面带微笑, supersedes: []}]",
+  "allocatedId": "change_17 (candidates: allocation, kind=change)",
+  "sourcePoint": "point_14, sequence 2",
+  "templateSentence": "周宁的外貌变化为「面带微笑」。",
+  "factsSentence": "周宁：面带微笑。",
+  "repeat": "appearance_already_applied, empty delta, no new appearance entry"
+ },
+ "verification": {
+  "script": "experiments/world-components/verify_page_facts.py",
+  "derives": "expected text from world_points, the initial names and the checkpoints; it also reads the captured facts responses",
+  "rounds": 9,
+  "checks": 60,
+  "problems": [],
+  "negativeControls": {
+   "wrongText": 3,
+   "wrongSource": 5
+  }
+ },
+ "pageCheck": {
+  "beforeAndAfterRefresh": "every round identical, including the appearance sentence and its template narration",
+  "historyStable": "previousRoundsUnchanged=true, grewBy=2",
+  "consoleErrors": [],
+  "factsRequests": 42
+ },
+ "coverage": {
+  "firstExecution": "change_17 committed at point_14; page shows the template sentence and the facts sentence",
+  "repeat": "refused before commit; point_21 empty delta; no second appearance entry",
+  "afterRefresh": "refused again at point_45; history untouched",
+  "appearanceHistory": "appearance_audit checks box, person_a and person_c at every point; only point_14 adds a change",
+  "taskAndMove": "still shown from the same run (task sentence at point_7, two moves)",
+  "idAllocation": "the draft rule id was replaced by change_17 through the existing candidates allocation"
+ },
+ "notClaimed": [
+  "appearance text is fixed by the rule policy; the player does not author it and no model chooses it",
+  "only adds descriptions; supersession/replacement is not exercised",
+  "only the default test world and the 露出微笑 command were run",
+  "the deployment still needs WORLD_FACTS_ADAPTER and WORLD_SQLITE_PATH set",
+  "model narration was not enabled; the page used the template path"
+ ],
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/adapter/facts.json",
+   "bytes": 9176,
+   "sha256": "cc6793b836abdb22fa239b074efbf8d13b24715ce2b586a8161900e949ee7e2a"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/adapter/gaps.json",
+   "bytes": 16,
+   "sha256": "da2401b88ac8b7c0832454105703383fffdd5395e280efe8a4430c3bcca5b719"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/adapter/not-displayed.json",
+   "bytes": 24,
+   "sha256": "ab8c59fe2b7db66908242fe9a278e964d157f3fb53e5bb3d156b53547458413a"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/adapter/preview.json",
+   "bytes": 6478,
+   "sha256": "8b5b23940922251f07cbb00298e9ec3890d00f76c4b7c4aedc692587346c1332"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/adapter/preview.txt",
+   "bytes": 2666,
+   "sha256": "ddd2f12c09c0d202eeb581b3099724ab430b5b3b0bda0ed48d95034d9b6ddcdb"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/browser-record.json",
+   "bytes": 99711,
+   "sha256": "0fcec2fd323e827d9e8a2d0860a947f1410b0c8d051f4a4b39e7982be8ae4648"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/build.json",
+   "bytes": 490,
+   "sha256": "5b87f8e3eab043c34942e2424655c632c852816b3b9676fb6899bc69fbc45bd9"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/committed.json",
+   "bytes": 2861,
+   "sha256": "3e1c0d8caddaa4aaad9b1eee17b02c65d12716055d52967d5b2e2edbba6763ba"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/environment.json",
+   "bytes": 1708,
+   "sha256": "791b43ca3edd844a47b88853778ba63b51a2c1604d5d3e3ee0e7f02d69fa9535"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/facts-requests.log",
+   "bytes": 3351,
+   "sha256": "2da79bf82e7649b8e8b366eec7f2341c9bf885c2f187aaef106d9cee9def633a"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/negative/mutation.json",
+   "bytes": 746,
+   "sha256": "d867f49d3306002816b112f406df22955613310cf41d993587b3be6aefa53ef7"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/negative/verify-wrong-source.json",
+   "bytes": 7878,
+   "sha256": "3e6179b413df2196d007559dbc625534e86448c1f35d704e375b22f538aa254f"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/negative/verify-wrong-text.json",
+   "bytes": 7867,
+   "sha256": "b707ffc2d7a14be111b152afe4624b4161df71c987d121412d9268aeec327cc8"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/screenshots/rounds-after-more.png",
+   "bytes": 180902,
+   "sha256": "4325471319936a886fbb2ab9e01b6e6528dccbe39ef80915fefc0fd76fba3b73"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/screenshots/rounds-after-refresh.png",
+   "bytes": 158682,
+   "sha256": "3b5072402680fe068362968ab573322bc7ac6b28d776fac3633d35e447661247"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/screenshots/rounds-after-run.png",
+   "bytes": 161077,
+   "sha256": "e518909b10101aa7d1b746205402e73cab6ffb12d4ae58f756b4a5c3c67fa2b1"
+  },
+  {
+   "path": "artifacts/next-acceptance/appearance-display-r1/verify.json",
+   "bytes": 7648,
+   "sha256": "e0dca0d196a99e5234377eb8ddf6f97a2cb2c6750c47967670a436e3aba2f31b"
+  }
+ ]
+}

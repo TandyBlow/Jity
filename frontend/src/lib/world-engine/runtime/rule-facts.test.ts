@@ -5,6 +5,7 @@ import { createRuleController } from './rule-controller';
 import type { InitialTemplate, WorldContext, WorldState } from '../types';
 
 export const TEST_POLICY: RulePolicy = {
+  appearance: { smile: { text: '面带微笑' } },
   routes: [{ from: 'corridor', to: 'hall', minimumSanity: 5 }],
   sanity: { minimum: 0, maximum: 10, effects: { strain: -2, recover: 1 }, milestones: {
     strain: { taskId: 'task_pressure', goal: '完成压力试验', requiredLocationId: 'corridor', minimumElapsedSeconds: 1, personalityText: '经历压力试验后更谨慎' },
@@ -30,6 +31,42 @@ export function testRuleWorld(): WorldContext {
 }
 
 describe('explicit execution authority', () => {
+  test('an explicit appearance command uses policy text and rejects invented effects or another actor', () => {
+    const authority = new RuleAuthority(TEST_POLICY);
+    const state = testRuleState(); const world = testRuleWorld();
+    expect(parseRuleCommand('周宁已面带微笑', state)).toBeNull();
+    const proposal = parseRuleCommand('露出微笑', state);
+    const receipt = authority.adjudicate({ proposal, inputText: '露出微笑', state, world, pointId: 'point_1' });
+    const expected = { person_c: { entityId: 'person_c', appearanceChanges: [
+      { id: 'rule_smile_input_1', text: '面带微笑', supersedes: [] },
+    ] } };
+    expect(authority.deltas(receipt, world, 'point_1', state)).toEqual(expected);
+    expect(authority.deltas(receipt, world, 'point_1', state)).toEqual(expected);
+    for (const invalid of [
+      { ...proposal, text: '突然受伤' }, { ...proposal, actorId: 'person_a' }, { ...proposal, effect: 'injury' },
+    ]) expect(() => authority.adjudicate({ proposal: invalid, inputText: '露出微笑', state, world, pointId: 'point_1' })).toThrow();
+    const consumed = structuredClone(world); consumed.advance.intentStatus = 'consumed';
+    expect(() => authority.deltas(receipt, consumed, 'point_1', state)).toThrow(/input_not_pending/);
+    const changed = structuredClone(world); changed.advance.inputId = 'another_input';
+    expect(() => authority.deltas(receipt, changed, 'point_1', state)).toThrow(/scope_changed/);
+    state.characters.person_c.appearanceChanges.push({ ...expected.person_c.appearanceChanges[0],
+      id: 'allocated_change', active: true, sourcePointId: 'point_0', sourceSequence: 0 });
+    expect(() => authority.deltas(receipt, world, 'point_1', state)).toThrow(/precondition_changed/);
+    const repeat = authority.adjudicate({ proposal, inputText: '露出微笑', state, world, pointId: 'point_1' });
+    expect(authority.inspect(repeat).decision).toMatchObject({ outcome: 'refused', reason: 'appearance_already_applied' });
+    expect(authority.deltas(repeat, world, 'point_1', state)).toEqual({});
+  });
+
+  test('appearance commands require an installed policy', () => {
+    const { appearance: _unused, ...policy } = TEST_POLICY;
+    const authority = new RuleAuthority(policy);
+    const state = testRuleState(); const world = testRuleWorld();
+    const receipt = authority.adjudicate({ proposal: parseRuleCommand('露出微笑', state), inputText: '露出微笑', state, world, pointId: 'point_1' });
+    expect(authority.inspect(receipt).decision).toMatchObject({ outcome: 'refused', reason: 'appearance_rule_not_configured' });
+    expect(authority.deltas(receipt, world, 'point_1', state)).toEqual({});
+    expect(() => new RuleAuthority({ ...TEST_POLICY, appearance: { smile: { text: ' ' } } })).toThrow(/invalid_appearance_policy/);
+  });
+
   test('natural-language assertions and a model numeric set cannot mint a receipt', () => {
     const state = testRuleState();
     const authority = new RuleAuthority(TEST_POLICY);

@@ -82,6 +82,7 @@ export function describeFact(fact: NarrationFact): string {
     case 'sanity_changed': return `${fact.name} / 精神值 = ${fact.from} → ${fact.to}`;
     case 'task_achieved': return `${fact.name} / 达成任务 = 「${fact.goal}」`;
     case 'personality_changed': return `${fact.name} / 个性变化 = 「${fact.text}」`;
+    case 'appearance_changed': return `${fact.name} / 外貌变化 = 「${fact.text}」`;
   }
 }
 

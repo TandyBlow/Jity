@@ -604,6 +604,7 @@ export default function WorldPage() {
             : '（无可用路线）'}</li>
           <li>完成压力试验（须在走廊，精神值 −2）</li>
           <li>完成恢复练习（须在走廊，精神值 +1）</li>
+          <li>露出微笑（外貌变为面带微笑；已经微笑时不重复添加）</li>
           <li>其他文本不会产生任何规则动作；被拒绝的命令会给出原因，世界时间仍按已提交点推进。</li>
         </ul>
         {lastAction && <p className={`mt-2 text-xs ${lastAction.startsWith('已拒绝') || lastAction.startsWith('未识别') ? 'text-red-600' : 'text-emerald-700'}`}>{lastAction}</p>}
