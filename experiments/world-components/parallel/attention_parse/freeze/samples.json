@@ -1,0 +1,164 @@
+{
+  "protocol": "c1-attention-parse-v1",
+  "frozenOn": "2026-11-08",
+  "statusNote": "规则基线实验；不训练、不接服务、不改N2规则。",
+  "labelFreeze": "本文件在实现提取器之前写入并单独提交；expected 是人工作者标注，不来自提取器输出。",
+  "utteranceOrigin": "全部 10 条玩家原话为本实验新写；仓库中没有可用的真实玩家原话记录。原话只作为输入，不代表已提交世界记录。",
+  "rosterOrigin": "对象、字段来源见 freeze/rosters.json（由 build_rosters.py 从已登记夹具逐字抽取并记录行号与文件哈希）。",
+  "worldRefs": {
+    "W1": "narration-split-samples.ts NS_INITIAL（world_school，冻结 T01 学校世界）",
+    "W2": "b3-short-samples.ts SHORT_STATE（world_short，B3 六项短场景夹具）"
+  },
+  "samples": [
+    {
+      "sampleId": "S01",
+      "category": "exact_name",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["person_a"],
+        "resolvedCandidates": ["person_a"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "原话说出提交记录里的完整人名；预期直接命中，不需推断。"
+    },
+    {
+      "sampleId": "S02",
+      "category": "synonym_descriptor",
+      "worldRef": "W2",
+      "utterance": "穿灰衣的那个还在门口吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["person_a"],
+        "resolvedCandidates": ["person_a"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "同义表达：原话没有说名字，用的是提交记录里 person_a.initialAppearance「穿灰衣。」的可见特征。"
+    },
+    {
+      "sampleId": "S03",
+      "category": "synonym_descriptor",
+      "worldRef": "W1",
+      "utterance": "黄铜钥匙还在走廊吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["item_key", "corridor"],
+        "resolvedCandidates": ["item_key", "corridor"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "同义表达＋两个对象：物品用描述词「黄铜」指向 item_key（initialAppearance「一把黄铜钥匙。」），地点用全名。"
+    },
+    {
+      "sampleId": "S04",
+      "category": "pronoun_unique",
+      "worldRef": "W2",
+      "utterance": "他还在门口吗？",
+      "priorNarration": "林川走进门厅。",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["person_a"],
+        "resolvedCandidates": ["person_a"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "代词单候选：上一段只提到一个角色（林川），门厅是地点，不参与「他」的候选。"
+    },
+    {
+      "sampleId": "S05",
+      "category": "pronoun_multi",
+      "worldRef": "W2",
+      "utterance": "他怎么了？",
+      "priorNarration": "林川走进门厅，周宁留在走廊。",
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": ["person_a", "person_c"],
+        "unresolvedMentions": []
+      },
+      "note": "代词多候选：上一段提到两个角色，规则不得二选一，输出歧义并让下游拿不到关注目标。"
+    },
+    {
+      "sampleId": "S06",
+      "category": "shared_form",
+      "worldRef": "W1",
+      "utterance": "学生还在走廊吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": ["corridor"],
+        "ambiguousCandidates": ["person_a", "person_b"],
+        "unresolvedMentions": []
+      },
+      "note": "多人同称（本仓库没有两个完全同名实体，最近邻是共用词干「学生A／学生B」）：原话只说词干，规则必须报歧义，不得按描述词猜 person_a；同句里的「走廊」仍可解析，但歧义状态下 attentionTargets 为空。"
+    },
+    {
+      "sampleId": "S07",
+      "category": "irrelevant",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "priorNarration": null,
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "无关语句：没有任何关注对象，输出空集，不回退全选。"
+    },
+    {
+      "sampleId": "S08",
+      "category": "unknown_reference",
+      "worldRef": "W2",
+      "utterance": "老林怎么想？",
+      "priorNarration": null,
+      "expected": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": ["老林"]
+      },
+      "note": "未登记称呼：昵称「老林」在提交记录里没有对应字段，规则应报无法解析，不得把一人匹配当全选。"
+    },
+    {
+      "sampleId": "S09",
+      "category": "multi_object",
+      "worldRef": "W1",
+      "utterance": "主角的任务「取回柜子里的东西」完成了吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["person_c", "task_shelf"],
+        "resolvedCandidates": ["person_c", "task_shelf"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "多对象：人名「主角」＋任务目标原文（task_shelf.goal），两个都应成为候选。"
+    },
+    {
+      "sampleId": "S10",
+      "category": "self_reference",
+      "worldRef": "W2",
+      "utterance": "我刚才打开盒盖了吗？",
+      "priorNarration": "周宁站在走廊。",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": ["person_c", "box"],
+        "resolvedCandidates": ["person_c", "box"],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "note": "自称＋物件描述：「我」指向提交记录的 protagonistId（person_c），「盒盖」来自 box.initialAppearance「盒盖关闭。」。"
+    }
+  ]
+}
