@@ -317,17 +317,15 @@ def parse(utterance: str, roster: dict, prior: str | None = None) -> Parsed:
     groups: list[list[str]] = []
 
     for finder in (name_matches, stem_matches):
-        found, found_groups = finder(text, roster)
+        found, _found_groups = finder(text, roster)
         matches.extend(found)
-        groups.extend(found_groups)
 
     descriptor_found, descriptor_groups, non_unique, dropped = descriptor_matches(text, roster)
     matches.extend(descriptor_found)
     groups.extend(descriptor_groups)
 
-    pronoun_found, pronoun_groups, unresolved = pronoun_matches(text, roster, prior_text)
+    pronoun_found, _pronoun_groups, unresolved = pronoun_matches(text, roster, prior_text)
     matches.extend(pronoun_found)
-    groups.extend(pronoun_groups)
 
     matches = _drop_contained(matches)
 

@@ -1,0 +1,75 @@
+{
+  "protocol": "c1-n2-wiring-facts-v1",
+  "note": "事实本身逐字来自提交样本的 requiredFacts；must/optional/forbidden 是本实验作者标注，不是夹具自带，也不是真实 N2 判定。",
+  "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+  "sourceSha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+  "facts": [
+    {
+      "factId": "ns-task-1#taskGoal",
+      "sourceSampleId": "ns-task-1",
+      "sourceKind": "taskGoal",
+      "kind": "task_achieved",
+      "authorization": "must",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 194,
+      "entityId": "person_c",
+      "goal": "取回柜子里的东西"
+    },
+    {
+      "factId": "ns-task-1#timePassage",
+      "sourceSampleId": "ns-task-1",
+      "sourceKind": "timePassage",
+      "kind": "time",
+      "authorization": "must",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 193,
+      "amount": 2,
+      "unit": "minute"
+    },
+    {
+      "factId": "ns-pos-1#position",
+      "sourceSampleId": "ns-pos-1",
+      "sourceKind": "position",
+      "kind": "moved",
+      "authorization": "optional",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 155,
+      "entityId": "person_a",
+      "from": "走廊",
+      "to": "大厅"
+    },
+    {
+      "factId": "ns-appear-1#appearanceText",
+      "sourceSampleId": "ns-appear-1",
+      "sourceKind": "appearanceText",
+      "kind": "appearance_changed",
+      "authorization": "optional",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 168,
+      "entityId": "item_key",
+      "text": "黄铜钥匙的表面蒙上了一层灰尘"
+    },
+    {
+      "factId": "ns-loc-appear-1#appearanceText",
+      "sourceSampleId": "ns-loc-appear-1",
+      "sourceKind": "appearanceText",
+      "kind": "appearance_changed",
+      "authorization": "optional",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 181,
+      "entityId": "corridor",
+      "text": "两侧的储物柜都被关上了"
+    },
+    {
+      "factId": "ns-cont-2#appearanceText",
+      "sourceSampleId": "ns-cont-2",
+      "sourceKind": "appearanceText",
+      "kind": "appearance_changed",
+      "authorization": "forbidden",
+      "sourceFile": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sourceLine": 286,
+      "entityId": "person_b",
+      "text": "额头上渗出了汗珠"
+    }
+  ]
+}
