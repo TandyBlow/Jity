@@ -49,7 +49,11 @@
 - `step6/scenes/campus-three-points.md`（v3）：**一致性样例**——只检查事件 ↔ Δ ↔ 面板、玩家动作授权、失败/交接落账；不评人物声音，不作为叙事标尺。
 - 叙事质量样例：`step6/scenes/art-room-three-points.md`——旧教学楼画夹与钥匙 v4，三点连续冲突；已补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、登记表来源与事件顺序；逐句来源核验见 `step6/scenes/art-room-clause-check.md`（独立复核已确认来源/顺序/道具，2026-11-08）；产品负责人读评 3/5（可读、可用，但不够生动；林川能动性不足），见 `step6/independent-review/art-room/product-owner-feedback.md`；独立读者评价仍待回收；可见性与受阻原因留到 N4.0，见 `step6/n4-integration-notes.md`。准入条件见 `step6/acceptance-boundaries.md` §6。
 
-## 3c. 已知数据交接缺口（决定路线可行性）
+## 3c. N4.0 输入适配原型（C6 侧）
+
+`n4_adapter/` 把玩家输入、上一段正文、事件（说话/受阻/交接）、可见性、受阻原因显式装进输入，并对缺失字段 fail-closed；13 条测试通过，输出在 `n4_adapter/out/`。它不改 `n4_input_renderer` 与 `backend/app`；合并与契约改动由 C/A 按 `n4_adapter/README.md` §7 的交接表处理。
+
+## 3d. 已知数据交接缺口（决定路线可行性）
 
 - 真实记录里 `world_advances.input_text` 曾为 NULL（`design/world-engine-reports/components/interaction-sample-v1.md`）；
 - N4.0 的 `resultText` 来源尚未正式接线（`n4-input-packing.md` 已知缺口 2）；

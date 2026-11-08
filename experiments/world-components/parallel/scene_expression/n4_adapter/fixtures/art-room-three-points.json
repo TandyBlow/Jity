@@ -1,0 +1,310 @@
+{
+  "sceneId": "art-room-three-points",
+  "world": {
+    "locations": {
+      "corridor3": {
+        "name": "三层走廊",
+        "parent": null,
+        "appearance": "灯只开一半；靠墙立着几块展板；尽头是楼梯间，声控灯；墙上挂着登记表夹"
+      },
+      "stairwell": {
+        "name": "楼梯间",
+        "parent": "corridor3",
+        "appearance": "声控灯；墙上挂着登记表夹"
+      },
+      "art_room": {
+        "name": "活动室",
+        "parent": "corridor3",
+        "appearance": "门玻璃贴着校庆海报；靠窗一排桌子；堆着纸箱和卷起的展板"
+      }
+    },
+    "characters": {
+      "person_c": {
+        "name": "林川",
+        "personality": "新成员，只按玩家输入行动",
+        "appearance": "校服，背着空书包"
+      },
+      "person_d": {
+        "name": "杜衡",
+        "personality": "摄影社社长，重规定、时间和责任",
+        "appearance": "深色外套，腰间挂着钥匙串"
+      },
+      "person_e": {
+        "name": "江屿",
+        "personality": "同社新生，会解释情况、替人考虑",
+        "appearance": "校服，手里拿着社团名单"
+      }
+    },
+    "items": {
+      "item_paint": {
+        "name": "画夹",
+        "appearance": "深蓝布面，边角磨白"
+      },
+      "item_key_room": {
+        "name": "活动室钥匙",
+        "appearance": "黄铜，单把"
+      },
+      "item_form": {
+        "name": "空白登记表",
+        "appearance": "一页表格"
+      }
+    }
+  },
+  "points": [
+    {
+      "id": "p1",
+      "time": "16:40",
+      "location": "corridor3",
+      "perspective": "person_c",
+      "present": [
+        "person_c",
+        "person_d",
+        "person_e"
+      ],
+      "visibleItems": [
+        "item_key_room"
+      ],
+      "playerInput": "我问门口两个人，活动室为什么锁着，我的画夹还在里面，能不能让我进去拿。",
+      "previousNarration": null,
+      "task": {
+        "goal": "拿回画夹",
+        "status": "pending",
+        "blockedReason": "门锁着，杜衡不放行"
+      },
+      "events": [
+        {
+          "id": "e1",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "布展，今天不进。",
+          "visible": true
+        },
+        {
+          "id": "e2",
+          "kind": "speech",
+          "actor": "person_e",
+          "text": "那个……我最后走的，画夹在靠窗那排桌上。",
+          "visible": true
+        },
+        {
+          "id": "e3",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "布展前清场，钥匙在我这儿。",
+          "visible": true
+        },
+        {
+          "id": "e4",
+          "kind": "attempt_failed",
+          "actor": "person_c",
+          "target": "art_room",
+          "text": "进入活动室失败：门锁着，杜衡没有让开。",
+          "visible": true
+        }
+      ],
+      "facts": []
+    },
+    {
+      "id": "p2",
+      "time": "16:45",
+      "location": "corridor3",
+      "perspective": "person_c",
+      "present": [
+        "person_c",
+        "person_e",
+        "person_d"
+      ],
+      "visibleItems": [
+        "item_key_room",
+        "item_form"
+      ],
+      "playerInput": "我问杜衡，布展要到什么时候，画夹能不能先拿出来。",
+      "previousNarration": "旧教学楼三层的走廊只开了一半的灯，靠墙立着几块展板。活动室的门锁着，玻璃上贴着校庆布展的海报。林川问门口两个人，活动室为什么锁着，他的画夹还在里面，能不能进去拿。杜衡说，布展，今天不进。江屿看了一眼门，又看向杜衡，说那个……我最后走的，画夹在靠窗那排桌上。杜衡说，布展前清场，钥匙在我这儿。",
+      "task": {
+        "goal": "拿回画夹",
+        "status": "pending",
+        "blockedReason": "需登记；登记处 17:00 关门"
+      },
+      "events": [
+        {
+          "id": "e1",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "清场到六点，室内物品要统一登记，不能提前拿。",
+          "visible": true
+        },
+        {
+          "id": "e2",
+          "kind": "speech",
+          "actor": "person_e",
+          "text": "登记处五点就关门。",
+          "visible": true
+        },
+        {
+          "id": "e3",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "我知道，我去拿登记表。",
+          "visible": true
+        },
+        {
+          "id": "e4",
+          "kind": "move",
+          "actor": "person_d",
+          "from": "corridor3",
+          "to": "stairwell",
+          "visible": true,
+          "visibility": "open-passage"
+        },
+        {
+          "id": "e5",
+          "kind": "action",
+          "actor": "person_d",
+          "text": "从墙上的登记表夹抽出一张空白登记表",
+          "visible": true
+        },
+        {
+          "id": "e6",
+          "kind": "item_transfer",
+          "actor": "person_d",
+          "item": "item_form",
+          "from": "stairwell",
+          "to": "person_d",
+          "visible": true
+        },
+        {
+          "id": "e7",
+          "kind": "speech",
+          "actor": "person_e",
+          "manner": "压低声音",
+          "text": "他得把室内的东西都登记完；要拿画夹，得等登记。",
+          "visible": true
+        }
+      ],
+      "facts": [
+        {
+          "id": "f1",
+          "kind": "moved",
+          "entityId": "person_d",
+          "from": "corridor3",
+          "to": "stairwell"
+        },
+        {
+          "id": "f2",
+          "kind": "moved",
+          "entityId": "item_form",
+          "from": "stairwell",
+          "to": "person_d"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "time": "16:50",
+      "location": "corridor3",
+      "perspective": "person_c",
+      "present": [
+        "person_c",
+        "person_e",
+        "person_d"
+      ],
+      "visibleItems": [
+        "item_paint",
+        "item_key_room",
+        "item_form"
+      ],
+      "playerInput": "我跟上杜衡，说画夹里有今天五点三十前要交的报名表，请他只开一分钟。",
+      "previousNarration": "林川问杜衡，布展要到什么时候，画夹能不能先拿出来。杜衡说，清场到六点，室内物品要统一登记，不能提前拿。江屿在旁边提醒，登记处五点就关门。杜衡说，我知道，我去拿登记表。他往走廊尽头的楼梯间走，声控灯亮了一下。墙上挂着登记表夹，他抽出一张空白表，钥匙串在口袋里响。江屿压低声音告诉林川，他得把室内的东西都登记完；要拿画夹，得等登记。",
+      "task": {
+        "goal": "拿回画夹",
+        "status": "pending",
+        "blockedReason": "画夹由杜衡送登记；18:00 后凭登记领；报名表 17:30 截止"
+      },
+      "events": [
+        {
+          "id": "e1",
+          "kind": "speech",
+          "actor": "person_c",
+          "text": "画夹里有今天五点三十前要交的报名表，请只开一分钟。",
+          "visible": true
+        },
+        {
+          "id": "e2",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "一分钟。",
+          "visible": true
+        },
+        {
+          "id": "e3",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "我进去取，不能在这儿给你。",
+          "visible": true
+        },
+        {
+          "id": "e4",
+          "kind": "move",
+          "actor": "person_d",
+          "from": "stairwell",
+          "to": "corridor3",
+          "visible": true
+        },
+        {
+          "id": "e5",
+          "kind": "action",
+          "actor": "person_d",
+          "text": "回到门口，开锁，推门",
+          "visible": true
+        },
+        {
+          "id": "e6",
+          "kind": "item_transfer",
+          "actor": "person_d",
+          "item": "item_paint",
+          "from": "art_room",
+          "to": "person_d",
+          "visible": true
+        },
+        {
+          "id": "e7",
+          "kind": "speech",
+          "actor": "person_e",
+          "text": "林川今天五点三十要交。",
+          "visible": true
+        },
+        {
+          "id": "e8",
+          "kind": "speech",
+          "actor": "person_d",
+          "text": "登记完送校庆办公室，十八点后凭登记领。",
+          "visible": true
+        },
+        {
+          "id": "e9",
+          "kind": "speech",
+          "actor": "person_e",
+          "text": "教务处王老师五点二十前都在，可以先去找他说明。",
+          "visible": true
+        },
+        {
+          "id": "e10",
+          "kind": "move",
+          "actor": "person_d",
+          "from": "corridor3",
+          "to": "stairwell",
+          "visible": true
+        }
+      ],
+      "facts": [
+        {
+          "id": "f1",
+          "kind": "moved",
+          "entityId": "item_paint",
+          "from": "art_room",
+          "to": "person_d"
+        }
+      ]
+    }
+  ]
+}

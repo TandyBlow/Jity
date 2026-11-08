@@ -54,6 +54,7 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `step6/scenes/art-room-three-points.md` | 编写的叙事质量样例 v4（开发草稿）：画夹与钥匙三点冲突；补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、登记表来源、事件顺序、环境连续与姓名；面板手工编写 |
 | `step6/scenes/art-room-clause-check.md` | 画夹场景逐句来源核验 v2：51 分句，支持 43、描写(c) 8、越权(a) 0、无 Δ 事件(b) 0；含事件顺序与道具来源；独立复核已确认（2026-11-08） |
 | `step6/n4-integration-notes.md` | 留到 N4.0 的两项：第三人称限知的可见性、任务受阻原因的持久化；本轮不改契约 |
+| `n4_adapter/` | C6 侧 N4.0 输入适配原型：玩家输入、上一段正文、事件、可见性、受阻原因；13 条测试；不改共享 N4 代码，交接表见其 README |
 | `step6/independent-review/art-room/` | 独立读者评价包：只给正文与问题，读者反馈模板保持空白；产品负责人读评另存 `product-owner-feedback.md`（非盲评） |
 | `step6/scenes/campus-three-points.md` | 编写的实验样例 v3（一致性样例，非叙事标尺）：校园三点连续结算（输入／事件／状态／正文＋面板）；已按审核修订玩家越权、柜位问答、双钥匙身份、面板位置 |
 | `step6/acceptance-boundaries.md` | 样例分两类、Q1/Q2 判分范围、面板由程序生成、玩家台词授权、叙事样例准入条件 |
