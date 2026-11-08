@@ -568,6 +568,11 @@ def check_case(case: dict, text: str, world: dict) -> dict:
     return {
         "caseId": case.get("id"),
         "verdict": _verdict(checks),
+        # pass 只表示"现有自动规则没有发现问题"。自然度、隐含事实、代词归属
+        # 都不在自动范围内，所以 pass 不能当作全面验收通过。
+        "verdictScope": "automatic-rules-only",
+        "passMeans": "没有自动规则报警；自然度/隐含事实/代词归属未检查",
+        "notAutomated": ["自然度", "隐含事实", "视角限知（代词与身体感受）"],
         "checks": checks,
         "counts": {
             "pass": sum(1 for c in checks if c["verdict"] == "pass"),

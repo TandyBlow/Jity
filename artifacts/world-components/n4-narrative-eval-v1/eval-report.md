@@ -3,7 +3,8 @@
 - 正例（已审目标正文）：0/132 被误判 fail；uncertain 45
 - 合法变体：0/528 被误判 fail；uncertain 182
 - 单点负例：532/734 按预期规则判出
-- 真实输出对照草稿标注：5/24 一致，误报 0，严格漏报 1，人工存疑但机器放行 6，abstain 12
+- 真实输出对照草稿标注：3/24 一致，误报 0，严格漏报 1，人工存疑但机器放行 8，abstain 12
+  矩阵（行=人工，列=机器）：{"humanPass": {"checkerPass": 2, "checkerUncertain": 3, "checkerFail": 0}, "humanUncertain": {"checkerPass": 8, "checkerUncertain": 2, "checkerFail": 0}, "humanFail": {"checkerPass": 1, "checkerUncertain": 7, "checkerFail": 1}}
 
 - drop-fact: 判出 42/84，uncertain 24，漏 18
 - explicit-duration: 判出 132/132，uncertain 0，漏 0

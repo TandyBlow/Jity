@@ -144,9 +144,9 @@
    "fail": 0,
    "falsePositives": [],
    "uncertain_byProbe": {
-    "scene-detail": 47,
     "ellipsis-time": 45,
     "pov-inner": 44,
+    "scene-detail": 47,
     "synonym": 46
    }
   },
@@ -362,9 +362,10 @@
     {
      "id": "zero-shot:n4w-07",
      "checker": "uncertain",
-     "human": "uncertain",
+     "human": "fail",
      "checkerFails": [],
      "humanReasons": [
+      "人格事实（陆行开始愿意先开口）在正文里没有对应主体",
       "把风吹得发冷属语义错"
      ]
     },
@@ -393,7 +394,9 @@
      "human": "uncertain",
      "checkerFails": [],
      "humanReasons": [
-      "下到云关驿之后又『往上走』，空间方向矛盾"
+      "移动事实未明确表达：石青在云关驿出现，但正文没有写他如何到达",
+      "在云关驿之后又『往上走』，后续方向无法确定",
+      "绳梯系在绳梯上属语义错"
      ]
     },
     {
@@ -438,7 +441,8 @@
      "human": "uncertain",
      "checkerFails": [],
      "humanReasons": [
-      "世界里没有巷子（『夜里的巷子很暗』）；场景句重复"
+      "世界设定里没有「巷子」；场景句重复（夜里的…很暗/发暗）",
+      "与 slot-arm:n4w-09 同一口径"
      ]
     },
     {
@@ -451,9 +455,12 @@
     {
      "id": "slot-arm:n4w-05",
      "checker": "pass",
-     "human": "pass",
+     "human": "uncertain",
      "checkerFails": [],
-     "humanReasons": []
+     "humanReasons": [
+      "世界设定里没有「栈道」（云关驿的小地点是大堂/客房）",
+      "事实层面三条都覆盖（移动、取旧地图、理智方向）"
+     ]
     },
     {
      "id": "slot-arm:n4w-06",
@@ -481,9 +488,12 @@
     {
      "id": "slot-arm:n4w-09",
      "checker": "pass",
-     "human": "pass",
+     "human": "uncertain",
      "checkerFails": [],
-     "humanReasons": []
+     "humanReasons": [
+      "世界设定里没有「巷子」（云关驿/风口岭/雪溪/望雪台及小地点均无巷），地点未授权",
+      "与 slot-arm:n4w-03 同一口径：地点不存在 → uncertain，不判 pass"
+     ]
     },
     {
      "id": "slot-arm:n4w-10",
@@ -498,23 +508,44 @@
      "human": "uncertain",
      "checkerFails": [],
      "humanReasons": [
-      "元叙述措辞"
+      "「木门只透进石阶」不通顺（自然度问题，自动判分器不覆盖）",
+      "无变化点用元叙述措辞『场景里没有新的变化』"
      ]
     },
     {
      "id": "slot-arm:n4w-12",
      "checker": "uncertain",
-     "human": "pass",
+     "human": "uncertain",
      "checkerFails": [],
-     "humanReasons": []
+     "humanReasons": [
+      "事实层面两条都覆盖（移动 + 清雪）",
+      "「她的心跳才慢下来」是阿洛的身体感受，视角人物陆行无法直接观察，属视角越界的疑似越界，需要人工确认"
+     ]
     }
    ],
    "confusion": {
-    "agree": 5,
+    "agree": 3,
     "falsePositive": 0,
     "falseNegative": 1,
-    "missedUncertain": 6,
-    "abstain": 12
+    "missedUncertain": 8,
+    "abstain": 12,
+    "matrix": {
+     "humanPass": {
+      "checkerPass": 2,
+      "checkerUncertain": 3,
+      "checkerFail": 0
+     },
+     "humanUncertain": {
+      "checkerPass": 8,
+      "checkerUncertain": 2,
+      "checkerFail": 0
+     },
+     "humanFail": {
+      "checkerPass": 1,
+      "checkerUncertain": 7,
+      "checkerFail": 1
+     }
+    }
    },
    "falsePositiveDetail": [],
    "falseNegativeDetail": [
@@ -546,7 +577,15 @@
      "human": "uncertain"
     },
     {
+     "id": "slot-arm:n4w-05",
+     "human": "uncertain"
+    },
+    {
      "id": "slot-arm:n4w-08",
+     "human": "uncertain"
+    },
+    {
+     "id": "slot-arm:n4w-09",
      "human": "uncertain"
     },
     {
@@ -572,7 +611,7 @@
     },
     {
      "id": "zero-shot:n4w-07",
-     "human": "uncertain",
+     "human": "fail",
      "checker": "uncertain"
     },
     {
@@ -612,7 +651,7 @@
     },
     {
      "id": "slot-arm:n4w-12",
-     "human": "pass",
+     "human": "uncertain",
      "checker": "uncertain"
     }
    ],
@@ -623,7 +662,7 @@
   "positives_falsePositiveRate": "0/132",
   "legitProbes_falsePositiveRate": "0/528",
   "mutations_detected": "532/734",
-  "modelOutputs_agreement": "5/24",
+  "modelOutputs_agreement": "3/24",
   "verdict_ofJudge": "未通过人工复核：标签是草稿，误报/漏报数字只能说明当前规则状态"
  }
 }

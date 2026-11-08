@@ -107,8 +107,13 @@ def main() -> int:
     # ---- model outputs vs annotations -----------------------------------
     ann = {a["id"]: a for a in load_jsonl(BASE / "annotations.jsonl")}
     outs = load_jsonl(BASE / "model_outputs.jsonl")
-    rows, conf = [], {"fp": [], "fn": [], "agree": 0, "abstain": [],
-                     "missedUncertain": []}
+    rows = []
+    conf = {"fp": [], "fn": [], "agree": 0, "abstain": [],
+            "missedUncertain": [], "matrix": {
+                "humanPass": {"checkerPass": 0, "checkerUncertain": 0, "checkerFail": 0},
+                "humanUncertain": {"checkerPass": 0, "checkerUncertain": 0, "checkerFail": 0},
+                "humanFail": {"checkerPass": 0, "checkerUncertain": 0, "checkerFail": 0},
+            }}
     for o in outs:
         c = cases[o["caseId"]]
         r = checker.check_case(c, o["text"], worlds[c["worldId"]])
@@ -120,6 +125,11 @@ def main() -> int:
         rows.append(row)
         if human is None:
             continue
+        key = {"pass": "humanPass", "uncertain": "humanUncertain",
+               "fail": "humanFail"}[human]
+        cell = {"pass": "checkerPass", "uncertain": "checkerUncertain",
+                "fail": "checkerFail"}[r["verdict"]]
+        conf["matrix"][key][cell] += 1
         if r["verdict"] == "fail" and human == "pass":
             conf["fp"].append(row)
         elif r["verdict"] == "pass" and human == "fail":
@@ -128,7 +138,7 @@ def main() -> int:
             conf["missedUncertain"].append(row)  # 人说存疑、机器直接放行
         elif r["verdict"] == "uncertain":
             conf["abstain"].append(row)
-        else:
+        elif r["verdict"] == human:
             conf["agree"] += 1
     report["materials"]["modelOutputs"] = len(outs)
     report["results"]["modelOutputs"] = {
@@ -139,6 +149,7 @@ def main() -> int:
             "falseNegative": len(conf["fn"]),
             "missedUncertain": len(conf["missedUncertain"]),
             "abstain": len(conf["abstain"]),
+            "matrix": conf["matrix"],
         },
         "falsePositiveDetail": conf["fp"],
         "falseNegativeDetail": conf["fn"],
@@ -174,6 +185,7 @@ def main() -> int:
              f"误报 {len(conf['fp'])}，严格漏报 {len(conf['fn'])}，"
              f"人工存疑但机器放行 {len(conf['missedUncertain'])}，"
              f"abstain {len(conf['abstain'])}",
+             f"  矩阵（行=人工，列=机器）：{json.dumps(conf['matrix'], ensure_ascii=False)}",
              ""]
     for k, v in sorted(per_type.items()):
         total = v["hit"] + v["uncertain"] + v["miss"]
