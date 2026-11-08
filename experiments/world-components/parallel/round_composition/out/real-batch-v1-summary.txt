@@ -1,0 +1,16 @@
+# DERIVED SUMMARY of out/real-batch-v1-reviewed.json
+# (the batch's stdout was not captured; this file is generated from the archive, not a console log)
+# batch real-batch-2026-11-08-v1  model qwen2.5:7b 845dbda0ea48  decode={"temperature": 0, "seed": 42, "num_predict": 128, "top_p": 1.0, "top_k": 40, "repeat_penalty": 1.0, "stop": [], "stream": false, "system": null, "templateNote": "ollama applies the model's chat template to the prompt; the prompt is the N4.0 structured record followed by 正文："}
+
+rb-move-outcome            status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=1 fallback=True
+rb-time-vague              status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=2 fallback=True
+rb-inner-change            status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+rb-two-actors-move         status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+rb-same-name               status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+rb-subtask                 status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=1 fallback=False
+rb-sanity-only             status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+rb-time-only               status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+rb-conflict-two-actors     status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=1 fallback=True
+rb-move-other-appearance   status=n5-rejected  calls=2 finish=length eval=128 n5pass=False quality=fail d4=0 fallback=True
+
+summary: {"total": 10, "statusCounts": {"n5-rejected": 10}, "n5Pass": 0, "portFailures": 0, "retried": 10, "fallbacksUsed": 9, "qualityPassed": 0, "qualityPending": 0, "tripwireTriggered": true, "quality": {"fail": 10}, "qualityFailed": 10, "qualityUndetermined": 0, "d4Labeled": 10, "d4LabelCount": 5, "d4Inventions": 2}

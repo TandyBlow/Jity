@@ -1,0 +1,104 @@
+# 首批真实模型离线实验（real-batch-v1）
+
+日期：2026-11-08。分支 `exp/c-round-composition`。**结论：机制跑通，模型 0/10 通过硬门；本批不构成质量验收，且按预登记触发线已暂停下一批。**
+
+## 1. 预登记（模型调用之前写入）
+
+| 项目 | 值 | 记录位置 |
+| --- | --- | --- |
+| 样本数 | 10（上限即 10） | `fixtures/batch-v1.json` `sampleIds` |
+| 模型 | `qwen2.5:7b`，digest `845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e`，7.6B，Q4_K_M | 同上 `model` |
+| 运行时 | ollama `0.40.15`，本机 HTTP（无外网），未断言 GPU | 同上 `model.runtime` |
+| 解码 | `temperature=0, seed=42, num_predict=128, top_p=1.0, top_k=40, repeat_penalty=1.0, stop=[], stream=false` | 同上 `decode` |
+| 链路 | 程序 N1 → N2 视角规则（`mayPolicy=select`）→ plan_v3 → 场景 → N4.0；模型只做 N4 成句；N5 用 `judge_v3` 硬门 | 同上 `selectionAndOrganization` |
+| 重试/回退 | 成句最多 2 次，第 2 次带上一轮问题；模板回退单独记录、不算成功 | 同上 `retryPolicy` |
+| 验收 | 机制：10/10 有完整请求/响应/结束原因/计时/决策，无未处理异常；质量：只由 N6 判定，`n5-pass` 不是质量结论；D4 必须标注 | 同上 `acceptance` |
+| 触发线 | 硬门通过 <7/10，或端口级失败 ≥2，则暂停并先修机制 | 同上 `acceptance.tripwire` |
+| N6 口径 | A 事实无矛盾 / B 无新增具名实体·事件·目标泄漏 / C 不写他人内心 / D 完整通顺；四项全过才算 pass | 同上 `n6Rubric` |
+
+预登记还固定了输入点与程序链的结果（每个样本的 N1 事实数、选集、句组、输入字符数），见 `fixtures/batch-v1-cases.json` 的 `dryRun`。10 个样本都先干跑确认 `ready-for-model`，避免把「其实停在选集/计划」的样本算成「模型被要求叙事」。其中 `rb-move-other-appearance` 干跑后发现他人的外貌变化不可见（视角在钟楼、对方在管线镇），选集只剩自己的移动——这一点在调用前就记录在案。
+
+## 2. 结果
+
+10 个样本全部 `n5-rejected`，0 个 `n5-pass`；共 20 次模型调用（10×2 重试），**没有端口失败**，回退模板产出 9 次（`rb-subtask` 的新任务类型没有模板帧，回退不可用）。
+
+| 样本 | 状态 | 调用 | 回退 | 结束原因 | 输出字数 |
+| --- | --- | --- | --- | --- | --- |
+| rb-move-outcome | n5-rejected | 2 | 有 | length | 178 |
+| rb-time-vague | n5-rejected | 2 | 有 | length | 180 |
+| rb-inner-change | n5-rejected | 2 | 有 | length | 189 |
+| rb-two-actors-move | n5-rejected | 2 | 有 | length | 186 |
+| rb-same-name | n5-rejected | 2 | 有 | length | 183 |
+| rb-subtask | n5-rejected | 2 | **无** | length | 179 |
+| rb-sanity-only | n5-rejected | 2 | 有 | length | 192 |
+| rb-time-only | n5-rejected | 2 | 有 | length | 211 |
+| rb-conflict-two-actors | n5-rejected | 2 | 有 | length | 205 |
+| rb-move-other-appearance | n5-rejected | 2 | 有 | length | 179 |
+
+耗时：单次调用 2.8–3.2 s（本地 CPU），单样本含重试 5.6–6.3 s；提示词 200–303 tokens。
+
+**最重要的机制发现：20 次调用的 `done_reason` 全部是 `length`，`eval_count` 全部正好 128。** 也就是说模型每次都写到预登记的 `num_predict=128` 上限被截断，10 条正文没有一条在句号处结束。G6（未截断）因此 10/10 失败，必述事实也大多在被截断的后半段根本没出现。
+
+## 3. 逐样本失败原因（摘要）
+
+| 样本 | 硬门问题（第 2 次） | N6 判定 |
+| --- | --- | --- |
+| rb-move-outcome | 移动/结果未覆盖、残留人名、截断 | fail：截断；未写移动；自撰动作与内心 |
+| rb-time-vague | 移动/结果未覆盖、时间无表达、残留、截断 | fail：截断；未写移动与结果；时间自相矛盾（「仿佛静止了」后接「过去了一会儿」） |
+| rb-inner-change | 三件事实均未覆盖、残留、截断 | fail：截断；三项变化都没写 |
+| rb-two-actors-move | 两人移动均未覆盖、残留、截断 | fail：截断；未写移动；写了他人的意图（内心） |
+| rb-same-name | 三人移动均未覆盖、**G4 触发**（两人同名只被写成一个人）、残留、截断 | fail：截断；两个「管线乙」被合并成一个跟随者；写他人意图 |
+| rb-subtask | 移动/新任务未覆盖、残留、截断 | fail：截断；移动与新任务都未写；自撰动作 |
+| rb-sanity-only | 个性/理智未覆盖、残留、截断 | fail：截断；两项都没写；自撰内心与威胁 |
+| rb-time-only | `no_change` 未覆盖、截断（第 2 次还因「一秒」被判 `time-value-mismatch`） | fail：截断；无变化未写；「一分一秒」是事实未授权的时长 |
+| rb-conflict-two-actors | 两个结果均未覆盖、残留、截断（第 1 次另有「一年」被判无法解析） | fail：截断；**改用第一人称**；写他人性格/内心；自撰对话；两个结果都未写 |
+| rb-move-other-appearance | 移动未覆盖、残留、截断 | fail：截断；**把输入记录「f0｜移动｜管线甲｜管线镇→钟楼」原样抄进正文** |
+
+## 4. D4 与 N6 复核
+
+复核对象是每个样本**最后一次模型正文**（有重试的是第 2 次）；模板回退不参与 D4/N6，也不算模型输出。
+
+- D4：10/10 已检查（`count` 不是 `null`）。共 5 条标注，其中 **2 条是真正新增**（`铁环`、`广场`），3 条来自权威文本（`铜铃`×2 来自任务目标，`梯子` 来自新任务目标），按 `isError=false` 单独记账。
+- N6：10/10 已执行，**0 pass / 10 fail / 0 undetermined**。复核人是本会话（单一复核者），状态 `pending-independent-review`；单一复核者测不出自己的漏，需第二位复核。
+- 因此 `quality`：`fail 10`，`pending 0`，`pass 0`。
+
+## 5. 触发线与当前判定
+
+预登记触发线：`n5Pass < 7` 或 `portFailures ≥ 2` 即暂停。实际 `n5Pass=0`、`portFailures=0` → **触发**（`out/real-batch-v1.json` 的 `summary.tripwireTriggered=true`）。
+
+按预登记规则，**本批之后不再跑下一批**，先修机制。需要说明的是：这一批测的是「当前配置」而不是「模型上限」——`num_predict=128` 与「写场景、行动与视角人物心理」的输入要求直接冲突，20/20 次调用都撞上限，模型没有一次能写完一句完整的话。这个上限是预登记自己定的，不能事后改数字再当成同一批结果。
+
+## 6. 这一批证明了什么、没证明什么
+
+**已证明（机制层面）**
+1. 10/10 样本完成了「程序链路 → 真实模型调用 → 硬门 → 重试 → 回退」并留下完整记录：请求（含 prompt 与 options）、原始响应 JSON、`done_reason`、token 计数、墙钟、重试决策、回退文本与其判定。原始 HTTP 记录另存 `out/real-batch-v1-raw.jsonl`。
+2. 重试确实带上了上一轮问题（归档里 `attempts[1].prompt` 可见追加的反馈行）。
+3. 硬门与 N6 能区分「硬门通过」与「质量通过」：9 个模板回退文本硬门全过，但没有一条被算成模型质量。
+4. 硬门抓到了真实问题：G4 在同名两人只写一人时触发；`一秒`、`一年` 被时间门按规则判掉；输入记录泄漏被 N6 记为格式违规。
+
+**没有证明（能力层面）**
+1. 模型能不能写对：所有正文都被 128 token 截断，没有一条完整输出，任何关于模型叙事能力的结论都无从谈起。
+2. 模型是否理解结构输入：正文多次照抄 `f0｜移动｜…`、改用第一人称、写他人内心，说明输出形态约束没有被遵守，但截断使这些现象无法与「长度不够」区分。
+3. 本批的 `n5-rejected` 不能解读为「模型质量差」，只能解读为「在这份 prompt + 这个输出预算下，没有产生可判定的正文」。
+
+## 7. 建议的下一步（需裁决，不擅自改口径）
+
+1. **输出预算**：按 N4.0 的输入要求（场景 + 行动 + 视角心理），128 token 不够。建议单独预登记一批 `num_predict=384`（或按 tokenizer 实测长度定）并把「输出未被截断」作为该批的机制前提，而不是改本批的数字。
+2. **输出形态约束**：在 N4.0 的要求行里明确「只输出一段、不超过 N 句、不要复述字段行、不要对话」，否则模型会持续写长文并抄输入。
+3. **POV 与内心**：现有要求行已写「他人只写可见动作」，但模型仍写他人意图；这属于 N6 已记录的问题，是否加硬门需要单独裁决。
+4. **帧与措辞**：本批显示模型的措辞与硬门帧差距很大（如 `过去了一会儿` vs 词表里的 `过了一会儿`）。这是「模型不会写」还是「门太窄」，需要一次只改一个变量的对照批才能分开。
+5. 在上述 1–2 完成前，不建议把任何模型结果当作质量基线。
+
+## 8. 证据文件与哈希
+
+| 文件 | 内容 |
+| --- | --- |
+| `fixtures/batch-v1.json` | 预登记：模型/digest、解码、验收、触发线、N6 口径、样本 ID、链路代码哈希 |
+| `fixtures/batch-v1-cases.json` | 10 个样本的输入点 + 干跑结果（事实数、选集、句组、输入字符数） |
+| `out/real-batch-v1.json` | 原始运行归档：每样本每轮的 prompt、原始响应、结束原因、耗时、决策、回退 |
+| `out/real-batch-v1-raw.jsonl` | 每次 HTTP 调用的原始请求/响应（一行一次调用） |
+| `fixtures/review-v1.json` | D4 标注 + N6 判定（单一复核者，待独立复核） |
+| `out/real-batch-v1-reviewed.json` | 合并后的归档：`d4`、`n6`、`quality` 与汇总 |
+| `real_batch.py` / `make_real_batch.py` / `apply_review.py` / `write_review_v1.py` | 运行、登记、合并与复核脚本 |
+
+运行归档的哈希每次运行都会变（含时间戳），因此不在此硬编码；以 `fixtures/manifest.json` 的 `outputs[]` 为准。旧门、旧归档与 `b594c008…` 未改动。

@@ -1,0 +1,5087 @@
+{
+ "version": "real-batch-v1-cases",
+ "cases": [
+  {
+   "caseId": "rb-move-outcome",
+   "title": "移动 + 任务结果（outcome）",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "achieved",
+         "resultText": "把铜铃挂回了钟楼"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [
+       "task_1"
+      ],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": true,
+   "notes": "D1=C path: the task is narrated from resultText."
+  },
+  {
+   "caseId": "rb-time-vague",
+   "title": "移动 + 结果 + 时间推进",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "achieved",
+         "resultText": "把铜铃挂回了钟楼"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": {
+     "boundary": "elapsed",
+     "duration": {
+      "amount": 8,
+      "unit": "minute"
+     }
+    },
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [
+       "task_1"
+      ],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": true,
+   "notes": "N4.0 hides the value; v3 accepts a vague expression and checks any stated duration."
+  },
+  {
+   "caseId": "rb-inner-change",
+   "title": "外貌 + 个性 + 理智",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [
+        {
+         "id": "ch_a1",
+         "text": "外袍被雨浸透",
+         "supersedes": []
+        }
+       ],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [
+        {
+         "id": "ch_p1",
+         "text": "话少了许多",
+         "supersedes": []
+        }
+       ],
+       "sanity": 14,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": null,
+      "appearanceChanges": [
+       {
+        "id": "ch_a1",
+        "text": "外袍被雨浸透",
+        "supersedes": []
+       }
+      ],
+      "personalityChanges": [
+       {
+        "id": "ch_p1",
+        "text": "话少了许多",
+        "supersedes": []
+       }
+      ],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": 14
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "Three visible self facts, no position change."
+  },
+  {
+   "caseId": "rb-two-actors-move",
+   "title": "两人同地移动（他人动作可见）",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     },
+     "char_pb": {
+      "entityId": "char_pb",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": true
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "The other actor's move is a may fact; select arm includes it."
+  },
+  {
+   "caseId": "rb-same-name",
+   "title": "两个同名角色同时移动（G4）",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pc": {
+        "id": "char_pc",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "initialPersonality": "沉默",
+        "initialSanity": 9,
+        "tasks": {
+         "task_9": {
+          "id": "task_9",
+          "ownerId": "char_pc",
+          "parentTaskId": null,
+          "goal": "合力抬钟",
+          "status": "achieved"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved"
+        }
+       }
+      },
+      "char_pc": {
+       "id": "char_pc",
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "appearanceChanges": [],
+       "personalityChanges": [],
+       "sanity": 9,
+       "tasks": {
+        "task_9": {
+         "id": "task_9",
+         "ownerId": "char_pc",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pc": {
+        "id": "char_pc",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "initialPersonality": "沉默",
+        "initialSanity": 9,
+        "tasks": {
+         "task_9": {
+          "id": "task_9",
+          "ownerId": "char_pc",
+          "parentTaskId": null,
+          "goal": "合力抬钟",
+          "status": "achieved"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved"
+        }
+       }
+      },
+      "char_pc": {
+       "id": "char_pc",
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "appearanceChanges": [],
+       "personalityChanges": [],
+       "sanity": 9,
+       "tasks": {
+        "task_9": {
+         "id": "task_9",
+         "ownerId": "char_pc",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     },
+     "char_pb": {
+      "entityId": "char_pb",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     },
+     "char_pc": {
+      "entityId": "char_pc",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": true
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "char_pb and char_pc share the name 管线乙; G4 is data-triggered and needs one mention per actor."
+  },
+  {
+   "caseId": "rb-subtask",
+   "title": "移动 + 新小任务",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [
+       {
+        "id": "task_9",
+        "ownerId": "char_pa",
+        "parentTaskId": "task_1",
+        "goal": "找梯子",
+        "status": "pending"
+       }
+      ],
+      "tasksAchieved": [],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "The program template has no subtask frame, so a rejection here cannot fall back to a template."
+  },
+  {
+   "caseId": "rb-sanity-only",
+   "title": "理智下降 + 个性变化",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [
+        {
+         "id": "ch_p2",
+         "text": "对雾天格外警觉",
+         "supersedes": []
+        }
+       ],
+       "sanity": 7,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": null,
+      "appearanceChanges": [],
+      "personalityChanges": [
+       {
+        "id": "ch_p2",
+        "text": "对雾天格外警觉",
+        "supersedes": []
+       }
+      ],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": 7
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "No position or task fact."
+  },
+  {
+   "caseId": "rb-time-only",
+   "title": "纯时间推进",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": {
+     "boundary": "elapsed",
+     "duration": {
+      "amount": 8,
+      "unit": "minute"
+     }
+    },
+    "entityDeltas": {}
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": false
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "No entity delta: N1 yields no_change + time."
+  },
+  {
+   "caseId": "rb-conflict-two-actors",
+   "title": "双人同目标（不同名）",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved",
+         "resultText": "合力把钟抬离了地面"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "合力抬钟",
+         "status": "achieved",
+         "resultText": "抬钟时肩膀抵住了钟沿"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": null,
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [
+       "task_2"
+      ],
+      "sanitySet": null
+     },
+     "char_pb": {
+      "entityId": "char_pb",
+      "positionSet": null,
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [
+       "task_3"
+      ],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": true
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": true,
+   "notes": "plan_v3 merges both facts into one group (same goal/place); both result texts must be carried."
+  },
+  {
+   "caseId": "rb-move-other-appearance",
+   "title": "自己移动 + 他人外貌变化（可见）",
+   "before": {
+    "pointId": "pt-1",
+    "version": 1,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": {}
+   },
+   "point": {
+    "pointId": "pt-2",
+    "version": 2,
+    "state": {
+     "engineVersion": "world-engine-v1",
+     "schemaVersion": 1,
+     "worldId": "w_pipe",
+     "protagonistId": "char_pa",
+     "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-11-01T00:00:00",
+      "instantOrdinal": 2
+     },
+     "initial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "w_pipe",
+      "protagonistId": "char_pa",
+      "initialTime": {
+       "calendar": "gregorian",
+       "dateTime": "2026-11-01T00:00:00",
+       "instantOrdinal": 1
+      },
+      "locations": {
+       "loc_1": {
+        "id": "loc_1",
+        "name": "管线镇",
+        "parentLocationId": null,
+        "initialAppearance": "安静",
+        "slots": [
+         {
+          "id": "slot_a",
+          "label": "上层格位"
+         },
+         {
+          "id": "slot_b",
+          "label": "下层格位"
+         }
+        ]
+       },
+       "loc_2": {
+        "id": "loc_2",
+        "name": "钟楼",
+        "parentLocationId": null,
+        "initialAppearance": "旧",
+        "slots": []
+       }
+      },
+      "items": {},
+      "characters": {
+       "char_pa": {
+        "id": "char_pa",
+        "name": "管线甲",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "沉稳",
+        "initialSanity": 10,
+        "tasks": {
+         "task_1": {
+          "id": "task_1",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "把铜铃挂回钟楼",
+          "status": "pending"
+         },
+         "task_2": {
+          "id": "task_2",
+          "ownerId": "char_pa",
+          "parentTaskId": null,
+          "goal": "晒网",
+          "status": "pending"
+         }
+        }
+       },
+       "char_pb": {
+        "id": "char_pb",
+        "name": "管线乙",
+        "initialPosition": {
+         "containerId": "loc_1",
+         "slotId": null,
+         "relativeTo": null
+        },
+        "initialAppearance": "常态",
+        "slots": [],
+        "initialPersonality": "急躁",
+        "initialSanity": 11,
+        "tasks": {
+         "task_3": {
+          "id": "task_3",
+          "ownerId": "char_pb",
+          "parentTaskId": null,
+          "goal": "补网",
+          "status": "pending"
+         }
+        }
+       }
+      }
+     },
+     "locations": {
+      "loc_1": {
+       "id": "loc_1",
+       "appearanceChanges": []
+      },
+      "loc_2": {
+       "id": "loc_2",
+       "appearanceChanges": []
+      }
+     },
+     "items": {},
+     "characters": {
+      "char_pa": {
+       "id": "char_pa",
+       "appearanceChanges": [],
+       "position": {
+        "containerId": "loc_2",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 10,
+       "tasks": {
+        "task_1": {
+         "id": "task_1",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "把铜铃挂回钟楼",
+         "status": "pending"
+        },
+        "task_2": {
+         "id": "task_2",
+         "ownerId": "char_pa",
+         "parentTaskId": null,
+         "goal": "晒网",
+         "status": "pending"
+        }
+       }
+      },
+      "char_pb": {
+       "id": "char_pb",
+       "appearanceChanges": [
+        {
+         "id": "ch_b1",
+         "text": "蓑衣上全是盐霜",
+         "supersedes": []
+        }
+       ],
+       "position": {
+        "containerId": "loc_1",
+        "slotId": null,
+        "relativeTo": null
+       },
+       "personalityChanges": [],
+       "sanity": 11,
+       "tasks": {
+        "task_3": {
+         "id": "task_3",
+         "ownerId": "char_pb",
+         "parentTaskId": null,
+         "goal": "补网",
+         "status": "pending"
+        }
+       }
+      }
+     }
+    },
+    "stateDigest": "dddddddd",
+    "previousPointId": "pt-1",
+    "timeAdvance": null,
+    "entityDeltas": {
+     "char_pa": {
+      "entityId": "char_pa",
+      "positionSet": {
+       "containerId": "loc_2",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "appearanceChanges": [],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     },
+     "char_pb": {
+      "entityId": "char_pb",
+      "positionSet": null,
+      "appearanceChanges": [
+       {
+        "id": "ch_b1",
+        "text": "蓑衣上全是盐霜",
+        "supersedes": []
+       }
+      ],
+      "personalityChanges": [],
+      "subtasksAdded": [],
+      "tasksAchieved": [],
+      "sanitySet": null
+     }
+    }
+   },
+   "perspective": {
+    "type": "protagonist"
+   },
+   "options": {
+    "mayPolicy": "select",
+    "visibleOtherActions": true
+   },
+   "selectionSource": "rule",
+   "planSource": "program",
+   "narrativeOutcome": false,
+   "notes": "The other actor stays at 管线镇 while the viewpoint moves to 钟楼, so the appearance change should be invisible; this case checks that selection does not quietly include it."
+  }
+ ],
+ "dryRun": {
+  "rb-move-outcome": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜结果｜管线甲｜把铜铃挂回了钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 209,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "outcome",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "goal": "把铜铃挂回钟楼",
+      "resultText": "把铜铃挂回了钟楼",
+      "taskId": "task_1",
+      "at": "钟楼",
+      "source": {
+       "entityId": "char_pa",
+       "taskId": "task_1",
+       "field": "tasksAchieved"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 2,
+     "may": 0,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "outcome",
+      "class": "must",
+      "ground": "self-outcome",
+      "selected": true,
+      "reason": "视角人物自己的可见行动结果，必述"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-time-vague": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜结果｜管线甲｜把铜铃挂回了钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 235,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "outcome",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "goal": "把铜铃挂回钟楼",
+      "resultText": "把铜铃挂回了钟楼",
+      "taskId": "task_1",
+      "at": "钟楼",
+      "source": {
+       "entityId": "char_pa",
+       "taskId": "task_1",
+       "field": "tasksAchieved"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 1
+     },
+     {
+      "kind": "time",
+      "amount": 8,
+      "unit": "minute",
+      "at": null,
+      "source": {
+       "timeAdvance": true
+      },
+      "factId": "f2",
+      "ref": 2
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 2,
+     "may": 1,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "outcome",
+      "class": "must",
+      "ground": "self-outcome",
+      "selected": true,
+      "reason": "视角人物自己的可见行动结果，必述"
+     },
+     {
+      "factId": "f2",
+      "kind": "time",
+      "class": "may",
+      "ground": "global-time",
+      "selected": true,
+      "reason": "全局事实，可写可省"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 8,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-inner-change": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜外貌｜管线甲｜外袍被雨浸透\nf1｜行为倾向｜管线甲｜话少了许多\nf2｜理智｜管线甲｜上升\n分组：\nG1｜f0 f1 f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 226,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "appearance_changed",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "text": "外袍被雨浸透",
+      "op": "added",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "changeId": "ch_a1",
+       "field": "appearanceChanges"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "personality_changed",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "text": "话少了许多",
+      "op": "added",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "changeId": "ch_p1",
+       "field": "personalityChanges"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 1
+     },
+     {
+      "kind": "sanity_changed",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": 10,
+      "to": 14,
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "field": "sanitySet"
+      },
+      "factId": "f2",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 2
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 2,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "appearance_changed",
+      "class": "may",
+      "ground": "self-state",
+      "selected": true,
+      "reason": "视角人物自己的描述类变化，可见但可省"
+     },
+     {
+      "factId": "f1",
+      "kind": "personality_changed",
+      "class": "may",
+      "ground": "self-state",
+      "selected": true,
+      "reason": "视角人物自己的描述类变化，可见但可省"
+     },
+     {
+      "factId": "f2",
+      "kind": "sanity_changed",
+      "class": "must",
+      "ground": "self-safety",
+      "selected": true,
+      "reason": "视角人物自己的理智变化（安全），必述"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-two-actors-move": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 231,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "moved",
+      "entityId": "char_pb",
+      "name": "管线乙",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pb",
+       "field": "positionSet"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "moved",
+      "class": "may",
+      "ground": "co-location",
+      "selected": true,
+      "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-same-name": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n管线乙｜性格=沉默｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\nf2｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\nG3｜f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 275,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "moved",
+      "entityId": "char_pb",
+      "name": "管线乙",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pb",
+       "field": "positionSet"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": true,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 1
+     },
+     {
+      "kind": "moved",
+      "entityId": "char_pc",
+      "name": "管线乙",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pc",
+       "field": "positionSet"
+      },
+      "factId": "f2",
+      "entityGroup": "characters",
+      "nameAmbiguous": true,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 2
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 2,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "moved",
+      "class": "may",
+      "ground": "co-location",
+      "selected": true,
+      "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+     },
+     {
+      "factId": "f2",
+      "kind": "moved",
+      "class": "may",
+      "ground": "co-location",
+      "selected": true,
+      "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 2,
+      "factIds": [
+       "f2"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-subtask": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 217,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "subtask_added",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "goal": "找梯子",
+      "parentGoal": "把铜铃挂回钟楼",
+      "at": "钟楼",
+      "source": {
+       "entityId": "char_pa",
+       "taskId": "task_9",
+       "field": "subtasksAdded"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 2,
+     "may": 0,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "subtask_added",
+      "class": "must",
+      "ground": "self-task",
+      "selected": true,
+      "reason": "视角人物自己接到的新任务，必述"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-sanity-only": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜行为倾向｜管线甲｜对雾天格外警觉\nf1｜理智｜管线甲｜下降\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 208,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "personality_changed",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "text": "对雾天格外警觉",
+      "op": "added",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "changeId": "ch_p2",
+       "field": "personalityChanges"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "sanity_changed",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": 10,
+      "to": 7,
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "field": "sanitySet"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "personality_changed",
+      "class": "may",
+      "ground": "self-state",
+      "selected": true,
+      "reason": "视角人物自己的描述类变化，可见但可省"
+     },
+     {
+      "factId": "f1",
+      "kind": "sanity_changed",
+      "class": "must",
+      "ground": "self-safety",
+      "selected": true,
+      "reason": "视角人物自己的理智变化（安全），必述"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-time-only": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜时间｜时间经过\nf1｜无变化｜—\n分组：\nG1｜f0 f1｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 207,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "time",
+      "amount": 8,
+      "unit": "minute",
+      "at": null,
+      "source": {
+       "timeAdvance": true
+      },
+      "factId": "f0",
+      "ref": 0
+     },
+     {
+      "kind": "no_change",
+      "scope": "全局",
+      "source": {
+       "noChange": true
+      },
+      "factId": "f1",
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 0,
+     "may": 2,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "time",
+      "class": "may",
+      "ground": "global-time",
+      "selected": true,
+      "reason": "全局事实，可写可省"
+     },
+     {
+      "factId": "f1",
+      "kind": "no_change",
+      "class": "may",
+      "ground": "global-scope",
+      "selected": true,
+      "reason": "全局事实，可写可省"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 8,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-conflict-two-actors": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜结果｜管线甲｜合力把钟抬离了地面\nf1｜结果｜管线乙｜抬钟时肩膀抵住了钟沿\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 240,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇",
+    "atPath": [
+     "loc_1"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "outcome",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "goal": "合力抬钟",
+      "resultText": "合力把钟抬离了地面",
+      "taskId": "task_2",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pa",
+       "taskId": "task_2",
+       "field": "tasksAchieved"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "outcome",
+      "entityId": "char_pb",
+      "name": "管线乙",
+      "goal": "合力抬钟",
+      "resultText": "抬钟时肩膀抵住了钟沿",
+      "taskId": "task_3",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pb",
+       "taskId": "task_3",
+       "field": "tasksAchieved"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0",
+     "f1"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "outcome",
+      "class": "must",
+      "ground": "self-outcome",
+      "selected": true,
+      "reason": "视角人物自己的可见行动结果，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "outcome",
+      "class": "may",
+      "ground": "co-location",
+      "selected": true,
+      "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  },
+  "rb-move-other-appearance": {
+   "status": "ready-for-model",
+   "reason": null,
+   "problems": null,
+   "blocking": null,
+   "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\n分组：\nG1｜f0\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文：",
+   "inputChars": 187,
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼",
+    "atPath": [
+     "loc_2"
+    ]
+   },
+   "n1": {
+    "facts": [
+     {
+      "kind": "moved",
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "from": "管线镇",
+      "to": "钟楼",
+      "at": "钟楼",
+      "heldBy": null,
+      "source": {
+       "entityId": "char_pa",
+       "field": "positionSet"
+      },
+      "factId": "f0",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "fromAmbiguous": false,
+      "toAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_2"
+      ],
+      "ref": 0
+     },
+     {
+      "kind": "appearance_changed",
+      "entityId": "char_pb",
+      "name": "管线乙",
+      "text": "蓑衣上全是盐霜",
+      "op": "added",
+      "at": "管线镇",
+      "source": {
+       "entityId": "char_pb",
+       "changeId": "ch_b1",
+       "field": "appearanceChanges"
+      },
+      "factId": "f1",
+      "entityGroup": "characters",
+      "nameAmbiguous": false,
+      "atAmbiguous": false,
+      "atPath": [
+       "loc_1"
+      ],
+      "ref": 1
+     }
+    ],
+    "diagnostics": []
+   },
+   "selection": {
+    "summary": {
+     "must": 1,
+     "may": 0,
+     "invisible": 1,
+     "selected": 1,
+     "mayPolicy": "select"
+    },
+    "ids": [
+     "f0"
+    ],
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "appearance_changed",
+      "class": "invisible",
+      "ground": "other-location",
+      "selected": false,
+      "reason": "发生在视角人物感知范围之外，省略"
+     }
+    ]
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   }
+  }
+ }
+}

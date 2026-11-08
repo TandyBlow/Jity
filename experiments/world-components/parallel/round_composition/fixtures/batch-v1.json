@@ -1,0 +1,89 @@
+{
+ "version": "real-batch-v1",
+ "batchId": "real-batch-2026-11-08-v1",
+ "registeredAt": "2026-11-08",
+ "purpose": "first real-model offline batch for the C7 composition chain: program N1/N2 rule/N3/N4.0 + a REAL N4 sentence model + the adjudicated N5 v3 hard gates, then D4 labels and an N6 semantic review",
+ "sampleCount": 10,
+ "sampleIds": [
+  "rb-move-outcome",
+  "rb-time-vague",
+  "rb-inner-change",
+  "rb-two-actors-move",
+  "rb-same-name",
+  "rb-subtask",
+  "rb-sanity-only",
+  "rb-time-only",
+  "rb-conflict-two-actors",
+  "rb-move-other-appearance"
+ ],
+ "model": {
+  "name": "qwen2.5:7b",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "parameterSize": "7.6B",
+  "quantization": "Q4_K_M",
+  "family": "qwen2",
+  "runtime": "ollama",
+  "runtimeVersion": "0.40.15",
+  "endpoint": "http://127.0.0.1:11434/api/generate",
+  "transport": "local HTTP, no external network",
+  "device": "local machine (ollama reports no GPU flags to this client); recorded as-is, not asserted"
+ },
+ "decode": {
+  "temperature": 0,
+  "seed": 42,
+  "num_predict": 128,
+  "top_p": 1.0,
+  "top_k": 40,
+  "repeat_penalty": 1.0,
+  "stop": [],
+  "stream": false,
+  "system": null,
+  "templateNote": "ollama applies the model's chat template to the prompt; the prompt is the N4.0 structured record followed by 正文："
+ },
+ "selectionAndOrganization": {
+  "selection": "program N2 rule (perspective rule), mayPolicy=select",
+  "organization": "program plan_v3 + check_plan_v3",
+  "input": "program N4.0 pack_narrative_input",
+  "judge": "judge_v3 (n5-v3) hard gates only"
+ },
+ "retryPolicy": {
+  "maxSentenceAttempts": 2,
+  "feedback": "the previous attempt's hard-gate problems are appended to the retry request (recorded)",
+  "fallback": "program template when the kinds have a frame; the case status stays a failure"
+ },
+ "acceptance": {
+  "mechanism": [
+   "all 10 samples produce a complete record: request, response, finish reason, timing, retry/fallback decision",
+   "no unhandled exception; every call has an explicit status",
+   "requests and responses are archived verbatim"
+  ],
+  "quality": [
+   "n5-pass means hard gates passed ONLY; it is not a quality verdict",
+   "quality comes from N6: pass / fail / undetermined, reviewed per sample against the committed facts",
+   "D4 labels every produced text: count=null when unchecked"
+  ],
+  "tripwire": [
+   "if >=3/10 samples fail the hard gates, or >=2 calls fail at the port/timeout level, stop and fix the mechanism before any further batch",
+   "no decision from this batch may be reported as model quality acceptance"
+  ]
+ },
+ "n6Rubric": {
+  "A_facts": "every selected fact is stated without contradiction (subject, action, direction, value)",
+  "B_additions": "no new named entity/place/item, no invented event, no task-goal leak",
+  "C_pov": "no other character's inner state narrated",
+  "D_completeness": "text ends as a complete sentence and reads as one coherent passage",
+  "verdict": "pass only when A-D all hold; unreadable -> undetermined; anything else -> fail"
+ },
+ "hashes": {
+  "cases": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7",
+  "judge": "5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54",
+  "compose": "b3870908bf7717b18772b98d5064ae6465c1c9061f9d0fcd1cd844d3d376ee63",
+  "chain": {
+   "narration_pipeline.py": "5f8e311d21a279f735bb84574dbb2fb1a6f00d641460263728db8f61e6c06866",
+   "n2_perspective.py": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+   "n3_organize.py": "12b6db4728505105a5805ed61c09c540f56c989755ad0b9688147346a4254913",
+   "packer.py": "6e5d1e5e815740f49baa3d751fd455b2a3192499888f11e9472ddd0d0b67a1b7",
+   "scene_context.py": "57d71610864c33084b90c81bf2b78a7afd3bcac3077e203b1cf9dafa35cc8a78"
+  }
+ }
+}

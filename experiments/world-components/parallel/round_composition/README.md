@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `ca48d9dc00eaf896456aed3f881892df85bcaea785df9f9afcd6c6dcbfabb750` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `706aa61e13bb79f9711fc8c85f556f3f14ca3b88bd1a9411a3f14464a97d2f97` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -250,3 +250,21 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 2. 再裁决 D3（两套 N5 核）与 D5（G4/G5 触发），让「N5 通过」这个词有唯一含义；之后才谈页面放行门。
 3. 把选择/组织/成句三个端口换成真模型（先离线，再浏览器），复用本目录的夹具与归档格式；此时才需要补 N4 token 门和真正的端到端耗时。
 4. 在真模型数据上再跑一遍这 19 个场景，重点看：必述覆盖、重试率、回退率、新具名人物出现率（D4 的入不入硬门取决于这个频率）。
+
+## 12. 首批真实模型离线实验（real-batch-v1）
+
+按 D1–D5 裁决进入首批真模型批次：10 个样本，模型 `qwen2.5:7b`（digest `845dbda0…`，Q4_K_M），ollama 0.40.15 本机推理，`temperature=0 / seed=42 / num_predict=128`，程序负责 N1/N2/plan_v3/场景/N4.0，模型只做成句，N5 用 `judge_v3` 硬门，之后做 D4 标注与 N6 复核。预登记、触发线与 N6 口径都在 `fixtures/batch-v1.json`，逐样本结果见 `real-batch-v1.md`。
+
+结果：**10/10 硬门拒绝，0/10 n5-pass；20 次调用全部 `done_reason=length`、`eval_count=128`**，即每次都在预登记上限被截断；N6 10/10 执行、0 pass / 10 fail；D4 10/10 已检查，5 条标注中 2 条是真正新增（`铁环`、`广场`）。预登记触发线（`n5Pass<7`）触发，因此按规则暂停下一批。
+
+这一批只证明机制（真实调用、重试、回退、硬门、D4/N6 全部留痕），不证明模型能力：所有正文都被 128 token 截断，没有一条完整句子，`n5-rejected` 不能读成「模型质量差」。下一步是单独预登记更大的输出预算与更明确的输出形态约束，再跑对照批（见 `real-batch-v1.md` 第 7 节）。
+
+| 文件 | 内容 |
+| --- | --- |
+| `fixtures/batch-v1.json` | 预登记：模型/digest、解码、验收、触发线、N6 口径 |
+| `fixtures/batch-v1-cases.json` | 10 个样本点 + 干跑结果 |
+| `out/real-batch-v1.json` | 原始运行归档（prompt、响应、结束原因、耗时、决策、回退） |
+| `out/real-batch-v1-raw.jsonl` | 每次 HTTP 调用的原始请求/响应 |
+| `fixtures/review-v1.json` | D4 标注 + N6 判定（单一复核者，待独立复核） |
+| `out/real-batch-v1-reviewed.json` | 合并后的归档（`d4`/`n6`/`quality`） |
+| `real-batch-v1.md` | 本批完整报告 |

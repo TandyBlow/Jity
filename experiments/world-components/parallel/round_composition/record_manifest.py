@@ -76,6 +76,27 @@ SOURCES = {
         "fixtures/annotations-v1.json",
         "experiments/world-components/parallel/round_composition/"
         "out/console-v3.log",
+        # first real-model batch (pre-registration, runner, review)
+        "experiments/world-components/parallel/round_composition/"
+        "make_real_batch.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real_batch.py",
+        "experiments/world-components/parallel/round_composition/"
+        "write_review_v1.py",
+        "experiments/world-components/parallel/round_composition/"
+        "apply_review.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real-batch-v1.md",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/batch-v1.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/batch-v1-cases.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/review-v1.json",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v1-raw.jsonl",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v1-summary.txt",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",
