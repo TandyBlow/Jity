@@ -247,6 +247,38 @@ class Projection(unittest.TestCase):
         self.assertEqual(self.measured["modelCalls"], 0)
 
 
+class Freeze(unittest.TestCase):
+    """The freeze is only worth something if tampering after it fails."""
+
+    def setUp(self):
+        self.manifest = json.loads((OUT / "candidates-fresh/FREEZE.json").read_text(encoding="utf-8"))
+
+    def test_every_frozen_file_matches(self):
+        import hashlib
+        base = OUT / "candidates-fresh"
+        bad = [rel for rel, want in self.manifest["files"].items()
+               if hashlib.sha256((base / rel).read_bytes()).hexdigest() != want]
+        self.assertEqual(bad, [], f"冻结后改动过：{bad}")
+
+    def test_review_was_all_pass(self):
+        review = load("review-results.json")
+        self.assertEqual([k for k, v in review["rows"].items() if v != "通过"], [])
+        self.assertEqual([k for k, v in review["global"].items() if v != "通过"], [])
+        self.assertEqual(len(review["rows"]), self.manifest["review"]["rows"])
+
+    def test_pack_digest_matches_the_listed_files(self):
+        import hashlib
+        body = chr(10).join(f"{k} {v}" for k, v in sorted(self.manifest["files"].items()))
+        self.assertEqual(hashlib.sha256(body.encode()).hexdigest(),
+                         self.manifest["packDigestSha256"])
+
+    def test_freeze_points_at_the_current_projection_source(self):
+        import hashlib
+        module = OUT.parents[2] / self.manifest["inputs"]["projectionModule"]
+        self.assertEqual(hashlib.sha256(module.read_bytes()).hexdigest(),
+                         self.manifest["inputs"]["projectionSha256"])
+
+
 class Facts(unittest.TestCase):
     def test_item_move_keeps_both_ends_and_holder(self):
         facts = load("c8e05/facts.json")["changeFacts"]

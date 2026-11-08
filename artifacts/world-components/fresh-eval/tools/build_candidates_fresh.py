@@ -439,6 +439,10 @@ def main(dest: pathlib.Path | None = None) -> int:
     specs = {s["id"]: s for s in
              json.loads((SRC / "scenario-specs.json").read_text(encoding="utf-8"))}
     registration = json.loads((SRC / "registration.json").read_text(encoding="utf-8"))
+    # always read the committed review results, not a temp DEST used by --check
+    review_path = OUT / "candidates-fresh/review-results.json"
+    review = (json.loads(review_path.read_text(encoding="utf-8"))
+              if review_path.exists() else None)
     corpus, vocab, scope = screening.load_sources()
     signatures = {sig: list(ids) for sig, ids in scope["signatureOwners"].items()}
     prov_path = OUT / "sources/three-arm-provenance.json"
@@ -602,6 +606,15 @@ def main(dest: pathlib.Path | None = None) -> int:
         write(DEST / cid / "checks.md", NL.join(checks) + NL)
         rows.append(row)
 
+    row_keys = []
+    for r in rows:
+        n = 0
+        for key in ("mustHold", "mustNotAppear", "notRequiredBecauseNotInInput"):
+            for _ in r["reviewItems"][key]:
+                n += 1
+                row_keys.append(f"{r['id']}-{n}")
+    passed = sum(1 for k in row_keys if review and review["rows"].get(k) == "通过")
+
     report = {
         "packVersion": PACK_VERSION,
         "generatedFrom": {
@@ -631,7 +644,9 @@ def main(dest: pathlib.Path | None = None) -> int:
                     "withWithheldFacts": sum(1 for r in rows if r["facts"]["withheld"]),
                     "v1Rejected": sum(1 for r in rows if r["screening"]["v1"]["verdict"] == "rejected"),
                     "v2Rejected": sum(1 for r in rows if r["screening"]["v2"]["verdict"] == "rejected"),
-                    "formalItems": 0, "frozen": 0, "modelCalls": 0},
+                    "formalItems": 0, "frozen": 0, "modelCalls": 0,
+                    "reviewRows": len(row_keys), "reviewRowsPassed": passed},
+
         "candidates": rows,
         "gaps": [
             {"id": "g06", "dimension": "长期人际关系", "status": "无权威字段",
@@ -767,7 +782,13 @@ def main(dest: pathlib.Path | None = None) -> int:
         rep += ["", "未改动：", ""] + [f"- {x}" for x in rev["notChanged"]] + [""]
     write(DEST / "report.md", NL.join(rep) + NL)
 
-    tbl = ["# 人工核验表（6 条候选，待核验）", "",
+    def verdict(key):
+        return review["rows"].get(key, "待核验") if review else "待核验"
+
+    status = (f"已核验：{review['reviewer']}，{review['date']}，"
+              f"{passed}/{len(row_keys)} 通过" if review else "待核验")
+    tbl = ["# 人工核验表（6 条候选）", "",
+           f"**状态**：{status}。",
            "**本轮没有模型输出**：现在能核的是“题目、事实与预期是否成立”，"
            "不是模型表现。结论只允许：`待核验`（默认）／`通过`／`不通过`／`无法判断`；"
            "`无法判断` 不算通过。核验者不得是参与调参的人。", "",
@@ -781,7 +802,19 @@ def main(dest: pathlib.Path | None = None) -> int:
                           ("不要求（输入未提供）", "notRequiredBecauseNotInInput")):
             for text in r["reviewItems"][key]:
                 n += 1
-                tbl.append(f"| `{r['id']}` | {n} | {kind} | {text} | {fact_ref} |  |  | 待核验 |")
+                who = review["reviewer"].split(" ")[0] if review else ""
+                when = review["date"] if review else ""
+                key_id = "{0}-{1}".format(r["id"], n)
+                tbl.append(f"| `{r['id']}` | {n} | {kind} | {text} | {fact_ref} | "
+                           f"{who} | {when} | {verdict(key_id)} |")
+    if review:
+        tbl += ["", "## 整体确认", "",
+                "| 编号 | 内容 | 结论 |", "|---|---|---|"]
+        for key, text in (("G1", "这 6 条是诊断候选，不是正式评测题；通过后也不自动升级为正式题"),
+                          ("G2", "页面路径只有 c8e01、c8e03 计叙述成绩；其余四条只作内核/接口层与 N2 规则臂"),
+                          ("G3", "夹具是本次新建、非 R01、非真实玩家记录；数据库独立、六个提交点读回校验通过"),
+                          ("G4", "全部核完才做一次性冻结；核验前任务保持未完成")):
+            tbl.append(f"| {key} | {text} | {review['global'].get(key, '待核验')} |")
     tbl += ["", "## 说明", "",
             "- 作者写的部分核对项是**核验时的注意事项**，不是对模型输出的要求；"
             "判不了就记无法判断。",
@@ -818,8 +851,9 @@ def check(against=None) -> int:
         if not path.is_file():
             continue
         rel = path.relative_to(committed).as_posix()
-        if rel == "projection-check.json":
-            continue                     # produced by run_projection_check.py
+        if rel in ("projection-check.json", "FREEZE.json", "freeze.md",
+                   "review-results.json"):
+            continue                     # produced by other tools / human review
         fresh = tmp / rel
         if not fresh.exists() or fresh.read_bytes() != path.read_bytes():
             drift.append(rel)

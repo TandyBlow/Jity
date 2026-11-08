@@ -1,7 +1,7 @@
 # 首批候选（6 条，待人工核验）
 
 输入包版本 v3（2026-11-08 第二轮外部审查后修订，见 `report.md`）。
-生成器 sha256 `c791f902da74…`，夹具模板 sha256 `241fde2bf18a…`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
+生成器 sha256 `0671d19ad0f1…`，夹具模板 sha256 `241fde2bf18a…`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
 
 六条全部通过 A 侧 Python 服务提交并读回（独立数据库 `fresh/source/authority.sqlite3`，读回校验 6/6）。**未冻结**，人工核验通过后才做一次性冻结。
 

@@ -1,0 +1,121 @@
+{
+ "status": "frozen",
+ "tag": "c8-fresh-eval-pack-v3.2-freeze",
+ "packVersion": 3,
+ "frozenBy": "user (product owner; not a participant in tuning)",
+ "frozenUtc": "2026-11-08T10:09:32+00:00",
+ "review": {
+  "file": "review-results.json",
+  "sha256": "b0ff6d94571b8febb7915d545c608105345cabad765d80d4dfb8779b6158a523",
+  "rows": 40,
+  "global": 4,
+  "conclusions": [
+   "通过"
+  ]
+ },
+ "guards": {
+  "packCheck": "0 drifted, 0 missing",
+  "projectionVerify": "ok",
+  "projectionCases": [
+   {
+    "id": "c8e01",
+    "accepted": true,
+    "leakedFactIds": []
+   },
+   {
+    "id": "c8e02",
+    "accepted": true,
+    "leakedFactIds": [
+     "fe_shao:position"
+    ]
+   },
+   {
+    "id": "c8e03",
+    "accepted": true,
+    "leakedFactIds": []
+   },
+   {
+    "id": "c8e04",
+    "accepted": false,
+    "leakedFactIds": null
+   },
+   {
+    "id": "c8e05",
+    "accepted": false,
+    "leakedFactIds": null
+   },
+   {
+    "id": "c8e06",
+    "accepted": false,
+    "leakedFactIds": null
+   }
+  ],
+  "projectionControls": {
+   "standing-only-no-leak": {
+    "expected": false,
+    "observed": false,
+    "ok": true
+   },
+   "withheld-move-leaks": {
+    "expected": true,
+    "observed": true,
+    "ok": true
+   }
+  }
+ },
+ "inputs": {
+  "fixtureRegistration": "fresh/source/registration.json",
+  "fixtureDatabase": "fresh/source/authority.sqlite3",
+  "fixtureDatabaseSha256": "04878c4f6ca9f39b6cc611d872f37a4e6791ffad7b1f92c8faa510dac35e4b68",
+  "fixtureTemplateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+  "fixtureSpecsSha256": "10d3c0fabc34b2f2320e9248e5275d1b7e449a9d68987147c649e6efa202c28e",
+  "fixtureCasesSha256": "b626ae27e6dba12f60c9853cea3d93f5e5bb842ddb21bae89698cea9c4371fdc",
+  "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+  "screeningSha256": "811486814feca52034533d46ec6f22998df42b61af2eeb8b09b55412af686be4",
+  "generatorSha256": "0671d19ad0f1bfc513d540f7bb4e188c409641a9d366e0e57ecc98ff71f3b54f",
+  "n2Module": "experiments/world-components/n2_perspective.py",
+  "n2Sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "projectionModule": "frontend/src/lib/world-engine/runtime/committed-narration.ts",
+  "projectionSha256": "309ca19fd2f2fa8f22f8d4b1e1cbb22f67cad902da7a418102d8a9422ee4c9cd"
+ },
+ "files": {
+  "c8e01/answer.json": "91879e7ed6d5e7f6f60e04cd8f7a611367aca013d60036694500b697c7f9ae52",
+  "c8e01/checks.md": "f5ad9c2c3488e6223af36fa3938106e7fcb3d19b06239518e378cfcababde615",
+  "c8e01/facts.json": "612c16368eff2f14a66437ffce0ed33e59ed7bae1a15a677ff9a1d344c2d3121",
+  "c8e01/input.json": "db616faf53161de092868b066f8623ce91471e188b3f1dc294d4502cc75e40bf",
+  "c8e01/screening.json": "1991f3e7683c44767d45a9f4099d6a7a655d5890c09101916147de12cf91c1c6",
+  "c8e02/answer.json": "97b9ebec2e4407967e5a117d64eed2e42d4c8fcd9899370c5cf70bb7f990aede",
+  "c8e02/checks.md": "09c5a3a6d370700cdfe78328cef9fcae8cd0f5805096a6780f911690db4a0f72",
+  "c8e02/facts.json": "14ec5ad3bbff5b3b964d3fea2e9063be4323da96b12c447657aa0370ab8ef58c",
+  "c8e02/input.json": "608e6985ca3bf8935fbdeecbdf5df17ce5db35d61d75a563334f59c05f5d474d",
+  "c8e02/screening.json": "729c47382eb652ae9fd3c6bbe9f15ba5d8965ecc73f4161aeca24955ac578963",
+  "c8e03/answer.json": "c68f60cdc69d0d3827da3ff8b62a28b2cf4313ca339f26364afb9c07e44d2dd6",
+  "c8e03/checks.md": "886fe905bfa2c260b7302df2128314efa8efaac63b86c14a3c6adbe43b150fdc",
+  "c8e03/facts.json": "70ffa4d6c32065450979f66c9031a6b4a16f0f7af68dc655c2e74ffa25d1c923",
+  "c8e03/input.json": "bce0809325d1b32b5d14fbb33139f64ba759f580de78b8009acb665f7e1099c5",
+  "c8e03/screening.json": "087dddc63c618d13100bc6c8796d8d5b439bd810a07599f25b9dfa99112228c6",
+  "c8e04/answer.json": "1b9b2d39835d3fee528ff92b6414c1634d1caccaa20d01b1c473375ce41b77b4",
+  "c8e04/checks.md": "a66df2d7a66db1f739e19ea3f6c612384960569eedbc39de8e936856e43ca2dc",
+  "c8e04/facts.json": "a57e93d61027c7a5953a8481a1a5f04f3590b29a35736e0eaf46eecfe37ecba9",
+  "c8e04/input.json": "318052242b1d98100a37dc07360d0299e5512fd13b53944de38d09ff786c445d",
+  "c8e04/screening.json": "e2f2f683a0666dcfb13c044fd01670e25bd5876c4d38063e2a2352cda43b2581",
+  "c8e05/answer.json": "66a2b70058fd227ded9cd75c50080a7fe15388e2de5f0922b0c402191a211d24",
+  "c8e05/checks.md": "977f1c87aaaca5fcc8ccc19f035a598d758a9ea3a8b4bb5aa7d6e9757b09d983",
+  "c8e05/facts.json": "28424b14e1e74d2de81aacc7c8aa71098709e0929ac89ff49ea080d44fc85fc3",
+  "c8e05/input.json": "5990316c25198a43461d4ba7a450d0c1570b9e0b66d64c9ae93b6ce40b20e797",
+  "c8e05/screening.json": "57fb117457cea041b0483f63cc07bda545104debef94329b35ee596f725ef3a4",
+  "c8e06/answer.json": "b1ee8be5b51159832a047605867ab51824c90336dcde9b828bd53d45554c81db",
+  "c8e06/checks.md": "fff9829cef1244f31159220a9b9b00fa2e78613e49fb2efcf224aed3609613d2",
+  "c8e06/facts.json": "9b561d7188011f38c27a0454234997256c69eb9b1e0e4bcb72365b52bcdb10b0",
+  "c8e06/input.json": "1ab757693843d125c5655f03c564d872f7ea9af00b02511619ffdebc24d054ca",
+  "c8e06/screening.json": "8750e33beffd46517c30891154b9e0ba653c048ac93b3b7731c3b517cadfcdb0",
+  "candidates.json": "29b83d618e024ac0ad931cfea7ca1c330c70cb02c551ee940132a8a3b3898f9a",
+  "projection-check.json": "ff8da52d6c0b102c68c6669fc1fec9e096a760aca3bec759e2643674cea7c080",
+  "README.md": "ceefd24e1ea1851a2844ccb28cd6d666bd6ea14bb142e60bcdad4aa48e9575f0",
+  "report.md": "1812cf39557aa0bd9a8abe15e7a63d391d9af235adfb48e179ca0e2058ff5833",
+  "review-results.json": "b0ff6d94571b8febb7915d545c608105345cabad765d80d4dfb8779b6158a523",
+  "review-table.md": "a8646ba871a64c6a92cf447dcc333b82bfba73c2c6acfa57caab0772bc21be0c"
+ },
+ "packDigestSha256": "a905479e357fa86512b5e1717905b9f77f9d9e58d04785eb822afd49edf816bd",
+ "note": "冻结后不得修改这六个候选的任何字节。任何修改都必须作为新版本重新核验，不能覆盖本冻结。模型一次都没有运行（modelCalls=0），所以这里冻结的是题目与输入，不是模型成绩。"
+}
