@@ -1,0 +1,62 @@
+{
+ "fix": "same-payload binding guard in narration-alignment.ts",
+ "defaultWorldRoot": {
+  "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+  "ok": true,
+  "violations": [],
+  "coverage": [
+   {
+    "id": "person_a:position",
+    "kind": "at",
+    "expressed": true
+   },
+   {
+    "id": "person_a:sanity",
+    "kind": "sanity",
+    "expressed": true
+   },
+   {
+    "id": "person_c:position",
+    "kind": "at",
+    "expressed": true
+   },
+   {
+    "id": "person_c:sanity",
+    "kind": "sanity",
+    "expressed": true
+   }
+  ]
+ },
+ "smileAfter": {
+  "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为10。",
+  "ok": true,
+  "violations": [],
+  "coverage": [
+   {
+    "id": "person_a:position",
+    "kind": "at",
+    "expressed": true
+   },
+   {
+    "id": "person_a:sanity",
+    "kind": "sanity",
+    "expressed": true
+   },
+   {
+    "id": "person_c:appearance:allocated_smile",
+    "kind": "appearance_changed",
+    "expressed": true
+   },
+   {
+    "id": "person_c:position",
+    "kind": "at",
+    "expressed": true
+   },
+   {
+    "id": "person_c:sanity",
+    "kind": "sanity",
+    "expressed": true
+   }
+  ]
+ }
+}

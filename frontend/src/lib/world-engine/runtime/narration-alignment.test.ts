@@ -8,8 +8,8 @@
  * that the template arm renders verbatim facts and both non-empty reference
  * arms pass cleanly. */
 import { describe, expect, it } from 'vitest';
-import { checkFactNarration, renderCommittedNarration } from './committed-narration';
-import { alignNarration, cnNumber, mentionsNumber, mentionsTime } from './narration-alignment';
+import { checkFactNarration, renderCommittedNarration, type CommittedNarration, type NarrationFact } from './committed-narration';
+import { alignNarration, cnNumber, mentionsNumber, mentionsTime, statedDirection } from './narration-alignment';
 import { NARRATION_EVAL_SAMPLES, type NarrationEvalSample } from './narration-eval-samples';
 import { NARRATION_EVAL_VALIDATION_SAMPLES } from './narration-eval-validation';
 import { buildNaturalPrompt, runNarrationEvaluation, templateText, type NarrationGenerator } from './narration-eval';
@@ -79,6 +79,86 @@ describe('frozen corpus', () => {
           `${entry.id} must stay acceptable to the old exact-clause gate`).toBe(true);
       }
     }
+  });
+});
+
+const NAMES = { a: '林川', c: '周宁' } as const;
+const factPacket = (facts: NarrationFact[]): CommittedNarration => ({
+  anchor: { worldId: 'world_short', pointId: 'point_1', version: 1, stateDigest: 'point_digest', previousPointId: 'root' },
+  facts,
+});
+const standing = (id: 'a' | 'c', value: number): NarrationFact =>
+  ({ id: `${id}:sanity`, actorId: id, name: NAMES[id], kind: 'sanity', value });
+const changed = (id: 'a' | 'c', from: number, to: number): NarrationFact =>
+  ({ id: `${id}:sanity`, actorId: id, name: NAMES[id], kind: 'sanity_changed', from, to });
+const described = (id: 'a' | 'c', text: string): NarrationFact =>
+  ({ id: `${id}:appearance`, actorId: id, name: NAMES[id], kind: 'appearance_changed', changeId: `${id}_change`, text });
+
+describe('actor binding when two actors carry the same payload', () => {
+  it('reads a change direction from its markers, not from number order', () => {
+    expect(statedDirection('精神值从10变为8', 10, 8)).toBe('forward');
+    expect(statedDirection('精神值降到了8，原来有10', 10, 8)).toBe('forward');
+    expect(statedDirection('精神值从8变为10', 8, 10)).toBe('forward');
+    // 无标记时按文字顺序读：先出现的数字是起点
+    expect(statedDirection('8和10都有记录', 10, 8)).toBe('reverse');
+  });
+
+  it('accepts correct standing values even when both actors share the value', () => {
+    const packet = factPacket([standing('a', 10), standing('c', 10)]);
+    const verdict = alignNarration(packet, '林川的精神值为10。周宁的精神值为10。');
+    expect(verdict.violations).toEqual([]);
+    expect(verdict.ok).toBe(true);
+    expect(verdict.coverage.every((entry) => entry.expressed)).toBe(true);
+  });
+
+  it('accepts correct standing values when the values differ', () => {
+    const verdict = alignNarration(factPacket([standing('a', 10), standing('c', 8)]),
+      '林川的精神值为10。周宁的精神值为8。');
+    expect(verdict.violations).toEqual([]);
+    expect(verdict.ok).toBe(true);
+  });
+
+  it('still flags a payload attached to the other actor when only that actor owns it', () => {
+    const verdict = alignNarration(factPacket([standing('a', 10), standing('c', 8)]), '周宁的精神值为10。');
+    expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
+  });
+
+  it('reports a wrong value as a wrong number, not as a swap', () => {
+    const verdict = alignNarration(factPacket([standing('a', 10), standing('c', 8)]), '林川的精神值为12。');
+    expect(verdict.violations.map((violation) => violation.kind)).toEqual(['wrong_number']);
+  });
+
+  it('accepts identical committed changes attributed to their own owner', () => {
+    const verdict = alignNarration(factPacket([changed('a', 10, 8), changed('c', 10, 8)]),
+      '林川的精神值从10变为8。周宁的精神值从10变为8。');
+    expect(verdict.violations).toEqual([]);
+    expect(verdict.ok).toBe(true);
+  });
+
+  it('flags a change attached to an actor whose committed pair differs', () => {
+    const verdict = alignNarration(factPacket([changed('a', 10, 8), changed('c', 9, 7)]),
+      '周宁的精神值从10变为8。');
+    expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
+  });
+
+  // 同两个数字、方向相反不是“同载荷”：句面写明了从10到8，就不是周宁的8→10。
+  it('does not treat a mirrored pair as the same payload', () => {
+    const verdict = alignNarration(factPacket([changed('a', 10, 8), changed('c', 8, 10)]),
+      '周宁的精神值从10变为8。');
+    expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
+  });
+
+  it('accepts a shared appearance text attributed to its own owner', () => {
+    const verdict = alignNarration(factPacket([described('a', '面带微笑'), described('c', '面带微笑')]),
+      '林川的外貌变化为「面带微笑」。周宁的外貌变化为「面带微笑」。');
+    expect(verdict.violations).toEqual([]);
+    expect(verdict.ok).toBe(true);
+  });
+
+  it('flags appearance text attached to the other actor', () => {
+    const verdict = alignNarration(factPacket([described('a', '面带微笑'), described('c', '神色紧张')]),
+      '周宁的外貌变化为「面带微笑」。');
+    expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
   });
 });
 

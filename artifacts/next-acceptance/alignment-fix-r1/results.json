@@ -1,0 +1,70 @@
+{
+ "baseline": "b187567",
+ "change": "frontend/src/lib/world-engine/runtime/narration-alignment.ts: same-payload binding guard (+ direction reader)",
+ "whyItFailed": "signature() matched the payload alone, so a fact of 周宁 whose value is also 10 was treated as the payload of 林川's clause and vice versa; equal payloads always produced two actor_swap violations",
+ "before": {
+  "probe": {
+   "rootOk": false,
+   "rootActorSwaps": 2,
+   "smileOk": false,
+   "smileActorSwaps": 2
+  },
+  "bindingTests": {
+   "failed": 3,
+   "passed": 6,
+   "failedNames": [
+    "accepts correct standing values even when both actors share the value",
+    "accepts identical committed changes attributed to their own owner",
+    "accepts a shared appearance text attributed to its own owner"
+   ]
+  },
+  "templateTests": {
+   "failed": 2,
+   "skipped": 7,
+   "failedNames": [
+    "the default world opening template passes the full alignment check",
+    "appearance narration requires an allocated change with matching text, source and unchanged history"
+   ]
+  }
+ },
+ "after": {
+  "probe": {
+   "rootOk": true,
+   "rootViolations": 0,
+   "smileOk": true,
+   "smileViolations": 0
+  },
+  "bindingTests": {
+   "passed": 10,
+   "skipped": 37
+  },
+  "alignmentFile": {
+   "passed": 47
+  },
+  "committedNarrationFile": {
+   "passed": 9
+  },
+  "frontendSuite": {
+   "files": 35,
+   "tests": 622
+  },
+  "typecheck": "tsc -p tsconfig.json and tsc -p tsconfig.world-contract.json pass",
+  "build": {
+   "command": "npm run build",
+   "exit": 0,
+   "next": "15.5.19",
+   "worktree": ".local/scratch/appearance-r1 (source synced)"
+  }
+ },
+ "realSwapStillCaught": [
+  "different standing values: 周宁的精神值为10 when 周宁=8",
+  "different committed change: 周宁 9→7 but the clause says 10→8",
+  "mirrored pair: 周宁 8→10 and the clause says 10→8",
+  "appearance: 周宁 神色紧张 and the clause says 面带微笑"
+ ],
+ "ambiguitiesNotForced": [
+  "two actors carry the same standing value: a clause naming one of them is true for both, so it is not convicted as a swap",
+  "two actors share the same goal/text/endpoints: the same payload cannot identify the owner",
+  "a change clause with no source/target marker is read in textual order (first number = source); an unusual target-first phrasing without markers could be read the other way"
+ ]
+}

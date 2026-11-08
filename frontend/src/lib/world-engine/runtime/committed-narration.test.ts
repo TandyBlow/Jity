@@ -41,25 +41,36 @@ describe('saved facts, template baseline and bounded polish', () => {
     expect(() => projectCommittedNarration(unsupported, before)).toThrow(/appearance_delta_disagrees/);
   });
 
+  test('the default world opening template passes the full alignment check', () => {
+    const { before } = reads();
+    const packet = projectCommittedNarration(before, null);
+    const text = renderCommittedNarration(packet);
+    expect(text).toBe('林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。');
+    const verdict = alignNarration(packet, text);
+    expect(verdict.ok, JSON.stringify(verdict.violations)).toBe(true);
+    expect(verdict.coverage.every((entry) => entry.expressed)).toBe(true);
+  });
+
   test('appearance narration requires an allocated change with matching text, source and unchanged history', () => {
     const { before, after } = reads();
     const change = { id: 'allocated_smile', text: '面带微笑', supersedes: [] };
     after.entityDeltas.person_c.appearanceChanges = [change];
     after.state.characters.person_c.appearanceChanges = [{ ...change, active: true, sourcePointId: after.pointId, sourceSequence: after.version }];
     const packet = projectCommittedNarration(after, before);
-    const text = renderCommittedNarration(packet);
+    const time = { amount: 1, unit: 'second' as const };
+    const factText = renderCommittedNarration(packet);
+    const text = renderCommittedNarration(packet, { time });
     expect(text).toContain('周宁的外貌变化为「面带微笑」。');
-    expect(checkFactNarration(packet, text).ok).toBe(true);
-    // 外貌事实确实被对齐器认下；整包 ok 不在这里断言：两人精神值同为 10，
-    // 既有数值签名会把同值句互判成 actor_swap（与本轮外貌无关，另记限制）。
+    expect(checkFactNarration(packet, factText).ok).toBe(true);
+    // 完整模板包（默认世界两名人物精神值同为 10 + 一条外貌变化）必须整体通过
+    const aligned = alignNarration(packet, text, { time });
+    expect(aligned.ok, JSON.stringify(aligned.violations)).toBe(true);
+    expect(aligned.coverage.every((entry) => entry.expressed)).toBe(true);
     const appearanceFact = packet.facts.find((fact) => fact.kind === 'appearance_changed')!;
-    const aligned = alignNarration(packet, text);
-    expect(aligned.coverage.find((entry) => entry.id === appearanceFact.id)?.expressed).toBe(true);
-    expect(aligned.violations.filter((violation) => violation.sentence.includes('外貌'))).toEqual([]);
-    const swappedAppearance = alignNarration(packet, '林川的外貌变化为「面带微笑」。');
-    expect(swappedAppearance.violations.some((violation) => violation.kind === 'actor_swap')).toBe(true);
     expect(describeFact(appearanceFact)).toBe('周宁 / 外貌变化 = 「面带微笑」');
-    expect(checkFactNarration(packet, text.replace('面带微笑', '脸色苍白')).ok).toBe(false);
+    const swappedAppearance = alignNarration(packet, '林川的外貌变化为「面带微笑」。', { time });
+    expect(swappedAppearance.violations.some((violation) => violation.kind === 'actor_swap')).toBe(true);
+    expect(checkFactNarration(packet, factText.replace('面带微笑', '脸色苍白')).ok).toBe(false);
     for (const mutate of [
       (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].text = '脸色苍白'; },
       (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourcePointId = 'another_point'; },

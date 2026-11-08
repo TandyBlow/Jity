@@ -1,0 +1,59 @@
+{
+ "purpose": "repair the narration alignment grader so equal payloads on two actors are not convicted as an actor swap",
+ "baseline": "b187567",
+ "noModel": true,
+ "noTraining": true,
+ "notPageGate": true,
+ "verification": {
+  "bindingTests": {
+   "before": {
+    "failed": 3,
+    "passed": 6
+   },
+   "after": {
+    "passed": 10
+   }
+  },
+  "templateTests": {
+   "before": {
+    "failed": 2
+   },
+   "after": {
+    "passed": 2
+   }
+  },
+  "alignmentFile": 47,
+  "committedNarrationFile": 9,
+  "frontendSuite": {
+   "files": 35,
+   "tests": 622
+  },
+  "typechecks": 2,
+  "build": {
+   "exit": 0,
+   "next": "15.5.19"
+  }
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/alignment-fix-r1/after-probe.json",
+   "bytes": 1283,
+   "sha256": "415fcc4ed4ee6ad017210591426f4aac02a392453a4db06ae41cca47639510ec"
+  },
+  {
+   "path": "artifacts/next-acceptance/alignment-fix-r1/before-probe.json",
+   "bytes": 1186,
+   "sha256": "505e73015efd9f78a4f812e03584d3f99167e06480c57b3c9324b00a3e8f2548"
+  },
+  {
+   "path": "artifacts/next-acceptance/alignment-fix-r1/change.diff",
+   "bytes": 4566,
+   "sha256": "10c6ac9e9f4fbfcfd1509dbfcea1c0bb2f8d30e9c15cd1c4f40328eb8eeb6052"
+  },
+  {
+   "path": "artifacts/next-acceptance/alignment-fix-r1/results.json",
+   "bytes": 2347,
+   "sha256": "4b1a3116805aee161e8d95c9272ad4d8e2ccaa5c879d1f5f0454e9d2f63d1c48"
+  }
+ ]
+}
