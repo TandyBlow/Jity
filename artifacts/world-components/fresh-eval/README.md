@@ -196,7 +196,7 @@ sha256 `309ca19f…`，0 次模型调用），把已提交的 before/after 读�
 
 **v3 修订**：R1/R2/R3 回到完整变化集合；视野筛选改由 N2 判定；`c8e03` 用同一套 N2 判定
 （聂汀穗的移动是 may，不是必述）；能力检查改为按人物。回归测试 `tools/test_candidates_pack.py`
-（17 项，含“三件套分散在三个人身上时页面仍拒绝”的反例，以及与实跑投影结果的一致性检查）。
+（18 项：三件套分散的反例、预测与实跑投影一致、以及整包 `--check` 重生成逐字节一致）。
 
 ---
 
@@ -237,7 +237,7 @@ artifacts/world-components/fresh-eval/
     ├── build_candidates_fresh.py 候选包：事实、输入、筛选、核验项
     ├── projection_check.ts       直接调用页面投影函数（Node 类型剥离）
     ├── run_projection_check.py   跑投影实测并与预测比对
-    ├── test_candidates_pack.py   17 项回归测试
+    ├── test_candidates_pack.py   18 项回归测试（含整包重生成校验）
     └── test_exclusion_selftest.py 注记剥离和旧题漏解析的回归检查
 ```
 

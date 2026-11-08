@@ -432,7 +432,9 @@ def capability(cid, changes, withheld, after):
     }
 
 
-def main() -> int:
+def main(dest: pathlib.Path | None = None) -> int:
+    global DEST
+    DEST = pathlib.Path(dest) if dest else (OUT / "candidates-fresh")
     cases = json.loads((SRC / "cases.json").read_text(encoding="utf-8"))
     specs = {s["id"]: s for s in
              json.loads((SRC / "scenario-specs.json").read_text(encoding="utf-8"))}
@@ -688,6 +690,8 @@ def main() -> int:
               "`c8e02` 的实测结果尤其重要：页面投影**接受**该 Δ，并把 N2 判为不可见的那个人"
               "的移动照样写了出来（`projectionNarratesWithheld=true`），"
               "所以这条不计页面叙述成绩，理由是可复现的实测，不是推测。", "",
+              "整包可复算：`python tools/build_candidates_fresh.py --check` 重新生成到临时目录"
+              "并逐字节比对，漂移即失败。", "",
               "## 能力不支持的部分（单列，不算模型失败）", ""]
     limited = [r for r in rows if r["capability"]["flags"]]
     if limited:
@@ -791,5 +795,32 @@ def main() -> int:
     return 0
 
 
+def check() -> int:
+    """Regenerate the whole pack into a temp dir and compare with the committed
+    one. Nothing here reads the existing pack, so drift means the committed
+    files no longer follow from the generator."""
+    import tempfile
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    main(tmp)
+    drift = []
+    for path in sorted(DEST.rglob("*")):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(DEST).as_posix()
+        if rel == "projection-check.json":
+            continue                     # produced by run_projection_check.py
+        fresh = tmp / rel
+        if not fresh.exists() or fresh.read_bytes() != path.read_bytes():
+            drift.append(rel)
+    missing = [p.relative_to(tmp).as_posix() for p in tmp.rglob("*")
+               if p.is_file() and not (DEST / p.relative_to(tmp)).exists()]
+    print(f"pack check: {len(drift)} drifted, {len(missing)} missing")
+    for name in drift[:10]:
+        print("  drift:", name)
+    for name in missing[:10]:
+        print("  missing:", name)
+    return 1 if (drift or missing) else 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(check() if "--check" in sys.argv[1:] else main())

@@ -19,6 +19,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import pathlib
+import sys
 import unittest
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -126,6 +127,16 @@ class Capability(unittest.TestCase):
         self.assertTrue(stages["stateCommitted"])
         self.assertFalse(stages["perspectiveFilterEnforced"])
         self.assertFalse(stages["narrationGenerated"])
+
+
+class Regeneration(unittest.TestCase):
+    def test_pack_regenerates_byte_for_byte(self):
+        """The committed pack must be what the generator produces today: the
+        tests otherwise only read files that could have drifted."""
+        import subprocess
+        proc = subprocess.run([sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
+                               "--check"], capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stdout[-2000:] + proc.stderr[-2000:])
 
 
 class Projection(unittest.TestCase):
