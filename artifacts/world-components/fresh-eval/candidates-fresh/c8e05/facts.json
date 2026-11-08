@@ -67,50 +67,6 @@
    "fieldPath": "state.items.fi_seal.appearanceChanges"
   }
  ],
- "mustExpress": [
-  {
-   "kind": "moved",
-   "phase": "change",
-   "entityId": "fe_wen",
-   "actor": "fe_wen",
-   "actorKind": "character",
-   "name": "闻澈岑",
-   "fromId": "fy_pump",
-   "from": "玄藻泵舱",
-   "toId": "fy_cal",
-   "to": "砾脊校准间",
-   "relativeTo": null,
-   "fieldPath": "state.characters.fe_wen.position"
-  },
-  {
-   "kind": "moved_entity",
-   "phase": "change",
-   "entityId": "fi_seal",
-   "actor": "fi_seal",
-   "actorKind": "item",
-   "name": "锆丝封签",
-   "fromId": "fe_wen",
-   "from": "闻澈岑",
-   "fromKind": "character",
-   "toId": "fe_nie",
-   "to": "聂汀穗",
-   "toKind": "character",
-   "holderChanged": true,
-   "relativeTo": null,
-   "fieldPath": "state.items.fi_seal.position"
-  },
-  {
-   "kind": "appearance_changed",
-   "phase": "change",
-   "entityId": "fi_seal",
-   "actor": "fi_seal",
-   "actorKind": "item",
-   "name": "锆丝封签",
-   "text": "接合处新增一道横向压痕。",
-   "fieldPath": "state.items.fi_seal.appearanceChanges"
-  }
- ],
- "mayMention": [],
  "standingRefs": [
   {
    "kind": "at",

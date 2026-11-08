@@ -1,0 +1,96 @@
+{
+ "packVersion": 3,
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "砾脊校准间",
+  "atPath": [
+   "fy_cal",
+   "fy_yard"
+  ]
+ },
+ "n1Facts": [
+  {
+   "factId": "fe_wen:position",
+   "kind": "moved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ],
+   "at": "砾脊校准间"
+  },
+  {
+   "factId": "fi_seal:position",
+   "kind": "moved",
+   "entityId": "fi_seal",
+   "entityGroup": "items",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ],
+   "at": "聂汀穗"
+  },
+  {
+   "factId": "fi_seal:appearance",
+   "kind": "appearance_changed",
+   "entityId": "fi_seal",
+   "entityGroup": "items",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ]
+  }
+ ],
+ "n2": {
+  "module": "experiments/world-components/n2_perspective.py",
+  "moduleSha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "status": "ok",
+  "summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "stops": [],
+  "refusals": [],
+  "decisions": [
+   {
+    "factId": "fe_wen:position",
+    "kind": "moved",
+    "class": "must",
+    "ground": "self-position",
+    "selected": true,
+    "reason": "视角人物自己的位置变化，必述"
+   },
+   {
+    "factId": "fi_seal:position",
+    "kind": "moved",
+    "class": "may",
+    "ground": "co-location",
+    "selected": true,
+    "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+   },
+   {
+    "factId": "fi_seal:appearance",
+    "kind": "appearance_changed",
+    "class": "may",
+    "ground": "co-location",
+    "selected": true,
+    "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+   }
+  ]
+ },
+ "expression": {
+  "fe_wen:position": "must",
+  "fi_seal:position": "must",
+  "fi_seal:appearance": "must"
+ },
+ "withheld": [],
+ "playerScope": {
+  "ids": [],
+  "constraint": null
+ }
+}

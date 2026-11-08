@@ -1,0 +1,139 @@
+{
+ "packVersion": 3,
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "砾脊校准间",
+  "atPath": [
+   "fy_cal",
+   "fy_yard"
+  ]
+ },
+ "n1Facts": [
+  {
+   "factId": "fe_nie:position",
+   "kind": "moved",
+   "entityId": "fe_nie",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_bridge",
+    "fy_yard"
+   ],
+   "at": "苔铎栈桥"
+  },
+  {
+   "factId": "fe_wen:position",
+   "kind": "moved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ],
+   "at": "砾脊校准间"
+  },
+  {
+   "factId": "fe_wen:sanity",
+   "kind": "sanity_changed",
+   "entityId": "fe_wen",
+   "entityGroup": "characters"
+  },
+  {
+   "factId": "fe_wen:task:ft_check",
+   "kind": "task_achieved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "goal": "核验瓷铯量规的双区刻度"
+  },
+  {
+   "factId": "fe_wen:task:ft_mark",
+   "kind": "task_achieved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "goal": "登记量规右区的第三条刻线"
+  },
+  {
+   "factId": "fe_wen:personality",
+   "kind": "personality_changed",
+   "entityId": "fe_wen",
+   "entityGroup": "characters"
+  }
+ ],
+ "n2": {
+  "module": "experiments/world-components/n2_perspective.py",
+  "moduleSha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "status": "ok",
+  "summary": {
+   "must": 4,
+   "may": 2,
+   "invisible": 0,
+   "selected": 6,
+   "mayPolicy": "select"
+  },
+  "stops": [],
+  "refusals": [],
+  "decisions": [
+   {
+    "factId": "fe_nie:position",
+    "kind": "moved",
+    "class": "may",
+    "ground": "co-location",
+    "selected": true,
+    "reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
+   },
+   {
+    "factId": "fe_wen:position",
+    "kind": "moved",
+    "class": "must",
+    "ground": "self-position",
+    "selected": true,
+    "reason": "视角人物自己的位置变化，必述"
+   },
+   {
+    "factId": "fe_wen:sanity",
+    "kind": "sanity_changed",
+    "class": "must",
+    "ground": "self-safety",
+    "selected": true,
+    "reason": "视角人物自己的理智变化（安全），必述"
+   },
+   {
+    "factId": "fe_wen:task:ft_check",
+    "kind": "task_achieved",
+    "class": "must",
+    "ground": "self-task",
+    "selected": true,
+    "reason": "视角人物自己的任务达成，必述"
+   },
+   {
+    "factId": "fe_wen:task:ft_mark",
+    "kind": "task_achieved",
+    "class": "must",
+    "ground": "self-task",
+    "selected": true,
+    "reason": "视角人物自己的任务达成，必述"
+   },
+   {
+    "factId": "fe_wen:personality",
+    "kind": "personality_changed",
+    "class": "may",
+    "ground": "self-state",
+    "selected": true,
+    "reason": "视角人物自己的描述类变化，可见但可省"
+   }
+  ]
+ },
+ "expression": {
+  "fe_nie:position": "may",
+  "fe_wen:position": "must",
+  "fe_wen:sanity": "must",
+  "fe_wen:task:ft_check": "must",
+  "fe_wen:task:ft_mark": "must",
+  "fe_wen:personality": "must"
+ },
+ "withheld": [],
+ "playerScope": {
+  "ids": [],
+  "constraint": null
+ }
+}

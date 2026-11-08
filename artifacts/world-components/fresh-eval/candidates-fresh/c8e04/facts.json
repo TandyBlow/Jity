@@ -57,44 +57,6 @@
    "fieldPath": "state.items.fi_gauge.position"
   }
  ],
- "mustExpress": [
-  {
-   "kind": "moved",
-   "phase": "change",
-   "entityId": "fe_wen",
-   "actor": "fe_wen",
-   "actorKind": "character",
-   "name": "闻澈岑",
-   "fromId": "fy_pump",
-   "from": "玄藻泵舱",
-   "toId": "fy_cal",
-   "to": "砾脊校准间",
-   "relativeTo": null,
-   "fieldPath": "state.characters.fe_wen.position"
-  },
-  {
-   "kind": "moved_entity",
-   "phase": "change",
-   "entityId": "fi_gauge",
-   "actor": "fi_gauge",
-   "actorKind": "item",
-   "name": "瓷铯量规",
-   "fromId": "fy_cal",
-   "from": "砾脊校准间",
-   "fromKind": "location",
-   "toId": "fy_cal",
-   "to": "砾脊校准间",
-   "toKind": "location",
-   "holderChanged": false,
-   "relativeTo": {
-    "entityId": "fe_nie",
-    "name": "聂汀穗",
-    "relation": "beside"
-   },
-   "fieldPath": "state.items.fi_gauge.position"
-  }
- ],
- "mayMention": [],
  "standingRefs": [
   {
    "kind": "at",

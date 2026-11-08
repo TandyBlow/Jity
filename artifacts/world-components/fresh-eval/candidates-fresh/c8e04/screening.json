@@ -18,5 +18,7 @@
   "r1Version": "v2",
   "reasons": [],
   "warnings": []
- }
+ },
+ "expressionSignature": "moved*1+moved_entity*1|2|30s",
+ "note": "R1/R2/R3 使用完整变化集合；expressionSignature 只用于叙述分析"
 }

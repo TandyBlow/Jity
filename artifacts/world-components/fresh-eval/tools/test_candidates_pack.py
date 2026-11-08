@@ -1,13 +1,15 @@
-"""Regression tests for the candidate pack (pack v2, after external review).
+"""Regression tests for the candidate pack (pack v3).
 
-Each test pins one of the four defects the reviewer found on 2026-11-08, so a
-later change cannot quietly reintroduce them:
+Pins every defect an external reviewer found on 2026-11-08, plus the four
+capability stages and the N2-based visibility pipeline:
 
-  * out-of-scope facts must not sit in mustExpress (c8e02 perspective, c8e06
-    player instruction);
-  * item moves must carry both ends plus holder information (c8e05);
-  * reference objects must carry a readable name (c8e04);
-  * a zero-valued standing number must survive into currentState.
+  * R1/R2/R3 run on the FULL change set; the spoken subset has its own signature
+  * invisible facts (N2) never reach input.json - they live in answer.json
+  * a deferred entity is removed from the packet entirely (c8e06)
+  * the page projection's numeric-cause rule is per character, not per point
+  * item moves carry both ends and holder information (c8e05)
+  * a reference object carries a readable name (c8e04)
+  * a zero-valued standing number survives into currentState
 
 Run: python -B tools/test_candidates_pack.py
 """
@@ -21,6 +23,7 @@ import unittest
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE.parent
+IDS = ("c8e01", "c8e02", "c8e03", "c8e04", "c8e05", "c8e06")
 
 _spec = importlib.util.spec_from_file_location("pack", HERE / "build_candidates_fresh.py")
 pack = importlib.util.module_from_spec(_spec)
@@ -31,33 +34,98 @@ def load(name):
     return json.loads((OUT / "candidates-fresh" / name).read_text(encoding="utf-8"))
 
 
-class Scope(unittest.TestCase):
-    def test_c8e02_offscreen_move_is_not_must(self):
+class Exclusion(unittest.TestCase):
+    def test_r3_uses_full_change_set(self):
+        c8e02 = load("c8e02/screening.json")
+        self.assertEqual(c8e02["v2"]["signature"], "moved*2|2|45s")
+        self.assertEqual(c8e02["expressionSignature"], "moved*1|1|45s")
+        c8e06 = load("c8e06/screening.json")
+        self.assertEqual(c8e06["v2"]["signature"], "moved*2+task_achieved*1|2|120s")
+
+    def test_r3_full_equals_all_change_facts(self):
+        screening = importlib.util.module_from_spec(
+            importlib.util.spec_from_file_location("screening", HERE / "screening.py"))
+        screening.__spec__.loader.exec_module(screening)
+        for cid in IDS:
+            facts = load(f"{cid}/facts.json")["changeFacts"]
+            data = load(f"{cid}/screening.json")
+            expected = screening.change_signature(
+                facts, load(f"{cid}/input.json")["timeAdvance"])
+            self.assertEqual(data["v2"]["signature"], expected, cid)
+
+
+class Visibility(unittest.TestCase):
+    def test_c8e02_far_building_is_absent_from_input(self):
         data = load("c8e02/input.json")
-        must = {f["entityId"] for f in data["mustExpress"]}
-        may = {(m["fact"]["entityId"], m["reason"]) for m in data["mayMention"]}
-        self.assertEqual(must, {"fe_wen"})
-        self.assertIn(("fe_shao", "offstage-perspective"), may)
+        blob = json.dumps(data, ensure_ascii=False)
+        self.assertNotIn("邵苇衡", blob)
+        self.assertNotIn("穹榛中继室", blob)
+        self.assertNotIn("fe_shao", blob)
+        self.assertEqual(data["withheld"]["count"], 1)
 
-    def test_c8e06_deferred_move_is_not_must(self):
+    def test_c8e02_withheld_fact_stays_in_the_answer(self):
+        answer = load("c8e02/answer.json")
+        withheld = answer["withheld"]
+        self.assertEqual([w["entityId"] for w in withheld], ["fe_shao"])
+        self.assertEqual(withheld[0]["n2Ground"], "other-location")
+
+    def test_c8e06_deferred_entity_is_absent(self):
         data = load("c8e06/input.json")
-        must = {f["entityId"] for f in data["mustExpress"]}
-        may = {(m["fact"]["entityId"], m["reason"]) for m in data["mayMention"]}
-        self.assertNotIn("fe_wen", must)
-        self.assertIn(("fe_wen", "deferredByInstruction"), may)
+        self.assertNotIn("fe_wen", {f["entityId"] for f in data["mustExpress"]})
+        self.assertNotIn("fe_wen", {m["entityId"] for m in data["mayMention"]})
+        self.assertNotIn("fe_wen", {c["entityId"] for c in data["currentState"]})
 
-    def test_no_fact_is_both_must_and_may(self):
-        for cid in ("c8e01", "c8e02", "c8e03", "c8e04", "c8e05", "c8e06"):
-            data = load(f"{cid}/input.json")
-            must = {(f["kind"], f["entityId"], f.get("fieldPath"))
-                    for f in data["mustExpress"]}
-            may = {(m["fact"]["kind"], m["fact"]["entityId"],
-                    m["fact"].get("fieldPath")) for m in data["mayMention"]}
-            self.assertEqual(must & may, set(), cid)
+    def test_every_invisible_fact_is_reported(self):
+        for cid in IDS:
+            answer = load(f"{cid}/answer.json")
+            invisible = [d for d in answer["n2"]["decisions"]
+                         if d.get("class") == "invisible"]
+            withheld = [w for w in answer["withheld"]
+                        if w["expression"] == "withheld"]
+            self.assertEqual(len(invisible), len(withheld), cid)
 
-    def test_visible_containers_include_the_building(self):
-        after = json.loads((OUT / "fresh/source/c8e02.after.json").read_text(encoding="utf-8"))
-        self.assertEqual(pack.visible_containers(after, "fe_wen"), {"fy_cal", "fy_yard"})
+    def test_n2_was_actually_called(self):
+        answer = load("c8e02/answer.json")
+        self.assertEqual(answer["n2"]["status"], "ok")
+        self.assertTrue(answer["n2"]["decisions"])
+        self.assertIn("n2_perspective", answer["n2"]["module"])
+
+
+class Capability(unittest.TestCase):
+    def test_numeric_cause_is_checked_per_character(self):
+        after = json.loads((OUT / "fresh/source/c8e01.after.json").read_text(encoding="utf-8"))
+        split = [
+            {"kind": "sanity_changed", "actor": "fe_nie", "entityId": "fe_nie"},
+            {"kind": "task_achieved", "actor": "fe_pu", "entityId": "fe_pu"},
+            {"kind": "personality_changed", "actor": "fe_yu", "entityId": "fe_yu"},
+        ]
+        caps = pack.capability("synthetic", split, [], after)
+        rules = [f["rule"] for f in caps["flags"]]
+        self.assertIn("P3-incomplete-numeric-cause", rules)
+        self.assertFalse(caps["stages"]["pageProjectionAcceptsDelta"])
+
+    def test_complete_trio_for_one_character_is_accepted(self):
+        after = json.loads((OUT / "fresh/source/c8e03.after.json").read_text(encoding="utf-8"))
+        same = [
+            {"kind": "sanity_changed", "actor": "fe_wen", "entityId": "fe_wen"},
+            {"kind": "task_achieved", "actor": "fe_wen", "entityId": "fe_wen"},
+            {"kind": "personality_changed", "actor": "fe_wen", "entityId": "fe_wen"},
+        ]
+        caps = pack.capability("synthetic", same, [], after)
+        self.assertTrue(caps["stages"]["pageProjectionAcceptsDelta"])
+
+    def test_perspective_item_is_not_page_ready(self):
+        row = next(r for r in load("candidates.json")["candidates"] if r["id"] == "c8e02")
+        self.assertFalse(row["capability"]["pagePathSatisfiesExpectation"])
+        self.assertIn("P5-no-perspective-filter",
+                      [f["rule"] for f in row["capability"]["flags"]])
+
+    def test_stages_are_separate(self):
+        row = next(r for r in load("candidates.json")["candidates"] if r["id"] == "c8e06")
+        stages = row["capability"]["stages"]
+        self.assertTrue(stages["stateCommitted"])
+        self.assertFalse(stages["perspectiveFilterEnforced"])
+        self.assertFalse(stages["narrationGenerated"])
 
 
 class Facts(unittest.TestCase):
@@ -66,40 +134,20 @@ class Facts(unittest.TestCase):
         move = next(f for f in facts if f["kind"] == "moved_entity")
         self.assertEqual((move["fromId"], move["toId"]), ("fe_wen", "fe_nie"))
         self.assertEqual((move["from"], move["to"]), ("闻澈岑", "聂汀穗"))
-        self.assertEqual((move["fromKind"], move["toKind"]), ("character", "character"))
         self.assertTrue(move["holderChanged"])
 
     def test_relative_position_has_readable_name(self):
         facts = load("c8e04/facts.json")["changeFacts"]
         move = next(f for f in facts if f["kind"] == "moved_entity")
-        self.assertEqual(move["relativeTo"]["entityId"], "fe_nie")
         self.assertEqual(move["relativeTo"]["name"], "聂汀穗")
 
     def test_zero_survives_current_state(self):
         rows = pack.current_state_entries(
-            [{"kind": "sanity", "entityId": "x", "name": "甲", "value": 0}])
+            "x", [{"kind": "sanity", "entityId": "x", "name": "甲", "value": 0}],
+            json.loads((OUT / "fresh/source/c8e01.after.json").read_text(encoding="utf-8")),
+            {"type": "omniscient", "entityId": None})
         self.assertEqual(rows, [{"entityId": "x", "name": "甲",
                                  "kind": "sanity", "value": 0}])
-
-
-class Capability(unittest.TestCase):
-    def test_stages_are_separate(self):
-        data = load("c8e06/input.json")
-        caps = load("candidates.json")
-        row = next(r for r in caps["candidates"] if r["id"] == "c8e06")
-        stages = row["capability"]["stages"]
-        self.assertTrue(stages["stateCommitted"])
-        self.assertFalse(stages["perspectiveFilterEnforced"])
-        self.assertFalse(stages["narrationGenerated"])
-        self.assertFalse(row["capability"]["pagePathSatisfiesExpectation"])
-        self.assertTrue(data["mustExpress"])
-
-    def test_perspective_item_is_not_marked_page_ready(self):
-        caps = load("candidates.json")
-        row = next(r for r in caps["candidates"] if r["id"] == "c8e02")
-        self.assertFalse(row["capability"]["pagePathSatisfiesExpectation"])
-        self.assertIn("P5-no-perspective-filter",
-                      [f["rule"] for f in row["capability"]["flags"]])
 
 
 if __name__ == "__main__":

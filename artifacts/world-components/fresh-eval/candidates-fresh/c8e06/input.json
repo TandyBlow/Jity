@@ -1,5 +1,5 @@
 {
- "packVersion": 2,
+ "packVersion": 3,
  "pointId": "point_53",
  "worldId": "world_47",
  "stateDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370",
@@ -8,7 +8,9 @@
   "unit": "second"
  },
  "perspective": {
-  "type": "omniscient"
+  "type": "omniscient",
+  "entityId": null,
+  "at": "全局"
  },
  "mustExpress": [
   {
@@ -23,7 +25,13 @@
    "toId": "fy_relay",
    "to": "穹榛中继室",
    "relativeTo": null,
-   "fieldPath": "state.characters.fe_shao.position"
+   "fieldPath": "state.characters.fe_shao.position",
+   "factId": "fe_shao:position",
+   "n2Class": "must",
+   "n2Ground": "omniscient-focus-position",
+   "n2Reason": "全知视角焦点人物的位置变化，必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
   },
   {
    "kind": "task_achieved",
@@ -34,29 +42,16 @@
    "taskId": "ft_relay",
    "goal": "复核穹榛机架背面的联接编号",
    "status": "achieved",
-   "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+   "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status",
+   "factId": "fe_shao:task:ft_relay",
+   "n2Class": "must",
+   "n2Ground": "omniscient-focus-goal",
+   "n2Reason": "全知视角焦点人物的目标/在追任务，必述（rubric §4）",
+   "expression": "must",
+   "requirementSource": "n2-must"
   }
  ],
- "mayMention": [
-  {
-   "fact": {
-    "kind": "moved",
-    "phase": "change",
-    "entityId": "fe_wen",
-    "actor": "fe_wen",
-    "actorKind": "character",
-    "name": "闻澈岑",
-    "fromId": "fy_pump",
-    "from": "玄藻泵舱",
-    "toId": "fy_cal",
-    "to": "砾脊校准间",
-    "relativeTo": null,
-    "fieldPath": "state.characters.fe_wen.position"
-   },
-   "reason": "deferredByInstruction",
-   "constraint": "玩家指令要求本轮暂不展开该角色：可以不提；若要提，不得写成关注对象，也不得据此推出任务达成。"
-  }
- ],
+ "mayMention": [],
  "currentState": [
   {
    "entityId": "fe_nie",
@@ -101,30 +96,6 @@
    "value": 57
   },
   {
-   "entityId": "fe_wen",
-   "name": "闻澈岑",
-   "kind": "sanity",
-   "value": 43
-  },
-  {
-   "entityId": "fe_wen",
-   "name": "闻澈岑",
-   "kind": "task_pending",
-   "value": "核验瓷铯量规的双区刻度"
-  },
-  {
-   "entityId": "fe_wen",
-   "name": "闻澈岑",
-   "kind": "task_pending",
-   "value": "登记量规右区的第三条刻线"
-  },
-  {
-   "entityId": "fe_wen",
-   "name": "闻澈岑",
-   "kind": "task_pending",
-   "value": "更换绛纹阀芯上的锆丝封签"
-  },
-  {
    "entityId": "fe_yu",
    "name": "郁棠序",
    "kind": "at",
@@ -144,11 +115,21 @@
   }
  ],
  "playerInstruction": "我只关心邵苇衡复核机架联接编号的结果；暂时别展开闻澈岑的移动。",
+ "playerScopeExcludedFromState": [
+  "fe_wen"
+ ],
+ "withheld": {
+  "count": 1,
+  "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
+  "grounds": [
+   "player-instruction"
+  ]
+ },
  "rules": {
   "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
-  "mayMention": "可以不提；若要提，遵守 constraint，且不得反过来当成必述项。",
+  "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
   "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
   "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
  },
- "note": "只给事实、现状、视角与时间；完整状态不作为输入。"
+ "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
 }

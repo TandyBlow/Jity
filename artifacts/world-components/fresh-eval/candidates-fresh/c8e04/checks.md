@@ -2,25 +2,24 @@
 
 - 覆盖：关系、多人物；视角：protagonist；时间：30 秒
 - 提交点：`world_30/point_36`，after 摘要 `581bfbf50e572ca3…`（读回校验通过）
-- 必述 2 条；可不提 0 条；现状引用 16 条
+- 完整变化 2 条：必述 2、可提及 0、不进入输入 0；现状引用 6 条
 
 ## 四段状态
 
 | 段 | 状态 | 证据 |
 |---|---|---|
 | 世界状态已提交 | 是 | `point_36` + 读回 |
-| 页面投影接受该 Δ | 否 | P1-non-character-delta、P4-position-slot-or-relative |
-| 视角过滤已执行 | 否 | 页面路径无可见性判定 |
+| 页面投影接受该 Δ | 否 | P1-item-or-location-delta |
+| 视角过滤已执行 | N2 已判 | `0` 条被排除（无） |
 | 叙事已生成 | 否 | 本轮不调用模型 |
 
 ## 能力不支持（单列，不算模型失败）
 
-- P1-non-character-delta：物品位移不在页面叙事投影的支持范围内（`committed-narration.ts:28`）
-- P4-position-slot-or-relative：relativeTo 会被投影拒绝（unsupported_narration_position）（`committed-narration.ts:49`）
+- P1-item-or-location-delta：物品/地点的位移与外貌变化都会被拒（world change 比较整块）（`committed-narration.ts:28`）
 
 ## 适用范围说明
 
-- 空间相对位置（beside）只在夹具与内核层成立；页面投影拒绝该形状。
+- 空间相对位置（beside）只在夹具与内核层成立；页面投影拒绝该形状。物品位移被 N2 判为 may，省略不扣分。
 
 ## 人工核验项
 
@@ -29,11 +28,12 @@
 - [ ] 必须成立：限于支持 position_relative 的模块，不计当前页面投影成绩。
 - [ ] 必须不出现：把未提供的人物或地点写进叙述
 - [ ] 必须不出现：把本点没有的变化写成发生
-- [ ] 不要求：完整状态里未进入 mustExpress/currentState 的任何字段
+- [ ] 不要求：输入未提供的完整状态字段
 
 ## 程序检查
 
 - R1 v1：candidate；v2：candidate；是否翻转：否
 - R2（new-world）：零命中
-- R3 变化签名：`moved*1+moved_entity*1|2|30s`
+- R3 完整变化签名：`moved*1+moved_entity*1|2|30s`
+- 必述子集签名（仅叙述分析）：`moved*1+moved_entity*1|2|30s`
 
