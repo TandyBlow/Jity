@@ -47,7 +47,7 @@
 ## 3b. 样例角色
 
 - `step6/scenes/campus-three-points.md`（v3）：**一致性样例**——只检查事件 ↔ Δ ↔ 面板、玩家动作授权、失败/交接落账；不评人物声音，不作为叙事标尺。
-- 叙事质量样例：`step6/scenes/art-room-three-points.md`——旧教学楼画夹与钥匙 v4，三点连续冲突；已补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、登记表来源与事件顺序；逐句来源核验见 `step6/scenes/art-room-clause-check.md`（执行方自检，独立评审未做）；文本质量待人工评价。准入条件见 `step6/acceptance-boundaries.md` §6。
+- 叙事质量样例：`step6/scenes/art-room-three-points.md`——旧教学楼画夹与钥匙 v4，三点连续冲突；已补登记规则动机、第二点新信息、17:30 截止压力、开门前交付限制、登记表来源与事件顺序；逐句来源核验见 `step6/scenes/art-room-clause-check.md`（独立复核已确认来源/顺序/道具，2026-11-08）；文学质量待独立读者评价，评价包在 `step6/independent-review/art-room/`；可见性与受阻原因留到 N4.0，见 `step6/n4-integration-notes.md`。准入条件见 `step6/acceptance-boundaries.md` §6。
 
 ## 3c. 已知数据交接缺口（决定路线可行性）
 
