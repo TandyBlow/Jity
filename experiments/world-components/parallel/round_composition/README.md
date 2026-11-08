@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `0756a358a55ac54dbf93d48da31c9ae1041e11937e65cf0c0c4c60d4e1010635` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `9c07bc0c0c44ae0556e8fdab703445438bf99407797445ea582b870a94bc2359` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -222,11 +222,17 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 | `judge_v4.py` | N5 v4（G2 诊断、G1 三态、G4 无法判定、G6 严格结束） | `b13af17aa1eaa2561fb8e67319f5c180c621557657d70308764e9a531b4693e2` |
 | `test_judge_v4.py` | v4 单测：三态、同名、结束原因、与 v3 的一致性 | `7f4456b6ee81d6dd5960e84cc9a9bf47ae22d5dd064c1a30a8779a8cb977808a` |
-| `rejudge_archives_v4.py` | 用 v4 重判三批归档并对比 | `36ac5dc69c7cdeee0c0948ade75777d892b02595302ea7436b31d76af1ba8f2a` |
+| `rejudge_archives_v4.py` | 用 v4 重判三批归档并对比 | `c22bdc71b74af100a86d3ef89e9b4defdb8880ebf9858f006f9bf534405592d5` |
 | `n5-v4.md` | v4 变更、测试与重判结果 | `5179bec2a07235681c3d0b8c107022da0b61e658096617ef5460083cf02b899d` |
-| `n4-input-design.md` | N4 输入组织设计稿与验收协议（待审） | `60b4799d029216c1973108942aef13694a57a96ebcab6342b3f6d838bebf9145` |
-| `second-reviewer-plan.md` | 独立复核的材料、流程与交付 | `76ceafd8d8a75dddf36c4b15d6aacea24d7ddef7846d89e7241f8a50b039918a` |
-| `make_reviewer_packet.py` | 生成盲包与校准集 | `ce6948ed1ebe53c81e2355c772e17dd768a3c64fb37a6bbf61d1660100eb7248` |
+| `n4-input-design.md` | N4 输入组织设计稿与验收协议（待审） | `b781bf488b120d4939da96b6a2913f382604362dba170bcaeee143f1b41e714f` |
+| `second-reviewer-plan.md` | 独立复核的材料、流程与交付 | `dec5f8efece9fc43f94e5975cd82260da54248277b1c17081fe7c8ed876f1c4f` |
+| `make_reviewer_packet.py` | 生成盲包与校准集 | `97aec239e3be3e89f549c420c992535b4b0c04ad319dab441cb4e9f593d5000b` |
+| `judge_v4_1.py` | N5 v4.1（观察者归属、描述绑定、否定范围） | `0af6d8cae41834e5b830ede9d973440756a9eb08226c59e824ec6b951f3988cf` |
+| `test_judge_v4_1.py` | v4.1 反例测试（五组） | `2f1957dd556b9f6254d8b1ac5f68742472d29892f3564f9ad445e8ec4e98e334` |
+| `n5-v4-1.md` | v4.1 变更、测试、重判结果 | `71e11aa5bb16f3a8421488f9edde62ce1f79ee782674d33435b35c600e1a1252` |
+| `n4_groups.py` | 按组渲染器（起点/终点、描述绑定、阻断） | `0ef9e6421cf72014484e2a2540f2cd2debf4a5c93079ba922847485b346b493c` |
+| `test_n4_groups.py` | 渲染器快照、确定性、阻断测试 | `3b5f6372126f0021bc004e1eaa7db1d512ae0f8386bfb166a00e9433004e84f2` |
+| `fixtures/n4-groups-rb-move-outcome.txt` | 按组渲染的审核快照 | `ccb7a8f36307a677f7b9aa858db37c8204d122691b26b1154784f6d8889bd8ed` |
 
 运行归档不列入上表，因为它们的哈希每次重跑都会变（归档里带 `runAt` 和各阶段毫秒）；输出哈希统一由 `record_manifest.py` 写进 `fixtures/manifest.json` 的 `outputs[]`，与该文件里的上游源码/契约哈希、git HEAD、N5 口径、门覆盖范围放在一起。重跑只应该改变计时与 `runAt`：这一点由 `out/determinism.json` 证明（`identicalAfterStrip: true`）。
 
@@ -324,3 +330,14 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 - **N4 设计稿**（`n4-input-design.md`）：只改 N4.0 的事实排列，事实按句组就近渲染、带起点/终点槽位与组内写作要求；冻结模型、解码、N1/N2/N3、写作约束、预算与判定器；验收以 22 条事实的语义覆盖、9 条移动完整率、错误归属、新增事件为主，正则通过率为辅；现有 10 样本只作开发集。**未登记、未实现。**
 - **独立复核**（`second-reviewer-plan.md`）：盲包 `fixtures/reviewer-packet-v3.json`（不含已有 N6/D4）、校准集 6 条（含 3 条编造专名、1 条否定句）、答案分离存放；复核者提交后再比较分歧并保留原始判断。
 - **守卫收紧**：`runner_guards.check_prompt()` 不再接受前缀匹配，重试必须逐字等于「原提示词 + 带标签反馈」；新增 `check_http_request()` 校验实际请求体、`check_retry_request()` 校验重试请求与归档一致。测试 10/10。
+
+## 17. v4.1 反例修复、按组渲染器、复核材料更正（未跑批次）
+
+按 2026-11-09 评审继续修正。**没有新的模型调用。**
+
+- **N5 v4.1**（`judge_v4_1.py`，`n5-v4.1`，v4 与其归档保留）：观察者归属——主体必须与结果同小句，`看着王五把…` 判 `attribution-other-actor`，跨逗号只允许连接词绑定；同名描述必须修饰对应的人（描述互换或混写 → `undetermined`）；否定/未实现只看承载结果的小句，`先没挂上，后来挂回去了` 不再误拒。`test_judge_v4_1.py` 五组全过，其余测试照旧通过。
+- **按组渲染器**（`n4_groups.py`）：事实按句组就近渲染，移动拆成 `起点/终点` 两行，同名描述取自角色状态并绑定 `entityId`；无法安全表达时阻断该事实、其余照常渲染但 `productQualified=False`。`test_n4_groups.py` 覆盖快照、确定性、描述绑定、阻断与时间事实。
+- **复核材料更正**：盲包补上完整场景、人物 `entityId` 与权威性格/外貌、可见物品；校准答案把编造专名拆成 2 例（王五、柳溪渡），`c3` 的钟声归新增事件单独记录。复核者只能来自未接触旧结论的人员或隔离会话，并如实记录来源。
+- **重判**：v4.1 对 v1–v3 仍是 0/10（每批 9 judged、1 undetermined），新规则没有改写历史结论。见 `out/archive-rejudge-v4-1.json`。
+
+对照实验协议仍未冻结：等独立标注与渲染器复核完成后再登记；新模型批次未启动。

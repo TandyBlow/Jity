@@ -181,6 +181,16 @@ SOURCES = {
         "fixtures/reviewer-calibration.json",
         "experiments/world-components/parallel/round_composition/"
         "fixtures/reviewer-calibration-key.json",
+        # N5 v4.1 and the grouped N4.1 renderer
+        "experiments/world-components/parallel/round_composition/judge_v4_1.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_judge_v4_1.py",
+        "experiments/world-components/parallel/round_composition/n5-v4-1.md",
+        "experiments/world-components/parallel/round_composition/n4_groups.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_n4_groups.py",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/n4-groups-rb-move-outcome.txt",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

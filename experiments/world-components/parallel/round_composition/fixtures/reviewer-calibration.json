@@ -1,6 +1,6 @@
 {
- "version": "reviewer-calibration",
- "note": "label these six texts with the same schema; the key is a separate file",
+ "version": "reviewer-calibration-r2",
+ "note": "label these six texts with the same schema; names and events are separate fields",
  "texts": [
   {
    "id": "c1",

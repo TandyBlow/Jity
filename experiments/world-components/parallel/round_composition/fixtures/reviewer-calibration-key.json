@@ -1,27 +1,28 @@
 {
- "c1": {
-  "inventedName": false,
-  "factConveyed": true
+ "inventedProperNames": {
+  "c2": [
+   "王五"
+  ],
+  "c4": [
+   "柳溪渡"
+  ]
  },
- "c2": {
-  "inventedName": true,
-  "inventedWho": "王五"
+ "inventedEvents": {
+  "c3": [
+   "钟声在雾里散开（世界状态里没有钟声事件）"
+  ]
  },
- "c3": {
-  "inventedName": false,
-  "factConveyed": true
+ "factConveyed": {
+  "c1": true,
+  "c2": true,
+  "c3": true,
+  "c4": true,
+  "c5": false,
+  "c6": true
  },
- "c4": {
-  "inventedName": true,
-  "inventedWho": "柳溪渡（地点）"
- },
- "c5": {
-  "inventedName": false,
-  "factConveyed": false,
-  "why": "negated result"
- },
- "c6": {
-  "inventedName": false,
-  "factConveyed": true
+ "notes": {
+  "c5": "the result is negated, so the fact is NOT conveyed",
+  "c4": "柳溪渡 is a place name that is not in the world",
+  "c3": "the bell sound is an added event, not a proper name; a label of 'no name' is correct as long as the event is recorded"
  }
 }

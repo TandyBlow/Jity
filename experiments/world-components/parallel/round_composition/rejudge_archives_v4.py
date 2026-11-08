@@ -23,13 +23,14 @@ sys.path.insert(0, str(HERE))
 
 import judge_v3 as v3  # noqa: E402
 import judge_v4 as v4  # noqa: E402
+import judge_v4_1 as v4_1  # noqa: E402
 from judge_v3 import JudgeBlocked  # noqa: E402
 import real_batch_v3 as rb  # noqa: E402
 
 OUT = HERE / "out" / "archive-rejudge-v4.json"
 
 
-def rejudge(run_doc, cases_by_id):
+def rejudge(run_doc, cases_by_id, judge_mod):
     rows = []
     for case in run_doc["cases"]:
         cid = case["caseId"]
@@ -45,7 +46,7 @@ def rejudge(run_doc, cases_by_id):
                "v3": {"status": old["status"], "hardPass": old["hardPass"],
                       "problems": old["problems"]}}
         try:
-            new = v4.judge(facts, must, chain["plan"], text, finish)
+            new = judge_mod.judge(facts, must, chain["plan"], text, finish)
         except JudgeBlocked as exc:
             row["v4"] = {"blocked": exc.code, "detail": exc.detail}
             rows.append(row)
@@ -88,18 +89,25 @@ def rejudge(run_doc, cases_by_id):
 
 
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--judge", choices=("v4", "v4.1"), default="v4")
+    ap.add_argument("--out", default=None)
+    args = ap.parse_args()
+    judge_mod = v4 if args.judge == "v4" else v4_1
+    out_path = pathlib.Path(args.out) if args.out else OUT
     cases_doc = json.loads(
         (HERE / "fixtures" / "batch-v1-cases.json").read_text(encoding="utf-8"))
     by_id = {c["caseId"]: c for c in cases_doc["cases"]}
-    report = {"version": "archive-rejudge-v4", "judge": v4.VERSION,
+    report = {"version": f"archive-rejudge-{args.judge}", "judge": judge_mod.VERSION,
               "note": "old archives are read-only here; v3 verdicts are kept "
                       "for comparison and were not recomputed into the archives",
               "batches": {}}
     for name in ("real-batch-v1", "real-batch-v2", "real-batch-v3"):
         doc = json.loads((HERE / "out" / f"{name}.json")
                          .read_text(encoding="utf-8"))
-        report["batches"][name] = rejudge(doc, by_id)
-    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n",
+        report["batches"][name] = rejudge(doc, by_id, judge_mod)
+    out_path.write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8", newline="\n")
 
     for name, b in report["batches"].items():
@@ -109,7 +117,7 @@ def main() -> int:
               f"{b['goalResidueSamples']} | residue-name diagnostics "
               f"{b['residueNameDiagnostics']} | same-name undetermined "
               f"{b['sameNameUndetermined']}")
-    print(f"-> {OUT.name}")
+    print(f"-> {out_path.name}")
     return 0
 
 
