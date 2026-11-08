@@ -153,9 +153,9 @@
    "unitId": "po01",
    "source": {
     "spec": "world.json#items.item_rope.afterPosition=loc_ferry_pier",
-    "authored": false,
-    "provenance": "verbatim",
-    "basis": null,
+    "authored": true,
+    "provenance": "authored",
+    "basis": "afterPosition only says the rope is at the pier; 沈砚 dragging it back is not recorded",
     "worldFile": "experiments/world-components/n4_narrative_dev/world.json",
     "worldSha256": "f096f5bdb7539f5b1b3b71eb49bd43b6b1ad53b4fa2ec186ae4b54e00ec6d35c"
    },
@@ -174,7 +174,7 @@
     "independent": true
    },
    "focus": "位置（合法位置不得删减）",
-   "note": "事实本身含终点位置",
+   "note": "终点位置来自 afterPosition；拖绳动作是人工补的",
    "criterion": null
   },
   {
@@ -182,8 +182,8 @@
    "source": {
     "spec": "world.json#items.item_fishbasket.afterPosition=loc_market_stalls",
     "authored": false,
-    "provenance": "verbatim",
-    "basis": null,
+    "provenance": "derived",
+    "basis": "afterPosition says the basket is at the stalls; 阿棠 placing it there is inferred, not recorded",
     "worldFile": "experiments/world-components/n4_narrative_dev/world.json",
     "worldSha256": "f096f5bdb7539f5b1b3b71eb49bd43b6b1ad53b4fa2ec186ae4b54e00ec6d35c"
    },
@@ -202,7 +202,7 @@
     "independent": true
    },
    "focus": "位置（合法位置不得删减）",
-   "note": "事实本身含位置；与 cf24 的“门槛边”不同，摊棚在可见清单里",
+   "note": "位置来自 afterPosition；放筐的人与动作是推导的；摊棚在可见清单里",
    "criterion": null
   },
   {

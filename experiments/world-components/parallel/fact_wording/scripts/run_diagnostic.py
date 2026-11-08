@@ -55,6 +55,9 @@ def main() -> int:
                 and (candidate.parent / "order.jsonl").exists()):
             resume_dir = candidate.parent
             break
+    prev_meta = None
+    if resume_dir is not None:
+        prev_meta = json.loads((resume_dir / "run.json").read_text(encoding="utf-8"))
     if resume_dir is None:
         run_id = time.strftime("%Y%m%dT%H%M%S") + "-" + manifest_sha[:8]
         run_dir = OUT_ROOT / run_id
@@ -89,8 +92,9 @@ def main() -> int:
         device="cpu", threads=4, cudaAvailable=torch.cuda.is_available(),
         os=platform.platform(),
     )
-    (run_dir / "env.json").write_text(json.dumps(env, ensure_ascii=False, indent=1) + "\n",
-                                       encoding="utf-8")
+    env_name = "env.json" if prev_meta is None else f"env-resume-{int(prev_meta.get('resumeCount', 0)) + 1}.json"
+    (run_dir / env_name).write_text(json.dumps(env, ensure_ascii=False, indent=1) + "\n",
+                                    encoding="utf-8")
 
     t0 = time.time()
     tokenizer = T5Tokenizer(vocab_file=str(model_dir / "spiece.model"), model_max_length=512)
@@ -124,6 +128,14 @@ def main() -> int:
         unitFileSha256=sha256(UNIT_FILE),
         env=env,
     )
+    if prev_meta is not None:
+        # inherit the original identity; register this process separately
+        run_meta = dict(prev_meta)
+        run_meta["resumeCount"] = int(prev_meta.get("resumeCount", 0)) + 1
+        run_meta["resumedAt"] = list(prev_meta.get("resumedAt", [])) + [time.strftime("%Y-%m-%dT%H:%M:%S%z")]
+        run_meta["runnerSha256AtResume"] = sha256(HERE)
+        run_meta["loadSecondsAtResume"] = round(load_seconds, 3)
+        run_meta.pop("finishedAt", None)
     if resume_dir is None:  # never rewrite metadata of an existing run
         (run_dir / "run.json").write_text(json.dumps(run_meta, ensure_ascii=False, indent=1) + "\n",
                                            encoding="utf-8")
@@ -219,7 +231,10 @@ def main() -> int:
     order.close()
     failures.close()
     run_meta["finishedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
-    run_meta["wallSeconds"] = round(time.time() - t0, 1)
+    if prev_meta is None:
+        run_meta["wallSeconds"] = round(time.time() - t0, 1)
+    else:
+        run_meta["finalProcessWallSeconds"] = round(time.time() - t0, 1)
     (run_dir / "run.json").write_text(json.dumps(run_meta, ensure_ascii=False, indent=1) + "\n",
                                        encoding="utf-8")
     print("run dir:", run_dir)

@@ -1,7 +1,7 @@
 # 独立验收集登记 v2（已登记，未运行）
 
 > 状态：登记完成，**没有运行任何模型**，也没有生成或查看 u240 在这些单元上的输出。
-> 单元数：17；其中事实值由人工撰写（authored）的 10 条，其余直接取自世界字段。
+> 单元数：17；其中事实值由人工撰写（authored）的 11 条，其余直接取自世界字段。
 > 世界文件：`experiments/world-components/n4_narrative_dev/world.json`（`worldId=w_fog_harbor`，sha256 `f096f5bdb7539f5b…`）
 > 判定标准：`comparison-protocol-v3.md` §4 + `freeze/failure-taxonomy-v1.json` 七类；U 不算通过；类别可重叠、不相加。
 
@@ -10,7 +10,7 @@
 | ac01 | outcome | 韩渡 outcome 换好了塔顶的灯芯 | `world.json#tasks.task_lamp.resultText（主语由沈砚换成韩渡）` | 是 | `13953a2b945cbbc5…` | 独立 | 新增动作/状态 |
 | ac02 | moved | 顾行舟 移动 雾堤→潮渡 dir=平 | `world.json#locations.loc_seawall, loc_ferry（同为 level1）` | 否 | `84abb79b13410796…` | 独立 | 新增动作/状态 |
 | ac03 | appearance_changed | 油布包 appearance_changed 边角磨出了线头 | `world.json#items.item_oilcloth.appearance（边角磨白）+ authored 变化` | 是 | `8f4da8b71f968aa6…` | 独立 | 新增动作/状态 |
-| po01 | outcome | 沈砚 outcome 把系泊绳拖回栈桥 | `world.json#items.item_rope.afterPosition=loc_ferry_pier` | 否 | `c1a89fa030152b21…` | 独立 | 位置（合法位置不得删减） |
+| po01 | outcome | 沈砚 outcome 把系泊绳拖回栈桥 | `world.json#items.item_rope.afterPosition=loc_ferry_pier` | 是 | `c1a89fa030152b21…` | 独立 | 位置（合法位置不得删减） |
 | po02 | outcome | 阿棠 outcome 把鱼筐放在摊棚边 | `world.json#items.item_fishbasket.afterPosition=loc_market_stalls` | 否 | `979719dc945e0d30…` | 独立 | 位置（合法位置不得删减） |
 | po03 | moved | 顾行舟 移动 潮生巷→潮汐档案馆 dir=平 | `world.json#locations.loc_archive, loc_alley` | 否 | `dd0a494e4b231b74…` | 独立 | 位置（过度断言风险） |
 | di01 | moved | 韩渡 移动 潮渡→旧灯塔 dir=上 | `world.json#locations.loc_ferry(level1) -> loc_lighthouse(level3)` | 否 | `6bdae4318ee52f69…` | 独立 | 方向 |

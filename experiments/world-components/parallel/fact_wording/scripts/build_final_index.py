@@ -102,6 +102,7 @@ GROUPS = {
         "results/run-history-v1.md",
         "results/c4-stage-closure-v1.md",
         "results/review-findings-v1.md",
+        "results/review-findings-v2.md",
         "results/blind-design-defect-v1.md",
         "results/timing-scope-v1.md",
         "results/next-steps-after-review-v1.md",
@@ -202,6 +203,7 @@ def main() -> int:
             packDefect="results/blind-design-defect-v1.md",
             timingScope="results/timing-scope-v1.md",
             nextSteps="results/next-steps-after-review-v1.md",
+            round2="results/review-findings-v2.md",
         ),
         exclusions=[
             "freeze/final-index-v2.json", "freeze/final-index-v2.sha256", "results/final-index-v2.md",

@@ -198,7 +198,7 @@ cf24 的第 2 步分类已整理：85 条原文与旧判读一致，11 条归档
 
 **当前配置**：保留原输入模板与贪心作为基线；束宽 2 保留为诊断实现；候选 T1 冻结不采用；独立验收集不运行；两者都没有独立验收通过结论。
 
-**可核查索引**：`freeze/final-index-v2.json`，其 sha256 记在同目录的 `freeze/final-index-v2.sha256`（索引是自指的，值不写在被索引的文件里）；可读表见 `results/final-index-v2.md`（198 个文件、0 缺失）。v1 索引保留在 `freeze/final-index-v1.json` 作为历史。环境目录不打包，保留依赖锁与环境说明。冲突采用规则写在索引与 `results/c4-stage-closure-v1.md`。
+**可核查索引**：`freeze/final-index-v2.json`，其 sha256 记在同目录的 `freeze/final-index-v2.sha256`（索引是自指的，值不写在被索引的文件里）；可读表见 `results/final-index-v2.md`（199 个文件、0 缺失）。v1 索引保留在 `freeze/final-index-v1.json` 作为历史。环境目录不打包，保留依赖锁与环境说明。冲突采用规则写在索引与 `results/c4-stage-closure-v1.md`。
 
 **重新开展实验的条件**：需要新的、可检验的机制假设，或授权训练侧工作；不能只换一句提示继续搜索。训练侧改动另立任务，本轮不实施。详见 `results/c4-stage-closure-v1.md`。
 
@@ -215,3 +215,13 @@ cf24 的第 2 步分类已整理：85 条原文与旧判读一致，11 条归档
 | 提交含两个带本地路径的 `.pyc` | 已从工作区与提交删除；分支提交已重写（旧 SHA 不再被引用） |
 | 索引漏了失败分析、人工核验、索引脚本 | v2 索引补齐（198 个文件），并列出有意排除项 |
 | 不建议继续改提示词 | 采纳，见 `results/next-steps-after-review-v1.md` |
+
+### 第二轮评审（`9702183` 之后）
+
+| 问题 | 处理 |
+|---|---|
+| 恢复时收尾仍用本进程 `run_meta` 覆盖 `run.json` | 恢复改为继承原元数据，另记 `resumeCount`/`resumedAt`/`runnerSha256AtResume`；收尾只追加 `finishedAt` |
+| po01/po02 来源仍不准 | po01 改 `authored`（afterPosition 只有终点位置）；po02 改 `derived`（放筐的人与动作是推导的）；v2 登记已重生成 |
+| 盲判 v2 展示模型看不到的数值 | 理智单元去掉 `from`/`to`；每批加固定 `judgingNotes`；两份包已重生成，仍未判 |
+
+证据：`results/review-findings-v2.md`。

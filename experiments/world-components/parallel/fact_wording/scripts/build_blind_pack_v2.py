@@ -23,6 +23,14 @@ EXP = HERE.parents[1]
 TREE = EXP.parents[3]
 UNIT_FILE = TREE / "artifacts/world-components/n4-cf24-contract.jsonl"
 
+JUDGING_NOTES = [
+    "只依据 fact 与 scene 判定，不使用记忆中的旧结论",
+    "输出新增 fact/scene 未给出的动作、状态、人物、物品、地点：失败（新增）",
+    "把 fact 换个说法再说一遍：失败（复述）",
+    "输入没有给出的数值：不作为“数值正确”的依据；输出出现具体数值按新增处理",
+    "无法判断记 U；U 不算通过",
+]
+
 BATCH = 10
 BASE_SEED = 20261109
 MAX_TRIES = 50
@@ -61,7 +69,12 @@ def shuffle_no_adjacent(items: list[dict]) -> tuple[list[dict], int]:
 def write_pack(out: Path, name: str, rows: list[dict], seed: int) -> dict:
     items = []
     for i, row in enumerate(rows, start=1):
-        items.append(dict(code=f"c{i:04d}", fact=row["fact"], scene=row["scene"], output=row["output"]))
+        fact = dict(row["fact"])
+        if fact.get("kind") == "sanity_changed":
+            fact.pop("from", None)
+            fact.pop("to", None)
+            fact["change"] = "状态变化（数值未提供给模型）"
+        items.append(dict(code=f"c{i:04d}", fact=fact, scene=row["scene"], output=row["output"]))
     mapping = {it["code"]: row["meta"] for it, row in zip(items, rows)}
     batches = [items[i:i + BATCH] for i in range(0, len(items), BATCH)]
 
@@ -72,7 +85,8 @@ def write_pack(out: Path, name: str, rows: list[dict], seed: int) -> dict:
         payload = dict(
             pack=f"{name}-batch-{idx:02d}",
             instruction="judge each output against its fact and scene only; "
-                        "the requirement clause is withheld on purpose",
+                        "the requirement clause and model-invisible numbers are withheld on purpose",
+            judgingNotes=JUDGING_NOTES,
             items=batch,
         )
         (out / f"batch-{idx:02d}.json").write_text(
@@ -82,7 +96,7 @@ def write_pack(out: Path, name: str, rows: list[dict], seed: int) -> dict:
     adjacency = sum(1 for i in range(len(rows) - 1) if rows[i]["factId"] == rows[i + 1]["factId"])
     (out / "index.json").write_text(json.dumps(dict(
         rows=len(items), batches=len(batches), batchSize=BATCH, seed=seed,
-        requirementHidden=True, adjacentSameFact=adjacency,
+        requirementHidden=True, numbersHidden=True, adjacentSameFact=adjacency,
     ), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return dict(rows=len(items), batches=len(batches), seed=seed, adjacentSameFact=adjacency)
 

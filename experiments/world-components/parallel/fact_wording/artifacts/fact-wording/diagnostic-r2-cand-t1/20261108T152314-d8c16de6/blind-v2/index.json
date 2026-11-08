@@ -4,5 +4,6 @@
  "batchSize": 10,
  "seed": 20261111,
  "requirementHidden": true,
+ "numbersHidden": true,
  "adjacentSameFact": 0
 }

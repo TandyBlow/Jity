@@ -2,7 +2,7 @@
 
 > 状态：c4 本阶段诊断完成；T1 失败；独立验收尚未开展。
 > 根目录：`experiments/world-components/parallel/fact_wording/`
-> 索引 JSON：`freeze/final-index-v2.json`，sha256 `a94147a7668e99336d8639630974010afeca84c4ac541114aad3d0b9677fd7d6`（同值见 `freeze/final-index-v2.sha256`）
+> 索引 JSON：`freeze/final-index-v2.json`，sha256 `6b40e724c7237b56cf2862f4d58c3197266f9a33b01545be43f5d709a4ae7d87`（同值见 `freeze/final-index-v2.sha256`）
 > 环境目录不打包：只索引 `env/requirements.lock.txt` 与 `env/ENVIRONMENT.md`。
 > 任务说明 `TASK.md` 位于本任务的独占目录之外（工作树根），不纳入本索引。
 
@@ -30,7 +30,7 @@
 | 冻结记录 | `freeze/comparison-inputs-v2.json` | 64,621 | `bc500f66b02992cbdd8fabcd9d575ecbd86afafd47694dbf947605e282aa18c4` |
 | 冻结记录 | `freeze/comparison-inputs-v3.json` | 65,327 | `101895d8c88c2f2b0b66b676ad3d2713b4041d7fbe3ef44b8e7c2238dc07bd06` |
 | 冻结记录 | `freeze/acceptance-registration-v1.json` | 26,605 | `e4de093937be604414e8347c545e5451ffdaa8d730e343942c5c132ed45f8d8d` |
-| 冻结记录 | `freeze/acceptance-registration-v2.json` | 28,945 | `c524c911040704f22323c7aa40000cb4a4ad34169487643cb7d9d478b73402df` |
+| 冻结记录 | `freeze/acceptance-registration-v2.json` | 29,164 | `a12c5f88dbb35cdbc7ec4c1cfab96b8d1436647fcc4bebf4b10c1e33823bf40b` |
 | 冻结记录 | `freeze/candidate-t1-v1.json` | 21,318 | `b6a48318d366216f2dea3ec2da1decb843a31e888585376bac852989174724d9` |
 | 冻结记录 | `freeze/candidate-t1-v2.json` | 24,622 | `d8c16de6c90bf8d433cdc86a65801f08bb3d6daf52eb9dfb64b4504b3a71228e` |
 | 冻结记录 | `freeze/candidate-t1-outcome-v1.json` | 1,198 | `20d0689cf41cf58d53e2fbc4d55fbfbc661c737043baf55b62af4594e4b2cd8c` |
@@ -39,13 +39,13 @@
 | 源码与脚本 | `scripts/beam2.py` | 7,857 | `0d33797a170454c87e1824ae4b5343b653befd38ab5bc81dc9605d1aff6f109a` |
 | 源码与脚本 | `scripts/preflight_beam2.py` | 17,500 | `fe2669d6b9383741daa421d5a4008410108ec053b982c4d62a453d490d93ef14` |
 | 源码与脚本 | `scripts/run_preflight.py` | 13,366 | `761816792b7b38e41246b377974c69cc665d1c27e14e0607e74de58aca416bcd` |
-| 源码与脚本 | `scripts/run_diagnostic.py` | 10,781 | `0fc67edb0d8b2514114c12192843cba491be5d7a1fd6cb4dea6a3f0ddc3ace57` |
+| 源码与脚本 | `scripts/run_diagnostic.py` | 11,642 | `10467caa28fc8112d8c3ef32b7ebcec45a9847b33b3a77f1eaa813cf5e894fe5` |
 | 源码与脚本 | `scripts/run_candidate.py` | 8,483 | `a2c521520c2b35a5bc71cee96bd1dd6a0b3adeb7c1cf7b50a483a74c4e0a7030` |
 | 源码与脚本 | `scripts/build_comparison_manifest.py` | 21,643 | `67e7b64f8428cb8111bb9a384043b1fce928cd1fa1ecb4772d9c0b0faf6cabe2` |
 | 源码与脚本 | `scripts/inventory_u240.py` | 22,357 | `0caf8bd26ba78e2500dedec24c2bc0326f8f809edcb04d2fad56753c7ced20a3` |
 | 源码与脚本 | `scripts/classify_cf24.py` | 23,585 | `7a8bfbdbc41ccebc93d4606a4c8dc4a51dd60673c3c336b491094ffe20a3f28a` |
 | 源码与脚本 | `scripts/copy_upstream.py` | 2,657 | `9bf9fa582105f4e6fcd8d359351ae17fdaba8680a5dde305342515ae4e7f6c99` |
-| 源码与脚本 | `scripts/build_acceptance_set.py` | 21,968 | `4b0f85a1e4e5d599e17e40b296fa6a45cc652c344158fca254473401e60d3cc2` |
+| 源码与脚本 | `scripts/build_acceptance_set.py` | 22,297 | `49e8d98d3df9c7ac48b7f6012704bf52abe7c4bd189f907da3d324b50454f551` |
 | 源码与脚本 | `scripts/build_blind_pack.py` | 3,978 | `9cb5f42baaf4a2cf64d8451ef5d23a4328a2f9fb1d3c6ec545c478330fc6b8ee` |
 | 源码与脚本 | `scripts/build_blind_pack_r2.py` | 4,370 | `708bcfb48275f7de1b682dc07e1924527515157a331bce8ceb86c762d8ba13a8` |
 | 源码与脚本 | `scripts/analyze_diagnostic.py` | 6,713 | `3ade7e401b8bef25551d77d85e3cb69033a44f41eae7ec5f89b76aade900f168` |
@@ -59,8 +59,8 @@
 | 源码与脚本 | `scripts/upstream/score_cf24_baseline.py` | 9,717 | `cb3c440f5870f738bbd9e98f4363ec588156276381d1217b14647533e4b37428` |
 | 源码与脚本 | `scripts/upstream/review_cf24_baseline.py` | 5,924 | `2f02fd5e8b55058b20d83ad821a7e5938a93ad6a7abcb2c25170bce9a62cbb0a` |
 | 源码与脚本 | `scripts/upstream/check_cf24_overlap.py` | 4,026 | `27887a9f426e6cefc71a1fb47cac8c5b3b4aa2e187fb7583f95bf8b4ec368132` |
-| 源码与脚本 | `scripts/build_blind_pack_v2.py` | 5,956 | `a6ddd2f068d89d6b4a9b5bdfa45d502165b434e16af865ac4e8ccc33e915dade` |
-| 源码与脚本 | `scripts/build_final_index.py` | 10,646 | `15a89467901eaaaa85722b486d8772c7aea513c9ff6449c2e300dbf56bfdecd9` |
+| 源码与脚本 | `scripts/build_blind_pack_v2.py` | 6,696 | `5368176eede85f7092307b84c94e93ef0c47477ab15c351329c057fdb61fa2dc` |
+| 源码与脚本 | `scripts/build_final_index.py` | 10,741 | `20475f210f829dd2ed0839c224addf7b7451ce8892272d99749a1f0cc22c2f14` |
 | 源码与脚本 | `scripts/redact_paths.py` | 3,855 | `41f9b88c34963b3c2137387be9c46a509b220e62fb588fab6d2c32d7c164a475` |
 | 预检产物 | `artifacts/fact-wording/preflight/preflight.json` | 8,485 | `2da60046b6968271f761531b039e0e42f1d0c2b1bcc5ea7d11fc28568ab07391` |
 | 预检产物 | `artifacts/fact-wording/preflight/runs.jsonl` | 13,104 | `7d45b7cc912bfa12a7b3e34e11a11836e5f9e521d8546e53b573c1ae61fd666c` |
@@ -68,7 +68,7 @@
 | 预检产物 | `artifacts/fact-wording/preflight/p7-beam2.json` | 96 | `728d158b09f47e6efe9d5cb1f0465b5bebc86adf78ddd5dd9e618cc3f3881c08` |
 | 脱敏与发布 | `REDACTION.md` | 4,092 | `62fde429e48b7aad1b97a21c3eb75e2bf84fb1e2be49d0c4d8b6d04e8d16f8a8` |
 | 脱敏与发布 | `freeze/final-index-v1-pre-redaction.json` | 36,398 | `503b17a6b0819b15fdd42a4455fad8d804a8ca8307ee5dd2bfbf743578f9d9ba` |
-| 报告与补注 | `README.md` | 17,219 | `d6d17e8fbd002b126086a12e1978820e06ab3cd981cf9fa22664a5f7c48e343b` |
+| 报告与补注 | `README.md` | 17,855 | `b8ca44a555f431df7bb57d8f5c330f7b376bf79de4aed52e0a2fb03606dbf8b8` |
 | 报告与补注 | `results/preflight-report-v1.md` | 10,959 | `562d9e4258666d170426a561ee17bc974d25bff20c447018123609809d5b6df7` |
 | 报告与补注 | `results/diagnostic-r1-report.md` | 11,237 | `a416ed2870bde40d54ea49e7a1fcc32d1ca22186d033be33bef6c284b7350818` |
 | 报告与补注 | `results/diagnostic-r1-audit-v1.md` | 5,540 | `dddac5bb66761c4fcfa1bc903346c71f4e6d54b0098b64b1c1ec9ba47e3bfa48` |
@@ -81,10 +81,11 @@
 | 报告与补注 | `results/run-history-v1.md` | 2,368 | `7ff13658bc7fc422e53cbb7922ce80823ac7c30d8f8cfe657d7d0ecc3390d34f` |
 | 报告与补注 | `results/c4-stage-closure-v1.md` | 5,335 | `93bd07f9508d0bf1a123700b0775d4540ed1b710bbaeb3f7f63bba868242e162` |
 | 报告与补注 | `results/review-findings-v1.md` | 4,333 | `69681b263247861a4590d5dd0b03a5776ae07aabdf0c41864af402e60ec1b32b` |
+| 报告与补注 | `results/review-findings-v2.md` | 2,698 | `1a4c790a454122d8d3d53c0b0745840d03dc440763d40b814808a832c0fc8000` |
 | 报告与补注 | `results/blind-design-defect-v1.md` | 1,288 | `5e1c935c9c2d9caaa09fac70fd04341d9320959cc3be0518556f5e926f2b37a2` |
 | 报告与补注 | `results/timing-scope-v1.md` | 1,023 | `c318ba2721eb8500d48c2f25e0bf60af2d2eadb38f029022fb7701e57986fbef` |
 | 报告与补注 | `results/next-steps-after-review-v1.md` | 1,069 | `4b8439a5fe5f3b9649b641be891d32aec411feae6dffa382666c6097796d2fbf` |
-| 报告与补注 | `results/acceptance-registration-v2.md` | 5,119 | `3c4bea0eee4d8ebaf06cdd459e03f06aee53b78dfe2199c5ca53970a3b926fba` |
+| 报告与补注 | `results/acceptance-registration-v2.md` | 5,119 | `957b1d10b6126bd09da65f0cf9d134800e7af91503aea9bc2f7b68459929b1ac` |
 | cf24 失败分类产物 | `results/cf24-catalog-v1.json` | 281,260 | `b8c5ccac259c5ea9decfd2a30872b032b66a644dcab2ec4059bac0b9577cd7d6` |
 | cf24 失败分类产物 | `results/cf24-moved-rule-pairs-v1.json` | 43,069 | `e1618ea120e134332351f58dca883f36f8c3b83e96714e56f6c3b80fcb74aebf` |
 | cf24 失败分类产物 | `results/failure-report-v1.md` | 4,236 | `189fe1f030d6a6aac902c4ce992f7304adb4031b7cc6398ced1600075eafd128` |
@@ -136,25 +137,25 @@
 | r1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind/judged-15.json` | 1,960 | `bc3f6185d634341ed36a076b26bc14a406e45d300b02c4aa47f87f84970455e3` |
 | r1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind/judged-16.json` | 1,959 | `815c410b06bf6c3b808ab7c4a5012ed403d8cb81f76559b36bc7b42aaf0c1b60` |
 | r1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind/judged-17.json` | 2,159 | `a26e35df64c1dda723d6acc8ba622bcce24776ffa879e029e7c0756aaa3985dc` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/index.json` | 130 | `29d96fb49c238c9c6e9cb1035b749269fb5f96b0919b910c13be287d79019036` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/index.json` | 155 | `7924a369f3e219e9739e7e0b181afd5b60564b6360a11eae2843650317ed2c1b` |
 | 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/map.json` | 26,649 | `9bf0ec3467944f38797787419c6810571cb41c2e1c9e2378bb2424d8cbfab99b` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-01.json` | 5,612 | `0ebbe692949e8e343471442e038c966ad82df88685f6e43d99f373175c620cb1` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-02.json` | 5,742 | `2e0341adeda12e97563c816a6c0deb52149212e5033eafdb96dcdb4e16f2b851` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-03.json` | 5,681 | `e67d67555e8f2b28e5e23d6323fd5f550cf203abf3be0a1c67a68d21be41fbfd` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-04.json` | 5,694 | `06bf2b7171da23b26cef416fbeda65f6cdcf8219b5e068850314ba80e71478ba` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-05.json` | 5,672 | `416710a56349989d908c15688576c5edc82e36c7d3ab12ae39ccea241390a3f2` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-06.json` | 5,552 | `60e5cd87b339646cdb56477f716d3d56fe3a5a2a574609391c7f4dad8df48f45` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-07.json` | 5,602 | `c9d1ad8d93b0f4a9dd922551612c475bc7526c6347029309bf1b2a531a5a3e7f` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-08.json` | 5,952 | `74f4875ac3941b9351210935bcd2cc726e9e971d80a732c48be46f44aa74f391` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-09.json` | 5,761 | `dd3fffb293e22d6c76046c017a74b81ab41bcf8a5d3cb634f9b67c9ea510a9d9` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-10.json` | 5,639 | `15cc175133e9775949a4b93488ed2710990f9a9f71b3cc63acaf14f3689b301e` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-11.json` | 5,681 | `c73bd4d18e7ef57b8a8d61a1df3c6979ce6296d66521b583f9d6afc9dfa00893` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-12.json` | 5,757 | `3b9e87cf5411d6cf0e5bff191bc45544790001a6082d96486389ca40f693566e` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-13.json` | 5,719 | `356648e62c99d0021826214bfc356ebcdfd8a2cec2b45dcca960e8dd2a007580` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-14.json` | 5,766 | `1e018f0ceb13f043a33aedd780e47452733a6b08e11e8c39b8447557a32c3262` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-15.json` | 5,592 | `ee404935aba6a287e2de2ff545fc82b615d07d6420f73f97a845d15181f59e65` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-16.json` | 5,937 | `e563e27016ef422c3f5c276c65a97761b093417382cb3df53996886ecdc04a03` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-17.json` | 5,786 | `74baed6b6090561aa8d20fae4abdba39f42d8ba58380635985e5411a459a6420` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-01.json` | 6,119 | `07a87f3202bcec9aac160de653559454445cddda6141412402c51fbb4e177037` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-02.json` | 6,189 | `1df5eddb111e11cba6c0d575f519ed7fe8993fccc88dd1413a582ad7a3002a4d` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-03.json` | 6,158 | `38d0a745e79671505f2e876f9b23f06aaec6d436ac65c9248b307d25635784d3` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-04.json` | 6,141 | `50e4d4a55cf4cf356aaa6a531029339f62a28d07d220cd161b1562f8de80425f` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-05.json` | 6,119 | `811666393fa030a438702d797a24ed9038c9603ea7f5253aca7ed3e5bc8c8600` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-06.json` | 5,999 | `901a6dd917b441c71a22a9bb9069d50ff80ae620361feea79d605369aabc7d81` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-07.json` | 6,049 | `22d4dfe07bc3b10519f15249bd7a28d3dc5f9922c92648e524a88b8bf9fd354a` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-08.json` | 6,399 | `63b7bdbd30177483ab143ce753de26ca77782e542cf5bb5f585e6f72a030a10a` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-09.json` | 6,208 | `e3d20b01331c4c368921c3d1924f72bbc2c4443aa80cd3b7f29e7522be26003e` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-10.json` | 6,086 | `f3c51afca785141d399637a96247583785af731c1622cc6ccf4fdb284ce6cd17` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-11.json` | 6,128 | `599db5cb9be8e6680550db87bed735465be9b0a710410a14c646d926e3ea7ee4` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-12.json` | 6,204 | `b40a10a009424b7b9de055477bb87e4f0ca467bb2f052d660336966bdb564e23` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-13.json` | 6,196 | `ff3ce683fefb81de1d11bcf596e2b4ffd4f7dfc88329f1673eb9ed6a968d8645` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-14.json` | 6,213 | `a5d58034a989cb0e2520e40e7362259bc4ff7218915894118290e757f68f137f` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-15.json` | 6,039 | `ae53ee785a09ae3ee9eea6629bbfb47446615153e3af8a6491d5b4e2897f2c61` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-16.json` | 6,384 | `c2c75a683d6efbfbddc775bb21f599c5c162b4a600998e222619c9a3e9379106` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-17.json` | 6,233 | `273579861c65be2b94d15eed728f0e1409a7b31aaa12e7f6c310cce8ff569783` |
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/raw.jsonl` | 42,568 | `a77b10e5eeb71fd0e9de999648f8bce2beb174bbb9a3ff18b9245748fbef3b60` |
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/order.jsonl` | 7,548 | `2c3539fb0615648eacdfb33a8bf110105cb352bcfecc926bd95f474205c53088` |
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/failures.jsonl` | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
@@ -198,24 +199,24 @@
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind/judged-15.json` | 1,903 | `fb81f00b94ef63a5c28e86e33d2de04a86f25bf9bc5af303e03abb151587c49e` |
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind/judged-16.json` | 1,922 | `d9131c61d49d40f08ab28435447cd77b27e7a2c9468b9249723e83d5b9a1bfcb` |
 | T1 运行原文与判词 | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind/judged-17.json` | 1,935 | `6baa21baa50daea35bdabea8f504ba484c964de5a5c1247a9d64dbf2d1dfe0c9` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/index.json` | 130 | `29d96fb49c238c9c6e9cb1035b749269fb5f96b0919b910c13be287d79019036` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/index.json` | 155 | `7924a369f3e219e9739e7e0b181afd5b60564b6360a11eae2843650317ed2c1b` |
 | 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/map.json` | 17,873 | `7fb49407161a870c85ae3faad8a684d884d4c963af80b01ebe861a5ac710bc67` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-01.json` | 5,627 | `76413a55ef87fe90f990730129ad0ae4fb8f95d818ea4b0cd4faa31c0ef55fd1` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-02.json` | 5,742 | `673dce8414a5a58b3df07b195cc8b112529bea3da24e64ccf6cdb8a2d36a7610` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-03.json` | 5,681 | `d1c33e0830ab66dad7306f674bfbec1df01c3c716546d92db23bb68405b0aeb9` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-04.json` | 5,728 | `69131756be3055ae54db9e3dcece9576220f2f4706d729abdd55c5a9b1963a0c` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-05.json` | 5,694 | `42e4af792804cbcc59d1888adfddae7bbd151bbdeac7f3a6bedfd1f6cada2dca` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-06.json` | 5,552 | `87c238a264a4925acb820e848f8f2f35c1a2dc57ba128cac1a03a27e21696af3` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-07.json` | 5,602 | `4d92f42f41a13e2ea37a63f60f5caaec38c24762069c15c35d292db773f06ed2` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-08.json` | 5,990 | `d4a03dbc463d351105e1e2e67fa2d42cf6fd72fbe4cd3c02e301714c6cb80456` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-09.json` | 5,786 | `c72a35f81de56c6c0d6e1d3c595ae959dc1311f6a0316ac607b0acf80710b696` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-10.json` | 5,639 | `ced1bfad23e32f0dd44d17719b322e04348a5dde59dc91d726536f013d90f37b` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-11.json` | 5,681 | `7b3ff01db845115a023b47888b73c027742c14b0add86a1b1319da987c24107f` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-12.json` | 5,757 | `409aeb00334050a8cb127d657110e8f712cd35556bb8a8d9e4a0da34a450c33c` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-13.json` | 5,719 | `f749aeb2b4f6b38e7d2471fa584e915171778a15e82d42e9442065616dbd3a37` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-14.json` | 5,769 | `f1f9e3c296a88536d1e0f26c773b2eb4a72986839a02b7c512bdf0c843a3e6e5` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-15.json` | 5,614 | `501d26fb5a886b6ce6c0579c8723da525775b6e82f76e597205af0af8188326b` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-16.json` | 5,956 | `b17b07142c80f596bf723bfc4f3c8680ea95723325668e1288916b4d68b477e5` |
-| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-17.json` | 5,808 | `28957c5b45d1b5e3d2f68b0ec29aa3d90f611a3d278dd8e3c16728866903880d` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-01.json` | 6,134 | `123f5aa91a2485f88c7c3b07629f56ab9da6ec139816977c82e0cb20dc1db8c0` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-02.json` | 6,189 | `3cd76124d254544a917e87fe0b83c5e21b25e7675e1b2e829b9c3eb0623f1df5` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-03.json` | 6,158 | `6fe7dda893c04f3865521cb319411f163bf89cd6f93ef06a053762275d224ac8` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-04.json` | 6,175 | `12fb06b2ccc067f504147b9ae21ede96c2a2fb4362579c665b15e6fe8c241588` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-05.json` | 6,141 | `34e515876880bccb0b4eb429179cdfcce910666ba1e7457822ff16fd79abafd1` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-06.json` | 5,999 | `c020de27cdbd291e4e55ae0cce170d1c58a05d4b8df45ccc9552b2ec686debd0` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-07.json` | 6,049 | `a11ee6921866c5a7398d745e0922f322f1dfbb5b436c2853cd74256675a960a5` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-08.json` | 6,437 | `876373697e0d9fb042d10314f69a77c7d0375cd4a9f12c80908b707d2bb31a53` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-09.json` | 6,233 | `3ff53b130e686c626230e787844735eebec1c52df4905f2e5a2a15b86c4fb2b5` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-10.json` | 6,086 | `1102d60da909728b0d3025e37f0f0129411c6f7e00a83bd2f7aff2905db325e3` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-11.json` | 6,128 | `62b15370b815e1ffbd42f4f1fd4a06fc35a33b0fb5369c5b14baf387169a07a0` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-12.json` | 6,204 | `57439abc4ed3d8302bff61a90594e41a5f6b55fd606639aa138ca3b733c161fa` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-13.json` | 6,196 | `1b3393a66feea3257cfe62088391b2efa0b2c705c815c1b83426305189d17b06` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-14.json` | 6,216 | `7a37e93b0fd9d66cd8c2b70955ce3f950db7f6a9213887ec92ccc4f35a509478` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-15.json` | 6,061 | `e5a707b641dd9539185bbf28cf031feb7716c3d3efd6ceb9b5d8bbee99e25254` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-16.json` | 6,403 | `9ed3cf2fc14f10d47e34653a5743939286e836d9c030f2dea75a5a6c9d31499a` |
+| 盲判包 v2（未判） | `artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-17.json` | 6,255 | `e0e3e39c3a4101ee8f079adf3b517b4d5a8dd7f207e9ad685b2fc67ad0e3577c` |
 
 缺失文件：无

@@ -10,7 +10,7 @@
   "源码与脚本": 26,
   "预检产物": 4,
   "脱敏与发布": 2,
-  "报告与补注": 17,
+  "报告与补注": 18,
   "cf24 失败分类产物": 5,
   "索引历史": 3,
   "r1 运行原文与判词": 43,
@@ -49,7 +49,8 @@
   "findings": "results/review-findings-v1.md",
   "packDefect": "results/blind-design-defect-v1.md",
   "timingScope": "results/timing-scope-v1.md",
-  "nextSteps": "results/next-steps-after-review-v1.md"
+  "nextSteps": "results/next-steps-after-review-v1.md",
+  "round2": "results/review-findings-v2.md"
  },
  "exclusions": [
   "freeze/final-index-v2.json",
@@ -141,8 +142,8 @@
    "group": "冻结记录",
    "path": "freeze/acceptance-registration-v2.json",
    "exists": true,
-   "bytes": 28945,
-   "sha256": "c524c911040704f22323c7aa40000cb4a4ad34169487643cb7d9d478b73402df"
+   "bytes": 29164,
+   "sha256": "a12c5f88dbb35cdbc7ec4c1cfab96b8d1436647fcc4bebf4b10c1e33823bf40b"
   },
   {
    "group": "冻结记录",
@@ -204,8 +205,8 @@
    "group": "源码与脚本",
    "path": "scripts/run_diagnostic.py",
    "exists": true,
-   "bytes": 10781,
-   "sha256": "0fc67edb0d8b2514114c12192843cba491be5d7a1fd6cb4dea6a3f0ddc3ace57"
+   "bytes": 11642,
+   "sha256": "10467caa28fc8112d8c3ef32b7ebcec45a9847b33b3a77f1eaa813cf5e894fe5"
   },
   {
    "group": "源码与脚本",
@@ -246,8 +247,8 @@
    "group": "源码与脚本",
    "path": "scripts/build_acceptance_set.py",
    "exists": true,
-   "bytes": 21968,
-   "sha256": "4b0f85a1e4e5d599e17e40b296fa6a45cc652c344158fca254473401e60d3cc2"
+   "bytes": 22297,
+   "sha256": "49e8d98d3df9c7ac48b7f6012704bf52abe7c4bd189f907da3d324b50454f551"
   },
   {
    "group": "源码与脚本",
@@ -344,15 +345,15 @@
    "group": "源码与脚本",
    "path": "scripts/build_blind_pack_v2.py",
    "exists": true,
-   "bytes": 5956,
-   "sha256": "a6ddd2f068d89d6b4a9b5bdfa45d502165b434e16af865ac4e8ccc33e915dade"
+   "bytes": 6696,
+   "sha256": "5368176eede85f7092307b84c94e93ef0c47477ab15c351329c057fdb61fa2dc"
   },
   {
    "group": "源码与脚本",
    "path": "scripts/build_final_index.py",
    "exists": true,
-   "bytes": 10646,
-   "sha256": "15a89467901eaaaa85722b486d8772c7aea513c9ff6449c2e300dbf56bfdecd9"
+   "bytes": 10741,
+   "sha256": "20475f210f829dd2ed0839c224addf7b7451ce8892272d99749a1f0cc22c2f14"
   },
   {
    "group": "源码与脚本",
@@ -407,8 +408,8 @@
    "group": "报告与补注",
    "path": "README.md",
    "exists": true,
-   "bytes": 17219,
-   "sha256": "d6d17e8fbd002b126086a12e1978820e06ab3cd981cf9fa22664a5f7c48e343b"
+   "bytes": 17855,
+   "sha256": "b8ca44a555f431df7bb57d8f5c330f7b376bf79de4aed52e0a2fb03606dbf8b8"
   },
   {
    "group": "报告与补注",
@@ -496,6 +497,13 @@
   },
   {
    "group": "报告与补注",
+   "path": "results/review-findings-v2.md",
+   "exists": true,
+   "bytes": 2698,
+   "sha256": "1a4c790a454122d8d3d53c0b0745840d03dc440763d40b814808a832c0fc8000"
+  },
+  {
+   "group": "报告与补注",
    "path": "results/blind-design-defect-v1.md",
    "exists": true,
    "bytes": 1288,
@@ -520,7 +528,7 @@
    "path": "results/acceptance-registration-v2.md",
    "exists": true,
    "bytes": 5119,
-   "sha256": "3c4bea0eee4d8ebaf06cdd459e03f06aee53b78dfe2199c5ca53970a3b926fba"
+   "sha256": "957b1d10b6126bd09da65f0cf9d134800e7af91503aea9bc2f7b68459929b1ac"
   },
   {
    "group": "cf24 失败分类产物",
@@ -883,8 +891,8 @@
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/index.json",
    "exists": true,
-   "bytes": 130,
-   "sha256": "29d96fb49c238c9c6e9cb1035b749269fb5f96b0919b910c13be287d79019036"
+   "bytes": 155,
+   "sha256": "7924a369f3e219e9739e7e0b181afd5b60564b6360a11eae2843650317ed2c1b"
   },
   {
    "group": "盲判包 v2（未判）",
@@ -897,120 +905,120 @@
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-01.json",
    "exists": true,
-   "bytes": 5612,
-   "sha256": "0ebbe692949e8e343471442e038c966ad82df88685f6e43d99f373175c620cb1"
+   "bytes": 6119,
+   "sha256": "07a87f3202bcec9aac160de653559454445cddda6141412402c51fbb4e177037"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-02.json",
    "exists": true,
-   "bytes": 5742,
-   "sha256": "2e0341adeda12e97563c816a6c0deb52149212e5033eafdb96dcdb4e16f2b851"
+   "bytes": 6189,
+   "sha256": "1df5eddb111e11cba6c0d575f519ed7fe8993fccc88dd1413a582ad7a3002a4d"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-03.json",
    "exists": true,
-   "bytes": 5681,
-   "sha256": "e67d67555e8f2b28e5e23d6323fd5f550cf203abf3be0a1c67a68d21be41fbfd"
+   "bytes": 6158,
+   "sha256": "38d0a745e79671505f2e876f9b23f06aaec6d436ac65c9248b307d25635784d3"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-04.json",
    "exists": true,
-   "bytes": 5694,
-   "sha256": "06bf2b7171da23b26cef416fbeda65f6cdcf8219b5e068850314ba80e71478ba"
+   "bytes": 6141,
+   "sha256": "50e4d4a55cf4cf356aaa6a531029339f62a28d07d220cd161b1562f8de80425f"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-05.json",
    "exists": true,
-   "bytes": 5672,
-   "sha256": "416710a56349989d908c15688576c5edc82e36c7d3ab12ae39ccea241390a3f2"
+   "bytes": 6119,
+   "sha256": "811666393fa030a438702d797a24ed9038c9603ea7f5253aca7ed3e5bc8c8600"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-06.json",
    "exists": true,
-   "bytes": 5552,
-   "sha256": "60e5cd87b339646cdb56477f716d3d56fe3a5a2a574609391c7f4dad8df48f45"
+   "bytes": 5999,
+   "sha256": "901a6dd917b441c71a22a9bb9069d50ff80ae620361feea79d605369aabc7d81"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-07.json",
    "exists": true,
-   "bytes": 5602,
-   "sha256": "c9d1ad8d93b0f4a9dd922551612c475bc7526c6347029309bf1b2a531a5a3e7f"
+   "bytes": 6049,
+   "sha256": "22d4dfe07bc3b10519f15249bd7a28d3dc5f9922c92648e524a88b8bf9fd354a"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-08.json",
    "exists": true,
-   "bytes": 5952,
-   "sha256": "74f4875ac3941b9351210935bcd2cc726e9e971d80a732c48be46f44aa74f391"
+   "bytes": 6399,
+   "sha256": "63b7bdbd30177483ab143ce753de26ca77782e542cf5bb5f585e6f72a030a10a"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-09.json",
    "exists": true,
-   "bytes": 5761,
-   "sha256": "dd3fffb293e22d6c76046c017a74b81ab41bcf8a5d3cb634f9b67c9ea510a9d9"
+   "bytes": 6208,
+   "sha256": "e3d20b01331c4c368921c3d1924f72bbc2c4443aa80cd3b7f29e7522be26003e"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-10.json",
    "exists": true,
-   "bytes": 5639,
-   "sha256": "15cc175133e9775949a4b93488ed2710990f9a9f71b3cc63acaf14f3689b301e"
+   "bytes": 6086,
+   "sha256": "f3c51afca785141d399637a96247583785af731c1622cc6ccf4fdb284ce6cd17"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-11.json",
    "exists": true,
-   "bytes": 5681,
-   "sha256": "c73bd4d18e7ef57b8a8d61a1df3c6979ce6296d66521b583f9d6afc9dfa00893"
+   "bytes": 6128,
+   "sha256": "599db5cb9be8e6680550db87bed735465be9b0a710410a14c646d926e3ea7ee4"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-12.json",
    "exists": true,
-   "bytes": 5757,
-   "sha256": "3b9e87cf5411d6cf0e5bff191bc45544790001a6082d96486389ca40f693566e"
+   "bytes": 6204,
+   "sha256": "b40a10a009424b7b9de055477bb87e4f0ca467bb2f052d660336966bdb564e23"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-13.json",
    "exists": true,
-   "bytes": 5719,
-   "sha256": "356648e62c99d0021826214bfc356ebcdfd8a2cec2b45dcca960e8dd2a007580"
+   "bytes": 6196,
+   "sha256": "ff3ce683fefb81de1d11bcf596e2b4ffd4f7dfc88329f1673eb9ed6a968d8645"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-14.json",
    "exists": true,
-   "bytes": 5766,
-   "sha256": "1e018f0ceb13f043a33aedd780e47452733a6b08e11e8c39b8447557a32c3262"
+   "bytes": 6213,
+   "sha256": "a5d58034a989cb0e2520e40e7362259bc4ff7218915894118290e757f68f137f"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-15.json",
    "exists": true,
-   "bytes": 5592,
-   "sha256": "ee404935aba6a287e2de2ff545fc82b615d07d6420f73f97a845d15181f59e65"
+   "bytes": 6039,
+   "sha256": "ae53ee785a09ae3ee9eea6629bbfb47446615153e3af8a6491d5b4e2897f2c61"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-16.json",
    "exists": true,
-   "bytes": 5937,
-   "sha256": "e563e27016ef422c3f5c276c65a97761b093417382cb3df53996886ecdc04a03"
+   "bytes": 6384,
+   "sha256": "c2c75a683d6efbfbddc775bb21f599c5c162b4a600998e222619c9a3e9379106"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/batch-17.json",
    "exists": true,
-   "bytes": 5786,
-   "sha256": "74baed6b6090561aa8d20fae4abdba39f42d8ba58380635985e5411a459a6420"
+   "bytes": 6233,
+   "sha256": "273579861c65be2b94d15eed728f0e1409a7b31aaa12e7f6c310cce8ff569783"
   },
   {
    "group": "T1 运行原文与判词",
@@ -1317,8 +1325,8 @@
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/index.json",
    "exists": true,
-   "bytes": 130,
-   "sha256": "29d96fb49c238c9c6e9cb1035b749269fb5f96b0919b910c13be287d79019036"
+   "bytes": 155,
+   "sha256": "7924a369f3e219e9739e7e0b181afd5b60564b6360a11eae2843650317ed2c1b"
   },
   {
    "group": "盲判包 v2（未判）",
@@ -1331,120 +1339,120 @@
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-01.json",
    "exists": true,
-   "bytes": 5627,
-   "sha256": "76413a55ef87fe90f990730129ad0ae4fb8f95d818ea4b0cd4faa31c0ef55fd1"
+   "bytes": 6134,
+   "sha256": "123f5aa91a2485f88c7c3b07629f56ab9da6ec139816977c82e0cb20dc1db8c0"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-02.json",
    "exists": true,
-   "bytes": 5742,
-   "sha256": "673dce8414a5a58b3df07b195cc8b112529bea3da24e64ccf6cdb8a2d36a7610"
+   "bytes": 6189,
+   "sha256": "3cd76124d254544a917e87fe0b83c5e21b25e7675e1b2e829b9c3eb0623f1df5"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-03.json",
    "exists": true,
-   "bytes": 5681,
-   "sha256": "d1c33e0830ab66dad7306f674bfbec1df01c3c716546d92db23bb68405b0aeb9"
+   "bytes": 6158,
+   "sha256": "6fe7dda893c04f3865521cb319411f163bf89cd6f93ef06a053762275d224ac8"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-04.json",
    "exists": true,
-   "bytes": 5728,
-   "sha256": "69131756be3055ae54db9e3dcece9576220f2f4706d729abdd55c5a9b1963a0c"
+   "bytes": 6175,
+   "sha256": "12fb06b2ccc067f504147b9ae21ede96c2a2fb4362579c665b15e6fe8c241588"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-05.json",
    "exists": true,
-   "bytes": 5694,
-   "sha256": "42e4af792804cbcc59d1888adfddae7bbd151bbdeac7f3a6bedfd1f6cada2dca"
+   "bytes": 6141,
+   "sha256": "34e515876880bccb0b4eb429179cdfcce910666ba1e7457822ff16fd79abafd1"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-06.json",
    "exists": true,
-   "bytes": 5552,
-   "sha256": "87c238a264a4925acb820e848f8f2f35c1a2dc57ba128cac1a03a27e21696af3"
+   "bytes": 5999,
+   "sha256": "c020de27cdbd291e4e55ae0cce170d1c58a05d4b8df45ccc9552b2ec686debd0"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-07.json",
    "exists": true,
-   "bytes": 5602,
-   "sha256": "4d92f42f41a13e2ea37a63f60f5caaec38c24762069c15c35d292db773f06ed2"
+   "bytes": 6049,
+   "sha256": "a11ee6921866c5a7398d745e0922f322f1dfbb5b436c2853cd74256675a960a5"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-08.json",
    "exists": true,
-   "bytes": 5990,
-   "sha256": "d4a03dbc463d351105e1e2e67fa2d42cf6fd72fbe4cd3c02e301714c6cb80456"
+   "bytes": 6437,
+   "sha256": "876373697e0d9fb042d10314f69a77c7d0375cd4a9f12c80908b707d2bb31a53"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-09.json",
    "exists": true,
-   "bytes": 5786,
-   "sha256": "c72a35f81de56c6c0d6e1d3c595ae959dc1311f6a0316ac607b0acf80710b696"
+   "bytes": 6233,
+   "sha256": "3ff53b130e686c626230e787844735eebec1c52df4905f2e5a2a15b86c4fb2b5"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-10.json",
    "exists": true,
-   "bytes": 5639,
-   "sha256": "ced1bfad23e32f0dd44d17719b322e04348a5dde59dc91d726536f013d90f37b"
+   "bytes": 6086,
+   "sha256": "1102d60da909728b0d3025e37f0f0129411c6f7e00a83bd2f7aff2905db325e3"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-11.json",
    "exists": true,
-   "bytes": 5681,
-   "sha256": "7b3ff01db845115a023b47888b73c027742c14b0add86a1b1319da987c24107f"
+   "bytes": 6128,
+   "sha256": "62b15370b815e1ffbd42f4f1fd4a06fc35a33b0fb5369c5b14baf387169a07a0"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-12.json",
    "exists": true,
-   "bytes": 5757,
-   "sha256": "409aeb00334050a8cb127d657110e8f712cd35556bb8a8d9e4a0da34a450c33c"
+   "bytes": 6204,
+   "sha256": "57439abc4ed3d8302bff61a90594e41a5f6b55fd606639aa138ca3b733c161fa"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-13.json",
    "exists": true,
-   "bytes": 5719,
-   "sha256": "f749aeb2b4f6b38e7d2471fa584e915171778a15e82d42e9442065616dbd3a37"
+   "bytes": 6196,
+   "sha256": "1b3393a66feea3257cfe62088391b2efa0b2c705c815c1b83426305189d17b06"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-14.json",
    "exists": true,
-   "bytes": 5769,
-   "sha256": "f1f9e3c296a88536d1e0f26c773b2eb4a72986839a02b7c512bdf0c843a3e6e5"
+   "bytes": 6216,
+   "sha256": "7a37e93b0fd9d66cd8c2b70955ce3f950db7f6a9213887ec92ccc4f35a509478"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-15.json",
    "exists": true,
-   "bytes": 5614,
-   "sha256": "501d26fb5a886b6ce6c0579c8723da525775b6e82f76e597205af0af8188326b"
+   "bytes": 6061,
+   "sha256": "e5a707b641dd9539185bbf28cf031feb7716c3d3efd6ceb9b5d8bbee99e25254"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-16.json",
    "exists": true,
-   "bytes": 5956,
-   "sha256": "b17b07142c80f596bf723bfc4f3c8680ea95723325668e1288916b4d68b477e5"
+   "bytes": 6403,
+   "sha256": "9ed3cf2fc14f10d47e34653a5743939286e836d9c030f2dea75a5a6c9d31499a"
   },
   {
    "group": "盲判包 v2（未判）",
    "path": "artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/batch-17.json",
    "exists": true,
-   "bytes": 5808,
-   "sha256": "28957c5b45d1b5e3d2f68b0ec29aa3d90f611a3d278dd8e3c16728866903880d"
+   "bytes": 6255,
+   "sha256": "e0e3e39c3a4101ee8f079adf3b517b4d5a8dd7f207e9ad685b2fc67ad0e3577c"
   }
  ]
 }

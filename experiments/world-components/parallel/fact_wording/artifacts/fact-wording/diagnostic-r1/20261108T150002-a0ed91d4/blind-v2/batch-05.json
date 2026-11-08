@@ -1,6 +1,13 @@
 {
  "pack": "cf24-r1-v2-batch-05",
- "instruction": "judge each output against its fact and scene only; the requirement clause is withheld on purpose",
+ "instruction": "judge each output against its fact and scene only; the requirement clause and model-invisible numbers are withheld on purpose",
+ "judgingNotes": [
+  "只依据 fact 与 scene 判定，不使用记忆中的旧结论",
+  "输出新增 fact/scene 未给出的动作、状态、人物、物品、地点：失败（新增）",
+  "把 fact 换个说法再说一遍：失败（复述）",
+  "输入没有给出的数值：不作为“数值正确”的依据；输出出现具体数值按新增处理",
+  "无法判断记 U；U 不算通过"
+ ],
  "items": [
   {
    "code": "c0041",
