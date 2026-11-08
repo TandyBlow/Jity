@@ -1,0 +1,27 @@
+{
+ "c1": {
+  "inventedName": false,
+  "factConveyed": true
+ },
+ "c2": {
+  "inventedName": true,
+  "inventedWho": "王五"
+ },
+ "c3": {
+  "inventedName": false,
+  "factConveyed": true
+ },
+ "c4": {
+  "inventedName": true,
+  "inventedWho": "柳溪渡（地点）"
+ },
+ "c5": {
+  "inventedName": false,
+  "factConveyed": false,
+  "why": "negated result"
+ },
+ "c6": {
+  "inventedName": false,
+  "factConveyed": true
+ }
+}

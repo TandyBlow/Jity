@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `71dcbd5c23a02a29dc8936ca1ed65cec1062f777f4b039d9a1965b8ddc6d2f8c` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `0756a358a55ac54dbf93d48da31c9ae1041e11937e65cf0c0c4c60d4e1010635` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -220,6 +220,13 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `fixtures/annotations-v1.json` | D4 人工标注（10 例，未标注为 null） | `3a3ede5e4b8064a732fadba2fb6ce776b87457870d2416dfe97ab800ff94e2e1` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
+| `judge_v4.py` | N5 v4（G2 诊断、G1 三态、G4 无法判定、G6 严格结束） | `b13af17aa1eaa2561fb8e67319f5c180c621557657d70308764e9a531b4693e2` |
+| `test_judge_v4.py` | v4 单测：三态、同名、结束原因、与 v3 的一致性 | `7f4456b6ee81d6dd5960e84cc9a9bf47ae22d5dd064c1a30a8779a8cb977808a` |
+| `rejudge_archives_v4.py` | 用 v4 重判三批归档并对比 | `36ac5dc69c7cdeee0c0948ade75777d892b02595302ea7436b31d76af1ba8f2a` |
+| `n5-v4.md` | v4 变更、测试与重判结果 | `5179bec2a07235681c3d0b8c107022da0b61e658096617ef5460083cf02b899d` |
+| `n4-input-design.md` | N4 输入组织设计稿与验收协议（待审） | `60b4799d029216c1973108942aef13694a57a96ebcab6342b3f6d838bebf9145` |
+| `second-reviewer-plan.md` | 独立复核的材料、流程与交付 | `76ceafd8d8a75dddf36c4b15d6aacea24d7ddef7846d89e7241f8a50b039918a` |
+| `make_reviewer_packet.py` | 生成盲包与校准集 | `ce6948ed1ebe53c81e2355c772e17dd768a3c64fb37a6bbf61d1660100eb7248` |
 
 运行归档不列入上表，因为它们的哈希每次重跑都会变（归档里带 `runAt` 和各阶段毫秒）；输出哈希统一由 `record_manifest.py` 写进 `fixtures/manifest.json` 的 `outputs[]`，与该文件里的上游源码/契约哈希、git HEAD、N5 口径、门覆盖范围放在一起。重跑只应该改变计时与 `runAt`：这一点由 `out/determinism.json` 证明（`identicalAfterStrip: true`）。
 
@@ -302,8 +309,18 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `judge-gaps.md` | 反例结论、对三批的影响、建议修法 | `a170e361c480363b95135de70dcef3101a1c498f352da9030d8ca7f1a96e9f49` |
 | `make_fact_omission.py` | 事实遗漏分析生成器 | `6c397131b63870b4078878fa338f158434ba302aa7e38a22a9a725c3893d0274` |
 | `fact-omission-v3.md` | 22 条必述事实的逐条归类 | `7a9084dc13ec71a558f5de9108e46ef5f4ef5db224cd8c4445d664e0827304c7` |
-| `runner_guards.py` | 推理前 digest、提示词一致性、结束原因守卫 | `b17076291f8101258b970dff2632b2ce74f16d05fb8927d3b2aec70bc39f91b0` |
-| `test_runner_guards.py` | 守卫测试（8 例，含两个 v3 事故的反例） | `01fa85c1ac5f5240a388b850716bebf83f1fa1935bdcd177eff77f3fa6ba4b36` |
+| `runner_guards.py` | 推理前 digest、提示词一致性、结束原因守卫 | `15191f90c69696166f456250ce07987ce0b338bb5c9fba8e8e3119bb5a9eaf8c` |
+| `test_runner_guards.py` | 守卫测试（8 例，含两个 v3 事故的反例） | `a13c01d93e4a694b2d00a3c3ccf06b9c9f6f72b932aef0b2ee030acef62153e1` |
 | `review-response.md` | 对 2026-11-08 评审的逐条回应 | `0670980a78ab43e5d7aed7489b7f5c46e27fea0aa09a071dd6b6dc9041434094` |
 
 评审回应全文：`review-response.md`。
+
+## 16. N5 v4、N4 设计稿、独立复核材料（未跑批次）
+
+按 2026-11-09 裁决：先修 N5 再谈 N4 实验。**没有新的模型调用。**
+
+- **N5 v4**（`judge_v4.py`，`n5-v4`）：G2 的登记名重复降为诊断、目标泄漏仍硬判；G1 改成 `covered / reject / needs-semantic-review` 三态，明确否定、条件假设、反问、引语与转述一律拒绝，旁观者与无主体送 N6 不算通过；G4 不再数名字，同名人物必须有各自的识别描述，否则 `undetermined`；G6 要求显式结束原因，`length` 截断、`load` 不算成功、缺失或未知阻断。v3 与 v1–v3 归档一字未动。
+- **重判三批**：v3 的 0/10 在 v4 下仍是 0/10；每批各有 1 个同名样本从失败变为 `undetermined`；登记名诊断 16/19/18 条，目标泄漏 0；没有样本因结束原因被阻断。见 `out/archive-rejudge-v4.json`。
+- **N4 设计稿**（`n4-input-design.md`）：只改 N4.0 的事实排列，事实按句组就近渲染、带起点/终点槽位与组内写作要求；冻结模型、解码、N1/N2/N3、写作约束、预算与判定器；验收以 22 条事实的语义覆盖、9 条移动完整率、错误归属、新增事件为主，正则通过率为辅；现有 10 样本只作开发集。**未登记、未实现。**
+- **独立复核**（`second-reviewer-plan.md`）：盲包 `fixtures/reviewer-packet-v3.json`（不含已有 N6/D4）、校准集 6 条（含 3 条编造专名、1 条否定句）、答案分离存放；复核者提交后再比较分歧并保留原始判断。
+- **守卫收紧**：`runner_guards.check_prompt()` 不再接受前缀匹配，重试必须逐字等于「原提示词 + 带标签反馈」；新增 `check_http_request()` 校验实际请求体、`check_retry_request()` 校验重试请求与归档一致。测试 10/10。

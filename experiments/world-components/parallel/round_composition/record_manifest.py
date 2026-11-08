@@ -162,6 +162,25 @@ SOURCES = {
         "test_runner_guards.py",
         "experiments/world-components/parallel/round_composition/"
         "review-response.md",
+        # N5 v4, N4 design, reviewer packet
+        "experiments/world-components/parallel/round_composition/judge_v4.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_judge_v4.py",
+        "experiments/world-components/parallel/round_composition/"
+        "rejudge_archives_v4.py",
+        "experiments/world-components/parallel/round_composition/n5-v4.md",
+        "experiments/world-components/parallel/round_composition/"
+        "n4-input-design.md",
+        "experiments/world-components/parallel/round_composition/"
+        "second-reviewer-plan.md",
+        "experiments/world-components/parallel/round_composition/"
+        "make_reviewer_packet.py",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/reviewer-packet-v3.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/reviewer-calibration.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/reviewer-calibration-key.json",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

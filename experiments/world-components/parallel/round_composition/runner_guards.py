@@ -9,7 +9,9 @@ run):
    run a different model than the one it names.
 2. The first v3 attempt archived the intervened prompt but sent the original
    one. Nothing in the code compared "what is recorded" with "what is sent", so
-   the mismatch survived until the token counts gave it away.
+   the mismatch survived until the token counts gave it away. Every attempt is
+   now compared in full, and the retry prompt is rebuilt from base + labelled
+   feedback instead of being accepted on a prefix match.
 
 The frozen `real_batch_v3.py` is left untouched: it is the runner the v3 archive
 is pinned to. The next runner must import this module and call
@@ -64,34 +66,58 @@ def check_model_digest(registration, fetch_tags=http_tags):
 
 
 def check_prompt(recorded, prompt, attempt=1):
-    """What is sent must be what is archived.
+    """The prompt sent must equal the prompt archived for THAT attempt.
 
-    The first attempt must equal the recorded input. A retry may append feedback,
-    so it must START with the recorded input and say so explicitly.
+    v1 of this guard accepted any retry that merely started with the recorded
+    input. That is prefix matching, not verification: an unrelated suffix, a
+    stale feedback string, or a duplicated header would all pass. The owner
+    required exact verification of the actual request, the feedback and the
+    archived prompt, so every attempt is now compared in full.
     """
     if not isinstance(recorded, str) or not recorded:
-        raise GuardError("prompt-not-recorded", "renderText is empty")
+        raise GuardError("prompt-not-recorded", f"attempt {attempt} has no text")
     if not isinstance(prompt, str) or not prompt:
         raise GuardError("prompt-empty", f"attempt {attempt}")
-    if prompt == recorded:
-        return {"attempt": attempt, "mode": "exact",
-                "sha256": _sha256_text(prompt)}
-    if attempt == 1:
+    if prompt != recorded:
         raise GuardError("prompt-differs-from-record",
-                         f"attempt 1 differs (recorded "
+                         f"attempt {attempt}: recorded "
                          f"{_sha256_text(recorded)[:12]}, sent "
-                         f"{_sha256_text(prompt)[:12]})")
-    if not prompt.startswith(recorded):
-        raise GuardError("prompt-retry-not-prefixed",
-                         f"attempt {attempt} does not start with the recorded "
-                         f"input")
-    if "上一轮" not in prompt[len(recorded):]:
-        raise GuardError("prompt-retry-unlabelled",
-                         f"attempt {attempt} appends text without the retry "
-                         f"label")
-    return {"attempt": attempt, "mode": "appended-feedback",
-            "sha256": _sha256_text(prompt),
-            "appendedChars": len(prompt) - len(recorded)}
+                         f"{_sha256_text(prompt)[:12]}")
+    return {"attempt": attempt, "mode": "exact",
+            "sha256": _sha256_text(prompt)}
+
+
+def compose_retry(base_prompt, feedback):
+    """The only legal retry prompt: the archived input plus labelled feedback."""
+    if not isinstance(feedback, str) or not feedback.strip():
+        raise GuardError("feedback-empty", "a retry needs non-empty feedback")
+    if "上一轮" in base_prompt:
+        raise GuardError("feedback-ambiguous",
+                         "the base prompt already contains the retry label")
+    return base_prompt + chr(10) + "上一轮的问题：" + feedback.rstrip() + chr(10)
+
+
+def check_http_request(recorded_prompt, body, attempt=1):
+    """Verify the actual request body, not a reconstructed string."""
+    if not isinstance(body, dict):
+        raise GuardError("request-shape-invalid", type(body).__name__)
+    if "prompt" not in body:
+        raise GuardError("request-prompt-missing", attempt)
+    check_prompt(recorded_prompt, body["prompt"], attempt)
+    if body.get("stream") not in (False, 0):
+        raise GuardError("request-streamed", "a streamed call cannot be "
+                                             "archived exactly")
+    return {"attempt": attempt, "sha256": _sha256_text(body["prompt"]),
+            "keys": sorted(body)}
+
+
+def check_retry_request(recorded_retry_prompt, base_prompt, feedback, body,
+                        attempt=2):
+    """Retry: the body must equal the archived retry prompt, and that prompt
+    must be exactly base + labelled feedback."""
+    expected = compose_retry(base_prompt, feedback)
+    check_prompt(recorded_retry_prompt, expected, attempt)
+    return check_http_request(recorded_retry_prompt, body, attempt)
 
 
 def finish_reason(data):

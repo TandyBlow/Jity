@@ -1,9 +1,12 @@
-"""Tests for runner_guards: the two failures the owner found in v3.
+"""Tests for runner_guards: the failures the owner found in v3 and in v1 of the
+guard itself.
 
-Each test is written against the failure, not against the implementation:
+Each test is written against the failure, not the implementation:
 - a re-pointed model tag must stop the batch before any call;
-- a prompt that differs from the archived text must stop the batch (this is the
-  exact v3 bug: archived intervention, sent original);
+- the prompt archived for an attempt must equal the prompt in the actual HTTP
+  request body (this is the exact v3 bug: archived intervention, sent original);
+- a retry must be exactly base + labelled feedback, never a prefix match (v1 of
+  the guard accepted any suffix);
 - a missing done_reason must not be read as a normal stop.
 
 Run: python -X utf8 test_runner_guards.py
@@ -71,8 +74,6 @@ def missing_tag_stops():
 def first_prompt_must_equal_record():
     rec = "要求：新行\n正文："
     assert g.check_prompt(rec, rec)["mode"] == "exact"
-    # the v3 bug: the recorded text is the intervention, the sent text the old
-    # requirement line
     try:
         g.check_prompt(rec, "要求：旧行\n正文：")
     except g.GuardError as exc:
@@ -92,23 +93,67 @@ def unrecorded_prompt_stops():
 
 
 @case
-def retry_must_append_labelled_feedback():
-    rec = "要求：新行\n正文："
-    ok = g.check_prompt(rec, rec + "\n上一轮的问题：移动没写\n", attempt=2)
-    assert ok["mode"] == "appended-feedback"
-    for bad, code in ((rec.replace("新行", "旧行"), "prompt-retry-not-prefixed"),
-                      (rec + "\n移动没写", "prompt-retry-unlabelled")):
+def retry_must_equal_its_archived_text():
+    base = "要求：新行\n正文："
+    retry = g.compose_retry(base, "移动没写")
+    assert g.check_prompt(retry, retry, 2)["mode"] == "exact"
+    # v1 of the guard accepted this: right prefix, junk suffix
+    for bad in (retry + "多余的尾巴", base, base + "\n上一轮的问题：别的\n"):
         try:
-            g.check_prompt(rec, bad, attempt=2)
+            g.check_prompt(retry, bad, 2)
         except g.GuardError as exc:
-            assert exc.code == code, (exc.code, code)
+            assert exc.code == "prompt-differs-from-record", (bad, exc.code)
         else:
-            raise AssertionError(f"retry prompt accepted: {code}")
+            raise AssertionError(f"non-archived retry prompt accepted: {bad!r}")
+
+
+@case
+def retry_composition_is_exact():
+    base = "要求：新行\n正文："
+    feedback = "移动没写起点"
+    retry = g.compose_retry(base, feedback)
+    assert retry == base + "\n上一轮的问题：" + feedback + "\n"
+    body = {"prompt": retry, "stream": False, "options": {"num_predict": 384}}
+    assert g.check_retry_request(retry, base, feedback, body)["sha256"] == \
+        g.check_prompt(retry, retry)["sha256"]
+    for wrong in ({"prompt": base + "\n上一轮的问题：" + feedback + "\n错"} ,
+                  {"prompt": retry, "stream": True}):
+        try:
+            g.check_retry_request(retry, base, feedback, wrong)
+        except g.GuardError as exc:
+            assert exc.code in ("prompt-differs-from-record", "request-streamed")
+        else:
+            raise AssertionError(f"bad retry request accepted: {wrong}")
+    for bad_feedback in ("", "   ", feedback + " plus"):
+        try:
+            g.check_retry_request(retry, base, bad_feedback,
+                                  {"prompt": retry, "stream": False})
+        except g.GuardError as exc:
+            assert exc.code in ("feedback-empty", "prompt-differs-from-record")
+        else:
+            raise AssertionError(f"feedback mismatch accepted: {bad_feedback!r}")
+
+
+@case
+def http_body_is_verified():
+    rec = "要求：新行\n正文："
+    ok = {"prompt": rec, "stream": False}
+    assert g.check_http_request(rec, ok)["sha256"] ==         g.check_prompt(rec, rec)["sha256"]
+    for bad in ({"stream": False}, {"prompt": rec + "x", "stream": False},
+                {"prompt": rec, "stream": True}, None):
+        try:
+            g.check_http_request(rec, bad)
+        except g.GuardError as exc:
+            assert exc.code in ("request-shape-invalid", "request-prompt-missing",
+                                "prompt-differs-from-record", "request-streamed")
+        else:
+            raise AssertionError(f"bad request body accepted: {bad}")
 
 
 @case
 def missing_finish_reason_is_an_error():
     assert g.finish_reason({"done_reason": "stop"}) == "stop"
+    assert g.finish_reason({"done_reason": "load"}) == "load"
     for payload in ({}, {"done_reason": None}, {"done_reason": ""}):
         try:
             g.finish_reason(payload)
