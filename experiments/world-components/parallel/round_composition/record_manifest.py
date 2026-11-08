@@ -56,6 +56,10 @@ SOURCES = {
         "experiments/world-components/parallel/round_composition/.gitattributes",
         "experiments/world-components/parallel/round_composition/README.md",
         "experiments/world-components/parallel/round_composition/conclusion.md",
+        "experiments/world-components/parallel/round_composition/"
+        "contract-decisions.md",
+        "experiments/world-components/parallel/round_composition/"
+        "contract_probes.py",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",
@@ -77,6 +81,57 @@ def sha_file(path: pathlib.Path) -> str:
 def git(*args) -> str:
     return subprocess.run(["git", *args], cwd=REPO, capture_output=True,
                           text=True, check=False).stdout.strip()
+
+
+def gate_coverage(archive_path) -> dict:
+    """Measure which N5 gates the archived run actually evaluated.
+
+    Derived from the archive, never hand-maintained: for each gate name,
+    the cases and attempts that carry it and the values seen. G4/G5 are
+    triggered by a rowId substring in judge_row, so a gate can appear on a
+    case that is not designed for it — the record says which cases, and
+    flags the trigger mechanism, instead of asserting a boolean.
+    """
+    if not archive_path.exists():
+        return {"status": "archive-missing",
+                "path": str(archive_path)}
+    doc = json.loads(archive_path.read_text(encoding="utf-8"))
+    seen, values = {}, {}
+    for case in doc.get("cases") or []:
+        stages = case.get("stages") or {}
+        for att in (stages.get("n4n5") or {}).get("attempts") or []:
+            for gate, ok in ((att.get("n5") or {}).get("gates") or {}).items():
+                seen.setdefault(gate, []).append(
+                    {"caseId": case.get("caseId"), "attempt": att.get("attempt")})
+                values.setdefault(gate, set()).add(ok)
+    return {
+        "status": "measured",
+        "archive": str(archive_path.name),
+        "archiveSha256": sha_file(archive_path),
+        "trigger": "eval_n4_v2.judge_row gates: G1/G2/G3/G6 always run; "
+                   "G4 runs only when rowId[case] contains 'conflict' and "
+                   "G5 only when it contains 'same-name'",
+        "executed": {g: {"evaluations": len(v), "cases": sorted(
+            {x["caseId"] for x in v}), "values": sorted(values[g])}
+            for g, v in sorted(seen.items())},
+        "notExecuted": sorted({"G1_alignment", "G2_no_fabrication",
+                               "G3_time", "G4_conflict_names",
+                               "G5_same_name_bare", "G6_no_truncation"}
+                              - set(seen)),
+        "notes": {
+            "G4": "evaluated only on the case whose caseId contains "
+                  "'conflict' (contract-time-conflict). That case has ONE "
+                  "actor (two facts, both 管线甲), so G4 took its "
+                  "'same-name multiple mention' branch text.count(name)>=2; "
+                  "this is an ACCIDENTAL trigger, not a validated conflict "
+                  "case. No designed two-actor conflict case exists in this "
+                  "composition.",
+            "G5": "not executed: no caseId contains 'same-name'.",
+            "G3": "evaluated on one case carrying a time fact; it fails on "
+                  "the N4.0-compliant vague time and passes only on an exact "
+                  "value (see out/contract-probes.json).",
+        },
+    }
 
 
 def main() -> int:
@@ -135,12 +190,10 @@ def main() -> int:
                             "n5CrossCheck; never gates, never auto-passes.",
             "semanticReview": "not run in this experiment",
         },
-        "gateScope": {"G4_executed": False, "G5_executed": False,
-                      "G4_G5_reason": "only fire on rowId containing "
-                                      "'conflict'/'same-name'; no such case is "
-                                      "part of this composition",
-                      "G3_executed": True,
-                      "G3_reason": "contract-time-conflict carries a time fact"},
+        "n5GateCoverage": gate_coverage(REPO / "experiments" /
+                                        "world-components" / "parallel" /
+                                        "round_composition" / "out" /
+                                        "composition-run.json"),
         "tokenGate": {"applied": False,
                       "reason": "mock ports take text, so no N4 token limit "
                                 "applies here; N4.0 packs measure 287-390 "

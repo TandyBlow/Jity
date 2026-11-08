@@ -1,17 +1,14 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:01:06.799951+00:00",
+ "recordedAt": "2026-11-08T06:08:10.976815+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "head": "ad28b0bb5f671e0ab82bb4ba64eab3025193fd41",
-  "headSubject": "C7 offline round composition: N1-N5 chain with mock ports, 19 cases, 19/19 expected",
+  "head": "b576c856c9c6bacae681beb2ca2a58f3ed35caca",
+  "headSubject": "C7 round composition: correct the N5 gate record and register the contract conflicts",
   "porcelain": [
-   "A  experiments/world-components/parallel/round_composition/.gitattributes",
-   " M experiments/world-components/parallel/round_composition/README.md",
-   " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
-   " M experiments/world-components/parallel/round_composition/record_manifest.py",
+   "M experiments/world-components/parallel/round_composition/conclusion.md",
    "?? TASK.md"
   ]
  },
@@ -143,13 +140,23 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "18efdbb61a38f243f3c7365c4c0978ac102a463604267f663e3a9db6ad0ad5bb",
-    "bytes": 16895
+    "sha256": "a16245b746bd51575c18ab07e39e10e06f7ff13650e042f9b8f2742c2997ab05",
+    "bytes": 19960
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
-    "sha256": "6b63cb5506c0dc4c45f45fe62a65f5e85d61b791b72c09cfdf674eacce0d8505",
-    "bytes": 1554
+    "sha256": "04d17db8c3e2701fcecc16d626d8ce9d288101448130d26fd978056a710168e3",
+    "bytes": 2088
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
+    "sha256": "5cf89248004853036e3a8e8b5b1e0b245ab96588abe429861e72376f842bf57e",
+    "bytes": 9932
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
+    "sha256": "7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656",
+    "bytes": 6031
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -180,6 +187,11 @@
    "bytes": 172858
   },
   {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
+   "sha256": "dbc94dd455deb1205ec6ee6f6d9f5d7d4fdadff06e930e3165a2365d833362d1",
+   "bytes": 3163
+  },
+  {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
    "sha256": "a991cbb4de3a0c11d3c0183faad901cc02cd39fe8d47ce48878413c363753004",
    "bytes": 172865
@@ -201,12 +213,102 @@
   "recordedOnly": "corpus_check.check_narration via narration_pipeline.verify_text (v7 recognizer): must-coverage and unrecognized content are review-class, no truncation rule. Archived as n5CrossCheck; never gates, never auto-passes.",
   "semanticReview": "not run in this experiment"
  },
- "gateScope": {
-  "G4_executed": false,
-  "G5_executed": false,
-  "G4_G5_reason": "only fire on rowId containing 'conflict'/'same-name'; no such case is part of this composition",
-  "G3_executed": true,
-  "G3_reason": "contract-time-conflict carries a time fact"
+ "n5GateCoverage": {
+  "status": "measured",
+  "archive": "composition-run.json",
+  "archiveSha256": "b594c0085d03cc783938d29570a35a02aacb748e155fecf06c67c79b8444dc8d",
+  "trigger": "eval_n4_v2.judge_row gates: G1/G2/G3/G6 always run; G4 runs only when rowId[case] contains 'conflict' and G5 only when it contains 'same-name'",
+  "executed": {
+   "G1_alignment": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G2_no_fabrication": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G3_time": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G4_conflict_names": {
+    "evaluations": 2,
+    "cases": [
+     "contract-time-conflict"
+    ],
+    "values": [
+     true
+    ]
+   },
+   "G6_no_truncation": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   }
+  },
+  "notExecuted": [
+   "G5_same_name_bare"
+  ],
+  "notes": {
+   "G4": "evaluated only on the case whose caseId contains 'conflict' (contract-time-conflict). That case has ONE actor (two facts, both 管线甲), so G4 took its 'same-name multiple mention' branch text.count(name)>=2; this is an ACCIDENTAL trigger, not a validated conflict case. No designed two-actor conflict case exists in this composition.",
+   "G5": "not executed: no caseId contains 'same-name'.",
+   "G3": "evaluated on one case carrying a time fact; it fails on the N4.0-compliant vague time and passes only on an exact value (see out/contract-probes.json)."
+  }
  },
  "tokenGate": {
   "applied": false,

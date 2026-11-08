@@ -15,7 +15,8 @@ RC=experiments/world-components/parallel/round_composition
 python -X utf8 $RC/make_fixtures.py     # 由登记的已提交状态生成 19 个输入点
 python -X utf8 $RC/compose.py           # 跑组合，写 out/composition-run.json
 python -X utf8 $RC/check_determinism.py # 跑两遍比对（去掉计时字段）
-python -X utf8 $RC/record_manifest.py   # 记录输入/输出哈希与 git 身份
+python -X utf8 $RC/contract_probes.py   # 两个契约冲突的定点探针（不重跑组合）
+python -X utf8 $RC/record_manifest.py   # 记录输入/输出哈希、N5 门覆盖与 git 身份
 ```
 
 `compose.py` 退出码 0 表示 19 个场景的实际状态全部等于预期状态。环境：Python 3.11.15，Windows 10，只用 CPU，无模型加载。
@@ -33,7 +34,7 @@ python -X utf8 $RC/record_manifest.py   # 记录输入/输出哈希与 git 身�
 | 场景上下文 | 程序 `build_scene_context` | 状态、视角、已选事实、显式环境 overlay | 场景（地点链、人物、可见物）、世界视图 | 主体/地点可解析；缺环境字段记诊断不编造 | `stages.scene` |
 | N4.0 输入装配 | 程序 `pack_narrative_input` | 已选事实、计划、场景、世界视图 | 结构化记录文本（场景/人物/可见/事实/分组/视角/要求） | fail-closed：计划与选集不符、未知 kind、缺 `resultText`、缺字段 → `stopped-at-input` | `stages.n4Input.input` |
 | N4 成句 | **模拟端口** | N4.0 文本 + 上一次的失败原因 | 正文候选、结束原因；端口故障抛错 | 空文本单列 | `stages.n4n5.attempts[]` |
-| N5 核对 | 程序 `eval_n4_v2.judge_row` | 计划、已选事实、正文、结束原因 | 硬门结果与问题列表 | G1 必述覆盖、G2 残留人名/目标、G3 时间精确值、G4 冲突署名、G5 同名裸名、G6 未截断 | `stages.n4n5.attempts[].n5` |
+| N5 核对 | 程序 `eval_n4_v2.judge_row` | 计划、已选事实、正文、结束原因 | 硬门结果与问题列表 | 每次都跑：G1 必述覆盖、G2 残留人名/目标、G3 时间精确值、G6 未截断。G4 只在 `rowId` 含 `conflict` 时跑、G5 只在含 `same-name` 时跑（触发靠案例命名，见 D5） | `stages.n4n5.attempts[].n5` |
 | 回退 | 程序模板 | 已选事实（仅限模板支持的 kind） | 模板正文 + 它的 N5 结果 | 回退正文单独记录，**不改变失败状态** | `stages.fallback` |
 | 交叉核对 | 程序 `verify_text → corpus_check` | 最后一次正文 | v7 识别器的 fails/reviews | 只记录，不参与判定 | `stages.n5CrossCheck` |
 
@@ -114,30 +115,47 @@ G1｜f0 f1
 6. N5 硬门确实在判：`reject-n5`、`fail-n5-extra-actor`、`contract-time-conflict` 三例的脚本正文都被拒，说明 `ok` 不是恒真。
 
 **已失败（本实验暴露的问题）**
-1. **两套 N5 程序核不一致。** 本组合用 v2 对齐器（`eval_n4_v2.judge_row`）。同一批正文再用 v7 识别器（`corpus_check.check_narration`，`verify_text` 调用）看：`reject-n5` 第 2 次截断文本 `fails=[] reviews=0`（v7 没有截断规则），`fail-n5-extra-actor` 的残留人名只算 review，不算 fail。也就是说，「N5 拒绝」目前取决于用哪套核。
-2. **时间契约冲突。** N4.0 契约明确要求时间只模糊表达、不写具体时长；v2 N5 的 G3 要求正文出现计划里的精确数值。照 N4.0 写的合规文本（`…过了一会儿。`）必然挂 G3（`uncovered:f2:time`）。本实验没有放宽任何门，只把这个冲突固定成一个场景。
-3. **N5 不硬拒新增具名人物。** v2 G2 只扫 `facts` 里已登记的人名和任务目标，新出现的名字（`管线丙`）不在扫描范围；v7 核也只给 review。本场景靠夹具自带的 `annotations.addsUnregisteredEntity` 才标成 `n5-false-pass`，不是判定器自己发现的。
+1. **任务标题契约冲突。** N4.0 的要求行写着「不写任务标题」，但 v2 N5 对任务类事实只有一种帧：`完成任务「目标原文」`。照 N4.0 写（把结果写成动作）必然挂 G1；照 N5 写就违反 N4.0。定点探针：`out/contract-probes.json` 的 `task-title-quoted`（pass）与 `task-title-paraphrased`（`uncovered:f1:task_achieved`）。本组合 4 个 `ok` 场景里的任务类事实全部选了后者（写标题）。登记为 D1。
+2. **两套 N5 程序核不一致。** 本组合用 v2 对齐器（`eval_n4_v2.judge_row`）。同一批正文再用 v7 识别器（`corpus_check.check_narration`，`verify_text` 调用）看：`reject-n5` 第 2 次截断文本 `fails=[] reviews=0`（v7 没有截断规则），`fail-n5-extra-actor` 的残留人名只算 review，不算 fail。也就是说，「N5 拒绝」目前取决于用哪套核。
+3. **时间契约冲突。** N4.0 契约明确要求时间只模糊表达、不写具体时长；v2 N5 的 G3 要求正文出现计划里的精确数值。照 N4.0 写的合规文本（`…过了一会儿。`）必然挂 G3（`uncovered:f2:time`）。本实验没有放宽任何门，只把这个冲突固定成一个场景。
+4. **N5 不硬拒新增具名人物。** v2 G2 只扫 `facts` 里已登记的人名和任务目标，新出现的名字（`管线丙`）不在扫描范围；v7 核也只给 review。本场景靠夹具自带的 `annotations.addsUnregisteredEntity` 才标成 `n5-false-pass`，不是判定器自己发现的。
 
 **无法判断**
 1. 模型能力：选择、组织、成句三步都是脚本。这里没有任何一条能说明真模型能不能做这几件事。
 2. N5 语义复核：本次完全没跑（`semanticReview: not-run`）。硬门通过不等于语义正确。
-3. G4（冲突双方必须署名）与 G5（同名不得用代词）没有被执行：它们只在 `rowId` 含 `conflict`/`same-name` 时触发，本次没有这两类场景（`fixtures/manifest.json` 的 `gateScope` 已记录）。
+3. **G4 只是意外触发，G5 没有执行。** 两个门都由 `rowId` 子串触发：`contract-time-conflict` 的 caseId 含 `conflict`，于是 G4 在它的两次尝试上各跑了一次，结果都是 `true`；但该案例只有一个人物（两条事实都是管线甲），G4 走的是「同一名字多次出现」分支 `text.count(名字) >= 2`，**不是**真正的双人冲突，所以这次 `true` 不构成对 G4 的验证。19 个场景里没有 caseId 含 `same-name`，`G5_same_name_bare` 一次都没执行。逐门的执行次数、涉及案例与取值全部由归档实测写进 `fixtures/manifest.json` 的 `n5GateCoverage`（不是手填）。
 4. 输入长度/真实 token：本工作树没有 checkpoint，无法重算 token；模拟端口吃文本，所以也没有 N4 的 token 门。N4.0 结构输入的历史量级（287–390 tokens）来自归档 `n4-input-packing-r1.json`，不是本次实测。
 
-## 6. 其他观察（不作缺陷断言）
+## 6. 契约裁决项
+
+上面暴露的四处冲突（任务标题、时间精确度、两套 N5 核、新增具名人物）加一处门控问题（G4/G5 靠 caseId 触发），逐条登记在 [contract-decisions.md](contract-decisions.md)，每条写清：谁要求什么、证据指向哪个文件的哪个字段、现在会怎样、可选方向与代价、需要谁定。
+
+| 编号 | 冲突 | 现在的后果 | 证据 |
+| --- | --- | --- | --- |
+| D1 | N4.0「不写任务标题」 vs N5 要求 `完成任务「目标」` | 任务类事实写标题才过门，不写就挂 G1 | `out/contract-probes.json` `task-title-*`；`composition-run.json` `normal-move-task` |
+| D2 | N4.0 强制模糊时间 vs N5 要求精确数值 | 含时间推进的点要么不过门，要么违反 N4.0 | `out/contract-probes.json` `time-*`；`contract-time-conflict` |
+| D3 | 两套 N5 程序核口径不同 | 「N5 拒绝」取决于用哪套核 | `n5CrossCheck`（`reject-n5`、`fail-n5-extra-actor`） |
+| D4 | 新增具名人物没有硬门 | 编造人物会被放行 | `n5-false-pass-unregistered-actor` |
+| D5 | G4/G5 由 `rowId` 子串触发 | G4 意外触发一次（`true`），G5 从未跑 | `fixtures/manifest.json` `n5GateCoverage` |
+
+本实验不裁决、不改门。
+
+## 7. 其他观察（不作缺陷断言）
 
 - N4.0 把环境 overlay 的各字段值直接拼进「地点外貌」且不带字段名（`地点外貌=旧；细雨；傍晚；高；昏暗；海雾贴着塔壁`）。值写错时无法区分是地点原文还是 overlay；本实验的第一版夹具就因为给钟楼写了「巷子里全是湿气」而暴露这点，已改成与场景一致的值。生产该由场景/时间系统写入地点外貌（与 N4.0 文档的已知缺口一致）。
 - `pack_narrative_input` 对 `time` 只写「时间经过」、组后统一写「过去了一会儿」，所以 N4 端看不到具体时长——这正是上面时间冲突的来源，也是契约有意的设计。
 - N2 的模拟端口只回编号集合，所以本实验只能校验「不漏必述、不选不可见、不越界」，**没有**校验「该不该写」（显著性与省略）——那部分本来就是模型职责。
 
-## 7. 交付物与哈希
+## 8. 交付物与哈希
 
 | 文件 | 作用 | SHA-256 |
 | --- | --- | --- |
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | 两次运行比对 | `88406e52fcd9246fd59e1b39e1189ad94dd37f1732538ca8135113c3b5d82952` |
-| `record_manifest.py` | 记录输入/输出哈希与 git 身份 | `cee89d3666b3714a31f064f4c6c7069c94d91656d001652c55c5c9cf8187e449` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `d632f87ec63334c04f00b4f40c13ed15226705dc2028266dcd39246d753f9b92` |
+| `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656` |
+| `contract-decisions.md` | D1–D5 契约裁决项登记 | `5cf89248004853036e3a8e8b5b1e0b245ab96588abe429861e72376f842bf57e` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 
@@ -151,17 +169,19 @@ G1｜f0 f1
 | --- | --- |
 | `out/composition-run.json` | 原始运行归档：每场景每步的请求、响应、校验、耗时；`cases[].facts[]` 是事实溯源 |
 | `out/determinism.json` / `-a.json` / `-b.json` | 确定性比对的结论与参与比对的两份完整输出 |
+| `out/contract-probes.json` | 任务标题与时间表达的定点探针结果（每句的硬门取值与问题） |
 | `out/console.log` | 本次运行的终端输出 |
-| `fixtures/manifest.json` | 输入清单与哈希：上游实现、契约文档、旧归档、本实验夹具；含 `missing`（本次为 0）与 `n5Rule` |
+| `fixtures/manifest.json` | 输入清单与哈希：上游实现、契约文档、旧归档、本实验夹具；含 `missing`（本次为 0）、`n5Rule`、`n5GateCoverage`（逐门执行次数/案例/取值，从归档实测）、`tokenGate` |
 
-## 8. 边界与未做
+## 9. 边界与未做
 
 - 没改生产路由、`backend/app`、`frontend/src/app/world/page.tsx`、共享契约、冻结语料或既有归档；没有训练、没有 GPU。
 - 没有接真模型、没有浏览器验收、没有语义复核、没有 N4 token 门。
 - 没有扩大 N5 判定：v2 硬门原样使用，`n5-false-pass` 是通过夹具标注记录的分歧，不是把门放宽。
 
-## 9. 下一步建议
+## 10. 下一步建议
 
-1. 把选择/组织/成句三个端口换成真模型（先离线，再浏览器），复用本目录的夹具与归档格式；此时才需要补 N4 token 门和真正的端到端耗时。
-2. 在真模型数据上再跑一遍这 19 个场景，重点看：必述覆盖、重试率、回退率、新具名人物出现率。
-3. 先裁决第 5 节的三项契约问题（两套 N5 核选一或分工、时间表达的精确度要求、新具名人物的硬门归属），再谈页面放行门；在此之前任何「N5 通过」都不应被当成产品质量结论。
+1. 先裁决 D1、D2（任务标题、时间精确度）：这两条决定任务类与时间类事实能不能被合规叙事，不裁决就直接接真模型，第一批数据会全撞在这里。
+2. 再裁决 D3（两套 N5 核）与 D5（G4/G5 触发），让「N5 通过」这个词有唯一含义；之后才谈页面放行门。
+3. 把选择/组织/成句三个端口换成真模型（先离线，再浏览器），复用本目录的夹具与归档格式；此时才需要补 N4 token 门和真正的端到端耗时。
+4. 在真模型数据上再跑一遍这 19 个场景，重点看：必述覆盖、重试率、回退率、新具名人物出现率（D4 的入不入硬门取决于这个频率）。

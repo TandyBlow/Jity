@@ -1,0 +1,86 @@
+{
+ "version": "round-composition-contract-probes-v0.1",
+ "purpose": "record how the frozen v2 N5 gate treats the two contract conflicts (task-title quoting, exact time value); no composition re-run, no model call",
+ "runAt": "2026-11-08T06:07:08.582339+00:00",
+ "sourceRun": {
+  "path": "out\\composition-run.json",
+  "sha256": "b594c0085d03cc783938d29570a35a02aacb748e155fecf06c67c79b8444dc8d"
+ },
+ "rule": "eval_n4_v2.judge_row, same call as the composition archive",
+ "probes": [
+  {
+   "probeId": "task-title-quoted",
+   "caseId": "normal-move-task",
+   "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+   "why": "archived accepted text: the task goal is quoted verbatim",
+   "rowId": "comp:normal-move-task",
+   "gates": {
+    "G1_alignment": true,
+    "G2_no_fabrication": true,
+    "G3_time": true,
+    "G6_no_truncation": true
+   },
+   "problems": [],
+   "residue": "。。",
+   "pass": true
+  },
+  {
+   "probeId": "task-title-paraphrased",
+   "caseId": "normal-move-task",
+   "text": "管线甲从管线镇来到了钟楼。他把铜铃挂回了钟楼。",
+   "why": "same facts, no task title: the goal text is paraphrased instead",
+   "rowId": "comp:normal-move-task",
+   "gates": {
+    "G1_alignment": false,
+    "G2_no_fabrication": true,
+    "G3_time": true,
+    "G6_no_truncation": true
+   },
+   "problems": [
+    "uncovered:f1:task_achieved"
+   ],
+   "residue": "。他把铜铃挂回了钟楼。",
+   "pass": false
+  },
+  {
+   "probeId": "time-vague",
+   "caseId": "contract-time-conflict",
+   "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
+   "why": "archived text: N4.0-compliant vague time, no duration",
+   "rowId": "comp:contract-time-conflict",
+   "gates": {
+    "G1_alignment": false,
+    "G2_no_fabrication": true,
+    "G3_time": false,
+    "G4_conflict_names": true,
+    "G6_no_truncation": true
+   },
+   "problems": [
+    "uncovered:f2:time"
+   ],
+   "residue": "。。过了一会儿。",
+   "pass": false
+  },
+  {
+   "probeId": "time-exact",
+   "caseId": "contract-time-conflict",
+   "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。前后大约八分钟过去了。",
+   "why": "exact planned duration: satisfies G3 but contradicts N4.0 and its '不写具体时长' rule",
+   "rowId": "comp:contract-time-conflict",
+   "gates": {
+    "G1_alignment": true,
+    "G2_no_fabrication": true,
+    "G3_time": true,
+    "G4_conflict_names": true,
+    "G6_no_truncation": true
+   },
+   "problems": [],
+   "residue": "。。。",
+   "pass": true
+  }
+ ],
+ "reading": {
+  "taskTitle": "P1 passes because the v2 frame requires the goal quoted as 「goal」; P2 paraphrases the same fact and fails G1 (uncovered task_achieved). N4.0's requirement line says 不写任务标题, so a text that obeys N4.0 cannot pass the v2 gate for this fact.",
+  "time": "P3 (vague) fails G3 with uncovered:f2:time; P4 with the planned exact value passes. N4.0 renders time as 时间经过 / 过去了一会儿 and forbids 具体时长, so a compliant text cannot pass G3."
+ }
+}
