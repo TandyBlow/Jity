@@ -1,10 +1,13 @@
 /**
  * 主世界页的回合展示验收：在隔离测试世界里用正常操作产生移动、理智变化、
- * 外貌变化与空增量，然后核对每个回合的事实句、刷新后的结果、以及历史顺序。
+ * 任务达成、性格描述与空增量，然后核对每个回合的事实句、刷新后的结果、以及历史顺序。
+ *
+ * 规则词汇表目前不产生 appearanceChanges，因此本脚本不覆盖外貌变化。
  *
  * 前置：后端 create_persistent_world_app 运行在 8021（隔离 SQLite），
  *       前端 next start 运行在 3111。
  * 用法：node scripts/world-facts-acceptance.mjs
+ *       WORLD_FACTS_OUT=<相对仓库根的目录> 可改证据目录。
  */
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -12,7 +15,7 @@ import { chromium } from 'playwright';
 
 const PAGE = process.env.WORLD_PAGE ?? 'http://127.0.0.1:3111/world';
 const API = process.env.WORLD_API ?? 'http://127.0.0.1:8021';
-const OUT = path.resolve('..', 'artifacts/next-runs', 'integration-r1', 'browser');
+const OUT = path.resolve('..', process.env.WORLD_FACTS_OUT ?? 'artifacts/next-runs/integration-r1/browser');
 mkdirSync(OUT, { recursive: true });
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

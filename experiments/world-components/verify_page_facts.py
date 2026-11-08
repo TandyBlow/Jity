@@ -6,12 +6,14 @@ destination for a move, the two sanity numbers, the recorded description text, o
 carries no entity change at all - and then checks the page text against that.
 """
 import json
+import os
 import pathlib
 import sqlite3
 import sys
 
-RECORD = 'artifacts/next-runs/integration-r1/browser/record.json'
-DATABASE = 'artifacts/next-runs/integration-r1/world.db'
+RECORD = os.environ.get('WORLD_FACTS_RECORD', 'artifacts/next-runs/integration-r1/browser/record.json')
+DATABASE = os.environ.get('WORLD_FACTS_DB', 'artifacts/next-runs/integration-r1/world.db')
+SUMMARY = os.environ.get('WORLD_FACTS_VERIFY', 'artifacts/next-runs/integration-r1/verify.json')
 
 
 def names_of(db, world_id):
@@ -25,15 +27,19 @@ def names_of(db, world_id):
 
 
 def previous_positions(db, world_id):
-    """Position and sanity per point, read from the checkpoints in sequence order."""
+    """Position, sanity and tasks per point, read from the checkpoints in sequence order."""
     positions = {}
     for point_id, state_json in db.execute(
             'SELECT point_id, state_json FROM world_state_checkpoints WHERE world_id=?', (world_id,)):
         state = json.loads(state_json)
+        characters = state.get('characters') or {}
         positions[point_id] = {
             'position': {key: (value.get('position') or {}).get('containerId')
-                         for key, value in (state.get('characters') or {}).items()},
-            'sanity': {key: value.get('sanity') for key, value in (state.get('characters') or {}).items()},
+                         for key, value in characters.items()},
+            'sanity': {key: value.get('sanity') for key, value in characters.items()},
+            'tasks': {key: {task_id: {'goal': task.get('goal'), 'status': task.get('status')}
+                            for task_id, task in (value.get('tasks') or {}).items()}
+                      for key, value in characters.items()},
         }
     return positions
 
@@ -47,6 +53,8 @@ def expectations(db, world_id):
             'WHERE world_id=? ORDER BY sequence', (world_id,)):
         delta = json.loads(delta_json) if delta_json else {}
         expected = {'pointId': point_id, 'sequence': sequence, 'kind': kind, 'must': [], 'mustNot': []}
+        # every delta kind in this world has a display shape; a hint here would mean the adapter lost one
+        expected['mustNot'].append('尚未展示')
         if kind == 'root':
             expected['mustNot'].append('没有实体变化')
         elif not delta:
@@ -69,7 +77,19 @@ def expectations(db, world_id):
             for entry in change.get('personalityChanges') or []:
                 expected['must'].append(entry['text'])
             if change.get('tasksAchieved') or change.get('subtasksAdded'):
-                expected['must'].append('尚未展示的任务变化')
+                committed = (states.get(point_id) or {}).get('tasks', {}).get(entity_id, {})
+                for task_id in change.get('tasksAchieved') or []:
+                    task = committed.get(task_id) or {}
+                    if not task.get('goal') or task.get('status') != 'achieved':
+                        expected['must'].append('暂无法恢复')
+                    else:
+                        expected['must'].append('%s达成任务：%s。' % (subject, task['goal']))
+                for task in change.get('subtasksAdded') or []:
+                    goal = (task or {}).get('goal')
+                    if not goal:
+                        expected['must'].append('暂无法恢复')
+                    else:
+                        expected['must'].append('%s新增小任务：%s' % (subject, goal))
             if set(change) - {'entityId', 'positionSet', 'sanitySet', 'appearanceChanges',
                               'personalityChanges', 'tasksAchieved', 'subtasksAdded'}:
                 expected['must'].append('暂无法恢复')
@@ -113,7 +133,7 @@ def main():
         'perRound': [{'pointId': row['pointId'], 'sequence': row['sequence'], 'must': row['must'],
                       'page': page.get(index, '')[:200]} for index, row in enumerate(rows)],
     }
-    out = pathlib.Path('artifacts/next-runs/integration-r1/verify.json')
+    out = pathlib.Path(SUMMARY)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1) + '\n', encoding='utf-8', newline='\n')
     print('rounds %d checks %d problems %d' % (len(rows), summary['checks'], len(problems)))

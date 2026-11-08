@@ -1,0 +1,61 @@
+{
+ "worldId": "world_1",
+ "rounds": 6,
+ "checks": 24,
+ "problems": [],
+ "snapshot": "afterMore",
+ "perRound": [
+  {
+   "pointId": "root_3",
+   "sequence": 0,
+   "must": [],
+   "page": ""
+  },
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "must": [
+    "周宁",
+    "（10→8）",
+    "经历压力试验后更谨慎",
+    "周宁达成任务：完成压力试验。"
+   ],
+   "page": "周宁的理智下降（10→8）。\n\n周宁：经历压力试验后更谨慎。\n\n周宁达成任务：完成压力试验。\n\n来源"
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "must": [
+    "周宁",
+    "周宁从走廊到门厅"
+   ],
+   "page": "周宁从走廊到门厅。\n\n来源"
+  },
+  {
+   "pointId": "point_20",
+   "sequence": 3,
+   "must": [
+    "没有实体变化"
+   ],
+   "page": "第3点没有实体变化。\n\n来源"
+  },
+  {
+   "pointId": "point_26",
+   "sequence": 4,
+   "must": [
+    "周宁",
+    "周宁从门厅到走廊"
+   ],
+   "page": "周宁从门厅到走廊。\n\n来源"
+  },
+  {
+   "pointId": "point_32",
+   "sequence": 5,
+   "must": [
+    "周宁",
+    "周宁从走廊到门厅"
+   ],
+   "page": "周宁从走廊到门厅。\n\n来源"
+  }
+ ]
+}

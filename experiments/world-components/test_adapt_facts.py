@@ -1,4 +1,8 @@
 """The adapter must read the predecessor point, never the head, and must not guess a missing origin."""
+import json
+import os
+import sqlite3
+import tempfile
 import unittest
 
 import adapt_facts
@@ -102,12 +106,15 @@ class AdapterCases(unittest.TestCase):
         self.assertEqual(facts, [])
         self.assertTrue(any(g['gap'] == 'state not recoverable' for g in gaps))
 
-    def test_task_delta_is_not_displayed_and_not_a_quiet_point(self):
+    def test_task_achieved_reads_the_goal_from_the_committed_state(self):
         facts, gaps, unshown = self.facts('p6')
-        self.assertEqual([f['kind'] for f in facts], [])
-        self.assertEqual(len(unshown), 1)
-        self.assertTrue(unshown[0]['notAChange'])
+        self.assertEqual([f['kind'] for f in facts], ['task_achieved'])
+        self.assertEqual(facts[0]['sentence'], '林川达成任务：留在走廊守门，不碰盒子。')
+        self.assertEqual(facts[0]['taskId'], 'task_watch')
+        self.assertIn('tasks.task_watch.goal', facts[0]['provenance']['fieldsRead'])
         self.assertEqual(gaps, [])
+        self.assertEqual(unshown, [])
+
 
     def test_empty_delta_is_scoped_to_its_point(self):
         facts, _, _ = self.facts('p4')
@@ -148,6 +155,93 @@ class AdapterCases(unittest.TestCase):
             self.assertIn('replayAgreesWithCheckpoint', provenance)
             for key in ('worldId', 'pointId', 'previousPointId', 'fieldsRead', 'adapted'):
                 self.assertIn(key, provenance)
+
+
+class TaskCases(unittest.TestCase):
+    """A task sentence may only restate what the committed point actually holds."""
+
+    names = {'person_a': '林川', 'person_c': '周宁'}
+
+    def state(self, tasks):
+        return {'characters': {'person_c': {'id': 'person_c', 'tasks': tasks}}, 'items': {}, 'locations': {}}
+
+    def adapt(self, delta, state):
+        path = os.path.join(tempfile.mkdtemp(), 'fixture.db')
+        db = sqlite3.connect(path)
+        db.execute('CREATE TABLE worlds (id TEXT, initial_json TEXT)')
+        db.execute('CREATE TABLE world_points (world_id TEXT, id TEXT, sequence INTEGER, kind TEXT, '
+                   'previous_point_id TEXT, delta_json TEXT, linked_from_point_id TEXT)')
+        db.execute("INSERT INTO worlds VALUES ('w', '{}')")
+        db.execute("INSERT INTO world_points VALUES ('w', 'p1', 1, 'turn', NULL, ?, NULL)",
+                   (json.dumps(delta, ensure_ascii=False),))
+        db.commit()
+        db.close()
+
+        original = adapt_facts.resolve_state
+
+        def fake_resolve(db, world_id, point_id, backend):
+            return {'state': state, 'source': 'fixture', 'checkpointFound': True,
+                    'checkpointDigestMatchesPoint': True, 'replayOk': True,
+                    'replayAgreesWithCheckpoint': True, 'replayError': None,
+                    'replayedDigest': None, 'checkpointDigest': 'x'}
+        adapt_facts.resolve_state = fake_resolve
+        try:
+            return adapt_facts.adapt_point(adapt_facts.connect(path), 'w', 'p1', self.names)
+        finally:
+            adapt_facts.resolve_state = original
+
+    def test_achieved_task_uses_the_committed_goal_verbatim(self):
+        tasks = {'task_pressure': {'id': 'task_pressure', 'ownerId': 'person_c', 'parentTaskId': None,
+                                   'goal': '完成压力试验', 'status': 'achieved'}}
+        facts, gaps, unshown = self.adapt({'person_c': {'entityId': 'person_c',
+                                                        'tasksAchieved': ['task_pressure']}}, self.state(tasks))
+        self.assertEqual([f['sentence'] for f in facts], ['周宁达成任务：完成压力试验。'])
+        self.assertEqual(gaps, [])
+        self.assertEqual(unshown, [])
+
+    def test_delta_claiming_a_pending_task_is_a_gap(self):
+        tasks = {'task_pressure': {'id': 'task_pressure', 'ownerId': 'person_c', 'parentTaskId': None,
+                                   'goal': '完成压力试验', 'status': 'pending'}}
+        facts, gaps, _ = self.adapt({'person_c': {'entityId': 'person_c',
+                                                  'tasksAchieved': ['task_pressure']}}, self.state(tasks))
+        self.assertEqual(facts, [])
+        self.assertIn('says pending', gaps[0]['gap'])
+
+    def test_delta_naming_an_unknown_task_is_a_gap(self):
+        facts, gaps, _ = self.adapt({'person_c': {'entityId': 'person_c', 'tasksAchieved': ['task_ghost']}},
+                                    self.state({}))
+        self.assertEqual(facts, [])
+        self.assertIn('no such task', gaps[0]['gap'])
+
+    def test_new_subtask_names_its_committed_parent(self):
+        tasks = {
+            'task_pressure': {'id': 'task_pressure', 'ownerId': 'person_c', 'parentTaskId': None,
+                              'goal': '完成压力试验', 'status': 'pending'},
+            'task_recover': {'id': 'task_recover', 'ownerId': 'person_c', 'parentTaskId': 'task_pressure',
+                             'goal': '完成恢复练习', 'status': 'pending'},
+        }
+        delta = {'person_c': {'entityId': 'person_c', 'subtasksAdded': [
+            {'id': 'task_recover', 'ownerId': 'person_c', 'parentTaskId': 'task_pressure',
+             'goal': '完成恢复练习', 'status': 'pending'}]}}
+        facts, gaps, _ = self.adapt(delta, self.state(tasks))
+        self.assertEqual([f['sentence'] for f in facts],
+                         ['周宁新增小任务：完成恢复练习（上级：完成压力试验）。'])
+        self.assertEqual(facts[0]['parentTaskId'], 'task_pressure')
+        self.assertEqual(gaps, [])
+
+    def test_subtask_whose_committed_goal_differs_is_a_gap(self):
+        tasks = {
+            'task_pressure': {'id': 'task_pressure', 'ownerId': 'person_c', 'parentTaskId': None,
+                              'goal': '完成压力试验', 'status': 'pending'},
+            'task_recover': {'id': 'task_recover', 'ownerId': 'person_c', 'parentTaskId': 'task_pressure',
+                             'goal': '另一件不同的事', 'status': 'pending'},
+        }
+        delta = {'person_c': {'entityId': 'person_c', 'subtasksAdded': [
+            {'id': 'task_recover', 'ownerId': 'person_c', 'parentTaskId': 'task_pressure',
+             'goal': '完成恢复练习', 'status': 'pending'}]}}
+        facts, gaps, _ = self.adapt(delta, self.state(tasks))
+        self.assertEqual(facts, [])
+        self.assertIn('differs from the delta', gaps[0]['gap'])
 
 
 if __name__ == '__main__':

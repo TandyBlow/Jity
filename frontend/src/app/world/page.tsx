@@ -278,10 +278,11 @@ export default function WorldPage() {
       if (!response.ok) {
         return { facts: [], notDisplayed: [], gaps: [{ gap: `事实接口不可用（HTTP ${response.status}）` }] };
       }
-      const payload = await response.json() as { facts?: FactRow[]; notDisplayed?: unknown[]; gaps?: { gap: string }[] };
+      const payload = await response.json() as {
+        facts?: FactRow[]; notDisplayed?: { reason?: string }[]; gaps?: { gap: string }[] };
       return {
         facts: payload.facts ?? [],
-        notDisplayed: (payload.notDisplayed ?? []).map(() => '任务变化目前没有展示形状'),
+        notDisplayed: (payload.notDisplayed ?? []).map((item) => item?.reason ?? '存在未展示的已提交变化'),
         gaps: payload.gaps ?? [],
       };
     } catch (cause) {
@@ -633,18 +634,20 @@ export default function WorldPage() {
                   <p key={fact.sentence} className="mt-1 text-zinc-900">{fact.sentence}</p>
                 ))}
                 {row.notDisplayed.length > 0 && (
-                  <p className="mt-1 text-amber-700">存在尚未展示的任务变化（没有被当作“没有变化”）。</p>
+                  <p className="mt-1 text-amber-700">
+                    存在尚未展示的变化（没有被当作“没有变化”）：{row.notDisplayed.join('；')}
+                  </p>
                 )}
                 {row.gaps.length > 0 && (
                   <p className="mt-1 text-red-700">
                     该点位事实暂无法恢复：{row.gaps.map((gap) => gap.gap).join('；')}
                   </p>
                 )}
-                {(row.facts.length > 0 || row.gaps.length > 0) && (
+                {(row.facts.length > 0 || row.gaps.length > 0 || row.notDisplayed.length > 0) && (
                   <details className="mt-1">
                     <summary className="cursor-pointer text-zinc-400">来源</summary>
                     <pre className="overflow-x-auto text-[11px] text-zinc-500">
-                      {JSON.stringify({ facts: row.facts, gaps: row.gaps }, null, 2)}
+                      {JSON.stringify({ facts: row.facts, gaps: row.gaps, notDisplayed: row.notDisplayed }, null, 2)}
                     </pre>
                   </details>
                 )}

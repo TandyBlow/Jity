@@ -125,9 +125,9 @@ export default function PreviewPage() {
 
           {view.band === 'unshown' && (
             <div className="preview-card preview-card--warn">
-              存在尚未展示的任务变化。
+              存在尚未展示的变化。
               <div className="preview-meta">
-                任务变化目前没有展示形状，因此没有写进上面的句子，也没有被当作“没有变化”。
+                这部分已提交的变化还没有展示句，因此没有写进上面的句子，也没有被当作“没有变化”。
               </div>
               <div className="preview-meta">{view.unshownReason}</div>
             </div>

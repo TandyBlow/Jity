@@ -239,9 +239,59 @@ def adapt_point(db, world_id, point_id, names=None, backend=DEFAULT_BACKEND):
                                   'provenance': dict(base, fieldsRead=fields + [change_list],
                                                      adapted='text copied verbatim')})
 
-        if change.get('tasksAchieved') or change.get('subtasksAdded'):
-            not_displayed.append(dict(base, reason='task delta has no display shape yet, so it is not shown',
-                                      notAChange=True))
+        # Task text is never copied from the action or from the delta alone: the delta holds only IDs,
+        # so the goal and the achieved status are read back from the committed state at this point.
+        tasks = (((current['state'].get('characters') or {}).get(entity_id) or {}).get('tasks') or {})
+        for task_id in change.get('tasksAchieved') or []:
+            task = tasks.get(task_id)
+            if task is None:
+                gaps.append(dict(base, gap='the delta says task %s was achieved, but the committed state has no such task'
+                                              % task_id))
+            elif task.get('ownerId') != entity_id:
+                gaps.append(dict(base, gap='task %s is owned by %s in the committed state, not by %s'
+                                              % (task_id, task.get('ownerId'), entity_id)))
+            elif task.get('status') != 'achieved':
+                gaps.append(dict(base, gap='the delta says task %s was achieved, but the committed state says %s'
+                                              % (task_id, task.get('status'))))
+            elif not task.get('goal'):
+                gaps.append(dict(base, gap='committed task %s has no goal text' % task_id))
+            else:
+                facts.append({'kind': 'task_achieved', 'taskId': task_id, 'complete': True,
+                              'sentence': '%s达成任务：%s。' % (name_of(names, entity_id), task['goal']),
+                              'provenance': dict(base, fieldsRead=fields + ['tasks.%s.goal' % task_id,
+                                                                            'tasks.%s.status' % task_id],
+                                                 adapted='goal and achieved status read from the committed state')})
+
+        for task in change.get('subtasksAdded') or []:
+            task_id = task.get('id')
+            committed = tasks.get(task_id)
+            parent_id = task.get('parentTaskId')
+            parent_goal = (tasks.get(parent_id) or {}).get('goal')
+            if committed is None:
+                gaps.append(dict(base, gap='the delta adds task %s, but the committed state has no such task' % task_id))
+                continue
+            if committed.get('status') != 'pending':
+                gaps.append(dict(base, gap='the delta adds task %s as pending, but the committed state says %s'
+                                              % (task_id, committed.get('status'))))
+                continue
+            if committed.get('ownerId') != entity_id:
+                gaps.append(dict(base, gap='new task %s is owned by %s in the committed state, not by %s'
+                                              % (task_id, committed.get('ownerId'), entity_id)))
+                continue
+            if (committed.get('goal'), committed.get('parentTaskId')) != (task.get('goal'), parent_id):
+                gaps.append(dict(base, gap='committed task %s differs from the delta in goal or parent' % task_id))
+                continue
+            if not parent_goal:
+                gaps.append(dict(base, gap='the parent of new task %s has no goal in the committed state' % task_id))
+                continue
+            facts.append({'kind': 'subtask_added', 'taskId': task_id, 'parentTaskId': parent_id, 'complete': True,
+                          'sentence': '%s新增小任务：%s（上级：%s）。' % (name_of(names, entity_id),
+                                                                   committed['goal'], parent_goal),
+                          'provenance': dict(base, fieldsRead=fields + ['tasks.%s.goal' % task_id,
+                                                                        'tasks.%s.parentTaskId' % task_id,
+                                                                        'tasks.%s.status' % task_id],
+                                             adapted='goal from the delta confirmed in the committed state; '
+                                                     'parent goal read from the committed state')})
 
     return facts, gaps, not_displayed
 

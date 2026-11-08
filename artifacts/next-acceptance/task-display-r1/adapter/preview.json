@@ -1,0 +1,231 @@
+{
+ "blocks": [
+  {
+   "worldId": "world_1",
+   "pointId": "root_3",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_7",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_3",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "personalityChanges": [
+      {
+       "id": "change_10",
+       "text": "经历压力试验后更谨慎",
+       "supersedes": []
+      }
+     ],
+     "sanitySet": 8,
+     "tasksAchieved": [
+      "task_pressure"
+     ]
+    }
+   },
+   "sentences": [
+    "周宁的理智下降（10→8）。",
+    "周宁：经历压力试验后更谨慎。",
+    "周宁达成任务：完成压力试验。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "personalityChanges",
+      "sanitySet",
+      "tasksAchieved",
+      "previous.sanity"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    },
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "personalityChanges",
+      "sanitySet",
+      "tasksAchieved",
+      "personalityChanges"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    },
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "personalityChanges",
+      "sanitySet",
+      "tasksAchieved",
+      "tasks.task_pressure.goal",
+      "tasks.task_pressure.status"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_14",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "point_7",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "sentences": [
+    "周宁从走廊到门厅。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_20",
+   "sequence": 3,
+   "kind": "normal",
+   "previousPointId": "point_14",
+   "delta": {},
+   "sentences": [
+    "第3点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_26",
+   "sequence": 4,
+   "kind": "normal",
+   "previousPointId": "point_20",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "corridor",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "sentences": [
+    "周宁从门厅到走廊。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_32",
+   "sequence": 5,
+   "kind": "normal",
+   "previousPointId": "point_26",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "sentences": [
+    "周宁从走廊到门厅。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  }
+ ]
+}
