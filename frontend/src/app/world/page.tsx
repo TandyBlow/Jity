@@ -78,7 +78,11 @@ function describeAdvance(advance: TimeAdvance | null): string | null {
   return `+${advance.duration.amount}${UNIT_TEXT[advance.duration.unit] ?? advance.duration.unit}`;
 }
 
-interface LogRow { pointId: Id; version: number; text: string; timeText: string | null; polished: boolean }
+interface FactRow { kind: string; sentence: string; provenance?: Record<string, unknown> }
+interface LogRow {
+  pointId: Id; version: number; text: string; timeText: string | null; polished: boolean;
+  facts: FactRow[]; notDisplayed: string[]; gaps: { gap: string; replayFailure?: string | null }[];
+}
 interface StatusView {
   locationId: Id; locationName: string; locationNames: Record<Id, string>; sanity: number; timeText: string;
   tasks: { goal: string; achieved: boolean }[]; personality: string;
@@ -203,7 +207,13 @@ export default function WorldPage() {
     if (event.kind === 'narration') {
       console.info(`[narration] polished=${event.polished} reason=${event.polishReason} attempts=${event.attempts} text=${JSON.stringify(event.text)}`);
       if (event.polished) polishedPointsRef.current.add(event.pointId);
-      setLog((rows) => [...rows, { pointId: event.pointId, version: event.version, text: event.text, timeText: null, polished: event.polished }]);
+      setLog((rows) => [...rows, {
+        pointId: event.pointId, version: event.version, text: event.text, timeText: null,
+        polished: event.polished, facts: [], notDisplayed: [], gaps: [],
+      }]);
+      if (worldId) void readFacts(api, worldId, event.pointId).then((facts) => {
+        setLog((rows) => rows.map((row) => (row.pointId === event.pointId ? { ...row, ...facts } : row)));
+      });
     } else if (event.kind === 'decision') {
       setLastAction(event.outcome === 'allowed' ? `已执行：${event.text}` : `已拒绝（${event.reason}）：${event.text}`);
     } else if (event.kind === 'unparsed') {
@@ -232,7 +242,7 @@ export default function WorldPage() {
   /** 以服务端事实重建整页视图：叙事行（含时间推进）与状态面板。点位台账
    * 完整分页——单页会把超过一页的世界渲染成旧 head。isStale 必填，在每个
    * await 后与发布前检查：已失效的重建绝不写页面状态。 */
-  const rebuild = async (wid: Id, transport: WorldTransport, isStale: () => boolean) => {
+  const rebuild = async (wid: Id, transport: WorldTransport, isStale: () => boolean, apiBase?: string) => {
     throwIfStale(isStale);
     const points = await readAllPoints(transport, wid);
     throwIfStale(isStale);
@@ -251,11 +261,32 @@ export default function WorldPage() {
         text: narration.text ?? `（叙事状态：${narration.narrationStatus}）`,
         timeText: describeAdvance(read.timeAdvance),
         polished: polishedPointsRef.current.has(point.pointId),
+        // 根点不是回合：它没有前置增量，展示“没有变化”只会误导
+        ...(point.kind === 'root' ? { facts: [], notDisplayed: [], gaps: [] } : await readFacts(apiBase, wid, point.pointId)),
       });
     }
     throwIfStale(isStale);
     setLog(rows);
     if (headState) setStatus(describeStatus(headState));
+  };
+
+  /** 事实句来自服务端只读接口，失败时留空并标注，绝不把失败读成“没有变化”。 */
+  const readFacts = async (apiBase: string | undefined, wid: Id, pointId: Id) => {
+    if (!apiBase) return { facts: [], notDisplayed: [], gaps: [] };
+    try {
+      const response = await fetch(`${apiBase.replace(/\/$/, '')}/world/facts/${encodeURIComponent(wid)}/${encodeURIComponent(pointId)}`);
+      if (!response.ok) {
+        return { facts: [], notDisplayed: [], gaps: [{ gap: `事实接口不可用（HTTP ${response.status}）` }] };
+      }
+      const payload = await response.json() as { facts?: FactRow[]; notDisplayed?: unknown[]; gaps?: { gap: string }[] };
+      return {
+        facts: payload.facts ?? [],
+        notDisplayed: (payload.notDisplayed ?? []).map(() => '任务变化目前没有展示形状'),
+        gaps: payload.gaps ?? [],
+      };
+    } catch (cause) {
+      return { facts: [], notDisplayed: [], gaps: [{ gap: `事实接口不可达：${String(cause)}` }] };
+    }
   };
 
   const buildTransport = (apiBase: string) => new PageTransport(new HttpWorldTransport(apiBase), persistLease);
@@ -336,7 +367,7 @@ export default function WorldPage() {
     activeRef.current = { session, page: transport };
     setLeaseLabel(transport.grant ? `租约有效（epoch ${transport.grant.fenceEpoch}）` : '无租约');
     commandsRef.current = saved.commands;
-    await rebuild(saved.worldId, transport, isStale);
+    await rebuild(saved.worldId, transport, isStale, apiBase);
     throwIfStale(isStale);
     setPhase('ready');
     setNote('');
@@ -372,7 +403,7 @@ export default function WorldPage() {
     commandsRef.current = [];
     savePersisted({ api: apiBase, worldId: wid, leaseToken: transport.grant?.leaseToken ?? null, fenceEpoch: transport.grant?.fenceEpoch ?? null, commands: [] });
     setLeaseLabel(transport.grant ? `租约有效（epoch ${transport.grant.fenceEpoch}）` : '无租约');
-    await rebuild(wid, transport, isStale);
+    await rebuild(wid, transport, isStale, apiBase);
     throwIfStale(isStale);
     setPhase('ready');
     setNote('');
@@ -413,7 +444,7 @@ export default function WorldPage() {
       setCommand('');
       try {
         // 卸载后中止重建：已失效的组件不再发读请求，页面状态交给新代。
-        await rebuild(wid, active.page, () => disposedRef.current);
+        await rebuild(wid, active.page, () => disposedRef.current, api);
       } catch (error) {
         if (!(error instanceof BootstrapCancelled)) throw error;
       }
@@ -598,6 +629,25 @@ export default function WorldPage() {
                 <span className="mr-1 font-mono text-[11px] text-zinc-400">v{row.version}{row.timeText ? `·${row.timeText}` : ''}</span>
                 {row.text}
                 {row.polished && <span className="ml-1 rounded bg-sky-100 px-1 text-[11px] text-sky-700">模型</span>}
+                {row.facts.map((fact) => (
+                  <p key={fact.sentence} className="mt-1 text-zinc-900">{fact.sentence}</p>
+                ))}
+                {row.notDisplayed.length > 0 && (
+                  <p className="mt-1 text-amber-700">存在尚未展示的任务变化（没有被当作“没有变化”）。</p>
+                )}
+                {row.gaps.length > 0 && (
+                  <p className="mt-1 text-red-700">
+                    该点位事实暂无法恢复：{row.gaps.map((gap) => gap.gap).join('；')}
+                  </p>
+                )}
+                {(row.facts.length > 0 || row.gaps.length > 0) && (
+                  <details className="mt-1">
+                    <summary className="cursor-pointer text-zinc-400">来源</summary>
+                    <pre className="overflow-x-auto text-[11px] text-zinc-500">
+                      {JSON.stringify({ facts: row.facts, gaps: row.gaps }, null, 2)}
+                    </pre>
+                  </details>
+                )}
               </li>
             ))}
           </ol>

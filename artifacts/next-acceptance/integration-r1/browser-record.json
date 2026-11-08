@@ -1,0 +1,85 @@
+{
+  "page": "http://127.0.0.1:3111/world",
+  "api": "http://127.0.0.1:8021",
+  "steps": {
+    "afterRun": [
+      {
+        "version": "v0",
+        "text": ""
+      },
+      {
+        "version": "v1·+1秒",
+        "text": "周宁的理智下降（10→8）。\n\n周宁：经历压力试验后更谨慎。\n\n存在尚未展示的任务变化（没有被当作“没有变化”）。\n\n来源"
+      },
+      {
+        "version": "v2·+1秒",
+        "text": "周宁从走廊到门厅。\n\n来源"
+      },
+      {
+        "version": "v3·+1秒",
+        "text": "第3点没有实体变化。\n\n来源"
+      },
+      {
+        "version": "v4·+1秒",
+        "text": "周宁从门厅到走廊。\n\n来源"
+      }
+    ],
+    "afterRefresh": [
+      {
+        "version": "v0",
+        "text": ""
+      },
+      {
+        "version": "v1·+1秒",
+        "text": "周宁的理智下降（10→8）。\n\n周宁：经历压力试验后更谨慎。\n\n存在尚未展示的任务变化（没有被当作“没有变化”）。\n\n来源"
+      },
+      {
+        "version": "v2·+1秒",
+        "text": "周宁从走廊到门厅。\n\n来源"
+      },
+      {
+        "version": "v3·+1秒",
+        "text": "第3点没有实体变化。\n\n来源"
+      },
+      {
+        "version": "v4·+1秒",
+        "text": "周宁从门厅到走廊。\n\n来源"
+      }
+    ],
+    "afterMore": [
+      {
+        "version": "v0",
+        "text": ""
+      },
+      {
+        "version": "v1·+1秒",
+        "text": "周宁的理智下降（10→8）。\n\n周宁：经历压力试验后更谨慎。\n\n存在尚未展示的任务变化（没有被当作“没有变化”）。\n\n来源"
+      },
+      {
+        "version": "v2·+1秒",
+        "text": "周宁从走廊到门厅。\n\n来源"
+      },
+      {
+        "version": "v3·+1秒",
+        "text": "第3点没有实体变化。\n\n来源"
+      },
+      {
+        "version": "v4·+1秒",
+        "text": "周宁从门厅到走廊。\n\n来源"
+      },
+      {
+        "version": "v5·+1秒",
+        "text": "周宁从走廊到门厅。\n\n来源"
+      }
+    ],
+    "historyStable": {
+      "previousRoundsUnchanged": true,
+      "grewBy": 1,
+      "lastRound": "周宁从走廊到门厅。\n\n来源"
+    }
+  },
+  "errors": [],
+  "worldId": "world_1",
+  "resumedAutomatically": true,
+  "pointsResponse": null
+}
