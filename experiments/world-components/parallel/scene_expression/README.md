@@ -51,6 +51,7 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `build_references.py` | 参照来源表的生成与路径校验 |
 | `step6/references/reference-paragraphs-v2.md` | 参照 v2：正文＋面板＋来源；删除语义越界，数值移入面板（仍为草稿，未作标尺） |
 | `step6/route-plan.md` | 段落生成路线方案：验收标准（草稿未冻结）、A/B/C 路线、数据、排期、未决问题 |
+| `step6/scenes/campus-three-points.md` | 编写的实验样例：校园三点连续结算（输入／事件／状态／正文＋面板）；不参与旧十题统计 |
 | `step6/context-audit.md` | 三题与现有数据库的上下文核查：缺玩家输入/上一段/触发事件，夹具只适合事实表达 |
 
 ## 复现
