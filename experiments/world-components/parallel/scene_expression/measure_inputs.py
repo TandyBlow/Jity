@@ -25,6 +25,8 @@ def main():
 
     out = {}
     for sid, doc in inputs.items():
+        if sid == "ns-pos-1":
+            continue  # 仅调试样本，不进十题统计
         rows = []
         for idx, slot in enumerate(doc["slots"]):
             if slot["owner"] != "model":

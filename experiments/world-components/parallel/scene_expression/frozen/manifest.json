@@ -1,5 +1,5 @@
 {
- "parentCommit": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+ "parentCommit": "0d0b19e28a7ba534f1642fcd87d7e0d7aff63e8a",
  "note": "提交本清单的提交即冻结提交；清单不记录自身提交号以免自指。",
  "samplesExport": {
   "path": "experiments\\world-components\\parallel\\scene_expression\\step1\\narration-split-samples.export.json",
@@ -46,9 +46,9 @@
   "sha256": "574384e865026b01c6a79d2603a0c56226d1308be02c38990954df15ec31b2d5"
  },
  "docs": {
-  "freeze-protocol.md": "ab6429fe30e00384fe3a2da3314d74a6183f4a1a1ef6f5ee3feb0d007853b7e4",
-  "README.md": "562d43703360713dee462a4bcbb5bad065cd1e79ebc3c8f37af6fbc4ff446064",
-  "frozen/prompt-tokens.json": "207ea22992b3330dc8c3b3f0a94220d3bfe5ac8e2aeb0f254c33c101fe401d05",
+  "freeze-protocol.md": "48c763eeacc35748234e05a5ec32daaa3da5befa1d10baf6cb93d915be5dcccb",
+  "README.md": "0e8d9efca55c72ef0dd07c4f141f0d55816535fbb3df1d48210b89962a473197",
+  "frozen/prompt-tokens.json": "68c1f1bf35a37c66ebe08c9ba34937aa800c391c0bfc15f130a27c4b24c53248",
   "step1/step1-verify.json": "5e1794cbf32ee20252ed16115c87ad2c74b61f7a5031d7721ef1b7b1650468a6",
   "step1/step1-token-probe.json": "e22b70bc9ae2e8df78fb51c2876c31bfad7bede6ce0d10d2fa6fe881b7e22a60"
  }

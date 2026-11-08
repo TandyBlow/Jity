@@ -27,7 +27,7 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `frozen/manifest.json` | 冻结清单：样本导出、素材、输入、构建脚本的 SHA-256 与冻结时提交 |
 | `frozen/materials.json` | 每题素材池（`entityId` / `fieldPath` / 来源 ID / 可见性 / 生效点）与三臂场景头 |
 | `frozen/inputs.json` | 每题每个必述槽位：模型槽的完整 prompt（A/B/C 各一份），程序槽的固定句 |
-| `frozen/prompt-tokens.json` | 每条输入的实际 token 长度（A 114–125、B 136–160、C 168–197） |
+| `frozen/prompt-tokens.json` | 十题每条输入的实际 token 长度（A 114–125、B 136–160、C 168–197；共 8 条 × 3 臂） |
 | `build_inputs.py` | 生成上面两份冻结 JSON；改脚本等于改协议，需重跑并更新 manifest |
 | `measure_inputs.py` | 只量 token，不生成 |
 | `step1_verify.py`、`step1/step1-verify.json` | 第 1 步：权重大小/SHA、加载、旧模板兼容、贪心可复现 |
