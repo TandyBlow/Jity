@@ -83,6 +83,13 @@ KF-1 的修法不属于 c1：要么把“局部请求”的检测从 `的<X>` �
 
 ## 6. 证据索引（不改动，只引用）
 
+哈希口径：`sha256Blob` = `git show HEAD:<path>` 的字节，跨工作树一致；`sha256WorkingCopy` = 生成时该工作树磁盘上的字节，会因 CRLF/LF 检出设置不同而不同（本仓库 `core.autocrlf` 会在检出时把 LF 转 CRLF，所以同一文件在另一个工作树里工作副本哈希会变，blob 哈希不变）。核对归档请用 `sha256Blob`：
+
+```bash
+git -C <任何工作树> show HEAD:experiments/world-components/parallel/attention_parse/runs/r1/raw-output.json | sha256sum
+```
+
+
 | 内容 | 位置 | 说明 |
 | --- | --- | --- |
 | 对象层 v1 | `runs/r1/` | 10/10、6 单元、5 探针，sha256 `0f7abbac…`，保持原样 |

@@ -38,7 +38,22 @@ EVIDENCE = [
 
 
 def sha256(path: pathlib.Path) -> str:
+    """Working-copy bytes (can differ by checkout line endings)."""
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def sha256_blob(rel: str) -> str | None:
+    """Bytes as stored in HEAD: stable across checkouts and autocrlf settings."""
+    try:
+        blob = subprocess.run(
+            ["git", "-c", f"safe.directory={ROOT.as_posix()}", "show", f"HEAD:{rel}"],
+            cwd=ROOT,
+            capture_output=True,
+            check=True,
+        ).stdout
+    except Exception:  # pragma: no cover - not committed yet
+        return None
+    return hashlib.sha256(blob).hexdigest()
 
 
 def git(*args: str) -> str:
@@ -148,10 +163,15 @@ def main() -> int:
             "batchSizeMax": 10,
             "labelsFrozenBeforeImplementation": True,
         },
+        "evidenceHashing": {
+            "sha256Blob": "sha256 of git show HEAD:<path>; identical in every worktree",
+            "sha256WorkingCopy": "sha256 of the file on disk in the generating worktree; may differ by CRLF/LF checkout",
+        },
         "evidence": [
             {
                 "path": rel,
-                "sha256": sha256(HERE / rel),
+                "sha256Blob": sha256_blob(f"{HERE.relative_to(ROOT).as_posix()}/{rel}"),
+                "sha256WorkingCopy": sha256(HERE / rel),
                 "recordedCommit": json.loads((HERE / rel).read_text(encoding="utf-8")).get("hashes", {}).get("commit")
                 if rel.endswith(".json")
                 else None,
@@ -163,7 +183,10 @@ def main() -> int:
     target.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {target.relative_to(ROOT)}")
     for item in document["evidence"]:
-        print(f"  {item['path']:<40} {item['sha256'][:16]} commit={str(item['recordedCommit'])[:12]}")
+        print(
+            f"  {item['path']:<40} blob={str(item['sha256Blob'])[:16]} "
+            f"work={item['sha256WorkingCopy'][:16]} commit={str(item['recordedCommit'])[:12]}"
+        )
     return 0
 
 

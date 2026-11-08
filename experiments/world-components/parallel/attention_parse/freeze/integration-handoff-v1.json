@@ -2,7 +2,7 @@
   "protocol": "c1-n2-integration-handoff-v1",
   "createdOn": "2026-11-08",
   "branch": "exp/c-attention-parse",
-  "c1Head": "a26228cbf5b09072ceebf4954c6a9cff3f296a99",
+  "c1Head": "ccb1965f959a7dbb5c3f77eb4aa931c83496ace3",
   "status": "有实验结果，独立过滤器接线已验证；正式 N2 未接入；真实玩家表达覆盖无法判断",
   "doesNotChange": [
     "runs/r1/",
@@ -145,75 +145,93 @@
     "batchSizeMax": 10,
     "labelsFrozenBeforeImplementation": true
   },
+  "evidenceHashing": {
+    "sha256Blob": "sha256 of git show HEAD:<path>; identical in every worktree",
+    "sha256WorkingCopy": "sha256 of the file on disk in the generating worktree; may differ by CRLF/LF checkout"
+  },
   "evidence": [
     {
       "path": "runs/r1/raw-output.json",
-      "sha256": "0f7abbac701219b4d02d098036591ee134780b0a14fb45108b32a1bec7a66eec",
+      "sha256Blob": "d7340d1af979d3fb643b7ef88348711b3bae7e89f8451a280ed04bc061b9c592",
+      "sha256WorkingCopy": "0f7abbac701219b4d02d098036591ee134780b0a14fb45108b32a1bec7a66eec",
       "recordedCommit": null
     },
     {
       "path": "runs/r1/score.json",
-      "sha256": "428608f60e78a9a794090b2b8fd1e299ed22f75af6c7f4b63986a9a798d21fcf",
+      "sha256Blob": "c4b096077da6ad34e48e8f85eddcbdaf02e6b7e7813eefe747e7ed5d7aac1da8",
+      "sha256WorkingCopy": "428608f60e78a9a794090b2b8fd1e299ed22f75af6c7f4b63986a9a798d21fcf",
       "recordedCommit": "0df57f413a1321cdfe7a1eb9da65e81666d5fb4f"
     },
     {
       "path": "runs/contract-v1/validation.json",
-      "sha256": "0bbcad3cb8595af0e630aa31df17ac4af6711e02da24219ff6afef900e82e8ff",
+      "sha256Blob": "bbcd57c3158f92bef4d0d7a822ee45f7175caf0a6b4748c4fcfb2e8e7d0bc3ad",
+      "sha256WorkingCopy": "0bbcad3cb8595af0e630aa31df17ac4af6711e02da24219ff6afef900e82e8ff",
       "recordedCommit": "ee5c4ccfe66196418968dfda0397bff9721e9230"
     },
     {
       "path": "runs/v2-acceptance/parse.json",
-      "sha256": "b38f7414d44c51672b5f3e9b4f9e1ed8c298a3357cad8d50efb90344d52ee647",
+      "sha256Blob": "648fed3f5e71c5df9f4b2cd989a008daa82481338d032d8c093fabd95ae3c25d",
+      "sha256WorkingCopy": "b38f7414d44c51672b5f3e9b4f9e1ed8c298a3357cad8d50efb90344d52ee647",
       "recordedCommit": null
     },
     {
       "path": "runs/v2-acceptance/score.json",
-      "sha256": "7d00ed509a7ceb20c11fe36422b1d5df5204fec357a0a00db642c625cc76f700",
+      "sha256Blob": "848246a5d8de920fab4f6cf86950c700368c36ab10af3c4a306a8ec9a46336c8",
+      "sha256WorkingCopy": "7d00ed509a7ceb20c11fe36422b1d5df5204fec357a0a00db642c625cc76f700",
       "recordedCommit": "44a23687fc41522cae0bf6533033871c9f13b4e5"
     },
     {
       "path": "runs/wiring-v1/parse.json",
-      "sha256": "daca8f6a77118e8a2e20c0ea5c6c287ca80cbefe875f12fd37b15f736b4fae7c",
+      "sha256Blob": "f58d4a73c8ad15e4a3e2bffbc9cf9664b03a4901df5257695344c5effc85ecf9",
+      "sha256WorkingCopy": "daca8f6a77118e8a2e20c0ea5c6c287ca80cbefe875f12fd37b15f736b4fae7c",
       "recordedCommit": null
     },
     {
       "path": "runs/wiring-v1/selection.json",
-      "sha256": "779854dd1590d595e5260bc6613b8e1f1de832dca82a3d9cbe3f2960b93dc187",
+      "sha256Blob": "bb6afd027dd07ead24b730253ed8f638cc690e9084a6890736f6c91344381d02",
+      "sha256WorkingCopy": "779854dd1590d595e5260bc6613b8e1f1de832dca82a3d9cbe3f2960b93dc187",
       "recordedCommit": null
     },
     {
       "path": "runs/wiring-v1/score.json",
-      "sha256": "97b549f51ddb2988fe0ad45cc33e36f9ed2179387532f99b68d2856eccb1559f",
+      "sha256Blob": "e4d4e8fa11d27cfe9af286fec35f62a8a996d2bdf4271ab62b876c0bca8ccad5",
+      "sha256WorkingCopy": "97b549f51ddb2988fe0ad45cc33e36f9ed2179387532f99b68d2856eccb1559f",
       "recordedCommit": "44a23687fc41522cae0bf6533033871c9f13b4e5"
     },
     {
       "path": "freeze/contract-v1.md",
-      "sha256": "d18e563fb9197bc39533042cb399e1dbc27a8ca7459ca797cc531f5bd72e91ac",
+      "sha256Blob": "d18e563fb9197bc39533042cb399e1dbc27a8ca7459ca797cc531f5bd72e91ac",
+      "sha256WorkingCopy": "d18e563fb9197bc39533042cb399e1dbc27a8ca7459ca797cc531f5bd72e91ac",
       "recordedCommit": null
     },
     {
       "path": "freeze/acceptance-v1.json",
-      "sha256": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
+      "sha256Blob": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
+      "sha256WorkingCopy": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
       "recordedCommit": null
     },
     {
       "path": "freeze/anchors-v1.json",
-      "sha256": "4995c449ad954a4eef1890ac8cf4b856311c44ca9cbd7c04dfd0c34758f5507b",
+      "sha256Blob": "f29c2bdc6119d0054f3c37e482a952c82d613627cffecd1c08f611b185afab2b",
+      "sha256WorkingCopy": "4995c449ad954a4eef1890ac8cf4b856311c44ca9cbd7c04dfd0c34758f5507b",
       "recordedCommit": null
     },
     {
       "path": "freeze/facts-v1.json",
-      "sha256": "249059bb878bd15575d06e51c8467ab64b532781ec3065cfce86b1623ac5be4a",
+      "sha256Blob": "8ed1c0daf85945d813cdfc84936e5d63df05fcdbae770d6c4ddc6661c16055e2",
+      "sha256WorkingCopy": "249059bb878bd15575d06e51c8467ab64b532781ec3065cfce86b1623ac5be4a",
       "recordedCommit": null
     },
     {
       "path": "freeze/wiring-v1.json",
-      "sha256": "5f6509f4ce8ee8e86767dd022ecd40c4c3dda1634b610d309354128f863a2087",
+      "sha256Blob": "5f6509f4ce8ee8e86767dd022ecd40c4c3dda1634b610d309354128f863a2087",
+      "sha256WorkingCopy": "5f6509f4ce8ee8e86767dd022ecd40c4c3dda1634b610d309354128f863a2087",
       "recordedCommit": null
     },
     {
       "path": "freeze/v2-extra-probes.json",
-      "sha256": "af5c7d955c59bcdbf5a696464c054e48fa0c56a5c937652e4081c4bf34a79be2",
+      "sha256Blob": "af5c7d955c59bcdbf5a696464c054e48fa0c56a5c937652e4081c4bf34a79be2",
+      "sha256WorkingCopy": "af5c7d955c59bcdbf5a696464c054e48fa0c56a5c937652e4081c4bf34a79be2",
       "recordedCommit": null
     }
   ]
