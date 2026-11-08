@@ -1,0 +1,216 @@
+<!doctype html>
+<!-- c9 browser T5 runtime probe.
+     One page, one browser process. It measures, in this order:
+       1. cold start: ort module import, tokenizer bytes + load, encoder
+          session, decoder session — each stage timed separately
+       2. first inference on a registered case (nothing warm yet)
+       3. the same case again (warm)
+       4. one case with the per-step macrotask yield switched off, to price
+          the yield itself
+       5. all seven registered cases, warm
+       6. cancellation: abort at a timer and abort at a step boundary
+       7. release of both sessions, with memory sampled at each boundary
+     It writes window.__C9_RESULT__ once. It does not judge output quality;
+     token parity against the offline reference is the only correctness gate
+     and is compared outside this page. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>c9 T5 browser runtime probe</title>
+<style>body{font:13px ui-monospace,monospace;margin:1.2rem}pre{white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="status">loading…</div>
+<div id="mem"></div>
+<pre id="out"></pre>
+<script type="module">
+const status = (t) => { document.getElementById("status").textContent = t; };
+const memEl = document.getElementById("mem");
+const result = {
+  adapter: null,
+  environment: {},
+  memory: { samples: [] },
+  stages: null,
+  cold: null,
+  warm: null,
+  noYield: null,
+  cases: [],
+  cancel: {},
+  released: null,
+};
+
+// Expensive cross-origin-isolated memory accounting forces a full GC and
+// took ~18 s per call on this machine, so it runs only in the dedicated
+// memory pass (?mem=1). The cheap JS-heap read is always taken.
+const DEEP_MEM = new URLSearchParams(location.search).has("mem");
+result.environment.deepMemory = DEEP_MEM;
+
+async function sampleMemory(label) {
+  const s = { label, atMs: +performance.now().toFixed(1) };
+  if (performance.memory) {
+    s.jsHeapUsedBytes = performance.memory.usedJSHeapSize;
+    s.jsHeapTotalBytes = performance.memory.totalJSHeapSize;
+  }
+  if (DEEP_MEM && typeof performance.measureUserAgentSpecificMemory === "function") {
+    try {
+      // cross-origin-isolated only; may take ~100ms and forces GC
+      const m = await performance.measureUserAgentSpecificMemory();
+      s.isolatedBytes = m.bytes;
+    } catch (e) {
+      s.isolatedError = String(e && e.name || e);
+    }
+  }
+  result.memory.samples.push(s);
+  memEl.textContent = result.memory.samples
+    .map((x) => `${x.label}: heap=${x.jsHeapUsedBytes ?? "?"} iso=${x.isolatedBytes ?? "-"}`)
+    .join(" | ");
+  return s;
+}
+
+function finish(payload) {
+  window.__C9_RESULT__ = payload;
+  document.getElementById("out").textContent = JSON.stringify(payload, null, 1);
+  status("done");
+}
+
+try {
+  result.environment.userAgent = navigator.userAgent;
+  result.environment.hardwareConcurrency = navigator.hardwareConcurrency;
+  result.environment.crossOriginIsolated = self.crossOriginIsolated;
+  result.environment.preciseMemory = !!(performance.memory);
+  result.environment.measureUserAgentSpecificMemory =
+    typeof performance.measureUserAgentSpecificMemory === "function";
+
+  const { T5Browser, ADAPTER_ID, LOOP_SOURCE_SHA256 } =
+    await import("/app/t5_adapter.mjs");
+  result.adapter = { id: ADAPTER_ID, loopSourceSha256: LOOP_SOURCE_SHA256 };
+
+  const fixture = await (await fetch("/fixtures/probe_inputs.json")).json();
+  const cases = fixture.cases;
+  result.fixture = { purpose: fixture.purpose, count: cases.length,
+                     names: cases.map((c) => c.name) };
+
+  const config = await (await fetch("/graphs/config.json")).json();
+  result.config = { num_heads: config.num_heads, d_kv: config.d_kv,
+                    num_layers: config.num_layers,
+                    num_decoder_layers: config.num_decoder_layers,
+                    vocab_size: config.vocab_size,
+                    eos_token_id: config.eos_token_id,
+                    pad_token_id: config.pad_token_id };
+
+  await sampleMemory("before-create");
+  status("creating sessions…");
+  const tCreate = performance.now();
+  const t5 = await T5Browser.create({
+    ortBundleUrl: "/ort/ort.bundle.min.mjs",
+    wasmPaths: "/ort/",
+    spBundleUrl: "/sp/index.js",
+    modelBytesUrl: "/graphs/spiece.model",
+    graphDir: "/graphs",
+    heads: config.num_heads,
+    dKv: config.d_kv,
+  });
+  result.stages = { ...t5.stages, measuredCreateMs: +(performance.now() - tCreate).toFixed(1) };
+  await sampleMemory("after-create");
+
+  // tokenizer parity is a precondition for everything else
+  result.tokenizer = cases.map((c) => {
+    const ids = t5.encode(c.renderText);
+    const firstDiff = ids.findIndex((x, i) => c.inputIds[i] !== x);
+    return { name: c.name, matchesBakedIds: firstDiff === -1 &&
+             ids.length === c.inputIds.length,
+             firstDiff, tokens: ids.length };
+  });
+
+  // 1. cold inference: nothing has been run in this process yet
+  status("cold inference…");
+  const cold = await t5.generate(cases[0].renderText);
+  result.cold = { name: cases[0].name, ids: cold.ids, text: cold.text,
+                  timings: cold.timings, inputTokens: cold.inputTokens };
+
+  // 2. warm inference, same input (session + wasm memory hot)
+  status("warm inference…");
+  const warm = await t5.generate(cases[0].renderText);
+  result.warm = { name: cases[0].name, ids: warm.ids,
+                  timings: warm.timings, sameIdsAsCold:
+                  JSON.stringify(warm.ids) === JSON.stringify(cold.ids) };
+  await sampleMemory("after-warm");
+
+  // 3. price of the per-step yield (cancellation needs it; keep the number)
+  status("yield-cost run…");
+  const noYield = await t5.generate(cases[0].renderText, { macrotaskYield: false });
+  result.noYield = { name: cases[0].name, timings: noYield.timings,
+                     sameIdsAsCold: JSON.stringify(noYield.ids) === JSON.stringify(cold.ids) };
+
+  // 4. all registered cases
+  for (let i = 0; i < cases.length; i++) {
+    const c = cases[i];
+    status(`case ${i + 1}/${cases.length} ${c.name}`);
+    const g = await t5.generate(c.renderText);
+    result.cases.push({
+      name: c.name, scope: c.scope,
+      ids: g.ids, text: g.text, inputTokens: g.inputTokens,
+      timings: g.timings,
+      tokenMatchVsBakedReference:
+        JSON.stringify(g.ids) === JSON.stringify(c.referenceIds),
+    });
+    await sampleMemory(`case-${c.name}`);
+  }
+
+  // 5. cancellation
+  status("cancel: timer…");
+  const ctrl = new AbortController();
+  const tCancel0 = performance.now();
+  setTimeout(() => ctrl.abort(), 120);
+  try {
+    const g = await t5.generate(cases[3].renderText, { signal: ctrl.signal });
+    result.cancel.timerAbort = { threw: false, steps: g.timings.steps,
+                                 wallMs: +(performance.now() - tCancel0).toFixed(0) };
+  } catch (e) {
+    result.cancel.timerAbort = { threw: true, name: e.name,
+      completedSteps: e.detail ? e.detail.completedSteps : null,
+      wallMs: +(performance.now() - tCancel0).toFixed(0),
+      returnedPartialText: false };
+  }
+
+  status("cancel: step boundary…");
+  const ctrl2 = new AbortController();
+  let stepsSeen = 0;
+  const tCancel2 = performance.now();
+  try {
+    const g = await t5.generate(cases[3].renderText, {
+      signal: ctrl2.signal,
+      onStep: (step) => { stepsSeen = step + 1; if (step + 1 === 5) ctrl2.abort(); },
+    });
+    result.cancel.stepAbort = { threw: false, steps: g.timings.steps,
+                                wallMs: +(performance.now() - tCancel2).toFixed(0) };
+  } catch (e) {
+    result.cancel.stepAbort = { threw: true, name: e.name,
+      completedSteps: e.detail ? e.detail.completedSteps : null,
+      stepsSeen, wallMs: +(performance.now() - tCancel2).toFixed(0),
+      returnedPartialText: false };
+  }
+
+  // 6. is the session still usable after a cancelled generation?
+  status("post-cancel reuse…");
+  const after = await t5.generate(cases[0].renderText);
+  result.cancel.reuseAfterAbort = {
+    sameIdsAsCold: JSON.stringify(after.ids) === JSON.stringify(cold.ids),
+    timings: after.timings };
+
+  // 7. release + memory
+  await sampleMemory("before-release");
+  t5.release();
+  await new Promise((r) => setTimeout(r, 300));
+  await sampleMemory("after-release");
+  result.released = true;
+
+  result.ok = true;
+  finish(result);
+} catch (e) {
+  result.ok = false;
+  result.fatal = { name: e && e.name, message: String(e && e.message || e),
+                   stack: e && e.stack ? String(e.stack).slice(0, 2000) : null };
+  finish(result);
+}
+</script>
+</body>
+</html>

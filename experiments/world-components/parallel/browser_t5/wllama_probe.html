@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- c9 wllama arch-dispatch probe: hand-built minimal GGUF headers, one per
+     architecture name, fed to wllama's loadModel(). What matters is the
+     loader's response per name — "unsupported architecture" versus "loads,
+     then fails on tensors" — not the error text itself. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>c9 wllama arch probe</title></head>
+<body>
+<pre id="out">loading…</pre>
+<script type="module">
+const out = document.getElementById("out");
+const report = (r) => {
+  window.__C9_WLLAMA__ = r;
+  out.textContent = JSON.stringify(r, null, 1);
+};
+try {
+  const { Wllama } = await import("/wllama/index.js");
+  const archive = { userAgent: navigator.userAgent, attempts: [] };
+  for (const arch of ["t5", "t5encoder", "notanarch"]) {
+    const blobs = [];
+    try {
+      const r = await fetch(`/gguf/${arch}.gguf`);
+      blobs.push(await r.blob());
+    } catch (e) {
+      archive.attempts.push({ arch, fetchFailed: String(e) });
+      continue;
+    }
+    // v3 passes pathConfig.default into the worker as the full wasm URL
+    const w = new Wllama({ default: "/wllama/wllama.wasm" },
+                         { suppressNativeLog: true });
+    const t0 = performance.now();
+    const attempt = { arch, ms: null };
+    try {
+      await w.loadModel(blobs);
+      attempt.loaded = true;
+      attempt.loadedModel = w.isModelLoaded();
+      attempt.loadMs = +(performance.now() - t0).toFixed(0);
+    } catch (e) {
+      attempt.loaded = false;
+      attempt.loadError = { name: e && e.name,
+        message: String(e && e.message || e).slice(0, 500) };
+      attempt.ms = +(performance.now() - t0).toFixed(0);
+    }
+    // loadModel alone is not a verdict: the real question is whether a
+    // generation call can run on the loaded object. Force one.
+    if (attempt.loaded) {
+      const t1 = performance.now();
+      try {
+        const r = await w.createCompletion({ prompt: "hi", nPredict: 1, temperature: 0 });
+        attempt.generate = { ok: true, text: JSON.stringify(r).slice(0, 200) };
+      } catch (e) {
+        attempt.generate = { ok: false, name: e && e.name,
+          message: String(e && e.message || e).slice(0, 500) };
+      }
+      attempt.generateMs = +(performance.now() - t1).toFixed(0);
+      try { attempt.bos = w.getBOS(); } catch { /* not available */ }
+    }
+    archive.attempts.push(attempt);
+    try { w.exit(); } catch { /* ignore */ }
+  }
+  report(archive);
+} catch (e) {
+  report({ fatal: String(e && e.message || e), stack: String(e && e.stack || "").slice(0, 1500) });
+}
+</script>
+</body>
+</html>
