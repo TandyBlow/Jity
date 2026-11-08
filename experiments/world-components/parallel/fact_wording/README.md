@@ -198,7 +198,7 @@ cf24 的第 2 步分类已整理：85 条原文与旧判读一致，11 条归档
 
 **当前配置**：保留原输入模板与贪心作为基线；束宽 2 保留为诊断实现；候选 T1 冻结不采用；独立验收集不运行；两者都没有独立验收通过结论。
 
-**可核查索引**：`freeze/final-index-v2.json`，其 sha256 记在同目录的 `freeze/final-index-v2.sha256`（索引是自指的，值不写在被索引的文件里）；可读表见 `results/final-index-v2.md`（199 个文件、0 缺失）。v1 索引保留在 `freeze/final-index-v1.json` 作为历史。环境目录不打包，保留依赖锁与环境说明。冲突采用规则写在索引与 `results/c4-stage-closure-v1.md`。
+**可核查索引**：`freeze/final-index-v2.json`，其 sha256 记在同目录的 `freeze/final-index-v2.sha256`（索引是自指的，值不写在被索引的文件里）；可读表见 `results/final-index-v2.md`（204 个文件、0 缺失）。v1 索引保留在 `freeze/final-index-v1.json` 作为历史。环境目录不打包，保留依赖锁与环境说明。冲突采用规则写在索引与 `results/c4-stage-closure-v1.md`。
 
 **重新开展实验的条件**：需要新的、可检验的机制假设，或授权训练侧工作；不能只换一句提示继续搜索。训练侧改动另立任务，本轮不实施。详见 `results/c4-stage-closure-v1.md`。
 
@@ -225,3 +225,15 @@ cf24 的第 2 步分类已整理：85 条原文与旧判读一致，11 条归档
 | 盲判 v2 展示模型看不到的数值 | 理智单元去掉 `from`/`to`；每批加固定 `judgingNotes`；两份包已重生成，仍未判 |
 
 证据：`results/review-findings-v2.md`。
+
+## 11. 真实状态 N3→N4 冒烟（2026-11-09）
+
+只读扫描 178 个真实世界库：107 个有改动的已提交点，72 个能走完 N1→N3（58 单事实、14 双事实），但**没有雾港世界（`w_fog_harbor`）的点**，全是测试世界。去重后只有 7 个不同事实：moved 2、task 2、sanity 3。
+
+u240 适用规则（先冻结）：moved 可用；task_achieved 没有 resultText、sanity 只有数字，均判不适用、不调用模型。实际调用 2 次（两条 moved）：**0 通过 / 2 失败**（一条新增“抬头看”，一条把走廊写成“盒子里”）。
+
+- 报告：`results/real-state-n3n4-smoke-v1.md`
+- 运行：`artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/`
+- 脚本：`scripts/run_real_state_smoke.py`
+- 耗时（含编码）：每条 2.1–3.1 s；模型加载 0.69 s
+- 限制：世界与 u240 训练世界不同；覆盖仅 2 条；分组/指代未实现；assistant 单判

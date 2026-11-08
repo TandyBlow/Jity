@@ -2,7 +2,7 @@
 
 > 状态：c4 本阶段诊断完成；T1 失败；独立验收尚未开展。
 > 根目录：`experiments/world-components/parallel/fact_wording/`
-> 索引 JSON：`freeze/final-index-v2.json`，sha256 `6b40e724c7237b56cf2862f4d58c3197266f9a33b01545be43f5d709a4ae7d87`（同值见 `freeze/final-index-v2.sha256`）
+> 索引 JSON：`freeze/final-index-v2.json`，sha256 `3b604073703b84481b94116ddae95b8ee545969fa8e5b30161fd26529450076d`（同值见 `freeze/final-index-v2.sha256`）
 > 环境目录不打包：只索引 `env/requirements.lock.txt` 与 `env/ENVIRONMENT.md`。
 > 任务说明 `TASK.md` 位于本任务的独占目录之外（工作树根），不纳入本索引。
 
@@ -35,7 +35,7 @@
 | 冻结记录 | `freeze/candidate-t1-v2.json` | 24,622 | `d8c16de6c90bf8d433cdc86a65801f08bb3d6daf52eb9dfb64b4504b3a71228e` |
 | 冻结记录 | `freeze/candidate-t1-outcome-v1.json` | 1,198 | `20d0689cf41cf58d53e2fbc4d55fbfbc661c737043baf55b62af4594e4b2cd8c` |
 | 环境记录（环境目录不打包） | `env/requirements.lock.txt` | 453 | `53580846a8cb7b17d77211b3ec1605ce686034b2c49c0d720d6bdd16c48590fb` |
-| 环境记录（环境目录不打包） | `env/ENVIRONMENT.md` | 2,469 | `455fe71b521c6f6a752b885283c670e76b5ef0f70588d2535489a9fa6188b1bc` |
+| 环境记录（环境目录不打包） | `env/ENVIRONMENT.md` | 3,066 | `c4f56a6d091c2bf6ccb859d639c6751ef5509d80412f0bdf300d6aa0d66c2a6f` |
 | 源码与脚本 | `scripts/beam2.py` | 7,857 | `0d33797a170454c87e1824ae4b5343b653befd38ab5bc81dc9605d1aff6f109a` |
 | 源码与脚本 | `scripts/preflight_beam2.py` | 17,500 | `fe2669d6b9383741daa421d5a4008410108ec053b982c4d62a453d490d93ef14` |
 | 源码与脚本 | `scripts/run_preflight.py` | 13,366 | `761816792b7b38e41246b377974c69cc665d1c27e14e0607e74de58aca416bcd` |
@@ -60,15 +60,16 @@
 | 源码与脚本 | `scripts/upstream/review_cf24_baseline.py` | 5,924 | `2f02fd5e8b55058b20d83ad821a7e5938a93ad6a7abcb2c25170bce9a62cbb0a` |
 | 源码与脚本 | `scripts/upstream/check_cf24_overlap.py` | 4,026 | `27887a9f426e6cefc71a1fb47cac8c5b3b4aa2e187fb7583f95bf8b4ec368132` |
 | 源码与脚本 | `scripts/build_blind_pack_v2.py` | 6,696 | `5368176eede85f7092307b84c94e93ef0c47477ab15c351329c057fdb61fa2dc` |
-| 源码与脚本 | `scripts/build_final_index.py` | 10,741 | `20475f210f829dd2ed0839c224addf7b7451ce8892272d99749a1f0cc22c2f14` |
+| 源码与脚本 | `scripts/build_final_index.py` | 11,132 | `1fe554b507a2951eb1718a0d478ef7aac71f0aec79ea3e8faf54720d4f6569a9` |
 | 源码与脚本 | `scripts/redact_paths.py` | 3,855 | `41f9b88c34963b3c2137387be9c46a509b220e62fb588fab6d2c32d7c164a475` |
+| 源码与脚本 | `scripts/run_real_state_smoke.py` | 14,155 | `7bafa7ff3b65bd64131f58a53d0417ac6201bc7e3ed907e1d5d8c868d3ba3fd5` |
 | 预检产物 | `artifacts/fact-wording/preflight/preflight.json` | 8,485 | `2da60046b6968271f761531b039e0e42f1d0c2b1bcc5ea7d11fc28568ab07391` |
 | 预检产物 | `artifacts/fact-wording/preflight/runs.jsonl` | 13,104 | `7d45b7cc912bfa12a7b3e34e11a11836e5f9e521d8546e53b573c1ae61fd666c` |
 | 预检产物 | `artifacts/fact-wording/preflight/env.json` | 464 | `14eb102bc20cdaa73db6bb6f81cf91d48a76a4d7e3f3a27a59176445f9329209` |
 | 预检产物 | `artifacts/fact-wording/preflight/p7-beam2.json` | 96 | `728d158b09f47e6efe9d5cb1f0465b5bebc86adf78ddd5dd9e618cc3f3881c08` |
 | 脱敏与发布 | `REDACTION.md` | 4,092 | `62fde429e48b7aad1b97a21c3eb75e2bf84fb1e2be49d0c4d8b6d04e8d16f8a8` |
 | 脱敏与发布 | `freeze/final-index-v1-pre-redaction.json` | 36,398 | `503b17a6b0819b15fdd42a4455fad8d804a8ca8307ee5dd2bfbf743578f9d9ba` |
-| 报告与补注 | `README.md` | 17,855 | `b8ca44a555f431df7bb57d8f5c330f7b376bf79de4aed52e0a2fb03606dbf8b8` |
+| 报告与补注 | `README.md` | 18,823 | `e90e7fe002c3a85a4d9b137cd066b22bc7b1b106c3a32609c72b27e01b917986` |
 | 报告与补注 | `results/preflight-report-v1.md` | 10,959 | `562d9e4258666d170426a561ee17bc974d25bff20c447018123609809d5b6df7` |
 | 报告与补注 | `results/diagnostic-r1-report.md` | 11,237 | `a416ed2870bde40d54ea49e7a1fcc32d1ca22186d033be33bef6c284b7350818` |
 | 报告与补注 | `results/diagnostic-r1-audit-v1.md` | 5,540 | `dddac5bb66761c4fcfa1bc903346c71f4e6d54b0098b64b1c1ec9ba47e3bfa48` |
@@ -82,6 +83,7 @@
 | 报告与补注 | `results/c4-stage-closure-v1.md` | 5,335 | `93bd07f9508d0bf1a123700b0775d4540ed1b710bbaeb3f7f63bba868242e162` |
 | 报告与补注 | `results/review-findings-v1.md` | 4,333 | `69681b263247861a4590d5dd0b03a5776ae07aabdf0c41864af402e60ec1b32b` |
 | 报告与补注 | `results/review-findings-v2.md` | 2,698 | `1a4c790a454122d8d3d53c0b0745840d03dc440763d40b814808a832c0fc8000` |
+| 报告与补注 | `results/real-state-n3n4-smoke-v1.md` | 5,120 | `1f66a55b33666b40920de166cc36bc12b539b62839fe3b44476268407187cbc2` |
 | 报告与补注 | `results/blind-design-defect-v1.md` | 1,288 | `5e1c935c9c2d9caaa09fac70fd04341d9320959cc3be0518556f5e926f2b37a2` |
 | 报告与补注 | `results/timing-scope-v1.md` | 1,023 | `c318ba2721eb8500d48c2f25e0bf60af2d2eadb38f029022fb7701e57986fbef` |
 | 报告与补注 | `results/next-steps-after-review-v1.md` | 1,069 | `4b8439a5fe5f3b9649b641be891d32aec411feae6dffa382666c6097796d2fbf` |
@@ -91,6 +93,9 @@
 | cf24 失败分类产物 | `results/failure-report-v1.md` | 4,236 | `189fe1f030d6a6aac902c4ce992f7304adb4031b7cc6398ced1600075eafd128` |
 | cf24 失败分类产物 | `review/batch-01.json` | 27,217 | `48ce9e44340f4c120591ca21dee89f10bfb885f1bbb1e88ca89b6317077dbad1` |
 | cf24 失败分类产物 | `review/batch-02.json` | 12,401 | `82f971fc0b33bce467d83d9e21c4e1e7f4ce61453fb6e32e22d3d0664180a2f2` |
+| 真实状态冒烟 | `artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/raw.jsonl` | 2,586 | `39d02c165d95935f252adb536c990ca4d1f4cc1923b14018402160a996d71dba` |
+| 真实状态冒烟 | `artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/run.json` | 7,828 | `dca25d4eb58a1fa82dc1a2ac88b99618ec28418b54cd049313a039cda13fb208` |
+| 真实状态冒烟 | `artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/env.json` | 202 | `b4c36179c5c951d43c93e72ecd96511c357d7e41f607ce7ba8398d7d92973b55` |
 | 索引历史 | `freeze/final-index-v1.json` | 37,237 | `581426af15e845be2df730cadd6ed18ee299be6f86bdb3c9ca1da0a223137195` |
 | 索引历史 | `freeze/final-index-v1.sha256` | 87 | `fac62141885b19d563bc71c0966a94833308a6e41c9e07ae5b9c026509e218d2` |
 | 索引历史 | `results/final-index-v1.md` | 25,609 | `fa4ead907218d18c936600e4424394149792338a2adb0ec3d1cf1086f0c61d8a` |

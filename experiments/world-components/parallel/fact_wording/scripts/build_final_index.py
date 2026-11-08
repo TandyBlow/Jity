@@ -77,6 +77,7 @@ GROUPS = {
         "scripts/build_blind_pack_v2.py",
         "scripts/build_final_index.py",
         "scripts/redact_paths.py",
+        "scripts/run_real_state_smoke.py",
     ],
     "预检产物": [
         "artifacts/fact-wording/preflight/preflight.json",
@@ -103,6 +104,7 @@ GROUPS = {
         "results/c4-stage-closure-v1.md",
         "results/review-findings-v1.md",
         "results/review-findings-v2.md",
+        "results/real-state-n3n4-smoke-v1.md",
         "results/blind-design-defect-v1.md",
         "results/timing-scope-v1.md",
         "results/next-steps-after-review-v1.md",
@@ -114,6 +116,11 @@ GROUPS = {
         "results/failure-report-v1.md",
         "review/batch-01.json",
         "review/batch-02.json",
+    ],
+    "真实状态冒烟": [
+        "artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/raw.jsonl",
+        "artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/run.json",
+        "artifacts/fact-wording/real-state-smoke/20261108T180059-realstate/env.json",
     ],
     "索引历史": [
         "freeze/final-index-v1.json",
