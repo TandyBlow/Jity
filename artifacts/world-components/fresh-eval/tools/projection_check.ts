@@ -10,8 +10,16 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { projectCommittedNarration } from
-  'file:///D:/others/Jity/.local/parallel/c-fresh-eval/frontend/src/lib/world-engine/runtime/committed-narration.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+// Resolve the repository from this file, never from a machine-specific path:
+// tools/ -> fresh-eval/ -> world-components/ -> artifacts/ -> repo root.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const REPO = resolve(HERE, '../../../..');
+const MODULE_PATH = resolve(REPO, 'frontend/src/lib/world-engine/runtime/committed-narration.ts');
+const { projectCommittedNarration } =
+  await import(pathToFileURL(MODULE_PATH).href);
 
 const [sourceDir, outPath] = process.argv.slice(2);
 if (!sourceDir || !outPath) {
@@ -52,11 +60,8 @@ for (const id of ids) {
   results.push(entry);
 }
 
-const modulePath =
-  'D:/others/Jity/.local/parallel/c-fresh-eval/frontend/src/lib/world-engine/runtime/committed-narration.ts';
-const moduleSha = createHash('sha256').update(readFileSync(modulePath)).digest('hex');
+const moduleSha = createHash('sha256').update(readFileSync(MODULE_PATH)).digest('hex');
 writeFileSync(outPath, JSON.stringify({
-  generatedUtc: new Date().toISOString(),
   node: process.version,
   module: 'frontend/src/lib/world-engine/runtime/committed-narration.ts',
   moduleSha256: moduleSha,

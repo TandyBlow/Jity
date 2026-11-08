@@ -117,12 +117,6 @@
   }
  ],
  "playerInstruction": null,
- "playerScopeExcludedFromState": [],
- "withheld": {
-  "count": 0,
-  "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-  "grounds": []
- },
  "rules": {
   "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
   "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",

@@ -488,13 +488,7 @@ def main(dest: pathlib.Path | None = None) -> int:
             "mayMention": may,
             "currentState": current,
             "playerInstruction": spec.get("inputText") if cid == "c8e06" else None,
-            "playerScopeExcludedFromState": sorted(deferred),
-            "withheld": {
-                "count": len(withheld),
-                "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-                "grounds": sorted({w["n2Ground"] if w["expression"] == "withheld"
-                                   else "player-instruction" for w in withheld}),
-            },
+
             "rules": {
                 "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
                 "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -610,8 +604,16 @@ def main(dest: pathlib.Path | None = None) -> int:
 
     report = {
         "packVersion": PACK_VERSION,
-        "worktreeHead": subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"],
-                                       capture_output=True, text=True).stdout.strip(),
+        "generatedFrom": {
+            "templateSha256": registration["templateSha256"],
+            "specsSha256": registration["specsSha256"],
+            "auditSha256": registration["auditSha256"],
+            "databaseSha256": sha(SRC / "authority.sqlite3"),
+            "generatorSha256": sha(HERE / "build_candidates_fresh.py"),
+            "screeningSha256": sha(HERE / "screening.py"),
+            "n2Sha256": sha(N2_PATH),
+            "note": "来源用固定输入哈希记录；不记 HEAD，否则每次提交都会让生成结果变化",
+        },
         "fixture": {"registration": registration,
                     "templateSha256": registration["templateSha256"],
                     "auditSha256": registration["auditSha256"],
@@ -660,7 +662,9 @@ def main(dest: pathlib.Path | None = None) -> int:
     esc = lambda s: s.replace("|", chr(92) + "|")
     lines = ["# 首批候选（6 条，待人工核验）", "",
              f"输入包版本 v{PACK_VERSION}（2026-11-08 第二轮外部审查后修订，见 `report.md`）。",
-             f"工作树 `{report['worktreeHead'][:12]}`。来源是本次**新建**的评测专用注册夹具 "
+             f"生成器 sha256 `{report['generatedFrom']['generatorSha256'][:12]}…`，"
+             f"夹具模板 sha256 `{report['generatedFrom']['templateSha256'][:12]}…`。"
+             f"来源是本次**新建**的评测专用注册夹具 "
              f"`{registration['id']}`：作者 `{registration['author']}`，"
              f"创建时间 `{registration['createdUtc']}`，"
              "不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。", "",
@@ -680,7 +684,8 @@ def main(dest: pathlib.Path | None = None) -> int:
     lines += ["", "## 模型看到什么、看不到什么", "",
               "可见性不由本包自定，而是导入真实 N2 规则（`experiments/world-components/"
               "n2_perspective.py`，只读）逐条判定 must / may / invisible。",
-              "不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**。"
+              "不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**；"
+              "输入里连“有事实被排除”的计数和依据也不给。"
               "唯一的非可见性排除是 `c8e06` 的玩家指令，单独标为 `player-instruction`。", "",
               "## 页面投影实测（不是预测）", "",
               "`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，"
@@ -709,7 +714,7 @@ def main(dest: pathlib.Path | None = None) -> int:
               "└── <id>/",
               "    ├── facts.json      原始 Δ / 变化事实 / 现状",
               "    ├── answer.json     完整事实 + N2 逐条判定 + 被排除的事实",
-              "    ├── input.json      模型实际输入（含 withheld 计数，不含其内容）",
+              "    ├── input.json      模型实际输入（不含被排除事实，也不提示有事实被排除）",
               "    ├── screening.json  R1 v1/v2、R2、R3（完整变化集）",
               "    └── checks.md       四段状态、排除事实、人工核验项",
               "```", ""]
@@ -795,26 +800,29 @@ def main(dest: pathlib.Path | None = None) -> int:
     return 0
 
 
-def check() -> int:
-    """Regenerate the whole pack into a temp dir and compare with the committed
-    one. Nothing here reads the existing pack, so drift means the committed
-    files no longer follow from the generator."""
+def check(against=None) -> int:
+    """Regenerate the whole pack into a temp dir and compare byte for byte with
+    the committed one. The committed directory must be captured BEFORE main()
+    runs: main() rebinds the module-global DEST, so reading DEST afterwards
+    would compare the fresh output with itself."""
     import tempfile
+    committed = pathlib.Path(against) if against else (OUT / "candidates-fresh")
     tmp = pathlib.Path(tempfile.mkdtemp())
     main(tmp)
     drift = []
-    for path in sorted(DEST.rglob("*")):
+    for path in sorted(committed.rglob("*")):
         if not path.is_file():
             continue
-        rel = path.relative_to(DEST).as_posix()
+        rel = path.relative_to(committed).as_posix()
         if rel == "projection-check.json":
             continue                     # produced by run_projection_check.py
         fresh = tmp / rel
         if not fresh.exists() or fresh.read_bytes() != path.read_bytes():
             drift.append(rel)
     missing = [p.relative_to(tmp).as_posix() for p in tmp.rglob("*")
-               if p.is_file() and not (DEST / p.relative_to(tmp)).exists()]
-    print(f"pack check: {len(drift)} drifted, {len(missing)} missing")
+               if p.is_file() and not (committed / p.relative_to(tmp)).exists()]
+    print(f"pack check: {len(drift)} drifted, {len(missing)} missing "
+          f"(against {committed})")
     for name in drift[:10]:
         print("  drift:", name)
     for name in missing[:10]:
@@ -823,4 +831,10 @@ def check() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(check() if "--check" in sys.argv[1:] else main())
+    args = sys.argv[1:]
+    if "--check" in args:
+        target = None
+        if "--against" in args:
+            target = args[args.index("--against") + 1]
+        sys.exit(check(target))
+    sys.exit(main())

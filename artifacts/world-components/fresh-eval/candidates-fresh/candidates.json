@@ -1,6 +1,15 @@
 {
  "packVersion": 3,
- "worktreeHead": "094e069052cc023a85fec80105e9d603d28af3b6",
+ "generatedFrom": {
+  "templateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+  "specsSha256": "10d3c0fabc34b2f2320e9248e5275d1b7e449a9d68987147c649e6efa202c28e",
+  "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+  "databaseSha256": "04878c4f6ca9f39b6cc611d872f37a4e6791ffad7b1f92c8faa510dac35e4b68",
+  "generatorSha256": "bc8238a57540f83259196ab64965e99eddac0e86b53ae5a7d479fac02cb26324",
+  "screeningSha256": "811486814feca52034533d46ec6f22998df42b61af2eeb8b09b55412af686be4",
+  "n2Sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "note": "来源用固定输入哈希记录；不记 HEAD，否则每次提交都会让生成结果变化"
+ },
  "fixture": {
   "registration": {
    "id": "c8-eval-geothermal-v1",
@@ -491,12 +500,6 @@
      }
     ],
     "playerInstruction": null,
-    "playerScopeExcludedFromState": [],
-    "withheld": {
-     "count": 0,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": []
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -900,14 +903,6 @@
      }
     ],
     "playerInstruction": null,
-    "playerScopeExcludedFromState": [],
-    "withheld": {
-     "count": 1,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": [
-      "other-location"
-     ]
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -1460,12 +1455,6 @@
      }
     ],
     "playerInstruction": null,
-    "playerScopeExcludedFromState": [],
-    "withheld": {
-     "count": 0,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": []
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -1921,12 +1910,6 @@
      }
     ],
     "playerInstruction": null,
-    "playerScopeExcludedFromState": [],
-    "withheld": {
-     "count": 0,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": []
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -2418,12 +2401,6 @@
      }
     ],
     "playerInstruction": null,
-    "playerScopeExcludedFromState": [],
-    "withheld": {
-     "count": 0,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": []
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
@@ -2886,16 +2863,6 @@
      }
     ],
     "playerInstruction": "我只关心邵苇衡复核机架联接编号的结果；暂时别展开闻澈岑的移动。",
-    "playerScopeExcludedFromState": [
-     "fe_wen"
-    ],
-    "withheld": {
-     "count": 1,
-     "rule": "不可见或按玩家指令推迟的事实不进入本输入；内容只留在 answer.json。",
-     "grounds": [
-      "player-instruction"
-     ]
-    },
     "rules": {
      "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
      "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",

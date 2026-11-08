@@ -62,7 +62,10 @@ class Visibility(unittest.TestCase):
         self.assertNotIn("邵苇衡", blob)
         self.assertNotIn("穹榛中继室", blob)
         self.assertNotIn("fe_shao", blob)
-        self.assertEqual(data["withheld"]["count"], 1)
+        # the model must not even learn that something was withheld
+        self.assertNotIn("withheld", blob)
+        answer = load("c8e02/answer.json")
+        self.assertEqual(len(answer["withheld"]), 1)
 
     def test_c8e02_withheld_fact_stays_in_the_answer(self):
         answer = load("c8e02/answer.json")
@@ -137,6 +140,41 @@ class Regeneration(unittest.TestCase):
         proc = subprocess.run([sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
                                "--check"], capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stdout[-2000:] + proc.stderr[-2000:])
+
+
+class RegenerationDetectsDrift(unittest.TestCase):
+    def test_tampered_copy_fails_the_check(self):
+        """A check that compares the fresh output with itself always passes;
+        this proves the comparison actually reads the committed bytes."""
+        import shutil
+        import subprocess
+        import tempfile
+        tmp = pathlib.Path(tempfile.mkdtemp()) / "pack"
+        shutil.copytree(OUT / "candidates-fresh", tmp)
+        victim = tmp / "c8e03/input.json"
+        data = json.loads(victim.read_text(encoding="utf-8"))
+        data["note"] = "tampered"
+        victim.write_text(json.dumps(data, ensure_ascii=False, indent=1) + chr(10),
+                          encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
+             "--check", "--against", str(tmp)],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0, proc.stdout[-1000:])
+        self.assertIn("c8e03/input.json", proc.stdout)
+
+    def test_missing_file_fails_the_check(self):
+        import shutil
+        import subprocess
+        import tempfile
+        tmp = pathlib.Path(tempfile.mkdtemp()) / "pack"
+        shutil.copytree(OUT / "candidates-fresh", tmp)
+        (tmp / "c8e05/facts.json").unlink()
+        proc = subprocess.run(
+            [sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
+             "--check", "--against", str(tmp)],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0, proc.stdout[-1000:])
 
 
 class Projection(unittest.TestCase):

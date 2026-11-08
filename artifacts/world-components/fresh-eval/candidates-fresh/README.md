@@ -1,7 +1,7 @@
 # 首批候选（6 条，待人工核验）
 
 输入包版本 v3（2026-11-08 第二轮外部审查后修订，见 `report.md`）。
-工作树 `094e069052cc`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
+生成器 sha256 `bc8238a57540…`，夹具模板 sha256 `241fde2bf18a…`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
 
 六条全部通过 A 侧 Python 服务提交并读回（独立数据库 `fresh/source/authority.sqlite3`，读回校验 6/6）。**未冻结**，人工核验通过后才做一次性冻结。
 
@@ -19,7 +19,7 @@
 ## 模型看到什么、看不到什么
 
 可见性不由本包自定，而是导入真实 N2 规则（`experiments/world-components/n2_perspective.py`，只读）逐条判定 must / may / invisible。
-不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**。唯一的非可见性排除是 `c8e06` 的玩家指令，单独标为 `player-instruction`。
+不可见的事实只写进 `answer.json`（核验答案），**不进 `input.json`**；输入里连“有事实被排除”的计数和依据也不给。唯一的非可见性排除是 `c8e06` 的玩家指令，单独标为 `player-instruction`。
 
 ## 页面投影实测（不是预测）
 
@@ -47,7 +47,7 @@ candidates-fresh/
 └── <id>/
     ├── facts.json      原始 Δ / 变化事实 / 现状
     ├── answer.json     完整事实 + N2 逐条判定 + 被排除的事实
-    ├── input.json      模型实际输入（含 withheld 计数，不含其内容）
+    ├── input.json      模型实际输入（不含被排除事实，也不提示有事实被排除）
     ├── screening.json  R1 v1/v2、R2、R3（完整变化集）
     └── checks.md       四段状态、排除事实、人工核验项
 ```
