@@ -38,6 +38,10 @@ const result = {
   cancel: {}, cases: [],
 };
 
+// A deep sample is slow (~18 s here): measureUserAgentSpecificMemory forces a
+// full GC. The value describes some instant inside that window, so the sample
+// records when it started and ended, and latency claims are bounded by the
+// pair, never by the start stamp alone.
 async function sampleMemory(label) {
   const s = { label, atMs: +performance.now().toFixed(1) };
   if (performance.memory) s.jsHeapUsedBytes = performance.memory.usedJSHeapSize;
@@ -45,6 +49,8 @@ async function sampleMemory(label) {
     try {
       const m = await performance.measureUserAgentSpecificMemory();
       s.isolatedBytes = m.bytes;
+      s.measuredUntilMs = +performance.now().toFixed(1);
+      s.measureDurationMs = +(s.measuredUntilMs - s.atMs).toFixed(1);
     } catch (e) { s.isolatedError = String(e && e.name || e); }
   }
   result.memory.samples.push(s);
@@ -159,20 +165,39 @@ try {
   status("terminate worker A…");
   const memBeforeTerminate = (result.memory.samples.at(-1) || {}).isolatedBytes ?? null;
   const tTerminate = performance.now();
-  a.worker.terminate();
+  a.worker.terminate(); // returns immediately; reclamation is asynchronous
+  const terminateWallClockMs = Date.now();
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const afterTerminate = [];
-  for (const delay of [100, 400, 1500, 3000]) {
-    await wait(delay);
-    const s = await sampleMemory(`terminated+${Math.round(performance.now() - tTerminate)}ms`);
-    afterTerminate.push({ atMs: s.atMs, isolatedBytes: s.isolatedBytes ?? null,
+  // first sample starts as soon as terminate() returns; its own runtime is the
+  // only resolution this API offers, so it is recorded instead of assumed
+  for (const delay of [0, 800, 5000]) {
+    if (delay) await wait(delay);
+    const start = performance.now();
+    const s = await sampleMemory(`terminated+${Math.round(start - tTerminate)}ms-start`);
+    afterTerminate.push({ startedAtMs: s.atMs, endedAtMs: s.measuredUntilMs ?? null,
+                          measureDurationMs: s.measureDurationMs ?? null,
+                          isolatedBytes: s.isolatedBytes ?? null,
                           jsHeapUsedBytes: s.jsHeapUsedBytes ?? null });
   }
+  const last = afterTerminate.at(-1);
   result.terminate = {
+    terminatedAtMs: +tTerminate.toFixed(1),
+    terminateWallClockMs,
     memBeforeTerminate,
     samples: afterTerminate,
-    reclaimedBytes: afterTerminate.at(-1).isolatedBytes != null && memBeforeTerminate != null
-      ? memBeforeTerminate - afterTerminate.at(-1).isolatedBytes : null,
+    firstSample: afterTerminate[0] ? {
+      startOffsetMs: +(afterTerminate[0].startedAtMs - tTerminate).toFixed(1),
+      endOffsetMs: afterTerminate[0].endedAtMs != null
+        ? +(afterTerminate[0].endedAtMs - tTerminate).toFixed(1) : null,
+      isolatedBytes: afterTerminate[0].isolatedBytes,
+    } : null,
+    // the honest bound: by the END of the first completed measurement the
+    // value was already X; when inside that window it dropped is unresolved
+    releaseResolvedWithinMs: afterTerminate[0] && afterTerminate[0].endedAtMs != null
+      ? +(afterTerminate[0].endedAtMs - tTerminate).toFixed(1) : null,
+    reclaimedBytes: last?.isolatedBytes != null && memBeforeTerminate != null
+      ? memBeforeTerminate - last.isolatedBytes : null,
   };
 
   // --- worker B: rebuild, verify the same tokens ---

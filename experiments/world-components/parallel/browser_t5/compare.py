@@ -58,6 +58,12 @@ def main() -> int:
     assets = load(RUNS / "assets.json")
     offline = load(RUNS / "offline-reference.json")
     offline_by_name = {c["name"]: c for c in offline["cases"]}
+    # int8 needs its own ORT-python reference: comparing browser-int8 against
+    # fp32 mixes two questions (quantisation delta vs browser/offline drift)
+    offline_int8_p = RUNS / "offline-reference-int8.json"
+    offline_int8 = load(offline_int8_p) if offline_int8_p.exists() else None
+    offline_int8_by_name = ({c["name"]: c for c in offline_int8["cases"]}
+                            if offline_int8 else {})
 
     runs = []
     for f in sorted(RUNS.glob("*/browser-result.json")) + sorted(RUNS.glob("*/worker-result.json")):
@@ -74,10 +80,16 @@ def main() -> int:
         parity_all = True
         for c in r.get("cases", []):
             ref = offline_by_name.get(c["name"])
+            ref_same = (offline_int8_by_name.get(c["name"])
+                        if variant == "int8" else ref)
             match = ref is not None and c["ids"] == ref["ids"]
+            match_same = ref_same is not None and c["ids"] == ref_same["ids"]
             if variant == "fp32":
                 parity_all = parity_all and match
+            else:
+                parity_all = parity_all and match_same
             cases.append({
+                "tokensMatchOfflineSameGraph": match_same,
                 "name": c["name"],
                 "steps": c["timings"]["steps"],
                 "meanStepMs": c["timings"]["meanStepMs"],
@@ -85,6 +97,7 @@ def main() -> int:
                 "offlineSteps": ref["steps"] if ref else None,
                 "offlineMeanStepMs": ref["meanStepMs"] if ref else None,
                 "tokensMatchOffline": match,
+                "tokensMatchOfflineFp32": match,
                 "tokensMatchStoredFixture": c["tokenMatchVsBakedReference"],
                 "text": c["text"],
                 "offlineText": ref["text"] if ref else None,
@@ -93,6 +106,10 @@ def main() -> int:
         mem = r.get("memory") or {}
         entry = {
             "run": name,
+            # an --rss run samples the OS process tree from the driver every
+            # second; that starves the browser of CPU and inflates load times,
+            # so its memory/RSS evidence counts but its timings do not
+            "timingUsable": archive.get("rss") is None,
             "kind": kind,
             "variant": variant,
             "deepMemoryPass": archive["environment"].get("deepMemoryPass"),
@@ -128,16 +145,17 @@ def main() -> int:
 
     timing = {
         "createMs": {f"{k}-{v}": stat([x["createMs"] for x in per_run
-                                       if x["kind"] == k and x["variant"] == v])
+                                       if x["kind"] == k and x["variant"] == v
+                                       and x["timingUsable"]])
                      for k in ("page", "worker") for v in ("fp32", "int8")},
         "stepMs": {v: stat([c["meanStepMs"] for x in per_run
                             if x["variant"] == v and x["kind"] == "page"
-                            for c in x["cases"]])
+                            and x["timingUsable"] for c in x["cases"]])
                    for v in ("fp32", "int8")},
         "offlineStepMs": stat([c["meanStepMs"] for c in offline["cases"]]),
         "encoderMs": {v: stat([c["encoderMs"] for x in per_run
                                if x["variant"] == v and x["kind"] == "page"
-                               for c in x["cases"]])
+                               and x["timingUsable"] for c in x["cases"]])
                       for v in ("fp32", "int8")},
     }
 
@@ -187,12 +205,15 @@ def main() -> int:
                 "completedSteps": (c.get("outcome") or {}).get("completedSteps"),
                 "issueToThrowMs": c.get("issueToThrowMs")})
 
+    int8_same_graph_failures = []
     int8_diffs = []
     for x in per_run:
         if x["variant"] != "int8":
             continue
         for c in x["cases"]:
-            if not c["tokensMatchOffline"]:
+            if not c["tokensMatchOfflineSameGraph"]:
+                int8_same_graph_failures.append({"run": x["run"], "case": c["name"]})
+            if not c["tokensMatchOfflineFp32"]:
                 int8_diffs.append({
                     "run": x["run"], "kind": x["kind"], "case": c["name"],
                     "browser": c["text"], "offline": c["offlineText"],
@@ -231,6 +252,7 @@ def main() -> int:
         "memorySummary": mem_summary,
         "cancelSummary": cancel_summary,
         "int8TokenDiffsDistinct": int8_distinct,
+        "int8SameGraphFailures": int8_same_graph_failures,
         "verdict": {
             "fp32TokenParityAllPageRuns": all(
                 x["tokensAllMatchOffline"] for x in per_run
@@ -244,9 +266,12 @@ def main() -> int:
             "rebuiltWorkerReproduces": all(
                 x["rebuiltWorkerTokens"] is not False
                 for x in per_run if x["kind"] == "worker"),
-            "int8TokenIdenticalCases": sum(
+            "int8SameGraphParity": not int8_same_graph_failures and any(
+                x["variant"] == "int8" for x in per_run),
+            "int8SameGraphFailures": int8_same_graph_failures,
+            "int8TokenIdenticalToFp32": sum(
                 1 for x in per_run if x["variant"] == "int8"
-                for c in x["cases"] if c["tokensMatchOffline"]),
+                for c in x["cases"] if c["tokensMatchOfflineFp32"]),
         },
     }
     out = pathlib.Path(args.out)

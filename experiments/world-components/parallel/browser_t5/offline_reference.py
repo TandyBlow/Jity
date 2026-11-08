@@ -26,6 +26,7 @@ REPO = HERE.parents[6]
 WT = HERE.parents[3]
 GRAPH_DIR = REPO / ".local" / "world-components-worktree" / "experiments" / \
     "world-components" / "assets" / "n4-onnx" / "r3-direction"
+GRAPH_DIR_INT8 = REPO / ".local" / "world-components-worktree" / "experiments" /     "world-components" / "assets" / "n4-onnx" / "r3-direction-int8"
 CKPT = REPO / ".local" / "world-components-worktree" / "experiments" / \
     "world-components" / "assets" / "n4-finetune" / "r3-direction"
 FIXTURE = WT / "experiments" / "world-components" / "browser_probe" / "probe_inputs.json"
@@ -71,8 +72,12 @@ def greedy(enc_sess, dec_sess, input_ids, attention_mask, eos_id, pad_id,
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=str(HERE / "runs" / "offline-reference.json"))
+    ap.add_argument("--graphs", default="fp32", choices=["fp32", "int8"])
+    ap.add_argument("--out", default=None)
     args = ap.parse_args()
+    graph_dir = GRAPH_DIR_INT8 if args.graphs == "int8" else GRAPH_DIR
+    out_path = pathlib.Path(args.out) if args.out else (
+        HERE / "runs" / f"offline-reference{'-int8' if args.graphs == 'int8' else ''}.json")
 
     import onnxruntime as ort
     import sentencepiece as spm
@@ -87,8 +92,8 @@ def main() -> int:
     so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     providers = ["CPUExecutionProvider"]
     t0 = time.perf_counter()
-    enc_sess = ort.InferenceSession(str(GRAPH_DIR / "encoder.onnx"), so, providers=providers)
-    dec_sess = ort.InferenceSession(str(GRAPH_DIR / "decoder_kv.onnx"), so, providers=providers)
+    enc_sess = ort.InferenceSession(str(graph_dir / "encoder.onnx"), so, providers=providers)
+    dec_sess = ort.InferenceSession(str(graph_dir / "decoder_kv.onnx"), so, providers=providers)
     load_ms = (time.perf_counter() - t0) * 1000
 
     out_cases = []
@@ -118,14 +123,16 @@ def main() -> int:
 
     record = {
         "purpose": "c9 offline reference: ORT-python greedy on the baked ids, "
-                   "same graphs and loop shape as the browser adapter",
+                   "same graphs and loop shape as the browser adapter "
+                   f"({args.graphs} graphs)",
         "environment": {
             "python": sys.version.split()[0],
             "onnxruntime": ort.__version__,
             "device": "CPUExecutionProvider, intra/inter threads = 1",
+            "graphSet": args.graphs,
             "graphs": {
-                "encoder.onnx": hashlib.sha256((GRAPH_DIR / "encoder.onnx").read_bytes()).hexdigest(),
-                "decoder_kv.onnx": hashlib.sha256((GRAPH_DIR / "decoder_kv.onnx").read_bytes()).hexdigest(),
+                "encoder.onnx": hashlib.sha256((graph_dir / "encoder.onnx").read_bytes()).hexdigest(),
+                "decoder_kv.onnx": hashlib.sha256((graph_dir / "decoder_kv.onnx").read_bytes()).hexdigest(),
             },
         },
         "decodeParams": {"strategy": "greedy", "max_new_tokens": MAX_NEW_TOKENS,
@@ -134,13 +141,16 @@ def main() -> int:
                          "num_heads": cfg["num_heads"], "d_kv": cfg["d_kv"]},
         "sessionLoadMs": round(load_ms, 1),
         "cases": out_cases,
+        # the stored referenceIds were produced with the fp32 graphs, so only
+        # that set is expected to reproduce them
         "allMatchStoredReference": all_match_stored,
+        "matchStoredReferenceExpected": args.graphs == "fp32",
     }
-    out = pathlib.Path(args.out)
+    out = out_path
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n",
                    encoding="utf-8")
-    print("wrote", out)
+    print("wrote", out, "graphs:", args.graphs)
     for c in out_cases:
         print(f"{c['name']:16s} steps={c['steps']:2d} "
               f"enc={c['encoderMs']:7.1f}ms gen={c['generationMs']:7.1f}ms "

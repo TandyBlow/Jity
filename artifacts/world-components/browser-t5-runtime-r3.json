@@ -1,0 +1,5518 @@
+{
+ "round": 3,
+ "supersedes": "browser-t5-runtime-r2.json (round 2) and r1",
+ "task": {
+  "id": "c9",
+  "branch": "exp/c-browser-t5",
+  "exclusive_dir": "experiments/world-components/parallel/browser_t5/",
+  "question": "release the runtime's memory by terminating a worker, price the int8 graphs, and measure cancel latency from the abort call instead of from the run start"
+ },
+ "model": {
+  "checkpoint": "Randeng-T5-77M fine-tune r3-direction",
+  "params": 77440384,
+  "config": {
+   "num_heads": 6,
+   "d_kv": 64,
+   "d_model": 512,
+   "vocab_size": 32596,
+   "num_layers": 8,
+   "num_decoder_layers": 8,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "decoder_start_token_id": 0
+  },
+  "graphs": {
+   "fp32": {
+    "encoder.onnx": {
+     "sha256": "b49b3ad27ee671947c8e6bfd0ab2c2b0b95e1dd4115ca5e253d02e6b1bcc7324",
+     "bytes": 142418864
+    },
+    "decoder_kv.onnx": {
+     "sha256": "6905fc88b9d6483229c536f25905b248b7cabf76d32e11693aa649d5011eb529",
+     "bytes": 234545169
+    },
+    "decoder_step.onnx": {
+     "sha256": "05893d84e50cb267b12329d7cd7fe25d2604415b403ed3e2eefd304175dda757",
+     "bytes": 234486157
+    }
+   },
+   "int8": {
+    "encoder.onnx": {
+     "sha256": "2a13b5fa1f051d0b8214a5ba5905182feaa58f4f1b9dd74f5c1dd28de766a58a",
+     "bytes": 35848202
+    },
+    "decoder_kv.onnx": {
+     "sha256": "2f93e93775464f7eb4f038949c5157a2cb6a82841eb2ed0c13ddbdd25f53f352",
+     "bytes": 184607589
+    }
+   }
+  },
+  "spiece": {
+   "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "bytes": 680811
+  },
+  "decode": {
+   "strategy": "greedy (argmax per step, no sampling, no beam)",
+   "max_new_tokens": 64,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "decoder_start_token_id": 0,
+   "num_heads": 6,
+   "d_kv": 64,
+   "d_model": 512,
+   "vocab_size": 32596,
+   "num_layers": 8,
+   "num_decoder_layers": 8,
+   "kv_cache": "self-attention KV only; cross-attention K/V recomputed inside decoder_kv.onnx each step",
+   "input_truncation": "adapter returns unsupported above 128 real tokens (ids include the appended </s>=1)",
+   "note": "max_input 128 / max_output 64 are the r3-direction training contract; the adapter does not pad or truncate below the gate"
+  }
+ },
+ "fixtures": {
+  "file": ".local\\parallel\\c-browser-t5\\experiments\\world-components\\browser_probe\\probe_inputs.json",
+  "sha256": "2f0babc830dbc9e3dc34af7ae29bf0ea52d09062e0db9cc7feaed8d3ed4dfd5a",
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 35,
+    "referenceTokens": 16,
+    "referenceIdsSha256": "981c5d07aaddeb93ae0125269a0fd05d97e40a9db9ec5b1ed852fcb2cc18b6c4"
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 25,
+    "referenceTokens": 10,
+    "referenceIdsSha256": "4b01a7866ace19e0e94c82171aa0f957e89a7b791f9682425ad20dcb6e8a8a76"
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 38,
+    "referenceTokens": 20,
+    "referenceIdsSha256": "4e5a8d9c4ea6742380fdee7e7c1a48f5766f90ace62a4cf50dc1c93e4615f431"
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 63,
+    "referenceTokens": 33,
+    "referenceIdsSha256": "ee054723325128267a7960b3d9a9dbf9aa27c4507edd430b98d940d4a607fc0a"
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "inputTokens": 35,
+    "referenceTokens": 16,
+    "referenceIdsSha256": "7e47d06b341d0acbfc146dcfb6774637cd50dfb488211164e62d545bbd9ca5ac"
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "inputTokens": 21,
+    "referenceTokens": 11,
+    "referenceIdsSha256": "aa92e10e8d3a1ff18948ddac37a1cbb08a7d36fb214a8838f496e84bd6ee9221"
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "inputTokens": 25,
+    "referenceTokens": 10,
+    "referenceIdsSha256": "b2e697775513e5d98e76f5396c431522713f9287318bf6da7d07e4c18df11f77"
+   }
+  ]
+ },
+ "code": {
+  "adapter": {
+   "path": "experiments/world-components/parallel/browser_t5/t5_adapter.mjs",
+   "sha256": "93f18b196817d15bbc64cddc011277488e8842f98a198f2317d950a83efb6e98"
+  },
+  "worker": {
+   "path": "experiments/world-components/parallel/browser_t5/t5_worker.mjs",
+   "sha256": "6bdf92fb5cf612481fa42117b7d9648fe9619edfbb457c257e766af2e3a37193"
+  },
+  "pageProbe": {
+   "path": "experiments/world-components/parallel/browser_t5/probe.html",
+   "sha256": "96097d06e619987ff9a9461414c73e4aad0ae232881ce1e23766a9ab431619a7"
+  },
+  "workerProbe": {
+   "path": "experiments/world-components/parallel/browser_t5/worker_probe.html",
+   "sha256": "a8393a6dcb5cec38b9773264084e5390915bda8224ac82e505b94449af729812"
+  }
+ },
+ "offlineReference": {
+  "purpose": "c9 offline reference: ORT-python greedy on the baked ids, same graphs and loop shape as the browser adapter",
+  "environment": {
+   "python": "3.12.3",
+   "onnxruntime": "1.25.1",
+   "device": "CPUExecutionProvider, intra/inter threads = 1",
+   "graphs": {
+    "encoder.onnx": "b49b3ad27ee671947c8e6bfd0ab2c2b0b95e1dd4115ca5e253d02e6b1bcc7324",
+    "decoder_kv.onnx": "6905fc88b9d6483229c536f25905b248b7cabf76d32e11693aa649d5011eb529"
+   }
+  },
+  "decodeParams": {
+   "strategy": "greedy",
+   "max_new_tokens": 64,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "num_heads": 6,
+   "d_kv": 64
+  },
+  "sessionLoadMs": 3176.6,
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "generationMs": 650.5,
+    "encoderMs": 89.5,
+    "steps": 17,
+    "meanStepMs": 38.3,
+    "idsSha256": "981c5d07aaddeb93ae0125269a0fd05d97e40a9db9ec5b1ed852fcb2cc18b6c4",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "一切如旧。前后大约九分钟。",
+    "generationMs": 401.3,
+    "encoderMs": 58.3,
+    "steps": 11,
+    "meanStepMs": 36.5,
+    "idsSha256": "4b01a7866ace19e0e94c82171aa0f957e89a7b791f9682425ad20dcb6e8a8a76",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 38,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     9301,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+    "generationMs": 863.1,
+    "encoderMs": 63.7,
+    "steps": 21,
+    "meanStepMs": 41.1,
+    "idsSha256": "4e5a8d9c4ea6742380fdee7e7c1a48f5766f90ace62a4cf50dc1c93e4615f431",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 63,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     559,
+     261,
+     19847,
+     1730,
+     4466,
+     261,
+     5516,
+     4366,
+     1730,
+     410,
+     4749,
+     7746,
+     618,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+    "generationMs": 1875.8,
+    "encoderMs": 172.0,
+    "steps": 34,
+    "meanStepMs": 55.2,
+    "idsSha256": "ee054723325128267a7960b3d9a9dbf9aa27c4507edd430b98d940d4a607fc0a",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     22834,
+     2912,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+    "generationMs": 676.5,
+    "encoderMs": 52.3,
+    "steps": 17,
+    "meanStepMs": 39.8,
+    "idsSha256": "7e47d06b341d0acbfc146dcfb6774637cd50dfb488211164e62d545bbd9ca5ac",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "inputTokens": 21,
+    "ids": [
+     259,
+     24952,
+     7357,
+     2405,
+     12689,
+     691,
+     261,
+     9569,
+     2696,
+     4659,
+     297
+    ],
+    "text": "大约零分钟过去了,一切如旧。",
+    "generationMs": 500.5,
+    "encoderMs": 71.5,
+    "steps": 12,
+    "meanStepMs": 41.7,
+    "idsSha256": "aa92e10e8d3a1ff18948ddac37a1cbb08a7d36fb214a8838f496e84bd6ee9221",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     921,
+     1156,
+     297
+    ],
+    "text": "一切如旧。前后大约三天。",
+    "generationMs": 481.2,
+    "encoderMs": 72.9,
+    "steps": 11,
+    "meanStepMs": 43.7,
+    "idsSha256": "b2e697775513e5d98e76f5396c431522713f9287318bf6da7d07e4c18df11f77",
+    "matchStoredReference": true
+   }
+  ],
+  "allMatchStoredReference": true
+ },
+ "offlineReferenceInt8": {
+  "purpose": "c9 offline reference: ORT-python greedy on the baked ids, same graphs and loop shape as the browser adapter (int8 graphs)",
+  "environment": {
+   "python": "3.12.3",
+   "onnxruntime": "1.25.1",
+   "device": "CPUExecutionProvider, intra/inter threads = 1",
+   "graphSet": "int8",
+   "graphs": {
+    "encoder.onnx": "2a13b5fa1f051d0b8214a5ba5905182feaa58f4f1b9dd74f5c1dd28de766a58a",
+    "decoder_kv.onnx": "2f93e93775464f7eb4f038949c5157a2cb6a82841eb2ed0c13ddbdd25f53f352"
+   }
+  },
+  "decodeParams": {
+   "strategy": "greedy",
+   "max_new_tokens": 64,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "num_heads": 6,
+   "d_kv": 64
+  },
+  "sessionLoadMs": 2697.7,
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+    "generationMs": 617.9,
+    "encoderMs": 49.4,
+    "steps": 17,
+    "meanStepMs": 36.3,
+    "idsSha256": "d6e83e2897a15e58aaa13f387ecf84bd5c90917572ca73f235cab4a6c968ed24",
+    "matchStoredReference": false
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "一切如旧。前后大约九分钟。",
+    "generationMs": 342.5,
+    "encoderMs": 16.9,
+    "steps": 11,
+    "meanStepMs": 31.1,
+    "idsSha256": "4b01a7866ace19e0e94c82171aa0f957e89a7b791f9682425ad20dcb6e8a8a76",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 38,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     9301,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+    "generationMs": 765.2,
+    "encoderMs": 25.9,
+    "steps": 21,
+    "meanStepMs": 36.4,
+    "idsSha256": "4e5a8d9c4ea6742380fdee7e7c1a48f5766f90ace62a4cf50dc1c93e4615f431",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 63,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     559,
+     261,
+     19847,
+     1730,
+     4466,
+     261,
+     5516,
+     4366,
+     1730,
+     410,
+     4749,
+     7746,
+     618,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+    "generationMs": 1471.2,
+    "encoderMs": 50.3,
+    "steps": 34,
+    "meanStepMs": 43.3,
+    "idsSha256": "ee054723325128267a7960b3d9a9dbf9aa27c4507edd430b98d940d4a607fc0a",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     22834,
+     2912,
+     297
+    ],
+    "text": "陆知微从柳堤来到药圃。前后大约四十秒。",
+    "generationMs": 532.0,
+    "encoderMs": 21.1,
+    "steps": 17,
+    "meanStepMs": 31.3,
+    "idsSha256": "d7e926c1a2438e813ba8f9a092c57738cc85214c0b0e51b02d2e644eed4fec2e",
+    "matchStoredReference": false
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "inputTokens": 21,
+    "ids": [
+     259,
+     24952,
+     7357,
+     2405,
+     12689,
+     691,
+     261,
+     9569,
+     2696,
+     4659,
+     297
+    ],
+    "text": "大约零分钟过去了,一切如旧。",
+    "generationMs": 398.8,
+    "encoderMs": 14.3,
+    "steps": 12,
+    "meanStepMs": 33.2,
+    "idsSha256": "aa92e10e8d3a1ff18948ddac37a1cbb08a7d36fb214a8838f496e84bd6ee9221",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     921,
+     1156,
+     297
+    ],
+    "text": "一切如旧。前后大约三天。",
+    "generationMs": 342.9,
+    "encoderMs": 19.9,
+    "steps": 11,
+    "meanStepMs": 31.2,
+    "idsSha256": "b2e697775513e5d98e76f5396c431522713f9287318bf6da7d07e4c18df11f77",
+    "matchStoredReference": true
+   }
+  ],
+  "allMatchStoredReference": false,
+  "matchStoredReferenceExpected": false
+ },
+ "pageRuns": [
+  {
+   "run": "fp32-r2",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 27403,
+   "servedMiB": 388.4,
+   "createMs": 13937.7,
+   "stages": {
+    "ortImportMs": 844.9,
+    "tokenizerFetchMs": 198.5,
+    "spLoadMs": 264.8,
+    "encoderCreateMs": 6718.9,
+    "decoderCreateMs": 5910.6,
+    "createTotalMs": 13937.7,
+    "measuredCreateMs": 13938.9
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 355.2,
+     "stepEndOffsetsMs": [
+      104.9,
+      168.8,
+      230.5,
+      278.7,
+      335.7,
+      389.8,
+      441.4,
+      496.6,
+      559.5,
+      616.1,
+      668.1,
+      719,
+      775.4,
+      833,
+      889.7,
+      940.4,
+      1006
+     ],
+     "generationMs": 908.6,
+     "meanStepMs": 53.4,
+     "steps": 17,
+     "stepMs": [
+      77.2,
+      62.1,
+      56.2,
+      46.6,
+      56.1,
+      52.9,
+      46.7,
+      50.3,
+      57.2,
+      51.6,
+      46.5,
+      46.2,
+      50.2,
+      51.9,
+      51.2,
+      45.4,
+      60.2
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 116.3,
+     "stepEndOffsetsMs": [
+      59.9,
+      118,
+      168.4,
+      230.7,
+      292.6,
+      376.7,
+      455.7,
+      563.5,
+      637.8,
+      714.7,
+      785,
+      851.2,
+      914.2,
+      996.7,
+      1064.5,
+      1132.1,
+      1204.6
+     ],
+     "generationMs": 1055.8,
+     "meanStepMs": 62.1,
+     "steps": 17,
+     "stepMs": [
+      54.3,
+      49.3,
+      44.1,
+      56.4,
+      56.1,
+      78.8,
+      72.9,
+      62.9,
+      68.6,
+      72.1,
+      64.7,
+      61.7,
+      57.2,
+      66.4,
+      61.4,
+      62.1,
+      66.7
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "runWallMs": 246,
+     "abortIssuedAtMs": 25554.8,
+     "abortObservedAtMs": 25615.1,
+     "issueToThrowMs": 60.4,
+     "stepEndOffsetsMs": [
+      61.2
+     ],
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "runWallMs": 476,
+     "abortIssuedAtMs": 26038.6,
+     "abortObservedAtMs": 26091.4,
+     "issueToThrowMs": 52.9,
+     "stepEndOffsetsMs": [
+      57.7,
+      113.6,
+      168.5,
+      224.9,
+      282.6
+     ],
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 101.1,
+      "stepEndOffsetsMs": [
+       44.2,
+       90.5,
+       136.7,
+       183.8,
+       232.8,
+       278,
+       323.1,
+       369.3,
+       414.6,
+       461.2,
+       506.2,
+       550.8,
+       593.9,
+       637.4,
+       681.4,
+       724,
+       769
+      ],
+      "generationMs": 681.9,
+      "meanStepMs": 40.1,
+      "steps": 17,
+      "stepMs": [
+       39.3,
+       40.8,
+       40.2,
+       42.7,
+       43.3,
+       40,
+       40.1,
+       41,
+       40.3,
+       41.2,
+       40,
+       39.2,
+       37.8,
+       38.4,
+       39.4,
+       38.2,
+       39.9
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 352,
+      "jsHeapUsedBytes": 1467902,
+      "jsHeapTotalBytes": 2715386
+     },
+     {
+      "label": "after-create",
+      "atMs": 14291.5,
+      "jsHeapUsedBytes": 242731672,
+      "jsHeapTotalBytes": 244020840
+     },
+     {
+      "label": "after-warm",
+      "atMs": 16989.2,
+      "jsHeapUsedBytes": 248642493,
+      "jsHeapTotalBytes": 251099265
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 19385.1,
+      "jsHeapUsedBytes": 250901548,
+      "jsHeapTotalBytes": 252101640
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 20089.6,
+      "jsHeapUsedBytes": 254312761,
+      "jsHeapTotalBytes": 255212397
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 21221.1,
+      "jsHeapUsedBytes": 253134095,
+      "jsHeapTotalBytes": 254000447
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 23425.2,
+      "jsHeapUsedBytes": 261869673,
+      "jsHeapTotalBytes": 262838969
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 24313.3,
+      "jsHeapUsedBytes": 249622896,
+      "jsHeapTotalBytes": 250686708
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 24843.9,
+      "jsHeapUsedBytes": 253879962,
+      "jsHeapTotalBytes": 254476578
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 25367.2,
+      "jsHeapUsedBytes": 245940430,
+      "jsHeapTotalBytes": 246900014
+     },
+     {
+      "label": "before-release",
+      "atMs": 26962.1,
+      "jsHeapUsedBytes": 254159064,
+      "jsHeapTotalBytes": 255180504
+     },
+     {
+      "label": "after-release",
+      "atMs": 27285,
+      "jsHeapUsedBytes": 254171412,
+      "jsHeapTotalBytes": 255180504
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 51.9,
+     "encoderMs": 171.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 49,
+     "encoderMs": 95.6,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 42.1,
+     "encoderMs": 127.8,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 54.2,
+     "encoderMs": 184,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 40.1,
+     "encoderMs": 116.9,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 33.5,
+     "encoderMs": 67.4,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 35.2,
+     "encoderMs": 79.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "fp32-r3",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 30347,
+   "servedMiB": 388.4,
+   "createMs": 11329.2,
+   "stages": {
+    "tokenizer": {
+     "fetchBundleMs": 24.3,
+     "fetchModelMs": 30.5,
+     "loadMs": 217.2
+    },
+    "tokenizerWallMs": 272.6,
+    "ortImportMs": 74.9,
+    "encoderCreateMs": 5103.4,
+    "decoderCreateMs": 6150.9,
+    "createTotalMs": 11329.2,
+    "measuredCreateMs": 11602.4
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 476.4,
+     "stepEndOffsetsMs": [
+      120.1,
+      183.1,
+      247.9,
+      312.4,
+      381.5,
+      441.8,
+      507.8,
+      586.8,
+      661.6,
+      744.6,
+      814.7,
+      891.5,
+      976.8,
+      1071.3,
+      1162.8,
+      1264.6,
+      1339.8
+     ],
+     "generationMs": 1238.5,
+     "meanStepMs": 72.9,
+     "steps": 17,
+     "stepMs": [
+      100.1,
+      60.9,
+      59.2,
+      63.3,
+      68.1,
+      59.3,
+      60.6,
+      64.2,
+      69.6,
+      77.4,
+      64.6,
+      71.2,
+      79.3,
+      89.6,
+      85.5,
+      96,
+      69.6
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 213.7,
+     "stepEndOffsetsMs": [
+      97.1,
+      202.2,
+      264,
+      332.2,
+      407.4,
+      481.9,
+      561,
+      636.5,
+      709.3,
+      782.4,
+      853.6,
+      920,
+      986.2,
+      1050,
+      1119.8,
+      1191.5,
+      1261.6
+     ],
+     "generationMs": 1165.1,
+     "meanStepMs": 68.5,
+     "steps": 17,
+     "stepMs": [
+      91.8,
+      95.1,
+      57,
+      62.6,
+      70.3,
+      68.6,
+      73.7,
+      70.3,
+      66.8,
+      67.5,
+      64.8,
+      61.5,
+      61,
+      58.3,
+      64.3,
+      66.3,
+      65.1
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "runWallMs": 392,
+     "abortIssuedAtMs": 27585,
+     "abortObservedAtMs": 27673.2,
+     "issueToThrowMs": 88.3,
+     "stepEndOffsetsMs": [
+      90.3
+     ],
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "runWallMs": 807,
+     "abortIssuedAtMs": 28383.8,
+     "abortObservedAtMs": 28480.9,
+     "issueToThrowMs": 97.2,
+     "stepEndOffsetsMs": [
+      103,
+      211.6,
+      317.5,
+      421.6,
+      523.6
+     ],
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 190.9,
+      "stepEndOffsetsMs": [
+       73.2,
+       149.7,
+       215.2,
+       279.6,
+       351.5,
+       425.4,
+       499,
+       556.7,
+       631.5,
+       695.7,
+       765.8,
+       846.3,
+       927.9,
+       1001.1,
+       1082.5,
+       1151.4,
+       1218.9
+      ],
+      "generationMs": 1117.3,
+      "meanStepMs": 65.7,
+      "steps": 17,
+      "stepMs": [
+       68.5,
+       71.3,
+       60.3,
+       59.2,
+       66.7,
+       68.9,
+       56.3,
+       52,
+       70.1,
+       59.3,
+       63.9,
+       75.4,
+       75.5,
+       67.9,
+       76.4,
+       63.4,
+       62.2
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 285.9,
+      "jsHeapUsedBytes": 1442974,
+      "jsHeapTotalBytes": 2191898
+     },
+     {
+      "label": "after-create",
+      "atMs": 11888.8,
+      "jsHeapUsedBytes": 241793917,
+      "jsHeapTotalBytes": 242995609
+     },
+     {
+      "label": "after-warm",
+      "atMs": 15227.8,
+      "jsHeapUsedBytes": 248115478,
+      "jsHeapTotalBytes": 250336178
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 18055.5,
+      "jsHeapUsedBytes": 250125381,
+      "jsHeapTotalBytes": 251338553
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 18917.4,
+      "jsHeapUsedBytes": 253538006,
+      "jsHeapTotalBytes": 254449310
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 20638.2,
+      "jsHeapUsedBytes": 252538840,
+      "jsHeapTotalBytes": 253392656
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 24048.8,
+      "jsHeapUsedBytes": 261472326,
+      "jsHeapTotalBytes": 262428050
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 25524.3,
+      "jsHeapUsedBytes": 249165757,
+      "jsHeapTotalBytes": 250177229
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 26472.4,
+      "jsHeapUsedBytes": 253021003,
+      "jsHeapTotalBytes": 253967099
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 27280.6,
+      "jsHeapUsedBytes": 246084315,
+      "jsHeapTotalBytes": 246971263
+     },
+     {
+      "label": "before-release",
+      "atMs": 29891.7,
+      "jsHeapUsedBytes": 244826353,
+      "jsHeapTotalBytes": 245773377
+     },
+     {
+      "label": "after-release",
+      "atMs": 30218.4,
+      "jsHeapUsedBytes": 244838701,
+      "jsHeapTotalBytes": 245773377
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 67,
+     "encoderMs": 195.7,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 59.5,
+     "encoderMs": 132.1,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 68.7,
+     "encoderMs": 143,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 86,
+     "encoderMs": 306.3,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 72.7,
+     "encoderMs": 146.2,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 63,
+     "encoderMs": 125.5,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 57.9,
+     "encoderMs": 113.7,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "int8-mem1",
+   "variant": "int8",
+   "deepMemoryPass": true,
+   "wallMs": 150786,
+   "servedMiB": 239.1,
+   "createMs": 8720.1,
+   "stages": {
+    "ortImportMs": 52.7,
+    "tokenizerFetchMs": 68.7,
+    "spLoadMs": 216.8,
+    "encoderCreateMs": 3015.6,
+    "decoderCreateMs": 5366.3,
+    "createTotalMs": 8720.1,
+    "measuredCreateMs": 8721.2
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 239.9,
+     "stepEndOffsetsMs": [
+      109,
+      156.8,
+      207.2,
+      260.6,
+      330.7,
+      378.1,
+      430.3,
+      484.5,
+      535.6,
+      588.5,
+      642.9,
+      696.1,
+      746.8,
+      796.6,
+      851.8,
+      910.6,
+      963.6
+     ],
+     "generationMs": 876.8,
+     "meanStepMs": 51.6,
+     "steps": 17,
+     "stepMs": [
+      102.5,
+      46.6,
+      47.5,
+      52.4,
+      54.9,
+      46.4,
+      46.6,
+      48.4,
+      46.5,
+      47.4,
+      49.5,
+      48,
+      44.7,
+      44.7,
+      49.7,
+      53.4,
+      47.7
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 82.6,
+     "stepEndOffsetsMs": [
+      51.1,
+      109.6,
+      171.6,
+      222.2,
+      277.6,
+      337,
+      394.3,
+      441.9,
+      492.4,
+      545.6,
+      600.2,
+      652.5,
+      702.9,
+      759,
+      809.4,
+      857.7,
+      908.5
+     ],
+     "generationMs": 815.4,
+     "meanStepMs": 48,
+     "steps": 17,
+     "stepMs": [
+      45.9,
+      50.2,
+      56.4,
+      44.9,
+      50.6,
+      53.7,
+      51.7,
+      42,
+      45.5,
+      48.4,
+      48.6,
+      46.8,
+      44.9,
+      51.3,
+      45.3,
+      43,
+      46.2
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "runWallMs": 291,
+     "abortIssuedAtMs": 120551.3,
+     "abortObservedAtMs": 120610,
+     "issueToThrowMs": 58.8,
+     "stepEndOffsetsMs": [
+      95.3,
+      154.3
+     ],
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "runWallMs": 496,
+     "abortIssuedAtMs": 121029.7,
+     "abortObservedAtMs": 121105.7,
+     "issueToThrowMs": 76.1,
+     "stepEndOffsetsMs": [
+      64.8,
+      140.8,
+      213.7,
+      285.2,
+      366.3
+     ],
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 110.7,
+      "stepEndOffsetsMs": [
+       64.5,
+       124.8,
+       184.5,
+       247.9,
+       308,
+       382.4,
+       465,
+       525.2,
+       589.5,
+       655.2,
+       724.9,
+       788.8,
+       850.4,
+       916,
+       986.3,
+       1028.6,
+       1064.9
+      ],
+      "generationMs": 972,
+      "meanStepMs": 57.2,
+      "steps": 17,
+      "stepMs": [
+       59,
+       54.8,
+       54.7,
+       56.9,
+       54.3,
+       68.3,
+       77,
+       55.4,
+       58.8,
+       61.2,
+       64.6,
+       59.2,
+       56.1,
+       60,
+       64.1,
+       36.7,
+       30.9
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 189.9,
+      "jsHeapUsedBytes": 1457462,
+      "jsHeapTotalBytes": 2191110,
+      "isolatedBytes": 1108882
+     },
+     {
+      "label": "after-create",
+      "atMs": 20938.5,
+      "jsHeapUsedBytes": 192562801,
+      "jsHeapTotalBytes": 194083269,
+      "isolatedBytes": 713443522
+     },
+     {
+      "label": "after-warm",
+      "atMs": 30009.4,
+      "jsHeapUsedBytes": 15420726,
+      "jsHeapTotalBytes": 18283242,
+      "isolatedBytes": 713855646
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 35641,
+      "jsHeapUsedBytes": 19639349,
+      "jsHeapTotalBytes": 21686605,
+      "isolatedBytes": 713920912
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 45149.3,
+      "jsHeapUsedBytes": 10678798,
+      "jsHeapTotalBytes": 12220090,
+      "isolatedBytes": 713914062
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 52184.3,
+      "jsHeapUsedBytes": 17583652,
+      "jsHeapTotalBytes": 18502156,
+      "isolatedBytes": 713942520
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 65350.6,
+      "jsHeapUsedBytes": 11441598,
+      "jsHeapTotalBytes": 12038038,
+      "isolatedBytes": 713964436
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 78600.2,
+      "jsHeapUsedBytes": 15000877,
+      "jsHeapTotalBytes": 15530961,
+      "isolatedBytes": 713969438
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 90505.5,
+      "jsHeapUsedBytes": 12354651,
+      "jsHeapTotalBytes": 13003535,
+      "isolatedBytes": 713973778
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 102294.8,
+      "jsHeapUsedBytes": 11916399,
+      "jsHeapTotalBytes": 12848723,
+      "isolatedBytes": 713989574
+     },
+     {
+      "label": "before-release",
+      "atMs": 122282.1,
+      "jsHeapUsedBytes": 15786553,
+      "jsHeapTotalBytes": 18159061,
+      "isolatedBytes": 714011770
+     },
+     {
+      "label": "after-release",
+      "atMs": 137634.6,
+      "jsHeapUsedBytes": 15123917,
+      "jsHeapTotalBytes": 17372629,
+      "isolatedBytes": 714018814
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 43.2,
+     "encoderMs": 68.3,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": false,
+     "tokensMatchStoredFixture": false,
+     "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 36.2,
+     "encoderMs": 55.8,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 62.1,
+     "encoderMs": 118.6,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 54.6,
+     "encoderMs": 126,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 61.6,
+     "encoderMs": 110.7,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": false,
+     "tokensMatchStoredFixture": false,
+     "text": "陆知微从柳堤来到药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 63.1,
+     "encoderMs": 77.8,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 57.6,
+     "encoderMs": 91.1,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "int8-r1",
+   "variant": "int8",
+   "deepMemoryPass": false,
+   "wallMs": 20972,
+   "servedMiB": 239.1,
+   "createMs": 8755,
+   "stages": {
+    "ortImportMs": 56.3,
+    "tokenizerFetchMs": 46.3,
+    "spLoadMs": 325.4,
+    "encoderCreateMs": 3282.2,
+    "decoderCreateMs": 5044.8,
+    "createTotalMs": 8755,
+    "measuredCreateMs": 8755.6
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 260.1,
+     "stepEndOffsetsMs": [
+      90.3,
+      139.6,
+      196.2,
+      239.8,
+      303.4,
+      362.3,
+      407.7,
+      470.1,
+      516.9,
+      562.8,
+      610.1,
+      657.2,
+      704.1,
+      751.2,
+      799.5,
+      849.5,
+      896.8
+     ],
+     "generationMs": 798.5,
+     "meanStepMs": 47,
+     "steps": 17,
+     "stepMs": [
+      71.7,
+      47.9,
+      52.7,
+      42.5,
+      62.9,
+      44.9,
+      40.5,
+      56.4,
+      41.5,
+      40.6,
+      41.4,
+      41.1,
+      41.8,
+      42.3,
+      43.6,
+      44.4,
+      42.3
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     1730,
+     5650,
+     23880,
+     14293,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 69.1,
+     "stepEndOffsetsMs": [
+      48.9,
+      100,
+      145,
+      193.9,
+      238.9,
+      297.2,
+      347.2,
+      391.8,
+      439.8,
+      484.1,
+      531.6,
+      576.6,
+      622.9,
+      677.7,
+      722.4,
+      769.7,
+      814.8
+     ],
+     "generationMs": 723.8,
+     "meanStepMs": 42.6,
+     "steps": 17,
+     "stepMs": [
+      43.3,
+      43.8,
+      39.3,
+      43.3,
+      40.1,
+      53.2,
+      44.6,
+      39.5,
+      42.3,
+      38.9,
+      43.1,
+      40.2,
+      40.6,
+      49.2,
+      39.6,
+      42.3,
+      40.5
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "runWallMs": 232,
+     "abortIssuedAtMs": 19106,
+     "abortObservedAtMs": 19165.1,
+     "issueToThrowMs": 59.2,
+     "stepEndOffsetsMs": [
+      58.3,
+      117.8
+     ],
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "runWallMs": 434,
+     "abortIssuedAtMs": 19545.5,
+     "abortObservedAtMs": 19598.8,
+     "issueToThrowMs": 53.4,
+     "stepEndOffsetsMs": [
+      58.9,
+      118.1,
+      182.3,
+      257,
+      315.1
+     ],
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 70.6,
+      "stepEndOffsetsMs": [
+       46.5,
+       103.1,
+       157.6,
+       203.3,
+       251.4,
+       306.5,
+       358.3,
+       410.4,
+       459.2,
+       512.8,
+       570.6,
+       622.1,
+       672.4,
+       719,
+       770.4,
+       820.9,
+       865.7
+      ],
+      "generationMs": 778.7,
+      "meanStepMs": 45.8,
+      "steps": 17,
+      "stepMs": [
+       41.4,
+       51.5,
+       49.1,
+       39.6,
+       42.3,
+       49.6,
+       46.9,
+       47.8,
+       43.8,
+       48.6,
+       52.1,
+       46.9,
+       45.8,
+       42,
+       46.4,
+       45.4,
+       39.5
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 233.7,
+      "jsHeapUsedBytes": 1457450,
+      "jsHeapTotalBytes": 2191098
+     },
+     {
+      "label": "after-create",
+      "atMs": 8989.8,
+      "jsHeapUsedBytes": 192932052,
+      "jsHeapTotalBytes": 194345404
+     },
+     {
+      "label": "after-warm",
+      "atMs": 11041.1,
+      "jsHeapUsedBytes": 200449593,
+      "jsHeapTotalBytes": 203677229
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 12755.7,
+      "jsHeapUsedBytes": 199754800,
+      "jsHeapTotalBytes": 204332220
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 13350.6,
+      "jsHeapUsedBytes": 203166037,
+      "jsHeapTotalBytes": 207442977
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 14640.5,
+      "jsHeapUsedBytes": 212232803,
+      "jsHeapTotalBytes": 215945123
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 16973.6,
+      "jsHeapUsedBytes": 210324421,
+      "jsHeapTotalBytes": 211809213
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 17871.1,
+      "jsHeapUsedBytes": 198751604,
+      "jsHeapTotalBytes": 200025168
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 18419.4,
+      "jsHeapUsedBytes": 202861346,
+      "jsHeapTotalBytes": 203815038
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 18933,
+      "jsHeapUsedBytes": 195385766,
+      "jsHeapTotalBytes": 196565674
+     },
+     {
+      "label": "before-release",
+      "atMs": 20535.8,
+      "jsHeapUsedBytes": 194490832,
+      "jsHeapTotalBytes": 195621316
+     },
+     {
+      "label": "after-release",
+      "atMs": 20858.6,
+      "jsHeapUsedBytes": 194503252,
+      "jsHeapTotalBytes": 195621316
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 43.9,
+     "encoderMs": 79.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": false,
+     "tokensMatchStoredFixture": false,
+     "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 41.7,
+     "encoderMs": 63.8,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 52.3,
+     "encoderMs": 80.6,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 59.5,
+     "encoderMs": 134.8,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 43.3,
+     "encoderMs": 67.8,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": false,
+     "tokensMatchStoredFixture": false,
+     "text": "陆知微从柳堤来到药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 36.8,
+     "encoderMs": 43.7,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 36.8,
+     "encoderMs": 51.6,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "mem1",
+   "variant": "fp32",
+   "deepMemoryPass": true,
+   "wallMs": 166892,
+   "servedMiB": 388.3,
+   "createMs": 14799,
+   "stages": {
+    "ortImportMs": 71.6,
+    "tokenizerFetchMs": 55.3,
+    "spLoadMs": 292.8,
+    "encoderCreateMs": 6715.6,
+    "decoderCreateMs": 7663.7,
+    "createTotalMs": 14799,
+    "measuredCreateMs": 14799.9
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 285.6,
+     "generationMs": 833.6,
+     "meanStepMs": 49,
+     "steps": 17,
+     "stepMs": [
+      76.1,
+      48.4,
+      53.2,
+      59.1,
+      48.2,
+      48.6,
+      51.8,
+      46.9,
+      42.7,
+      45.6,
+      42.4,
+      46.8,
+      46.8,
+      41.7,
+      48.9,
+      44.2,
+      42.3
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 113.8,
+     "generationMs": 830.7,
+     "meanStepMs": 48.9,
+     "steps": 17,
+     "stepMs": [
+      47,
+      46.8,
+      45.1,
+      42.8,
+      43.1,
+      45.3,
+      48.3,
+      64.3,
+      54.3,
+      46,
+      52,
+      47.4,
+      48.9,
+      48.8,
+      56,
+      46.4,
+      48.4
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "wallMs": 405,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 651,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 144.9,
+      "generationMs": 952.2,
+      "meanStepMs": 56,
+      "steps": 17,
+      "stepMs": [
+       56.9,
+       53.2,
+       57.1,
+       58.8,
+       58.8,
+       55.5,
+       63.8,
+       55.6,
+       56.1,
+       60.3,
+       52.6,
+       53.9,
+       51.1,
+       50.6,
+       60.4,
+       54.4,
+       53.2
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 194,
+      "jsHeapUsedBytes": 1454151,
+      "jsHeapTotalBytes": 2189319,
+      "isolatedBytes": 1104586
+     },
+     {
+      "label": "after-create",
+      "atMs": 31023.9,
+      "jsHeapUsedBytes": 242554171,
+      "jsHeapTotalBytes": 244543359,
+      "isolatedBytes": 973340298
+     },
+     {
+      "label": "after-warm",
+      "atMs": 39558.7,
+      "jsHeapUsedBytes": 14828072,
+      "jsHeapTotalBytes": 17864048,
+      "isolatedBytes": 973751128
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 47554.7,
+      "jsHeapUsedBytes": 19589535,
+      "jsHeapTotalBytes": 21422683,
+      "isolatedBytes": 973819102
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 55524.8,
+      "jsHeapUsedBytes": 10654352,
+      "jsHeapTotalBytes": 12480456,
+      "isolatedBytes": 973803862
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 65766.2,
+      "jsHeapUsedBytes": 17554546,
+      "jsHeapTotalBytes": 18762522,
+      "isolatedBytes": 973824862
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 83604.8,
+      "jsHeapUsedBytes": 11417396,
+      "jsHeapTotalBytes": 12298404,
+      "isolatedBytes": 973847746
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 94646.5,
+      "jsHeapUsedBytes": 14975143,
+      "jsHeapTotalBytes": 15791327,
+      "isolatedBytes": 973854072
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 106425.6,
+      "jsHeapUsedBytes": 12329005,
+      "jsHeapTotalBytes": 13263901,
+      "isolatedBytes": 973863152
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 121096.4,
+      "jsHeapUsedBytes": 11890353,
+      "jsHeapTotalBytes": 12846945,
+      "isolatedBytes": 973870668
+     },
+     {
+      "label": "before-release",
+      "atMs": 138375.2,
+      "jsHeapUsedBytes": 15748355,
+      "jsHeapTotalBytes": 17895139,
+      "isolatedBytes": 973890644
+     },
+     {
+      "label": "after-release",
+      "atMs": 154725,
+      "jsHeapUsedBytes": 15096707,
+      "jsHeapTotalBytes": 17108707,
+      "isolatedBytes": 973897552
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 55.8,
+     "encoderMs": 193.4,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 36.8,
+     "encoderMs": 80.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 46.4,
+     "encoderMs": 128.9,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 71.3,
+     "encoderMs": 237.6,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 46.9,
+     "encoderMs": 154.2,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 50.1,
+     "encoderMs": 115.3,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 46.7,
+     "encoderMs": 97.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "run1",
+   "variant": "fp32",
+   "deepMemoryPass": null,
+   "wallMs": 172833,
+   "servedMiB": 388.3,
+   "createMs": 21120.2,
+   "stages": {
+    "ortImportMs": 2381.3,
+    "tokenizerFetchMs": 328.5,
+    "spLoadMs": 279,
+    "encoderCreateMs": 10184.8,
+    "decoderCreateMs": 7946.6,
+    "createTotalMs": 21120.2,
+    "measuredCreateMs": 21121.3
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 411.9,
+     "generationMs": 1093.9,
+     "meanStepMs": 64.3,
+     "steps": 17,
+     "stepMs": [
+      128,
+      62.1,
+      60.3,
+      60.6,
+      69.6,
+      60.2,
+      59.4,
+      62.8,
+      58.1,
+      60.6,
+      60.5,
+      58,
+      58.5,
+      58.9,
+      58.8,
+      58.7,
+      58.7
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 150.2,
+     "generationMs": 1001.8,
+     "meanStepMs": 58.9,
+     "steps": 17,
+     "stepMs": [
+      56.9,
+      59.9,
+      59.5,
+      57.1,
+      57.7,
+      59.6,
+      58.2,
+      60.7,
+      58.9,
+      55.7,
+      59.3,
+      57.6,
+      58,
+      60.7,
+      58.5,
+      56,
+      67.4
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "wallMs": 397,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 575,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 127.8,
+      "generationMs": 818.8,
+      "meanStepMs": 48.2,
+      "steps": 17,
+      "stepMs": [
+       46.1,
+       46.6,
+       50.5,
+       58.6,
+       51,
+       48,
+       48.1,
+       46.5,
+       47.9,
+       47.3,
+       48.9,
+       46.6,
+       42.9,
+       46.3,
+       44.2,
+       51.3,
+       47.9
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 983.4,
+      "jsHeapUsedBytes": 1453690,
+      "jsHeapTotalBytes": 2713262,
+      "isolatedBytes": 1098362
+     },
+     {
+      "label": "after-create",
+      "atMs": 39137,
+      "jsHeapUsedBytes": 242550024,
+      "jsHeapTotalBytes": 243756588,
+      "isolatedBytes": 973336834
+     },
+     {
+      "label": "after-warm",
+      "atMs": 47994.3,
+      "jsHeapUsedBytes": 14791349,
+      "jsHeapTotalBytes": 18125853,
+      "isolatedBytes": 973743110
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 53619.8,
+      "jsHeapUsedBytes": 19604232,
+      "jsHeapTotalBytes": 21684488,
+      "isolatedBytes": 973805096
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 62946.2,
+      "jsHeapUsedBytes": 10649197,
+      "jsHeapTotalBytes": 12217973,
+      "isolatedBytes": 973805216
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 65063.7,
+      "jsHeapUsedBytes": 17549459,
+      "jsHeapTotalBytes": 18762183,
+      "isolatedBytes": 973818486
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 79951.9,
+      "jsHeapUsedBytes": 11412269,
+      "jsHeapTotalBytes": 12035921,
+      "isolatedBytes": 973850716
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 95913.9,
+      "jsHeapUsedBytes": 14970116,
+      "jsHeapTotalBytes": 15528844,
+      "isolatedBytes": 973848288
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 111689.4,
+      "jsHeapUsedBytes": 12323834,
+      "jsHeapTotalBytes": 13001418,
+      "isolatedBytes": 973863018
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 123330.9,
+      "jsHeapUsedBytes": 11884886,
+      "jsHeapTotalBytes": 12584462,
+      "isolatedBytes": 973869130
+     },
+     {
+      "label": "before-release",
+      "atMs": 138365.2,
+      "jsHeapUsedBytes": 15730704,
+      "jsHeapTotalBytes": 17632656,
+      "isolatedBytes": 973890126
+     },
+     {
+      "label": "after-release",
+      "atMs": 154708.8,
+      "jsHeapUsedBytes": 15091464,
+      "jsHeapTotalBytes": 16846224,
+      "isolatedBytes": 973899838
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 57.9,
+     "encoderMs": 139.7,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 48.7,
+     "encoderMs": 108.7,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 55.3,
+     "encoderMs": 167.1,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 72.1,
+     "encoderMs": 254.2,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 44.8,
+     "encoderMs": 114.3,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 50.5,
+     "encoderMs": 103.7,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 45,
+     "encoderMs": 87.8,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "run2",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 27611,
+   "servedMiB": 388.3,
+   "createMs": 13151.2,
+   "stages": {
+    "ortImportMs": 54.6,
+    "tokenizerFetchMs": 61.3,
+    "spLoadMs": 245.1,
+    "encoderCreateMs": 5456,
+    "decoderCreateMs": 7334.2,
+    "createTotalMs": 13151.2,
+    "measuredCreateMs": 13152.4
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 468.1,
+     "generationMs": 985.2,
+     "meanStepMs": 58,
+     "steps": 17,
+     "stepMs": [
+      83,
+      61.4,
+      65.4,
+      59.7,
+      68.4,
+      74.9,
+      56.7,
+      54.6,
+      58.5,
+      57.5,
+      55.1,
+      49.8,
+      43.3,
+      46.9,
+      46.1,
+      46.4,
+      57.5
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 141.2,
+     "generationMs": 929.6,
+     "meanStepMs": 54.7,
+     "steps": 17,
+     "stepMs": [
+      49,
+      54.7,
+      52.3,
+      54.8,
+      53.3,
+      56.1,
+      68.3,
+      58.1,
+      55,
+      54.8,
+      56.1,
+      52.3,
+      45.2,
+      53.8,
+      53.2,
+      53.1,
+      59.6
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "wallMs": 369,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 791,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 147.2,
+      "generationMs": 1028,
+      "meanStepMs": 60.5,
+      "steps": 17,
+      "stepMs": [
+       51.9,
+       54.3,
+       60.9,
+       57.5,
+       61.7,
+       51.1,
+       60.5,
+       70.8,
+       55.3,
+       60.6,
+       73.9,
+       68.2,
+       52,
+       53.1,
+       63.2,
+       69.1,
+       63.9
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 360.2,
+      "jsHeapUsedBytes": 1464811,
+      "jsHeapTotalBytes": 2713595
+     },
+     {
+      "label": "after-create",
+      "atMs": 13513.2,
+      "jsHeapUsedBytes": 243347906,
+      "jsHeapTotalBytes": 244019062
+     },
+     {
+      "label": "after-warm",
+      "atMs": 16237.5,
+      "jsHeapUsedBytes": 249789923,
+      "jsHeapTotalBytes": 252374367
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 18394.4,
+      "jsHeapUsedBytes": 250252906,
+      "jsHeapTotalBytes": 252790726
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 19135.6,
+      "jsHeapUsedBytes": 253663451,
+      "jsHeapTotalBytes": 255901483
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 20417.5,
+      "jsHeapUsedBytes": 252656049,
+      "jsHeapTotalBytes": 254058397
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 22679.6,
+      "jsHeapUsedBytes": 261222887,
+      "jsHeapTotalBytes": 262217335
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 23587.9,
+      "jsHeapUsedBytes": 249000190,
+      "jsHeapTotalBytes": 250065074
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 24145,
+      "jsHeapUsedBytes": 252852320,
+      "jsHeapTotalBytes": 253854944
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 24731.2,
+      "jsHeapUsedBytes": 245610068,
+      "jsHeapTotalBytes": 246581076
+     },
+     {
+      "label": "before-release",
+      "atMs": 27156.9,
+      "jsHeapUsedBytes": 253820670,
+      "jsHeapTotalBytes": 254861566
+     },
+     {
+      "label": "after-release",
+      "atMs": 27485.4,
+      "jsHeapUsedBytes": 253832482,
+      "jsHeapTotalBytes": 254861566
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 56.2,
+     "encoderMs": 129.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 52.5,
+     "encoderMs": 94.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 47.7,
+     "encoderMs": 157,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 55.4,
+     "encoderMs": 199.3,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 41.6,
+     "encoderMs": 113,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 35.6,
+     "encoderMs": 67.3,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 40.1,
+     "encoderMs": 88.1,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "run3",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 28766,
+   "servedMiB": 388.3,
+   "createMs": 13483.9,
+   "stages": {
+    "ortImportMs": 58.9,
+    "tokenizerFetchMs": 59.5,
+    "spLoadMs": 248.6,
+    "encoderCreateMs": 5507.3,
+    "decoderCreateMs": 7609.6,
+    "createTotalMs": 13483.9,
+    "measuredCreateMs": 13484.8
+   },
+   "tokenizerStages": null,
+   "cold": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "timings": {
+     "encoderMs": 473,
+     "generationMs": 1126.7,
+     "meanStepMs": 66.3,
+     "steps": 17,
+     "stepMs": [
+      99.2,
+      62,
+      63.2,
+      74.5,
+      56.7,
+      67.3,
+      60.8,
+      66.2,
+      68.5,
+      63.2,
+      67.5,
+      61,
+      64,
+      67.4,
+      79.7,
+      47.4,
+      58.3
+     ]
+    },
+    "inputTokens": 35
+   },
+   "warm": {
+    "name": "n4h-loc-01",
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "timings": {
+     "encoderMs": 140.6,
+     "generationMs": 913.3,
+     "meanStepMs": 53.7,
+     "steps": 17,
+     "stepMs": [
+      54.4,
+      59.6,
+      58.4,
+      61.4,
+      63.5,
+      58.4,
+      58.1,
+      55.9,
+      55.7,
+      43,
+      48,
+      49.6,
+      47.3,
+      49.2,
+      46.3,
+      49.8,
+      54.8
+     ]
+    },
+    "sameIdsAsCold": true
+   },
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "wallMs": 409,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 747,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 164.1,
+      "generationMs": 1082.3,
+      "meanStepMs": 63.7,
+      "steps": 17,
+      "stepMs": [
+       60,
+       56.5,
+       64.3,
+       55.8,
+       60.2,
+       69.1,
+       69.4,
+       62.7,
+       69,
+       55.9,
+       50.4,
+       59.2,
+       77.9,
+       81.2,
+       53.4,
+       45.7,
+       91.8
+      ]
+     }
+    }
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 188.3,
+      "jsHeapUsedBytes": 1437694,
+      "jsHeapTotalBytes": 2189294
+     },
+     {
+      "label": "after-create",
+      "atMs": 13673.9,
+      "jsHeapUsedBytes": 242725482,
+      "jsHeapTotalBytes": 244019062
+     },
+     {
+      "label": "after-warm",
+      "atMs": 16566.2,
+      "jsHeapUsedBytes": 249542507,
+      "jsHeapTotalBytes": 251907783
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 18643.6,
+      "jsHeapUsedBytes": 250253982,
+      "jsHeapTotalBytes": 251480006
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 19439.1,
+      "jsHeapUsedBytes": 253664551,
+      "jsHeapTotalBytes": 254590763
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 20796.2,
+      "jsHeapUsedBytes": 252658317,
+      "jsHeapTotalBytes": 253534109
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 23344.3,
+      "jsHeapUsedBytes": 261223667,
+      "jsHeapTotalBytes": 262217335
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 24465.5,
+      "jsHeapUsedBytes": 249002314,
+      "jsHeapTotalBytes": 250065074
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 25149.4,
+      "jsHeapUsedBytes": 253253312,
+      "jsHeapTotalBytes": 253854944
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 25815.6,
+      "jsHeapUsedBytes": 245616512,
+      "jsHeapTotalBytes": 246581076
+     },
+     {
+      "label": "before-release",
+      "atMs": 28310.6,
+      "jsHeapUsedBytes": 253827294,
+      "jsHeapTotalBytes": 254861566
+     },
+     {
+      "label": "after-release",
+      "atMs": 28641.3,
+      "jsHeapUsedBytes": 253839118,
+      "jsHeapTotalBytes": 254861566
+     }
+    ]
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 55,
+     "encoderMs": 118.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 52.5,
+     "encoderMs": 146.6,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "offlineText": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 51.9,
+     "encoderMs": 139.1,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 63.2,
+     "encoderMs": 215.6,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "offlineText": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 52.9,
+     "encoderMs": 134.5,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "offlineText": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 44,
+     "encoderMs": 92.7,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "offlineText": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 46.9,
+     "encoderMs": 87.4,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "tokensMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。",
+     "offlineText": "一切如旧。前后大约三天。"
+    }
+   ]
+  }
+ ],
+ "workerRuns": [
+  {
+   "run": "w-fp32-1",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 45256,
+   "servedMiB": 775.3,
+   "createMs": 14086.3,
+   "stages": {
+    "ortImportMs": 824.1,
+    "encoderCreateMs": 6440.7,
+    "decoderCreateMs": 6820.9,
+    "createTotalMs": 14085.7,
+    "workerCreateMs": 14086.3
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 139.6,
+    "fetchModelMs": 61.3,
+    "loadMs": 246
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 829.9,
+      "jsHeapUsedBytes": 7729681
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 15061.1,
+      "jsHeapUsedBytes": 7779288
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 16835,
+      "jsHeapUsedBytes": 7841755
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 17227,
+      "jsHeapUsedBytes": 7859068
+     },
+     {
+      "label": "terminated+101ms",
+      "atMs": 17328.6,
+      "jsHeapUsedBytes": 7866983
+     },
+     {
+      "label": "terminated+504ms",
+      "atMs": 17731,
+      "jsHeapUsedBytes": 7869543
+     },
+     {
+      "label": "terminated+2004ms",
+      "atMs": 19231.4,
+      "jsHeapUsedBytes": 7873723
+     },
+     {
+      "label": "terminated+5011ms",
+      "atMs": 22238,
+      "jsHeapUsedBytes": 7880523
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 44636.6,
+      "jsHeapUsedBytes": 4767873
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 45137.6,
+      "jsHeapUsedBytes": 4770677
+     }
+    ]
+   },
+   "terminate": {
+    "memBeforeTerminate": null,
+    "samples": [
+     {
+      "atMs": 17328.6,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 7866983
+     },
+     {
+      "atMs": 17731,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 7869543
+     },
+     {
+      "atMs": 19231.4,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 7873723
+     },
+     {
+      "atMs": 22238,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 7880523
+     }
+    ],
+    "reclaimedBytes": null
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 16960.4,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      83.6
+     ],
+     "mainObservedAt": 17226.9
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 16260.1,
+     "stepsBefore": 0
+    },
+    "issueToWorkerReceiveMs": -700.3,
+    "issueToThrowMs": 266.5
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 65.3,
+     "encoderMs": 391.6,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 63.1,
+     "encoderMs": 135.2,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 70.3,
+     "encoderMs": 184,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 80.4,
+     "encoderMs": 254.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 60.6,
+     "encoderMs": 166.9,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 44.1,
+     "encoderMs": 84.4,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 42.8,
+     "encoderMs": 93.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "w-fp32-mem1",
+   "variant": "fp32",
+   "deepMemoryPass": true,
+   "wallMs": 209392,
+   "servedMiB": 775.3,
+   "createMs": 10094.2,
+   "stages": {
+    "ortImportMs": 60.1,
+    "encoderCreateMs": 4993.4,
+    "decoderCreateMs": 5040.2,
+    "createTotalMs": 10093.7,
+    "workerCreateMs": 10094.2
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 38.1,
+    "fetchModelMs": 28.3,
+    "loadMs": 254.2
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 580,
+      "jsHeapUsedBytes": 7742235,
+      "isolatedBytes": 4409791
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 20768,
+      "jsHeapUsedBytes": 5908115,
+      "isolatedBytes": 972981088
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 32606.3,
+      "jsHeapUsedBytes": 4685937,
+      "isolatedBytes": 973254462
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 41080.7,
+      "jsHeapUsedBytes": 4704392,
+      "isolatedBytes": 973282846
+     },
+     {
+      "label": "terminated+103ms",
+      "atMs": 52209,
+      "jsHeapUsedBytes": 4685643,
+      "isolatedBytes": 4461735
+     },
+     {
+      "label": "terminated+60512ms",
+      "atMs": 112618.3,
+      "jsHeapUsedBytes": 4773654,
+      "isolatedBytes": 4463751
+     },
+     {
+      "label": "terminated+73040ms",
+      "atMs": 125146.3,
+      "jsHeapUsedBytes": 4689906,
+      "isolatedBytes": 4462699
+     },
+     {
+      "label": "terminated+88071ms",
+      "atMs": 140177.1,
+      "jsHeapUsedBytes": 4692598,
+      "isolatedBytes": 4462667
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 181723.7,
+      "jsHeapUsedBytes": 4859866,
+      "isolatedBytes": 973516766
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 195249.2,
+      "jsHeapUsedBytes": 4721851,
+      "isolatedBytes": 4495339
+     }
+    ]
+   },
+   "terminate": {
+    "memBeforeTerminate": 973282846,
+    "samples": [
+     {
+      "atMs": 52209,
+      "isolatedBytes": 4461735,
+      "jsHeapUsedBytes": 4685643
+     },
+     {
+      "atMs": 112618.3,
+      "isolatedBytes": 4463751,
+      "jsHeapUsedBytes": 4773654
+     },
+     {
+      "atMs": 125146.3,
+      "isolatedBytes": 4462699,
+      "jsHeapUsedBytes": 4689906
+     },
+     {
+      "atMs": 140177.1,
+      "isolatedBytes": 4462667,
+      "jsHeapUsedBytes": 4692598
+     }
+    ],
+    "reclaimedBytes": 968820179
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 40960.6,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      58.1
+     ],
+     "mainObservedAt": 41080.6
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 30403.6,
+     "stepsBefore": 0
+    },
+    "workerClockNote": "ack.receivedAt and outcome.stepEndOffsetsMs use the worker time origin; they are not comparable to main*At fields",
+    "issueToThrowMs": 120
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 74.4,
+     "encoderMs": 520.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 59.6,
+     "encoderMs": 122.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 61.3,
+     "encoderMs": 187.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 68.3,
+     "encoderMs": 210.8,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 56.6,
+     "encoderMs": 122.1,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 53.1,
+     "encoderMs": 109.9,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 52.1,
+     "encoderMs": 108.7,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "w-fp32-mem2",
+   "variant": "fp32",
+   "deepMemoryPass": true,
+   "wallMs": 235126,
+   "servedMiB": 775.3,
+   "createMs": 14379.9,
+   "stages": {
+    "ortImportMs": 750.4,
+    "encoderCreateMs": 6198.2,
+    "decoderCreateMs": 7430.4,
+    "createTotalMs": 14379,
+    "workerCreateMs": 14379.9
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 152.8,
+    "fetchModelMs": 29.2,
+    "loadMs": 250.7
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 718,
+      "jsHeapUsedBytes": 7731743,
+      "isolatedBytes": 4419129,
+      "measuredUntilMs": 19749.1,
+      "measureDurationMs": 19031.1
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 34236.7,
+      "jsHeapUsedBytes": 5915367,
+      "isolatedBytes": 972984964,
+      "measuredUntilMs": 50257.2,
+      "measureDurationMs": 16020.5
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 51949.5,
+      "jsHeapUsedBytes": 4720383,
+      "isolatedBytes": 973257170,
+      "measuredUntilMs": 64977.4,
+      "measureDurationMs": 13027.9
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 65412,
+      "jsHeapUsedBytes": 4698928,
+      "isolatedBytes": 973288974,
+      "measuredUntilMs": 80435.1,
+      "measureDurationMs": 15023.1
+     },
+     {
+      "label": "terminated+0ms-start",
+      "atMs": 80435.3,
+      "jsHeapUsedBytes": 5137683,
+      "isolatedBytes": 4470661,
+      "measuredUntilMs": 140440.5,
+      "measureDurationMs": 60005.2
+     },
+     {
+      "label": "terminated+60810ms-start",
+      "atMs": 141245.3,
+      "jsHeapUsedBytes": 4772742,
+      "isolatedBytes": 4471115,
+      "measuredUntilMs": 158271.8,
+      "measureDurationMs": 17026.5
+     },
+     {
+      "label": "terminated+82842ms-start",
+      "atMs": 163277,
+      "jsHeapUsedBytes": 4700854,
+      "isolatedBytes": 4469295,
+      "measuredUntilMs": 176304.4,
+      "measureDurationMs": 13027.4
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 203424.7,
+      "jsHeapUsedBytes": 4872130,
+      "isolatedBytes": 973521988,
+      "measuredUntilMs": 215460.4,
+      "measureDurationMs": 12035.7
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 215964.8,
+      "jsHeapUsedBytes": 4727399,
+      "isolatedBytes": 4425307,
+      "measuredUntilMs": 234996.1,
+      "measureDurationMs": 19031.3
+     }
+    ]
+   },
+   "terminate": {
+    "terminatedAtMs": 80435.2,
+    "memBeforeTerminate": 973288974,
+    "samples": [
+     {
+      "startedAtMs": 80435.3,
+      "endedAtMs": 140440.5,
+      "measureDurationMs": 60005.2,
+      "isolatedBytes": 4470661,
+      "jsHeapUsedBytes": 5137683
+     },
+     {
+      "startedAtMs": 141245.3,
+      "endedAtMs": 158271.8,
+      "measureDurationMs": 17026.5,
+      "isolatedBytes": 4471115,
+      "jsHeapUsedBytes": 4772742
+     },
+     {
+      "startedAtMs": 163277,
+      "endedAtMs": 176304.4,
+      "measureDurationMs": 13027.4,
+      "isolatedBytes": 4469295,
+      "jsHeapUsedBytes": 4700854
+     }
+    ],
+    "firstSample": {
+     "startOffsetMs": 0.1,
+     "endOffsetMs": 60005.3,
+     "isolatedBytes": 4470661
+    },
+    "releaseResolvedWithinMs": 60005.3,
+    "reclaimedBytes": 968819679
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 65101.9,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      113.4
+     ],
+     "mainObservedAt": 65411.9
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 45523.1,
+     "stepsBefore": 0
+    },
+    "workerClockNote": "ack.receivedAt and outcome.stepEndOffsetsMs use the worker time origin; they are not comparable to main*At fields",
+    "issueToThrowMs": 310
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 78.3,
+     "encoderMs": 485,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 65.4,
+     "encoderMs": 162.6,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 96.4,
+     "encoderMs": 203.8,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 96.6,
+     "encoderMs": 399.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 65.5,
+     "encoderMs": 190,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 53.4,
+     "encoderMs": 105.2,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 58.3,
+     "encoderMs": 145.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "w-fp32-mem3",
+   "variant": "fp32",
+   "deepMemoryPass": true,
+   "wallMs": 351858,
+   "servedMiB": 775.3,
+   "createMs": 138834.5,
+   "stages": {
+    "ortImportMs": 2157.2,
+    "encoderCreateMs": 89993.5,
+    "decoderCreateMs": 46681.2,
+    "createTotalMs": 138831.9,
+    "workerCreateMs": 138834.5
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 32.3,
+    "fetchModelMs": 66.9,
+    "loadMs": 265
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 666,
+      "jsHeapUsedBytes": 7720388,
+      "isolatedBytes": 4416459,
+      "measuredUntilMs": 10689.9,
+      "measureDurationMs": 10023.9
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 153471.4,
+      "jsHeapUsedBytes": 4850943,
+      "isolatedBytes": 972977064,
+      "measuredUntilMs": 160013,
+      "measureDurationMs": 6541.6
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 161900.2,
+      "jsHeapUsedBytes": 4702768,
+      "isolatedBytes": 973260468,
+      "measuredUntilMs": 172491.1,
+      "measureDurationMs": 10590.9
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 172835.6,
+      "jsHeapUsedBytes": 4711157,
+      "isolatedBytes": 973285388,
+      "measuredUntilMs": 190859.9,
+      "measureDurationMs": 18024.3
+     },
+     {
+      "label": "terminated+0ms-start",
+      "atMs": 190860.3,
+      "jsHeapUsedBytes": 4957416,
+      "isolatedBytes": 4470647,
+      "measuredUntilMs": 250865.7,
+      "measureDurationMs": 60005.4
+     },
+     {
+      "label": "terminated+60807ms-start",
+      "atMs": 251667.5,
+      "jsHeapUsedBytes": 4780483,
+      "isolatedBytes": 4396449,
+      "measuredUntilMs": 270696.5,
+      "measureDurationMs": 19029
+     },
+     {
+      "label": "terminated+84841ms-start",
+      "atMs": 275701.6,
+      "jsHeapUsedBytes": 4625301,
+      "isolatedBytes": 4382993,
+      "measuredUntilMs": 289728.9,
+      "measureDurationMs": 14027.3
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 329749.1,
+      "jsHeapUsedBytes": 4805791,
+      "isolatedBytes": 973430846,
+      "measuredUntilMs": 339778.3,
+      "measureDurationMs": 10029.2
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 340284,
+      "jsHeapUsedBytes": 4637292,
+      "isolatedBytes": 4415441,
+      "measuredUntilMs": 351311.9,
+      "measureDurationMs": 11027.9
+     }
+    ]
+   },
+   "terminate": {
+    "terminatedAtMs": 190860.2,
+    "terminateWallClockMs": 1794123004069,
+    "memBeforeTerminate": 973285388,
+    "samples": [
+     {
+      "startedAtMs": 190860.3,
+      "endedAtMs": 250865.7,
+      "measureDurationMs": 60005.4,
+      "isolatedBytes": 4470647,
+      "jsHeapUsedBytes": 4957416
+     },
+     {
+      "startedAtMs": 251667.5,
+      "endedAtMs": 270696.5,
+      "measureDurationMs": 19029,
+      "isolatedBytes": 4396449,
+      "jsHeapUsedBytes": 4780483
+     },
+     {
+      "startedAtMs": 275701.6,
+      "endedAtMs": 289728.9,
+      "measureDurationMs": 14027.3,
+      "isolatedBytes": 4382993,
+      "jsHeapUsedBytes": 4625301
+     }
+    ],
+    "firstSample": {
+     "startOffsetMs": 0.1,
+     "endOffsetMs": 60005.5,
+     "isolatedBytes": 4470647
+    },
+    "releaseResolvedWithinMs": 60005.5,
+    "reclaimedBytes": 968902395
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 172618.4,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      72.6
+     ],
+     "mainObservedAt": 172835.5
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 161245.1,
+     "stepsBefore": 0
+    },
+    "workerClockNote": "ack.receivedAt and outcome.stepEndOffsetsMs use the worker time origin; they are not comparable to main*At fields",
+    "issueToThrowMs": 217.1
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 76.6,
+     "encoderMs": 445.7,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 61.7,
+     "encoderMs": 144.4,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 61,
+     "encoderMs": 178.6,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 87.7,
+     "encoderMs": 282.2,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 61.9,
+     "encoderMs": 182.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 41.4,
+     "encoderMs": 91.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 43.9,
+     "encoderMs": 102.9,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "w-int8-mem1",
+   "variant": "int8",
+   "deepMemoryPass": true,
+   "wallMs": 210089,
+   "servedMiB": 476.8,
+   "createMs": 10669.4,
+   "stages": {
+    "ortImportMs": 98.7,
+    "encoderCreateMs": 4477.9,
+    "decoderCreateMs": 6092,
+    "createTotalMs": 10668.6,
+    "workerCreateMs": 10669.4
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 26.7,
+    "fetchModelMs": 16.4,
+    "loadMs": 94
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 243.1,
+      "jsHeapUsedBytes": 7742215,
+      "isolatedBytes": 4415057
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 21017.8,
+      "jsHeapUsedBytes": 5909059,
+      "isolatedBytes": 713073324
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 32259.9,
+      "jsHeapUsedBytes": 4696491,
+      "isolatedBytes": 713346100
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 40807.5,
+      "jsHeapUsedBytes": 4706736,
+      "isolatedBytes": 713378262
+     },
+     {
+      "label": "terminated+102ms",
+      "atMs": 52935,
+      "jsHeapUsedBytes": 4685655,
+      "isolatedBytes": 4460751
+     },
+     {
+      "label": "terminated+60511ms",
+      "atMs": 113344.3,
+      "jsHeapUsedBytes": 4757106,
+      "isolatedBytes": 4461591
+     },
+     {
+      "label": "terminated+81043ms",
+      "atMs": 133876,
+      "jsHeapUsedBytes": 4689798,
+      "isolatedBytes": 4464435
+     },
+     {
+      "label": "terminated+94069ms",
+      "atMs": 146902.3,
+      "jsHeapUsedBytes": 4692790,
+      "isolatedBytes": 4466223
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 180383.3,
+      "jsHeapUsedBytes": 4855414,
+      "isolatedBytes": 713611196
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 196917.8,
+      "jsHeapUsedBytes": 4721587,
+      "isolatedBytes": 4503077
+     }
+    ]
+   },
+   "terminate": {
+    "memBeforeTerminate": 713378262,
+    "samples": [
+     {
+      "atMs": 52935,
+      "isolatedBytes": 4460751,
+      "jsHeapUsedBytes": 4685655
+     },
+     {
+      "atMs": 113344.3,
+      "isolatedBytes": 4461591,
+      "jsHeapUsedBytes": 4757106
+     },
+     {
+      "atMs": 133876,
+      "isolatedBytes": 4464435,
+      "jsHeapUsedBytes": 4689798
+     },
+     {
+      "atMs": 146902.3,
+      "isolatedBytes": 4466223,
+      "jsHeapUsedBytes": 4692790
+     }
+    ],
+    "reclaimedBytes": 708912039
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 40714.4,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      70
+     ],
+     "mainObservedAt": 40807.4
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 30431.6,
+     "stepsBefore": 0
+    },
+    "workerClockNote": "ack.receivedAt and outcome.stepEndOffsetsMs use the worker time origin; they are not comparable to main*At fields",
+    "issueToThrowMs": 93
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 71.8,
+     "encoderMs": 380.4,
+     "tokensMatchOffline": false,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微从柳堤来到药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 57.5,
+     "encoderMs": 90.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 58.2,
+     "encoderMs": 127.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 70.4,
+     "encoderMs": 76.8,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 58.4,
+     "encoderMs": 99.7,
+     "tokensMatchOffline": false,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微从柳堤来到药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 53.9,
+     "encoderMs": 74.3,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 48.5,
+     "encoderMs": 67.5,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  },
+  {
+   "run": "w-rss-1",
+   "variant": "fp32",
+   "deepMemoryPass": false,
+   "wallMs": 103489,
+   "servedMiB": 775.3,
+   "createMs": 47207.7,
+   "stages": {
+    "ortImportMs": 1428,
+    "encoderCreateMs": 30923.4,
+    "decoderCreateMs": 14855.7,
+    "createTotalMs": 47207.1,
+    "workerCreateMs": 47207.7
+   },
+   "tokenizerStages": {
+    "fetchBundleMs": 131.1,
+    "fetchModelMs": 35.6,
+    "loadMs": 253.6
+   },
+   "memory": {
+    "samples": [
+     {
+      "label": "baseline",
+      "atMs": 681.3,
+      "jsHeapUsedBytes": 7735008
+     },
+     {
+      "label": "after-A-init",
+      "atMs": 52206.6,
+      "jsHeapUsedBytes": 4661705
+     },
+     {
+      "label": "after-A-inference",
+      "atMs": 54003.4,
+      "jsHeapUsedBytes": 4726672
+     },
+     {
+      "label": "after-A-cancel",
+      "atMs": 54489,
+      "jsHeapUsedBytes": 4744213
+     },
+     {
+      "label": "terminated+0ms-start",
+      "atMs": 54489.3,
+      "jsHeapUsedBytes": 4751388
+     },
+     {
+      "label": "terminated+803ms-start",
+      "atMs": 55292.2,
+      "jsHeapUsedBytes": 4755500
+     },
+     {
+      "label": "terminated+5809ms-start",
+      "atMs": 60298.5,
+      "jsHeapUsedBytes": 4765728
+     },
+     {
+      "label": "after-B-cases",
+      "atMs": 101973.3,
+      "jsHeapUsedBytes": 4971284
+     },
+     {
+      "label": "after-B-terminate",
+      "atMs": 102474.5,
+      "jsHeapUsedBytes": 4974116
+     }
+    ]
+   },
+   "terminate": {
+    "terminatedAtMs": 54489.2,
+    "terminateWallClockMs": 1794123239319,
+    "memBeforeTerminate": null,
+    "samples": [
+     {
+      "startedAtMs": 54489.3,
+      "endedAtMs": null,
+      "measureDurationMs": null,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 4751388
+     },
+     {
+      "startedAtMs": 55292.2,
+      "endedAtMs": null,
+      "measureDurationMs": null,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 4755500
+     },
+     {
+      "startedAtMs": 60298.5,
+      "endedAtMs": null,
+      "measureDurationMs": null,
+      "isolatedBytes": null,
+      "jsHeapUsedBytes": 4765728
+     }
+    ],
+    "firstSample": {
+     "startOffsetMs": 0.1,
+     "endOffsetMs": null,
+     "isolatedBytes": null
+    },
+    "releaseResolvedWithinMs": null,
+    "reclaimedBytes": null
+   },
+   "cancel": {
+    "mainIssuedAbortAt": 54126.3,
+    "outcome": {
+     "type": "cancelled",
+     "completedSteps": 1,
+     "stepEndOffsetsMs": [
+      117.1
+     ],
+     "mainObservedAt": 54488.9
+    },
+    "ack": {
+     "aborted": true,
+     "receivedAt": 52638,
+     "stepsBefore": 0
+    },
+    "workerClockNote": "ack.receivedAt and outcome.stepEndOffsetsMs use the worker time origin; they are not comparable to main*At fields",
+    "issueToThrowMs": 362.6
+   },
+   "rebuiltWorkerTokens": true,
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "steps": 17,
+     "meanStepMs": 75.5,
+     "encoderMs": 476,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "steps": 11,
+     "meanStepMs": 60.3,
+     "encoderMs": 156,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "steps": 21,
+     "meanStepMs": 71.6,
+     "encoderMs": 192.1,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "steps": 34,
+     "meanStepMs": 90.8,
+     "encoderMs": 302.8,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "steps": 17,
+     "meanStepMs": 64.1,
+     "encoderMs": 162,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "steps": 12,
+     "meanStepMs": 52.1,
+     "encoderMs": 115,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "steps": 11,
+     "meanStepMs": 57.2,
+     "encoderMs": 134.2,
+     "tokensMatchOffline": true,
+     "sameAsWorkerACase0": null,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ]
+  }
+ ],
+ "timingSummary": {
+  "createMs": {
+   "page-fp32": {
+    "values": [
+     13937.7,
+     11329.2,
+     14799,
+     21120.2,
+     13151.2,
+     13483.9
+    ],
+    "median": 13710.8,
+    "min": 11329.2,
+    "max": 21120.2,
+    "n": 6
+   },
+   "page-int8": {
+    "values": [
+     8720.1,
+     8755
+    ],
+    "median": 8737.5,
+    "min": 8720.1,
+    "max": 8755,
+    "n": 2
+   },
+   "worker-fp32": {
+    "values": [
+     14086.3,
+     10094.2,
+     14379.9
+    ],
+    "median": 14086.3,
+    "min": 10094.2,
+    "max": 14379.9,
+    "n": 3
+   },
+   "worker-int8": {
+    "values": [
+     10669.4
+    ],
+    "median": 10669.4,
+    "min": 10669.4,
+    "max": 10669.4,
+    "n": 1
+   }
+  },
+  "stepMs": {
+   "fp32": {
+    "values": [
+     51.9,
+     49,
+     42.1,
+     54.2,
+     40.1,
+     33.5,
+     35.2,
+     67,
+     59.5,
+     68.7,
+     86,
+     72.7,
+     63,
+     57.9,
+     55.8,
+     36.8,
+     46.4,
+     71.3,
+     46.9,
+     50.1,
+     46.7,
+     57.9,
+     48.7,
+     55.3,
+     72.1,
+     44.8,
+     50.5,
+     45,
+     56.2,
+     52.5,
+     47.7,
+     55.4,
+     41.6,
+     35.6,
+     40.1,
+     55,
+     52.5,
+     51.9,
+     63.2,
+     52.9,
+     44,
+     46.9
+    ],
+    "median": 51.9,
+    "min": 33.5,
+    "max": 86,
+    "n": 42
+   },
+   "int8": {
+    "values": [
+     43.2,
+     36.2,
+     62.1,
+     54.6,
+     61.6,
+     63.1,
+     57.6,
+     43.9,
+     41.7,
+     52.3,
+     59.5,
+     43.3,
+     36.8,
+     36.8
+    ],
+    "median": 48.1,
+    "min": 36.2,
+    "max": 63.1,
+    "n": 14
+   }
+  },
+  "offlineStepMs": {
+   "values": [
+    38.3,
+    36.5,
+    41.1,
+    55.2,
+    39.8,
+    41.7,
+    43.7
+   ],
+   "median": 41.1,
+   "min": 36.5,
+   "max": 55.2,
+   "n": 7
+  },
+  "encoderMs": {
+   "fp32": {
+    "values": [
+     171.1,
+     95.6,
+     127.8,
+     184,
+     116.9,
+     67.4,
+     79.5,
+     195.7,
+     132.1,
+     143,
+     306.3,
+     146.2,
+     125.5,
+     113.7,
+     193.4,
+     80.5,
+     128.9,
+     237.6,
+     154.2,
+     115.3,
+     97.5,
+     139.7,
+     108.7,
+     167.1,
+     254.2,
+     114.3,
+     103.7,
+     87.8,
+     129.1,
+     94.5,
+     157,
+     199.3,
+     113,
+     67.3,
+     88.1,
+     118.1,
+     146.6,
+     139.1,
+     215.6,
+     134.5,
+     92.7,
+     87.4
+    ],
+    "median": 128.3,
+    "min": 67.3,
+    "max": 306.3,
+    "n": 42
+   },
+   "int8": {
+    "values": [
+     68.3,
+     55.8,
+     118.6,
+     126,
+     110.7,
+     77.8,
+     91.1,
+     79.1,
+     63.8,
+     80.6,
+     134.8,
+     67.8,
+     43.7,
+     51.6
+    ],
+    "median": 78.4,
+    "min": 43.7,
+    "max": 134.8,
+    "n": 14
+   }
+  }
+ },
+ "memorySummary": {
+  "int8-mem1": {
+   "run": "int8-mem1",
+   "kind": "page",
+   "variant": "int8",
+   "isolatedBytesByLabel": {
+    "before-create": 1108882,
+    "after-create": 713443522,
+    "after-warm": 713855646,
+    "case-n4h-loc-01": 713920912,
+    "case-n4h-empty-01": 713914062,
+    "case-n4h-task-01": 713942520,
+    "case-n4h-chain-01": 713964436,
+    "case-synthetic-ext-1": 713969438,
+    "case-synthetic-ext-2": 713973778,
+    "case-synthetic-ext-3": 713989574,
+    "before-release": 714011770,
+    "after-release": 714018814
+   },
+   "afterCreateMiB": 680.4,
+   "afterReleaseMiB": 680.9
+  },
+  "mem1": {
+   "run": "mem1",
+   "kind": "page",
+   "variant": "fp32",
+   "isolatedBytesByLabel": {
+    "before-create": 1104586,
+    "after-create": 973340298,
+    "after-warm": 973751128,
+    "case-n4h-loc-01": 973819102,
+    "case-n4h-empty-01": 973803862,
+    "case-n4h-task-01": 973824862,
+    "case-n4h-chain-01": 973847746,
+    "case-synthetic-ext-1": 973854072,
+    "case-synthetic-ext-2": 973863152,
+    "case-synthetic-ext-3": 973870668,
+    "before-release": 973890644,
+    "after-release": 973897552
+   },
+   "afterCreateMiB": 928.2,
+   "afterReleaseMiB": 928.8
+  },
+  "w-fp32-mem1": {
+   "run": "w-fp32-mem1",
+   "kind": "worker",
+   "variant": "fp32",
+   "isolatedBytesByLabel": {
+    "baseline": 4409791,
+    "after-A-init": 972981088,
+    "after-A-inference": 973254462,
+    "after-A-cancel": 973282846,
+    "terminated+103ms": 4461735,
+    "terminated+60512ms": 4463751,
+    "terminated+73040ms": 4462699,
+    "terminated+88071ms": 4462667,
+    "after-B-cases": 973516766,
+    "after-B-terminate": 4495339
+   },
+   "afterWorkerInitMiB": 927.9,
+   "reclaimedMiB": 923.9,
+   "postTerminateSamplesMiB": [
+    4.3,
+    4.3,
+    4.3,
+    4.3
+   ]
+  },
+  "w-fp32-mem2": {
+   "run": "w-fp32-mem2",
+   "kind": "worker",
+   "variant": "fp32",
+   "isolatedBytesByLabel": {
+    "baseline": 4419129,
+    "after-A-init": 972984964,
+    "after-A-inference": 973257170,
+    "after-A-cancel": 973288974,
+    "terminated+0ms-start": 4470661,
+    "terminated+60810ms-start": 4471115,
+    "terminated+82842ms-start": 4469295,
+    "after-B-cases": 973521988,
+    "after-B-terminate": 4425307
+   },
+   "afterWorkerInitMiB": 927.9,
+   "reclaimedMiB": 923.9,
+   "postTerminateSamplesMiB": [
+    4.3,
+    4.3,
+    4.3
+   ]
+  },
+  "w-fp32-mem3": {
+   "run": "w-fp32-mem3",
+   "kind": "worker",
+   "variant": "fp32",
+   "isolatedBytesByLabel": {
+    "baseline": 4416459,
+    "after-A-init": 972977064,
+    "after-A-inference": 973260468,
+    "after-A-cancel": 973285388,
+    "terminated+0ms-start": 4470647,
+    "terminated+60807ms-start": 4396449,
+    "terminated+84841ms-start": 4382993,
+    "after-B-cases": 973430846,
+    "after-B-terminate": 4415441
+   },
+   "afterWorkerInitMiB": 927.9,
+   "reclaimedMiB": 924.0,
+   "postTerminateSamplesMiB": [
+    4.3,
+    4.2,
+    4.2
+   ]
+  },
+  "w-int8-mem1": {
+   "run": "w-int8-mem1",
+   "kind": "worker",
+   "variant": "int8",
+   "isolatedBytesByLabel": {
+    "baseline": 4415057,
+    "after-A-init": 713073324,
+    "after-A-inference": 713346100,
+    "after-A-cancel": 713378262,
+    "terminated+102ms": 4460751,
+    "terminated+60511ms": 4461591,
+    "terminated+81043ms": 4464435,
+    "terminated+94069ms": 4466223,
+    "after-B-cases": 713611196,
+    "after-B-terminate": 4503077
+   },
+   "afterWorkerInitMiB": 680.0,
+   "reclaimedMiB": 676.1,
+   "postTerminateSamplesMiB": [
+    4.3,
+    4.3,
+    4.3,
+    4.3
+   ]
+  }
+ },
+ "cancelSummary": [
+  {
+   "run": "fp32-r2",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 60.4
+  },
+  {
+   "run": "fp32-r2",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": 52.9
+  },
+  {
+   "run": "fp32-r3",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 88.3
+  },
+  {
+   "run": "fp32-r3",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": 97.2
+  },
+  {
+   "run": "int8-mem1",
+   "variant": "int8",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 2,
+   "issueToThrowMs": 58.8
+  },
+  {
+   "run": "int8-mem1",
+   "variant": "int8",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": 76.1
+  },
+  {
+   "run": "int8-r1",
+   "variant": "int8",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 2,
+   "issueToThrowMs": 59.2
+  },
+  {
+   "run": "int8-r1",
+   "variant": "int8",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": 53.4
+  },
+  {
+   "run": "mem1",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 2,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "mem1",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run1",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 2,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run1",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run2",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run2",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run3",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "timer(120ms)",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "run3",
+   "variant": "fp32",
+   "kind": "page",
+   "mode": "step-boundary(5)",
+   "threw": true,
+   "completedSteps": 5,
+   "issueToThrowMs": null
+  },
+  {
+   "run": "w-fp32-1",
+   "variant": "fp32",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 266.5
+  },
+  {
+   "run": "w-fp32-mem1",
+   "variant": "fp32",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 120
+  },
+  {
+   "run": "w-fp32-mem2",
+   "variant": "fp32",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 310
+  },
+  {
+   "run": "w-fp32-mem3",
+   "variant": "fp32",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 217.1
+  },
+  {
+   "run": "w-int8-mem1",
+   "variant": "int8",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 93
+  },
+  {
+   "run": "w-rss-1",
+   "variant": "fp32",
+   "kind": "worker",
+   "mode": "postMessage at 120ms",
+   "threw": true,
+   "completedSteps": 1,
+   "issueToThrowMs": 362.6
+  }
+ ],
+ "int8": {
+  "graphBytes": {
+   "fp32": 376964033,
+   "int8": 220455791
+  },
+  "pageCreateMs": [
+   8720.1,
+   8755
+  ],
+  "fp32PageCreateMs": [
+   13937.7,
+   11329.2,
+   14799,
+   21120.2,
+   13151.2,
+   13483.9
+  ],
+  "stepMsMedian": {
+   "fp32": 51.9,
+   "int8": 48.1
+  },
+  "memoryMiB": {
+   "fp32": [
+    928.2
+   ],
+   "int8": [
+    680.4
+   ]
+  },
+  "tokenDiffsDistinctVsFp32": [
+   {
+    "run": "int8-mem1",
+    "kind": "page",
+    "case": "n4h-loc-01",
+    "browser": "陆知微从柳堤来到药圃。前后大约九分钟。",
+    "offline": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "browserSteps": 17,
+    "offlineSteps": 17
+   },
+   {
+    "run": "int8-mem1",
+    "kind": "page",
+    "case": "synthetic-ext-1",
+    "browser": "陆知微从柳堤来到药圃。前后大约四十秒。",
+    "offline": "陆知微由柳堤进入药圃。前后大约四十秒。",
+    "browserSteps": 17,
+    "offlineSteps": 17
+   }
+  ],
+  "browserVsOfflineSameGraph": true,
+  "browserVsOfflineSameGraphFailures": [],
+  "reading": "browser-int8 reproduces ORT-python-int8 exactly on all 21 case-runs, so the browser adds no drift of its own. The 2/7 token differences versus fp32 are the quantisation effect: one clause reworded, same facts. Token identity is not required by the documented int8 contract, and quality is out of scope for c9"
+ },
+ "verdict": {
+  "fp32TokenParityAllPageRuns": true,
+  "fp32TokenParityWorkerRuns": true,
+  "workerTerminateReleasesMemory": true,
+  "rebuiltWorkerReproduces": true,
+  "int8SameGraphParity": true,
+  "int8SameGraphFailures": [],
+  "int8TokenIdenticalToFp32": 15
+ },
+ "corrections": [
+  {
+   "claimInRound1": "release() 之后 300 ms 内存未下降，说明只能重载页面",
+   "status": "round 2 收紧",
+   "whatTheDataShows": "把运行时放进 DedicatedWorker 后 terminate() 把可归因内存从 973.3 MB 降到 4.46 MB，重建 worker 再跑 7 个用例与离线一致",
+   "remainingClaim": "页面内 release() 不回收 wasm 内存；回收要靠终止承载它的 worker"
+  },
+  {
+   "claimInRound1": "最大取消延迟为 35–72 ms（单步耗时）",
+   "status": "round 2 撤回（口径错误）",
+   "whatTheDataShows": "按 abort() 调用时刻到 AbortError 的间隔测：page 内 52.9–97.2 ms，worker 内 93–266.5 ms。上界是取消到达时正在执行的那次 ORT 调用的剩余时间",
+   "remainingClaim": "取消粒度是一步；延迟 = 在飞调用剩余时间 + 让出宏任务 + 检查"
+  },
+  {
+   "claimInRound2": "terminate() 在 +103 ms 就把内存还到 4.46 MB",
+   "status": "撤回（时序口径错误）",
+   "whatTheDataShows": "round 2 的时间戳是采样*开始*的时刻，而 performance.measureUserAgentSpecificMemory() 本身要 13–60 s（它强制全量 GC）。所以那句话只能说明「以某个更晚时刻为准已经是 4.46 MB」，不能说明回收在 103 ms 内完成。补测：1 s 采样的浏览器进程树工作集在 terminate 后+0.19 s 仍为 1085.7 MB、+1.21 s 降到 378.6 MB（另一轮 +59 ms 仍 2014.8 MB、+1.13 s 降到 964.2 MB），即回收在约 1 s 内可观测，分辨率 1 s",
+   "remainingClaim": "terminate() 是让内存回到基线的手段（973.3 → 4.46 MB，int8 713.1 → 4.46 MB，重建 worker 后输出一致）；回收耗时约 1 s 量级，但没能测到亚秒精度"
+  },
+  {
+   "claimInRound2": "int8 与 fp32 离线参照有 2/7 用例 token 不同",
+   "status": "补齐归因",
+   "whatTheDataShows": "补跑同一份 int8 图的 ORT-python 参照（runs/offline-reference-int8.json），浏览器 int8 三轮 × 7 用例与它逐 token 全同（21/21）；那 2 处差异在离线 int8 上完全一样地出现，因此差异来自量化本身，不是浏览器",
+   "remainingClaim": "int8 的浏览器/离线一致性成立；int8 与 fp32 的 2 处措辞差异是量化效应"
+  }
+ ],
+ "rssRuns": [
+  {
+   "run": "w-fp32-mem3",
+   "terminateWallClockMs": 1794123004069,
+   "beforeTerminateMiB": 1168.3,
+   "firstSamplesAfterTerminate": [
+    {
+     "offsetMs": 192,
+     "mib": 1085.7
+    },
+    {
+     "offsetMs": 1210,
+     "mib": 378.6
+    },
+    {
+     "offsetMs": 2205,
+     "mib": 378.7
+    },
+    {
+     "offsetMs": 3229,
+     "mib": 378.7
+    },
+    {
+     "offsetMs": 4189,
+     "mib": 378.7
+    },
+    {
+     "offsetMs": 5202,
+     "mib": 380.3
+    }
+   ],
+   "firstDropSample": {
+    "offsetMs": 1210,
+    "mib": 378.6
+   },
+   "pageReportedFirstSample": {
+    "startOffsetMs": 0.1,
+    "endOffsetMs": 60005.5,
+    "isolatedBytes": 4470647
+   },
+   "timingUsable": false,
+   "note": "--rss runs sample the OS process tree every second from the driver; that steals CPU from the browser, so load/inference timings from these runs are excluded"
+  },
+  {
+   "run": "w-rss-1",
+   "terminateWallClockMs": 1794123239319,
+   "beforeTerminateMiB": 1875.0,
+   "firstSamplesAfterTerminate": [
+    {
+     "offsetMs": 59,
+     "mib": 2014.8
+    },
+    {
+     "offsetMs": 1134,
+     "mib": 964.2
+    },
+    {
+     "offsetMs": 2086,
+     "mib": 976.9
+    },
+    {
+     "offsetMs": 3108,
+     "mib": 992.6
+    },
+    {
+     "offsetMs": 4153,
+     "mib": 679.1
+    },
+    {
+     "offsetMs": 5287,
+     "mib": 605.9
+    }
+   ],
+   "firstDropSample": {
+    "offsetMs": 1134,
+    "mib": 964.2
+   },
+   "pageReportedFirstSample": {
+    "startOffsetMs": 0.1,
+    "endOffsetMs": null,
+    "isolatedBytes": null
+   },
+   "timingUsable": false,
+   "note": "--rss runs sample the OS process tree every second from the driver; that steals CPU from the browser, so load/inference timings from these runs are excluded"
+  }
+ ],
+ "wllamaAssessment": {
+  "status": "undetermined; unchanged from round 1",
+  "runs": {
+   "wllama1": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "attempts": [
+     {
+      "arch": "t5",
+      "loaded": true,
+      "loadedModel": true,
+      "ms": 2061
+     },
+     {
+      "arch": "t5encoder",
+      "loaded": true,
+      "loadedModel": true,
+      "ms": 578
+     },
+     {
+      "arch": "notanarch",
+      "loaded": true,
+      "loadedModel": true,
+      "ms": 640
+     }
+    ]
+   },
+   "wllama2": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "attempts": [
+     {
+      "arch": "t5",
+      "ms": null,
+      "loaded": true,
+      "loadedModel": true,
+      "loadMs": 1971,
+      "generate": {
+       "ok": false,
+       "name": "RuntimeError",
+       "message": "Invalid typed array length: 1163217991"
+      },
+      "generateMs": 49,
+      "bos": 0
+     },
+     {
+      "arch": "t5encoder",
+      "ms": null,
+      "loaded": true,
+      "loadedModel": true,
+      "loadMs": 583,
+      "generate": {
+       "ok": false,
+       "name": "RuntimeError",
+       "message": "Invalid typed array length: 1163217991"
+      },
+      "generateMs": 49,
+      "bos": 0
+     },
+     {
+      "arch": "notanarch",
+      "ms": null,
+      "loaded": true,
+      "loadedModel": true,
+      "loadMs": 534,
+      "generate": {
+       "ok": false,
+       "name": "RuntimeError",
+       "message": "Invalid typed array length: 1163217991"
+      },
+      "generateMs": 40,
+      "bos": 0
+     }
+    ]
+   }
+  },
+  "blocker": "no real T5 GGUF and no HF->GGUF converter in the tree"
+ },
+ "openItems": [
+  "re-init cost after terminate: every terminate() needs a full reload (worker init 10.1-14.1 s measured), so terminate is a hard reset, not a cheap discard",
+  "int8 quality on a judged holdout (c9 only compares tokens)",
+  "network-realistic transfer (all runs are localhost)",
+  "Firefox / Safari",
+  "coexistence with the rest of the world page",
+  "wllama end-to-end T5 (needs a real T5 GGUF)"
+ ]
+}

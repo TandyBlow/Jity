@@ -44,6 +44,12 @@ const arg = (name, fallback) => {
 const PORT = Number(arg("port", 3213));
 const STAMP = arg("stamp", new Date().toISOString().replace(/[:.]/g, "-"));
 const MEM = args.includes("--mem");
+// --rss: sample the browser process tree's working set from the OS in parallel
+// with the run. The page-side memory API is accurate but slow (~13-60 s per
+// call), so it cannot say WHEN a release happened; RSS can (1 s resolution),
+// with the caveat that "freed by the allocator" and "returned to the OS" are
+// different things.
+const RSS = args.includes("--rss");
 const GRAPHS = arg("graphs", "fp32");
 const RUN_DIR = path.join(HERE, "runs", STAMP);
 
@@ -122,6 +128,41 @@ const server = await serve(PORT);
 const browser = await chromium.launch({
   channel: "msedge", headless: true, args: ["--enable-precise-memory-info"],
 });
+const browserCdp = RSS ? await browser.newBrowserCDPSession() : null;
+const { execFileSync } = await import("node:child_process");
+const rssSamples = [];
+function rssNow(ids) {
+  if (!ids.length) return 0;
+  try {
+    const out = execFileSync("powershell", ["-NoProfile", "-Command",
+      `Get-Process -Id ${ids.join(",")} -ErrorAction SilentlyContinue | ` +
+      `ForEach-Object { "$($_.Id) $($_.WorkingSet64)" }`],
+      { encoding: "utf8", timeout: 15000 });
+    const rows = out.split(String.fromCharCode(10))
+      .map((s) => s.trim()).filter(Boolean);
+    return rows.reduce((a, line) => a + Number(
+      line.split(" ").filter(Boolean).pop() || 0), 0);
+  } catch {
+    return 0;
+  }
+}
+let rssTimer = null;
+let rssBusy = false;
+if (RSS) {
+  rssTimer = setInterval(async () => {
+    // skip overlapping samples: a PowerShell spawn that outlives the 1 s
+    // tick stacks up and starves the browser of CPU (observed in w-fp32-mem3)
+    if (rssBusy) return;
+    rssBusy = true;
+    try {
+      const { processInfo } = await browserCdp.send("SystemInfo.getProcessInfo");
+      const ids = processInfo.map((p) => p.id);
+      const bytes = rssNow(ids);
+      rssSamples.push({ t: Date.now(), processes: ids.length, bytes });
+    } catch { /* browser gone */ } finally { rssBusy = false; }
+  }, 1000);
+}
+
 const context = await browser.newContext();
 const page = await context.newPage();
 page.on("console", (m) => log(`[console:${m.type()}]`, m.text().slice(0, 400)));
@@ -136,6 +177,7 @@ await page.waitForFunction("window.__C9_WORKER_RESULT__ !== undefined", null,
                            { timeout: 900000 });
 const result = await page.evaluate("window.__C9_WORKER_RESULT__");
 const wallMs = Date.now() - tNav;
+if (rssTimer) clearInterval(rssTimer);
 const browserVersion = browser.version();
 await browser.close();
 server.close();
@@ -158,10 +200,30 @@ const archive = {
   },
   result,
   wallMs,
+  rss: RSS ? {
+    note: "OS working set of the browser process tree, 1 s sampling; "
+          + "aligned to result.terminate.terminateWallClockMs",
+    samples: rssSamples,
+    atTerminate: null,
+    afterTerminate: null,
+  } : null,
   transfer: { requests: transfers.length,
               bytes: transfers.reduce((a, t) => a + (t.bytes || 0), 0),
               perPath: transfers },
 };
+if (RSS && result.terminate?.terminateWallClockMs) {
+  const tT = result.terminate.terminateWallClockMs;
+  const before = rssSamples.filter((x) => x.t <= tT).at(-1) || null;
+  const after = rssSamples.filter((x) => x.t > tT);
+  archive.rss.atTerminate = before;
+  archive.rss.afterTerminate = after.map((x) => ({
+    offsetMs: x.t - tT,
+    mib: +(x.bytes / 1048576).toFixed(1),
+  }));
+  const drop = after.find((x) => before && x.bytes < before.bytes - 400 * 1048576);
+  archive.rss.firstDropSample = drop
+    ? { offsetMs: drop.t - tT, mib: +(drop.bytes / 1048576).toFixed(1) } : null;
+}
 await writeFile(path.join(RUN_DIR, "worker-result.json"),
                 JSON.stringify(archive, null, 1) + "\n", "utf-8");
 

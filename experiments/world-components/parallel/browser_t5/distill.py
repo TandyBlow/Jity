@@ -36,12 +36,34 @@ def file_sha(p: pathlib.Path) -> str | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(
-        WT / "artifacts" / "world-components" / "browser-t5-runtime-r2.json"))
+        WT / "artifacts" / "world-components" / "browser-t5-runtime-r3.json"))
     args = ap.parse_args()
 
     assets = load(RUNS / "assets.json")
     offline = load(RUNS / "offline-reference.json")
+    offline_int8_p = RUNS / "offline-reference-int8.json"
+    offline_int8 = load(offline_int8_p) if offline_int8_p.exists() else None
     comparison = load(RUNS / "comparison.json")
+
+    rss_runs = []
+    for d in sorted(RUNS.glob("*/worker-result.json")):
+        archive = load(d)
+        if not archive.get("rss"):
+            continue
+        r = archive["result"]
+        after = archive["rss"].get("afterTerminate") or []
+        rss_runs.append({
+            "run": d.parent.name,
+            "terminateWallClockMs": (r.get("terminate") or {}).get("terminateWallClockMs"),
+            "beforeTerminateMiB": round((archive["rss"].get("atTerminate") or {}).get("bytes", 0) / 1048576, 1),
+            "firstSamplesAfterTerminate": after[:6],
+            "firstDropSample": archive["rss"].get("firstDropSample"),
+            "pageReportedFirstSample": (r.get("terminate") or {}).get("firstSample"),
+            "timingUsable": False,
+            "note": "--rss runs sample the OS process tree every second from the "
+                    "driver; that steals CPU from the browser, so load/inference "
+                    "timings from these runs are excluded",
+        })
 
     wllama_runs = {}
     for d in sorted(RUNS.glob("wllama*")):
@@ -82,8 +104,8 @@ def main() -> int:
         }
 
     evidence = {
-        "round": 2,
-        "supersedes": "browser-t5-runtime-r1.json (round 1: fp32 page runs only)",
+        "round": 3,
+        "supersedes": "browser-t5-runtime-r2.json (round 2) and r1",
         "task": {
             "id": "c9", "branch": "exp/c-browser-t5",
             "exclusive_dir": "experiments/world-components/parallel/browser_t5/",
@@ -122,6 +144,7 @@ def main() -> int:
                             "sha256": file_sha(HERE / "worker_probe.html")},
         },
         "offlineReference": offline,
+        "offlineReferenceInt8": offline_int8,
         "pageRuns": [slim_page(r) for r in page],
         "workerRuns": [slim_worker(r) for r in worker],
         "timingSummary": comparison["timingSummary"],
@@ -147,37 +170,65 @@ def main() -> int:
                          comparison["memorySummary"].values()
                          if e["variant"] == "int8" and e["kind"] == "page"],
             },
-            "tokenDiffsDistinct": comparison["int8TokenDiffsDistinct"],
-            "reading": "int8 changes the wording of one clause on 2 of 7 cases "
-                       "(same facts, different phrase); token identity is not "
-                       "required by the documented int8 contract, and quality is "
-                       "out of scope for c9",
+            "tokenDiffsDistinctVsFp32": comparison["int8TokenDiffsDistinct"],
+            "browserVsOfflineSameGraph": comparison["verdict"]["int8SameGraphParity"],
+            "browserVsOfflineSameGraphFailures": comparison["verdict"]["int8SameGraphFailures"],
+            "reading": "browser-int8 reproduces ORT-python-int8 exactly on all "
+                       "21 case-runs, so the browser adds no drift of its own. The "
+                       "2/7 token differences versus fp32 are the quantisation "
+                       "effect: one clause reworded, same facts. Token identity "
+                       "is not required by the documented int8 contract, and "
+                       "quality is out of scope for c9",
         },
         "verdict": comparison["verdict"],
         "corrections": [
             {
                 "claimInRound1": "release() 之后 300 ms 内存未下降，说明只能重载页面",
-                "status": "收紧",
-                "whatTheDataShows": "page 侧 release() 后 300 ms 确实未下降"
-                                    "(973.9 MB)，但把运行时放进 DedicatedWorker 后 "
-                                    "terminate() 在 +103 ms 就把可归因内存从 973.3 MB "
-                                    "降到 4.46 MB，并在 +88 s 内保持；重建 worker 再跑 7 "
-                                    "个用例，输出与离线参照逐 token 相同",
+                "status": "round 2 收紧",
+                "whatTheDataShows": "把运行时放进 DedicatedWorker 后 terminate() "
+                                    "把可归因内存从 973.3 MB 降到 4.46 MB，"
+                                    "重建 worker 再跑 7 个用例与离线一致",
                 "remainingClaim": "页面内 release() 不回收 wasm 内存；"
                                   "回收要靠终止承载它的 worker",
             },
             {
                 "claimInRound1": "最大取消延迟为 35–72 ms（单步耗时）",
-                "status": "撤回（口径错误）",
-                "whatTheDataShows": "round 1 记的是从开始生成到抛错的总时长；"
-                                    "本轮按 abort() 调用时刻到 AbortError 的间隔测："
+                "status": "round 2 撤回（口径错误）",
+                "whatTheDataShows": "按 abort() 调用时刻到 AbortError 的间隔测："
                                     "page 内 52.9–97.2 ms，worker 内 93–266.5 ms。"
-                                    "上界不是一步耗时，而是取消到达时正在执行的"
-                                    "那次 ORT 调用的剩余时间——落在解码步上约 50–100 ms，"
-                                    "落在 encoder 上可到 266 ms",
-                "remainingClaim": "取消粒度是一步；延迟 = 在飞调用剩余时间 + 让出宏任务 + 检查",
+                                    "上界是取消到达时正在执行的那次 ORT 调用的剩余时间",
+                "remainingClaim": "取消粒度是一步；延迟 = 在飞调用剩余时间 + "
+                                  "让出宏任务 + 检查",
+            },
+            {
+                "claimInRound2": "terminate() 在 +103 ms 就把内存还到 4.46 MB",
+                "status": "撤回（时序口径错误）",
+                "whatTheDataShows": "round 2 的时间戳是采样*开始*的时刻，"
+                                    "而 performance.measureUserAgentSpecificMemory() "
+                                    "本身要 13–60 s（它强制全量 GC）。所以那句话只能"
+                                    "说明「以某个更晚时刻为准已经是 4.46 MB」，"
+                                    "不能说明回收在 103 ms 内完成。"
+                                    "补测：1 s 采样的浏览器进程树工作集在 terminate 后"
+                                    "+0.19 s 仍为 1085.7 MB、+1.21 s 降到 378.6 MB"
+                                    "（另一轮 +59 ms 仍 2014.8 MB、+1.13 s 降到 964.2 MB），"
+                                    "即回收在约 1 s 内可观测，分辨率 1 s",
+                "remainingClaim": "terminate() 是让内存回到基线的手段（973.3 → 4.46 MB，"
+                                  "int8 713.1 → 4.46 MB，重建 worker 后输出一致）；"
+                                  "回收耗时约 1 s 量级，但没能测到亚秒精度",
+            },
+            {
+                "claimInRound2": "int8 与 fp32 离线参照有 2/7 用例 token 不同",
+                "status": "补齐归因",
+                "whatTheDataShows": "补跑同一份 int8 图的 ORT-python 参照"
+                                    "（runs/offline-reference-int8.json），"
+                                    "浏览器 int8 三轮 × 7 用例与它逐 token 全同（21/21）；"
+                                    "那 2 处差异在离线 int8 上完全一样地出现，"
+                                    "因此差异来自量化本身，不是浏览器",
+                "remainingClaim": "int8 的浏览器/离线一致性成立；"
+                                  "int8 与 fp32 的 2 处措辞差异是量化效应",
             },
         ],
+        "rssRuns": rss_runs,
         "wllamaAssessment": {
             "status": "undetermined; unchanged from round 1",
             "runs": wllama_runs,
