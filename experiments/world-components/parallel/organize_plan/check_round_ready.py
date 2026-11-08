@@ -37,6 +37,9 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+import check_adoption as adoption  # noqa: E402
+
+
 def check_holdout() -> dict:
     if not HOLDOUT_FREEZE.exists():
         return {"ready": False, "state": "留出待交付",
@@ -63,6 +66,15 @@ def check_signoff() -> dict:
     signed = json.loads(SIGNOFF.read_text(encoding="utf-8"))
     if not signed.get("signed"):
         return {"ready": False, "state": "人工签认待完成", "detail": "signoff.json 未标 signed"}
+    if signed.get("satisfiesHumanSignoff") is not True:
+        return {
+            "ready": False,
+            "state": "人工签认待完成",
+            "detail": (f"已有签认记录，但 signerKind={signed.get('signerKind')!r}、"
+                       f"signoffClass={signed.get('signoffClass')!r}：仅作审计材料，"
+                       f"不满足人工签认要求；签认人 {signed.get('signer')}，{signed.get('date')}，"
+                       f"审阅 {signed.get('reviewedCommit')}"),
+        }
     if not ACCEPTANCE.exists():
         return {"ready": False, "state": "人工签认待完成", "detail": "acceptance.json 不存在，门状态未计算"}
     # A signed record is only valid while the things it pinned are unchanged.
@@ -103,31 +115,18 @@ def check_checkpoint() -> dict:
             why += f"；取证结论 {f.get('verdict', {}).get('verdict')}"
         return {"ready": False, "state": "计划训练检查点缺失", "detail": why}
 
-    doc = json.loads(ADOPTION.read_text(encoding="utf-8"))
-    problems = []
-    weight = Path(doc.get("weightFile", ""))
-    if not doc.get("modelSha256"):
-        problems.append("缺 modelSha256")
-    elif weight.exists() and sha256(weight) != doc["modelSha256"]:
-        problems.append("权重文件的 sha256 与记录不符")
-    elif not weight.exists():
-        problems.append(f"权重文件不存在：{weight}")
-    rec = doc.get("matchedRecord") or {}
-    rec_path = HERE / rec.get("file", "")
-    if not rec.get("file") or not rec_path.exists():
-        problems.append("matchedRecord.file 缺失或不存在")
-    elif doc.get("modelSha256") not in rec_path.read_text(encoding="utf-8", errors="replace"):
-        problems.append(f"{rec.get('file')} 里找不到这个哈希：无法归因")
-    if not doc.get("trainedOnPlanBlocks") is True:
-        problems.append("trainedOnPlanBlocks 不是 true")
-    for key in ("selection", "decode", "device"):
-        if not doc.get(key):
-            problems.append(f"缺 {key}")
+    # Adoption rules live in check_adoption.py: the hash must be tied to the
+    # training inputs + plan format, the training run and the selection result,
+    # and must not be the base-model hash.
+    problems = adoption.check()
     if problems:
-        return {"ready": False, "state": "检查点不可归因", "detail": "；".join(problems)}
+        return {"ready": False, "state": "检查点不可归因", "detail": "；".join(problems[:4]) +
+                (f"（共 {len(problems)} 项）" if len(problems) > 4 else "")}
+    doc = json.loads(ADOPTION.read_text(encoding="utf-8"))
     return {"ready": True, "state": "检查点已采纳",
-            "detail": f"{doc['modelSha256'][:12]}；trainedOnPlanBlocks=true；"
-                      f"matchedRecord={rec.get('file')}#{rec.get('field')}"}
+            "detail": (f"{doc['modelSha256'][:12]}；planFormat={doc['trainingInputs']['planFormat'][:40]}；"
+                       f"selection epoch {doc['selection']['epoch']}/{doc['selection']['updates']} updates；"
+                       f"matchedField={doc['trainingRun']['recordField']}")}
 
 
 def main() -> int:

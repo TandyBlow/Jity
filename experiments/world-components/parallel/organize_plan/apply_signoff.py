@@ -79,9 +79,15 @@ def main() -> int:
     for row in form["rows"]:
         counts[row["humanVerdict"]] += 1
 
+    is_human = form["signerKind"] == "human"
     doc = {
         "formVersion": form["formVersion"],
         "signed": True,
+        # "signed" only means the form was completed. Whether that can satisfy
+        # a human sign-off requirement is a separate, explicit field.
+        "signoffClass": "human" if is_human else "audit-only",
+        "satisfiesHumanSignoff": is_human,
+        "auditOnly": not is_human,
         "signer": form["signer"],
         "signerRole": form["signerRole"],
         "signerKind": form["signerKind"],
@@ -101,7 +107,13 @@ def main() -> int:
     }
     OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
-    print(json.dumps({"signer": doc["signer"], "humanCounts": counts}, ensure_ascii=False, indent=1))
+    print(json.dumps({"signer": doc["signer"], "signerKind": doc["signerKind"],
+                      "signoffClass": doc["signoffClass"],
+                      "satisfiesHumanSignoff": doc["satisfiesHumanSignoff"],
+                      "humanCounts": counts}, ensure_ascii=False, indent=1))
+    if not is_human:
+        print("NOTE: signerKind is not 'human', so this record is audit material only; "
+              "the gate will stay PROVISIONAL_AI_REVIEW_ONLY until a human signs.")
     print("now re-run apply_review.py to recompute the gate")
     return 0
 

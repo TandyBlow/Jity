@@ -1,6 +1,9 @@
 {
  "formVersion": "c3-signoff-v1",
  "signed": true,
+ "signoffClass": "audit-only",
+ "satisfiesHumanSignoff": false,
+ "auditOnly": true,
  "signer": "pi（AI 编码代理，本机 pi harness）",
  "signerRole": "delegated-signer",
  "signerKind": "ai",

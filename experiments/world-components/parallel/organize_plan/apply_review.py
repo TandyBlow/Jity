@@ -30,9 +30,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import gate_rules  # noqa: E402
+
 RUN = HERE / "runs" / "r2"
 CRITERIA = HERE / "freeze" / "criteria-v2.json"
 PROBES = RUN / "tamper-probes.json"
@@ -147,19 +151,15 @@ def main() -> int:
         "detail": "probes the v2 program alone would let through (no hard finding)",
     }
 
-    signoff_complete = bool(signoff) and signoff.get("signed") is True
-    unsigned = not signoff_complete
-    if unsigned:
-        if reviewer.get("kind") == "ai":
-            gate = "PROVISIONAL_AI_REVIEW_ONLY"
-        else:
-            gate = "BLOCKED_PENDING_HUMAN_SIGNOFF"
-    elif deviations or any(r["normalised"] is None for r in normalised_rows):
-        gate = "BLOCKED_REVIEW_INCOMPLETE"
-    else:
-        # unsure is allowed inside a sealed review; it just does not pass, and
-        # the affected probes stay listed as open items.
-        gate = "OPEN"
+    # The gate rule lives in gate_rules.py so the "an AI sign-off cannot open a
+    # human sign-off gate" case can be regression-tested on its own.
+    decision = gate_rules.decide_gate(
+        signoff=signoff,
+        reviewer_kind=reviewer.get("kind"),
+        all_rows_decided=all(r["normalised"] is not None for r in normalised_rows),
+        deviations=deviations,
+    )
+    gate = decision["gate"]
 
     identity = hashlib.sha256(
         (sha256(CRITERIA) + sha256(PROBES) + sha256(REVIEW)).encode("ascii")
@@ -177,10 +177,15 @@ def main() -> int:
         "reviewer": reviewer,
         "signoff": None if not signoff else {
             "file": "runs/r2/signoff.json", "sha256": sha256(SIGNOFF),
-            "signer": signoff.get("signer"), "date": signoff.get("date"),
+            "signer": signoff.get("signer"),
+            "signerKind": signoff.get("signerKind"),
+            "date": signoff.get("date"),
             "reviewedCommit": signoff.get("reviewedCommit"),
             "humanCounts": signoff.get("humanCounts"),
+            "satisfiesHumanSignoff": decision["satisfiesHumanSignoff"],
+            "auditOnly": not decision["satisfiesHumanSignoff"],
         },
+        "gateReason": decision["reason"],
         "openItems": [o["probeId"] for o in outcomes if o["outcome"] == "pending-review"],
         "counts": counts,
         "programOnly": program_only,
@@ -189,8 +194,9 @@ def main() -> int:
             "PROVISIONAL_AI_REVIEW_ONLY":
                 "verdicts are AI review; human sign-off is still pending, so this cannot be used as "
                 "the acceptance gate for a model round yet",
-            "OPEN": "review sealed by the project owner; openItems (e.g. an 'unsure' probe) remain "
-                    "not-passing but do not block using the gate on new model output",
+            "OPEN": "a HUMAN sign-off sealed the review; openItems (e.g. an 'unsure' probe) remain "
+                    "not-passing. Note: an open gate still does not start a model round — "
+                    "check_round_ready.py decides that",
             "BLOCKED_PENDING_HUMAN_SIGNOFF": "reviewer did not sign",
             "BLOCKED_REVIEW_INCOMPLETE": "some review row is unsure/unfilled or a verdict is off-contract",
             "OPEN": "review sealed; the gate may be used",

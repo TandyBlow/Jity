@@ -451,34 +451,66 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | # | 状态 | 就绪 | 依据 |
 | --- | --- | --- | --- |
 | 1 | **留出待交付** | NO | `freeze/holdout-v1-freeze.json` 不存在：A 的包未到，或未过 `--package` |
-| 2 | 签认完成，门 OPEN | yes | 签认人 `pi（AI 编码代理）`，2026-11-08，审阅 `4dd9df4`；8 条 `new-content-fail`、2 条 `unsure`；未通过项 T09 |
+| 2 | **人工签认待完成** | NO | 有签认记录，但 `signerKind='ai'`、`signoffClass='audit-only'`：只作审计材料（`pi（AI 编码代理）`，2026-11-08，审阅 `4dd9df4`） |
 | 3 | **计划训练检查点缺失** | NO | `freeze/checkpoint-adoption.json` 不存在；取证结论 `not-found-locally` |
 
 命令行输出：
 
 ```
-模型能力实验：BLOCKED（未就绪：留出待交付、计划训练检查点缺失）
+模型能力实验：BLOCKED（未就绪：留出待交付、人工签认待完成、计划训练检查点缺失）
 ```
+
+门状态：`PROVISIONAL_AI_REVIEW_ONLY`。`acceptance.json` 的 `gateReason` 写明原因：`signerKind='ai'` 的签认不能替代人工签认。
 
 **门 OPEN 不等于可以跑模型。** 门只说明“判据与核验流程已封版”；能不能跑还取决于留出和检查点。三项都在 `check_round_ready.py` 里，缺一即 BLOCKED。
 
-### 8.9.1 签认是委托签认，不是人类复核
+### 8.9.1 AI 签认只作审计材料，不能开门
 
-`runs/r2/signoff.json` 里写实了：
+`runs/r2/signoff.json` 保留为审计记录，字段写实：
 
 ```json
 {"signer": "pi（AI 编码代理，本机 pi harness）", "signerRole": "delegated-signer",
  "signerKind": "ai", "date": "2026-11-08", "reviewedCommit": "4dd9df4",
- "delegationNote": "项目负责人明确指示由本代理完成本轮签认；签认人身份照实记为 AI 代理，不冒充人类复核者。"}
+ "signed": true, "signoffClass": "audit-only",
+ "satisfiesHumanSignoff": false, "auditOnly": true}
 ```
 
-`humanVerdict` 是逐条结论，`aiVerdict`/`aiNote` 原样保留、没有覆盖。T09 两行保留 `unsure`，因此它仍在 `openItems` 里，**不计通过**。
+`humanVerdict` 是逐条结论，`aiVerdict`/`aiNote` 原样保留、没有覆盖；T09 两行仍是 `unsure`，记在 `openItems`，**不计通过**。
 
-### 8.9.2 检查点采纳需要什么
+**门规则**（`gate_rules.py`，纯函数，可单测）：
 
-`freeze/checkpoint-adoption.json`（现在不存在）必须包含：`weightFile`、`modelSha256`、`matchedRecord{file, field}`、`trainedOnPlanBlocks: true`、`selection`、`decode`、`device`。`check_round_ready.py` 会做三件事：文件存在、sha256 与记录一致、**在这个哈希能被 `matchedRecord` 指向的记录里原文找到**。找不到就判“不可归因”，不给跑。
+| 条件 | 门状态 |
+| --- | --- |
+| 没有签认记录，且复核者是 AI | `PROVISIONAL_AI_REVIEW_ONLY` |
+| 有签认记录，但 `signerKind != "human"` | `PROVISIONAL_AI_REVIEW_ONLY`（只作审计） |
+| 没有签认记录，复核者也不是 AI | `BLOCKED_PENDING_HUMAN_SIGNOFF` |
+| 人类签认，但有阻断性偏差/未决行 | `BLOCKED_REVIEW_INCOMPLETE` |
+| 人类签认，全部行已决 | `OPEN` |
 
-这条是给路线 A 收尾后留的接口：将来任何来源提供的权重，都必须能对上一份记录，否则结果无法归因。
+回归检查 `python -X utf8 gate_rules.py`（6/6）：`signerKind=ai`、`unknown`、空值、`robot` 四个变体都不能开门；只有 `human` 能。这条就是“AI 委托签认不能据此把门改成 `OPEN`”的机器约束，不是文档约定。
+
+### 8.9.2 检查点采纳：哈希必须被记录“指向”，不能只是“出现过”
+
+规则在 `check_adoption.py`，`--explain` 会打印完整字段表。一份可采纳的记录必须把同一个 `modelSha256` 同时挂到三处：
+
+| 挂到哪 | 字段 | 判法 |
+| --- | --- | --- |
+| 训练输入与计划格式 | `trainingInputs.{materialFile, materialSha256, planFormat, planCount}` | 材料文件存在且哈希相符；`planFormat` 说明模型消费过哪些计划字段 |
+| 训练运行 | `trainingRun.{record, recordSha256, recordField, recipe}` | 打开该记录，按 `recordField` 取到的**值必须等于 `modelSha256`** |
+| 选点结果 | `selection.{record, recordSha256, recordField, epoch, updates, metric}` | 同样按字段取值等于一个指向同一权重的哈希；且 `recordSha256` 必须与 `trainingRun.recordSha256` 相同（同一次运行） |
+
+两个否定条件：
+
+- **`modelSha256 == baseModel.modelSha256` 直接拒绝**；等于已知 77M 基座哈希 `5cdc5721…` 也拒绝，理由写在输出里：「匹配基座权重不是归因」。
+- **哈希只在文件里“原文出现”不算**：必须能解析到字段值。字段名里带点（`model.safetensors`）时用“最长字面键优先”的解析，或用 JSON Pointer `/model/files/model.safetensors`。
+
+三个负对照实测（临时记录，跑完删除）：
+
+| 记录 | 结果 |
+| --- | --- |
+| A：哈希只作为文字出现在记录里，没有对应字段 | 拒绝：`recordField ... does not exist` |
+| B：`modelSha256` 填成基座哈希 | 拒绝：`equals baseModel.modelSha256` + `is the known 77M base hash` |
+| C：记录里 `model.files.model.safetensors` 与 `selection.selectedSha256` 都等于该哈希 | `adopted` |
 
 ### 8.9.3 留出验收的两道闸
 
@@ -567,6 +599,8 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
 | `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点） | — |
+| `gate_rules.py` | 门规则纯函数 + 6 条回归检查（AI 签认不能开门） | — |
+| `check_adoption.py` | 检查点采纳规则（三处挂接、拒绝基座哈希、`--explain`） | — |
 | `NEXT-ROUND.md` | 三项决定的执行状态与下一步 | — |
 | `runs/r2/controls.json` | 4 个固定策略 × 9 个来源 | — |
 | `runs/r2/downstream-inputs.jsonl` | 18 条 N4 模拟输入（与 r1 逐字节一致） | — |
@@ -586,7 +620,9 @@ python -X utf8 apply_review.py        # 把 manual-review.json 的结论并进 a
 python -X utf8 inventory_checkpoints.py  # 只读清点本地权重（约 35 秒，不算模型）
 python -X utf8 recover_checkpoint.py     # 只读取证旧检查点（约 60 秒）
 python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒绝覆盖）
-python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json
+python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
+python -X utf8 gate_rules.py             # 门规则回归检查（6 条）
+python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）
 python -X utf8 model_smoke.py         # 可选：4 条基线 smoke（CPU，约 40 秒，写到 runs/r1）

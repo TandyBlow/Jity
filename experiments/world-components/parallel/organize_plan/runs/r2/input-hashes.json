@@ -1,8 +1,8 @@
 {
- "created": "2026-11-08T07:06:33.812230+00:00",
- "runtimeHead": "4dd9df433745a3a69d5f35f7b0871e9d1657418e",
+ "created": "2026-11-08T07:15:43.903055+00:00",
+ "runtimeHead": "3ac130fbd2caeb8ca8028ecda7af5005fb707e56",
  "runtimeBranch": "exp/c-organize-plan",
- "runtimeStatus": "M experiments/world-components/parallel/organize_plan/HOLDOUT-HANDOFF.md\n M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/apply_signoff.py\n M experiments/world-components/parallel/organize_plan/build_signoff_form.py\n M experiments/world-components/parallel/organize_plan/freeze/checkpoint-forensics.json\n M experiments/world-components/parallel/organize_plan/recover_checkpoint.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n M experiments/world-components/parallel/organize_plan/runs/r2/input-hashes.json\n M experiments/world-components/parallel/organize_plan/runs/r2/signoff-form.json\n M experiments/world-components/parallel/organize_plan/validate_holdout.py\n?? TASK.md",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/apply_signoff.py\n M experiments/world-components/parallel/organize_plan/check_round_ready.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n M experiments/world-components/parallel/organize_plan/runs/r2/signoff.json\n?? TASK.md",
  "python": "3.12.3",
  "platform": "Windows-11-10.0.26200-SP0",
  "code": {
