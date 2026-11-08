@@ -1,0 +1,511 @@
+{
+ "protocol": "group-wording-v1",
+ "freeze_sha256": "0d8db13f0ca079174504d02fece57514b32672ee53bba3d0e3a9959a9e66f0ed",
+ "material_sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816",
+ "checkpoint_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+ "organizer_sha256": "867dd6dd424f022d736ff5217b25b289827348e7f7db68becf72adfe0d23678f",
+ "script_sha256": "051f483bbf29be9ba6ed524ba306cd0edc1e188e290e3d1482298841d39a51f4",
+ "device": "NVIDIA GeForce RTX 4090 D",
+ "torch": "2.5.1+cu124",
+ "transformers": "4.51.3",
+ "decoding": {
+  "max_input": 512,
+  "max_new": 128,
+  "num_beams": 1,
+  "do_sample": false,
+  "batch": 6,
+  "stop_on_eos": true
+ },
+ "rows": {
+  "n4n-109": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-109:g1": {
+      "text": "韩渡从潮渡走到雾堤。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 20.9356
+     },
+     "n4n-109:g2": {
+      "text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 20.9356
+     }
+    },
+    "assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤,开始愿意先开口。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤,开始愿意先开口。"
+   },
+   "S": {
+    "calls": {
+     "n4n-109:f0": {
+      "text": "韩渡从潮渡走到雾堤。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2743
+     },
+     "n4n-109:f1": {
+      "text": "沈砚从潮渡走到雾堤。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2743
+     },
+     "n4n-109:f2": {
+      "text": "沈砚开始愿意先开口。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2743
+     }
+    },
+    "fact_sentences": {
+     "f0": "韩渡从潮渡走到雾堤。",
+     "f1": "沈砚从潮渡走到雾堤。",
+     "f2": "沈砚开始愿意先开口。"
+    },
+    "assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤，开始愿意先开口。"
+   }
+  },
+  "n4n-64": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-64:g1": {
+      "text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+      "new_tokens": 19,
+      "stop": "eos",
+      "elapsed_s": 1.3462
+     }
+    },
+    "assembled": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚把系泊绳从浅滩拖了回来,心里发紧。"
+   },
+   "S": {
+    "calls": {
+     "n4n-64:f0": {
+      "text": "沈砚把系泊绳从浅滩拖了回来。",
+      "new_tokens": 15,
+      "stop": "eos",
+      "elapsed_s": 0.3597
+     },
+     "n4n-64:f1": {
+      "text": "沈砚心里发紧。",
+      "new_tokens": 15,
+      "stop": "eos",
+      "elapsed_s": 0.3597
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚把系泊绳从浅滩拖了回来。",
+     "f1": "沈砚心里发紧。"
+    },
+    "assembled": "沈砚把系泊绳从浅滩拖了回来，心里发紧。"
+   }
+  },
+  "n4n-65": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-65:g1": {
+      "text": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+      "new_tokens": 21,
+      "stop": "eos",
+      "elapsed_s": 0.4594
+     }
+    },
+    "assembled": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚把潮汐簿缺的那页补全了,心里松快了些。"
+   },
+   "S": {
+    "calls": {
+     "n4n-65:f0": {
+      "text": "沈砚把潮汐簿缺的那页补全了。",
+      "new_tokens": 15,
+      "stop": "eos",
+      "elapsed_s": 0.3588
+     },
+     "n4n-65:f1": {
+      "text": "沈砚心里松快了些。",
+      "new_tokens": 15,
+      "stop": "eos",
+      "elapsed_s": 0.3588
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚把潮汐簿缺的那页补全了。",
+     "f1": "沈砚心里松快了些。"
+    },
+    "assembled": "沈砚把潮汐簿缺的那页补全了，心里松快了些。"
+   }
+  },
+  "n4n-74": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-74:g1": {
+      "text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+      "new_tokens": 20,
+      "stop": "eos",
+      "elapsed_s": 0.4381
+     }
+    },
+    "assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油。"
+   },
+   "S": {
+    "calls": {
+     "n4n-74:f0": {
+      "text": "叶知微把灯罩擦得透亮。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.315
+     },
+     "n4n-74:f1": {
+      "text": "叶知微的袖口沾了铜油。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.315
+     }
+    },
+    "fact_sentences": {
+     "f0": "叶知微把灯罩擦得透亮。",
+     "f1": "叶知微的袖口沾了铜油。"
+    },
+    "assembled": "叶知微把灯罩擦得透亮，袖口沾了铜油。"
+   }
+  },
+  "n4n-75": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-75:g1": {
+      "text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+      "new_tokens": 21,
+      "stop": "eos",
+      "elapsed_s": 0.4566
+     }
+    },
+    "assembled": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。"
+   },
+   "S": {
+    "calls": {
+     "n4n-75:f0": {
+      "text": "阿棠把一叠干纸放在桌角。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3126
+     },
+     "n4n-75:f1": {
+      "text": "阿棠的鞋底带着早市的泥水。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3126
+     }
+    },
+    "fact_sentences": {
+     "f0": "阿棠把一叠干纸放在桌角。",
+     "f1": "阿棠的鞋底带着早市的泥水。"
+    },
+    "assembled": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。"
+   }
+  },
+  "n4n-87": {
+   "split": "fixed",
+   "J": {
+    "calls": {
+     "n4n-87:g1": {
+      "text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+      "new_tokens": 20,
+      "stop": "eos",
+      "elapsed_s": 0.4369
+     }
+    },
+    "assembled": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。"
+   },
+   "S": {
+    "calls": {
+     "n4n-87:f0": {
+      "text": "韩渡从潮渡走到雾堤。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3131
+     },
+     "n4n-87:f1": {
+      "text": "韩渡把松脱的钟绳重新系紧。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3131
+     }
+    },
+    "fact_sentences": {
+     "f0": "韩渡从潮渡走到雾堤。",
+     "f1": "韩渡把松脱的钟绳重新系紧。"
+    },
+    "assembled": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。"
+   }
+  },
+  "t24": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "t24:g1": {
+      "text": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+      "new_tokens": 23,
+      "stop": "eos",
+      "elapsed_s": 0.5414
+     },
+     "t24:g2": {
+      "text": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+      "new_tokens": 23,
+      "stop": "eos",
+      "elapsed_s": 0.5414
+     }
+    },
+    "assembled": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+   },
+   "S": {
+    "calls": {
+     "t24:f0": {
+      "text": "纸灯笼被风扯破一角。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2935
+     },
+     "t24:f1": {
+      "text": "排水沟的里面积了泥。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2935
+     },
+     "t24:f2": {
+      "text": "沈砚把纸灯笼扶正。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2935
+     },
+     "t24:f3": {
+      "text": "阿棠把鱼筐放在门槛边。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2935
+     }
+    },
+    "fact_sentences": {
+     "f0": "纸灯笼被风扯破一角。",
+     "f1": "排水沟的里面积了泥。",
+     "f2": "沈砚把纸灯笼扶正。",
+     "f3": "阿棠把鱼筐放在门槛边。"
+    },
+    "assembled": "纸灯笼被风扯破一角，排水沟的里面积了泥。沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。"
+   }
+  },
+  "v20": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "v20:g1": {
+      "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+      "new_tokens": 20,
+      "stop": "eos",
+      "elapsed_s": 0.438
+     }
+    },
+    "assembled": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+   },
+   "S": {
+    "calls": {
+     "v20:f0": {
+      "text": "沈砚从潮生巷走到潮渡。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2906
+     },
+     "v20:f1": {
+      "text": "沈砚心里松快了些。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2906
+     },
+     "v20:f2": {
+      "text": "沈砚把渡船推离栈桥。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2906
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚从潮生巷走到潮渡。",
+     "f1": "沈砚心里松快了些。",
+     "f2": "沈砚把渡船推离栈桥。"
+    },
+    "assembled": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。"
+   }
+  },
+  "v07": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "v07:g1": {
+      "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+      "new_tokens": 23,
+      "stop": "eos",
+      "elapsed_s": 0.5406
+     },
+     "v07:g2": {
+      "text": "沈砚把铜灯擦亮。",
+      "new_tokens": 23,
+      "stop": "eos",
+      "elapsed_s": 0.5406
+     }
+    },
+    "assembled": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。"
+   },
+   "S": {
+    "calls": {
+     "v07:f0": {
+      "text": "铜灯的灯罩上积了灰。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3125
+     },
+     "v07:f1": {
+      "text": "潮汐簿的封面蒙了一层灰。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3125
+     },
+     "v07:f2": {
+      "text": "沈砚把铜灯擦亮。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3125
+     }
+    },
+    "fact_sentences": {
+     "f0": "铜灯的灯罩上积了灰。",
+     "f1": "潮汐簿的封面蒙了一层灰。",
+     "f2": "沈砚把铜灯擦亮。"
+    },
+    "assembled": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。"
+   }
+  }
+ },
+ "samples": {
+  "GW-01": {
+   "sourceId": "n4n-109",
+   "groupFacts": [
+    "f1",
+    "f2"
+   ],
+   "role": "fixed-multi",
+   "J_text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+   "S_text": "沈砚从潮渡走到雾堤，开始愿意先开口。"
+  },
+  "GW-02": {
+   "sourceId": "n4n-64",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi",
+   "J_text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+   "S_text": "沈砚把系泊绳从浅滩拖了回来，心里发紧。"
+  },
+  "GW-03": {
+   "sourceId": "n4n-65",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi",
+   "J_text": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+   "S_text": "沈砚把潮汐簿缺的那页补全了，心里松快了些。"
+  },
+  "GW-04": {
+   "sourceId": "n4n-74",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi",
+   "J_text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+   "S_text": "叶知微把灯罩擦得透亮，袖口沾了铜油。"
+  },
+  "GW-05": {
+   "sourceId": "n4n-75",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi",
+   "J_text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+   "S_text": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。"
+  },
+  "GW-06": {
+   "sourceId": "n4n-87",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi",
+   "J_text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+   "S_text": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。"
+  },
+  "GW-07": {
+   "sourceId": "t24",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+   "S_text": "纸灯笼被风扯破一角，排水沟的里面积了泥。"
+  },
+  "GW-08": {
+   "sourceId": "t24",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "role": "regression-multi",
+   "J_text": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+   "S_text": "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。"
+  },
+  "GW-09": {
+   "sourceId": "v20",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "role": "regression-multi",
+   "J_text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+   "S_text": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。"
+  },
+  "GW-10": {
+   "sourceId": "v07",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+   "S_text": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。"
+  }
+ },
+ "determinism_ok": true
+}

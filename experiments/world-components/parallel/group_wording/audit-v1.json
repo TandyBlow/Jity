@@ -1,0 +1,861 @@
+{
+ "source": "run-v1\\results.json",
+ "determinism_ok": true,
+ "samples": {
+  "GW-01": {
+   "sourceId": "n4n-109",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f1",
+    "f2"
+   ],
+   "J": {
+    "text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤,开始愿意先开口。"
+    ],
+    "facts": {
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "沈砚从潮渡走到雾堤，开始愿意先开口。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤，开始愿意先开口。"
+    ],
+    "facts": {
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤，开始愿意先开口。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤，开始愿意先开口。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮渡走到雾堤，",
+      "best_fact": "f1",
+      "score": 1.0
+     },
+     {
+      "clause": "开始愿意先开口。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-02": {
+   "sourceId": "n4n-64",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+    "sentences": [
+     "沈砚把系泊绳从浅滩拖了回来,心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   },
+   "S": {
+    "text": "沈砚把系泊绳从浅滩拖了回来，心里发紧。",
+    "sentences": [
+     "沈砚把系泊绳从浅滩拖了回来，心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚把系泊绳从浅滩拖了回来，心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚把系泊绳从浅滩拖了回来，心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把系泊绳从浅滩拖了回来，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "weak_clauses": [
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   }
+  },
+  "GW-03": {
+   "sourceId": "n4n-65",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+    "sentences": [
+     "沈砚把潮汐簿缺的那页补全了,心里松快了些。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "松快"
+    ]
+   },
+   "S": {
+    "text": "沈砚把潮汐簿缺的那页补全了，心里松快了些。",
+    "sentences": [
+     "沈砚把潮汐簿缺的那页补全了，心里松快了些。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚把潮汐簿缺的那页补全了，心里松快了些。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚把潮汐簿缺的那页补全了，心里松快了些。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把潮汐簿缺的那页补全了，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "心里松快了些。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "weak_clauses": [
+     {
+      "clause": "心里松快了些。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "松快"
+    ]
+   }
+  },
+  "GW-04": {
+   "sourceId": "n4n-74",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮,袖口沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮，袖口沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "叶知微把灯罩擦得透亮，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "袖口沾了铜油。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-05": {
+   "sourceId": "n4n-75",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+    "sentences": [
+     "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+    "sentences": [
+     "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠把一叠干纸放在桌角，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "鞋底带着早市的泥水。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-06": {
+   "sourceId": "n4n-87",
+   "role": "fixed-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+    "sentences": [
+     "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+    "sentences": [
+     "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "韩渡从潮渡走到雾堤，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "把松脱的钟绳重新系紧。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-07": {
+   "sourceId": "t24",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+    "sentences": [
+     "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "纸灯笼被风扯破一角，排水沟的里面积了泥。",
+    "sentences": [
+     "纸灯笼被风扯破一角，排水沟的里面积了泥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "纸灯笼被风扯破一角，排水沟的里面积了泥。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "纸灯笼被风扯破一角，排水沟的里面积了泥。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "纸灯笼被风扯破一角，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "排水沟的里面积了泥。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-08": {
+   "sourceId": "t24",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "J": {
+    "text": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+    "sentences": [
+     "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+    "sentences": [
+     "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚把纸灯笼扶正，",
+      "best_fact": "f2",
+      "score": 1.0
+     },
+     {
+      "clause": "阿棠把鱼筐放在门槛边。",
+      "best_fact": "f3",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-09": {
+   "sourceId": "v20",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "J": {
+    "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+    "sentences": [
+     "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": false,
+      "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+      "score": 0.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+      "score": 1.0
+     }
+    },
+    "omissions": [
+     "f1"
+    ],
+    "clauses": [
+     {
+      "clause": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+    "sentences": [
+     "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮生巷走到潮渡，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "心里松快了些，",
+      "best_fact": null,
+      "score": 0.0
+     },
+     {
+      "clause": "把渡船推离栈桥。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [
+     {
+      "clause": "心里松快了些，",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "松快"
+    ]
+   }
+  },
+  "GW-10": {
+   "sourceId": "v07",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+    "sentences": [
+     "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。",
+    "sentences": [
+     "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "铜灯的灯罩上积了灰，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "潮汐簿的封面蒙了一层灰。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  }
+ },
+ "row_checks": {
+  "n4n-109": {
+   "J_matches_recorded_784": true
+  },
+  "n4n-64": {
+   "J_matches_recorded_784": true
+  },
+  "n4n-65": {
+   "J_matches_recorded_784": true
+  },
+  "n4n-74": {
+   "J_matches_recorded_784": true
+  },
+  "n4n-75": {
+   "J_matches_recorded_784": true
+  },
+  "n4n-87": {
+   "J_matches_recorded_784": true
+  },
+  "t24": {
+   "J_matches_recorded_784": true
+  },
+  "v20": {
+   "J_matches_recorded_784": true
+  },
+  "v07": {
+   "J_matches_recorded_784": true
+  }
+ },
+ "summary": {
+  "J_omissions": 1,
+  "S_omissions": 0,
+  "samples": 10
+ }
+}

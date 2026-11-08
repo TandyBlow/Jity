@@ -1,0 +1,247 @@
+{
+ "checks": [
+  {
+   "check": "manifest-v2 listed files match",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "manifest-v2 has no unlisted file",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "freeze-v1 hash",
+   "ok": true,
+   "detail": "0d8db13f0ca079174504d02fece57514b32672ee53bba3d0e3a9959a9e66f0ed"
+  },
+  {
+   "check": "freeze-b2 hash",
+   "ok": true,
+   "detail": "34d7be711105a660aa2d4eab29e233f6efd143fe256dd2a6e64f13f74de50f02"
+  },
+  {
+   "check": "run-v1 results hash",
+   "ok": true,
+   "detail": "77d7128780c05110a66a994169fea37b6469269a50c33d20f61dbd823bb22aff"
+  },
+  {
+   "check": "run-b2 results hash",
+   "ok": true,
+   "detail": "4464b03c02f74f03fc6aff67b242072420e384fa2a6d477bb8fcdc9d25b7bb4a"
+  },
+  {
+   "check": "freeze .sha256 files agree",
+   "ok": true,
+   "detail": [
+    "0d8db13f0ca079174504d02fece57514b32672ee53bba3d0e3a9959a9e66f0ed",
+    "34d7be711105a660aa2d4eab29e233f6efd143fe256dd2a6e64f13f74de50f02"
+   ]
+  },
+  {
+   "check": "freeze-v1 checkpoint sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-v1 material sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-v1 organizer sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-b2 checkpoint sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-b2 material sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-b2 organizer sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "runner sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-b2 runner sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "freeze-v1 prompt count",
+   "ok": true,
+   "detail": [
+    35,
+    35
+   ]
+  },
+  {
+   "check": "freeze-b2 prompt count",
+   "ok": true,
+   "detail": [
+    42,
+    42
+   ]
+  },
+  {
+   "check": "material canonical sha",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "GW ids are GW-01..GW-19 in order",
+   "ok": true,
+   "detail": [
+    "GW-01",
+    "GW-02",
+    "GW-03",
+    "GW-04",
+    "GW-05",
+    "GW-06",
+    "GW-07",
+    "GW-08",
+    "GW-09",
+    "GW-10",
+    "GW-11",
+    "GW-12",
+    "GW-13",
+    "GW-14",
+    "GW-15",
+    "GW-16",
+    "GW-17",
+    "GW-18",
+    "GW-19"
+   ]
+  },
+  {
+   "check": "no duplicate GW id",
+   "ok": true,
+   "detail": 0
+  },
+  {
+   "check": "fixed group set equals material multi-groups",
+   "ok": true,
+   "detail": {
+    "samples": 6,
+    "material": 6,
+    "missing": [],
+    "extra": []
+   }
+  },
+  {
+   "check": "regression group set equals material multi-groups",
+   "ok": true,
+   "detail": {
+    "samples": 13,
+    "material": 13,
+    "missing": [],
+    "extra": []
+   }
+  },
+  {
+   "check": "fixed count 6",
+   "ok": true,
+   "detail": 6
+  },
+  {
+   "check": "regression count 13",
+   "ok": true,
+   "detail": 13
+  },
+  {
+   "check": "audit-v1 samples",
+   "ok": true,
+   "detail": [
+    "GW-01",
+    "GW-02",
+    "GW-03",
+    "GW-04",
+    "GW-05",
+    "GW-06",
+    "GW-07",
+    "GW-08",
+    "GW-09",
+    "GW-10"
+   ]
+  },
+  {
+   "check": "audit-b2 samples",
+   "ok": true,
+   "detail": [
+    "GW-11",
+    "GW-12",
+    "GW-13",
+    "GW-14",
+    "GW-15",
+    "GW-16",
+    "GW-17",
+    "GW-18",
+    "GW-19"
+   ]
+  },
+  {
+   "check": "audit determinism flags",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "summary lists 19 GW ids",
+   "ok": true,
+   "detail": [
+    "GW-01",
+    "GW-02",
+    "GW-03",
+    "GW-04",
+    "GW-05",
+    "GW-06",
+    "GW-07",
+    "GW-08",
+    "GW-09",
+    "GW-10",
+    "GW-11",
+    "GW-12",
+    "GW-13",
+    "GW-14",
+    "GW-15",
+    "GW-16",
+    "GW-17",
+    "GW-18",
+    "GW-19"
+   ]
+  },
+  {
+   "check": "summary states J 2/19 and S 0/19",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "check": "wrong GW-07 quote only in errata",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "corrected GW-07 text present in review/result docs",
+   "ok": true,
+   "detail": 5
+  },
+  {
+   "check": "S natural 18/19 in README",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "passed": true,
+ "count": 32,
+ "note": "verify-delivery-v1.json is the generated report and is not listed in manifest-v2 (self-reference)."
+}
