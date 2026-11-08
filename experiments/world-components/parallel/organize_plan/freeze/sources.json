@@ -1,0 +1,1529 @@
+{
+ "protocol": "c3-organize-plan-sources-v1",
+ "created": "2026-11-08T05:49:43.001165+00:00",
+ "sourceRoot": "D:\\others\\Jity",
+ "sourceHead": "005ea5be46e09b72f219defca047a8fb0d281045",
+ "committedFixture": {
+  "worktree": "D:\\others\\Jity\\.local\\parallel\\e-browser-regression",
+  "branch": "exp/e-browser-regression",
+  "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+  "pairsDir": "artifacts/next-inputs/world-provenance/pairs",
+  "note": "the authorized JSONs and pair-worlds are tracked at this commit; the SQLite databases are not tracked, so every selected fact is additionally verified by hash against the main-worktree DBs and the frozen rows are copied into sources.json"
+ },
+ "note": "Facts are taken from artifacts/world-provenance/pairs/*-authorized.json and verified against world_evidence / world_points.delta_json in the paired SQLite databases. A byte-identical committed copy of the authorized JSONs exists at committedFixture; the selected rows and all hashes are frozen here so the experiment is reproducible from freeze/.",
+ "families": {
+  "edge": {
+   "sources": [
+    "fixture-r1",
+    "fixture-r2",
+    "fixture-r3",
+    "fixture-r4",
+    "fixture-r5"
+   ],
+   "selection": "all 5 facts; authorized before(f2->f3) applies"
+  },
+  "grouping": {
+   "sources": [
+    "train-r2",
+    "train-r3",
+    "train-r4",
+    "train-r5"
+   ],
+   "selection": "[f0,f1,f3,f4]; f2 excluded; edges empty"
+  }
+ },
+ "sources": [
+  {
+   "sourceId": "fixture-r1",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\fixture-r1-authorized.json",
+   "sourceSha256": "f7619a71382374ac6c8775260ffe9af99b0d163d5ed192d73c89bbe62c93482d",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/fixture-r1-authorized.json",
+    "sha256": "f7619a71382374ac6c8775260ffe9af99b0d163d5ed192d73c89bbe62c93482d",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\fixture.db",
+   "dbSha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨",
+     "pointId": "fixture_r1_p1",
+     "evidenceId": "fixture_r1_p1/person_a/appearance/fixture_r1_p1_1",
+     "sequence": 1
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白",
+     "pointId": "fixture_r1_p1",
+     "evidenceId": "fixture_r1_p1/person_a/appearance/fixture_r1_p1_2",
+     "sequence": 1
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片",
+     "pointId": "fixture_r1_p2",
+     "evidenceId": "fixture_r1_p2/person_b/appearance/fixture_r1_p2_1",
+     "sequence": 2
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥",
+     "pointId": "fixture_r1_p3",
+     "evidenceId": "fixture_r1_p3/person_c/appearance/fixture_r1_p3_1",
+     "sequence": 3
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部",
+     "pointId": "fixture_r1_p3",
+     "evidenceId": "fixture_r1_p3/person_c/appearance/fixture_r1_p3_2",
+     "sequence": 3
+    }
+   ],
+   "points": [
+    {
+     "id": "fixture_r1_p1",
+     "sequence": 1,
+     "previousPointId": "root_3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r1_p2",
+     "sequence": 2,
+     "previousPointId": "fixture_r1_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r1_p3",
+     "sequence": 3,
+     "previousPointId": "fixture_r1_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r2_p1",
+     "sequence": 4,
+     "previousPointId": "fixture_r1_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "fixture_r1_p2/person_b/appearance/fixture_r1_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "fixture_r1_p3/person_c/appearance/fixture_r1_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "edge",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {}
+  },
+  {
+   "sourceId": "fixture-r2",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\fixture-r2-authorized.json",
+   "sourceSha256": "4ac8a4860f16f7c50ef9db6247936d9b96a338f84320a32045d261cbb0b76a2a",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/fixture-r2-authorized.json",
+    "sha256": "4ac8a4860f16f7c50ef9db6247936d9b96a338f84320a32045d261cbb0b76a2a",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\fixture.db",
+   "dbSha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "灯罩蒙了灰",
+     "pointId": "fixture_r2_p1",
+     "evidenceId": "fixture_r2_p1/person_a/appearance/fixture_r2_p1_1",
+     "sequence": 4
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "掌心出汗",
+     "pointId": "fixture_r2_p1",
+     "evidenceId": "fixture_r2_p1/person_a/appearance/fixture_r2_p1_2",
+     "sequence": 4
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "钟绳磨出了毛边",
+     "pointId": "fixture_r2_p2",
+     "evidenceId": "fixture_r2_p2/person_b/appearance/fixture_r2_p2_1",
+     "sequence": 5
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "衣角结了盐霜",
+     "pointId": "fixture_r2_p3",
+     "evidenceId": "fixture_r2_p3/person_c/appearance/fixture_r2_p3_1",
+     "sequence": 6
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鬓发被雾打湿",
+     "pointId": "fixture_r2_p3",
+     "evidenceId": "fixture_r2_p3/person_c/appearance/fixture_r2_p3_2",
+     "sequence": 6
+    }
+   ],
+   "points": [
+    {
+     "id": "fixture_r2_p1",
+     "sequence": 4,
+     "previousPointId": "fixture_r1_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r2_p2",
+     "sequence": 5,
+     "previousPointId": "fixture_r2_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r2_p3",
+     "sequence": 6,
+     "previousPointId": "fixture_r2_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r3_p1",
+     "sequence": 7,
+     "previousPointId": "fixture_r2_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "fixture_r2_p2/person_b/appearance/fixture_r2_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "fixture_r2_p3/person_c/appearance/fixture_r2_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "edge",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {}
+  },
+  {
+   "sourceId": "fixture-r3",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\fixture-r3-authorized.json",
+   "sourceSha256": "10d8eb590af684dce93f4773ee28f06a85a83a724e9810e5d0a16140b8a85528",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/fixture-r3-authorized.json",
+    "sha256": "10d8eb590af684dce93f4773ee28f06a85a83a724e9810e5d0a16140b8a85528",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\fixture.db",
+   "dbSha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "被雨打湿半幅",
+     "pointId": "fixture_r3_p1",
+     "evidenceId": "fixture_r3_p1/person_a/appearance/fixture_r3_p1_1",
+     "sequence": 7
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口开了线",
+     "pointId": "fixture_r3_p1",
+     "evidenceId": "fixture_r3_p1/person_a/appearance/fixture_r3_p1_2",
+     "sequence": 7
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "指缝里塞着泥",
+     "pointId": "fixture_r3_p2",
+     "evidenceId": "fixture_r3_p2/person_b/appearance/fixture_r3_p2_1",
+     "sequence": 8
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋跟磨塌了",
+     "pointId": "fixture_r3_p3",
+     "evidenceId": "fixture_r3_p3/person_c/appearance/fixture_r3_p3_1",
+     "sequence": 9
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "裤脚沾了铜油",
+     "pointId": "fixture_r3_p3",
+     "evidenceId": "fixture_r3_p3/person_c/appearance/fixture_r3_p3_2",
+     "sequence": 9
+    }
+   ],
+   "points": [
+    {
+     "id": "fixture_r3_p1",
+     "sequence": 7,
+     "previousPointId": "fixture_r2_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r3_p2",
+     "sequence": 8,
+     "previousPointId": "fixture_r3_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r3_p3",
+     "sequence": 9,
+     "previousPointId": "fixture_r3_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r4_p1",
+     "sequence": 10,
+     "previousPointId": "fixture_r3_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "fixture_r3_p2/person_b/appearance/fixture_r3_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "fixture_r3_p3/person_c/appearance/fixture_r3_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "edge",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {}
+  },
+  {
+   "sourceId": "fixture-r4",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\fixture-r4-authorized.json",
+   "sourceSha256": "0505c140b876131777adaa2c7fcfb1c36aefa05b786e7eb2d0e84bd560b606a0",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/fixture-r4-authorized.json",
+    "sha256": "0505c140b876131777adaa2c7fcfb1c36aefa05b786e7eb2d0e84bd560b606a0",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\fixture.db",
+   "dbSha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "围巾松开一截",
+     "pointId": "fixture_r4_p1",
+     "evidenceId": "fixture_r4_p1/person_a/appearance/fixture_r4_p1_1",
+     "sequence": 10
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "脸色发白",
+     "pointId": "fixture_r4_p1",
+     "evidenceId": "fixture_r4_p1/person_a/appearance/fixture_r4_p1_2",
+     "sequence": 10
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "背上溅了泥点",
+     "pointId": "fixture_r4_p2",
+     "evidenceId": "fixture_r4_p2/person_b/appearance/fixture_r4_p2_1",
+     "sequence": 11
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "手背蹭破了皮",
+     "pointId": "fixture_r4_p3",
+     "evidenceId": "fixture_r4_p3/person_c/appearance/fixture_r4_p3_1",
+     "sequence": 12
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "肩头落着灰",
+     "pointId": "fixture_r4_p3",
+     "evidenceId": "fixture_r4_p3/person_c/appearance/fixture_r4_p3_2",
+     "sequence": 12
+    }
+   ],
+   "points": [
+    {
+     "id": "fixture_r4_p1",
+     "sequence": 10,
+     "previousPointId": "fixture_r3_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r4_p2",
+     "sequence": 11,
+     "previousPointId": "fixture_r4_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r4_p3",
+     "sequence": 12,
+     "previousPointId": "fixture_r4_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r5_p1",
+     "sequence": 13,
+     "previousPointId": "fixture_r4_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "fixture_r4_p2/person_b/appearance/fixture_r4_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "fixture_r4_p3/person_c/appearance/fixture_r4_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "edge",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {}
+  },
+  {
+   "sourceId": "fixture-r5",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\fixture-r5-authorized.json",
+   "sourceSha256": "8f75058aff3c0b2a2a82f4d31844a916f4803fcb1a836b4acd46677dd3958a02",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/fixture-r5-authorized.json",
+    "sha256": "8f75058aff3c0b2a2a82f4d31844a916f4803fcb1a836b4acd46677dd3958a02",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\fixture.db",
+   "dbSha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "帽檐压出折痕",
+     "pointId": "fixture_r5_p1",
+     "evidenceId": "fixture_r5_p1/person_a/appearance/fixture_r5_p1_1",
+     "sequence": 13
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "脚踝肿了一块",
+     "pointId": "fixture_r5_p1",
+     "evidenceId": "fixture_r5_p1/person_a/appearance/fixture_r5_p1_2",
+     "sequence": 13
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "衣领被雨浸透",
+     "pointId": "fixture_r5_p2",
+     "evidenceId": "fixture_r5_p2/person_b/appearance/fixture_r5_p2_1",
+     "sequence": 14
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "指尖磨出茧",
+     "pointId": "fixture_r5_p3",
+     "evidenceId": "fixture_r5_p3/person_c/appearance/fixture_r5_p3_1",
+     "sequence": 15
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "膝盖沾了泥",
+     "pointId": "fixture_r5_p3",
+     "evidenceId": "fixture_r5_p3/person_c/appearance/fixture_r5_p3_2",
+     "sequence": 15
+    }
+   ],
+   "points": [
+    {
+     "id": "fixture_r5_p1",
+     "sequence": 13,
+     "previousPointId": "fixture_r4_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r5_p2",
+     "sequence": 14,
+     "previousPointId": "fixture_r5_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "fixture_r5_p3",
+     "sequence": 15,
+     "previousPointId": "fixture_r5_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "fixture_r5_p2/person_b/appearance/fixture_r5_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "fixture_r5_p3/person_c/appearance/fixture_r5_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "edge",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {}
+  },
+  {
+   "sourceId": "train-r2",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\train-r2-authorized.json",
+   "sourceSha256": "d5616ac5cf82bef938009e4746384104b9b5557a6e9fcc75a4ea80457ea09b67",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/train-r2-authorized.json",
+    "sha256": "d5616ac5cf82bef938009e4746384104b9b5557a6e9fcc75a4ea80457ea09b67",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\train.db",
+   "dbSha256": "d09666d1553f286a13c34ebae39b79cdb4ffd8df809fdb26dc953a88202ce6a8",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "灯罩蒙了灰",
+     "pointId": "train_r2_p1",
+     "evidenceId": "train_r2_p1/char_shen/appearance/train_r2_p1_1",
+     "sequence": 4
+    },
+    {
+     "factId": "f1",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "掌心出汗",
+     "pointId": "train_r2_p1",
+     "evidenceId": "train_r2_p1/char_shen/appearance/train_r2_p1_2",
+     "sequence": 4
+    },
+    {
+     "factId": "f2",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "text": "钟绳磨出了毛边",
+     "pointId": "train_r2_p2",
+     "evidenceId": "train_r2_p2/char_gu/appearance/train_r2_p2_1",
+     "sequence": 5
+    },
+    {
+     "factId": "f3",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "衣角结了盐霜",
+     "pointId": "train_r2_p3",
+     "evidenceId": "train_r2_p3/char_ye/appearance/train_r2_p3_1",
+     "sequence": 6
+    },
+    {
+     "factId": "f4",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "鬓发被雾打湿",
+     "pointId": "train_r2_p3",
+     "evidenceId": "train_r2_p3/char_ye/appearance/train_r2_p3_2",
+     "sequence": 6
+    }
+   ],
+   "points": [
+    {
+     "id": "train_r2_p1",
+     "sequence": 4,
+     "previousPointId": "train_r1_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r2_p2",
+     "sequence": 5,
+     "previousPointId": "train_r2_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r2_p3",
+     "sequence": 6,
+     "previousPointId": "train_r2_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r3_p1",
+     "sequence": 7,
+     "previousPointId": "train_r2_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "train_r2_p2/char_gu/appearance/train_r2_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "train_r2_p3/char_ye/appearance/train_r2_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "grouping",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {
+    "f2": "removed so the f2->f3 authorization has no applicable endpoint; this creates a second legal merge candidate (f3+f4)"
+   }
+  },
+  {
+   "sourceId": "train-r3",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\train-r3-authorized.json",
+   "sourceSha256": "86e7791e5889f5e3abd7dd3f552b88216d0934972b11e2ff265fcad36132cd22",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/train-r3-authorized.json",
+    "sha256": "86e7791e5889f5e3abd7dd3f552b88216d0934972b11e2ff265fcad36132cd22",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\train.db",
+   "dbSha256": "d09666d1553f286a13c34ebae39b79cdb4ffd8df809fdb26dc953a88202ce6a8",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "被雨打湿半幅",
+     "pointId": "train_r3_p1",
+     "evidenceId": "train_r3_p1/char_shen/appearance/train_r3_p1_1",
+     "sequence": 7
+    },
+    {
+     "factId": "f1",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "袖口开了线",
+     "pointId": "train_r3_p1",
+     "evidenceId": "train_r3_p1/char_shen/appearance/train_r3_p1_2",
+     "sequence": 7
+    },
+    {
+     "factId": "f2",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "text": "指缝里塞着泥",
+     "pointId": "train_r3_p2",
+     "evidenceId": "train_r3_p2/char_gu/appearance/train_r3_p2_1",
+     "sequence": 8
+    },
+    {
+     "factId": "f3",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "鞋跟磨塌了",
+     "pointId": "train_r3_p3",
+     "evidenceId": "train_r3_p3/char_ye/appearance/train_r3_p3_1",
+     "sequence": 9
+    },
+    {
+     "factId": "f4",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "裤脚沾了铜油",
+     "pointId": "train_r3_p3",
+     "evidenceId": "train_r3_p3/char_ye/appearance/train_r3_p3_2",
+     "sequence": 9
+    }
+   ],
+   "points": [
+    {
+     "id": "train_r3_p1",
+     "sequence": 7,
+     "previousPointId": "train_r2_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r3_p2",
+     "sequence": 8,
+     "previousPointId": "train_r3_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r3_p3",
+     "sequence": 9,
+     "previousPointId": "train_r3_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r4_p1",
+     "sequence": 10,
+     "previousPointId": "train_r3_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "train_r3_p2/char_gu/appearance/train_r3_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "train_r3_p3/char_ye/appearance/train_r3_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "grouping",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {
+    "f2": "removed so the f2->f3 authorization has no applicable endpoint; this creates a second legal merge candidate (f3+f4)"
+   }
+  },
+  {
+   "sourceId": "train-r4",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\train-r4-authorized.json",
+   "sourceSha256": "5c03c646709a805cc8424603dfd4580c3eb1eed5debea2609353625d69515e91",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/train-r4-authorized.json",
+    "sha256": "5c03c646709a805cc8424603dfd4580c3eb1eed5debea2609353625d69515e91",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\train.db",
+   "dbSha256": "d09666d1553f286a13c34ebae39b79cdb4ffd8df809fdb26dc953a88202ce6a8",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "围巾松开一截",
+     "pointId": "train_r4_p1",
+     "evidenceId": "train_r4_p1/char_shen/appearance/train_r4_p1_1",
+     "sequence": 10
+    },
+    {
+     "factId": "f1",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "脸色发白",
+     "pointId": "train_r4_p1",
+     "evidenceId": "train_r4_p1/char_shen/appearance/train_r4_p1_2",
+     "sequence": 10
+    },
+    {
+     "factId": "f2",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "text": "背上溅了泥点",
+     "pointId": "train_r4_p2",
+     "evidenceId": "train_r4_p2/char_gu/appearance/train_r4_p2_1",
+     "sequence": 11
+    },
+    {
+     "factId": "f3",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "手背蹭破了皮",
+     "pointId": "train_r4_p3",
+     "evidenceId": "train_r4_p3/char_ye/appearance/train_r4_p3_1",
+     "sequence": 12
+    },
+    {
+     "factId": "f4",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "肩头落着灰",
+     "pointId": "train_r4_p3",
+     "evidenceId": "train_r4_p3/char_ye/appearance/train_r4_p3_2",
+     "sequence": 12
+    }
+   ],
+   "points": [
+    {
+     "id": "train_r4_p1",
+     "sequence": 10,
+     "previousPointId": "train_r3_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r4_p2",
+     "sequence": 11,
+     "previousPointId": "train_r4_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r4_p3",
+     "sequence": 12,
+     "previousPointId": "train_r4_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r5_p1",
+     "sequence": 13,
+     "previousPointId": "train_r4_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "train_r4_p2/char_gu/appearance/train_r4_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "train_r4_p3/char_ye/appearance/train_r4_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "grouping",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {
+    "f2": "removed so the f2->f3 authorization has no applicable endpoint; this creates a second legal merge candidate (f3+f4)"
+   }
+  },
+  {
+   "sourceId": "train-r5",
+   "worldId": "world_1",
+   "sourceFile": "artifacts\\world-provenance\\pairs\\train-r5-authorized.json",
+   "sourceSha256": "51e43edc90b030dd95a0d6a78d7f6b38ef9bad8e42842d1b9ee3b87756b2e890",
+   "committedCopy": {
+    "file": "artifacts/next-inputs/world-provenance/pairs/train-r5-authorized.json",
+    "sha256": "51e43edc90b030dd95a0d6a78d7f6b38ef9bad8e42842d1b9ee3b87756b2e890",
+    "tracked": true
+   },
+   "dbFile": "artifacts\\world-provenance\\pairs\\train.db",
+   "dbSha256": "d09666d1553f286a13c34ebae39b79cdb4ffd8df809fdb26dc953a88202ce6a8",
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "帽檐压出折痕",
+     "pointId": "train_r5_p1",
+     "evidenceId": "train_r5_p1/char_shen/appearance/train_r5_p1_1",
+     "sequence": 13
+    },
+    {
+     "factId": "f1",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "text": "脚踝肿了一块",
+     "pointId": "train_r5_p1",
+     "evidenceId": "train_r5_p1/char_shen/appearance/train_r5_p1_2",
+     "sequence": 13
+    },
+    {
+     "factId": "f2",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "text": "衣领被雨浸透",
+     "pointId": "train_r5_p2",
+     "evidenceId": "train_r5_p2/char_gu/appearance/train_r5_p2_1",
+     "sequence": 14
+    },
+    {
+     "factId": "f3",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "指尖磨出茧",
+     "pointId": "train_r5_p3",
+     "evidenceId": "train_r5_p3/char_ye/appearance/train_r5_p3_1",
+     "sequence": 15
+    },
+    {
+     "factId": "f4",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "text": "膝盖沾了泥",
+     "pointId": "train_r5_p3",
+     "evidenceId": "train_r5_p3/char_ye/appearance/train_r5_p3_2",
+     "sequence": 15
+    }
+   ],
+   "points": [
+    {
+     "id": "train_r5_p1",
+     "sequence": 13,
+     "previousPointId": "train_r4_p3",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 2,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r5_p2",
+     "sequence": 14,
+     "previousPointId": "train_r5_p1",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 3,
+       "unit": "second"
+      }
+     }
+    },
+    {
+     "id": "train_r5_p3",
+     "sequence": 15,
+     "previousPointId": "train_r5_p2",
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "second"
+      }
+     }
+    }
+   ],
+   "requestedRelations": [
+    {
+     "type": "before",
+     "fromFactId": "f2",
+     "toFactId": "f3"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1",
+    "relations": [
+     {
+      "type": "before",
+      "fromFactId": "f2",
+      "toFactId": "f3",
+      "evidence": [
+       {
+        "type": "event",
+        "evidenceId": "train_r5_p2/char_gu/appearance/train_r5_p2_1"
+       },
+       {
+        "type": "event",
+        "evidenceId": "train_r5_p3/char_ye/appearance/train_r5_p3_1"
+       }
+      ],
+      "authorization": {
+       "verdict": "pass",
+       "validatorVersion": "world-relation-validator/1"
+      },
+      "elapsedSeconds": 1
+     }
+    ],
+    "rejected": [],
+    "problems": []
+   },
+   "verification": {
+    "ok": true,
+    "units": 5,
+    "evidenceRows": 5,
+    "deltaChecks": 5,
+    "pointChainChecks": 5,
+    "relationChecks": 1,
+    "problems": []
+   },
+   "family": "grouping",
+   "selectedFactIds": [
+    "f0",
+    "f1",
+    "f3",
+    "f4"
+   ],
+   "droppedFacts": {
+    "f2": "removed so the f2->f3 authorization has no applicable endpoint; this creates a second legal merge candidate (f3+f4)"
+   }
+  }
+ ]
+}
