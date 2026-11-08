@@ -14,3 +14,8 @@ artifacts/rule-facts/** text eol=lf
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.
 nul -text
+
+# c2 attention-selection v2: freeze input/evidence bytes (hash checks)
+artifacts/world-components/parallel/fact-selection-v2/** -text
+experiments/world-components/parallel/fact_selection/** -text
+design/world-engine-reports/components/attention-selection-v2.md -text

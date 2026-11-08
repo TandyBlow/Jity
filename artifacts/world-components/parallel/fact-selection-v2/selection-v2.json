@@ -1,0 +1,1610 @@
+{
+ "protocol": "attention-selection-v2",
+ "cases": [
+  {
+   "caseId": "P1",
+   "groupId": "G2",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f4"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "P2",
+   "groupId": "G2",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f3"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f3"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "P3",
+   "groupId": "G2",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "P4",
+   "groupId": "G2",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "C1",
+   "groupId": "G1",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f4"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "C2",
+   "groupId": "G1",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f4"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": false,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 1.0,
+     "legacyD1Pass": true,
+     "targetRecall": 0.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 2,
+     "optionalCount": 0
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": false,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 1.0,
+     "legacyD1Pass": true,
+     "targetRecall": 0.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 2,
+     "optionalCount": 0
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "C3",
+   "groupId": "G1",
+   "origin": "constructed-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f3"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f3"
+     ],
+     "mustPrecision": 0.5,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 4,
+     "optionalCount": 2
+    },
+    "lexical_content": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "H1",
+   "groupId": "G3",
+   "origin": "real-pipeline-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f0"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f0",
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f1"
+     ],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 2,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f0"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f0"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f0"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "H2",
+   "groupId": "G3",
+   "origin": "real-pipeline-package",
+   "attentionOrigin": "synthetic",
+   "arms": {
+    "manual": {
+     "selected": [
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "f0",
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": false,
+     "strictPass": false,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [
+      "f0"
+     ],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 0.5,
+     "selectedCount": 2,
+     "optionalCount": 2
+    },
+    "lexical": {
+     "selected": [
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "lexical_content": {
+     "selected": [
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    },
+    "semantic": {
+     "selected": [
+      "f1"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.0,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 1,
+     "optionalCount": 1
+    }
+   }
+  },
+  {
+   "caseId": "R1",
+   "groupId": "R",
+   "origin": "committed-real-report",
+   "attentionOrigin": "real-command",
+   "arms": {
+    "manual": {
+     "selected": [
+      "r3_sanity",
+      "r3_task",
+      "r3_personality"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": false,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [
+      "r3_personality"
+     ],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "no_attention": {
+     "selected": [
+      "r3_sanity",
+      "r3_task",
+      "r3_personality"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": false,
+     "manualEqual": true,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [
+      "r3_personality"
+     ],
+     "unrelatedSelected": [],
+     "mustPrecision": 0.6666666666666666,
+     "legacyD1Pass": false,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 3,
+     "optionalCount": 1
+    },
+    "lexical": {
+     "selected": [
+      "r3_sanity",
+      "r3_task"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 1.0,
+     "legacyD1Pass": true,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 2,
+     "optionalCount": 0
+    },
+    "lexical_content": {
+     "selected": [
+      "r3_sanity",
+      "r3_task"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 1.0,
+     "legacyD1Pass": true,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 2,
+     "optionalCount": 0
+    },
+    "semantic": {
+     "selected": [
+      "r3_sanity",
+      "r3_task"
+     ],
+     "hardPass": true,
+     "lenientPass": true,
+     "strictPass": true,
+     "manualEqual": false,
+     "missingMust": [],
+     "forbiddenSelected": [],
+     "uncertainSelected": [],
+     "priorSelected": [],
+     "targetSelected": true,
+     "relatedSelected": [],
+     "unrelatedSelected": [],
+     "mustPrecision": 1.0,
+     "legacyD1Pass": true,
+     "targetRecall": 1.0,
+     "acceptableOptionalPrecision": 1.0,
+     "selectedCount": 2,
+     "optionalCount": 0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "manual": {
+   "all": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 10,
+    "strictPass": 9,
+    "manualEqual": 10,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.5333333333333333,
+    "unrelatedSelected": 0,
+    "relatedSelected": 1
+   },
+   "controlled": {
+    "n": 9,
+    "hardPass": 9,
+    "lenientPass": 9,
+    "strictPass": 9,
+    "manualEqual": 9,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.5185185185185185,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "coverage": {
+    "n": 1,
+    "hardPass": 1,
+    "lenientPass": 1,
+    "strictPass": 0,
+    "manualEqual": 1,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.6666666666666666,
+    "unrelatedSelected": 0,
+    "relatedSelected": 1
+   },
+   "byGroup": {
+    "G1": {
+     "n": 3,
+     "lenientPass": 3,
+     "strictPass": 3,
+     "manualEqual": 3
+    },
+    "G2": {
+     "n": 4,
+     "lenientPass": 4,
+     "strictPass": 4,
+     "manualEqual": 4
+    },
+    "G3": {
+     "n": 2,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "R": {
+     "n": 1,
+     "lenientPass": 1,
+     "strictPass": 0,
+     "manualEqual": 1
+    }
+   }
+  },
+  "no_attention": {
+   "all": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 3,
+    "strictPass": 2,
+    "manualEqual": 3,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.45,
+    "unrelatedSelected": 7,
+    "relatedSelected": 1
+   },
+   "controlled": {
+    "n": 9,
+    "hardPass": 9,
+    "lenientPass": 2,
+    "strictPass": 2,
+    "manualEqual": 2,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.4259259259259259,
+    "unrelatedSelected": 7,
+    "relatedSelected": 0
+   },
+   "coverage": {
+    "n": 1,
+    "hardPass": 1,
+    "lenientPass": 1,
+    "strictPass": 0,
+    "manualEqual": 1,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.6666666666666666,
+    "unrelatedSelected": 0,
+    "relatedSelected": 1
+   },
+   "byGroup": {
+    "G1": {
+     "n": 3,
+     "lenientPass": 0,
+     "strictPass": 0,
+     "manualEqual": 0
+    },
+    "G2": {
+     "n": 4,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "G3": {
+     "n": 2,
+     "lenientPass": 0,
+     "strictPass": 0,
+     "manualEqual": 0
+    },
+    "R": {
+     "n": 1,
+     "lenientPass": 1,
+     "strictPass": 0,
+     "manualEqual": 1
+    }
+   }
+  },
+  "lexical": {
+   "all": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 7,
+    "strictPass": 7,
+    "manualEqual": 6,
+    "legacyD1Pass": 2,
+    "mustPrecisionMean": 0.5666666666666667,
+    "unrelatedSelected": 2,
+    "relatedSelected": 0
+   },
+   "controlled": {
+    "n": 9,
+    "hardPass": 9,
+    "lenientPass": 6,
+    "strictPass": 6,
+    "manualEqual": 6,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 0.5185185185185185,
+    "unrelatedSelected": 2,
+    "relatedSelected": 0
+   },
+   "coverage": {
+    "n": 1,
+    "hardPass": 1,
+    "lenientPass": 1,
+    "strictPass": 1,
+    "manualEqual": 0,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 1.0,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "byGroup": {
+    "G1": {
+     "n": 3,
+     "lenientPass": 1,
+     "strictPass": 1,
+     "manualEqual": 1
+    },
+    "G2": {
+     "n": 4,
+     "lenientPass": 3,
+     "strictPass": 3,
+     "manualEqual": 3
+    },
+    "G3": {
+     "n": 2,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "R": {
+     "n": 1,
+     "lenientPass": 1,
+     "strictPass": 1,
+     "manualEqual": 0
+    }
+   }
+  },
+  "lexical_content": {
+   "all": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 9,
+    "strictPass": 9,
+    "manualEqual": 8,
+    "legacyD1Pass": 2,
+    "mustPrecisionMean": 0.6,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "controlled": {
+    "n": 9,
+    "hardPass": 9,
+    "lenientPass": 8,
+    "strictPass": 8,
+    "manualEqual": 8,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 0.5555555555555556,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "coverage": {
+    "n": 1,
+    "hardPass": 1,
+    "lenientPass": 1,
+    "strictPass": 1,
+    "manualEqual": 0,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 1.0,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "byGroup": {
+    "G1": {
+     "n": 3,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "G2": {
+     "n": 4,
+     "lenientPass": 4,
+     "strictPass": 4,
+     "manualEqual": 4
+    },
+    "G3": {
+     "n": 2,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "R": {
+     "n": 1,
+     "lenientPass": 1,
+     "strictPass": 1,
+     "manualEqual": 0
+    }
+   }
+  },
+  "semantic": {
+   "all": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 10,
+    "strictPass": 10,
+    "manualEqual": 9,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 0.5666666666666667,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "controlled": {
+    "n": 9,
+    "hardPass": 9,
+    "lenientPass": 9,
+    "strictPass": 9,
+    "manualEqual": 9,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.5185185185185185,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "coverage": {
+    "n": 1,
+    "hardPass": 1,
+    "lenientPass": 1,
+    "strictPass": 1,
+    "manualEqual": 0,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 1.0,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "byGroup": {
+    "G1": {
+     "n": 3,
+     "lenientPass": 3,
+     "strictPass": 3,
+     "manualEqual": 3
+    },
+    "G2": {
+     "n": 4,
+     "lenientPass": 4,
+     "strictPass": 4,
+     "manualEqual": 4
+    },
+    "G3": {
+     "n": 2,
+     "lenientPass": 2,
+     "strictPass": 2,
+     "manualEqual": 2
+    },
+    "R": {
+     "n": 1,
+     "lenientPass": 1,
+     "strictPass": 1,
+     "manualEqual": 0
+    }
+   }
+  }
+ },
+ "generatedAt": "2026-11-08T09:24:50.065135+00:00",
+ "python": "3.11.15",
+ "inputs": {
+  "cases": "D:\\others\\Jity\\.local\\parallel\\c-fact-selection\\experiments\\world-components\\parallel\\fact_selection\\cases-v2.json",
+  "casesSha256": "b2289c2a158419053cf543dc849327428c73d92db03ab34b7a8d03ee91d3f20e",
+  "sourceFixture": {
+   "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+   "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f"
+  },
+  "selectorSha256": "20832d82990e7efb723cec6e91627edd14b77236635e56cb76a15749ad842208",
+  "runnerSha256": "1ac7d88930de84d0fdb04d24c94ae338511c16ff8d559e26c4f31acf4a914690"
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "protocol": "attention-selection-v2",
+ "status": "frozen",
+ "frozenAt": "2026-11-08T09:24:48.717066+00:00",
+ "noTraining": true,
+ "noModel": true,
+ "noIntegration": true,
+ "caseCount": 10,
+ "caseIds": [
+  "P1",
+  "P2",
+  "P3",
+  "P4",
+  "C1",
+  "C2",
+  "C3",
+  "H1",
+  "H2",
+  "R1"
+ ],
+ "cases": {
+  "file": "experiments/world-components/parallel/fact_selection/cases-v2.json",
+  "sha256": "b2289c2a158419053cf543dc849327428c73d92db03ab34b7a8d03ee91d3f20e"
+ },
+ "sources": [
+  {
+   "id": "v1-fixture",
+   "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+   "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f"
+  },
+  {
+   "id": "interaction-report",
+   "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+   "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+  }
+ ],
+ "code": {
+  "selector.py": "20832d82990e7efb723cec6e91627edd14b77236635e56cb76a15749ad842208",
+  "run_selection.py": "1ac7d88930de84d0fdb04d24c94ae338511c16ff8d559e26c4f31acf4a914690",
+  "test_selector.py": "762c3c2eab3d880f1e3a4bc9c1529fb49c19fb07e8c0aaed421ed45e01491ae7",
+  "v1_recheck.py": "cfc77ccc4f3118af3234b22f07e176f07875ec54b2eac6f2ad2d7bf7333b414d"
+ },
+ "arms": [
+  "manual",
+  "no_attention",
+  "lexical",
+  "lexical_content",
+  "semantic"
+ ],
+ "metric": {
+  "hardPass": "must all, no forbidden/uncertain, no prior repeat",
+  "lenientPass": "hardPass + target optional selected + no unrelated optional; related allowed",
+  "strictPass": "lenientPass + selected optionals exactly target",
+  "mustPrecision": "legacy D1 diagnostic only: must hits / all selected; not a c2 pass criterion"
+ },
+ "notes": [
+  "semantic uses a hand-provided focus, not a parser output",
+  "no model arm was run; Qwen3-0.6B is retired; no candidate approved",
+  "R1 facts come from the committed interaction report; its world.db is local-only and not in this branch"
+ ]
+}
