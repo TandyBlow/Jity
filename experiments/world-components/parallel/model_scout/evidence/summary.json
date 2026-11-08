@@ -1,0 +1,342 @@
+{
+  "generatedAt": "2026-11-08T06:41:01.271Z",
+  "generator": "evidence/summarize.mjs",
+  "prompt": {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\experiments\\world-components\\parallel\\model_scout\\inputs\\nv-move-1.prompt.txt",
+    "chars": 275,
+    "sha256": "75753343aa1edaed986b03d2326216de148e8a410e8ba6565b6d1db3c4461c8a",
+    "text": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到走廊（方向反转）；学生A推开门冲进大厅（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:"
+  },
+  "rows": [
+    {
+      "label": "MNN-Pocket-0.3B Q4_1 (QAT, recommended)",
+      "file": "probe-Q4_1-ctx2048-r2.json",
+      "status": "COMPLETED",
+      "model": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+      "modelBytes": 191896672,
+      "modelSha256": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097",
+      "generalName": "MNN-Pocket-0.3B-QAT",
+      "architecture": "qwen3",
+      "fileType": "3",
+      "libllama": "b11364-46ca246",
+      "wllama": "3.8.1",
+      "browser": "157.0.4341.42",
+      "threads": 4,
+      "multithread": true,
+      "webgpuVisible": null,
+      "webgpuSupported": false,
+      "crossOriginIsolated": true,
+      "loadMs": 13491,
+      "memoryAfterLoadMB": 707.5,
+      "cpuLoadPercent": 53,
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "calls": 2,
+      "promptTokens": [
+        179,
+        179
+      ],
+      "prefillTokensPerSec": [
+        8.07,
+        9.44
+      ],
+      "predictedTokens": [
+        37,
+        37
+      ],
+      "decodeTokensPerSec": [
+        6,
+        6.03
+      ],
+      "wallMs": [
+        28260,
+        24950
+      ],
+      "finishReasons": [
+        "stop",
+        "stop"
+      ],
+      "medianWallMs": 26605,
+      "medianPrefillTps": 8.75,
+      "medianDecodeTps": 6.02,
+      "outputSha256": [
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        },
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        }
+      ],
+      "outputs": [
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。"
+      ]
+    },
+    {
+      "label": "MNN-Pocket-0.3B Q4_1, world-page settings (ctx 2048, enable_thinking kwarg)",
+      "file": "probe-Q4_1-ctx2048-pagekw.json",
+      "status": "COMPLETED",
+      "model": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+      "modelBytes": 191896672,
+      "modelSha256": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097",
+      "generalName": "MNN-Pocket-0.3B-QAT",
+      "architecture": "qwen3",
+      "fileType": "3",
+      "libllama": "b11364-46ca246",
+      "wllama": "3.8.1",
+      "browser": "157.0.4341.42",
+      "threads": 4,
+      "multithread": true,
+      "webgpuVisible": null,
+      "webgpuSupported": false,
+      "crossOriginIsolated": true,
+      "loadMs": 17735,
+      "memoryAfterLoadMB": 707.5,
+      "cpuLoadPercent": 4,
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "calls": 2,
+      "promptTokens": [
+        179,
+        179
+      ],
+      "prefillTokensPerSec": [
+        7.51,
+        7.61
+      ],
+      "predictedTokens": [
+        37,
+        37
+      ],
+      "decodeTokensPerSec": [
+        4.23,
+        4.45
+      ],
+      "wallMs": [
+        32446,
+        31654
+      ],
+      "finishReasons": [
+        "stop",
+        "stop"
+      ],
+      "medianWallMs": 32050,
+      "medianPrefillTps": 7.56,
+      "medianDecodeTps": 4.34,
+      "outputSha256": [
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        },
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        }
+      ],
+      "outputs": [
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。"
+      ]
+    },
+    {
+      "label": "MNN-Pocket-0.3B Q4_1, narration-eval settings (ctx 4096, enable_thinking kwarg)",
+      "file": "probe-Q4_1-ctx4096-pagekw.json",
+      "status": "COMPLETED",
+      "model": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+      "modelBytes": 191896672,
+      "modelSha256": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097",
+      "generalName": "MNN-Pocket-0.3B-QAT",
+      "architecture": "qwen3",
+      "fileType": "3",
+      "libllama": "b11364-46ca246",
+      "wllama": "3.8.1",
+      "browser": "157.0.4341.42",
+      "threads": 4,
+      "multithread": true,
+      "webgpuVisible": null,
+      "webgpuSupported": false,
+      "crossOriginIsolated": true,
+      "loadMs": 18409,
+      "memoryAfterLoadMB": 727.5,
+      "cpuLoadPercent": 38,
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "calls": 2,
+      "promptTokens": [
+        179,
+        179
+      ],
+      "prefillTokensPerSec": [
+        7.21,
+        7.26
+      ],
+      "predictedTokens": [
+        37,
+        37
+      ],
+      "decodeTokensPerSec": [
+        4.26,
+        4.27
+      ],
+      "wallMs": [
+        33342,
+        33124
+      ],
+      "finishReasons": [
+        "stop",
+        "stop"
+      ],
+      "medianWallMs": 33233,
+      "medianPrefillTps": 7.23,
+      "medianDecodeTps": 4.26,
+      "outputSha256": [
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        },
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        }
+      ],
+      "outputs": [
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
+        "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。"
+      ]
+    },
+    {
+      "label": "MNN-Pocket-0.3B Q8_0",
+      "file": "probe-Q8_0-ctx2048.json",
+      "status": "COMPLETED",
+      "model": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q8_0.gguf",
+      "modelBytes": 386751520,
+      "modelSha256": "31eb5db92b2e02a80e9e3a9316aa83120cbee98e4f4a22ca19015ba601dbd690",
+      "generalName": "MNN Pocket 0.3B Instruct",
+      "architecture": "qwen3",
+      "fileType": "7",
+      "libllama": "b11364-46ca246",
+      "wllama": "3.8.1",
+      "browser": "157.0.4341.42",
+      "threads": 4,
+      "multithread": true,
+      "webgpuVisible": null,
+      "webgpuSupported": false,
+      "crossOriginIsolated": true,
+      "loadMs": 28220,
+      "memoryAfterLoadMB": 1101.2,
+      "cpuLoadPercent": 79,
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "calls": 2,
+      "promptTokens": [
+        179,
+        179
+      ],
+      "prefillTokensPerSec": [
+        12.69,
+        12.18
+      ],
+      "predictedTokens": [
+        39,
+        39
+      ],
+      "decodeTokensPerSec": [
+        6.53,
+        6.99
+      ],
+      "wallMs": [
+        19993,
+        20165
+      ],
+      "finishReasons": [
+        "stop",
+        "stop"
+      ],
+      "medianWallMs": 20079,
+      "medianPrefillTps": 12.43,
+      "medianDecodeTps": 6.76,
+      "outputSha256": [
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        },
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        }
+      ],
+      "outputs": [
+        "学生A沿着走廊前行，脚步轻缓地踏在石板上，脚步声在空旷的走廊中回响。  \n时间推进，时长数值为2分钟。",
+        "学生A沿着走廊前行，脚步轻缓地踏在石板上，脚步声在空旷的走廊中回响。  \n时间推进，时长数值为2分钟。"
+      ]
+    },
+    {
+      "label": "control: Qwen3-0.6B Q4_K_M (existing baseline)",
+      "file": "control-qwen3-0.6b.json",
+      "status": "COMPLETED",
+      "model": "D:\\others\\Jity\\frontend\\public\\models\\Qwen3-0.6B-Q4_K_M.gguf",
+      "modelBytes": 396705472,
+      "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+      "generalName": "Qwen3-0.6B",
+      "architecture": "qwen3",
+      "fileType": "15",
+      "libllama": "b11364-46ca246",
+      "wllama": "3.8.1",
+      "browser": "157.0.4341.42",
+      "threads": 4,
+      "multithread": true,
+      "webgpuVisible": null,
+      "webgpuSupported": false,
+      "crossOriginIsolated": true,
+      "loadMs": 32312,
+      "memoryAfterLoadMB": 1337.5,
+      "cpuLoadPercent": 79,
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "calls": 2,
+      "promptTokens": [
+        183,
+        183
+      ],
+      "prefillTokensPerSec": [
+        10.29,
+        10.65
+      ],
+      "predictedTokens": [
+        8,
+        8
+      ],
+      "decodeTokensPerSec": [
+        5.14,
+        5.14
+      ],
+      "wallMs": [
+        19258,
+        18592
+      ],
+      "finishReasons": [
+        "stop",
+        "stop"
+      ],
+      "medianWallMs": 18925,
+      "medianPrefillTps": 10.47,
+      "medianDecodeTps": 5.14,
+      "outputSha256": [
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        },
+        {
+          "sha256": null,
+          "note": "raw text kept in the probe file"
+        }
+      ],
+      "outputs": [
+        "学生A从走廊走到大厅。",
+        "学生A从走廊走到大厅。"
+      ]
+    }
+  ]
+}

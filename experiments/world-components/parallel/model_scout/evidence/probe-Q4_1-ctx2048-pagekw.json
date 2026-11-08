@@ -1,0 +1,2008 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-11-08T06:36:10.324Z",
+  "config": {
+    "model": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+    "prompt": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\experiments\\world-components\\parallel\\model_scout\\inputs\\nv-move-1.prompt.txt",
+    "out": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\experiments\\world-components\\parallel\\model_scout\\evidence\\probe-Q4_1-ctx2048-pagekw.json",
+    "nCtx": 2048,
+    "threads": 4,
+    "maxTokens": 96,
+    "temperature": 0,
+    "seed": 42,
+    "runs": 2,
+    "channel": "msedge",
+    "chatKwargs": "{\"enable_thinking\":false}",
+    "timeoutMs": 600000,
+    "modelBytes": 191896672,
+    "modelSha256": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097"
+  },
+  "prompt": {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-model-scout\\experiments\\world-components\\parallel\\model_scout\\inputs\\nv-move-1.prompt.txt",
+    "chars": 275,
+    "sha256": "75753343aa1edaed986b03d2326216de148e8a410e8ba6565b6d1db3c4461c8a",
+    "text": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到走廊（方向反转）；学生A推开门冲进大厅（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:"
+  },
+  "assets": {
+    "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "wllamaVersion": "3.8.1"
+  },
+  "source": {
+    "head": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+    "branch": "exp/c-model-scout",
+    "status": "?? ../../../../TASK.md"
+  },
+  "device": {
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20,
+    "totalMemGB": 15.6,
+    "freeMemGB": 2.6,
+    "node": "v22.20.0",
+    "cpuLoadPercentAtStart": 4
+  },
+  "console": [],
+  "pageErrors": [],
+  "requestFailures": [],
+  "server": {
+    "origin": "http://127.0.0.1:59280"
+  },
+  "browser": {
+    "version": "157.0.4341.42",
+    "channel": "msedge"
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "crossOriginIsolated": true,
+    "sharedArrayBuffer": true,
+    "hardwareConcurrency": 20,
+    "deviceMemoryGB": 16,
+    "gpuVisible": false,
+    "webgpuProbe": false
+  },
+  "libllamaVersion": "b11364-46ca246",
+  "webgpuSupported": false,
+  "topology": {
+    "multithread": true,
+    "numThreads": 4,
+    "encoderDecoder": false,
+    "addBos": false,
+    "addEos": false
+  },
+  "chatTemplate": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- for message in messages %}\n    {%- if message.content is string %}\n        {%- set content = message.content %}\n    {%- else %}\n        {%- set content = '' %}\n    {%- endif %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) %}\n        {{- '<|im_start|>' + message.role + '\\n' + content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- '\\n' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- '<tool_call>\\n{\"name\": \"' }}\n                {{- tool_call.name }}\n                {{- '\", \"arguments\": ' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- '}\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n{%- endif %}",
+  "modelMetadata": {
+    "hparams": {
+      "nVocab": 65536,
+      "nCtxTrain": 40960,
+      "nEmbd": 896,
+      "nLayer": 28
+    },
+    "meta": {
+      "tokenizer.ggml.padding_token_id": "65510",
+      "qwen3.context_length": "40960",
+      "tokenizer.ggml.eos_token_id": "65512",
+      "tokenizer.ggml.pre": "qwen2",
+      "tokenizer.ggml.model": "gpt2",
+      "general.quantization_version": "2",
+      "tokenizer.ggml.add_bos_token": "false",
+      "general.name": "MNN-Pocket-0.3B-QAT",
+      "qwen3.attention.value_length": "64",
+      "pocket.qat_conversion": "preserve UINT4 codes; split g64 into two g32 blocks; FP16 scale and -scale*zero_point",
+      "qwen3.attention.key_length": "64",
+      "qwen3.attention.layer_norm_rms_epsilon": "0.000001",
+      "pocket.qat_source_sha256": "790692d5b7dba28607b7a712234a9277c7cf5c00f08f58c6fb1e147082bf317a",
+      "general.file_type": "3",
+      "general.size_label": "303M",
+      "qwen3.block_count": "28",
+      "general.architecture": "qwen3",
+      "qwen3.attention.head_count_kv": "2",
+      "qwen3.rope.freq_base": "1000000.000000",
+      "tokenizer.chat_template": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- for message in messages %}\n    {%- if message.content is string %}\n        {%- set content = message.content %}\n    {%- else %}\n        {%- set content = '' %}\n    {%- endif %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) %}\n        {{- '<|im_start|>' + message.role + '\\n' + content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- '\\n' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- '<tool_call>\\n{\"name\": \"' }}\n                {{- tool_call.name }}\n                {{- '\", \"arguments\": ' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- '}\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n{%- endif %}",
+      "qwen3.embedding_length": "896",
+      "qwen3.attention.head_count": "14",
+      "qwen3.feed_forward_length": "2560",
+      "general.type": "model"
+    }
+  },
+  "loadMs": 17735,
+  "progress": [
+    {
+      "loaded": 129776,
+      "total": 191896672,
+      "ms": 1579
+    },
+    {
+      "loaded": 636544,
+      "total": 191896672,
+      "ms": 1683
+    },
+    {
+      "loaded": 2097152,
+      "total": 191896672,
+      "ms": 1784
+    },
+    {
+      "loaded": 3160048,
+      "total": 191896672,
+      "ms": 1886
+    },
+    {
+      "loaded": 4380608,
+      "total": 191896672,
+      "ms": 1990
+    },
+    {
+      "loaded": 5390928,
+      "total": 191896672,
+      "ms": 2092
+    },
+    {
+      "loaded": 6399824,
+      "total": 191896672,
+      "ms": 2193
+    },
+    {
+      "loaded": 7445184,
+      "total": 191896672,
+      "ms": 2295
+    },
+    {
+      "loaded": 8408784,
+      "total": 191896672,
+      "ms": 2405
+    },
+    {
+      "loaded": 9568256,
+      "total": 191896672,
+      "ms": 2508
+    },
+    {
+      "loaded": 10878976,
+      "total": 191896672,
+      "ms": 2611
+    },
+    {
+      "loaded": 11927552,
+      "total": 191896672,
+      "ms": 2714
+    },
+    {
+      "loaded": 13219456,
+      "total": 191896672,
+      "ms": 2816
+    },
+    {
+      "loaded": 14595712,
+      "total": 191896672,
+      "ms": 2917
+    },
+    {
+      "loaded": 15663104,
+      "total": 191896672,
+      "ms": 3020
+    },
+    {
+      "loaded": 16842752,
+      "total": 191896672,
+      "ms": 3123
+    },
+    {
+      "loaded": 18134656,
+      "total": 191896672,
+      "ms": 3226
+    },
+    {
+      "loaded": 19529728,
+      "total": 191896672,
+      "ms": 3330
+    },
+    {
+      "loaded": 21083776,
+      "total": 191896672,
+      "ms": 3433
+    },
+    {
+      "loaded": 22544384,
+      "total": 191896672,
+      "ms": 3536
+    },
+    {
+      "loaded": 23836288,
+      "total": 191896672,
+      "ms": 3638
+    },
+    {
+      "loaded": 25100288,
+      "total": 191896672,
+      "ms": 3743
+    },
+    {
+      "loaded": 26279936,
+      "total": 191896672,
+      "ms": 3844
+    },
+    {
+      "loaded": 27459584,
+      "total": 191896672,
+      "ms": 3949
+    },
+    {
+      "loaded": 28685952,
+      "total": 191896672,
+      "ms": 4052
+    },
+    {
+      "loaded": 29884416,
+      "total": 191896672,
+      "ms": 4154
+    },
+    {
+      "loaded": 31260672,
+      "total": 191896672,
+      "ms": 4255
+    },
+    {
+      "loaded": 32880256,
+      "total": 191896672,
+      "ms": 4358
+    },
+    {
+      "loaded": 34013184,
+      "total": 191896672,
+      "ms": 4460
+    },
+    {
+      "loaded": 35848192,
+      "total": 191896672,
+      "ms": 4561
+    },
+    {
+      "loaded": 37552128,
+      "total": 191896672,
+      "ms": 4663
+    },
+    {
+      "loaded": 39518208,
+      "total": 191896672,
+      "ms": 4765
+    },
+    {
+      "loaded": 41156608,
+      "total": 191896672,
+      "ms": 4868
+    },
+    {
+      "loaded": 42663936,
+      "total": 191896672,
+      "ms": 4969
+    },
+    {
+      "loaded": 44367872,
+      "total": 191896672,
+      "ms": 5069
+    },
+    {
+      "loaded": 46465024,
+      "total": 191896672,
+      "ms": 5172
+    },
+    {
+      "loaded": 48037888,
+      "total": 191896672,
+      "ms": 5274
+    },
+    {
+      "loaded": 49479680,
+      "total": 191896672,
+      "ms": 5374
+    },
+    {
+      "loaded": 50968192,
+      "total": 191896672,
+      "ms": 5478
+    },
+    {
+      "loaded": 52232192,
+      "total": 191896672,
+      "ms": 5580
+    },
+    {
+      "loaded": 53982848,
+      "total": 191896672,
+      "ms": 5682
+    },
+    {
+      "loaded": 55621248,
+      "total": 191896672,
+      "ms": 5785
+    },
+    {
+      "loaded": 57344000,
+      "total": 191896672,
+      "ms": 5887
+    },
+    {
+      "loaded": 59225728,
+      "total": 191896672,
+      "ms": 5992
+    },
+    {
+      "loaded": 60864128,
+      "total": 191896672,
+      "ms": 6094
+    },
+    {
+      "loaded": 62259200,
+      "total": 191896672,
+      "ms": 6197
+    },
+    {
+      "loaded": 63635456,
+      "total": 191896672,
+      "ms": 6298
+    },
+    {
+      "loaded": 64815104,
+      "total": 191896672,
+      "ms": 6401
+    },
+    {
+      "loaded": 66453504,
+      "total": 191896672,
+      "ms": 6511
+    },
+    {
+      "loaded": 67239936,
+      "total": 191896672,
+      "ms": 6612
+    },
+    {
+      "loaded": 68812800,
+      "total": 191896672,
+      "ms": 6715
+    },
+    {
+      "loaded": 70497920,
+      "total": 191896672,
+      "ms": 6815
+    },
+    {
+      "loaded": 71958528,
+      "total": 191896672,
+      "ms": 6917
+    },
+    {
+      "loaded": 73250432,
+      "total": 191896672,
+      "ms": 7018
+    },
+    {
+      "loaded": 74711040,
+      "total": 191896672,
+      "ms": 7118
+    },
+    {
+      "loaded": 76152832,
+      "total": 191896672,
+      "ms": 7219
+    },
+    {
+      "loaded": 77594624,
+      "total": 191896672,
+      "ms": 7321
+    },
+    {
+      "loaded": 78970880,
+      "total": 191896672,
+      "ms": 7421
+    },
+    {
+      "loaded": 80459392,
+      "total": 191896672,
+      "ms": 7524
+    },
+    {
+      "loaded": 82032256,
+      "total": 191896672,
+      "ms": 7625
+    },
+    {
+      "loaded": 83558400,
+      "total": 191896672,
+      "ms": 7728
+    },
+    {
+      "loaded": 85309056,
+      "total": 191896672,
+      "ms": 7830
+    },
+    {
+      "loaded": 86573056,
+      "total": 191896672,
+      "ms": 7932
+    },
+    {
+      "loaded": 87996032,
+      "total": 191896672,
+      "ms": 8035
+    },
+    {
+      "loaded": 90046464,
+      "total": 191896672,
+      "ms": 8137
+    },
+    {
+      "loaded": 98566144,
+      "total": 191896672,
+      "ms": 8241
+    },
+    {
+      "loaded": 106954752,
+      "total": 191896672,
+      "ms": 8363
+    },
+    {
+      "loaded": 115343360,
+      "total": 191896672,
+      "ms": 8487
+    },
+    {
+      "loaded": 123731968,
+      "total": 191896672,
+      "ms": 8610
+    },
+    {
+      "loaded": 132120576,
+      "total": 191896672,
+      "ms": 8725
+    },
+    {
+      "loaded": 138412032,
+      "total": 191896672,
+      "ms": 9002
+    },
+    {
+      "loaded": 144703488,
+      "total": 191896672,
+      "ms": 9137
+    },
+    {
+      "loaded": 150667264,
+      "total": 191896672,
+      "ms": 9252
+    },
+    {
+      "loaded": 151893632,
+      "total": 191896672,
+      "ms": 9355
+    },
+    {
+      "loaded": 153354240,
+      "total": 191896672,
+      "ms": 9460
+    },
+    {
+      "loaded": 154730496,
+      "total": 191896672,
+      "ms": 9562
+    },
+    {
+      "loaded": 156237824,
+      "total": 191896672,
+      "ms": 9662
+    },
+    {
+      "loaded": 158138368,
+      "total": 191896672,
+      "ms": 9763
+    },
+    {
+      "loaded": 160282240,
+      "total": 191896672,
+      "ms": 9867
+    },
+    {
+      "loaded": 162641536,
+      "total": 191896672,
+      "ms": 9968
+    },
+    {
+      "loaded": 164495360,
+      "total": 191896672,
+      "ms": 10069
+    },
+    {
+      "loaded": 166330368,
+      "total": 191896672,
+      "ms": 10169
+    },
+    {
+      "loaded": 168343168,
+      "total": 191896672,
+      "ms": 10271
+    },
+    {
+      "loaded": 170112640,
+      "total": 191896672,
+      "ms": 10372
+    },
+    {
+      "loaded": 172275328,
+      "total": 191896672,
+      "ms": 10476
+    },
+    {
+      "loaded": 174391296,
+      "total": 191896672,
+      "ms": 10577
+    },
+    {
+      "loaded": 176160768,
+      "total": 191896672,
+      "ms": 10678
+    },
+    {
+      "loaded": 178520064,
+      "total": 191896672,
+      "ms": 10779
+    },
+    {
+      "loaded": 180532864,
+      "total": 191896672,
+      "ms": 10880
+    },
+    {
+      "loaded": 182255616,
+      "total": 191896672,
+      "ms": 10981
+    },
+    {
+      "loaded": 183828480,
+      "total": 191896672,
+      "ms": 11081
+    },
+    {
+      "loaded": 185513600,
+      "total": 191896672,
+      "ms": 11182
+    },
+    {
+      "loaded": 186974208,
+      "total": 191896672,
+      "ms": 11286
+    },
+    {
+      "loaded": 188593792,
+      "total": 191896672,
+      "ms": 11389
+    },
+    {
+      "loaded": 190119936,
+      "total": 191896672,
+      "ms": 11493
+    },
+    {
+      "loaded": 191823872,
+      "total": 191896672,
+      "ms": 11597
+    },
+    {
+      "loaded": 191896672,
+      "total": 191896672,
+      "ms": 11602
+    }
+  ],
+  "memorySamples": {
+    "beforeLoad": {
+      "wall": {
+        "ts": 1794119786115,
+        "ms": 11043,
+        "totalMB": 0.5,
+        "breakdown": [
+          {
+            "bytesMB": 0,
+            "types": [
+              "DOM"
+            ]
+          },
+          {
+            "bytesMB": 0.3,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 0,
+            "types": []
+          },
+          {
+            "bytesMB": 0.2,
+            "types": [
+              "Shared"
+            ]
+          }
+        ]
+      },
+      "heap": {
+        "usedMB": 0.7,
+        "totalMB": 1.8,
+        "limitMB": 4192
+      }
+    },
+    "afterLoad": {
+      "wall": {
+        "ts": 1794119863939,
+        "ms": 60013,
+        "totalMB": 707.5,
+        "breakdown": [
+          {
+            "bytesMB": 0.6,
+            "types": [
+              "Shared"
+            ]
+          },
+          {
+            "bytesMB": 0,
+            "types": []
+          },
+          {
+            "bytesMB": 0,
+            "types": [
+              "DOM"
+            ]
+          },
+          {
+            "bytesMB": 129,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 0.7,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 577.2,
+            "types": [
+              "JavaScript"
+            ]
+          }
+        ]
+      },
+      "heap": {
+        "usedMB": 1.6,
+        "totalMB": 2.7,
+        "limitMB": 4192
+      }
+    },
+    "afterRun1": {
+      "wall": {
+        "ts": 1794119956388,
+        "ms": 60003,
+        "totalMB": 707.6,
+        "breakdown": [
+          {
+            "bytesMB": 0,
+            "types": []
+          },
+          {
+            "bytesMB": 0.2,
+            "types": [
+              "Shared"
+            ]
+          },
+          {
+            "bytesMB": 577.3,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 1.1,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 0,
+            "types": [
+              "DOM"
+            ]
+          },
+          {
+            "bytesMB": 129,
+            "types": [
+              "JavaScript"
+            ]
+          }
+        ]
+      },
+      "heap": {
+        "usedMB": 1.6,
+        "totalMB": 2.7,
+        "limitMB": 4192
+      }
+    },
+    "afterRun2": {
+      "wall": {
+        "ts": 1794120048058,
+        "ms": 60015,
+        "totalMB": 707.5,
+        "breakdown": [
+          {
+            "bytesMB": 128.9,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 577.2,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 0.6,
+            "types": [
+              "Shared"
+            ]
+          },
+          {
+            "bytesMB": 0.7,
+            "types": [
+              "JavaScript"
+            ]
+          },
+          {
+            "bytesMB": 0,
+            "types": [
+              "DOM"
+            ]
+          },
+          {
+            "bytesMB": 0,
+            "types": []
+          }
+        ]
+      },
+      "heap": {
+        "usedMB": 1.6,
+        "totalMB": 2.7,
+        "limitMB": 4192
+      }
+    }
+  },
+  "runs": [
+    {
+      "index": 0,
+      "firstTokenMs": 24432,
+      "wallMs": 32446,
+      "finishReason": "stop",
+      "usage": null,
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 179,
+        "prompt_ms": 23850.651,
+        "prompt_per_token_ms": 133.24386033519554,
+        "prompt_per_second": 7.505036235698555,
+        "predicted_n": 37,
+        "predicted_ms": 8507.635,
+        "predicted_per_token_ms": 236.32319444444445,
+        "predicted_per_second": 4.231493241071108
+      },
+      "text": "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
+      "chunkCount": 40,
+      "promptTokens": 179,
+      "prefillMs": 23851,
+      "prefillTokensPerSec": 7.51,
+      "predictedTokens": 37,
+      "decodeMs": 8508,
+      "decodeTokensPerSec": 4.23,
+      "chunks": [
+        {
+          "ms": 23936,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24189,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24432,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24432,
+          "text": "学生",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24661,
+          "text": "A",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24900,
+          "text": "沿着",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25132,
+          "text": "走廊",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25354,
+          "text": "前行",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25564,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25795,
+          "text": "脚步",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26030,
+          "text": "轻",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26271,
+          "text": "缓",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26503,
+          "text": "地",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26746,
+          "text": "穿过",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26977,
+          "text": "空",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27210,
+          "text": "旷",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27443,
+          "text": "的",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27688,
+          "text": "区域",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27922,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28161,
+          "text": "脚步",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28403,
+          "text": "声",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28639,
+          "text": "在",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28883,
+          "text": "空气中",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29121,
+          "text": "回",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29365,
+          "text": "响",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29604,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29850,
+          "text": "仿佛",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30091,
+          "text": "在",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30336,
+          "text": "与",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30568,
+          "text": "时间",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30803,
+          "text": "对话",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31042,
+          "text": "。",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31291,
+          "text": "  \n",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31529,
+          "text": "时间",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31756,
+          "text": "推进",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31979,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 32204,
+          "text": "2",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 32437,
+          "text": "分钟",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 32438,
+          "text": "。",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 32446,
+          "text": "",
+          "finishReason": "stop",
+          "usage": null,
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 179,
+            "prompt_ms": 23850.651,
+            "prompt_per_token_ms": 133.24386033519554,
+            "prompt_per_second": 7.505036235698555,
+            "predicted_n": 37,
+            "predicted_ms": 8507.635,
+            "predicted_per_token_ms": 236.32319444444445,
+            "predicted_per_second": 4.231493241071108
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "firstTokenMs": 24003,
+      "wallMs": 31654,
+      "finishReason": "stop",
+      "usage": null,
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 179,
+        "prompt_ms": 23534.345,
+        "prompt_per_token_ms": 131.47678770949722,
+        "prompt_per_second": 7.605905326874403,
+        "predicted_n": 37,
+        "predicted_ms": 8088.599,
+        "predicted_per_token_ms": 224.68330555555556,
+        "predicted_per_second": 4.450708954665696
+      },
+      "text": "学生A沿着走廊前行，脚步轻缓地穿过空旷的区域，脚步声在空气中回响，仿佛在与时间对话。  \n时间推进，2分钟。",
+      "chunkCount": 40,
+      "promptTokens": 179,
+      "prefillMs": 23534,
+      "prefillTokensPerSec": 7.61,
+      "predictedTokens": 37,
+      "decodeMs": 8089,
+      "decodeTokensPerSec": 4.45,
+      "chunks": [
+        {
+          "ms": 23561,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 23789,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24003,
+          "text": "",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24003,
+          "text": "学生",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24222,
+          "text": "A",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24448,
+          "text": "沿着",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24678,
+          "text": "走廊",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 24900,
+          "text": "前行",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25128,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25353,
+          "text": "脚步",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25578,
+          "text": "轻",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 25805,
+          "text": "缓",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26031,
+          "text": "地",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26255,
+          "text": "穿过",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26478,
+          "text": "空",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26696,
+          "text": "旷",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 26919,
+          "text": "的",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27145,
+          "text": "区域",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27380,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27598,
+          "text": "脚步",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 27813,
+          "text": "声",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28028,
+          "text": "在",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28263,
+          "text": "空气中",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28495,
+          "text": "回",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28729,
+          "text": "响",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 28954,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29184,
+          "text": "仿佛",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29413,
+          "text": "在",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29642,
+          "text": "与",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 29874,
+          "text": "时间",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30098,
+          "text": "对话",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30317,
+          "text": "。",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30537,
+          "text": "  \n",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30756,
+          "text": "时间",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 30976,
+          "text": "推进",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31203,
+          "text": "，",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31429,
+          "text": "2",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31650,
+          "text": "分钟",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31652,
+          "text": "。",
+          "finishReason": null,
+          "usage": null,
+          "timings": null
+        },
+        {
+          "ms": 31654,
+          "text": "",
+          "finishReason": "stop",
+          "usage": null,
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 179,
+            "prompt_ms": 23534.345,
+            "prompt_per_token_ms": 131.47678770949722,
+            "prompt_per_second": 7.605905326874403,
+            "predicted_n": 37,
+            "predicted_ms": 8088.599,
+            "predicted_per_token_ms": 224.68330555555556,
+            "predicted_per_second": 4.450708954665696
+          }
+        }
+      ]
+    }
+  ],
+  "logs": [
+    [
+      "debug",
+      "Downloading model files: [\"/model.gguf\"]"
+    ],
+    [
+      "debug",
+      "Multithread enabled: true, pthreadPoolSize: 4"
+    ],
+    [
+      "debug",
+      "Loading \"wllama.wasm\" from \"http://127.0.0.1:59280/wasm/wllama.wasm\""
+    ],
+    [
+      "debug",
+      "Calling wllamaStart..."
+    ],
+    [
+      "log",
+      "ggml_webgpu: Failed to get an adapter: WebGPU not available on this browser (requestAdapter returned null)"
+    ],
+    [
+      "debug",
+      "Using async file read"
+    ],
+    [
+      "debug",
+      "Loading model..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: loaded meta data with 27 key-value pairs and 310 tensors from models/model-00001-of-00001.gguf (version GGUF V3 (latest))"
+    ],
+    [
+      "debug",
+      "llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   0:                       general.architecture str              = qwen3"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   1:                               general.type str              = model"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   2:                               general.name str              = MNN-Pocket-0.3B-QAT"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   3:                         general.size_label str              = 303M"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   4:                          qwen3.block_count u32              = 28"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   5:                       qwen3.context_length u32              = 40960"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   6:                     qwen3.embedding_length u32              = 896"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   7:                  qwen3.feed_forward_length u32              = 2560"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   8:                 qwen3.attention.head_count u32              = 14"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv   9:              qwen3.attention.head_count_kv u32              = 2"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  10:                       qwen3.rope.freq_base f32              = 1000000.000000"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  11:     qwen3.attention.layer_norm_rms_epsilon f32              = 0.000001"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  12:                 qwen3.attention.key_length u32              = 64"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  13:               qwen3.attention.value_length u32              = 64"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  14:                          general.file_type u32              = 3"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  15:               general.quantization_version u32              = 2"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  16:                       tokenizer.ggml.model str              = gpt2"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  17:                         tokenizer.ggml.pre str              = qwen2"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  18:                      tokenizer.ggml.tokens arr[str,65536]   = [\"!\", \"\\\"\", \"#\", \"$\", \"%\", \"&\", \"'\", ..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  19:                  tokenizer.ggml.token_type arr[i32,65536]   = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  20:                      tokenizer.ggml.merges arr[str,65254]   = [\"Ġ Ġ\", \"ĠĠ ĠĠ\", \"i n\", \"Ġ t\",..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  21:                tokenizer.ggml.eos_token_id u32              = 65512"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  22:            tokenizer.ggml.padding_token_id u32              = 65510"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  23:               tokenizer.ggml.add_bos_token bool             = false"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  24:                    tokenizer.chat_template str              = {%- if tools %}\\n    {{- '<|im_start|>..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  25:                   pocket.qat_source_sha256 str              = 790692d5b7dba28607b7a712234a9277c7cf5..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - kv  26:                      pocket.qat_conversion str              = preserve UINT4 codes; split g64 into ..."
+    ],
+    [
+      "debug",
+      "llama_model_loader: - type  f32:  113 tensors"
+    ],
+    [
+      "debug",
+      "llama_model_loader: - type q4_1:  197 tensors"
+    ],
+    [
+      "debug",
+      "print_info: file format = GGUF V3 (latest)"
+    ],
+    [
+      "debug",
+      "print_info: file type   = Q4_1"
+    ],
+    [
+      "debug",
+      "print_info: file size   = 180.68 MiB (5.00 BPW) "
+    ],
+    [
+      "debug",
+      "load: 0 unused tokens"
+    ],
+    [
+      "debug",
+      "load: printing all EOG tokens:"
+    ],
+    [
+      "debug",
+      "load:   - 65510 ('<|endoftext|>')"
+    ],
+    [
+      "debug",
+      "load:   - 65512 ('<|im_end|>')"
+    ],
+    [
+      "debug",
+      "load:   - 65529 ('<|fim_pad|>')"
+    ],
+    [
+      "debug",
+      "load:   - 65530 ('<|repo_name|>')"
+    ],
+    [
+      "debug",
+      "load:   - 65531 ('<|file_sep|>')"
+    ],
+    [
+      "debug",
+      "load: special tokens cache size = 26"
+    ],
+    [
+      "debug",
+      "load: token to piece cache size = 0.3853 MB"
+    ],
+    [
+      "debug",
+      "print_info: arch                  = qwen3"
+    ],
+    [
+      "debug",
+      "print_info: vocab_only            = 0"
+    ],
+    [
+      "debug",
+      "print_info: no_alloc              = 0"
+    ],
+    [
+      "debug",
+      "print_info: n_ctx_train           = 40960"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_inp            = 896"
+    ],
+    [
+      "debug",
+      "print_info: n_embd                = 896"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_out            = 896"
+    ],
+    [
+      "debug",
+      "print_info: n_layer               = 28"
+    ],
+    [
+      "debug",
+      "print_info: n_layer_all           = 28"
+    ],
+    [
+      "debug",
+      "print_info: n_head                = 14"
+    ],
+    [
+      "debug",
+      "print_info: n_head_kv             = 2"
+    ],
+    [
+      "debug",
+      "print_info: n_rot                 = 64"
+    ],
+    [
+      "debug",
+      "print_info: n_swa                 = 0"
+    ],
+    [
+      "debug",
+      "print_info: is_swa_any            = 0"
+    ],
+    [
+      "debug",
+      "print_info: non_causal_type       = 0"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_head_k         = 64"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_head_v         = 64"
+    ],
+    [
+      "debug",
+      "print_info: n_gqa                 = 7"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_k_gqa          = 128"
+    ],
+    [
+      "debug",
+      "print_info: n_embd_v_gqa          = 128"
+    ],
+    [
+      "debug",
+      "print_info: f_norm_eps            = 0.0e+00"
+    ],
+    [
+      "debug",
+      "print_info: f_norm_rms_eps        = 1.0e-06"
+    ],
+    [
+      "debug",
+      "print_info: f_clamp_kqv           = 0.0e+00"
+    ],
+    [
+      "debug",
+      "print_info: f_max_alibi_bias      = 0.0e+00"
+    ],
+    [
+      "debug",
+      "print_info: f_logit_scale         = 0.0e+00"
+    ],
+    [
+      "debug",
+      "print_info: f_attn_scale          = 0.0e+00"
+    ],
+    [
+      "debug",
+      "print_info: f_attn_value_scale    = 0.0000"
+    ],
+    [
+      "debug",
+      "print_info: n_ff                  = 2560"
+    ],
+    [
+      "debug",
+      "print_info: n_expert              = 0"
+    ],
+    [
+      "debug",
+      "print_info: n_expert_used         = 0"
+    ],
+    [
+      "debug",
+      "print_info: n_expert_groups       = 0"
+    ],
+    [
+      "debug",
+      "print_info: n_group_used          = 0"
+    ],
+    [
+      "debug",
+      "print_info: causal attn           = 1"
+    ],
+    [
+      "debug",
+      "print_info: pooling type          = -1"
+    ],
+    [
+      "debug",
+      "print_info: rope type             = 2"
+    ],
+    [
+      "debug",
+      "print_info: rope scaling          = linear"
+    ],
+    [
+      "debug",
+      "print_info: freq_base_train       = 1000000.0"
+    ],
+    [
+      "debug",
+      "print_info: freq_scale_train      = 1"
+    ],
+    [
+      "debug",
+      "print_info: n_ctx_orig_yarn       = 40960"
+    ],
+    [
+      "debug",
+      "print_info: rope_yarn_log_mul     = 0.0000"
+    ],
+    [
+      "debug",
+      "print_info: rope_finetuned        = unknown"
+    ],
+    [
+      "debug",
+      "print_info: model type            = 1.7B"
+    ],
+    [
+      "debug",
+      "print_info: model params          = 302.83 M"
+    ],
+    [
+      "debug",
+      "print_info: general.name          = MNN-Pocket-0.3B-QAT"
+    ],
+    [
+      "debug",
+      "print_info: vocab type            = BPE"
+    ],
+    [
+      "debug",
+      "print_info: n_vocab               = 65536"
+    ],
+    [
+      "debug",
+      "print_info: n_merges              = 65254"
+    ],
+    [
+      "debug",
+      "print_info: BOS token             = 11 ','"
+    ],
+    [
+      "debug",
+      "print_info: EOS token             = 65512 '<|im_end|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOT token             = 65512 '<|im_end|>'"
+    ],
+    [
+      "debug",
+      "print_info: PAD token             = 65510 '<|endoftext|>'"
+    ],
+    [
+      "debug",
+      "print_info: LF token              = 198 'Ċ'"
+    ],
+    [
+      "debug",
+      "print_info: FIM PRE token         = 65526 '<|fim_prefix|>'"
+    ],
+    [
+      "debug",
+      "print_info: FIM SUF token         = 65528 '<|fim_suffix|>'"
+    ],
+    [
+      "debug",
+      "print_info: FIM MID token         = 65527 '<|fim_middle|>'"
+    ],
+    [
+      "debug",
+      "print_info: FIM PAD token         = 65529 '<|fim_pad|>'"
+    ],
+    [
+      "debug",
+      "print_info: FIM REP token         = 65530 '<|repo_name|>'"
+    ],
+    [
+      "debug",
+      "print_info: FIM SEP token         = 65531 '<|file_sep|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOG token             = 65510 '<|endoftext|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOG token             = 65512 '<|im_end|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOG token             = 65529 '<|fim_pad|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOG token             = 65530 '<|repo_name|>'"
+    ],
+    [
+      "debug",
+      "print_info: EOG token             = 65531 '<|file_sep|>'"
+    ],
+    [
+      "debug",
+      "print_info: max token length      = 256"
+    ],
+    [
+      "debug",
+      "load_tensors: loading model tensors, this can take a while... (load_mode = none)"
+    ],
+    [
+      "debug",
+      "load_tensors:          CPU model buffer size =   180.68 MiB"
+    ],
+    [
+      "debug",
+      "llama_context: constructing llama_context"
+    ],
+    [
+      "debug",
+      "llama_context: n_seq_max             = 4"
+    ],
+    [
+      "debug",
+      "llama_context: n_ctx                 = 2048"
+    ],
+    [
+      "debug",
+      "llama_context: n_ctx_seq             = 2048"
+    ],
+    [
+      "debug",
+      "llama_context: n_batch               = 2048"
+    ],
+    [
+      "debug",
+      "llama_context: n_ubatch              = 512"
+    ],
+    [
+      "debug",
+      "llama_context: causal_attn           = 1"
+    ],
+    [
+      "debug",
+      "llama_context: flash_attn            = auto"
+    ],
+    [
+      "debug",
+      "llama_context: kv_unified            = true"
+    ],
+    [
+      "debug",
+      "llama_context: freq_base             = 1000000.0"
+    ],
+    [
+      "debug",
+      "llama_context: freq_scale            = 1"
+    ],
+    [
+      "debug",
+      "llama_context: n_rs_seq              = 0"
+    ],
+    [
+      "debug",
+      "llama_context: n_outputs_max         = 4"
+    ],
+    [
+      "debug",
+      "llama_context: n_outputs_max_per_seq = 1"
+    ],
+    [
+      "debug",
+      "llama_context: n_ctx_seq (2048) < n_ctx_train (40960) -- the full capacity of the model will not be utilized"
+    ],
+    [
+      "debug",
+      "llama_context:        CPU  output buffer size =     1.00 MiB"
+    ],
+    [
+      "debug",
+      "llama_kv_cache:        CPU KV buffer size =    28.00 MiB"
+    ],
+    [
+      "debug",
+      "llama_kv_cache: size =   28.00 MiB (  2048 cells,  28 layers,  4/1 seqs), K (f16):   14.00 MiB, V (f16):   14.00 MiB"
+    ],
+    [
+      "debug",
+      "llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 64"
+    ],
+    [
+      "debug",
+      "llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 64"
+    ],
+    [
+      "debug",
+      "sched_reserve: reserving ..."
+    ],
+    [
+      "debug",
+      "resolve_fused_ops: Flash Attention enabled"
+    ],
+    [
+      "debug",
+      "resolve_fused_ops: resolving fused DeepSeek V4 HC support:"
+    ],
+    [
+      "debug",
+      "resolve_fused_ops: fused DeepSeek V4 HC pre enabled"
+    ],
+    [
+      "debug",
+      "resolve_fused_ops: fused DeepSeek V4 HC comb enabled"
+    ],
+    [
+      "debug",
+      "resolve_fused_ops: fused DeepSeek V4 HC post enabled"
+    ],
+    [
+      "debug",
+      "sched_reserve:        CPU compute buffer size =    24.01 MiB"
+    ],
+    [
+      "debug",
+      "sched_reserve: graph: nodes = 986, splits = 1, input objects = 4, input tensors = 6"
+    ],
+    [
+      "debug",
+      "sched_reserve: reserve took 87.42 ms, sched copies = 1"
+    ],
+    [
+      "debug",
+      "{\"loadedCtxInfo\":{\"_name\":\"load_res\",\"success\":true,\"n_ctx\":2048,\"n_batch\":2048,\"n_ubatch\":512,\"n_vocab\":65536,\"n_ctx_train\":40960,\"n_embd\":896,\"n_layer\":28,\"metadata_key\":[\"tokenizer.ggml.padding_token_id\",\"qwen3.context_length\",\"tokenizer.ggml.eos_token_id\",\"tokenizer.ggml.pre\",\"tokenizer.ggml.model\",\"general.quantization_version\",\"tokenizer.ggml.add_bos_token\",\"general.name\",\"qwen3.attention.value_length\",\"pocket.qat_conversion\",\"qwen3.attention.key_length\",\"qwen3.attention.layer_norm_rms_epsilon\",\"pocket.qat_source_sha256\",\"general.file_type\",\"general.size_label\",\"qwen3.block_count\",\"general.architecture\",\"qwen3.attention.head_count_kv\",\"qwen3.rope.freq_base\",\"tokenizer.chat_template\",\"qwen3.embedding_length\",\"qwen3.attention.head_count\",\"qwen3.feed_forward_length\",\"general.type\"],\"metadata_val\":[\"65510\",\"40960\",\"65512\",\"qwen2\",\"gpt2\",\"2\",\"false\",\"MNN-Pocket-0.3B-QAT\",\"64\",\"preserve UINT4 codes; split g64 into two g32 blocks; FP16 scale and -scale*zero_point\",\"64\",\"0.000001\",\"790692d5b7dba28607b7a712234a9277c7cf5c00f08f58c6fb1e147082bf317a\",\"3\",\"303M\",\"28\",\"qwen3\",\"2\",\"1000000.000000\",\"{%- if tools %}\\n    {{- '<|im_start|>system\\\\n' }}\\n    {%- if messages[0].role == 'system' %}\\n        {{- messages[0].content + '\\\\n\\\\n' }}\\n    {%- endif %}\\n    {{- \\\"# Tools\\\\n\\\\nYou may call one or more functions to assist with the user query.\\\\n\\\\nYou are provided with function signatures within <tools></tools> XML tags:\\\\n<tools>\\\" }}\\n    {%- for tool in tools %}\\n        {{- \\\"\\\\n\\\" }}\\n        {{- tool | tojson }}\\n    {%- endfor %}\\n    {{- \\\"\\\\n</tools>\\\\n\\\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\\\n<tool_call>\\\\n{\\\\\\\"name\\\\\\\": <function-name>, \\\\\\\"arguments\\\\\\\": <args-json-object>}\\\\n</tool_call><|im_end|>\\\\n\\\" }}\\n{%- else %}\\n    {%- if messages[0].role == 'system' %}\\n        {{- '<|im_start|>system\\\\n' + messages[0].content + '<|im_end|>\\\\n' }}\\n    {%- endif %}\\n{%- endif %}\\n{%- for message in messages %}\\n    {%- if message.content is string %}\\n        {%- set content = message.content %}\\n    {%- else %}\\n        {%- set content = '' %}\\n    {%- endif %}\\n    {%- if (message.role == \\\"user\\\") or (message.role == \\\"system\\\" and not loop.first) %}\\n        {{- '<|im_start|>' + message.role + '\\\\n' + content + '<|im_end|>' + '\\\\n' }}\\n    {%- elif message.role == \\\"assistant\\\" %}\\n        {{- '<|im_start|>' + message.role + '\\\\n' + content }}\\n        {%- if message.tool_calls %}\\n            {%- for tool_call in message.tool_calls %}\\n                {%- if (loop.first and content) or (not loop.first) %}\\n                    {{- '\\\\n' }}\\n                {%- endif %}\\n                {%- if tool_call.function %}\\n                    {%- set tool_call = tool_call.function %}\\n                {%- endif %}\\n                {{- '<tool_call>\\\\n{\\\"name\\\": \\\"' }}\\n                {{- tool_call.name }}\\n                {{- '\\\", \\\"arguments\\\": ' }}\\n                {%- if tool_call.arguments is string %}\\n                    {{- tool_call.arguments }}\\n                {%- else %}\\n                    {{- tool_call.arguments | tojson }}\\n                {%- endif %}\\n                {{- '}\\\\n</tool_call>' }}\\n            {%- endfor %}\\n        {%- endif %}\\n        {{- '<|im_end|>\\\\n' }}\\n    {%- elif message.role == \\\"tool\\\" %}\\n        {%- if loop.first or (messages[loop.index0 - 1].role != \\\"tool\\\") %}\\n            {{- '<|im_start|>user' }}\\n        {%- endif %}\\n        {{- '\\\\n<tool_response>\\\\n' }}\\n        {{- content }}\\n        {{- '\\\\n</tool_response>' }}\\n        {%- if loop.last or (messages[loop.index0 + 1].role != \\\"tool\\\") %}\\n            {{- '<|im_end|>\\\\n' }}\\n        {%- endif %}\\n    {%- endif %}\\n{%- endfor %}\\n{%- if add_generation_prompt %}\\n    {{- '<|im_start|>assistant\\\\n' }}\\n{%- endif %}\",\"896\",\"14\",\"2560\",\"model\"],\"token_bos\":11,\"token_eos\":65512,\"token_eot\":65512,\"list_tokens_eog\":[65510,65512,65529,65530,65531],\"add_bos_token\":false,\"add_eos_token\":false,\"has_encoder\":false,\"token_decoder_start\":-1,\"media_marker\":\"<__media_01wZePQhAdN8IHP6pFmSNKsAXhK7cfx9__>\",\"has_image_input\":false,\"has_audio_input\":false,\"metadata\":{\"tokenizer.ggml.padding_token_id\":\"65510\",\"qwen3.context_length\":\"40960\",\"tokenizer.ggml.eos_token_id\":\"65512\",\"tokenizer.ggml.pre\":\"qwen2\",\"tokenizer.ggml.model\":\"gpt2\",\"general.quantization_version\":\"2\",\"tokenizer.ggml.add_bos_token\":\"false\",\"general.name\":\"MNN-Pocket-0.3B-QAT\",\"qwen3.attention.value_length\":\"64\",\"pocket.qat_conversion\":\"preserve UINT4 codes; split g64 into two g32 blocks; FP16 scale and -scale*zero_point\",\"qwen3.attention.key_length\":\"64\",\"qwen3.attention.layer_norm_rms_epsilon\":\"0.000001\",\"pocket.qat_source_sha256\":\"790692d5b7dba28607b7a712234a9277c7cf5c00f08f58c6fb1e147082bf317a\",\"general.file_type\":\"3\",\"general.size_label\":\"303M\",\"qwen3.block_count\":\"28\",\"general.architecture\":\"qwen3\",\"qwen3.attention.head_count_kv\":\"2\",\"qwen3.rope.freq_base\":\"1000000.000000\",\"tokenizer.chat_template\":\"{%- if tools %}\\n    {{- '<|im_start|>system\\\\n' }}\\n    {%- if messages[0].role == 'system' %}\\n        {{- messages[0].content + '\\\\n\\\\n' }}\\n    {%- endif %}\\n    {{- \\\"# Tools\\\\n\\\\nYou may call one or more functions to assist with the user query.\\\\n\\\\nYou are provided with function signatures within <tools></tools> XML tags:\\\\n<tools>\\\" }}\\n    {%- for tool in tools %}\\n        {{- \\\"\\\\n\\\" }}\\n        {{- tool | tojson }}\\n    {%- endfor %}\\n    {{- \\\"\\\\n</tools>\\\\n\\\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\\\n<tool_call>\\\\n{\\\\\\\"name\\\\\\\": <function-name>, \\\\\\\"arguments\\\\\\\": <args-json-object>}\\\\n</tool_call><|im_end|>\\\\n\\\" }}\\n{%- else %}\\n    {%- if messages[0].role == 'system' %}\\n        {{- '<|im_start|>system\\\\n' + messages[0].content + '<|im_end|>\\\\n' }}\\n    {%- endif %}\\n{%- endif %}\\n{%- for message in messages %}\\n    {%- if message.content is string %}\\n        {%- set content = message.content %}\\n    {%- else %}\\n        {%- set content = '' %}\\n    {%- endif %}\\n    {%- if (message.role == \\\"user\\\") or (message.role == \\\"system\\\" and not loop.first) %}\\n        {{- '<|im_start|>' + message.role + '\\\\n' + content + '<|im_end|>' + '\\\\n' }}\\n    {%- elif message.role == \\\"assistant\\\" %}\\n        {{- '<|im_start|>' + message.role + '\\\\n' + content }}\\n        {%- if message.tool_calls %}\\n            {%- for tool_call in message.tool_calls %}\\n                {%- if (loop.first and content) or (not loop.first) %}\\n                    {{- '\\\\n' }}\\n                {%- endif %}\\n                {%- if tool_call.function %}\\n                    {%- set tool_call = tool_call.function %}\\n                {%- endif %}\\n                {{- '<tool_call>\\\\n{\\\"name\\\": \\\"' }}\\n                {{- tool_call.name }}\\n                {{- '\\\", \\\"arguments\\\": ' }}\\n                {%- if tool_call.arguments is string %}\\n                    {{- tool_call.arguments }}\\n                {%- else %}\\n                    {{- tool_call.arguments | tojson }}\\n                {%- endif %}\\n                {{- '}\\\\n</tool_call>' }}\\n            {%- endfor %}\\n        {%- endif %}\\n        {{- '<|im_end|>\\\\n' }}\\n    {%- elif message.role == \\\"tool\\\" %}\\n        {%- if loop.first or (messages[loop.index0 - 1].role != \\\"tool\\\") %}\\n            {{- '<|im_start|>user' }}\\n        {%- endif %}\\n        {{- '\\\\n<tool_response>\\\\n' }}\\n        {{- content }}\\n        {{- '\\\\n</tool_response>' }}\\n        {%- if loop.last or (messages[loop.index0 + 1].role != \\\"tool\\\") %}\\n            {{- '<|im_end|>\\\\n' }}\\n        {%- endif %}\\n    {%- endif %}\\n{%- endfor %}\\n{%- if add_generation_prompt %}\\n    {{- '<|im_start|>assistant\\\\n' }}\\n{%- endif %}\",\"qwen3.embedding_length\":\"896\",\"qwen3.attention.head_count\":\"14\",\"qwen3.feed_forward_length\":\"2560\",\"general.type\":\"model\"}}}"
+    ]
+  ],
+  "completedAt": "2026-11-08T06:40:48.133Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}
