@@ -49,6 +49,7 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `step6/verdict-stop-naturalness.md` | 失败结论与评审停止记录 |
 | `step6/references/` | 三题参照段落（人工写作，非模型输出）＋逐句来源表 |
 | `build_references.py` | 参照来源表的生成与路径校验 |
+| `step6/references/reference-paragraphs-v2.md` | 参照 v2：正文＋面板＋来源；删除语义越界，数值移入面板（仍为草稿，未作标尺） |
 | `step6/route-plan.md` | 段落生成路线方案：验收标准、A/B/C 路线、数据、排期、未决问题 |
 
 ## 复现
