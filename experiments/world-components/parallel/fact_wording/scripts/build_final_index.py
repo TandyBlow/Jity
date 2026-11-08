@@ -1,9 +1,9 @@
 """Build the final, hash-checkable index for the c4 stage.
 
 Writes:
-  freeze/final-index-v1.json
-  freeze/final-index-v1.sha256   (hash of the JSON itself, since a file cannot contain it)
-  results/final-index-v1.md
+  freeze/final-index-v2.json
+  freeze/final-index-v2.sha256   (hash of the JSON itself, since a file cannot contain it)
+  results/final-index-v2.md
 """
 
 from __future__ import annotations
@@ -22,6 +22,8 @@ PRECEDENCE = [
     "T1 的因果表述以 results/candidate-t1-result-v1-audit.md 为准（原句“否掉了充分原因”不成立）",
     "其余结论以 results/c4-stage-closure-v1.md 为准",
     "所有计数以运行原文（raw.jsonl）与 analysis/candidate-analysis JSON 为准；任何摘要文档与之冲突时以原文为准",
+    "盲判口径以 results/blind-design-defect-v1.md 为准（v1 判词不是严格盲判）",
+    "耗时口径以 results/timing-scope-v1.md 为准（1.72/4.69 s 只是解码耗时）",
 ]
 
 GROUPS = {
@@ -39,6 +41,7 @@ GROUPS = {
         "freeze/comparison-inputs-v2.json",
         "freeze/comparison-inputs-v3.json",
         "freeze/acceptance-registration-v1.json",
+        "freeze/acceptance-registration-v2.json",
         "freeze/candidate-t1-v1.json",
         "freeze/candidate-t1-v2.json",
         "freeze/candidate-t1-outcome-v1.json",
@@ -71,6 +74,9 @@ GROUPS = {
         "scripts/upstream/score_cf24_baseline.py",
         "scripts/upstream/review_cf24_baseline.py",
         "scripts/upstream/check_cf24_overlap.py",
+        "scripts/build_blind_pack_v2.py",
+        "scripts/build_final_index.py",
+        "scripts/redact_paths.py",
     ],
     "预检产物": [
         "artifacts/fact-wording/preflight/preflight.json",
@@ -95,6 +101,23 @@ GROUPS = {
         "results/acceptance-registration-v1.md",
         "results/run-history-v1.md",
         "results/c4-stage-closure-v1.md",
+        "results/review-findings-v1.md",
+        "results/blind-design-defect-v1.md",
+        "results/timing-scope-v1.md",
+        "results/next-steps-after-review-v1.md",
+        "results/acceptance-registration-v2.md",
+    ],
+    "cf24 失败分类产物": [
+        "results/cf24-catalog-v1.json",
+        "results/cf24-moved-rule-pairs-v1.json",
+        "results/failure-report-v1.md",
+        "review/batch-01.json",
+        "review/batch-02.json",
+    ],
+    "索引历史": [
+        "freeze/final-index-v1.json",
+        "freeze/final-index-v1.sha256",
+        "results/final-index-v1.md",
     ],
 }
 
@@ -138,6 +161,12 @@ def main() -> int:
         rels += ["blind/" + p.name for p in sorted((base / "blind").glob("batch-*.json"))]
         rels += ["blind/" + p.name for p in sorted((base / "blind").glob("judged-*.json"))]
         add_files(rows, group, [str((base / r).relative_to(EXP)).replace(chr(92), "/") for r in rels])
+        if group.startswith("r1"):
+            v2 = sorted((base / "blind-v2").glob("batch-*.json"))
+        else:
+            v2 = sorted((base / "blind-v2").glob("batch-*.json"))
+        rels2 = ["blind-v2/index.json", "blind-v2/map.json"] + ["blind-v2/" + p.name for p in v2]
+        add_files(rows, "盲判包 v2（未判）", [str((base / r).relative_to(EXP)).replace(chr(92), "/") for r in rels2])
 
     counts = {}
     for row in rows:
@@ -145,9 +174,9 @@ def main() -> int:
     missing = [r["path"] for r in rows if not r["exists"]]
 
     payload = dict(
-        protocol="c4-final-index-v1",
+        protocol="c4-final-index-v2",
         status=STATUS,
-        generatedAt="2026-11-08",
+        generatedAt="2026-11-09",
         root="experiments/world-components/parallel/fact_wording/",
         counts=counts,
         missing=missing,
@@ -164,23 +193,33 @@ def main() -> int:
             knownCrossHashBreaks=["diagnostic-r1/*/run.json manifestSha256", "preflight/preflight.json manifestSha256"],
         ),
         workflow=dict(
-            r1="85 units x 2 arms, protocol v3, assistant blind judging",
-            t1="85 units greedy only, candidate frozen in freeze/candidate-t1-v2.json",
-            acceptance="17 units registered in freeze/acceptance-registration-v1.json; never run",
+            r1="85 units x 2 arms, protocol v3; v1 pack was pair-adjacent (not strictly blind); blind-v2 pack unjudged",
+            t1="85 units greedy only, candidate frozen in freeze/candidate-t1-v2.json; v1 pack showed the requirement clause",
+            acceptance="17 units in v2 registration (provenance fixed); still never run",
         ),
+        reviewState=dict(
+            findings="results/review-findings-v1.md",
+            packDefect="results/blind-design-defect-v1.md",
+            timingScope="results/timing-scope-v1.md",
+            nextSteps="results/next-steps-after-review-v1.md",
+        ),
+        exclusions=[
+            "freeze/final-index-v2.json", "freeze/final-index-v2.sha256", "results/final-index-v2.md",
+            ".gitattributes", ".gitignore", "__pycache__/ (removed)",
+        ],
         files=rows,
     )
-    out_json = EXP / "freeze/final-index-v1.json"
+    out_json = EXP / "freeze/final-index-v2.json"
     out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     index_sha = sha(out_json)
-    (EXP / "freeze/final-index-v1.sha256").write_text(index_sha + "  final-index-v1.json\n", encoding="utf-8")
+    (EXP / "freeze/final-index-v2.sha256").write_text(index_sha + "  final-index-v2.json\n", encoding="utf-8")
 
     lines = [
-        "# 最终索引 v1（可核查）",
+        "# 最终索引 v2（可核查）",
         "",
         f"> 状态：{STATUS}",
         "> 根目录：`experiments/world-components/parallel/fact_wording/`",
-        f"> 索引 JSON：`freeze/final-index-v1.json`，sha256 `{index_sha}`（同值见 `freeze/final-index-v1.sha256`）",
+        f"> 索引 JSON：`freeze/final-index-v2.json`，sha256 `{index_sha}`（同值见 `freeze/final-index-v2.sha256`）",
         "> 环境目录不打包：只索引 `env/requirements.lock.txt` 与 `env/ENVIRONMENT.md`。",
         "> 任务说明 `TASK.md` 位于本任务的独占目录之外（工作树根），不纳入本索引。",
         "",
@@ -199,7 +238,7 @@ def main() -> int:
         else:
             lines.append(f'| {row["group"]} | `{row["path"]}` | {row["bytes"]:,} | `{row["sha256"]}` |')
     lines += ["", f"缺失文件：{missing if missing else '无'}", ""]
-    (EXP / "results/final-index-v1.md").write_text(chr(10).join(lines), encoding="utf-8")
+    (EXP / "results/final-index-v2.md").write_text(chr(10).join(lines), encoding="utf-8")
     print(f"indexed {len(rows)} files, missing {len(missing)}")
     print("index sha256:", index_sha)
     print("counts:", json.dumps(counts, ensure_ascii=False))

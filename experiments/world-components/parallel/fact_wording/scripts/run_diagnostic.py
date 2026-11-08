@@ -48,7 +48,11 @@ def main() -> int:
     resume_dir = None
     for candidate in sorted(OUT_ROOT.glob("*/run.json"), reverse=True):
         meta = json.loads(candidate.read_text(encoding="utf-8"))
-        if meta.get("manifestSha256") == manifest_sha and (candidate.parent / "raw.jsonl").exists():
+        if meta.get("finishedAt"):
+            continue  # a finished run is immutable; never resume into it
+        if (meta.get("manifestSha256") == manifest_sha
+                and (candidate.parent / "raw.jsonl").exists()
+                and (candidate.parent / "order.jsonl").exists()):
             resume_dir = candidate.parent
             break
     if resume_dir is None:
@@ -61,6 +65,10 @@ def main() -> int:
         run_id = run_dir.name
         done = {(r["unitId"], r["arm"]) for r in
                 (json.loads(line) for line in (run_dir / "raw.jsonl").read_text(encoding="utf-8").splitlines() if line.strip())}
+        raw_n = sum(1 for line in (run_dir / "raw.jsonl").read_text(encoding="utf-8").splitlines() if line.strip())
+        order_n = sum(1 for line in (run_dir / "order.jsonl").read_text(encoding="utf-8").splitlines() if line.strip())
+        if raw_n != order_n:
+            raise SystemExit(f"inconsistent run dir {run_id}: raw={raw_n} order={order_n}; refusing to resume")
         print(f"resuming {run_id}: {len(done)} rows already present", flush=True)
 
     os.environ.setdefault("OMP_NUM_THREADS", "4")
@@ -116,8 +124,9 @@ def main() -> int:
         unitFileSha256=sha256(UNIT_FILE),
         env=env,
     )
-    (run_dir / "run.json").write_text(json.dumps(run_meta, ensure_ascii=False, indent=1) + "\n",
-                                       encoding="utf-8")
+    if resume_dir is None:  # never rewrite metadata of an existing run
+        (run_dir / "run.json").write_text(json.dumps(run_meta, ensure_ascii=False, indent=1) + "\n",
+                                           encoding="utf-8")
 
     def make_scorer(text: str):
         encoded = tokenizer(text, return_tensors="pt")

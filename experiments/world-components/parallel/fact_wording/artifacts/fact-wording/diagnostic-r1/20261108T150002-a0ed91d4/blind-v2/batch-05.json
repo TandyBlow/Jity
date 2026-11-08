@@ -1,0 +1,130 @@
+{
+ "pack": "cf24-r1-v2-batch-05",
+ "instruction": "judge each output against its fact and scene only; the requirement clause is withheld on purpose",
+ "items": [
+  {
+   "code": "c0041",
+   "fact": {
+    "factId": "f0",
+    "kind": "moved",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "from": "潮汐档案馆",
+    "to": "潮生巷",
+    "direction": "平"
+   },
+   "scene": "短句任务。\n地点=潮生巷\n地点可见=油布包、备用钥匙、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=沈砚｜移动｜潮汐档案馆→潮生巷\n方向=平",
+   "output": "沈砚从潮汐档案馆出来,走进潮生巷。"
+  },
+  {
+   "code": "c0042",
+   "fact": {
+    "factId": "f1",
+    "kind": "appearance_changed",
+    "name": "排水沟",
+    "entityGroup": "items",
+    "text": "里面积了泥"
+   },
+   "scene": "短句任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=排水沟｜外貌变化｜里面积了泥",
+   "output": "排水沟的里面积了泥。"
+  },
+  {
+   "code": "c0043",
+   "fact": {
+    "factId": "f3",
+    "kind": "appearance_changed",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "text": "袖口沾了墨"
+   },
+   "scene": "短句任务。\n地点=潮汐档案馆\n地点可见=潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛、铜灯、潮汐簿、干纸\n场景=午后；阴；铜灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜袖口沾了墨",
+   "output": "沈砚的袖口沾了墨。"
+  },
+  {
+   "code": "c0044",
+   "fact": {
+    "factId": "f0",
+    "kind": "moved",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "from": "潮渡",
+    "to": "旧灯塔",
+    "direction": "平"
+   },
+   "scene": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、抹布、擦铜油、灯芯、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜移动｜潮渡→旧灯塔\n方向=平",
+   "output": "叶知微从潮渡上来,走进旧灯塔。"
+  },
+  {
+   "code": "c0045",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把抹布搭回梯脚"
+   },
+   "scene": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、抹布、擦铜油、灯芯、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜结果｜把抹布搭回梯脚",
+   "output": "叶知微把抹布搭回梯脚。"
+  },
+  {
+   "code": "c0046",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把一叠干纸放在桌角"
+   },
+   "scene": "短句任务。\n地点=潮汐档案馆\n地点可见=潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛、铜灯、潮汐簿、干纸\n场景=午后；阴；铜灯\n视角=沈砚；第三人称\n事实=叶知微｜结果｜把一叠干纸放在桌角",
+   "output": "叶知微把一叠干纸放在桌角。"
+  },
+  {
+   "code": "c0047",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把灯罩擦得透亮"
+   },
+   "scene": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=叶知微｜结果｜把灯罩擦得透亮",
+   "output": "叶知微把灯罩擦得透亮。"
+  },
+  {
+   "code": "c0048",
+   "fact": {
+    "factId": "f3",
+    "kind": "outcome",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "resultText": "把系泊绳拖回岸上"
+   },
+   "scene": "短句任务。\n地点=潮渡>浅滩\n地点可见=系泊绳、渡船、缆绳、退潮后的泥滩、系泊绳、冷光、木桩、缆绳、船灯、水面、浅滩\n场景=退潮；雾；天光\n视角=沈砚；第三人称\n事实=沈砚｜结果｜把系泊绳拖回岸上",
+   "output": "沈砚把系泊绳拖回岸上。"
+  },
+  {
+   "code": "c0049",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "阿棠",
+    "entityGroup": "characters",
+    "resultText": "把空鱼筐摞到摊棚边上"
+   },
+   "scene": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、抹布、帆布棚、鱼筐、案板、石板、银鳞鱼、白汽\n场景=清晨；薄雾；棚下散光\n视角=阿棠；第三人称\n事实=阿棠｜结果｜把空鱼筐摞到摊棚边上",
+   "output": "阿棠把空鱼筐摞到摊棚边上。"
+  },
+  {
+   "code": "c0050",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "resultText": "把铜灯擦亮"
+   },
+   "scene": "短句任务。\n地点=潮汐档案馆\n地点可见=潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛、铜灯、潮汐簿、干纸\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n事实=沈砚｜结果｜把铜灯擦亮",
+   "output": "沈砚把铜灯擦亮。"
+  }
+ ]
+}

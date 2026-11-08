@@ -1,0 +1,8 @@
+{
+ "rows": 170,
+ "batches": 17,
+ "batchSize": 10,
+ "seed": 20261111,
+ "requirementHidden": true,
+ "adjacentSameFact": 0
+}

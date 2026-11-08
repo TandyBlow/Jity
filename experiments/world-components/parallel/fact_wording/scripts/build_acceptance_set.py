@@ -10,8 +10,15 @@ The script also checks signature overlap against:
   * cf24 (85), final24 (76), moved24 (24)
 
 and writes:
-  freeze/acceptance-registration-v1.json
-  results/acceptance-registration-v1.md
+  freeze/acceptance-registration-v2.json
+  results/acceptance-registration-v2.md
+
+v2 (2026-11-09) fixes provenance after review:
+  * ac01 uses task_lamp.resultText, not the goal sentence (goal != outcome)
+  * su01 is authored: the subject was swapped from the task owner to 韩渡
+  * moved units are marked `derived` from location levels; world.json has no action log
+  * sa01/sa02 hide the sanity number, so the criterion is "no number may appear",
+    not numeric fidelity
 """
 
 from __future__ import annotations
@@ -65,15 +72,18 @@ KIND_LABEL = {
 # the visible list on purpose.
 UNITS = [
     # --- extra_action_state: the fact is plain, so any tail clause is an addition ---
-    dict(id="ac01", kind="outcome", subject="沈砚", value="把备用灯芯送到塔顶",
+    dict(id="ac01", kind="outcome", subject="韩渡", value="换好了塔顶的灯芯",
          place=("旧灯塔", "塔顶"), visible=["铜框信号灯", "玻璃罩", "火苗", "海风直吹", "备用灯芯"],
          scene="夜；夜雾，海风；铜灯已点亮", viewer="沈砚",
-         source="world.json#tasks.task_lamp.goal", authored=False,
-         focus="新增动作/状态", note="目标句只写送达，到达后的一切动作都属新增"),
+         source="world.json#tasks.task_lamp.resultText（主语由沈砚换成韩渡）", authored=True,
+         provenance="authored", basis="subject swapped from the task owner; the sentence is verbatim resultText",
+         focus="新增动作/状态",
+         note="取 resultText 而非 goal（goal 是“把备用灯芯送到塔顶”，不是结果）；主语是人工换的"),
     dict(id="ac02", kind="moved", subject="顾行舟", frm="雾堤", to="潮渡", direction="平",
          place=("潮渡", "栈桥"), visible=["木桩", "缆绳", "船灯", "水面"],
          scene="傍晚；雾；船灯", viewer="顾行舟",
          source="world.json#locations.loc_seawall, loc_ferry（同为 level1）", authored=False,
+         provenance="derived", basis="location level comparison; world.json has no action log",
          focus="新增动作/状态", note="平向移动，无抵达后内容；该主体+起终点组合未在任何旧集出现"),
     dict(id="ac03", kind="appearance_changed", subject="油布包", value="边角磨出了线头",
          place=("潮生巷", "巷子"), visible=["湿石板", "纸灯笼", "排水沟", "墙根", "水洼", "油布包"],
@@ -96,6 +106,7 @@ UNITS = [
          place=("潮汐档案馆", "长桌"), visible=["潮汐簿", "墨", "干纸", "铜灯", "笔", "长桌"],
          scene="午后；阴；铜灯", viewer="顾行舟",
          source="world.json#locations.loc_archive, loc_alley", authored=False,
+         provenance="derived", basis="location level comparison; world.json has no action log",
          focus="位置（过度断言风险）", note="可见清单有长桌，只授权存在；“在长桌边坐下”属过度断言"),
 
     # --- direction: 上 / 下 / 平 ---
@@ -103,24 +114,28 @@ UNITS = [
          place=("旧灯塔", "塔顶"), visible=["铜框信号灯", "玻璃罩", "火苗", "海风直吹"],
          scene="夜；夜雾，海风", viewer="沈砚",
          source="world.json#locations.loc_ferry(level1) -> loc_lighthouse(level3)", authored=False,
+         provenance="derived", basis="location level comparison; world.json has no action log",
          focus="方向", note="由低到高，方向=上"),
     dict(id="di02", kind="moved", subject="韩渡", frm="旧灯塔", to="潮渡", direction="下",
          place=("潮渡", "栈桥"), visible=["木桩", "缆绳", "船灯", "水面"],
          scene="清晨；薄雾；船灯", viewer="沈砚",
          source="world.json#locations.loc_lighthouse(level3) -> loc_ferry(level1)", authored=False,
+         provenance="derived", basis="location level comparison; world.json has no action log",
          focus="方向", note="由高到低，方向=下"),
     dict(id="di03", kind="moved", subject="韩渡", frm="潮生巷", to="早市", direction="平",
          place=("早市", "摊棚"), visible=["帆布棚", "鱼筐", "案板", "石板", "银鳞鱼", "白汽"],
          scene="清晨；薄雾；棚下散光", viewer="韩渡",
          source="world.json#locations.loc_alley -> loc_market（同为 level1）", authored=False,
+         provenance="derived", basis="location level comparison; world.json has no action log",
          focus="方向", note="同层移动，方向=平；不许出现高低措辞"),
 
     # --- subject ---
-    dict(id="su01", kind="outcome", subject="韩渡", value="把警示灯扶正",
+    dict(id="su01", kind="outcome", subject="韩渡", value="把被风吹歪的警示灯扶正",
          place=("雾堤", "堤面"), visible=["石壁", "钟架", "钟绳", "警示灯", "铁皮", "白沫"],
          scene="夜；浓雾；警示灯", viewer="韩渡",
-         source="world.json#tasks.task_warnlamp.resultText，改用韩渡为主语", authored=False,
-         focus="主体归属", note="动作与 cf24 的沈砚版相同、主体不同；不得把主体写成沈砚"),
+         source="world.json#tasks.task_warnlamp.resultText，改用韩渡为主语", authored=True,
+         provenance="authored", basis="subject swapped from the task owner (沈砚) to 韩渡",
+         focus="主体归属", note="主体是人工换的，不是世界记录；不得把主体写成沈砚"),
     dict(id="su02", kind="appearance_changed", subject="阿棠", value="围裙上刮破了口子",
          place=("早市", "摊棚"), visible=["帆布棚", "鱼筐", "案板", "石板", "银鳞鱼", "白汽"],
          scene="清晨；薄雾；棚下散光", viewer="阿棠",
@@ -132,12 +147,18 @@ UNITS = [
          place=("潮生巷", "巷子"), visible=["湿石板", "纸灯笼", "排水沟", "墙根", "水洼"],
          scene="雨后；雨停；纸灯笼", viewer="沈砚",
          source="authored（cf24 只有 12→9；此处换数值）", authored=True,
-         focus="理智数值", note="输入不含数字，只给“胸口发闷”；数值保真不可核时判 U"),
+         provenance="authored", basis="new numbers; the number is deliberately absent from the input",
+         focus="理智描述（输入不含数值）",
+         criterion="不得出现具体数值；只要求写出“胸口发闷”这类描述；数值保真不在本单元验收范围",
+         note="输入不含数字，判定只看是否编造数值"),
     dict(id="sa02", kind="sanity_changed", subject="韩渡", frm=15, to=11, descriptor="手抖",
          place=("雾堤", "堤面"), visible=["石壁", "钟架", "钟绳", "警示灯", "铁皮", "白沫"],
          scene="夜；浓雾；警示灯", viewer="韩渡",
          source="authored（新主体与新数值）", authored=True,
-         focus="理智数值", note="同上"),
+         provenance="authored", basis="new subject and numbers; the number is absent from the input",
+         focus="理智描述（输入不含数值）",
+         criterion="不得出现具体数值；只要求写出“手抖”这类描述；数值保真不在本单元验收范围",
+         note="同上"),
 
     # --- repetition / language ---
     dict(id="rp01", kind="appearance_changed", subject="铜灯罩", value="玻璃上蒙了一层水汽",
@@ -250,6 +271,8 @@ def main() -> int:
             unitId=unit["id"],
             source=dict(
                 spec=unit["source"], authored=unit["authored"],
+                provenance=unit.get("provenance", "verbatim"),
+                basis=unit.get("basis"),
                 worldFile="experiments/world-components/n4_narrative_dev/world.json",
                 worldSha256=sha256(WORLD),
             ),
@@ -264,12 +287,12 @@ def main() -> int:
             inputSha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
             overlap=dict(signatureHits=hits, inputHits=input_hits,
                          independent=not hits and not input_hits),
-            focus=unit["focus"], note=unit["note"],
+            focus=unit["focus"], note=unit["note"], criterion=unit.get("criterion"),
         ))
 
     registration = dict(
-        protocol="c4-acceptance-registration-v1",
-        status="registered, not run; u240 output never produced or inspected for these units",
+        protocol="c4-acceptance-registration-v2",
+        status="v1 superseded by v2 (provenance/criteria fixes); still registered, not run",
         createdAt="2026-11-08",
         unitCount=len(units_out),
         world=dict(path="experiments/world-components/n4_narrative_dev/world.json", sha256=sha256(WORLD),
@@ -293,15 +316,17 @@ def main() -> int:
         limitations=[
             "same N4 world as training; independence is signature/input level, not a new world",
             "authored values are declared per unit and are not world-authoritative records",
+            "world.json has no committed action log: all moved units are derived from location levels",
+            "v1 registration (freeze/acceptance-registration-v1.json) is kept as the reviewed-before-fix record",
             "no u240 output exists for this set yet; registration only",
             "judging will again be assistant-only unless a human reviewer is added",
         ],
     )
-    (EXPERIMENT / "freeze/acceptance-registration-v1.json").write_text(
+    (EXPERIMENT / "freeze/acceptance-registration-v2.json").write_text(
         json.dumps(registration, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     lines = [
-        "# 独立验收集登记 v1（已登记，未运行）",
+        "# 独立验收集登记 v2（已登记，未运行）",
         "",
         "> 状态：登记完成，**没有运行任何模型**，也没有生成或查看 u240 在这些单元上的输出。",
         f"> 单元数：{len(units_out)}；其中事实值由人工撰写（authored）的 {sum(1 for u in units_out if u['source']['authored'])} 条，其余直接取自世界字段。",
@@ -324,7 +349,7 @@ def main() -> int:
                      f'{"独立" if u["overlap"]["independent"] else "冲突"} | {u["focus"]} |')
     lines += ["", "## 输入渲染示例（ac01）", "", "```", units_out[0]["input"].rstrip(), "```", "",
               "## 限制", ""] + [f"- {x}" for x in registration["limitations"]]
-    (EXPERIMENT / "results/acceptance-registration-v1.md").write_text(chr(10).join(lines) + chr(10), encoding="utf-8")
+    (EXPERIMENT / "results/acceptance-registration-v2.md").write_text(chr(10).join(lines) + chr(10), encoding="utf-8")
 
     if problems:
         print("OVERLAP PROBLEMS:", json.dumps(problems, ensure_ascii=False, indent=1))
