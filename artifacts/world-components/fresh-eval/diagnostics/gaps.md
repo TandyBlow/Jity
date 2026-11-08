@@ -8,7 +8,7 @@
 | g03 | 外貌变化（人物 / 地点 / 物品） | `committed-narration.ts:28 → unsupported_narration_world_change（地点/物品）；:51 → unrecorded_appearance_change（人物）` | 外貌改写、衣物被雨打湿、黑板写满字、地点变暗等全部无法叙述；‘外貌’类覆盖在页面路径上不可测 |
 | g04 | 任务树新增（subtasksAdded） | `committed-narration.ts:35 → unsupported_committed_delta` | 新增子任务无法叙述，玩家看不到任务树扩张；已登记夹具 task-normalization.json 的整条路径在页面上不可达 |
 | g03b | 部分数值因果（只有任务达成、没有理智/人格） | `committed-narration.ts:38 → narration_requires_complete_numeric_cause` | 只达成任务、没有数值变化或人格变化的点无法进入页面叙事；三臂对照里的 nv-task-only-1 正是这种手写包，与投影规则不一致 |
-| g05 | 手写包与生产投影的输入契约不一致（nv-task-only-1） | `frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause` | nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致 |
+| g05 | 手写包与生产投影的输入契约不一致（nv-task-only-1） | `frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause` | 输入契约问题：页面生产路径根本不会产出这种事实包，所以该样本**不能代表当前页面生产路径**。这不等于模型在该题上的输出错误可以免计。 |
 
 ## 明细
 
@@ -57,8 +57,9 @@
 - 合法输入：EntityDelta.tasksAchieved 单独出现；A 侧内核允许，三臂样本 nv-task-only-1 也正是这种形状（只有任务达成、没有理智/人格）
 - 触发条件：tasksAchieved / personalityChanges / sanitySet 未同时出现（三者必须齐全）
 - 抛错位置：`frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause`
-- 影响：nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致
-- 需要：二选一：a) 生产投影放宽为允许纯任务达成（需要产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移除、只留在判分器单测里
-- 补上之后：任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线
-- 证据：committed-narration.ts 第 35–38 行；frontend/src/lib/world-engine/runtime/narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved
+- 影响：输入契约问题：页面生产路径根本不会产出这种事实包，所以该样本**不能代表当前页面生产路径**。这不等于模型在该题上的输出错误可以免计。
+- 账目：{"inputContract": "记为缺口：样本形状与生产投影不一致；处置见 ownerAction。", "outputError": "在**明确给定事实包**的诊断里，模型如果写错事实（换人物、错任务目标、多写或少写事实、把未达成写成达成），仍记为该诊断的输出错误。契约问题只解释“这条包从哪来”，不改变对模型输出的判定。", "separation": "两者分开记录：缺口表记输入契约，诊断结果记输出错误；不得用契约问题把输出错误一概免计。"}
+- 需要：二选一：a) 生产投影放宽为允许纯任务达成（需产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移出、只留在判分器单测里。c8 不修改生产投影。
+- 补上之后：任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线。
+- 证据：committed-narration.ts 第 35–38 行；narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved
 

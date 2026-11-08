@@ -1,22 +1,59 @@
-# 人工核验表（首批 6 条，未核验）
+# 人工核验表（六条诊断，逐项，待核验）
 
-标注者必须不是参与调参的人；每格填“通过/不通过/无法判断”，并写清依据。`无法判断` 不算通过。
+**本轮没有模型输出**，所以只能核验“题目与预期是否成立”，不能填写模型表现。结论列只允许：`待核验`（默认）／`通过`／`不通过`／`无法判断`。`无法判断` 不算通过。
 
-| 编号 | 夹具 | 模块 | 必须成立（逐项打勾） | 必须不出现 | 来源绑定 | 标注者 | 日期 | 结论 |
-|---|---|---|---|---|---|---|---|---|
-| `c8d01` | 单人移动 + 其余五人现状陈述 | 页面已提交叙事路径（committed-narration） | ☐ person_a 的移动方向必须是大堂→走廊<br>☐ 其余五人只写现状，不写他们移动 | ☐ 学生以外的人物<br>☐ 任何任务达成<br>☐ 任何人格或理智变化 | school.initial-state.json @ root_0 |  |  |  |
-| `c8d02` | 三人三地同时变化（含跨父地点） | 页面已提交叙事路径 | ☐ 三条移动的起点与终点必须各自对应，不得互换<br>☐ person_e 的终点是它的父地点二楼，不是同层教室 | ☐ 第四条移动<br>☐ 把三人写成同一目的地 | school.initial-state.json @ root_0 |  |  |  |
-| `c8d03` | 视角外的人移动（N2 视角诊断） | C 侧 N2 视角规则臂（narration_pipeline.select_facts） | ☐ N2 规则臂把 person_a 的移动判为不可见（invisible），理由记录观察依据缺失<br>☐ person_c 自身的现状可以进 must | ☐ 页面叙事臂的输出被当作视角过滤结果<br>☐ 把本项计入端到端能力成绩 | school.initial-state.json @ root_0 |  |  |  |
-| `c8d04` | 任务达成 + 人格变化 + 理智下降（回归诊断） | 页面已提交叙事路径 | ☐ 必须写成下降（30→26）<br>☐ 任务目标原文必须逐字出现<br>☐ 人格文本按夹具原文 | ☐ 升到了 26<br>☐ 把任务说成未完成<br>☐ 把人格写成相反意思 | school.initial-state.json @ root_0 |  |  |  |
-| `c8d05` | 空增量点（只有时间流逝） | 页面已提交叙事路径 | ☐ 必须写出时间流逝<br>☐ 不得编造任何变化 | ☐ 任何移动、任务、人格、理智变化 | school.initial-state.json @ root_0 |  |  |  |
-| `c8d06` | 三点链：移动 → 空点 → 父任务达成＋人格＋理智 | 页面已提交叙事路径 | ☐ 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成<br>☐ 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’<br>☐ 理智 30→28 为下降 | ☐ 把两个任务都写成已完成<br>☐ 把 28 写成上升 | school.initial-state.json @ root_0 |  |  |  |
+核验者不得是参与调参的人。依据一栏要写清引用了哪份材料（夹具路径、字段、行号）。
 
-## 使用说明
+| 编号 | 项 | 类型 | 内容 | 依据（事实／字段） | 核验者 | 日期 | 结论 |
+|---|---|---|---|---|---|---|---|
+| `c8d01` | 1 | 必须成立 | person_a 的移动方向必须是大堂→走廊 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d01` | 2 | 必须成立 | 其余五人只写现状，不写他们移动 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d01` | 3 | 必须不出现 | 学生以外的人物 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d01` | 4 | 必须不出现 | 任何任务达成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d01` | 5 | 必须不出现 | 任何人格或理智变化 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d02` | 1 | 必须成立 | 三条移动的起点与终点必须各自对应，不得互换 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.position.containerId`、`characters.person_e.position.containerId` |  |  | 待核验 |
+| `c8d02` | 2 | 必须成立 | person_e 的终点是它的父地点二楼，不是同层教室 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.position.containerId`、`characters.person_e.position.containerId` |  |  | 待核验 |
+| `c8d02` | 3 | 必须不出现 | 第四条移动 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.position.containerId`、`characters.person_e.position.containerId` |  |  | 待核验 |
+| `c8d02` | 4 | 必须不出现 | 把三人写成同一目的地 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.position.containerId`、`characters.person_e.position.containerId` |  |  | 待核验 |
+| `c8d03` | 1 | 必须成立 | N2 规则臂把 person_a 的移动判为不可见（invisible），理由记录观察依据缺失 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d03` | 2 | 必须成立 | person_c 自身的现状可以进 must | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d03` | 3 | 必须不出现 | 页面叙事臂的输出被当作视角过滤结果 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d03` | 4 | 必须不出现 | 把本项计入端到端能力成绩 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId` |  |  | 待核验 |
+| `c8d04` | 1 | 必须成立 | 必须写成下降（30→26） | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d04` | 2 | 必须成立 | 任务目标原文必须逐字出现 | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d04` | 3 | 必须成立 | 人格文本按夹具原文 | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d04` | 4 | 必须不出现 | 升到了 26 | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d04` | 5 | 必须不出现 | 把任务说成未完成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d04` | 6 | 必须不出现 | 把人格写成相反意思 | `school.initial-state.json` @ `root_0`；字段 `characters.person_c.tasks.task_wait_noon.status`、`characters.person_c.personalityChanges`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d05` | 1 | 必须成立 | 必须写出时间流逝 | `school.initial-state.json` @ `root_0`；字段 — |  |  | 待核验 |
+| `c8d05` | 2 | 必须成立 | 不得编造任何变化 | `school.initial-state.json` @ `root_0`；字段 — |  |  | 待核验 |
+| `c8d05` | 3 | 必须不出现 | 任何移动、任务、人格、理智变化 | `school.initial-state.json` @ `root_0`；字段 — |  |  | 待核验 |
+| `c8d06` | 1 | 必须成立 | 第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 2 | 必须成立 | 必须保留子任务 task_wait_noon 仍为 pending 的事实：不得表述为‘全部任务完成’ | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 3 | 必须成立 | 理智 30→28 为下降 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 4 | 必须不出现 | 把两个任务都写成已完成 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
+| `c8d06` | 5 | 必须不出现 | 把 28 写成上升 | `school.initial-state.json` @ `root_0`；字段 `characters.person_a.position.containerId`、`characters.person_c.tasks.task_c_root.status`、`characters.person_c.sanity` |  |  | 待核验 |
 
-1. 逐条把夹具跑一遍，记录实际输出（模型名、权重哈希、解码参数、设备、提交 SHA）。
-2. 每个核对项只判“成立/不成立/无法判断”，并写明依据文本位置。
-3. `c8d03` 只对 C 侧 N2 规则臂有效，不计入页面视角过滤或端到端能力成绩。
-4. `c8d04`／`c8d06` 是针对已知错误的回归诊断，不是独立留出。
-5. 核验通过也不等于可以冻结：来源独立性仍未成立（见 report 的 independence 字段）。
-6. 逐条材料（before／Δ／after、事实、允许与禁止、程序检查）见 `review-packets.md`。
-7. `c8d04` 的下降方向与 `c8d06` 的“不得说全部完成”目前**没有程序判定**，只能由人工给结论（见 `expectation-review.md`）。
+## 逐条提示
+
+- `c8d04`：明查**数值方向**（30→26 是下降，不是上升）。判定器目前不查方向词，所以这一项只能由人给结论。
+- `c8d06`：明查**父任务达成与子任务 pending 是否同时保留**（`task_c_root=achieved` 且 `task_wait_noon=pending`），不得只写“完成任务”或“全部完成”。事实包只带父任务那条 `task_achieved`，子任务状态不在包里，所以这项也必须由人核。
+- `c8d03`：只核 N2 规则臂的判定与理由，不核页面视角过滤，不计入端到端成绩。
+- `c8d05`：时间必述可程序检查；“没有编造”只能部分检查（见 `expectation-review.md`）。
+
+## 汇总（待人工填写）
+
+| 编号 | 已核项 | 通过 | 不通过 | 无法判断 | 待核验 | 备注 |
+|---|---|---|---|---|---|---|
+| `c8d01` | 0/5 | 0 | 0 | 0 | 5 |  |
+| `c8d02` | 0/4 | 0 | 0 | 0 | 4 |  |
+| `c8d03` | 0/4 | 0 | 0 | 0 | 4 |  |
+| `c8d04` | 0/6 | 0 | 0 | 0 | 6 |  |
+| `c8d05` | 0/3 | 0 | 0 | 0 | 3 |  |
+| `c8d06` | 0/5 | 0 | 0 | 0 | 5 |  |
+
+## 结论口径
+
+- 全部项目核完才可把该条从“待核验”移出；缺项按“待核验”记，不合并成“通过”。
+- 核验通过不等于可以冻结：来源独立性仍是 `undetermined`。
+- 本表不含模型输出；模型表现另开记录，且不得回填到本表。

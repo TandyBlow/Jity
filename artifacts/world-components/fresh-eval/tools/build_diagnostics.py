@@ -294,6 +294,7 @@ def main() -> int:
     write_review_table(data)
     write_review_packets(rows, data)
     write_expectation_review(rows)
+    write_grader_handoff(rows)
 
     accepted = report["summary"]["kernelAccepted"]
     print(f"head={report['worktreeHead'][:12]} diagnostics={len(rows)} "
@@ -316,6 +317,11 @@ def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_co
              f"工作树 HEAD：`{report['worktreeHead'][:12]}`；脚本 `tools/build_diagnostics.py`。", "",
              "**定位**：六条诊断夹具、零条正式独立评测题、未冻结。内核通过只说明增量被接受，"
              "不说明该点已提交，也不说明它未参与训练或调参。", "",
+             "**本轮范围**：没有模型输出，也没有人工结论。核验只到“题目与预期是否成立”，"
+             "未核项一律记 `待核验`；不运行模型、不追加候选。", "",
+             "**两条不能外推的结论**：R3 自检通过只证明规则按当前口径工作，"
+             "**不证明**历史变化事实可靠（十条旧题的依据全部 `undetermined`），"
+             "**也不证明**任何新题独立。", "",
              f"绑定来源：`{FIXTURE}`（sha256 `{sha256(fixture_path)[:16]}…`），"
              f"根点摘要 `{digest0[:16]}…`，与已提交根点一致："
              f"{'是' if digest0 == ROOT_DIGEST else '否'}。"
@@ -366,8 +372,10 @@ def write_report_md(report, rows, fixture_path, digest0, old_collisions, diag_co
               "- 旧题的变化事实依据全部 `undetermined`（见 `sources/three-arm-provenance.md`）："
               "签名相同只说明“按当前转换口径同形”。",
               "- 预期复核见 `expectation-review.md`：两条预期目前只能人工判定。",
-              "- `nv-task-only-1` 是手写包与生产投影的输入契约不一致（`gaps.md` g05），"
-              "其失败不能算模型失败。"]
+              "- `nv-task-only-1` 是手写包与生产投影的输入契约不一致（`gaps.md` g05）："
+              "这解释该包不能代表页面生产路径，但不豁免输出判分——明确给定事实包时，"
+              "模型写错事实仍记输出错误；两者分开记账。",
+              "- 判分缺口（理智方向、全部完成类总结句）已交维护方，见 `grader-handoff.md`。"]
     screening.write_artifact(OUT / "diagnostics/report.md", NL.join(lines) + NL)
 
 
@@ -472,6 +480,8 @@ def write_gaps():
                   f"- 触发条件：{g['condition']}",
                   f"- 抛错位置：`{g['throwPoint']}`",
                   f"- 影响：{g['impact']}",
+                  *([f"- 账目：{json.dumps(g['accounting'], ensure_ascii=False)}"]
+                    if g.get("accounting") else []),
                   f"- 需要：{g['ownerAction']}",
                   f"- 补上之后：{g['afterFix']}",
                   f"- 证据：{g['evidence']}", ""]
@@ -479,27 +489,181 @@ def write_gaps():
 
 
 def write_review_table(data):
-    lines = ["# 人工核验表（首批 6 条，未核验）", "",
-             "标注者必须不是参与调参的人；每格填“通过/不通过/无法判断”，并写清依据。"
+    """One row per check item, so a reviewer can judge each separately."""
+    lines = ["# 人工核验表（六条诊断，逐项，待核验）", "",
+             "**本轮没有模型输出**，所以只能核验“题目与预期是否成立”，"
+             "不能填写模型表现。结论列只允许：`待核验`（默认）／`通过`／`不通过`／`无法判断`。"
              "`无法判断` 不算通过。", "",
-             "| 编号 | 夹具 | 模块 | 必须成立（逐项打勾） | 必须不出现 | 来源绑定 | 标注者 | 日期 | 结论 |",
-             "|---|---|---|---|---|---|---|---|---|"]
+             "核验者不得是参与调参的人。依据一栏要写清引用了哪份材料（夹具路径、字段、行号）。", "",
+             "| 编号 | 项 | 类型 | 内容 | 依据（事实／字段） | 核验者 | 日期 | 结论 |",
+             "|---|---|---|---|---|---|---|---|"]
     for item in data["items"]:
-        must = "<br>".join(f"☐ {x}" for x in item["reviewChecks"]["mustHold"])
-        nots = "<br>".join(f"☐ {x}" for x in item["reviewChecks"]["mustNotAppear"])
-        fixture_name = item["binding"]["fixture"].split("/")[-1]
-        lines.append(f"| `{item['id']}` | {item['title']} | {item['module']} | {must} | "
-                     f"{nots} | {fixture_name} @ root_0 |  |  |  |")
-    lines += ["", "## 使用说明", "",
-              "1. 逐条把夹具跑一遍，记录实际输出（模型名、权重哈希、解码参数、设备、提交 SHA）。",
-              "2. 每个核对项只判“成立/不成立/无法判断”，并写明依据文本位置。",
-              "3. `c8d03` 只对 C 侧 N2 规则臂有效，不计入页面视角过滤或端到端能力成绩。",
-              "4. `c8d04`／`c8d06` 是针对已知错误的回归诊断，不是独立留出。",
-              "5. 核验通过也不等于可以冻结：来源独立性仍未成立（见 report 的 independence 字段）。",
-              "6. 逐条材料（before／Δ／after、事实、允许与禁止、程序检查）见 `review-packets.md`。",
-              "7. `c8d04` 的下降方向与 `c8d06` 的“不得说全部完成”目前**没有程序判定**，"
-              "只能由人工给结论（见 `expectation-review.md`）。"]
+        binding = item["binding"]
+        fields = "、".join(f"`{f}`" for f in binding.get("fieldPaths", [])) or "—"
+        base = (f"`{binding['fixture'].split('/')[-1]}` @ `{binding['statePointId']}`；"
+                f"字段 {fields}")
+        n = 0
+        for kind, key in (("必须成立", "mustHold"), ("必须不出现", "mustNotAppear")):
+            for text in item["reviewChecks"][key]:
+                n += 1
+                lines.append(f"| `{item['id']}` | {n} | {kind} | {text} | {base} "
+                             f"|  |  | 待核验 |")
+    lines += ["", "## 逐条提示", "",
+              "- `c8d04`：明查**数值方向**（30→26 是下降，不是上升）。"
+              "判定器目前不查方向词，所以这一项只能由人给结论。",
+              "- `c8d06`：明查**父任务达成与子任务 pending 是否同时保留**"
+              "（`task_c_root=achieved` 且 `task_wait_noon=pending`），"
+              "不得只写“完成任务”或“全部完成”。事实包只带父任务那条 `task_achieved`，"
+              "子任务状态不在包里，所以这项也必须由人核。",
+              "- `c8d03`：只核 N2 规则臂的判定与理由，不核页面视角过滤，不计入端到端成绩。",
+              "- `c8d05`：时间必述可程序检查；“没有编造”只能部分检查（见 `expectation-review.md`）。",
+              "",
+              "## 汇总（待人工填写）", "",
+              "| 编号 | 已核项 | 通过 | 不通过 | 无法判断 | 待核验 | 备注 |",
+              "|---|---|---|---|---|---|---|"]
+    for item in data["items"]:
+        total = len(item["reviewChecks"]["mustHold"]) + len(item["reviewChecks"]["mustNotAppear"])
+        lines.append(f"| `{item['id']}` | 0/{total} | 0 | 0 | 0 | {total} |  |")
+    lines += ["", "## 结论口径", "",
+              "- 全部项目核完才可把该条从“待核验”移出；缺项按“待核验”记，不合并成“通过”。",
+              "- 核验通过不等于可以冻结：来源独立性仍是 `undetermined`。",
+              "- 本表不含模型输出；模型表现另开记录，且不得回填到本表。"]
     screening.write_artifact(OUT / "diagnostics/review-table.md", NL.join(lines) + NL)
+
+
+def write_expectation_review(rows):
+    """What the program actually checks, what it does not, what stays human."""
+    items = [
+        ("c8d01",
+         "移动方向（大堂→走廊）；其余五人只写现状",
+         "按分句检查 `moved` 的 from/to 是否被写反（`direction_reversed`）；"
+         "检查人物名是否被换到别人的事实（`actor_swap`）；"
+         "对没有位置事实的站位声明报 `state_claim_without_fact`",
+         "只覆盖已知地点名与已登记动词；改写成不含已知地点名的方位描述、"
+         "或使用词表外动词的事件，不在检查范围内",
+         "“其余五人只写现状”的语义完整性；新增细节是否算编造"),
+        ("c8d02",
+         "三条移动各自对应、不得互换",
+         "同上：逐分句方向检查 + 人物互换检查；同一点多条 `moved` 时每条独立比对",
+         "不检查三条移动之间的联合一致性（例如把两个目的地写进同一句、"
+         "再靠分句切分绕开），也不检查“多写一条不存在的移动”之外的顺序问题",
+         "多人物同句的表达是否仍能逐条对上"),
+        ("c8d03",
+         "N2 规则臂把视角外移动判为不可见，并记录理由",
+         "只做了**辅助函数级**验证：直接调用 `_visibility_ground`，"
+         "对 `{kind:moved, entityId:person_a, at:corridor}` 返回 `(False, 'other-location')`",
+         "**没有**跑整条 `classify_facts` / N1 抽取 / 选择策略；"
+         "事实的 `at` 由上游填充，上游若填错，本验证不覆盖",
+         "整条筛选路径的实际输出；理由文案；must/may 的最终集合"),
+        ("c8d04",
+         "理智必须写成下降（30→26）",
+         "`wrong_number` 只检查句中的数字是否属于 `{from, to}`，"
+         "即 26、30 两个数字出现任意顺序都通过",
+         "**方向词完全没有检查**：“从26升到30”会通过；"
+         "改写成“降到 30、原来是 26”之类同样通过",
+         "数值方向（升/降）判定；这正是该诊断要人工确认的一项"),
+        ("c8d05",
+         "必须写出时间流逝；不得编造变化",
+         "`timeRequired` + `mentionsTime` 证明**时间要求被检查**（是否提到该时长）；"
+         "对已登记地点名的无事实站位、以及词表内动词的无事实事件，会报违规",
+         "**不证明“没有编造”**：词表外动词、未登记物件、"
+         "不含已知地点名的方位描述都不会被拦；"
+         "“没有变化”类总结句也不在检查范围",
+         "是否存在检查器不认识的编造；空点叙述是否自然"),
+        ("c8d06",
+         "第三点只写父任务达成；必须保留子任务仍为 pending；不得表述为“全部任务完成”",
+         "只要句子绑定任意 `task_achieved` 事实即可通过；"
+         "未绑定任务事实的完成说法会报 `task_claimed_without_fact`",
+         "**父/子任务区别不在检查范围**：事实包里只有父任务的 `task_achieved`，"
+         "子任务 pending 根本不在包里；不点人物的总结句（“全部任务完成”）"
+         "被显式排除在范围外",
+         "“全部完成”类总结句；父任务与子任务的同时保留"),
+    ]
+    lines = ["# 六条诊断的预期复核（自动生成，勿手改）", "",
+             "问题：预期里写的“必须／不得”，现有工具到底检查了哪一部分？"
+             "下表按 `narration-alignment.ts`（sha256 309ca19f…）与 "
+             "`n2_perspective.py` 的规则逐条对照，并列出剩余交人工的部分。", "",
+             "**检查器存在 ≠ 预期被完整覆盖**。下表第三列是“程序实际检查什么”，"
+             "第四列是“不覆盖什么”，第五列是“只能交人工的部分”。", "",
+             "| 项 | 预期 | 程序实际检查什么 | 程序不覆盖什么 | 交人工的部分 |",
+             "|---|---|---|---|---|"]
+    for item_id, expect, checks, not_covered, human in items:
+        lines.append(f"| `{item_id}` | {expect} | {checks} | {not_covered} | {human} |")
+    lines += ["", "## 结论", "",
+              "- 六条里没有一条是“程序完整覆盖预期”：`c8d01`／`c8d02` 覆盖方向与人物绑定，"
+              "但不覆盖改写后的表达完整性；`c8d05` 只覆盖时间必述与部分编造类别；"
+              "`c8d03` 只到辅助函数；`c8d04`／`c8d06` 的关键项**完全不可程序判定**。",
+              "- 因此复核表里每一格都必须由人给结论；程序结果只能作为参考证据，不能替代。",
+              "- 要让 `c8d04`／`c8d06` 可判，得先改判定器（见 `grader-handoff.md`），"
+              "改完要重跑受影响的旧题基线并记录判分器版本变化。",
+              "", "## 边界", "",
+              "- 表中“程序检查什么”来自阅读 TS 与一次 `_visibility_ground` 直接调用，"
+              "没有执行整条页面路径。",
+              "- 判定器是否在真实输出上误判，仍以实际运行为准；本批没有运行模型。"]
+    screening.write_artifact(OUT / "diagnostics/expectation-review.md", NL.join(lines) + NL)
+
+
+def write_grader_handoff(rows):
+    """Two concrete counterexamples for the grader maintainer."""
+    by_id = {r["id"]: r for r in rows}
+
+    def facts_of(row_id, point_id=None):
+        row = by_id[row_id]
+        for st in row["points"]:
+            if point_id and st["pointId"] != point_id:
+                continue
+            return st
+        return None
+
+    d04 = facts_of("c8d04")
+    d06 = facts_of("c8d06", "c8d06_p3")
+    lines = ["# 判分缺口交接（给判定器维护方，自动生成，勿手改）", "",
+             "c8 只保留诊断材料，不修改判定器、不修改生产投影。下面两个反例都来自本批诊断的事实包，"
+             "可以直接作为回归用例。", "",
+             "判定器：`frontend/src/lib/world-engine/runtime/narration-alignment.ts`"
+             "（sha256 309ca19f…，本批未运行，结论来自阅读源码）。", "",
+             "## 反例一：理智方向写反不被拦", "",
+             "**事实包（c8d04 第三点同型，去掉人格/任务后仍成立）**", "",
+             "```json",
+             json.dumps({"facts": [
+                 {"kind": "sanity_changed", "name": "C", "from": 30, "to": 26},
+                 {"kind": "at", "name": "C", "location": "一号教室"},
+             ], "time": {"amount": 2, "unit": "minute"}}, ensure_ascii=False, indent=1),
+             "```", "",
+             "**输入句**：`C的精神值从26升到30。`", "",
+             "**应判结果**：违规（方向写反：事实是 30→26 下降）。"
+             "建议违规种类沿用 `wrong_number` 或新增 `direction_reversed`（sanity 分支）。", "",
+             "**当前行为**：通过。`narration-alignment.ts:396-403` 的 `wrong_number` 只检查"
+             "句中数字是否属于 `{from, to}`；26 和 30 都在集合里，顺序不被检查。", "",
+             "## 反例二：把父任务达成写成“全部任务完成”不被拦", "",
+             "**事实包（c8d06 第三点）**", "",
+             "```json",
+             json.dumps({"facts": d06["changeFacts"], "time": {"amount": 3, "unit": "minute"}},
+                        ensure_ascii=False, indent=1),
+             "```", "",
+             "**输入句**："
+             "`C完成了任务「安全度过校园中的这段时间」，校园里的所有任务都完成了。`", "",
+             "**应判结果**：违规。两点理由都要写到："
+             "（1）事实只支持 `task_c_root` 达成；"
+             "（2）子任务 `task_wait_noon` 仍为 pending，不能说“所有任务完成”。", "",
+             "**当前行为**：通过。`narration-alignment.ts:439-444` 只要句子里绑上任意 "
+             "`task_achieved` 事实就放行；不点人物的总结句（“全部任务完成”）"
+             "被第 433 行注释显式排除在检查范围外。", "",
+             "**额外问题（契约，不是判定器能单独解决的）**：本批事实包只含父任务的 "
+             "`task_achieved`，子任务 pending **根本不在包里**（`committed-narration.ts` 只发"
+             " `task_achieved`，不发任务状态）。所以即使判定器加了“全部完成”规则，"
+             "也缺一条可核对的 pending 事实。要修需二选一：", "",
+             "1. 投影补一条“任务状态”事实（或允许 `task_pending` 类事实），判定器据此比对；",
+             "2. 明确产品口径：父任务达成时不允许叙述引申到子任务，按措辞规则（而非事实比对）拦。", "",
+             "## 修复后的要求", "",
+             "- 两条反例都加成回归用例，必须判违规；本批六条诊断的事实包可直接复用。",
+             "- 重跑受影响的旧题基线（至少 `nv-task-pers-sanity-1`、`nv-task-only-1`），"
+             "并记录判分器版本变化（文件哈希 + 行为变更说明）。",
+             "- 若修改了事实包形状（增加 pending 事实），旧题基线同样要重跑，"
+             "并同步更新 `sources/three-arm-provenance.md` 的结论。",
+             "- c8 不代改判定器；修复完成后由维护方给出新版本证据，c8 只做引用。",
+             ]
+    screening.write_artifact(OUT / "diagnostics/grader-handoff.md", NL.join(lines) + NL)
 
 
 def _time_of(item, point_id):

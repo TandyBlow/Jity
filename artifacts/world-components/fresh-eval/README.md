@@ -113,6 +113,8 @@ python artifacts/world-components/fresh-eval/tools/exclusion_selftest.py
 | 十题之外还有 `hv-*`／`ns-*`／`b3-*` 三族旧题 | 只把它们算进 R1 排除串，没做逐题签名 | 已在 `exclusion-scope.json` 的 `threeArmSiblings` 登记；要逐题签名需另开一轮 |
 | 绑定已登记夹具的夹具必然复用夹具里的人名地名 | 词表闸对它们恒为命中 | `source-bound` 模式只把命中记为「已登记复用」并逐项列出；它只表示来源绑定状态，**不表示独立性通过** |
 | 本批没有正式独立来源 | 六条只能作诊断，不能作正式评测题 | 已在 `diagnostics/report.md` 逐条写「独立性：undetermined」；正式评测题须另找可核实的独立来源（不必限定等 R01） |
+| 旧题十条的变化事实没有权威读取 | 签名只说明形状；不能拿它证明派生，也不能说旧题历史可靠 | `sources/three-arm-provenance.md`：十条全部 `undetermined`，锚点是占位值、`hall`/`task_intro`/`task_shelf` 在夹具里不存在 |
+| 判定器不查理智方向、不查“全部完成”类总结句 | 这两项预期无法程序判定 | 已交 `diagnostics/grader-handoff.md`（两个反例 + 修复后重跑旧题基线的要求） |
 
 ---
 
@@ -136,7 +138,8 @@ artifacts/world-components/fresh-eval/
 │   ├── gaps.json / .md           缺口：叙事投影 4 条 + 手写包与投影契约不一致 1 条
 │   ├── review-table.md           人工核验表（标注者列留空）
 │   ├── review-packets.md         六条逐条核验包（before／Δ／after、事实、检查）
-│   └── expectation-review.md     六条预期是否可被程序判定
+│   ├── expectation-review.md     程序实际检查什么、不覆盖什么、交人工什么
+│   └── grader-handoff.md         判分缺口交接（两个反例，给判定器维护方）
 ├── verification.log             来源复算、自检和回归检查的命令与输出
 ├── .gitattributes               保留本目录文件原始字节，避免哈希随换行转换漂移
 └── tools/
@@ -151,12 +154,13 @@ artifacts/world-components/fresh-eval/
 
 ## 7. 当前状态与下一步
 
-**已交付**：六条诊断夹具、零条正式独立评测题、未冻结（见 `diagnostics/`）。诊断不等于评测：`source-bound` 只表示来源绑定状态，`accepted by apply_point` 只表示增量被内核接受，`not-committed` 表示本批全是假设点、没有 round/group/settle/points 记录，独立性一律 `undetermined`。
+**已交付**：六条诊断夹具、零条正式独立评测题、未冻结（见 `diagnostics/`）；核验材料已整理完毕，等待人工逐项判定。诊断不等于评测：`source-bound` 只表示来源绑定状态，`accepted by apply_point` 只表示增量被内核接受，`not-committed` 表示本批全是假设点、没有 round/group/settle/points 记录，独立性一律 `undetermined`。
 
 **下一步**：
 1. 按 `diagnostics/review-table.md` 做人工核验（标注者不得参与调参），逐项填「通过／不通过／无法判断」；`无法判断` 不算通过。
 2. 正式评测题另找可核实的独立来源：要能追到来源文件、点位身份和使用历史，且能证明未参与训练或调参。不限定只能等 R01。
 3. 缺口（`diagnostics/gaps.md`）交对应模块；能力补齐后必须重新核验来源独立性，不能自动晋升为正式题。
-4. 两条目前没有程序判定的预期（`c8d04` 下降方向、`c8d06` “不得说全部完成”）需要先扩判定器或明确只走人工。
+4. `c8d04` 的数值方向、`c8d06` 的父/子任务同时保留：目前只能人工判定；判分缺口已交维护方，修复后要重跑受影响旧题基线并记录判分器版本变化。
+5. 未核项一律记 `待核验`；本轮不追加候选、不运行模型。
 
 来源历史无法核实、缺失归档影响无法排除时，保持 `undetermined`。本目录的合成自检输入只是规则探针，不进入正式评测集。本轮提交只归档来源审计、规则机制与六条诊断夹具，不表示新评测集已冻结或独立性已获证明。

@@ -1,5 +1,5 @@
 {
- "worktreeHead": "01e0a92fd88a77a4b6aec5799bc9266170ab8be1",
+ "worktreeHead": "cfea5835e85d6a7959dafb7abead23123b72964c",
  "positioning": {
   "whatThisIs": "六条诊断夹具：用已登记夹具的初始状态构造假设点位，经 A 侧内核应用、跑排除规则、并给出人工核验要求。",
   "whatThisIsNot": "不是正式独立评测题，不冻结，不主张点位级独立，不计入任何能力成绩。",
@@ -2364,10 +2364,15 @@
    "legalInput": "EntityDelta.tasksAchieved 单独出现；A 侧内核允许，三臂样本 nv-task-only-1 也正是这种形状（只有任务达成、没有理智/人格）",
    "throwPoint": "frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause",
    "condition": "tasksAchieved / personalityChanges / sanitySet 未同时出现（三者必须齐全）",
-   "impact": "nv-task-only-1 这种手写叙事包无法由生产路径生成：页面根本不会产出这条事实包。模型在该题上表现差不能算模型失败，只能说明样本与生产契约不一致",
-   "ownerAction": "二选一：a) 生产投影放宽为允许纯任务达成（需要产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移除、只留在判分器单测里",
-   "afterFix": "任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线",
-   "evidence": "committed-narration.ts 第 35–38 行；frontend/src/lib/world-engine/runtime/narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved"
+   "impact": "输入契约问题：页面生产路径根本不会产出这种事实包，所以该样本**不能代表当前页面生产路径**。这不等于模型在该题上的输出错误可以免计。",
+   "ownerAction": "二选一：a) 生产投影放宽为允许纯任务达成（需产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移出、只留在判分器单测里。c8 不修改生产投影。",
+   "afterFix": "任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线。",
+   "evidence": "committed-narration.ts 第 35–38 行；narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved",
+   "accounting": {
+    "inputContract": "记为缺口：样本形状与生产投影不一致；处置见 ownerAction。",
+    "outputError": "在**明确给定事实包**的诊断里，模型如果写错事实（换人物、错任务目标、多写或少写事实、把未达成写成达成），仍记为该诊断的输出错误。契约问题只解释“这条包从哪来”，不改变对模型输出的判定。",
+    "separation": "两者分开记录：缺口表记输入契约，诊断结果记输出错误；不得用契约问题把输出错误一概免计。"
+   }
   }
  ]
 }

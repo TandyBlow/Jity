@@ -1,6 +1,6 @@
 # 排除规则自检（自动生成，勿手改）
 
-工作树 HEAD：`01e0a92fd88a77a4b6aec5799bc9266170ab8be1`；脚本 `tools/exclusion_selftest.py`。
+工作树 HEAD：`cfea5835e85d6a7959dafb7abead23123b72964c`；脚本 `tools/exclusion_selftest.py`。
 
 ## 输入
 
