@@ -115,7 +115,7 @@ G1｜f0 f1
 6. N5 硬门确实在判：`reject-n5`、`fail-n5-extra-actor`、`contract-time-conflict` 三例的脚本正文都被拒，说明 `ok` 不是恒真。
 
 **已失败（本实验暴露的问题）**
-1. **任务标题契约冲突。** N4.0 的要求行写着「不写任务标题」，但 v2 N5 对任务类事实只有一种帧：`完成任务「目标原文」`。照 N4.0 写（把结果写成动作）必然挂 G1；照 N5 写就违反 N4.0。定点探针：`out/contract-probes.json` 的 `task-title-quoted`（pass）与 `task-title-paraphrased`（`uncovered:f1:task_achieved`）。4 个 `ok` 场景里含任务类事实的是 `normal-move-task` 与 `retry-n5-success`，这两个都选了后者（写标题）。登记为 D1。
+1. **任务标题契约冲突。** N4.0 的要求行写着「不写任务标题」，但 v2 N5 对任务类事实只有一种帧：`完成任务「目标原文」`。照 N4.0 写（把结果写成动作）必然挂 G1；照 N5 写就违反 N4.0。定点探针：`out/contract-probes.json` 的 `task-title-quoted`（pass）与 `task-title-paraphrased`（`uncovered:f1:task_achieved`）。4 个 `ok` 场景里含任务类事实的是 `normal-move-task` 与 `retry-n5-success`，这两个都选了后者（写标题）。另一条更自然的路（改成结果表述 `outcome` + `resultText`）今天也走不通：判定器对它直接抛 `no v2 pattern for kind outcome`（`out/contract-probes.json` → `outcome-kind-unsupported`，`pass=null`）。登记为 D1。
 2. **两套 N5 程序核不一致。** 本组合用 v2 对齐器（`eval_n4_v2.judge_row`）。同一批正文再用 v7 识别器（`corpus_check.check_narration`，`verify_text` 调用）看：`reject-n5` 第 2 次截断文本 `fails=[] reviews=0`（v7 没有截断规则），`fail-n5-extra-actor` 的残留人名只算 review，不算 fail。也就是说，「N5 拒绝」目前取决于用哪套核。
 3. **时间契约冲突。** N4.0 契约明确要求时间只模糊表达、不写具体时长；v2 N5 的 G3 要求正文出现计划里的精确数值。照 N4.0 写的合规文本（`…过了一会儿。`）必然挂 G3（`uncovered:f2:time`）。本实验没有放宽任何门，只把这个冲突固定成一个场景。
 4. **N5 不硬拒新增具名人物。** v2 G2 只扫 `facts` 里已登记的人名和任务目标，新出现的名字（`管线丙`）不在扫描范围；v7 核也只给 review。本场景靠夹具自带的 `annotations.addsUnregisteredEntity` 才标成 `n5-false-pass`，不是判定器自己发现的。
@@ -128,11 +128,11 @@ G1｜f0 f1
 
 ## 6. 契约裁决项
 
-上面暴露的四处冲突（任务标题、时间精确度、两套 N5 核、新增具名人物）加一处门控问题（G4/G5 靠 caseId 触发），逐条登记在 [contract-decisions.md](contract-decisions.md)，每条写清：谁要求什么、证据指向哪个文件的哪个字段、现在会怎样、可选方向与代价、需要谁定。
+上面暴露的四处冲突（任务标题、时间精确度、两套 N5 核、新增具名人物）加一处门控问题（G4/G5 靠 caseId 触发），逐条登记在 [contract-decisions.md](contract-decisions.md)：契约原文、证据指向哪个文件的哪个字段、现在会怎样、选项与代价、**一条建议（不是决定）**、若选建议项要改什么/重跑什么、验收判据。该文件还含真模型实验前的四条门槛和一张待填的裁决记录表。
 
 | 编号 | 冲突 | 现在的后果 | 证据 |
 | --- | --- | --- | --- |
-| D1 | N4.0「不写任务标题」 vs N5 要求 `完成任务「目标」` | 任务类事实写标题才过门，不写就挂 G1 | `out/contract-probes.json` `task-title-*`；`composition-run.json` `normal-move-task` |
+| D1 | N4.0「不写任务标题」 vs N5 要求 `完成任务「目标」` | 任务类事实写标题才过门，不写就挂 G1；改成结果表述则判定器无帧可判 | `out/contract-probes.json` `task-title-*`、`outcome-kind-unsupported`；`composition-run.json` `normal-move-task` |
 | D2 | N4.0 强制模糊时间 vs N5 要求精确数值 | 含时间推进的点要么不过门，要么违反 N4.0 | `out/contract-probes.json` `time-*`；`contract-time-conflict` |
 | D3 | 两套 N5 程序核口径不同 | 「N5 拒绝」取决于用哪套核 | `n5CrossCheck`（`reject-n5`、`fail-n5-extra-actor`） |
 | D4 | 新增具名人物没有硬门 | 编造人物会被放行 | `n5-false-pass-unregistered-actor` |
@@ -154,8 +154,8 @@ G1｜f0 f1
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | 两次运行比对 | `88406e52fcd9246fd59e1b39e1189ad94dd37f1732538ca8135113c3b5d82952` |
 | `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `de65ea56b7da7dd28290e6229c0f7c11adbeea3bab82e533ab7cca0d24581e00` |
-| `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656` |
-| `contract-decisions.md` | D1–D5 契约裁决项登记 | `ae6a0a3d044431f2dd780df8e8868fb77ff4bba49c70398027f393ac1e806b73` |
+| `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
+| `contract-decisions.md` | D1–D5 契约裁决项登记 | `997953db146843a84bc035b89c8f157adaecf84a8a390982225662873450c667` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 
@@ -169,7 +169,7 @@ G1｜f0 f1
 | --- | --- |
 | `out/composition-run.json` | 原始运行归档：每场景每步的请求、响应、校验、耗时；`cases[].facts[]` 是事实溯源 |
 | `out/determinism.json` / `-a.json` / `-b.json` | 确定性比对的结论与参与比对的两份完整输出 |
-| `out/contract-probes.json` | 任务标题与时间表达的定点探针结果（每句的硬门取值与问题） |
+| `out/contract-probes.json` | 任务标题、时间表达与 `outcome` 帧的定点探针结果（`probes` 为归档文本，`syntheticProbes` 为构造行） |
 | `out/console.log` | 本次运行的终端输出 |
 | `fixtures/manifest.json` | 输入清单与哈希：上游实现、契约文档、旧归档、本实验夹具；含 `missing`（本次为 0）、`n5Rule`、`n5GateCoverage`（逐门执行次数/案例/取值，从归档实测）、`tokenGate` |
 

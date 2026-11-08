@@ -1,16 +1,18 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:09:04.093490+00:00",
+ "recordedAt": "2026-11-08T06:12:30.303662+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "8d8487cc74f37493dbda1f862384a0b9b8f22150",
-  "headSubject": "C7 round composition: stop the manifest's git head from going dangling",
+  "headAtRecording": "9310e6c6cd61e937793d2dce04c1ce5fa5362cb8",
+  "headSubject": "C7 round composition: state which ok cases carry task facts (precision fix)",
   "porcelain": [
    "M experiments/world-components/parallel/round_composition/README.md",
    " M experiments/world-components/parallel/round_composition/contract-decisions.md",
+   " M experiments/world-components/parallel/round_composition/contract_probes.py",
    " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
+   " M experiments/world-components/parallel/round_composition/out/contract-probes.json",
    "?? TASK.md"
   ]
  },
@@ -142,8 +144,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "8686b3c228915eace11291dee3ca61b0671d8c6b5e0e237a7c84f4e699b078bb",
-    "bytes": 20157
+    "sha256": "93834ae2785b9e922045bc9f4c45274ea91321ecb965a41099150efc0ae1629f",
+    "bytes": 20646
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -152,13 +154,13 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
-    "sha256": "ae6a0a3d044431f2dd780df8e8868fb77ff4bba49c70398027f393ac1e806b73",
-    "bytes": 9992
+    "sha256": "997953db146843a84bc035b89c8f157adaecf84a8a390982225662873450c667",
+    "bytes": 16179
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
-    "sha256": "7998a781a93ead993d1bed141b587bc8d7d6ec3e650cdaa2b3907416fe973656",
-    "bytes": 6031
+    "sha256": "8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c",
+    "bytes": 9425
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -190,8 +192,8 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
-   "sha256": "dbc94dd455deb1205ec6ee6f6d9f5d7d4fdadff06e930e3165a2365d833362d1",
-   "bytes": 3163
+   "sha256": "57e27e0c076dd5ac6a07c402e7d8bc90336a0cb472442392abe83a4a226cefdf",
+   "bytes": 4078
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",

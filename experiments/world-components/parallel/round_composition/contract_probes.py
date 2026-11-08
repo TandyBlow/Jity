@@ -14,6 +14,14 @@
 #   P4 time, exact value         expectation: pass -> only the exact value
 #                                satisfies G3, contradicting N4.0's vague
 #                                time line and its "不写具体时长" rule
+#   S1 outcome kind (SYNTHETIC)  expectation: the judge has no frame for
+#                                `outcome` and raises ValueError -> the
+#                                "switch task facts to resultText" option for
+#                                D1 is not evaluable by the current gate
+#
+# S1 constructs its row from the archived normal-move-task facts (the task
+# fact rewritten to `outcome` + resultText) and is labelled synthetic: it is
+# not a fact set produced by N1.
 #
 # Usage: python -X utf8 contract_probes.py [--run out/composition-run.json]
 #                                           [--out out/contract-probes.json]
@@ -60,6 +68,45 @@ PROBES = {
 }
 
 
+# Synthetic rows: built from an archived case's facts, then transformed.
+# They are labelled `synthetic: true` in the archive so they can never be
+# mistaken for N1 output.
+SYNTHETIC = [
+    {
+        "probeId": "outcome-kind-unsupported",
+        "caseId": "normal-move-task",
+        "why": "D1 option A: express the completed task as `outcome` + "
+               "resultText (what N2/N4.0 already carry) instead of the task "
+               "title. The frozen v2 judge has no pattern for `outcome`.",
+        "transform": "task_achieved -> outcome(+resultText)",
+        "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。",
+    },
+]
+
+
+def judge_synthetic(probe, base):
+    """Build the synthetic row and judge it; a judge ValueError is recorded
+    as a capability gap, not as a verdict."""
+    facts = []
+    for f in base["facts"]:
+        g = dict(f)
+        if g.get("kind") == "task_achieved":
+            g["kind"] = "outcome"
+            g["resultText"] = "把铜铃挂回了钟楼"
+        facts.append(g)
+    row = {"rowId": f"comp:{probe['caseId']}",
+           "facts": facts, "mustExpress": list(base["mustExpress"]),
+           "plan": base["plan"]}
+    try:
+        verdict = judge_row(row, probe["text"], "eos")
+        return {"pass": verdict["pass"], "gates": verdict["gates"],
+                "problems": verdict["align"]["problems"]}
+    except ValueError as exc:
+        return {"pass": None, "judgeError": str(exc),
+                "note": "the gate cannot evaluate this fact kind at all, so "
+                        "no verdict exists"}
+
+
 def sha256_file(path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -100,6 +147,19 @@ def main() -> int:
                 "pass": verdict["pass"],
             })
 
+    synthetic = []
+    for probe in SYNTHETIC:
+        case = by_id[probe["caseId"]]
+        base = {"facts": [f for f in case["stages"]["n1"]["facts"]
+                          if f["factId"] in set(case["selectedFactIds"])],
+                "mustExpress": list(case["selectedFactIds"]),
+                "plan": case["stages"]["organization"]["response"]}
+        synthetic.append({"probeId": probe["probeId"],
+                          "caseId": probe["caseId"], "why": probe["why"],
+                          "transform": probe["transform"],
+                          "text": probe["text"], "synthetic": True,
+                          **judge_synthetic(probe, base)})
+
     doc = {
         "version": "round-composition-contract-probes-v0.1",
         "purpose": "record how the frozen v2 N5 gate treats the two "
@@ -110,6 +170,7 @@ def main() -> int:
                       "sha256": sha256_file(args.run)},
         "rule": "eval_n4_v2.judge_row, same call as the composition archive",
         "probes": probes,
+        "syntheticProbes": synthetic,
         "reading": {
             "taskTitle": "P1 passes because the v2 frame requires the goal "
                          "quoted as 「goal」; P2 paraphrases the same fact and "
@@ -120,6 +181,12 @@ def main() -> int:
                     "planned exact value passes. N4.0 renders time as "
                     "时间经过 / 过去了一会儿 and forbids 具体时长, so a "
                     "compliant text cannot pass G3.",
+            "outcomeKind": "S1 converts the completed task into `outcome` + "
+                           "resultText (the shape N2 selects and N4.0 packs) "
+                           "and the judge raises 'no v2 pattern for kind "
+                           "outcome'. So D1 option A needs a new N5 frame "
+                           "before it can even be measured; the current gate "
+                           "cannot express a verdict for that fact kind.",
         },
     }
     out = pathlib.Path(args.out)
@@ -129,6 +196,9 @@ def main() -> int:
     for p in probes:
         print(f"{p['probeId']:24s} pass={p['pass']} gates={p['gates']} "
               f"problems={p['problems']}")
+    for p in synthetic:
+        print(f"{p['probeId']:24s} pass={p['pass']} "
+              f"{p.get('judgeError') or p.get('problems')}")
     print("->", out)
     return 0
 
