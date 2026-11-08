@@ -1,0 +1,220 @@
+{
+  "protocol": "c1-n2-integration-handoff-v1",
+  "createdOn": "2026-11-08",
+  "branch": "exp/c-attention-parse",
+  "c1Head": "a26228cbf5b09072ceebf4954c6a9cff3f296a99",
+  "status": "有实验结果，独立过滤器接线已验证；正式 N2 未接入；真实玩家表达覆盖无法判断",
+  "doesNotChange": [
+    "runs/r1/",
+    "freeze/contract-v1.md",
+    "freeze/acceptance-v1.json",
+    "freeze/anchors-v1.json"
+  ],
+  "targetShape": {
+    "fields": [
+      "entityId",
+      "scope",
+      "part?",
+      "partAnchored?",
+      "surface",
+      "scopeCue"
+    ],
+    "scopes": [
+      "object",
+      "position",
+      "appearance",
+      "task",
+      "part"
+    ],
+    "states": [
+      "resolved",
+      "ambiguous",
+      "unresolved",
+      "none"
+    ],
+    "emptyTargetsForStates": [
+      "ambiguous",
+      "unresolved",
+      "none"
+    ]
+  },
+  "mapping": {
+    "pipeline": "classify_facts(may_policy='select') -> keep all must -> keep may only if a target matches -> never resurrect invisible",
+    "mayPolicyNote": "attention and may_policy are alternative selectors for may facts; with may_policy='omit' the targets are never consumed",
+    "scopeKinds": {
+      "object": [
+        "<all kinds of that entity>"
+      ],
+      "position": [
+        "moved",
+        "positioned_at",
+        "position_relative",
+        "slot_changed"
+      ],
+      "appearance": [
+        "appearance_changed",
+        "appearance_removed"
+      ],
+      "task": [
+        "task_achieved",
+        "subtask_added"
+      ],
+      "part": [
+        "appearance_changed",
+        "appearance_removed"
+      ]
+    },
+    "partRule": "fact.text contains target.part literally; partAnchored=false changes nothing here",
+    "invariants": [
+      "must facts are kept regardless of attention",
+      "empty targets select no may fact (equivalent to may_policy='omit')",
+      "invisible / refusals / stops semantics unchanged",
+      "one fact selected at most once; order follows classify_facts"
+    ]
+  },
+  "openDecisions": [
+    {
+      "id": "OD-1",
+      "issue": "no personality scope; '什么性子' currently widens to object",
+      "blocks": "R-attention-v1 G1-A/G1-B",
+      "owner": "N2 integration"
+    },
+    {
+      "id": "OD-2",
+      "issue": "product may_policy is 'omit' today; attention targets are only consumed under 'select'",
+      "blocks": "any attention-driven narration",
+      "owner": "N2 integration / product"
+    },
+    {
+      "id": "OD-3",
+      "issue": "old six-condition attentionTargets are words, not scoped targets; do not reuse as new labels",
+      "blocks": "reusing attention-selection-v1.json as integration truth",
+      "owner": "N2 integration"
+    }
+  ],
+  "knownFailures": [
+    {
+      "id": "KF-1",
+      "input": "看看他手背",
+      "behaviour": "falls back to object (whole entity)",
+      "evidence": "freeze/v2-extra-probes.json#X2 covers only the 的<X> shape",
+      "mustHandleBeforeIntegration": true
+    },
+    {
+      "id": "KF-2",
+      "input": "局部词不在 part 词表",
+      "behaviour": "with 的 -> unresolved (empty targets); without 的 -> KF-1",
+      "evidence": "freeze/contract-v1.md §8",
+      "mustHandleBeforeIntegration": true
+    },
+    {
+      "id": "KF-3",
+      "input": "整人 + 局部同一句",
+      "behaviour": "only one scope per entity; second request ignored",
+      "evidence": "freeze/contract-v1.md §8",
+      "mustHandleBeforeIntegration": false
+    },
+    {
+      "id": "KF-4",
+      "input": "两个完全同名实体",
+      "behaviour": "covered only by a synthetic roster",
+      "evidence": "freeze/rule-cases.json#U1",
+      "mustHandleBeforeIntegration": false
+    }
+  ],
+  "integrationFreezeRequirements": {
+    "perSample": [
+      "before/after/delta or fact bundle source",
+      "perspective",
+      "subject_tasks",
+      "may_policy",
+      "utterance",
+      "expectedSelectedFactIds"
+    ],
+    "gates": [
+      "all must facts kept",
+      "no may fact outside the attention scope selected",
+      "empty targets select zero may facts",
+      "zero invisible/forbidden selections; stops behaviour unchanged"
+    ],
+    "reporting": [
+      "parse error (c1)",
+      "classification error (classify_facts)",
+      "filter decision error (scope filter)"
+    ],
+    "batchSizeMax": 10,
+    "labelsFrozenBeforeImplementation": true
+  },
+  "evidence": [
+    {
+      "path": "runs/r1/raw-output.json",
+      "sha256": "0f7abbac701219b4d02d098036591ee134780b0a14fb45108b32a1bec7a66eec",
+      "recordedCommit": null
+    },
+    {
+      "path": "runs/r1/score.json",
+      "sha256": "428608f60e78a9a794090b2b8fd1e299ed22f75af6c7f4b63986a9a798d21fcf",
+      "recordedCommit": "0df57f413a1321cdfe7a1eb9da65e81666d5fb4f"
+    },
+    {
+      "path": "runs/contract-v1/validation.json",
+      "sha256": "0bbcad3cb8595af0e630aa31df17ac4af6711e02da24219ff6afef900e82e8ff",
+      "recordedCommit": "ee5c4ccfe66196418968dfda0397bff9721e9230"
+    },
+    {
+      "path": "runs/v2-acceptance/parse.json",
+      "sha256": "b38f7414d44c51672b5f3e9b4f9e1ed8c298a3357cad8d50efb90344d52ee647",
+      "recordedCommit": null
+    },
+    {
+      "path": "runs/v2-acceptance/score.json",
+      "sha256": "7d00ed509a7ceb20c11fe36422b1d5df5204fec357a0a00db642c625cc76f700",
+      "recordedCommit": "44a23687fc41522cae0bf6533033871c9f13b4e5"
+    },
+    {
+      "path": "runs/wiring-v1/parse.json",
+      "sha256": "daca8f6a77118e8a2e20c0ea5c6c287ca80cbefe875f12fd37b15f736b4fae7c",
+      "recordedCommit": null
+    },
+    {
+      "path": "runs/wiring-v1/selection.json",
+      "sha256": "779854dd1590d595e5260bc6613b8e1f1de832dca82a3d9cbe3f2960b93dc187",
+      "recordedCommit": null
+    },
+    {
+      "path": "runs/wiring-v1/score.json",
+      "sha256": "97b549f51ddb2988fe0ad45cc33e36f9ed2179387532f99b68d2856eccb1559f",
+      "recordedCommit": "44a23687fc41522cae0bf6533033871c9f13b4e5"
+    },
+    {
+      "path": "freeze/contract-v1.md",
+      "sha256": "d18e563fb9197bc39533042cb399e1dbc27a8ca7459ca797cc531f5bd72e91ac",
+      "recordedCommit": null
+    },
+    {
+      "path": "freeze/acceptance-v1.json",
+      "sha256": "28f3873bce361c7b3f8b6c0496042e1b4c6483028ffe46a03a9a557e367c9b69",
+      "recordedCommit": null
+    },
+    {
+      "path": "freeze/anchors-v1.json",
+      "sha256": "4995c449ad954a4eef1890ac8cf4b856311c44ca9cbd7c04dfd0c34758f5507b",
+      "recordedCommit": null
+    },
+    {
+      "path": "freeze/facts-v1.json",
+      "sha256": "249059bb878bd15575d06e51c8467ab64b532781ec3065cfce86b1623ac5be4a",
+      "recordedCommit": null
+    },
+    {
+      "path": "freeze/wiring-v1.json",
+      "sha256": "5f6509f4ce8ee8e86767dd022ecd40c4c3dda1634b610d309354128f863a2087",
+      "recordedCommit": null
+    },
+    {
+      "path": "freeze/v2-extra-probes.json",
+      "sha256": "af5c7d955c59bcdbf5a696464c054e48fa0c56a5c937652e4081c4bf34a79be2",
+      "recordedCommit": null
+    }
+  ]
+}

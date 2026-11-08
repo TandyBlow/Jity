@@ -3,7 +3,7 @@
 日期：2026-11-08。分支 `exp/c-attention-parse`，工作树 `.local/parallel/c-attention-parse`。
 
 - **对应原设计**：R11（叙事只写玩家当前可知道、且值得说的世界事实）的上游输入——先要知道玩家在关注什么。
-- **当前档位**：对象层 **有实验结果**；关注粒度契约 v1 **已冻结**；v2 提取器 **已实现并通过 A01–A10**；N2 范围筛选 **已在独立夹具上跑通**（8/8）。仍未接入正式页面、未改服务端与 N2 规则、没有训练、没有模型。
+- **当前档位**：对象层 **有实验结果**；关注粒度契约 v1 **已冻结**；v2 提取器 **已实现并通过 A01–A10**；N2 范围筛选 **已在独立夹具上跑通**（8/8）；**N2 集成交接稿已写**（映射与已知失败），正式 `classify_facts` 接入未做。未接入正式页面、未改服务端与 N2 规则、没有训练、没有模型。
 - **补的缺口**：上一轮 [attention-selection-v1](../../../../design/world-engine-reports/components/attention-selection-v1.md) 的六个条件里，`attentionTargets` 是直接给定的输入，没有验证能否从玩家原话里得到它。c1 只做这一环。
 
 ## 1. 一句话结论
@@ -245,6 +245,9 @@ python -X utf8 attention_parse.py --out /tmp/raw.json   # 输出全部样本原�
 | `n2_attention_filter.py`、`run_wiring.py` | 契约 §6 的范围筛选与跑批 |
 | `runs/v2-acceptance/parse.json`、`score.json`、`run.log` | v2 解析原始输出、比对、表格 |
 | `runs/wiring-v1/parse.json`、`selection.json`、`score.json`、`run.log` | 解析结果与事实筛选结果分开保存 |
+| `HANDOFF-n2-integration.md` | 交接稿：与 `classify_facts` 的映射、三件待定事项、四条已知失败、集成样本冻结要求 |
+| `freeze/integration-handoff-v1.json` | 机器可读交接：映射表、invariants、KF 清单、证据文件哈希与记录提交 |
+| `build_handoff.py` | 生成交接 JSON（哈希取自文件，不手抄） |
 
 ## 13. 下一轮建议（不扩大本轮结论）
 
@@ -253,3 +256,31 @@ python -X utf8 attention_parse.py --out /tmp/raw.json   # 输出全部样本原�
 3. **用 v2 目标重跑 R-attention-v1 六条件**：先补 `personality` 等范围，再比较旧规则与范围筛选在同批事实上的取舍差异。
 4. **换真实原话**：从正式页面的行动记录里取真实玩家输入（只读），替换自写样本，重新冻结一批 ≤10 条。
 5. **补同名实体**：找一个或构造一个**已提交**世界，里面真的有两个同名对象，再测 M1/M2 的组合，而不是靠合成 roster。
+
+## 14. 交接：N2 集成（2026-11-08）
+
+交接稿：`HANDOFF-n2-integration.md`；机器可读版：`freeze/integration-handoff-v1.json`（含每个冻结文件的 sha256 与记录提交）。两份都不改现有冻结文件与 `runs/r1/`。
+
+交接的核心是一个接法，不是一段代码：
+
+```
+classify_facts(may_policy="select")
+  → 保留全部 must
+  → may 只保留被 target 命中的（实体 + scope 对应的 kind + part 字面）
+  → invisible / refusals / stops 语义不变
+```
+
+四条不许放宽的底线（c1 已用 8 个 case 验证过）：
+
+1. 必述不受关注影响；
+2. 空目标 = 不选可选事实（等价 `may_policy="omit"`），不是无约束、不是全选；
+3. 注意力不能把不可见事实变可见，`stops` 仍然停线；
+4. 同一事实只留一次，顺序沿用 `classify_facts`。
+
+集成前必须由 N2 侧定的三件事（写在交接稿 §3）：
+
+- **缺 `personality` 范围**：上一轮六条件问“什么性子”，现在会落到 `object`；
+- **`may_policy` 与关注是替代关系**：产品默认 `omit`，保留 `omit` 就永远不消费 targets；
+- **旧六条件的 `attentionTargets` 是词不是目标对象**，不能直接当新判据，集成样本要重冻。
+
+已知失败随交接保留：`KF-1`“看看他手背”仍会扩大为整人（v2 的守卫只认 `的<X>`），正式接入前必须处理；`KF-2` 词表外局部、`KF-3` 整人＋局部同句、`KF-4` 完全同名实体，见交接稿 §4。
