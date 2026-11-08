@@ -1,0 +1,869 @@
+[
+  {
+    "id": "2026-10-16-examiner-legal-action-false-positives",
+    "date": "2026-10-16",
+    "title": "修复 Examiner 对合法行动的误判",
+    "summary": "收紧中文物品使用语句的识别边界，区分背包物品、身体部位与普通叙事短语，避免合法行动被错误拦截并消耗剧情节奏。",
+    "developer": "tobi",
+    "areas": [
+      "backend",
+      "examiner",
+      "campaign",
+      "narrative",
+      "tests"
+    ],
+    "changes": [
+      "修复裸词‘用’的匹配边界：不再把‘利用’‘备用’‘采用’末尾的‘用’识别为物品使用动作，避免‘寻找备用通道’被错误解析成‘使用物品：通道’。",
+      "保留‘使用’‘拿出’‘掏出’‘举起’‘装备’等明确物品动作的严格库存校验，同时继续排除‘用力’‘用心’‘用尽’等状态或程度表达。",
+      "将掌心、手指、伤口、血液、目光和身体等具身资源视为场景中天然可用的行动条件，不再要求它们预先登记为背包物品；实际效果仍由叙事模型和检定决定。",
+      "放行‘用的是哪一类工具’等询问与判断句，避免把被询问对象误当作玩家声称持有的道具。",
+      "幕间转场的首个行动不再被 Examiner 用上一幕的地点与物品状态提前否决，玩家选择会先与下一幕开场事实融合，再进入正常规则判定。",
+      "Examiner 拦截结果不再推进 turns_total、turn_in_session 或 session_closing，解析误判和确实非法的尝试都不会挤占有效叙事回合预算。",
+      "新增中文边界、具身行动、询问句与回合预算回归用例；全量后端测试 634 项通过。"
+    ],
+    "relatedFiles": [
+      "backend/app/services/agents/examiner.py",
+      "backend/app/services/scenario_generator/agent_pipeline.py",
+      "backend/app/services/scenario_generator/post_generation.py",
+      "backend/tests/test_local_examiner.py",
+      "backend/tests/test_campaign_budget_edges.py",
+      "backend/tests/test_turn_commit_consistency.py"
+    ],
+    "nextSteps": [
+      "继续从真实游玩日志补充中文动作语料，重点覆盖复合句、省略主语、场景临时物和身体状态的表达。",
+      "为 Examiner 增加结构化解析诊断，记录命中的动词、候选物品与放行原因，方便定位新的误判。",
+      "统一自动跑剧情的尝试次数与有效战役回合展示，避免被拦截行动造成两个计数并存。"
+    ]
+  },
+  {
+    "id": "2026-10-15-narrative-pacing-and-meaningful-options",
+    "date": "2026-10-15",
+    "title": "重构叙事节奏与剧情推进选项",
+    "summary": "用软、硬回合阈值控制每幕的收束节奏，让选项承担明确的剧情推进职责，并把幕间转场拆成可感知、可行动的连续过程。",
+    "developer": "tobi",
+    "areas": [
+      "backend",
+      "campaign",
+      "narrative",
+      "prompt",
+      "tests"
+    ],
+    "changes": [
+      "重新定义每幕的回合预算：min_turns 保障必要铺垫，soft_turns 开始主动收束，hard_turns 只负责触发不可继续拖延的危机或强制事件，不再把阈值本身当作瞬间切幕指令。",
+      "到达 soft_turns 后启用严格选项收束：只保留 2–4 个能推进当前主线的行动，去掉等待、闲逛、重复观察和无结果追问；每个选项必须落到尚未完成的收束锚点，并以不同方法或风险推进。",
+      "把当前幕尚未揭示的完成锚点名称与说明注入生成约束，避免模型只收到抽象的“请推进剧情”，却不知道必须推动哪一项事实、决定或任务。",
+      "强化选项影响契约：玩家选择必须在当回合产生新信息、状态变化、关系变化、代价或不可逆决定；失败也要以代价换进展，不能原地重置为同一组选项。",
+      "hard_turns 触发后先进入 session_closing 收束态，由文本完成危机、决定或离场动作；系统不会在同一回合直接跳到下一幕。下一次成功的转场行动完成空间与因果桥接后，才提交幕索引推进。",
+      "拆分最终幕的局部 hard_turns 与整局 50 回合预算：最终幕达到局部阈值时只把冲突推向最终抉择，不再把当前总回合数临时改写为全局上限，也不会误报‘回合预算耗尽·未完成的调查’。只有明确结局行动或真正耗尽整局预算才会结束战役。",
+      "最终幕进入强制抉择阶段后，会向叙事模型提供当前满足条件的结局路线及其确定性触发短语，要求输出代表不同立场和代价的结局选项，避免继续等待、重复调查或由系统替玩家作决定。",
+      "下一幕开场会承接玩家刚刚执行的转场行动，并与预设开场融合，减少上一幕结尾、幕间移动和下一幕开头互相脱节的问题。",
+      "被 Examiner 拦截的无效行动不再消耗战役叙事回合，避免解析误判或非法操作挤占每幕的有效节奏预算。",
+      "按同一套连贯性、推进性、选项有效性、节奏与结尾完整度标准复测 seed 73；综合评分由 78 提升至 91，并完成 634 项后端回归测试。快速实跑确认最终幕第 10 回合不会再被误判为全局预算耗尽；该结果不代表所有随机种子与长局剧情均已通过。"
+    ],
+    "relatedFiles": [
+      "backend/app/services/prompt_builder/prompts.py",
+      "backend/app/services/scenario_generator/prompting.py",
+      "backend/app/services/scenario_generator/post_generation.py",
+      "backend/app/services/scenario_generator/opening_scene.py",
+      "backend/app/services/campaign_advancer.py",
+      "backend/app/services/campaign_manager/metrics.py",
+      "backend/tests/test_session_completion_gates.py",
+      "backend/tests/test_campaign_budget_edges.py",
+      "backend/tests/test_prompt_contract.py",
+      "playtest_logs/narrative_change_retest_20261015.md"
+    ],
+    "nextSteps": [
+      "继续扩充 Examiner 的真实行动语料，覆盖路径、方式、身体状态与场景临时物等非背包名词，降低规则解析对自由叙事的误伤。",
+      "统一自动跑剧情计数与战役有效回合的展示口径，避免被拦截行动造成 47/44 与 42/50 同时出现。",
+      "为最终幕结局选项增加服务端校验或自动重试；当前提示词已经要求使用确定性触发短语，但实跑中模型仍可能返回‘继续观察’一类非结局选项。",
+      "扩大不同随机种子与完整战役的结局流畅度测试，继续观察 soft_turns 之后选项是否既聚焦主线又保留真实选择差异。"
+    ]
+  },
+  {
+    "id": "2026-10-11-master-zjrrrr-integration",
+    "date": "2026-10-11",
+    "title": "整合主线预算事务、分支记忆与存档管理",
+    "summary": "保留 master 与 zjrrrr 的提交历史和有效功能，统一最终回合快照与后台摘要，接入设置菜单的显式存档删除。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "memory",
+      "campaign",
+      "tests"
+    ],
+    "changes": [
+      "以 master f24cbba 合并 zjrrrr 40e4af2，不合入 agent，不重置数据库。保留原有 10 月 11 日开发日志。",
+      "保留预算、进度、回顾及关系事务；物品和最终结局确定后只采集一次记忆，状态、节点、战役进度原子提交，成功后才启动独立副本维护。失败和取消恢复运行状态。",
+      "保留摘要等待、pending 重启恢复和节点/版本比较写回；跨幕保留长期记忆与物品账本。固定开场也核对物品终态，拒绝跨幕复活消耗品。",
+      "合并 Examiner 的名称/别名消歧与主线措辞、地点和检定修复；别名物品尾随动作仍触发检定。预算路线同时检查事实、物品和锚点条件，否定与假设不算明确选择。",
+      "设置菜单新增独立存档管理列表：确认后按槽 ID 删除、活动槽禁用、防重复请求、失败内联提示；后端活动检查与删除同事务，仅删除槽。复制槽保留总回合预算进度。",
+      "物品容量响应改为 null，界面显示无固定上限；保留记忆抽屉、时间线、节点比较、提示词与进度，HTTP 409 后刷新失败明确提示。",
+      "真实模型验收发现短预算辅助请求可能返回空正文或截断 JSON；新增 finish_reason=length 拒绝检查，避免 JSON 修复器把残缺摘要当作成功并消费输入。DeepSeek Flash/Pro 的短预算辅助调用显式禁用思考，显式 reasoner 和普通叙事调用保持原模式。",
+      "离线验收：后端 615 项、前端 53 项、启动脚本 5 项全部通过；TypeScript 检查与生产构建通过。覆盖提交失败/取消/重试、一次性回顾与关系更新、摘要迟到/失败/重启、跨幕与分支、物品别名/终态/超过 20 件、结局替换及 1/5/50 回合预算。",
+      "页面验收：Playwright 30 项通过；同环境原版 master f24cbba 先生成对照，主界面、记忆抽屉、时间线各页和编辑器共 13 张截图零像素差异。新存档管理在 1536px 和 390px 验证取消/成功/失败/同名隔离/活动保护/防重复，另验证 409 恢复、节点对比/恢复、提示词与进度。开发日志因新增内容单独检查，不覆盖原版对照。",
+      "真实模型最终验收基于 efaa7ab，请求 deepseek-v4-flash，在独立 SQLite 与 8123 端口完成 12 个提交回合（4 个固定开场含真实选项调用、8 个 Narrator 回合）：五回合预算终局、跨幕后事实/物品保留、完整 L1 摘要和实体/因果信息落库、恢复第 4 回合后新分支续写均通过。最终重跑没有 502、摘要/Director 失败或回顾降级。",
+      "首次候选 51e7d3d 的实测暴露了空响应、摘要失败及不完整摘要，不能记为通过；原始失败证据与最终重跑均留在本地 docs/evidence/，不推送数据库、Prompt 档案或图片。最终验证仍走 SHA-256 向量降级，不能声称真实语义召回通过；短跑不代表长期叙事质量评估。"
+    ],
+    "relatedFiles": [
+      "backend/app/services/scenario_generator/generator.py",
+      "backend/app/services/scenario_generator/memory_lifecycle.py",
+      "backend/app/repositories/campaign_progress.py",
+      "frontend/src/components/game/SettingsMenu.tsx",
+      "backend/tests/test_branch_integration.py",
+      "scripts/integration_smoke.py"
+    ],
+    "nextSteps": [
+      "保留 Examiner H16 子区域误拒为已知问题，不将开发语料通过率当作真实玩家准确率。"
+    ]
+  },
+  {
+    "id": "2026-10-11-memory-review-and-local-startup",
+    "date": "2026-10-11",
+    "title": "跨幕记忆与物品一致性修复、本地启动保护",
+    "summary": "保留跨幕记忆快照，补齐物品别名消歧和消耗状态约束，避免背包容量截断丢失新物品，并让联合启动脚本保护已有服务。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "memory",
+      "campaign",
+      "scripts",
+      "tests"
+    ],
+    "changes": [
+      "记录已推送到 zjrrrr 的提交 b1a9efa（记忆与物品修复）和 cc35321（启动脚本修复）；本条补充 10 月 1 日记录未覆盖的改动。",
+      "跨幕重置 NPC、近期事件和场景提示词时保留分支所属的完整记忆快照，包括长期摘要与待摘要输入；清理运行时缓存后从保留的快照重新加载，避免历史线索在进入下一幕时被删除。",
+      "本地 Examiner 支持按规范名称与显式 aliases 查找物品，规范名称优先；同一别名对应多个物品时要求使用明确名称。SCORE 先建立各物品身份再注册别名，避免共享别名将不同物品合并或误删其中一个。",
+      "新增 consumed 状态，将 used/consumed/消耗映射为已消耗，将 discarded 映射为丢失。已消耗的同一物品身份不能通过普通获得、recovered 或 repaired 复活；损毁物品仍允许显式 repaired。该约束在快照序列化与恢复后继续生效。",
+      "物品终态同时校验顶层 items_gained/items_lost 和 memory_updates，移除不可用物品并保留状态记录；提示词同步列出 consumed、destroyed 和 discarded 等状态。约束针对结构化状态，不代表已完成任意叙事文本的事实审查。",
+      "取消背包列表的 20 项截断，避免获得的新任务物品被静默丢弃、背包与物品状态记录不一致；NPC、任务和长期事实仍保留原有容量限制。",
+      "联合启动脚本使用 lsof 检查配置的端口；端口已有监听进程时跳过对应服务启动，不截断该服务的已有日志。监听进程的服务身份未校验，端口占用本身不证明 Jity 服务可用。",
+      "退出或子进程异常时仅清理本次脚本启动的进程，保留已有服务；支持自定义前后端端口。两个端口都被占用时直接退出，不启动新进程。",
+      "本次提交前相关后端测试 94 项通过，启动脚本测试 5 项通过，git diff --check 通过；后端有 3 条 SWIG 依赖弃用警告。测试覆盖跨幕线索检索与注入、别名歧义、物品终态恢复、容量边界、SQLite 快照恢复与事务回滚，以及端口占用和启动失败。",
+      "上述验证为离线回归；本次未重新运行真实模型长剧情、前端生产构建或页面验收。约 19 MB 的 docs/evidence/ 验证材料保留在本地，未随上述提交推送。"
+    ],
+    "relatedFiles": [
+      "backend/app/schemas/agent_io/memory_branches.py",
+      "backend/app/services/agents/examiner.py",
+      "backend/app/services/game_state/entry_state.py",
+      "backend/app/services/game_state/manager.py",
+      "backend/app/services/memory/score_tracker.py",
+      "backend/app/services/prompt_builder/builder.py",
+      "backend/app/services/scenario_generator/opening_scene.py",
+      "backend/tests/test_memory_review_regressions.py",
+      "scripts/start_local.sh",
+      "scripts/tests/test_start_local.py"
+    ],
+    "nextSteps": [
+      "将 zjrrrr 与 master 的 Examiner、生成持久化和前端改动整合后重新验证，当前分支通过不等同于合并版本已通过。",
+      "补充真实模型跨幕线索与物品一致性评估，并将存档删除入口接到首页实际使用的 SettingsMenu。"
+    ]
+  },
+  {
+    "id": "2026-10-01-campaign-memory-consistency",
+    "date": "2026-10-01",
+    "title": "战役唯一入口、分支记忆一致性与终局恢复",
+    "summary": "移除自由模式生成入口，补齐记忆快照的提交与恢复链路，强化物品状态约束、可解释检索和遗忘机制，并完善存档删除及终局、时间线异常处理。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "campaign",
+      "memory",
+      "timeline",
+      "tests"
+    ],
+    "changes": [
+      "本次记录对应提交 36b482c 与 84efc73；记忆机制与兼容边界详见 docs/campaign_memory.md。",
+      "只保留战役生成：POST /sessions 未传 campaign_filename 时使用 default_campaign.json；显式空值、空字符串和非法文件名返回 422，文件不存在返回 404，且不会留下空会话。移除前端自由模式选项和后端单模型回退。",
+      "保留旧自由会话与时间线的读取能力，但继续生成返回 422；首页恢复旧自由会话时改为创建默认战役，不将旧历史静默改写成战役数据。",
+      "统一最终回合的记忆采集顺序：先完成结局替换和物品状态校验，再采集叙事与结构化后果；固定开场和本地 Examiner 拒绝也进入记忆链路。",
+      "原始记忆缓冲与 version/pending 随剧情节点一起落库。后台摘要使用独立控制器副本，并捕获当前分支、当前幕的对话；写回时在事务内比较活动节点及记忆版本，仅更新记忆字段，拒绝迟到或重复结果。",
+      "切换存档或恢复分支时取消旧维护任务并清理缓存；下一回合等待本会话维护完成。服务重启后的 pending 快照在构建提示词前重试，摘要失败保留输入，允许后续继续恢复。",
+      "分层摘要只在上层生成成功后消费原始缓冲或低层摘要；L2、L3 晋级可独立重试，L3 达到阈值后继续压缩。运行时摘要不再写入缺少分支隔离的全局知识库，跨幕清理保留物品状态与显式别名。",
+      "SCORE 同时校验 items_gained/items_lost 与 memory_updates 物品更新，同回合删除优先；丢失或销毁状态不会被普通获得事件覆盖。明确找回、修复分别使用 transition: recovered、transition: repaired，名称归一化并支持显式 aliases，不猜测语义同义词。",
+      "被拒绝的物品获得事件在状态合并前移除，背包与 Director 使用真实物品状态，摘要输入附带权威状态。该约束作用于结构化输出，不代表已经完成对任意叙事文本的事实审查。",
+      "记忆查询补充地点、人物、任务、物品、线索和近期事件；MemoryHit 提供分项得分与命中原因，按来源、内容及跨层回合范围去重。恢复快照后按需批量补齐向量，向量服务不可用时退回实体和关键词排序。",
+      "只有实际完整进入最终提示词的记忆才记录召回并强化；未注入的竞争记忆持久化抑制系数，后台维护本身不产生召回。补齐数值稳定、同回合去重、召回历史上限与旧轮次换算，关键后果摘要的保护标记随晋级继承。",
+      "记忆检索明细以 narrative_memory 类型保存到 model_outputs.retrieved_chunks_json，便于追查某回合实际使用了哪些记忆；当前检索权重仍是待质量评估的工程默认值。",
+      "存档删除后端按槽 id 精确执行并保护当前活动存档；禁用提示和二次确认目前位于未挂载的 SidePanel，尚需接入首页实际使用的 SettingsMenu，不能视为页面入口已交付。此处承接 9 月 18 日存档删除记录。生成遇到 HTTP 409 时重新读取最新会话、活动节点与剧情输出，避免继续使用过期节点。",
+      "终局判定支持中文冒号前带决定标签的明确行动，排除假设性提问；最终场景不再因回合预算耗尽而越过最后一幕，兼容已保存的越界终局进度。前端状态展示及相关提示文案统一使用血条称呼。",
+      "提交前验证记录：完整工作区后端 437 项测试、前端 14 项测试及 TypeScript 类型检查通过；记忆改动的独立暂存快照后端 428 项通过，两组数量对应不同文件范围，不应相加。",
+      "记忆改动另完成前端生产构建及桌面、移动端入口检查；入口检查使用模拟 API。200 回合测试为离线层级摘要回归，覆盖失败重试、恢复、去重、物品状态和数值稳定，不代表真实模型下的长剧情质量或全部结局路线已经验证。"
+    ],
+    "relatedFiles": [
+      "docs/campaign_memory.md",
+      "backend/app/routers/sessions.py",
+      "backend/app/routers/slots.py",
+      "backend/app/database/timeline.py",
+      "backend/app/services/scenario_generator/generator.py",
+      "backend/app/services/scenario_generator/memory_lifecycle.py",
+      "backend/app/services/scenario_generator/agent_pipeline.py",
+      "backend/app/services/memory/memory_controller/controller.py",
+      "backend/app/services/memory/memory_controller/maintenance.py",
+      "backend/app/services/memory/nsb/branch.py",
+      "backend/app/services/memory/nsb/retrieval.py",
+      "backend/app/services/memory/score_tracker.py",
+      "backend/app/services/memory/forgetting.py",
+      "backend/app/services/campaign_endings.py",
+      "backend/tests/test_memory_consistency.py",
+      "backend/tests/test_campaign_openings.py",
+      "backend/tests/test_campaign_ending_selection.py",
+      "backend/tests/test_campaign_wiring.py",
+      "frontend/src/components/game/useGameActions.ts",
+      "frontend/src/components/game/useGameEffects.ts",
+      "frontend/src/components/game/SidePanel.tsx"
+    ],
+    "nextSteps": [
+      "用独立存档开展真实模型长剧情评估，记录关键事实召回率、错误复活物品、跨分支污染、摘要成本与下一回合等待时间，再调整检索和遗忘参数。",
+      "补充叙事文本与结构化物品状态不一致的质量检查，明确检测、重试和降级策略，避免把结构化校验等同于全文事实校验。",
+      "增加前端时间线冲突后刷新失败、连续切档及后台摘要迟到的端到端覆盖，并持续验证各战役最终选择到持久化结局的完整链路。"
+    ]
+  },
+  {
+    "id": "2026-09-18-slot-delete",
+    "date": "2026-09-18",
+    "title": "存档栏显式删除存档",
+    "summary": "侧栏存档栏新增删除按钮：当前存档置灰不可删，其余存档二次确认后按 id 删除；后端删除接口从按名全局删除改为按 id 精确删除。",
+    "developer": "zjr",
+    "areas": [
+      "backend",
+      "frontend",
+      "save-slots",
+      "tests"
+    ],
+    "changes": [
+      "侧栏「存档:」行在 + 旁新增 Trash2 删除按钮：未选中或当前（active）存档时置灰并提示，删除前 window.confirm 二次确认。",
+      "删除范围限定为当前选中槽所在会话的那一行：deleteSlot(id) → DELETE /campaigns/slots/{slot_id}，删除后 refreshSlots 保持当前选中不变。",
+      "后端删除接口从 DELETE /campaigns/slots/{slot_name}（全库按名删除，会把所有会话同名槽一起删掉，且无任何调用方）改为按 id 删除；路由层校验 404（槽不存在）与 409（active 槽不可删）。",
+      "仓储层 delete_slot(slot_name) 替换为 delete_slot_by_id(slot_id)，删除条件从 slot_name 改为 id。",
+      "已知交互含义：新建存档立即成为当前存档，此时删除按钮置灰，需先切回其他存档再删；其他会话的 active 槽同样显示不可删。",
+      "验证：新增 4 个集成用例（删非 active 200 且列表移除、删 active 409 且保留、不存在 404、跨会话同名声按 id 删除互不影响），test_campaign_wiring.py 8 项通过；前端构建通过。"
+    ],
+    "relatedFiles": [
+      "backend/app/routers/slots.py",
+      "backend/app/repositories/campaign_progress.py",
+      "backend/tests/test_campaign_wiring.py",
+      "frontend/src/components/game/SidePanel.tsx",
+      "frontend/src/components/game/useGameActions.ts",
+      "frontend/src/lib/api.ts"
+    ],
+    "nextSteps": [
+      "考虑批量清理 auto_ 时间戳槽（多选删除或按前缀清理）。",
+      "设置菜单的存档行目前仍只有新增，如需与侧栏对齐可复用同一个删除入口。"
+    ]
+  },
+  {
+    "id": "2026-09-17-campaign-endings",
+    "date": "2026-09-17",
+    "title": "四战役多结局、确定性判定与结算界面",
+    "summary": "为四个战役补齐独立最终章与七路线结局，并将结局选择从模型自由判断改为后端确定性判定。",
+    "developer": "shit",
+    "areas": [
+      "backend",
+      "frontend",
+      "campaign",
+      "gameplay",
+      "tests"
+    ],
+    "changes": [
+      "《卡塞尔入学档案》《火之晨曦》《悼亡者之瞳》《黑月之潮》各新增七条独立结局，共二十八条路线，并补充最终场景、人物状态、关键物品和剧情锚点。",
+      "Campaign Schema 新增 ending_routes，结局包含类型、条件说明、明确触发行动、剧情收束与尾声。",
+      "新增后端结局判定器，仅在最终章节根据玩家明确行动和生存状态锁定结局；模型负责生成文案，不再自行决定结局或提前结束战役。",
+      "结局成立后 Campaign FSM 持久化为 campaign_end，后端拒绝继续生成，避免结局被后续剧情覆盖。",
+      "前端新增战役结束结算卡，展示结局名称与摘要，并禁用自由输入、剧情选项和继续生成按钮。",
+      "章节初始物品状态统一为 owned，修复关键物品进入场景后无法使用的问题。",
+      "行动检查支持同一大场景内的子区域交互，修复人物位于王殿入口、红井核心或高架桥下时被误判为不在场的问题。",
+      "新增结局选择、最终章节限制、失败结局、物品状态与场景人物交互回归测试。",
+      "验证：后端全量 374 项测试通过，前端生产构建通过。"
+    ],
+    "relatedFiles": [
+      "backend/app/schemas/campaign.py",
+      "backend/app/services/campaign_endings.py",
+      "backend/app/services/campaign_context.py",
+      "backend/app/services/agents/examiner.py",
+      "backend/app/services/game_state/entry_state.py",
+      "backend/app/services/scenario_generator/generator.py",
+      "backend/data/campaigns/default_campaign.json",
+      "backend/data/campaigns/龙族Ⅰ_火之晨曦_campaign.json",
+      "backend/data/campaigns/龙族Ⅱ_悼亡者之瞳_campaign.json",
+      "backend/data/campaigns/龙族Ⅲ_黑月之潮_campaign.json",
+      "frontend/src/components/game/StoryPanel.tsx",
+      "backend/tests/test_campaign_ending_selection.py",
+      "backend/tests/test_campaign_endings.py"
+    ],
+    "nextSteps": [
+      "为自动跑剧情增加目标结局选择，以稳定覆盖二十八条路线。",
+      "更新战役编辑器，使结局条件和触发行动可以在界面中维护。"
+    ]
+  },
+  {
+    "id": "2026-09-16-auto-save-slots-and-data-reset",
+    "date": "2026-09-16",
+    "title": "自动存档槽、跨会话存档切换与本地数据重置",
+    "summary": "新开一局自动生成带时间戳的存档槽，设置与侧栏显示全部会话的存档并可跨会话切换；同时清理测试会话数据，保留三个战役与主存档。",
+    "developer": "zjr",
+    "areas": [
+      "backend",
+      "frontend",
+      "save-slots",
+      "database",
+      "tests"
+    ],
+    "changes": [
+      "确认游戏数据全部持久化在 SQLite（game_sessions、story_turns、session_messages、campaign_progress），关闭终端或浏览器不丢失；前端 localStorage 只存会话指针。",
+      "新建战役会话未指定槽名时自动生成 auto_YYYYMMDD_HHMMSS 存档槽，替换默认 default 槽名；冒烟测试等显式槽名不受影响。",
+      "存档列表改为返回全部会话的槽，不再按当前会话过滤；设置与侧栏下拉展示槽名、战役名、A/S 进度与最后游玩时间，选中任意槽即可切换到对应会话。",
+      "槽选中逻辑改为按当前会话匹配首选槽名或 is_active 槽，避免多个会话同槽名时误选。",
+      "CreateSessionRequest.slot_name 默认值改为 None；前端 createSession 仅在显式提供时才传 slot_name。",
+      "重新加载测试改用会话的 active_slot_name，与生产环境 get_campaign_manager_for_session 行为一致。",
+      "本地数据重置：按 session 隔离删除 102 个测试/冒烟会话及其消息、时间线节点、模型输出和进度行，保留主存档 00fb40e9 与三个龙族战役文件；VACUUM 后数据库从 17.6MB 降至 13.4MB，完整性检查通过。",
+      "验证：357 项后端测试全部通过，前端构建通过；端到端验证自动槽命名、全部槽列表与 is_active 标记正确。"
+    ],
+    "relatedFiles": [
+      "backend/app/routers/sessions.py",
+      "backend/app/schemas/game/requests_responses.py",
+      "backend/app/repositories/campaign_progress.py",
+      "backend/tests/test_campaign_openings.py",
+      "frontend/src/components/game/SettingsMenu.tsx",
+      "frontend/src/components/game/SidePanel.tsx",
+      "frontend/src/components/game/useGameActions.ts",
+      "frontend/src/components/game/useGameEffects.ts",
+      "frontend/src/components/game/useGameSession.ts",
+      "frontend/src/lib/api.ts",
+      "frontend/src/lib/game/format.ts"
+    ],
+    "nextSteps": [
+      "用真实 LLM 验证跨会话切换存档后的续写连续性，确认切换后战役与剧情恢复正确。",
+      "考虑为自动槽提供重命名与删除入口，避免大量时间戳槽难以辨认。",
+      "备份文件 jity.sqlite3.bak 确认无误后可手动删除。"
+    ]
+  },
+  {
+    "id": "2026-09-15-branching-timeline-and-real-llm-smoke",
+    "date": "2026-09-15",
+    "title": "可分叉剧情时间线与四战役真实 LLM 跨幕回归",
+    "summary": "把线性历史升级为可恢复、可继续分叉的剧情树，并用当前 DeepSeek 配置完成四个内置战役的开场、续写和跨幕真实模型回归，修复 Examiner 误拦截和旧幕上下文回流。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "timeline",
+      "campaign",
+      "llm",
+      "tests"
+    ],
+    "changes": [
+      "新增 story_turns 快照表和 active_turn_id，将每次玩家行动、结构化输出、完整游戏状态、Campaign 进度、模型及来源保存为不可变剧情节点。",
+      "生成回合按当前节点建立子节点，并使用 expected_parent_id 与会话级锁阻止过期分支并发覆盖当前进度。",
+      "新增剧情树列表、节点详情和节点激活 API；恢复旧节点时同步恢复 game_state、Campaign 进度、存档槽、记忆控制器快照和当前分支消息视图。",
+      "前端时间线增加树状分支、剧情与状态详情、当前路径标记和『从此处继续』操作；回到游戏后，新行动会从恢复节点形成新分支，旧后代仍保留。",
+      "最近对话读取限制在当前时间线祖先链，并在 Campaign 模式进一步限制到当前幕；上一幕内容只通过 recap 提供，避免旧幕原始叙事压过新幕开场。",
+      "Director 现在同时接收当前地点、当前幕固定开场、当前幕最近记录和明确标注为背景的上一幕 recap，Narrator 必须从当前幕继续。",
+      "纯续写动作『继续』『继续剧情』『接着』确定性放行，不再因 entry_state 未重复列出开场人物而被 Examiner 错误阻止；具体动作仍走完整规则判定。",
+      "新增四战役 transition smoke 脚本，通过临时两回合副本走真实 HTTP 与 LLM 路径，记录每步提示词、地点、人物、剧情、来源、模型和连续性检查，测试后自动清理副本。",
+      "真实模型验证使用当前配置 deepseek-chat：卡塞尔入学档案、火之晨曦、悼亡者之瞳、白王降临均完成『开场→继续→下一幕开场→继续』，未发现入学调查串入、开场重复或跨幕回跳。",
+      "验证：合并最新 master 后，后端完整测试 321 项通过；前端生产构建与 TypeScript 检查通过；最终真实 LLM 冒烟报告位于 artifacts/smoke/campaign-transition-smoke-20260915-165635.md。"
+    ],
+    "relatedFiles": [
+      "backend/app/database/timeline.py",
+      "backend/app/database/schema.py",
+      "backend/app/database/sessions.py",
+      "backend/app/services/scenario_generator/generator.py",
+      "backend/app/services/scenario_generator/agent_pipeline.py",
+      "backend/app/services/scenario_generator/prompting.py",
+      "backend/app/services/agents/examiner.py",
+      "backend/app/services/agents/director.py",
+      "backend/tests/test_branching_timeline.py",
+      "backend/tests/test_campaign_openings.py",
+      "frontend/src/app/timeline/StoryTimeline.tsx",
+      "frontend/src/app/timeline/useTimelineData.ts",
+      "frontend/src/components/game/useGameActions.ts",
+      "docs/branching_timeline.md",
+      "README.md",
+      "scripts/campaign_transition_smoke.py",
+      "artifacts/smoke/campaign-transition-smoke-20260915-165635.md"
+    ],
+    "nextSteps": [
+      "用更长的真实 Campaign 分支验证多次回退、再分叉和跨 Arc 后的 recap、锚点及 NPC 关系恢复。",
+      "为时间线节点增加用户可编辑标签和分支命名，便于大型战役定位关键选择。",
+      "把真实 LLM 冒烟测试接入可选的手动发布检查，避免在普通 CI 中消耗模型额度。"
+    ]
+  },
+  {
+    "id": "2026-09-15-campaign-openings-and-llm-errors",
+    "date": "2026-09-15",
+    "title": "四个战役独立开场、续写上下文与请求错误提示修复",
+    "summary": "修复战役进入和首次续写沿用报到大厅剧情的问题，统一战役入口、初始状态和跨幕开场，并细分 LLM 请求失败提示。",
+    "developer": "zjr",
+    "areas": [
+      "backend",
+      "frontend",
+      "campaign",
+      "llm",
+      "tests"
+    ],
+    "changes": [
+      "四个战役分别从学院大门、婶婶家卧室、苏菲拉德披萨馆和黑天鹅港开场，补充各幕 entry_state 地点及首幕人物、物品、目标和背景提示。",
+      "新战役使用独立初始状态，清除自由模式的报到大厅、诺诺接应和入学任务残留；starting_state 支持空列表和零值覆盖，跨幕时保留累计血条和物品。",
+      "前端初始化先显示剧情读取状态，所有战役及时间线入口统一自动请求开场；复用启动请求，避免 React Strict Mode 重复创建会话。",
+      "会话响应返回 campaign_filename，刷新和加载存档时恢复战役选择与历史剧情；已有剧情不重复播放开场，无历史的战役自动进入对应场景。",
+      "战役续写移除固定入学调查限制，注入当前战役名称、限制和本幕开场背景，要求承接最近行动并保持时间、地点和人物连续。",
+      "开场判断改用当前幕 turn_in_session，正常推进到下一幕后可读取该幕开场，不再依赖全局 turn 为零。",
+      "生成期间禁用重复操作并增加请求防重入；背景跟随地点与提示词更新，切换场景时清除旧背景。",
+      "LLM 错误提示区分连接失败、超时、认证、余额、权限、限流和服务异常，避免将网络错误统一归因为 API Key 或余额问题。",
+      "叙事输出长度要求从约 30 句调整为约 20 句。",
+      "验证：128 项相关后端测试、前端 TypeScript 检查通过；隔离浏览器验证四战役开场、继续、刷新、切换、新建会话和时间线入口。续写使用模拟模型返回，尚未验证真实 LLM 生成内容。"
+    ],
+    "relatedFiles": [
+      "backend/app/routers/sessions.py",
+      "backend/app/services/game_state/entry_state.py",
+      "backend/app/services/scenario_generator/opening_scene.py",
+      "backend/app/services/campaign_context.py",
+      "backend/app/services/llm_client/errors.py",
+      "backend/app/services/prompt_builder/builder.py",
+      "backend/data/campaigns/default_campaign.json",
+      "backend/data/campaigns/龙族Ⅰ_火之晨曦_campaign.json",
+      "backend/data/campaigns/龙族Ⅱ_悼亡者之瞳_campaign.json",
+      "backend/data/campaigns/龙族Ⅲ_黑月之潮_campaign.json",
+      "backend/tests/test_campaign_openings.py",
+      "frontend/src/components/game/useGameActions.ts",
+      "frontend/src/components/game/useGameEffects.ts",
+      "frontend/src/components/game/useGameSession.ts",
+      "frontend/src/components/game/useSceneBackground.ts",
+      "frontend/src/lib/game/initialOutput.ts"
+    ],
+    "nextSteps": [
+      "用真实模型验证四个战役的首段续写和连续跨幕叙事，检查是否仍有入学剧情串入。",
+      "已有存档保留历史剧情与进度；验证新开场时重新选择战役或新建会话。"
+    ]
+  },
+  {
+    "id": "2026-09-11-scene-background-and-game-ui",
+    "date": "2026-09-11",
+    "title": "场景背景系统与游戏化主界面",
+    "summary": "为主页面加入根据剧情地点更新的 AI 场景背景，并将左侧控制台重构为右上角设置菜单，改善剧情阅读、操作布局和游戏沉浸感。",
+    "developer": "shit",
+    "areas": [
+      "frontend",
+      "backend",
+      "ui",
+      "background-generation",
+      "llm"
+    ],
+    "changes": [
+      "新增背景生成接口，接入硅基流动 Kwai-Kolors/Kolors 模型，并将返回图片保存到本地缓存目录。",
+      "背景生成使用剧情返回的英文 scene_prompt 与当前地点，加入无文字、无水印、宽幅环境概念图等统一画面约束。",
+      "前端仅在 current_location 发生变化时请求新背景；同一地点内继续复用当前背景，生成或加载失败时保留旧图并提供重试入口。",
+      "背景图片加载完成后再替换页面背景，避免生成过程中出现空白；相同提示词命中缓存时不重复调用生图服务。",
+      "主页面移除左侧控制面板，将模型、战役、存档、时间线、战役编辑器、开发日志和新建会话整合进右上角设置菜单。",
+      "将玩家行动输入框和生成按钮移动到剧情区域底部，支持 Ctrl/Command + Enter 快速生成下一幕。",
+      "增加剧情长文本自动分段，在模型未返回换行时按完整句子整理段落，恢复长篇剧情的阅读节奏。",
+      "加入轻量鼠标视差效果，背景会随指针方向微幅移动，并兼容系统的减少动态效果设置。",
+      "背景更新逻辑最终保留为每轮剧情同时生成 scene_prompt 和 current_location，再由前端根据地点变化决定是否绘制新背景。"
+    ],
+    "relatedFiles": [
+      "backend/app/config.py",
+      "backend/app/main.py",
+      "backend/app/routers/backgrounds.py",
+      "backend/app/schemas/background.py",
+      "backend/app/services/background_generator.py",
+      "backend/tests/test_background_generator.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/globals.css",
+      "frontend/src/components/game/SettingsMenu.tsx",
+      "frontend/src/components/game/StoryPanel.tsx",
+      "frontend/src/components/game/useGameSession.ts",
+      "frontend/src/components/game/useSceneBackground.ts",
+      "frontend/src/lib/api.ts"
+    ],
+    "nextSteps": [
+      "继续测试长剧情中的地点命名稳定性，避免同一地点因名称轻微变化而重复生成背景。",
+      "为地点增加稳定标识或名称归一化机制，并补充地点变化到背景替换的端到端测试。",
+      "根据实际使用体验调整背景亮度、遮罩强度和鼠标视差幅度。"
+    ]
+  },
+  {
+    "id": "2026-06-24-campaign-runtime-slots-and-local-workflow",
+    "date": "2026-06-24",
+    "title": "Campaign Runtime 接线、存档槽隔离和本地工作流整理",
+    "summary": "修复 Campaign 运行时进度、锚点揭示、全局 manager 串线和存档槽混用问题；补齐已实现模块在主流程中的实际接线，并整理本地启动、清理和开发日志展示。",
+    "developer": "zjr",
+    "areas": [
+      "backend",
+      "frontend",
+      "campaign",
+      "save-slots",
+      "rag",
+      "developer-tooling"
+    ],
+    "changes": [
+      "CampaignProgress 增加 turn_in_session 并在生成成功后递增，session/arc 自动推进时重置，避免 30 回合切换、recap 注入和完整 Arc 推进失效。",
+      "锚点候选在成功生成后写入 revealed_anchors，动态锚点也接入主流程，Timeline 不再长期为空。",
+      "CampaignManager 改为按 session_id + slot_name 加载和缓存，避免全局单例导致新战役覆盖旧会话或自由模式继承战役上下文。",
+      "主流程接入 EmbeddingClient、HealthMonitor、动态锚点生成、LLM fact extraction、token section 截断和最近对话历史注入。",
+      "存档槽 API 和前端下拉框改为按当前 sessionId 过滤，避免多个历史 default (A1S1 · T0) 混在当前会话里。",
+      "新增存档槽加载接口，选择 slot 会切换对应 session/state/model；新建 slot 会复制并绑定当前会话的 Campaign progress。",
+      "新增本地 setup/start/clean 脚本，并将 Codex 环境动作接到这些脚本，减少重复手动命令。",
+      "开发日志字段升级为 developer，并在页面上明确显示每次开发工作的开发人员。"
+    ],
+    "relatedFiles": [
+      "backend/app/main.py",
+      "backend/app/database.py",
+      "backend/app/schemas/campaign.py",
+      "backend/app/schemas/game.py",
+      "backend/app/services/campaign_manager.py",
+      "backend/app/services/scenario_generator.py",
+      "backend/app/services/prompt_builder.py",
+      "backend/app/services/retriever.py",
+      "backend/app/services/context_strategy.py",
+      "backend/app/services/health_monitor.py",
+      "backend/tests/test_campaign_runtime_wiring.py",
+      "backend/tests/test_campaign_wiring.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/dev-log/DevLogView.tsx",
+      "frontend/src/lib/api.ts",
+      "frontend/src/lib/dev-log.ts",
+      "frontend/src/types.ts",
+      "scripts/setup_local.sh",
+      "scripts/start_backend.sh",
+      "scripts/start_frontend.sh",
+      "scripts/start_local.sh",
+      "scripts/clean_local.sh"
+    ],
+    "nextSteps": [
+      "用真实战役连续运行超过 30 个 campaign turn，确认 recap、session advance 和 revealed_anchors 在 UI 中稳定同步。",
+      "检查存档槽加载是否需要复制/恢复完整 game_state 快照，而不只是切换 Campaign progress。",
+      "根据真实 playtest 数据校准 HealthMonitor baseline。"
+    ]
+  },
+  {
+    "id": "2026-06-22-prompt-refactor-experiment",
+    "date": "2026-06-22",
+    "title": "Prompt 重构验证实验",
+    "summary": "基于 6 轮实验（L0/L1/L2）识别出 prompt 设计为主要瓶颈后，对系统 prompt 进行深度重构：降低 temperature、精简 JSON schema、调整 L0 卡片位置、清理措辞，并设计三条件对照实验验证效果。",
+    "developer": "TandyBlow",
+    "areas": [
+      "backend",
+      "frontend",
+      "llm",
+      "prompt",
+      "experiment"
+    ],
+    "changes": [
+      "LLM temperature 从 0.9 降至 0.3，减少非 JSON 输出和随机漫步。",
+      "Baseline JSON schema 精简为 8 字段（去掉 5 个状态追踪字段：sanity_delta、health_delta、items_update、npcs_update、quests_update），降低模型输出负担。",
+      "L0 模式：8+5 字段 JSON（状态追踪字段标记为可选），L0 卡片从 prompt 顶部移至底部（叙事指令之后、JSON 格式之前），避免位置污染叙事指令。",
+      "系统 prompt 措辞清理：DM→KP、删除冗余说明、强化 JSON 格式约束。",
+      "评估方案：三步模糊匹配（规范化 + 关键词 + 嵌入相似度），评估叙事质量、状态追踪准确性和 JSON 合规率。",
+      "前端新增战役选择器（campaign selector dropdown），支持从 Timeline 页面跳转时自动带入战役文件名。",
+      "前端 createSession 支持 campaign/arc/session 参数，战役模式下自动触发开场生成。",
+      "后端 POST /sessions 修复 entry_state 合并逻辑：不再仅 mid-campaign 合并，所有战役模式统一合并 entry_state（含 starting_state）。",
+      "后端 /campaigns 列表过滤：跳过 schema 文件、下划线前缀调试文件、无 arcs 字段的非法 campaign。",
+      "CORS 增加 localhost:3001 允许源，支持多前端开发端口。"
+    ],
+    "relatedFiles": [
+      "backend/app/main.py",
+      "backend/app/services/llm_client.py",
+      "backend/app/services/prompt_builder.py",
+      "backend/app/services/scenario_generator.py",
+      "backend/app/services/campaign_generator.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/lib/api.ts",
+      "frontend/src/types.ts",
+      "frontend/src/lib/dev-log.ts"
+    ],
+    "nextSteps": [
+      "运行 Baseline-new / L0-bot-full-new / L1-mix-k5-new 三条件各 10 轮（A+B 场景各 5 轮），收集 LLM 输出。",
+      "用三步模糊匹配方案评估新旧数据，确认 prompt 改动是否提升 JSON 合规率和叙事质量。",
+      "若 JSON 合规率显著提升，考虑将精简 schema 作为默认配置；否则回退部分字段。"
+    ]
+  },
+  {
+    "id": "2026-06-19-campaign-wiring-and-novel-pipeline",
+    "date": "2026-06-19",
+    "title": "Campaign Wiring 集成测试与小说管线脚本",
+    "summary": "完成 Campaign 系统 API 接线验证的集成测试框架，新增小说→战役自动生成管线脚本，修复 lazy imports 和 from __future__ 兼容性问题，为 Phase 6 执行做准备。",
+    "developer": "TandyBlow",
+    "areas": [
+      "backend",
+      "campaign",
+      "testing",
+      "pipeline",
+      "knowledge-base"
+    ],
+    "changes": [
+      "新增 backend/tests/test_campaign_wiring.py — Campaign load→opening→inject→anchor 全链路集成测试（WIRE-05）。",
+      "新增 scripts/run_novel_pipeline.py — TXT→campaign.json 自动生成管线脚本，支持编码检测、章节提取、锚点生成、跨章组装。",
+      "全局移除 `from __future__ import annotations` 导入，修复 lazy imports 导致的类型解析问题。",
+      "新增 backend/tests/test_no_future_annotations.py — 静态检查确保不再引入 from __future__ import annotations。",
+      "知识库大幅扩展 world_lore.md：新增蛇岐八家、猛鬼众、黑天鹅港·δ计划、言灵体系、皇与鬼等 5 个龙族世界观条目。",
+      "知识库 npcs.json 扩展：新增日本分部相关 NPC（源稚生、源稚女/风间琉璃、上杉越、绘梨衣、赫尔佐格等）及关系网络。",
+      "知识库 locations.json 扩展：新增日本场景（源氏重工、极乐馆、黑天鹅港等）。",
+      "龙族 I/II/III 共 6 本 TXT 源文件就位（~4.5MB），为 Phase 8 内容创建做准备。",
+      "campaign_generator.py 新增 NovelIngestor 类——编码检测 + 章节边界识别 + 逐章锚点提取 + 跨章组装 pipeline。"
+    ],
+    "relatedFiles": [
+      "backend/tests/test_campaign_wiring.py",
+      "backend/tests/test_no_future_annotations.py",
+      "scripts/run_novel_pipeline.py",
+      "backend/app/services/campaign_generator.py",
+      "backend/app/main.py",
+      "knowledge/world_lore.md",
+      "knowledge/npcs.json",
+      "knowledge/locations.json",
+      "13802-龙族Ⅰ_火之晨曦.txt",
+      "13803-龙族Ⅱ_悼亡者之瞳.txt",
+      "13804-龙族Ⅲ+_+黑月之潮（上）.txt",
+      "13805-龙族Ⅲ+_+黑月之潮（中）.txt",
+      "13806-龙族Ⅲ+_+黑月之潮（下）.txt",
+      "13807-龙族Ⅳ_奥丁之渊.txt"
+    ],
+    "nextSteps": [
+      "执行 Phase 6 四个计划（06-01~06-04）：Campaign Wiring → Session Auto-Advance → Arc Selection API → Arc Selection UI。",
+      "Phase 6 完成后运行 auto_play.py 270 回合验证，确认 session 边界自动触发 recap + FSM 切换。",
+      "小说管线需 charset-normalizer 依赖安装后才能端到端测试（NOVEL-01）。"
+    ]
+  },
+  {
+    "id": "2026-06-18-campaign-engine-v1-complete",
+    "date": "2026-06-18",
+    "title": "Campaign Narrative Engine v1 完成 — 5 阶段 18 计划 143 测试",
+    "summary": "经过 5 个阶段的系统化执行，Jity Campaign Narrative Engine v1 正式完成。实现了从基础技术栈升级到 AI 战役生成、锚点事件系统、叙事健康监控的完整闭环，auto_play.py 270 回合无崩溃通过。",
+    "developer": "TandyBlow",
+    "areas": [
+      "backend",
+      "frontend",
+      "campaign",
+      "llm",
+      "rag",
+      "testing",
+      "ui",
+      "milestone"
+    ],
+    "changes": [
+      "Phase 1 Foundation（4 plans）：FastAPI/Pydantic/FAISS 升级、openai SDK 替换 httpx + json_repair、tiktoken token 计数、transitions FSM、Tailwind CSS v4 + shadcn/ui。",
+      "Phase 2 Campaign Core（5 plans）：campaign.json 标准化格式 + v1→v2→v3 迁移链、CampaignManager 加载/校验/开场覆盖、独立 campaign_progress 表 + FSM 集成、锚点事件系统（混合触发器 + 单锚点/回合 + 冷却）、CampaignManager 上下文注入 + token 预算检查。",
+      "Phase 3 Narrative Quality（4 plans）：Session 前情提要（LLM 压缩 'Previously on...'）、AI 战役生成（deepseek-v4-pro）+ 前端策展编辑器、动态分支检测（LLM fact extraction 替代硬编码关键词）、叙事健康监控 + 隐式引导注入。",
+      "Phase 4 UI & Polish（2 plans）：发现时间线 UI（system-known vs player-confirmed 区分）、策展编辑器增强。",
+      "Phase 5 Pre-Launch Hardening（3 plans）：context_strategy 接口、RAG embedding 升级（hash-based → DeepSeek embedding API）、选项策略配置化、并发安全（乐观锁）、auto_play.py 270 回合验证通过（3 arcs × 3 sessions × 30 turns）。",
+      "schemas/ 包拆分：game.py（144 行）+ campaign.py（179 行），从单一 300+ 行文件重构。",
+      "PromptBuilder 重构：PromptInput dataclass（6 参数→1 参数）、消息历史注入、风格锚点、负面约束指令。",
+      "143 个 pytest 测试全部通过，覆盖 CampaignManager、FSM、锚点系统、schema 迁移、token 预算、前情提要、fact extraction、健康监控。",
+      "DeepSeek 模型迁移：deepseek-chat → deepseek-v4-flash（日常）/ deepseek-v4-pro（创意生成）。"
+    ],
+    "relatedFiles": [
+      "backend/app/services/campaign_manager.py",
+      "backend/app/services/campaign_fsm.py",
+      "backend/app/services/campaign_generator.py",
+      "backend/app/services/scenario_generator.py",
+      "backend/app/services/prompt_builder.py",
+      "backend/app/services/llm_client.py",
+      "backend/app/services/game_state.py",
+      "backend/app/services/retriever.py",
+      "backend/app/services/embedding_client.py",
+      "backend/app/services/health_monitor.py",
+      "backend/app/services/context_strategy.py",
+      "backend/app/schemas/game.py",
+      "backend/app/schemas/campaign.py",
+      "backend/tests/*.py",
+      "frontend/src/app/curator/page.tsx",
+      "frontend/src/app/timeline/page.tsx",
+      "frontend/src/app/page.tsx",
+      "scripts/auto_play.py"
+    ],
+    "nextSteps": [
+      "进入 v1.5（Phase 6-8）：Session 自动推进 + Arc 选择 + 小说管线 + 龙族内容包。",
+      "解决已知 Blocker：Campaign 系统端到端 HTTP 验证、session_messages 表结构调整、_is_first_turn_of_session() 修复。"
+    ]
+  },
+  {
+    "id": "2026-06-17-auto-play-script",
+    "date": "2026-06-17",
+    "title": "自动跑剧情脚本和长轮次记录",
+    "summary": "新增自动剧情 playtest 脚本，用于连续创建会话、自动选择更能推进剧情的选项，并把每轮生成内容、选择记录、Context Memory 和 RAG Hits 追加到 Markdown 日志中，方便做 300 轮 x 3 次的稳定性观察。",
+    "developer": "Codex",
+    "areas": [
+      "developer-tooling",
+      "playtest",
+      "backend",
+      "llm"
+    ],
+    "changes": [
+      "新增 scripts/auto_play.py，默认运行 3 个 session，每个 session 最多 300 轮，达到轮次后重新开始新会话。",
+      "脚本会记录每轮所有可选项、实际选中的选项、选择分数、生成剧情、NPC 对话、状态变化、Context Memory 快照和 RAG Hits。",
+      "自动选项策略偏向推进、继续、前往、调查、询问、检查、任务、地点、关键 NPC 或关键物品，并降低等待、拒绝、逃跑、沉默等被动选项权重。",
+      "脚本按轮追加写入 Markdown 文件，默认输出到 playtest_logs/，即使长跑中断也能保留已经生成的内容。",
+      "为生成请求增加 retries 参数，遇到临时网络或模型接口错误时会短暂等待并重试，降低长跑被偶发错误打断的概率。",
+      "README 增加自动跑剧情的默认长跑命令、小规模试跑命令和常用参数说明。",
+      "将 playtest_logs/ 加入 .gitignore，避免 900 轮剧情日志误提交到仓库。",
+      "为了支持长剧情轮次，把提示词叙事目标调整为约 30 句，并提高 LLM max_tokens 上限。",
+      "更新旧版 config.example.js 的示例模型名，保持示例配置和当前长文本生成需求一致。"
+    ],
+    "relatedFiles": [
+      "scripts/auto_play.py",
+      "README.md",
+      ".gitignore",
+      "backend/app/services/llm_client.py",
+      "backend/app/services/prompt_builder.py",
+      "config.example.js",
+      "frontend/src/lib/dev-log.ts"
+    ],
+    "nextSteps": [
+      "先用 --runs 1 --turns 5 做小规模试跑，确认输出格式和后端连接正常。",
+      "再运行默认 3 x 300 轮长跑，检查日志里是否出现重复循环、记忆漂移、RAG 误命中或 JSON 修复失败。"
+    ]
+  },
+  {
+    "id": "2026-06-16-status-delta-and-json-repair",
+    "date": "2026-06-16",
+    "title": "状态变化提示、血统稳定恢复和 JSON 修复",
+    "summary": "增强游戏回合反馈和 AI 输出可靠性：前端直接提示本回合血统稳定/血条变化，后端统一处理血统稳定的自动恢复，并为模型 JSON 输出增加强制格式和二次修复。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "llm",
+      "game-state"
+    ],
+    "changes": [
+      "在主控制台剧情选项前新增状态变化提示，显示血统稳定和血条的本回合增减及对应原因说明。",
+      "新增状态提示样式，区分损耗和恢复，让玩家更容易理解行动代价。",
+      "后端状态合并时加入每回合 2 点血统稳定自动恢复，并在提示词中说明模型不要把自动恢复写入 sanity_delta。",
+      "LLM 请求改用 response_format=json_object，并把最大输出 token 提升到 5000，减少剧情 JSON 被截断的概率。",
+      "当模型输出首次解析失败时，自动发起一次 JSON 修复请求；若仍失败，会把原始输出和修复输出一并保存，方便排查。",
+      "提示词增加字符串转义约束，要求对白引用避免未转义英文双引号，降低 JSON 解析错误。"
+    ],
+    "relatedFiles": [
+      "backend/app/services/game_state.py",
+      "backend/app/services/llm_client.py",
+      "backend/app/services/prompt_builder.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/globals.css",
+      "frontend/src/lib/dev-log.ts"
+    ],
+    "nextSteps": [
+      "用真实 DeepSeek 输出连续跑几回合，确认状态提示、自动恢复和模型返回的 sanity_delta 不会重复计算。",
+      "观察 model_outputs 中的失败记录，判断 JSON 修复提示是否还需要补充字段类型或截断处理规则。"
+    ]
+  },
+  {
+    "id": "2026-06-15-context-memory",
+    "date": "2026-06-15",
+    "title": "第二阶段：强化 Context Memory",
+    "summary": "把原本偏临时记录的状态扩展成真正的游戏记忆系统：明确长期状态结构、稳定 NPC/任务/物品字段，并让每轮 AI 输出只提交增量记忆，由后端合并成下一轮 prompt 的上下文。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "game-state",
+      "prompt"
+    ],
+    "changes": [
+      "明确 state schema，补齐 current_location、items、npcs、quests、recent_events、world_facts 和 player_status。",
+      "新增 ItemMemory、NPCMemory、QuestMemory、WorldFactMemory、PlayerStatus 和 MemoryUpdates 等结构化 schema。",
+      "为 NPC、任务、物品和长期事实统一稳定字段，例如 name、status、description、relationship、objective、notes、source。",
+      "后端状态合并改为 upsert/remove 规则：AI 只通过 memory_updates 提供本回合新增或变化的记忆，系统负责回合数、血统稳定、血条裁剪、状态归一化和去重合并。",
+      "增加 world_facts 的系统推断规则，用于记录红色标记、L-13 编号、S级观察对象、执行部观察等关键长期事实。",
+      "recent_events 改为保存 key_event 或自动摘要，限制最多 8 条、单条最多 120 字，避免把长篇 narration 无限塞进状态。",
+      "Prompt 中拆分当前状态、Context Memory/长期记忆和最近事件，下一轮生成会带上当前位置、同行 NPC、任务、关键物品、长期事实和玩家状态。",
+      "前端右侧 Context Memory 改成当前状态、同伴与 NPC、关键物品、任务、长期事实、最近事件等清晰分区。"
+    ],
+    "relatedFiles": [
+      "backend/app/schemas.py",
+      "backend/app/services/game_state.py",
+      "backend/app/services/prompt_builder.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/types.ts",
+      "frontend/src/lib/dev-log.ts"
+    ],
+    "nextSteps": [
+      "连续生成多轮，确认当前地点、同行 NPC、正在进行任务、关键物品和最近事件都能稳定保留。",
+      "检查下一轮 prompt 中的 Context Memory 是否只包含必要摘要，没有重复堆叠整段剧情文本。"
+    ]
+  },
+  {
+    "id": "2026-06-15-knowledge-base-and-rag",
+    "date": "2026-06-15",
+    "title": "第三阶段：扩充 Knowledge Base 和 RAG",
+    "summary": "把知识库从单一样例扩展为按类型组织的 RAG 数据源，并增强轻量检索、结果落库和前端命中展示，为项目报告中的 RAG 演示打基础。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "rag",
+      "knowledge-base"
+    ],
+    "changes": [
+      "将知识库拆分为 npcs.json、locations.json、quests.json、rules.md 和 world_lore.md，并保留 cassell_lore.json 兼容已有样例。",
+      "JSON 与 Markdown chunk 支持 source_type、keywords、title、content 和 importance，Markdown 可在标题后写元数据。",
+      "KnowledgeBase 加载时跳过 README，自动解析 Markdown 元数据，并根据文件名推断 npc、location、quest、rule、world_lore 等来源类型。",
+      "轻量检索增加中文 2-4 字 n-gram token 展开、关键词命中加权、标题命中加权和 importance 加权，提升临时通行卡、诺诺、图书馆等短查询命中率。",
+      "ScenarioGenerator 会把本轮 retrieved_chunks 序列化写入 model_outputs，成功和失败输出都能追溯当时用了哪些知识。",
+      "RAG Hit 返回内容增加 keywords 和 importance，前端展示来源类型、分数、标题、短内容和关键词 chip。",
+      "更新 knowledge/README.md，说明知识库文件职责、JSON 字段和 Markdown 元数据格式。"
+    ],
+    "relatedFiles": [
+      "backend/app/database.py",
+      "backend/app/schemas.py",
+      "backend/app/services/knowledge_base.py",
+      "backend/app/services/retriever.py",
+      "backend/app/services/scenario_generator.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/types.ts",
+      "knowledge/README.md",
+      "knowledge/cassell_lore.json",
+      "knowledge/locations.json",
+      "knowledge/npcs.json",
+      "knowledge/quests.json",
+      "knowledge/rules.md",
+      "knowledge/world_lore.md",
+      "frontend/src/lib/dev-log.ts"
+    ],
+    "nextSteps": [
+      "用“临时通行卡”“诺诺”“图书馆”等输入做检索验收，确认 RAG Hits 能命中对应 NPC、地点、规则或任务资料。",
+      "继续观察轻量哈希检索的误命中情况，后续再评估是否接入真正 embedding 服务。"
+    ]
+  },
+  {
+    "id": "2026-06-13-scripted-opening-and-dev-log",
+    "date": "2026-06-13",
+    "title": "固定开场、AI 接管节点和开发日志",
+    "summary": "把游戏开场整理成可控的固定剧情，引导玩家进入三个调查方向；同时新增开发日志页面，方便记录后续代码改动。",
+    "developer": "Codex",
+    "areas": [
+      "backend",
+      "frontend",
+      "story",
+      "developer-tooling"
+    ],
+    "changes": [
+      "新增卡塞尔学院报到处大厅固定开场，并为三个初始玩家反应提供脚本化输出。",
+      "固定开场结束后交给 AI 继续生成；未配置 DeepSeek API key 时返回 503，避免后续剧情继续使用本地兜底内容。",
+      "更新提示词约束和 LLM 输出归一化，要求物品、NPC、任务等字段使用对象数组。",
+      "调整前端初始剧情、默认行动和错误提示展示，移除 narrative_profile 请求字段。",
+      "新增 STORY_OUTLINE.md，说明固定剧情结构、AI 接管节点和建议延展方向。",
+      "新增 /dev-log 路由、结构化日志数据和主控制台入口，集中展示开发改动。",
+      "生产环境默认隐藏开发日志页面，可通过 ENABLE_DEV_LOG=true 显式开启。"
+    ],
+    "relatedFiles": [
+      "STORY_OUTLINE.md",
+      "backend/app/main.py",
+      "backend/app/schemas.py",
+      "backend/app/services/game_state.py",
+      "backend/app/services/llm_client.py",
+      "backend/app/services/prompt_builder.py",
+      "backend/app/services/scenario_generator.py",
+      "frontend/src/app/dev-log/page.tsx",
+      "frontend/src/app/dev-log/DevLogView.tsx",
+      "frontend/src/lib/dev-log.ts",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/globals.css",
+      "frontend/src/lib/api.ts"
+    ],
+    "nextSteps": [
+      "配置 DeepSeek API key 后，从三个主调查方向各跑一轮，检查 AI 接管后的结构化输出质量。",
+      "每次完成一组有意义的代码改动后，在 devLogEntries 顶部新增一条记录。"
+    ]
+  }
+]

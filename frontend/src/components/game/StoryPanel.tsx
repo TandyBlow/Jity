@@ -57,6 +57,7 @@ export function StoryPanel({
   const {
     sessionId,
     activeTurnId,
+    restoreVersion,
     selectedSlot,
     state,
     output,
@@ -156,6 +157,7 @@ export function StoryPanel({
     sessionId: string;
     activeTurnId: number | null;
     slotName: string;
+    restoreVersion: number;
     progress: CampaignProgressSummary | null;
   } | null>(null);
   useEffect(() => {
@@ -166,16 +168,17 @@ export function StoryPanel({
     }
     fetchCampaignProgress(sessionId)
       .then((progress) => {
-        if (!cancelled) setLoadedProgress({ sessionId, activeTurnId, slotName: selectedSlot, progress });
+        if (!cancelled) setLoadedProgress({ sessionId, activeTurnId, slotName: selectedSlot, restoreVersion, progress });
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, [sessionId, activeTurnId, selectedSlot]);
+  }, [sessionId, activeTurnId, selectedSlot, restoreVersion]);
   const cachedProgress = loadedProgress?.sessionId === sessionId
     && loadedProgress.activeTurnId === activeTurnId
     && loadedProgress.slotName === selectedSlot
+    && loadedProgress.restoreVersion === restoreVersion
       ? loadedProgress.progress
       : null;
   const campaignProgress =

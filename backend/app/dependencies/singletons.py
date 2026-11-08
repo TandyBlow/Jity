@@ -15,23 +15,18 @@ from app.services.health_monitor import HealthMonitor
 from app.services.knowledge_base import KnowledgeBase
 from app.services.llm_client import LLMClient
 from app.services.prompt_builder import PromptBuilder
-from app.services.retriever import RAGRetriever
-from app.services.scripted_story import ScriptedStoryService
 
 settings = get_settings()
 db = Database(settings.database_file)
 knowledge = KnowledgeBase(db, settings.knowledge_dir, settings.rulebook_file)
-chunks = knowledge.load_chunks()
 state_manager = GameStateManager(db)
 embedding_client = (
     EmbeddingClient(settings.deepseek_api_key, settings.llm_base_url)
     if settings.deepseek_api_key
     else None
 )
-retriever = RAGRetriever(chunks, embedding_client=embedding_client)
 prompt_builder = PromptBuilder()
 llm_client = LLMClient(settings)
-scripted_story = ScriptedStoryService()
 health_monitor = HealthMonitor(db)
 campaign_generator = CampaignGenerator(
     llm_client=llm_client,

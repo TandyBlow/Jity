@@ -86,14 +86,14 @@ class TestCampaignManagerRecap:
 
     def test_is_first_turn_of_session(self):
         """_is_first_turn_of_session should return True for turn 0."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         # FSM starts at idle; at turn 0 for session_active
         mgr.fsm.machine.set_state("active/session_active")
         assert mgr._is_first_turn_of_session(0) is True
 
     def test_is_not_first_turn(self):
         """_is_first_turn_of_session should return False for turn > 0."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         mgr.fsm.machine.set_state("active/session_active")
         assert mgr._is_first_turn_of_session(5) is False
 
@@ -113,7 +113,7 @@ class TestCampaignManagerRecap:
             "revealed_anchors": "[]", "completed_arcs": "[]",
             "recap_compressed": "前情提要：测试摘要内容", "recap_full": "",
         }
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(p)
         mgr.fsm.machine.set_state("active/session_active")
         result = mgr.inject_context({}, 0)
@@ -122,7 +122,7 @@ class TestCampaignManagerRecap:
     @pytest.mark.asyncio
     async def test_generate_recap_awaits_inner(self):
         """generate_recap must return the awaited recap, not a coroutine."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         mgr._recap = MagicMock()
         mgr._recap.generate_recap = AsyncMock(return_value="前情提要：测试")
         result = await mgr.generate_recap("sess-1")

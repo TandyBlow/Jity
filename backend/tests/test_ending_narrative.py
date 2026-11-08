@@ -183,9 +183,9 @@ async def test_route_changed_by_lethal_output_rewrites_even_long_initial_story(t
     h = Harness(tmp_path)
     _stage_finale(h)
     _set_narrator(h, ENDING_STORY, health_delta=-100,
-                  items_gained=[{"name": "错误路线奖励", "status": "owned"}],
-                  memory_updates={"world_facts_upserted": [{"name": "错误好结局事实"}]},
-                  npc_relations_delta=[{"name": "诺诺", "delta": 5}])
+                  items_gained=[{"name": "封印碎片", "status": "owned"}],
+                  memory_updates={"world_facts_upserted": [{"name": "封印造成致命伤势"}]},
+                  npc_relations_delta=[{"name": "诺诺", "sentiment": "positive"}])
     replacement = ENDING_STORY.replace("你把湿透的笔记收进衣袋", "镜中的陌生人收起了笔记")
     h.llm.generate_text = AsyncMock(return_value=replacement)
 
@@ -194,13 +194,13 @@ async def test_route_changed_by_lethal_output_rewrites_even_long_initial_story(t
     _assert_story_ending(response, "空座位")
     assert response.output.narration == replacement
     assert response.state["health"] == 0
-    assert not any(item["name"] == "错误路线奖励" for item in response.state["items"])
-    assert not any(fact["name"] == "错误好结局事实" for fact in response.state["world_facts"])
-    assert response.output.npc_relations_delta is None
+    assert any(item["name"] == "封印碎片" for item in response.state["items"])
+    assert any(fact["name"] == "封印造成致命伤势" for fact in response.state["world_facts"])
+    assert response.output.npc_relations_delta
     call, = _ending_calls(h)
     route = next(route for route in h.manager.campaign.ending_routes if route.name == "空座位")
     assert route.resolution in call.args[0] and route.epilogue in call.args[0]
-    assert "错误路线奖励" not in call.args[0]
+    assert "封印碎片" in call.args[0]
 
 
 @pytest.mark.asyncio

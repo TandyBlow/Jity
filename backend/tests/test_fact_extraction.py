@@ -14,7 +14,7 @@ class TestDeviationDetection:
 
     def test_no_deviation_without_campaign(self):
         """detect_deviation returns False when no campaign loaded."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         assert mgr.detect_deviation({}, 5) is False
 
     def test_detect_deviation_after_sustained_turns(self, tmp_path):
@@ -36,7 +36,7 @@ class TestDeviationDetection:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(p)
         # Turn 5, no anchors triggered
         assert mgr.detect_deviation({}, 5) is True
@@ -60,7 +60,7 @@ class TestDeviationDetection:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(p)
         assert mgr.detect_deviation({}, 1) is False
 
@@ -79,7 +79,7 @@ class TestAdaptiveAnchors:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(p)
         anchors = mgr.generate_adaptive_anchors({"current_location": "图书馆"})
         assert len(anchors) >= 1
@@ -97,7 +97,7 @@ class TestAdaptiveAnchors:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(p)
         # Simulate 3 existing dynamic anchors
         mgr.progress.revealed_anchors = ["dynamic-0-0-1", "dynamic-0-0-2", "dynamic-0-0-3"]

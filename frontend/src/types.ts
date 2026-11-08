@@ -139,6 +139,8 @@ export type RetrievedChunk = {
 };
 
 export type SessionResponse = {
+  account_id?: string | null;
+  save_purpose?: SavePurpose;
   session_id: string;
   game_name: string;
   model: string;
@@ -335,7 +337,11 @@ export type CampaignDetailResponse = {
   campaign: CampaignSchema;
 };
 
+export type SavePurpose = "user" | "development" | "test" | "legacy";
+
 export type SaveSlot = {
+  account_id?: string | null;
+  save_purpose?: SavePurpose;
   id: number;
   campaign_id: string;
   slot_name: string;

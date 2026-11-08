@@ -9,9 +9,6 @@ from app.database import Database
 from app.schemas import StoryOutput
 
 from app.services.game_state.defaults import (
-    MAX_NPCS,
-    MAX_QUESTS,
-    MAX_WORLD_FACTS,
     RECENT_EVENT_LIMIT,
     RECENT_EVENT_MAX_CHARS,
     SANITY_RECOVERY_PER_TURN,
@@ -34,10 +31,13 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def __init__(self, db: Database) -> None:
         self.db = db
 
-    def create_session(self, game_name: str, model: str) -> dict[str, Any]:
+    def create_session(
+        self, game_name: str, model: str, *, account_id: str | None = None,
+        save_purpose: str = "development",
+    ) -> dict[str, Any]:
         session_id = str(uuid.uuid4())
         state = default_state()
-        self.db.write_session(session_id, game_name, model, state)
+        self.db.write_session(session_id, game_name, model, state, account_id=account_id, save_purpose=save_purpose)
         active_turn_id = self.db.ensure_timeline_root(session_id, state, model)
         return {
             "session_id": session_id,
@@ -45,6 +45,8 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
             "model": model,
             "state": state,
             "active_turn_id": active_turn_id,
+            "account_id": account_id,
+            "save_purpose": save_purpose,
         }
 
     def get_session_payload(self, session_id: str) -> dict[str, Any] | None:
@@ -58,6 +60,8 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
             "state": json.loads(row["state_json"]),
             "campaign_filename": row["campaign_filename"],
             "active_turn_id": row["active_turn_id"],
+            "account_id": row["account_id"],
+            "save_purpose": row["save_purpose"],
         }
 
     def save_state(self, session_id: str, game_name: str, model: str, state: dict[str, Any]) -> None:
@@ -234,13 +238,5 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
 
     @staticmethod
     def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
-        """Apply defensive caps to prevent 270-turn state bloat.
-
-        Caps: 15 NPCs, 10 quests, 15 world_facts.
-        Inventory is authoritative and must not silently drop acquired items.
-        Excess entries are trimmed from the end (FIFO — oldest first kept).
-        """
-        state["npcs"] = state.get("npcs", [])[:MAX_NPCS]
-        state["quests"] = state.get("quests", [])[:MAX_QUESTS]
-        state["world_facts"] = state.get("world_facts", [])[:MAX_WORLD_FACTS]
+        """Compatibility hook: presentation limits must not erase saved facts."""
         return state

@@ -95,6 +95,7 @@ def api_post(base_url: str, path: str, payload: dict[str, Any], timeout: float) 
 
 
 def send_request(request: Request, timeout: float) -> dict[str, Any]:
+    request.add_header("X-Jity-Save-Purpose", "test")
     try:
         with urlopen(request, timeout=timeout) as response:
             return json.loads(response.read().decode("utf-8"))

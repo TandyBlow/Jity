@@ -86,27 +86,25 @@ class TestCampaignManagerHealth:
     def test_inject_health_without_monitor_returns_none(self):
         """inject_health should return None when no monitor set."""
         from app.services.campaign_manager import CampaignManager
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         result = mgr.inject_health()
         assert result is None
 
     def test_build_health_guidance_pacing_slow(self):
         """_build_health_guidance should produce Chinese guidance for pacing_slow."""
-        from app.services.campaign_manager import CampaignManager
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        from app.services.campaign_context import CampaignContextBuilder
         metrics = HealthMetrics(
             needs_guidance=True,
             guidance_hints=[HealthGuidanceHint.PACING_SLOW],
         )
-        result = mgr._build_health_guidance(metrics)
+        result = CampaignContextBuilder._build_health_guidance(metrics)
         assert result is not None
         assert "叙事健康引导" in result
         assert "节奏" in result
 
     def test_build_health_guidance_no_hints(self):
         """_build_health_guidance should return None when no hints."""
-        from app.services.campaign_manager import CampaignManager
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        from app.services.campaign_context import CampaignContextBuilder
         metrics = HealthMetrics(needs_guidance=False, guidance_hints=[])
-        result = mgr._build_health_guidance(metrics)
+        result = CampaignContextBuilder._build_health_guidance(metrics)
         assert result is None

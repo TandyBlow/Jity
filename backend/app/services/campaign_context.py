@@ -127,7 +127,7 @@ class CampaignContextBuilder:
         )
         if candidates:
             anchor = candidates[0]
-            self.anchors.pending_anchor_triggers = [(anchor.id, turn_in_session)]
+            self.anchors.stage_anchor(anchor, turn_in_session)
             parts.append(self._describe_trigger(anchor))
 
         # Health guidance layer
@@ -161,7 +161,7 @@ class CampaignContextBuilder:
     def _describe_trigger(anchor: AnchorEvent) -> str:
         """Build a diegetic redirection instruction for the anchor."""
         return (
-            f"叙事引导：玩家即将触发锚点事件「{anchor.name}」。\n"
+            f"候选锚点 ID={anchor.id}，名称「{anchor.name}」（尚未完成）。\n"
             f"锚点描述：{anchor.description}\n"
             "请通过环境线索、NPC暗示、或剧情推动自然地引导玩家接近该事件。\n"
             "不要直接告诉玩家发生了什么，让玩家自己的选择引领他们到达那里。\n"

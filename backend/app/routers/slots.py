@@ -2,8 +2,10 @@
 
 import json
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.dependencies.save_scope import SaveScope, get_save_scope, require_owned_session
 
 from app.dependencies import (
     campaign_manager_cache,
@@ -22,13 +24,15 @@ _repo = CampaignProgressRepository(db)
 
 
 @router.get("")
-def list_slots(session_id: str | None = None) -> dict[str, object]:
+def list_slots(
+    scope: Annotated[SaveScope, Depends(get_save_scope)], session_id: str | None = None,
+) -> dict[str, object]:
     """List save slots, optionally limited to one game session."""
-    return {"slots": _repo.list_slots(session_id)}
+    return {"slots": _repo.list_slots(session_id, account_id=scope.account_id, purpose=scope.purpose)}
 
 
 @router.post("")
-def create_slot(request: dict[str, str]) -> dict[str, object]:
+def create_slot(request: dict[str, str], scope: Annotated[SaveScope, Depends(get_save_scope)]) -> dict[str, object]:
     """Create a named save slot for the current game session."""
     slot_name = request.get("slot_name", "").strip()
     if not slot_name:
@@ -39,6 +43,7 @@ def create_slot(request: dict[str, str]) -> dict[str, object]:
         raise HTTPException(status_code=400, detail="session_id is required")
 
     session_row = db.get_session(session_id)
+    require_owned_session(session_row, scope)
     if not session_row:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
 
@@ -57,23 +62,25 @@ def create_slot(request: dict[str, str]) -> dict[str, object]:
 
 
 @router.post("/{slot_id}/load")
-def load_slot(slot_id: int) -> dict[str, object]:
+def load_slot(slot_id: int, scope: Annotated[SaveScope, Depends(get_save_scope)]) -> dict[str, object]:
     """Switch the backend and UI to a persisted campaign slot."""
     progress = db.read_campaign_progress_by_id(slot_id)
     if not progress:
         raise HTTPException(status_code=404, detail=f"Slot '{slot_id}' not found")
 
     session_id = progress["campaign_id"]
+    require_owned_session(db.get_session(session_id), scope)
     if not state_manager.get_session_payload(session_id):
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
 
     slot_name = progress["slot_name"]
     head_turn_id = progress.get("head_turn_id")
     if head_turn_id:
-        snapshot = db.activate_story_turn(session_id, int(head_turn_id))
+        snapshot = db.activate_story_turn(session_id, int(head_turn_id), slot_name=slot_name)
         if not snapshot:
             raise HTTPException(status_code=404, detail="Saved timeline node not found")
-    db.set_session_active_slot(session_id, slot_name)
+    else:
+        db.set_session_active_slot(session_id, slot_name)
     campaign_manager_cache.invalidate(session_id, slot_name)
     knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
     get_campaign_manager_for_session(session_id, slot_name)
@@ -98,12 +105,9 @@ def load_slot(slot_id: int) -> dict[str, object]:
 
 
 @router.delete("/{slot_id}")
-def delete_slot(slot_id: int) -> dict[str, object]:
-    """Delete a save slot by id. The active slot of its session cannot be deleted."""
-    try:
-        progress = _repo.delete_slot_by_id(slot_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
+def delete_slot(slot_id: int, scope: Annotated[SaveScope, Depends(get_save_scope)]) -> dict[str, object]:
+    """Delete a save slot by id, including the session's active slot."""
+    progress = _repo.delete_slot_by_id(slot_id, account_id=scope.account_id)
     if not progress:
         raise HTTPException(status_code=404, detail=f"Slot '{slot_id}' not found")
     return {"status": "deleted", "slot_id": slot_id, "slot_name": progress["slot_name"]}

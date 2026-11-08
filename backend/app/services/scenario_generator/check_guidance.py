@@ -43,6 +43,9 @@ def apply_check_to_ruling(ruling: ActionRuling, result, *, resolved: bool) -> Ac
 
 def ending_player_action(request) -> str:
     """A failed attempt cannot satisfy a deterministic success-route trigger."""
+    ruling = getattr(request, "_action_ruling", None)
+    if ruling is not None and ruling.permissibility == ActionPermissibility.BLOCKED:
+        return ""
     result = getattr(request, "_resolved_action_check", None)
     if result is not None and result.outcome in {"failure", "fumble"}:
         return ""

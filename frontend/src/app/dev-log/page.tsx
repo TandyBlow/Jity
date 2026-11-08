@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function DevLogPage() {
-  const isDevLogEnabled = process.env.NODE_ENV !== "production" || process.env.ENABLE_DEV_LOG === "true";
+  const isDevLogEnabled = process.env.ENABLE_DEV_LOG !== "false";
 
   if (!isDevLogEnabled) {
     notFound();

@@ -16,6 +16,13 @@ from app.schemas.game.memory import (
     WorldFactMemory,
 )
 
+class AnchorCompletion(BaseModel):
+    """A claimed completed event, backed by a quote from this turn's story."""
+
+    anchor_id: str
+    evidence: str
+
+
 class StoryOutput(BaseModel):
     narration: str
     dialogue: list[DialogueLine] = Field(default_factory=list)
@@ -25,6 +32,7 @@ class StoryOutput(BaseModel):
     options: list[str] = Field(default_factory=list)
     option_checks: list[OptionCheck | None] = Field(default_factory=list)
     action_check: ActionCheckResult | None = None
+    anchor_completions: list[AnchorCompletion] = Field(default_factory=list)
     game_over: bool = False
     game_over_reason: str = ""
     current_location: str = ""
@@ -50,6 +58,8 @@ class StoryOutput(BaseModel):
     def replace_em_dashes(self) -> "StoryOutput":
         """Return a new StoryOutput with all em dashes replaced by Chinese periods."""
         self.narration = replace_em_dash(self.narration)
+        for completion in self.anchor_completions:
+            completion.evidence = replace_em_dash(completion.evidence)
         self.scene_prompt = replace_em_dash(self.scene_prompt)
         self.game_over_reason = replace_em_dash(self.game_over_reason)
         self.current_location = replace_em_dash(self.current_location)

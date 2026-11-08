@@ -89,8 +89,7 @@ class TestCampaignManagerLoading:
         from unittest.mock import MagicMock
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        scripted_story = MagicMock()
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=scripted_story)
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         campaign = mgr.load(campaign_path)
 
         assert campaign.title == "测试"
@@ -121,7 +120,7 @@ class TestCampaignManagerLoading:
         from unittest.mock import MagicMock
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(campaign_path)
 
         scene = mgr.get_opening_scene()
@@ -130,7 +129,7 @@ class TestCampaignManagerLoading:
     def test_get_opening_scene_returns_none_when_no_campaign(self):
         """get_opening_scene() returns None when no campaign loaded."""
         from unittest.mock import MagicMock
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         assert mgr.get_opening_scene() is None
         assert mgr.is_loaded() is False
 
@@ -155,7 +154,7 @@ class TestCampaignManagerLoading:
         from unittest.mock import MagicMock
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(campaign_path)
         assert mgr.get_opening_scene() is None
 
@@ -164,14 +163,14 @@ class TestCampaignManagerLoading:
         campaign_path = tmp_path / "bad.json"
         campaign_path.write_text("not json", encoding="utf-8")
         from unittest.mock import MagicMock
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path)
         with pytest.raises(ValueError):
             mgr.load(campaign_path)
 
     def test_load_file_not_found(self, tmp_path):
         """load() should raise FileNotFoundError for missing file."""
         from unittest.mock import MagicMock
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path)
         with pytest.raises(FileNotFoundError):
             mgr.load(tmp_path / "nonexistent.json")
 
@@ -189,7 +188,7 @@ class TestCampaignManagerLoading:
         from unittest.mock import MagicMock
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         campaign = mgr.load(campaign_path)
         assert campaign.version == 4
         assert campaign.constraints == ""

@@ -53,25 +53,26 @@ def test_budget_checks_required_item_and_anchor_even_with_fact_evidence():
 
 
 @pytest.mark.asyncio
-async def test_replaced_ending_captures_only_final_consequences(tmp_path):
+async def test_replaced_ending_captures_final_prose_and_retains_settled_consequences(tmp_path):
     h = Harness(tmp_path)
     h.manager.progress.arc_index = 2
     h.manager.progress.session_index = 1
     h.manager.save_progress()
     h.llm.generate.return_value = (StoryOutput(
         narration="应该被替换的原始旁白", health_delta=-100,
-        items_gained=[{"name": "虚构奖励", "aliases": ["奖牌"]}],
-        npc_relations_delta=[{"name": "同伴", "delta": 5}],
+        items_gained=[{"name": "临终信件", "aliases": ["遗书"]}],
+        npc_relations_delta=[{"name": "同伴", "sentiment": "positive"}],
     ), 1)
     response = await h.generate()
     await h.gen._wait_memory(h.session_id)
     assert response.output.game_over
-    assert not response.output.items_gained and not response.output.npc_relations_delta
+    assert response.output.items_gained[0]["name"] == "临终信件"
+    assert response.output.npc_relations_delta
     saved = json.loads(h.db.get_story_turn(h.session_id, response.timeline_node_id)["state_json"])
     memory = saved["_memory_controller"]
     assert "应该被替换" not in json.dumps(memory, ensure_ascii=False)
-    assert "虚构奖励" not in json.dumps(memory, ensure_ascii=False)
-    assert "奖牌" not in memory["item_aliases"]
+    assert "临终信件" in json.dumps(memory, ensure_ascii=False)
+    assert memory["item_aliases"]["遗书"] == "临终信件"
     assert len(memory["nsb"]["turn_buffer"]) == 1
     assert response.output.narration in memory["nsb"]["turn_buffer"][0]
     assert response.caps["items"] is None
@@ -97,8 +98,10 @@ async def test_slot_copy_keeps_budget_and_delete_keeps_shared_history(tmp_path):
     assert h.db.get_session(h.session_id)
     assert h.db.get_story_turn(h.session_id, response.timeline_node_id)
     assert repo.delete_slot_by_id(original["id"]) is None
-    with pytest.raises(ValueError, match="当前存档不可删除"):
-        repo.delete_slot_by_id(copied["id"])
+    assert repo.delete_slot_by_id(copied["id"])
+    assert repo.list_slots(h.session_id) == []
+    assert h.db.list_story_turns(h.session_id) == before
+    assert h.db.get_session(h.session_id)
 
 
 @pytest.mark.asyncio

@@ -129,7 +129,12 @@ _COLUMN_MIGRATIONS = [
     ("campaign_progress", "recap_full", "TEXT NOT NULL DEFAULT ''"),
     ("game_sessions", "campaign_id", "TEXT"),
     ("game_sessions", "campaign_filename", "TEXT"),
+    ("game_sessions", "max_turns_per_campaign", "INTEGER"),
     ("game_sessions", "active_slot_name", "TEXT NOT NULL DEFAULT 'default'"),
+    # Old saves have no reliable owner/source. Keep them explicitly unclassified
+    # instead of guessing ownership or test purpose from their display names.
+    ("game_sessions", "account_id", "TEXT"),
+    ("game_sessions", "save_purpose", "TEXT NOT NULL DEFAULT 'legacy' CHECK(save_purpose IN ('user', 'development', 'test', 'legacy'))"),
     ("session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0"),
     ("session_messages", "turn_node_id", "INTEGER"),
     ("campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'"),
@@ -152,6 +157,9 @@ def init_schema(db) -> None:
     for table, column, definition in _COLUMN_MIGRATIONS:
         ensure_column(db, table, column, definition)
     _migrate_campaign_progress_pk(db)
+    db.execute(
+        "CREATE INDEX IF NOT EXISTS idx_game_sessions_account_purpose ON game_sessions(account_id, save_purpose)"
+    )
     db.execute(
         "CREATE INDEX IF NOT EXISTS idx_session_messages_turn ON session_messages(turn_node_id)"
     )

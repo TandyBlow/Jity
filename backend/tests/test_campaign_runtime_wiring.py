@@ -56,7 +56,7 @@ def test_campaign_progress_tracks_turn_in_session():
 
 def test_advance_turn_persists_campaign_local_turn(tmp_path):
     db = Database(tmp_path / "test.db")
-    mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+    mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
     mgr.load(_campaign_file(tmp_path), campaign_id="session-1")
 
     assert mgr.advance_turn() == 1
@@ -69,7 +69,7 @@ def test_advance_turn_persists_campaign_local_turn(tmp_path):
 @pytest.mark.asyncio
 async def test_advance_session_resets_turn_counter(tmp_path):
     db = Database(tmp_path / "test.db")
-    mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+    mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
     mgr.load(_campaign_file(tmp_path, sessions=2), campaign_id="session-1")
     mgr.progress.turn_in_session = 30
     mgr.save_progress()
@@ -82,7 +82,7 @@ async def test_advance_session_resets_turn_counter(tmp_path):
     assert row["turn_in_session"] == 0
 
 
-def test_injected_anchor_is_committed_after_successful_turn(tmp_path):
+def test_injected_anchor_requires_story_and_state_evidence_before_commit(tmp_path):
     db = Database(tmp_path / "test.db")
     anchor = {
         "id": "a1",
@@ -91,10 +91,20 @@ def test_injected_anchor_is_committed_after_successful_turn(tmp_path):
         "priority": 1,
         "trigger_conditions": {"location": "大厅"},
     }
-    mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+    mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
     mgr.load(_campaign_file(tmp_path, anchors=[anchor]), campaign_id="session-1")
 
     context = mgr.inject_context(_state(), 0)
+    assert mgr.commit_pending_anchors() == []
+    mgr.inject_context(_state(), 0)
+    from app.schemas import StoryOutput
+    evidence = "你看到大厅门禁亮起异常纹路。"
+    fact = {"name": "揭示门禁", "description": evidence, "status": "known"}
+    output = StoryOutput(
+        narration=evidence, anchor_completions=[{"anchor_id": "a1", "evidence": evidence}],
+        memory_updates={"world_facts_upserted": [fact]},
+    )
+    mgr.confirm_pending_anchors(output, {**_state(), "world_facts": [fact]})
     triggered = mgr.commit_pending_anchors()
 
     row = db.read_campaign_progress("session-1")
@@ -108,11 +118,11 @@ def test_progress_slots_are_isolated(tmp_path):
     db = Database(tmp_path / "test.db")
     campaign_path = _campaign_file(tmp_path)
 
-    first = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+    first = CampaignManager(db=db, campaigns_dir=tmp_path)
     first.load(campaign_path, campaign_id="session-1", slot_name="default")
     first.advance_turn()
 
-    second = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+    second = CampaignManager(db=db, campaigns_dir=tmp_path)
     second.load(campaign_path, campaign_id="session-1", slot_name="branch")
 
     assert db.read_campaign_progress("session-1", "default")["turn_in_session"] == 1
@@ -120,7 +130,7 @@ def test_progress_slots_are_isolated(tmp_path):
 
 
 def test_prompt_sections_truncate_low_priority_context(tmp_path):
-    mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path, scripted_story=MagicMock())
+    mgr = CampaignManager(db=MagicMock(), campaigns_dir=tmp_path)
     mgr._strategy = SimpleTruncationStrategy(budget_limit=20)
     sections = {
         "rag_chunks": "RAG " + ("noise " * 200),

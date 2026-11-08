@@ -5,12 +5,6 @@ from typing import Any
 
 import numpy as np
 
-try:
-    import faiss
-except ImportError:  # pragma: no cover
-    faiss = None
-
-
 TOKEN_RE = re.compile(r"[\w\u4e00-\u9fff]+", re.UNICODE)
 CJK_RE = re.compile(r"[\u4e00-\u9fff]+")
 
@@ -27,14 +21,6 @@ class RAGRetriever:
         self.embedding_client = embedding_client
         self._api_vectors_ready = False
         self.vectors = np.array([self._embed(self._chunk_text(chunk)) for chunk in chunks], dtype="float32")
-        self.index = None
-        self._rebuild_index()
-
-    def _rebuild_index(self) -> None:
-        self.index = None
-        if faiss is not None and len(self.vectors):
-            self.index = faiss.IndexFlatIP(self.dimensions)
-            self.index.add(self.vectors)
 
     def retrieve(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
         if not self.chunks:
@@ -81,7 +67,6 @@ class RAGRetriever:
         vectors = await self.embedding_client.embed(texts)
         self.vectors = self._normalize_vectors(vectors.astype("float32"))
         self.dimensions = int(self.vectors.shape[1]) if len(self.vectors.shape) == 2 else self.dimensions
-        self._rebuild_index()
         self._api_vectors_ready = True
 
     @staticmethod

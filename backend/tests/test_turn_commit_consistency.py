@@ -63,7 +63,7 @@ def _story_output(text: str = "第一回合的旁白。") -> StoryOutput:
 
 class Harness:
     """Real database + real campaign manager; only LLM output and the
-    prompt/opening/post hooks are stubbed, so the finalize seam runs for real."""
+    prompt/opening hooks are stubbed, so the finalize seam runs for real."""
 
     def __init__(self, tmp_path: Path):
         self.db = Database(tmp_path / "consistency.sqlite3")
@@ -73,7 +73,7 @@ class Harness:
         self.llm.generate_json = AsyncMock(return_value={})
         self.llm.generate_text = AsyncMock(side_effect=auxiliary_text_response)
         self.manager = CampaignManager(
-            db=self.db, campaigns_dir=tmp_path, scripted_story=None,
+            db=self.db, campaigns_dir=tmp_path,
             prompt_builder=MagicMock(), llm_client=self.llm,
         )
         self.manager.load(CAMPAIGN, slot_name="default")
@@ -82,7 +82,7 @@ class Harness:
 
         self.gen = ScenarioGenerator(
             db=self.db, state_manager=self.state_manager, retriever=None,
-            prompt_builder=None, llm_client=self.llm, scripted_story=None,
+            prompt_builder=None, llm_client=self.llm,
             default_model="test-model",
         )
         self.gen.campaign_manager_provider = lambda sid, slot: self.manager
@@ -98,7 +98,7 @@ class Harness:
             )
 
         self.gen._build_prompt = AsyncMock(side_effect=build_prompt_stub)
-        # _apply_post_generation runs for real: the NPC relation overlay is
+        # NPC relation settlement runs for real: the NPC relation overlay is
         # part of the consistency surface under test.
         # Exercise the actual versioned snapshot lifecycle, including fresh
         # controllers after failures/restores and independent maintenance workers.
@@ -130,7 +130,25 @@ class Harness:
         )
 
     def stage_pending_anchor(self) -> None:
-        self.manager._anchors.pending_anchor_triggers = [("dynamic-test-anchor", 0)]
+        from app.schemas.campaign import AnchorEvent
+        self.manager._anchors.stage_anchor(AnchorEvent(
+            id="dynamic-test-anchor", name="测试线索", description="你发现了藏在门后的测试线索。",
+        ), 0)
+        self.llm.generate.return_value = (self.story_for_pending_anchor(), 5)
+
+    def story_for_pending_anchor(self) -> StoryOutput:
+        """A compliant narrator for tests that exercise actual chapter progress."""
+        from app.schemas.game.story_output import AnchorCompletion
+        from app.schemas.game.memory import WorldFactMemory
+        output = _story_output()
+        for anchor in self.manager._anchors._pending_anchor_events.values():
+            evidence = f"你确认了新的事件：{anchor.description}"
+            output.narration += evidence
+            output.anchor_completions.append(AnchorCompletion(anchor_id=anchor.id, evidence=evidence))
+            output.memory_updates.world_facts_upserted.append(WorldFactMemory(
+                name=anchor.name, status="known", description=evidence,
+            ))
+        return output
 
     def progress_row(self) -> dict:
         row = self.db.read_campaign_progress(

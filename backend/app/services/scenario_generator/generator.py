@@ -1,4 +1,4 @@
-"""ScenarioGenerator — orchestrates one generation turn through five hooks."""
+"""ScenarioGenerator — generate output, then use the shared turn finalizer."""
 
 import asyncio
 import logging
@@ -9,16 +9,14 @@ from app.services.action_checks import (
     ActionCheckError, is_check_transition, resolve_action_check, validate_action_check,
 )
 from app.services.scenario_generator.check_guidance import ending_player_action
-from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
+from app.schemas import GenerateRequest, GenerateResponse, StoryOutput
 from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
-from app.services.game_state.defaults import STATE_CAPS
 from app.services.llm_client import LLMClient
 from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder, PromptMeta
 from app.services.retriever import RAGRetriever
-from app.services.scripted_story import ScriptedStoryService
-from app.services.campaign_endings import BLOODLINE_COLLAPSE_ENDING_ID, is_final_session
+from app.services.campaign_endings import BLOODLINE_COLLAPSE_ENDING_ID
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
@@ -49,7 +47,6 @@ class ScenarioGenerator(
         retriever: RAGRetriever,
         prompt_builder: PromptBuilder,
         llm_client: LLMClient,
-        scripted_story: ScriptedStoryService,
         default_model: str,
         campaign_manager: CampaignManager | None = None,
         campaign_manager_provider: Callable[[str, str], CampaignManager | None] | None = None,
@@ -59,7 +56,6 @@ class ScenarioGenerator(
         self.retriever = retriever
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
-        self.scripted_story = scripted_story
         self.campaign_manager = campaign_manager
         self.campaign_manager_provider = campaign_manager_provider
         self.default_model = default_model
@@ -167,7 +163,7 @@ class ScenarioGenerator(
         # has not opened yet: a scripted opening cannot consume the ending.
         if selected_ending is None:
             opening_result = await self._handle_opening_scene(
-                session_id, request, session, state, model, campaign_manager, _csi,
+                session_id, request, state, model, campaign_manager, _csi,
                 parent_turn_id,
             )
             if opening_result is not None:
@@ -221,17 +217,9 @@ class ScenarioGenerator(
                 output.narration = ""
                 output.dialogue = []
                 output.scene_prompt = ""
-                if not bloodline_collapse:
-                    output.current_location = state.get("current_location", "")
-                    output.items_gained = []
-                    output.items_lost = []
-                    output.npcs_encountered = []
-                    output.quests_updated = []
-                    output.memory_updates = type(output.memory_updates)()
-                    output.npc_relations_delta = None
-                # Bloodline loss is a consequence of this action. Retain its
-                # scene and item changes, so the final story starts where the
-                # collapse actually happened rather than teleporting backwards.
+                # Rewrite prose only. These settled consequences are the very
+                # evidence that made the new route eligible; dropping them
+                # would persist an ending whose requirements are no longer met.
             if bloodline_collapse:
                 status = output.memory_updates.player_status_patch
                 status.condition = "死侍化，失去人类自我"
@@ -257,99 +245,13 @@ class ScenarioGenerator(
 
         memory_ctrl.score_tracker._aliases = tracker_aliases
         memory_ctrl.score_tracker.load_from_state(tracker_snapshot)
-        memory_ctrl.score_tracker.validate_output(output, int(state.get("turn", 0)) + 1)
-        next_state = self.state_manager.apply_output(state, request.player_action, output)
-        next_state["items"] = memory_ctrl.score_tracker.reconcile_inventory(next_state.get("items", []))
-
-        # Hook 4: Post-generation processing (NPC relations)
-        next_state = await self._apply_post_generation(
-            output, next_state, state, session_id, session, model, campaign_manager
+        return await self._finalize_turn(
+            session_id=session_id, request=request, output=output, state=state,
+            model=model, campaign_manager=campaign_manager, memory_ctrl=memory_ctrl,
+            parent_turn_id=parent_turn_id, campaign_session_index=_csi,
+            source=source, latency_ms=latency_ms, token_count=token_count,
+            retrieved=retrieved, retrieved_for_storage=retrieved_for_storage, meta=meta,
         )
-
-        self._feed_memory(session_id, next_state, output, request.player_action, campaign_manager)
-
-        # Hook 5: Record + finalize (commit anchors, advance turn advance session — once)
-        output_id, metrics = await self._record_and_finalize(
-            session_id, request, output, model, latency_ms, source, state,
-            retrieved_for_storage, token_count, campaign_manager, meta=meta
-        )
-
-        progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
-        timeline_node_id = self.db.commit_story_turn(
-            session_id=session_id,
-            expected_parent_id=parent_turn_id,
-            player_action=request.player_action,
-            output=output.model_dump(),
-            state=next_state,
-            campaign_progress=progress_snapshot,
-            model=model,
-            source=source,
-            model_output_id=output_id,
-            campaign_session_index=_csi,
-        )
-        campaign_manager.flush_deferred_effects()
-        self._schedule_memory(session_id, timeline_node_id, next_state, campaign_manager)
-
-        sanitized = self.state_manager.sanitize_state(dict(next_state))
-        serialized = output.model_dump()
-        campaign_view = (
-            campaign_manager.campaign_view(sanitized)
-            if campaign_manager is not None and campaign_manager.is_loaded() else {}
-        )
-        return GenerateResponse(
-            memory=self.state_manager.memory_trace_entry(serialized, sanitized),
-            declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
-            caps=STATE_CAPS,
-            campaign_progress=campaign_view or None,
-            session_id=session_id,
-            state=sanitized,
-            output=output,
-            retrieved_chunks=[
-                RetrievedChunk(
-                    id=chunk["id"],
-                    title=chunk["title"],
-                    source_type=chunk["source_type"],
-                    content=chunk["content"][:700],
-                    score=chunk["score"],
-                    keywords=chunk.get("keywords", []),
-                    importance=int(chunk.get("importance", 3)),
-                )
-                for chunk in retrieved
-            ],
-            model_output_id=output_id,
-            used_model=model,
-            source=source,
-            timeline_node_id=timeline_node_id,
-            parent_timeline_node_id=parent_turn_id,
-        )
-
-    # ── Shared advance helper ─────────────────────────────────────────
-
-    async def _advance_campaign(
-        self,
-        campaign_manager: CampaignManager | None,
-        pending_messages: list[dict[str, str]] | None = None,
-    ) -> None:
-        """Commit anchors, advance turn, maybe advance session — exactly once.
-
-        All advancement is in-memory only: the turn path persists progress
-        inside the commit_story_turn transaction, so a failed node commit
-        leaves nothing advanced on disk.
-        """
-        if campaign_manager is None or not campaign_manager.is_loaded():
-            return
-        closing_pending = campaign_manager.is_closing_pending()
-        should_begin_closing = campaign_manager.should_begin_closing_after_next_turn()
-        campaign_manager.commit_pending_anchors(persist=False)
-        campaign_manager.advance_turn(persist=False)
-        if closing_pending and not is_final_session(
-            campaign_manager.campaign, campaign_manager.progress
-        ):
-            await campaign_manager.advance_session(pending_messages, persist=False)
-        elif should_begin_closing and not is_final_session(
-            campaign_manager.campaign, campaign_manager.progress
-        ):
-            campaign_manager.begin_closing()
 
     # ── Error storage helper ──────────────────────────────────────────
 
@@ -380,15 +282,6 @@ class ScenarioGenerator(
         if campaign_manager is not None and campaign_manager.is_loaded():
             return getattr(campaign_manager.progress, "session_index", 0)
         return 0
-
-    def _campaign_progress_snapshot(
-        self, session_id: str, campaign_manager: CampaignManager | None
-    ) -> dict:
-        if campaign_manager is None or not campaign_manager.is_loaded() or campaign_manager.progress is None:
-            return {}
-        # In-memory values: on the deferred path they are ahead of the row
-        # until commit_story_turn writes them.
-        return campaign_manager.progress_snapshot()
 
     def invalidate_timeline_caches(self, session_id: str, slot_name: str = "default") -> None:
         """Discard branch-local in-memory state after activating a snapshot."""

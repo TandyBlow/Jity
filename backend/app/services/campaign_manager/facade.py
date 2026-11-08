@@ -48,14 +48,12 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
         self,
         db: Database,
         campaigns_dir: Path,
-        scripted_story,
         prompt_builder=None,
         llm_client=None,
         health_monitor=None,
     ) -> None:
         self.db = db
         self.campaigns_dir = campaigns_dir
-        self.scripted_story = scripted_story
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
         self._health_monitor = health_monitor
@@ -69,7 +67,7 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
         self._context = CampaignContextBuilder(
             db, self._anchors, self._recap, health_monitor
         )
-        self._strategy: ContextStrategy = SimpleTruncationStrategy()  # public for tests
+        self._strategy: ContextStrategy = SimpleTruncationStrategy()
         # In-memory NPC relations overlay for the deferred turn path: relation
         # increments and boundary decay land here first, travel inside the
         # progress snapshot, and are persisted by the node commit only.

@@ -176,6 +176,10 @@ def _style_and_rules(input: PromptInput) -> str:
         "需要引用原话时使用中文引号、英文单引号，或改写为间接叙述。\n"
         "- 不要使用破折号（—），用逗号、句号或省略号替代。\n"
         "- 同时维护 memory_updates：只写本回合新增或变化的记忆，不要整段复述已有记忆。\n"
+        "- anchor_completions 只声明本回合实际完成的候选锚点：anchor_id 使用给定 ID，"
+        "evidence 逐字引用 narration 或 dialogue.text 中描述事件已经发生的完整片段（至少 8 字）。"
+        "同时在 memory_updates.world_facts_upserted 写入 name=给定锚点名称、status=known、"
+        "description=同一证据片段。计划、暗示、假设、失败未完成的事件不得声明完成；未完成时返回空数组。\n"
         "- memory_updates.key_event 必须是一句不超过 80 字的关键事件摘要，"
         "用于最近事件，不要复制 narration。\n"
         "- 系统会负责回合数、血统稳定、血条裁剪和记忆合并；血统稳定在行动结算后仍高于 0 时"
@@ -192,6 +196,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "options": ["选项1", "选项2", "选项3"],\n'
         '  "option_checks": [null, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功发现线索，失败付出相应代价。"}, {"requires_check": true, "name": "行动检定", "skill": "行动", "system": "通用 d20", "difficulty": "困难", "stakes": "成功潜进去，失败留下痕迹。"}],\n'
         '  "game_over": false,\n'
+        '  "anchor_completions": [],\n'
         '  "game_over_reason": "",\n'
         '  "current_location": "",\n'
         '  "items_gained": [{"name": "物品名", "description": "物品说明"}],\n'

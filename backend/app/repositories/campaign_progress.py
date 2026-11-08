@@ -15,13 +15,16 @@ class CampaignProgressRepository:
     # Read
     # ------------------------------------------------------------------
 
-    def list_slots(self, session_id: str | None = None) -> list[dict]:
-        """List save slots, optionally filtered by session_id."""
-        where_clause = ""
-        params: tuple[str, ...] = ()
+    def list_slots(
+        self, session_id: str | None = None, *, account_id: str | None = None,
+        purpose: str = "development",
+    ) -> list[dict]:
+        """Always scope by owner AND purpose, even with an explicit session ID."""
+        where_clause = "WHERE game_sessions.account_id IS ? AND game_sessions.save_purpose = ?"
+        params = (account_id, purpose)
         if session_id:
-            where_clause = "WHERE campaign_progress.campaign_id = ?"
-            params = (session_id,)
+            where_clause += " AND campaign_progress.campaign_id = ?"
+            params += (session_id,)
 
         with self.db.connect() as conn:
             rows = conn.execute(
@@ -35,7 +38,9 @@ class CampaignProgressRepository:
                      campaign_progress.head_turn_id,
                      campaign_progress.updated_at,
                      game_sessions.campaign_filename,
-                     game_sessions.active_slot_name
+                     game_sessions.active_slot_name,
+                     game_sessions.account_id,
+                     game_sessions.save_purpose
                    FROM campaign_progress
                    JOIN game_sessions ON game_sessions.id = campaign_progress.campaign_id
                    {where_clause}
@@ -55,6 +60,8 @@ class CampaignProgressRepository:
                 "last_played": row["updated_at"],
                 "campaign_filename": row["campaign_filename"],
                 "is_active": row["slot_name"] == row["active_slot_name"],
+                "account_id": row["account_id"],
+                "save_purpose": row["save_purpose"],
             }
             for row in rows
         ]
@@ -106,19 +113,18 @@ class CampaignProgressRepository:
     # Delete
     # ------------------------------------------------------------------
 
-    def delete_slot_by_id(self, slot_id: int) -> dict | None:
-        """Check active status and delete only this slot under one write lock."""
+    def delete_slot_by_id(self, slot_id: int, *, account_id: str | None = None) -> dict | None:
+        """Delete only this slot under one write lock, preserving session/history."""
         with self.db.connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
             row = conn.execute(
                 """SELECT p.*, s.active_slot_name FROM campaign_progress p
-                   JOIN game_sessions s ON s.id = p.campaign_id WHERE p.id = ?""",
-                (slot_id,),
+                   JOIN game_sessions s ON s.id = p.campaign_id
+                   WHERE p.id = ? AND s.account_id IS ?""",
+                (slot_id, account_id),
             ).fetchone()
             if row is None:
                 return None
-            if row["slot_name"] == row["active_slot_name"]:
-                raise ValueError("当前存档不可删除，请先切换到其他存档")
             conn.execute(
                 "DELETE FROM campaign_progress WHERE id = ?",
                 (slot_id,),

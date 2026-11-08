@@ -1,9 +1,16 @@
 """Shared fixtures for Jity backend tests."""
 
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
+
+# API tests import the application (and its database singleton) at collection
+# time. Never let those imports open the developer's real save database.
+_test_database_dir = tempfile.TemporaryDirectory(prefix="jity-pytest-")
+os.environ["DATABASE_FILE"] = str(Path(_test_database_dir.name) / "test.sqlite3")
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))

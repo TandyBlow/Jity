@@ -8,23 +8,6 @@ from app.schemas.game import StoryOutput
 class MetricsFacade:
     """Token budget checks and per-turn instrumentation."""
 
-    DEFAULT_MAX_TURNS = 30
-
-    # ── Token budget (dead in production, kept for test compat) ───────
-
-    TOKEN_BUDGET_LIMIT = 102400
-
-    def check_token_budget(self, prompt: str) -> tuple[bool, int, str]:
-        """Check if prompt exceeds token budget. Delegates to strategy."""
-        token_count = self._strategy.count_tokens(prompt)
-        if self._strategy.should_truncate(token_count):
-            return (
-                False,
-                token_count,
-                f"警告：token计数 {token_count} 超过预算 {self._strategy.budget_limit}",
-            )
-        return True, token_count, ""
-
     def resolve_max_turns(self) -> int:
         return self._advancer.resolve_max_turns(self.campaign, self.progress)
 

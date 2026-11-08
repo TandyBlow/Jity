@@ -6,8 +6,8 @@ RECENT_EVENT_LIMIT = 8
 RECENT_EVENT_MAX_CHARS = 120
 SANITY_RECOVERY_PER_TURN = 1
 
-# State bloat prevention (HARD-03): defensive caps to prevent
-# unbounded list growth over 270-turn campaigns
+# Legacy sizes retained for compatibility. Durable state is never truncated;
+# prompt builders apply their own presentation limits.
 MAX_ITEMS = 20  # Legacy constant; inventory is no longer truncated.
 MAX_NPCS = 15
 MAX_QUESTS = 10
@@ -17,9 +17,9 @@ STALE_TURN_THRESHOLD = 30  # prune entries unchanged for 30+ turns
 # Category -> cap, for surfaces that report occupancy rather than enforce it.
 STATE_CAPS = {
     "items": None,
-    "npcs": MAX_NPCS,
-    "quests": MAX_QUESTS,
-    "world_facts": MAX_WORLD_FACTS,
+    "npcs": None,
+    "quests": None,
+    "world_facts": None,
 }
 
 

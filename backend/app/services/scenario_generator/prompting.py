@@ -68,7 +68,7 @@ class PromptBuildMixin:
                     "\n## 核心剧情强制补完指令\n"
                     f"{HARD_TURNS_OPTION_CONTRACT}"
                     "本回合必须完成的核心事件：\n"
-                    f"- {forced_anchor.name}：{forced_anchor.description}"
+                    f"- ID={forced_anchor.id}，名称「{forced_anchor.name}」：{forced_anchor.description}"
                 )
             elif type(should_close) is bool and should_close and not is_final_session(
                 campaign_manager.campaign, progress

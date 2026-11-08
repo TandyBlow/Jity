@@ -77,8 +77,8 @@ def test_legacy_fields_are_folded_in_memory_updates_order(tmp_path):
     assert entry["items"]["declared"] == ["旧通行卡"]
 
 
-def test_a_declaration_the_cap_dropped_is_reported_as_declared(tmp_path):
-    """The failure this whole surface exists to make visible."""
+def test_new_fact_beyond_legacy_cap_is_both_declared_and_held(tmp_path):
+    """Presentation limits no longer erase the state being audited."""
     manager = _manager(tmp_path)
     full = [{"name": f"既有事实{i}", "description": "d"} for i in range(MAX_WORLD_FACTS)]
     output = _story(
@@ -90,9 +90,9 @@ def test_a_declaration_the_cap_dropped_is_reported_as_declared(tmp_path):
     next_state = manager.apply_output(_state(world_facts=full), "观察", output)
     entry = manager.memory_trace_entry(output.model_dump(), next_state)
 
-    assert len(next_state["world_facts"]) == MAX_WORLD_FACTS
+    assert len(next_state["world_facts"]) == MAX_WORLD_FACTS + 1
     assert "第 16 条新事实" in entry["world_facts"]["declared"]
-    assert "第 16 条新事实" not in entry["world_facts"]["held"]
+    assert "第 16 条新事实" in entry["world_facts"]["held"]
 
 
 def test_nothing_declared_yields_empty_lists(tmp_path):
@@ -129,7 +129,7 @@ def test_route_returns_a_node_per_turn(tmp_path, monkeypatch):
 
     payload = http.get(f"/sessions/{sid}/memory-trace").json()
 
-    assert payload["caps"]["world_facts"] == MAX_WORLD_FACTS
+    assert payload["caps"]["world_facts"] is None
     # Root plus the one committed turn.
     assert len(payload["nodes"]) == 2
     turn = payload["nodes"][-1]
@@ -166,7 +166,7 @@ def test_node_detail_carries_the_same_folded_memory(tmp_path, monkeypatch):
     # The raw declaration travels alongside, in merge order, for the panel to
     # show what the model actually wrote.
     assert [entry["name"] for entry in detail["declared"]["npcs"]["upserted"]] == ["诺诺"]
-    assert detail["caps"]["world_facts"] == MAX_WORLD_FACTS
+    assert detail["caps"]["world_facts"] is None
 
 
 def test_route_404s_for_unknown_session(tmp_path, monkeypatch):

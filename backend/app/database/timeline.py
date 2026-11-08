@@ -243,9 +243,17 @@ class TimelineStoreMixin:
                 )
             return turn_id
 
-    def activate_story_turn(self, session_id: str, turn_id: int) -> dict[str, Any] | None:
-        """Restore a node snapshot without removing any descendants."""
+    def activate_story_turn(
+        self, session_id: str, turn_id: int, *, slot_name: str | None = None,
+    ) -> dict[str, Any] | None:
+        """Restore into the target/active slot, never the snapshot's source slot."""
         with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            session = db.execute(
+                "SELECT active_slot_name FROM game_sessions WHERE id = ?", (session_id,)
+            ).fetchone()
+            if session is None:
+                return None
             row = db.execute(
                 "SELECT * FROM story_turns WHERE id = ? AND session_id = ?",
                 (turn_id, session_id),
@@ -255,7 +263,9 @@ class TimelineStoreMixin:
             snapshot = dict(row)
             state = json.loads(snapshot["state_json"])
             progress = json.loads(snapshot["campaign_progress_json"] or "{}")
-            slot_name = str(progress.get("slot_name") or "default")
+            slot_name = slot_name or session["active_slot_name"] or "default"
+            if progress:
+                progress["slot_name"] = slot_name
 
             db.execute(
                 """
@@ -305,6 +315,7 @@ class TimelineStoreMixin:
                     ),
                 )
         snapshot["state"] = state
+        snapshot["slot_name"] = slot_name
         snapshot["campaign_progress"] = progress
         snapshot["output"] = json.loads(snapshot["output_json"]) if snapshot["output_json"] else None
         return snapshot

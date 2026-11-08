@@ -193,7 +193,7 @@ export function useTimelineData(
     try {
       await activateTimelineNode(sessionId, selectedNodeId);
       window.localStorage.setItem("jity_active_session_id", sessionId);
-      window.location.href = "/";
+      window.location.href = `/?session=${encodeURIComponent(sessionId)}`;
     } catch (error) {
       setTimelineError(error instanceof Error ? error.message : "恢复剧情节点失败");
       setActivating(false);

@@ -71,7 +71,7 @@ function TimelineContent() {
                   delay: searchParams.get("delay") ?? "200",
                   seed: searchParams.get("seed") ?? "20260616",
                 }).toString()}`
-              : "/"}
+              : (sessionId ? `/?session=${encodeURIComponent(sessionId)}` : "/")}
             className="back-link"
             onClick={(event) => {
               if (sessionId && typeof window !== "undefined") {

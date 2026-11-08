@@ -3,9 +3,7 @@
 from fastapi import APIRouter
 
 from app.dependencies import (
-    chunks,
     knowledge_service,
-    retriever,
     settings,
 )
 
@@ -18,7 +16,7 @@ def health() -> dict[str, object]:
         "status": "ok",
         "database": str(settings.database_file),
         "knowledge_chunks": len(knowledge_service.chunks),
-        "retriever": "faiss" if knowledge_service.retriever.index is not None else "numpy",
+        "retriever": "numpy",
     }
 
 

@@ -6,6 +6,14 @@ from typing import Any
 
 
 class SessionStoreMixin:
+    def set_session_turn_budget(self, session_id: str, turns: int) -> None:
+        """Persist this playthrough's budget independently of the campaign template."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE game_sessions SET max_turns_per_campaign = ? WHERE id = ?",
+                (turns, session_id),
+            )
+
     def set_session_campaign_id(
         self,
         session_id: str,
@@ -41,6 +49,9 @@ class SessionStoreMixin:
         model: str,
         state: dict[str, Any],
         expected_version: int | None = None,
+        *,
+        account_id: str | None = None,
+        save_purpose: str = "development",
     ) -> int:
         """Persist game state with optional optimistic locking.
 
@@ -78,8 +89,8 @@ class SessionStoreMixin:
             else:
                 db.execute(
                     """
-                    INSERT INTO game_sessions (id, game_name, model, state_json, version)
-                    VALUES (?, ?, ?, ?, 0)
+                    INSERT INTO game_sessions (id, game_name, model, state_json, version, account_id, save_purpose)
+                    VALUES (?, ?, ?, ?, 0, ?, ?)
                     ON CONFLICT(id) DO UPDATE SET
                       game_name = excluded.game_name,
                       model = excluded.model,
@@ -87,7 +98,7 @@ class SessionStoreMixin:
                       version = game_sessions.version + 1,
                       updated_at = CURRENT_TIMESTAMP
                     """,
-                    (session_id, game_name, model, json.dumps(state, ensure_ascii=False)),
+                    (session_id, game_name, model, json.dumps(state, ensure_ascii=False), account_id, save_purpose),
                 )
                 row = db.execute(
                     "SELECT version FROM game_sessions WHERE id = ?", (session_id,)

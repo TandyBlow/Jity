@@ -3,6 +3,7 @@
 import logging
 from typing import Any
 
+from app.config import Settings, get_settings
 from app.services.campaign_persistence import CampaignPersistence
 from app.services.campaign_recap import CampaignRecapGenerator
 
@@ -12,17 +13,18 @@ logger = logging.getLogger(__name__)
 class CampaignSessionAdvancer:
     """Orchestrates campaign-local turn increments and session/arc boundaries."""
 
-    DEFAULT_MAX_TURNS = 30
-    # Whole-campaign execution budget: the ending must be presented within it.
-    DEFAULT_MAX_TURNS_PER_CAMPAIGN = 50
+    # Product ceiling, independent of the configurable default budget.
+    MAX_TURNS_PER_CAMPAIGN = 50
 
     def __init__(
         self,
         persistence: CampaignPersistence,
         recap_generator: CampaignRecapGenerator,
+        settings: Settings | None = None,
     ) -> None:
         self.persistence = persistence
         self.recap = recap_generator
+        self.settings = settings if settings is not None else get_settings()
         # Deferred-turn state: the recap text and the relation-decay marker
         # ride the progress snapshot into the node commit instead of writing
         # early. Cleared on commit (flush) and on failure (reload).
@@ -64,30 +66,15 @@ class CampaignSessionAdvancer:
         return progress.turn_in_session
 
     def resolve_max_turns_per_campaign(self, campaign: Any) -> int:
-        """Whole-campaign budget with precedence chain, clamped to [1, 50].
+        """Use the loaded campaign/played-session override, then backend settings.
 
-        50 is a hard ceiling, not a default: a campaign file or option_config
-        asking for 100 still gets 50 so the ending always stays in reach.
+        Keep the existing [1, 50] product boundary even for legacy campaigns
+        whose authored budget exceeds the ceiling.
         """
-        configured: int | None = None
-        if campaign is not None:
-            campaign_cap = getattr(campaign, "max_turns_per_campaign", None)
-            if campaign_cap is not None:
-                configured = int(campaign_cap)
+        configured = getattr(campaign, "max_turns_per_campaign", None)
         if configured is None:
-            import json
-            from pathlib import Path
-
-            try:
-                config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
-                if config_path.exists():
-                    config = json.loads(config_path.read_text(encoding="utf-8"))
-                    configured = int(config.get("max_turns_per_campaign", self.DEFAULT_MAX_TURNS_PER_CAMPAIGN))
-            except Exception:
-                logger.debug("option_config.json load failed", exc_info=True)
-        if configured is None:
-            configured = self.DEFAULT_MAX_TURNS_PER_CAMPAIGN
-        return max(1, min(configured, self.DEFAULT_MAX_TURNS_PER_CAMPAIGN))
+            configured = self.settings.max_turns_per_campaign
+        return max(1, min(int(configured), self.MAX_TURNS_PER_CAMPAIGN))
 
     def _sessions_remaining(self, campaign: Any, progress: Any) -> int:
         """Sessions from the current position to the campaign end, inclusive."""
@@ -100,7 +87,7 @@ class CampaignSessionAdvancer:
     def resolve_max_turns(self, campaign: Any, progress: Any) -> int:
         """Resolve the current session's turn cap.
 
-        Precedence chain (per-session → campaign → config → 30), clamped by
+        Precedence chain (per-session → campaign → backend settings), clamped by
         the whole-campaign allocation: the session may only use an equal
         share of the remaining budget, so later chapters keep their turns
         and the sum never exceeds the campaign cap.
@@ -212,20 +199,8 @@ class CampaignSessionAdvancer:
             if campaign_max is not None:
                 return max(1, int(campaign_max))
 
-        # 3. option_config.json global default
-        import json
-        from pathlib import Path
-
-        try:
-            config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
-            if config_path.exists():
-                config = json.loads(config_path.read_text(encoding="utf-8"))
-                return max(1, int(config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)))
-        except Exception:
-            logger.debug("option_config.json load failed", exc_info=True)
-
-        # 4. Hardcoded default — MUST return int, never None
-        return self.DEFAULT_MAX_TURNS
+        # 3. Backend settings supply the validated fallback (default: 30).
+        return self.settings.max_turns_per_session
 
     async def advance_session(
         self,

@@ -198,7 +198,7 @@ async def test_late_worker_cannot_pollute_restored_branch(tmp_path):
         await release.wait()
         return {"summary": "只属于子分支的秘密"}
     llm = MagicMock(generate_json=AsyncMock(side_effect=summarize))
-    gen = ScenarioGenerator(db, states, None, None, llm, None, "test")
+    gen = ScenarioGenerator(db, states, None, None, llm, "test")
     for i in range(5):
         mc.nsb.add_turn("a", "b", i + 2)
     job = asyncio.create_task(gen._maintain_memory_snapshot(sid, child, 6, mc.export_state(), ""))
@@ -300,7 +300,7 @@ def test_memory_cas_does_not_overwrite_new_live_state(tmp_path):
 async def test_completed_worker_advances_version_and_rejects_duplicate(tmp_path):
     db, states, session, mc = db_session(tmp_path)
     sid, root = session["session_id"], session["active_turn_id"]
-    gen = ScenarioGenerator(db, states, None, None, None, None, "test")
+    gen = ScenarioGenerator(db, states, None, None, None, "test")
     await gen._maintain_memory_snapshot(sid, root, 1, mc.export_state(), "")
     current = states.get_session_payload(sid)["state"]["_memory_controller"]
     assert current["version"] != mc.version

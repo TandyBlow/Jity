@@ -18,6 +18,7 @@ class CreateSessionRequest(BaseModel):
     arc_index: int = 0
     session_index: int = 0
     slot_name: Optional[str] = None
+    max_turns_per_campaign: int | None = Field(default=None, strict=True, ge=1, le=50)
 
 
 class GenerateRequest(BaseModel):
@@ -44,6 +45,8 @@ class GenerateRequest(BaseModel):
 # ── Response models ──
 
 class SessionResponse(BaseModel):
+    account_id: str | None = None
+    save_purpose: Literal["user", "development", "test", "legacy"] = "development"
     session_id: str
     game_name: str
     model: str

@@ -80,6 +80,13 @@ class CampaignLoader:
 
         # Init progress and FSM
         cid = campaign_id or self.campaign.title
+        # Read the playthrough override on every load, including cache eviction,
+        # server restarts, timeline restores and switches between save slots.
+        session_row = self.db.get_session(cid)
+        if session_row is not None:
+            budget = session_row["max_turns_per_campaign"]
+            if budget is not None:
+                self.campaign.max_turns_per_campaign = budget
         self.slot_name = slot_name or "default"
         existing = self.load_progress(cid)
         if existing:

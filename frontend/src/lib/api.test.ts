@@ -46,6 +46,25 @@ afterEach(() => {
 });
 
 describe("error handling", () => {
+  it("explains connection failures and allows the next save-list request to recover", async () => {
+    const failure = new TypeError("Failed to fetch");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(failure));
+
+    await expect(listSlots()).rejects.toMatchObject({
+      message: "无法连接游戏服务，请确认服务已启动、网络连接正常后重试。",
+      cause: failure,
+    });
+
+    stubFetch({ body: JSON.stringify({ slots: [{ id: 1 }] }) });
+    await expect(listSlots()).resolves.toEqual({ slots: [{ id: 1 }] });
+  });
+
+  it("preserves cancellation errors", async () => {
+    const failure = new DOMException("Request aborted", "AbortError");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(failure));
+    await expect(listSlots()).rejects.toBe(failure);
+  });
+
   it("surfaces the detail field from a JSON error body", async () => {
     stubFetch({ ok: false, status: 422, body: JSON.stringify({ detail: "战役文件不存在" }) });
 
@@ -73,6 +92,7 @@ describe("createSession", () => {
 
     expect(calls[0].url).toBe(`${BASE}/sessions`);
     expect(calls[0].init.method).toBe("POST");
+    expect(calls[0].init.headers).toMatchObject({ "X-Jity-Save-Purpose": "user" });
     expect(jsonBody(calls[0].init)).toEqual({ model: "deepseek-v4-flash", campaign_filename: "default_campaign.json" });
   });
 
@@ -177,6 +197,13 @@ describe("previewActionCheck", () => {
 });
 
 describe("URL construction", () => {
+  it("requests an explicit save purpose without changing the browser default", async () => {
+    const calls = stubFetch({ body: JSON.stringify({ slots: [] }) });
+    await listSlots(undefined, "legacy");
+    await listSlots();
+    expect(calls[0].init.headers).toMatchObject({ "X-Jity-Save-Purpose": "legacy" });
+    expect(calls[1].init.headers).toMatchObject({ "X-Jity-Save-Purpose": "user" });
+  });
   it("encodes a campaign filename", async () => {
     const calls = stubFetch({ body: JSON.stringify({}) });
 

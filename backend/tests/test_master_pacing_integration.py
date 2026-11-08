@@ -31,6 +31,14 @@ async def _checked_hard_turn(tmp_path):
     h.llm.generate = AsyncMock(side_effect=lambda *args, **kwargs: (StoryOutput(
         narration="档案被锁住了，但门边浮现的红色标记让事态发生了变化。",
         current_location="报到处大厅", options=["继续"],
+        anchor_completions=[{
+            "anchor_id": h.manager.campaign.arcs[0].sessions[0].completion_anchors[0],
+            "evidence": "门边浮现的红色标记让事态发生了变化。",
+        }],
+        memory_updates={"world_facts_upserted": [{
+            "name": h.manager.campaign.arcs[0].sessions[0].anchor_events[0].name,
+            "status": "known", "description": "门边浮现的红色标记让事态发生了变化。",
+        }]},
     ), 1))
     request = GenerateRequest(
         player_action="搜索档案", timeline_node_id=opened.timeline_node_id,

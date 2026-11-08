@@ -53,7 +53,7 @@ def runtime(tmp_path, monkeypatch):
     managers = {}
 
     def build_manager():
-        return CampaignManager(db=db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
+        return CampaignManager(db=db, campaigns_dir=CAMPAIGNS)
 
     monkeypatch.setattr(sessions, "db", db)
     monkeypatch.setattr(sessions, "state_manager", states)
@@ -68,7 +68,7 @@ def runtime(tmp_path, monkeypatch):
     llm.generate_json = AsyncMock(return_value=dict(GOOD_PAYLOAD))
 
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
-    generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
+    generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
     from app import dependencies
     monkeypatch.setattr(dependencies, "embedding_client", None)

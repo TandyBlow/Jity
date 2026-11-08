@@ -20,7 +20,7 @@ test("timeline comparison, recorded prompt and restoration remain usable", async
   await page.getByText("实际发出的 prompt 全文", { exact: true }).click();
   await expect(page.locator(".turn-context-prompt pre")).toContainText("导演指令");
   await page.getByRole("button", { name: "从此处继续" }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(url => url.pathname === "/" && url.searchParams.get("session") === SESSION_ID);
   expect(activated).toBe(true);
 });
 
@@ -52,7 +52,7 @@ for (const viewport of [{ width: 1536, height: 730 }, { width: 390, height: 844 
     await page.getByRole("button", { name: "设置", exact: true }).click();
     await expect(page.locator("#settings-slot")).toHaveValue("1");
     await page.getByRole("button", { name: "管理存档" }).click();
-    await expect(page.getByTestId("slot-1").getByRole("button", { name: "删除", exact: true })).toBeDisabled();
+    await expect(page.getByTestId("slot-1").getByRole("button", { name: "删除", exact: true })).toBeEnabled();
     const target = page.getByTestId("slot-2");
     await target.getByRole("button", { name: "删除", exact: true }).click();
     await target.getByRole("button", { name: "取消" }).click();
@@ -81,6 +81,18 @@ for (const viewport of [{ width: 1536, height: 730 }, { width: 390, height: 844 
     await expect(page.locator("#settings-slot")).toHaveValue("1");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
     await page.screenshot({ path: test.info().outputPath(`slot-management-${viewport.width}.png`) });
+    reject = false;
+    const active = page.getByTestId("slot-1");
+    await active.getByRole("button", { name: "删除", exact: true }).click();
+    await active.getByRole("button", { name: "取消", exact: true }).click();
+    expect(deleted).toEqual([2, 3]);
+    await active.getByRole("button", { name: "删除", exact: true }).click();
+    await active.getByRole("button", { name: "确认删除", exact: true }).click();
+    await expect(active).toHaveCount(0);
+    await expect(page.getByTestId("slot-3")).toBeVisible();
+    await expect(page.locator("#settings-slot")).toHaveValue("");
+    expect(deleted).toEqual([2, 3, 1]);
+    expect(loads).toBe(0);
   });
 }
 

@@ -4,7 +4,6 @@ pydantic==2.13.4
 pydantic-settings==2.8.0
 httpx==0.28.1
 numpy==2.2.0
-faiss-cpu==1.14.2
 openai==2.41.0
 tiktoken==0.9.0
 transitions==0.9.3

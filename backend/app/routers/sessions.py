@@ -4,8 +4,10 @@ import json
 import logging
 import time
 from datetime import datetime
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.dependencies.save_scope import SaveScope, get_save_scope
 
 from app.dependencies import (
     build_campaign_manager,
@@ -30,12 +32,22 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 
 @router.post("", response_model=SessionResponse)
-def create_session(request: CreateSessionRequest) -> SessionResponse:
+def create_session(
+    request: CreateSessionRequest,
+    scope: Annotated[SaveScope, Depends(get_save_scope)] = SaveScope(),
+) -> SessionResponse:
+    if scope.purpose == "legacy":
+        raise HTTPException(status_code=422, detail="New sessions must specify a current save purpose")
     campaign_path = settings.campaigns_dir / request.campaign_filename
     if not campaign_path.is_file():
         raise HTTPException(status_code=404, detail=f"Campaign file not found: {request.campaign_filename}")
-    payload = state_manager.create_session(request.game_name, request.model or settings.llm_model)
+    payload = state_manager.create_session(
+        request.game_name, request.model or settings.llm_model,
+        account_id=scope.account_id, save_purpose=scope.purpose,
+    )
     session_id = payload["session_id"]
+    if request.max_turns_per_campaign is not None:
+        db.set_session_turn_budget(session_id, request.max_turns_per_campaign)
 
     # ── Campaign wiring: load campaign if filename provided ──
     if request.campaign_filename:
@@ -305,7 +317,7 @@ def activate_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="Timeline node not found")
 
     progress = snapshot.get("campaign_progress") or {}
-    slot_name = str(progress.get("slot_name") or "default")
+    slot_name = snapshot["slot_name"]
     campaign_manager_cache.invalidate(session_id, slot_name)
     knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
 

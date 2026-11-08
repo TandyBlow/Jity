@@ -108,8 +108,8 @@ async def test_delete_slot_by_id_removes_non_active_slot():
 
 
 @pytest.mark.asyncio
-async def test_delete_active_slot_rejected():
-    """Deleting the session's active slot returns 409 and keeps the row."""
+async def test_delete_active_slot_preserves_session():
+    """The last active slot can be removed without deleting the session."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         created = await client.post("/sessions", json={
@@ -123,9 +123,12 @@ async def test_delete_active_slot_rejected():
         active = next(slot for slot in slots if slot["is_active"])
         resp = await client.delete(f"/campaigns/slots/{active['id']}")
 
-        assert resp.status_code == 409
+        assert resp.status_code == 200
         remaining = (await client.get("/campaigns/slots", params={"session_id": session_id})).json()["slots"]
-        assert active["id"] in {slot["id"] for slot in remaining}
+        assert remaining == []
+        assert (await client.get(f"/sessions/{session_id}")).status_code == 200
+        assert (await client.post(f"/campaigns/slots/{active['id']}/load")).status_code == 404
+        assert (await client.delete(f"/campaigns/slots/{active['id']}")).status_code == 404
 
 
 @pytest.mark.asyncio

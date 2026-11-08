@@ -2,8 +2,7 @@
 
 from typing import Any
 
-from app.schemas.campaign import AnchorEvent, AnchorTriggerConditions
-from app.services.campaign_context import CampaignContextBuilder
+from app.schemas.campaign import AnchorEvent
 
 
 class AnchorFacade:
@@ -24,6 +23,9 @@ class AnchorFacade:
             self.mark_anchor_triggered(anchor_id, turn, persist=persist)
 
         return self._anchors.commit_pending_anchors(self.progress, mark_fn=_mark)
+
+    def confirm_pending_anchors(self, output, state: dict) -> None:
+        self._anchors.confirm_pending_anchors(output, state)
 
     def stage_forced_completion_anchor(self) -> AnchorEvent | None:
         """Stage the next missing core anchor for the hard-convergence turn.
@@ -51,9 +53,7 @@ class AnchorFacade:
             if anchor_id in revealed or anchor_id not in by_id:
                 continue
             anchor = by_id[anchor_id]
-            self._anchors.pending_anchor_triggers = [
-                (anchor.id, self.progress.turn_in_session)
-            ]
+            self._anchors.stage_anchor(anchor, self.progress.turn_in_session)
             return anchor
         return None
 
@@ -89,22 +89,3 @@ class AnchorFacade:
 
     def inject_health(self) -> str | None:
         return self._context.inject_health(self.progress)
-
-    def _describe_trigger(self, anchor: AnchorEvent) -> str:
-        return CampaignContextBuilder._describe_trigger(anchor)
-
-    # ── Internal passthroughs (tests call these directly) ─────────────
-
-    def _conditions_met(self, conditions: AnchorTriggerConditions, state: dict[str, Any]) -> bool:
-        return self._anchors._conditions_met(conditions, state)
-
-    def _check_cooldown(self, anchor_id: str, turn: int) -> bool:
-        return self._anchors._check_cooldown(anchor_id, turn)
-
-    def _build_health_guidance(self, health: Any) -> str | None:
-        return CampaignContextBuilder._build_health_guidance(health)
-
-    # Expose internal cooldown dict for tests
-    @property
-    def _anchor_cooldowns(self) -> dict[str, int]:
-        return self._anchors._anchor_cooldowns

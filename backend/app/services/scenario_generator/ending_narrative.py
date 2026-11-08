@@ -66,9 +66,13 @@ class EndingNarrativeMixin:
                 "npcs", "quests", "world_facts", "recent_events",
             )
         }
-        recent = self.db.get_recent_messages(
-            session_id, limit=4, campaign_session_index=campaign_session_index,
-        )
+        # Storage IDs and timestamps are audit metadata, not story material.
+        recent = [
+            {"role": message["role"], "content": message["content"]}
+            for message in self.db.get_recent_messages(
+                session_id, limit=4, campaign_session_index=campaign_session_index,
+            )
+        ]
         recap = campaign_manager._load_recap_compressed() or ""
         check_result = getattr(request, "_resolved_action_check", None)
         material = json.dumps({

@@ -48,6 +48,7 @@ async def test_examiner_blocked_feedback_does_not_consume_campaign_pacing(tmp_pa
 @pytest.mark.parametrize("cap", [1, 5, 50])
 async def test_real_openings_do_not_consume_the_ending_turn(tmp_path, cap):
     h = Harness(tmp_path)
+    h.llm.generate = AsyncMock(side_effect=lambda *a, **k: (h.story_for_pending_anchor(), 5))
     h.manager.campaign.max_turns_per_campaign = cap
     del h.gen._handle_opening_scene
     h.gen._generate_opening_options = AsyncMock(return_value=OpeningOptions(
@@ -104,11 +105,11 @@ async def test_failure_before_node_commit_discards_all_runtime_changes(tmp_path,
                 raise error("injected snapshot failure")
             patch.setattr(h.gen, "_campaign_progress_snapshot", fail_snapshot)
         else:
-            original = h.gen._record_and_finalize
+            original = h.gen._record_output_and_advance
             async def fail_finalize(*args, **kwargs):
                 await original(*args, **kwargs)
                 raise error("injected finalize failure")
-            patch.setattr(h.gen, "_record_and_finalize", fail_finalize)
+            patch.setattr(h.gen, "_record_output_and_advance", fail_finalize)
         with pytest.raises(error):
             await h.generate()
     assert h.head() == root
@@ -136,13 +137,13 @@ async def test_memory_maintenance_starts_after_a_successful_node_commit(tmp_path
         await maintain(worker, *args, **kwargs)
     monkeypatch.setattr(MemoryController, "maintain", checked_maintain)
 
-    original = h.gen._record_and_finalize
+    original = h.gen._record_output_and_advance
     with monkeypatch.context() as patch:
         async def fail_finalize(*args, **kwargs):
             await original(*args, **kwargs)
             await asyncio.sleep(0)
             raise RuntimeError("injected failure before node commit")
-        patch.setattr(h.gen, "_record_and_finalize", fail_finalize)
+        patch.setattr(h.gen, "_record_output_and_advance", fail_finalize)
         with pytest.raises(RuntimeError):
             await h.generate()
     await asyncio.sleep(0)
@@ -184,7 +185,7 @@ async def test_failed_anchor_commit_does_not_suppress_retry(tmp_path, monkeypatc
         patch.setattr(h.db, "commit_story_turn", fail_commit)
         with pytest.raises(ConcurrentModificationError):
             await h.generate()
-    assert h.manager._check_cooldown("dynamic-test-anchor", 0)
+    assert h.manager._anchors._check_cooldown("dynamic-test-anchor", 0)
     assert h.manager._anchors.pending_anchor_triggers == []
 
 

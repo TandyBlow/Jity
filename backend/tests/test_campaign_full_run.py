@@ -7,6 +7,7 @@ restore exactly once and the ending must land on the cap turn.
 """
 
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -89,6 +90,7 @@ def test_budget_ending_classification():
 @pytest.mark.asyncio
 async def test_full_campaign_runs_and_ends_within_budget(tmp_path):
     h = Harness(tmp_path)
+    h.llm.generate = AsyncMock(side_effect=lambda *a, **k: (h.story_for_pending_anchor(), 5))
     cap = h.manager.resolve_max_turns_per_campaign()
     totals: list[int] = []
     chapters: list[tuple[int, int]] = []

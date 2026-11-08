@@ -1,0 +1,12 @@
+{
+  "generator": "built-in image_gen",
+  "generated": "2026-10-22",
+  "sharedPrompt": "Use case: stylized-concept. Asset type: permanent game start-screen background illustration. Create one landscape 16:9 cinematic painterly fantasy illustration, 1920x1080 or higher. [scene] Rich detailed environment painting, restrained film lighting, sophisticated dark fantasy visual novel atmosphere, beautiful textured brushwork, wide panoramic depth. The right third especially lower right must be quieter, darker, and low contrast for interface controls. No people in foreground, no text, no lettering, no logos, no watermark, no UI.",
+  "scenes": {
+    "cassell": "Cassell College admission archive: a majestic ancient World Tree towering over an ivy-covered gothic academy, intricate spreading branches and luminous amber-green leaves, stone towers and a quiet courtyard at blue-hour dawn, mist, subtle warm windows. Main tree left of center.",
+    "bronze": "Dawn of Fire campaign: an immense ancient Chinese bronze city rising from deep dark water, monumental patinated bronze gates, intricate dragon reliefs, warm molten fire flowing in channels, distant dawn and drifting embers. Architectural focal point left of center.",
+    "rain": "Eyes of the Mourner campaign: a rain-soaked modern Chinese city at night, an abandoned underground railway entrance opening into a mysterious vast subterranean realm, distant dragon-like shadow, cold blue rain, muted amber street lights reflecting on wet pavement. Main visual left of center.",
+    "tokyo": "Black Moon Tide campaign: Tokyo Tower above a stormy Tokyo skyline, a vast ominous black sea and moon behind clouds, windblown pale cherry blossom petals, crimson lights reflected in water, tragic yet beautiful atmosphere. Main tower left of center."
+  },
+  "usage": "Generated once, converted to WebP, served as static project assets. No runtime generation."
+}

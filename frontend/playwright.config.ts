@@ -29,10 +29,11 @@ export default defineConfig({
   webServer: {
     // A production build is captured on purpose: `next dev` injects a dev
     // indicator and compiles routes on demand, both of which add noise.
+    // JITY_PLAYWRIGHT applies to both build and start so neither uses .next.
     command: `npm run build && npm run start -- --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: false,
     timeout: 240_000,
-    env: { ENABLE_DEV_LOG: "true" },
+    env: { ENABLE_DEV_LOG: "true", JITY_PLAYWRIGHT: "1" },
   },
 });

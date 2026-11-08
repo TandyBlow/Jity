@@ -34,6 +34,7 @@ node_modules/
 frontend/node_modules/
 .next/
 frontend/.next/
+frontend/.next-playwright/
 out/
 frontend/tsconfig.tsbuildinfo
 npm-debug.log*
@@ -53,9 +54,12 @@ frontend/.visual-out/
 # diffable probe report next to them (layout-probe-*.json) IS tracked.
 docs/frontend-baseline/*.png
 
-# === Docs stay local (workspace convention) ===
-# Already-tracked files under docs/ keep being tracked; this only stops new ones.
-docs/
+# === Documentation archives tracked; other local evidence stays local ===
+# Existing tracked documentation remains tracked.
+/docs/*
+!/docs/dev-log/
+!/docs/research/
+/docs/research/generated/
 
 # === Runtime data ===
 .local/
@@ -65,9 +69,8 @@ backend/data/*
 !backend/data/campaigns/
 backend/data/campaigns/*
 !backend/data/campaigns/default_campaign.json
-!backend/data/scripted_story/
-!backend/data/scripted_story/*.json
 playtest_logs/
+/artifacts/smoke/
 backend/reports/
 
 # === Novel source files ===

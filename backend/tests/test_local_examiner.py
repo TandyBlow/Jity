@@ -138,6 +138,6 @@ async def test_no_periodic_fact_request_and_narrator_facts_preserved(state, turn
     next_state = manager.apply_output(state, "观察", output)
     campaign = SimpleNamespace(is_loaded=lambda: True, progress=SimpleNamespace(turn_in_session=turn),
                                extract_facts=AsyncMock(side_effect=AssertionError("No standalone API")))
-    result = await PostGenerationMixin()._apply_post_generation(output, next_state, state, "s", {}, "m", campaign)
-    assert any(f["name"] == "密道" for f in result["world_facts"])
+    PostGenerationMixin()._apply_npc_relations(output, state, campaign)
+    assert any(f["name"] == "密道" for f in next_state["world_facts"])
     campaign.extract_facts.assert_not_awaited()

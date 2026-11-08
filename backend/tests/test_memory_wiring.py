@@ -179,7 +179,7 @@ class TestNarratorStageMemory:
     def _make_generator(self) -> ScenarioGenerator:
         return ScenarioGenerator(
             db=None, state_manager=None, retriever=None, prompt_builder=None,
-            llm_client=MagicMock(), scripted_story=None, default_model="deepseek-v4-flash",
+            llm_client=MagicMock(), default_model="deepseek-v4-flash",
         )
 
     @pytest.mark.asyncio

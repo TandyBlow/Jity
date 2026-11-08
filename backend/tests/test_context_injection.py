@@ -42,7 +42,7 @@ class TestContextInjection:
 
     def test_inject_returns_empty_when_no_campaign(self):
         """inject_context() returns empty string when no campaign loaded."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         result = mgr.inject_context(_make_state(), 0)
         assert result == ""
 
@@ -71,7 +71,7 @@ class TestContextInjection:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(campaign_path)
 
         result = mgr.inject_context(_make_state(), 5)
@@ -119,7 +119,7 @@ class TestContextInjection:
 
         db = MagicMock()
         db.read_campaign_progress.return_value = None
-        mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
+        mgr = CampaignManager(db=db, campaigns_dir=tmp_path)
         mgr.load(campaign_path)
 
         result = mgr.inject_context(_make_state(), 5)

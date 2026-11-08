@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import Any
 
 
 DEFAULT_API_BASE_URL = "http://localhost:8000"
@@ -21,53 +20,25 @@ INITIAL_OPTIONS = [
     "试图挤出个笑脸，但声音有点抖：“照片？什么照片？我那张高考准考证上的照片可丑了……”",
 ]
 
-# Load optional config from backend/scripts/option_config.json
-def _load_option_config() -> dict[str, Any]:
-    config_path = Path(__file__).resolve().parents[2] / "backend" / "scripts" / "option_config.json"
-    try:
-        if config_path.exists():
-            return json.loads(config_path.read_text(encoding="utf-8"))
-    except Exception:
-        pass
-    return {}
+# Runner-only selection weights. Gameplay budgets belong to campaign JSON and
+# backend Settings; the server never imports or reads this file.
+AUTO_PLAY_CONFIG_PATH = Path(__file__).resolve().parents[1] / "auto_play_config.json"
 
-_OPTION_CONFIG = _load_option_config()
 
-PROGRESSION_KEYWORDS = _OPTION_CONFIG.get("progression_keywords", {
-    "推进": 12,
-    "继续": 10,
-    "前往": 10,
-    "进入": 9,
-    "调查": 9,
-    "询问": 8,
-    "确认": 7,
-    "检查": 7,
-    "追问": 7,
-    "观察": 6,
-    "打开": 6,
-    "寻找": 6,
-    "跟随": 6,
-    "接受": 5,
-    "核验": 5,
-    "听证": 5,
-    "取件": 5,
-    "档案": 5,
-    "图书馆": 5,
-    "钟楼": 5,
-    "任务": 5,
-    "线索": 5,
-    "通行卡": 4,
-    "诺诺": 4,
-})
+def load_auto_play_config(path: Path = AUTO_PLAY_CONFIG_PATH) -> dict[str, dict[str, int]]:
+    config = json.loads(path.read_text(encoding="utf-8"))
+    expected = {"progression_keywords", "passive_keywords"}
+    if not isinstance(config, dict) or set(config) != expected:
+        raise ValueError("Auto-play config must contain only progression_keywords and passive_keywords")
+    for weights in config.values():
+        if not isinstance(weights, dict) or any(
+            not isinstance(word, str) or type(weight) is not int
+            for word, weight in weights.items()
+        ):
+            raise ValueError("Auto-play keyword weights must be string-to-integer mappings")
+    return config
 
-PASSIVE_KEYWORDS = _OPTION_CONFIG.get("passive_keywords", {
-    "等待": -8,
-    "拒绝": -7,
-    "离开学院": -7,
-    "回宿舍睡觉": -6,
-    "开玩笑": -4,
-    "装傻": -4,
-    "沉默": -4,
-    "逃跑": -4,
-    "什么都不做": -10,
-})
+
+_AUTO_PLAY_CONFIG = load_auto_play_config()
+PROGRESSION_KEYWORDS = _AUTO_PLAY_CONFIG["progression_keywords"]
+PASSIVE_KEYWORDS = _AUTO_PLAY_CONFIG["passive_keywords"]

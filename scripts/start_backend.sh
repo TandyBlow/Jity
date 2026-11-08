@@ -12,7 +12,7 @@ if [[ ! -f "$BACKEND_DIR/.env" && -f "$BACKEND_DIR/.env.example" ]]; then
   echo "Created backend/.env. Set DEEPSEEK_API_KEY before LLM generation."
 fi
 
-mkdir -p "$BACKEND_DIR/data/campaigns" "$BACKEND_DIR/data/scripted_story" "$BACKEND_DIR/data/novels"
+mkdir -p "$BACKEND_DIR/data/campaigns" "$BACKEND_DIR/data/novels"
 
 cd "$BACKEND_DIR"
 if command -v conda >/dev/null 2>&1 && conda env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then

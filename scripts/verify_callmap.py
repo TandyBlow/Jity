@@ -51,7 +51,7 @@ CHECK_SCOPE = [
 WATCH = {
     "state_manager", "retriever", "prompt_builder", "llm_client",
     "campaign_manager", "memory_ctrl", "knowledge_service",
-    "evaluation_module", "db", "knowledge", "scripted_story", "_llm",
+    "evaluation_module", "db", "knowledge", "_llm",
 }
 
 EDGE_RE = re.compile(r"^EDGE:\s*(\S+):(\d+)\s*->\s*(.+?)\s*$")

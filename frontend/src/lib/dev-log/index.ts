@@ -1,6 +1,6 @@
-/** Developer log entries, split one file per entry under `entries/`. */
-export type { DevLogEntry } from "@/lib/dev-log/types";
+/** Canonical development history lives with the project documentation. */
+import entries from "../../../../docs/dev-log/entries.json";
+import type { DevLogEntry } from "./types";
 
-import { devLogEntries } from "@/lib/dev-log/entries";
-
-export { devLogEntries };
+export type { DevLogEntry } from "./types";
+export const devLogEntries: DevLogEntry[] = entries;

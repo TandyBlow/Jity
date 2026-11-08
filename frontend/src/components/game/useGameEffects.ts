@@ -2,22 +2,21 @@
 
 import { useEffect, useRef } from "react";
 
-import { createSession, getSession, listCampaigns, listSlots } from "@/lib/api";
-import { SLOT_DEFAULT } from "@/lib/game/initialOutput";
-import type { CampaignListItem, SaveSlot, SessionResponse } from "@/types";
+import { createSession, getSession, listCampaigns } from "@/lib/api";
+import type { CampaignListItem, SessionResponse } from "@/types";
 import type { GameSessionCore } from "@/components/game/useGameSession";
 
-/** Side-effect effects for the game console (session init, campaign list, save slots). */
+/** Initialize the console and consume one pending opening per fresh campaign. */
 export function useGameEffects(
   core: GameSessionCore,
   extras: {
-    setSlots: (slots: SaveSlot[]) => void;
     setCampaigns: (campaigns: CampaignListItem[]) => void;
     handleGenerate: (action?: string, overrideSessionId?: string) => Promise<void>;
   },
+  initialSession?: SessionResponse,
 ) {
-  const { sessionId, model, selectedSlot, pendingGenerate, refreshSlots } = core;
-  const { setSlots, setCampaigns, handleGenerate } = extras;
+  const { sessionId, model, pendingGenerate, dispatch, restoreSession } = core;
+  const { setCampaigns, handleGenerate } = extras;
 
   const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
 
@@ -35,8 +34,9 @@ export function useGameEffects(
     let mounted = true;
 
     async function loadInitialSession(): Promise<SessionResponse> {
+      if (initialSession) return initialSession;
       const params = new URLSearchParams(window.location.search);
-      const requestedSessionId = params.get("autoplay") === "1" ? params.get("session") : null;
+      const requestedSessionId = params.get("session");
       if (requestedSessionId) {
         const session = await getSession(requestedSessionId);
         if (!session.campaign_filename) throw new Error("该历史会话未关联战役，请新建战役。");
@@ -54,34 +54,18 @@ export function useGameEffects(
 
       if (campaignOpts?.campaignFilename) return createSession(model, campaignOpts);
 
-      const activeSessionId = window.localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY);
-      if (activeSessionId) {
-        try {
-          const session = await getSession(activeSessionId);
-          if (session.campaign_filename) return session;
-        } catch {
-          window.localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
-        }
-      }
-      return createSession(model);
+      throw new Error("请选择战役或加载存档后进入游戏。");
     }
 
     bootRequest.current ??= loadInitialSession();
     bootRequest.current.then(async (session) => {
       if (!mounted) return;
-      rememberActiveSession(session.session_id);
-      core.setSessionId(session.session_id);
-      core.setState(session.state);
-      core.setActiveTurnId(session.active_turn_id ?? null);
-      core.setModel(session.model);
-      core.setSelectedCampaign(session.campaign_filename ?? "");
-      core.setChunks([]);
-      await refreshSlots(session.session_id);
-      await core.restoreLastOutput(session.session_id, session.campaign_filename, session.active_turn_id);
+      await restoreSession(session);
+      if (mounted) rememberActiveSession(session.session_id);
     }).catch((err: Error) => {
-      if (mounted) core.setError(err.message);
+      if (mounted) dispatch({ type: "requestFailed", error: err.message });
     }).finally(() => {
-      if (mounted) core.setIsLoading(false);
+      if (mounted) dispatch({ type: "requestFinished" });
     });
 
     return () => { mounted = false; };
@@ -98,37 +82,10 @@ export function useGameEffects(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Load save slots ──
-  useEffect(() => {
-    if (!sessionId) {
-      setSlots([]);
-      core.setSelectedSlot(SLOT_DEFAULT);
-      core.setSelectedSlotId("");
-      return;
-    }
-    listSlots().then(r => {
-      const nextSlots = r.slots ?? [];
-      setSlots(nextSlots);
-      const current = nextSlots.filter((slot) => slot.campaign_id === sessionId);
-      const active = current.find((slot) => slot.is_active)
-        ?? current.find((slot) => slot.slot_name === selectedSlot);
-      if (active) {
-        core.setSelectedSlot(active.slot_name);
-        core.setSelectedSlotId(active.id);
-      } else {
-        core.setSelectedSlot(SLOT_DEFAULT);
-        core.setSelectedSlotId("");
-      }
-    }).catch((err) => console.error("listSlots failed:", err));
-  /* selectedSlot intentionally excluded: changing preferred slot name while
-     session stays the same should not reload the list — only a new session does */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId]);
-
   // ── Load the opening for every fresh campaign, including its first arc ──
   useEffect(() => {
     if (!pendingGenerate || !sessionId) return;
-    core.setPendingGenerate(null);
+    dispatch({ type: "openingConsumed" });
     handleGenerate(pendingGenerate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingGenerate, sessionId]);

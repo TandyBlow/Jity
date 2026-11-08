@@ -9,6 +9,7 @@ import type {
   GenerateResponse,
   MemoryTraceResponse,
   SaveSlot,
+  SavePurpose,
   SessionHistoryResponse,
   SessionResponse,
   StoryOutput,
@@ -27,13 +28,23 @@ export class APIError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Jity-Save-Purpose": "user",
+        ...(init?.headers ?? {}),
+      },
+    });
+  } catch (error) {
+    // Fetch rejects on connection/CORS failures; HTTP errors are handled below.
+    if (error instanceof TypeError) {
+      throw new Error("无法连接游戏服务，请确认服务已启动、网络连接正常后重试。", { cause: error });
+    }
+    throw error;
+  }
 
   if (!response.ok) {
     const text = await response.text();
@@ -57,6 +68,7 @@ export function createSession(
     arcIndex?: number;
     sessionIndex?: number;
     slotName?: string;
+    maxTurnsPerCampaign?: number;
   },
 ): Promise<SessionResponse> {
   const body: Record<string, unknown> = { model, campaign_filename: options?.campaignFilename || "default_campaign.json" };
@@ -67,6 +79,9 @@ export function createSession(
   }
   if (options?.slotName) {
     body.slot_name = options.slotName;
+  }
+  if (options?.maxTurnsPerCampaign !== undefined) {
+    body.max_turns_per_campaign = options.maxTurnsPerCampaign;
   }
   return request<SessionResponse>("/sessions", {
     method: "POST",
@@ -215,11 +230,11 @@ export function getSessionProgress(sessionId: string): Promise<{
 
 // ── Save Slot API ──
 
-export function listSlots(sessionId?: string): Promise<{
+export function listSlots(sessionId?: string, purpose: SavePurpose = "user"): Promise<{
   slots: SaveSlot[];
 }> {
   const query = sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : "";
-  return request(`/campaigns/slots${query}`);
+  return request(`/campaigns/slots${query}`, { headers: { "X-Jity-Save-Purpose": purpose } });
 }
 
 export function createSlot(slotName: string, sessionId: string, sourceSlotName?: string): Promise<{ status: string; slot_name: string; campaign_id: string }> {

@@ -6,7 +6,7 @@ work unchanged).  Thread-unsafe global mutation (campaign_managers, knowledge
 reload) is encapsulated in classes with proper locking.
 
 Modules:
-  - singletons:      eager service instances (db, retriever, llm_client, ...)
+  - singletons:      eager service instances (db, knowledge, llm_client, ...)
   - campaign_cache:  CampaignManagerCache + manager factory helpers
   - knowledge_service: KnowledgeService with atomic reload
 """
@@ -23,7 +23,6 @@ from app.dependencies.knowledge_service import KnowledgeService
 from app.dependencies.singletons import (
     campaign_generator,
     campaign_progress_repo,
-    chunks,
     db,
     embedding_client,
     evaluation_module,
@@ -31,8 +30,6 @@ from app.dependencies.singletons import (
     knowledge,
     llm_client,
     prompt_builder,
-    retriever,
-    scripted_story,
     settings,
     state_manager,
 )
@@ -44,8 +41,6 @@ knowledge_service = KnowledgeService(
     state_manager=state_manager,
     prompt_builder=prompt_builder,
     llm_client=llm_client,
-    scripted_story=scripted_story,
-    cache=campaign_manager_cache,
     settings=settings,
 )
 
@@ -54,13 +49,10 @@ __all__ = [
     "settings",
     "db",
     "knowledge",
-    "chunks",
     "state_manager",
     "embedding_client",
-    "retriever",
     "prompt_builder",
     "llm_client",
-    "scripted_story",
     "health_monitor",
     "campaign_generator",
     "evaluation_module",

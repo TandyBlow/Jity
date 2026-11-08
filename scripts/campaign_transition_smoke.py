@@ -46,7 +46,7 @@ def api(base: str, method: str, path: str, payload: dict[str, Any] | None = None
         base.rstrip("/") + path,
         data=data,
         method=method,
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "X-Jity-Save-Purpose": "test"},
     )
     try:
         with urlopen(request, timeout=240) as response:

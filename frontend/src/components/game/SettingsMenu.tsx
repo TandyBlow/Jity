@@ -77,7 +77,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
   };
 
   const removeSlot = async (id: number) => {
-    if (busy || deleting.current || slots.find((slot) => slot.id === id)?.is_active) return;
+    if (busy || deleting.current) return;
     deleting.current = true;
     setDeletingId(id);
     setDeleteError("");
@@ -188,7 +188,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
               </button>
               {managingSlots ? (
                 <div className="settings-slot-list">
-                  <p className="settings-slot-hint">删除只移除该存档槽，不会删除会话或共享剧情节点。各会话的活动存档不可删除。</p>
+                  <p className="settings-slot-hint">删除只移除该存档槽，不会删除会话或共享剧情节点。活动存档也可删除；继续游戏时会重新自动存档。</p>
                   {slots.map((slot) => (
                     <div className="settings-slot-entry" data-testid={`slot-${slot.id}`} key={slot.id}>
                       <div><strong>{slot.slot_name}</strong>{slot.is_active ? <span> · 活动中</span> : null}</div>
@@ -197,11 +197,11 @@ export function SettingsMenu({ session }: { session: GameSession }) {
                       {confirmDelete === slot.id ? (
                         <div className="settings-delete-confirm">
                           <p>确定删除“{slot.slot_name}”（#{slot.id}）？此存档槽不可恢复。</p>
-                          <button disabled={busy || slot.is_active} onClick={() => void removeSlot(slot.id)} type="button">{deletingId === slot.id ? "删除中…" : "确认删除"}</button>
+                          <button disabled={busy} onClick={() => void removeSlot(slot.id)} type="button">{deletingId === slot.id ? "删除中…" : "确认删除"}</button>
                           <button disabled={deletingId !== null} onClick={() => { setConfirmDelete(null); setDeleteError(""); }} type="button">取消</button>
                         </div>
                       ) : (
-                        <button disabled={busy || slot.is_active} onClick={() => { setConfirmDelete(slot.id); setDeleteError(""); }} type="button">删除</button>
+                        <button disabled={busy} onClick={() => { setConfirmDelete(slot.id); setDeleteError(""); }} type="button">删除</button>
                       )}
                     </div>
                   ))}

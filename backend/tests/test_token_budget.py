@@ -38,26 +38,27 @@ def _make_state(location="卡塞尔学院报到大厅", npcs=None, items=None, t
 
 
 class TestTokenBudget:
-    """Tests for CampaignManager.check_token_budget()."""
+    """Exercise the prompt-budget path used by generation."""
 
     def test_short_prompt_within_budget(self):
         """A short prompt should be within token budget."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
-        ok, count, warning = mgr.check_token_budget("Hello, this is a short prompt.")
-        assert ok is True
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
+        prompt, count, truncated = mgr.truncate_prompt_sections({"system_prompt": "Hello, this is a short prompt."})
+        assert prompt == "Hello, this is a short prompt."
         assert count > 0
-        assert warning == ""
+        assert truncated is False
 
     def test_token_count_is_positive(self):
         """Token count should be a positive integer."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
-        _, count, _ = mgr.check_token_budget("测试中文 prompt")
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
+        _, count, _ = mgr.truncate_prompt_sections({"system_prompt": "测试中文 prompt"})
         assert count > 0
         assert isinstance(count, int)
 
     def test_budget_limit_is_configured(self):
-        """TOKEN_BUDGET_LIMIT should be set to 102400 (80% of 128K)."""
-        assert CampaignManager.TOKEN_BUDGET_LIMIT == 102400
+        """The active truncation strategy defaults to 80% of 128K."""
+        from app.services.context_strategy import SimpleTruncationStrategy
+        assert SimpleTruncationStrategy().budget_limit == 102400
 
     def test_encoding_uses_cl100k_base(self):
         """Token budget should use cl100k_base encoder via SimpleTruncationStrategy."""
@@ -72,21 +73,21 @@ class TestInstrumentation:
 
     def test_record_turn_word_count(self):
         """record_turn should count characters in narration."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(narration="这是一个测试叙事文本，包含多个汉字。")
         metrics = mgr.record_turn(output, _make_state(), 500)
         assert metrics["word_count"] == len("这是一个测试叙事文本，包含多个汉字。")
 
     def test_record_turn_option_count(self):
         """record_turn should count options."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(options=["选项A", "选项B", "选项C", "选项D"])
         metrics = mgr.record_turn(output, _make_state(), 500)
         assert metrics["option_count"] == 4
 
     def test_record_turn_dialogue_lines(self):
         """record_turn should count dialogue lines."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(dialogue=[
             {"speaker": "A", "text": "Hello"},
             {"speaker": "B", "text": "World"},
@@ -97,21 +98,21 @@ class TestInstrumentation:
 
     def test_record_turn_sanity_delta(self):
         """record_turn should capture sanity_delta from output."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(sanity_delta=-5)
         metrics = mgr.record_turn(output, _make_state(), 500)
         assert metrics["sanity_delta"] == -5
 
     def test_record_turn_health_delta(self):
         """record_turn should capture health_delta from output."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(health_delta=10)
         metrics = mgr.record_turn(output, _make_state(), 500)
         assert metrics["health_delta"] == 10
 
     def test_record_turn_location_changed_false(self):
         """location_changed should be 0 when location unchanged."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(location="卡塞尔学院报到大厅")
         state = _make_state(location="卡塞尔学院报到大厅")
         metrics = mgr.record_turn(output, state, 500)
@@ -119,7 +120,7 @@ class TestInstrumentation:
 
     def test_record_turn_location_changed_true(self):
         """location_changed should be 1 when location changes."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"))
         output = _make_output(location="旧档案室")
         state = _make_state(location="卡塞尔学院报到大厅")
         metrics = mgr.record_turn(output, state, 500)
@@ -132,7 +133,6 @@ class TestOptionConfig:
         mgr = CampaignManager(
             db=MagicMock(),
             campaigns_dir=Path("/tmp"),
-            scripted_story=MagicMock(),
         )
         previous_cwd = Path.cwd()
         try:

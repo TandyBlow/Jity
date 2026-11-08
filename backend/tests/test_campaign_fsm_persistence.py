@@ -88,7 +88,6 @@ class TestProgressPersistence:
             mgr = CampaignManager(
                 db=db,
                 campaigns_dir=tmp,
-                scripted_story=MagicMock(),
             )
             mgr.load(campaign_path)
             assert mgr.is_loaded() is True
@@ -118,7 +117,6 @@ class TestProgressPersistence:
             mgr = CampaignManager(
                 db=db,
                 campaigns_dir=tmp,
-                scripted_story=MagicMock(),
             )
             mgr.load(campaign_path)
             mgr.save_progress()

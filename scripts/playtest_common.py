@@ -11,6 +11,7 @@ class APIError(RuntimeError):
 
 
 def _send(req: Request, timeout: float) -> dict:
+    req.add_header("X-Jity-Save-Purpose", "test")
     try:
         with urlopen(req, timeout=timeout) as resp:
             body = resp.read().decode("utf-8")

@@ -18,12 +18,16 @@ class CampaignAnchorEvaluator:
     def __init__(self) -> None:
         self._anchor_cooldowns: dict[str, int] = {}
         self._pending_anchor_triggers: list[tuple[str, int]] = []
+        self._pending_anchor_events: dict[str, AnchorEvent] = {}
+        self._confirmed_anchor_ids: set[str] = set()
 
     # ── Public API ───────────────────────────────────────────────────
 
     def reset_runtime_state(self) -> None:
         """Discard pending triggers and cooldowns after a rollback or restore."""
         self._pending_anchor_triggers.clear()
+        self._pending_anchor_events.clear()
+        self._confirmed_anchor_ids.clear()
         self._anchor_cooldowns.clear()
 
     def evaluate_anchors(
@@ -72,8 +76,44 @@ class CampaignAnchorEvaluator:
         candidates.sort(key=lambda a: a.priority)
         return candidates[:1]
 
+    def stage_anchor(self, anchor: AnchorEvent, turn: int) -> None:
+        """Keep the exact proposed event, including dynamically authored ones."""
+        self.pending_anchor_triggers = [(anchor.id, turn)]
+        self._pending_anchor_events = {anchor.id: anchor}
+
+    def confirm_pending_anchors(self, output: Any, state: dict) -> None:
+        """Require a declaration, a story quote and its committed world fact.
+
+        A candidate or a Director instruction is not evidence of completion.
+        Missing/invalid declarations fail closed and can be proposed next turn.
+        This checks structural evidence; semantic prose quality still depends
+        on the narrator following the completion contract.
+        """
+        def normalize(text: str) -> str:
+            return "".join(text.split())
+        passages = [normalize(output.narration), *(normalize(d.text) for d in output.dialogue)]
+        facts = {normalize(f.get("name", "")): f for f in state.get("world_facts", [])}
+        declared_facts = {normalize(f.name) for f in output.memory_updates.world_facts_upserted}
+        candidates = {anchor_id for anchor_id, _ in self._pending_anchor_triggers}
+        self._confirmed_anchor_ids.clear()
+        accepted = []
+        for completion in output.anchor_completions:
+            anchor = self._pending_anchor_events.get(completion.anchor_id)
+            if anchor is None or anchor.id not in candidates or anchor.id in self._confirmed_anchor_ids:
+                continue
+            evidence = normalize(completion.evidence)
+            fact = facts.get(normalize(anchor.name), {})
+            if (len(evidence) < 8 or not any(evidence in text for text in passages)
+                    or normalize(anchor.name) not in declared_facts
+                    or fact.get("status") not in {"known", "confirmed", "verified", "已确认"}
+                    or evidence not in normalize(fact.get("description", ""))):
+                continue
+            self._confirmed_anchor_ids.add(anchor.id)
+            accepted.append(completion)
+        output.anchor_completions = accepted
+
     def commit_pending_anchors(self, progress: Any, *, mark_fn) -> list[str]:
-        """Mark anchors that were injected into a successful turn prompt.
+        """Mark only events whose final story and state confirmed completion.
 
         Args:
             mark_fn: Callable(anchor_id, turn) that records the trigger
@@ -83,9 +123,11 @@ class CampaignAnchorEvaluator:
             return []
         triggered: list[str] = []
         for anchor_id, turn in self._pending_anchor_triggers:
+            if anchor_id not in self._confirmed_anchor_ids:
+                continue
             mark_fn(anchor_id, turn)
             triggered.append(anchor_id)
-        self._pending_anchor_triggers = []
+        self.pending_anchor_triggers = []
         return triggered
 
     @property
@@ -95,6 +137,8 @@ class CampaignAnchorEvaluator:
     @pending_anchor_triggers.setter
     def pending_anchor_triggers(self, value: list[tuple[str, int]]) -> None:
         self._pending_anchor_triggers = value
+        self._pending_anchor_events.clear()
+        self._confirmed_anchor_ids.clear()
 
     # ── Deviation detection ──────────────────────────────────────────
 

@@ -27,7 +27,7 @@ if [[ ! -f "$BACKEND_DIR/.env" ]]; then
   cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
   echo "Created backend/.env. Set DEEPSEEK_API_KEY before LLM generation."
 fi
-mkdir -p "$BACKEND_DIR/data/campaigns" "$BACKEND_DIR/data/scripted_story" "$BACKEND_DIR/data/novels"
+mkdir -p "$BACKEND_DIR/data/campaigns" "$BACKEND_DIR/data/novels"
 
 echo "==> Installing frontend dependencies"
 if [[ -f "$FRONTEND_DIR/package-lock.json" ]]; then

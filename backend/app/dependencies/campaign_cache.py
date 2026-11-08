@@ -3,7 +3,7 @@
 import threading
 import time
 
-from app.dependencies.singletons import db, health_monitor, llm_client, prompt_builder, scripted_story, settings
+from app.dependencies.singletons import db, health_monitor, llm_client, prompt_builder, settings
 from app.services.campaign_manager import CampaignManager
 
 
@@ -95,7 +95,6 @@ def build_campaign_manager() -> CampaignManager:
     return CampaignManager(
         db=db,
         campaigns_dir=settings.campaigns_dir,
-        scripted_story=scripted_story,
         prompt_builder=prompt_builder,
         llm_client=llm_client,
         health_monitor=health_monitor,

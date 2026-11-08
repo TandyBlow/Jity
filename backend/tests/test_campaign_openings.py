@@ -52,7 +52,7 @@ def runtime(tmp_path, monkeypatch):
     managers = {}
 
     def build_manager():
-        return CampaignManager(db=db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
+        return CampaignManager(db=db, campaigns_dir=CAMPAIGNS)
 
     monkeypatch.setattr(sessions, "db", db)
     monkeypatch.setattr(sessions, "state_manager", states)
@@ -72,7 +72,7 @@ def runtime(tmp_path, monkeypatch):
         "option_checks": [dict(check) if check else None for check in OPENING_CHECKS],
     })
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
-    generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
+    generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
     from app import dependencies
     monkeypatch.setattr(dependencies, "embedding_client", None)
@@ -107,7 +107,7 @@ async def test_opening_then_continue_uses_selected_campaign(runtime, filename, l
         assert opened.state["turn"] == manager.progress.turn_in_session == 1
         # The live panel reads the declaration from here, folded server side.
         assert set(opened.memory) == {"items", "npcs", "quests", "world_facts"}
-        assert opened.caps["world_facts"] == 15
+        assert opened.caps["world_facts"] is None
         # The opening asks for options only, so the Narrator is still never called.
         runtime.llm.generate_json.assert_awaited_once()
         runtime.llm.generate.assert_not_awaited()
@@ -217,14 +217,15 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     assert "芝加哥火车站候车大厅" in director_context
     assert next_opening in director_context
 
-    reloaded = CampaignManager(db=runtime.db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
+    reloaded = CampaignManager(db=runtime.db, campaigns_dir=CAMPAIGNS)
     active_slot = runtime.db.get_session(sid)["active_slot_name"]
     reloaded.load(CAMPAIGNS / FILES[1], campaign_id=sid, slot_name=active_slot)
     runtime.managers[sid] = reloaded
     assert reloaded.progress.turn_in_session == 1
     payload = runtime.states.get_session_payload(sid)
     assert await runtime.generator._handle_opening_scene(
-        sid, GenerateRequest(player_action="观察"), payload, payload["state"], "test", reloaded, 1
+        sid, GenerateRequest(player_action="观察"), payload["state"], "test", reloaded, 1,
+        payload["active_turn_id"],
     ) is None
 
 
@@ -259,7 +260,7 @@ async def test_continue_after_next_opening_cannot_be_blocked_by_examiner(runtime
 
 
 @pytest.mark.asyncio
-async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime):
+async def test_lethal_finale_keeps_consequences_without_unfulfilled_anchor(runtime):
     async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
         session = (await client.post("/sessions", json={
             "campaign_filename": "default_campaign.json",
@@ -272,9 +273,9 @@ async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime)
         narration="你正准备继承封印。",
         health_delta=-100,
         current_location="钟楼地下封印室",
-        items_gained=[{"name": "错误路线奖励", "status": "owned"}],
+        items_gained=[{"name": "封印碎片", "status": "owned"}],
         memory_updates={
-            "world_facts_upserted": [{"name": "错误好结局事实"}],
+            "world_facts_upserted": [{"name": "封印造成致命伤势"}],
         },
         options=["继续"],
     ), 1)
@@ -290,15 +291,15 @@ async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime)
     assert result.output.narration == ENDING_STORY
     assert "镜像人格夺取玩家身份" in runtime.llm.generate_text.call_args.args[0]
     assert result.output.options == []
-    assert not any(item["name"] == "错误路线奖励" for item in result.state["items"])
-    assert not any(fact["name"] == "错误好结局事实" for fact in result.state["world_facts"])
+    assert any(item["name"] == "封印碎片" for item in result.state["items"])
+    assert any(fact["name"] == "封印造成致命伤势" for fact in result.state["world_facts"])
     manager = runtime.managers[sid]
     row = runtime.db.read_campaign_progress(
         manager.progress.campaign_id,
         manager.slot_name,
     )
     assert row["fsm_state"] == "campaign_end"
-    assert "anchor-seal-truth" in json.loads(row["revealed_anchors"])
+    assert "anchor-seal-truth" not in json.loads(row["revealed_anchors"])
 
 
 @pytest.mark.asyncio

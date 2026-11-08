@@ -15,12 +15,12 @@ Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约�
 - 战役行动由本地 Python Examiner 检查，再由 LLM Director 和 Narrator 组织剧情。
 - 支持浏览器自动跑团，以及可选的 AI 场景背景生成与缓存。
 - 固定开场正文来自战役，但选项仍由模型生成，因此开始游玩也需要 API Key。
-- 设置菜单提供独立的存档管理列表：按槽 ID 确认删除，活动存档受保护，不删除会话或共享剧情节点。
+- 加载存档和设置菜单支持按槽 ID 确认删除，包括活动存档；不删除会话或共享剧情节点，继续游戏时会重新自动存档。
 - 整局与最后章节预算负责及时收束；物品账本、长期摘要及待摘要输入跟随分支快照保存，背包无固定条数上限。
 
 ## 技术栈与回合流程
 
-前端使用 Next.js 15、React 19、TypeScript 和 Tailwind CSS；后端使用 FastAPI、Pydantic 和 SQLite。知识源采用 JSON / Markdown，当前 RAG 使用 NumPy 向量评分与关键词加权；虽然会构建 FAISS 索引，当前排序路径仍由 NumPy 完成。
+前端使用 Next.js 15、React 19、TypeScript 和 Tailwind CSS；后端使用 FastAPI、Pydantic 和 SQLite。知识源采用 JSON / Markdown，当前 RAG 使用 NumPy 向量评分与关键词加权。知识库只在启动时加载一次；重载时替换检索器，保留会话锁、记忆缓存和后台任务。
 
 战役中的普通生成回合按以下流程执行：
 
@@ -52,7 +52,6 @@ Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约�
 | `docs/branching_timeline.md` | 分支时间线、跨幕上下文和回归测试维护说明 |
 | `knowledge/` | RAG 知识库源文件 |
 | `scripts/auto_play.py` | 自动长回合跑测与日志记录 |
-| `index.html`、`api.js`、`game.js`、`ui.js` | 旧版 vanilla JS 原型，仅保留作参考 |
 
 ## 环境要求
 
@@ -106,6 +105,14 @@ scripts/start_local.sh
 - API 文档：[http://localhost:8000/docs](http://localhost:8000/docs)
 
 联合启动的日志位于 `.local/logs/backend.log` 和 `.local/logs/frontend.log`，按 `Ctrl+C` 停止服务。
+
+### 存档归属与用途
+
+存档列表按会话的 `account_id` 和 `save_purpose` 查询；命名存档、自动保存和时间线分支继承原会话的归属与用途。当前尚未实现账号登录，`account_id` 为 `NULL`，表示本地未绑定账号，不能将其视为已完成多用户身份认证。之后接入登录时，应由 `get_save_scope` 从已认证身份取得账号 ID，并为全部会话接口启用授权检查；禁止信任客户端提交的账号 ID。
+
+浏览器新游戏标记为 `user`，列表默认显示“游玩存档”，可分别查看“开发存档”“测试存档”和“历史未分类”。API 通过 `X-Jity-Save-Purpose: user | development | test | legacy` 选择列表用途；未传时默认为 `development`，跑测脚本明确传 `test`。用途只用于分类，不是权限凭据，`legacy` 仅用于旧存档查询，不能用于新建游戏。
+
+旧存档没有可靠来源记录，迁移时统一保留为 `legacy`，不会按名称猜测归属、删除数据或自动认领到某个账号。可在“历史未分类”中继续加载和管理。后端 pytest 在应用导入前强制切换到独立临时数据库，不再向 `backend/data/jity.sqlite3` 写入测试会话。
 
 可用环境变量覆盖端口：
 
@@ -202,7 +209,7 @@ Campaign
 - `/`：游戏控制台与战役选择。
 - `/curator`：生成、上传、编辑和保存 Campaign。
 - `/timeline`：查看剧情分支树、节点剧情与状态，并从历史节点继续。
-- `/dev-log`：开发记录，生产环境默认关闭。
+- `/dev-log`：开发记录，开始页右上角可进入；设置 `ENABLE_DEV_LOG=false` 可关闭。
 
 新建战役后可直接开始游戏，自动存档名称采用 `auto_日期_时间` 格式。时间线保留「剧情分支、战役锚点、世界线索」三个页签；先预览历史节点，再恢复并返回游戏继续，原来的后续节点仍然保留。继续生成时只读取当前分支的祖先消息，避免混入其他分支的剧情。
 
@@ -256,13 +263,27 @@ python3 scripts/auto_play.py \
 
 日志默认写入 `playtest_logs/`，该目录不会提交到 Git。
 
+自动选择选项的关键词权重位于 `scripts/auto_play_config.json`，仅供跑测脚本使用，不影响后端运行规则。脚本不再读取 `backend/scripts/option_config.json`。
+
 四战役跨幕真实 LLM 冒烟测试：
 
 ```bash
 python scripts/campaign_transition_smoke.py
 ```
 
-脚本通过临时的两回合 Campaign 副本依次执行“开场 → 继续 → 下一幕开场 → 继续”，记录提示词、地点、人物、剧情、模型来源与连续性检查，并在结束后删除临时 Campaign。报告写入 `artifacts/smoke/`；维护细节见 [分支剧情时间线开发文档](docs/branching_timeline.md)。
+脚本通过临时的两回合 Campaign 副本依次执行“开场 → 继续 → 下一幕开场 → 继续”，记录提示词、地点、人物、剧情、模型来源与连续性检查，并在结束后删除临时 Campaign。新报告写入本地 `artifacts/smoke/`，已保留的历史报告见 `docs/research/reports/smoke/`；维护细节见 [分支剧情时间线开发文档](docs/branching_timeline.md)。
+
+### 回合预算配置
+
+- 每幕预算：战役中当前幕的 `max_turns_per_session` → 战役级同名字段 → 后端 `MAX_TURNS_PER_SESSION`（默认 30）。现有整局预算分配规则仍会给后续章节预留回合。
+- 整局预算：建档时选择并持久化的 `max_turns_per_campaign` → 战役级同名字段 → 后端 `MAX_TURNS_PER_CAMPAIGN`（默认 50）。保留 1–50 回合的产品边界及存档恢复行为。
+- 后端默认值通过 `backend/.env` 配置，示例见 `backend/.env.example`。战役已有显式配置时优先使用战役配置；自动跑测的选择策略不能覆盖这些规则。
+
+### 开发文档与研究材料
+
+- 开发日志原始内容位于 [`docs/dev-log/`](docs/dev-log/README.md)，`/dev-log` 网页继续提供展示、搜索和筛选。
+- 论文生成脚本、章节、配图和专用依赖位于 [`tools/research/`](tools/research/README.md)，不参与游戏运行。
+- 已归档的 Examiner 与幕间转换历史报告位于 [`docs/research/reports/`](docs/research/README.md)。运行日志与新跑测输出保持独立，历史实验结论不代表当前版本的效果。
 
 ## 测试与构建
 
@@ -280,6 +301,16 @@ python -m pytest -q
 cd frontend
 npm run build
 ```
+
+浏览器测试（在 `frontend/` 中运行）：
+
+```bash
+npx playwright test
+```
+
+Playwright 会自动使用独立的 `.next-playwright/` 目录构建并在 3100 端口启动测试服务；
+构建和启动共用 `JITY_PLAYWRIGHT=1`，类型检查使用 `tsconfig.playwright.json`。
+开发服务继续使用 `.next/`，可与浏览器测试同时运行。测试构建产物已加入 Git 忽略规则。
 
 ## 可选背景图配置
 

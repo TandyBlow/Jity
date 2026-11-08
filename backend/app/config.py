@@ -2,6 +2,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,8 @@ class Settings(BaseSettings):
     knowledge_dir: Path = Path("../knowledge")
     rulebook_file: Path = Path("../RULEBOOK.md")
     campaigns_dir: Path = Path("data/campaigns")
+    max_turns_per_session: int = Field(default=30, ge=1)
+    max_turns_per_campaign: int = Field(default=50, ge=1, le=50)
     frontend_origin: str = "http://localhost:3000"
     deepseek_api_key: str = ""
     llm_base_url: str = "https://api.deepseek.com"

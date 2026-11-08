@@ -439,5 +439,10 @@ export async function installApiMocks(page: Page): Promise<void> {
 export async function seedSession(page: Page): Promise<void> {
   await page.addInitScript((sessionId) => {
     window.localStorage.setItem("jity_active_session_id", sessionId);
+    if (window.location.pathname === "/") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("session", sessionId);
+      window.history.replaceState(null, "", url);
+    }
   }, SESSION_ID);
 }

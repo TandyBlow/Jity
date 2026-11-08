@@ -1,5 +1,7 @@
 # 运行循环调用链地图（可核对版）
 
+> 本文主体是早期实现的调用链快照，流程和行号尚未全面同步。2026-10-22 已更新下文启动期与知识库重载说明；当前功能入口以 README 和代码为准。
+
 覆盖范围：**在线回合循环**——一次 `POST /sessions/{session_id}/generate` 请求从进入后端到返回的完整调用链。
 不覆盖：campaign 生成/编辑流（`campaign_generator/`、`routers/campaigns.py`）、知识库重载（`/meta`）、
 `scripts/` 下的跑测脚本、前端内部实现。
@@ -20,7 +22,7 @@ python scripts/verify_callmap.py missing docs/runtime_call_map.md
 - 所有 `EDGE:` 行由 `scripts/verify_callmap.py` 用 stdlib AST 从代码机械提取，非人工转写。
 - `check` 的覆盖文件集 = 脚本顶部 `CHECK_SCOPE`；`missing` 只反查 `WATCH` 名单中的协作对象
   （`state_manager`、`retriever`、`prompt_builder`、`llm_client`、`campaign_manager`、`memory_ctrl`、
-  `knowledge_service`、`evaluation_module`、`db`、`knowledge`、`scripted_story`、`_llm`）。
+  `knowledge_service`、`evaluation_module`、`db`、`knowledge`、`_llm`）。
 - 同文件内部的私有辅助调用（如 `self._evict`）不参与反查，地图只选择性收录；
   prose 中的行号引用（无 EDGE 前缀）需人工跳转核对。
 - 目标串规范化：属性链按点号拼接；夹在链中的表达式记作 `(...).方法名`。
@@ -71,24 +73,21 @@ GenerateResponse（新状态 + 剧情 + 检索块 + source标记）──▶ 前
 
 uvicorn 载入 `app.main`，import 链按顺序执行：
 
-1. `backend/app/main.py:6-7` — import config 与 routers；
-2. routers → `backend/app/dependencies/__init__.py:16-38` → `backend/app/dependencies/singletons.py:21-43`
-   —— **第一次真正的 `get_settings()` 调用在这里**（config.py:22 定义，`@lru_cache` 单例），
-   随后逐个创建 `Database`、`KnowledgeBase`（并 `load_chunks`）、`GameStateManager`、`LLMClient` 等单例；
-3. `backend/app/dependencies/__init__.py:40-50` — 组装 `KnowledgeService`，
-   其构造函数（`backend/app/dependencies/knowledge_service.py:44-46`）重建 chunks/retriever 并创建
-   `ScenarioGenerator`（:49-58，注入 `campaign_manager_provider=get_campaign_manager_for_session`，:56）；
-4. `backend/app/main.py:11-26` — 创建 FastAPI app、挂 CORS（:12-18）、include_router
-   （slots 必须在 campaigns 之前，见 :20-21 注释）。
+1. `backend/app/main.py` 导入 config 与 routers。
+2. routers 导入 dependencies，`singletons.py` 创建设置、数据库、知识源、状态管理器和模型客户端；此处不加载知识块或创建检索器。
+3. `dependencies/__init__.py` 组装唯一的 `KnowledgeService`；其构造函数加载一次知识块、构建一次 NumPy 检索器，并创建持有会话锁、记忆缓存和任务记录的 `ScenarioGenerator`。
+4. `main.py` 创建 FastAPI app、挂 CORS 并注册路由；slots 必须在 campaigns 之前。
 
-EDGE（启动期调用，同样可核对）：
+`POST /knowledge/reload` 在完整构建新检索器后替换引用，不重建生成器。在途检索继续使用旧实例，后续检索使用新实例；构建失败时保留正在使用的检索器。
 
-EDGE: backend/app/dependencies/singletons.py:24 -> knowledge.load_chunks
-EDGE: backend/app/dependencies/knowledge_service.py:44 -> knowledge.load_chunks
-EDGE: backend/app/dependencies/knowledge_service.py:63 -> self.knowledge.load_chunks
-EDGE: backend/app/dependencies/knowledge_service.py:45 -> RAGRetriever
-EDGE: backend/app/dependencies/knowledge_service.py:46 -> self._build_scenario_generator
-EDGE: backend/app/dependencies/knowledge_service.py:49 -> ScenarioGenerator
+EDGE（知识库初始化与重载调用）：
+
+EDGE: backend/app/dependencies/knowledge_service.py:38 -> knowledge.load_chunks
+EDGE: backend/app/dependencies/knowledge_service.py:39 -> RAGRetriever
+EDGE: backend/app/dependencies/knowledge_service.py:40 -> self._build_scenario_generator
+EDGE: backend/app/dependencies/knowledge_service.py:43 -> ScenarioGenerator
+EDGE: backend/app/dependencies/knowledge_service.py:68 -> self.knowledge.load_chunks
+EDGE: backend/app/dependencies/knowledge_service.py:69 -> RAGRetriever
 
 ---
 
