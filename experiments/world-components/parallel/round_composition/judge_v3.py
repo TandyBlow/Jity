@@ -63,12 +63,17 @@ VAGUE_TIME = (
 # matches must be the WHOLE expression: a match that is preceded or followed by
 # more numeric material (点/半/零/digit/numeral) is a fragment and becomes
 # unparseable instead of being read as its legal-looking prefix.
+#
+# The number is REQUIRED. A bare unit is ambiguous with ordinary words ("天色",
+# "月色", "年度"), and treating it as a duration without a value rejected
+# ordinary prose as unparseable. A bare unit is now simply not a duration
+# mention; "几分钟" still matches (num=几) and stays unparseable.
 CN_CHARS = "零一二两三四五六七八九十百千"
 DURATION_RE = re.compile(
     r"(?P<neg>负|－|-|−)?\s*"
     r"(?P<num>\d+(?:\.\d+)?"
     r"|[零一二两三四五六七八九十百千]+点[零一二三四五六七八九]+"
-    r"|[零一二两三四五六七八九十百千]+|半|几|数)?\s*"
+    r"|[零一二两三四五六七八九十百千]+|半|几|数)\s*"
     r"(?P<unit>个半小时|个半月|个小时|个钟头|个月|分钟|分半钟|分半"
     r"|小时|钟头|秒钟|秒|天|日|年|月|时辰)"
     r"(?P<tailhalf>半)?")
@@ -213,14 +218,32 @@ def _patterns_for(fact, pronoun=None):
         raise JudgeBlocked("unsupported-kind", kind)
 
 
-def _is_fragment(text, start, end):
+NUMERIC_CONTEXT = set(CN_CHARS) | set("点0123456789")
+
+
+def _is_fragment(text, start, end, other_starts):
     """A match that sits inside a larger numeric expression is not a duration:
-    '八点八分钟' / '八分钟半' / '一百分钟' fragments must not be read as their
-    legal-looking prefix. Checked on both sides."""
-    before = text[start - 1] if start > 0 else ""
-    after = text[end] if end < len(text) else ""
-    return (before in (CN_CHARS + "点0123456789")
-            or after in ("点", "半", "零") or after.isdigit())
+    '八点八分钟' fragments must not be read as their legal-looking prefix.
+
+    Two things are NOT fragments:
+      - an empty boundary (start/end of text): the first version wrote
+        `before in (CN_CHARS + "点...")`, and with before="" Python's substring
+        rule made that True, so a text STARTING with a duration was rejected;
+      - the start of the NEXT duration in a compound ("一小时六十分钟"): the
+        following digit begins a new duration token, not a continuation. Only
+        numeric material that does NOT start another duration nearby counts as
+        a fragment."""
+    before = text[start - 1] if start > 0 else None
+    after = text[end] if end < len(text) else None
+    if before is not None and before in NUMERIC_CONTEXT:
+        return True
+    if after is None:
+        return False
+    if after in NUMERIC_CONTEXT or after == "半":
+        # allow a following duration token ("六十分钟" after "一小时")
+        nearby = [s for s in other_starts if end <= s <= end + 2]
+        return not nearby
+    return False
 
 
 def _duration_mentions(text):
@@ -229,14 +252,16 @@ def _duration_mentions(text):
     convert OR fragments of a larger expression. Unparseable is a hard
     failure; it never falls back to a vague expression."""
     parsed, unparseable = [], []
-    for m in DURATION_RE.finditer(text):
+    matches = list(DURATION_RE.finditer(text))
+    other_starts = {m.start() for m in matches}
+    for m in matches:
         raw = m.group(0)
         entry = {"raw": raw, "start": m.start(), "end": m.end()}
         if m.group("num") is None:
             # a bare unit ("分钟过去了") states a duration without a value
             unparseable.append(entry)
             continue
-        if _is_fragment(text, m.start(), m.end()):
+        if _is_fragment(text, m.start(), m.end(), other_starts - {m.start()}):
             unparseable.append(entry)
             continue
         got = _parse_duration(m.group("num"), m.group("unit"),
@@ -248,6 +273,25 @@ def _duration_mentions(text):
             entry["amount"], entry["unit"] = got
             parsed.append(entry)
     return parsed, unparseable
+
+
+SENTENCE_END = "。！？!?；;" + chr(10)
+
+
+def _sentence_index(text, pos):
+    return sum(1 for ch in text[:pos] if ch in SENTENCE_END)
+
+
+def _compound_groups(mentions, text):
+    """Mentions that share a sentence form a compound duration
+    ("一小时六十分钟"). The declared rule is that compounds are NOT summed, so
+    they are rejected; per-component matching would otherwise accept a
+    component that happens to equal the authoritative value while the total
+    differs."""
+    by_sentence = {}
+    for m in mentions:
+        by_sentence.setdefault(_sentence_index(text, m["start"]), []).append(m)
+    return {k: v for k, v in by_sentence.items() if len(v) > 1}
 
 
 def _time_gate(facts, must, text):
@@ -263,11 +307,20 @@ def _time_gate(facts, must, text):
             "unparseable": [u["raw"] for u in unparseable],
             "authorized": sorted(map(list, authorized))}
     problems = []
+    compounds = _compound_groups(parsed + unparseable, text)
+    if compounds:
+        info["compound"] = [["".join(m["raw"] for m in group)]
+                            for group in compounds.values()]
+        for group in compounds.values():
+            problems.append(
+                "time-compound-unsupported:"
+                + "+".join(m["raw"] for m in group)
+                + " (compound durations are not summed)")
     if unparseable:
         # cannot check -> reject; never fall back to a vague expression
         problems.extend(f"time-value-unparseable:{u['raw']}"
                         for u in unparseable)
-    if parsed:
+    if parsed and not compounds:
         if not time_facts:
             problems.extend(f"time-value-without-fact:{m['raw']}"
                             for m in parsed)
@@ -279,7 +332,7 @@ def _time_gate(facts, must, text):
                         f"time-value-mismatch:{m['raw']}="
                         f"{m['amount']}{m['unit']} not in "
                         f"{sorted(authorized)}")
-    if not parsed and not unparseable:
+    if not parsed and not unparseable and not compounds:
         vague_hit = next((v for v in VAGUE_TIME if v in text), None)
         info["vague"] = vague_hit
         if time_facts and vague_hit is None:

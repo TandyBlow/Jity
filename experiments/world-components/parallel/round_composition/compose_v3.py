@@ -198,7 +198,10 @@ def run_case(case, mocks_case, annotations):
         rec["counters"] = counters
         rec["timings"] = {"totalMs": ms(t_case)}
         rec["expectV3"] = expect_v3(case)
-        rec["expectMet"] = (rec["status"] == rec["expectV3"]
+        # judge-only samples may carry several texts (e.g. two shapes that must
+        # both pass); every one of them must meet the expectation
+        rec["expectMet"] = (all(v["status"] == rec["expectV3"]
+                                for v in verdicts)
                             and all(c["expectMet"] for c in counters))
         d4_kind = ((annotations.get("cases") or {}).get(cid) or {}).get("textKind")
         rec["d4"] = record_d4(cid, annotations,

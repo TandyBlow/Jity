@@ -276,8 +276,13 @@ def main() -> int:
         "counterTexts": [
             {"text": "管线甲从管线镇来到了钟楼。一小时四十分钟过去了。",
              "expect": "n5-rejected",
-             "why": "compound duration: 一小时 + 四十分钟, neither equals 90 "
-                    "minutes; compound expressions are not summed"},
+             "why": "compound duration: 一小时 + 四十分钟; compounds are not "
+                    "summed, so the row is rejected as unsupported"},
+            {"text": "管线甲从管线镇来到了钟楼。一小时六十分钟过去了。",
+             "expect": "n5-rejected",
+             "why": "third review: 60 + 60 = 120 minutes. Per-component "
+                    "matching passed because 一小时 equalled the authoritative "
+                    "60; a compound must be rejected instead"},
             {"text": "管线甲从管线镇来到了钟楼。一百分钟过去了。",
              "expect": "n5-rejected",
              "why": "100 minutes != 90 minutes; also proves 百 does not crash"},
@@ -287,6 +292,38 @@ def main() -> int:
               "seconds, so 一个半小时 equals 90 minutes; months/years stay "
               "unit-for-unit because their length is not fixed. Compound "
               "expressions are not summed and therefore fail.",
+    })
+
+    # ---- third review: boundaries and ordinary words --------------------
+    cases.append({
+        "caseId": "d2-time-boundaries", "title": "时长门：句首与普通词",
+        "expect": "n5-pass", "judgeOnly": True,
+        "facts": f8, "mustExpress": ["f0", "f1", "f2"],
+        "plan": {"sentences": [{"index": 0, "factIds": ["f0", "f1", "f2"],
+                                "coreference": [],
+                                "time": {"amount": 8, "unit": "minute"}}]},
+        "sentenceTexts": [
+            # duration at the very START of the text: before "" must not be
+            # read as numeric context (the substring bug)
+            "八分钟过去了。管线甲从管线镇来到了钟楼。"
+            "管线甲完成了任务「把铜铃挂回钟楼」。",
+            # 天色 is an ordinary word, not a bare 天 unit
+            "过了一会儿，天色渐暗。管线甲从管线镇来到了钟楼。"
+            "管线甲完成了任务「把铜铃挂回钟楼」。",
+        ],
+        "counterTexts": [
+            {"text": "过了一会儿，几小时过去了。管线甲从管线镇来到了钟楼。"
+                     "管线甲完成了任务「把铜铃挂回钟楼」。",
+             "expect": "n5-rejected",
+             "why": "几小时 is an explicit but unparseable duration; the bare "
+                    "unit must not be confused with an ordinary word either"},
+        ],
+        "rowIdAliases": ["comp:d2-time-boundaries",
+                         "alias:d2-time-boundaries"],
+        "notes": "Third review: a text starting with the duration was rejected "
+                 "as a fragment because '' is a substring of any string; and a "
+                 "bare unit matched inside 天色, rejecting ordinary prose. "
+                 "Both texts must pass now.",
     })
 
     # ---- grant regression: legal pronoun must be matched ----------------

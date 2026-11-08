@@ -167,17 +167,19 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `d5-same-name-grant` | 同上，但计划被**篡改**，给同名实体授权代词 | — | 主文本即反例：G5 触发并失败 |
 | `d5-control-single-actor` | 普通单人场景 | 通过 | —（对照：G4/G5 均不触发） |
 | `d2-time-value-strict` | 权威 8 分钟 | `约八分钟` 通过 | 7 条：`8.8分钟`、`负八分钟`、`八分半钟`（躲在模糊句后）、`几分钟`、`八点八分钟`、`八分钟半`、`一百分钟`，全部被拒 |
-| `d2-time-units` | 权威 90 分钟 | `一个半小时` 通过（按时长换算相等） | `一小时四十分钟`（复合表达不求和）、`一百分钟` |
+| `d2-time-units` | 权威 90 分钟 | `一个半小时` 通过（按时长换算相等） | `一小时四十分钟`、`一小时六十分钟`（复合表达不求和）、`一百分钟` |
+| `d2-time-boundaries` | 权威 8 分钟 | 句首 `八分钟过去了。…`；`过了一会儿，天色渐暗。` | `过了一会儿，几小时过去了。` |
 
 **结果（`out/composition-v3-run.json`）**
 
-29 例（19 原例 + 10 新例）全部落在预期：`n5-pass 13 / n5-rejected 4 / incomplete 3 / stopped-at-selection 4 / stopped-at-organization 2 / sentence-port-failed 1 / empty-output 1 / blocked-at-judge 1`；`qualityPending=29`、`qualityPassed=0`；`g4Triggered=2`、`g5Triggered=1`；`rowIdInvarianceFailures=0`；D4 标注 10 例、正例 1、未检查 19。
+30 例（19 原例 + 11 新例）全部落在预期：`n5-pass 14 / n5-rejected 4 / incomplete 3 / stopped-at-selection 4 / stopped-at-organization 2 / sentence-port-failed 1 / empty-output 1 / blocked-at-judge 1`；`qualityPending=30`、`qualityPassed=0`；`g4Triggered=2`、`g5Triggered=1`；`rowIdInvarianceFailures=0`；D4 标注 10 例、正例 1、未检查 20。
 
 **复核补正（2026-11-08，第二轮复核提出的两个反例）**
 
 | 问题 | 原来的行为 | 现在的行为 | 归档证据 |
 | --- | --- | --- | --- |
 | 时长只截取尾数 | `8.8分钟` 被读成 8 分钟通过；`负八分钟` 丢符号通过；`过了一会儿，八分半钟过去了` 没识别出时长，靠模糊表达通过；`几分钟` 也靠模糊表达通过 | 扫描完整表达式（符号、小数、中文数、半、几/数、时辰）；`8.8` → 8.8 与 8 不符、`负八分钟` → −8、`八分半钟` → 8.5，三者都判 `time-value-mismatch`；`几分钟` 判 `time-value-unparseable`；**只要出现时长就不再回退模糊表达** | `d2-time-value-strict` 主文本（约八分钟）通过，四条反例全部被拒，问题码写在归档里 |
+| 句首被误判碎片 / 普通词被当单位 / 复合时长被逐项放行（第三轮复核） | 文首就是时长时 `before=""`，Python 的 `"" in 字符串` 为真，整句被判碎片；`天黑` 里的「天」被当成无数字的时长单位；`一小时六十分钟` 两个分量各自等于权威 60 分钟，逐项比对全部通过 | 边界判断改成 `None` 而非空串；数词改为**必填**，裸单位（天/月/年）不再算时长；同一句出现 ≥2 个时长即判 `time-compound-unsupported`（按已声明口径不求和），后续数字若开启新的时长词则不算碎片 | `d2-time-boundaries`（句首时长 + 天色/月色 两个正例，几小时一个反例）、`d2-time-units` 新增 `一小时六十分钟` 反例（对 60 与 120 都拒绝） |
 | 仍会匹配局部表达式 / 大数转换崩溃（第二轮复核） | `八点八分钟` 只匹配到 `八分钟`；`八分钟半` 把尾部的「半」丢在外面；`一百分钟` 让 `cn_to_int` 返回 `None`，`float(None)` 抛 `TypeError`，整批中断 | 数词文法扩到中文小数（`八点八`）与尾部「半」（`八分钟半` → 8.5）；匹配后检查前后文，若还是数字材料（点/半/零/数位）就判 `time-value-unparseable`；中文数改用自带解析（支持十/百/千与「零」），转换失败一律记 `time-value-unparseable`，不再抛异常 | `d2-time-value-strict` 的第二轮三条反例：`八点八分钟`→8.8、`八分钟半`→8.5、`一百分钟`→100.0，全部 `n5-rejected` 且无异常 |
 | 合法代词授权被忽略 | 匹配时固定传 `pronoun=None`，同一移动事实 + 合法「他」授权，v2 通过、v3 报 `uncovered:f0:moved` | 从计划取每个实体的授权代词参与匹配（`他/她/TA`），同名实体的授权仍由 G5 拒绝 | `d2-pronoun-grant`：`他从管线镇来到了钟楼。` 通过；`…来到了桥头。` 仍被拒；`d5-same-name-grant` 仍因 G5 失败 |
 
@@ -189,7 +191,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 
 **旧版本未被改动**：`out/composition-run.json` 仍是 `b594c008…`。为确认 v2 路径没有因为新增文件而改变，我另外跑了一遍 `compose.py --out out/_parity-v2.json` 并与冻结归档逐案比对（状态、每次尝试的硬门、问题列表、回退是否产出）——完全相同，临时文件已删除。
 
-**时长口径的三条补充**：① 精确单位（秒/分/小时/天）按秒换算比较，所以 `一个半小时` 等于 90 分钟；月/年没有固定长度，单位必须一致才比。② 复合表达（`一小时四十分钟`）不求和，会分别比对并失败——这是已知未支持项，不是通过。③ **已知的严格性代价**：任何时长表述都要对得上权威值，所以像「半天没动」这种习惯说法（视为 0.5 天）也会被判不符；模糊词表里收的是「半晌/一会儿/片刻」这类不含数值的说法。这是按裁决「出现时长必须核对」取的严格口径，如果真模型数据里误伤明显，需要另行裁决是否给固定的习惯说法开口子。
+**时长口径的三条补充**：① 精确单位（秒/分/小时/天）按秒换算比较，所以 `一个半小时` 等于 90 分钟；月/年没有固定长度，单位必须一致才比。② 复合表达（`一小时四十分钟`）不求和：同一句出现两个及以上时长即判 `time-compound-unsupported`，即使各分量或总和恰好等于权威值也拒绝——这是已知未支持项，不是通过，也不是失败于数值。③ **已知的严格性代价**：任何时长表述都要对得上权威值，所以像「半天没动」这种习惯说法（视为 0.5 天）也会被判不符；模糊词表里收的是「半晌/一会儿/片刻」这类不含数值的说法。这是按裁决「出现时长必须核对」取的严格口径，如果真模型数据里误伤明显，需要另行裁决是否给固定的习惯说法开口子。
 
 **仍然不能证明的**：正文全部是脚本字符串；N6 未执行，所以没有任何一条是质量通过；D4 只有一个标注者，漏报率算不出来（见 `human-review-v1.md`）。
 
@@ -208,13 +210,13 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
 | `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `ca48d9dc00eaf896456aed3f881892df85bcaea785df9f9afcd6c6dcbfabb750` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
-| `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `57bc9586f2b5e57b803a666519c27b4a3e92beff50df2f548364211e45d7aefc` |
-| `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `0b5ca4f3346de58eb5088b7066637772cc47f9174501a076896f8218d5f9fa02` |
-| `compose_v3.py` | 26 例在 v3 下重跑，记录 n5/n6/quality/d4 与反例 | `f7ff9f37341f49c0a48becf67d5445976185204c8fd78727b7b4433082f77fc8` |
-| `make_v3_fixtures.py` | D1/D5 样本族生成 | `36cd91f668aa5a060541feb3de23c7a2bd3cd86b72fbb0dda64f81d18fb04d3c` |
-| `test_judge_v3.py` | v3 单元检查（D1/D2/D3/D4/D5） | `344a708da4420c546572dc9ce013753d9caf5771206b27d414e795231f177a8f` |
+| `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
+| `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
+| `compose_v3.py` | 26 例在 v3 下重跑，记录 n5/n6/quality/d4 与反例 | `e1c331e3b4a75dbe09da68bacb7c619e63345a858ac54185ea176b036d5b766e` |
+| `make_v3_fixtures.py` | D1/D5 样本族生成 | `e33e95c937f4531e798cf9e725ae139300121fa1b88be45b99d86f61052ab39f` |
+| `test_judge_v3.py` | v3 单元检查（D1/D2/D3/D4/D5） | `d41d378f95353a8fd5705143a4dca157a44711bb096ece6091883b262892f1c8` |
 | `human-review-v1.md` | D4 首批 10 条人工核验表 | `c7522ed3b1686c479f576f06a2fd00476627630490da8555620c732e3b4524fa` |
-| `fixtures/cases-v3-extra.json` | D1/D5 样本（7 例，含反例） | `8e9ac38d4519a75f445d97e5ef7ba1695b0263717342d69ffbfb880d3f13c5cb` |
+| `fixtures/cases-v3-extra.json` | D1/D5 样本（7 例，含反例） | `3a03c0813edf11e819a8d163a325a6a78d1bc25673d856c2ffe39da1f0b840b0` |
 | `fixtures/annotations-v1.json` | D4 人工标注（10 例，未标注为 null） | `3a3ede5e4b8064a732fadba2fb6ce776b87457870d2416dfe97ab800ff94e2e1` |
 | `fixtures/cases.json` | 19 个场景的输入点（已提交状态、视角、选项） | `b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df` |
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |

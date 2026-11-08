@@ -1,14 +1,15 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T06:59:33.127917+00:00",
+ "recordedAt": "2026-11-08T07:04:45.243522+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "74c6cce2ff59a4bddf782347d59be872f5c2362a",
-  "headSubject": "C7 round composition: drop accidental bytecode and ignore it",
+  "headAtRecording": "92af2a2c4d0ac5e59be244b419b69ab1d0efe3e8",
+  "headSubject": "C7 round composition: make the duration gate read whole expressions (second review)",
   "porcelain": [
    "M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/compose_v3.py",
    " M experiments/world-components/parallel/round_composition/contract-decisions.md",
    " M experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
    " M experiments/world-components/parallel/round_composition/judge_v3.py",
@@ -151,8 +152,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "edb4891484ba0c885fa77253fc604d70dca17346a38c44f8c4053c1d98d93522",
-    "bytes": 30126
+    "sha256": "1112fc99375da0cd6a473710aca14c7894be726a8dc81d0cf342993f615d5c72",
+    "bytes": 31237
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -161,8 +162,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
-    "sha256": "57bc9586f2b5e57b803a666519c27b4a3e92beff50df2f548364211e45d7aefc",
-    "bytes": 19436
+    "sha256": "97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba",
+    "bytes": 19902
    },
    {
     "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
@@ -171,23 +172,23 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/judge_v3.py",
-    "sha256": "0b5ca4f3346de58eb5088b7066637772cc47f9174501a076896f8218d5f9fa02",
-    "bytes": 18882
+    "sha256": "5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54",
+    "bytes": 21216
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose_v3.py",
-    "sha256": "f7ff9f37341f49c0a48becf67d5445976185204c8fd78727b7b4433082f77fc8",
-    "bytes": 35827
+    "sha256": "e1c331e3b4a75dbe09da68bacb7c619e63345a858ac54185ea176b036d5b766e",
+    "bytes": 36026
    },
    {
     "path": "experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
-    "sha256": "36cd91f668aa5a060541feb3de23c7a2bd3cd86b72fbb0dda64f81d18fb04d3c",
-    "bytes": 17795
+    "sha256": "e33e95c937f4531e798cf9e725ae139300121fa1b88be45b99d86f61052ab39f",
+    "bytes": 19992
    },
    {
     "path": "experiments/world-components/parallel/round_composition/test_judge_v3.py",
-    "sha256": "344a708da4420c546572dc9ce013753d9caf5771206b27d414e795231f177a8f",
-    "bytes": 14917
+    "sha256": "d41d378f95353a8fd5705143a4dca157a44711bb096ece6091883b262892f1c8",
+    "bytes": 16517
    },
    {
     "path": "experiments/world-components/parallel/round_composition/human-review-v1.md",
@@ -196,8 +197,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
-    "sha256": "8e9ac38d4519a75f445d97e5ef7ba1695b0263717342d69ffbfb880d3f13c5cb",
-    "bytes": 72171
+    "sha256": "3a03c0813edf11e819a8d163a325a6a78d1bc25673d856c2ffe39da1f0b840b0",
+    "bytes": 74329
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/annotations-v1.json",
@@ -206,8 +207,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/out/console-v3.log",
-    "sha256": "bda4da5c0524e3b528ded3a8b3ae81425e85ef53d77e9025c6eb485ec93ac9df",
-    "bytes": 3126
+    "sha256": "31607a547582bd5fb703f1693c98f655bb1ad17b6376485613f5944381c8f1dc",
+    "bytes": 3215
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -239,8 +240,8 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-v3-run.json",
-   "sha256": "11596f76933737462b4174818cab6c029f2dd537ad28e3c0cb6cab20ee64d341",
-   "bytes": 184911
+   "sha256": "cb40fcc05c16ef0e752a49751ef9f55613b9f6d01047e4a62b27f7dd74f937a6",
+   "bytes": 192252
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
@@ -249,23 +250,23 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
-   "sha256": "61935260883afdf177a2f87f6099d89207050acb1daad1daf11772318f065d89",
-   "bytes": 172867
+   "sha256": "184599975ef05e32af21b30b8532de3e941d82d3dae7a00be4d5970faa3a2bd7",
+   "bytes": 172862
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-b.json",
-   "sha256": "2555ba022c03d9c07140069172f37db89c419023813b2e36472fe4d1f3c6781f",
-   "bytes": 172866
+   "sha256": "e2b95e7427f74c49ee2bd3464556ea6a6821a80dd0c772437ae4a99334189b36",
+   "bytes": 172865
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-a.json",
-   "sha256": "f7cc8ac7af7fda3690a0e421ec15aaa504ab2fe8e25ca73e2e4347caa48cb0df",
-   "bytes": 184918
+   "sha256": "d9abe58c26d9ca7532775cdffa04b04c153e0b526c00b74fba487621777583ec",
+   "bytes": 192261
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-b.json",
-   "sha256": "7b61bf481c559356a0098d7fb4ae1a1e3496129eb1dbdab13e54f32d99c6acfb",
-   "bytes": 184916
+   "sha256": "46d3493d55067f734ebd7db0f7150606be1f6fc4be1fc5658f18e9703b795159",
+   "bytes": 192247
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",

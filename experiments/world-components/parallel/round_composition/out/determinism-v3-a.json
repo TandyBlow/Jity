@@ -15,7 +15,7 @@
  },
  "purpose": "re-run the 19 archived cases under the adjudicated N5 v3, add the D1/D5 sample families, record D4 labels and keep N6 separate; the v2 archive is not modified",
  "caveat": "scripted sentence ports: this is mechanism + adjudication evidence, not model capability. quality is 'pending' for every case because N6 was not run; 'n5-pass' means the hard gates passed and nothing more.",
- "runAt": "2026-11-08T06:59:15.250327+00:00",
+ "runAt": "2026-11-08T07:04:36.748431+00:00",
  "environment": {
   "python": "3.11.15",
   "platform": "Windows-10-10.0.26200-SP0"
@@ -38,7 +38,7 @@
   },
   "extraCases": {
    "path": "fixtures/cases-v3-extra.json",
-   "sha256": "8e9ac38d4519a75f445d97e5ef7ba1695b0263717342d69ffbfb880d3f13c5cb"
+   "sha256": "3a03c0813edf11e819a8d163a325a6a78d1bc25673d856c2ffe39da1f0b840b0"
   },
   "annotations": {
    "path": "fixtures/annotations-v1.json",
@@ -46,9 +46,9 @@
   }
  },
  "summary": {
-  "total": 29,
+  "total": 30,
   "statusCounts": {
-   "n5-pass": 13,
+   "n5-pass": 14,
    "incomplete": 3,
    "stopped-at-selection": 4,
    "stopped-at-organization": 2,
@@ -57,12 +57,12 @@
    "empty-output": 1,
    "blocked-at-judge": 1
   },
-  "expectMet": 29,
-  "qualityPending": 29,
+  "expectMet": 30,
+  "qualityPending": 30,
   "qualityPassed": 0,
   "d4Labeled": 10,
   "d4Positives": 1,
-  "d4Unchecked": 19,
+  "d4Unchecked": 20,
   "g4Triggered": 2,
   "g5Triggered": 1,
   "rowIdInvarianceFailures": 0
@@ -225,7 +225,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.12,
+     "ms": 0.133,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -277,7 +277,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.061,
+     "ms": 0.065,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -322,7 +322,7 @@
      }
     },
     "organization": {
-     "ms": 0.041,
+     "ms": 0.046,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -345,23 +345,23 @@
      }
     },
     "scene": {
-     "ms": 0.059,
+     "ms": 0.056,
      "status": "ok",
      "diagnostics": []
     },
     "n4Input": {
-     "ms": 0.113,
+     "ms": 0.207,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧；细雨；傍晚；高；昏暗；海雾贴着塔壁\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 1.369,
+     "ms": 2.138,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 1.343,
+       "ms": 2.098,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
         "finishReason": "eos"
@@ -411,7 +411,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.005,
      "used": false
     }
    },
@@ -502,7 +502,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 1.88
+    "totalMs": 2.794
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -513,7 +513,7 @@
    "expect": "ok",
    "stages": {
     "perspective": {
-     "ms": 0.019,
+     "ms": 0.021,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -526,7 +526,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.123,
+     "ms": 0.133,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -582,7 +582,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.078,
+     "ms": 0.081,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -627,7 +627,7 @@
      }
     },
     "organization": {
-     "ms": 0.048,
+     "ms": 0.047,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -657,7 +657,7 @@
      }
     },
     "scene": {
-     "ms": 0.094,
+     "ms": 0.108,
      "status": "ok",
      "diagnostics": [
       {
@@ -683,18 +683,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.131,
+     "ms": 0.133,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n管线乙｜性格=急躁｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜移动｜管线乙｜管线镇→钟楼\n分组：\nG1｜f0\nG2｜f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 1.482,
+     "ms": 1.043,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 1.455,
+       "ms": 1.023,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -835,7 +835,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 2.073
+    "totalMs": 1.652
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -859,7 +859,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.074,
+     "ms": 0.084,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 3,
@@ -933,7 +933,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.069,
+     "ms": 0.072,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -1011,7 +1011,7 @@
      }
     },
     "scene": {
-     "ms": 0.045,
+     "ms": 0.049,
      "status": "ok",
      "diagnostics": [
       {
@@ -1037,18 +1037,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.087,
+     "ms": 0.088,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=管线镇\n地点外貌=安静\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜外貌｜管线甲｜外袍被雨浸透\nf1｜行为倾向｜管线甲｜话少了许多\nf2｜理智｜管线甲｜上升\n分组：\nG1｜f0 f1 f2\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.98,
+     "ms": 0.955,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.962,
+       "ms": 0.938,
        "response": {
         "text": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。",
         "finishReason": "eos"
@@ -1207,7 +1207,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 1.37
+    "totalMs": 1.358
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -1218,7 +1218,7 @@
    "expect": "incomplete",
    "stages": {
     "perspective": {
-     "ms": 0.013,
+     "ms": 0.014,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -1231,7 +1231,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.031,
+     "ms": 0.036,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 0,
@@ -1260,7 +1260,7 @@
    "status": "incomplete",
    "reason": "n1-cannot-express",
    "timings": {
-    "totalMs": 0.054
+    "totalMs": 0.06
    },
    "expectMet": true,
    "d4": {
@@ -1279,7 +1279,7 @@
    "expect": "incomplete",
    "stages": {
     "perspective": {
-     "ms": 0.006,
+     "ms": 0.007,
      "status": "stopped",
      "perspective": null,
      "problems": [
@@ -1297,7 +1297,7 @@
    "status": "incomplete",
    "reason": "perspective-unresolvable",
    "timings": {
-    "totalMs": 0.011
+    "totalMs": 0.012
    },
    "expectMet": true,
    "d4": {
@@ -1313,151 +1313,6 @@
   {
    "caseId": "fail-n2-invalid",
    "title": "N2 未知事实引用",
-   "expect": "stopped-at-selection",
-   "stages": {
-    "perspective": {
-     "ms": 0.008,
-     "status": "ok",
-     "perspective": {
-      "type": "protagonist",
-      "entityId": "char_pa",
-      "at": "钟楼",
-      "atPath": [
-       "loc_2"
-      ]
-     },
-     "problems": []
-    },
-    "n1": {
-     "ms": 0.064,
-     "program": "narration_pipeline.extract_facts",
-     "narrativeOutcome": false,
-     "factCount": 2,
-     "facts": [
-      {
-       "kind": "moved",
-       "entityId": "char_pa",
-       "name": "管线甲",
-       "from": "管线镇",
-       "to": "钟楼",
-       "at": "钟楼",
-       "heldBy": null,
-       "source": {
-        "entityId": "char_pa",
-        "field": "positionSet"
-       },
-       "factId": "f0",
-       "entityGroup": "characters",
-       "nameAmbiguous": false,
-       "fromAmbiguous": false,
-       "toAmbiguous": false,
-       "atAmbiguous": false,
-       "atPath": [
-        "loc_2"
-       ],
-       "ref": 0
-      },
-      {
-       "kind": "task_achieved",
-       "entityId": "char_pa",
-       "name": "管线甲",
-       "goal": "把铜铃挂回钟楼",
-       "at": "钟楼",
-       "source": {
-        "entityId": "char_pa",
-        "taskId": "task_1"
-       },
-       "factId": "f1",
-       "entityGroup": "characters",
-       "nameAmbiguous": false,
-       "atAmbiguous": false,
-       "atPath": [
-        "loc_2"
-       ],
-       "ref": 1
-      }
-     ],
-     "diagnostics": [],
-     "blocking": []
-    },
-    "selection": {
-     "ms": 0.053,
-     "program": "n2 rule + mock port",
-     "response": {
-      "selectedFactIds": [
-       "f0",
-       "f99"
-      ]
-     },
-     "rule": {
-      "status": "ok",
-      "summary": {
-       "must": 2,
-       "may": 0,
-       "invisible": 0,
-       "selected": 2,
-       "mayPolicy": "select"
-      },
-      "stops": [],
-      "decisions": [
-       {
-        "factId": "f0",
-        "kind": "moved",
-        "class": "must",
-        "ground": "self-position",
-        "selected": true,
-        "reason": "视角人物自己的位置变化，必述"
-       },
-       {
-        "factId": "f1",
-        "kind": "task_achieved",
-        "class": "must",
-        "ground": "self-task",
-        "selected": true,
-        "reason": "视角人物自己的任务达成，必述"
-       }
-      ]
-     },
-     "validation": {
-      "unknownIds": [
-       "f99"
-      ],
-      "missingMust": [
-       "f1"
-      ],
-      "invisible": [
-       "f99"
-      ],
-      "shape": "ok"
-     }
-    }
-   },
-   "notes": "The composer validates the selection against N1 ids.",
-   "modelCalled": false,
-   "quality": "pending",
-   "n6": {
-    "status": "not-run",
-    "result": null
-   },
-   "status": "stopped-at-selection",
-   "reason": "unknown-fact-references",
-   "timings": {
-    "totalMs": 0.139
-   },
-   "expectMet": true,
-   "d4": {
-    "checked": false,
-    "count": null,
-    "items": [],
-    "textKind": null,
-    "text": null,
-    "labeler": "assistant-manual (single labeler, same session that built the archive)",
-    "reviewStatus": "pending-independent-review"
-   }
-  },
-  {
-   "caseId": "fail-n2-missing-must",
-   "title": "N2 漏掉必述事实",
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
@@ -1526,7 +1381,152 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.032,
+     "ms": 0.055,
+     "program": "n2 rule + mock port",
+     "response": {
+      "selectedFactIds": [
+       "f0",
+       "f99"
+      ]
+     },
+     "rule": {
+      "status": "ok",
+      "summary": {
+       "must": 2,
+       "may": 0,
+       "invisible": 0,
+       "selected": 2,
+       "mayPolicy": "select"
+      },
+      "stops": [],
+      "decisions": [
+       {
+        "factId": "f0",
+        "kind": "moved",
+        "class": "must",
+        "ground": "self-position",
+        "selected": true,
+        "reason": "视角人物自己的位置变化，必述"
+       },
+       {
+        "factId": "f1",
+        "kind": "task_achieved",
+        "class": "must",
+        "ground": "self-task",
+        "selected": true,
+        "reason": "视角人物自己的任务达成，必述"
+       }
+      ]
+     },
+     "validation": {
+      "unknownIds": [
+       "f99"
+      ],
+      "missingMust": [
+       "f1"
+      ],
+      "invisible": [
+       "f99"
+      ],
+      "shape": "ok"
+     }
+    }
+   },
+   "notes": "The composer validates the selection against N1 ids.",
+   "modelCalled": false,
+   "quality": "pending",
+   "n6": {
+    "status": "not-run",
+    "result": null
+   },
+   "status": "stopped-at-selection",
+   "reason": "unknown-fact-references",
+   "timings": {
+    "totalMs": 0.162
+   },
+   "expectMet": true,
+   "d4": {
+    "checked": false,
+    "count": null,
+    "items": [],
+    "textKind": null,
+    "text": null,
+    "labeler": "assistant-manual (single labeler, same session that built the archive)",
+    "reviewStatus": "pending-independent-review"
+   }
+  },
+  {
+   "caseId": "fail-n2-missing-must",
+   "title": "N2 漏掉必述事实",
+   "expect": "stopped-at-selection",
+   "stages": {
+    "perspective": {
+     "ms": 0.01,
+     "status": "ok",
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼",
+      "atPath": [
+       "loc_2"
+      ]
+     },
+     "problems": []
+    },
+    "n1": {
+     "ms": 0.055,
+     "program": "narration_pipeline.extract_facts",
+     "narrativeOutcome": false,
+     "factCount": 2,
+     "facts": [
+      {
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "at": "钟楼",
+       "heldBy": null,
+       "source": {
+        "entityId": "char_pa",
+        "field": "positionSet"
+       },
+       "factId": "f0",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "fromAmbiguous": false,
+       "toAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 0
+      },
+      {
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "at": "钟楼",
+       "source": {
+        "entityId": "char_pa",
+        "taskId": "task_1"
+       },
+       "factId": "f1",
+       "entityGroup": "characters",
+       "nameAmbiguous": false,
+       "atAmbiguous": false,
+       "atPath": [
+        "loc_2"
+       ],
+       "ref": 1
+      }
+     ],
+     "diagnostics": [],
+     "blocking": []
+    },
+    "selection": {
+     "ms": 0.033,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -1582,7 +1582,7 @@
    "status": "stopped-at-selection",
    "reason": "missing-must-facts",
    "timings": {
-    "totalMs": 0.123
+    "totalMs": 0.119
    },
    "expectMet": true,
    "d4": {
@@ -1601,7 +1601,7 @@
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
-     "ms": 0.014,
+     "ms": 0.015,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -1614,7 +1614,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.064,
+     "ms": 0.164,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -1666,7 +1666,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.041,
+     "ms": 0.039,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": []
@@ -1721,7 +1721,7 @@
    "status": "stopped-at-selection",
    "reason": "missing-must-facts",
    "timings": {
-    "totalMs": 0.135
+    "totalMs": 0.235
    },
    "expectMet": true,
    "d4": {
@@ -1753,7 +1753,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.154,
+     "ms": 0.049,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -1805,7 +1805,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.04,
+     "ms": 0.035,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -1850,7 +1850,7 @@
      }
     },
     "organization": {
-     "ms": 0.025,
+     "ms": 0.026,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -1884,7 +1884,7 @@
    "status": "stopped-at-organization",
    "reason": "plan-invariant-violation",
    "timings": {
-    "totalMs": 0.254
+    "totalMs": 0.144
    },
    "expectMet": true,
    "d4": {
@@ -1916,7 +1916,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.045,
+     "ms": 0.051,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -1968,7 +1968,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.031,
+     "ms": 0.034,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -2013,7 +2013,7 @@
      }
     },
     "organization": {
-     "ms": 0.023,
+     "ms": 0.026,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -2050,7 +2050,7 @@
    "status": "stopped-at-organization",
    "reason": "plan-invariant-violation",
    "timings": {
-    "totalMs": 0.126
+    "totalMs": 0.14
    },
    "expectMet": true,
    "d4": {
@@ -2134,7 +2134,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.027,
+     "ms": 0.034,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -2179,7 +2179,7 @@
      }
     },
     "organization": {
-     "ms": 0.018,
+     "ms": 0.019,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -2202,7 +2202,7 @@
      }
     },
     "scene": {
-     "ms": 0.042,
+     "ms": 0.051,
      "status": "ok",
      "diagnostics": [
       {
@@ -2228,18 +2228,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.091,
+     "ms": 0.083,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.407,
+     "ms": 0.466,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.213,
+       "ms": 0.25,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -2286,7 +2286,7 @@
       },
       {
        "attempt": 2,
-       "ms": 0.172,
+       "ms": 0.189,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
         "finishReason": "eos"
@@ -2427,7 +2427,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.702
+    "totalMs": 0.769
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -2438,7 +2438,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.031,
+     "ms": 0.012,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -2451,7 +2451,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.056,
+     "ms": 0.072,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -2503,7 +2503,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.033,
+     "ms": 0.042,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -2548,7 +2548,7 @@
      }
     },
     "organization": {
-     "ms": 0.02,
+     "ms": 0.023,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -2571,7 +2571,7 @@
      }
     },
     "scene": {
-     "ms": 0.036,
+     "ms": 0.05,
      "status": "ok",
      "diagnostics": [
       {
@@ -2597,18 +2597,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.061,
+     "ms": 0.087,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.347,
+     "ms": 0.449,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.17,
+       "ms": 0.233,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -2655,7 +2655,7 @@
       },
       {
        "attempt": 2,
-       "ms": 0.161,
+       "ms": 0.191,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」",
         "finishReason": "length"
@@ -2707,7 +2707,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.004,
      "used": true,
      "reason": "n5-rejected",
      "source": "template_text (program)",
@@ -2814,7 +2814,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.801
+    "totalMs": 1.022
    },
    "expectV3": "n5-rejected",
    "expectMet": true
@@ -2825,7 +2825,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.009,
+     "ms": 0.014,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -2838,7 +2838,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.048,
+     "ms": 0.173,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -2890,7 +2890,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.069,
+     "ms": 0.066,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -2935,7 +2935,7 @@
      }
     },
     "organization": {
-     "ms": 0.019,
+     "ms": 0.038,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -2958,7 +2958,7 @@
      }
     },
     "scene": {
-     "ms": 0.038,
+     "ms": 0.077,
      "status": "ok",
      "diagnostics": [
       {
@@ -2984,18 +2984,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.06,
+     "ms": 0.107,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.522,
+     "ms": 0.898,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.224,
+       "ms": 0.454,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
         "finishReason": "eos"
@@ -3044,7 +3044,7 @@
       },
       {
        "attempt": 2,
-       "ms": 0.274,
+       "ms": 0.393,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。",
         "finishReason": "eos"
@@ -3097,7 +3097,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.004,
+     "ms": 0.009,
      "used": true,
      "reason": "n5-rejected",
      "source": "template_text (program)",
@@ -3205,7 +3205,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 1.102
+    "totalMs": 1.755
    },
    "expectV3": "n5-rejected",
    "expectMet": true
@@ -3216,7 +3216,7 @@
    "expect": "sentence-port-failed",
    "stages": {
     "perspective": {
-     "ms": 0.014,
+     "ms": 0.019,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -3229,7 +3229,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.085,
+     "ms": 0.098,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -3281,7 +3281,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.051,
+     "ms": 0.057,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -3326,7 +3326,7 @@
      }
     },
     "organization": {
-     "ms": 0.031,
+     "ms": 0.034,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -3349,7 +3349,7 @@
      }
     },
     "scene": {
-     "ms": 0.059,
+     "ms": 0.072,
      "status": "ok",
      "diagnostics": [
       {
@@ -3375,13 +3375,13 @@
      ]
     },
     "n4Input": {
-     "ms": 0.093,
+     "ms": 0.101,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.016,
+     "ms": 0.028,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
@@ -3479,7 +3479,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.754
+    "totalMs": 0.901
    },
    "expectV3": "sentence-port-failed",
    "expectMet": true
@@ -3490,7 +3490,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.014,
+     "ms": 0.018,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -3503,7 +3503,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.095,
+     "ms": 0.109,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 3,
@@ -3566,7 +3566,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.062,
+     "ms": 0.106,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -3620,7 +3620,7 @@
      }
     },
     "organization": {
-     "ms": 0.041,
+     "ms": 0.051,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -3647,7 +3647,7 @@
      }
     },
     "scene": {
-     "ms": 0.059,
+     "ms": 0.08,
      "status": "ok",
      "diagnostics": [
       {
@@ -3673,18 +3673,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.089,
+     "ms": 0.127,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\nf2｜时间｜时间经过\n分组：\nG1｜f0 f1 f2｜组后时间=过去了一会儿\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.376,
+     "ms": 0.405,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.359,
+       "ms": 0.382,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。",
         "finishReason": "eos"
@@ -3848,7 +3848,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.82
+    "totalMs": 1.061
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -3859,7 +3859,7 @@
    "expect": "n5-false-pass",
    "stages": {
     "perspective": {
-     "ms": 0.012,
+     "ms": 0.018,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -3872,7 +3872,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.067,
+     "ms": 0.102,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -3924,7 +3924,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.043,
+     "ms": 0.053,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -3969,7 +3969,7 @@
      }
     },
     "organization": {
-     "ms": 0.027,
+     "ms": 0.033,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -3992,7 +3992,7 @@
      }
     },
     "scene": {
-     "ms": 0.056,
+     "ms": 0.065,
      "status": "ok",
      "diagnostics": [
       {
@@ -4018,18 +4018,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.115,
+     "ms": 0.09,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.346,
+     "ms": 0.241,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.328,
+       "ms": 0.226,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。",
         "finishReason": "eos",
@@ -4083,7 +4083,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.002,
      "used": false
     }
    },
@@ -4182,7 +4182,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.744
+    "totalMs": 0.707
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -4193,7 +4193,7 @@
    "expect": "empty-output",
    "stages": {
     "perspective": {
-     "ms": 0.013,
+     "ms": 0.015,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -4206,7 +4206,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.078,
+     "ms": 0.069,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -4258,7 +4258,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.058,
+     "ms": 0.039,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -4303,7 +4303,7 @@
      }
     },
     "organization": {
-     "ms": 0.031,
+     "ms": 0.024,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -4326,7 +4326,7 @@
      }
     },
     "scene": {
-     "ms": 0.047,
+     "ms": 0.039,
      "status": "ok",
      "diagnostics": [
       {
@@ -4352,13 +4352,13 @@
      ]
     },
     "n4Input": {
-     "ms": 0.079,
+     "ms": 0.062,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜任务达成｜管线甲｜把铜铃挂回钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.027,
+     "ms": 0.019,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
@@ -4391,7 +4391,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.003,
+     "ms": 0.005,
      "used": true,
      "reason": "empty-output",
      "source": "template_text (program)",
@@ -4462,7 +4462,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.655
+    "totalMs": 0.594
    },
    "expectV3": "empty-output",
    "expectMet": true
@@ -4473,7 +4473,7 @@
    "expect": "stopped-at-selection",
    "stages": {
     "perspective": {
-     "ms": 0.011,
+     "ms": 0.014,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -4486,7 +4486,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.068,
+     "ms": 0.159,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -4538,7 +4538,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.043,
+     "ms": 0.102,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -4595,7 +4595,7 @@
    "status": "stopped-at-selection",
    "reason": "invisible-fact-selected",
    "timings": {
-    "totalMs": 0.135
+    "totalMs": 0.332
    },
    "expectMet": true,
    "d4": {
@@ -4614,7 +4614,7 @@
    "expect": "n5-rejected",
    "stages": {
     "perspective": {
-     "ms": 0.008,
+     "ms": 0.018,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -4627,7 +4627,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.045,
+     "ms": 0.098,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": false,
      "factCount": 2,
@@ -4681,7 +4681,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.03,
+     "ms": 0.052,
      "program": "n2 rule + mock port",
      "response": {
       "selectedFactIds": [
@@ -4726,7 +4726,7 @@
      }
     },
     "organization": {
-     "ms": 0.021,
+     "ms": 0.039,
      "program": "plan source=mock + check_plan_v3",
      "response": {
       "sentences": [
@@ -4749,7 +4749,7 @@
      }
     },
     "scene": {
-     "ms": 0.037,
+     "ms": 0.065,
      "status": "ok",
      "diagnostics": [
       {
@@ -4775,18 +4775,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.063,
+     "ms": 0.236,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜新任务｜管线甲｜找梯子（属于：把铜铃挂回钟楼）\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.757,
+     "ms": 1.126,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.593,
+       "ms": 0.769,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -4833,7 +4833,7 @@
       },
       {
        "attempt": 2,
-       "ms": 0.144,
+       "ms": 0.303,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。",
         "finishReason": "eos"
@@ -4884,7 +4884,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.004,
      "used": false,
      "reason": "n5-rejected",
      "unavailableReason": "template-unsupported-kind",
@@ -4982,7 +4982,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 1.013
+    "totalMs": 1.726
    },
    "expectV3": "n5-rejected",
    "expectMet": true
@@ -4993,7 +4993,7 @@
    "expect": "n5-pass",
    "stages": {
     "perspective": {
-     "ms": 0.01,
+     "ms": 0.02,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -5006,7 +5006,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.055,
+     "ms": 0.099,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": true,
      "factCount": 2,
@@ -5061,7 +5061,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.032,
+     "ms": 0.057,
      "program": "n2 rule",
      "response": {
       "selectedFactIds": [
@@ -5106,7 +5106,7 @@
      }
     },
     "organization": {
-     "ms": 0.107,
+     "ms": 0.151,
      "program": "plan source=program + check_plan_v3",
      "response": {
       "sentences": [
@@ -5129,7 +5129,7 @@
      }
     },
     "scene": {
-     "ms": 0.033,
+     "ms": 0.077,
      "status": "ok",
      "diagnostics": [
       {
@@ -5155,18 +5155,18 @@
      ]
     },
     "n4Input": {
-     "ms": 0.065,
+     "ms": 0.107,
      "status": "ok",
      "code": null,
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜结果｜管线甲｜把铜铃挂回了钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.369,
+     "ms": 0.573,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.359,
+       "ms": 0.55,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。",
         "finishReason": "eos"
@@ -5216,7 +5216,7 @@
      "note": "hard gates only; semantic review is N6 and was not run"
     },
     "fallback": {
-     "ms": 0.002,
+     "ms": 0.003,
      "used": false
     }
    },
@@ -5308,7 +5308,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.724
+    "totalMs": 1.169
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -5319,7 +5319,7 @@
    "expect": "incomplete",
    "stages": {
     "perspective": {
-     "ms": 0.011,
+     "ms": 0.012,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -5332,7 +5332,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.052,
+     "ms": 0.07,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": true,
      "factCount": 1,
@@ -5389,7 +5389,7 @@
    "status": "incomplete",
    "reason": "n1-cannot-express",
    "timings": {
-    "totalMs": 0.071
+    "totalMs": 0.093
    },
    "expectMet": true,
    "d4": {
@@ -5408,7 +5408,7 @@
    "expect": "n5-pass",
    "stages": {
     "n1": {
-     "ms": 0.14,
+     "ms": 0.158,
      "program": "narration_pipeline.extract_facts",
      "facts": [
       {
@@ -5453,7 +5453,7 @@
      "diagnostics": []
     },
     "organization": {
-     "ms": 0.002,
+     "ms": 0.003,
      "program": "plan source=program + check_plan_v3",
      "response": {
       "sentences": [
@@ -5476,7 +5476,7 @@
      }
     },
     "n5": {
-     "ms": 0.004,
+     "ms": 0.003,
      "program": "judge_v3.judge",
      "facts": [
       {
@@ -5662,7 +5662,7 @@
     }
    ],
    "timings": {
-    "totalMs": 0.935
+    "totalMs": 1.013
    },
    "expectV3": "n5-pass",
    "expectMet": true,
@@ -5682,7 +5682,7 @@
    "expect": "n5-pass",
    "stages": {
     "n1": {
-     "ms": 0.192,
+     "ms": 0.16,
      "program": "narration_pipeline.extract_facts",
      "facts": [
       {
@@ -5757,7 +5757,7 @@
      }
     },
     "n5": {
-     "ms": 0.003,
+     "ms": 0.002,
      "program": "judge_v3.judge",
      "facts": [
       {
@@ -5956,7 +5956,7 @@
     }
    ],
    "timings": {
-    "totalMs": 0.688
+    "totalMs": 0.514
    },
    "expectV3": "n5-pass",
    "expectMet": true,
@@ -5976,7 +5976,7 @@
    "expect": "n5-rejected",
    "stages": {
     "n1": {
-     "ms": 0.126,
+     "ms": 0.094,
      "program": "narration_pipeline.extract_facts",
      "facts": [
       {
@@ -6021,7 +6021,7 @@
      "diagnostics": []
     },
     "organization": {
-     "ms": 0.003,
+     "ms": 0.002,
      "program": "plan source=tampered + check_plan_v3",
      "response": {
       "sentences": [
@@ -6053,7 +6053,7 @@
      }
     },
     "n5": {
-     "ms": 0.004,
+     "ms": 0.002,
      "program": "judge_v3.judge",
      "facts": [
       {
@@ -6219,7 +6219,7 @@
    "hardPass": false,
    "counters": [],
    "timings": {
-    "totalMs": 1.067
+    "totalMs": 0.673
    },
    "expectV3": "n5-rejected",
    "expectMet": true,
@@ -6239,7 +6239,7 @@
    "expect": "n5-pass",
    "stages": {
     "perspective": {
-     "ms": 0.015,
+     "ms": 0.011,
      "status": "ok",
      "perspective": {
       "type": "protagonist",
@@ -6252,7 +6252,7 @@
      "problems": []
     },
     "n1": {
-     "ms": 0.075,
+     "ms": 0.073,
      "program": "narration_pipeline.extract_facts",
      "narrativeOutcome": true,
      "factCount": 2,
@@ -6307,7 +6307,7 @@
      "blocking": []
     },
     "selection": {
-     "ms": 0.041,
+     "ms": 0.046,
      "program": "n2 rule",
      "response": {
       "selectedFactIds": [
@@ -6352,7 +6352,7 @@
      }
     },
     "organization": {
-     "ms": 0.081,
+     "ms": 0.074,
      "program": "plan source=program + check_plan_v3",
      "response": {
       "sentences": [
@@ -6375,7 +6375,7 @@
      }
     },
     "scene": {
-     "ms": 0.04,
+     "ms": 0.038,
      "status": "ok",
      "diagnostics": [
       {
@@ -6407,12 +6407,12 @@
      "input": "叙事任务。\n场景：\n地点=钟楼\n地点外貌=旧\n人物：\n管线甲｜性格=沉稳｜外貌=常态｜随身=无\n可见：\n无\n事实：\nf0｜移动｜管线甲｜管线镇→钟楼\nf1｜结果｜管线甲｜把铜铃挂回了钟楼\n分组：\nG1｜f0 f1\n视角：管线甲；第三人称限知；只写管线甲的内心，他人只写可见动作。\n要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。\n正文："
     },
     "n4n5": {
-     "ms": 0.222,
+     "ms": 0.217,
      "program": "scripted sentence port + judge_v3.judge",
      "attempts": [
       {
        "attempt": 1,
-       "ms": 0.21,
+       "ms": 0.204,
        "response": {
         "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。",
         "finishReason": "eos"
@@ -6554,7 +6554,7 @@
     "reviewStatus": "pending-independent-review"
    },
    "timings": {
-    "totalMs": 0.603
+    "totalMs": 0.584
    },
    "expectV3": "n5-pass",
    "expectMet": true
@@ -6954,7 +6954,7 @@
     }
    ],
    "timings": {
-    "totalMs": 2.558
+    "totalMs": 2.721
    },
    "expectV3": "n5-pass",
    "expectMet": true,
@@ -6974,7 +6974,7 @@
    "expect": "n5-pass",
    "stages": {
     "n5": {
-     "ms": 0.018,
+     "ms": 0.003,
      "program": "judge_v3.judge",
      "facts": [
       {
@@ -7070,7 +7070,7 @@
        "text": "管线甲从管线镇来到了钟楼。一小时四十分钟过去了。",
        "expect": "n5-rejected",
        "status": "n5-rejected",
-       "why": "compound duration: 一小时 + 四十分钟, neither equals 90 minutes; compound expressions are not summed",
+       "why": "compound duration: 一小时 + 四十分钟; compounds are not summed, so the row is rejected as unsupported",
        "gates": {
         "G1_alignment": true,
         "G2_residue": true,
@@ -7078,8 +7078,23 @@
         "G6_no_truncation": true
        },
        "problems": [
-        "time-value-mismatch:一小时=1.0hour not in [(90, 'minute')]",
-        "time-value-mismatch:四十分钟=40.0minute not in [(90, 'minute')]"
+        "time-compound-unsupported:一小时+四十分钟 (compound durations are not summed)"
+       ],
+       "expectMet": true
+      },
+      {
+       "text": "管线甲从管线镇来到了钟楼。一小时六十分钟过去了。",
+       "expect": "n5-rejected",
+       "status": "n5-rejected",
+       "why": "third review: 60 + 60 = 120 minutes. Per-component matching passed because 一小时 equalled the authoritative 60; a compound must be rejected instead",
+       "gates": {
+        "G1_alignment": true,
+        "G2_residue": true,
+        "G3_time": false,
+        "G6_no_truncation": true
+       },
+       "problems": [
+        "time-compound-unsupported:一小时+六十分钟 (compound durations are not summed)"
        ],
        "expectMet": true
       },
@@ -7162,7 +7177,7 @@
      "text": "管线甲从管线镇来到了钟楼。一小时四十分钟过去了。",
      "expect": "n5-rejected",
      "status": "n5-rejected",
-     "why": "compound duration: 一小时 + 四十分钟, neither equals 90 minutes; compound expressions are not summed",
+     "why": "compound duration: 一小时 + 四十分钟; compounds are not summed, so the row is rejected as unsupported",
      "gates": {
       "G1_alignment": true,
       "G2_residue": true,
@@ -7170,8 +7185,23 @@
       "G6_no_truncation": true
      },
      "problems": [
-      "time-value-mismatch:一小时=1.0hour not in [(90, 'minute')]",
-      "time-value-mismatch:四十分钟=40.0minute not in [(90, 'minute')]"
+      "time-compound-unsupported:一小时+四十分钟 (compound durations are not summed)"
+     ],
+     "expectMet": true
+    },
+    {
+     "text": "管线甲从管线镇来到了钟楼。一小时六十分钟过去了。",
+     "expect": "n5-rejected",
+     "status": "n5-rejected",
+     "why": "third review: 60 + 60 = 120 minutes. Per-component matching passed because 一小时 equalled the authoritative 60; a compound must be rejected instead",
+     "gates": {
+      "G1_alignment": true,
+      "G2_residue": true,
+      "G3_time": false,
+      "G6_no_truncation": true
+     },
+     "problems": [
+      "time-compound-unsupported:一小时+六十分钟 (compound durations are not summed)"
      ],
      "expectMet": true
     },
@@ -7193,7 +7223,7 @@
     }
    ],
    "timings": {
-    "totalMs": 0.563
+    "totalMs": 0.878
    },
    "expectV3": "n5-pass",
    "expectMet": true,
@@ -7208,12 +7238,273 @@
    }
   },
   {
+   "caseId": "d2-time-boundaries",
+   "title": "时长门：句首与普通词",
+   "expect": "n5-pass",
+   "stages": {
+    "n5": {
+     "ms": 0.002,
+     "program": "judge_v3.judge",
+     "facts": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "from": "管线镇",
+       "to": "钟楼",
+       "entityGroup": "characters"
+      },
+      {
+       "factId": "f1",
+       "kind": "task_achieved",
+       "entityId": "char_pa",
+       "name": "管线甲",
+       "goal": "把铜铃挂回钟楼",
+       "entityGroup": "characters"
+      },
+      {
+       "factId": "f2",
+       "kind": "time",
+       "amount": 8,
+       "unit": "minute"
+      }
+     ],
+     "mustExpress": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "plan": {
+      "sentences": [
+       {
+        "index": 0,
+        "factIds": [
+         "f0",
+         "f1",
+         "f2"
+        ],
+        "coreference": [],
+        "time": {
+         "amount": 8,
+         "unit": "minute"
+        }
+       }
+      ]
+     },
+     "verdicts": [
+      {
+       "text": "八分钟过去了。管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+       "status": "n5-pass",
+       "n5": {
+        "version": "n5-v3",
+        "status": "judged",
+        "hardPass": true,
+        "gates": {
+         "G1_alignment": true,
+         "G2_residue": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "triggers": {
+         "G4": false,
+         "G5": false
+        },
+        "problems": [],
+        "covered": [
+         "f0",
+         "f1"
+        ],
+        "residue": "八分钟过去了。。。",
+        "time": {
+         "triggered": true,
+         "parsed": [
+          {
+           "raw": "八分钟",
+           "start": 0,
+           "end": 3,
+           "amount": 8.0,
+           "unit": "minute"
+          }
+         ],
+         "unparseable": [],
+         "authorized": [
+          [
+           8,
+           "minute"
+          ]
+         ]
+        },
+        "rowIdInvariance": {
+         "aliases": [
+          "comp:primary",
+          "alias:renamed"
+         ],
+         "identicalGates": true
+        }
+       }
+      },
+      {
+       "text": "过了一会儿，天色渐暗。管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+       "status": "n5-pass",
+       "n5": {
+        "version": "n5-v3",
+        "status": "judged",
+        "hardPass": true,
+        "gates": {
+         "G1_alignment": true,
+         "G2_residue": true,
+         "G3_time": true,
+         "G6_no_truncation": true
+        },
+        "triggers": {
+         "G4": false,
+         "G5": false
+        },
+        "problems": [],
+        "covered": [
+         "f0",
+         "f1"
+        ],
+        "residue": "过了一会儿，天色渐暗。。。",
+        "time": {
+         "triggered": true,
+         "parsed": [],
+         "unparseable": [],
+         "authorized": [
+          [
+           8,
+           "minute"
+          ]
+         ],
+         "vague": "过了一会儿"
+        },
+        "rowIdInvariance": {
+         "aliases": [
+          "comp:primary",
+          "alias:renamed"
+         ],
+         "identicalGates": true
+        }
+       }
+      }
+     ],
+     "counters": [
+      {
+       "text": "过了一会儿，几小时过去了。管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+       "expect": "n5-rejected",
+       "status": "n5-rejected",
+       "why": "几小时 is an explicit but unparseable duration; the bare unit must not be confused with an ordinary word either",
+       "gates": {
+        "G1_alignment": true,
+        "G2_residue": true,
+        "G3_time": false,
+        "G6_no_truncation": true
+       },
+       "problems": [
+        "time-value-unparseable:几小时"
+       ],
+       "expectMet": true
+      }
+     ]
+    }
+   },
+   "notes": "Third review: a text starting with the duration was rejected as a fragment because '' is a substring of any string; and a bare unit matched inside 天色, rejecting ordinary prose. Both texts must pass now.",
+   "modelCalled": false,
+   "quality": "pending",
+   "n6": {
+    "status": "not-run",
+    "result": null
+   },
+   "status": "n5-pass",
+   "n5": {
+    "version": "n5-v3",
+    "status": "judged",
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "triggers": {
+     "G4": false,
+     "G5": false
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "residue": "八分钟过去了。。。",
+    "time": {
+     "triggered": true,
+     "parsed": [
+      {
+       "raw": "八分钟",
+       "start": 0,
+       "end": 3,
+       "amount": 8.0,
+       "unit": "minute"
+      }
+     ],
+     "unparseable": [],
+     "authorized": [
+      [
+       8,
+       "minute"
+      ]
+     ]
+    },
+    "rowIdInvariance": {
+     "aliases": [
+      "comp:primary",
+      "alias:renamed"
+     ],
+     "identicalGates": true
+    }
+   },
+   "hardPass": true,
+   "counters": [
+    {
+     "text": "过了一会儿，几小时过去了。管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+     "expect": "n5-rejected",
+     "status": "n5-rejected",
+     "why": "几小时 is an explicit but unparseable duration; the bare unit must not be confused with an ordinary word either",
+     "gates": {
+      "G1_alignment": true,
+      "G2_residue": true,
+      "G3_time": false,
+      "G6_no_truncation": true
+     },
+     "problems": [
+      "time-value-unparseable:几小时"
+     ],
+     "expectMet": true
+    }
+   ],
+   "timings": {
+    "totalMs": 0.632
+   },
+   "expectV3": "n5-pass",
+   "expectMet": true,
+   "d4": {
+    "checked": false,
+    "count": null,
+    "items": [],
+    "textKind": null,
+    "text": "八分钟过去了。管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。",
+    "labeler": "assistant-manual (single labeler, same session that built the archive)",
+    "reviewStatus": "pending-independent-review"
+   }
+  },
+  {
    "caseId": "d2-pronoun-grant",
    "title": "合法代词授权必须命中",
    "expect": "n5-pass",
    "stages": {
     "n1": {
-     "ms": 0.123,
+     "ms": 0.127,
      "program": "narration_pipeline.extract_facts",
      "facts": [
       {
@@ -7243,7 +7534,7 @@
      "diagnostics": []
     },
     "organization": {
-     "ms": 0.002,
+     "ms": 0.003,
      "program": "plan source=program + check_plan_v3",
      "response": {
       "sentences": [
@@ -7272,7 +7563,7 @@
      }
     },
     "n5": {
-     "ms": 0.003,
+     "ms": 0.002,
      "program": "judge_v3.judge",
      "facts": [
       {
@@ -7446,7 +7737,7 @@
     }
    ],
    "timings": {
-    "totalMs": 1.163
+    "totalMs": 1.225
    },
    "expectV3": "n5-pass",
    "expectMet": true,
@@ -7523,7 +7814,7 @@
    "hardPass": null,
    "counters": [],
    "timings": {
-    "totalMs": 0.051
+    "totalMs": 0.047
    },
    "expectV3": "blocked-at-judge",
    "expectMet": true,

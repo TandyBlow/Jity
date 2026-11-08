@@ -178,6 +178,32 @@ def test_d2_regressions():
                 base + "半小时过去了。")
     check(not r["hardPass"], "D2: 半小时 is 30 minutes, not 90")
 
+    # third review: empty boundary at the start of the text is not a fragment
+    r = j.judge(facts, must, PLAN,
+                "八分钟过去了。" + base)
+    check(r["hardPass"], "D2 regression 3: a text starting with the duration "
+                         "passes (empty boundary)")
+    check(not [p for p in r["problems"] if p.startswith("time-")],
+          "D2 regression 3: no spurious fragment problem at position 0")
+
+    # third review: ordinary words containing a unit char are not durations
+    r = j.judge(facts, must, PLAN, base + "过了一会儿，天色渐暗。")
+    check(r["hardPass"], "D2 regression 3: 天色 is not a bare 天 duration")
+    r = j.judge(facts, must, PLAN, base + "过了一会儿，月色的确很淡。")
+    check(r["hardPass"], "D2 regression 3: 月色 is not a bare 月 duration")
+
+    # third review: compound durations are rejected, never summed
+    r = j.judge(time_facts(amount=60, unit="minute"), ["f0", "f1", "f2"],
+                PLAN, base + "一小时六十分钟过去了。")
+    check(not r["hardPass"], "D2 regression 3: 一小时六十分钟 is not accepted "
+                             "against 60 minutes")
+    check(any(p.startswith("time-compound-unsupported") for p in r["problems"]),
+          "D2 regression 3: compound is named as unsupported")
+    r = j.judge(time_facts(amount=120, unit="minute"), ["f0", "f1", "f2"],
+                PLAN, base + "一小时六十分钟过去了。")
+    check(not r["hardPass"], "D2 regression 3: compounds are not summed even "
+                             "when the total would match")
+
 
 def test_pronoun_grant():
     """Reviewer finding (2026-11-08): v3 ignored plan grants and rejected a
