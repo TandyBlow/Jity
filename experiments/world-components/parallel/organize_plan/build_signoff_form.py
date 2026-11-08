@@ -71,6 +71,7 @@ def main() -> int:
         "signer": "",
         "signerRole": "",
         "signerKind": "",
+        "iReviewedEachRow": False,
         "delegationNote": "",
         "date": "",
         "reviewedCommit": "",

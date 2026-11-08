@@ -25,9 +25,10 @@
  },
  "signoff": {
   "file": "runs/r2/signoff.json",
-  "sha256": "6275a2fb2a2c9ab561fae5c598e89c67f3d8bb822e009e21dd3ed3aee5f17b1b",
+  "sha256": "ae683b2ce7999fa31e2fad1a93d45b4943e43dbe9b218c9fad9f6be39d5588c3",
   "signer": "pi（AI 编码代理，本机 pi harness）",
   "signerKind": "ai",
+  "iReviewedEachRow": false,
   "date": "2026-11-08",
   "reviewedCommit": "4dd9df4",
   "humanCounts": {

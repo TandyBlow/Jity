@@ -1,8 +1,8 @@
 {
- "created": "2026-11-08T07:15:43.903055+00:00",
- "runtimeHead": "3ac130fbd2caeb8ca8028ecda7af5005fb707e56",
+ "created": "2026-11-08T07:23:22.141688+00:00",
+ "runtimeHead": "ce3551f391563f2afd3438fb4f220cc25de5b68c",
  "runtimeBranch": "exp/c-organize-plan",
- "runtimeStatus": "M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/apply_signoff.py\n M experiments/world-components/parallel/organize_plan/check_round_ready.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n M experiments/world-components/parallel/organize_plan/runs/r2/signoff.json\n?? TASK.md",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/NEXT-ROUND.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/apply_review.py\n M experiments/world-components/parallel/organize_plan/apply_signoff.py\n M experiments/world-components/parallel/organize_plan/build_signoff_form.py\n M experiments/world-components/parallel/organize_plan/gate_rules.py\n M experiments/world-components/parallel/organize_plan/runs/r2/acceptance.json\n?? TASK.md",
  "python": "3.12.3",
  "platform": "Windows-11-10.0.26200-SP0",
  "code": {

@@ -42,6 +42,10 @@ def main() -> int:
     allowed = criteria["manualReview"]["verdictValues"]
 
     missing: list[str] = []
+    # A human sign-off must also attest that each row was read. AI/audit records
+    # are allowed to omit it; the gate treats them as audit-only anyway.
+    if form.get("signerKind") == "human" and form.get("iReviewedEachRow") is not True:
+        missing.append("iReviewedEachRow")
     for field in ("signer", "signerRole", "signerKind", "date", "reviewedCommit"):
         if not str(form.get(field, "")).strip():
             missing.append(field)
@@ -91,6 +95,7 @@ def main() -> int:
         "signer": form["signer"],
         "signerRole": form["signerRole"],
         "signerKind": form["signerKind"],
+        "iReviewedEachRow": form.get("iReviewedEachRow") is True,
         "delegationNote": form.get("delegationNote", ""),
         "date": form["date"],
         "reviewedCommit": form["reviewedCommit"],

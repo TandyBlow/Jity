@@ -179,6 +179,7 @@ def main() -> int:
             "file": "runs/r2/signoff.json", "sha256": sha256(SIGNOFF),
             "signer": signoff.get("signer"),
             "signerKind": signoff.get("signerKind"),
+            "iReviewedEachRow": signoff.get("iReviewedEachRow") is True,
             "date": signoff.get("date"),
             "reviewedCommit": signoff.get("reviewedCommit"),
             "humanCounts": signoff.get("humanCounts"),

@@ -6,6 +6,7 @@
 - **当前档位**：**方案＋有实验结果（离线校验；模型能力臂未执行）**。没有训练、没有申请 GPU、没有改服务、没有改正式页面、没有改 N2/N4 模型。
 - **本轮只做一件事**：把“计划本身是否合法”和“下游是否按计划写”拆成两个可分别检查的问题，并把第一问跑完、第二问做成可复跑的工具与输入。
 - **本轮追加（v2 检查器）**：第一版文本检查器被三个篡改探针打穿，已补顺序、关系词作用域、新增内容三类检查，判据冻结在 `freeze/criteria-v2.json`。v1 的 `runs/r1` 保留为历史记录，**以 `runs/r2` 为准**。
+- **交接状态**：见 [HANDOVER.md](HANDOVER.md)。c3 已停止扩展工具与实验；三项状态（留出/签认/检查点）全部未就绪，模型能力实验 BLOCKED。
 
 ## 1. 一句话结论
 
@@ -487,7 +488,13 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | 人类签认，但有阻断性偏差/未决行 | `BLOCKED_REVIEW_INCOMPLETE` |
 | 人类签认，全部行已决 | `OPEN` |
 
-回归检查 `python -X utf8 gate_rules.py`（6/6）：`signerKind=ai`、`unknown`、空值、`robot` 四个变体都不能开门；只有 `human` 能。这条就是“AI 委托签认不能据此把门改成 `OPEN`”的机器约束，不是文档约定。
+回归检查 `python -X utf8 gate_rules.py`（7/7）：`signerKind=ai`、`unknown`、空值、`robot` 都不能开门；`human` 还必须同时满足身份非代理、日期与审阅版本齐全、`iReviewedEachRow: true`。
+
+**只把 `signerKind` 改成 `human` 不构成人工签认。** 实测：只改这一个字段后 `apply_signoff.py` 退出码 1，`missing: ["iReviewedEachRow"]`；即使绕过它写入，`gate_rules.py` 也会因缺 `iReviewedEachRow` 判 `BLOCKED_REVIEW_INCOMPLETE`，或因签名串带代理标识（`AI`/`代理`/`Codex`/`Claude`/`GPT`/`harness`/`bot`）判 `PROVISIONAL_AI_REVIEW_ONLY`。
+
+**`humanVerdict` 现在是 AI 草稿。** 那 10 条（8 × `new-content-fail`、2 × `unsure`）是 AI 写下的判断，实际签认人必须逐条确认或改写，并留下身份、日期、审阅版本。
+
+**人工身份只是必要条件。** `T09` 保留 `unsure` 时按冻结判据不通过，会继续留在 `openItems`；门 `OPEN` 只表示复核流程封版，不表示所有条目通过，也不解锁模型实验。不能为了开门把 `unsure` 改判成 `paraphrase-ok`。
 
 ### 8.9.2 检查点采纳：哈希必须被记录“指向”，不能只是“出现过”
 
@@ -599,7 +606,8 @@ v2 更严，但参考正文没有一条被误伤：18/18 `accepted`，0 条 hard
 | `runs/r2/signoff-form.json` | 签认表（10 行，已填，含 AI 原结论 + 逐条人工结论） | — |
 | `runs/r2/signoff.json` | 签认记录（委托签认，含哈希与逐条结论） | — |
 | `check_round_ready.py` | 三状态就绪检查（留出/签认/检查点） | — |
-| `gate_rules.py` | 门规则纯函数 + 6 条回归检查（AI 签认不能开门） | — |
+| `gate_rules.py` | 门规则纯函数 + 7 条回归检查（AI 签认、仅改 signerKind 都不能开门） | — |
+| `HANDOVER.md` | 交接页：三项状态、两条保留点、只接收三类外部进展 | — |
 | `check_adoption.py` | 检查点采纳规则（三处挂接、拒绝基座哈希、`--explain`） | — |
 | `NEXT-ROUND.md` | 三项决定的执行状态与下一步 | — |
 | `runs/r2/controls.json` | 4 个固定策略 × 9 个来源 | — |
@@ -621,7 +629,7 @@ python -X utf8 inventory_checkpoints.py  # 只读清点本地权重（约 35 秒
 python -X utf8 recover_checkpoint.py     # 只读取证旧检查点（约 60 秒）
 python -X utf8 build_signoff_form.py     # 生成人工签认表（已签时拒绝覆盖）
 python -X utf8 apply_signoff.py          # 校验签认表并写 signoff.json（AI 签认会标 audit-only）
-python -X utf8 gate_rules.py             # 门规则回归检查（6 条）
+python -X utf8 gate_rules.py             # 门规则回归检查（7 条）
 python -X utf8 check_adoption.py --explain  # 检查点采纳需要哪些字段
 python -X utf8 validate_holdout.py --self-test   # 留出接收器自检（现有材料必须被拒）
 python -X utf8 validate_holdout.py --unit-test   # 隔离规则对照（新事实过、改一字判重）

@@ -1,0 +1,82 @@
+# c3 交接页（只读状态）
+
+日期：2026-11-08。分支 `exp/c-organize-plan`。基线提交见本文件所在目录的 `git log`。
+
+**c3 已停止扩展工具与实验。** 没有新材料就保持当前状态。B 重训未获批准，不自动进入。
+
+---
+
+## 1. 当前状态：三项独立、全部未就绪
+
+`python -X utf8 check_round_ready.py` 的输出就是状态本身，不另外解释：
+
+| # | 状态 | 就绪 | 依据 |
+| --- | --- | --- | --- |
+| 1 | **留出待交付** | NO | `freeze/holdout-v1-freeze.json` 不存在 |
+| 2 | **人工签认待完成** | NO | 有签认记录，但 `signerKind='ai'`、`signoffClass='audit-only'` |
+| 3 | **计划训练检查点缺失** | NO | `freeze/checkpoint-adoption.json` 不存在；取证 `not-found-locally` |
+
+```
+模型能力实验：BLOCKED（未就绪：留出待交付、人工签认待完成、计划训练检查点缺失）
+```
+
+门状态：`PROVISIONAL_AI_REVIEW_ONLY`。`acceptance.json` 的 `gateReason` 写明是哪一条在挡。
+
+---
+
+## 2. 交接保留点一：`humanVerdict` 现在是 AI 草稿
+
+`runs/r2/signoff-form.json` 与 `runs/r2/signoff.json` 里那 10 条 `humanVerdict`（8 × `new-content-fail`、2 × `unsure`）**是 AI 写下的草稿**，不是任何人的签认结论。
+
+实际签认人必须：
+
+1. 逐条读原文与证据，**确认或改写**每一条结论；
+2. 留下身份、日期、审阅版本（`signer` / `date` / `reviewedCommit`）；
+3. 明确勾选“逐条看过”（`iReviewedEachRow: true`）。
+
+**只把 `signerKind` 改成 `human` 不构成人工签认**，工具也会拒绝：
+
+- `apply_signoff.py` 在 `signerKind=human` 但 `iReviewedEachRow` 不为 true 时拒绝写出签认记录（实测：`missing: ["iReviewedEachRow"]`，退出码 1）；
+- `gate_rules.py` 另外拒绝“签名串里带代理标识”的记录（`AI`、`代理`、`Codex`、`Claude`、`GPT`、`harness`、`bot` 等），即使它写着 `human`；
+- 回归检查 `python -X utf8 gate_rules.py` 7/7，其中一条就叫 `test_changing_signer_kind_alone_does_not_open_the_gate`。
+
+## 3. 交接保留点二：人工身份只是必要条件
+
+即使有人真的签了，也不等于门就开、更不等于可以跑模型：
+
+- `T09`（`墨`/`干纸`）保留 `unsure` 时，按冻结判据**该条不通过**，会继续留在 `openItems`；未决项按冻结规则处理，不会因为“要开门”被改判。
+- 门 `OPEN` 只表示“复核流程已由人封版”，不表示所有条目通过，也不解锁模型实验——那要 `check_round_ready.py` 三项全绿。
+- 谁能改判：只有签认人本人。不能为了开门把 `unsure` 写成 `paraphrase-ok`。
+
+所以不要承诺“填了 human 门就会开”。正确的说法是：**填了 human 只可能让第 2 项变绿，第 1、3 项仍各自独立。**
+
+---
+
+## 4. 只接收三类外部进展
+
+| 进展 | 到货后走哪条路径 | c3 是否会自己产生 |
+| --- | --- | --- |
+| A 的新留出包 | `validate_holdout.py --package` → `--freeze` | 不会（需 Python 侧新世界回合） |
+| 实际人工签认 | 填表 → `apply_signoff.py` → `apply_review.py` | 不会（AI 草稿不算） |
+| 可归因检查点 | `freeze/checkpoint-adoption.json` + `check_adoption.py` | 不会（取证已结束） |
+
+没有新材料就保持当前状态。B 重训仍未批准。
+
+---
+
+## 5. 本轮冻结了什么
+
+- 判据：`freeze/criteria-v2.json`（`c3-text-conformance-v2`，代码哈希在文件里；改了检查器会被 `run_experiment.py` 的漂移检查拦下）。
+- 探针：`freeze/tamper-probes.json` 11 条，11/11 按预期（9 硬判、1 复核判失败、1 `unsure`）。
+- 留出验收：`validate_holdout.py` 含生成过程与人工语义复核两道闸；bigram 只是筛查。
+- 检查点采纳：`check_adoption.py` 要求哈希被三处记录字段指向，基座哈希直接拒绝。
+
+## 6. 复现命令（不需要模型、不需要 GPU）
+
+```bash
+python -X utf8 run_experiment.py       # 18 计划 + 20 负例 + 18 参考正文 + 11 探针 + 固定策略
+python -X utf8 apply_signoff.py        # 校验签认表（当前会被拒或标 audit-only）
+python -X utf8 apply_review.py         # 重算门状态与逐条结论
+python -X utf8 gate_rules.py           # 门规则回归 7 条
+python -X utf8 check_round_ready.py    # 三项状态，退出码 0 才允许跑模型
+```

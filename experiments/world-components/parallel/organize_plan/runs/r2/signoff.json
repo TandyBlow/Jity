@@ -7,6 +7,7 @@
  "signer": "pi（AI 编码代理，本机 pi harness）",
  "signerRole": "delegated-signer",
  "signerKind": "ai",
+ "iReviewedEachRow": false,
  "delegationNote": "项目负责人在 2026-11-08 的会话中明确指示由本代理完成本轮签认；签认人身份照实记为 AI 代理，不冒充人类复核者。AI 复核结论保留在 aiVerdict/aiNote，逐行人工结论写在 humanVerdict/humanNote。",
  "date": "2026-11-08",
  "reviewedCommit": "4dd9df4",

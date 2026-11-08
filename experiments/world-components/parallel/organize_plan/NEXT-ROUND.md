@@ -127,7 +127,9 @@ c3 会跑两个自检，证明工具不是“只会通过”也不是“只会�
 模型能力实验：BLOCKED（未就绪：留出待交付、人工签认待完成、计划训练检查点缺失）
 ```
 
-**AI 签认不会开门。** 门规则在 `gate_rules.py`，6 条回归检查覆盖 `ai` / `unknown` / 空值 / `robot` 四种非人类签名，全部判为 `PROVISIONAL_AI_REVIEW_ONLY`；只有 `signerKind="human"` 才能得到 `OPEN`。`acceptance.json` 的 `gateReason` 会写明当前是哪一条在挡。
+**AI 签认不会开门。** 门规则在 `gate_rules.py`，7 条回归检查覆盖 `ai` / `unknown` / 空值 / `robot` 四种非人类签名，全部判为 `PROVISIONAL_AI_REVIEW_ONLY`；`human` 还必须同时有非代理身份、日期、审阅版本和 `iReviewedEachRow: true`。**只改 `signerKind` 不构成人工签认**（实测被 `apply_signoff.py` 拒）。`acceptance.json` 的 `gateReason` 会写明当前是哪一条在挡。
+
+**人工身份只是必要条件。** `T09` 保留 `unsure` 时按冻结判据不通过、继续留在 `openItems`；门 `OPEN` 不表示全部条目通过，也不解锁模型实验。不能为开门强行改判。
 
 **检查点采纳不是“哈希出现过”。** 见 `check_adoption.py`：同一个 `modelSha256` 必须分别挂到训练输入与计划格式、训练运行记录字段、选点记录字段三处；`modelSha256` 等于基座哈希直接拒绝。三个负对照（A 仅文字出现、B 基座哈希、C 字段解析成功）已实测为 拒绝/拒绝/采纳。
 
@@ -138,6 +140,8 @@ c3 会跑两个自检，证明工具不是“只会通过”也不是“只会�
 | 留出包 | A | `validate_holdout.py --package`（含生成过程与人工语义复核两道闸）→ `--freeze` → `render_input.py` → 再冻一份输入 |
 | 检查点（若决定走回头） | 用户 / A | 必须先给出 `freeze/checkpoint-adoption.json`：权重 sha256 + 能对上的一份记录；对不上判“不可归因”，不跑 |
 | B 重训是否批准 | 用户 | 另行决定；c3 不自动进入，不申请 GPU |
+
+只接收这三类外部进展；没有新材料就保持当前状态。交接页：[HANDOVER.md](HANDOVER.md)。
 
 ## 7. 本轮之后的禁止项
 
