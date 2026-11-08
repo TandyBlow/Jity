@@ -119,16 +119,32 @@ def main() -> int:
     PACKET.write_text(json.dumps(packet, ensure_ascii=False, indent=1) + "\n",
                       encoding="utf-8", newline="\n")
 
-    calib = {"version": "reviewer-calibration-r2",
-             "note": "label these six texts with the same schema; names and "
-                     "events are separate fields",
+    authority_good = {
+        "scene": {"location": "钟楼", "appearance": "旧"},
+        "characters": [{"entityId": "char_pa", "name": "管线甲",
+                        "personality": "沉稳", "appearance": "常态"}],
+        "visible": [],
+        "perspectiveEntityId": "char_pa",
+        "allowedFacts": ["管线甲从管线镇来到钟楼", "管线甲把铜铃挂回钟楼"],
+        "allowedAdditions": ["与场景一致的环境描写", "视角人物的感受"],
+    }
+    calib = {"version": "reviewer-calibration-r3",
+             "note": "every text comes with the authoritative scene, the "
+                     "characters (entityId) and the allowed facts, so a label "
+                     "can be checked against evidence instead of guessed",
              "texts": [
-                 {"id": "c1", "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他靠着栏杆喘了口气。"},
-                 {"id": "c2", "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。王五在楼梯口等他。"},
-                 {"id": "c3", "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。钟声在雾里散开。"},
-                 {"id": "c4", "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼，又去了柳溪渡。"},
-                 {"id": "c5", "text": "管线甲从管线镇来到了钟楼。管线甲并未把铜铃挂回钟楼。"},
-                 {"id": "c6", "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他的手指还在抖。"},
+                 {"id": "c1", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他靠着栏杆喘了口气。"},
+                 {"id": "c2", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。王五在楼梯口等他。"},
+                 {"id": "c3", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。钟声在雾里散开。"},
+                 {"id": "c4", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼，又去了柳溪渡。"},
+                 {"id": "c5", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼。管线甲并未把铜铃挂回钟楼。"},
+                 {"id": "c6", "authority": authority_good,
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他的手指还在抖。"},
              ]}
 
     key = {
@@ -137,7 +153,9 @@ def main() -> int:
             "c4": ["柳溪渡"],
         },
         "inventedEvents": {
+            "c2": ["王五在楼梯口等他（新增人物带来新增事件）"],
             "c3": ["钟声在雾里散开（世界状态里没有钟声事件）"],
+            "c4": ["又去了柳溪渡（新增移动事件）"],
         },
         "factConveyed": {
             "c1": True, "c2": True, "c3": True, "c4": True,
@@ -145,17 +163,22 @@ def main() -> int:
         },
         "notes": {
             "c5": "the result is negated, so the fact is NOT conveyed",
-            "c4": "柳溪渡 is a place name that is not in the world",
-            "c3": "the bell sound is an added event, not a proper name; a "
-                  "label of 'no name' is correct as long as the event is "
-                  "recorded",
+            "c4": "柳溪渡 is a place name that is not in the world; the trip "
+                  "there is a separate added event",
+            "c3": "the bell sound is an added event, not a proper name",
+            "c1": "the deep breath is an allowed feeling, not an event",
+            "c6": "the trembling fingers are an allowed feeling, not an event",
         },
     }
 
-    CALIB.write_text(json.dumps(calib, ensure_ascii=False, indent=1) + "\n",
-                     encoding="utf-8", newline="\n")
-    KEY.write_text(json.dumps(key, ensure_ascii=False, indent=1) + "\n",
-                   encoding="utf-8", newline="\n")
+    CALIB.write_text(json.dumps(calib, ensure_ascii=False,
+                            indent=1) + chr(10),
+                            encoding="utf-8",
+                            newline=chr(10))
+    KEY.write_text(json.dumps(key, ensure_ascii=False,
+                          indent=1) + chr(10),
+                          encoding="utf-8",
+                          newline=chr(10))
     names = sum(len(v) for v in key["inventedProperNames"].values())
     events = sum(len(v) for v in key["inventedEvents"].values())
     print(f"packet: {len(cases)} cases with scene/characters/entityIds -> "

@@ -20,8 +20,8 @@
 
 - 盲包：`fixtures/reviewer-packet-v3.json`——每题含**完整场景**（地点、地点外貌、同栋）、**人物身份与 entityId、权威性格/外貌**、可见物品、权威事实行、视角、写作要求、首次调用原文、结束原因。**不含**已有 N6 结论与 D4 标签。
   - 修正记录：第一版只给事实行，复核者无法判断某段环境描写是否经过授权，也无法区分两个同名人物；现已补上场景与身份信息（`reviewer-packet-v3.json` 的 `scene` 字段）。
-- 校准集：`fixtures/reviewer-calibration.json`（6 条短文），答案在 `fixtures/reviewer-calibration-key.json`，复核者提交后对照。目的：避免把「没有检出」当成「能检出」。
-  - **专名与事件分开**：编造专名只有 **2 例**（`c2` 王五、`c4` 柳溪渡），不是文档早先写的 3 例；`c3` 的「钟声」归**新增事件**，单独记在 `inventedEvents`。`c5` 是否定句，事实判「未传达」。
+- 校准集：`fixtures/reviewer-calibration.json`（6 条短文），**每条都带权威场景、人物（entityId）、允许的事实与允许的补充**，复核者先看权威资料再标注；答案在 `fixtures/reviewer-calibration-key.json`，提交后对照。
+  - **专名与事件分开**：编造专名 **2 例**（`c2` 王五、`c4` 柳溪渡）；新增事件 **3 条**（`c2` 王五在楼梯口等他、`c3` 钟声散开、`c4` 又去了柳溪渡）。`c5` 是否定句，事实判「未传达」；`c1` 的喘气与 `c6` 的手指发抖属于允许的感受，不算事件。
 - 复核者不参与本实验的批次运行，不看 `review-v3.json`、`fact-omission-v3.md` 与任何 N6 结论。
 
 ## 3. 流程

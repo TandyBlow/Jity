@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `9c07bc0c0c44ae0556e8fdab703445438bf99407797445ea582b870a94bc2359` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `5074f23b4b94c3bdc35124b414414de28907d6f27eeb5052bc5affe17c933a82` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -222,17 +222,21 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `fixtures/mocks.json` | 三个模拟端口的脚本返回；**不是模型输出** | `6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627` |
 | `judge_v4.py` | N5 v4（G2 诊断、G1 三态、G4 无法判定、G6 严格结束） | `b13af17aa1eaa2561fb8e67319f5c180c621557657d70308764e9a531b4693e2` |
 | `test_judge_v4.py` | v4 单测：三态、同名、结束原因、与 v3 的一致性 | `7f4456b6ee81d6dd5960e84cc9a9bf47ae22d5dd064c1a30a8779a8cb977808a` |
-| `rejudge_archives_v4.py` | 用 v4 重判三批归档并对比 | `c22bdc71b74af100a86d3ef89e9b4defdb8880ebf9858f006f9bf534405592d5` |
+| `rejudge_archives_v4.py` | 用 v4 重判三批归档并对比 | `ea3b5d30a340f89adb1cb838a7c2e4b952d2dd0018a530bab6871062bb733c0d` |
 | `n5-v4.md` | v4 变更、测试与重判结果 | `5179bec2a07235681c3d0b8c107022da0b61e658096617ef5460083cf02b899d` |
-| `n4-input-design.md` | N4 输入组织设计稿与验收协议（待审） | `b781bf488b120d4939da96b6a2913f382604362dba170bcaeee143f1b41e714f` |
-| `second-reviewer-plan.md` | 独立复核的材料、流程与交付 | `dec5f8efece9fc43f94e5975cd82260da54248277b1c17081fe7c8ed876f1c4f` |
-| `make_reviewer_packet.py` | 生成盲包与校准集 | `97aec239e3be3e89f549c420c992535b4b0c04ad319dab441cb4e9f593d5000b` |
+| `n4-input-design.md` | N4 输入组织设计稿与验收协议（待审） | `bf0b47555bffae7620e1186e7dbbe19596576d6eca27078c8d542dd9975049f0` |
+| `second-reviewer-plan.md` | 独立复核的材料、流程与交付 | `341a38d5657182a1aa18749b78581d57b6497e0d5cfca1ff6e3aed223a8be587` |
+| `make_reviewer_packet.py` | 生成盲包与校准集 | `843c6f5ecc3225a37d64d8f9143084787fb2304bf2fe2511d928292978baab55` |
 | `judge_v4_1.py` | N5 v4.1（观察者归属、描述绑定、否定范围） | `0af6d8cae41834e5b830ede9d973440756a9eb08226c59e824ec6b951f3988cf` |
 | `test_judge_v4_1.py` | v4.1 反例测试（五组） | `2f1957dd556b9f6254d8b1ac5f68742472d29892f3564f9ad445e8ec4e98e334` |
 | `n5-v4-1.md` | v4.1 变更、测试、重判结果 | `71e11aa5bb16f3a8421488f9edde62ce1f79ee782674d33435b35c600e1a1252` |
-| `n4_groups.py` | 按组渲染器（起点/终点、描述绑定、阻断） | `0ef9e6421cf72014484e2a2540f2cd2debf4a5c93079ba922847485b346b493c` |
-| `test_n4_groups.py` | 渲染器快照、确定性、阻断测试 | `3b5f6372126f0021bc004e1eaa7db1d512ae0f8386bfb166a00e9433004e84f2` |
-| `fixtures/n4-groups-rb-move-outcome.txt` | 按组渲染的审核快照 | `ccb7a8f36307a677f7b9aa858db37c8204d122691b26b1154784f6d8889bd8ed` |
+| `n4_groups.py` | 按组渲染器（起点/终点、描述绑定、阻断） | `06cd4f7ef7e3805395d8188e710d1804a07b50cdc40107939a6b18fb0c277980` |
+| `test_n4_groups.py` | 渲染器快照、确定性、阻断测试 | `d2942730fea76b8ca800322eee8a132d4e9fa5e6374e625bd1a6c5b1b051a3af` |
+| `fixtures/n4-groups-rb-move-outcome.txt` | 按组渲染的审核快照 | `782f3b4194813fd07a40db8e2ebfd13b242785acc0c30aa2ce84c56e82b18ed2` |
+| `character_identity.py` | N4/N5 共用的角色识别资料 | `2e044261070c0aa50178e1b78690c704ec8b563a66ad7ed7bffc83bf4e9519dd` |
+| `judge_v4_2.py` | N5 v4.2（共享识别、同描述拒绝、证据缺失） | `0acc37faedad6c9fbbdd5790237475d859686b0af0f330c70928f3a2101ca998` |
+| `test_judge_v4_2.py` | v4.2 单测（识别一致性与 v4.1 行为） | `6294cabfacf3678b38336fb47cec82d54a75686eab4df330ae2d541d72bf0457` |
+| `n5-v4-2.md` | v4.2 变更、测试与重判 | `3a48905c13d1ace1d2076b29f171d3477c54571aebc13b0c309e3b32dcdf4a3e` |
 
 运行归档不列入上表，因为它们的哈希每次重跑都会变（归档里带 `runAt` 和各阶段毫秒）；输出哈希统一由 `record_manifest.py` 写进 `fixtures/manifest.json` 的 `outputs[]`，与该文件里的上游源码/契约哈希、git HEAD、N5 口径、门覆盖范围放在一起。重跑只应该改变计时与 `runAt`：这一点由 `out/determinism.json` 证明（`identicalAfterStrip: true`）。
 
@@ -341,3 +345,14 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 - **重判**：v4.1 对 v1–v3 仍是 0/10（每批 9 judged、1 undetermined），新规则没有改写历史结论。见 `out/archive-rejudge-v4-1.json`。
 
 对照实验协议仍未冻结：等独立标注与渲染器复核完成后再登记；新模型批次未启动。
+
+## 18. 全局约束恢复、识别资料统一、时间兼容（未跑批次）
+
+按 2026-11-09 评审修正。**没有新的模型调用，也没有冻结 A/B。**
+
+- **N4 全局约束恢复**：`n4_groups.py` 现在逐字复用旧装配器的 `视角：…` 与 `要求：…` 两行，放在句组之前；句组只加一句事实表达说明。`test_n4_groups.py::test_ab_invariants` 逐字比较 A/B 两侧应一致的部分（场景、人物、可见、视角行、要求行），并断言要求行只出现一次。快照同步更新。
+- **识别资料统一**：新增 `character_identity.py`，一次性从角色状态生成 `{entityId, name, descriptor, field, source}`；N4 渲染与 N5 判定读同一个对象。两人描述相同会被标成 `indistinguishable`，`same_name_descriptors()` 直接拒绝，不再把「描述出现过」当证据。
+- **N5 v4.2**（`judge_v4_2.py`）：同名判定改用共享识别资料；描述相同 → `undetermined`（`descriptors-identical`）；描述没贴在自己证据上 → `undetermined`；同名事实没有匹配片段 → `undetermined`（`evidence-missing`）。v4.1 与 v4 的代码与归档保留。
+- **时间兼容**：组内时间保留 `｜组后时间=过去了一会儿`；未分配给句组的时间事实追加 `全局时间=过去了一会儿`，不丢失。两条都有测试。
+- **复核校准**：每条校准文本补上权威场景、人物、允许事实；答案把编造专名（2 例）与新增事件（3 例：王五等人的事件、钟声、前往柳溪渡）分开，并注明喘气/手指发抖属于允许感受。
+- **重判**：v4.2 对 v1–v3 仍 0/10，同名样本从 v4.1 的「事实缺描述」改为「证据缺失」的 `undetermined`；结论不变。见 `out/archive-rejudge-v4-2.json`。

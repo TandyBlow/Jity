@@ -8,8 +8,14 @@
   ]
  },
  "inventedEvents": {
+  "c2": [
+   "王五在楼梯口等他（新增人物带来新增事件）"
+  ],
   "c3": [
    "钟声在雾里散开（世界状态里没有钟声事件）"
+  ],
+  "c4": [
+   "又去了柳溪渡（新增移动事件）"
   ]
  },
  "factConveyed": {
@@ -22,7 +28,9 @@
  },
  "notes": {
   "c5": "the result is negated, so the fact is NOT conveyed",
-  "c4": "柳溪渡 is a place name that is not in the world",
-  "c3": "the bell sound is an added event, not a proper name; a label of 'no name' is correct as long as the event is recorded"
+  "c4": "柳溪渡 is a place name that is not in the world; the trip there is a separate added event",
+  "c3": "the bell sound is an added event, not a proper name",
+  "c1": "the deep breath is an allowed feeling, not an event",
+  "c6": "the trembling fingers are an allowed feeling, not an event"
  }
 }

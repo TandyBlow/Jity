@@ -35,6 +35,7 @@ for p in (str(WC), str(WC / "n4_input_renderer"),
 from n4_input_renderer.packer import (  # noqa: E402
     KIND_LABEL,
     _fact_payload,
+    _selected_time_facts,
     _validate_plan,
     _validate_scene,
 )
@@ -43,17 +44,15 @@ from n4_input_renderer.renderer import (  # noqa: E402
     _loc_name,
     _pov_name,
 )
+import character_identity  # noqa: E402
 
-VERSION = "n4-groups-v0.1"
+VERSION = "n4-groups-v0.2"
 
-GROUP_RULES = (
-    "在正文里完整表达以上事实。",
-    "移动需要交代起点、终点和人物。",
-    "允许补充与权威状态一致的环境描写和人物感受。",
-    "不得新增行动、人物、任务或对话。",
-    "不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/"
-    "物品/地点；他人只写可见动作。",
-)
+REQUIREMENT_LINE = ("要求：写场景、行动与视角人物心理；不写任务标题、"
+                    "数值面板、具体时长、字段名；不新增未列出的具名人物/"
+                    "物品/地点；他人只写可见动作。")
+GROUP_RULES = ("写作要求：在正文里完整表达本组事实；"
+               "移动需要交代起点、终点和人物。")
 
 # which fact kinds get an explicit person line and a value line
 PERSON_LINE = {"moved", "outcome", "task_achieved", "subtask_added",
@@ -78,17 +77,11 @@ def _last_change(state, eid, field):
     return None
 
 
-def descriptor(state, eid):
-    """Authoritative descriptor for an entity, or (None, None)."""
-    pers = _last_change(state, eid, "personalityChanges") \
-        or _initial(state, eid).get("initialPersonality")
-    if pers:
-        return pers, "性格"
-    app = _last_change(state, eid, "appearanceChanges") \
-        or _initial(state, eid).get("initialAppearance")
-    if app and app != "常态":
-        return app, "外貌"
-    return None, None
+def descriptor(state, eid, identities=None):
+    """Authoritative descriptor, read from the shared identity record."""
+    ids = identities if identities is not None else \
+        character_identity.build_identities(state)
+    return character_identity.descriptor_for(ids, eid)
 
 
 def _same_name_entities(facts):
@@ -100,7 +93,7 @@ def _same_name_entities(facts):
     return {n: sorted(e) for n, e in by_name.items() if len(e) >= 2}
 
 
-def _block(fact, state, same_names, seen_eids):
+def _block(fact, state, same_names, seen_eids, identities=None):
     """Render one fact as a block; return (lines|None, blocked|None)."""
     kind = fact.get("kind")
     name = fact.get("name")
@@ -119,12 +112,15 @@ def _block(fact, state, same_names, seen_eids):
                       "detail": "moved needs from/to"}
     person = name
     if name in same_names:
-        desc, field = descriptor(state, eid)
-        if not desc:
+        ids = identities if identities is not None else             character_identity.build_identities(state)
+        got, reason = character_identity.same_name_descriptors(
+            ids, name, same_names[name])
+        if got is None:
             return None, {"factId": fid,
-                          "reason": "same-name-indistinguishable",
-                          "detail": f"{name} has no authoritative descriptor"}
-        person = f"{name}（{field}={desc}）"
+                          "reason": reason or "same-name-indistinguishable",
+                          "detail": f"{name}: {reason}"}
+        field = (ids.get("entries", {}).get(eid) or {}).get("field") or "性格"
+        person = f"{name}（{field}={got[eid]}）"
     lines = [head]
     if kind in PERSON_LINE:
         lines.append(f"人物：{person}")
@@ -211,28 +207,43 @@ def pack_grouped_input(case, plan, world, selected_fact_ids=None,
         included = {fid for s in plan["sentences"] for fid in s["factIds"]}
         selected = [f for f in facts if f.get("factId") in included]
         same_names = _same_name_entities(selected)
+        identities = character_identity.build_identities(state)
         pov = _pov_name(case, world, strict=True)
+        plan_ids = {fid for s in plan["sentences"] for fid in s["factIds"]}
+        extra_time = _selected_time_facts(facts, plan_ids)
+        has_group_time = any(s.get("time") for s in plan["sentences"])
 
         lines = list(header)
+        # global invariants: identical to the v3 packer, so the A/B arms only
+        # differ in the fact arrangement below
+        lines.append(f"视角：{pov}；第三人称限知；只写{pov}的内心，"
+                     f"他人只写可见动作。")
+        lines.append(REQUIREMENT_LINE)
+        lines.append("")
         for sentence in plan["sentences"]:
             idx = sentence["index"] + 1
-            lines.append(f"句组 G{idx}")
+            suffix = "｜组后时间=过去了一会儿" if sentence.get("time") else ""
+            lines.append(f"句组 G{idx}{suffix}")
             lines.append(f"叙述视角：{pov}，第三人称限知")
             for fid in sentence["factIds"]:
                 fact = next((f for f in facts if f["factId"] == fid), None)
                 if fact is None:
                     raise N4RenderError("plan-unknown-fact", fid)
-                block, blocked = _block(fact, state, same_names, [])
+                block, blocked = _block(fact, state, same_names, [],
+                                        identities)
                 if blocked:
                     out["blocked"].append(blocked)
                     lines.append(f"{fid}｜阻断：{blocked['reason']}")
                     continue
                 lines.extend(block)
             lines.append("")
-            lines.append("写作要求：")
-            lines.extend(GROUP_RULES)
+            lines.append(GROUP_RULES)
+            lines.append("")
+        if not has_group_time and extra_time:
+            lines.append("全局时间=过去了一会儿")
             lines.append("")
         lines.append("正文：")
+
         out["input"] = "\n".join(lines)
         out["sameName"] = same_names
         out["status"] = "blocked" if out["blocked"] else "ok"

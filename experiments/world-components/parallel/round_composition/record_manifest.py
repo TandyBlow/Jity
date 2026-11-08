@@ -191,6 +191,13 @@ SOURCES = {
         "test_n4_groups.py",
         "experiments/world-components/parallel/round_composition/"
         "fixtures/n4-groups-rb-move-outcome.txt",
+        # shared identity record and N5 v4.2
+        "experiments/world-components/parallel/round_composition/"
+        "character_identity.py",
+        "experiments/world-components/parallel/round_composition/judge_v4_2.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_judge_v4_2.py",
+        "experiments/world-components/parallel/round_composition/n5-v4-2.md",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",
