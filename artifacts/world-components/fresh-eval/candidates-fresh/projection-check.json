@@ -20,14 +20,20 @@
     "moved",
     "sanity"
    ],
-   "actors": [
-    "fe_nie",
-    "fe_pu",
-    "fe_shao",
-    "fe_wen",
-    "fe_yu"
+   "factIds": [
+    "fe_nie:position",
+    "fe_nie:sanity",
+    "fe_pu:position",
+    "fe_pu:sanity",
+    "fe_shao:position",
+    "fe_shao:sanity",
+    "fe_wen:position",
+    "fe_wen:sanity",
+    "fe_yu:position",
+    "fe_yu:sanity"
    ],
-   "withheldActors": [],
+   "withheldFacts": [],
+   "leakedFactIds": [],
    "projectionNarratesWithheld": false,
    "pointId": "point_7",
    "afterDigest": "2f959cc7186179374a260440f610ab42aa20e638156bdcba0add25cab9a2a3bd"
@@ -48,15 +54,30 @@
     "at",
     "sanity"
    ],
-   "actors": [
-    "fe_nie",
-    "fe_pu",
-    "fe_shao",
-    "fe_wen",
-    "fe_yu"
+   "factIds": [
+    "fe_nie:position",
+    "fe_nie:sanity",
+    "fe_pu:position",
+    "fe_pu:sanity",
+    "fe_shao:position",
+    "fe_shao:sanity",
+    "fe_wen:position",
+    "fe_wen:sanity",
+    "fe_yu:position",
+    "fe_yu:sanity"
    ],
-   "withheldActors": [
-    "fe_shao"
+   "withheldFacts": [
+    {
+     "entityId": "fe_shao",
+     "kind": "moved",
+     "target": {
+      "factId": "fe_shao:position",
+      "kind": "moved"
+     }
+    }
+   ],
+   "leakedFactIds": [
+    "fe_shao:position"
    ],
    "projectionNarratesWithheld": true,
    "pointId": "point_17",
@@ -81,14 +102,23 @@
     "at",
     "sanity"
    ],
-   "actors": [
-    "fe_nie",
-    "fe_pu",
-    "fe_shao",
-    "fe_wen",
-    "fe_yu"
+   "factIds": [
+    "fe_nie:position",
+    "fe_nie:sanity",
+    "fe_pu:position",
+    "fe_pu:sanity",
+    "fe_shao:position",
+    "fe_shao:sanity",
+    "fe_wen:position",
+    "fe_wen:sanity",
+    "fe_wen:task:ft_check",
+    "fe_wen:task:ft_mark",
+    "fe_wen:personality:change_29",
+    "fe_yu:position",
+    "fe_yu:sanity"
    ],
-   "withheldActors": [],
+   "withheldFacts": [],
+   "leakedFactIds": [],
    "projectionNarratesWithheld": false,
    "pointId": "point_26",
    "afterDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08"
@@ -97,7 +127,8 @@
    "id": "c8e04",
    "accepted": false,
    "reason": "unsupported_narration_world_change",
-   "withheldActors": [],
+   "withheldFacts": [],
+   "leakedFactIds": null,
    "projectionNarratesWithheld": null,
    "pointId": "point_36",
    "afterDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452"
@@ -106,7 +137,8 @@
    "id": "c8e05",
    "accepted": false,
    "reason": "unsupported_narration_world_change",
-   "withheldActors": [],
+   "withheldFacts": [],
+   "leakedFactIds": null,
    "projectionNarratesWithheld": null,
    "pointId": "point_44",
    "afterDigest": "4bc218e24ec7ec7138afb77eaa42dac2779f5418c6b705b3f2398988a6422bcc"
@@ -115,12 +147,48 @@
    "id": "c8e06",
    "accepted": false,
    "reason": "narration_requires_complete_numeric_cause",
-   "withheldActors": [
-    "fe_wen"
+   "withheldFacts": [
+    {
+     "entityId": "fe_wen",
+     "kind": "moved",
+     "target": {
+      "factId": "fe_wen:position",
+      "kind": "moved"
+     }
+    }
    ],
+   "leakedFactIds": null,
    "projectionNarratesWithheld": null,
    "pointId": "point_53",
    "afterDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370"
   }
- ]
+ ],
+ "controls": [
+  {
+   "name": "standing-only-no-leak",
+   "expected": false,
+   "observed": false,
+   "ok": true,
+   "factKinds": [
+    "at",
+    "sanity"
+   ]
+  },
+  {
+   "name": "withheld-move-leaks",
+   "expected": true,
+   "observed": true,
+   "ok": true,
+   "factKinds": [
+    "moved",
+    "sanity"
+   ]
+  }
+ ],
+ "summary": {
+  "accepted": 3,
+  "rejected": 3,
+  "controlsOk": true,
+  "leakDetected": true
+ }
 }

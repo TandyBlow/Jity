@@ -1,7 +1,7 @@
 # 首批候选（6 条，待人工核验）
 
 输入包版本 v3（2026-11-08 第二轮外部审查后修订，见 `report.md`）。
-生成器 sha256 `bc8238a57540…`，夹具模板 sha256 `241fde2bf18a…`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
+生成器 sha256 `c791f902da74…`，夹具模板 sha256 `241fde2bf18a…`。来源是本次**新建**的评测专用注册夹具 `c8-eval-geothermal-v1`：作者 `Codex in this user-authorized C8 session`，创建时间 `2026-11-08T07:55:58.132062+00:00`，不是 R01 生成、不是历史玩家记录、没有改名复用旧世界。
 
 六条全部通过 A 侧 Python 服务提交并读回（独立数据库 `fresh/source/authority.sqlite3`，读回校验 6/6）。**未冻结**，人工核验通过后才做一次性冻结。
 
@@ -23,7 +23,9 @@
 
 ## 页面投影实测（不是预测）
 
-`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，读已提交的 before/after 记录，结果写在 `projection-check.json`：接受/拒绝逐条与 `capability.stages` 比对，不一致即失败。没有模型参与（`modelCalls=0`）。
+`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，读已提交的 before/after 记录，结果写在 `projection-check.json`：接受/拒绝逐条与 `capability.stages` 比对，不一致即失败。`--verify` 会重新执行一次并与已保存结果逐项比对（含模块哈希、每个用例、泄漏事实、两项自检），过期即失败。没有模型参与（`modelCalls=0`）。
+
+泄漏按**事实**判，不按人物判：被排除的移动只有在投影真的输出`<人物>:position`（kind=moved）时才算泄漏，人物仅以 `at`/`sanity` 出现不算。自检里放了两个对照：只出现现状时判不泄漏、移动真的发生时判泄漏。
 
 `c8e02` 的实测结果尤其重要：页面投影**接受**该 Δ，并把 N2 判为不可见的那个人的移动照样写了出来（`projectionNarratesWithheld=true`），所以这条不计页面叙述成绩，理由是可复现的实测，不是推测。
 

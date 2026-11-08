@@ -138,7 +138,8 @@ class Regeneration(unittest.TestCase):
         tests otherwise only read files that could have drifted."""
         import subprocess
         proc = subprocess.run([sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
-                               "--check"], capture_output=True, text=True)
+                               "--check"], capture_output=True, text=True,
+            encoding='utf-8', errors='replace')
         self.assertEqual(proc.returncode, 0, proc.stdout[-2000:] + proc.stderr[-2000:])
 
 
@@ -159,7 +160,8 @@ class RegenerationDetectsDrift(unittest.TestCase):
         proc = subprocess.run(
             [sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
              "--check", "--against", str(tmp)],
-            capture_output=True, text=True)
+            capture_output=True, text=True,
+            encoding='utf-8', errors='replace')
         self.assertNotEqual(proc.returncode, 0, proc.stdout[-1000:])
         self.assertIn("c8e03/input.json", proc.stdout)
 
@@ -173,7 +175,8 @@ class RegenerationDetectsDrift(unittest.TestCase):
         proc = subprocess.run(
             [sys.executable, "-B", str(HERE / "build_candidates_fresh.py"),
              "--check", "--against", str(tmp)],
-            capture_output=True, text=True)
+            capture_output=True, text=True,
+            encoding='utf-8', errors='replace')
         self.assertNotEqual(proc.returncode, 0, proc.stdout[-1000:])
 
 
@@ -193,8 +196,52 @@ class Projection(unittest.TestCase):
         verdicts = {c["id"]: c for c in self.measured["cases"]}
         self.assertTrue(verdicts["c8e02"]["accepted"])
         self.assertTrue(verdicts["c8e02"]["projectionNarratesWithheld"])
+        # fact-level, not actor-level: the leaked fact is the withheld move
+        self.assertEqual(verdicts["c8e02"]["leakedFactIds"], ["fe_shao:position"])
         row = next(r for r in self.pack["candidates"] if r["id"] == "c8e02")
         self.assertFalse(row["capability"]["pagePathSatisfiesExpectation"])
+
+    def test_leak_detector_has_both_controls(self):
+        controls = {c["name"]: c for c in self.measured["controls"]}
+        standing = controls["standing-only-no-leak"]
+        self.assertFalse(standing["expected"])
+        self.assertFalse(standing["observed"])          # at/sanity only is not a leak
+        self.assertIn("sanity", standing["factKinds"])
+        moving = controls["withheld-move-leaks"]
+        self.assertTrue(moving["expected"])
+        self.assertTrue(moving["observed"])
+
+    def test_saved_projection_matches_the_current_source(self):
+        import hashlib
+        module = (OUT.parents[2] / "frontend/src/lib/world-engine/runtime/committed-narration.ts")
+        current = hashlib.sha256(module.read_bytes()).hexdigest()
+        self.assertEqual(self.measured["moduleSha256"], current)
+
+    def test_projection_verify_reruns_and_matches(self):
+        import shutil
+        import subprocess
+        if shutil.which("node") is None:
+            self.skipTest("node not available")
+        proc = subprocess.run([sys.executable, "-B", str(HERE / "run_projection_check.py"),
+                               "--verify"], capture_output=True, text=True,
+            encoding='utf-8', errors='replace')
+        self.assertEqual(proc.returncode, 0, proc.stdout[-2000:] + proc.stderr[-2000:])
+        self.assertIn('"verify": "ok"', proc.stdout)
+
+    def test_verify_catches_a_tampered_saved_result(self):
+        import subprocess
+        import tempfile
+        data = json.loads(json.dumps(self.measured))
+        target = next(c for c in data["cases"] if c["id"] == "c8e02")
+        target["leakedFactIds"] = []          # pretend nothing leaked
+        tmp = pathlib.Path(tempfile.mkdtemp()) / "projection-check.json"
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, "-B", str(HERE / "run_projection_check.py"),
+             "--verify", "--result", str(tmp)],
+            capture_output=True, text=True, encoding="utf-8", errors="replace")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("c8e02", proc.stdout)
 
     def test_no_model_was_called(self):
         self.assertEqual(self.measured["modelCalls"], 0)

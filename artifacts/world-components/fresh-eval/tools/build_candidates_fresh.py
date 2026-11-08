@@ -691,7 +691,11 @@ def main(dest: pathlib.Path | None = None) -> int:
               "`tools/run_projection_check.py` 用 Node 直接调用页面投影函数，"
               "读已提交的 before/after 记录，结果写在 `projection-check.json`："
               "接受/拒绝逐条与 `capability.stages` 比对，不一致即失败。"
-              "没有模型参与（`modelCalls=0`）。", "",
+              "`--verify` 会重新执行一次并与已保存结果逐项比对（含模块哈希、每个用例、"
+              "泄漏事实、两项自检），过期即失败。没有模型参与（`modelCalls=0`）。", "",
+              "泄漏按**事实**判，不按人物判：被排除的移动只有在投影真的输出"
+              "`<人物>:position`（kind=moved）时才算泄漏，人物仅以 `at`/`sanity` 出现不算。"
+              "自检里放了两个对照：只出现现状时判不泄漏、移动真的发生时判泄漏。", "",
               "`c8e02` 的实测结果尤其重要：页面投影**接受**该 Δ，并把 N2 判为不可见的那个人"
               "的移动照样写了出来（`projectionNarratesWithheld=true`），"
               "所以这条不计页面叙述成绩，理由是可复现的实测，不是推测。", "",
@@ -821,6 +825,16 @@ def check(against=None) -> int:
             drift.append(rel)
     missing = [p.relative_to(tmp).as_posix() for p in tmp.rglob("*")
                if p.is_file() and not (committed / p.relative_to(tmp)).exists()]
+    # The projection measurement is produced by another tool; it cannot be
+    # regenerated here, but a stale one must not pass: its recorded module hash
+    # has to match the page projection source on disk.
+    projection = committed / "projection-check.json"
+    ts_module = REPO / "frontend/src/lib/world-engine/runtime/committed-narration.ts"
+    if projection.exists() and ts_module.exists():
+        saved = json.loads(projection.read_text(encoding="utf-8"))
+        current = sha(ts_module)
+        if saved.get("moduleSha256") != current:
+            drift.append("projection-check.json (moduleSha256 is stale)")
     print(f"pack check: {len(drift)} drifted, {len(missing)} missing "
           f"(against {committed})")
     for name in drift[:10]:
