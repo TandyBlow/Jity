@@ -126,6 +126,16 @@ def sha256_bytes(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+def package_digest(out: Path, source_ids) -> dict:
+    """Same binding as c3's validator: manifest + every pair file, nothing else."""
+    files = {'manifest.json': sha256_bytes((out / 'manifest.json').read_bytes())}
+    for sid in source_ids:
+        path = out / 'pairs' / f'{sid}-authorized.json'
+        files[f'pairs/{sid}-authorized.json'] = sha256_bytes(path.read_bytes())
+    canonical = json.dumps(files, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return {'files': files, 'sha256': hashlib.sha256(canonical.encode('utf-8')).hexdigest()}
+
+
 def bigrams(text: str) -> set[str]:
     t = ''.join(ch for ch in text if ch not in '，。、；：！？“”‘’（）《》…—,.!?() \n\t')
     return {t[i:i + 2] for i in range(max(0, len(t) - 1))}
@@ -138,11 +148,24 @@ def jaccard(a: str, b: str) -> float:
     return len(ga & gb) / len(ga | gb)
 
 
-def old_texts() -> list[dict]:
+def old_texts() -> tuple[list[dict], list[dict]]:
+    """Load the old corpora. Every required file must exist and be non-empty.
+
+    A missing corpus used to be skipped silently, which made the dedupe screen
+    pass without comparing anything. Now it is a hard failure: the build refuses
+    to run rather than record a meaningless "pass".
+    """
     rows: list[dict] = []
+    inventory: list[dict] = []
+    missing = [str(p) for p in OLD_MATERIAL if not p.exists()]
+    if missing:
+        raise SystemExit(json.dumps({
+            'status': 'refused',
+            'reason': 'old material missing; the dedupe precheck would compare nothing',
+            'missing': missing,
+        }, ensure_ascii=False, indent=1))
     for path in OLD_MATERIAL:
-        if not path.exists():
-            continue
+        before = len(rows)
         if path.suffix == '.jsonl':
             for line in path.read_text(encoding='utf-8').splitlines():
                 if not line.strip():
@@ -156,7 +179,16 @@ def old_texts() -> list[dict]:
             for source in json.loads(path.read_text(encoding='utf-8'))['sources']:
                 for fact in source['facts']:
                     rows.append({'origin': f'{path.name}:{source["sourceId"]}', 'text': fact['text']})
-    return rows
+        added = len(rows) - before
+        if added == 0:
+            raise SystemExit(json.dumps({
+                'status': 'refused',
+                'reason': 'old material loaded zero fact texts; refusing to run the precheck',
+                'file': str(path),
+            }, ensure_ascii=False, indent=1))
+        inventory.append({'file': str(path), 'sha256': sha256_bytes(path.read_bytes()),
+                          'factTexts': added})
+    return rows, inventory
 
 
 def precheck(rows: list[dict]) -> list[dict]:
@@ -390,7 +422,9 @@ def seconds_between(points, a, b):
 def main(out_arg: str) -> int:
     global OLD_MATERIAL_ROWS
     out = Path(out_arg)
-    OLD_MATERIAL_ROWS = old_texts()
+    OLD_MATERIAL_ROWS, old_inventory = old_texts()
+    from datetime import datetime, timezone
+    generated_at = datetime.now(timezone.utc).isoformat(timespec='seconds')
     planned = []
     for source_id, cast, point_texts, _ in SOURCES:
         for texts in point_texts:
@@ -422,7 +456,9 @@ def main(out_arg: str) -> int:
     manifest = {
         'packageId': 'holdout-a-v1',
         'producedBy': 'A (world-server): backend/scripts/build_holdout_v1.py',
-        'createdAt': '2027-01-16',
+        # wall-clock of the build, not the in-world time of the rounds below
+        'createdAt': generated_at,
+        'worldInternalTime': '2027-01-16T05:00:00',
         'baseCommit': None,  # filled below from git
         'sources': package['sources'],
         'databases': {'h': 'world.db'},
@@ -436,8 +472,10 @@ def main(out_arg: str) -> int:
             'dedupeMethod': ('build_holdout_v1.precheck: every fact text is compared to all old '
                              'material fact texts (controllability-v1, pairs-v2, c3 freeze/sources) by '
                              'character-bigram Jaccard; the build refuses at >= 0.8 before any world '
-                             'is created'),
-            'producedAt': '2027-01-16',
+                             'is created, and refuses to run if any old corpus is missing'),
+            'dedupeCorpora': old_inventory,
+            'dedupeFactTexts': len(OLD_MATERIAL_ROWS),
+            'producedAt': generated_at,
             'producerCommit': None,
             'authorityEvidence': 'world_evidence + world_point_evidence + world_points.delta_json',
             'relationValidator': 'world-relation-validator/1',
@@ -472,21 +510,51 @@ def main(out_arg: str) -> int:
     }
     (out / 'semantic-review.json').write_text(json.dumps(semantic, ensure_ascii=False, indent=1) + '\n',
                                              encoding='utf-8')
-    todo = """# 语义独立性复核（待人工）
 
-本目录的 `semantic-review.json` 是 **AI 草稿**，`reviewer.kind = "ai"`。c3 的
-`validate_holdout.py` 只接受 `reviewer.kind == "human"`，所以在有人签之前，这个包会被判
-`not-admissible`（`PKG-semantic-review-not-human`），**不会**被冻结。
+    # The human sign-off template, bound to the digest of the reviewed files.
+    # c3 never reads the draft's verdicts; it reads only the sign-off file.
+    manifest['packageSha256'] = package_digest(out, package['sources'])['sha256']
+    (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + '\n',
+                                       encoding='utf-8')
+    template = {
+        'protocol': 'c3-holdout-semantic-signoff-v1',
+        'packageId': manifest['packageId'],
+        'packageSha256': manifest['packageSha256'],
+        'reviewedCommit': '',
+        'iReviewedEachSource': False,
+        'reviewer': {'identity': '', 'kind': 'human', 'date': ''},
+        'sources': {sid: {'verdict': None, 'reason': ''} for sid in package['sources']},
+        'instructions': [
+            'copy this file to semantic-review-signoff.json and fill every field',
+            'verdict: independent | semantic-duplicate | unsure',
+            'reason: what was compared and why it differs; do not copy the AI draft note',
+            'do not change packageSha256; any change to a pair file invalidates the sign-off',
+        ],
+    }
+    (out / 'semantic-review-signoff.template.json').write_text(
+        json.dumps(template, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    todo = """# 语义独立性复核（待人工签认）
+
+本目录有两份文件，不要混用：
+
+| 文件 | 谁写 | 作用 |
+| --- | --- | --- |
+| `semantic-review.json` | A 侧（AI） | **草稿**，`reviewer.kind = "ai"`；c3 不读它的结论 |
+| `semantic-review-signoff.json` | 人 | **正式签认**；c3 只认这一份 |
+
+`semantic-review-signoff.template.json` 是空表，已绑定当前包的哈希（`packageSha256`）。
 
 人工需要做的事：
 
 1. 逐个来源读 `pairs/<id>-authorized.json` 的事实文本，并与旧材料对照
    （`.../organize-wording/controllability-v1.jsonl`、`pairs-v2.jsonl`、c3 的
-   `freeze/sources.json`）。
+   `freeze/sources.json`；逐条最相近旧句和相似度见 `semantic-review-evidence.json`）。
 2. 判断该来源是否与旧材料在**事件语义**上独立（不是“字面不同”，而是“说的是不同的事”）。
-3. 把每个来源的 `verdict` 改成 `independent` / `semantic-duplicate` / `unsure`，
-   在 `note` 里写明与哪条旧材料不同、为什么；把 `reviewer` 改成真实身份并加 `date`。
-4. 任何 `semantic-duplicate` 或 `unsure` 都会让整包被拒；宁可退回重做，不要放行。
+3. 复制模板为 `semantic-review-signoff.json`，逐源填写 `verdict` 与 `reason`
+   （理由不能照抄草稿里的同一句模板，c3 会拒），填 `reviewer.identity`、`reviewer.date`、
+   `reviewedCommit`，并保持 `iReviewedEachSource: true`。
+4. **不要改 `packageSha256`**。任何 pair 文件变动都会让签认失效，c3 会判 `PKG-semantic-signoff-stale`。
+5. 任何 `semantic-duplicate` 或 `unsure` 都会让整包被拒；宁可退回重做，不要放行。
 """
     (out / 'SEMANTIC-REVIEW-TODO.md').write_text(todo, encoding='utf-8')
 

@@ -1,0 +1,68 @@
+{
+ "protocol": "c3-holdout-semantic-signoff-v1",
+ "packageId": "holdout-a-v1",
+ "packageSha256": "7624273e78b434c69eacc20e509305fe6b8101911bed4dfa2889a6466c1e9e8e",
+ "reviewedCommit": "",
+ "iReviewedEachSource": false,
+ "reviewer": {
+  "identity": "",
+  "kind": "human",
+  "date": ""
+ },
+ "sources": {
+  "h01": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h02": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h03": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h04": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h05": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h06": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h07": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h08": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h09": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h10": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h11": {
+   "verdict": null,
+   "reason": ""
+  },
+  "h12": {
+   "verdict": null,
+   "reason": ""
+  }
+ },
+ "instructions": [
+  "copy this file to semantic-review-signoff.json and fill every field",
+  "verdict: independent | semantic-duplicate | unsure",
+  "reason: what was compared and why it differs; do not copy the AI draft note",
+  "do not change packageSha256; any change to a pair file invalidates the sign-off"
+ ]
+}

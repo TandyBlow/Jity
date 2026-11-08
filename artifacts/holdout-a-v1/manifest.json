@@ -1,8 +1,9 @@
 {
  "packageId": "holdout-a-v1",
  "producedBy": "A (world-server): backend/scripts/build_holdout_v1.py",
- "createdAt": "2027-01-16",
- "baseCommit": "005ea5be46e09b72f219defca047a8fb0d281045",
+ "createdAt": "2026-11-08T07:51:38+00:00",
+ "worldInternalTime": "2027-01-16T05:00:00",
+ "baseCommit": "9f2b0532d34f3c77c7213605fab9b9b61507e193",
  "sources": [
   "h01",
   "h02",
@@ -36,15 +37,33 @@
    "h11:world_81:h11_p1,h11_p2,h11_p3",
    "h12:world_89:h12_p1,h12_p2,h12_p3"
   ],
-  "dedupeMethod": "build_holdout_v1.precheck: every fact text is compared to all old material fact texts (controllability-v1, pairs-v2, c3 freeze/sources) by character-bigram Jaccard; the build refuses at >= 0.8 before any world is created",
-  "producedAt": "2027-01-16",
-  "producerCommit": "005ea5be46e09b72f219defca047a8fb0d281045",
+  "dedupeMethod": "build_holdout_v1.precheck: every fact text is compared to all old material fact texts (controllability-v1, pairs-v2, c3 freeze/sources) by character-bigram Jaccard; the build refuses at >= 0.8 before any world is created, and refuses to run if any old corpus is missing",
+  "dedupeCorpora": [
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+    "sha256": "8c613633a0e0fa4fa332861346264cbb28eb87f9945cafc8eb6b908c54dcc8e7",
+    "factTexts": 120
+   },
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\pairs-v2.jsonl",
+    "sha256": "7a7205b32cc2367c3410a6176c6e243e6dc469bd355ec3a3b44c5c8f2ff9b987",
+    "factTexts": 137
+   },
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\experiments\\world-components\\parallel\\organize_plan\\freeze\\sources.json",
+    "sha256": "e1c58c2c67a2228d0729f9e155a5210f69615de449e801f44e028da1c99423dd",
+    "factTexts": 45
+   }
+  ],
+  "dedupeFactTexts": 302,
+  "producedAt": "2026-11-08T07:51:38+00:00",
+  "producerCommit": "9f2b0532d34f3c77c7213605fab9b9b61507e193",
   "authorityEvidence": "world_evidence + world_point_evidence + world_points.delta_json",
   "relationValidator": "world-relation-validator/1",
-  "producerStatus": "M backend/app/database/world_repository.py\n M frontend/next.config.ts\n?? artifacts/cohesion-split/\n?? artifacts/decode-compare/\n?? artifacts/holdout-a-v1/\n?? artifacts/statement-extractor/\n?? artifacts/statement-verification/\n?? artifacts/world-provenance/\n?? backend/app/database/world_evidence_store.py\n?? backend/app/database/world_evidence_v1.sql\n?? backend/app/services/world/provenance.py\n?? backend/scripts/authorize_relations.py\n?? backend/scripts/authorize_round.py\n?? backend/scripts/build_holdout_v1.py\n?? backend/scripts/build_mixed_round.py\n?? backend/scripts/build_pair_worlds.py\n?? backend/scripts/round_input.py\n?? backend/tests/test_world_provenance_chain.py\n?? design/world-engine-reports/b240-diagnostic-point.md\n?? design/world-engine-reports/b240-gain-loss-table.md\n?? design/world-engine-reports/background-selection-run.md\n?? design/world-engine-reports/boundary-arm-closing-record.md\n?? design/world-engine-reports/boundary-data-arm.md\n?? design/world-engine-reports/boundary-v2-arm.md\n?? design/world-engine-reports/cohesion-split-pilot.md\n?? design/world-engine-reports/decode-beam-vs-greedy.md\n?? design/world-engine-reports/direction-cases-review.md\n?? design/world-engine-reports/expression-contract-v2.md\n?? design/world-engine-reports/incomplete-round-assembly.md\n?? design/world-engine-reports/joint-label-compatibility-v1.md\n?? design/world-engine-reports/manual-reachability-5.md\n?? design/world-engine-reports/narration-service-loop.md\n?? design/world-engine-reports/organization-a1-freeze.md\n?? design/world-engine-reports/organization-run-v2.md\n?? design/world-engine-reports/pipeline-round-acceptance.md\n?? design/world-engine-reports/planner-split-trial.md\n?? design/world-engine-reports/provenance-chain.md\n?? design/world-engine-reports/provenance-expression-loop.md\n?? design/world-engine-reports/resident-and-quality-baseline.md\n?? design/world-engine-reports/semantic-correction-run.md\n?? design/world-engine-reports/split-dw-comparison.md\n?? design/world-"
+  "producerStatus": "D artifacts/holdout-a-v1/SEMANTIC-REVIEW-TODO.md\n D artifacts/holdout-a-v1/build-log.json\n D artifacts/holdout-a-v1/manifest.json\n D artifacts/holdout-a-v1/semantic-review-evidence.json\n D artifacts/holdout-a-v1/semantic-review.json\n M artifacts/holdout-a-v1/world.db\n M backend/app/database/world_repository.py\n M backend/scripts/build_holdout_v1.py\n M frontend/next.config.ts\n?? artifacts/cohesion-split/\n?? artifacts/decode-compare/\n?? artifacts/statement-extractor/\n?? artifacts/statement-verification/\n?? artifacts/world-provenance/\n?? backend/app/database/world_evidence_store.py\n?? backend/app/database/world_evidence_v1.sql\n?? backend/app/services/world/provenance.py\n?? backend/scripts/authorize_relations.py\n?? backend/scripts/authorize_round.py\n?? backend/scripts/build_mixed_round.py\n?? backend/scripts/build_pair_worlds.py\n?? backend/scripts/round_input.py\n?? backend/tests/test_world_provenance_chain.py\n?? design/world-engine-reports/b240-diagnostic-point.md\n?? design/world-engine-reports/b240-gain-loss-table.md\n?? design/world-engine-reports/background-selection-run.md\n?? design/world-engine-reports/boundary-arm-closing-record.md\n?? design/world-engine-reports/boundary-data-arm.md\n?? design/world-engine-reports/boundary-v2-arm.md\n?? design/world-engine-reports/cohesion-split-pilot.md\n?? design/world-engine-reports/decode-beam-vs-greedy.md\n?? design/world-engine-reports/direction-cases-review.md\n?? design/world-engine-reports/expression-contract-v2.md\n?? design/world-engine-reports/incomplete-round-assembly.md\n?? design/world-engine-reports/joint-label-compatibility-v1.md\n?? design/world-engine-reports/manual-reachability-5.md\n?? design/world-engine-reports/narration-service-loop.md\n?? design/world-engine-reports/organization-a1-freeze.md\n?? design/world-engine-reports/organization-run-v2.md\n?? design/world-engine-reports/pipeline-round-acceptance.md\n?? design/world-engine-reports/planner-split-trial.md\n?? design/world-engine-reports/provenance-chain.md\n?? design/w"
  },
  "files": {
-  "world.db": "2a1ece8e138c4d4ac33bddb70e30a2be9017983714e5b2f948dd6ac3613de332",
+  "world.db": "268023927a0523a760eabed72ab0cc8c0b55d4fcc944f1e16a8fd844d35d5045",
   "pairs": {
    "h01": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
    "h02": "6d0c6fbfd233fb5f9f66143d7b7943a7681c2ec7a1a4576f3743f9db0d417afb",
@@ -59,5 +78,6 @@
    "h11": "5c8a0a9024281f604f0f310dc691bc4429cde6a8389d49fb668709486309a221",
    "h12": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
   }
- }
+ },
+ "packageSha256": "7624273e78b434c69eacc20e509305fe6b8101911bed4dfa2889a6466c1e9e8e"
 }
