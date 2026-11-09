@@ -68,5 +68,6 @@ describe('novel narration integration', () => {
     const packet = projectCommittedNarration(after, before);
     expect(validateNovelNarration(packet, ' ').accepted).toBe(false);
     expect(validateNovelNarration(packet, '走廊里一片安静。').reason).toBe('missing_changed_fact');
+    expect(validateNovelNarration(packet, '周宁从走廊走到门厅，随后砸碎了窗玻璃。').accepted).toBe(false);
   });
 });
