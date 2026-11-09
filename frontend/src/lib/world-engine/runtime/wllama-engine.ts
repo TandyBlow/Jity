@@ -17,6 +17,8 @@ export interface WllamaEngineOptions {
   numThreads?: number;
   /** Try WebGPU for the narrative mode. If unavailable, retry with WASM CPU. */
   preferWebGPU?: boolean;
+  /** For long novel prompts, fail quickly instead of blocking the page on slow CPU. */
+  requireWebGPU?: boolean;
 }
 
 export class WllamaInferenceEngine implements InferenceEngine {
@@ -68,11 +70,13 @@ export class WllamaInferenceEngine implements InferenceEngine {
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       });
-      if (this.options.preferWebGPU === true && instance.isSupportWebGPU()) {
+      const gpuSupported = this.options.preferWebGPU === true && instance.isSupportWebGPU();
+      if (this.options.requireWebGPU && !gpuSupported) throw new Error('WebGPU unavailable for novel narration');
+      if (gpuSupported) {
         try {
           await load(99999);
         } catch (error) {
-          if (controller.signal.aborted || this.disposed) throw error;
+          if (controller.signal.aborted || this.disposed || this.options.requireWebGPU) throw error;
           // GPU initialization can leave a partly constructed model.
           await instance.exit();
           instance = await this.factory();
