@@ -1,0 +1,16 @@
+test_14_tasks_and_full_budget_are_registered (test_short_qwen_training.QwenContractTests.test_14_tasks_and_full_budget_are_registered) ... ok
+test_failed_attempt_has_complete_replayable_timing_envelope (test_short_qwen_training.QwenContractTests.test_failed_attempt_has_complete_replayable_timing_envelope) ... ok
+test_oversized_complete_prompt_or_target_is_rejected (test_short_qwen_training.QwenContractTests.test_oversized_complete_prompt_or_target_is_rejected) ... ok
+test_process_partition_preserves_every_registered_case_and_step_once (test_short_qwen_training.QwenContractTests.test_process_partition_preserves_every_registered_case_and_step_once) ... ok
+test_registered_alternative_eos_is_preserved (test_short_qwen_training.QwenContractTests.test_registered_alternative_eos_is_preserved) ... ok
+test_training_has_complete_prompt_non_thinking_and_response_eos (test_short_qwen_training.QwenContractTests.test_training_has_complete_prompt_non_thinking_and_response_eos) ... ok
+test_lora_real_gradient_keeps_base_then_merges_numerically (test_short_qwen_training.QwenNumericalTests.test_lora_real_gradient_keeps_base_then_merges_numerically) ... ok
+test_resource_failure_records_raw_then_stops_without_second_call (test_short_qwen_training.QwenNumericalTests.test_resource_failure_records_raw_then_stops_without_second_call) ... ok
+test_saved_optimizer_adapter_rng_resume_equals_continuous_training (test_short_qwen_training.QwenNumericalTests.test_saved_optimizer_adapter_rng_resume_equals_continuous_training) ... ok
+test_selected_response_logits_equal_full_masked_causal_loss (test_short_qwen_training.QwenNumericalTests.test_selected_response_logits_equal_full_masked_causal_loss) ... ok
+test_tensor_identity_supports_bfloat16 (test_short_qwen_training.QwenNumericalTests.test_tensor_identity_supports_bfloat16) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 3.330s
+
+OK

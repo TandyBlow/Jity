@@ -1,0 +1,29 @@
+{
+  "lossless": true,
+  "firstOutputsPreserved": true,
+  "files": [
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.json",
+      "originalBytes": 238313740,
+      "originalSha256": "3707fa80e483842e56db43820ce2a6233a633239640d408c39b60d1e7f1b247d",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.json.gz",
+      "compressedBytes": 9937644,
+      "compressedSha256": "6b8589a8268289cbf7db3eedf4c2edeb76803d3c2c7ed08237cc9e21505574cf",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_raw_and_compressed_retained_locally"
+    },
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.journal.jsonl",
+      "originalBytes": 246488592,
+      "originalSha256": "477983e0cb977399acdb855161a7eb398009ad90d73cf3b5004480c461f330ff",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.journal.jsonl.gz",
+      "compressedBytes": 11959364,
+      "compressedSha256": "836fa963e397e0f0fcb560f5eeb2894ef62413b31604fecd66ddb7d6d3f230bf",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_raw_and_compressed_retained_locally"
+    }
+  ],
+  "priorIndexPath": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.raw-archive.initial.json",
+  "priorIndexSha256": "23e883da4d1271177af0da00b78246f1a142f4df9978522723447374ead5fbca",
+  "policyCorrection": "Large raw evidence and its gzip are local only under current AGENTS.md; no original output bytes changed."
+}

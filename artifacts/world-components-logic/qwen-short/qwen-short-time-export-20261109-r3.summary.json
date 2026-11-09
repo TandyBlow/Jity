@@ -1,0 +1,24 @@
+{
+  "runId": "qwen-short-time-export-20261109-r3",
+  "status": "failed",
+  "supervisor": {
+    "error": null,
+    "exitCode": 1,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 1767.578125,
+    "peakProcessIds": [
+      8241
+    ],
+    "stopReason": null,
+    "wallMs": 6739.506124984473
+  },
+  "error": {
+    "message": "'qwen3 is not supported yet for transformers. Only [] are supported for the library transformers. If you want to support qwen3 please propose a PR or open up an issue.'",
+    "type": "KeyError"
+  },
+  "numericComparisonStarted": false,
+  "quantizationStarted": false,
+  "modelPublished": false,
+  "failureClass": "cold_worker_onnx_registry_import_missing",
+  "originalRecordModified": false
+}

@@ -1,0 +1,4211 @@
+{
+  "schema": "jity-short-diagnostic-coverage-audit-v1",
+  "auditDate": "2026-11-09",
+  "scope": "registration_and_source_distribution_only_not_model_quality",
+  "dataset": {
+    "path": "experiments/world-components-logic/data/short-semantics/time-choice-v2/supervision.jsonl.gz",
+    "sha256": "8aa0875d0268e921142cfab5c2fe42df049193bca2d70b08358cbe909f4abe16",
+    "rows": 4750
+  },
+  "sourceFiles": {
+    "experiments/world-components-logic/short_evaluation.py": "71cf36feb3d08dbbe9582a63fe90d2b3b89146fad95b298e7102f9abba5991ac",
+    "experiments/world-components-logic/short_experiment.py": "785c780c24bf50a898761feab817e831ec63279ae28b3b08e531b391edaec08b"
+  },
+  "contractSelectionLiteral": "^(D0[1-8]\\.[1-6]|U[1-6]\\.[12]|D06\\.P\\.(mapping|review))$",
+  "modelCalls": 0,
+  "humanReviewCount": 0,
+  "sourceVerification": "pending",
+  "componentCount": 102,
+  "registrations": {
+    "contracts": {
+      "registeredCases": 400,
+      "scopes": {
+        "live_upstream": 48,
+        "live_initialization": 4,
+        "live_pure_time": 4,
+        "diagnostic": 344
+      },
+      "diagnosticKinds": {
+        "annotation_only": 245,
+        "text": 45,
+        "number": 14,
+        "label": 40
+      },
+      "diagnosticComponents": {
+        "D01.1": 4,
+        "D01.2": 4,
+        "D01.3": 28,
+        "D01.4": 25,
+        "D01.5": 12,
+        "D01.6": 12,
+        "D02.1": 24,
+        "D02.2": 26,
+        "D02.3": 19,
+        "D02.4": 16,
+        "D02.5": 17,
+        "D03.1": 8,
+        "D03.2": 12,
+        "D04.1": 4,
+        "D05.1": 4,
+        "D05.2": 12,
+        "D05.3": 12,
+        "D05.4": 6,
+        "D05.5": 4,
+        "D06.P.mapping": 4,
+        "D06.P.review": 28,
+        "D07.1": 8,
+        "D07.2": 8,
+        "D07.3": 8,
+        "D08.1": 4,
+        "D08.2": 8,
+        "U1.1": 4,
+        "U1.2": 1,
+        "U2.1": 4,
+        "U2.2": 1,
+        "U3.1": 4,
+        "U4.1": 4,
+        "U4.2": 2,
+        "U5.1": 3,
+        "U5.2": 2,
+        "U6.1": 2
+      },
+      "liveInputKinds": {
+        "player_pending": 8,
+        "player_expired": 8,
+        "npc_consumed": 8,
+        "missing_material_abstention_control": 8,
+        "explicit_skip_control": 8,
+        "provided_complete_attempt_control": 8
+      },
+      "heldoutSources": [
+        "short-20261109:gate",
+        "short-20261109:jointlift",
+        "short-20261109:newentity",
+        "short-20261109:waiting"
+      ]
+    },
+    "all": {
+      "registeredCases": 1602,
+      "scopes": {
+        "live_upstream": 48,
+        "live_initialization": 4,
+        "live_pure_time": 4,
+        "diagnostic": 1546
+      },
+      "diagnosticKinds": {
+        "annotation_only": 245,
+        "text": 128,
+        "number": 27,
+        "label": 1028,
+        "reference": 118
+      },
+      "diagnosticComponents": {
+        "D01.1": 4,
+        "D01.1.kind": 32,
+        "D01.1.name": 28,
+        "D01.1.protagonist": 4,
+        "D01.1.slot_label": 4,
+        "D01.1.slot_next": 32,
+        "D01.2": 4,
+        "D01.2.container": 20,
+        "D01.2.parent": 8,
+        "D01.2.relative": 20,
+        "D01.2.slot": 20,
+        "D01.3": 28,
+        "D01.4": 25,
+        "D01.4.goal": 13,
+        "D01.4.next": 25,
+        "D01.4.parent": 13,
+        "D01.5": 12,
+        "D01.6": 12,
+        "D02.1": 24,
+        "D02.2": 26,
+        "D02.2.next": 26,
+        "D02.2.text": 14,
+        "D02.3": 19,
+        "D02.3.role": 295,
+        "D02.3.verdict": 19,
+        "D02.4": 16,
+        "D02.4.check": 48,
+        "D02.4.issue_fragment": 4,
+        "D02.5": 17,
+        "D02.5.check": 85,
+        "D02.5.issue_fragment": 5,
+        "D03.1": 8,
+        "D03.1.relation": 24,
+        "D03.2": 12,
+        "D03.2.verdict": 12,
+        "D04.1": 4,
+        "D04.1.covered": 8,
+        "D04.1.next": 8,
+        "D04.1.text": 4,
+        "D05.1": 4,
+        "D05.1.edge": 32,
+        "D05.2": 12,
+        "D05.2.label": 21,
+        "D05.3": 12,
+        "D05.3.next": 12,
+        "D05.3.text": 8,
+        "D05.4": 6,
+        "D05.4.verdict": 6,
+        "D05.5": 4,
+        "D05.5.member": 16,
+        "D06.P.mapping": 4,
+        "D06.P.mapping.audit": 4,
+        "D06.P.mapping.kind": 8,
+        "D06.P.mapping.more": 23,
+        "D06.P.mapping.target": 17,
+        "D06.P.review": 28,
+        "D06.P.review.verdict": 28,
+        "D07.1": 8,
+        "D07.1.character": 4,
+        "D07.1.next": 8,
+        "D07.1.text": 4,
+        "D07.2": 8,
+        "D07.3": 8,
+        "D08.1": 4,
+        "D08.1.amount": 4,
+        "D08.1.boundary": 4,
+        "D08.1.unit": 4,
+        "D08.2": 8,
+        "D08.2.actor": 24,
+        "D08.2.next_kind": 16,
+        "D08.2.time.amount": 4,
+        "D08.2.time.boundary": 8,
+        "D08.2.time.unit": 4,
+        "U1.1": 4,
+        "U1.1.change": 20,
+        "U1.2": 1,
+        "U1.2.audit": 2,
+        "U1.2.container": 3,
+        "U1.2.relative_mode": 3,
+        "U1.2.slot_mode": 3,
+        "U2.1": 4,
+        "U2.1.audit": 4,
+        "U2.1.next_op": 56,
+        "U2.1.record_more": 27,
+        "U2.2": 1,
+        "U3.1": 4,
+        "U3.1.status": 13,
+        "U4.1": 4,
+        "U4.1.count": 13,
+        "U4.2": 2,
+        "U5.1": 3,
+        "U5.1.audit": 3,
+        "U5.1.next_op": 18,
+        "U5.1.record_more": 7,
+        "U5.2": 2,
+        "U6.1": 2
+      },
+      "liveInputKinds": {
+        "player_pending": 8,
+        "player_expired": 8,
+        "npc_consumed": 8,
+        "missing_material_abstention_control": 8,
+        "explicit_skip_control": 8,
+        "provided_complete_attempt_control": 8
+      },
+      "heldoutSources": [
+        "short-20261109:gate",
+        "short-20261109:jointlift",
+        "short-20261109:newentity",
+        "short-20261109:waiting"
+      ]
+    },
+    "webgpu": {
+      "registeredCases": 436,
+      "scopes": {
+        "live_upstream": 48,
+        "live_initialization": 4,
+        "live_pure_time": 4,
+        "diagnostic": 380
+      },
+      "diagnosticKinds": {
+        "annotation_only": 245,
+        "text": 81,
+        "number": 14,
+        "label": 40
+      },
+      "diagnosticComponents": {
+        "D01.1": 4,
+        "D01.1.name": 4,
+        "D01.1.slot_label": 4,
+        "D01.2": 4,
+        "D01.3": 28,
+        "D01.4": 25,
+        "D01.4.goal": 4,
+        "D01.5": 12,
+        "D01.6": 12,
+        "D02.1": 24,
+        "D02.2": 26,
+        "D02.2.text": 4,
+        "D02.3": 19,
+        "D02.4": 16,
+        "D02.5": 17,
+        "D03.1": 8,
+        "D03.2": 12,
+        "D04.1": 4,
+        "D04.1.text": 4,
+        "D05.1": 4,
+        "D05.2": 12,
+        "D05.3": 12,
+        "D05.3.text": 4,
+        "D05.4": 6,
+        "D05.5": 4,
+        "D06.P.mapping": 4,
+        "D06.P.review": 28,
+        "D07.1": 8,
+        "D07.1.text": 4,
+        "D07.2": 8,
+        "D07.3": 8,
+        "D08.1": 4,
+        "D08.1.amount": 4,
+        "D08.2": 8,
+        "D08.2.time.amount": 4,
+        "U1.1": 4,
+        "U1.2": 1,
+        "U2.1": 4,
+        "U2.2": 1,
+        "U3.1": 4,
+        "U4.1": 4,
+        "U4.2": 2,
+        "U5.1": 3,
+        "U5.2": 2,
+        "U6.1": 2
+      },
+      "liveInputKinds": {
+        "player_pending": 8,
+        "player_expired": 8,
+        "npc_consumed": 8,
+        "missing_material_abstention_control": 8,
+        "explicit_skip_control": 8,
+        "provided_complete_attempt_control": 8
+      },
+      "heldoutSources": [
+        "short-20261109:gate",
+        "short-20261109:jointlift",
+        "short-20261109:newentity",
+        "short-20261109:waiting"
+      ]
+    },
+    "webgpu_text": {
+      "registeredCases": 14,
+      "scopes": {
+        "diagnostic": 14
+      },
+      "diagnosticKinds": {
+        "text": 14
+      },
+      "diagnosticComponents": {
+        "D01.1.name": 1,
+        "D01.1.slot_label": 1,
+        "D01.3": 1,
+        "D01.4.goal": 1,
+        "D01.5": 1,
+        "D02.2.text": 1,
+        "D04.1.text": 1,
+        "D05.3.text": 1,
+        "D07.1.text": 1,
+        "D08.1.amount": 1,
+        "D08.2.time.amount": 1,
+        "U2.2": 1,
+        "U4.2": 1,
+        "U5.2": 1
+      },
+      "liveInputKinds": {},
+      "heldoutSources": [
+        "short-20261109:gate",
+        "short-20261109:waiting"
+      ]
+    }
+  },
+  "components": {
+    "D01.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.1.kind": {
+      "kind": "label",
+      "rows": {
+        "train": 64,
+        "development": 16,
+        "test": 16
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"locations\"": 16,
+          "\"items\"": 16,
+          "\"characters\"": 24,
+          "\"end\"": 8
+        },
+        "development": {
+          "\"locations\"": 4,
+          "\"items\"": 4,
+          "\"characters\"": 6,
+          "\"end\"": 2
+        },
+        "test": {
+          "\"locations\"": 4,
+          "\"items\"": 4,
+          "\"characters\"": 6,
+          "\"end\"": 2
+        }
+      }
+    },
+    "D01.1.name": {
+      "kind": "text",
+      "rows": {
+        "train": 56,
+        "development": 14,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.1.protagonist": {
+      "kind": "reference",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "4": 8
+        },
+        "development": {
+          "4": 2
+        },
+        "test": {
+          "4": 2
+        }
+      }
+    },
+    "D01.1.slot_label": {
+      "kind": "text",
+      "rows": {
+        "train": 10,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.1.slot_next": {
+      "kind": "label",
+      "rows": {
+        "train": 66,
+        "development": 16,
+        "test": 16
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"slot\"": 10,
+          "\"end\"": 56
+        },
+        "development": {
+          "\"slot\"": 2,
+          "\"end\"": 14
+        },
+        "test": {
+          "\"slot\"": 2,
+          "\"end\"": 14
+        }
+      }
+    },
+    "D01.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.2.container": {
+      "kind": "reference",
+      "rows": {
+        "train": 40,
+        "development": 10,
+        "test": 10
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"draft:buoy_r0_e0\"": 3,
+          "\"draft:buoy_r0_e4\"": 1,
+          "\"draft:buoy_r0_e1\"": 1,
+          "\"draft:archive_r0_e5\"": 1,
+          "\"draft:archive_r0_e4\"": 1,
+          "\"draft:archive_r0_e0\"": 2,
+          "\"draft:archive_r0_e1\"": 1,
+          "\"draft:dye_r0_e0\"": 3,
+          "\"draft:dye_r0_e4\"": 1,
+          "\"draft:dye_r0_e1\"": 1,
+          "\"draft:swap_r0_e4\"": 2,
+          "\"draft:swap_r0_e0\"": 1,
+          "\"draft:swap_r0_e1\"": 2,
+          "\"draft:drying_r0_e0\"": 3,
+          "\"draft:drying_r0_e4\"": 1,
+          "\"draft:drying_r0_e1\"": 1,
+          "\"draft:conditional_r0_e0\"": 3,
+          "\"draft:conditional_r0_e2\"": 1,
+          "\"draft:conditional_r0_e1\"": 1,
+          "\"draft:missing_r0_e0\"": 4,
+          "\"draft:missing_r0_e1\"": 1,
+          "\"draft:signal_r0_e0\"": 3,
+          "\"draft:signal_r0_e4\"": 1,
+          "\"draft:signal_r0_e1\"": 1
+        },
+        "development": {
+          "\"draft:gate_r0_e0\"": 3,
+          "\"draft:gate_r0_e4\"": 1,
+          "\"draft:gate_r0_e1\"": 1,
+          "\"draft:waiting_r0_e0\"": 3,
+          "\"draft:waiting_r0_e4\"": 1,
+          "\"draft:waiting_r0_e1\"": 1
+        },
+        "test": {
+          "\"draft:jointlift_r0_e0\"": 3,
+          "\"draft:jointlift_r0_e4\"": 1,
+          "\"draft:jointlift_r0_e1\"": 1,
+          "\"draft:newentity_r0_e0\"": 3,
+          "\"draft:newentity_r0_e4\"": 1,
+          "\"draft:newentity_r0_e1\"": 1
+        }
+      }
+    },
+    "D01.2.parent": {
+      "kind": "reference",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"__none__\"": 15,
+          "\"draft:archive_r0_e0\"": 1
+        },
+        "development": {
+          "\"__none__\"": 4
+        },
+        "test": {
+          "\"__none__\"": 4
+        }
+      }
+    },
+    "D01.2.relation": {
+      "kind": "label",
+      "rows": {
+        "train": 1,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:missing"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"beside\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.2.relative": {
+      "kind": "reference",
+      "rows": {
+        "train": 40,
+        "development": 10,
+        "test": 10
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"__none__\"": 39,
+          "\"draft:missing_r0_e3\"": 1
+        },
+        "development": {
+          "\"__none__\"": 10
+        },
+        "test": {
+          "\"__none__\"": 10
+        }
+      }
+    },
+    "D01.2.slot": {
+      "kind": "reference",
+      "rows": {
+        "train": 40,
+        "development": 10,
+        "test": 10
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"__none__\"": 37,
+          "\"draft:archive_r0_e4_s1\"": 1,
+          "\"draft:missing_r0_e0_s0\"": 2
+        },
+        "development": {
+          "\"__none__\"": 10
+        },
+        "test": {
+          "\"__none__\"": 10
+        }
+      }
+    },
+    "D01.3": {
+      "kind": "text",
+      "rows": {
+        "train": 56,
+        "development": 14,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.4": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 50,
+        "development": 12,
+        "test": 13
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.4.goal": {
+      "kind": "text",
+      "rows": {
+        "train": 26,
+        "development": 6,
+        "test": 7
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.4.next": {
+      "kind": "label",
+      "rows": {
+        "train": 50,
+        "development": 12,
+        "test": 13
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"task\"": 26,
+          "\"end\"": 24
+        },
+        "development": {
+          "\"task\"": 6,
+          "\"end\"": 6
+        },
+        "test": {
+          "\"task\"": 7,
+          "\"end\"": 6
+        }
+      }
+    },
+    "D01.4.parent": {
+      "kind": "reference",
+      "rows": {
+        "train": 26,
+        "development": 6,
+        "test": 7
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"__none__\"": 24,
+          "\"draft:buoy_r0_draft:buoy_r0_e4_t0\"": 1,
+          "\"draft:conditional_r0_draft:conditional_r0_e4_t0\"": 1
+        },
+        "development": {
+          "\"__none__\"": 6
+        },
+        "test": {
+          "\"__none__\"": 6,
+          "\"draft:jointlift_r0_draft:jointlift_r0_e4_t0\"": 1
+        }
+      }
+    },
+    "D01.5": {
+      "kind": "text",
+      "rows": {
+        "train": 24,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D01.6": {
+      "kind": "number",
+      "rows": {
+        "train": 24,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "62": 2,
+          "78": 8,
+          "89": 8,
+          "66": 1,
+          "70": 1,
+          "46": 1,
+          "74": 1,
+          "82": 1,
+          "86": 1
+        },
+        "development": {
+          "66": 1,
+          "78": 2,
+          "89": 2,
+          "70": 1
+        },
+        "test": {
+          "74": 1,
+          "78": 3,
+          "89": 2
+        }
+      }
+    },
+    "D02.1": {
+      "kind": "label",
+      "rows": {
+        "train": 48,
+        "development": 12,
+        "test": 12
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"act\"": 24,
+          "\"skip\"": 16,
+          "\"incomplete\"": 8
+        },
+        "development": {
+          "\"act\"": 6,
+          "\"skip\"": 4,
+          "\"incomplete\"": 2
+        },
+        "test": {
+          "\"act\"": 6,
+          "\"skip\"": 4,
+          "\"incomplete\"": 2
+        }
+      }
+    },
+    "D02.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 54,
+        "development": 12,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D02.2.next": {
+      "kind": "label",
+      "rows": {
+        "train": 54,
+        "development": 12,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"fragment\"": 30,
+          "\"end\"": 24
+        },
+        "development": {
+          "\"fragment\"": 6,
+          "\"end\"": 6
+        },
+        "test": {
+          "\"fragment\"": 8,
+          "\"end\"": 6
+        }
+      }
+    },
+    "D02.2.text": {
+      "kind": "text",
+      "rows": {
+        "train": 30,
+        "development": 6,
+        "test": 8
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D02.3": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 38,
+        "development": 8,
+        "test": 11
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D02.3.role": {
+      "kind": "label",
+      "rows": {
+        "train": 665,
+        "development": 95,
+        "test": 200
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"absent\"": 562,
+          "\"present\"": 103
+        },
+        "development": {
+          "\"absent\"": 81,
+          "\"present\"": 14
+        },
+        "test": {
+          "\"absent\"": 171,
+          "\"present\"": 29
+        }
+      }
+    },
+    "D02.3.verdict": {
+      "kind": "label",
+      "rows": {
+        "train": 38,
+        "development": 8,
+        "test": 11
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 30,
+          "\"reject\"": 8
+        },
+        "development": {
+          "\"pass\"": 6,
+          "\"reject\"": 2
+        },
+        "test": {
+          "\"pass\"": 8,
+          "\"reject\"": 3
+        }
+      }
+    },
+    "D02.4": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 32,
+        "development": 8,
+        "test": 8
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D02.4.check": {
+      "kind": "label",
+      "rows": {
+        "train": 96,
+        "development": 24,
+        "test": 24
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 88,
+          "\"fail\"": 8
+        },
+        "development": {
+          "\"pass\"": 22,
+          "\"fail\"": 2
+        },
+        "test": {
+          "\"pass\"": 22,
+          "\"fail\"": 2
+        }
+      }
+    },
+    "D02.4.issue_fragment": {
+      "kind": "reference",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"fragment-1\"": 8
+        },
+        "development": {
+          "\"fragment-1\"": 2
+        },
+        "test": {
+          "\"fragment-1\"": 2
+        }
+      }
+    },
+    "D02.5": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 32,
+        "development": 8,
+        "test": 9
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D02.5.check": {
+      "kind": "label",
+      "rows": {
+        "train": 160,
+        "development": 40,
+        "test": 45
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 152,
+          "\"fail\"": 8
+        },
+        "development": {
+          "\"pass\"": 38,
+          "\"fail\"": 2
+        },
+        "test": {
+          "\"pass\"": 42,
+          "\"fail\"": 3
+        }
+      }
+    },
+    "D02.5.issue_fragment": {
+      "kind": "reference",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"fragment-1\"": 8
+        },
+        "development": {
+          "\"fragment-1\"": 2
+        },
+        "test": {
+          "\"fragment-1\"": 3
+        }
+      }
+    },
+    "D03.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D03.1.relation": {
+      "kind": "label",
+      "rows": {
+        "train": 48,
+        "development": 12,
+        "test": 12
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"none\"": 31,
+          "\"target\"": 17
+        },
+        "development": {
+          "\"none\"": 8,
+          "\"target\"": 4
+        },
+        "test": {
+          "\"none\"": 8,
+          "\"target\"": 4
+        }
+      }
+    },
+    "D03.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 24,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D03.2.verdict": {
+      "kind": "label",
+      "rows": {
+        "train": 24,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 16,
+          "\"reject\"": 8
+        },
+        "development": {
+          "\"pass\"": 4,
+          "\"reject\"": 2
+        },
+        "test": {
+          "\"pass\"": 4,
+          "\"reject\"": 2
+        }
+      }
+    },
+    "D04.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D04.1.covered": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"covered\"": 8,
+          "\"missing\"": 8
+        },
+        "development": {
+          "\"covered\"": 2,
+          "\"missing\"": 2
+        },
+        "test": {
+          "\"covered\"": 2,
+          "\"missing\"": 2
+        }
+      }
+    },
+    "D04.1.next": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"constraint\"": 8,
+          "\"end\"": 8
+        },
+        "development": {
+          "\"constraint\"": 2,
+          "\"end\"": 2
+        },
+        "test": {
+          "\"constraint\"": 2,
+          "\"end\"": 2
+        }
+      }
+    },
+    "D04.1.text": {
+      "kind": "text",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.1.edge": {
+      "kind": "label",
+      "rows": {
+        "train": 64,
+        "development": 16,
+        "test": 16
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"absent\"": 56,
+          "\"present\"": 8
+        },
+        "development": {
+          "\"absent\"": 14,
+          "\"present\"": 2
+        },
+        "test": {
+          "\"absent\"": 14,
+          "\"present\"": 2
+        }
+      }
+    },
+    "D05.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 24,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.2.label": {
+      "kind": "label",
+      "rows": {
+        "train": 43,
+        "development": 10,
+        "test": 11
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"not_achieved\"": 7,
+          "\"achieved\"": 20,
+          "\"incomplete\"": 8,
+          "\"partial\"": 8
+        },
+        "development": {
+          "\"partial\"": 3,
+          "\"not_achieved\"": 1,
+          "\"achieved\"": 4,
+          "\"incomplete\"": 2
+        },
+        "test": {
+          "\"achieved\"": 5,
+          "\"not_achieved\"": 1,
+          "\"incomplete\"": 2,
+          "\"partial\"": 3
+        }
+      }
+    },
+    "D05.3": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 23,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.3.next": {
+      "kind": "label",
+      "rows": {
+        "train": 23,
+        "development": 6,
+        "test": 6
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"fact\"": 15,
+          "\"end\"": 8
+        },
+        "development": {
+          "\"fact\"": 4,
+          "\"end\"": 2
+        },
+        "test": {
+          "\"fact\"": 4,
+          "\"end\"": 2
+        }
+      }
+    },
+    "D05.3.text": {
+      "kind": "text",
+      "rows": {
+        "train": 15,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.4": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 12,
+        "development": 3,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.4.verdict": {
+      "kind": "label",
+      "rows": {
+        "train": 12,
+        "development": 3,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 8,
+          "\"reject\"": 4
+        },
+        "development": {
+          "\"pass\"": 2,
+          "\"reject\"": 1
+        },
+        "test": {
+          "\"pass\"": 2,
+          "\"reject\"": 1
+        }
+      }
+    },
+    "D05.5": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D05.5.member": {
+      "kind": "label",
+      "rows": {
+        "train": 30,
+        "development": 8,
+        "test": 8
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"include\"": 23,
+          "\"exclude\"": 7
+        },
+        "development": {
+          "\"include\"": 7,
+          "\"exclude\"": 1
+        },
+        "test": {
+          "\"include\"": 6,
+          "\"exclude\"": 2
+        }
+      }
+    },
+    "D06.P.mapping": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 9,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D06.P.mapping.audit": {
+      "kind": "label",
+      "rows": {
+        "train": 9,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 8,
+          "\"reject\"": 1
+        },
+        "development": {
+          "\"pass\"": 2
+        },
+        "test": {
+          "\"pass\"": 2
+        }
+      }
+    },
+    "D06.P.mapping.kind": {
+      "kind": "label",
+      "rows": {
+        "train": 18,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"state\"": 15,
+          "\"unchanged\"": 2,
+          "\"gap\"": 1
+        },
+        "development": {
+          "\"state\"": 3,
+          "\"unchanged\"": 1
+        },
+        "test": {
+          "\"state\"": 3,
+          "\"transient\"": 1
+        }
+      }
+    },
+    "D06.P.mapping.more": {
+      "kind": "label",
+      "rows": {
+        "train": 53,
+        "development": 10,
+        "test": 13
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"more\"": 38,
+          "\"end\"": 15
+        },
+        "development": {
+          "\"more\"": 7,
+          "\"end\"": 3
+        },
+        "test": {
+          "\"more\"": 10,
+          "\"end\"": 3
+        }
+      }
+    },
+    "D06.P.mapping.target": {
+      "kind": "reference",
+      "rows": {
+        "train": 38,
+        "development": 7,
+        "test": 10
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"candidate:6625370ec57f1d2cd5c5fe13830ee9295e0871b70ed5d7518e7af39b0f344e66\"": 1,
+          "\"candidate:879a82640eebb1dc66250f4d4bd39fcb66d1857883f76be89e33383e8db24fd5\"": 1,
+          "\"candidate:ff50393c57038c135bea5ef9bf4647a450161bc31e9b847a95645115a8a6f976\"": 1,
+          "\"candidate:b8176dac5e02a683006f27e520a1a39441f46139ed008f02b2d9d9de04942146\"": 3,
+          "\"candidate:4dda91365ddc29ce5170b62b4a4e87109a44ed6cd7c94e800c83869c38bfd207\"": 6,
+          "\"candidate:aa6e65f1e4ec1a54863c4c51955d01213ed71e3d576b2486f510c38a8632459b\"": 2,
+          "\"candidate:3a07d80a29d3d56f7f174ff6a2fb5b85fb928880da887769b66517a21fa6d08f\"": 4,
+          "\"candidate:c604356c870589c192fdc95a67c56b2b2e34c221642fc5b6976df8270d8d9cc3\"": 1,
+          "\"candidate:e58b4b350c4a0601b2ad20689806dcdd3229d11169a699cb9ba679e5590bf3b7\"": 4,
+          "\"candidate:422526c955e6a84fd21112df2ffe8a226b68f86e0c0281323357510699071938\"": 1,
+          "\"candidate:3d2da9ab07855c9ea6974da5a6b7beaf4f9aa846d3973ec8db85c411f130c6bc\"": 1,
+          "\"candidate:507f8f5ccf5f0774ef0632fb1cae43bfcd459f34b1bf6a14db4c991b8e4218fb\"": 1,
+          "\"candidate:d7cd7a811c2b3059efbce1eff48f793f52103832e3c197b5e117ec1f94cfa98c\"": 1,
+          "\"candidate:e57adb0403df007c986eb36242880c32c55492c6bfe4652de48c23465b53bb3f\"": 1,
+          "\"candidate:4161b2644b4ac2adaccc35bc344abccdfdff7c7ab7ddadc41a0b160211df58e8\"": 1,
+          "\"candidate:9aa7e671c286075917f15baa0494b3338d2a6a9333fd41f055360cf184a3c840\"": 1,
+          "\"candidate:f4226550dc358eaa2a6947e5acca767e79f901241f0684d83ac3705f468001be\"": 2,
+          "\"candidate:35a397abefdbc74ab3124d5e836ba142fdd0bfc079ace4a7089d6ee20e2e03cb\"": 2,
+          "\"candidate:55d0bf78d43e1319c2addbaa396c2c9bd223b371a6b18b2eb09024f71d1aea7e\"": 1,
+          "\"candidate:77a9355d75cac72d38fb7724200d5222f4d4fa368fa084dc0802512f6cb25e35\"": 1,
+          "\"candidate:c78a5e6480836877943bbc7f7b9e89131b3360051412f9570a49a170b9c9fcf4\"": 1,
+          "\"candidate:0e93e6e20a2d30aec3c6ce30cc540f3f56010109919bfbe58c8b2484b585d6fa\"": 1
+        },
+        "development": {
+          "\"candidate:81c9a64334c9954c185efaec4776cf19bcdd9cb62db15f5a15eba5a1567dc0ff\"": 1,
+          "\"candidate:5d9d142cedaf73932f5ad5a6fa59abd490f19b23ae5383fc13e2dcc1aa44e68b\"": 1,
+          "\"candidate:3a07d80a29d3d56f7f174ff6a2fb5b85fb928880da887769b66517a21fa6d08f\"": 1,
+          "\"candidate:4dda91365ddc29ce5170b62b4a4e87109a44ed6cd7c94e800c83869c38bfd207\"": 1,
+          "\"candidate:574f8709ade9a11c232dc99dab9a842cc034c14b3d27981065beb5a318765875\"": 1,
+          "\"candidate:e2852080d8f4cbc997eb9216d17bfde961451bf11bef1e1adfb59c93b424eac7\"": 1,
+          "\"candidate:29c99abc3379c203b4ca7cf731277f2361c41896e4b5a4964de8dea75b1973bb\"": 1
+        },
+        "test": {
+          "\"candidate:507f8f5ccf5f0774ef0632fb1cae43bfcd459f34b1bf6a14db4c991b8e4218fb\"": 1,
+          "\"candidate:e57adb0403df007c986eb36242880c32c55492c6bfe4652de48c23465b53bb3f\"": 1,
+          "\"candidate:aa6e65f1e4ec1a54863c4c51955d01213ed71e3d576b2486f510c38a8632459b\"": 1,
+          "\"candidate:3a07d80a29d3d56f7f174ff6a2fb5b85fb928880da887769b66517a21fa6d08f\"": 1,
+          "\"candidate:b8176dac5e02a683006f27e520a1a39441f46139ed008f02b2d9d9de04942146\"": 1,
+          "\"candidate:4dda91365ddc29ce5170b62b4a4e87109a44ed6cd7c94e800c83869c38bfd207\"": 2,
+          "\"candidate:35fb5f7fa1a165f7563ddc7ec074eaf81af3f711c003e89a0ce5789e93757d0f\"": 1,
+          "\"candidate:e58b4b350c4a0601b2ad20689806dcdd3229d11169a699cb9ba679e5590bf3b7\"": 1,
+          "\"candidate:64a386f772ffea93878a88f94d95d9f88093166d323a11b3c77fc252a6c9441c\"": 1
+        }
+      }
+    },
+    "D06.P.review": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 56,
+        "development": 14,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D06.P.review.verdict": {
+      "kind": "label",
+      "rows": {
+        "train": 56,
+        "development": 14,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 48,
+          "\"reject\"": 8
+        },
+        "development": {
+          "\"pass\"": 12,
+          "\"reject\"": 2
+        },
+        "test": {
+          "\"pass\"": 12,
+          "\"reject\"": 2
+        }
+      }
+    },
+    "D07.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D07.1.character": {
+      "kind": "reference",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"a\"": 8
+        },
+        "development": {
+          "\"a\"": 2
+        },
+        "test": {
+          "\"a\"": 2
+        }
+      }
+    },
+    "D07.1.next": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"candidate\"": 8,
+          "\"end\"": 8
+        },
+        "development": {
+          "\"candidate\"": 2,
+          "\"end\"": 2
+        },
+        "test": {
+          "\"candidate\"": 2,
+          "\"end\"": 2
+        }
+      }
+    },
+    "D07.1.text": {
+      "kind": "text",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D07.2": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"likely\"": 8,
+          "\"unlikely\"": 8
+        },
+        "development": {
+          "\"likely\"": 2,
+          "\"unlikely\"": 2
+        },
+        "test": {
+          "\"likely\"": 2,
+          "\"unlikely\"": 2
+        }
+      }
+    },
+    "D07.3": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"related\"": 8,
+          "\"unrelated\"": 8
+        },
+        "development": {
+          "\"related\"": 2,
+          "\"unrelated\"": 2
+        },
+        "test": {
+          "\"related\"": 2,
+          "\"unrelated\"": 2
+        }
+      }
+    },
+    "D08.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D08.1.amount": {
+      "kind": "text",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D08.1.boundary": {
+      "kind": "label",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"elapsed\"": 8
+        },
+        "development": {
+          "\"elapsed\"": 2
+        },
+        "test": {
+          "\"elapsed\"": 2
+        }
+      }
+    },
+    "D08.1.unit": {
+      "kind": "label",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"minute\"": 7,
+          "\"second\"": 1
+        },
+        "development": {
+          "\"minute\"": 2
+        },
+        "test": {
+          "\"minute\"": 2
+        }
+      }
+    },
+    "D08.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D08.2.actor": {
+      "kind": "label",
+      "rows": {
+        "train": 48,
+        "development": 12,
+        "test": 12
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"include\"": 32,
+          "\"exclude\"": 16
+        },
+        "development": {
+          "\"include\"": 8,
+          "\"exclude\"": 4
+        },
+        "test": {
+          "\"include\"": 8,
+          "\"exclude\"": 4
+        }
+      }
+    },
+    "D08.2.next_kind": {
+      "kind": "label",
+      "rows": {
+        "train": 32,
+        "development": 8,
+        "test": 8
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"normal\"": 8,
+          "\"end\"": 16,
+          "\"linked\"": 8
+        },
+        "development": {
+          "\"normal\"": 2,
+          "\"end\"": 4,
+          "\"linked\"": 2
+        },
+        "test": {
+          "\"normal\"": 2,
+          "\"end\"": 4,
+          "\"linked\"": 2
+        }
+      }
+    },
+    "D08.2.time.amount": {
+      "kind": "text",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "D08.2.time.boundary": {
+      "kind": "label",
+      "rows": {
+        "train": 16,
+        "development": 4,
+        "test": 4
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"elapsed\"": 8,
+          "\"instant\"": 8
+        },
+        "development": {
+          "\"elapsed\"": 2,
+          "\"instant\"": 2
+        },
+        "test": {
+          "\"elapsed\"": 2,
+          "\"instant\"": 2
+        }
+      }
+    },
+    "D08.2.time.unit": {
+      "kind": "label",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"minute\"": 7,
+          "\"second\"": 1
+        },
+        "development": {
+          "\"minute\"": 2
+        },
+        "test": {
+          "\"minute\"": 2
+        }
+      }
+    },
+    "U1.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U1.1.change": {
+      "kind": "label",
+      "rows": {
+        "train": 40,
+        "development": 10,
+        "test": 10
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"keep\"": 36,
+          "\"change\"": 4
+        },
+        "development": {
+          "\"keep\"": 10
+        },
+        "test": {
+          "\"change\"": 3,
+          "\"keep\"": 7
+        }
+      }
+    },
+    "U1.2": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 2,
+        "development": 0,
+        "test": 1
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:swap"
+        ],
+        "development": [],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U1.2.audit": {
+      "kind": "label",
+      "rows": {
+        "train": 4,
+        "development": 0,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:swap"
+        ],
+        "development": [],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 2,
+          "\"reject\"": 2
+        },
+        "development": {},
+        "test": {
+          "\"pass\"": 1,
+          "\"reject\"": 1
+        }
+      }
+    },
+    "U1.2.container": {
+      "kind": "reference",
+      "rows": {
+        "train": 4,
+        "development": 0,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:swap"
+        ],
+        "development": [],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"a\"": 2,
+          "\"far\"": 1,
+          "\"loc\"": 1
+        },
+        "development": {},
+        "test": {
+          "\"far\"": 3
+        }
+      }
+    },
+    "U1.2.relation": {
+      "kind": "label",
+      "rows": {
+        "train": 1,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"beside\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "U1.2.relative_entity": {
+      "kind": "reference",
+      "rows": {
+        "train": 1,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"tool\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "U1.2.relative_mode": {
+      "kind": "label",
+      "rows": {
+        "train": 4,
+        "development": 0,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:swap"
+        ],
+        "development": [],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"select\"": 1,
+          "\"none\"": 3
+        },
+        "development": {},
+        "test": {
+          "\"none\"": 3
+        }
+      }
+    },
+    "U1.2.slot": {
+      "kind": "reference",
+      "rows": {
+        "train": 1,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"slot:a-left\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "U1.2.slot_mode": {
+      "kind": "label",
+      "rows": {
+        "train": 4,
+        "development": 0,
+        "test": 3
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:swap"
+        ],
+        "development": [],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"select\"": 1,
+          "\"none\"": 3
+        },
+        "development": {},
+        "test": {
+          "\"none\"": 3
+        }
+      }
+    },
+    "U2.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U2.1.audit": {
+      "kind": "label",
+      "rows": {
+        "train": 9,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 8,
+          "\"reject\"": 1
+        },
+        "development": {
+          "\"pass\"": 2
+        },
+        "test": {
+          "\"pass\"": 2
+        }
+      }
+    },
+    "U2.1.next_op": {
+      "kind": "label",
+      "rows": {
+        "train": 113,
+        "development": 28,
+        "test": 28
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"keep\"": 52,
+          "\"end\"": 56,
+          "\"add\"": 4,
+          "\"remove\"": 1
+        },
+        "development": {
+          "\"keep\"": 13,
+          "\"end\"": 14,
+          "\"add\"": 1
+        },
+        "test": {
+          "\"keep\"": 14,
+          "\"end\"": 14
+        }
+      }
+    },
+    "U2.1.record": {
+      "kind": "reference",
+      "rows": {
+        "train": 3,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:conditional",
+          "short-20261109:drying"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"damp\"": 1,
+          "\"curled-corner\"": 1,
+          "\"seal-broken\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "U2.1.record_more": {
+      "kind": "label",
+      "rows": {
+        "train": 56,
+        "development": 13,
+        "test": 14
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"end\"": 53,
+          "\"more\"": 3
+        },
+        "development": {
+          "\"end\"": 13
+        },
+        "test": {
+          "\"end\"": 14
+        }
+      }
+    },
+    "U2.2": {
+      "kind": "text",
+      "rows": {
+        "train": 4,
+        "development": 1,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:buoy",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal"
+        ],
+        "development": [
+          "short-20261109:gate"
+        ],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U3.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U3.1.status": {
+      "kind": "label",
+      "rows": {
+        "train": 26,
+        "development": 6,
+        "test": 7
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pending\"": 14,
+          "\"achieved\"": 12
+        },
+        "development": {
+          "\"pending\"": 3,
+          "\"achieved\"": 3
+        },
+        "test": {
+          "\"achieved\"": 4,
+          "\"pending\"": 3
+        }
+      }
+    },
+    "U4.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 8,
+        "development": 2,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U4.1.count": {
+      "kind": "number",
+      "rows": {
+        "train": 26,
+        "development": 6,
+        "test": 7
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:dye",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:gate",
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "2": 2,
+          "0": 22,
+          "1": 2
+        },
+        "development": {
+          "1": 1,
+          "0": 5
+        },
+        "test": {
+          "0": 6,
+          "1": 1
+        }
+      }
+    },
+    "U4.2": {
+      "kind": "text",
+      "rows": {
+        "train": 6,
+        "development": 1,
+        "test": 1
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:dye",
+          "short-20261109:signal"
+        ],
+        "development": [
+          "short-20261109:gate"
+        ],
+        "test": [
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U5.1": {
+      "kind": "annotation_only",
+      "rows": {
+        "train": 7,
+        "development": 1,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U5.1.audit": {
+      "kind": "label",
+      "rows": {
+        "train": 8,
+        "development": 1,
+        "test": 2
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"pass\"": 7,
+          "\"reject\"": 1
+        },
+        "development": {
+          "\"pass\"": 1
+        },
+        "test": {
+          "\"pass\"": 2
+        }
+      }
+    },
+    "U5.1.next_op": {
+      "kind": "label",
+      "rows": {
+        "train": 43,
+        "development": 6,
+        "test": 12
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"keep\"": 18,
+          "\"end\"": 21,
+          "\"replace\"": 1,
+          "\"add\"": 2,
+          "\"remove\"": 1
+        },
+        "development": {
+          "\"keep\"": 2,
+          "\"end\"": 3,
+          "\"add\"": 1
+        },
+        "test": {
+          "\"add\"": 1,
+          "\"end\"": 6,
+          "\"keep\"": 5
+        }
+      }
+    },
+    "U5.1.record": {
+      "kind": "reference",
+      "rows": {
+        "train": 3,
+        "development": 0,
+        "test": 0
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:drying"
+        ],
+        "development": [],
+        "test": []
+      },
+      "targetCounts": {
+        "train": {
+          "\"avoid-request\"": 1,
+          "\"careful-grip\"": 1,
+          "\"work-alone\"": 1
+        },
+        "development": {},
+        "test": {}
+      }
+    },
+    "U5.1.record_more": {
+      "kind": "label",
+      "rows": {
+        "train": 23,
+        "development": 2,
+        "test": 5
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:buoy",
+          "short-20261109:conditional",
+          "short-20261109:drying",
+          "short-20261109:missing",
+          "short-20261109:signal",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift",
+          "short-20261109:newentity"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "\"end\"": 20,
+          "\"more\"": 3
+        },
+        "development": {
+          "\"end\"": 2
+        },
+        "test": {
+          "\"end\"": 5
+        }
+      }
+    },
+    "U5.2": {
+      "kind": "text",
+      "rows": {
+        "train": 3,
+        "development": 1,
+        "test": 1
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:missing",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {},
+        "development": {},
+        "test": {}
+      }
+    },
+    "U6.1": {
+      "kind": "number",
+      "rows": {
+        "train": 4,
+        "development": 1,
+        "test": 1
+      },
+      "sourceGroups": {
+        "train": [
+          "short-20261109:archive",
+          "short-20261109:drying",
+          "short-20261109:missing",
+          "short-20261109:swap"
+        ],
+        "development": [
+          "short-20261109:waiting"
+        ],
+        "test": [
+          "short-20261109:jointlift"
+        ]
+      },
+      "targetCounts": {
+        "train": {
+          "68": 1,
+          "74": 1,
+          "81": 1,
+          "88": 1
+        },
+        "development": {
+          "86": 1
+        },
+        "test": {
+          "79": 1
+        }
+      }
+    }
+  },
+  "missingDevelopmentOrTest": {
+    "D01.2.relation": {
+      "train": 1,
+      "development": 0,
+      "test": 0
+    },
+    "U1.2": {
+      "train": 2,
+      "development": 0,
+      "test": 1
+    },
+    "U1.2.audit": {
+      "train": 4,
+      "development": 0,
+      "test": 2
+    },
+    "U1.2.container": {
+      "train": 4,
+      "development": 0,
+      "test": 3
+    },
+    "U1.2.relation": {
+      "train": 1,
+      "development": 0,
+      "test": 0
+    },
+    "U1.2.relative_entity": {
+      "train": 1,
+      "development": 0,
+      "test": 0
+    },
+    "U1.2.relative_mode": {
+      "train": 4,
+      "development": 0,
+      "test": 3
+    },
+    "U1.2.slot": {
+      "train": 1,
+      "development": 0,
+      "test": 0
+    },
+    "U1.2.slot_mode": {
+      "train": 4,
+      "development": 0,
+      "test": 3
+    },
+    "U2.1.record": {
+      "train": 3,
+      "development": 0,
+      "test": 0
+    },
+    "U2.2": {
+      "train": 4,
+      "development": 1,
+      "test": 0
+    },
+    "U5.1.record": {
+      "train": 3,
+      "development": 0,
+      "test": 0
+    }
+  },
+  "D05BaseGroupJudgments": {
+    "train": {
+      "rows": 17,
+      "admitted": 16,
+      "rejected": 1,
+      "targetsAlreadyActed": 1
+    },
+    "development": {
+      "rows": 4,
+      "admitted": 4,
+      "rejected": 0,
+      "targetsAlreadyActed": 0
+    },
+    "test": {
+      "rows": 4,
+      "admitted": 4,
+      "rejected": 0,
+      "targetsAlreadyActed": 0
+    }
+  },
+  "D05BaseRelations": {
+    "train": {
+      "supports": 6,
+      "contests": 1,
+      "depends": 1
+    },
+    "development": {
+      "obstructs": 1,
+      "supports": 1
+    },
+    "test": {
+      "supports": 2
+    }
+  },
+  "D03AlreadyActedRelations": {
+    "train": {
+      "none": 15,
+      "target": 1
+    },
+    "development": {
+      "none": 4
+    },
+    "test": {
+      "none": 4
+    }
+  },
+  "D04ThreatCardinality": {
+    "1": 12
+  }
+}

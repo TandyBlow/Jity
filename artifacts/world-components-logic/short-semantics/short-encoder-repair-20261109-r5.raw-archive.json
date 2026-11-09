@@ -1,0 +1,28 @@
+{
+  "schema": "jity-raw-archive-v1",
+  "runId": "short-encoder-repair-20261109-r5",
+  "gitContent": "index_only_large_payloads_local",
+  "lossless": true,
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r5.record.json",
+      "bytes": 1106643,
+      "sha256": "d6ab7cc2c97c2e182e33b44556183fbf1732b0d599e9662912954eacd1078cc0",
+      "compressedPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r5.record.json.gz",
+      "compressedBytes": 324957,
+      "compressedSha256": "f5fc66c6fb067ee03b036adab74488355498ed7f9a9f58f5ecdc62e3eb081012",
+      "decompressedSha256": "d6ab7cc2c97c2e182e33b44556183fbf1732b0d599e9662912954eacd1078cc0",
+      "originalRetained": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r5.record.journal.jsonl",
+      "bytes": 12618861,
+      "sha256": "1ca91a058c879e66781a993dc50435f63eabd4e8fac79fc13abddbc18574a9f0",
+      "compressedPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r5.record.journal.jsonl.gz",
+      "compressedBytes": 822035,
+      "compressedSha256": "4b168828b3537dd80394e13afe9362e3722b888d07f0bc1e7036bbd15c0a5242",
+      "decompressedSha256": "1ca91a058c879e66781a993dc50435f63eabd4e8fac79fc13abddbc18574a9f0",
+      "originalRetained": true
+    }
+  ]
+}

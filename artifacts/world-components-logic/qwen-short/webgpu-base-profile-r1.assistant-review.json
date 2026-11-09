@@ -1,0 +1,161 @@
+{
+  "schema": "jity-webgpu-profile-assistant-semantic-review-v1",
+  "runId": "qwen-webgpu-base-profile-20261109-r1",
+  "planSha256": "8c820efba69439f67954cf94d819e38f0b2896d1bfecef62d0f000d1b7f3b003",
+  "technicalAuditSha256": "c7a16fae1caf8e86d0ad023f0636d298cd92c1ee44d1eb37a8cb44d054388b02",
+  "reviewer": "assistant",
+  "humanReview": "pending",
+  "sourceVerification": "unverified_assistant_drafts",
+  "uniqueSourceGroups": 1,
+  "uniqueInputs": 2,
+  "measurements": 8,
+  "repeatedMeasurementsAreIndependentSemanticCases": false,
+  "scope": "zero_step_community_base_not_trained_quality_or_complete_chain",
+  "allWithinWorkloadTextsAndTokensIdentical": true,
+  "measurementAssessments": {
+    "fails_component_responsibility": 8
+  },
+  "uniqueInputAssessments": {
+    "fails_component_responsibility": 2
+  },
+  "cases": [
+    {
+      "caseId": "short:1:default",
+      "component": "D01.1.slot_label",
+      "mode": "default",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "rawText": "防潮闸控制室",
+      "assessment": "fails_component_responsibility",
+      "reason": "组件要求为防潮闸控制室提出一个局部槽位标签；原文完全重复容器名称，没有给出容器内部的局部位置。",
+      "inputConstraints": {
+        "entityName": "防潮闸控制室",
+        "proposedSlots": [],
+        "expectedResponsibility": "one local slot label"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "short:2:off",
+      "component": "D01.1.slot_label",
+      "mode": "off",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "rawText": "防潮闸控制室",
+      "assessment": "fails_component_responsibility",
+      "reason": "组件要求为防潮闸控制室提出一个局部槽位标签；原文完全重复容器名称，没有给出容器内部的局部位置。",
+      "inputConstraints": {
+        "entityName": "防潮闸控制室",
+        "proposedSlots": [],
+        "expectedResponsibility": "one local slot label"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "short:3:default",
+      "component": "D01.1.slot_label",
+      "mode": "default",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "rawText": "防潮闸控制室",
+      "assessment": "fails_component_responsibility",
+      "reason": "组件要求为防潮闸控制室提出一个局部槽位标签；原文完全重复容器名称，没有给出容器内部的局部位置。",
+      "inputConstraints": {
+        "entityName": "防潮闸控制室",
+        "proposedSlots": [],
+        "expectedResponsibility": "one local slot label"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "short:4:off",
+      "component": "D01.1.slot_label",
+      "mode": "off",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "rawText": "防潮闸控制室",
+      "assessment": "fails_component_responsibility",
+      "reason": "组件要求为防潮闸控制室提出一个局部槽位标签；原文完全重复容器名称，没有给出容器内部的局部位置。",
+      "inputConstraints": {
+        "entityName": "防潮闸控制室",
+        "proposedSlots": [],
+        "expectedResponsibility": "one local slot label"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "long:1:default",
+      "component": "U4.2",
+      "mode": "default",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "assessment": "fails_component_responsibility",
+      "reason": "ownerId=a、parentTaskId=a-task的目标是让防潮闸保持关闭；原文却采用人物b的把手柄完全向外扳开目标，方向与指定父任务相反。当前半插入锁紧销/手柄卡阻事实不支持为a改写为开闸目标。",
+      "inputConstraints": {
+        "ownerId": "a",
+        "parentTaskId": "a-task",
+        "parentGoal": "让防潮闸保持关闭。",
+        "otherActorGoal": "把闸门手柄完全向外扳开。"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "long:2:off",
+      "component": "U4.2",
+      "mode": "off",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "assessment": "fails_component_responsibility",
+      "reason": "ownerId=a、parentTaskId=a-task的目标是让防潮闸保持关闭；原文却采用人物b的把手柄完全向外扳开目标，方向与指定父任务相反。当前半插入锁紧销/手柄卡阻事实不支持为a改写为开闸目标。",
+      "inputConstraints": {
+        "ownerId": "a",
+        "parentTaskId": "a-task",
+        "parentGoal": "让防潮闸保持关闭。",
+        "otherActorGoal": "把闸门手柄完全向外扳开。"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "long:3:default",
+      "component": "U4.2",
+      "mode": "default",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "assessment": "fails_component_responsibility",
+      "reason": "ownerId=a、parentTaskId=a-task的目标是让防潮闸保持关闭；原文却采用人物b的把手柄完全向外扳开目标，方向与指定父任务相反。当前半插入锁紧销/手柄卡阻事实不支持为a改写为开闸目标。",
+      "inputConstraints": {
+        "ownerId": "a",
+        "parentTaskId": "a-task",
+        "parentGoal": "让防潮闸保持关闭。",
+        "otherActorGoal": "把闸门手柄完全向外扳开。"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    },
+    {
+      "caseId": "long:4:off",
+      "component": "U4.2",
+      "mode": "off",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "assessment": "fails_component_responsibility",
+      "reason": "ownerId=a、parentTaskId=a-task的目标是让防潮闸保持关闭；原文却采用人物b的把手柄完全向外扳开目标，方向与指定父任务相反。当前半插入锁紧销/手柄卡阻事实不支持为a改写为开闸目标。",
+      "inputConstraints": {
+        "ownerId": "a",
+        "parentTaskId": "a-task",
+        "parentGoal": "让防潮闸保持关闭。",
+        "otherActorGoal": "把闸门手柄完全向外扳开。"
+      },
+      "assessmentMethod": "full_input_component_responsibility_not_exact_match",
+      "completionIsSemanticApproval": false
+    }
+  ],
+  "semanticQualityApproved": false,
+  "nextEvidenceDrivenWork": [
+    "Resolve trained float ONNX conversion under the frozen numerical criterion before any trained WebGPU claim.",
+    "Use target-parent and actor distinction errors to evaluate narrow U4 goal generation; do not repair the goal in program code.",
+    "Use the whole-container label error to distinguish entity naming from local slot naming in actual training/validation."
+  ]
+}

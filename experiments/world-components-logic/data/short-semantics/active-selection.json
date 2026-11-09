@@ -1,0 +1,30 @@
+{
+  "schema": "jity-short-active-selection-v1",
+  "meaning": "Explicit current experiment candidates; selection is not deployment or semantic approval",
+  "references": {
+    "dataset": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/data/short-semantics/time-choice-v2/supervision.jsonl.gz",
+      "sha256": "8aa0875d0268e921142cfab5c2fe42df049193bca2d70b08358cbe909f4abe16"
+    },
+    "dataMigration": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/data/short-semantics/time-choice-v2/migration-proof.json",
+      "sha256": "849eea3e8034dce4814facaa4259febb696bc8481fdc3db2a0020ee376f8a007"
+    },
+    "encoder": {
+      "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-time-20261109-r8/provider.json",
+      "sha256": "ef3266c284549847752415f21ac078b91fe802a6a4417506a8ea028d9f7613dd"
+    },
+    "focusEncoder": {
+      "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/r6_global_plus_focus.deployment-provider.json",
+      "sha256": "7af36cfd5fbbdcd425ce21320812f44b61ed6e2f23c90a34cf373c3a63d81f9a"
+    },
+    "trainedQwen": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.model.json",
+      "sha256": "c14b86f2b73a67fcbab6779ebe69cbb52701f153bd15072814300dd942b68bbd"
+    }
+  },
+  "browserProvider": null,
+  "randeng": "retired_no_fallback",
+  "productionIntegration": false,
+  "semanticQualityApproved": false
+}

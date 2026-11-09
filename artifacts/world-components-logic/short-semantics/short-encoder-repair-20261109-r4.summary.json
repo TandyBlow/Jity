@@ -1,0 +1,752 @@
+{
+  "schema": "jity-short-training-summary-v1",
+  "runId": "short-encoder-repair-20261109-r4",
+  "status": "failed",
+  "error": {
+    "message": "'collections.OrderedDict' object has no attribute 'shape'",
+    "type": "AttributeError"
+  },
+  "planSha256": "29bfd93da097b64caca92dbe69cfa05b92ffef2681e2cfb4ab48c3cb48337aeb",
+  "recordSha256": "551ecef9e4a8d82bb2d3df2c390169e15ba63ef42e91c80a32017fc227dd7f8a",
+  "providerManifest": null,
+  "actualTrainingSteps": 48,
+  "components": {
+    "D01.4.parent": {
+      "predictions": 13,
+      "exactDraftMatches": 13,
+      "nonzeroDataGradientSteps": 16,
+      "gradientExposures": 32,
+      "positiveLabelDataGradientExposures": {},
+      "headParameterChanged": true,
+      "splits": {
+        "development": {
+          "count": 6,
+          "exactDraftMatches": 6
+        },
+        "test": {
+          "count": 7,
+          "exactDraftMatches": 7
+        }
+      },
+      "confusion": [
+        {
+          "target": "__none__",
+          "output": "__none__",
+          "count": 12
+        },
+        {
+          "target": "draft:jointlift_r0_draft:jointlift_r0_e4_t0",
+          "output": "draft:jointlift_r0_draft:jointlift_r0_e4_t0",
+          "count": 1
+        }
+      ]
+    },
+    "D02.1": {
+      "predictions": 24,
+      "exactDraftMatches": 12,
+      "nonzeroDataGradientSteps": 32,
+      "gradientExposures": 32,
+      "positiveLabelDataGradientExposures": {
+        "act": 11,
+        "incomplete": 11,
+        "skip": 10
+      },
+      "headParameterChanged": true,
+      "splits": {
+        "development": {
+          "count": 12,
+          "exactDraftMatches": 6
+        },
+        "test": {
+          "count": 12,
+          "exactDraftMatches": 6
+        }
+      },
+      "confusion": [
+        {
+          "target": "act",
+          "output": "act",
+          "count": 12
+        },
+        {
+          "target": "skip",
+          "output": "act",
+          "count": 8
+        },
+        {
+          "target": "incomplete",
+          "output": "act",
+          "count": 4
+        }
+      ]
+    },
+    "D05.2.label": {
+      "predictions": 21,
+      "exactDraftMatches": 9,
+      "nonzeroDataGradientSteps": 32,
+      "gradientExposures": 32,
+      "positiveLabelDataGradientExposures": {
+        "achieved": 8,
+        "incomplete": 8,
+        "not_achieved": 8,
+        "partial": 8
+      },
+      "headParameterChanged": true,
+      "splits": {
+        "development": {
+          "count": 10,
+          "exactDraftMatches": 4
+        },
+        "test": {
+          "count": 11,
+          "exactDraftMatches": 5
+        }
+      },
+      "confusion": [
+        {
+          "target": "partial",
+          "output": "achieved",
+          "count": 6
+        },
+        {
+          "target": "not_achieved",
+          "output": "achieved",
+          "count": 2
+        },
+        {
+          "target": "achieved",
+          "output": "achieved",
+          "count": 9
+        },
+        {
+          "target": "incomplete",
+          "output": "achieved",
+          "count": 4
+        }
+      ]
+    }
+  },
+  "predictions": 58,
+  "exactDraftMatches": 34,
+  "unstartedPredictions": 0,
+  "supervisor": {
+    "error": null,
+    "exitCode": 1,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 433.140625,
+    "stopReason": null,
+    "wallMs": 32354.09929207526
+  },
+  "trainingAttemptElapsedMs": 25157.21075,
+  "repairProof": null,
+  "firstFailureRetained": true,
+  "r4_r5_reproduction": {
+    "sameTrainingConfig": true,
+    "sameDatasetBytes": true,
+    "sameExampleSchedule": true,
+    "headTensorHashes": {
+      "r4": {
+        "D02.1": "c2e081b646094a391a587aec6ee4af760113c8eb336100ef875cc8810e51e0e1",
+        "D01.4.parent": "4bf26eee4675d3465dd153770b3268017542c18b64d782449080101107470240",
+        "D05.2.label": "a123b5bce9bb08d3e20103356724592c2aa0776eaf44fa34edc210a1bd62fab6"
+      },
+      "r5": {
+        "D02.1": "c2e081b646094a391a587aec6ee4af760113c8eb336100ef875cc8810e51e0e1",
+        "D01.4.parent": "4bf26eee4675d3465dd153770b3268017542c18b64d782449080101107470240",
+        "D05.2.label": "a123b5bce9bb08d3e20103356724592c2aa0776eaf44fa34edc210a1bd62fab6"
+      }
+    },
+    "predictionOutputComparison": "all 58 first outputs, ordered example IDs and decoded values; elapsed timing excluded",
+    "allThreeHeadTensorsEqual": true,
+    "all58PredictionsEqual": true,
+    "allLossesEqual": true
+  },
+  "comparisonWithR3": [
+    {
+      "exampleId": "gate:D02.1:22",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D02.1:58",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D02.1:59",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D02.1:22",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D02.1:59",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D02.1:60",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D02.1:23",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D02.1:63",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "jointlift:D02.1:64",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D02.1:22",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D02.1:58",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D02.1:59",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "completed",
+      "r3Output": "act",
+      "repairOutput": "act",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D01.4:10:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D01.4:12:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D01.4:14:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D05.2:39:primitive:1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D05.2:39:primitive:2",
+      "component": "D05.2.label",
+      "draftTarget": "not_achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D01.4:10:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D01.4:12:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D01.4:14:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D05.2:39:primitive:1",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D05.2:39:primitive:2",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D01.4:10:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D01.4:11:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "draft:jointlift_r0_draft:jointlift_r0_e4_t0",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "draft:jointlift_r0_draft:jointlift_r0_e4_t0",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D01.4:13:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D01.4:15:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:primitive:1",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:primitive:2",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:primitive:3",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D01.4:10:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D01.4:12:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D01.4:14:primitive:2",
+      "component": "D01.4.parent",
+      "draftTarget": "__none__",
+      "r3Status": "not_started_untrained",
+      "r3Output": null,
+      "repairOutput": "__none__",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D05.2:39:primitive:1",
+      "component": "D05.2.label",
+      "draftTarget": "not_achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": false,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D05.2:39:primitive:2",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "completed",
+      "r3Output": "achieved",
+      "repairOutput": "achieved",
+      "r3DraftMatch": true,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D02.1:22:semantic-abstention:explicit_skip",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D02.1:22:semantic-abstention:attempt_without_promised_success",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "gate:D05.2:39:semantic-abstention:missing_supplement_joint:primitive-incomplete",
+      "component": "D05.2.label",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "jointlift:D02.1:23:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "jointlift:D02.1:23:semantic-abstention:explicit_skip",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "jointlift:D02.1:23:semantic-abstention:attempt_without_promised_success",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:semantic-abstention:missing_supplement_joint:primitive-incomplete",
+      "component": "D05.2.label",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D02.1:22:semantic-abstention:explicit_skip",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D02.1:22:semantic-abstention:attempt_without_promised_success",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "newentity:D05.2:39:semantic-abstention:missing_supplement_joint:primitive-incomplete",
+      "component": "D05.2.label",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D02.1:22:semantic-abstention:explicit_skip",
+      "component": "D02.1",
+      "draftTarget": "skip",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D02.1:22:semantic-abstention:attempt_without_promised_success",
+      "component": "D02.1",
+      "draftTarget": "act",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "act",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D05.2:39:semantic-abstention:missing_supplement_joint:primitive-incomplete",
+      "component": "D05.2.label",
+      "draftTarget": "incomplete",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D05.2:39:authored-partial-joint:primitive:partial:gate:a:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "gate:D05.2:39:authored-partial-joint:primitive:partial:gate:b:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:authored-partial-joint:primitive:partial:jointlift:a:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "jointlift:D05.2:42:authored-partial-joint:primitive:partial:jointlift:b:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D05.2:39:authored-partial-joint:primitive:partial:newentity:a:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "newentity:D05.2:39:authored-partial-joint:primitive:partial:newentity:b:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    },
+    {
+      "exampleId": "waiting:D05.2:39:authored-partial-joint:primitive:partial:waiting:a:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "partial",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": false
+    },
+    {
+      "exampleId": "waiting:D05.2:39:authored-partial-joint:primitive:partial:waiting:b:attempt-1",
+      "component": "D05.2.label",
+      "draftTarget": "achieved",
+      "r3Status": "not_registered_new_same_source_variant",
+      "r3Output": null,
+      "repairOutput": "achieved",
+      "r3DraftMatch": null,
+      "repairDraftMatch": true
+    }
+  ],
+  "formalEvaluationAllowed": false,
+  "humanReviewStatus": "pending",
+  "sameSourceGroupsReused": true,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unmeasured",
+  "publicationNote": "r4 completed actual training and all predictions but nested tensor hash verification failed; no provider published. r5 repeats the identical training schedule after correcting only publication verification."
+}

@@ -1,0 +1,35 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py:185: DeprecationWarning: The feature will be removed. Please remove usage of this function
+  setup_onnx_logging(verbose) as log_ctx,
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/cache_utils.py:132: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if not self.is_initialized or self.keys.numel() == 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/masking_utils.py:207: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if (padding_length := kv_length + kv_offset - attention_mask.shape[-1]) > 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/model_patcher.py:422: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  mask = torch.where(mask, torch.tensor(0.0, device=mask.device, dtype=dtype), torch.finfo(dtype).min)
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/symbolic_opset9.py:5350: UserWarning: Exporting aten::index operator of advanced indexing in opset 18 is achieved by combination of multiple ONNX operators, including Reshape, Transpose, Concat, and Gather. If indices include negative values, the exported graph will produce incorrect results.
+  warnings.warn(
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.
+E....
+======================================================================
+ERROR: test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache (test_short_qwen_export.QwenExportTests.test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_qwen_export.py", line 73, in test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache
+    raw=export.export_float(root/'source',root/'float',export.CONFIG)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/short_qwen_export.py", line 192, in export_float
+    validate_float(model,onnx_config,models[0],config)
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/short_qwen_export.py", line 164, in validate_float
+    actual=session.run(names,arrays);mapping={v:k for k,v in config.torch_to_onnx_output_map.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 283, in run
+    self._validate_input(list(input_feed.keys()))
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 265, in _validate_input
+    raise ValueError(
+ValueError: Required inputs (['past_key_values.0.key', 'past_key_values.0.value']) are missing from input feed (['input_ids', 'attention_mask', 'position_ids']).
+
+----------------------------------------------------------------------
+Ran 5 tests in 3.272s
+
+FAILED (errors=1)

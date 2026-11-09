@@ -1,0 +1,279 @@
+{
+  "schema": "jity-time-head-repair-summary-v1",
+  "runId": "short-encoder-time-20261109-r8",
+  "status": "diagnostic_completed",
+  "planPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r8.plan.json",
+  "recordPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r8.record.json",
+  "providerManifest": {
+    "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-time-20261109-r8/provider.json",
+    "sha256": "ef3266c284549847752415f21ac078b91fe802a6a4417506a8ea028d9f7613dd"
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 654.6875,
+    "peakProcessIds": [
+      85053
+    ],
+    "stopReason": null,
+    "wallMs": 21205.482125049457
+  },
+  "steps": 32,
+  "componentGradientExposures": {
+    "D08.1.unit": 32,
+    "D08.2.time.unit": 32
+  },
+  "componentLabelDataGradientExposures": {
+    "D08.1.unit": {
+      "minute": 16,
+      "second": 16
+    },
+    "D08.2.time.unit": {
+      "minute": 16,
+      "second": 16
+    }
+  },
+  "headParameterChanged": {
+    "D08.1.unit": true,
+    "D08.2.time.unit": true
+  },
+  "repairProof": {
+    "generatorCheckpointSha256": "456b60c81634e4d6a00b18b0fc02214239156a57a2b5163ca240b1aa031917ce",
+    "generatorExactInheritedEntry": true,
+    "newHeadsCheckpoint": {
+      "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-time-20261109-r8/encoder/heads.pt",
+      "sha256": "4a00a7bec006c00ace5565046cf06976ac608adfc9e80ca36bc077bbb37d0779"
+    },
+    "replacedComponents": [
+      "D08.1.unit",
+      "D08.2.time.unit"
+    ],
+    "representationBasis": "same source encoder weights/layers/tokenizer/float32/complete fact-window codec; no cached features imported",
+    "unchangedHeadTensorHashes": {
+      "D01.1.kind": "81a1d8901294e3af5026d5557d14040c26cab0b7f5dac1b8e3981a5c57149a7d",
+      "D01.1.protagonist": "b40ac867169b2cd505badad8f9255a31ba90b2ae4871f2fdef3101b08dbc9ebe",
+      "D01.1.slot_next": "305a6b4f27bea7368d9272f25f43f0be131dae4264b1f17773d8ffe7d051f155",
+      "D01.2.container": "1aeb7880cf92c2f2e018436cf20a41912187c7f84be0e35572d7fa723aec9432",
+      "D01.2.parent": "a92c762e76b16c36ffdecfd208157e8a51b8fba9ed548708a950dda33fc0b720",
+      "D01.2.relation": "4f8e7b36401fa1c44d580b25d7c92288688a18dde71dd167e51dfa8acc0a4668",
+      "D01.2.relative": "7ac95a545e6be7e64a25c6b045704170b4ea3ea868f4edcf6019ee94b33e5462",
+      "D01.2.slot": "51bf425bef22220e8a60076e006ecf1b873051e6ec484023f9a032f5f6c641a4",
+      "D01.4.next": "3c002885ab06e2b70b7f091a707764ff26b197a2fe404916b09af0d2d0122e11",
+      "D01.4.parent": "4bf26eee4675d3465dd153770b3268017542c18b64d782449080101107470240",
+      "D01.6": "5410a515ce0f2d049d712846054c24fa147e2c3db3373a440e6bde7f7d6781a9",
+      "D02.1": "c2e081b646094a391a587aec6ee4af760113c8eb336100ef875cc8810e51e0e1",
+      "D02.2.next": "223b9f58b706b1e8ba96cde75f831be912031486506f0c030cd1baa3006ccaff",
+      "D02.3.role": "388f94256758d693c07d4ce223838a3962c58cad2e7f7986e978a132f8d4dcea",
+      "D02.3.verdict": "6941693f9488767f2336acd045305c116e7e15d5698d50a91db9dff0484a8a0e",
+      "D02.4.check": "b8d6c3a7b5ac03b0257ef00685d37c0a2d6aa5c3844f920da8858ca2cf8e18fd",
+      "D02.4.issue_fragment": "ced9bcb84b0af707469b6b17b79970d6863a8cb08b3b305371f10c11db16d14e",
+      "D02.5.check": "5de6cdfc444c653450c3aab430260934d25e62c093c40bc7cd831fbe11040eb2",
+      "D02.5.issue_fragment": "5a491af4fe045dc59f98e2529699721c3156279e7ad33afbe0a0fdb946c433ce",
+      "D03.1.relation": "77c52802f7a74ffa65cef59e2b7bf4c9f55de1adbe282f4242eef78747e2695c",
+      "D03.2.verdict": "594b444d0957ae83070c42863e741bcc520b4382dd0613c40efa4a597423fb5b",
+      "D04.1.covered": "2e313b81b67312f3cadb50334ee42db9c7b9bab5cae0cc39bc2e8c8c51b3b95e",
+      "D04.1.next": "0256abbbdca06f5a33073c9c50a08c4274bcbe67aa64c1a3e2d03026de467aaf",
+      "D05.1.edge": "efbedf4f707c6556d5d89f063755e9ab83f1e6fdc27d7cfa9ea0e6bac4dd01cd",
+      "D05.2.label": "a123b5bce9bb08d3e20103356724592c2aa0776eaf44fa34edc210a1bd62fab6",
+      "D05.3.next": "f96cde7704d336311e29963cb9579163c9eb5c357f1fb602e0f68c318f616575",
+      "D05.4.verdict": "45f74e672940fea09a9aebd580473455eb08230b30e06d032905eb82af6dfa55",
+      "D05.5.member": "fa2e588c420c61e7d3ee3d60a2d90e8163c61f0efb1659130a3e600a226866bb",
+      "D06.P.mapping.audit": "351b125ef355ec89bee7dffa66249c08296b66cfa965781714eff6734d9788f8",
+      "D06.P.mapping.kind": "bcac34b4a73e8f73a0f08f7adeac4c283908c925d39f7d22cb1a4c47cb7fff00",
+      "D06.P.mapping.more": "d7471b58264837f4df60e2d8a17e2d01734b3cc9ec2749813fb1f39841ea5343",
+      "D06.P.mapping.target": "00f457733a8f5c08c12ad7328454cef6644b992336fde13de7813ddccb8b0051",
+      "D06.P.review.verdict": "6054ea55f2ccc6053c04f6779014556330d97b9a0ba8ab2c9bbab5ce1fbf5a75",
+      "D07.1.character": "a3aabf34b790dbe19b33f8ab18e2e0dd02536d6835ac61d33d3ed5b6c059fb2e",
+      "D07.1.next": "1d0b9ef481e7df4c05fe0c831c3beb45da64df2a8441478a6e14027f80fcb7fe",
+      "D07.2": "68903bbceffdefedca50ce4339e4be186f9c324b43a6901d4eff54a9c64a58b4",
+      "D07.3": "3a33f5f4d56fd53c8016caa6e8d01bff6d5cf7b78317fdc2e89d60bb6dd33a13",
+      "D08.1.boundary": "3aa9b84b98bf433e324394f72488134caa2681d2096a8a1994b3218a9983a5b9",
+      "D08.2.actor": "7a1a39868d296be8caf3282617989352bd4c6dae106a3ea8c93c39c9b3a1706e",
+      "D08.2.next_kind": "867e462a5287eaef4c22d5dd76d9a6a4c56ad6ca0417109c65bc044d9e1886c6",
+      "D08.2.time.boundary": "8dd56809546e75eb1bcad0b65b67138670c7546a56a0d42cf3ca15a5589cf8cb",
+      "U1.1.change": "e9d10f88e18cd5438f1ac7a5f858e3327daa8cd64f877f45c7db7a674d1865b3",
+      "U1.2.audit": "79db4c0b3d7b7b77dc045ace94193c04d479102fa661186eb5d852fab873ec29",
+      "U1.2.container": "388558351565fecc285b488a3408e0d3671ba8a74396fa697996f7728efb72d4",
+      "U1.2.relation": "37f7726efd0eb6789273dc4aa45880e9e544224351ae6cf7d0d630cedc12d6ef",
+      "U1.2.relative_entity": "6c856514def271e407b8cc0b0971daa291b701229d3beb69826b30a98abd0987",
+      "U1.2.relative_mode": "44b87339adcbbab6c2db984448bc625a26d090ae4ba3f9271e383af9284dd037",
+      "U1.2.slot": "9e253046ebb763ea5e7d63c830c3be680f53aa7abf4878346ff730c69db42aa1",
+      "U1.2.slot_mode": "c9ed4a0ebf76dc60bf93c1518382f9cbd68a91a83c6ec9ed787e818003ce4040",
+      "U2.1.audit": "e1d5910aad25db48b053501b70fd7d37b11d61f9613dfa8fefc5604e60d34ef5",
+      "U2.1.next_op": "79b56741909f31453a19e602a7c028aaadb686ac6af15eb8ac47f1371c6dafcc",
+      "U2.1.record": "e096c6b372dd97cec7ca5927982993b7e879bcc534fdd4a2e61005fe06df4d9b",
+      "U2.1.record_more": "a0fe7f396df20ee7ac606d6b8ddc7738eaeb627fa81b1ea9f9c4a3f1f3cf6fe5",
+      "U3.1.status": "5c2368cb783707cc611632840757d324c04543bff3aa4723485cd81183e9003a",
+      "U4.1.count": "a2d8c14419283b0be650dbfd957c6079d048d57c1c77b968ffd18330358dd3cb",
+      "U5.1.audit": "d468d11a0fb20ef9f8d0325acfdd6b02f323c7dc4939d86b8afbb02a397c0e7e",
+      "U5.1.next_op": "b8f435f938e3ece27a1ea23cfc71f701d7bb98eaaa58705ff3172c7d1da3d836",
+      "U5.1.record": "e71fa18cd9ecd1f65a89495d8095bd02971a87c4dd90e6ef49c191d18ff7f119",
+      "U5.1.record_more": "9a40dd897c8c39c0c03b9dba3ba81568799d16713cfc51fce2563c942fb43471",
+      "U6.1": "717dd08a446e5aaacadefd8f4377e35aaf0a2877d5132d85b16be14ecd4bb04e"
+    },
+    "unmodifiedHeadCount": 60
+  },
+  "predictions": [
+    {
+      "component": "D08.1.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 156.29645786248147,
+      "exactDraftMatch": true,
+      "exampleId": "gate:D08.1:71:primitive:3",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 417,
+          "sha256": "88293d312138ad773202f9b6f3f70523dd1e9d6946683fcbff88297cb684c722"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development"
+    },
+    {
+      "component": "D08.2.time.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 145.15841589309275,
+      "exactDraftMatch": true,
+      "exampleId": "gate:D08.2:72:primitive:4",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 437,
+          "sha256": "219cfca82498a24c74ae338cd0e181032b5061799df5c0c12979bb1997f450dd"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development"
+    },
+    {
+      "component": "D08.1.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 163.47291693091393,
+      "exactDraftMatch": true,
+      "exampleId": "waiting:D08.1:72:primitive:3",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 459,
+          "sha256": "7544f67d9d96c73097aac7c7bdf71f2a7e3fbe7e58bc53198ffa6bebb0b82867"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development"
+    },
+    {
+      "component": "D08.2.time.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 151.1544578243047,
+      "exactDraftMatch": true,
+      "exampleId": "waiting:D08.2:73:primitive:4",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 479,
+          "sha256": "7a6532ed51e5c12ecf4c4cc33fae15fd2c002fcd8e791664c94f5707a8eec69e"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development"
+    },
+    {
+      "component": "D08.1.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 272.27433398365974,
+      "exactDraftMatch": true,
+      "exampleId": "jointlift:D08.1:78:primitive:3",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 503,
+          "sha256": "b3e6a98527b634322f33b57804402c530b02c9b0585df649310a86a7ba65eaa1"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test"
+    },
+    {
+      "component": "D08.2.time.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 181.33045779541135,
+      "exactDraftMatch": true,
+      "exampleId": "jointlift:D08.2:79:primitive:4",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 525,
+          "sha256": "0a26d789a0a5f69567b9113a30e032e11709ccdeda113c774de8dad8cea27ead"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test"
+    },
+    {
+      "component": "D08.1.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 152.79870899394155,
+      "exactDraftMatch": true,
+      "exampleId": "newentity:D08.1:71:primitive:3",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 547,
+          "sha256": "d63b8d25b8ef2846bdda484d23c02ee4ff8c432429a43e7b703acd1826a643fc"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test"
+    },
+    {
+      "component": "D08.2.time.unit",
+      "draftTarget": "minute",
+      "elapsedMs": 144.81458300724626,
+      "exactDraftMatch": true,
+      "exampleId": "newentity:D08.2:72:primitive:4",
+      "output": "minute",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 567,
+          "sha256": "85b59194528634eb3e3d4e1ab3812b7e89b069985b8245e3eff0465be9286830"
+        },
+        "name": "head_prediction"
+      },
+      "semanticStatus": "pending_human_review",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test"
+    }
+  ],
+  "exactDraftMatch": 8,
+  "semanticQualityApproved": false,
+  "humanReviewed": 0,
+  "limitations": [
+    "All eight dev/test targets are minute; no held-out second positive or other four unit classes.",
+    "Twelve reused assistant-authored source groups; no new independent generalization."
+  ],
+  "priorFailedRun": {
+    "runId": "short-encoder-time-20261109-r7",
+    "status": "failed",
+    "providerPublished": false,
+    "lossesEqual": true,
+    "allEightPredictionsEqualExcludingTimingAndRawRefs": true,
+    "allCheckpointTensorValuesEqual": true,
+    "change": "Publication now explicitly fills unsupported class counts with zero; same frozen sampling/optimization; prior training results retained."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-11-09T07:51:59.776304+00:00",
+  "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]",
+  "pipReports": {
+    "install-report.json": {
+      "uncompressedSha256": "06b09a51437ff1184bdd402610ad1534e781196ecb10bce47379194f99de9a57",
+      "gzipSha256": "ddb918dd92562ca646aa2e0ef61adb11c637bc88211a645e810ea3046be7d56d",
+      "bytes": 427747,
+      "gzipBytes": 122791
+    },
+    "install-report-a-preview.json": {
+      "uncompressedSha256": "2b2e6702096c21391e98a5a094adfe57f8351db4366b902d3159886cdd0f81f7",
+      "gzipSha256": "d0ed7de16c76ee73e5bd956e5eed3a6785c750c3e0ac5b96baf9a6f6dfd8abb9",
+      "bytes": 138869,
+      "gzipBytes": 28393
+    }
+  },
+  "paidServices": false
+}

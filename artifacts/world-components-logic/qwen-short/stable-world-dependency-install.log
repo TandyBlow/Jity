@@ -1,0 +1,26 @@
+Collecting pydantic==2.13.4
+  WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)'))': /packages/fd/7b/122376b1fd3c62c1ed9dc80c931ace4844b3c55407b6fb2d199377c9736f/pydantic-2.13.4-py3-none-any.whl.metadata
+  Downloading pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 109.4/109.4 kB 880.1 kB/s eta 0:00:00
+Collecting sentencepiece==0.2.1
+  Downloading sentencepiece-0.2.1-cp312-cp312-macosx_11_0_arm64.whl.metadata (10 kB)
+Collecting annotated-types>=0.6.0 (from pydantic==2.13.4)
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.4 (from pydantic==2.13.4)
+  Downloading pydantic_core-2.46.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (6.6 kB)
+Requirement already satisfied: typing-extensions>=4.14.1 in /Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages (from pydantic==2.13.4) (4.16.0)
+Collecting typing-inspection>=0.4.2 (from pydantic==2.13.4)
+  Downloading typing_inspection-0.4.5-py3-none-any.whl.metadata (2.6 kB)
+Downloading pydantic-2.13.4-py3-none-any.whl (472 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 472.3/472.3 kB 4.2 MB/s eta 0:00:00
+Downloading sentencepiece-0.2.1-cp312-cp312-macosx_11_0_arm64.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 7.2 MB/s eta 0:00:00
+Downloading pydantic_core-2.46.4-cp312-cp312-macosx_11_0_arm64.whl (2.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 3.6 MB/s eta 0:00:00
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading typing_inspection-0.4.5-py3-none-any.whl (14 kB)
+Installing collected packages: typing-inspection, sentencepiece, pydantic-core, annotated-types, pydantic
+Successfully installed annotated-types-0.8.0 pydantic-2.13.4 pydantic-core-2.46.4 sentencepiece-0.2.1 typing-inspection-0.4.5
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: /Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/bin/python -m pip install --upgrade pip

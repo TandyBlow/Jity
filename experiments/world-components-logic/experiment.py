@@ -21,6 +21,7 @@ from run_pilot import exclusive,save,timestamp
 ROOT=Path(__file__).resolve().parents[2]
 BASE=Path(__file__).resolve().parent
 ART=ROOT/'artifacts/world-components-logic'
+CHECKPOINT_STORAGE='journal_refs_v1'
 
 
 def read_json(path):
@@ -100,70 +101,147 @@ class AppendJournal:
         # window events are flushed for process-exit recovery, not power-loss QA.
         if kind!='window':os.fsync(self.stream.fileno())
         self.previous=row['sha256'];self.seq+=1
+        return {'sequence':row['sequence'],'sha256':row['sha256']}
 
     def close(self):self.stream.close()
     def __enter__(self):return self
     def __exit__(self,*args):self.close()
 
 
+def append_checkpoint(journal,event):
+    """Persist every raw byte first; retain only a verified event reference."""
+    reference=journal.append('attempt_checkpoint',event)
+    return {'checkpointRef':reference,'name':event['name']}
+
+
+class JournalStream:
+    """Verified streaming reader: memory is bounded by one journal event.
+
+    A final unterminated line is retained as partial-tail evidence, never parsed
+    as a completion. gzip is streamed as well. Callers must not accumulate rows.
+    """
+    def __init__(self,path,plan_sha):
+        self.path=Path(path);self.plan_sha=plan_sha
+        self.events=0;self.partial_tail_bytes=0;self.previous=None
+
+    def __iter__(self):
+        from run_pilot import digest
+        self.events=0;self.partial_tail_bytes=0;self.previous=None
+        opener=gzip.open if str(self.path).endswith('.gz') else open
+        with opener(self.path,'rb') as stream:
+            for index,line in enumerate(stream):
+                if not line.endswith(b'\n'):
+                    self.partial_tail_bytes=len(line);break
+                row=json.loads(line)
+                if set(row)!={'sequence','planSha256','previousSha256','kind','data','sha256'}:raise ValueError('journal envelope invalid')
+                if (row['sequence']!=index or row['planSha256']!=self.plan_sha or row['previousSha256']!=self.previous
+                        or digest({k:v for k,v in row.items() if k!='sha256'})!=row['sha256']):
+                    raise ValueError('journal identity/sequence/hash mismatch')
+                self.previous=row['sha256'];self.events+=1
+                yield row
+
+
 def read_journal(path,plan_sha):
-    from run_pilot import digest
-    raw=Path(path).read_bytes()
-    if str(path).endswith('.gz'):raw=gzip.decompress(raw)
-    lines=raw.splitlines(keepends=True);entries=[];previous=None;partial=0
-    for i,line in enumerate(lines):
-        if not line.endswith(b'\n'):
-            if i!=len(lines)-1:raise ValueError('journal has an interior partial line')
-            partial=len(line);break
-        row=json.loads(line)
-        if set(row)!={'sequence','planSha256','previousSha256','kind','data','sha256'}:raise ValueError('journal envelope invalid')
-        if (row['sequence']!=i or row['planSha256']!=plan_sha or row['previousSha256']!=previous
-                or digest({k:v for k,v in row.items() if k!='sha256'})!=row['sha256']):raise ValueError('journal identity/sequence/hash mismatch')
-        entries.append(row);previous=row['sha256']
-    return entries,partial
+    """Legacy materialized API. New execution/recovery uses JournalStream."""
+    stream=JournalStream(path,plan_sha)
+    entries=list(stream)
+    return entries,stream.partial_tail_bytes
 
 
-def reconcile_journal(report,path,reason):
+def _checkpoint_reference(row):
+    return {'checkpointRef':{'sequence':row['sequence'],'sha256':row['sha256']},'name':row['data']['name']}
+
+
+def iter_checkpoint_events(report,path):
+    """Resolve v1 raw or v2 referenced checkpoints without accumulating payloads.
+
+    Every referenced event must match sequence/hash/name and attempt identity.
+    All checkpoint entries must be covered exactly once. Consumers interested
+    in predictions may filter by event name after verification, without keeping
+    encoder token arrays. Exhaust the iterator to validate trailing events.
+    """
+    path=Path(path)
+    if not path.exists() and path.with_suffix(path.suffix+'.gz').exists():path=path.with_suffix(path.suffix+'.gz')
+    key=lambda value:(value['arm'],value['caseId'],value['repeat'])
+    expected={};counts={}
+    for attempt in report['attempts']:
+        identity=key(attempt)
+        if identity in expected:raise ValueError('duplicate attempt identity in checkpoint index')
+        expected[identity]=attempt.get('checkpoints',[]);counts[identity]=0
+    stream=JournalStream(path,report['planSha256']);first=True
+    for row in stream:
+        if first:
+            if row['kind']!='begin' or row['data']['runId']!=report['runId']:raise ValueError('journal header mismatch')
+            first=False
+        if row['kind']!='attempt_checkpoint':continue
+        event=row['data'];identity=key(event)
+        if identity not in expected or counts[identity]>=len(expected[identity]):raise ValueError('checkpoint missing from record index')
+        registered=expected[identity][counts[identity]]
+        if 'checkpointRef' in registered:
+            if registered!=_checkpoint_reference(row):raise ValueError('checkpoint reference mismatch')
+        elif registered!=event:raise ValueError('legacy checkpoint bytes differ from journal')
+        counts[identity]+=1
+        yield event
+    if any(counts[k]!=len(rows) for k,rows in expected.items()):raise ValueError('unresolved checkpoint references')
+
+
+def reconcile_journal(report,path,reason,*,bounded=None):
     """Read only: reconstruct evidence after exit; never infer/retry a model."""
     import copy
-    entries,partial=read_journal(path,report['planSha256'])
-    if not entries:
-        report['journalRecovery']={'events':0,'partialTailBytes':partial,'sha256':sha256_file(path)}
+    stream=JournalStream(path,report['planSha256']);entries=iter(stream)
+    first=next(entries,None)
+    if first is None:
+        report['journalRecovery']={'events':0,'partialTailBytes':stream.partial_tail_bytes,'sha256':sha256_file(path),
+                                   'readOnlyReplay':True,'modelCallsDuringReplay':0}
+        report['status']='stopped_incomplete'
+        report['unexecutedAttempts']=sum(slot['status']=='not_started' for slot in report['attemptSlots'])
         return
     key=lambda a:(a['arm'],a['caseId'],a['repeat'])
-    first=entries[0]
     if first['kind']!='begin' or first['data']['runId']!=report['runId']:raise ValueError('journal header mismatch')
+    storage=first['data'].get('checkpointStorage')
+    if storage not in (None,CHECKPOINT_STORAGE):raise ValueError('unknown checkpoint storage')
+    referenced=storage==CHECKPOINT_STORAGE
+    if bounded is None:bounded=referenced
+    if referenced and not bounded:raise ValueError('referenced journal requires bounded recovery')
     planned=first['data']['slots'];ids=[key(s) for s in planned]
     if len(set(ids))!=len(ids) or ids!=[key(s) for s in report['attemptSlots']]:raise ValueError('journal slot mismatch')
     slots={key(s):dict(s) for s in planned};attempts=[];active=None;result=None;windows=[];active_window=None
-    snapshots={key(a):a for a in report['attempts']}
-    for row in entries[1:]:
+    snapshots={key(a):a for a in report['attempts']};checkpoint_hashes=[]
+    from run_pilot import digest
+    def window_summary(data,row):
+        return {**{k:data[k] for k in ('eventId','arm','caseId','repeat','status','windowIndex') if k in data},
+                'journalRef':{'sequence':row['sequence'],'sha256':row['sha256']}}
+    for row in entries:
         kind=row['kind'];data=row['data']
         if kind=='attempt_start':
             k=key(data)
             if active is not None or k not in slots or slots[k]['status']!='not_started' or data['status']!='started':raise ValueError('duplicate/unknown/overlapping attempt start')
-            active=copy.deepcopy(data);slots[k]=active;result=None
+            if data.get('checkpoints'):raise ValueError('attempt starts with unlogged checkpoints')
+            active=copy.deepcopy(data);slots[k]=active;result=None;checkpoint_hashes=[]
         elif kind=='window':
             if active is None or result is not None or key(data)!=key(active):raise ValueError('window outside active attempt')
             index=data['eventId']
             if data['status']=='running':
                 if active_window is not None or index!=len(windows):raise ValueError('duplicate/overlapping window start')
-                active_window=copy.deepcopy(data);windows.append(active_window)
+                active_window=copy.deepcopy(data);windows.append(window_summary(data,row) if bounded else active_window)
             else:
                 if (active_window is None or index!=active_window['eventId'] or data['status'] not in ('complete','failed')
                         or any(data[k]!=active_window[k] for k in ('caseId','arm','repeat','windowIndex','inputIds','tokenTypeIds','factSpans'))):
                     raise ValueError('unmatched window settlement')
-                windows[index]=copy.deepcopy(data);active_window=None
+                windows[index]=window_summary(data,row) if bounded else copy.deepcopy(data);active_window=None
         elif kind=='attempt_result':
             if active is None or result is not None or key(data)!=key(active) or active_window is not None:raise ValueError('unmatched/duplicate attempt result')
             if data['status'] not in ('complete','failed'):raise ValueError('invalid attempt result status')
-            if data.get('checkpoints',[])!=active.get('checkpoints',[]):raise ValueError('attempt checkpoint history mismatch')
-            result=copy.deepcopy(data)
+            if bounded and not referenced:
+                if [digest(event) for event in data.get('checkpoints',[])]!=checkpoint_hashes:raise ValueError('attempt checkpoint history mismatch')
+            elif data.get('checkpoints',[])!=active.get('checkpoints',[]):raise ValueError('attempt checkpoint history mismatch')
+            result={**data,'checkpoints':active.get('checkpoints',[])} if bounded else copy.deepcopy(data)
         elif kind=='attempt_checkpoint':
             if active is None or result is not None or key(data)!=key(active):raise ValueError('checkpoint outside active attempt')
             if (set(data)!={'arm','caseId','repeat','name','payload'} or not isinstance(data['name'],str)
                     or not isinstance(data['payload'],dict)):raise ValueError('invalid checkpoint envelope')
-            active.setdefault('checkpoints',[]).append(copy.deepcopy(data))
+            active.setdefault('checkpoints',[]).append(_checkpoint_reference(row) if bounded else copy.deepcopy(data))
+            if bounded and not referenced:checkpoint_hashes.append(digest(data))
         elif kind=='attempt_settled':
             if active is None or result is None or key(data)!=key(active):raise ValueError('timing without result')
             if set(data)!={'arm','caseId','repeat','resultJournalMs','snapshotEndMs','elapsedThroughResultMs'}:raise ValueError('invalid timing fields')
@@ -178,6 +256,7 @@ def reconcile_journal(report,path,reason):
         else:raise ValueError('unknown journal event kind')
     if active_window is not None:
         active_window.update(status='interrupted',stopReason=reason,settledAt=timestamp())
+        if bounded:windows[active_window['eventId']].update(status='interrupted',stopReason=reason,settledAt=timestamp())
     if active is not None:
         item=result if result is not None else active
         item.update(status='result_saved_timing_incomplete' if result is not None else 'interrupted',stopReason=reason,
@@ -186,10 +265,37 @@ def reconcile_journal(report,path,reason):
     report.update(attempts=attempts,attemptSlots=[slots[k] for k in ids],activeAttempt=None,
                   forwardAttempts=windows,activeForward=None,
                   unexecutedAttempts=sum(s['status']=='not_started' for s in slots.values()),
-                  journalRecovery={'events':len(entries),'partialTailBytes':partial,'sha256':sha256_file(path),
+                  journalRecovery={'events':stream.events,'partialTailBytes':stream.partial_tail_bytes,'sha256':sha256_file(path),
                                    'readOnlyReplay':True,'modelCallsDuringReplay':0})
-    if partial or active is not None or active_window is not None or (report.get('status')=='diagnostic_completed' and report['unexecutedAttempts']):report['status']='stopped_incomplete'
+    if bounded:
+        report['checkpointStorage']=CHECKPOINT_STORAGE
+        report['journalRecovery']['boundedReferences']=True
+    else:report.pop('checkpointStorage',None)
+    if stream.partial_tail_bytes or active is not None or active_window is not None or (report.get('status')=='diagnostic_completed' and report['unexecutedAttempts']):report['status']='stopped_incomplete'
 
+
+
+def process_tree_rss(output, root_pid):
+    """Include descendants and reparented members of the owned process group.
+
+    ps emits numeric metadata only; unrelated processes are never included.
+    Children must inherit the supervisor-created group (no nested setsid).
+    """
+    rows = {}
+    for line in output.splitlines():
+        if not line.strip(): continue
+        fields = line.split()
+        if len(fields) != 4: raise ValueError('invalid process resource sample')
+        pid, parent, group, rss = map(int, fields)
+        if pid <= 0 or parent < 0 or group < 0 or rss < 0 or pid in rows:
+            raise ValueError('invalid process resource identity')
+        rows[pid] = (parent, group, rss)
+    members = {pid for pid, (_, group, _) in rows.items() if pid == root_pid or group == root_pid}
+    while True:
+        expanded = members | {pid for pid, (parent, _, _) in rows.items() if parent in members}
+        if expanded == members: break
+        members = expanded
+    return sum(rows[pid][2] for pid in members) / 1024, sorted(members)
 
 
 def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
@@ -199,13 +305,16 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
         raise FileExistsError('preserve original record/journal; use a new run id')
     try:verify(plan)
     except Exception as error:
-        exclusive(out,{'status':'failed_preflight','planSha256':sha256_file(path),'attempts':[],
-                      'error':str(error),'formalEvaluationAllowed':False});raise
+        report=unstarted_record(plan,path,arms)
+        report.update(status='failed_preflight',error=str(error),formalEvaluationAllowed=False)
+        exclusive(out,report);raise
     config=plan['config']
+    tree_monitor=config.get('monitorProcessTree',False)
+    if type(tree_monitor) is not bool:raise ValueError('invalid process resource monitoring policy')
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',
              TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',
              HF_HOME=str(ROOT/'.local/world-components-logic/hf-cache'))
-    start=time.monotonic();reason=None;peak=0.;error=None
+    start=time.monotonic();reason=None;peak=0.;error=None;peak_members=[]
     with out.with_suffix('.process.log').open('x',encoding='utf-8') as log:
         try:
             child=subprocess.Popen([str(ROOT/plan['environment']['venvExecutableRelativePath']),str(worker_script),
@@ -215,11 +324,14 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
             exclusive(out,report);return 1
         try:
             while child.poll() is None:
-                rss=subprocess.run(['ps','-o','rss=','-p',str(child.pid)],capture_output=True,text=True)
+                rss=subprocess.run(['ps','-axo','pid=,ppid=,pgid=,rss='] if tree_monitor else ['ps','-o','rss=','-p',str(child.pid)],capture_output=True,text=True)
                 if rss.returncode or not rss.stdout.strip():
                     if child.poll() is not None:break
                     raise RuntimeError('RSS monitor unavailable')
-                peak=max(peak,float(rss.stdout)/1024)
+                if tree_monitor:
+                    resident,members=process_tree_rss(rss.stdout,child.pid)
+                else:resident,members=float(rss.stdout)/1024,[child.pid]
+                if resident>peak:peak,peak_members=resident,members
                 if peak>config['maxResidentMiB']:reason='resident_memory_limit'
                 if time.monotonic()-start>config['processWallSeconds']:reason='process_wall_limit'
                 if reason:break
@@ -230,9 +342,30 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
                 os.killpg(child.pid,signal.SIGTERM)
                 try:child.wait(timeout=3)
                 except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait()
+            if tree_monitor:
+                # A controller exit cannot leave an unmonitored GPU worker.
+                sample=subprocess.run(['ps','-axo','pid=,ppid=,pgid=,rss='],capture_output=True,text=True)
+                try:
+                    if sample.returncode or not sample.stdout.strip():
+                        raise RuntimeError('process tree cleanup sample unavailable')
+                    _,remaining=process_tree_rss(sample.stdout,child.pid)
+                    remaining=[pid for pid in remaining if pid!=child.pid]
+                    if remaining:
+                        reason=reason or 'worker_left_descendants'
+                        os.killpg(child.pid,signal.SIGTERM)
+                        time.sleep(.25)
+                        try:os.killpg(child.pid,signal.SIGKILL)
+                        except ProcessLookupError:pass
+                except ProcessLookupError:pass
+                except Exception as cleanup_error:
+                    reason=reason or 'process_tree_cleanup_failure';error=str(cleanup_error)
+                    try:os.killpg(child.pid,signal.SIGKILL)
+                    except ProcessLookupError:pass
     report=read_json(out) if out.exists() else unstarted_record(plan,path,arms)
     report['supervisor']={'exitCode':child.returncode,'stopReason':reason,'error':error,'wallMs':(time.monotonic()-start)*1000,
-                          'observedPeakResidentMiB':peak,'measurement':'ps_rss_every250ms'}
+                          'observedPeakResidentMiB':peak,
+                          'measurement':'process_tree_and_owned_group_ps_rss_every250ms' if tree_monitor else 'ps_rss_every250ms',
+                          'peakProcessIds':peak_members}
     if reason or child.returncode:
         settle_stages(report,reason or 'worker_exit');settle_attempts(report,reason or 'worker_exit')
         report['status']='stopped_incomplete' if reason else 'failed'
@@ -248,7 +381,7 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
     return 0 if report['status']=='diagnostic_completed' else 1
 
 
-def status():
+def historical_status():
     slots=(ART/'l3-22-realizer-slots-summary.json').exists()
     search=(ART/'l3-21-realizer-grid-summary.json').exists()
     budget=(ART/'l3-20-realizer-budget320-summary.json').exists()
@@ -272,9 +405,14 @@ def status():
     print(json.dumps(result,ensure_ascii=False,indent=2));return 0
 
 
-def check():
-    commands=[['-m','unittest','discover','-s',str(BASE/'tests'),'-p','test_*.py'],
-              *[[str(BASE/name),'--check'] for name in ('pilot_report.py','m01_report.py','m01_shared_report.py')],
+def status():
+    import short_experiment
+    return short_experiment.active_status()
+
+
+def historical_check():
+    """Read archived evidence only; retired model-dependent tests stay at d80a031."""
+    commands=[*[[str(BASE/name),'--check'] for name in ('pilot_report.py','m01_report.py','m01_shared_report.py')],
               [str(BASE/'m01_shared_report.py'),'--event','--check'],
               [str(BASE/'m01_shared_report.py'),'--journal','--check'],
               [str(BASE/'m01_shared_report.py'),'--input','--check'],
@@ -292,15 +430,59 @@ def check():
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
         if result.returncode:return result.returncode
-    print('PASS: engineering tests and archived reports; no training or inference executed.')
+    print('PASS: archived evidence checks; no training or inference executed.')
+    return 0
+
+
+def check():
+    """Active architecture checks, including tiny numerical training fixtures.
+
+    No production model weights, game inference, services or old experiments
+    are executed. Archive validation is explicitly available separately.
+    """
+    env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',
+             OPENBLAS_NUM_THREADS='1',TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1')
+    for pattern in ('test_short_*.py','test_experiment_journal*.py'):
+        answer=subprocess.run([sys.executable,'-m','unittest','discover','-s',str(BASE/'tests'),'-p',pattern],cwd=ROOT,env=env)
+        if answer.returncode:return answer.returncode
+    print('PASS: new-architecture engineering and numerical fixtures; no game-model capability claim.')
     return 0
 
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='D current entry: status/check do not execute models; prepare freezes a new batch; execute runs it.')
     sub=parser.add_subparsers(dest='command')
-    sub.add_parser('status',help='read current status only (default)')
-    sub.add_parser('check',help='run lightweight tests and verify archived reports; no models')
+    sub.add_parser('status',help='new short-semantics status, no model execution')
+    sub.add_parser('history-status',help='read archived pre-short-semantics status')
+    sub.add_parser('history-check',help='read-only archived evidence validation; no legacy model execution')
+    data=sub.add_parser('short-data',help='check active authored supervision and group isolation')
+    data.add_argument('--dataset',type=Path)
+    audit=sub.add_parser('short-audit',help='inspect local model/dependency availability only')
+    audit.add_argument('--model-root',type=Path,help='historical audit only')
+    audit.add_argument('--historical',action='store_true',help='explicitly inspect archived MiniRBT/Randeng resources')
+    prep=sub.add_parser('short-prepare',help='freeze new short semantic training plan; no model execution')
+    prep.add_argument('run_id');prep.add_argument('--model-root',type=Path);prep.add_argument('--dataset',type=Path);prep.add_argument('--profile',choices=('intent','all','encoder_repair','encoder_time_repair'),default='intent')
+    prep.add_argument('--inherit-provider',type=Path,help='required for encoder_repair; all other heads and generator retain this exact identity')
+    qp=sub.add_parser('short-qwen-prepare',help='freeze complete-context Qwen short-text training; no inference')
+    qp.add_argument('run_id');qp.add_argument('--model-manifest',type=Path,required=True);qp.add_argument('--dataset',type=Path)
+    qp.add_argument('--profile',choices=('all','time_repair'),default='all')
+    qp.add_argument('--inherit-model',type=Path);qp.add_argument('--migration',type=Path)
+    sub.add_parser('short-qwen-execute',help='execute frozen local Qwen training using shared supervisor').add_argument('plan',type=Path)
+    sub.add_parser('short-qwen-report',help='read Qwen training evidence').add_argument('plan',type=Path)
+    fp=sub.add_parser('short-encoder-focus-prepare',help='freeze full-context versus query-focus encoder comparison')
+    fp.add_argument('run_id');fp.add_argument('--source-provider',type=Path,required=True);fp.add_argument('--dataset',type=Path)
+    sub.add_parser('short-encoder-focus-execute',help='execute frozen encoder comparison using shared supervisor').add_argument('plan',type=Path)
+    sub.add_parser('short-encoder-focus-report',help='read first-output encoder comparison evidence').add_argument('plan',type=Path)
+    ep=sub.add_parser('short-eval-prepare',help='freeze diagnostic and actual-upstream model comparison')
+    ep.add_argument('run_id');ep.add_argument('--provider',type=Path,required=True);ep.add_argument('--dataset',type=Path)
+    ep.add_argument('--scope',choices=('contracts','all','webgpu','webgpu_text'),default='contracts')
+    ep.add_argument('--resource-profile',choices=('default','webgpu_complete_context_v1'),default='default')
+    ep.add_argument('--benchmark-evidence',type=Path,help='completed profiling record required by explicit full-context resource profile')
+    sub.add_parser('short-eval-execute',help='execute frozen new-chain comparison').add_argument('plan',type=Path)
+    sub.add_parser('short-eval-report',help='read original new-chain comparison evidence').add_argument('plan',type=Path)
+    sub.add_parser('short-execute',help='execute frozen new training plan using shared supervisor').add_argument('plan',type=Path)
+    sub.add_parser('short-report',help='read new frozen preparation or training record').add_argument('plan',type=Path)
+    sub.add_parser('check',help='new-architecture engineering and tiny numerical fixtures; no game inference')
     plan_data=sub.add_parser('plan-data',help='check/write current action-plan preparation; no models')
     plan_data.add_argument('--write-new',action='store_true')
     training_data=sub.add_parser('train-data',help='current new-source candidate and training-readiness materials; no models')
@@ -339,6 +521,37 @@ def main(argv=None):
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
+    if args.command=='history-status':return historical_status()
+    if args.command=='history-check':return historical_check()
+    if args.command and args.command.startswith('short-'):
+        import short_experiment as short
+        if args.command.startswith('short-qwen-'):
+            import short_qwen_training as qwen
+            if args.command=='short-qwen-prepare':print(qwen.freeze(args.run_id,model_manifest=args.model_manifest,dataset=args.dataset or short.active_data_path(),profile=args.profile,inherit_model=args.inherit_model,migration=args.migration));return 0
+            if args.command=='short-qwen-execute':return qwen.execute(args.plan)
+            print(json.dumps(qwen.report(args.plan),ensure_ascii=False,indent=2));return 0
+        if args.command.startswith('short-encoder-focus-'):
+            import short_encoder_repair as focus
+            if args.command=='short-encoder-focus-prepare':print(focus.freeze(args.run_id,source_provider=args.source_provider,dataset=args.dataset or short.active_data_path()));return 0
+            if args.command=='short-encoder-focus-execute':return focus.execute(args.plan)
+            print(json.dumps(focus.report(args.plan),ensure_ascii=False,indent=2));return 0
+        if args.command.startswith('short-eval-'):
+            import short_evaluation as evaluation
+            if args.command=='short-eval-prepare':print(evaluation.freeze(args.run_id,args.provider,dataset=args.dataset or short.active_data_path(),scope=args.scope,resource_profile=args.resource_profile,benchmark_evidence=args.benchmark_evidence));return 0
+            if args.command=='short-eval-execute':return evaluation.execute(args.plan)
+            print(json.dumps(evaluation.report(args.plan),ensure_ascii=False,indent=2));return 0
+        if args.command=='short-data':print(json.dumps(short.validate_rows(short.load_rows(args.dataset or short.active_data_path())),ensure_ascii=False));return 0
+        if args.command=='short-audit':
+            if args.model_root and not args.historical:raise ValueError('--model-root requires --historical; current candidates use registered identities')
+            print(json.dumps(short.audit_resources(args.model_root) if args.historical else short.active_audit(),ensure_ascii=False,indent=2));return 0
+        if args.command=='short-prepare':print(short.freeze(args.run_id,model_root=args.model_root,dataset=args.dataset or short.active_data_path(),profile=args.profile,inherit_provider=args.inherit_provider));return 0
+        if args.command=='short-execute':return short.execute(args.plan)
+        if args.command=='short-report':print(json.dumps(short.readiness_report(args.plan),ensure_ascii=False,indent=2));return 0
+    retired=args.command in ('prepare','execute','train-prepare','train-execute')
+    retired=retired or (args.command in ('train-inspect','train-smoke','realizer-steps','realizer-search','realizer-slots') and not getattr(args,'report',False))
+    retired=retired or (args.command in ('plan-data','train-data','train-audit','train-expand','train-report') and getattr(args,'write_new',False))
+    if retired:
+        parser.error('legacy execution retired on this branch; use short-* for the new architecture; d80a031 remains the historical reproduction reference')
     if args.command=='check':return check()
     if args.command=='realizer-slots':
         import realizer_slots

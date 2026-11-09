@@ -1,0 +1,43 @@
+{
+  "runId": "short-encoder-time-20261109-r7",
+  "status": "failed_publishing_after_real_training",
+  "modelManifest": null,
+  "trainingSteps": 32,
+  "trainedHeadComponents": [
+    "D08.1.unit",
+    "D08.2.time.unit"
+  ],
+  "actualPositiveLabelGradientExposures": {
+    "D08.1.unit": {
+      "minute": 16,
+      "second": 16
+    },
+    "D08.2.time.unit": {
+      "minute": 16,
+      "second": 16
+    }
+  },
+  "checkpoint": {
+    "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-time-20261109-r7/encoder/heads.pt",
+    "sha256": "4a00a7bec006c00ace5565046cf06976ac608adfc9e80ca36bc077bbb37d0779"
+  },
+  "registeredPredictions": 8,
+  "error": {
+    "message": "incomplete per-label gradient qualification",
+    "type": "ValueError"
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": 1,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 659.59375,
+    "peakProcessIds": [
+      83641
+    ],
+    "stopReason": null,
+    "wallMs": 18882.793208118528
+  },
+  "sourceRecordSha256": "1ea23ac6a108b0e6fb075c735ed0fd58c1e0736f4c7b923393899963674e2db4",
+  "fixScope": "derive explicit zero counts for unobserved labels without altering observed counts or prior record; next new run",
+  "semanticQualityApproved": false
+}

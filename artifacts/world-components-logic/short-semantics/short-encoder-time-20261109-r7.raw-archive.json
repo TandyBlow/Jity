@@ -1,0 +1,25 @@
+{
+  "schema": "jity-local-raw-archive-v1",
+  "runId": "short-encoder-time-20261109-r7",
+  "gitContent": "index_only_large_payloads_local",
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r7.record.json",
+      "bytes": 179469,
+      "sha256": "1ea23ac6a108b0e6fb075c735ed0fd58c1e0736f4c7b923393899963674e2db4",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r7.record.json.gz",
+      "gzipBytes": 53770,
+      "gzipSha256": "33af78f9c0b8d07f3da3e403f83d086429f2621c4b6613ae350699344d969df2",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r7.record.journal.jsonl",
+      "bytes": 1889380,
+      "sha256": "321e32893dcf3266bf602b337f390181ef223bcbb7b4f1ec2ef43f6636d453e1",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/short-encoder-time-20261109-r7.record.journal.jsonl.gz",
+      "gzipBytes": 128837,
+      "gzipSha256": "59e130a96777e726908ab1487979ffe9ba6fb06f44400684020b2b5d875b31b3",
+      "decompressedByteIdentityVerified": true
+    }
+  ]
+}

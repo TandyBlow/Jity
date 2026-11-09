@@ -1,0 +1,8 @@
+{
+  "schema": "jity-experiment-superseded-before-execution-v1",
+  "previousPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/profiling-comparison-workloads-v1.json",
+  "previousSha256": "8313c0439065173619b275358f04ba5fc2c0cf15f95c856af895f9f1060ceb7a",
+  "status": "superseded_before_execution",
+  "modelCalls": 0,
+  "reason": "Match the other experiments at 8192 complete input token limit; old recipe was 32768. No input is truncated."
+}

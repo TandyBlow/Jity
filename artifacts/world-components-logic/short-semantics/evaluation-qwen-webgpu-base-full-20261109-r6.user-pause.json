@@ -1,0 +1,15 @@
+{
+  "schema": "jity-user-requested-experiment-pause-v1",
+  "requestedAt": "2026-11-09T13:42:59.671366+00:00",
+  "runId": "qwen-webgpu-base-full-20261109-r6",
+  "reason": "User explicitly requested a temporary stop and status summary.",
+  "recordPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.record.json",
+  "planSha256": "44e445df431419238b764330914f0fd24958a6030924a87ea7695ccec79b921e",
+  "completedAttemptCountAtRequest": 264,
+  "activeCaseId": null,
+  "workerPid": 27201,
+  "supervisorPid": 26900,
+  "action": "SIGTERM owned worker process group; supervisor retains and reconciles journal. Browser worker is stopped on disconnect.",
+  "completionMeaning": "in-flight incomplete; remaining unstarted; never skip/no-change/handback",
+  "resumePolicy": "new frozen run identity and explicit remaining-case registration; preserve all existing outputs"
+}

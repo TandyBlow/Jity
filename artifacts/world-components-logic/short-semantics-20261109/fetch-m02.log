@@ -1,0 +1,10 @@
+model.safetensors: 33554432/309783974 bytes
+model.safetensors: 67108864/309783974 bytes
+model.safetensors: 100663296/309783974 bytes
+model.safetensors: 134217728/309783974 bytes
+model.safetensors: 167772160/309783974 bytes
+model.safetensors: 201326592/309783974 bytes
+model.safetensors: 234881024/309783974 bytes
+model.safetensors: 268435456/309783974 bytes
+model.safetensors: 301989888/309783974 bytes
+{"modelDirectory": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead", "verifiedFiles": 6, "wallMs": 84729.84029200001}

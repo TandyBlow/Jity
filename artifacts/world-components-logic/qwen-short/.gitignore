@@ -1,0 +1,21 @@
+# This experiment's full raw evidence and weights remain local; do not delete.
+*.record.json
+*.record.json.gz
+*.journal.jsonl
+*.journal.jsonl.gz
+*.webgpu.jsonl
+*.webgpu.jsonl.gz
+*.process.log
+*.stderr.log
+/browser-tokenizer-probe-*.jsonl
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.onnx_data
+*.gguf
+*.export-record.json
+*.export-record.json.gz
+*.process.log.gz
+*.stderr.log.gz

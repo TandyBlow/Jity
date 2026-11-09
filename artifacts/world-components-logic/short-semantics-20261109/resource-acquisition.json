@@ -1,0 +1,120 @@
+{
+  "models": {
+    "encoder": {
+      "modelId": "hfl/minirbt-h256",
+      "revision": "446e1b4012b10946f479563005700c54c9db3f7c",
+      "directory": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c",
+      "registrySha256": "dd674851600bd08c5bad796f122ba4ea7fc50f60243d174f32c86f83555312d4",
+      "files": [
+        {
+          "path": "README.md",
+          "expectedSha256": "667be60e0b89d63d308d3d1e76f906d056ad4a2c56e6a2f785544098e220f3eb",
+          "observedSha256": "667be60e0b89d63d308d3d1e76f906d056ad4a2c56e6a2f785544098e220f3eb",
+          "expectedBytes": 974,
+          "valid": true
+        },
+        {
+          "path": "config.json",
+          "expectedSha256": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+          "observedSha256": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+          "expectedBytes": 598,
+          "valid": true
+        },
+        {
+          "path": "pytorch_model.bin",
+          "expectedSha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+          "observedSha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+          "expectedBytes": 41514155,
+          "valid": true
+        },
+        {
+          "path": "vocab.txt",
+          "expectedSha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+          "observedSha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+          "expectedBytes": 109540,
+          "valid": true
+        }
+      ],
+      "available": true
+    },
+    "generator": {
+      "modelId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+      "revision": "06d379d7375245f31cfb87166eff134cfeb5dead",
+      "directory": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead",
+      "registrySha256": "dd674851600bd08c5bad796f122ba4ea7fc50f60243d174f32c86f83555312d4",
+      "files": [
+        {
+          "path": "README.md",
+          "expectedSha256": "8b299afc5766f690da82863312ae94360891374e72e96bc80f9ab79c65303848",
+          "observedSha256": "8b299afc5766f690da82863312ae94360891374e72e96bc80f9ab79c65303848",
+          "expectedBytes": 11968,
+          "valid": true
+        },
+        {
+          "path": "config.json",
+          "expectedSha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+          "observedSha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+          "expectedBytes": 780,
+          "valid": true
+        },
+        {
+          "path": "model.safetensors",
+          "expectedSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+          "observedSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+          "expectedBytes": 309783974,
+          "valid": true
+        },
+        {
+          "path": "special_tokens_map.json",
+          "expectedSha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+          "observedSha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+          "expectedBytes": 65,
+          "valid": true
+        },
+        {
+          "path": "spiece.model",
+          "expectedSha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+          "observedSha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+          "expectedBytes": 680811,
+          "valid": true
+        },
+        {
+          "path": "tokenizer_config.json",
+          "expectedSha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+          "observedSha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+          "expectedBytes": 439,
+          "valid": true
+        }
+      ],
+      "available": true
+    }
+  },
+  "dependencies": {
+    "torch": true,
+    "transformers": true,
+    "sentencepiece": true,
+    "numpy": true
+  },
+  "versions": {
+    "torch": "2.7.1",
+    "transformers": "4.57.3",
+    "sentencepiece": "0.2.1",
+    "numpy": "1.26.4"
+  },
+  "blockers": [],
+  "pythonExecutable": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/venv/bin/python",
+  "pythonVersion": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "modelCalls": 0,
+  "trainingSteps": 0,
+  "scope": "local_presence_identity_only",
+  "recordedAt": "2026-11-09T07:25:06.727369+00:00",
+  "authorization": "user_20261109_no_other_models_use_discretion_free_public_downloads",
+  "paidServices": false,
+  "installReportSha256": "06b09a51437ff1184bdd402610ad1534e781196ecb10bce47379194f99de9a57",
+  "hostArchitecture": "arm64",
+  "totalMemoryBytes": 19327352832,
+  "diskFreeBytes": 19521142784,
+  "initialResources": "no local model weights found; fixed public revisions fetched and verified",
+  "originalInterpreter": "Apple command-line Python 3.9 lacked dependencies; dedicated Python 3.12 venv created"
+}

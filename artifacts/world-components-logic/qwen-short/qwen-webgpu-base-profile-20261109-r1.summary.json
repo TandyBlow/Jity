@@ -1,0 +1,530 @@
+{
+  "schema": "jity-webgpu-profile-summary-v1",
+  "runId": "qwen-webgpu-base-profile-20261109-r1",
+  "status": "diagnostic_completed",
+  "qualification": {
+    "mode": "base_zero_shot_diagnostic",
+    "scope": "unfinetuned_community_base_profiling_only",
+    "trainedExportDisposition": {
+      "effectiveQualification": null,
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r4.export-record.json",
+      "runId": "qwen-short-time-export-20261109-r4",
+      "sha256": "0a99bf2017e478210b1c12d241721cb2a76b3a64477887ee4975f2a6c18c001a",
+      "status": "failed"
+    },
+    "trainedWeightsExportQualified": false,
+    "trainingEffectEvidence": false
+  },
+  "registeredMeasurements": 8,
+  "uniqueInputs": 2,
+  "uniqueSourceGroups": 1,
+  "sourceSplit": "development_previously_exposed",
+  "retries": 0,
+  "unstarted": 0,
+  "completeEosResults": 8,
+  "independentSemanticAssessments": {
+    "fails_component_responsibility": 2
+  },
+  "measurementSemanticAssessments": {
+    "fails_component_responsibility": 8
+  },
+  "humanReviewCount": 0,
+  "sourceVerification": "unverified_assistant_drafts",
+  "semanticQualityApproved": false,
+  "fullRequestMeasured": false,
+  "fullRequest500ms": "not_measured_AB_C_and_ready_missing",
+  "allEightLocalCallsExceeded500ms": true,
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 43.328125,
+    "peakProcessIds": [
+      14250
+    ],
+    "stopReason": null,
+    "wallMs": 324660.8753330074
+  },
+  "bootstrap": {
+    "attachLoadAndReadyMs": 40497.675417,
+    "actualModelLoadMs": 3231.6500000953674,
+    "tokenizerParityCases": 4,
+    "modelLoadCount": 1,
+    "separateShaderCompilationMs": null
+  },
+  "timing": {
+    "caseWallSumMs": 283016.482291,
+    "completeGenerateSumMs": 281345.3200004101,
+    "profiledOnKernelSumMs": 45109.542912000004,
+    "onKernelTimeIsUnprofiledCompute": false,
+    "offKernelTimeMs": null,
+    "cpuOperatorTimeMs": null,
+    "caseWallIncludesResultSnapshotTelemetry": true
+  },
+  "memory": {
+    "pythonPeakMiB": 43.328125,
+    "browserPeakMiB": null,
+    "gpuPeakMiB": null
+  },
+  "gpuEvidence": {
+    "deviceSessions": 1,
+    "realAdapter": "Apple metal-3 nonfallback",
+    "onRequestsWithPositiveMatMulNBits": 4,
+    "offPerRequestGpuProof": false,
+    "offPriorCalibrationReferencesVerified": 4,
+    "kernelBatches": 354,
+    "observedKernels": 22608
+  },
+  "cases": [
+    {
+      "caseId": "short:1:default",
+      "component": "D01.1.slot_label",
+      "workloadId": "short",
+      "mode": "default",
+      "requestId": "cd60305cf5934b8ead1610fb2ec397df",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "inputTokenCount": 196,
+      "outputTokenCount": 6,
+      "rawText": "防潮闸控制室",
+      "rawTokenIds": [
+        99287,
+        100227,
+        107964,
+        100359,
+        99478,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸控制室"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 3.7200000286102295,
+        "forwardMs": 898.460000038147,
+        "profileDrainMs": 0.875,
+        "profilingCostIncluded": true,
+        "profilingMode": "default",
+        "kernelProfilingEnabled": true,
+        "workerTotalMs": 904.795000076294
+      },
+      "caseWallMs": 1258.727625,
+      "resultJournalMs": 0.539541,
+      "snapshotEndMs": 0.814167,
+      "telemetryJournalMs": 0.056291,
+      "observedGpuKernelMs": 572.850176,
+      "kernelCount": 3580,
+      "positiveWeightKernelCount": 577,
+      "perRequestGpuProof": true,
+      "calibration": null
+    },
+    {
+      "caseId": "short:2:off",
+      "component": "D01.1.slot_label",
+      "workloadId": "short",
+      "mode": "off",
+      "requestId": "1b3e94b4dfa04157959429b9a4c39387",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "inputTokenCount": 196,
+      "outputTokenCount": 6,
+      "rawText": "防潮闸控制室",
+      "rawTokenIds": [
+        99287,
+        100227,
+        107964,
+        100359,
+        99478,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸控制室"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 0.9449999332427979,
+        "forwardMs": 589.414999961853,
+        "profileDrainMs": 0.3000001907348633,
+        "profilingCostIncluded": true,
+        "profilingMode": "off",
+        "kernelProfilingEnabled": false,
+        "workerTotalMs": 591.0999999046326
+      },
+      "caseWallMs": 616.272417,
+      "resultJournalMs": 0.256292,
+      "snapshotEndMs": 1.131083,
+      "telemetryJournalMs": 0.066875,
+      "observedGpuKernelMs": null,
+      "kernelCount": null,
+      "positiveWeightKernelCount": null,
+      "perRequestGpuProof": false,
+      "calibration": {
+        "deviceSessionId": "f09a910e-3a50-403d-af3b-96003d631b78",
+        "positiveWeightKernelCount": 577,
+        "requestId": "cd60305cf5934b8ead1610fb2ec397df",
+        "requestSha256": "f9062054da02de00bb0234944a0bfbaae64a3a34ebc5598718473e2292a7a419",
+        "scopeSha256": "7e2860f82d1f85d44eb57b3f36d32c6a857b2fd3151712eaad17dc4e7e3045e5"
+      }
+    },
+    {
+      "caseId": "short:3:default",
+      "component": "D01.1.slot_label",
+      "workloadId": "short",
+      "mode": "default",
+      "requestId": "a03a35499c424550ac16c17bc6aa8aae",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "inputTokenCount": 196,
+      "outputTokenCount": 6,
+      "rawText": "防潮闸控制室",
+      "rawTokenIds": [
+        99287,
+        100227,
+        107964,
+        100359,
+        99478,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸控制室"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 0.8600001335144043,
+        "forwardMs": 656.5350000858307,
+        "profileDrainMs": 1.874999761581421,
+        "profilingCostIncluded": true,
+        "profilingMode": "default",
+        "kernelProfilingEnabled": true,
+        "workerTotalMs": 659.920000076294
+      },
+      "caseWallMs": 1057.972458,
+      "resultJournalMs": 0.593875,
+      "snapshotEndMs": 1.2565,
+      "telemetryJournalMs": 0.062667,
+      "observedGpuKernelMs": 559.284224,
+      "kernelCount": 3580,
+      "positiveWeightKernelCount": 547,
+      "perRequestGpuProof": true,
+      "calibration": null
+    },
+    {
+      "caseId": "short:4:off",
+      "component": "D01.1.slot_label",
+      "workloadId": "short",
+      "mode": "off",
+      "requestId": "da08aa11d6b3418db09a7996e344fc97",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "inputTokenCount": 196,
+      "outputTokenCount": 6,
+      "rawText": "防潮闸控制室",
+      "rawTokenIds": [
+        99287,
+        100227,
+        107964,
+        100359,
+        99478,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸控制室"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 0.9100000858306885,
+        "forwardMs": 540.8199999332428,
+        "profileDrainMs": 0.3450000286102295,
+        "profilingCostIncluded": true,
+        "profilingMode": "off",
+        "kernelProfilingEnabled": false,
+        "workerTotalMs": 542.6099998950958
+      },
+      "caseWallMs": 602.549583,
+      "resultJournalMs": 0.265375,
+      "snapshotEndMs": 1.511208,
+      "telemetryJournalMs": 0.075292,
+      "observedGpuKernelMs": null,
+      "kernelCount": null,
+      "positiveWeightKernelCount": null,
+      "perRequestGpuProof": false,
+      "calibration": {
+        "deviceSessionId": "f09a910e-3a50-403d-af3b-96003d631b78",
+        "positiveWeightKernelCount": 547,
+        "requestId": "a03a35499c424550ac16c17bc6aa8aae",
+        "requestSha256": "de2a8b2511ac7f9e24791c57f29c1809acd6edafaff8a704a5e4414ddcf904b5",
+        "scopeSha256": "7e2860f82d1f85d44eb57b3f36d32c6a857b2fd3151712eaad17dc4e7e3045e5"
+      }
+    },
+    {
+      "caseId": "long:1:default",
+      "component": "U4.2",
+      "workloadId": "long",
+      "mode": "default",
+      "requestId": "2ae5a66b146d4bb9b70cf4abda885d51",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "inputTokenCount": 3128,
+      "outputTokenCount": 13,
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "rawTokenIds": [
+        12,
+        58230,
+        228,
+        107964,
+        64689,
+        44934,
+        107570,
+        100372,
+        113969,
+        113490,
+        29767,
+        1773,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "- 将闸门手柄完全向外扳开。"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 7.65500020980835,
+        "forwardMs": 60571.610000133514,
+        "profileDrainMs": 0.3599998950958252,
+        "profilingCostIncluded": true,
+        "profilingMode": "default",
+        "kernelProfilingEnabled": true,
+        "workerTotalMs": 60586.38499999046
+      },
+      "caseWallMs": 60919.520166,
+      "resultJournalMs": 1.910084,
+      "snapshotEndMs": 3.038125,
+      "telemetryJournalMs": 0.12275,
+      "observedGpuKernelMs": 21327.183872,
+      "kernelCount": 7724,
+      "positiveWeightKernelCount": 1348,
+      "perRequestGpuProof": true,
+      "calibration": null
+    },
+    {
+      "caseId": "long:2:off",
+      "component": "U4.2",
+      "workloadId": "long",
+      "mode": "off",
+      "requestId": "1ec989d445cc44ed95705fc360a7697d",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "inputTokenCount": 3128,
+      "outputTokenCount": 13,
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "rawTokenIds": [
+        12,
+        58230,
+        228,
+        107964,
+        64689,
+        44934,
+        107570,
+        100372,
+        113969,
+        113490,
+        29767,
+        1773,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "- 将闸门手柄完全向外扳开。"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 11.900000095367432,
+        "forwardMs": 85834.44500017166,
+        "profileDrainMs": 1.2400000095367432,
+        "profilingCostIncluded": true,
+        "profilingMode": "off",
+        "kernelProfilingEnabled": false,
+        "workerTotalMs": 85849.03000020981
+      },
+      "caseWallMs": 85911.424209,
+      "resultJournalMs": 0.555084,
+      "snapshotEndMs": 13.9995,
+      "telemetryJournalMs": 0.1455,
+      "observedGpuKernelMs": null,
+      "kernelCount": null,
+      "positiveWeightKernelCount": null,
+      "perRequestGpuProof": false,
+      "calibration": {
+        "deviceSessionId": "f09a910e-3a50-403d-af3b-96003d631b78",
+        "positiveWeightKernelCount": 1348,
+        "requestId": "2ae5a66b146d4bb9b70cf4abda885d51",
+        "requestSha256": "15d796f0340222984999caad79fc63fe08cfa46fdc681f41a6ea55327507c448",
+        "scopeSha256": "bf4c367f94eb65a5d42a777294ea6f7ccccfdea028d1d95dcfda433f77a9b967"
+      }
+    },
+    {
+      "caseId": "long:3:default",
+      "component": "U4.2",
+      "workloadId": "long",
+      "mode": "default",
+      "requestId": "c4375796b9c244a69098124af2973ff3",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "inputTokenCount": 3128,
+      "outputTokenCount": 13,
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "rawTokenIds": [
+        12,
+        58230,
+        228,
+        107964,
+        64689,
+        44934,
+        107570,
+        100372,
+        113969,
+        113490,
+        29767,
+        1773,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "- 将闸门手柄完全向外扳开。"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 17.824999809265137,
+        "forwardMs": 85788.59500002861,
+        "profileDrainMs": 0.5150001049041748,
+        "profilingCostIncluded": true,
+        "profilingMode": "default",
+        "kernelProfilingEnabled": true,
+        "workerTotalMs": 85817.48999977112
+      },
+      "caseWallMs": 86069.737583,
+      "resultJournalMs": 1.908666,
+      "snapshotEndMs": 4.100458,
+      "telemetryJournalMs": 0.092875,
+      "observedGpuKernelMs": 22650.22464,
+      "kernelCount": 7724,
+      "positiveWeightKernelCount": 1292,
+      "perRequestGpuProof": true,
+      "calibration": null
+    },
+    {
+      "caseId": "long:4:off",
+      "component": "U4.2",
+      "workloadId": "long",
+      "mode": "off",
+      "requestId": "385a2150fd3b4841a526ab19a21f29b0",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "inputTokenCount": 3128,
+      "outputTokenCount": 13,
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "rawTokenIds": [
+        12,
+        58230,
+        228,
+        107964,
+        64689,
+        44934,
+        107570,
+        100372,
+        113969,
+        113490,
+        29767,
+        1773,
+        151645
+      ],
+      "eosReached": true,
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "- 将闸门手柄完全向外扳开。"
+      },
+      "timings": {
+        "coldLoad": false,
+        "loadMs": 0,
+        "tokenizeMs": 7.454999923706055,
+        "forwardMs": 46465.44000005722,
+        "profileDrainMs": 1.0649998188018799,
+        "profilingCostIncluded": true,
+        "profilingMode": "off",
+        "kernelProfilingEnabled": false,
+        "workerTotalMs": 46476.22500014305
+      },
+      "caseWallMs": 46580.27825,
+      "resultJournalMs": 0.340166,
+      "snapshotEndMs": 14.264333,
+      "telemetryJournalMs": 0.140292,
+      "observedGpuKernelMs": null,
+      "kernelCount": null,
+      "positiveWeightKernelCount": null,
+      "perRequestGpuProof": false,
+      "calibration": {
+        "deviceSessionId": "f09a910e-3a50-403d-af3b-96003d631b78",
+        "positiveWeightKernelCount": 1292,
+        "requestId": "c4375796b9c244a69098124af2973ff3",
+        "requestSha256": "c0ab4b70f67d705777817b3c9b32f5335f859c462fe8eeeaae7d8c2a85cb029f",
+        "scopeSha256": "bf4c367f94eb65a5d42a777294ea6f7ccccfdea028d1d95dcfda433f77a9b967"
+      }
+    }
+  ],
+  "textAndTokenAgreement": {
+    "allFourMeasurementsPerInputEqual": true,
+    "logitsCompared": false
+  },
+  "interpretation": [
+    "Short observed off calls were faster; long paired differences changed direction.",
+    "The fixed ordering does not identify a causal profiling/logging effect.",
+    "Profiling changes GPU pass boundaries; background iCloud transfer may have continued after restoring local files, and thermal/system-idle conditions were not controlled.",
+    "No session_calibrated mode was implemented or adopted from these results.",
+    "The two repeated inputs do not establish task generalization or finetuned model quality."
+  ],
+  "evidence": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/webgpu-base-profile-r1.technical-audit.json",
+      "sha256": "c7a16fae1caf8e86d0ad023f0636d298cd92c1ee44d1eb37a8cb44d054388b02",
+      "bytes": 23707
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/webgpu-base-profile-r1.identity-audit.json",
+      "sha256": "41e5007130f69520489bf86e0c442995e674ea53f25c5c1696632353cb5e83a2",
+      "bytes": 854
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/webgpu-base-profile-r1.assistant-review.json",
+      "sha256": "6bdfe89e81c8b5eaefa4e935cff7468943d64536c60af4deffa14eac8f00b7de",
+      "bytes": 7827
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.raw-archive.json",
+      "sha256": "21d25e9a56c1a16be0bdeff77e68c79e1f4d963738aef84f4740b05d45b5d93c",
+      "bytes": 2887
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/webgpu-base-profile-r1.jpg",
+      "sha256": "aa60010e500599293898dbd12fe1600b3ad63bab96ee733ac1bf3e4d9210762a",
+      "bytes": 81189
+    }
+  ]
+}

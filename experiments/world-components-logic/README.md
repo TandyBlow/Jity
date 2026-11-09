@@ -1,4 +1,33 @@
+> 2026-11-09 最新模型变更：自然语言生成停用燃灯，选择 Qwen3-0.6B 非思考模式与 WebGPU 部署路线。基座已真实运行；训练后 export-r1 数值门失败、登记已隔离，不能当作已通过的浏览器模型。下文燃灯记录仅为历史证据。
+
 # D / L3 当前入口与实验记录
+
+## 当前唯一活动方案：短语义组件（2026-11-09）
+
+分支 `codex/d-short-semantics-20261109` 完全使用新方案；旧计划表达链不再作为活动方案或回退。
+入口仍为 `experiment.py`，使用 `short-*` 子命令；完整说明与状态见
+[新方案接口/交接](../../design/world-engine-reports/components-logic/short-semantics.md) 和
+[训练实验](../../design/world-engine-reports/components-logic/short-experiment.md)。
+实际完成、失败和未接入项以 [交付报告](../../design/world-engine-reports/components-logic/short-results.md) 为准。
+`data/short-semantics/active-selection.json` 显式登记 time-choice-v2 的 4,750 条数据、r8 编码器、r6 聚焦四头及 Qwen r5（144 累计步）。`status`、`short-data`、`short-audit` 默认检查当前候选，数据与训练清单内容身份漂移明确拒绝；旧资源仅以 `short-audit --historical` 读取。当前 `browserProvider=null`：严格 export-r2 数值门失败，r3 在数值比较前因导出注册缺失失败，候选状态不能解释为语义或产品接线通过。逐任务及关键反例留出盲区见 [诊断覆盖审计](../../design/world-engine-reports/components-logic/short-diagnostic-coverage.md)。
+新模块 `short_contracts`、`short_intent`、`short_settlement`、`short_lifecycle`、`short_handoff`、
+`short_training`、`short_experiment` 分别实现三态、D02–D04、D05/D06、D01/D07/D08、提交/叙事隔离、训练和公共运行器适配。
+本机缺模型资源时明确 blocked，工程替身不计语义能力；新助手草稿人审/来源待核。
+
+export-r4 同输入关闭 ORT 优化仍有 28/57 输出不满足原数值门，未量化/发布。当前另行执行 `qwen-webgpu-base-full-20261109-r6` 的 436 槽离线批，使用已训练编码头与零训练步浏览器基座。显式 `short-eval-prepare --resource-profile webgpu_complete_context_v1 --benchmark-evidence <已完成profiling.record.json>` 延长观察到 7200 秒总预算，保持原 500ms 门、完整输入、全部槽和零重试；默认资源档不改。本批尚在执行，不预报结果，不接真实 C。
+
+当前工程检查使用专用环境：
+
+```bash
+.local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py check
+.local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py short-data
+.local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py short-audit
+.local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py status
+```
+
+`check` 仅执行新架构及公共日志的工程测试，包含小型数值梯度测试，不加载游戏模型作能力评测。历史材料只读核验另用 `history-check`；历史依赖模型的测试及运行方式由原提交定位，不纳入当前默认检查。活动 Qwen 训练使用 `short-qwen-prepare/execute/report`；编码器修复使用 `short-prepare --profile encoder_time_repair` 或其他明确登记的编码器 profile；聚焦比较使用 `short-encoder-focus-*`。真实推理仍经 `short-eval-prepare/execute/report`，必须先冻结独立身份且满足模型发布资格。旧 intent/all 的燃灯生成不再执行，不能把上述只读检查或工程测试当成真实实验。
+
+下面各节完整保留为历史记录。历史命令、授权和结论不能作为本次活动配置；旧执行入口已退休，旧报告只读核验。
 
 ## 当前从这里开始（2026-11-04）
 

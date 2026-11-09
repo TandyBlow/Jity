@@ -1,0 +1,34 @@
+{
+  "schema": "jity-local-raw-archive-v1",
+  "runId": "qwen-short-time-export-20261109-r3",
+  "gitContent": "index_only_large_payloads_local",
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.json",
+      "bytes": 2423,
+      "sha256": "65b7f4610a693d4733926a8b1512c3735f00e3f5b711c2f7a268fae7edb63556",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.json.gz",
+      "gzipBytes": 997,
+      "gzipSha256": "dede888118785d9ec6bfe463f78ed61949285cb4c4662e4e7981d47d6c173386",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.journal.jsonl",
+      "bytes": 12829,
+      "sha256": "8038bcf3cf7a1ca256145d4266a6b2a9aea3846f1a81cf361c525229cf6998f1",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.journal.jsonl.gz",
+      "gzipBytes": 4954,
+      "gzipSha256": "fc1a86caa8cd98f7f056b028577ebe9699dc1983b994fa3adbf786ee4c119f37",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.process.log",
+      "bytes": 286,
+      "sha256": "7a97056b36cc0c297b74bc920c5fb4ece73fd2a00231d5e5f72cc2691f81ec74",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r3.export-record.process.log.gz",
+      "gzipBytes": 207,
+      "gzipSha256": "cd8d6cecf05e4a3deecc0be3f2df015f491eb8152f6193b69966434b852d3864",
+      "decompressedByteIdentityVerified": true
+    }
+  ]
+}

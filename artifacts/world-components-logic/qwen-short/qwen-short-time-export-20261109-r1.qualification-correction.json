@@ -1,0 +1,15 @@
+{
+  "schema": "jity-export-qualification-correction-v1",
+  "runId": "qwen-short-time-export-20261109-r1",
+  "originalRecordStatus": "diagnostic_completed",
+  "effectiveQualification": "failed_numerical_validation",
+  "reason": "Optimum top-level export catches AtolError and logs warning; our wrapper did not propagate it.",
+  "registeredAtol": 0.0001,
+  "observedMaxReportedAbsoluteDifference": 0.0008597373962402344,
+  "logPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.process.log",
+  "logSha256": "7c08ea8499d4203d691950c37db4b0f51b570c5150a07fada36b4a14ab7f7058",
+  "originalRecordsModified": false,
+  "assetsQuarantined": true,
+  "browserInferenceAllowed": false,
+  "semanticQualityApproved": false
+}

@@ -1,0 +1,27 @@
+{
+  "lossless": true,
+  "firstOutputsPreserved": true,
+  "decompressedSha256Verified": true,
+  "files": [
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.json",
+      "originalBytes": 20265209,
+      "originalSha256": "dbff3c247f02ae4f90e7abf0192a9f5f83b28856ef7d4c2d11bf738ce93cc662",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.json.gz",
+      "compressedBytes": 5905814,
+      "compressedSha256": "ac66f95b549eaa5043aed9bd35d401b0043010e8b8bdc65c297d7623536d59ff",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_raw_and_compressed_retained_locally"
+    },
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.journal.jsonl",
+      "originalBytes": 242651728,
+      "originalSha256": "c8e273401e7eeaf3569e70df4551cf87f51d786f38b3e6a3f0039bd57e8385af",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.journal.jsonl.gz",
+      "compressedBytes": 16216505,
+      "compressedSha256": "54014d9b141d2629f741ded12e624bd48fc718e3a7197f4e73672901aa4e405f",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_raw_and_compressed_retained_locally"
+    }
+  ]
+}

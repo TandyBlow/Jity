@@ -1,0 +1,492 @@
+{
+  "schema": "jity-lossless-large-file-backup-v1",
+  "format": "tar.zst",
+  "zstdWindowLog": 31,
+  "archiveBytes": 2266416922,
+  "archiveSha256": "4950430a977521b1959ce13f099a67a95165e1c98ce7c353ca3844510e9ed335",
+  "parts": [
+    {
+      "path": "training-files.tar.zst.part000",
+      "bytes": 268435456,
+      "sha256": "c7c42587318619c77066c6b765e083dd8ca7c2f1e58170c6a2347d57e5b1037c"
+    },
+    {
+      "path": "training-files.tar.zst.part001",
+      "bytes": 268435456,
+      "sha256": "23b0efbcd9dddb0927c486dfab32fd4997dec5dca51f2c628b008bc7dcc03e73"
+    },
+    {
+      "path": "training-files.tar.zst.part002",
+      "bytes": 268435456,
+      "sha256": "bd5efbaa8bbe93131c241daf6d51a3e512d55bd910f59493f6d8e97e8df9545b"
+    },
+    {
+      "path": "training-files.tar.zst.part003",
+      "bytes": 268435456,
+      "sha256": "439d9f36b5b9fe911b1e337419b848bfae4dc0b8fbf5e0be2830320a4a44cafb"
+    },
+    {
+      "path": "training-files.tar.zst.part004",
+      "bytes": 268435456,
+      "sha256": "7e111260da46b0661816e6093bef51077df62b848d0a3d6df3a78b8e7f5dc329"
+    },
+    {
+      "path": "training-files.tar.zst.part005",
+      "bytes": 268435456,
+      "sha256": "427c9cccf3d62ad2ba177004715c4d899980ba8b2880e9aa7e6ff3557cca68c9"
+    },
+    {
+      "path": "training-files.tar.zst.part006",
+      "bytes": 268435456,
+      "sha256": "3ff9105d95bf3fe9e48af6b722c21367c8ca0a9e56329e9b44882047d03d2deb"
+    },
+    {
+      "path": "training-files.tar.zst.part007",
+      "bytes": 268435456,
+      "sha256": "695a75f47505695482bbe5f47622f5c604afb0605f135793585a5c4ab1c77a5d"
+    },
+    {
+      "path": "training-files.tar.zst.part008",
+      "bytes": 118933274,
+      "sha256": "325b27b460756f2e0a5edf22825a38b412f955461849598efffef9389e63cf3a"
+    }
+  ],
+  "files": [
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin",
+      "bytes": 41514155,
+      "sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-focus-20261109-r6/full_mean_control/heads.pt",
+      "bytes": 551387,
+      "sha256": "d122d1e3010339866dee6bded625ed13c8ea9bc2cebc84abe01458536f5c2b0e"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-focus-20261109-r6/global_plus_focus/heads.pt",
+      "bytes": 551387,
+      "sha256": "1cd7ce3af5d6cd344c3847827049316455e776f8297023d5d566e1024b5f7811"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-repair-20261109-r5/merged-heads.pt",
+      "bytes": 514823,
+      "sha256": "6c08973cbc3ec6989ab083e1a30457721eaf99357cb3fe4f4fd38c8632b9ab9c"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-time-20261109-r7/encoder/heads.pt",
+      "bytes": 14621,
+      "sha256": "4a00a7bec006c00ace5565046cf06976ac608adfc9e80ca36bc077bbb37d0779"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-time-20261109-r8/encoder/heads.pt",
+      "bytes": 14621,
+      "sha256": "4a00a7bec006c00ace5565046cf06976ac608adfc9e80ca36bc077bbb37d0779"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/encoder/short-encoder-time-20261109-r8/encoder/merged-heads.pt",
+      "bytes": 514887,
+      "sha256": "9adf110c10a2ccd090c83a8ddf89f4a3ff6e7cfc7eb68c3e6da86ea6645fbe21"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/merged/model.safetensors",
+      "bytes": 1192135096,
+      "sha256": "0a6d9395f71e6ea19bad260a1bfb83964e093a9cf6ba66bb0590d394e1f70c59"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/merged/tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-008/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "d956ec67cb6a8e3c3bd61ffa83c0a163e9b4d6a668632ab22fbbc3b424180bf1"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-008/state.pt",
+      "bytes": 9343899,
+      "sha256": "06177ab4e786379c89ce49ea643dcc9388fcbd88c7dda7dc8bcd52e4623f9f0b"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-009/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "49d22e188d3d01a8935401a8403c9121e275925c16ca0a920531794d9d95f88a"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-009/state.pt",
+      "bytes": 9343963,
+      "sha256": "440ef56ff8bd55e3a71a72fcf09dd7b16db33da4f469b4cfab7f9dd05abde772"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-010/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "cf4b6a6efbf65262ec515391dc5ca385399a2811b3d19e8a57f87d5dd06d409e"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-010/state.pt",
+      "bytes": 9344027,
+      "sha256": "11690c2c095dd1b9af309569c80b05860868de2089cc6b7eeed76a0ffe080f51"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-011/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "18361d7bae6d0b01f294b3328f070814cf293125461bb4abffb8e8d070c60f1d"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-011/state.pt",
+      "bytes": 9344091,
+      "sha256": "6c6a4d99464c54fee17647dd120bce4e8f6c37bb957504328da8dc578992089d"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-012/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "fcf8ba8c9fb9a400145212ebc60c824ab69b33472949bf166254fb50868a0699"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-012/state.pt",
+      "bytes": 9344219,
+      "sha256": "565022e714dea0b7e2a539d8b722a1c4b617d344c35e830ad5e29837586213ae"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-013/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "65aadf72351e52f7976ec6d1014a17f628bf6aafd51868a2295b00bac83cf654"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-013/state.pt",
+      "bytes": 9344283,
+      "sha256": "f33c36276757057065614e354a93c7378267320f5c3101babc6cc7c63cfc14c1"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-014/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "989344b2ea6b9a476225bcacbedfb69b9e2ea990a27048df509ae1cfd02f1708"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-014/state.pt",
+      "bytes": 9344347,
+      "sha256": "577bed66bf87ea4e0f53a50847a528ef7c286fedeabfc5e1c43bb3e5c46f09d6"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-015/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "6dab55ac9ad4725aac6c2920ffdc2b7cebb625b24cb16c3e683e552ac9430e51"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-015/state.pt",
+      "bytes": 9344411,
+      "sha256": "b6cfef7f1e2e890ccea826ea286b27b88ab3a7cedae85b14a67c0c1660c2e268"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-016/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "d1024f134c902ee05beaa18f691760e3f3ba558dc06e0c4aa0f8cb1edc2539e3"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-016/state.pt",
+      "bytes": 9344475,
+      "sha256": "1be66604bbdfbbe61fd81be499fbb39deecf122478f815f553e0477fe2dc29d2"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-017/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "264f92c219894b462c3e4ef3565ac5b49c1e0ec648261550300423b2986ad059"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-017/state.pt",
+      "bytes": 9344539,
+      "sha256": "65d12abbcc3404022e6dde358ae25d59a99845aec11e60c89c6e8bb4ea990dd9"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-018/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "2e29c6a048bb9fd41607cab0e0cb6d635aa29e4946b2a73e376d2c11328d6ebf"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-018/state.pt",
+      "bytes": 9344603,
+      "sha256": "59c21b565aafbb0088c9735e69c1589eabed79e432913208d28b44277acb73fe"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-019/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "bb11e2d53a7f9a04a500b8b19fede81d6520cfe6199659c045e6b4ed647727ea"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-019/state.pt",
+      "bytes": 9344667,
+      "sha256": "99bdb2bc076fb4b871befd6e6a87e920222856d4bb6af0b7613f36683532bf47"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-020/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "f0e883ef3688785e77af4ab1d4145b4ce6eeae5a2ce3e0245da78428ccc60e96"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-020/state.pt",
+      "bytes": 9344795,
+      "sha256": "42b781b38b0971de63c80d47b0b658a9eb5cba434f00d09ac8550e76494b421b"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-021/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "8ace2ac14745a703efb9dd68446cfdeb07dda040ae5d876e6ec79c53a3d807c9"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-20261109-r4/unit-021/state.pt",
+      "bytes": 9344859,
+      "sha256": "4a90e4a94a486fc27b449e8a1812a2698f14653b853309ebdf468c4a776bdbc6"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/merged/model.safetensors",
+      "bytes": 1192135096,
+      "sha256": "a4d42694e0f6d0f377a974325f887ed6c9259ad13a158aa7cc653d7cfd37ec07"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/merged/tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-001/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "3340cfc409533bf1e9e1817738e3d5bc8fb6c61019d730ef42c9c6e8013433b0"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-001/state.pt",
+      "bytes": 9343963,
+      "sha256": "58de356c985cdc1afa4ee0a11d2b93478efa5e7f2efbc2b5554c03b2becc16b0"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-002/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "48d6364a9f6c47caa9cd1d29797efd7fc785c7ac1b934197f256946943fd603e"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-002/state.pt",
+      "bytes": 9344027,
+      "sha256": "10de7aa179e88abd6e8ec1b4d46274196d428787a5850137adafdba73e0f8b38"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-003/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "ec3518cd8597b073634352305dbb621b8c084219f02229a1fc5bbff0023fc5dc"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-003/state.pt",
+      "bytes": 9344091,
+      "sha256": "6671a96171ce473e79cf36ecda24aacdf5b8ab721094dd868910d24b0a2cc4a5"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-004/adapter.pt",
+      "bytes": 2329055,
+      "sha256": "68eda871cb811542fe759e230327ad4323e2a93990c0686567f5f7f601d80d39"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/runs/qwen-short-time-20261109-r5/unit-004/state.pt",
+      "bytes": 9344155,
+      "sha256": "5dd095ec9d11bb333bec6ef5c90fd5f765b914ed246a49162da7119c8dfb89cb"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors",
+      "bytes": 1503300328,
+      "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/task-cache/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/onnx/model_q4f16.onnx",
+      "bytes": 569789750,
+      "sha256": "9e33a5911974174761d0dfdcc0bec975d9c45af0eae5e9eb647b8ba9442a8f91"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/heads.pt",
+      "bytes": 551387,
+      "sha256": "d122d1e3010339866dee6bded625ed13c8ea9bc2cebc84abe01458536f5c2b0e"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/heads.pt",
+      "bytes": 551387,
+      "sha256": "1cd7ce3af5d6cd344c3847827049316455e776f8297023d5d566e1024b5f7811"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin",
+      "bytes": 41514155,
+      "sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/model.safetensors",
+      "bytes": 309783974,
+      "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/spiece.model",
+      "bytes": 680811,
+      "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors",
+      "bytes": 1503300328,
+      "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-all-20261109-r3/encoder/heads.pt",
+      "bytes": 512711,
+      "sha256": "422d110cafa01dfeabf5f502d84e174e8a91f18cb7acd92a5b86c54eff60d6bd"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-all-20261109-r3/generator/adapter.pt",
+      "bytes": 719171,
+      "sha256": "456b60c81634e4d6a00b18b0fc02214239156a57a2b5163ca240b1aa031917ce"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-encoder-repair-20261109-r4/encoder/heads.pt",
+      "bytes": 13013,
+      "sha256": "00a87d338c6de10bc987c4e5921fd630a134f787bb9ef799bd16a767e3aa38cd"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-encoder-repair-20261109-r4/encoder/merged-heads.pt",
+      "bytes": 514823,
+      "sha256": "6c08973cbc3ec6989ab083e1a30457721eaf99357cb3fe4f4fd38c8632b9ab9c"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-encoder-repair-20261109-r5/encoder/heads.pt",
+      "bytes": 13013,
+      "sha256": "00a87d338c6de10bc987c4e5921fd630a134f787bb9ef799bd16a767e3aa38cd"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-encoder-repair-20261109-r5/encoder/merged-heads.pt",
+      "bytes": 514823,
+      "sha256": "6c08973cbc3ec6989ab083e1a30457721eaf99357cb3fe4f4fd38c8632b9ab9c"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-intent-20261109-r1/encoder/heads.pt",
+      "bytes": 35163,
+      "sha256": "f1e0e3e14ef6f44dc3a7561a0136a1365ae68a7daa68b81a5cee8533229eab40"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/short-semantic-models/short-intent-20261109-r1/generator/adapter.pt",
+      "bytes": 719171,
+      "sha256": "117ced83d28e2297f19d2c48b4d938986623df9ece99409c32e6ff9d5611d7af"
+    },
+    {
+      "path": "artifacts/world-components-logic/model-archive-20261110/worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/onnx/model_q4f16.onnx",
+      "bytes": 569789750,
+      "sha256": "9e33a5911974174761d0dfdcc0bec975d9c45af0eae5e9eb647b8ba9442a8f91"
+    },
+    {
+      "path": "artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.journal.jsonl",
+      "bytes": 19975529,
+      "sha256": "62bd2de51ec69b9d39bbc318e48fda7be896e2cad091c79ba7417a57f50dd6fa"
+    },
+    {
+      "path": "artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.webgpu.jsonl",
+      "bytes": 11759331,
+      "sha256": "65417d061ce4235bd50edb86b05bb6dbfd476747755696e5385fae9ef94af788"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-20261109-r5.record.journal.jsonl",
+      "bytes": 118408485,
+      "sha256": "b4c67f08a0c8508d48ec2b47cbe3c6d0cf09886b70bdbc099e0570167ef04967"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-20261109-r5.record.webgpu.jsonl",
+      "bytes": 60577792,
+      "sha256": "e077f5191a76d291f9a86490a034f95e54f5c178b6e418ee7d2a1f81ee358a13"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.record.journal.jsonl",
+      "bytes": 1473947178,
+      "sha256": "e5b7505ab142ce4dae06e124648987fd4a9e1bbec39ba3832f4fa6bdd5783bbd"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.record.json",
+      "bytes": 27867928,
+      "sha256": "a500f81f729669fedd18429af6fbdc93e0f9e936f648a9dfef94129b03173c4b"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.record.webgpu.jsonl",
+      "bytes": 665085302,
+      "sha256": "666f495fe2d56ae4c88b572b128088c0e737c714d245c3cd4ea937662478a2df"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.journal.jsonl",
+      "bytes": 242453100,
+      "sha256": "2637d61bcb2a2692d9a5958a69ef97d553abbb2a47f2d3b21d49937ea668bb0e"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.journal.jsonl.gz",
+      "bytes": 16253476,
+      "sha256": "7308b57dea00c0ceafbeb625843ee50201108c19009acff7ea82f88c2352589c"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.json",
+      "bytes": 19244726,
+      "sha256": "ec6ab58a3fff884595ab689093cbc1ae85d2dc8d39f006e6d8b4ded4a7ffd267"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-short-intent-eval-20261109-r1.record.journal.jsonl",
+      "bytes": 160377771,
+      "sha256": "51e753ee060cfe2b2cbc1c000c41873d0d33ca86e81add23b81a062733b7818c"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/evaluation-short-intent-eval-20261109-r1.record.json",
+      "bytes": 154320437,
+      "sha256": "cc8fcd4cd626a04dbead15be05de4b01d5117480256e18ffda25b110e8f530e0"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.journal.jsonl",
+      "bytes": 242651728,
+      "sha256": "c8e273401e7eeaf3569e70df4551cf87f51d786f38b3e6a3f0039bd57e8385af"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.journal.jsonl.gz",
+      "bytes": 16216505,
+      "sha256": "54014d9b141d2629f741ded12e624bd48fc718e3a7197f4e73672901aa4e405f"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.json",
+      "bytes": 20265209,
+      "sha256": "dbff3c247f02ae4f90e7abf0192a9f5f83b28856ef7d4c2d11bf738ce93cc662"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-encoder-focus-20261109-r6.record.journal.jsonl",
+      "bytes": 49448937,
+      "sha256": "4c798ab0d5c336d9de45f360c8d2589cb08d55e0fea9bb11bb9c0e713b771850"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r4.record.journal.jsonl",
+      "bytes": 12618920,
+      "sha256": "40617c6b69980da843d567cceb8028aa6ca33524e01c670dc1496de13e4f51d2"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-encoder-repair-20261109-r5.record.journal.jsonl",
+      "bytes": 12618861,
+      "sha256": "1ca91a058c879e66781a993dc50435f63eabd4e8fac79fc13abddbc18574a9f0"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.journal.jsonl",
+      "bytes": 246488592,
+      "sha256": "477983e0cb977399acdb855161a7eb398009ad90d73cf3b5004480c461f330ff"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.journal.jsonl.gz",
+      "bytes": 11959364,
+      "sha256": "836fa963e397e0f0fcb560f5eeb2894ef62413b31604fecd66ddb7d6d3f230bf"
+    },
+    {
+      "path": "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.json",
+      "bytes": 238313740,
+      "sha256": "3707fa80e483842e56db43820ce2a6233a633239640d408c39b60d1e7f1b247d"
+    }
+  ],
+  "scope": "Frozen snapshot of current work at initial upload preparation. Excludes conversion diagnostic intermediate caches by user selection. No model acceptance or deployment implied."
+}

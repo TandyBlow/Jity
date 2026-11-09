@@ -1,0 +1,23 @@
+{
+  "schema": "jity-quarantined-relocation-v2",
+  "status": "quarantined_not_qualified",
+  "sourceIndex": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/quarantine-export-r1/index.json",
+    "sha256": "7d7529ce0631e159ce61d125942874d26af9f85ef110eb68acd6659d140a315f"
+  },
+  "reason": "Preserve prior registrations at quarantined paths; neither manifest is qualified or active.",
+  "files": [
+    {
+      "originalPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-r5.browser-model.json",
+      "retainedAs": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/quarantine-export-r1/qwen-short-time-r5.browser-model.json",
+      "sha256": "e469e5d42b225b54114b4d4f93d89751c651e1f84b12b740d06b98c1d17306ac",
+      "bytes": 16791
+    },
+    {
+      "originalPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-trained-r5.provider.json",
+      "retainedAs": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/quarantine-export-r1/qwen-webgpu-trained-r5.provider.json",
+      "sha256": "74f57f78a46ee132c3c0f58c34a43b7edb956fb4143cddeeb71b26f640cf9f2a",
+      "bytes": 64576
+    }
+  ]
+}

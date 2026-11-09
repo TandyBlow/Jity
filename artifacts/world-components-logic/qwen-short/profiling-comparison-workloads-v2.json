@@ -1,0 +1,816 @@
+{
+  "sourcePlan": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-20261109-r5.plan.json",
+    "sha256": "cf4b002e170fd49282bd19f67a8288d7259df03ac9303db38536afbe5d452347"
+  },
+  "sourceData": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/data/evaluation-qwen-webgpu-base-20261109-r5/supervision.jsonl.gz",
+    "sha256": "9587fdf90ecf675705a47ad6bdfccd85879143f2446f2116ec02e455a922fc5a"
+  },
+  "workloads": [
+    {
+      "workloadId": "short",
+      "component": "D01.1.slot_label",
+      "exampleId": "gate:D01.1:1:primitive:4",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "input": {
+        "brief": "防潮闸控制室与下层检修道中的现有物品和人物，当前工作：让防潮闸保持关闭。",
+        "draftId": "draft:gate",
+        "entityKind": "locations",
+        "entityName": "防潮闸控制室",
+        "proposedEntities": [],
+        "proposedSlots": [],
+        "revision": 0
+      },
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "completeInput": true
+    },
+    {
+      "workloadId": "long",
+      "component": "U4.2",
+      "exampleId": "gate:U4.2:53",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "input": {
+        "candidates": [
+          {
+            "changes": {},
+            "stage": "position"
+          },
+          {
+            "changes": {
+              "tool": {
+                "appearanceChanges": [
+                  {
+                    "id": "change:3d5e68443ba26e4a3a1d05c82b38a920f4a14fda2a19bf6f5c6197eec6272c13",
+                    "supersedes": [],
+                    "text": "锁紧销有一半露在销孔外。"
+                  }
+                ],
+                "entityId": "tool"
+              }
+            },
+            "stage": "appearance"
+          },
+          {
+            "changes": {},
+            "stage": "tasks"
+          }
+        ],
+        "context": {
+          "binding": {
+            "epoch": 1,
+            "pointId": "point:gate",
+            "version": 1
+          },
+          "group": {
+            "alreadyActedIds": [
+              "off"
+            ],
+            "closed": true,
+            "confirmedTargets": [
+              {
+                "sourceId": "a",
+                "targetIds": [
+                  "b"
+                ]
+              },
+              {
+                "sourceId": "b",
+                "targetIds": [
+                  "a"
+                ]
+              }
+            ],
+            "groupId": "group:gate",
+            "judgments": [
+              {
+                "admitted": true,
+                "eligibilityBaselineDigest": "9846e24be7494930e1dc71f69f40aea6333acce772fa8a763c966a1f990ec8a1",
+                "eligible": true,
+                "groupId": "group:gate",
+                "result": 15,
+                "rollId": "roll:1",
+                "ruleVersion": "reaction-d20-v1",
+                "sourceId": "a",
+                "target": 11,
+                "targetId": "b",
+                "triggerKey": "trigger:1"
+              },
+              {
+                "admitted": true,
+                "eligibilityBaselineDigest": "9846e24be7494930e1dc71f69f40aea6333acce772fa8a763c966a1f990ec8a1",
+                "eligible": true,
+                "groupId": "group:gate",
+                "result": 15,
+                "rollId": "roll:2",
+                "ruleVersion": "reaction-d20-v1",
+                "sourceId": "b",
+                "target": 11,
+                "targetId": "a",
+                "triggerKey": "trigger:2"
+              }
+            ],
+            "memberIds": [
+              "a",
+              "b"
+            ],
+            "members": [
+              {
+                "actionText": "宋黎尝试把锁紧销插入闸门手柄的销孔。",
+                "fragments": [
+                  {
+                    "id": "a:fragment-1",
+                    "text": "宋黎尝试把锁紧销插入闸门手柄的销孔。"
+                  }
+                ],
+                "memberId": "a"
+              },
+              {
+                "actionText": "易安尝试向外扳动闸门手柄。",
+                "fragments": [
+                  {
+                    "id": "b:fragment-1",
+                    "text": "易安尝试向外扳动闸门手柄。"
+                  }
+                ],
+                "memberId": "b"
+              }
+            ]
+          },
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 1,
+              "unit": "minute"
+            }
+          },
+          "world": {
+            "characters": {
+              "a": {
+                "appearanceChanges": [],
+                "id": "a",
+                "personalityChanges": [],
+                "position": {
+                  "containerId": "loc"
+                },
+                "sanity": 66,
+                "tasks": {
+                  "a-task": {
+                    "goal": "让防潮闸保持关闭。",
+                    "id": "a-task",
+                    "ownerId": "a",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              },
+              "b": {
+                "appearanceChanges": [],
+                "id": "b",
+                "personalityChanges": [],
+                "position": {
+                  "containerId": "loc"
+                },
+                "sanity": 78,
+                "tasks": {
+                  "b-task": {
+                    "goal": "把闸门手柄完全向外扳开。",
+                    "id": "b-task",
+                    "ownerId": "b",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              },
+              "off": {
+                "appearanceChanges": [],
+                "id": "off",
+                "personalityChanges": [],
+                "position": {
+                  "containerId": "far"
+                },
+                "sanity": 89,
+                "tasks": {
+                  "off-task": {
+                    "goal": "等待工作情况的正式确认。",
+                    "id": "off-task",
+                    "ownerId": "off",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              }
+            },
+            "engineVersion": "world-engine-v1",
+            "initial": {
+              "characters": {
+                "a": {
+                  "id": "a",
+                  "initialAppearance": "现有实体，外观完整。",
+                  "initialPersonality": "习惯先检查闸门手柄的状态，再提出具体尝试。",
+                  "initialPosition": {
+                    "containerId": "loc"
+                  },
+                  "initialSanity": 66,
+                  "name": "宋黎",
+                  "slots": [],
+                  "tasks": {
+                    "a-task": {
+                      "goal": "让防潮闸保持关闭。",
+                      "id": "a-task",
+                      "ownerId": "a",
+                      "parentTaskId": null,
+                      "status": "pending"
+                    }
+                  }
+                },
+                "b": {
+                  "id": "b",
+                  "initialAppearance": "正握着闸门手柄，试图向外扳开。",
+                  "initialPersonality": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+                  "initialPosition": {
+                    "containerId": "loc"
+                  },
+                  "initialSanity": 78,
+                  "name": "易安",
+                  "slots": [],
+                  "tasks": {
+                    "b-task": {
+                      "goal": "把闸门手柄完全向外扳开。",
+                      "id": "b-task",
+                      "ownerId": "b",
+                      "parentTaskId": null,
+                      "status": "pending"
+                    }
+                  }
+                },
+                "off": {
+                  "id": "off",
+                  "initialAppearance": "现有实体，外观完整。",
+                  "initialPersonality": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+                  "initialPosition": {
+                    "containerId": "far"
+                  },
+                  "initialSanity": 89,
+                  "name": "孟遥",
+                  "slots": [],
+                  "tasks": {
+                    "off-task": {
+                      "goal": "等待工作情况的正式确认。",
+                      "id": "off-task",
+                      "ownerId": "off",
+                      "parentTaskId": null,
+                      "status": "pending"
+                    }
+                  }
+                }
+              },
+              "engineVersion": "world-engine-v1",
+              "initialTime": {
+                "calendar": "gregorian",
+                "dateTime": "2026-11-09T09:00:00",
+                "instantOrdinal": 0
+              },
+              "items": {
+                "object": {
+                  "id": "object",
+                  "initialAppearance": "现有实体，外观完整。",
+                  "initialPosition": {
+                    "containerId": "loc"
+                  },
+                  "name": "闸门手柄",
+                  "slots": []
+                },
+                "tool": {
+                  "id": "tool",
+                  "initialAppearance": "锁紧销前端有毛刺，插入时可能受阻。",
+                  "initialPosition": {
+                    "containerId": "a"
+                  },
+                  "name": "锁紧销",
+                  "slots": []
+                }
+              },
+              "locations": {
+                "far": {
+                  "id": "far",
+                  "initialAppearance": "现有实体，外观完整。",
+                  "name": "下层检修道",
+                  "parentLocationId": null,
+                  "slots": []
+                },
+                "loc": {
+                  "id": "loc",
+                  "initialAppearance": "现有实体，外观完整。",
+                  "name": "防潮闸控制室",
+                  "parentLocationId": null,
+                  "slots": [
+                    {
+                      "id": "slot:surface",
+                      "label": "工作台面"
+                    }
+                  ]
+                }
+              },
+              "protagonistId": "a",
+              "schemaVersion": 1,
+              "worldId": "world:gate"
+            },
+            "items": {
+              "object": {
+                "appearanceChanges": [],
+                "id": "object",
+                "position": {
+                  "containerId": "loc"
+                }
+              },
+              "tool": {
+                "appearanceChanges": [],
+                "id": "tool",
+                "position": {
+                  "containerId": "a"
+                }
+              }
+            },
+            "locations": {
+              "far": {
+                "appearanceChanges": [],
+                "id": "far"
+              },
+              "loc": {
+                "appearanceChanges": [],
+                "id": "loc"
+              }
+            },
+            "protagonistId": "a",
+            "schemaVersion": 1,
+            "time": {
+              "calendar": "gregorian",
+              "dateTime": "2026-11-09T09:00:00",
+              "instantOrdinal": 0
+            },
+            "worldId": "world:gate"
+          }
+        },
+        "currentSubtaskCandidates": {},
+        "facts": [
+          {
+            "id": "fact:1",
+            "text": "锁紧销只插入一半，闸门手柄受到卡阻，但仍不能确认防潮闸已锁定。"
+          },
+          {
+            "id": "fact:2",
+            "text": "易安受到卡阻，未能把闸门手柄向外扳动。"
+          }
+        ],
+        "goalIndex": 0,
+        "ownerId": "a",
+        "parentTaskId": "a-task",
+        "requiredCount": 1,
+        "settlement": {
+          "associations": {
+            "checkedMemberIds": [
+              "a",
+              "b"
+            ],
+            "facts": [
+              {
+                "factId": "fact:1",
+                "memberIds": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "factId": "fact:2",
+                "memberIds": [
+                  "b"
+                ]
+              }
+            ]
+          },
+          "audit": {
+            "checkedActionIds": [
+              "a",
+              "b"
+            ],
+            "checkedFactIds": [
+              "fact:1",
+              "fact:2"
+            ],
+            "checkedRollIds": [
+              "roll:1",
+              "roll:2"
+            ],
+            "verdict": "pass"
+          },
+          "binding": {
+            "epoch": 1,
+            "pointId": "point:gate",
+            "version": 1
+          },
+          "committed": false,
+          "contentHash": "d022f05dca860bbcff61f07f068c7f948a59afad1713943a16c5d3a046244ea6",
+          "facts": [
+            {
+              "id": "fact:1",
+              "text": "锁紧销只插入一半，闸门手柄受到卡阻，但仍不能确认防潮闸已锁定。"
+            },
+            {
+              "id": "fact:2",
+              "text": "易安受到卡阻，未能把闸门手柄向外扳动。"
+            }
+          ],
+          "inputHash": "da12ba4cce14e7a97ee8b5cff877420c540a3852f9599d710f4b4ef805756422",
+          "joint": {
+            "judgments": [
+              {
+                "attemptId": "a:fragment-1",
+                "label": "partial"
+              },
+              {
+                "attemptId": "b:fragment-1",
+                "label": "not_achieved"
+              }
+            ]
+          },
+          "relations": {
+            "checkedActionIds": [
+              "a",
+              "b"
+            ],
+            "relations": [
+              {
+                "kind": "obstructs",
+                "sourceId": "b",
+                "targetId": "a"
+              }
+            ]
+          },
+          "results": {
+            "a": "锁紧销只插入一半，闸门手柄受到卡阻，但仍不能确认防潮闸已锁定。",
+            "b": "锁紧销只插入一半，闸门手柄受到卡阻，但仍不能确认防潮闸已锁定。\n易安受到卡阻，未能把闸门手柄向外扳动。"
+          },
+          "semanticReview": "model_checked_not_human_signed"
+        },
+        "world": {
+          "characters": {
+            "a": {
+              "appearanceChanges": [],
+              "id": "a",
+              "personalityChanges": [],
+              "position": {
+                "containerId": "loc",
+                "relativeTo": null,
+                "slotId": null
+              },
+              "sanity": 66,
+              "tasks": {
+                "a-task": {
+                  "goal": "让防潮闸保持关闭。",
+                  "id": "a-task",
+                  "ownerId": "a",
+                  "parentTaskId": null,
+                  "status": "pending"
+                }
+              }
+            },
+            "b": {
+              "appearanceChanges": [],
+              "id": "b",
+              "personalityChanges": [],
+              "position": {
+                "containerId": "loc",
+                "relativeTo": null,
+                "slotId": null
+              },
+              "sanity": 78,
+              "tasks": {
+                "b-task": {
+                  "goal": "把闸门手柄完全向外扳开。",
+                  "id": "b-task",
+                  "ownerId": "b",
+                  "parentTaskId": null,
+                  "status": "pending"
+                }
+              }
+            },
+            "off": {
+              "appearanceChanges": [],
+              "id": "off",
+              "personalityChanges": [],
+              "position": {
+                "containerId": "far",
+                "relativeTo": null,
+                "slotId": null
+              },
+              "sanity": 89,
+              "tasks": {
+                "off-task": {
+                  "goal": "等待工作情况的正式确认。",
+                  "id": "off-task",
+                  "ownerId": "off",
+                  "parentTaskId": null,
+                  "status": "pending"
+                }
+              }
+            }
+          },
+          "engineVersion": "world-engine-v1",
+          "initial": {
+            "characters": {
+              "a": {
+                "id": "a",
+                "initialAppearance": "现有实体，外观完整。",
+                "initialPersonality": "习惯先检查闸门手柄的状态，再提出具体尝试。",
+                "initialPosition": {
+                  "containerId": "loc"
+                },
+                "initialSanity": 66,
+                "name": "宋黎",
+                "slots": [],
+                "tasks": {
+                  "a-task": {
+                    "goal": "让防潮闸保持关闭。",
+                    "id": "a-task",
+                    "ownerId": "a",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              },
+              "b": {
+                "id": "b",
+                "initialAppearance": "正握着闸门手柄，试图向外扳开。",
+                "initialPersonality": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+                "initialPosition": {
+                  "containerId": "loc"
+                },
+                "initialSanity": 78,
+                "name": "易安",
+                "slots": [],
+                "tasks": {
+                  "b-task": {
+                    "goal": "把闸门手柄完全向外扳开。",
+                    "id": "b-task",
+                    "ownerId": "b",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              },
+              "off": {
+                "id": "off",
+                "initialAppearance": "现有实体，外观完整。",
+                "initialPersonality": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+                "initialPosition": {
+                  "containerId": "far"
+                },
+                "initialSanity": 89,
+                "name": "孟遥",
+                "slots": [],
+                "tasks": {
+                  "off-task": {
+                    "goal": "等待工作情况的正式确认。",
+                    "id": "off-task",
+                    "ownerId": "off",
+                    "parentTaskId": null,
+                    "status": "pending"
+                  }
+                }
+              }
+            },
+            "engineVersion": "world-engine-v1",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-11-09T09:00:00",
+              "instantOrdinal": 0
+            },
+            "items": {
+              "object": {
+                "id": "object",
+                "initialAppearance": "现有实体，外观完整。",
+                "initialPosition": {
+                  "containerId": "loc"
+                },
+                "name": "闸门手柄",
+                "slots": []
+              },
+              "tool": {
+                "id": "tool",
+                "initialAppearance": "锁紧销前端有毛刺，插入时可能受阻。",
+                "initialPosition": {
+                  "containerId": "a"
+                },
+                "name": "锁紧销",
+                "slots": []
+              }
+            },
+            "locations": {
+              "far": {
+                "id": "far",
+                "initialAppearance": "现有实体，外观完整。",
+                "name": "下层检修道",
+                "parentLocationId": null,
+                "slots": []
+              },
+              "loc": {
+                "id": "loc",
+                "initialAppearance": "现有实体，外观完整。",
+                "name": "防潮闸控制室",
+                "parentLocationId": null,
+                "slots": [
+                  {
+                    "id": "slot:surface",
+                    "label": "工作台面"
+                  }
+                ]
+              }
+            },
+            "protagonistId": "a",
+            "schemaVersion": 1,
+            "worldId": "world:gate"
+          },
+          "items": {
+            "object": {
+              "appearanceChanges": [],
+              "id": "object",
+              "position": {
+                "containerId": "loc",
+                "relativeTo": null,
+                "slotId": null
+              }
+            },
+            "tool": {
+              "appearanceChanges": [
+                {
+                  "active": true,
+                  "id": "change:3d5e68443ba26e4a3a1d05c82b38a920f4a14fda2a19bf6f5c6197eec6272c13",
+                  "sourcePointId": "point:gate",
+                  "sourceSequence": 2,
+                  "supersedes": [],
+                  "text": "锁紧销有一半露在销孔外。"
+                }
+              ],
+              "id": "tool",
+              "position": {
+                "containerId": "a",
+                "relativeTo": null,
+                "slotId": null
+              }
+            }
+          },
+          "locations": {
+            "far": {
+              "appearanceChanges": [],
+              "id": "far"
+            },
+            "loc": {
+              "appearanceChanges": [],
+              "id": "loc"
+            }
+          },
+          "protagonistId": "a",
+          "schemaVersion": 1,
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-11-09T09:01:00",
+            "instantOrdinal": 0
+          },
+          "worldId": "world:gate"
+        },
+        "worldHash": "f6411e6fc5a2ca2df145ec464b11b2780cc55c45fbde2e4c167e526ef5f262a6"
+      },
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "completeInput": true
+    }
+  ],
+  "scope": "two_actual_complete_inputs_not_full_chain",
+  "semanticQualityApproval": false,
+  "schema": "jity-webgpu-profiling-workload-registration-v1",
+  "cases": [
+    {
+      "caseId": "short:1:default",
+      "workloadId": "short",
+      "component": "D01.1.slot_label",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "profilingMode": "default",
+      "measurementIndex": 1,
+      "repeatedMeasurement": false,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "short:2:off",
+      "workloadId": "short",
+      "component": "D01.1.slot_label",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "profilingMode": "off",
+      "measurementIndex": 2,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "short:3:default",
+      "workloadId": "short",
+      "component": "D01.1.slot_label",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "profilingMode": "default",
+      "measurementIndex": 3,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "short:4:off",
+      "workloadId": "short",
+      "component": "D01.1.slot_label",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "profilingMode": "off",
+      "measurementIndex": 4,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "long:1:default",
+      "workloadId": "long",
+      "component": "U4.2",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "profilingMode": "default",
+      "measurementIndex": 1,
+      "repeatedMeasurement": false,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "long:2:off",
+      "workloadId": "long",
+      "component": "U4.2",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "profilingMode": "off",
+      "measurementIndex": 2,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "long:3:default",
+      "workloadId": "long",
+      "component": "U4.2",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "profilingMode": "default",
+      "measurementIndex": 3,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    },
+    {
+      "caseId": "long:4:off",
+      "workloadId": "long",
+      "component": "U4.2",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "profilingMode": "off",
+      "measurementIndex": 4,
+      "repeatedMeasurement": true,
+      "retry": false,
+      "orderBias": "fixed_on_off_on_off_not_counterbalanced"
+    }
+  ],
+  "config": {
+    "attemptsPerCase": 1,
+    "retries": 0,
+    "concurrency": 1,
+    "callTimeoutMs": 120000,
+    "browserAttachSeconds": 180,
+    "processWallSeconds": 1200,
+    "maxResidentMiB": 1024,
+    "maxInputTokens": 8192,
+    "maxNewTokens": 128,
+    "cache": false,
+    "threads": 1,
+    "measurementOrder": [
+      "default",
+      "off",
+      "default",
+      "off"
+    ],
+    "sameDeviceSessionRequired": true,
+    "repeatMeaning": "pre_registered_repeated_measurement_not_retry_or_best_of",
+    "scope": "profiling_kernel_scheduling_readback_and_full_logging_cost_together",
+    "browserAndGpuPeakMemoryMeasured": false
+  },
+  "modelAssetFreeze": "pending_final_task_trained_ONNX_export_and_v3_parity",
+  "executed": false,
+  "previousRegistration": {
+    "schema": "jity-experiment-superseded-before-execution-v1",
+    "previousPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/profiling-comparison-workloads-v1.json",
+    "previousSha256": "8313c0439065173619b275358f04ba5fc2c0cf15f95c856af895f9f1060ceb7a",
+    "status": "superseded_before_execution",
+    "modelCalls": 0,
+    "reason": "Match the other experiments at 8192 complete input token limit; old recipe was 32768. No input is truncated."
+  }
+}

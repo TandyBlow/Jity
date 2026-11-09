@@ -1,0 +1,2 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.

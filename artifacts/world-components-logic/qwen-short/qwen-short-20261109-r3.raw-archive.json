@@ -1,0 +1,25 @@
+{
+  "runId": "qwen-short-20261109-r3",
+  "gitContent": "index_only_raw_and_gzip_local",
+  "originalsPreserved": true,
+  "entries": [
+    {
+      "original": "artifacts/world-components-logic/qwen-short/qwen-short-20261109-r3.record.json",
+      "originalBytes": 51338,
+      "originalSha256": "692504cfa4a498b22f0b7de103cce8df814c719d8a6a704b536b6d9531cd55e3",
+      "gzip": "artifacts/world-components-logic/qwen-short/qwen-short-20261109-r3.record.json.gz",
+      "gzipBytes": 9438,
+      "gzipSha256": "a25db333547cd00b9149d009bfa209556a11f93cd23ed2df5f501f2b010d1587",
+      "decompressedBytesIdentical": true
+    },
+    {
+      "original": "artifacts/world-components-logic/qwen-short/qwen-short-20261109-r3.record.journal.jsonl",
+      "originalBytes": 1473840,
+      "originalSha256": "32eef21f586c21f30957a6a11537ccf4dbf5c2d20b9470874f79be8fa27a4cf8",
+      "gzip": "artifacts/world-components-logic/qwen-short/qwen-short-20261109-r3.record.journal.jsonl.gz",
+      "gzipBytes": 84223,
+      "gzipSha256": "144a8495da19ae2c61dd5befd1efc66e6963235f861143c3e734082865004352",
+      "decompressedBytesIdentical": true
+    }
+  ]
+}

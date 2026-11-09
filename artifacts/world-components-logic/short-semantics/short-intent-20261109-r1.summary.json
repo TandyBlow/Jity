@@ -1,0 +1,297 @@
+{
+  "arms": [
+    {
+      "actualForwardCalls": null,
+      "actualTrainingTargetExposure": {
+        "D02.1": {
+          "act": 18,
+          "skip": 9
+        },
+        "D02.3.role": {
+          "absent": 21,
+          "present": 6
+        },
+        "D02.3.subject": {
+          "a": 27
+        },
+        "D02.3.verdict": {
+          "pass": 21,
+          "reject": 6
+        },
+        "D02.4.check": {
+          "fail": 6,
+          "pass": 21
+        },
+        "D02.4.issue_fragment": {
+          "fragment-1": 27
+        },
+        "D02.5.check": {
+          "fail": 5,
+          "pass": 22
+        },
+        "D02.5.issue_fragment": {
+          "fragment-1": 27
+        },
+        "D03.1.relation": {
+          "none": 25,
+          "target": 1
+        },
+        "D03.2.verdict": {
+          "pass": 13,
+          "reject": 13
+        },
+        "D04.1.covered": {
+          "covered": 16,
+          "missing": 10
+        },
+        "D04.1.next": {
+          "constraint": 13,
+          "end": 13
+        }
+      },
+      "arm": "encoder_train",
+      "checkpoint": {
+        "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/encoder/heads.pt",
+        "sha256": "f1e0e3e14ef6f44dc3a7561a0136a1365ae68a7daa68b81a5cee8533229eab40"
+      },
+      "components": {
+        "D02.1": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D02.3.role": {
+          "exactDraftMatches": 215,
+          "incomplete": 0,
+          "predictions": 255,
+          "splits": {
+            "development": 95,
+            "test": 160
+          }
+        },
+        "D02.3.subject": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D02.3.verdict": {
+          "exactDraftMatches": 14,
+          "incomplete": 0,
+          "predictions": 18,
+          "splits": {
+            "development": 8,
+            "test": 10
+          }
+        },
+        "D02.4.check": {
+          "exactDraftMatches": 36,
+          "incomplete": 0,
+          "predictions": 48,
+          "splits": {
+            "development": 24,
+            "test": 24
+          }
+        },
+        "D02.4.issue_fragment": {
+          "exactDraftMatches": 12,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D02.5.check": {
+          "exactDraftMatches": 60,
+          "incomplete": 0,
+          "predictions": 80,
+          "splits": {
+            "development": 40,
+            "test": 40
+          }
+        },
+        "D02.5.issue_fragment": {
+          "exactDraftMatches": 20,
+          "incomplete": 0,
+          "predictions": 20,
+          "splits": {
+            "development": 10,
+            "test": 10
+          }
+        },
+        "D03.1.relation": {
+          "exactDraftMatches": 11,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D03.2.verdict": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D04.1.covered": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D04.1.next": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        }
+      },
+      "elapsedMs": 292025.587458,
+      "firstLoss": 0.5184099674224854,
+      "lastLoss": 0.3409901559352875,
+      "sourceWeightsUnchanged": true,
+      "steps": 160,
+      "trainedComponents": [
+        "D02.1",
+        "D02.3.role",
+        "D02.3.subject",
+        "D02.3.verdict",
+        "D02.4.check",
+        "D02.4.issue_fragment",
+        "D02.5.check",
+        "D02.5.issue_fragment",
+        "D03.1.relation",
+        "D03.2.verdict",
+        "D04.1.covered",
+        "D04.1.next"
+      ]
+    },
+    {
+      "actualForwardCalls": {
+        "encoder": 190,
+        "top": 1040
+      },
+      "actualTrainingTargetExposure": {
+        "D02.2": {
+          "【结束】": 130,
+          "何铎尝试稳住海图边缘。": 5,
+          "余荞尝试向郑栖请求借阅牌。": 11,
+          "叶予尝试用吸水纸轻压海图表面。": 10,
+          "周苇尝试用信号机向季闻发送道路封闭通知。": 11,
+          "唐霁尝试拿起染料碗。": 12,
+          "杜岑尝试固定浮标灯的外壳。": 6,
+          "柏晴尝试抱着校准箱前往仪器储存间。": 12,
+          "柳絮尝试检查种子盒的封口签。": 12,
+          "江岚尝试用软尺量出残缺陶碗的缺口。": 11,
+          "沈知尝试扶稳残缺陶碗。": 6,
+          "温禾尝试用绝缘钳接好浮标灯的松线。": 11,
+          "若封口签完整，柳絮尝试把种子盒交给阮明。": 11,
+          "裴弦尝试从仪器储存间走到仪器调校间。": 6,
+          "谢迟尝试压紧信号机的备用插头。": 5,
+          "连笙尝试把染料碗拉到自己面前。": 5,
+          "郑栖尝试把借阅牌交给余荞。": 6,
+          "阮明尝试接住柳絮递来的种子盒。": 6
+        },
+        "D04.1.text": {
+          "回应余荞对借阅牌的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 6,
+          "回应叶予对海图的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 6,
+          "回应周苇对信号机的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 6,
+          "回应唐霁对染料碗的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 5,
+          "回应柏晴对校准箱的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 5,
+          "回应柳絮对种子盒的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 6,
+          "回应江岚对残缺陶碗的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 5,
+          "回应温禾对浮标灯的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。": 5
+        }
+      },
+      "arm": "generator_train",
+      "checkpoint": {
+        "path": ".local/world-components-logic/short-semantic-models/short-intent-20261109-r1/generator/adapter.pt",
+        "sha256": "117ced83d28e2297f19d2c48b4d938986623df9ece99409c32e6ff9d5611d7af",
+        "sourceTensorSha256": "cceb3639c60ad49a2416f965c8a74c1fb632d6cf122b2922c9265b3fb2b311c4",
+        "tensorSha256": "7be543b5722b44e60fc7679fbff291891074973982bf39c2bb657ae6fc7faffe"
+      },
+      "components": {
+        "D02.2": {
+          "exactDraftMatches": 0,
+          "incomplete": 2,
+          "predictions": 26,
+          "splits": {
+            "development": 12,
+            "test": 14
+          }
+        },
+        "D04.1.text": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        }
+      },
+      "elapsedMs": 365404.179583,
+      "firstLoss": 6.465702533721924,
+      "lastLoss": 0.35186395049095154,
+      "sourceWeightsUnchanged": true,
+      "steps": 160,
+      "trainedComponents": [
+        "D02.2",
+        "D04.1.text"
+      ]
+    }
+  ],
+  "formalEvaluationAllowed": false,
+  "fullRequest500ms": "not_measured",
+  "generatorAssistantReviewCounts": {
+    "does_not_satisfy_this_task_input": 24,
+    "incomplete": 2,
+    "plausible_attempt_but_coverage_and_step_role_not_established": 4
+  },
+  "humanReview": "pending",
+  "interpretation": "Exact match against assistant-authored labels is not semantic correctness. Source groups were openly authored; no independent generalization claim.",
+  "knownDraftIssues": "design/world-engine-reports/components-logic/short-data-review.md",
+  "logFiles": {
+    "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.journal.jsonl": 246488592,
+    "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.json": 238313740,
+    "artifacts/world-components-logic/short-semantics/short-intent-20261109-r1.record.process.log": 395
+  },
+  "provider": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/provider.json",
+    "sha256": "3ef150ca87d755e92409a9cbc71825e53908c45a494f52d1872fdca128a3fe14"
+  },
+  "runId": "short-intent-20261109-r1",
+  "runtimeDisconnectedTrainingTasks": [
+    "D02.3.subject"
+  ],
+  "schema": "jity-short-exploratory-training-summary-v1",
+  "sourceVerification": "pending",
+  "status": "diagnostic_completed",
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 3155.21875,
+    "stopReason": null,
+    "wallMs": 678318.6863751616
+  },
+  "unstartedPredictions": 0
+}

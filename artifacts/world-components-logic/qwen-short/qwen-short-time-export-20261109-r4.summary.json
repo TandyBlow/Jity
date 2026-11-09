@@ -1,0 +1,439 @@
+{
+  "runId": "qwen-short-time-export-20261109-r4",
+  "status": "failed",
+  "supervisor": {
+    "error": null,
+    "exitCode": 1,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 4716.09375,
+    "peakProcessIds": [
+      11446
+    ],
+    "stopReason": null,
+    "wallMs": 20614.351166877896
+  },
+  "error": {
+    "message": "strict_float_export_numerical_validation_failed",
+    "type": "ValueError"
+  },
+  "strictValidation": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r4.failed-validation.json",
+    "sha256": "5bd1d5697831197a03fc727a03dfd9e7cb3d071a8f0d5d3e7aa1c05becd3950f",
+    "scope": "float_export_numerical",
+    "status": "failed",
+    "outputs": 57,
+    "passed": 29,
+    "maxAbsError": 0.0014224052429199219
+  },
+  "sameActualInputArraysAsR2": true,
+  "sameInputShapesAsR2": true,
+  "actualInputArraysArchive": {
+    "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/exports/qwen-short-time-export-20261109-r4/strict-float-validation.inputs.npz",
+    "sha256": "bbe464476e10b77f96addc966245a9062186f129d04557822ccca732a9e3b2d1"
+  },
+  "runtimeComparison": [
+    {
+      "output": "logits",
+      "basicPass": false,
+      "basicMaxAbs": 0.0003542900085449219,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00047135353088378906
+    },
+    {
+      "output": "present.0.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000579833984375,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0005645751953125
+    },
+    {
+      "output": "present.0.value",
+      "basicPass": true,
+      "basicMaxAbs": 8.344650268554688e-07,
+      "disabledPass": true,
+      "disabledMaxAbs": 8.940696716308594e-07
+    },
+    {
+      "output": "present.1.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000274658203125,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0002593994140625
+    },
+    {
+      "output": "present.1.value",
+      "basicPass": true,
+      "basicMaxAbs": 1.2516975402832031e-06,
+      "disabledPass": true,
+      "disabledMaxAbs": 1.1920928955078125e-06
+    },
+    {
+      "output": "present.2.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000335693359375,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.000274658203125
+    },
+    {
+      "output": "present.2.value",
+      "basicPass": true,
+      "basicMaxAbs": 2.6226043701171875e-06,
+      "disabledPass": true,
+      "disabledMaxAbs": 3.0994415283203125e-06
+    },
+    {
+      "output": "present.3.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.0001068115234375,
+      "disabledPass": true,
+      "disabledMaxAbs": 9.918212890625e-05
+    },
+    {
+      "output": "present.3.value",
+      "basicPass": true,
+      "basicMaxAbs": 5.9604644775390625e-06,
+      "disabledPass": true,
+      "disabledMaxAbs": 6.4373016357421875e-06
+    },
+    {
+      "output": "present.4.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000152587890625,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0001834481954574585
+    },
+    {
+      "output": "present.4.value",
+      "basicPass": true,
+      "basicMaxAbs": 9.924173355102539e-06,
+      "disabledPass": true,
+      "disabledMaxAbs": 9.47713851928711e-06
+    },
+    {
+      "output": "present.5.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.0002522468566894531,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.000263214111328125
+    },
+    {
+      "output": "present.5.value",
+      "basicPass": true,
+      "basicMaxAbs": 1.4215707778930664e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 1.1071562767028809e-05
+    },
+    {
+      "output": "present.6.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00021457672119140625,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0002994537353515625
+    },
+    {
+      "output": "present.6.value",
+      "basicPass": true,
+      "basicMaxAbs": 1.4543533325195312e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 1.5020370483398438e-05
+    },
+    {
+      "output": "present.7.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.0001678466796875,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.000232696533203125
+    },
+    {
+      "output": "present.7.value",
+      "basicPass": true,
+      "basicMaxAbs": 2.0503997802734375e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 1.9311904907226562e-05
+    },
+    {
+      "output": "present.8.key",
+      "basicPass": true,
+      "basicMaxAbs": 5.5789947509765625e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 8.7738037109375e-05
+    },
+    {
+      "output": "present.8.value",
+      "basicPass": true,
+      "basicMaxAbs": 2.0429491996765137e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 1.9147992134094238e-05
+    },
+    {
+      "output": "present.9.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.00014495849609375,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0001239776611328125
+    },
+    {
+      "output": "present.9.value",
+      "basicPass": true,
+      "basicMaxAbs": 4.208087921142578e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 3.4928321838378906e-05
+    },
+    {
+      "output": "present.10.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000232696533203125,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.00026702880859375
+    },
+    {
+      "output": "present.10.value",
+      "basicPass": true,
+      "basicMaxAbs": 4.121661186218262e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 3.445148468017578e-05
+    },
+    {
+      "output": "present.11.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.0002014636993408203,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00017499923706054688
+    },
+    {
+      "output": "present.11.value",
+      "basicPass": true,
+      "basicMaxAbs": 3.9637088775634766e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 4.26173210144043e-05
+    },
+    {
+      "output": "present.12.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.0002841949462890625,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0002803802490234375
+    },
+    {
+      "output": "present.12.value",
+      "basicPass": true,
+      "basicMaxAbs": 5.984306335449219e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 5.53131103515625e-05
+    },
+    {
+      "output": "present.13.key",
+      "basicPass": true,
+      "basicMaxAbs": 7.534027099609375e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0001087188720703125
+    },
+    {
+      "output": "present.13.value",
+      "basicPass": true,
+      "basicMaxAbs": 4.585087299346924e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 4.8995018005371094e-05
+    },
+    {
+      "output": "present.14.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.0001239776611328125,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.00011444091796875
+    },
+    {
+      "output": "present.14.value",
+      "basicPass": true,
+      "basicMaxAbs": 4.413723945617676e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 7.11977481842041e-05
+    },
+    {
+      "output": "present.15.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.000225067138671875,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00037860870361328125
+    },
+    {
+      "output": "present.15.value",
+      "basicPass": true,
+      "basicMaxAbs": 6.091594696044922e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 7.68899917602539e-05
+    },
+    {
+      "output": "present.16.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.00010645389556884766,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0001575946807861328
+    },
+    {
+      "output": "present.16.value",
+      "basicPass": true,
+      "basicMaxAbs": 5.8531761169433594e-05,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.00010144710540771484
+    },
+    {
+      "output": "present.17.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.0001068115234375,
+      "disabledPass": true,
+      "disabledMaxAbs": 0.0001277923583984375
+    },
+    {
+      "output": "present.17.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.00012636184692382812,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00017070770263671875
+    },
+    {
+      "output": "present.18.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00011616945266723633,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00017261505126953125
+    },
+    {
+      "output": "present.18.value",
+      "basicPass": true,
+      "basicMaxAbs": 0.00011849403381347656,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0001659393310546875
+    },
+    {
+      "output": "present.19.key",
+      "basicPass": true,
+      "basicMaxAbs": 0.00020599365234375,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.000209808349609375
+    },
+    {
+      "output": "present.19.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.00014632940292358398,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00022673606872558594
+    },
+    {
+      "output": "present.20.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00019311904907226562,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0002435147762298584
+    },
+    {
+      "output": "present.20.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.00021529197692871094,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00027632713317871094
+    },
+    {
+      "output": "present.21.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.0001512765884399414,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00025272369384765625
+    },
+    {
+      "output": "present.21.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.000244140625,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0003886222839355469
+    },
+    {
+      "output": "present.22.key",
+      "basicPass": true,
+      "basicMaxAbs": 9.176135063171387e-05,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00016614794731140137
+    },
+    {
+      "output": "present.22.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.0003426074981689453,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0003962516784667969
+    },
+    {
+      "output": "present.23.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00016450881958007812,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0003203153610229492
+    },
+    {
+      "output": "present.23.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.0003495216369628906,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00048160552978515625
+    },
+    {
+      "output": "present.24.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.0002601146697998047,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0003533363342285156
+    },
+    {
+      "output": "present.24.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.00040340423583984375,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0005865097045898438
+    },
+    {
+      "output": "present.25.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00019788742065429688,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0003223419189453125
+    },
+    {
+      "output": "present.25.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.0006618499755859375,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0009646415710449219
+    },
+    {
+      "output": "present.26.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00015294551849365234,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00017357617616653442
+    },
+    {
+      "output": "present.26.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.0007319450378417969,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0011608600616455078
+    },
+    {
+      "output": "present.27.key",
+      "basicPass": false,
+      "basicMaxAbs": 0.00020873546600341797,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.00028514862060546875
+    },
+    {
+      "output": "present.27.value",
+      "basicPass": false,
+      "basicMaxAbs": 0.000896453857421875,
+      "disabledPass": false,
+      "disabledMaxAbs": 0.0014224052429199219
+    }
+  ],
+  "quantizationStarted": false,
+  "modelPublished": false,
+  "browserInferenceAllowed": false,
+  "nextWork": "Locate specific operator-level divergence on fixed graph/input before proposing another path; do not widen threshold or claim model capability."
+}

@@ -1,0 +1,476 @@
+[
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "宋黎尝试把锁紧销插入闸门手柄的销孔。",
+    "errorCategories": [
+      "wrong_actor",
+      "invented_or_wrong_tool"
+    ],
+    "exampleId": "gate:D02.2:23",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试用钉钉紧紧销住门门。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "gate:D02.2:25",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试把锁紧销插入闸门手柄的销孔。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "易安尝试向外扳动闸门手柄。",
+    "errorCategories": [
+      "wrong_actor",
+      "wrong_attempt_or_missing_required_tool"
+    ],
+    "exampleId": "gate:D02.2:29",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试把锁紧销插入闸门手柄的销孔。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "gate:D02.2:31",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试把锁紧销插入闸门手柄的销孔。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "宋黎尝试把锁紧销插入闸门手柄的销孔。",
+    "errorCategories": [
+      "wrong_actor",
+      "invented_or_wrong_tool"
+    ],
+    "exampleId": "gate:D02.2:59",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试用钉钉紧紧销住门门。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "gate:D02.2:61",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试把锁紧销插入闸门手柄的销孔。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "陶青尝试在测震观察室等待稳定观测期结束。",
+    "errorCategories": [
+      "wrong_actor_or_action",
+      "irrelevant_tool_use"
+    ],
+    "exampleId": "waiting:D02.2:23",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试用记录仪保持物品稳定。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "waiting:D02.2:25",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试用记录仪对记录物品的操作,保持保持保持记录仪对记录物品的主体及对象的主体及对象的主体及对象的主体及对象的具体情况作出回应。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "顾芒尝试保持安静，避免碰动记录仪。",
+    "errorCategories": [
+      "wrong_actor_or_action",
+      "repetition_or_instruction_leakage"
+    ],
+    "exampleId": "waiting:D02.2:29",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,采用防护或协助行动,保持当前工具与对象的角色,保持当前工具与对象的角色,采用防护或协助行动,不宣告结果。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "waiting:D02.2:31",
+    "humanReview": "pending",
+    "rawText": "任澈尝试保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,采用防护或协助行动,保持当前工具与对象的角色,保持相应的工具与对象,采用防护或协助行动,不宣告结果。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "陶青尝试在测震观察室等待稳定观测期结束。",
+    "errorCategories": [
+      "wrong_actor_or_action",
+      "irrelevant_tool_use"
+    ],
+    "exampleId": "waiting:D02.2:60",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试用记录仪保持物品稳定。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "waiting:D02.2:62",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试用记录仪保持物品稳定。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "plausible_attempt_but_coverage_and_step_role_not_established",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "柯遥尝试与伍澄共同抬起标本托盘。",
+    "errorCategories": [
+      "cooperation_detail_omitted",
+      "potential_repeated_goal_instead_of_next_step"
+    ],
+    "exampleId": "jointlift:D02.2:24",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "plausible_attempt_but_coverage_and_step_role_not_established",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "柯遥尝试与伍澄把标本托盘送到恒温存放间。",
+    "errorCategories": [
+      "cooperation_detail_omitted",
+      "potential_repeated_goal_instead_of_next_step"
+    ],
+    "exampleId": "jointlift:D02.2:26",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "jointlift:D02.2:28",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "incomplete",
+    "completion": "incomplete",
+    "component": "D02.2",
+    "draftTarget": "伍澄尝试托住标本托盘另一侧并配合柯遥移动。",
+    "errorCategories": [
+      "truncated_without_eos"
+    ],
+    "exampleId": "jointlift:D02.2:32",
+    "humanReview": "pending",
+    "rawText": "回应柯遥对标本托盘的保持,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持工作的工具与对象的角色,采取防护或协助行动,保持对方对标本托",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "incomplete",
+    "completion": "incomplete",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "truncated_without_eos"
+    ],
+    "exampleId": "jointlift:D02.2:34",
+    "humanReview": "pending",
+    "rawText": "回应柯遥对标本托盘的尝试,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持当前工具与对象的角色,保持工作的工具与对象的角色,采用防护或协助行动,达成角色或角色,保持",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "plausible_attempt_but_coverage_and_step_role_not_established",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "柯遥尝试与伍澄共同抬起标本托盘。",
+    "errorCategories": [
+      "cooperation_detail_omitted",
+      "potential_repeated_goal_instead_of_next_step"
+    ],
+    "exampleId": "jointlift:D02.2:64",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "plausible_attempt_but_coverage_and_step_role_not_established",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "柯遥尝试与伍澄把标本托盘送到恒温存放间。",
+    "errorCategories": [
+      "cooperation_detail_omitted",
+      "potential_repeated_goal_instead_of_next_step"
+    ],
+    "exampleId": "jointlift:D02.2:66",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "jointlift:D02.2:68",
+    "humanReview": "pending",
+    "rawText": "柯遥尝试将标本托盘平稳送到恒温存放间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "方禾尝试从空的设备存放柜中取出一块未登记的替换齿轮，再修好校时钟。",
+    "errorCategories": [
+      "wrong_actor",
+      "invented_or_wrong_tool"
+    ],
+    "exampleId": "newentity:D02.2:23",
+    "humanReview": "pending",
+    "rawText": "奚白尝试用钉钉把校时钟调整到正确时间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "newentity:D02.2:25",
+    "humanReview": "pending",
+    "rawText": "奚白尝试从空的设备存放柜中取出一块未登记的替换齿轮,再修好校时钟。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "奚白尝试用拨针杆固定校时钟的指针。",
+    "errorCategories": [
+      "wrong_actor",
+      "wrong_attempt_or_missing_required_tool"
+    ],
+    "exampleId": "newentity:D02.2:29",
+    "humanReview": "pending",
+    "rawText": "奚白尝试从空的设备存放柜中取出一块未登记的替换齿轮。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "newentity:D02.2:31",
+    "humanReview": "pending",
+    "rawText": "奚白尝试用拨针杆固定校时钟的指针。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "方禾尝试从空的设备存放柜中取出一块未登记的替换齿轮，再修好校时钟。",
+    "errorCategories": [
+      "wrong_actor",
+      "invented_or_wrong_tool"
+    ],
+    "exampleId": "newentity:D02.2:58",
+    "humanReview": "pending",
+    "rawText": "奚白尝试用钉钉把校时钟调整到正确时间。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D02.2",
+    "draftTarget": "【结束】",
+    "errorCategories": [
+      "fails_to_end",
+      "unrequested_extra_fragment"
+    ],
+    "exampleId": "newentity:D02.2:60",
+    "humanReview": "pending",
+    "rawText": "奚白尝试从空的设备存放柜中取出一块未登记的替换齿轮,再修好校时钟。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D04.1.text",
+    "draftTarget": "回应宋黎对闸门手柄的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。",
+    "errorCategories": [
+      "reaction_constraint_replaced_by_action_or_incoherent_text"
+    ],
+    "exampleId": "gate:D04.1:28:primitive:2",
+    "humanReview": "pending",
+    "rawText": "孟遥尝试把锁紧销插入闸门手柄的销孔。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:gate",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D04.1.text",
+    "draftTarget": "回应陶青对记录仪的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。",
+    "errorCategories": [
+      "reaction_constraint_replaced_by_action_or_incoherent_text"
+    ],
+    "exampleId": "waiting:D04.1:28:primitive:2",
+    "humanReview": "pending",
+    "rawText": "顾芒尝试用记录仪保持物品稳定性。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:waiting",
+    "split": "development"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D04.1.text",
+    "draftTarget": "回应柯遥对标本托盘的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。",
+    "errorCategories": [
+      "reaction_constraint_replaced_by_action_or_incoherent_text"
+    ],
+    "exampleId": "jointlift:D04.1:31:primitive:2",
+    "humanReview": "pending",
+    "rawText": "回应柯遥对恒温存放间的回应,不回应对方。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:jointlift",
+    "split": "test"
+  },
+  {
+    "assistantReview": "does_not_satisfy_this_task_input",
+    "completion": "result",
+    "component": "D04.1.text",
+    "draftTarget": "回应方禾对校时钟的尝试，保持当前工具与对象的角色，采用防护或协助行动，不宣告结果。",
+    "errorCategories": [
+      "reaction_constraint_replaced_by_action_or_incoherent_text"
+    ],
+    "exampleId": "newentity:D04.1:28:primitive:2",
+    "humanReview": "pending",
+    "rawText": "奚白尝试用钉钉往校时取出。",
+    "reviewScope": "explicit inspection of all first generator outputs; draft itself has known errors",
+    "sourceGroup": "short-20261109:newentity",
+    "split": "test"
+  }
+]

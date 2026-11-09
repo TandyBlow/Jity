@@ -1,0 +1,17 @@
+.........................................................................................................................................................F.........................................
+======================================================================
+FAIL: test_new_adapters_match_actual_decoder_and_scheduler (test_short_protocol.ActualConsumerTests.test_new_adapters_match_actual_decoder_and_scheduler)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_protocol.py", line 81, in test_new_adapters_match_actual_decoder_and_scheduler
+    input=json.dumps(protocol_packet(), ensure_ascii=False), capture_output=True, text=True, check=False)
+                     ^^^^^^^^^^^^^^^^^
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_protocol.py", line 43, in protocol_packet
+    assert segments.status == 'result', segments.reason
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: invalid_frozen_action_registry
+
+----------------------------------------------------------------------
+Ran 195 tests in 11.713s
+
+FAILED (failures=1)

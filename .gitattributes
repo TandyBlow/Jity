@@ -19,3 +19,11 @@ nul -text
 # the review packet; checkout and commit must not rewrite line endings.
 experiments/world-components-logic/** text eol=lf
 artifacts/world-components-logic/** text eol=lf
+
+# Preserve compressed evidence and archived model bytes exactly.
+*.gz -text
+*.jpg -text
+artifacts/world-components-logic/model-archive-20261110/** -text
+
+# User-authorized training backup (2026-11-10).
+artifacts/world-components-logic/large-file-backup-20261110/*.part* filter=lfs diff=lfs merge=lfs -text

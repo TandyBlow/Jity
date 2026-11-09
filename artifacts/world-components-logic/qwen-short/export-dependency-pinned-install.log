@@ -1,0 +1,45 @@
+Collecting numpy==1.26.4
+  Downloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (61 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.1/61.1 kB 757.9 kB/s eta 0:00:00
+Collecting onnx_ir==0.1.12
+  Downloading onnx_ir-0.1.12-py3-none-any.whl.metadata (3.2 kB)
+Collecting ml_dtypes==0.5.4
+  Downloading ml_dtypes-0.5.4-cp312-cp312-macosx_10_13_universal2.whl.metadata (8.9 kB)
+Requirement already satisfied: onnx>=1.16 in ./.local/world-components-logic/qwen/venv/lib/python3.12/site-packages (from onnx_ir==0.1.12) (1.19.1)
+Collecting typing_extensions>=4.10 (from onnx_ir==0.1.12)
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Requirement already satisfied: protobuf>=4.25.1 in ./.local/world-components-logic/qwen/venv/lib/python3.12/site-packages (from onnx>=1.16->onnx_ir==0.1.12) (7.36.2)
+Downloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl (13.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.7/13.7 MB 7.1 MB/s eta 0:00:00
+Downloading onnx_ir-0.1.12-py3-none-any.whl (129 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 129.3/129.3 kB 6.9 MB/s eta 0:00:00
+Downloading ml_dtypes-0.5.4-cp312-cp312-macosx_10_13_universal2.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.9/676.9 kB 19.1 MB/s eta 0:00:00
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 93.9 MB/s eta 0:00:00
+Installing collected packages: typing_extensions, numpy, ml_dtypes, onnx_ir
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.5.4
+    Uninstalling numpy-2.5.4:
+      Successfully uninstalled numpy-2.5.4
+  Attempting uninstall: ml_dtypes
+    Found existing installation: ml_dtypes 0.6.0
+    Uninstalling ml_dtypes-0.6.0:
+      Successfully uninstalled ml_dtypes-0.6.0
+  Attempting uninstall: onnx_ir
+    Found existing installation: onnx-ir 1.1.0
+    Uninstalling onnx-ir-1.1.0:
+      Successfully uninstalled onnx-ir-1.1.0
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+onnxruntime 1.23.2 requires packaging, which is not installed.
+onnxruntime 1.23.2 requires sympy, which is not installed.
+onnxscript 0.5.6 requires packaging, which is not installed.
+optimum 2.1.0 requires huggingface_hub>=0.8.0, which is not installed.
+optimum 2.1.0 requires packaging, which is not installed.
+optimum 2.1.0 requires torch>=1.11, which is not installed.
+optimum 2.1.0 requires transformers>=4.29, which is not installed.
+optimum-onnx 0.1.0 requires transformers<4.58.0,>=4.36, which is not installed.
+Successfully installed ml_dtypes-0.5.4 numpy-1.26.4 onnx_ir-0.1.12 typing_extensions-4.16.0
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: /Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/venv/bin/python -m pip install --upgrade pip

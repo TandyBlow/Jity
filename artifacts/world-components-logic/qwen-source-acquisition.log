@@ -1,0 +1,47 @@
+retry 1: README.md (URLError)
+retry 2: README.md (URLError)
+model.safetensors: 33554432/1503300328 bytes
+model.safetensors: 67108864/1503300328 bytes
+model.safetensors: 100663296/1503300328 bytes
+model.safetensors: 134217728/1503300328 bytes
+model.safetensors: 167772160/1503300328 bytes
+model.safetensors: 201326592/1503300328 bytes
+model.safetensors: 234881024/1503300328 bytes
+model.safetensors: 268435456/1503300328 bytes
+model.safetensors: 301989888/1503300328 bytes
+model.safetensors: 335544320/1503300328 bytes
+model.safetensors: 369098752/1503300328 bytes
+model.safetensors: 402653184/1503300328 bytes
+model.safetensors: 436207616/1503300328 bytes
+model.safetensors: 469762048/1503300328 bytes
+model.safetensors: 503316480/1503300328 bytes
+model.safetensors: 536870912/1503300328 bytes
+model.safetensors: 570425344/1503300328 bytes
+model.safetensors: 603979776/1503300328 bytes
+model.safetensors: 637534208/1503300328 bytes
+model.safetensors: 671088640/1503300328 bytes
+model.safetensors: 704643072/1503300328 bytes
+model.safetensors: 738197504/1503300328 bytes
+model.safetensors: 771751936/1503300328 bytes
+model.safetensors: 805306368/1503300328 bytes
+model.safetensors: 838860800/1503300328 bytes
+model.safetensors: 872415232/1503300328 bytes
+model.safetensors: 905969664/1503300328 bytes
+model.safetensors: 939524096/1503300328 bytes
+model.safetensors: 973078528/1503300328 bytes
+model.safetensors: 1006632960/1503300328 bytes
+model.safetensors: 1040187392/1503300328 bytes
+model.safetensors: 1073741824/1503300328 bytes
+model.safetensors: 1107296256/1503300328 bytes
+model.safetensors: 1140850688/1503300328 bytes
+model.safetensors: 1174405120/1503300328 bytes
+model.safetensors: 1207959552/1503300328 bytes
+model.safetensors: 1241513984/1503300328 bytes
+model.safetensors: 1275068416/1503300328 bytes
+model.safetensors: 1308622848/1503300328 bytes
+model.safetensors: 1342177280/1503300328 bytes
+model.safetensors: 1375731712/1503300328 bytes
+model.safetensors: 1409286144/1503300328 bytes
+model.safetensors: 1442840576/1503300328 bytes
+model.safetensors: 1476395008/1503300328 bytes
+{"directory": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca", "files": 9, "manifest": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen3-06b-source-payload.json"}

@@ -1,0 +1,26 @@
+✔ complete context accepted unchanged; truncation is refused (10.616334ms)
+✔ input byte hash, generation, model and thinking flags are enforced (0.744791ms)
+✔ context overlimit is incomplete even when output would fit (1.039167ms)
+✔ EOS must be generated and terminal; never force success at output cap (0.394042ms)
+✔ cancel, deadline and lost device never become normal completion (0.343375ms)
+✔ late old-worker result cannot release a new request or its timer (0.177333ms)
+✔ already-queued old timer cannot terminate replacement worker (0.065166ms)
+✔ completion held across async logging cannot release a successor (0.063292ms)
+✔ GPU Cast or attention MatMul cannot prove quantized weight computation (2.585958ms)
+✔ profile for a prior GPU interval is rejected instead of borrowed (0.324791ms)
+✔ profiles retain all rows in emitted batches with bounded in-memory witnesses (0.368042ms)
+✔ runtime binding returns the device published by ORT, without creating a probe (0.198708ms)
+✔ probe metadata or a different adapter cannot establish actual model device identity (0.093375ms)
+✔ runtime device must itself expose required features and nonfallback provenance (0.062ms)
+✔ connection end is terminal and preserves the last observation without creating completion (0.090125ms)
+✔ profiling-off requires a prior audited identical input on the same device session (0.864542ms)
+✔ off mode is explicitly registered and has its own immutable placement identity (0.316167ms)
+✔ page stops after server loss, terminates worker, and keeps the original load error (1.766667ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117.806166

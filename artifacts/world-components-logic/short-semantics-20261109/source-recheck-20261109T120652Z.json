@@ -1,0 +1,22 @@
+{
+  "schema": "jity-d-source-recheck-v1",
+  "observedAt": "2026-11-09T12:06:52Z",
+  "remote": "https://github.com/TandyBlow/Jity.git",
+  "remoteBranch": "world-components-logic",
+  "remoteCommit": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+  "verification": "actual git ls-remote origin refs/heads/world-components-logic",
+  "taskBranch": "codex/d-short-semantics-20261109",
+  "isolatedWorktree": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics",
+  "originalWorkspace": {
+    "path": "/Users/davidz/Documents/GitHub/Jity",
+    "branch": "zjrrrr",
+    "head": "ca12e90c7a458fa2e398c5fe5daba3822a46eda5",
+    "trackedWorktreeStatus": "clean"
+  },
+  "userRequirements": {
+    "path": "/Users/davidz/Library/Mobile Documents/com~apple~CloudDocs/UIC/FYP/Jity.md",
+    "sha256": "b58b6885ac35570d013047181ddce72b61ed995a4357642aec390ededd430f48",
+    "unchangedSinceInitialAudit": true
+  },
+  "scope": "read-only source recheck; no branch synchronization or production changes"
+}

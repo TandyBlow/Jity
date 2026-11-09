@@ -1,0 +1,33 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py:185: DeprecationWarning: The feature will be removed. Please remove usage of this function
+  setup_onnx_logging(verbose) as log_ctx,
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/cache_utils.py:132: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if not self.is_initialized or self.keys.numel() == 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/masking_utils.py:207: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if (padding_length := kv_length + kv_offset - attention_mask.shape[-1]) > 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/model_patcher.py:422: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  mask = torch.where(mask, torch.tensor(0.0, device=mask.device, dtype=dtype), torch.finfo(dtype).min)
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/symbolic_opset9.py:5350: UserWarning: Exporting aten::index operator of advanced indexing in opset 18 is achieved by combination of multiple ONNX operators, including Reshape, Transpose, Concat, and Gather. If indices include negative values, the exported graph will produce incorrect results.
+  warnings.warn(
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.
+F....
+======================================================================
+FAIL: test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache (test_short_qwen_export.QwenExportTests.test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_qwen_export.py", line 80, in test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache
+    self.assertEqual(no_opt['inputArraysSha256'],basic['inputArraysSha256'])
+AssertionError: {'input_ids': '2e7f332ff90b4bb7f0a332f91a9e[391 chars]9c6'} != {'attention_mask': '1adb3e219ce79c4962ca83a[391 chars]b8d'}
+- {'attention_mask': 'd8e6c64d290b3a3783d4006b85dc552c5663f8d063201c4ede467d737b73bf7e',
++ {'attention_mask': '1adb3e219ce79c4962ca83a9773c8718ea85834a620039b237fa8ca3245ddd42',
+   'input_ids': '2e7f332ff90b4bb7f0a332f91a9e669c95e082a2c98a43f8a460c6d90ff98e30',
+   'past_key_values.0.key': 'e5b34538f2d69a5497bb0264814fc457e90a908e58d847e19ce55292a0245109',
+   'past_key_values.0.value': 'e7dccbba577575416665fc673d04c56eb525656bcc6340186ded92bcfe8e79c6',
+   'position_ids': '667b4620695fef6fc41638e3b6c3c3c77a3a868f3e1d447a0c7e5f10625ebb8d'}
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.856s
+
+FAILED (failures=1)

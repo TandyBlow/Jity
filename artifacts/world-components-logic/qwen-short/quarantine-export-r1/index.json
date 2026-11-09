@@ -1,0 +1,19 @@
+{
+  "schema": "jity-quarantined-registration-v1",
+  "createdAt": "2026-11-09T12:38:11.367857+00:00",
+  "reason": "Export r1 numerical validation exceeded the predeclared tolerances; Optimum logged warning without throwing. Original diagnostic_completed is not evidence of qualification. Registration was premature; no trained WebGPU generation or dependent evaluation was started.",
+  "status": "quarantined_not_qualified",
+  "originalRecordsPreserved": true,
+  "files": [
+    {
+      "path": "artifacts/world-components-logic/qwen-short/quarantine-export-r1/qwen-short-time-r5.browser-model.json",
+      "sha256": "e469e5d42b225b54114b4d4f93d89751c651e1f84b12b740d06b98c1d17306ac",
+      "bytes": 16791
+    },
+    {
+      "path": "artifacts/world-components-logic/qwen-short/quarantine-export-r1/qwen-webgpu-trained-r5.provider.json",
+      "sha256": "74f57f78a46ee132c3c0f58c34a43b7edb956fb4143cddeeb71b26f640cf9f2a",
+      "bytes": 64576
+    }
+  ]
+}

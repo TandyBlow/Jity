@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-09T09:47:18.079105+00:00",
+  "method": "actual_IAB_navigation_and_accessibility_tree_via_cua",
+  "url": "http://127.0.0.1:8769/protocol-probe-final.html",
+  "visibleResult": "通过：22 / 22",
+  "checks": 22,
+  "passed": 22,
+  "scope": "actual_D_baseline_decoder_scheduler_with_synthetic_engineering_packet",
+  "modelCalls": 0,
+  "productionServiceCalls": 0,
+  "CModelConnected": false,
+  "fullRequestMeasured": false,
+  "artifactPath": "artifacts/world-components-logic/short-semantics-20261109/protocol-probe-final.html",
+  "artifactSha256": "f7ac78c8d12de2a115c522511aa87d79b509ea65435bfccb2091edb247e75976",
+  "consumerIdentityReport": "artifacts/world-components-logic/short-semantics-20261109/protocol-probe-final.json"
+}

@@ -1,0 +1,28 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py:185: DeprecationWarning: The feature will be removed. Please remove usage of this function
+  setup_onnx_logging(verbose) as log_ctx,
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/cache_utils.py:132: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if not self.is_initialized or self.keys.numel() == 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/transformers/masking_utils.py:207: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+  if (padding_length := kv_length + kv_offset - attention_mask.shape[-1]) > 0:
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/model_patcher.py:422: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  mask = torch.where(mask, torch.tensor(0.0, device=mask.device, dtype=dtype), torch.finfo(dtype).min)
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/symbolic_opset9.py:5350: UserWarning: Exporting aten::index operator of advanced indexing in opset 18 is achieved by combination of multiple ONNX operators, including Reshape, Transpose, Concat, and Gather. If indices include negative values, the exported graph will produce incorrect results.
+  warnings.warn(
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Passing the argument `library_name` to `get_supported_tasks_for_model_type` is required, but got library_name=None. Defaulting to `transformers`. An error will be raised in a future version of Optimum if `library_name` is not provided.
+E....
+======================================================================
+ERROR: test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache (test_short_qwen_export.QwenExportTests.test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_qwen_export.py", line 77, in test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache
+    no_opt=export.validate_float(reference_eager,constructor(reference_eager.config,use_past=True,use_past_in_inputs=True),raw,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: validate_float() got an unexpected keyword argument 'receipt_path'
+
+----------------------------------------------------------------------
+Ran 5 tests in 60.400s
+
+FAILED (errors=1)

@@ -1,0 +1,1248 @@
+{
+  "arms": [
+    {
+      "actualForwardCalls": null,
+      "actualTrainingExposure": {
+        "D01.1.kind": {
+          "examples": 6,
+          "sourceGroups": 2
+        },
+        "D01.1.protagonist": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.1.slot_next": {
+          "examples": 6,
+          "sourceGroups": 3
+        },
+        "D01.2.container": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.2.parent": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.2.relation": {
+          "examples": 6,
+          "sourceGroups": 1
+        },
+        "D01.2.relative": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.2.slot": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.4.next": {
+          "examples": 6,
+          "sourceGroups": 3
+        },
+        "D01.4.parent": {
+          "examples": 6,
+          "sourceGroups": 6
+        },
+        "D01.6": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D02.1": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.2.next": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.3.role": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.3.verdict": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.4.check": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.4.issue_fragment": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D02.5.check": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D02.5.issue_fragment": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D03.1.relation": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D03.2.verdict": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D04.1.covered": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D04.1.next": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D05.1.edge": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D05.2.label": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D05.3.next": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D05.4.verdict": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D05.5.member": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "D06.P.mapping.audit": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D06.P.mapping.kind": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D06.P.mapping.more": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D06.P.mapping.target": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D06.P.review.verdict": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D07.1.character": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D07.1.next": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D07.2": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D07.3": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D08.1.boundary": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "D08.1.unit": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "D08.2.actor": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D08.2.next_kind": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "D08.2.time.boundary": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "D08.2.time.unit": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "U1.1.change": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "U1.2.audit": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U1.2.container": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U1.2.relation": {
+          "examples": 5,
+          "sourceGroups": 1
+        },
+        "U1.2.relative_entity": {
+          "examples": 5,
+          "sourceGroups": 1
+        },
+        "U1.2.relative_mode": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U1.2.slot": {
+          "examples": 5,
+          "sourceGroups": 1
+        },
+        "U1.2.slot_mode": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U2.1.audit": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "U2.1.next_op": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "U2.1.record": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U2.1.record_more": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "U3.1.status": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "U4.1.count": {
+          "examples": 5,
+          "sourceGroups": 5
+        },
+        "U5.1.audit": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "U5.1.next_op": {
+          "examples": 5,
+          "sourceGroups": 3
+        },
+        "U5.1.record": {
+          "examples": 5,
+          "sourceGroups": 2
+        },
+        "U5.1.record_more": {
+          "examples": 5,
+          "sourceGroups": 4
+        },
+        "U6.1": {
+          "examples": 5,
+          "sourceGroups": 4
+        }
+      },
+      "arm": "encoder_train",
+      "checkpoint": {
+        "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/encoder/heads.pt",
+        "sha256": "422d110cafa01dfeabf5f502d84e174e8a91f18cb7acd92a5b86c54eff60d6bd"
+      },
+      "completeEncoderWindowForwards": 30696,
+      "components": {
+        "D01.1.kind": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 32,
+          "splits": {
+            "development": 16,
+            "test": 16
+          }
+        },
+        "D01.1.protagonist": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D01.1.slot_next": {
+          "exactDraftMatches": 28,
+          "incomplete": 0,
+          "predictions": 32,
+          "splits": {
+            "development": 16,
+            "test": 16
+          }
+        },
+        "D01.2.container": {
+          "exactDraftMatches": 12,
+          "incomplete": 0,
+          "predictions": 20,
+          "splits": {
+            "development": 10,
+            "test": 10
+          }
+        },
+        "D01.2.parent": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D01.2.relative": {
+          "exactDraftMatches": 20,
+          "incomplete": 0,
+          "predictions": 20,
+          "splits": {
+            "development": 10,
+            "test": 10
+          }
+        },
+        "D01.2.slot": {
+          "exactDraftMatches": 20,
+          "incomplete": 0,
+          "predictions": 20,
+          "splits": {
+            "development": 10,
+            "test": 10
+          }
+        },
+        "D01.4.next": {
+          "exactDraftMatches": 12,
+          "incomplete": 0,
+          "predictions": 25,
+          "splits": {
+            "development": 12,
+            "test": 13
+          }
+        },
+        "D01.6": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D02.1": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D02.2.next": {
+          "exactDraftMatches": 12,
+          "incomplete": 0,
+          "predictions": 26,
+          "splits": {
+            "development": 12,
+            "test": 14
+          }
+        },
+        "D02.3.role": {
+          "exactDraftMatches": 252,
+          "incomplete": 0,
+          "predictions": 295,
+          "splits": {
+            "development": 95,
+            "test": 200
+          }
+        },
+        "D02.3.verdict": {
+          "exactDraftMatches": 14,
+          "incomplete": 0,
+          "predictions": 19,
+          "splits": {
+            "development": 8,
+            "test": 11
+          }
+        },
+        "D02.4.check": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 48,
+          "splits": {
+            "development": 24,
+            "test": 24
+          }
+        },
+        "D02.4.issue_fragment": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D02.5.check": {
+          "exactDraftMatches": 80,
+          "incomplete": 0,
+          "predictions": 85,
+          "splits": {
+            "development": 40,
+            "test": 45
+          }
+        },
+        "D02.5.issue_fragment": {
+          "exactDraftMatches": 5,
+          "incomplete": 0,
+          "predictions": 5,
+          "splits": {
+            "development": 2,
+            "test": 3
+          }
+        },
+        "D03.1.relation": {
+          "exactDraftMatches": 16,
+          "incomplete": 0,
+          "predictions": 24,
+          "splits": {
+            "development": 12,
+            "test": 12
+          }
+        },
+        "D03.2.verdict": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D04.1.covered": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D04.1.next": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D05.1.edge": {
+          "exactDraftMatches": 28,
+          "incomplete": 0,
+          "predictions": 32,
+          "splits": {
+            "development": 16,
+            "test": 16
+          }
+        },
+        "D05.2.label": {
+          "exactDraftMatches": 6,
+          "incomplete": 0,
+          "predictions": 9,
+          "splits": {
+            "development": 4,
+            "test": 5
+          }
+        },
+        "D05.3.next": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D05.4.verdict": {
+          "exactDraftMatches": 2,
+          "incomplete": 0,
+          "predictions": 6,
+          "splits": {
+            "development": 3,
+            "test": 3
+          }
+        },
+        "D05.5.member": {
+          "exactDraftMatches": 3,
+          "incomplete": 0,
+          "predictions": 16,
+          "splits": {
+            "development": 8,
+            "test": 8
+          }
+        },
+        "D06.P.mapping.audit": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D06.P.mapping.kind": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D06.P.mapping.more": {
+          "exactDraftMatches": 14,
+          "incomplete": 0,
+          "predictions": 23,
+          "splits": {
+            "development": 10,
+            "test": 13
+          }
+        },
+        "D06.P.mapping.target": {
+          "exactDraftMatches": 6,
+          "incomplete": 0,
+          "predictions": 17,
+          "splits": {
+            "development": 7,
+            "test": 10
+          }
+        },
+        "D06.P.review.verdict": {
+          "exactDraftMatches": 24,
+          "incomplete": 0,
+          "predictions": 28,
+          "splits": {
+            "development": 14,
+            "test": 14
+          }
+        },
+        "D07.1.character": {
+          "exactDraftMatches": 3,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D07.1.next": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D07.2": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D07.3": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D08.1.boundary": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D08.1.unit": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D08.2.actor": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 24,
+          "splits": {
+            "development": 12,
+            "test": 12
+          }
+        },
+        "D08.2.next_kind": {
+          "exactDraftMatches": 8,
+          "incomplete": 0,
+          "predictions": 16,
+          "splits": {
+            "development": 8,
+            "test": 8
+          }
+        },
+        "D08.2.time.boundary": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D08.2.time.unit": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "U1.1.change": {
+          "exactDraftMatches": 3,
+          "incomplete": 0,
+          "predictions": 20,
+          "splits": {
+            "development": 10,
+            "test": 10
+          }
+        },
+        "U1.2.audit": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 2,
+          "splits": {
+            "test": 2
+          }
+        },
+        "U1.2.container": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 3,
+          "splits": {
+            "test": 3
+          }
+        },
+        "U1.2.relative_mode": {
+          "exactDraftMatches": 3,
+          "incomplete": 0,
+          "predictions": 3,
+          "splits": {
+            "test": 3
+          }
+        },
+        "U1.2.slot_mode": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 3,
+          "splits": {
+            "test": 3
+          }
+        },
+        "U2.1.audit": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "U2.1.next_op": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 56,
+          "splits": {
+            "development": 28,
+            "test": 28
+          }
+        },
+        "U2.1.record_more": {
+          "exactDraftMatches": 27,
+          "incomplete": 0,
+          "predictions": 27,
+          "splits": {
+            "development": 13,
+            "test": 14
+          }
+        },
+        "U3.1.status": {
+          "exactDraftMatches": 7,
+          "incomplete": 0,
+          "predictions": 13,
+          "splits": {
+            "development": 6,
+            "test": 7
+          }
+        },
+        "U4.1.count": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 13,
+          "splits": {
+            "development": 6,
+            "test": 7
+          }
+        },
+        "U5.1.audit": {
+          "exactDraftMatches": 3,
+          "incomplete": 0,
+          "predictions": 3,
+          "splits": {
+            "development": 1,
+            "test": 2
+          }
+        },
+        "U5.1.next_op": {
+          "exactDraftMatches": 2,
+          "incomplete": 0,
+          "predictions": 18,
+          "splits": {
+            "development": 6,
+            "test": 12
+          }
+        },
+        "U5.1.record_more": {
+          "exactDraftMatches": 7,
+          "incomplete": 0,
+          "predictions": 7,
+          "splits": {
+            "development": 2,
+            "test": 5
+          }
+        },
+        "U6.1": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 2,
+          "splits": {
+            "development": 1,
+            "test": 1
+          }
+        }
+      },
+      "elapsedMs": 475629.778042,
+      "generateCalls": 0,
+      "lossFirstLast": [
+        1.3897494077682495,
+        0.7196660041809082
+      ],
+      "nonzeroDataGradientSteps": {
+        "D01.1.kind": 6,
+        "D01.1.protagonist": 6,
+        "D01.1.slot_next": 6,
+        "D01.2.container": 6,
+        "D01.2.parent": 6,
+        "D01.2.relation": 6,
+        "D01.2.relative": 6,
+        "D01.2.slot": 5,
+        "D01.4.next": 6,
+        "D01.4.parent": 0,
+        "D01.6": 5,
+        "D02.1": 5,
+        "D02.2.next": 5,
+        "D02.3.role": 5,
+        "D02.3.verdict": 5,
+        "D02.4.check": 5,
+        "D02.4.issue_fragment": 2,
+        "D02.5.check": 5,
+        "D02.5.issue_fragment": 2,
+        "D03.1.relation": 5,
+        "D03.2.verdict": 5,
+        "D04.1.covered": 5,
+        "D04.1.next": 5,
+        "D05.1.edge": 5,
+        "D05.2.label": 5,
+        "D05.3.next": 5,
+        "D05.4.verdict": 5,
+        "D05.5.member": 5,
+        "D06.P.mapping.audit": 5,
+        "D06.P.mapping.kind": 5,
+        "D06.P.mapping.more": 5,
+        "D06.P.mapping.target": 5,
+        "D06.P.review.verdict": 5,
+        "D07.1.character": 5,
+        "D07.1.next": 5,
+        "D07.2": 5,
+        "D07.3": 5,
+        "D08.1.boundary": 5,
+        "D08.1.unit": 5,
+        "D08.2.actor": 5,
+        "D08.2.next_kind": 5,
+        "D08.2.time.boundary": 5,
+        "D08.2.time.unit": 5,
+        "U1.1.change": 5,
+        "U1.2.audit": 5,
+        "U1.2.container": 5,
+        "U1.2.relation": 5,
+        "U1.2.relative_entity": 5,
+        "U1.2.relative_mode": 5,
+        "U1.2.slot": 5,
+        "U1.2.slot_mode": 5,
+        "U2.1.audit": 5,
+        "U2.1.next_op": 5,
+        "U2.1.record": 1,
+        "U2.1.record_more": 5,
+        "U3.1.status": 5,
+        "U4.1.count": 5,
+        "U5.1.audit": 5,
+        "U5.1.next_op": 5,
+        "U5.1.record": 2,
+        "U5.1.record_more": 5,
+        "U6.1": 5
+      },
+      "sourceWeightsUnchanged": true,
+      "steps": 160,
+      "trainedComponents": [
+        "D01.1.kind",
+        "D01.1.protagonist",
+        "D01.1.slot_next",
+        "D01.2.container",
+        "D01.2.parent",
+        "D01.2.relation",
+        "D01.2.relative",
+        "D01.2.slot",
+        "D01.4.next",
+        "D01.6",
+        "D02.1",
+        "D02.2.next",
+        "D02.3.role",
+        "D02.3.verdict",
+        "D02.4.check",
+        "D02.4.issue_fragment",
+        "D02.5.check",
+        "D02.5.issue_fragment",
+        "D03.1.relation",
+        "D03.2.verdict",
+        "D04.1.covered",
+        "D04.1.next",
+        "D05.1.edge",
+        "D05.2.label",
+        "D05.3.next",
+        "D05.4.verdict",
+        "D05.5.member",
+        "D06.P.mapping.audit",
+        "D06.P.mapping.kind",
+        "D06.P.mapping.more",
+        "D06.P.mapping.target",
+        "D06.P.review.verdict",
+        "D07.1.character",
+        "D07.1.next",
+        "D07.2",
+        "D07.3",
+        "D08.1.boundary",
+        "D08.1.unit",
+        "D08.2.actor",
+        "D08.2.next_kind",
+        "D08.2.time.boundary",
+        "D08.2.time.unit",
+        "U1.1.change",
+        "U1.2.audit",
+        "U1.2.container",
+        "U1.2.relation",
+        "U1.2.relative_entity",
+        "U1.2.relative_mode",
+        "U1.2.slot",
+        "U1.2.slot_mode",
+        "U2.1.audit",
+        "U2.1.next_op",
+        "U2.1.record",
+        "U2.1.record_more",
+        "U3.1.status",
+        "U4.1.count",
+        "U5.1.audit",
+        "U5.1.next_op",
+        "U5.1.record",
+        "U5.1.record_more",
+        "U6.1"
+      ]
+    },
+    {
+      "actualForwardCalls": {
+        "encoder": 448,
+        "top": 1628
+      },
+      "actualTrainingExposure": {
+        "D01.1.name": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D01.1.slot_label": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D01.3": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D01.4.goal": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D01.5": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D02.2.text": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D04.1.text": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D05.3.text": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D07.1.text": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D08.1.amount": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "D08.2.time.amount": {
+          "examples": 23,
+          "sourceGroups": 8
+        },
+        "U2.2": {
+          "examples": 23,
+          "sourceGroups": 4
+        },
+        "U4.2": {
+          "examples": 22,
+          "sourceGroups": 4
+        },
+        "U5.2": {
+          "examples": 22,
+          "sourceGroups": 3
+        }
+      },
+      "arm": "generator_train",
+      "checkpoint": {
+        "path": ".local/world-components-logic/short-semantic-models/short-all-20261109-r3/generator/adapter.pt",
+        "sha256": "456b60c81634e4d6a00b18b0fc02214239156a57a2b5163ca240b1aa031917ce",
+        "sourceTensorSha256": "cceb3639c60ad49a2416f965c8a74c1fb632d6cf122b2922c9265b3fb2b311c4",
+        "tensorSha256": "e742e4cb6c2de01d2e5cd273426e55288ef70d32fb50f11214d79b105d471cd0"
+      },
+      "completeEncoderWindowForwards": 0,
+      "components": {
+        "D01.1.name": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 28,
+          "splits": {
+            "development": 14,
+            "test": 14
+          }
+        },
+        "D01.1.slot_label": {
+          "exactDraftMatches": 4,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D01.3": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 28,
+          "splits": {
+            "development": 14,
+            "test": 14
+          }
+        },
+        "D01.4.goal": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 13,
+          "splits": {
+            "development": 6,
+            "test": 7
+          }
+        },
+        "D01.5": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 12,
+          "splits": {
+            "development": 6,
+            "test": 6
+          }
+        },
+        "D02.2.text": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 14,
+          "splits": {
+            "development": 6,
+            "test": 8
+          }
+        },
+        "D04.1.text": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D05.3.text": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 8,
+          "splits": {
+            "development": 4,
+            "test": 4
+          }
+        },
+        "D07.1.text": {
+          "exactDraftMatches": 1,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D08.1.amount": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "D08.2.time.amount": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 4,
+          "splits": {
+            "development": 2,
+            "test": 2
+          }
+        },
+        "U2.2": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 1,
+          "splits": {
+            "development": 1
+          }
+        },
+        "U4.2": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 2,
+          "splits": {
+            "development": 1,
+            "test": 1
+          }
+        },
+        "U5.2": {
+          "exactDraftMatches": 0,
+          "incomplete": 0,
+          "predictions": 2,
+          "splits": {
+            "development": 1,
+            "test": 1
+          }
+        }
+      },
+      "elapsedMs": 927378.513375,
+      "generateCalls": 128,
+      "lossFirstLast": [
+        3.683118760585785,
+        1.0613090693950653
+      ],
+      "nonzeroDataGradientSteps": null,
+      "sourceWeightsUnchanged": true,
+      "steps": 160,
+      "trainedComponents": [
+        "D01.1.name",
+        "D01.1.slot_label",
+        "D01.3",
+        "D01.4.goal",
+        "D01.5",
+        "D02.2.text",
+        "D04.1.text",
+        "D05.3.text",
+        "D07.1.text",
+        "D08.1.amount",
+        "D08.2.time.amount",
+        "U2.2",
+        "U4.2",
+        "U5.2"
+      ]
+    }
+  ],
+  "formalEvaluationAllowed": false,
+  "fullRequest500ms": "not_measured",
+  "holdout": "open_previously_inspected_same_sources",
+  "humanReview": "pending",
+  "interpretation": "Draft exact match is not semantic quality; all first outputs remain in raw journal. Training only, not live upstream completion.",
+  "plannedPredictionCount": 1277,
+  "predictionSlotStatus": {
+    "complete": 1264,
+    "not_started": 13
+  },
+  "previousExposure": "short-intent-20261109-r1",
+  "provider": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/provider.json",
+    "sha256": "b759d07b33b4e147507023115bf1f5cd180696bf0884d72e51f4bc45e4d9a861"
+  },
+  "runId": "short-all-20261109-r3",
+  "schema": "jity-short-exploratory-training-summary-v1",
+  "sourceVerification": "pending",
+  "status": "diagnostic_completed",
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 2468.875,
+    "stopReason": null,
+    "wallMs": 1409825.5872498266
+  },
+  "unstartedPredictions": [
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "gate:D01.4:10:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "gate:D01.4:12:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "gate:D01.4:14:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "waiting:D01.4:10:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "waiting:D01.4:12:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "waiting:D01.4:14:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "development",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "jointlift:D01.4:10:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "jointlift:D01.4:11:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "jointlift:D01.4:13:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "jointlift:D01.4:15:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "newentity:D01.4:10:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "newentity:D01.4:12:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    },
+    {
+      "arm": "encoder_train",
+      "component": "D01.4.parent",
+      "exampleId": "newentity:D01.4:14:primitive:2",
+      "reason": "untrained_or_no_nonzero_data_gradient",
+      "split": "test",
+      "status": "not_started"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "jity-time-choice-application-proof-v1",
+  "state": "applied_after_runtime_unlock",
+  "sourceSha256": "62c12feba54d169e3eb595853fad17b19c1fb76ecdb7da601141add9d3d365c8",
+  "engineeringChecks": {
+    "newTimeChoice": 10,
+    "existingLifecycleHandoff": 45,
+    "passed": 55,
+    "modelEvidence": false
+  },
+  "datasetRowsLoadedByCommonLoader": 4750,
+  "activeOriginalDatasetUnchanged": true,
+  "newDatasetSha256": "8aa0875d0268e921142cfab5c2fe42df049193bca2d70b08358cbe909f4abe16"
+}

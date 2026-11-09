@@ -1,0 +1,40 @@
+{
+  "schema": "jity-user-pause-final-disposition-v1",
+  "at": "2026-11-09T13:45:08.041930+00:00",
+  "runId": "qwen-webgpu-base-full-20261109-r6",
+  "effectiveDisposition": "paused_by_user",
+  "recordStatus": "stopped_incomplete",
+  "reason": "Explicit user pause, not an inference timeout or semantic handback.",
+  "recordSha256": "a500f81f729669fedd18429af6fbdc93e0f9e936f648a9dfef94129b03173c4b",
+  "attemptCount": 265,
+  "attemptStatuses": {
+    "complete": 264,
+    "interrupted": 1
+  },
+  "slotStatuses": {
+    "complete": 264,
+    "interrupted": 1,
+    "not_started": 171
+  },
+  "recordedSemanticCompletions": {
+    "incomplete": 48,
+    "empty": 20,
+    "result": 196,
+    "no_completed_outcome": 1
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": -15,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 657.484375,
+    "peakProcessIds": [
+      27201
+    ],
+    "stopReason": null,
+    "wallMs": 1499293.3743339963
+  },
+  "journalRecoveryError": null,
+  "rawPreserved": true,
+  "resumeRequiresNewFrozenRemainingCasePlan": true,
+  "semanticQualityApproved": false
+}

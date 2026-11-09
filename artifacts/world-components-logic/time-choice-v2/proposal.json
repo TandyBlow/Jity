@@ -1,0 +1,25 @@
+{
+  "schema": "jity-time-choice-proposal-v2",
+  "state": "proposed_not_applied",
+  "baseSource": "experiments/world-components-logic/short_heads_lifecycle.py",
+  "baseSourceSha256": "5c84b372639ded25ce9dc306051e146a1f95c363fc45e89edee5f5045dcc1fd7",
+  "proposedSourceSha256": "62c12feba54d169e3eb595853fad17b19c1fb76ecdb7da601141add9d3d365c8",
+  "patchSha256": "74760fc45c739907ed3813a6bdf773603e5c1ede3f4aa26cb51b346b0caeba63",
+  "programOnly": true,
+  "activeCodeChanged": false,
+  "newInputContract": {
+    "unit": {
+      "timeChoice": {
+        "boundary": "actual prior model label"
+      }
+    },
+    "amount": {
+      "timeChoice": {
+        "boundary": "actual prior model label",
+        "unit": "actual prior unit label"
+      }
+    }
+  },
+  "publicWireUnchanged": true,
+  "currentBatchUnchanged": true
+}

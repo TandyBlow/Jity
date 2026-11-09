@@ -1,0 +1,153 @@
+Collecting torch==2.7.1
+  Downloading torch-2.7.1-cp312-none-macosx_11_0_arm64.whl.metadata (29 kB)
+Collecting transformers==4.57.3
+  Downloading transformers-4.57.3-py3-none-any.whl.metadata (43 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.0/44.0 kB 9.3 MB/s eta 0:00:00
+Collecting numpy==1.26.4
+  Downloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (61 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.1/61.1 kB 1.5 MB/s eta 0:00:00
+Collecting safetensors==0.6.2
+  Downloading safetensors-0.6.2-cp38-abi3-macosx_11_0_arm64.whl.metadata (4.1 kB)
+Collecting tokenizers==0.22.1
+  Downloading tokenizers-0.22.1-cp39-abi3-macosx_11_0_arm64.whl.metadata (6.8 kB)
+Collecting huggingface_hub==0.36.0
+  Downloading huggingface_hub-0.36.0-py3-none-any.whl.metadata (14 kB)
+Collecting optimum==2.1.0
+  Downloading optimum-2.1.0-py3-none-any.whl.metadata (14 kB)
+Collecting optimum-onnx==0.1.0
+  Downloading optimum_onnx-0.1.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting onnx==1.19.1
+  Downloading onnx-1.19.1-cp312-cp312-macosx_12_0_universal2.whl.metadata (7.0 kB)
+Collecting onnxruntime==1.23.2
+  Downloading onnxruntime-1.23.2-cp312-cp312-macosx_13_0_arm64.whl.metadata (5.1 kB)
+Collecting onnxscript==0.5.6
+  Downloading onnxscript-0.5.6-py3-none-any.whl.metadata (13 kB)
+Collecting onnx_ir==0.1.12
+  Downloading onnx_ir-0.1.12-py3-none-any.whl.metadata (3.2 kB)
+Collecting ml_dtypes==0.5.4
+  Downloading ml_dtypes-0.5.4-cp312-cp312-macosx_10_13_universal2.whl.metadata (8.9 kB)
+Collecting filelock (from torch==2.7.1)
+  Downloading filelock-4.2.9-py3-none-any.whl.metadata (2.3 kB)
+Collecting typing-extensions>=4.10.0 (from torch==2.7.1)
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting setuptools (from torch==2.7.1)
+  Downloading setuptools-84.2.1-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch==2.7.1)
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx (from torch==2.7.1)
+  Downloading networkx-3.7-py3-none-any.whl.metadata (6.7 kB)
+Collecting jinja2 (from torch==2.7.1)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec (from torch==2.7.1)
+  Downloading fsspec-2026.9.0-py3-none-any.whl.metadata (10 kB)
+Collecting packaging>=20.0 (from transformers==4.57.3)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pyyaml>=5.1 (from transformers==4.57.3)
+  Downloading pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl.metadata (2.4 kB)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='pypi.org', port=443): Read timed out. (read timeout=15)")': /simple/regex/
+Collecting regex!=2019.12.17 (from transformers==4.57.3)
+  Downloading regex-2026.11.9-cp312-cp312-macosx_11_0_arm64.whl.metadata (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.5/40.5 kB 1.9 MB/s eta 0:00:00
+Collecting requests (from transformers==4.57.3)
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting tqdm>=4.27 (from transformers==4.57.3)
+  Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.4/57.4 kB 1.8 MB/s eta 0:00:00
+Collecting hf-xet<2.0.0,>=1.1.3 (from huggingface_hub==0.36.0)
+  Downloading hf_xet-1.8.0-cp38-abi3-macosx_11_0_arm64.whl.metadata (4.9 kB)
+Collecting protobuf>=4.25.1 (from onnx==1.19.1)
+  Downloading protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl.metadata (595 bytes)
+Collecting coloredlogs (from onnxruntime==1.23.2)
+  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)
+Collecting flatbuffers (from onnxruntime==1.23.2)
+  Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.7.1)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting humanfriendly>=9.1 (from coloredlogs->onnxruntime==1.23.2)
+  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.7.1)
+  Downloading markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (2.7 kB)
+Collecting charset_normalizer<4,>=2 (from requests->transformers==4.57.3)
+  Downloading charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (46 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.4/46.4 kB 1.8 MB/s eta 0:00:00
+Collecting idna<4,>=2.5 (from requests->transformers==4.57.3)
+  Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting urllib3<3,>=1.26 (from requests->transformers==4.57.3)
+  Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting certifi>=2023.5.7 (from requests->transformers==4.57.3)
+  Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+Downloading torch-2.7.1-cp312-none-macosx_11_0_arm64.whl (68.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 68.6/68.6 MB 3.4 MB/s eta 0:00:00
+Downloading transformers-4.57.3-py3-none-any.whl (12.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 1.9 MB/s eta 0:00:00
+Downloading numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl (13.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.7/13.7 MB 3.3 MB/s eta 0:00:00
+Downloading safetensors-0.6.2-cp38-abi3-macosx_11_0_arm64.whl (432 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 432.2/432.2 kB 8.6 MB/s eta 0:00:00
+Downloading tokenizers-0.22.1-cp39-abi3-macosx_11_0_arm64.whl (2.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 2.3 MB/s eta 0:00:00
+Downloading huggingface_hub-0.36.0-py3-none-any.whl (566 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.1/566.1 kB 1.1 MB/s eta 0:00:00
+Downloading optimum-2.1.0-py3-none-any.whl (161 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 161.2/161.2 kB 18.5 MB/s eta 0:00:00
+Downloading optimum_onnx-0.1.0-py3-none-any.whl (194 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 194.2/194.2 kB 7.8 MB/s eta 0:00:00
+Downloading onnx-1.19.1-cp312-cp312-macosx_12_0_universal2.whl (18.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 1.9 MB/s eta 0:00:00
+Downloading onnxruntime-1.23.2-cp312-cp312-macosx_13_0_arm64.whl (17.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.2/17.2 MB 3.2 MB/s eta 0:00:00
+Downloading onnxscript-0.5.6-py3-none-any.whl (683 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 683.0/683.0 kB 10.7 MB/s eta 0:00:00
+Downloading onnx_ir-0.1.12-py3-none-any.whl (129 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 129.3/129.3 kB 10.5 MB/s eta 0:00:00
+Downloading ml_dtypes-0.5.4-cp312-cp312-macosx_10_13_universal2.whl (676 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 676.9/676.9 kB 12.8 MB/s eta 0:00:00
+Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.7/221.7 kB 9.3 MB/s eta 0:00:00
+Downloading hf_xet-1.8.0-cp38-abi3-macosx_11_0_arm64.whl (3.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 6.6 MB/s eta 0:00:00
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 25.1 MB/s eta 0:00:00
+Downloading protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl (456 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 456.0/456.0 kB 11.7 MB/s eta 0:00:00
+Downloading pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl (173 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 174.0/174.0 kB 9.6 MB/s eta 0:00:00
+Downloading regex-2026.11.9-cp312-cp312-macosx_11_0_arm64.whl (294 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 294.2/294.2 kB 2.8 MB/s eta 0:00:00
+Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 9.2 MB/s eta 0:00:00
+Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.2/80.2 kB 4.1 MB/s eta 0:00:00
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 9.8 MB/s eta 0:00:00
+Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 7.9 MB/s eta 0:00:00
+Downloading filelock-4.2.9-py3-none-any.whl (164 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 164.7/164.7 kB 9.1 MB/s eta 0:00:00
+Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 134.9/134.9 kB 10.3 MB/s eta 0:00:00
+Downloading networkx-3.7-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 2.0 MB/s eta 0:00:00
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 kB 5.6 MB/s eta 0:00:00
+Downloading setuptools-84.2.1-py3-none-any.whl (876 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 876.3/876.3 kB 1.6 MB/s eta 0:00:00
+Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.1/135.1 kB 11.6 MB/s eta 0:00:00
+Downloading charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl (367 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 367.8/367.8 kB 1.4 MB/s eta 0:00:00
+Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 13.7 MB/s eta 0:00:00
+Downloading idna-3.20-py3-none-any.whl (69 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 69.6/69.6 kB 7.3 MB/s eta 0:00:00
+Downloading markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl (12 kB)
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 33.5 MB/s eta 0:00:00
+Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.7/135.7 kB 9.6 MB/s eta 0:00:00
+Installing collected packages: mpmath, flatbuffers, urllib3, typing-extensions, tqdm, sympy, setuptools, safetensors, regex, pyyaml, protobuf, packaging, numpy, networkx, MarkupSafe, idna, humanfriendly, hf-xet, fsspec, filelock, charset_normalizer, certifi, requests, ml_dtypes, jinja2, coloredlogs, torch, onnxruntime, onnx, huggingface_hub, tokenizers, onnx_ir, transformers, onnxscript, optimum, optimum-onnx
+Successfully installed MarkupSafe-3.0.4 certifi-2026.10.23 charset_normalizer-3.5.2 coloredlogs-15.0.1 filelock-4.2.9 flatbuffers-25.12.19 fsspec-2026.9.0 hf-xet-1.8.0 huggingface_hub-0.36.0 humanfriendly-10.0 idna-3.20 jinja2-3.1.6 ml_dtypes-0.5.4 mpmath-1.3.0 networkx-3.7 numpy-1.26.4 onnx-1.19.1 onnx_ir-0.1.12 onnxruntime-1.23.2 onnxscript-0.5.6 optimum-2.1.0 optimum-onnx-0.1.0 packaging-26.3 protobuf-7.36.2 pyyaml-6.0.3 regex-2026.11.9 requests-2.34.2 safetensors-0.6.2 setuptools-84.2.1 sympy-1.14.0 tokenizers-0.22.1 torch-2.7.1 tqdm-4.70.1 transformers-4.57.3 typing-extensions-4.16.0 urllib3-2.8.0
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: /Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/bin/python -m pip install --upgrade pip

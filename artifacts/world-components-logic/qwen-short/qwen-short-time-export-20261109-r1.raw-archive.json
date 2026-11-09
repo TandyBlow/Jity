@@ -1,0 +1,34 @@
+{
+  "schema": "jity-local-raw-archive-v1",
+  "runId": "qwen-short-time-export-20261109-r1",
+  "gitContent": "index_only_large_payloads_local",
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.json",
+      "bytes": 5020,
+      "sha256": "8ac40c2b2a55a198825ee0a799350f8332a40be9416869b583ab6f08b2afed5d",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.json.gz",
+      "gzipBytes": 1609,
+      "gzipSha256": "3c1105a3c9e01270b616b2335ceda4b057330421ea84ae44062629bc13b44eed",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.journal.jsonl",
+      "bytes": 24069,
+      "sha256": "8b1657ffc4d19a37c595663f4e51da02b2a895e87bf0dbad95170ac5dac6c944",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.journal.jsonl.gz",
+      "gzipBytes": 3549,
+      "gzipSha256": "ee2b1eb4fdbdbc6032ab6ecc35fbc4537973e559910ddaf8c5eeb4cbc2793ac3",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.process.log",
+      "bytes": 1117464,
+      "sha256": "7c08ea8499d4203d691950c37db4b0f51b570c5150a07fada36b4a14ab7f7058",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.process.log.gz",
+      "gzipBytes": 37818,
+      "gzipSha256": "2e05efa2916038768d0b29cfeca157b98d01c1538a85dde3c737b08ab32d6557",
+      "decompressedByteIdentityVerified": true
+    }
+  ]
+}

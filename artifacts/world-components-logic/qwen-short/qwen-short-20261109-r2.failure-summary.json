@@ -1,0 +1,1562 @@
+{
+  "schema": "jity-qwen-failure-summary-v1",
+  "runId": "qwen-short-20261109-r2",
+  "status": "stopped_incomplete",
+  "supervisor": {
+    "error": null,
+    "exitCode": -15,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 1050.0625,
+    "stopReason": null,
+    "wallMs": 246781.64312499575
+  },
+  "actualTrainingSteps": 0,
+  "publishedTrainedModel": false,
+  "predictionSlots": [
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:4",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:5",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:6",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:7",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:8",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.3:9",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.5:16",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.5:17",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.5:18",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:U2.2:48",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:U4.2:53",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:4",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:5",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:6",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:7",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:8",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.3:9",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.5:16",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.5:17",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.5:18",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:U5.2:54",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:4",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:5",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:6",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:7",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:8",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.3:9",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.5:17",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.5:18",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.5:19",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:U5.2:58",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:4",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:5",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:6",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:7",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:8",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.3:9",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.5:16",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.5:17",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.5:18",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:U4.2:52",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:2",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:4",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:7",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:10",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:13",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:16",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:19",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.1:1:primitive:22",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.4:10:primitive:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.4:12:primitive:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D01.4:14:primitive:3",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D02.2:23:primitive:2",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D04.1:30:primitive:2",
+      "status": "result",
+      "reason": null,
+      "rawOutputRetained": true
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D02.2:31:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D05.3:40:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D05.3:41:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D02.2:60:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D07.1:65:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D08.1:71:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "gate:D08.2:72:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:4",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:7",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:10",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:13",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:16",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:19",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.1:1:primitive:22",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.4:10:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.4:12:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D01.4:14:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D02.2:23:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D04.1:30:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D02.2:31:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D05.3:40:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D05.3:41:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D02.2:61:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D07.1:66:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D08.1:72:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "waiting:D08.2:73:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:4",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:7",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:10",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:13",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:16",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:19",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.1:1:primitive:22",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.4:10:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.4:11:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.4:13:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D01.4:15:primitive:3",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D02.2:24:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D02.2:26:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D04.1:33:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D02.2:34:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D05.3:43:primitive:2",
+      "status": "incomplete",
+      "reason": "frozen_mps_driver_memory_limit",
+      "rawOutputRetained": false
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D05.3:44:primitive:2",
+      "status": "interrupted"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D02.2:65:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D02.2:67:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D07.1:72:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D08.1:78:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "jointlift:D08.2:79:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:10",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:13",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.1:1:primitive:22",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.4:10:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.4:12:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D01.4:14:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D02.2:23:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D04.1:30:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D02.2:31:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D05.3:40:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D05.3:41:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D02.2:60:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D07.1:65:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D08.1:71:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_baseline",
+      "exampleId": "newentity:D08.2:72:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:5",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:6",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:8",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.3:9",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.5:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.5:17",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.5:18",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:U2.2:48",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:U4.2:53",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:5",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:6",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:8",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.3:9",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.5:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.5:17",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.5:18",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:U5.2:54",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:5",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:6",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:8",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.3:9",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.5:17",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.5:18",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.5:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:U5.2:58",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:5",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:6",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:8",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.3:9",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.5:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.5:17",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.5:18",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:U4.2:52",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:10",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:13",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.1:1:primitive:22",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.4:10:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.4:12:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D01.4:14:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D02.2:23:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D04.1:30:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D02.2:31:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D05.3:40:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D05.3:41:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D02.2:60:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D07.1:65:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D08.1:71:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "gate:D08.2:72:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:10",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:13",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.1:1:primitive:22",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.4:10:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.4:12:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D01.4:14:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D02.2:23:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D04.1:30:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D02.2:31:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D05.3:40:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D05.3:41:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D02.2:61:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D07.1:66:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D08.1:72:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "waiting:D08.2:73:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:10",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:13",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.1:1:primitive:22",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.4:10:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.4:11:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.4:13:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D01.4:15:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D02.2:24:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D02.2:26:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D04.1:33:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D02.2:34:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D05.3:43:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D05.3:44:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D02.2:65:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D02.2:67:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D07.1:72:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D08.1:78:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "jointlift:D08.2:79:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:4",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:7",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:10",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:13",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:16",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:19",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.1:1:primitive:22",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.4:10:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.4:12:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D01.4:14:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D02.2:23:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D04.1:30:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D02.2:31:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D05.3:40:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D05.3:41:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D02.2:60:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D07.1:65:primitive:3",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D08.1:71:primitive:2",
+      "status": "not_started"
+    },
+    {
+      "arm": "qwen_after",
+      "exampleId": "newentity:D08.2:72:primitive:3",
+      "status": "not_started"
+    }
+  ],
+  "counts": {
+    "result": 58,
+    "incomplete": 44,
+    "interrupted": 1,
+    "not_started": 153
+  },
+  "settledRawOutputGaps": [
+    "gate:D02.2:31:primitive:2",
+    "gate:D05.3:40:primitive:2",
+    "gate:D05.3:41:primitive:2",
+    "gate:D02.2:60:primitive:2",
+    "gate:D07.1:65:primitive:3",
+    "gate:D08.1:71:primitive:2",
+    "gate:D08.2:72:primitive:3",
+    "waiting:D01.1:1:primitive:2",
+    "waiting:D01.1:1:primitive:4",
+    "waiting:D01.1:1:primitive:7",
+    "waiting:D01.1:1:primitive:10",
+    "waiting:D01.1:1:primitive:13",
+    "waiting:D01.1:1:primitive:16",
+    "waiting:D01.1:1:primitive:19",
+    "waiting:D01.1:1:primitive:22",
+    "waiting:D01.4:10:primitive:3",
+    "waiting:D01.4:12:primitive:3",
+    "waiting:D01.4:14:primitive:3",
+    "waiting:D02.2:23:primitive:2",
+    "waiting:D04.1:30:primitive:2",
+    "waiting:D02.2:31:primitive:2",
+    "waiting:D05.3:40:primitive:2",
+    "waiting:D05.3:41:primitive:2",
+    "waiting:D02.2:61:primitive:2",
+    "waiting:D07.1:66:primitive:3",
+    "waiting:D08.1:72:primitive:2",
+    "waiting:D08.2:73:primitive:3",
+    "jointlift:D01.1:1:primitive:2",
+    "jointlift:D01.1:1:primitive:4",
+    "jointlift:D01.1:1:primitive:7",
+    "jointlift:D01.1:1:primitive:10",
+    "jointlift:D01.1:1:primitive:13",
+    "jointlift:D01.1:1:primitive:16",
+    "jointlift:D01.1:1:primitive:19",
+    "jointlift:D01.1:1:primitive:22",
+    "jointlift:D01.4:10:primitive:3",
+    "jointlift:D01.4:11:primitive:3",
+    "jointlift:D01.4:13:primitive:3",
+    "jointlift:D01.4:15:primitive:3",
+    "jointlift:D02.2:24:primitive:2",
+    "jointlift:D02.2:26:primitive:2",
+    "jointlift:D04.1:33:primitive:2",
+    "jointlift:D02.2:34:primitive:2",
+    "jointlift:D05.3:43:primitive:2"
+  ],
+  "rawGapReason": "memory guard was evaluated before event.update stored generated raw tokens; those 44 outputs cannot be recovered and are not fabricated",
+  "resourceBug": "per-case broad exception handler continued after MPS driver limit instead of stopping the batch",
+  "observedMpsLivePeakBytes": 1192815616,
+  "observedMpsDriverRecordedPeakBytes": 8560836608,
+  "peakLimitation": "failed guard metrics were not stored; true driver peak may be higher than recorded valid endpoints",
+  "action": "worker explicitly terminated after identifying resource gate violation; new batch fixes stop propagation, raw ordering and unused-cache release without raising the cap",
+  "originalEvidenceRetained": true,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false
+}

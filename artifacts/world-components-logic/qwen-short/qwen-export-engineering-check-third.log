@@ -1,0 +1,40 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py:1407: OnnxExporterWarning: Exporting to ONNX opset version 21 is not supported. by 'torch.onnx.export()'. The highest opset version supported is 20. To use a newer opset version, consider 'torch.onnx.export(..., dynamo=True)'. 
+  warnings.warn(
+E
+======================================================================
+ERROR: test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache (test_short_qwen_export.QwenExportTests.test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_short_qwen_export.py", line 24, in test_actual_tiny_causal_export_quantizes_and_executes_with_empty_cache
+    raw=export.export_float(root/'source',root/'float',export.CONFIG)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/short_qwen_export.py", line 77, in export_float
+    main_export(str(source),destination,task=config['task'],opset=config['opset'],device='cpu',dtype=config['dtype'],
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/__main__.py", line 399, in main_export
+    onnx_export_from_model(
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/convert.py", line 1080, in onnx_export_from_model
+    _, onnx_outputs = export_models(
+                      ^^^^^^^^^^^^^^
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/convert.py", line 687, in export_models
+    export(
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/convert.py", line 787, in export
+    export_output = export_pytorch(
+                    ^^^^^^^^^^^^^^^
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/optimum/exporters/onnx/convert.py", line 568, in export_pytorch
+    onnx_export(
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/__init__.py", line 396, in export
+    export(
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py", line 529, in export
+    _export(
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/utils.py", line 1430, in _export
+    GLOBALS.export_onnx_opset_version = opset_version
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/venv-r3/lib/python3.12/site-packages/torch/onnx/_globals.py", line 61, in export_onnx_opset_version
+    raise ValueError(f"Unsupported ONNX opset version: {value}")
+ValueError: Unsupported ONNX opset version: 21
+
+----------------------------------------------------------------------
+Ran 1 test in 3.758s
+
+FAILED (errors=1)

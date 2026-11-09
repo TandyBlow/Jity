@@ -1,0 +1,109 @@
+................E.....E......................................................................................................................................................................................................................................EEE................................................................E............E...E...............................................................................................................................s.............
+======================================================================
+ERROR: test_summary_does_not_turn_empty_targets_or_one_candidate_into_pass (test_action_chain.ChainEvidenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_action_chain.py", line 172, in test_summary_does_not_turn_empty_targets_or_one_candidate_into_pass
+    summary,_=self.report.build_chain()
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/m01_shared_report.py", line 829, in build_chain
+    if plan['baseline']!=shared.baseline_identity():raise ValueError('original fixed checkpoint evidence changed')
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/m01_shared.py", line 52, in baseline_identity
+    if sha256_file(ROOT/r['checkpoint']['path'])!=r['checkpoint']['sha256']:
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/lab.py", line 70, in sha256_file
+    with Path(path).open("rb") as stream:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt'
+
+======================================================================
+ERROR: test_all_failed_directions_are_present_and_not_promoted_to_pass (test_action_chain.GenerationProfileTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_action_chain.py", line 219, in test_all_failed_directions_are_present_and_not_promoted_to_pass
+    summary,_=self.report.build_focus()
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/m01_shared_report.py", line 934, in build_focus
+    if plan['baseline']!=shared.baseline_identity() or sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('focus source/protocol drift')
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/m01_shared.py", line 52, in baseline_identity
+    if sha256_file(ROOT/r['checkpoint']['path'])!=r['checkpoint']['sha256']:
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/lab.py", line 70, in sha256_file
+    with Path(path).open("rb") as stream:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt'
+
+======================================================================
+ERROR: test_actual_autograd_freeze_padding_fit_loop_and_checkpoint_reload (test_plan_training.NumericImplementationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_plan_training.py", line 556, in test_actual_autograd_freeze_padding_fit_loop_and_checkpoint_reload
+    r=subprocess.run([str(python),'-c',code,str(BASE)],capture_output=True,text=True,timeout=30)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1821, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/venv/bin/python'
+
+======================================================================
+ERROR: test_complete_t5_forward_backward_disk_reload_and_token_equivalence_on_random_tiny_model (test_plan_training.NumericImplementationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_plan_training.py", line 519, in test_complete_t5_forward_backward_disk_reload_and_token_equivalence_on_random_tiny_model
+    result=subprocess.run([str(python),'-c',code,str(BASE)],capture_output=True,text=True,timeout=30)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1821, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/venv/bin/python'
+
+======================================================================
+ERROR: test_expression_generation_never_reads_target_and_logs_phase_tokens_and_stopping (test_plan_training.NumericImplementationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_plan_training.py", line 481, in test_expression_generation_never_reads_target_and_logs_phase_tokens_and_stopping
+    result=subprocess.run([str(python),'-c',code,str(BASE)],capture_output=True,text=True,timeout=30)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1821, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/venv/bin/python'
+
+======================================================================
+ERROR: test_loss_probe_has_no_gradients_parameter_changes_or_rng_consumption (test_realizer_search.NumericValidationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_realizer_search.py", line 159, in test_loss_probe_has_no_gradients_parameter_changes_or_rng_consumption
+    import torch
+ModuleNotFoundError: No module named 'torch'
+
+======================================================================
+ERROR: test_prepared_plan_binds_supervisor_environment_and_rejects_scope_drift (test_realizer_slots.SlotContractTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_realizer_slots.py", line 93, in test_prepared_plan_binds_supervisor_environment_and_rejects_scope_drift
+    s.prepare();plan=s.t.run.read_json(root/(s.RUN+'-s42.plan.json'));s.verify(plan)
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/realizer_slots.py", line 304, in prepare
+    if not manifest['model']['allSixFilesFullyRehashedAndVerified'] or not manifest['environment']['registeredVersionsMatch']:raise ValueError('slot model/environment invalid')
+ValueError: slot model/environment invalid
+
+======================================================================
+ERROR: test_shared_generator_and_timed_reference_handoff_without_pretrained_model (test_realizer_slots.SlotHandoffTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/experiments/world-components-logic/tests/test_realizer_slots.py", line 154, in test_shared_generator_and_timed_reference_handoff_without_pretrained_model
+    import torch
+ModuleNotFoundError: No module named 'torch'
+
+----------------------------------------------------------------------
+Ran 479 tests in 173.721s
+
+FAILED (errors=8, skipped=1)

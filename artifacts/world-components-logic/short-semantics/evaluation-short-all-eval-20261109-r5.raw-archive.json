@@ -1,0 +1,27 @@
+{
+  "lossless": true,
+  "firstOutputsPreserved": true,
+  "gzipMtime": 0,
+  "files": [
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.json",
+      "originalBytes": 19244726,
+      "originalSha256": "ec6ab58a3fff884595ab689093cbc1ae85d2dc8d39f006e6d8b4ded4a7ffd267",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.json.gz",
+      "compressedBytes": 5501700,
+      "compressedSha256": "1d84b3cac035532dcf6037608687a414d92b1a05f7c5e16376d098927347428f",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_large_payloads_local"
+    },
+    {
+      "originalPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.journal.jsonl",
+      "originalBytes": 242453100,
+      "originalSha256": "2637d61bcb2a2692d9a5958a69ef97d553abbb2a47f2d3b21d49937ea668bb0e",
+      "compressedPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.journal.jsonl.gz",
+      "compressedBytes": 16253476,
+      "compressedSha256": "7308b57dea00c0ceafbeb625843ee50201108c19009acff7ea82f88c2352589c",
+      "originalRetainedLocally": true,
+      "gitContent": "index_only_large_payloads_local"
+    }
+  ]
+}

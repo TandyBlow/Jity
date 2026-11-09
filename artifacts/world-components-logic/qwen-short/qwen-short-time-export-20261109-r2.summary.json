@@ -1,0 +1,31 @@
+{
+  "runId": "qwen-short-time-export-20261109-r2",
+  "status": "failed",
+  "supervisor": {
+    "error": null,
+    "exitCode": 1,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 3793.921875,
+    "peakProcessIds": [
+      99721
+    ],
+    "stopReason": null,
+    "wallMs": 58279.11962498911
+  },
+  "error": {
+    "message": "strict_float_export_numerical_validation_failed",
+    "type": "ValueError"
+  },
+  "strictValidation": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r2.failed-validation.json",
+    "sha256": "c13fbe7ba770eedf33e72155cbba649d5050823a84150c6c0f70e140266dbeec",
+    "scope": "float_export_numerical",
+    "status": "failed",
+    "outputs": 57,
+    "passed": 35,
+    "maxAbsError": 0.000896453857421875
+  },
+  "quantizationStarted": false,
+  "modelPublished": false,
+  "browserInferenceAllowed": false
+}

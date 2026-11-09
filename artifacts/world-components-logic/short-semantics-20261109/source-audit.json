@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-11-09T07:33:04.966202+00:00",
+  "origin": "https://github.com/TandyBlow/Jity.git",
+  "branch": "codex/d-short-semantics-20261109",
+  "baseHead": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+  "remoteReferences": {
+    "refs/heads/world-components": "457fc45b4c73bd82da4984379336ce10b4ec2658",
+    "refs/heads/world-components-logic": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+    "refs/heads/world-server": "fc60a603c7e0b57805fffea0458192bcfebf6ffc"
+  },
+  "worktree": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics",
+  "originalWorktree": "/Users/davidz/Documents/GitHub/Jity",
+  "isolation": "separate git worktree; original working files untouched",
+  "requirements": {
+    "path": "/Users/davidz/Library/Mobile Documents/com~apple~CloudDocs/UIC/FYP/Jity.md",
+    "sha256": "b58b6885ac35570d013047181ddce72b61ed995a4357642aec390ededd430f48"
+  },
+  "authority": "current user instructions; historical commands/approvals only background",
+  "abcChanges": "none; fixed-source read-only compatibility experiments only",
+  "activeArchitecture": "short_semantics_only",
+  "legacyRuntime": "retired in experiment.py; historical evidence preserved"
+}

@@ -1,0 +1,3581 @@
+{
+  "schema": "jity-d-short-evaluation-summary-v2",
+  "runId": "short-all-eval-20261109-r5",
+  "plan": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.plan.json",
+  "planSha256": "d7f9e8adf083343346ae4b6a959fd80cb14c38f9a21a61a10c2f54dd00045990",
+  "provider": {
+    "identity": "e593f24cf7ff56fa52b96de61c9bb688f9210a8ecebf2c4404a044b8141a77c7",
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/provider.json",
+    "sha256": "490fb59c35fe42ba9ea4741a6689745fd967b3c1d81cbe4a7a91c1b47034a4c6",
+    "trainingRunId": "short-encoder-repair-20261109-r5"
+  },
+  "dataset": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/data/short-encoder-repair-20261109-r5/supervision.jsonl.gz",
+    "sha256": "9587fdf90ecf675705a47ad6bdfccd85879143f2446f2116ec02e455a922fc5a"
+  },
+  "status": "diagnostic_completed",
+  "attemptStatusCounts": {
+    "complete": 400
+  },
+  "registered": 400,
+  "attempted": 400,
+  "unstartedCaseIds": [],
+  "scopes": {
+    "live_upstream": {
+      "registered": 48,
+      "attempted": 48,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 48,
+      "missing_outcome": 0,
+      "not_started": 0,
+      "reasons": {
+        "act/reaction ended without an action": 48
+      }
+    },
+    "live_initialization": {
+      "registered": 4,
+      "attempted": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "missing_outcome": 0,
+      "not_started": 0,
+      "reasons": {
+        "invalid_initial_protagonist_or_places": 4
+      }
+    },
+    "live_pure_time": {
+      "registered": 4,
+      "attempted": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "missing_outcome": 0,
+      "not_started": 0,
+      "reasons": {
+        "D08.1:time_amount_not_integer": 4
+      }
+    },
+    "diagnostic": {
+      "registered": 344,
+      "attempted": 344,
+      "result": 324,
+      "empty": 0,
+      "incomplete": 20,
+      "missing_outcome": 0,
+      "not_started": 0,
+      "reasons": {
+        "case_deadline_late_primitive_output": 11,
+        "D06.P.mapping: interface_gap: required fact has no existing protocol representation": 4,
+        "time_amount_not_integer": 4,
+        "U1.2: slot selected but chosen container has no slots": 1
+      }
+    }
+  },
+  "liveInputKinds": {
+    "explicit_skip_control": 8,
+    "missing_material_abstention_control": 8,
+    "npc_consumed": 8,
+    "player_expired": 8,
+    "player_pending": 8,
+    "provided_complete_attempt_control": 8
+  },
+  "liveByInputKindAndRepresentation": {
+    "player_pending|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "player_pending|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "player_expired|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "player_expired|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "npc_consumed|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "npc_consumed|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "missing_material_abstention_control|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "missing_material_abstention_control|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "explicit_skip_control|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "explicit_skip_control|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 0,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "provided_complete_attempt_control|natural": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    },
+    "provided_complete_attempt_control|references": {
+      "count": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "successfulActChains": 0,
+      "D02DraftLabelMatches": 4,
+      "observedDecisions": {
+        "act": 4
+      },
+      "autonomousPlanningPassed": false
+    }
+  },
+  "liveCases": [
+    {
+      "caseId": "live:gate:D02.1:22:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 3275.109542,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:references",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 356.744792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:58:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 462.8935,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:58:references",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 318.088792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:59:natural",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 337.953,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:59:references",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 341.584166,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 345.472666,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:references",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 337.032875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:59:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 330.75325,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:59:references",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 331.65075,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:60:natural",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 335.691208,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:60:references",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 355.607834,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 385.5445,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:references",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 372.135042,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:63:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 360.963875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:63:references",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 336.312875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:64:natural",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 362.597834,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:64:references",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 384.038542,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 366.644125,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:references",
+      "scope": "live_upstream",
+      "inputKind": "player_pending",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 335.646208,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:58:natural",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 330.433833,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:58:references",
+      "scope": "live_upstream",
+      "inputKind": "player_expired",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 339.642208,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:59:natural",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 375.587625,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:59:references",
+      "scope": "live_upstream",
+      "inputKind": "npc_consumed",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 342.0465,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:missing_instructions:natural",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 347.579125,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:missing_instructions:references",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 346.256291,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:explicit_skip:natural",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 332.377791,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:explicit_skip:references",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 347.261792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:attempt_without_promised_success:natural",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 345.817875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:gate:D02.1:22:semantic-abstention:attempt_without_promised_success:references",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 330.995584,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:missing_instructions:natural",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 389.731834,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:missing_instructions:references",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 380.726042,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:explicit_skip:natural",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 419.409875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:explicit_skip:references",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 389.396833,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:attempt_without_promised_success:natural",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 448.345875,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:jointlift:D02.1:23:semantic-abstention:attempt_without_promised_success:references",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 392.845292,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:missing_instructions:natural",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 358.131166,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:missing_instructions:references",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 342.799792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:explicit_skip:natural",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 382.521792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:explicit_skip:references",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 344.819125,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:attempt_without_promised_success:natural",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 340.701958,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:newentity:D02.1:22:semantic-abstention:attempt_without_promised_success:references",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 336.989208,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:missing_instructions:natural",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 340.004041,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:missing_instructions:references",
+      "scope": "live_upstream",
+      "inputKind": "missing_material_abstention_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 342.466792,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "incomplete",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:explicit_skip:natural",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 339.757458,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:explicit_skip:references",
+      "scope": "live_upstream",
+      "inputKind": "explicit_skip_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 344.430625,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "skip",
+      "D02DraftLabelMatch": false,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:attempt_without_promised_success:natural",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "natural",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 354.279208,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "live:waiting:D02.1:22:semantic-abstention:attempt_without_promised_success:references",
+      "scope": "live_upstream",
+      "inputKind": "provided_complete_attempt_control",
+      "representation": "references",
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "act/reaction ended without an action",
+      "caseWallMs": 349.607417,
+      "stages": [
+        {
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": {
+        "decision": "act",
+        "completion": {
+          "status": "result",
+          "value": "act",
+          "reason": null
+        }
+      },
+      "committed": false,
+      "semanticQualityApproved": false,
+      "expectedD02DraftLabelForScoringOnly": "act",
+      "D02DraftLabelMatch": true,
+      "successfulActChain": false
+    },
+    {
+      "caseId": "initialization:gate:D01.1:1",
+      "scope": "live_initialization",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "invalid_initial_protagonist_or_places",
+      "caseWallMs": 548.658917,
+      "stages": [
+        {
+          "stage": "D01_generate",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_A_initial_validation",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_candidate_seal",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "initialization:waiting:D01.1:1",
+      "scope": "live_initialization",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "invalid_initial_protagonist_or_places",
+      "caseWallMs": 142.643875,
+      "stages": [
+        {
+          "stage": "D01_generate",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_A_initial_validation",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_candidate_seal",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "initialization:jointlift:D01.1:1",
+      "scope": "live_initialization",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "invalid_initial_protagonist_or_places",
+      "caseWallMs": 310.031417,
+      "stages": [
+        {
+          "stage": "D01_generate",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_A_initial_validation",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_candidate_seal",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "initialization:newentity:D01.1:1",
+      "scope": "live_initialization",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "invalid_initial_protagonist_or_places",
+      "caseWallMs": 315.730541,
+      "stages": [
+        {
+          "stage": "D01_generate",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_A_initial_validation",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "offline_candidate_seal",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "pure-time:gate:D02.1:22",
+      "scope": "live_pure_time",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:gate",
+      "completion": "incomplete",
+      "reason": "D08.1:time_amount_not_integer",
+      "caseWallMs": 652.055958,
+      "stages": [
+        {
+          "stage": "D08_time",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "pure-time:waiting:D02.1:22",
+      "scope": "live_pure_time",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:waiting",
+      "completion": "incomplete",
+      "reason": "D08.1:time_amount_not_integer",
+      "caseWallMs": 645.454291,
+      "stages": [
+        {
+          "stage": "D08_time",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "pure-time:jointlift:D02.1:23",
+      "scope": "live_pure_time",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:jointlift",
+      "completion": "incomplete",
+      "reason": "D08.1:time_amount_not_integer",
+      "caseWallMs": 711.411375,
+      "stages": [
+        {
+          "stage": "D08_time",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    },
+    {
+      "caseId": "pure-time:newentity:D02.1:22",
+      "scope": "live_pure_time",
+      "inputKind": null,
+      "representation": null,
+      "sourceGroup": "short-20261109:newentity",
+      "completion": "incomplete",
+      "reason": "D08.1:time_amount_not_integer",
+      "caseWallMs": 649.3925,
+      "stages": [
+        {
+          "stage": "D08_time",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "firstDecision": null,
+      "committed": false,
+      "semanticQualityApproved": false
+    }
+  ],
+  "diagnosticComponents": {
+    "D01.1": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D01.2": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D01.3": {
+      "registered": 28,
+      "result": 28,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 28,
+      "trainedDirectResults": 28,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 28,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D01.4": {
+      "registered": 25,
+      "result": 25,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 12,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 25,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D01.5": {
+      "registered": 12,
+      "result": 12,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 12,
+      "trainedDirectResults": 12,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 12,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D01.6": {
+      "registered": 12,
+      "result": 12,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 1,
+      "trainedDirect": 12,
+      "trainedDirectResults": 12,
+      "trainedDirectDraftMatches": 1,
+      "incompleteReasons": {},
+      "draftComparisonCases": 12,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D02.1": {
+      "registered": 24,
+      "result": 24,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 12,
+      "trainedDirect": 24,
+      "trainedDirectResults": 24,
+      "trainedDirectDraftMatches": 12,
+      "incompleteReasons": {},
+      "draftComparisonCases": 20,
+      "semanticAbstentionsExpected": 4,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D02.2": {
+      "registered": 26,
+      "result": 26,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 12,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 26,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D02.3": {
+      "registered": 19,
+      "result": 19,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 19,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D02.4": {
+      "registered": 16,
+      "result": 16,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 16,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D02.5": {
+      "registered": 17,
+      "result": 17,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 12,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 17,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D03.1": {
+      "registered": 8,
+      "result": 8,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D03.2": {
+      "registered": 12,
+      "result": 12,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 8,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 12,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D04.1": {
+      "registered": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "case_deadline_late_primitive_output": 4
+      },
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D05.1": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D05.2": {
+      "registered": 12,
+      "result": 12,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 2,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 4,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D05.3": {
+      "registered": 12,
+      "result": 12,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 4,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 12,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D05.4": {
+      "registered": 6,
+      "result": 6,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 2,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 6,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D05.5": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U1.1": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D06.P.review": {
+      "registered": 28,
+      "result": 28,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 23,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 28,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U2.1": {
+      "registered": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "case_deadline_late_primitive_output": 4
+      },
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U2.2": {
+      "registered": 1,
+      "result": 1,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 1,
+      "trainedDirectResults": 1,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 1,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U3.1": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 1,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U4.1": {
+      "registered": 4,
+      "result": 4,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U4.2": {
+      "registered": 2,
+      "result": 2,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 2,
+      "trainedDirectResults": 2,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 2,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D06.P.mapping": {
+      "registered": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "D06.P.mapping: interface_gap: required fact has no existing protocol representation": 4
+      },
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D07.1": {
+      "registered": 8,
+      "result": 8,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 1,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D07.2": {
+      "registered": 8,
+      "result": 8,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 4,
+      "trainedDirect": 8,
+      "trainedDirectResults": 8,
+      "trainedDirectDraftMatches": 4,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D07.3": {
+      "registered": 8,
+      "result": 8,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 4,
+      "trainedDirect": 8,
+      "trainedDirectResults": 8,
+      "trainedDirectDraftMatches": 4,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D08.1": {
+      "registered": 4,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 4,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "time_amount_not_integer": 4
+      },
+      "draftComparisonCases": 4,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "D08.2": {
+      "registered": 8,
+      "result": 8,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 8,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U5.1": {
+      "registered": 3,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 3,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "case_deadline_late_primitive_output": 3
+      },
+      "draftComparisonCases": 3,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U5.2": {
+      "registered": 2,
+      "result": 2,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 2,
+      "trainedDirectResults": 2,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 2,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U6.1": {
+      "registered": 2,
+      "result": 2,
+      "empty": 0,
+      "incomplete": 0,
+      "draftMatches": 0,
+      "trainedDirect": 2,
+      "trainedDirectResults": 2,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {},
+      "draftComparisonCases": 2,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    },
+    "U1.2": {
+      "registered": 1,
+      "result": 0,
+      "empty": 0,
+      "incomplete": 1,
+      "draftMatches": 0,
+      "trainedDirect": 0,
+      "trainedDirectResults": 0,
+      "trainedDirectDraftMatches": 0,
+      "incompleteReasons": {
+        "U1.2: slot selected but chosen container has no slots": 1
+      },
+      "draftComparisonCases": 1,
+      "semanticAbstentionsExpected": 0,
+      "semanticAbstentionMatches": 0,
+      "semanticPassed": false
+    }
+  },
+  "diagnosticDraftComparisonCases": 336,
+  "diagnosticDraftMatches": 98,
+  "semanticAbstentionExpected": 8,
+  "semanticAbstentionMatches": 0,
+  "semanticAbstentionCases": [
+    {
+      "caseId": "diagnostic:gate:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "expectedReason": "semantic_incomplete:D02.1",
+      "expectedAttemptIds": [],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "act"
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:gate:D05.2:39:semantic-abstention:missing_supplement_joint",
+      "component": "D05.2",
+      "expectedReason": "semantic_incomplete:D05.2:a:fragment-missing-supplement",
+      "expectedAttemptIds": [
+        "a:fragment-missing-supplement"
+      ],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": {
+          "judgments": [
+            {
+              "attemptId": "a:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "b:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "a:fragment-missing-supplement",
+              "label": "achieved"
+            }
+          ]
+        }
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:jointlift:D02.1:23:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "expectedReason": "semantic_incomplete:D02.1",
+      "expectedAttemptIds": [],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "act"
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:jointlift:D05.2:42:semantic-abstention:missing_supplement_joint",
+      "component": "D05.2",
+      "expectedReason": "semantic_incomplete:D05.2:a:fragment-missing-supplement",
+      "expectedAttemptIds": [
+        "a:fragment-missing-supplement"
+      ],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": {
+          "judgments": [
+            {
+              "attemptId": "a:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "a:fragment-2",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "b:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "a:fragment-missing-supplement",
+              "label": "achieved"
+            }
+          ]
+        }
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:newentity:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "expectedReason": "semantic_incomplete:D02.1",
+      "expectedAttemptIds": [],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "act"
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:newentity:D05.2:39:semantic-abstention:missing_supplement_joint",
+      "component": "D05.2",
+      "expectedReason": "semantic_incomplete:D05.2:a:fragment-missing-supplement",
+      "expectedAttemptIds": [
+        "a:fragment-missing-supplement"
+      ],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": {
+          "judgments": [
+            {
+              "attemptId": "a:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "b:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "a:fragment-missing-supplement",
+              "label": "achieved"
+            }
+          ]
+        }
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:waiting:D02.1:22:semantic-abstention:missing_instructions",
+      "component": "D02.1",
+      "expectedReason": "semantic_incomplete:D02.1",
+      "expectedAttemptIds": [],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "act"
+      },
+      "matches": false
+    },
+    {
+      "caseId": "diagnostic:waiting:D05.2:39:semantic-abstention:missing_supplement_joint",
+      "component": "D05.2",
+      "expectedReason": "semantic_incomplete:D05.2:a:fragment-missing-supplement",
+      "expectedAttemptIds": [
+        "a:fragment-missing-supplement"
+      ],
+      "actualCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": {
+          "judgments": [
+            {
+              "attemptId": "a:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "b:fragment-1",
+              "label": "achieved"
+            },
+            {
+              "attemptId": "a:fragment-missing-supplement",
+              "label": "achieved"
+            }
+          ]
+        }
+      },
+      "matches": false
+    }
+  ],
+  "unexpectedSemanticAbstentions": 0,
+  "caseDeadlines": [
+    {
+      "caseId": "diagnostic:gate:D04.1:30",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30043.364625,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:gate:U2.1:47",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30832.266583,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:waiting:D04.1:30",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30551.57125,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:waiting:U2.1:47",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30339.602625,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:waiting:U5.1:53",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30109.199334,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:jointlift:D04.1:33",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30749.308375,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:jointlift:U2.1:51",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30403.234042,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:jointlift:U5.1:57",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 31012.64825,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:newentity:D04.1:30",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30905.136,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:newentity:U2.1:47",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30398.291667,
+      "deadlineSeconds": 30
+    },
+    {
+      "caseId": "diagnostic:newentity:U5.1:54",
+      "scope": "diagnostic",
+      "reason": "case_deadline_late_primitive_output",
+      "wallMs": 30296.502542,
+      "deadlineSeconds": 30
+    }
+  ],
+  "rawCheckpointEvents": 60266,
+  "rawEventCounts": {
+    "short_component_start": 448,
+    "semantic_call_started": 1577,
+    "request_model_load": 2,
+    "encoder_forward_started": 27873,
+    "encoder_forward_settled": 27873,
+    "semantic_call_finished": 1577,
+    "short_component": 448,
+    "live_stage_settled": 56,
+    "generator_forward_started": 195,
+    "generator_forward_settled": 195,
+    "case_late_output_rejected": 11,
+    "case_budget_incomplete": 11
+  },
+  "calls": {
+    "primitiveAdmitted": 1577,
+    "primitiveBlockedBeforeCall": 0,
+    "encoderForwards": 27873,
+    "generatorInvocations": 195,
+    "highLevelCalls": 448,
+    "AOfflinePreviews": 0,
+    "AOfflineInitialValidations": 0,
+    "CInvocations": 0
+  },
+  "timing": {
+    "encoderWindowMs": 412479.81737949885,
+    "generatorInvocationMs": 139069.78866574354,
+    "providerCallInclusiveMs": 601328.4783679992,
+    "coldRequestLoadMs": 197.1237501129508,
+    "AOfflinePreviewMs": 0.0,
+    "AOfflineInitialValidationMs": 0.0,
+    "DModelComputeMs": 551549.6060452424,
+    "summedCaseWallMs": 604102.173667,
+    "supervisorWallMs": 628940.3676248621,
+    "programAndEvidenceMs": null,
+    "formalServiceMs": null,
+    "CGenerationMs": null,
+    "readyWaitMs": null,
+    "fullRequestMs": null,
+    "neuralComputeScope": "actual_encoder_window_forwards_and_whole_model.generate_invocations; linear_heads_not_separately_timed",
+    "counterSemantics": "generatorInvocations counts model.generate calls, never token decoder.forward calls",
+    "overlap": "provider inclusive includes tokenization/load/forwards/nested evidence; buckets overlap and must not be subtracted to infer exact program cost"
+  },
+  "loadEvents": [
+    {
+      "caseId": "live:gate:D02.1:22:natural",
+      "role": "encoder",
+      "elapsedMs": 72.54333305172622
+    },
+    {
+      "caseId": "initialization:gate:D01.1:1",
+      "role": "generator",
+      "elapsedMs": 124.58041706122458
+    }
+  ],
+  "componentCompute": {
+    "D02.1": {
+      "encoderWindowMs": 11372.4869270809,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 798,
+      "generatorInvocations": 0
+    },
+    "D02.2.next": {
+      "encoderWindowMs": 12348.096951842308,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 845,
+      "generatorInvocations": 0
+    },
+    "D01.1.kind": {
+      "encoderWindowMs": 151.88541915267706,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 29,
+      "generatorInvocations": 0
+    },
+    "D01.1.name": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 1026.8090397585183,
+      "encoderForwards": 0,
+      "generatorInvocations": 21
+    },
+    "D01.1.slot_next": {
+      "encoderWindowMs": 116.33462505415082,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 21,
+      "generatorInvocations": 0
+    },
+    "D01.1.protagonist": {
+      "encoderWindowMs": 122.53366713412106,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 11,
+      "generatorInvocations": 0
+    },
+    "D01.1.protagonist:candidate": {
+      "encoderWindowMs": 40.18387058749795,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 21,
+      "generatorInvocations": 0
+    },
+    "D08.1.boundary": {
+      "encoderWindowMs": 1263.1689915433526,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 78,
+      "generatorInvocations": 0
+    },
+    "D08.1.amount": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 4351.596125168726,
+      "encoderForwards": 0,
+      "generatorInvocations": 8
+    },
+    "D01.2.parent": {
+      "encoderWindowMs": 396.165126003325,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 32,
+      "generatorInvocations": 0
+    },
+    "D01.2.parent:candidate": {
+      "encoderWindowMs": 60.34791702404618,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 24,
+      "generatorInvocations": 0
+    },
+    "D01.2.container": {
+      "encoderWindowMs": 1520.5252929590642,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 109,
+      "generatorInvocations": 0
+    },
+    "D01.2.container:candidate": {
+      "encoderWindowMs": 381.77542109042406,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 140,
+      "generatorInvocations": 0
+    },
+    "D01.2.slot": {
+      "encoderWindowMs": 984.4530872069299,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 75,
+      "generatorInvocations": 0
+    },
+    "D01.2.slot:candidate": {
+      "encoderWindowMs": 56.61558243446052,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 40,
+      "generatorInvocations": 0
+    },
+    "D01.2.relative": {
+      "encoderWindowMs": 1542.119708377868,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 111,
+      "generatorInvocations": 0
+    },
+    "D01.2.relative:candidate": {
+      "encoderWindowMs": 420.14050390571356,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 160,
+      "generatorInvocations": 0
+    },
+    "D01.3": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 5987.167913932353,
+      "encoderForwards": 0,
+      "generatorInvocations": 28
+    },
+    "D01.4.next": {
+      "encoderWindowMs": 2044.653126038611,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 145,
+      "generatorInvocations": 0
+    },
+    "D01.5": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 4959.158750716597,
+      "encoderForwards": 0,
+      "generatorInvocations": 12
+    },
+    "D01.6": {
+      "encoderWindowMs": 1321.956251282245,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 96,
+      "generatorInvocations": 0
+    },
+    "D02.3.verdict": {
+      "encoderWindowMs": 3372.3172158934176,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 221,
+      "generatorInvocations": 0
+    },
+    "D02.3.role": {
+      "encoderWindowMs": 51733.79742796533,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 3430,
+      "generatorInvocations": 0
+    },
+    "D02.4.check": {
+      "encoderWindowMs": 8890.7738274429,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 591,
+      "generatorInvocations": 0
+    },
+    "D02.4.issue_fragment": {
+      "encoderWindowMs": 9188.04367328994,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 606,
+      "generatorInvocations": 0
+    },
+    "D02.4.issue_fragment:candidate": {
+      "encoderWindowMs": 114.8270363919437,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 57,
+      "generatorInvocations": 0
+    },
+    "D02.5.check": {
+      "encoderWindowMs": 16056.005899328738,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 1045,
+      "generatorInvocations": 0
+    },
+    "D03.1.relation": {
+      "encoderWindowMs": 4558.66555031389,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 294,
+      "generatorInvocations": 0
+    },
+    "D03.2.verdict": {
+      "encoderWindowMs": 2265.3256671037525,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 147,
+      "generatorInvocations": 0
+    },
+    "D04.1.next": {
+      "encoderWindowMs": 21973.056305665523,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 1461,
+      "generatorInvocations": 0
+    },
+    "D04.1.text": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 97147.19754667021,
+      "encoderForwards": 0,
+      "generatorInvocations": 113
+    },
+    "D05.1.edge": {
+      "encoderWindowMs": 6877.740453695878,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 456,
+      "generatorInvocations": 0
+    },
+    "D05.2.label": {
+      "encoderWindowMs": 7439.271413488314,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 501,
+      "generatorInvocations": 0
+    },
+    "D05.3.next": {
+      "encoderWindowMs": 2612.0396240148693,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 175,
+      "generatorInvocations": 0
+    },
+    "D05.4.verdict": {
+      "encoderWindowMs": 1310.6304581742734,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 89,
+      "generatorInvocations": 0
+    },
+    "D05.5.member": {
+      "encoderWindowMs": 3502.636871766299,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 240,
+      "generatorInvocations": 0
+    },
+    "U1.1.change": {
+      "encoderWindowMs": 7907.981320051476,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 520,
+      "generatorInvocations": 0
+    },
+    "D06.P.review.verdict": {
+      "encoderWindowMs": 11570.219829911366,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 768,
+      "generatorInvocations": 0
+    },
+    "U2.1.next_op": {
+      "encoderWindowMs": 109656.92105772905,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 7309,
+      "generatorInvocations": 0
+    },
+    "U2.2": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 3158.258916810155,
+      "encoderForwards": 0,
+      "generatorInvocations": 1
+    },
+    "U3.1.status": {
+      "encoderWindowMs": 5256.2835433054715,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 356,
+      "generatorInvocations": 0
+    },
+    "U4.1.count": {
+      "encoderWindowMs": 5413.196281995624,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 356,
+      "generatorInvocations": 0
+    },
+    "U4.2": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 6730.3477069363,
+      "encoderForwards": 0,
+      "generatorInvocations": 2
+    },
+    "D06.P.mapping.kind": {
+      "encoderWindowMs": 4137.996584177017,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 262,
+      "generatorInvocations": 0
+    },
+    "D07.1.next": {
+      "encoderWindowMs": 1649.1841678507626,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 108,
+      "generatorInvocations": 0
+    },
+    "D07.1.character": {
+      "encoderWindowMs": 2224.1095330100507,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 140,
+      "generatorInvocations": 0
+    },
+    "D07.1.character:candidate": {
+      "encoderWindowMs": 341.466334881261,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 32,
+      "generatorInvocations": 0
+    },
+    "D07.1.text": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 8095.133374677971,
+      "encoderForwards": 0,
+      "generatorInvocations": 8
+    },
+    "D07.2": {
+      "encoderWindowMs": 1742.8622872103006,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 108,
+      "generatorInvocations": 0
+    },
+    "D07.3": {
+      "encoderWindowMs": 1671.4510817546397,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 108,
+      "generatorInvocations": 0
+    },
+    "D08.2.next_kind": {
+      "encoderWindowMs": 1487.4887538608164,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 96,
+      "generatorInvocations": 0
+    },
+    "U5.1.next_op": {
+      "encoderWindowMs": 82213.41245761141,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 5460,
+      "generatorInvocations": 0
+    },
+    "U5.2": {
+      "encoderWindowMs": 0.0,
+      "generatorInvocationMs": 7614.119291072711,
+      "encoderForwards": 0,
+      "generatorInvocations": 2
+    },
+    "U6.1": {
+      "encoderWindowMs": 1021.2167939171195,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 60,
+      "generatorInvocations": 0
+    },
+    "U1.2.container": {
+      "encoderWindowMs": 1137.5253731384873,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 70,
+      "generatorInvocations": 0
+    },
+    "U1.2.container:candidate": {
+      "encoderWindowMs": 94.18620844371617,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 10,
+      "generatorInvocations": 0
+    },
+    "U1.2.slot_mode": {
+      "encoderWindowMs": 915.7418773975223,
+      "generatorInvocationMs": 0.0,
+      "encoderForwards": 62,
+      "generatorInvocations": 0
+    }
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 1881.765625,
+    "stopReason": null,
+    "wallMs": 628940.3676248621
+  },
+  "evidence": {
+    "recordPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.json",
+    "recordSha256": "ec6ab58a3fff884595ab689093cbc1ae85d2dc8d39f006e6d8b4ded4a7ffd267",
+    "journalPath": "artifacts/world-components-logic/short-semantics/evaluation-short-all-eval-20261109-r5.record.journal.jsonl",
+    "journalSha256": "2637d61bcb2a2692d9a5958a69ef97d553abbb2a47f2d3b21d49937ea668bb0e",
+    "journalRecovery": {
+      "boundedReferences": true,
+      "events": 61467,
+      "modelCallsDuringReplay": 0,
+      "partialTailBytes": 0,
+      "readOnlyReplay": true,
+      "sha256": "2637d61bcb2a2692d9a5958a69ef97d553abbb2a47f2d3b21d49937ea668bb0e"
+    },
+    "frozenEvidenceVerified": true,
+    "currentSourceDrift": []
+  },
+  "comparisonLimits": [
+    "所有56 live均未完成；快速拒绝不代表成功链性能。",
+    "完整尝试原文act控制只提供分类/传递证据，不算自主规划。",
+    "正确中间输入诊断与标签匹配不是端到端语义质量。",
+    "旧r1与r5数据、训练、编排不同，不能将墙钟差异归因于单项改进。"
+  ],
+  "formalABConnected": false,
+  "CConnected": false,
+  "humanReviewed": 0,
+  "sourceVerification": "unverified",
+  "semanticQualityApproved": false,
+  "fullRequest500ms": "unmeasured",
+  "protocolGapDiagnostics": {
+    "registered": 0,
+    "expectedRefusalsObserved": 0,
+    "cases": [],
+    "note": "Four ordinary mapping diagnostics produced model-claimed interface_gap refusals; their frozen rows did not expect an interface gap. These are unconfirmed model judgments, not verified protocol gaps or successful semantic abstentions.",
+    "claimedGapRefusals": 4,
+    "semanticGapConfirmed": false,
+    "claimedGapCaseIds": [
+      "diagnostic:gate:D06.P.mapping:57",
+      "diagnostic:waiting:D06.P.mapping:58",
+      "diagnostic:jointlift:D06.P.mapping:62",
+      "diagnostic:newentity:D06.P.mapping:57"
+    ]
+  },
+  "generationBackendLifecycle": {
+    "model": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "status": "retired_after_this_completed_historical_run",
+    "reason": "subsequent_explicit_user_instruction_to_use_WebGPU_with_Qwen_or_Netease_Yuyan",
+    "furtherRandengCallsAuthorized": false,
+    "newBackendStatus": "selection_and_real_WebGPU_validation_pending_elsewhere"
+  }
+}

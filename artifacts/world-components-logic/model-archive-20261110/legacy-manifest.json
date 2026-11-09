@@ -1,0 +1,313 @@
+{
+  "files": [
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/config.json",
+      "archivePath": "worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/config.json",
+      "bytes": 598,
+      "sha256": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/payload-manifest.json",
+      "archivePath": "worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/payload-manifest.json",
+      "bytes": 800,
+      "sha256": "379042c1b4c28f5fb39672e95d60f9978d44cb8885229728d7f424916f080304",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/payload-manifest.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/README.md",
+      "archivePath": "worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/README.md",
+      "bytes": 974,
+      "sha256": "667be60e0b89d63d308d3d1e76f906d056ad4a2c56e6a2f785544098e220f3eb",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/README.md"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/vocab.txt",
+      "archivePath": "worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/vocab.txt",
+      "bytes": 109540,
+      "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/vocab.txt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin",
+      "archivePath": "worktree-local/models/M01/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin",
+      "bytes": 41514155,
+      "sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/model.safetensors",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/model.safetensors",
+      "bytes": 309783974,
+      "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/model.safetensors"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/tokenizer_config.json",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/tokenizer_config.json",
+      "bytes": 439,
+      "sha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/tokenizer_config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/special_tokens_map.json",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/special_tokens_map.json",
+      "bytes": 65,
+      "sha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/special_tokens_map.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/config.json",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/config.json",
+      "bytes": 780,
+      "sha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/payload-manifest.json",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/payload-manifest.json",
+      "bytes": 1155,
+      "sha256": "29075783d2188af2e40b4856a9674e2e9c621d2a19cdf5eed5e4f4706d669c87",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/payload-manifest.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/README.md",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/README.md",
+      "bytes": 11968,
+      "sha256": "8b299afc5766f690da82863312ae94360891374e72e96bc80f9ab79c65303848",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/README.md"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/spiece.model",
+      "archivePath": "worktree-local/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/spiece.model",
+      "bytes": 680811,
+      "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead/spiece.model"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors",
+      "bytes": 1503300328,
+      "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+      "bytes": 11343,
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer_config.json",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer_config.json",
+      "bytes": 9732,
+      "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer_config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/config.json",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/config.json",
+      "bytes": 726,
+      "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/generation_config.json",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/generation_config.json",
+      "bytes": 239,
+      "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/generation_config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/README.md",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/README.md",
+      "bytes": 13965,
+      "sha256": "1ab64a26fcb3b461423b89a433a8c858f1bf8d4086f979cbb3ff878d47cf20e9",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/README.md"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/merges.txt",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/merges.txt",
+      "bytes": 1671853,
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/merges.txt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/vocab.json",
+      "archivePath": "worktree-local/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/vocab.json",
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/qwen/source/c1899de289a04d12100db370d81485cdf75e47ca/vocab.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer_config.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer_config.json",
+      "bytes": 10369,
+      "sha256": "7c5194eecfd95a4dcbd6b4b502af785d2541fd65a388d1cae7ad43693c67b802",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer_config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/special_tokens_map.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/special_tokens_map.json",
+      "bytes": 613,
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/special_tokens_map.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/config.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/config.json",
+      "bytes": 912,
+      "sha256": "8a04114ba59cc42b47d804d35d1d5c61d746ae4634f41f796768c6e302d39b9e",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer.json",
+      "bytes": 9117040,
+      "sha256": "e7a95fce95bf5b0946d0ddb3f9d7caa030b7e850bbe92b0edb26bcf563e9f3d5",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/tokenizer.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/generation_config.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/generation_config.json",
+      "bytes": 219,
+      "sha256": "9e9e031ae8bca36eefcdcdd0b35d83c61baa01e31d68d5f5a961c9ca1a4b95bf",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/generation_config.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/chat_template.jinja",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/chat_template.jinja",
+      "bytes": 4116,
+      "sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/chat_template.jinja"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/model-manifest.json",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/model-manifest.json",
+      "bytes": 3253,
+      "sha256": "e9eb122f0e380516af4defc77d392180f93f2fa09f23faff4c082727ff0f72dd",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/model-manifest.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/onnx/model_q4f16.onnx",
+      "archivePath": "worktree-local/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/onnx/model_q4f16.onnx",
+      "bytes": 569789750,
+      "sha256": "9e33a5911974174761d0dfdcc0bec975d9c45af0eae5e9eb647b8ba9442a8f91",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/webgpu/models/58ca03a5e7b354b480b1a82b34bde8dc7b854cc0/onnx/model_q4f16.onnx"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r4/encoder/heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-encoder-repair-20261109-r4/encoder/heads.pt",
+      "bytes": 13013,
+      "sha256": "00a87d338c6de10bc987c4e5921fd630a134f787bb9ef799bd16a767e3aa38cd",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r4/encoder/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r4/encoder/merged-heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-encoder-repair-20261109-r4/encoder/merged-heads.pt",
+      "bytes": 514823,
+      "sha256": "6c08973cbc3ec6989ab083e1a30457721eaf99357cb3fe4f4fd38c8632b9ab9c",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r4/encoder/merged-heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/provider.json",
+      "archivePath": "worktree-local/short-semantic-models/short-intent-20261109-r1/provider.json",
+      "bytes": 9531,
+      "sha256": "3ef150ca87d755e92409a9cbc71825e53908c45a494f52d1872fdca128a3fe14",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/provider.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/encoder/heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-intent-20261109-r1/encoder/heads.pt",
+      "bytes": 35163,
+      "sha256": "f1e0e3e14ef6f44dc3a7561a0136a1365ae68a7daa68b81a5cee8533229eab40",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/encoder/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/generator/adapter.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-intent-20261109-r1/generator/adapter.pt",
+      "bytes": 719171,
+      "sha256": "117ced83d28e2297f19d2c48b4d938986623df9ece99409c32e6ff9d5611d7af",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-intent-20261109-r1/generator/adapter.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/provider.json",
+      "archivePath": "worktree-local/short-semantic-models/short-encoder-repair-20261109-r5/provider.json",
+      "bytes": 34464,
+      "sha256": "490fb59c35fe42ba9ea4741a6689745fd967b3c1d81cbe4a7a91c1b47034a4c6",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/provider.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/encoder/heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-encoder-repair-20261109-r5/encoder/heads.pt",
+      "bytes": 13013,
+      "sha256": "00a87d338c6de10bc987c4e5921fd630a134f787bb9ef799bd16a767e3aa38cd",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/encoder/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-encoder-repair-20261109-r5/encoder/merged-heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-encoder-repair-20261109-r5/encoder/merged-heads.pt",
+      "bytes": 514823,
+      "sha256": "6c08973cbc3ec6989ab083e1a30457721eaf99357cb3fe4f4fd38c8632b9ab9c",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-repair-20261109-r5/merged-heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/provider.json",
+      "archivePath": "worktree-local/short-semantic-models/short-all-20261109-r3/provider.json",
+      "bytes": 23391,
+      "sha256": "b759d07b33b4e147507023115bf1f5cd180696bf0884d72e51f4bc45e4d9a861",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/provider.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/encoder/heads.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-all-20261109-r3/encoder/heads.pt",
+      "bytes": 512711,
+      "sha256": "422d110cafa01dfeabf5f502d84e174e8a91f18cb7acd92a5b86c54eff60d6bd",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/encoder/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/generator/adapter.pt",
+      "archivePath": "worktree-local/short-semantic-models/short-all-20261109-r3/generator/adapter.pt",
+      "bytes": 719171,
+      "sha256": "456b60c81634e4d6a00b18b0fc02214239156a57a2b5163ca240b1aa031917ce",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/short-semantic-models/short-all-20261109-r3/generator/adapter.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/heads.pt",
+      "archivePath": "worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/heads.pt",
+      "bytes": 551387,
+      "sha256": "d122d1e3010339866dee6bded625ed13c8ea9bc2cebc84abe01458536f5c2b0e",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-focus-20261109-r6/full_mean_control/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/provider.json",
+      "archivePath": "worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/provider.json",
+      "bytes": 7714,
+      "sha256": "10cf7caf6f1f372a580696c38fc2dcbb062803423905b6962d905819eec1af04",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/full_mean_control/provider.json"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/heads.pt",
+      "archivePath": "worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/heads.pt",
+      "bytes": 551387,
+      "sha256": "1cd7ce3af5d6cd344c3847827049316455e776f8297023d5d566e1024b5f7811",
+      "readFrom": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/short-encoder-focus-20261109-r6/global_plus_focus/heads.pt"
+    },
+    {
+      "source": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/provider.json",
+      "archivePath": "worktree-local/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/provider.json",
+      "bytes": 7714,
+      "sha256": "870cf849f9097311b575aa393aa0427d7ceacb5f0f5a430607af16d46941bf15",
+      "readFrom": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/.local/world-components-logic/focus-encoder-models/short-encoder-focus-20261109-r6/global_plus_focus/provider.json"
+    }
+  ],
+  "unavailable": []
+}

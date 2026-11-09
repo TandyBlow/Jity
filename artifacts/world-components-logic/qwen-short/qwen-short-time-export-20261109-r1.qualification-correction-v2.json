@@ -1,0 +1,51 @@
+{
+  "schema": "jity-export-qualification-correction-v2",
+  "runId": "qwen-short-time-export-20261109-r1",
+  "createdAt": "2026-11-09T12:54:45.012254+00:00",
+  "status": "failed_validation",
+  "reason": "Optimum caught the numerical tolerance failure and returned with a warning; original supervisor completion is not a passed numerical gate. No trained browser calls were executed from this export.",
+  "planPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-plan.json",
+  "planSha256": "1735688090b27ada12ef4b5c5c09f73d3cee54ccaf42452ca367b72d3af67106",
+  "originalStatus": "diagnostic_completed",
+  "rawExperimentRecordsModified": false,
+  "previousCorrectionMetadataConflict": "An earlier full correction at the v1 path was replaced by a concurrent documentation writer; this v2 preserves the currently observed v1 bytes by reference and rebinds the unchanged original experiment evidence. The first correction bytes were not independently archived.",
+  "observedFailingOutputs": 42,
+  "maximumReportedAbsError": 0.0008597373962402344,
+  "validationAtol": 0.0001,
+  "validationRtol": 1e-05,
+  "numericGate": "failed_np_allclose_reported_by_original_tool",
+  "references": {
+    "plan": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-plan.json",
+      "sha256": "1735688090b27ada12ef4b5c5c09f73d3cee54ccaf42452ca367b72d3af67106",
+      "bytes": 27925
+    },
+    "record": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.json",
+      "sha256": "8ac40c2b2a55a198825ee0a799350f8332a40be9416869b583ab6f08b2afed5d",
+      "bytes": 5020
+    },
+    "log": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.export-record.process.log",
+      "sha256": "7c08ea8499d4203d691950c37db4b0f51b570c5150a07fada36b4a14ab7f7058",
+      "bytes": 1117464
+    },
+    "sourceManifest": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.webgpu-model.json",
+      "sha256": "e93389dbf6e196ecd6e565975255b407bc42d0fec344591ceaffdc2802ed073c",
+      "bytes": 29695
+    },
+    "previousCorrection": {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r1.qualification-correction.json",
+      "sha256": "0fa4f8eb02d7d267bb82adcda5ab0e243f40256ce683a4f008f4f22d7aa30d00",
+      "bytes": 815
+    }
+  },
+  "quarantineIndex": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/quarantine-export-r1/index.json",
+    "sha256": "7d7529ce0631e159ce61d125942874d26af9f85ef110eb68acd6659d140a315f",
+    "bytes": 953
+  },
+  "semanticQualityApproved": false,
+  "trainedWebGPUCalls": 0
+}

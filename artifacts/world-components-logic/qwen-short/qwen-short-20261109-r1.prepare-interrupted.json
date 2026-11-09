@@ -1,0 +1,11 @@
+{
+  "runId": "qwen-short-20261109-r1",
+  "status": "preparation_cancelled_before_freeze",
+  "modelCalls": 0,
+  "trainingSteps": 0,
+  "planWritten": false,
+  "reason": "root codec reference-format correction before freeze; CPU sampler also identified repeated len(tokenizer) rebuilding the large vocabulary for every token",
+  "sourceSnapshot": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-20261109-r1.prepare-source.py",
+  "sourceSha256": "2c9418594c6d1650335d4a13473c5bffecfeef55a25594c28945572c19a66f08",
+  "trainingNotStarted": true
+}

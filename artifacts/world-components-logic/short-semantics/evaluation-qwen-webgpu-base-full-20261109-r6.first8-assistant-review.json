@@ -1,0 +1,1069 @@
+{
+  "schema": "jity-webgpu-base-live-prefix-assistant-review-v1",
+  "reviewDate": "2026-11-09",
+  "scope": "first_eight_registered_live_cases_only_not_full_batch",
+  "plan": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.plan.json",
+    "sha256": "44e445df431419238b764330914f0fd24958a6030924a87ea7695ccec79b921e"
+  },
+  "packetIndex": {
+    "path": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/index.json",
+    "sha256": "000dc5559a900ae140e8bdc71bc88637f858331bee70954299c0c94c26e18675"
+  },
+  "sourceJournalPrefix": {
+    "sourceJournal": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/evaluation-qwen-webgpu-base-full-20261109-r6.record.journal.jsonl",
+    "lastSequence": 13902,
+    "lastEventSha256": "4c70b71c1581d6adc5805d1ba9c800c9332b7daf7c111cfd9b1b885adc878545",
+    "prefixSha256": "aa21b737904c9f5cc96c2f0db1e5852b64abe1d50356648952529d2da9138a8c"
+  },
+  "registeredTotal": 436,
+  "reviewed": 8,
+  "remainingUnreviewedHere": 428,
+  "wholeBatchFinished": false,
+  "selection": "literal_first_8_plan_cases; settled_event_and_elapsedIncludingTelemetryMs_required; active_case_excluded",
+  "summary": {
+    "completion": {
+      "result": 0,
+      "empty": 2,
+      "incomplete": 6
+    },
+    "assessment": {
+      "incomplete_semantic_failure": 6,
+      "local_skip_reasonable": 2
+    },
+    "generationCalls": 6,
+    "generatorResult": 1,
+    "generatorTruncated": 5,
+    "successfulFrozenActChains": 0,
+    "AOfflinePreviews": 0,
+    "CGeneration": 0
+  },
+  "backend": {
+    "textQualification": "base_zero_shot",
+    "textTrainingSteps": 0,
+    "textModelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+  },
+  "humanReviewCount": 0,
+  "sourceVerification": "pending",
+  "semanticQualityApproved": false,
+  "method": "Assistant read both full worlds, exact variant differences, actual model inputs/instructions and all six complete retained raw strings. No lexical similarity scorer or inference rerun. Targets read only as separate assistant-draft review references.",
+  "cases": [
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:22:natural",
+        "exampleId": "gate:D02.1:22",
+        "inputHash": "bb5cc5042118f9a39b294d115d7b0c172d47da9480f350d997a0690b04dbab20",
+        "inputKind": "player_pending",
+        "offlinePoint": {
+          "advanceId": "eval-advance:5c15eaccd2e77a6419320798b622ae35e8e9a52acdfd0b14f2d151178b0aba5d",
+          "id": "eval-point:5c15eaccd2e77a6419320798b622ae35e8e9a52acdfd0b14f2d151178b0aba5d",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:5c15eaccd2e77a6419320798b622ae35e8e9a52acdfd0b14f2d151178b0aba5d",
+          "previousPointId": "eval-predecessor:5c15eaccd2e77a6419320798b622ae35e8e9a52acdfd0b14f2d151178b0aba5d",
+          "roundId": "eval-round:5c15eaccd2e77a6419320798b622ae35e8e9a52acdfd0b14f2d151178b0aba5d",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "natural",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "bb5cc5042118f9a39b294d115d7b0c172d47da9480f350d997a0690b04dbab20",
+      "sourceRowHash": "81538a7ee69c4c6293d68e71c2f0dea41121d1f211d3f256d1823b21aaa84676",
+      "outputHash": "9c5645c6e2a7fc7f38930d6f96d8ea91dfc8aa770802f998a44ff76581b2f046",
+      "completion": {
+        "reason": "fragment needs explicit subject binding",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 14637.193666,
+      "resultCheckpoint": {
+        "sequence": 278,
+        "sha256": "db9cb31cf6c00a5d4507264898fccb98a5a9da7356531fb46263a43b0c354e0e"
+      },
+      "settledCheckpoint": {
+        "sequence": 279,
+        "sha256": "c4d42eb0a55b3a5aec8a8945cf34c5d8e4c77ef5ba6c7e5633a9dd3333167d51"
+      },
+      "checkpointEventCount": 276,
+      "checkpointFileSha256": "6e72e24edcd86ce4f683bd0bb4c9c151f6ecc27fe303546d55ea203d8e993a95",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/00",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "行动机会 act 与现有请求相符，但短句仅为“让防潮闸保持关闭。”，未明确宋黎这一主体、任何具体尝试或锁紧销/闸门手柄的操作关系；也未处理易安向外扳手柄这一阻碍。不是行动事实或成功事实。D02.3.verdict 的 pass 为局部语义误接纳，程序随后以缺 subject binding 拒绝；没有形成冻结 act。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "e987e4b00df5a88463c1b485e697891dfdffe5242788baa0ab211e826b64ae06",
+          "checkpoint": {
+            "sequence": 35,
+            "sha256": "e20274f880ad0faff5527c9d4925e1d1ca7476db0331e2c8b18a8b3135437357"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "bff0ea2acc33b3ae6040739fe28142e0afd21cca6210b0efb5117b72e8e33c32",
+          "checkpoint": {
+            "sequence": 69,
+            "sha256": "326c5767f248644100fa58b9255e955ac55944e42faeddfccdb705579411cecf"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "result",
+          "value": "让防潮闸保持关闭。",
+          "reason": null,
+          "inputHash": "bff0ea2acc33b3ae6040739fe28142e0afd21cca6210b0efb5117b72e8e33c32",
+          "checkpoint": {
+            "sequence": 248,
+            "sha256": "7c333035d15fdc6455638a330376a9279c275b2c06d0d94601b18548d9237007"
+          }
+        },
+        {
+          "component": "D02.3.verdict",
+          "status": "result",
+          "value": "pass",
+          "reason": null,
+          "inputHash": "910865f67aa844f74615fbf0bcb5415f9edbe9fae3af207635fe003a1c228279",
+          "checkpoint": {
+            "sequence": 275,
+            "sha256": "41eb861be350d088789d26f86ff7ba8d17be87914cbfe6d8a51c6bbe87d3c15d"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 71,
+            "sha256": "0fb3284f54e3b10ee8e33cacb526eb8103b6287db051195dc2ada8cd9300be4f"
+          },
+          "inputSha256": "bff0ea2acc33b3ae6040739fe28142e0afd21cca6210b0efb5117b72e8e33c32",
+          "messagesSha256": "f5e8074db423725b12997e3aab7df4ba27438f5ac3bee426fe2148a33c83a820",
+          "requestSha256": "251d3fe8dc1e68b90434477bae1c347a8caf3635bbad7cbd73d36e1ec90149a7",
+          "outputCheckpoint": {
+            "sequence": 246,
+            "sha256": "0957557c7edd4cb4ea9e42e4a4eac5898622244ad7fa2d29036da517aec9237b"
+          },
+          "component": "D02.2.text",
+          "status": "result",
+          "reason": null,
+          "rawText": "让防潮闸保持关闭。",
+          "rawTextSha256": "0cc0e562b6f5be74eea9074fe6f314269d5ecc43005f057b54cd1781241d221d",
+          "rawTokenIdsHash": "e0eab4560b19231c31153106486ceca06d624e14fa40650c0066c604f547c0c9",
+          "outputTokens": 8,
+          "eosReached": true,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "fragment needs explicit subject binding",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:22:references",
+        "exampleId": "gate:D02.1:22",
+        "inputHash": "bb5cc5042118f9a39b294d115d7b0c172d47da9480f350d997a0690b04dbab20",
+        "inputKind": "player_pending",
+        "offlinePoint": {
+          "advanceId": "eval-advance:6fcd41daad85e86a3ab1f7730fefb41867b1f4cac34f905af1425ce915d46b66",
+          "id": "eval-point:6fcd41daad85e86a3ab1f7730fefb41867b1f4cac34f905af1425ce915d46b66",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:6fcd41daad85e86a3ab1f7730fefb41867b1f4cac34f905af1425ce915d46b66",
+          "previousPointId": "eval-predecessor:6fcd41daad85e86a3ab1f7730fefb41867b1f4cac34f905af1425ce915d46b66",
+          "roundId": "eval-round:6fcd41daad85e86a3ab1f7730fefb41867b1f4cac34f905af1425ce915d46b66",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "references",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "bb5cc5042118f9a39b294d115d7b0c172d47da9480f350d997a0690b04dbab20",
+      "sourceRowHash": "81538a7ee69c4c6293d68e71c2f0dea41121d1f211d3f256d1823b21aaa84676",
+      "outputHash": "1e05ee6345b1f3c03d786b7544995d4fbf1a365d6abe3dc028e85cfe429024a6",
+      "completion": {
+        "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 18692.002958,
+      "resultCheckpoint": {
+        "sequence": 2989,
+        "sha256": "a9bb58e33fd423bb9a3c33e17a588522adc3d80b4cbdfc786d0a192efcdbecbc"
+      },
+      "settledCheckpoint": {
+        "sequence": 2990,
+        "sha256": "c5a38b591d0c831392d9476ed8019e54613207e5348701747bbca70cc79a69f4"
+      },
+      "checkpointEventCount": 2708,
+      "checkpointFileSha256": "150bc208c44d57220410490f61533624e53689e299b074201556229692357cec",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/01",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "与同源自然名臂相同的完整关闸输入，引用臂输出 JSON 外壳与输入上下文，未生成现有 ID 标记组成的短尝试；128 输出 token 后没有 EOS。是输入复述和截断，不是可采纳行动；不能以输出中出现 actorId/任务字段当作角色绑定。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "8f7f2c28d12b011e68a04cd0556a487c7d8701bec5e42f130bac14437fd3f1e2",
+          "checkpoint": {
+            "sequence": 313,
+            "sha256": "60494fa8fb1f47116151ae3b2f1ae267c51ca8397794c6a85f769c368c37280f"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "5c42ad0f4c6059f270522a46008774fbda9b508884031bf69a8649a79511dc6e",
+          "checkpoint": {
+            "sequence": 347,
+            "sha256": "52fb85a3fb100189f5b15a697583c83f24fe74c6d3f96a7da1bb49c24db43b13"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "value": null,
+          "reason": "webgpu:truncated_no_eos",
+          "inputHash": "5c42ad0f4c6059f270522a46008774fbda9b508884031bf69a8649a79511dc6e",
+          "checkpoint": {
+            "sequence": 2986,
+            "sha256": "daa8d23ace6c8a3b7a97d4b5b5f60fb4d38eec86313a732283157876e63f2c9b"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 349,
+            "sha256": "ab61d1c9db19cc09f622cf7f1516b31fd5003ced3b14acbdbfbbabe9d07cb235"
+          },
+          "inputSha256": "5c42ad0f4c6059f270522a46008774fbda9b508884031bf69a8649a79511dc6e",
+          "messagesSha256": "b3b8f66bb48365e7b0add874724a8ce7897b601b93c77cd3c7f90f447e3dbccd",
+          "requestSha256": "a0d8d212d1322cc716fcc4d332b8464b8c768fa4577aa3a026bfde83cdfb6df0",
+          "outputCheckpoint": {
+            "sequence": 2984,
+            "sha256": "db7ec5ee1e416837ae7c3e510230d080649ec6b266ab3fbb7a37a2ef407fc430"
+          },
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "reason": "truncated_no_eos",
+          "rawText": "{\"component\":\"D02.2.text\",\"context\":{\"context\":{\"actorId\":\"a\",\"advance\":{\"advanceId\":\"advance:gate\",\"inputId\":\"input:gate\",\"inputText\":\"请帮我处理这件事：让防潮闸保持关闭。\",\"intentStatus\":\"pending\"},\"confirmedPrefix\":[],\"protagonistId\":\"a\",\"world\":{\"characters\":{\"a\":{\"appearanceChanges\":[],\"id\":\"a\",\"personalityChanges\":[],\"position\":{\"containerId\":\"loc\"},\"sanity\":66,\"tasks\":{\"a-task\":{\"goal\":\"让防潮闸保持关闭。\",\"id\":\"a-task\",\"ownerId\":\"a\",\"parentTaskId\":",
+          "rawTextSha256": "b16036fb8a26f95265e6e24c4c5306371d71fa6bbc562097925284b9a9f9035b",
+          "rawTokenIdsHash": "3e1a951af620c2d75137aa62be347ed22aed04b2227550167d03f5e529609d13",
+          "outputTokens": 128,
+          "eosReached": null,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:58:natural",
+        "exampleId": "gate:D02.1:58",
+        "inputHash": "bc4e71d240378f7df7e1ba11dfb52c65d5b10a6f99a8eb864e171917b6c589ef",
+        "inputKind": "player_expired",
+        "offlinePoint": {
+          "advanceId": "eval-advance:d741b132293df8eae06c2f7cfbdc0753065ef7cc722eb19b12bd92170fe38b90",
+          "id": "eval-point:d741b132293df8eae06c2f7cfbdc0753065ef7cc722eb19b12bd92170fe38b90",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:d741b132293df8eae06c2f7cfbdc0753065ef7cc722eb19b12bd92170fe38b90",
+          "previousPointId": "eval-predecessor:d741b132293df8eae06c2f7cfbdc0753065ef7cc722eb19b12bd92170fe38b90",
+          "roundId": "eval-round:d741b132293df8eae06c2f7cfbdc0753065ef7cc722eb19b12bd92170fe38b90",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "natural",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "bc4e71d240378f7df7e1ba11dfb52c65d5b10a6f99a8eb864e171917b6c589ef",
+      "sourceRowHash": "45ddf1544021f89266a8b4e6d406a7cd435c8145e78d306bac8472e5f7032f7c",
+      "outputHash": "9ed99c15644c9c8d6e88781a7200b61344370a14314d5ce20fb20bd4ab6c1f5e",
+      "completion": {
+        "reason": null,
+        "status": "empty",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 288.330666,
+      "resultCheckpoint": {
+        "sequence": 3023,
+        "sha256": "ab55c222c3a144ae8b46bf68fc3d66d477748cc6b8bcc7282d2d28ecbc78bc3a"
+      },
+      "settledCheckpoint": {
+        "sequence": 3024,
+        "sha256": "6692a88733586d783412593f95d98cdbf72be71dc4c11c2f5d6134ddf4d76a2e"
+      },
+      "checkpointEventCount": 31,
+      "checkpointFileSha256": "631933cf6d7bbf1e85f86858b2a7f25d8593babf0657fba815b0b7924bb37630",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/02",
+      "assessment": "local_skip_reasonable",
+      "reason": "玩家 inputText=null 且 intentStatus=expired；当前人物 a 的 tasks 是空集合，既无确认行动也无已准入反应约束。因此在这份给定当前状态下不再执行旧玩家输入、返回 skip 属合理局部判断。initial 中原始任务仍存在，不能覆盖当前任务集合而把旧意图重新消费。其他人物任务及手柄状态仍保留，skip 并不证明世界无变化或以后无需反应；未生成 act，不算 D02→D06 成功。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "skip",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "skip",
+          "reason": null,
+          "inputHash": "95085eefb84c31d2f6246c20318b9a3a5f395d0387e0b94082dd9d593e173116",
+          "checkpoint": {
+            "sequence": 3020,
+            "sha256": "3a38f8cdf401ef78c38f376f1031f2f26d1849174a2dc2379a601ac946f6f09d"
+          }
+        }
+      ],
+      "generations": [],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": null,
+            "status": "empty",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "empty"
+        },
+        {
+          "reason": "upstream_empty",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_empty",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:58:references",
+        "exampleId": "gate:D02.1:58",
+        "inputHash": "bc4e71d240378f7df7e1ba11dfb52c65d5b10a6f99a8eb864e171917b6c589ef",
+        "inputKind": "player_expired",
+        "offlinePoint": {
+          "advanceId": "eval-advance:eebf5f5aa97634c091b9a8a47ac6cd4f8bab19a15c22cca34f2d986372f3d64d",
+          "id": "eval-point:eebf5f5aa97634c091b9a8a47ac6cd4f8bab19a15c22cca34f2d986372f3d64d",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:eebf5f5aa97634c091b9a8a47ac6cd4f8bab19a15c22cca34f2d986372f3d64d",
+          "previousPointId": "eval-predecessor:eebf5f5aa97634c091b9a8a47ac6cd4f8bab19a15c22cca34f2d986372f3d64d",
+          "roundId": "eval-round:eebf5f5aa97634c091b9a8a47ac6cd4f8bab19a15c22cca34f2d986372f3d64d",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "references",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "bc4e71d240378f7df7e1ba11dfb52c65d5b10a6f99a8eb864e171917b6c589ef",
+      "sourceRowHash": "45ddf1544021f89266a8b4e6d406a7cd435c8145e78d306bac8472e5f7032f7c",
+      "outputHash": "9ed99c15644c9c8d6e88781a7200b61344370a14314d5ce20fb20bd4ab6c1f5e",
+      "completion": {
+        "reason": null,
+        "status": "empty",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 232.2075,
+      "resultCheckpoint": {
+        "sequence": 3057,
+        "sha256": "44e563bd65f3fcb799b3f3e91f0015cdc6f80aff3e4b61acfbb1a0fc67bb24c6"
+      },
+      "settledCheckpoint": {
+        "sequence": 3058,
+        "sha256": "9e5a4de84fe8b4209885c338087ddefe32b4acac66e82d8cf748c0f141db0378"
+      },
+      "checkpointEventCount": 31,
+      "checkpointFileSha256": "257e230a8eefaa6437c2881d53ff1be5c5c094a9cf52f2402ea946fa992f22e6",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/03",
+      "assessment": "local_skip_reasonable",
+      "reason": "引用臂的当前世界、已过期空输入和当前空任务与自然名臂逐字段相同，模型同样返回 skip；没有请求文本生成，也不存在由引用臂产生的完整行动。该局部判断可接受，但不能作为自主规划、结算或引用替换门通过证据。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "skip",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "skip",
+          "reason": null,
+          "inputHash": "5b4f1aa747228b9f9adf24d91273250eab23a6b6bdda0feaf51f066c75210d1d",
+          "checkpoint": {
+            "sequence": 3054,
+            "sha256": "0cb032b97d358a1703d1eb2d38b41958d44ef9ffdea08ebb3ec637f321dfacc5"
+          }
+        }
+      ],
+      "generations": [],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": null,
+            "status": "empty",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "empty"
+        },
+        {
+          "reason": "upstream_empty",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_empty",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:59:natural",
+        "exampleId": "gate:D02.1:59",
+        "inputHash": "4c75590fcc7e74ec27d88b4fb8988055625fa3b33824a1571bc0c9af9989d9d8",
+        "inputKind": "npc_consumed",
+        "offlinePoint": {
+          "advanceId": "eval-advance:2185c53436603ee842114c6df12f991606ae2776a4426930476bc5080c16b335",
+          "id": "eval-point:2185c53436603ee842114c6df12f991606ae2776a4426930476bc5080c16b335",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:2185c53436603ee842114c6df12f991606ae2776a4426930476bc5080c16b335",
+          "previousPointId": "eval-predecessor:2185c53436603ee842114c6df12f991606ae2776a4426930476bc5080c16b335",
+          "roundId": "eval-round:2185c53436603ee842114c6df12f991606ae2776a4426930476bc5080c16b335",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "natural",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "4c75590fcc7e74ec27d88b4fb8988055625fa3b33824a1571bc0c9af9989d9d8",
+      "sourceRowHash": "76819a145c02c956abc1bb18a82a2525c7c3ef01953cb3ee477761805c61bd3b",
+      "outputHash": "1e05ee6345b1f3c03d786b7544995d4fbf1a365d6abe3dc028e85cfe429024a6",
+      "completion": {
+        "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 20785.760333,
+      "resultCheckpoint": {
+        "sequence": 5768,
+        "sha256": "6e43c0682c88f80e75946694bbb6a694c47f03ec115a05ed32cd0cf14b9e98fe"
+      },
+      "settledCheckpoint": {
+        "sequence": 5769,
+        "sha256": "9a9389f1e95bf214380b6df0539c43e7939a1feb1e8649bcfe30877709fffcc3"
+      },
+      "checkpointEventCount": 2708,
+      "checkpointFileSha256": "34b9c61ce3d9dce3048d01e6846dd8713c43e82ea0453537183caeb7384952ce",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/04",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "主角是场外 off，当前行动者 a 是宋黎，其关闸任务仍 pending；“我先在原地等候消息。”已经 consumed，不能给 NPC 重新当作玩家待执行命令。act 判断有任务依据，但自然名生成仅复述包含这些字段的 JSON 输入，未形成宋黎的具体尝试，128 token 无 EOS。未发生角色规划成功。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "18809e20dae9abc3ab30eca8bd61c8cc089ff3ae118711f2dce1b4e710676f1c",
+          "checkpoint": {
+            "sequence": 3092,
+            "sha256": "67fc0110cb38a09b8d325cb9ae81dca1d3b00bdb00d89616e9588efbfd580bfd"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "8cd070a7479159be63b990970bb0b5f7007bfeb4ea24edbce30b82764a6b302f",
+          "checkpoint": {
+            "sequence": 3126,
+            "sha256": "e3dcc9991c86b1eb5e06dc0037ca15092319f1de4ae3d5abf06c6da1d0d47ba3"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "value": null,
+          "reason": "webgpu:truncated_no_eos",
+          "inputHash": "8cd070a7479159be63b990970bb0b5f7007bfeb4ea24edbce30b82764a6b302f",
+          "checkpoint": {
+            "sequence": 5765,
+            "sha256": "8faf7a30b7e145a4373857de060bba04de6b6fc6b9ee6cd2c3fecd8cb2198cf7"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 3128,
+            "sha256": "d2f3afbb730fc278827ae480b998f74572e52bd1e749fd380ea58ca1209e4234"
+          },
+          "inputSha256": "8cd070a7479159be63b990970bb0b5f7007bfeb4ea24edbce30b82764a6b302f",
+          "messagesSha256": "988f0f7fbab24dbd2406829a01cc61ba634a40cd4ea64c9b265fef871522cafb",
+          "requestSha256": "86a5db69d1febb431e50b16cba59f2f2b817e06f2a72edd039e0463d297091ac",
+          "outputCheckpoint": {
+            "sequence": 5763,
+            "sha256": "c89288d23d9358612b11ca771b2e6c2affa87193787c2fc22566059d940fcec0"
+          },
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "reason": "truncated_no_eos",
+          "rawText": "{\"component\":\"D02.2.text\",\"context\":{\"context\":{\"actorId\":\"a\",\"advance\":{\"advanceId\":\"advance:gate\",\"inputId\":\"input:gate\",\"inputText\":\"我先在原地等候消息。\",\"intentStatus\":\"consumed\"},\"confirmedPrefix\":[],\"protagonistId\":\"off\",\"world\":{\"characters\":{\"a\":{\"appearanceChanges\":[],\"id\":\"a\",\"personalityChanges\":[],\"position\":{\"containerId\":\"loc\"},\"sanity\":66,\"tasks\":{\"a-task\":{\"goal\":\"让防潮闸保持关闭。\",\"id\":\"a-task\",\"ownerId\":\"a\",\"parentTaskId\":null,\"status",
+          "rawTextSha256": "208db97b88eff7be679b3fe0dfd184850023abfd05ce4fc718b55b42c8b8fe3a",
+          "rawTokenIdsHash": "2306fc57f4f8197d7536f482e783b8f53c94de6040b614a2e523d8c3b55dbd22",
+          "outputTokens": 128,
+          "eosReached": null,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:gate:D02.1:59:references",
+        "exampleId": "gate:D02.1:59",
+        "inputHash": "4c75590fcc7e74ec27d88b4fb8988055625fa3b33824a1571bc0c9af9989d9d8",
+        "inputKind": "npc_consumed",
+        "offlinePoint": {
+          "advanceId": "eval-advance:2cd09d01ba98217eb99519cf4a08ea74a11817614ca93504b30f27fc5ac8f8d4",
+          "id": "eval-point:2cd09d01ba98217eb99519cf4a08ea74a11817614ca93504b30f27fc5ac8f8d4",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:2cd09d01ba98217eb99519cf4a08ea74a11817614ca93504b30f27fc5ac8f8d4",
+          "previousPointId": "eval-predecessor:2cd09d01ba98217eb99519cf4a08ea74a11817614ca93504b30f27fc5ac8f8d4",
+          "roundId": "eval-round:2cd09d01ba98217eb99519cf4a08ea74a11817614ca93504b30f27fc5ac8f8d4",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:gate"
+        },
+        "representation": "references",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:gate",
+        "split": "development"
+      },
+      "inputHash": "4c75590fcc7e74ec27d88b4fb8988055625fa3b33824a1571bc0c9af9989d9d8",
+      "sourceRowHash": "76819a145c02c956abc1bb18a82a2525c7c3ef01953cb3ee477761805c61bd3b",
+      "outputHash": "1e05ee6345b1f3c03d786b7544995d4fbf1a365d6abe3dc028e85cfe429024a6",
+      "completion": {
+        "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 18280.154916,
+      "resultCheckpoint": {
+        "sequence": 8479,
+        "sha256": "41d8ff419025df5ea15df93a13b4ac00c0e9dbdca352f41394bf2b8263f023ab"
+      },
+      "settledCheckpoint": {
+        "sequence": 8480,
+        "sha256": "1ed08c46449179699ebbf5035503d702066e5b451882bc83649b9c0d3f783442"
+      },
+      "checkpointEventCount": 2708,
+      "checkpointFileSha256": "20bf955fb86686018086848f671207d0da1b66a7bc14eb6f950e7f8300e909dd",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/05",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "与同源 NPC 自然名臂使用相同完整状态：宋黎需依据自身关闸任务自主提出尝试，不能复用已消费的场外主角指令。引用输出仍是输入 JSON 复述且 128 token 截断，没有可冻结的角色/工具/对象引用和行动。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "1205f3da307a86531f51843daafdb15b429b7f74751f211906ee871b65d2d5bd",
+          "checkpoint": {
+            "sequence": 5803,
+            "sha256": "d3faff2365e30e20edcb8debe4c885959919ab0da4f5548da049d72faca27bc4"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "4d6705b32a60824ea8c1017c3dfc4f30df52849a03373e0bdfcce63f0aba7161",
+          "checkpoint": {
+            "sequence": 5837,
+            "sha256": "211562a359358be29e86884db95e4fdaf4563f9120d30612f9e0e833c40832ec"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "value": null,
+          "reason": "webgpu:truncated_no_eos",
+          "inputHash": "4d6705b32a60824ea8c1017c3dfc4f30df52849a03373e0bdfcce63f0aba7161",
+          "checkpoint": {
+            "sequence": 8476,
+            "sha256": "a45187df1a51c67920213634deb4c65df8d50b13fbc77d72f4dc59b07f8e8fdc"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 5839,
+            "sha256": "6722f141b7ad9a9f7c8910e7d6d7bc75a17f7c16c77f5af976aeb42d2049b11a"
+          },
+          "inputSha256": "4d6705b32a60824ea8c1017c3dfc4f30df52849a03373e0bdfcce63f0aba7161",
+          "messagesSha256": "29555eca195fbce3af2ce94400401f2c067fa5d1124c86b6e2b6047bfea27731",
+          "requestSha256": "adecb9be521d2474ada0d03a99285afe12fbd081361ad04ce630348e14a55903",
+          "outputCheckpoint": {
+            "sequence": 8474,
+            "sha256": "a25f345b5deb85e30883fe162bdaa32a422f37725e68dc7ebb784b901119ce8b"
+          },
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "reason": "truncated_no_eos",
+          "rawText": "{\"component\":\"D02.2.text\",\"context\":{\"context\":{\"actorId\":\"a\",\"advance\":{\"advanceId\":\"advance:gate\",\"inputId\":\"input:gate\",\"inputText\":\"我先在原地等候消息。\",\"intentStatus\":\"consumed\"},\"confirmedPrefix\":[],\"protagonistId\":\"off\",\"world\":{\"characters\":{\"a\":{\"appearanceChanges\":[],\"id\":\"a\",\"personalityChanges\":[],\"position\":{\"containerId\":\"loc\"},\"sanity\":66,\"tasks\":{\"a-task\":{\"goal\":\"让防潮闸保持关闭。\",\"id\":\"a-task\",\"ownerId\":\"a\",\"parentTaskId\":null,\"status",
+          "rawTextSha256": "208db97b88eff7be679b3fe0dfd184850023abfd05ce4fc718b55b42c8b8fe3a",
+          "rawTokenIdsHash": "2306fc57f4f8197d7536f482e783b8f53c94de6040b614a2e523d8c3b55dbd22",
+          "outputTokens": 128,
+          "eosReached": null,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:waiting:D02.1:22:natural",
+        "exampleId": "waiting:D02.1:22",
+        "inputHash": "f99a6d66266a0f4b2f60e382fe1261d2ae1dac6806658b52a9249f9400597c3f",
+        "inputKind": "player_pending",
+        "offlinePoint": {
+          "advanceId": "eval-advance:6e1086cd3605c4e4df3b9772eaf29d36d7d0dfa12cca7cdffd691cc221cdd6de",
+          "id": "eval-point:6e1086cd3605c4e4df3b9772eaf29d36d7d0dfa12cca7cdffd691cc221cdd6de",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:6e1086cd3605c4e4df3b9772eaf29d36d7d0dfa12cca7cdffd691cc221cdd6de",
+          "previousPointId": "eval-predecessor:6e1086cd3605c4e4df3b9772eaf29d36d7d0dfa12cca7cdffd691cc221cdd6de",
+          "roundId": "eval-round:6e1086cd3605c4e4df3b9772eaf29d36d7d0dfa12cca7cdffd691cc221cdd6de",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:waiting"
+        },
+        "representation": "natural",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:waiting",
+        "split": "development"
+      },
+      "inputHash": "f99a6d66266a0f4b2f60e382fe1261d2ae1dac6806658b52a9249f9400597c3f",
+      "sourceRowHash": "f923f2745c7bd75b8cea70461abcafd8a64228c1b06db9f9c03817667e416d55",
+      "outputHash": "1e05ee6345b1f3c03d786b7544995d4fbf1a365d6abe3dc028e85cfe429024a6",
+      "completion": {
+        "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 18536.707583,
+      "resultCheckpoint": {
+        "sequence": 11190,
+        "sha256": "c3cd90446349ce67ccd66585569ab02934346a22233b6bed17a332db91a7f79f"
+      },
+      "settledCheckpoint": {
+        "sequence": 11191,
+        "sha256": "e3bd9e7cd3d837ab44d429e061272aef75ca2f0de96b23ed3c7eeea72d038419"
+      },
+      "checkpointEventCount": 2708,
+      "checkpointFileSha256": "97d076ae4e670b51bb1ede4aae63f1d12e561aa2b9512316483105384d806dff",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/06",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "陶青当前请求和任务是等到五分钟稳定观察结束，计时表明确还需五分钟；顾芒须保持安静不碰记录仪，任澈隔窗核对约定。输出只复述输入结构和任务字段，未提出陶青如何尝试等待/维持条件，也未完成一句行动；128 token 截断。没有进入时间提议，不能推断五分钟已经推进或任务已完成。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "f8ceca1204ab0a5f2ce9afce312f655bfb5f03fba1f5dff25208ea037e7fc51b",
+          "checkpoint": {
+            "sequence": 8514,
+            "sha256": "7d8d54682fa6d9fc7fdd59b20b0549f14551d90c19012dbaf3b64797a3b4d937"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "e8b4acee427decf457f49ce8c7660ce7165ac4bbc7ac8a138a8d69da43b6e99e",
+          "checkpoint": {
+            "sequence": 8548,
+            "sha256": "8bf4114a8905bf54ed6c6ad6504af9edf4800c01eb20b2e7954e5c6ad1ebf76a"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "value": null,
+          "reason": "webgpu:truncated_no_eos",
+          "inputHash": "e8b4acee427decf457f49ce8c7660ce7165ac4bbc7ac8a138a8d69da43b6e99e",
+          "checkpoint": {
+            "sequence": 11187,
+            "sha256": "efeb40afe507eece48ba6e2de58645d74105789dbbecf1565500b6911ac1e48b"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 8550,
+            "sha256": "89931d0eeb6a79f9378487fddd94acdc21727b94ad382f776e61e41aa9dbe4ef"
+          },
+          "inputSha256": "e8b4acee427decf457f49ce8c7660ce7165ac4bbc7ac8a138a8d69da43b6e99e",
+          "messagesSha256": "c988c641b83d2c6424cd9bc5916cab864e4ceeca4c8bf784aa6ea7ea4a9f7b62",
+          "requestSha256": "6a4e1f8d9982fe954641c3267426ad7a3170c8c0134dd5862e8a09a2fe5e0251",
+          "outputCheckpoint": {
+            "sequence": 11185,
+            "sha256": "c2a575512ccf512b96d4de8a1a56e744bf73664cd58b4212096455d76e4232a5"
+          },
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "reason": "truncated_no_eos",
+          "rawText": "{\"component\":\"D02.2.text\",\"context\":{\"actorId\":\"a\",\"advance\":{\"advanceId\":\"advance:waiting\",\"inputId\":\"input:waiting\",\"inputText\":\"请帮我处理这件事：等到五分钟稳定观测期结束。\",\"intentStatus\":\"pending\"},\"confirmedPrefix\":[],\"protagonistId\":\"a\",\"world\":{\"characters\":{\"a\":{\"appearanceChanges\":[],\"id\":\"a\",\"personalityChanges\":[],\"position\":{\"containerId\":\"loc\"},\"sanity\":70,\"tasks\":{\"a-task\":{\"goal\":\"等到五分钟稳定观测期结束。\",\"id\":\"a-task\",\"ownerId\":\"a\",\"parentTaskId\":null,\"",
+          "rawTextSha256": "9ec56902ff8216ce5b297e89105744bb902fe44b2776a8a54b74ad2388dada29",
+          "rawTokenIdsHash": "81f0743abf8444e3c933e97a1ad583095090438e46fd47ca81fb84b7196476fb",
+          "outputTokens": 128,
+          "eosReached": null,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    },
+    {
+      "case": {
+        "caseId": "live:waiting:D02.1:22:references",
+        "exampleId": "waiting:D02.1:22",
+        "inputHash": "f99a6d66266a0f4b2f60e382fe1261d2ae1dac6806658b52a9249f9400597c3f",
+        "inputKind": "player_pending",
+        "offlinePoint": {
+          "advanceId": "eval-advance:fb19f97785c8a26ef0a906a96d424f954c886857baabe2842b6aae6159729bbb",
+          "id": "eval-point:fb19f97785c8a26ef0a906a96d424f954c886857baabe2842b6aae6159729bbb",
+          "kind": "instant",
+          "linkedFromPointId": "eval-predecessor:fb19f97785c8a26ef0a906a96d424f954c886857baabe2842b6aae6159729bbb",
+          "previousPointId": "eval-predecessor:fb19f97785c8a26ef0a906a96d424f954c886857baabe2842b6aae6159729bbb",
+          "roundId": "eval-round:fb19f97785c8a26ef0a906a96d424f954c886857baabe2842b6aae6159729bbb",
+          "sequence": 2,
+          "timeAdvance": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "trigger": "player",
+          "worldId": "world:waiting"
+        },
+        "representation": "references",
+        "scope": "live_upstream",
+        "sourceGroup": "short-20261109:waiting",
+        "split": "development"
+      },
+      "inputHash": "f99a6d66266a0f4b2f60e382fe1261d2ae1dac6806658b52a9249f9400597c3f",
+      "sourceRowHash": "f923f2745c7bd75b8cea70461abcafd8a64228c1b06db9f9c03817667e416d55",
+      "outputHash": "1e05ee6345b1f3c03d786b7544995d4fbf1a365d6abe3dc028e85cfe429024a6",
+      "completion": {
+        "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+        "status": "incomplete",
+        "value": null
+      },
+      "elapsedIncludingTelemetryMs": 18931.732916,
+      "resultCheckpoint": {
+        "sequence": 13901,
+        "sha256": "a63e9c455a1bd92c6ef09fb09e9891454c26e05015b9c7f6ccb8134e4fbc54f6"
+      },
+      "settledCheckpoint": {
+        "sequence": 13902,
+        "sha256": "4c70b71c1581d6adc5805d1ba9c800c9332b7daf7c111cfd9b1b885adc878545"
+      },
+      "checkpointEventCount": 2708,
+      "checkpointFileSha256": "b2ab7228106670c6cff269f861c4285c3afb55d67062924f2913d894ae59ee37",
+      "packetDirectory": "/Users/davidz/.cache/jity-d-short-semantics-20261109/review/full-r6-first8/07",
+      "assessment": "incomplete_semantic_failure",
+      "reason": "完整五分钟等待输入与自然名臂相同，引用臂仍复制 context/world/任务 JSON，未给出 [[实体ID]] 与自然动作构成的尝试。128 token 截断、无 EOS，不得按空行动、无变化或正常交还处理；D03及以后未启动。",
+      "successfulFrozenActChain": false,
+      "D02DecisionDraftTargetForReviewOnly": "act",
+      "actualDecisionOutputs": [
+        {
+          "component": "D02.1",
+          "status": "result",
+          "value": "act",
+          "reason": null,
+          "inputHash": "869cba0b115d039f4ddde9b2358271de9386cf5f35ae1cbe5c18ceeb926c3221",
+          "checkpoint": {
+            "sequence": 11225,
+            "sha256": "e3dc970c21f13f8076d0fe1aa60daeea5850ac42168159a4415323b2e47becc4"
+          }
+        },
+        {
+          "component": "D02.2.next",
+          "status": "result",
+          "value": "fragment",
+          "reason": null,
+          "inputHash": "34d9ad25e159e634fdb901f9a69e14606de52450427bf7355d5d9ff4cedb3fe2",
+          "checkpoint": {
+            "sequence": 11259,
+            "sha256": "5bbe620759f0a13a33436e14771b8b14d70c3945270d5410ad3c818d3ee702b6"
+          }
+        },
+        {
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "value": null,
+          "reason": "webgpu:truncated_no_eos",
+          "inputHash": "34d9ad25e159e634fdb901f9a69e14606de52450427bf7355d5d9ff4cedb3fe2",
+          "checkpoint": {
+            "sequence": 13898,
+            "sha256": "4de43353053efb1fae394ff870c65b5b02de90ec89a82f01c11896bbff00e671"
+          }
+        }
+      ],
+      "generations": [
+        {
+          "checkpoint": {
+            "sequence": 11261,
+            "sha256": "265e6e9c29a0092f8460599af4d7831b28b84dcb89d7c10d2dcb3f0822549b89"
+          },
+          "inputSha256": "34d9ad25e159e634fdb901f9a69e14606de52450427bf7355d5d9ff4cedb3fe2",
+          "messagesSha256": "ce85a626a2a65e62eb2c4e922307cfaa692ee7fb9d5a1de1d36bb6f7cc4bf055",
+          "requestSha256": "8dfb03f6bffdddc3791c078d83b4085613c81b10e45f84658d291283f5c3145a",
+          "outputCheckpoint": {
+            "sequence": 13896,
+            "sha256": "febf0328ff09c84bb1c5acc8b72d704402f4eeaa2a5a8e152171cdc54c08f725"
+          },
+          "component": "D02.2.text",
+          "status": "incomplete",
+          "reason": "truncated_no_eos",
+          "rawText": "{\"component\":\"D02.2.text\",\"context\":{\"context\":{\"actorId\":\"a\",\"advance\":{\"advanceId\":\"advance:waiting\",\"inputId\":\"input:waiting\",\"inputText\":\"请帮我处理这件事：等到五分钟稳定观测期结束。\",\"intentStatus\":\"pending\"},\"confirmedPrefix\":[],\"protagonistId\":\"a\",\"world\":{\"characters\":{\"a\":{\"appearanceChanges\":[],\"id\":\"a\",\"personalityChanges\":[],\"position\":{\"containerId\":\"loc\"},\"sanity\":70,\"tasks\":{\"a-task\":{\"goal\":\"等到五分钟稳定观测期结束。\",\"id\":\"a-task\",\"ownerId\":\"a\",\"parentTaskId\":",
+          "rawTextSha256": "8a65d19eba530dce7e0dbb934aebaa87ec7fa1ba76427968e7667608ac0d738c",
+          "rawTokenIdsHash": "e1980ae877d8f06566f85ad448f2412e70b8aa522f9af180bc71cadb8c0abe4a",
+          "outputTokens": 128,
+          "eosReached": null,
+          "modelIdentity": "31fb901fe876af0b3fff2c6a519dd8fe75fab495ccf1875908b2d6a8ac125c81"
+        }
+      ],
+      "stageStatuses": [
+        {
+          "completion": {
+            "reason": "D02.2: narrow_composite:D02.2.text:webgpu:truncated_no_eos",
+            "status": "incomplete",
+            "value": null
+          },
+          "stage": "D02_D03_D04",
+          "status": "incomplete"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D05",
+          "status": "not_started"
+        },
+        {
+          "reason": "upstream_incomplete",
+          "stage": "D06",
+          "status": "not_started"
+        }
+      ],
+      "semanticReviewStatus": "assistant_only",
+      "humanReviewCount": 0,
+      "sourceVerification": "pending"
+    }
+  ]
+}

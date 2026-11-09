@@ -1,0 +1,3927 @@
+{
+  "schema": "jity-d-generator-assistant-review-v1",
+  "runId": "short-all-20261109-r3",
+  "reviewer": "independent_assistant_preliminary",
+  "scope": "all_generator_first_outputs_given_registered_intermediate_inputs",
+  "selection": "all_128_generator_predictions_in_original_record_order; no_retries_or_success_selection",
+  "method": "assistant_read_full_frozen_input_and_output_and_review_only_draft_target; repeated_source_worlds_read_once_with_lossless_stage_differences; categories_and_reasons_written_individually_not_lexical_scoring",
+  "categories": {
+    "clearly_unsatisfied": "明确不满足本次局部语义职责",
+    "plausible_needs_review": "可能合理，但有明确疑点，仍需进一步语义审查",
+    "locally_satisfied": "满足这一局部输出目标，不等于组件或整链验收通过",
+    "incomplete": "生成未完成、截断或错误；不得变为否定答案"
+  },
+  "hashDefinitions": {
+    "inputHash": "short_contracts.digest(full registered input)",
+    "outputHash": "sha256(rawText UTF-8 bytes)",
+    "tokenHashes": "short_contracts.digest(actual raw token ID array)"
+  },
+  "sources": {
+    "plan": {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.plan.json",
+      "sha256": "481807a77d781aee27d4fbca6559ab4c509ab1cefb52682bf24efa87ee925cc2"
+    },
+    "record": {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.json",
+      "sha256": "dbff3c247f02ae4f90e7abf0192a9f5f83b28856ef7d4c2d11bf738ce93cc662"
+    },
+    "dataset": {
+      "path": "artifacts/world-components-logic/short-semantics/data/short-all-20261109-r3/supervision.jsonl.gz",
+      "sha256": "a28b3e5ac2fa681de13c06125e0d9d82bdbfca62c87c270c20117c42088048c3"
+    },
+    "journal": {
+      "path": "artifacts/world-components-logic/short-semantics/short-all-20261109-r3.record.journal.jsonl",
+      "sha256": "c8e273401e7eeaf3569e70df4551cf87f51d786f38b3e6a3f0039bd57e8385af",
+      "verifiedEvents": 64896,
+      "partialTailBytes": 0,
+      "headSha256": "7617da66d551d192021ae188a806f31186bdda7ab9e3d6701055a5ab81d811eb"
+    },
+    "codeSnapshot": {
+      "directory": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics/code/short-all-20261109-r3",
+      "files": {
+        "action_plan.py": "f0ddb13c9f871bfa3215be2b054a03eba7ae24adaae7ba748db8544f66dd74ef",
+        "data/short-semantics/author_packet.py": "c7d16ba153f04bd2e4b73aaa913c1cbcfb494a6ebd32e0e4cb2e2363d6b1233f",
+        "data/short-semantics/project_primitives.py": "224528737b788e009e7fa715798833afaffdc034a05f785c81b30212fabe1f17",
+        "experiment.py": "07c12af88fb1f9ac3a170a09aa3745737578e71ebde5e36e3c74c1c4231c27c4",
+        "fact_windows.py": "e6aee51d190ef9c7a0204b4c55d5cff1c87125e455d048a4d60ad655e6942c01",
+        "generate_dev_drafts.py": "2385f92b5966177d3a004fa9c802e2ec156dd653ad7e94ce91824ade413980a7",
+        "lab.py": "92529e7f497d655cd84dc43c6408d229bc878436948db433d9183b2c635e2997",
+        "m01_probe.py": "3b77561124ca6fa74b8e10298351bdd1b261d9278801c9354e99a48d94686913",
+        "pilot_codec.py": "919625e88019b776027cd1f6b5bdccf0d6caeba77f705db4359e9fac12ba308a",
+        "plan_training.py": "077aba3aeb179c423d43f0530920f5d47d88199bcc474da67dd54d564962a2a5",
+        "prepare_run_batch.py": "76c2ba10a834e84058e73ebbd8561baa4674bc84de82d4214258f9ad7b15f301",
+        "run_pilot.py": "bd5f0a975ae2181fa5d5a29f3ca5e47e91c0f74606b4b192382b5b732123aa3d",
+        "short_contracts.py": "4cbd330c5e5537820acee51deee1baae988bd0f6d8393c6d49f662a5a5abc6ab",
+        "short_experiment.py": "a767312113a891123a4e229c11e0dba85afed2aaf9b2544d4c6de91bf40d3c8d",
+        "short_handoff.py": "8ed1a5171ffcc336e6a6f49c86687499e9487746250aaa795c6dcc7160220411",
+        "short_heads_lifecycle.py": "5c84b372639ded25ce9dc306051e146a1f95c363fc45e89edee5f5045dcc1fd7",
+        "short_heads_updates.py": "1efbc354f8918bd38211783ab7744aac2242fb7f2f169eeebfe56ce1cf7e311b",
+        "short_intent.py": "5c2ded9843056c732a200541cdc6d55aaff5b238d45787c4a313d0fb9cc83f21",
+        "short_lifecycle.py": "1f70a425f1ff57761fd5b5fa9b70b8f2f2b6e49f1fa89e380613a6157962e4b6",
+        "short_preview.py": "00077da9d6be989980202d1708ca5bf1c72eb909587f5c1dac3007ac58d2a014",
+        "short_settlement.py": "18e17af2869e907da7533ab730d21e28d37efe3da43f33349cb2806c8168a5b4",
+        "short_training.py": "9ec154677d90c86b18f647cec00bd1f3de147ea89e0968c0a1aea11791ca93a3"
+      }
+    },
+    "trainedGeneratorCheckpoint": {
+      "path": ".local/world-components-logic/short-semantic-models/short-all-20261109-r3/generator/adapter.pt",
+      "sha256": "456b60c81634e4d6a00b18b0fc02214239156a57a2b5163ca240b1aa031917ce",
+      "sourceTensorSha256": "cceb3639c60ad49a2416f965c8a74c1fb632d6cf122b2922c9265b3fb2b311c4",
+      "tensorSha256": "e742e4cb6c2de01d2e5cd273426e55288ef70d32fb50f11214d79b105d471cd0"
+    }
+  },
+  "limitations": [
+    "人工审查为0；来源独立性和语义真值未获外部核验。",
+    "仅为给定中间输入的生成输出初审，不是自主规划、真实上游链或生产C叙事质量。",
+    "D01创作请求存在欠明确之处，合理的非草稿替代不会仅因精确不匹配而判错。",
+    "生成EOS完成和输出符合组件语义是不同结论；D08非整数句子仍须在正式包装层拒绝。",
+    "可能合理与局部满足均不能提升为语义验收通过；此审阅不回写训练数据或推理输入。"
+  ],
+  "summary": {
+    "allFirstOutputs": 128,
+    "reviewed": 128,
+    "humanReviewed": 0,
+    "sourceVerification": "unverified",
+    "generationCompletions": {
+      "result": 128
+    },
+    "categories": {
+      "clearly_unsatisfied": 92,
+      "locally_satisfied": 13,
+      "plausible_needs_review": 23,
+      "incomplete": 0
+    },
+    "byComponent": {
+      "D01.3": {
+        "clearly_unsatisfied": 23,
+        "locally_satisfied": 5,
+        "plausible_needs_review": 0,
+        "incomplete": 0
+      },
+      "D01.5": {
+        "clearly_unsatisfied": 8,
+        "plausible_needs_review": 4,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "U2.2": {
+        "clearly_unsatisfied": 1,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "U4.2": {
+        "clearly_unsatisfied": 2,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "U5.2": {
+        "clearly_unsatisfied": 2,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "D01.1.name": {
+        "plausible_needs_review": 13,
+        "clearly_unsatisfied": 14,
+        "locally_satisfied": 1,
+        "incomplete": 0
+      },
+      "D01.1.slot_label": {
+        "locally_satisfied": 4,
+        "clearly_unsatisfied": 0,
+        "plausible_needs_review": 0,
+        "incomplete": 0
+      },
+      "D01.4.goal": {
+        "clearly_unsatisfied": 10,
+        "plausible_needs_review": 2,
+        "locally_satisfied": 1,
+        "incomplete": 0
+      },
+      "D02.2.text": {
+        "clearly_unsatisfied": 10,
+        "plausible_needs_review": 4,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "D04.1.text": {
+        "clearly_unsatisfied": 4,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "D05.3.text": {
+        "clearly_unsatisfied": 8,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "D07.1.text": {
+        "locally_satisfied": 2,
+        "clearly_unsatisfied": 2,
+        "plausible_needs_review": 0,
+        "incomplete": 0
+      },
+      "D08.1.amount": {
+        "clearly_unsatisfied": 4,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      },
+      "D08.2.time.amount": {
+        "clearly_unsatisfied": 4,
+        "plausible_needs_review": 0,
+        "locally_satisfied": 0,
+        "incomplete": 0
+      }
+    },
+    "issues": {
+      "output_kind_confusion": 5,
+      "generic_appearance": 5,
+      "entity_binding": 19,
+      "preference_vs_action": 7,
+      "preference_underspecified": 4,
+      "task_conflict": 1,
+      "semantic_incomplete_sentence": 12,
+      "goal_vs_result": 1,
+      "underspecified_initialization": 13,
+      "locally_valid_slot": 4,
+      "entity_kind_confusion": 14,
+      "goal_vs_fact": 8,
+      "goal_underspecified": 2,
+      "reaction_role_confusion": 3,
+      "tool_object_direction": 1,
+      "action_result_confusion": 6,
+      "intent_underspecified": 4,
+      "locally_valid_followup": 2,
+      "time_amount_type": 8,
+      "ungrounded_entity": 2,
+      "attempt_vs_success": 1,
+      "ungrounded_fact": 1,
+      "locally_valid_goal": 1,
+      "reaction_constraint_missing": 1,
+      "locally_valid_name": 1,
+      "constraint_vs_action": 1,
+      "recipient_direction": 1
+    },
+    "semanticQualityApproved": false,
+    "fullChainPassed": false,
+    "exactDraftMatches": 6
+  },
+  "items": [
+    {
+      "index": 0,
+      "exampleId": "gate:D01.3:3",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "eaecccac142d90305ea1ebaa14d65ccf006723ebeeb98e6f17b24f5197244ca7",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64638,
+          "sha256": "1cd29d42eabd801aceeebf1dc6086b1498c06ec91046dc3222f0556d0927d91b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "abec700d44716d4d8ce9eb95feba7e1718d10974ddf4330414b16a3f72c3aa53",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "output_kind_confusion",
+      "reason": "请求为防潮闸控制室的初始外貌；只给槽位名工作台面，没有完整外观描述。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 1,
+      "exampleId": "gate:D01.3:4",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "d3c5b632cf6172dedd73bedde5765e71b803c85416eb528c196ec30b85fdc6fc",
+      "outputHash": "c18b4b548e97f45b5f2a568b64a804196085e8ad3dbe118ec6cb7f1f30b7a95b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64640,
+          "sha256": "86ca7ebdd9f59095e71a2f7b74a4c6d7d3b51785ac87dfc78b151ae69e1386a8"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "4880a81ce1a80e6bfae5fe2d7819359d43945dabdd04908b69ede7626722b181",
+      "outputTokenIdsHash": "80975d6a78d4e13b3c20bbf469e86596b29b2ef9e389842392825fe2ab4cd657",
+      "completion": "result",
+      "rawText": "现有实体,外观完整。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "generic_appearance",
+      "reason": "下层检修道尚无外貌设定；完整地说外观完整，符合最小局部描述要求，但没有场景细节。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 2,
+      "exampleId": "gate:D01.3:5",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "3c72f63e74400b6dd6c7b45729c4c085b3897b05a83195db4f6fc2717246fd61",
+      "outputHash": "c18b4b548e97f45b5f2a568b64a804196085e8ad3dbe118ec6cb7f1f30b7a95b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64642,
+          "sha256": "4bb0111a3ddc74a153642daa066daf940de769d6c8287b5346dfd61231cc427e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "348206d3d80662a97cfcca95e6a3caa8034cbb28d00fbe6c373228f6cb033c0b",
+      "outputTokenIdsHash": "80975d6a78d4e13b3c20bbf469e86596b29b2ef9e389842392825fe2ab4cd657",
+      "completion": "result",
+      "rawText": "现有实体,外观完整。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "generic_appearance",
+      "reason": "当前对象是闸门手柄；外观完整是一条完整的局部外貌陈述，标点差异不影响该语义。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 3,
+      "exampleId": "gate:D01.3:6",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "65abe69ac7c01973ff9d1ba0a18e91e7deafa18399dd4bd047e42afbdd013209",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64644,
+          "sha256": "a3ad86ab18ebb4329909808c808601066474e5f2d6cc6c4884ea7d27e1c33d88"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "229077c4d71059bda4fcad9a0121062339ade82547d5189e4d2d016012a3559e",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "锁紧销前端有毛刺，插入时可能受阻。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前对象是锁紧销，输出却只有工作台面名词，既换了对象也没有描述销的外观。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 4,
+      "exampleId": "gate:D01.3:7",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "52c8a1561b60ac29e0e66f1d5730f9a4e8fa96cd3046af9fce105c7b8d9a1c9f",
+      "outputHash": "08e03a72f2d9a657627661a52bb04512e04b7a7cd531e9cbd6b502b7ae7fa575",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64646,
+          "sha256": "8ef26d77f8d4e7d6221cb8acde763691448b0f442ff7fa869abe2162904a8377"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "db6252c9224339574d2112ddfc966191fa375c7847d4357339c5d1f491018bdf",
+      "outputTokenIdsHash": "23d81bf097d99469e42a3b67ac17c6cd96e3f05841ebf0ffb76f12f149595cec",
+      "completion": "result",
+      "rawText": "锁紧销前端有毛刺,插入时可能受阻。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前要求宋黎的外貌，输出复制了草稿中锁紧销的毛刺与插入阻碍，主体错误。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 5,
+      "exampleId": "gate:D01.3:8",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "f39b525a9a6ca7dee3434d48c07b76dadff3b2a32ac90d952ac8c98e2e5d2cd0",
+      "outputHash": "08e03a72f2d9a657627661a52bb04512e04b7a7cd531e9cbd6b502b7ae7fa575",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64648,
+          "sha256": "b2c0e5e20175293a7d2a34c49e6b816b0b9668fce26319bd639a897012cc6eda"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "02f2d830e5a591b32288db47169fc12bb134e2a36d68050916a6b3b0a8e37cd9",
+      "outputTokenIdsHash": "23d81bf097d99469e42a3b67ac17c6cd96e3f05841ebf0ffb76f12f149595cec",
+      "completion": "result",
+      "rawText": "锁紧销前端有毛刺,插入时可能受阻。",
+      "error": null,
+      "draftTargetForReviewOnly": "正握着闸门手柄，试图向外扳开。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前要求易安的外貌，输出仍是锁紧销的毛刺，不能成为人物身体或外观描述。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 6,
+      "exampleId": "gate:D01.3:9",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "07d9d7a070e558e87f066839f928396711977850ce8d10cef7340f65adaed23c",
+      "outputHash": "08e03a72f2d9a657627661a52bb04512e04b7a7cd531e9cbd6b502b7ae7fa575",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64650,
+          "sha256": "2bec403320895ad99fd061ab730ac3aee54c057863cff4adddab0de925da98db"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "4c4a0cb0e42fc1b7d9803acd84aeeb267fce87ce50f3ad7911c2f79292c6bc01",
+      "outputTokenIdsHash": "23d81bf097d99469e42a3b67ac17c6cd96e3f05841ebf0ffb76f12f149595cec",
+      "completion": "result",
+      "rawText": "锁紧销前端有毛刺,插入时可能受阻。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "孟遥位于下层检修道；给其外貌输出锁紧销毛刺，未描述所选人物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 7,
+      "exampleId": "gate:D01.5:16",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "6eb14fcb1cdce37b59afaef4473c0e7919703abc54e6429364500e48b123eada",
+      "outputHash": "011354db23995d287c979319fadc5f1d45b4e5abbaf6b043de3e2212f08b136a",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64652,
+          "sha256": "15cdaed2344a3dfdec7f321a23108413aab18a378cd143d4cd639488cdd5917f"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "5dda088a004bdf646257a6dfeafbd8e1897e036daadeb0b15d9b3187aa96843d",
+      "outputTokenIdsHash": "717dada69fc56e05edcc6c4d3b50d90787f0f8c367502de6296ce0d1e429f094",
+      "completion": "result",
+      "rawText": "先将锁紧销插入锁住。",
+      "error": null,
+      "draftTargetForReviewOnly": "习惯先检查闸门手柄的状态，再提出具体尝试。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "宋黎已有保持闸门关闭任务；输出插入锁紧销的一次操作，没有表达初始行动偏好。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 8,
+      "exampleId": "gate:D01.5:17",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "98dc6eb991930de5158061c8eac3eba5a06c0b83c85cb6eeb8841887846b27e6",
+      "outputHash": "9f05271f8476f41ec9fab34a39cb4e98d450447829603890781408c5456b09c7",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64654,
+          "sha256": "3f9c18cbb881e069b794bcdc6a5e02b49b722c598bf84bae77c166bc7d8000b4"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a8c1e25723b00bd91dd282a84c4f8600832a38a2f19b4ef1da01df9a32f80852",
+      "outputTokenIdsHash": "6486c86926626bf0fe182a104f91b7dcf2114d24b179758f95ee92f54db4f9cb",
+      "completion": "result",
+      "rawText": "先检查闸门的位置,再先检查闸门的位置。",
+      "error": null,
+      "draftTargetForReviewOnly": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "易安的个性请求得到同一句检查位置的重复操作，未形成有意义的偏好说明。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 9,
+      "exampleId": "gate:D01.5:18",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "ca8125b1055b889781ec20641d2d02fb27ef3c746004dbac40c785c72f7bd2ee",
+      "outputHash": "739db736b9a6654dc8565c0dab4b7d6cfbacd22efd66929b7ede1362210ef81e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64656,
+          "sha256": "0579b001656478d3623c94ad7230bd2c2dcb8384dcbc6db3e2c416dfeedf5fcb"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "82e4bb057375dca0914ed0caedd8db29d81033822dfbb93671282af4dfd5974f",
+      "outputTokenIdsHash": "5f16eba3e9375ff7ef25578268ea5cfd8313e1403c143799847fb2b16244b8f6",
+      "completion": "result",
+      "rawText": "先检查闸门的位置,再提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "preference_underspecified",
+      "reason": "先检查闸门位置再确认可被理解为孟遥谨慎核对的顺序偏好，但确认内容和习惯性含义不明确，不能直接验收个性。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 10,
+      "exampleId": "gate:U2.2:48",
+      "component": "U2.2",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "1287acf4323cc95ad53f5477ccb3d002a8f24518838ae446ddf687157554427b",
+      "outputHash": "6ae8f42b6e022e80089140e5c5a158190df4d8816683db986a1440758a7123ff",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64658,
+          "sha256": "1f88bbdc8a2867f5d467cd7f027329ddfb33aeae3d3546c4ca41822e69664e83"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a3a2ab3417b822c9af8067ae484b097af4873baa788542d41d412409af8ab8d1",
+      "outputTokenIdsHash": "003b99a1d54ce48dde5a8465cbc47284d7430e73c06ff27a8781c8a320c13b16",
+      "completion": "result",
+      "rawText": "先向左扳开锁紧门,先扳开锁紧门。",
+      "error": null,
+      "draftTargetForReviewOnly": "锁紧销有一半露在销孔外。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "output_kind_confusion",
+      "reason": "U2新增对象是半插入的锁紧销，输出却是扳开锁紧门的命令，既不是局部外貌，也不忠实于半插事实。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 11,
+      "exampleId": "gate:U4.2:53",
+      "component": "U4.2",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "outputHash": "1a92f51d5b7106ed8d2d623b6e07e4d60eaa12376c389e3c7b3e7d739d8f0e8d",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64660,
+          "sha256": "b2801c723bfbab740ec8b6d6363800ee857faf9e786f9c7b51e23bb2fe6f0c00"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2b71a3218c38c506b8cdf03cd2b7304b5d1cd955dd84fe4415a7789d9f78065d",
+      "outputTokenIdsHash": "4b36646bd96f89051c6c08d8bb44cd042b153094c3dfa32691a08bd5d3ebb30f",
+      "completion": "result",
+      "rawText": "先向外扳开锁紧门。",
+      "error": null,
+      "draftTargetForReviewOnly": "检查锁紧销卡住的原因。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "task_conflict",
+      "reason": "父任务要求闸门保持关闭，结果为锁紧销卡住；新目标反而要求向外扳开门，不支持该父任务。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 12,
+      "exampleId": "waiting:D01.3:3",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "cb78b89235b96a4824c87d1c1abd36128947f90c1836dc5e9816da597a765899",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64662,
+          "sha256": "21e272518c285cfdcfcfe0f50dba5bc6242fed8ddedc24b127f223d11eda7262"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f40834930c88966e4dedfb37a58f0aef532538772f04c17631618e8083955c0b",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "output_kind_confusion",
+      "reason": "测震观察室的初始外貌只得到槽位名工作台面，没有完整描述。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 13,
+      "exampleId": "waiting:D01.3:4",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "62bccab5726bfd88c518d6f5425d9f7e0ea6d73a546bc015f3bf0225049ea80f",
+      "outputHash": "c18b4b548e97f45b5f2a568b64a804196085e8ad3dbe118ec6cb7f1f30b7a95b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64664,
+          "sha256": "16e16d1a3b79f207e301b9fe927ae7a82c2e8c9255d8ef3574bd75f160530439"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ed09c5ca3904aeb3f19761c8b01ae4227ced133d7dcc47260a99bba84c7474ed",
+      "outputTokenIdsHash": "80975d6a78d4e13b3c20bbf469e86596b29b2ef9e389842392825fe2ab4cd657",
+      "completion": "result",
+      "rawText": "现有实体,外观完整。",
+      "error": null,
+      "draftTargetForReviewOnly": "通过玻璃窗可看见测震观察室内的人员和记录仪。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "generic_appearance",
+      "reason": "外侧走廊尚未被赋予外貌；外观完整是可成立的最小初始描述。输入未要求必须采用草稿中的玻璃窗，不能仅因不同于草稿判错。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 14,
+      "exampleId": "waiting:D01.3:5",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "5e67e881abf9ef56b0e7834128c02ee523ca89d66b3fd0ed3d8f844f65005706",
+      "outputHash": "7457abfe461d5c800365695aa532c79b98269818c7d5f7fc0251c65923bacd73",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64666,
+          "sha256": "5cf191dbcddf17747b3194a1211c9b2bfff8f67f2358131c57311ec0ba70f2a6"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a4e82a9858b7b989d0c6eb0a9968bd7c531da14eadfc2aba6492a30282b1c018",
+      "outputTokenIdsHash": "58863aaa26e667ee4409d4bcec24f83fdb3e5771891b458b182f6c2da679c2d7",
+      "completion": "result",
+      "rawText": "玻璃窗",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前实体是记录仪，输出玻璃窗，混淆了刚写入的走廊描述与当前仪器。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 15,
+      "exampleId": "waiting:D01.3:6",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "d3f26edae4f2390cb7004b477a02b403c13d3c74a55e735fcfa5b063aaf4e92f",
+      "outputHash": "5fdddb94bf787e066dcbbe1e8f022526ede80eaba67c08d182ba6dcae044964f",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64668,
+          "sha256": "678be728c2e0670b68bc81e0eed7299750430d61f5487eb33ca3fde69b9258f3"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "60d9494512e2a03f6d087caaf9dd46b74dd6c7beaae8b01d56fa3544ffadabca",
+      "outputTokenIdsHash": "61ac53eb1532e7821b1eef084421bdc03b0c787c912a3d3f865cbaf3331be3fe",
+      "completion": "result",
+      "rawText": "观察室的人员和记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "观察期刚开始，显示还需稳定等待五分钟。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前实体是计时表，输出观察室的人员和记录仪这一名词片段，没有计时表状态。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 16,
+      "exampleId": "waiting:D01.3:7",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "36fdd56d50f7c8590d242cd11c4009a0f4a5581a97a67789ab0142cfb927060b",
+      "outputHash": "97a36701a147d33eefb674a2d14404a947623d3c74bc131a43b4506242bf1a81",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64670,
+          "sha256": "1d76d073f5a2298260efccb7d501b3f41a4d9e9c7d1d11f83c46d3a49b2d4ab1"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "b72c46b4ade971f2bb2fd9ef0b5ee459ec6977c3bad14f6985092088b9d1e611",
+      "outputTokenIdsHash": "ab4bf0f914639114ca19cf4b497d8d99134cebec0050e59aaea9262d4395376f",
+      "completion": "result",
+      "rawText": "观察室内人员有记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "要求陶青个人外貌，输出室内人员有记录仪的集合事实，未描述陶青的局部外观。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 17,
+      "exampleId": "waiting:D01.3:8",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "d3c713d9a3ca988ce17bef64ebfa1e4b1737a44d432cee33756bb7a37a33a1f5",
+      "outputHash": "97a36701a147d33eefb674a2d14404a947623d3c74bc131a43b4506242bf1a81",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64672,
+          "sha256": "599dfb9d7391a05075c920f4af23a9b6338b8a658d41208de088134683ddbe8a"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "34899577c248d522edc79f99549897019375c1967d19b2f42ca2c7c39e83aa3b",
+      "outputTokenIdsHash": "ab4bf0f914639114ca19cf4b497d8d99134cebec0050e59aaea9262d4395376f",
+      "completion": "result",
+      "rawText": "观察室内人员有记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "要求顾芒外貌，仍输出人员有记录仪，无法绑定为该人物的外貌属性。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 18,
+      "exampleId": "waiting:D01.3:9",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "24ee60e31bec102413b854aa753ca978a6896e1d15a8b635e3cb4fda9f4ec16e",
+      "outputHash": "97a36701a147d33eefb674a2d14404a947623d3c74bc131a43b4506242bf1a81",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64674,
+          "sha256": "3a8903c9bd61d14305daae0cc4154e48ce9a8127a5c3aad2d50873bd19106c14"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "6275a6654cd25c9a6eb1e329e8cf14c624923fc78e9e6e2f8909a09fd10598bd",
+      "outputTokenIdsHash": "ab4bf0f914639114ca19cf4b497d8d99134cebec0050e59aaea9262d4395376f",
+      "completion": "result",
+      "rawText": "观察室内人员有记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "正站在外侧走廊隔窗观察室内是否遵守稳定观察约定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "要求外侧走廊中的任澈外貌，输出室内人员有记录仪，人物和场所均未对准。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 19,
+      "exampleId": "waiting:D01.5:16",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "9876154d568568d996db6b9d826aa02831dc5267fd9f6fd83cc749b500fe7de2",
+      "outputHash": "94a2ba79cd39545aef9b7ff5f9dc2583d72e209a4dee847d3a98e5a061fb598f",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64676,
+          "sha256": "6d231d24d336c711d5d006bf15e0b94a3ab4469bc96f79d3d2ddf5b429014ecc"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "81e5e19416f00b71137f204c1e63f760c3ac4f7a6d82fd761534aba3d5e2dd36",
+      "outputTokenIdsHash": "a0e5ff832eeaff1602ca0312aaa926a9f61d731feb60e22a08a7fe338b269660",
+      "completion": "result",
+      "rawText": "观察室内人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "习惯先检查记录仪的状态，再提出具体尝试。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "陶青个性输出是人员是否遵守约定的疑问片段，没有行动偏好谓语。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 20,
+      "exampleId": "waiting:D01.5:17",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "4ac1c5c763093927a510e09ae88cb21948601b399ca75a47aa623b330d2b0986",
+      "outputHash": "94a2ba79cd39545aef9b7ff5f9dc2583d72e209a4dee847d3a98e5a061fb598f",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64678,
+          "sha256": "b10000f1fada2e04147a73740e6632b9594f1d3787fdcc12eb332944e523e422"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "653e3fb4d721e96978e79dead7869333ebcb97edbb65b8ae080039cced172b9a",
+      "outputTokenIdsHash": "a0e5ff832eeaff1602ca0312aaa926a9f61d731feb60e22a08a7fe338b269660",
+      "completion": "result",
+      "rawText": "观察室内人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "顾芒个性输出只保留是否遵守约定的疑问，既没有偏好也没有完整判断。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 21,
+      "exampleId": "waiting:D01.5:18",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "7390769ae8a09f15de835e04db91a47afd8610c65ab9c98dd2f67f038adb5e52",
+      "outputHash": "94a2ba79cd39545aef9b7ff5f9dc2583d72e209a4dee847d3a98e5a061fb598f",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64680,
+          "sha256": "fb4c497c54b49d22ac1a39cdba7cb365255b722f373070b12e7200c5448c2c46"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "9202ac35decf959af430d3f8f0273708840af4abca49fde7d14c67e0120c18af",
+      "outputTokenIdsHash": "a0e5ff832eeaff1602ca0312aaa926a9f61d731feb60e22a08a7fe338b269660",
+      "completion": "result",
+      "rawText": "观察室内人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "任澈的观察任务被复制成是否遵守约定的残句，不能据此建立人物个性。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 22,
+      "exampleId": "waiting:U5.2:54",
+      "component": "U5.2",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "4c59c3d95f0bbffdf9367e142ddb1a9e5602906d01e62237e953063260230e2c",
+      "outputHash": "49993008955d4225abc0fe63cc00a37c3e1bb1bc05a8c55a6b861c9524c0d1a2",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64682,
+          "sha256": "d45a3293006dc13de88f7ef38889da6269a316dab46f4dacc13c22664d1b86a4"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c1e44595b81ca65b9705b27e1dc17f8cc5f18f4cc1042abae3d6d3d07cab55d4",
+      "outputTokenIdsHash": "9d01977d0c35bd95b3bef4c42c14bcfff38097402ebef3bcf8e4999851c95a53",
+      "completion": "result",
+      "rawText": "先向窗口确认安静。",
+      "error": null,
+      "draftTargetForReviewOnly": "等待观察结果时更愿意遵守约定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "任澈已见证五分钟安静，U5要求新的偏好；向窗口确认安静是一条当下指令，未说明偏好变化。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 23,
+      "exampleId": "jointlift:D01.3:3",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "fd301f4a2f66bcccd0785373fc098f14e9df6d8672ad1a81214ed9ce251c7b38",
+      "outputHash": "6953d8e31095e13ce9476aa895dc92b4c5452008f3201c2d1b3416705a97adfa",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64684,
+          "sha256": "f0bce763e2b9840772e2b413e144450ca79022e3208a15ecfdd280b86770a38c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a91fa4d77a596a0fa0df611931f7549b9ed69238af7ae3430dd2036b7ab589f2",
+      "outputTokenIdsHash": "01d357ea9cac1ffa858a8c892541fbeafd762d84442f0a6e349ae26ee4ad31b6",
+      "completion": "result",
+      "rawText": "工作台面,工作台面已运行。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "output_kind_confusion",
+      "reason": "标本整理室的外貌被写成工作台面已运行，台面运行没有明确状态含义，也未描述该房间。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 24,
+      "exampleId": "jointlift:D01.3:4",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "a766ee8fc420f84a630b1c45db7210fa514a863d001be3e29dfd60a3dabed39c",
+      "outputHash": "c18b4b548e97f45b5f2a568b64a804196085e8ad3dbe118ec6cb7f1f30b7a95b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64686,
+          "sha256": "5ccfd62f375d7a0cebe6143cd4eb68acb7a743db1d4200ac563c867011c1f221"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "710f637b958cca748ae1c6417da24fb6315633a3bc08a6908d9c07f7c7259a13",
+      "outputTokenIdsHash": "80975d6a78d4e13b3c20bbf469e86596b29b2ef9e389842392825fe2ab4cd657",
+      "completion": "result",
+      "rawText": "现有实体,外观完整。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "generic_appearance",
+      "reason": "恒温存放间的外观完整是一条可用的最小初始描述；这不证明温控、器物或搬运语义。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 25,
+      "exampleId": "jointlift:D01.3:5",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "bcb97cc2d2356d911016c7825ce782e38e449665ed6c5b9dc034748ab0ca0ca7",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64688,
+          "sha256": "0a2fe9eb26e4e8d06890e09b42aef26fd455b81b7a7d2d894f94088099f26e73"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "44ea6acdaf16110b22eb3869eefe0216102d7d511b9afff3e7dd34b9faca980e",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "标本托盘的外貌只得到工作台面名词，未描述托盘。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 26,
+      "exampleId": "jointlift:D01.3:6",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "e8840bb73f435562e7ed981ca4af5d010bd392d0b70985d09d36ef27639bc97b",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64690,
+          "sha256": "622709b3d1300f6a1013dbc72ef625140201dad6f20c5802eccb81e695b92316"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1d6d0958e22632c388e0cb80b1bd3d2914f9c1a2ba2aa08ca3f81d2804792649",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "防滑垫的外貌被替换为工作台面，缺少垫的局部外观。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 27,
+      "exampleId": "jointlift:D01.3:7",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "e104b149aabd4a37d05082fa499521675e7f4c79b83970633603db7f9ccb47ff",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64692,
+          "sha256": "6149fec9ac4fc26a7e92df3464292b7c99f67eeedf943c2a9ca7a7a808b583dc"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "9aee6a32a8d64686e30fef6d64263e7f8a09ef3159adec975783f64b7baf2ca8",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "柯遥的外貌输出工作台面，人物与槽位混淆。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 28,
+      "exampleId": "jointlift:D01.3:8",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "cbdc4c43a213198bc5418dbbf2c6881d6f3aa819352965c98115a0b0c1bfe7ce",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64694,
+          "sha256": "c56a87cf9dfcc0b168aa0ebf38a24071ee76fe075a64cb9e806fe8c6e2926ed9"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a05700587a7625ca0ed6f018cc0f1c98c52c5c11670c48e4dc7109e84d4939f6",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "伍澄的外貌输出工作台面，不能构成人物描述。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 29,
+      "exampleId": "jointlift:D01.3:9",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "9b23ba9ad943be086de0ce09ee3150aad78a62c880c68f9b0a2db456a19defca",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64696,
+          "sha256": "434f5fe80d2dcd9bd33f0d877a68b1d4bbffae0eefe1ef289934880db9035383"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "b2f03af8ec05ef81e61af94282fd282ba8d1fd96d8de09ea7757457874350293",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "恒温存放间内韩朔的外貌仍是工作台面，未描述选定人物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 30,
+      "exampleId": "jointlift:D01.5:17",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "bc7a7afa9ce9c05a0a6ce7dc7069cec9f533c2969912821c537afbe53d4670de",
+      "outputHash": "6186cb4c9ed8c8b91db72e029b0c2c9fdd183392371dd7b6f73abe29c9065dc0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64698,
+          "sha256": "93c2f0f6be84a65f232dd5fe2d1175b4d889e9616243f380c161eda89231676f"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c5e593d4a3f497fd06e78cd4c79512ea4c2f323d8df3eb7f88ca10d855c0b03d",
+      "outputTokenIdsHash": "fdf1ad79950a54f86225f4bbfee773b9b3a44f64606440fc718e731b77190f44",
+      "completion": "result",
+      "rawText": "先将标本托盘平稳送到恒温存放间。",
+      "error": null,
+      "draftTargetForReviewOnly": "习惯先检查标本托盘的状态，再提出具体尝试。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "柯遥的搬运任务原文被当作个性输出；没有说明遇事的行动偏好。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 31,
+      "exampleId": "jointlift:D01.5:18",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "d209c82c5a9478bcaf734a6792b9a07e703cc43113af6d3e47b46a3c785fc44b",
+      "outputHash": "bda41299087c40ba440d16682427bfc2fcdb8d42fc238a7d5fa828fe74184082",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64700,
+          "sha256": "7c575cde95f34bb1181cd28dc4de977b4c8a8bcfccff91e42aa3144db92bfc4e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "4dc465ee07e2fe880630c41007e196bc35122f7d812bd291d94f06f8765afa7d",
+      "outputTokenIdsHash": "7beddd7093c679f1c44b1e08fce8f27676452a4bb0b4bfb242c81b7300e4340c",
+      "completion": "result",
+      "rawText": "先检查标本托盘的状态,再等待工作。",
+      "error": null,
+      "draftTargetForReviewOnly": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "preference_underspecified",
+      "reason": "伍澄先检查托盘再等待可以解释为谨慎的行动顺序，但等待工作的含义及稳定偏好表达均不清楚。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 32,
+      "exampleId": "jointlift:D01.5:19",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "16502ef6386b7f3b4c0e4aa8c86ea15c6755a1551cebae4ed32fb2459069aa35",
+      "outputHash": "dce4b247727cde1b3c2117b8a6f8bf219dcfc6d255e37c81d496c007fac3184a",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64702,
+          "sha256": "28d681434e1f58437fe1f967db5bf5e109c515af011cdab06f0e4ed421a07345"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "aafbe4f4400961f5395a57d7c81d5161fb54d56194ce165a1f962a29fba6fbe9",
+      "outputTokenIdsHash": "d8ee1cf0a6d1515b04530b58005dd61476e5d831ec21e6cf1e2543c60c0f1d72",
+      "completion": "result",
+      "rawText": "先确认对方是否同意,再提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "preference_underspecified",
+      "reason": "先确认对方同意可表示韩朔尊重许可的偏好，但又提出确认较空泛，不能认定已建立清晰个性。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 33,
+      "exampleId": "jointlift:U5.2:58",
+      "component": "U5.2",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "b1fcf04b4da65d9e86a1b3dacd4ca5f8083d8a313927bb0adbd41ce175642b94",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64704,
+          "sha256": "ec5e3f423322a89d4a9412a0334568bcf6329556cf8c839187735dcefb6327ee"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "00dc062048cf4f2ca50d47bb9d5e9766e2c03ec89481c1f46dc0229550292f37",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "搬运脆弱物件时会主动与同伴分工。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "共同搬运已完成，U5要求柯遥新的行动偏好；只给向同伴确认的一次指令，不能说明因本次经历产生的偏好变化。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 34,
+      "exampleId": "newentity:D01.3:3",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "0aeb4f2659d0a4b65221fb2324dc6fe95aebd282623d8673c4e9c7d2ff69ae19",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64706,
+          "sha256": "d944f8f8cc6674af1e430358923dfaa2973424a3a056b0dd3264df1e2bc5fde4"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "eb1415b84da74a923c5d1ff43d3d15ea5217f9fb5369716a0960027d6d9f3cc7",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "output_kind_confusion",
+      "reason": "天文校时台的外貌只给工作台面名称，没有属性或状态。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 35,
+      "exampleId": "newentity:D01.3:4",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "67d86e585436ab8bff2594e56f8a0c3441eb6b2494639e587b848aa7f43cc26e",
+      "outputHash": "c18b4b548e97f45b5f2a568b64a804196085e8ad3dbe118ec6cb7f1f30b7a95b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64708,
+          "sha256": "8108ad5e7244c5176dc0ba13c88428ba03cc85ae775d456abaa8d95d00d977c1"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "26b9da1730641ed81626a5fc87403e8af138ecf045651ddd27c67589a059902d",
+      "outputTokenIdsHash": "80975d6a78d4e13b3c20bbf469e86596b29b2ef9e389842392825fe2ab4cd657",
+      "completion": "result",
+      "rawText": "现有实体,外观完整。",
+      "error": null,
+      "draftTargetForReviewOnly": "柜内没有替换零件。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "generic_appearance",
+      "reason": "当前设备存放柜尚无外貌；外观完整是最小完整描述。草稿的没有替换零件未在本次输入中预先规定，不能把其遗漏单独判成模型违约。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 36,
+      "exampleId": "newentity:D01.3:5",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "78978760ec4ff82e39ba6c44fbf8a85a988701cfc91baf66030a83e4142f5e7f",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64710,
+          "sha256": "40a1611169fd9a93fb0ba61cdfcfefcbbde501eb4eadd551c471ecf91eb52f67"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "60f62d34dd37f6a9ae55591e41d37c2802e6525c0f95c4328cb06f27793b7644",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "校时钟的齿轮卡住，指针已经停摆。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "当前请求校时钟外貌，输出台面没有替换零件，转移了主体和属性类别。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 37,
+      "exampleId": "newentity:D01.3:6",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "17fc9a8192109e5319ef9ef23ab9297c924de6f49883e802dc0f0afa34dc8937",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64712,
+          "sha256": "74015f17fcf9e883e6cefee47052f3c4d77f7e8767e7ed3b32da1eda2f0cc417"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f2e565e0e82372eb59310f2522b2a8fdc065ef85f689f73b7a18a4dff988e682",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "拨针杆的外貌输出台面缺少零件，未描述该工具。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 38,
+      "exampleId": "newentity:D01.3:7",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "2cec9ccb6641ba385f71299b3fdb4ccd4ba1ea0cafda8eca322cebff8505a431",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64714,
+          "sha256": "64e462fc120d020293fb31146352c033a9ae23ab35cd7817655fee4d840a0684"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "0c547da4d96e806064b335f2a2f87a031b8d8c7b8b1a80ba4a0ec11a642e5525",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "方禾的人物外貌被写成台面没有替换零件，对象错误。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 39,
+      "exampleId": "newentity:D01.3:8",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "f2911f36e8f98bda5501f8cfd79760ad82b2f03eb015d2723f7fa3a041405629",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64716,
+          "sha256": "7509e1c4fe515654f938d01e6739c00fc701ed62b035a578829ca4ad7adb7b90"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c7479cf2f197f7d0139aebecd7f6d9ba41477b5511bcd0c7f75349689a50ff94",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "奚白的人物外貌被写成台面没有替换零件，不能绑定为人物身体状态。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 40,
+      "exampleId": "newentity:D01.3:9",
+      "component": "D01.3",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "98efd157f3301872bbd918b172e6cc401d6ab1e68bda6b561ca77f0230c09942",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64718,
+          "sha256": "8b20f88bca269f9d9f13faaa94b1ede0d91f0e1ed3342d58a55997c2476beb24"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "bbbcea938f14c7c4d3d165bbe3a0eed9dd9d736b77bdab4c53dc290878236a1f",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有实体，外观完整。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_binding",
+      "reason": "宁砚外貌被写成台面缺件，未描述柜中人物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 41,
+      "exampleId": "newentity:D01.5:16",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "374029ea01de54586718096a1957056c61855038aa0ca305234b0fdb557b12f9",
+      "outputHash": "d39be0a2f22ab23a0858adc3563ed601f5990ed30c3a327a1d28941d5c68c649",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64720,
+          "sha256": "08f6f32cd9342986741d305140e4c4fc9b1db45b8d2c116c8937f44bab7b173c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1c2864fe3ccf4ed3790b686f826bcfa79833e528f29cb697b444b47a5312104c",
+      "outputTokenIdsHash": "c2a6557a70c4ee6f8c15599af082da7846a489daf2351516ab83186aafef326f",
+      "completion": "result",
+      "rawText": "校时钟的齿轮卡住,指针仍在调整齿轮。",
+      "error": null,
+      "draftTargetForReviewOnly": "习惯先检查校时钟的状态，再提出具体尝试。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "方禾个性被写成钟的故障与指针调整齿轮，既未给偏好，又让指针承担不合语义的动作。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 42,
+      "exampleId": "newentity:D01.5:17",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "9a5dc15605f42f8f24da507e8b8ac8d484dda564e0ba531fa3836399db08396e",
+      "outputHash": "58d411bd945acff29bc2d858a505b1baf1bfe79905a8f0d1d0ab594eb13bb92b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64722,
+          "sha256": "4f851d60b551038a03dde7cf0352bb932a17bb6579361faa9ea2b360e7377568"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "091888c692074365723e826e3cdf250925ccca9df1074ea2ca6ad184d89e9ec8",
+      "outputTokenIdsHash": "26be1f1bbdd401932158e74a4a7fa9cf602b00433e176fb0a35f4dae93d5b29c",
+      "completion": "result",
+      "rawText": "先检查校时钟的位置,再先检查校时钟的位置。",
+      "error": null,
+      "draftTargetForReviewOnly": "愿意回应同伴的明确请求，操作时注意保持物品稳定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "preference_vs_action",
+      "reason": "奚白个性仅重复检查钟的位置，未产生完整、有区别的行动偏好。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 43,
+      "exampleId": "newentity:D01.5:18",
+      "component": "D01.5",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "d15199798650cb330f85d14bcee99b721ba3a0ebcb666d1dfcd471cb969aad79",
+      "outputHash": "e1e9e387baf07007da1dbbc1cb3ccf34154270c12e1dd904926a3882557d43ea",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64724,
+          "sha256": "20df243f098b8b4844459d0811dfb10212c709cf39abfb3d54db2026cf1a151c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "5b81e6e6bddf5eac98a902828f0f76b2686a78d5804081548d877205b1055d9b",
+      "outputTokenIdsHash": "80ede0bc093c28f376e122e9282cfb926724693d7a4ced938a06aebba7995de1",
+      "completion": "result",
+      "rawText": "先检查校时钟的位置,再提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "远处发生变化时倾向于先等待确认，再决定是否介入。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "preference_underspecified",
+      "reason": "宁砚先检查位置再确认可理解为谨慎偏好，但确认内容和长期倾向不明确，只能列为待复核。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 44,
+      "exampleId": "newentity:U4.2:52",
+      "component": "U4.2",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "573158b81ca2b1569a07855da393abf5dc32d8df55809ade8da468bac741a55a",
+      "outputHash": "15b571f156c31e0a8825f48c3617752f05f91dc791af0029247d0ecef1269dd7",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64726,
+          "sha256": "129aed0ee283982437bc91f7b5bd568f2e73b1e937f94093322dbe220f0fb7f5"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "21f9192f0211dbfb0475a5658dfed535aa04b7aa75adff1fa610b3fcfd05b166",
+      "outputTokenIdsHash": "8408b61d90ef5809ac4df3b2b3f7402285b35701c91b9e1c38ecfd470a54381a",
+      "completion": "result",
+      "rawText": "奚白尝试扶稳校时壳的齿轮,但仍未再接。",
+      "error": null,
+      "draftTargetForReviewOnly": "与奚白共同检查现有齿轮卡住的原因。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_result",
+      "reason": "父任务仍是修正校时钟，新子任务却叙述奚白尝试扶稳及未再接的残缺经过，没有给方禾一个可完成的新目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 45,
+      "exampleId": "gate:D01.1:1:primitive:2",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "f9469f91d98f79c7cee9c0921ec1db363a29a8f57ca562c688cc6fdc548ffd93",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64728,
+          "sha256": "9b5195201eeabf84095ff309dd6731d75c66988a282b3d7ebe56547c857197a9"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "cf6aba6b41f74c3c8b3a899b5617e31a894b7dd39fd58be96d5110b154b349eb",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "防潮闸控制室",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可作为局部场所，但创作要求明确提到控制室与检修道；单个命名步骤不能证明这些场所会被完整建立，也不能只凭与草稿不同直接判整清单失败。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 46,
+      "exampleId": "gate:D01.1:1:primitive:4",
+      "component": "D01.1.slot_label",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64730,
+          "sha256": "72dcf6f23a930f005d02dd402599f035d2228b1e7ae1ea180063b91f5093a26e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "6acb48fad0c5702a0107ff6bb56b85300885668893210a34d9b2e4e8bb61d1b7",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "工作台面",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_slot",
+      "reason": "为防潮闸控制室新增工作台面槽位，名称语义完整且符合局部容器用途。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 47,
+      "exampleId": "gate:D01.1:1:primitive:7",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "31edfd174ec6b00e883fd02fe07d88afb5644f78442574caaae208ebc5cee478",
+      "outputHash": "8d926c26a59efbfea28a08977482f5e82357f424f66fb6358bc0592de3fb1d47",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64732,
+          "sha256": "7b5b887dc48fd0e29b5eb904cdb5a87e7bc15ba3136bc6f844838565baffde1d"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c6f0331f9175d91bc44b71e52af96425d1e8bbb84dce91c930d596fef5bb95f7",
+      "outputTokenIdsHash": "67dd6f7b7c93bfac41a24c27d7259ccb621eff59a47af37c3c4eb8f27691ccac",
+      "completion": "result",
+      "rawText": "防潮闸",
+      "error": null,
+      "draftTargetForReviewOnly": "下层检修道",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "控制室之后提议防潮闸，可能表示闸体所在位置，也可能误把物件当地点；没有检修道命名，需后续类型与清单覆盖复核。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 48,
+      "exampleId": "gate:D01.1:1:primitive:10",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "c19791cff0bcb1a24b7778f0c4e613c1c21cfe2cdfcc238cc22414cdd95f7bae",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64734,
+          "sha256": "b65af1dc3e7af2bc3f0208572ab54e3ebc19d773f2746502fb27e993fd276e50"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "aca6d735936f0f78e75c56049eb3c11d3c097b4f41d503269aa015688d8a801d",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "闸门手柄",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可对应实体台面，但同名槽位已经存在；需要明确实体与槽位关系，不能据此证明已自主提出操作闸门所需器物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 49,
+      "exampleId": "gate:D01.1:1:primitive:13",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "b673c3f75350cdf920e44796f012ba4fd073b5d2c10144232a03c2f7f18092c5",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64736,
+          "sha256": "1a40ece3c604a3c51eceea660381d21459dbeecb63f142ecadd4d64907ad11e7"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "65945b0de8fb1dac427059ed9ede0675dedd45dbf9f18592cdce456167f44c15",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "锁紧销",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "已有手柄后又提工作台面可作额外物件，但与已有槽位同名、未提供锁紧工具；当前一步不能判定全清单覆盖。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 50,
+      "exampleId": "gate:D01.1:1:primitive:16",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "2d9f6fc68d073dc380cc32988f2ef67be46f8616092af3adbd870949d2777aae",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64738,
+          "sha256": "1fcac7aab580842d5c135a29aae259a0bd7aed3dabb665bd043d0b8f456dcd0b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "03443be79a17d3eec7cae3338eaffc1aee2fef112609fa093db158ac9b1b604b",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "宋黎",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "当前要求人物名称，工作台面是已有槽位名称，未形成可识别的人物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 51,
+      "exampleId": "gate:D01.1:1:primitive:19",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "713916907c842351d0f0285686cb14e65ecd224dc78c7125c121e8c4fb467b20",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64740,
+          "sha256": "89ba29d903dd765ed557eeb0a5ffbf8266e46f4de4895ec2fc660aa4e9cbc80e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "622467c098a12e260342c1ad6edb95ea597cff411ed8a3d3a2bf8a1d0608c136",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "易安",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "已有人物宋黎，下一人物仍被命名工作台面，混用物理槽位与人物类别。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 52,
+      "exampleId": "gate:D01.1:1:primitive:22",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "4bd539a5591732229dd59736e91e7b2887d20053bded88fa4df5fc2e61364ab9",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64742,
+          "sha256": "4a7dd487832b1d9517eddd431ef40d06d680bf915bd801e1e2b8f155299a543b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "00acab609f196b1b6e08d4462118584182a9a0826d3ed7723e5ac4b240203e84",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "孟遥",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第三人物命名工作台面，不能支持当前明确的人物清单职责。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 53,
+      "exampleId": "gate:D01.4:10:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "2d244653ccc90d7c1d2eaa446f3f5767cc4125e6f6e50afbc19fc09f2999be99",
+      "outputHash": "08e03a72f2d9a657627661a52bb04512e04b7a7cd531e9cbd6b502b7ae7fa575",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64744,
+          "sha256": "b46b905d82cb52e04ae2b5110e3120f09ac2bab747b184ffe01c043d50b528fa"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ffa1c66b9a1d23f2d55959643a9545e088353a60ab2902b634424619b3b69b73",
+      "outputTokenIdsHash": "23d81bf097d99469e42a3b67ac17c6cd96e3f05841ebf0ffb76f12f149595cec",
+      "completion": "result",
+      "rawText": "锁紧销前端有毛刺,插入时可能受阻。",
+      "error": null,
+      "draftTargetForReviewOnly": "让防潮闸保持关闭。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "宋黎初始任务应是可追求目标，输出只是锁紧销毛刺与受阻的既有描述。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 54,
+      "exampleId": "gate:D01.4:12:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "e5659515ca4103df4ecfd939d00a748f4d6116746a506f31fb8862be1b39bc51",
+      "outputHash": "08e03a72f2d9a657627661a52bb04512e04b7a7cd531e9cbd6b502b7ae7fa575",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64746,
+          "sha256": "2a571fe393840205de97e43267a2aeb7eba90fcb5c2144d30bbb9561be0241b9"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ac5f1f28a32d0e34784b2cc759b60a76c6b664468a440b577f4f91ec46ad5db0",
+      "outputTokenIdsHash": "23d81bf097d99469e42a3b67ac17c6cd96e3f05841ebf0ffb76f12f149595cec",
+      "completion": "result",
+      "rawText": "锁紧销前端有毛刺,插入时可能受阻。",
+      "error": null,
+      "draftTargetForReviewOnly": "把闸门手柄完全向外扳开。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "易安初始任务输出锁紧销的现状，没有表达该人物打算达成的目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 55,
+      "exampleId": "gate:D01.4:14:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "2eab5ae90cbc09094ecb83a83c84f89ecd3912fcc4bf649abca59ee50814c324",
+      "outputHash": "011354db23995d287c979319fadc5f1d45b4e5abbaf6b043de3e2212f08b136a",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64748,
+          "sha256": "5be97e5b25a97c60b8e3a15032c22c71fc691ad5e7f41d37e5f79228d5daf51c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f3233c7f777c720a4c5958e428c9f2eff84909b103d5f803cb63a4170ffe070d",
+      "outputTokenIdsHash": "717dada69fc56e05edcc6c4d3b50d90787f0f8c367502de6296ce0d1e429f094",
+      "completion": "result",
+      "rawText": "先将锁紧销插入锁住。",
+      "error": null,
+      "draftTargetForReviewOnly": "等待工作情况的正式确认。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "goal_underspecified",
+      "reason": "给孟遥插入锁紧销的目标可支持关闸，但插入何处、锁住何物不明确，且角色分工尚需完整任务树复核。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 56,
+      "exampleId": "gate:D02.2:23:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "426da8e810c861ff46db9d91c0c94e2454cb7bbabf33804203b8a1a26e47fc54",
+      "outputHash": "a5c2529fcb55b2cf1070b2d7bcd0bf538cdf8603f0ecc65bdfb30d505a88ef31",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64750,
+          "sha256": "e627233041dba0af649c91a44e2da8384de9c0c3a173faf0c2bd675b2ce1a5e5"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f3d018dd6bb1ddc4ae2236fb24d74707ad1e2a24ab92c709a8832f3320d1ac9b",
+      "outputTokenIdsHash": "056aef18da4db323ec72138ee13ed60218d33ae97ebabd2b8dfc4b5c346ef55f",
+      "completion": "result",
+      "rawText": "先向闸门控制,先先确认是否介入。",
+      "error": null,
+      "draftTargetForReviewOnly": "宋黎尝试把锁紧销插入闸门手柄的销孔。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "让防潮闸保持关闭的请求只得到先向闸门控制和重复确认，操作对象、动作与询问内容均不完整。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 57,
+      "exampleId": "gate:D04.1:30:primitive:2",
+      "component": "D04.1.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "1820589992a951c669999d3e6a44c62f20cd13de3c6df83bb1d4954d498d0525",
+      "outputHash": "75d32f3c09feceb20e58d25dc9b51471425b7e541109cf679c9a60c925a2424a",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64752,
+          "sha256": "0d46642a4dbe46964e4997e1c2f41d741709d2fe7c7e4900ccebcdf91565c2b6"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "0b5d551aaa6f8c5cf9515a022323b8f2b72f29e801d7fcad9643286b396b65b1",
+      "outputTokenIdsHash": "f6d8e271b7ddf1d56e6cdc5d7ca18456f5379e19c1c61f05f26a2f2dca554c4b",
+      "completion": "result",
+      "rawText": "尝试把锁紧销插入闸门手柄的销孔。",
+      "error": null,
+      "draftTargetForReviewOnly": "易安握着手柄并试图向外扳开，锁紧销构成阻碍；反应可继续尝试扳动，不能预断销已失效或自己完全成功。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "reaction_role_confusion",
+      "reason": "D04应为易安分析插销对其扳门尝试的阻碍；输出直接复制插销动作，混淆发起者与被牵连者职责。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 58,
+      "exampleId": "gate:D02.2:31:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "df666065550f401844f8c238e748ffdff6c53835333be3b29489e49d67098e6c",
+      "outputHash": "55c86485e246f6cbec7458c67a968e0f45b054afadd82e1856a15824ae1e8113",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64754,
+          "sha256": "1d09c8b0eb073ee287915b49b0b46ef820488f8dfc23f35e06a6e6ab6476e2f2"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c517af1af70f369db9d704386e430ebb167c6c6a943f8053aa40cc10b21701ea",
+      "outputTokenIdsHash": "8a11c742237a800c527eedb3175efb84cba97cdb80e418da68e0a992b2d076dd",
+      "completion": "result",
+      "rawText": "易安握着手柄,并试图扳开锁紧销。",
+      "error": null,
+      "draftTargetForReviewOnly": "易安尝试向外扳动闸门手柄。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "tool_object_direction",
+      "reason": "易安持手柄、约束允许继续扳手柄，生成却说扳开锁紧销，改变了受力对象。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 59,
+      "exampleId": "gate:D05.3:40:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "129c8387f36008c77a62d38d9166dac638c5aca7d630f4fd2a1a81a970116cb6",
+      "outputHash": "bc1428fb69b7056bf134142ff61ea6941b405fe28ab4a880a5089ae07799fc63",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64756,
+          "sha256": "115f1bfd68b7bb7bcb25e7533425733ed2902a6d77ba796fcc4457f465311c68"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "54c164d59cc9942bfb89f76d240a2bbbcfd920826a7d3692b1298900e2c66ad6",
+      "outputTokenIdsHash": "8d6102fc5900d517a071437434a649d18b77acd0e28ce097b65f8702aad01879",
+      "completion": "result",
+      "rawText": "尝试向外扳开锁紧销。",
+      "error": null,
+      "draftTargetForReviewOnly": "锁紧销只插入一半，闸门手柄受到卡阻，但仍不能确认防潮闸已锁定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "联合判断已给部分插销和扳门失败，结果事实却仍是一次尝试命令，未说明任何实际后果。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 60,
+      "exampleId": "gate:D05.3:41:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "0a88366d452ff3c1a91cb944b3f75c04d5dbefa7e1c451f5cb3fcd3530bd9627",
+      "outputHash": "c11ae134e1a812b125ecec3e5d3bc75171c9ba8ead58f87bec41e5f0e9e04803",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64758,
+          "sha256": "592f7ba8435bea7abc93adefa67704d66908630dcac6d6ea383e847c020d39ad"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "7a1b83d849b91369a7562d9a19b119a41c9c74e64e571e3edb990e9243a86ae5",
+      "outputTokenIdsHash": "9615e630837bb7e7a6e338b4a66f17fa9fc0a10a4a6b7ddb08845c4702babd46",
+      "completion": "result",
+      "rawText": "先向外扳开锁紧销。",
+      "error": null,
+      "draftTargetForReviewOnly": "易安受到卡阻，未能把闸门手柄向外扳动。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "已有半插事实后，下一事实仍要求扳开锁紧销；既非易安未扳动手柄的结果，也非可核验副作用。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 61,
+      "exampleId": "gate:D02.2:60:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "79f7efb46601db391d05ed2b2401b18f063db2956aa14f2883dce503adb720fc",
+      "outputHash": "4eb9f4c19c947e644b4106576a6f5bcbb087a1eefba5e95bd5447b501db5c4a8",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64760,
+          "sha256": "72d0eec1cbd467d8d2ed6dee6721b6e1dfea92bd9c83b8d56618fcf03cc63a5b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "978086acd4be87adc17eeddcf334f8507f7af6c994d54eb267a7469750f2aea7",
+      "outputTokenIdsHash": "4dfd9badb9b200aa88473e7a3dc06a81aae1be6a9b5280dbadfe913bbd05b557",
+      "completion": "result",
+      "rawText": "先先检查闸门是否关闭,再先提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "宋黎尝试把锁紧销插入闸门手柄的销孔。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "intent_underspecified",
+      "reason": "消费后的主角输入不应限制宋黎自发关闸目标，先检查是否关闭可以是合理下一步；但重复措辞、缺主体和确认内容使该片段尚不能冻结。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 62,
+      "exampleId": "gate:D07.1:65:primitive:3",
+      "component": "D07.1.text",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "151b190da1b78cdfa1afe96bc82b3e8febad043a2add2593633422f1f9c8a939",
+      "outputHash": "5c0248d5cfe0410e5eebb7760195f702dfd62d30af6e0a525fa6f0c7122b98c1",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64762,
+          "sha256": "e98198dc7c58d70e834fc09d9f148ec9459c64f8534a3bb70f334ebf04be97c3"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "58eb8af4fca34c815143a939c39b48472ba0825f6cbcdee319d9c52f5f26419a",
+      "outputTokenIdsHash": "9d8f71f03d3db9adb08759b1e578c81815ea311d96a96410f6284e8f4ab67111",
+      "completion": "result",
+      "rawText": "检查锁紧销卡住的原因。",
+      "error": null,
+      "draftTargetForReviewOnly": "检查锁紧销卡住的原因。",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_followup",
+      "reason": "正式变化形状中新增了检查销卡住原因的待办，宋黎的拟行动对准该待办；只满足D07拟行动局部目标，发生可能与主角关联仍未由此证明。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 63,
+      "exampleId": "gate:D08.1:71:primitive:2",
+      "component": "D08.1.amount",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "d61fae6a804418a79a7ebbfd12b89453d151dc140058806daa08cfcf520852a8",
+      "outputHash": "c11ae134e1a812b125ecec3e5d3bc75171c9ba8ead58f87bec41e5f0e9e04803",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64764,
+          "sha256": "09dbebb49dbb4fd9a53a91ef62b5abe7800c1cf0c41f2762b52ec6af5431c753"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1a51e2a319e90c3275fdb608acaec16cf02c5e018b9b941f8efe542e01c09201",
+      "outputTokenIdsHash": "9615e630837bb7e7a6e338b4a66f17fa9fc0a10a4a6b7ddb08845c4702babd46",
+      "completion": "result",
+      "rawText": "先向外扳开锁紧销。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "D08.1.amount要求合法整数时间量，输出扳销动作句，不能被当成时间跨度。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 64,
+      "exampleId": "gate:D08.2:72:primitive:3",
+      "component": "D08.2.time.amount",
+      "sourceGroup": "short-20261109:gate",
+      "split": "development",
+      "inputHash": "39d5c78bacd14ab21e55e74ef56d2ac5a818b091cd9c6870926904125b456600",
+      "outputHash": "a5c2529fcb55b2cf1070b2d7bcd0bf538cdf8603f0ecc65bdfb30d505a88ef31",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64766,
+          "sha256": "eac8d304ef40695ea544ea2e00e2cf79a8d288a16c5c3f403b4a9f9ce13e8c73"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "d32fb4445c020b528ecc76490fb761bb575ff1ec500d76e4a0eda33acd2082c0",
+      "outputTokenIdsHash": "056aef18da4db323ec72138ee13ed60218d33ae97ebabd2b8dfc4b5c346ef55f",
+      "completion": "result",
+      "rawText": "先向闸门控制,先先确认是否介入。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "分段的时间量输出动作与确认残句，既没有数值也没有可合法解析的跨度。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 65,
+      "exampleId": "waiting:D01.1:1:primitive:2",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "d945b62515add948ffa623484f2b9b92a05df1a53cd4661d6ecff6bf1270413c",
+      "outputHash": "07161a3bf2c5938ee8db5231839ced7d313f01b6e176d77d65d2265fa7399d8d",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64768,
+          "sha256": "1985b34edc0fafafeb4b77964a62f05fb327854d86fae8f1a784e04eca32b187"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "e8efe25b6e1508c6dd29e904826859d8584644ec1d97e1511fb09bff8da4a43a",
+      "outputTokenIdsHash": "f05c6d1a7c35a3d476c3f7c27f5a3d19458e3e1ad4ad10c36e418be693459b81",
+      "completion": "result",
+      "rawText": "工作日",
+      "error": null,
+      "draftTargetForReviewOnly": "测震观察室",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "当前要求地点名称，工作日是日期类别，不能满足测震场所命名。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 66,
+      "exampleId": "waiting:D01.1:1:primitive:4",
+      "component": "D01.1.slot_label",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "2de1585366614476a971793c7bc96a3686dd9a5e2d41d700154231f788cc94a4",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64770,
+          "sha256": "22fd886932f1e0c370da24129fa8fe48ddb96be15d1e47df2444544124f31f3d"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "632c99e3067a92abfac097d5772059944c98caf43144c494137a6fd79d22b321",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "工作台面",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_slot",
+      "reason": "给测震观察室新增工作台面槽位，在局部命名层面合理。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 67,
+      "exampleId": "waiting:D01.1:1:primitive:7",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "88f493c27639a0eb3385f61c74bd87e3677e6f3ac0b4e2e1865cea2550628dfa",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64772,
+          "sha256": "e550dfca2135fc628339bd01bb17a37492b23211ef595069dc69ba108d837e24"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "768c920b41f061c5fa2751d498295801d39b51c69323188ca717154f377118d0",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "外侧走廊",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可作子地点，但当前已有同名槽位且要求还涉及外侧走廊；整清单覆盖与类型区分尚不能确认。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 68,
+      "exampleId": "waiting:D01.1:1:primitive:10",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "45e25e3ecc1e5d46923a19d23011559f53e9c8bbb422cca3333fdf8742fa5202",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64774,
+          "sha256": "e8a8a838dbbfe3b104b3b9f2f77700cd567bc8d60e3cfbfd416ce3b25e4734a9"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "5b431138275643cc580c0c468702561e26c430d2decdf0edadaf1cddd9879302",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "记录仪",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可作物件名称，但已有同名槽位，尚未表现出稳定观测所需记录仪的覆盖；这里只能评作待复核的初始提议。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 69,
+      "exampleId": "waiting:D01.1:1:primitive:13",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "15b185a4238d863252f683f292d79db80d3bb9f4c1867bb1881e2fb2534a183a",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64776,
+          "sha256": "b7b8c3259c178cb75891a0dc005aa263928db26958b81523fddab8197a814412"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "fef28af7c96492bca7b5dfa7116cb36e9bd0ad29256d64cb689ccc52e33e0218",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "计时表",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "记录仪后提议工作台面可为额外物件，但槽位同名及计时功能覆盖仍有疑问，不能判完整初始化通过。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 70,
+      "exampleId": "waiting:D01.1:1:primitive:16",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "901b3c48e8f7b3ffcefc5bf0366aeb3a3933b7ee5524f787ac4599b85c06dc60",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64778,
+          "sha256": "f643be54c007b6c6660c5d095f16781dea755d362421c77c6933b0a2156266cf"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "151c21298db5961b5a083892380cfa8f3a09c09938e6ce70737810481b3dfdf5",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "陶青",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "人物名称输出工作台面，误用物理表面类别。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 71,
+      "exampleId": "waiting:D01.1:1:primitive:19",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "543165c203b2ec007909f29f3082826bf5beda92b7d2c80dbfc53ee4c0033d37",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64780,
+          "sha256": "9475f3b393d368ba9da759928fea9b2f8283758a63ae192c881b234d916e21da"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2964d151fcab7216ad25a208eae65be5bb34bac0244e4992c9be515f69da5cbb",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "顾芒",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "陶青之后新增人物被命名工作台面，无法成为清晰人物身份。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 72,
+      "exampleId": "waiting:D01.1:1:primitive:22",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "473eaaed102a554a13694768f0d54a7848d373d240041cf374892e5562b79616",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64782,
+          "sha256": "d77cb896630bb3aea7ec198cf6f276188e9066473ebe54e027e36222ef35d02c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "5b0bf0d43171493e8ea25c3dd7434fcfb07bb27b073665a2aa5899f427bf1902",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "任澈",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第三人物仍给槽位名工作台面，未满足人物命名职责。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 73,
+      "exampleId": "waiting:D01.4:10:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "4995db53f802f1bdb2265dd464302dbd8e2fd74af8eb22f9289331b0b0304bfd",
+      "outputHash": "18622e311e65c4ed6ea948528e54305fb6712db46e89df99fe5d8ad093ef9ab0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64784,
+          "sha256": "fba35f12a404a39c2c7869da9664d561ea27b938507c38e12e08e68bd8af10e9"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "e538590adb058e22b0eebbebbe3b9fbf92471871503fc91736bb4abeb456cf14",
+      "outputTokenIdsHash": "f300e25fc1cb7f9059c3a7bf7ca52c8dd7046574d869ab4995235ff3aba47f04",
+      "completion": "result",
+      "rawText": "观察室内的人员和记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "等到五分钟稳定观测期结束。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "陶青任务只输出室内人员和记录仪的名词短语，没有等待或其他可完成目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 74,
+      "exampleId": "waiting:D01.4:12:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "e0c1af71f156547e2831704f6981d381ccee7c77f897b23b4e3691644a9194f9",
+      "outputHash": "18622e311e65c4ed6ea948528e54305fb6712db46e89df99fe5d8ad093ef9ab0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64786,
+          "sha256": "b686e35d1a536cfcd4b03c1f81bc89c742f6ee32e891767881d6c9356294e910"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "84b25407cb6a62f7c9565a9f6fd10ec592d848207e0843eea29855106df844e8",
+      "outputTokenIdsHash": "f300e25fc1cb7f9059c3a7bf7ca52c8dd7046574d869ab4995235ff3aba47f04",
+      "completion": "result",
+      "rawText": "观察室内的人员和记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "在接下来的五分钟内保持安静，不碰动记录仪。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "顾芒任务重复室内人员和记录仪，未给可执行或可判定达成的目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 75,
+      "exampleId": "waiting:D01.4:14:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "dbb23c2102b92b3fdfe6b1fc452dde869f42975c69c320e5f54e81b88d68d736",
+      "outputHash": "9beff7d5b1b02c529fd404564446add7087f699fbc23f534b27a1c14d02c32e0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64788,
+          "sha256": "343558bd2a8f0e118c0f6459371b4f2a0ecd72af406156d1d1de3696f31b9c33"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "30532afe3e0cefd3e205896a13f9509f2c31928b2b434ea23fee6a773310302f",
+      "outputTokenIdsHash": "eb4436aa34d193c0c3ed7d10cc29634ff67c8b2da9fa1220ffc8d6ec5488aeb3",
+      "completion": "result",
+      "rawText": "观察室内的人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "通过窗户确认室内人员完整遵守五分钟稳定观察约定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "任澈任务输出是否遵守约定的疑问片段，没有观察、确认等完整目标谓语。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 76,
+      "exampleId": "waiting:D02.2:23:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "094dfabf7377bb13926385ce5410ef3204c273453b625095281b1f212395cb5f",
+      "outputHash": "5d969ed0541a6fe0b5cbbdbcab81ed277e37444c69f3f83465c12e177cd35c61",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64790,
+          "sha256": "9c68ea158caf71ad12f33f1979d608be175b8125e65388b94a633f4ecd226e83"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "986c23d796776df3cd632a61277709fa8f1c617582730996ac0c8da268ca5b9f",
+      "outputTokenIdsHash": "08d070aba48c806ffcb00f07cef1c89ed75c9f8a9c6e7b93ea2d31b56f7ccf32",
+      "completion": "result",
+      "rawText": "镜子显示,镜子上有记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "陶青尝试请顾芒保持安静，并等待剩余五分钟的稳定观测期结束。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "ungrounded_entity",
+      "reason": "当前没有镜子，且玩家要求等待稳定观测；输出镜上有记录仪的事实，既虚构实体又没有尝试性行动。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 77,
+      "exampleId": "waiting:D04.1:30:primitive:2",
+      "component": "D04.1.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "f0a919445819c4db42f64e8fb4e2730f9d5a75ff6402cb9f8405cedf63ee3438",
+      "outputHash": "77d8daa51a4aae8b757bc1e6231772b2ffab40b1bdf003a8fb4bc899de66363e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64792,
+          "sha256": "fe8d6e5b3920a9f3e8198238b9a61b081fc2cdc186d4f8824f9d30c52283d2a3"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "8c04c9ba0826942cf9795800b837570e905a5e4392cdce89ad75299f60708226",
+      "outputTokenIdsHash": "a896a2de91b94368ea6b83e07590e53afb605b97a37d3a797716d46d739cc37e",
+      "completion": "result",
+      "rawText": "顾芒尝试请顾芒保持安静,并等待剩余五分钟的稳定观测期结束。",
+      "error": null,
+      "draftTargetForReviewOnly": "顾芒收到保持安静的请求；可选择安静等待并避开记录仪，不宣告观察期提前完成。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "reaction_role_confusion",
+      "reason": "顾芒是收到陶青请求的反应者，输出却让顾芒请求自己，并未形成基于来袭请求的反应约束。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 78,
+      "exampleId": "waiting:D02.2:31:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "d12f45e5cea7e9362c6078a0d7652d71a507e159dec6edb19a759b51e354bb1a",
+      "outputHash": "cad862351e1183044bd4734dec389e18288591df09539af84a592b35000e0df0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64794,
+          "sha256": "ad448334b5609d1ca94e9444d0cc902a669b0462db5418b3501834d1be9338cf"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "88ad5911029d8e2cc0f79ff8c8c221a336f15e13019f6546b1ef92b4d6bcae31",
+      "outputTokenIdsHash": "9bd2468c7cc483cc2003cfbc885797702be4308932d107bd690e43f15b83a073",
+      "completion": "result",
+      "rawText": "顾芒收到保持安静的请求,并避开记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "顾芒尝试保持安静，避免碰动记录仪。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "attempt_vs_success",
+      "reason": "当前要求顾芒下一条尝试，输出收到请求并避开仪器的陈述，未保留尝试语气且没有安静等待的条件。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 79,
+      "exampleId": "waiting:D05.3:40:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "8036c88a449dccc824183b62d956f5b8a810e489ecb8bbed3af00d0e1d53d528",
+      "outputHash": "db9c6012e301afed4cfb4bcaf37a25995c72b674e1f43f8ae7d8883290671690",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64796,
+          "sha256": "5799318485acfb0f79c6553ea5495a14127df3f8366dfe60ae83ad8fd30804b5"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "924f58992f8238d91e44acfb5ffa95cf85c43f849826225b4e8668f95f5ea5ee",
+      "outputTokenIdsHash": "f3edd5f0f68adff77b93d24c2b8fc9163c03ee9968d930c6591ce0dca036c65a",
+      "completion": "result",
+      "rawText": "镜面显示,镜面显示有记录仪的数量。",
+      "error": null,
+      "draftTargetForReviewOnly": "五分钟稳定观测期已经结束，记录仪没有受到碰动。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "ungrounded_fact",
+      "reason": "冻结行动与全组判断都涉及五分钟安静，结果却虚构镜面显示仪器数量，不能由组内行动和状态支持。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 80,
+      "exampleId": "waiting:D05.3:41:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "c707ecf83cf9a60e7fb0a78417d6c6f106edbec2edd29519dfce2416c1306d98",
+      "outputHash": "9beff7d5b1b02c529fd404564446add7087f699fbc23f534b27a1c14d02c32e0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64798,
+          "sha256": "36efba5523f7e8f320e9fad6d420738339aab9438c2753de26c4095470d5570a"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a2ef067f3dca74b261cd4f270c41e766e5a0ea84aedf8a3d377474c023f82a35",
+      "outputTokenIdsHash": "eb4436aa34d193c0c3ed7d10cc29634ff67c8b2da9fa1220ffc8d6ec5488aeb3",
+      "completion": "result",
+      "rawText": "观察室内的人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "任澈在外侧走廊隔窗看见室内人员完整保持了五分钟安静，确认稳定观察约定被遵守。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "已有观察期结束事实后，应补实际观察后果；输出是否遵守的疑问残句，未给事实判断。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 81,
+      "exampleId": "waiting:D02.2:61:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "5fd6762d33471c9d3bd2e5648e10756f32fd367f84cc45d068c7bb581f422f4d",
+      "outputHash": "5d969ed0541a6fe0b5cbbdbcab81ed277e37444c69f3f83465c12e177cd35c61",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64800,
+          "sha256": "943f8d88426691f99b0e91ccf0c82a3e20407e973c91612b52253a1c12599345"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "65b443f7cc62f3925d127b560682e2805d1ef8eb4c3bdd7e65163a6e79531c05",
+      "outputTokenIdsHash": "08d070aba48c806ffcb00f07cef1c89ed75c9f8a9c6e7b93ea2d31b56f7ccf32",
+      "completion": "result",
+      "rawText": "镜子显示,镜子上有记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "陶青尝试请顾芒保持安静，并等待剩余五分钟的稳定观测期结束。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "ungrounded_entity",
+      "reason": "NPC陶青仍有等待任务，输出再次虚构镜子且没有任何尝试意图；消费状态不使该陈述变成行动。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 82,
+      "exampleId": "waiting:D07.1:66:primitive:3",
+      "component": "D07.1.text",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "2b3cf84f1b2a6299f6f785cfc215811caf7c787a01ee4c3c4051beddf0608fb6",
+      "outputHash": "4cf399e6e467d562509d0204d445a0e6b60fbe8ce4a7fcc107c7d64d5b989e2b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64802,
+          "sha256": "69a2db7a1f43b41a82ce7569cc5e3450130f399a296baa03e6fa87cc630aecda"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c0ba5f73023d25f1d8e2ee77affaf86ad0d26f4c6fdd70b7ccf2c0b50059af21",
+      "outputTokenIdsHash": "e815fb6740754a5da82e774d93f9eb66a665b280ae3a6d773b94c5765de1bdc7",
+      "completion": "result",
+      "rawText": "向外侧走廊确认安静记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "尝试核对当前工作的完成情况。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "当前五分钟观测已完成，拟行动向走廊确认安静记录仪的对象和确认内容不清，不能形成完整自然语言行动。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 83,
+      "exampleId": "waiting:D08.1:72:primitive:2",
+      "component": "D08.1.amount",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "3946e30fbaa9d8310f911b05598ab0b3ea4aba8efe800faff32c3fe37386ddb6",
+      "outputHash": "9beff7d5b1b02c529fd404564446add7087f699fbc23f534b27a1c14d02c32e0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64804,
+          "sha256": "743e8103b3706bb8d41c8e24c6fdfdb43f85abe2b9e5f5a3af2a3de94dd27480"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1b295060d67fa0e03f94223eea81b0f4af2977636046337bcc43abfb70a8f523",
+      "outputTokenIdsHash": "eb4436aa34d193c0c3ed7d10cc29634ff67c8b2da9fa1220ffc8d6ec5488aeb3",
+      "completion": "result",
+      "rawText": "观察室内的人员是否遵守稳定观察约定。",
+      "error": null,
+      "draftTargetForReviewOnly": "5",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "完整世界已明确五分钟等待语境，时间量却输出是否遵守约定的残句，无法解析为整数。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 84,
+      "exampleId": "waiting:D08.2:73:primitive:3",
+      "component": "D08.2.time.amount",
+      "sourceGroup": "short-20261109:waiting",
+      "split": "development",
+      "inputHash": "d541bbff3e5469184bc917dcfbb94acd20a73431ce2d126910f6ab8b0c881168",
+      "outputHash": "4cf399e6e467d562509d0204d445a0e6b60fbe8ce4a7fcc107c7d64d5b989e2b",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64806,
+          "sha256": "1884982de30ba7551511ddc894d1f9f93f193e3580a8d4819a0842db7c2ebffb"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2b8755267bf9e3347e7fce6eb58dac975605f8662e06a559d8e2b7ca35173d5e",
+      "outputTokenIdsHash": "e815fb6740754a5da82e774d93f9eb66a665b280ae3a6d773b94c5765de1bdc7",
+      "completion": "result",
+      "rawText": "向外侧走廊确认安静记录仪。",
+      "error": null,
+      "draftTargetForReviewOnly": "5",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "D08分段数值头收到非数值的向走廊确认句，未完成时间量职责。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 85,
+      "exampleId": "jointlift:D01.1:1:primitive:2",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "0f716773ec19f52325323c119d9c96adc914afdbcc9f24be5ce5c5f69df3c141",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64808,
+          "sha256": "b35424cae722f57df7fc2b52bb546732d4ee45217c1097c09c8b560321cbede2"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "a753c3c8385805a9842a663dd4f3f935265796d965068db125f9b38c4022baea",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "标本整理室",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可被提作局部位置，但未明确题设中的整理室或存放间；单步名称不能确认全初始化覆盖。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 86,
+      "exampleId": "jointlift:D01.1:1:primitive:4",
+      "component": "D01.1.slot_label",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "a4da863f5cfe04d5382209e42a0bb56fbd534b1a6fe2d147eeed6f51ad696afc",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64810,
+          "sha256": "b2bc0452cc31d47b23f0ff4b0e9e8260478aecf2781c643c6f9fca373364fd42"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "82a255153457ffc6647f5d97d20a89795046a120b81099d19e3656a661110ba4",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "工作台面",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_slot",
+      "reason": "标本整理室的工作台面是合理槽位标签，局部命名满足要求。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 87,
+      "exampleId": "jointlift:D01.1:1:primitive:7",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "d9eec991765f97f2d0a03199f566c452435c1557e6ad248effb0ac6598db2f5b",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64812,
+          "sha256": "506de2d713f1ad13fe25e3ec8d775268b665fbdafa356187928814d3df4081aa"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "6a7c1afd139e9ac9b6e9500250b3ad9ebd79b9f6b9c861dda8e042fcb807ec8b",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "恒温存放间",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "整理室之后又给工作台面，可能是子位置，但与已有槽位重名，且恒温存放间覆盖仍待后续核对。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 88,
+      "exampleId": "jointlift:D01.1:1:primitive:10",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "e7ac756013bed39c9e2ba3e85acc9baf3088e94c35e008be68873f275ebf89a0",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64814,
+          "sha256": "c35932039dd30f616296463790d37bb298048a8b83e3a825618bd4486d4a12ba"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "28b9273e2c468d2a373f2bcbf5b2121f5537e0d05b2379fbd7de39a3a48dfa52",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "标本托盘",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可对应物理桌面，但题设搬运依赖的标本托盘未在当前提议出现；不把草稿差异直接当失败，也不能宣称功能已保留。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 89,
+      "exampleId": "jointlift:D01.1:1:primitive:13",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "d94a9fa55c099c7bbedd1a1b4087f31c566e6ecd41a5b35fd7227adad7a5ba0b",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64816,
+          "sha256": "51bfd074ce1c8dbbe66075fe3ae9890f91ca40e5708d6da7545addfc5f06f755"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "9f6ca48ca567f95b40a1654dd986662a851520bae885397d167c5a0749326a23",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "防滑垫",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "已有托盘后可提桌面为额外器物，但已有同名槽位，实体身份及器物覆盖尚需复核。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 90,
+      "exampleId": "jointlift:D01.1:1:primitive:16",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "1c7aa9fd289aeea922578365d71d36e0529bb18926361cd4958af0ec57d83a68",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64818,
+          "sha256": "cd80e22d203d20a565128d156db3a3173de1f1d842ad73cd29b5698e7a09ae83"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "233a879abceb73876929a84bd236197428c1ac98f16975eef3713f48a4fcb42d",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "柯遥",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "人物生成输出工作台面，把器物槽位当人物。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 91,
+      "exampleId": "jointlift:D01.1:1:primitive:19",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "f113bdc1e6bc0cb7c3166246d5f3cc5704cc7b6883dde2bf6ea00407f3687dc4",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64820,
+          "sha256": "6a3fcaad096c71bfd8d28d3d916bb472fb23685238d5dea09e70d3dacd13a009"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "88f6f2c99f53724617bf8c88392c606f8fc81a22758d1fc2ac4cf1ed0ca74fed",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "伍澄",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第二人物仍给工作台面，不能提供可区分的人物身份。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 92,
+      "exampleId": "jointlift:D01.1:1:primitive:22",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "43deee4b181ec095523ea35787577c55d8848ba99c0ae71f86c739635f20f9e0",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64822,
+          "sha256": "b34d79802098d438c4f4f05cbc1af2d3f6cbeb1524f31a13e995b3ad3d5a1262"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "60297dfcd7e716cec9f2b2c95d6e8748f8f2ef06ee499b6cfb18815aeb91a571",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "韩朔",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第三人物被命名工作台面，重复的非人物名称不满足职责。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 93,
+      "exampleId": "jointlift:D01.4:10:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "504cb444b5fcf4a7ab10e381db243e2101ebd3cd33792a4acc7d78e945e68b9f",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64824,
+          "sha256": "0d767990c0192c4176aa3ddb4f99af5e425152f647597d7782f03a846df0491b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1020c655b651d41661467bb48ff34be392441487a27512a854dc48244eb9a94a",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "将标本托盘平稳送到恒温存放间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "柯遥的主任务只输出工作台面名词，不是可达成目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 94,
+      "exampleId": "jointlift:D01.4:11:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "a56f24672a3db774a2b8c95f25c8fe9d1af1f5a0625fbc793d608d22db0577b4",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64826,
+          "sha256": "6934a037625440d473c72371f2541a85a349f8d5027ad12304eb5aa9de70503c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "d33105b3dbe3c9aee56f36e8ff6b748a8a3a71caf9e604f13adb1dfa62feed87",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "让标本托盘在本次操作中保持稳定。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "父任务为平稳搬运托盘，子任务只有工作台面名词，无法说明如何支持父任务。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 95,
+      "exampleId": "jointlift:D01.4:13:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "39e31ab03b9bc5e38fab75d8e7ff732352ade4673dcd2520b9b88d8e56e9cc6f",
+      "outputHash": "6186cb4c9ed8c8b91db72e029b0c2c9fdd183392371dd7b6f73abe29c9065dc0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64828,
+          "sha256": "aec6d43f1a3c64a7d652054cae4e0889b9c0dd926fcac3921e35a11d39c7a49a"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "17494456799619e908affc35bef956b10721491e4932a2d44725fc6f2fecb55c",
+      "outputTokenIdsHash": "fdf1ad79950a54f86225f4bbfee773b9b3a44f64606440fc718e731b77190f44",
+      "completion": "result",
+      "rawText": "先将标本托盘平稳送到恒温存放间。",
+      "error": null,
+      "draftTargetForReviewOnly": "与柯遥一起把标本托盘平稳搬到恒温存放间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_goal",
+      "reason": "给伍澄提出把托盘平稳送到存放间的具体目标，符合题设工作；未明确共同搬运不使根任务失效，但不能证明协作行动规划。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 96,
+      "exampleId": "jointlift:D01.4:15:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "db823ae8a9ad7625171dfc64cb0074bea82b0c8a689c9612edec2b7a865696e6",
+      "outputHash": "6186cb4c9ed8c8b91db72e029b0c2c9fdd183392371dd7b6f73abe29c9065dc0",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64830,
+          "sha256": "5c82a66b06ec9b80686af373b4b64b4eb9fd768d84864f64ff1cae20733836a5"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ed0f9b5afcf0b77e302ef45c1d7d2548b3ee257fb79dbd1002c93ea7edb9d9ba",
+      "outputTokenIdsHash": "fdf1ad79950a54f86225f4bbfee773b9b3a44f64606440fc718e731b77190f44",
+      "completion": "result",
+      "rawText": "先将标本托盘平稳送到恒温存放间。",
+      "error": null,
+      "draftTargetForReviewOnly": "等待工作情况的正式确认。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "goal_underspecified",
+      "reason": "韩朔位于目的地，也可持有搬运完成目标；然而与两名搬运者重复目标、缺少本人分工，仍需任务树语义复核，不能只按草稿等待任务判错。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 97,
+      "exampleId": "jointlift:D02.2:24:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "e3ab28551535c5c2a5be87a9b7a84d26313b78c04d1e70837c1a00599409d600",
+      "outputHash": "c200b4a6f1c971af18eeceeb5dc954a9ff0e3325818b499bf3ea66a8666ca820",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64832,
+          "sha256": "96b5e1312b977c6ea5cf87976e19aba7b1809192053eb3a72cce06c6e2c4a853"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2202ea86c2f6eef6d235923d0897c525e430e0e8b943556e84483c7454533c41",
+      "outputTokenIdsHash": "5a471f084fa46a12364302e9412b03fa911354b7688d83831f2857b061130091",
+      "completion": "result",
+      "rawText": "先确认对方是否介入。",
+      "error": null,
+      "draftTargetForReviewOnly": "柯遥尝试与伍澄共同抬起标本托盘。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "intent_underspecified",
+      "reason": "先确认同伴是否参与可能是搬运前合理准备；但对方未点名、缺尝试主体与具体协作内容，尚不能形成可冻结片段。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 98,
+      "exampleId": "jointlift:D02.2:26:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "8fe3598bad7bc04e83f478a8daf610764a3b4394a0e15c00fa85570fc80a268b",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64834,
+          "sha256": "37e1cba5fa09e4aa90c9110496da8416e35089ee9d6c5dcd58bbfe229021620c"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "58edd7d3a6c576ac3c6eb1375c081c130dfff24c7a466707da78d74e761b6476",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "柯遥尝试与伍澄把标本托盘送到恒温存放间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "已提出共同抬起托盘后，只说向同伴提出确认，未说明确认什么或后续搬到哪里，不能满足完整下一片段。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 99,
+      "exampleId": "jointlift:D04.1:33:primitive:2",
+      "component": "D04.1.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "b59f1967de6e8f395465388d65f45b390b511524dca19b157e8925db9f7fc704",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64836,
+          "sha256": "9c38f836f14a7d5f7cd5a42db3aed5100784db1349ba2e6e50f097160b1b1588"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "1b7b659e80876b5542aa110b9cebb8b1108978eb8ff8e8fb1d816a25c42778cb",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "伍澄需回应共同搬运的请求；可托住另一侧并配合移动，不能代替柯遥宣告已到达或托盘始终水平。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "reaction_constraint_missing",
+      "reason": "伍澄受到共同搬运请求影响，约束输出仅为一句向同伴确认的指令，没有处理托盘、配合关系和不得预断成功的限制。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 100,
+      "exampleId": "jointlift:D02.2:34:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "237e620bd9c5fe75cf76418710876a88a88883a4f940da5103aaddda7c51a720",
+      "outputHash": "ea9f858cee0d684548d4c618d2e46697a897dbcae2793831baa042caf9724b28",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64838,
+          "sha256": "f3640caf57239aa29617785bf8c28edcd4d60fc64a00645e0c26da77a89a63ce"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f02413eb6a7e3238446d885195768ca0efdd57ca0b26f5a2803a7e2fb87beea9",
+      "outputTokenIdsHash": "457636a95d82f92d535414cf5de03f151ff9b86def976577adf665c6c9473fb8",
+      "completion": "result",
+      "rawText": "先向同伴提出请求。",
+      "error": null,
+      "draftTargetForReviewOnly": "伍澄尝试托住标本托盘另一侧并一同搬运到恒温存放间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "作为伍澄反应，只说向同伴提出请求，未说请求内容，也未说明如何回应已冻结搬运行动。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 101,
+      "exampleId": "jointlift:D05.3:43:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "3becda5bdef920d84724f3b4f6da3d98324e69b02b8c44becfe01cdf4df61457",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64840,
+          "sha256": "54a085eb0bb4e773ea1bf19988c0fd96b5a892f56437033181e32fcb853ee714"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "0705ca1e9507f6986aee14fd10fa587dd0461ff10fe74574afc14ced83c2b2e1",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "两人共同抬着标本托盘到达恒温存放间，托盘仍保持水平。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "全组搬运判为达成，结果输出却是下一条确认命令，未形成位置、稳定状态或共同结果事实。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 102,
+      "exampleId": "jointlift:D05.3:44:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "6ab497043a1c23a66a710a0ea3674dff7dbe4ffa9f021cdc8a7f4c39c57c9b41",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64842,
+          "sha256": "1140148b1608b7eae19e3b127ff8076b69d2ef1fd81fcce8d5c4683ae7f1b203"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "155adbd7b45ad64a6630f091f8a5117390d40ecf5b9a3a1757209eb15cc1f9f4",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "伍澄在搬运中托住了托盘另一侧。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "已有到达并保持水平候选后，下一结果仍是确认命令，未补伍澄的具体支撑事实。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 103,
+      "exampleId": "jointlift:D02.2:65:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "10da08ea066a210a513028b82794db2b657409c28acee91e51e6271b19d1c166",
+      "outputHash": "dce4b247727cde1b3c2117b8a6f8bf219dcfc6d255e37c81d496c007fac3184a",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64844,
+          "sha256": "4a9865c187938fbe7566fa50eb13a3d0c6665fe1a8ea2f25a63c48fb4fbcfb19"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "f956d50201e6e5249913baec4b240ae93cc03fb7b633a6537f5025a75a801e69",
+      "outputTokenIdsHash": "d8ee1cf0a6d1515b04530b58005dd61476e5d831ec21e6cf1e2543c60c0f1d72",
+      "completion": "result",
+      "rawText": "先确认对方是否同意,再提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "柯遥尝试与伍澄共同抬起标本托盘。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "intent_underspecified",
+      "reason": "NPC柯遥先确认伙伴同意搬运是可能合理的准备动作，但对方和确认内容未绑定，重复确认也未覆盖原搬运需求。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 104,
+      "exampleId": "jointlift:D02.2:67:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "05118769246c69e5eedcf59fbfe3f3073e487bdbb137b7d09f1baa5cf8853173",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64846,
+          "sha256": "f33bce46d8345039d5ba06d3d32aab513eb981324952d2921eae50b81b088308"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ddc8ba28248c25a36cc29a00eae45f03716e07e99646a471ae9b7f2aaa962a36",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "柯遥尝试与伍澄把标本托盘送到恒温存放间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "NPC已有共同抬起片段，再输出不具内容的确认，无法补上搬到恒温存放间的下一步。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 105,
+      "exampleId": "jointlift:D07.1:72:primitive:3",
+      "component": "D07.1.text",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "932f7a3ac55006d7785d517fc99085fce8f2fed287e508b820e2ec3c8b29ce4f",
+      "outputHash": "6d55b5824a132bbdd35b9e6ec8969007089bab4ad9764422e6f0b4d581233e1f",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64848,
+          "sha256": "7b65482d5bb7ac7a8fa7d43f09f5d03a047387fa183864a27c369e40644782eb"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "b62e18bd3ee9e380beb0239ef8b89305ae6fae4ba059d457ebe42f41b0759771",
+      "outputTokenIdsHash": "c8d7f7186f840ff6f59fd445188d93b27abe61a6c35267a3f711d0b14ae2a8d6",
+      "completion": "result",
+      "rawText": "先向同伴提出请求,并向同伴提出请求。",
+      "error": null,
+      "draftTargetForReviewOnly": "尝试核对当前工作的完成情况。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "搬运已提交完成，后续拟行动把向同伴提出请求重复两次，却不说明请求内容或新目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 106,
+      "exampleId": "jointlift:D08.1:78:primitive:2",
+      "component": "D08.1.amount",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "c5a825c750cd05d8f3467c3a6f435c2662d0ca7b7ab05b4e61070bd600d73ed8",
+      "outputHash": "66a6b84c2f6ee4fc4c07b77afcfcec494c611017c664d1ccf8f815e701efb20c",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64850,
+          "sha256": "b5bc5b6d687fb9566406c08c547a56668b09b82b78d6d7e2ba16a29b202e7a89"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "972069f45927264e8dc2514f6ea98df048819ce56599870d563ed40629a6d714",
+      "outputTokenIdsHash": "de61a028c4c19faaf8faac17234fbcbc7d40792272d6e8ee85c82ba83df101e8",
+      "completion": "result",
+      "rawText": "先向同伴提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "共同搬运的时间量输出向同伴确认的句子，没有合法整数。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 107,
+      "exampleId": "jointlift:D08.2:79:primitive:3",
+      "component": "D08.2.time.amount",
+      "sourceGroup": "short-20261109:jointlift",
+      "split": "test",
+      "inputHash": "e1ddc4a24e635b43ffa20baf49ec9d0a054711c4d536371cf6c1712c77c54bd5",
+      "outputHash": "c200b4a6f1c971af18eeceeb5dc954a9ff0e3325818b499bf3ea66a8666ca820",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64852,
+          "sha256": "5182c421b3923cb12132d48f5100c1526306370848d0f979c0c599c365c7078a"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "9a9a6f87009fa192ba63b7854bf2fdc656d2a0a51392f99414e81aa53ec782a6",
+      "outputTokenIdsHash": "5a471f084fa46a12364302e9412b03fa911354b7688d83831f2857b061130091",
+      "completion": "result",
+      "rawText": "先确认对方是否介入。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "初始分段时间量是确认是否介入的命令，不能作为程序锁定时间的数值。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 108,
+      "exampleId": "newentity:D01.1:1:primitive:2",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "8c7eb7302e8edf31b83fddcf2cb6b567ad5b85951946dc06c7a32118351f522f",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64854,
+          "sha256": "35d21c52537e742976570d13a997ba7e2a8088372907614ccaa9a933a75f205e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "8c0d04a330ad53d972235f67b46a6a8bfdda5bea252cdf6909514a7b01d25223",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "天文校时台",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "工作台面可能是校时台的局部地点，但题设中天文校时台与设备柜仍需完整覆盖，单个名称不能证明初始化满足。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 109,
+      "exampleId": "newentity:D01.1:1:primitive:4",
+      "component": "D01.1.slot_label",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "8dbbf6fa60455787fa892e366aeb9408f33caa9303642ff289a0d38526305c2f",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64856,
+          "sha256": "8f23e8160410dcb76a14e4f578f3823f7faf266f99319117843d92d47ebc027d"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "e85117e0dec7bf562aff8be1564e897e9da0e713b62953d897fdfcd2dd36dd46",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "工作台面",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_slot",
+      "reason": "为天文校时台产生工作台面槽位，符合该局部容器标签任务。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 110,
+      "exampleId": "newentity:D01.1:1:primitive:7",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "af7245cf1253b24eba2d3f1e880b74fd247e5d265ac37c5d32e598cf1762105a",
+      "outputHash": "83ed58d66e1a4394b72087c32b2dda9acd921379b56c4da59a84788a97de1344",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64858,
+          "sha256": "01574503b8f802f8dd4bbf9215af319d5d258a67ed16f59799cdf4d9a3d316a3"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "b6510614d11e369fb92fec97400fb463599097abdd13b52c5a8020ff1135049b",
+      "outputTokenIdsHash": "98d5bdaf308fc84efb828d4c0a9575f8550b2e1544e9b537f99d4842b1631144",
+      "completion": "result",
+      "rawText": "设备存放柜",
+      "error": null,
+      "draftTargetForReviewOnly": "设备存放柜",
+      "exactDraftMatch": true,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_name",
+      "reason": "已有天文校时台后补设备存放柜，与题设第二处位置一致，当前命名步骤明确满足。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 111,
+      "exampleId": "newentity:D01.1:1:primitive:10",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "bd484375da1247b8d70c85133e7fe0df36114dfaafe5804d204fd964c02bfa98",
+      "outputHash": "2daf6230314fea91fade6b8f0b1bff6fcffbc49d5c104ea2b6ade6d3269c2566",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64860,
+          "sha256": "3a581b57c94a9cc600d154507dc4f5d797d3583e76149a28bbae66dc98faa9c3"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "ac5e4cae3e7593ba8ec2837e5ab41ddac1608e2a911f15f1a9176ce06c9d5118",
+      "outputTokenIdsHash": "134fe42f357c8dfac2b367198e5dbfdbb2946984f47142bd64977b4a4e2a966d",
+      "completion": "result",
+      "rawText": "天文校时台",
+      "error": null,
+      "draftTargetForReviewOnly": "校时钟",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "当前要新增物品，输出与已有地点完全同名的天文校时台，未区分物件与既有地点，不能认作校时钟。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 112,
+      "exampleId": "newentity:D01.1:1:primitive:13",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "c9080fae3a8ba56e941c7b0810e8996038347d8c45538e23429480185a2ce838",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64862,
+          "sha256": "e262f21847fef95919bbe29d9dc8b77931788c92d16158fa87038bde7279839d"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "116258689176d3cb58b5f9966538f99c33f6b16f183215d0b6dc986e7dfcce72",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "拨针杆",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "underspecified_initialization",
+      "reason": "已有校时钟后，工作台面可作物件但同名槽位已存在；未说明新的器物身份或调整工具功能，需进一步复核。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 113,
+      "exampleId": "newentity:D01.1:1:primitive:16",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "7fc48728ece5824075145996f56d0edf71368b65f5a4e6a15c6fd8d0dd7bdcbd",
+      "outputHash": "2daf6230314fea91fade6b8f0b1bff6fcffbc49d5c104ea2b6ade6d3269c2566",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64864,
+          "sha256": "929e80cd71ad29c2f9e7ae1c1436c5bb70f1a23c89d01be4da439fbb9bd89319"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "fcdaa849415b61ce725e55ebe2660570a4dce14e9664bd1fd520e3563655aaae",
+      "outputTokenIdsHash": "134fe42f357c8dfac2b367198e5dbfdbb2946984f47142bd64977b4a4e2a966d",
+      "completion": "result",
+      "rawText": "天文校时台",
+      "error": null,
+      "draftTargetForReviewOnly": "方禾",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "人物名称输出已有地点天文校时台，身份类别明确错置。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 114,
+      "exampleId": "newentity:D01.1:1:primitive:19",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "5ece3b6afb9e462ff878f1063c546072b27463a397164af2853d4f263b657e40",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64866,
+          "sha256": "226c73ccb565046b379128e97ecfe18ed66ea576eb70c5afade195200465d66f"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "607f5e6664b0da44c4f26558a2a5220276d4f40d477d07646ad5734e615551fb",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "奚白",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第二人物输出工作台面，未形成角色身份。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 115,
+      "exampleId": "newentity:D01.1:1:primitive:22",
+      "component": "D01.1.name",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "00a9187744343615e5f1ca018dc982093523ebe38dc62c49af5c8f3895b89d33",
+      "outputHash": "4a2007c49e6c1acf186b8a57b07649b7a46c14911e434d059ea95efd76c2aa7e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64868,
+          "sha256": "5fe0b420ae04f78de73cb74d195cb21562ad7f2ad8e9e2b224f114ae9a9b3645"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "401793848d39deea9edf2aad4a05e9952c3b621fb9e45e721d172a674513aee5",
+      "outputTokenIdsHash": "f50148f4362e16b693edb1673fd42f0c22092296179c0605fb82491062086c18",
+      "completion": "result",
+      "rawText": "工作台面",
+      "error": null,
+      "draftTargetForReviewOnly": "宁砚",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "entity_kind_confusion",
+      "reason": "第三人物仍以槽位名工作台面命名，人物与物理表面混淆。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 116,
+      "exampleId": "newentity:D01.4:10:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "738e27ee0ecd37498e6961ba1fdd3ffa1f9652ced8f9aacccfecbb879600e9b8",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64870,
+          "sha256": "6dc9aa281510350bbef05ae6d342c6b86580a525ecb3dcd10608636e64235ab6"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2331b8985e2eca5a1fc1790638a58dc5cf73ec3ba5aee5947da0aacd20d56bff",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "把校时钟调整到正确时间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "方禾任务是台面缺少零件的事实陈述，没有修复或校准的目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 117,
+      "exampleId": "newentity:D01.4:12:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "f390e611460c9f81c6ef04548cea27e8b2064fbdbc3b6b505b4077db9495f673",
+      "outputHash": "761b15392776f070a8a69364347da45e093dcf998baa2a8af73076cae0f6a350",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64872,
+          "sha256": "377aca9941e292c0b7d1c32734e2552a1b13fb744b5269af2a152385aa78f11b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "eeb00bc8a5c3b0789e436cd5c7a60832d9fad8517256e80a916e00e43940e715",
+      "outputTokenIdsHash": "cd774290cc4fc70fc0600fe207b92ceaebe1c00340609bab1e0b72b431783473",
+      "completion": "result",
+      "rawText": "台面没有替换零件。",
+      "error": null,
+      "draftTargetForReviewOnly": "在调整齿轮期间扶稳校时钟外壳。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "goal_vs_fact",
+      "reason": "奚白任务同样只陈述台面缺件，没有可达成的支撑目标。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 118,
+      "exampleId": "newentity:D01.4:14:primitive:3",
+      "component": "D01.4.goal",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "ea607569b77a1d87d29203d2d4c1581e3f221c5b60f134fd172a7333e89a3044",
+      "outputHash": "30a087775093a81b439109a3f7ea29f5854fbf3d9e1f26096de7cdc87f924583",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64874,
+          "sha256": "ce40d289734d5a8b91c02b3ccf0acd95090237f535c2f0385471b7567e8fcc9b"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "0302744f9326665ae388d0ea9b5512e2e16e732655e94135ee48248af1cb3ba0",
+      "outputTokenIdsHash": "867531582b8e2372d0dd303fd6d43b4a2abb8ddc996e12e2b5191734e0ed3c03",
+      "completion": "result",
+      "rawText": "在调整齿轮时,在调整齿轮时,在调整齿轮时,再在校时钟内调整齿轮。",
+      "error": null,
+      "draftTargetForReviewOnly": "等待工作情况的正式确认。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "semantic_incomplete_sentence",
+      "reason": "宁砚任务重复多次在调整齿轮时的未完条件，末尾操作也缺清楚目标，不能作为完整任务文本。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 119,
+      "exampleId": "newentity:D02.2:23:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "8a7ab5a1f8f7914da1804e895cc09a6e63f13824ac8c8239b15aa1f054d7f1c1",
+      "outputHash": "e1e9e387baf07007da1dbbc1cb3ccf34154270c12e1dd904926a3882557d43ea",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64876,
+          "sha256": "d3a16a06c57c31ed1244e8a61d5dbb3278108ba8a5449524771afd9972b178c2"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "00527742c61d79a4a2e4a9d4d521d38065d44e7b98138f4a83fd1b2f53d589e3",
+      "outputTokenIdsHash": "80ede0bc093c28f376e122e9282cfb926724693d7a4ced938a06aebba7995de1",
+      "completion": "result",
+      "rawText": "先检查校时钟的位置,再提出确认。",
+      "error": null,
+      "draftTargetForReviewOnly": "方禾尝试在奚白扶稳校时钟外壳时，用拨针杆调整校时钟的现有齿轮，使指针恢复走动并校准到当前时间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "plausible_needs_review",
+      "issue": "intent_underspecified",
+      "reason": "检查校时钟位置可作为预备观察，但后续确认内容不明确，未绑定尝试主体，也不能证明对齿轮、协作和校准的原需求覆盖。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 120,
+      "exampleId": "newentity:D04.1:30:primitive:2",
+      "component": "D04.1.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "802f2a3fc7d1aa1167e8ca5487a00e0267813772ee059e5fe3f0b29a164f51f3",
+      "outputHash": "19bb5accd27f3fbeca525d64221d8fc1de58c96cae2057e8176b552386564695",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64878,
+          "sha256": "40c67389c4f3a5313935c9175b16dca54a830cc3ddd85c5d5ebf9d2cbc8f0547"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "0531d906b43a17d9e185d6fa4eaa1f9218a5a22b17bb9aa6f0174ee38b6cc70f",
+      "outputTokenIdsHash": "c520571d8250baa38753442871a1c1af3b402167a18da95ee6a55a0d93cb9d08",
+      "completion": "result",
+      "rawText": "奚白尝试在奚白扶稳校时壳时,用拨针杆调整校时钟的现有齿轮。",
+      "error": null,
+      "draftTargetForReviewOnly": "奚白需回应调整齿轮时钟壳移动的影响；可尝试扶稳外壳，不凭空提供替换齿轮或宣告时钟已修好。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "reaction_role_confusion",
+      "reason": "反应者奚白应考虑扶稳外壳，输出却让奚白在自己扶稳时使用方禾的拨针杆调整，混淆主行动与反应分工。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 121,
+      "exampleId": "newentity:D02.2:31:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "5adf3cc44ce6261606b22b7ca591ad83c81271dad18783bad925eec2aa7afe56",
+      "outputHash": "d90ba92149c282fce98ff6d768222ad5b2fccecaf873c3b30935f0086a7cfe52",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64880,
+          "sha256": "c13997167d8090c3f2cc662fd878304f261716ca093edebd5d2bea41d1f3cb98"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "d01d074de1d99e927692c1d6801e09e99b8dc808d4a771fe7d69dec1e4359ea7",
+      "outputTokenIdsHash": "093f057215bfa3117a3c5d9daf78201209edc9dbc792f93ce0b942206a662366",
+      "completion": "result",
+      "rawText": "奚白需回应调整齿轮时钟壳移动的影响。",
+      "error": null,
+      "draftTargetForReviewOnly": "奚白尝试扶稳校时钟外壳。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "constraint_vs_action",
+      "reason": "输入约束要求奚白回应钟壳移动，生成仅复述需要回应这一元说明，没有提出具体尝试行动。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 122,
+      "exampleId": "newentity:D05.3:40:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "be65af1b575544820793ccf25a7c255e53b7d0ed040e06b3d507bed193641ba5",
+      "outputHash": "5cdb0e752614df0a21408c24cfbea284b6829c71c2a47d3c31ee49b9d245038e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64882,
+          "sha256": "3105bfaa208be4f2446a74c471c70e94839036950c84fa6ffb11f4bf22c4272a"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "99f311c722e56564bff9dedb3c7f441287222543bb4f785d9591584a89d131fe",
+      "outputTokenIdsHash": "b0a6ebfd362ce04a8e699fa46463eb45369cca829492048306fd7b6c0b4ce957",
+      "completion": "result",
+      "rawText": "奚白尝试扶稳校时壳的现有齿壳。",
+      "error": null,
+      "draftTargetForReviewOnly": "现有齿轮仍然卡住，方禾未能让校时钟恢复走动。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "联合判断为方禾修钟失败、奚白扶稳成功，输出只是扶稳现有齿壳的尝试，既对象失真又不是实际结果。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 123,
+      "exampleId": "newentity:D05.3:41:primitive:2",
+      "component": "D05.3.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "84db7ba3ea20623143d834c0b167dea8e919b866b2c195852ce05400ed4b4ce6",
+      "outputHash": "5cdb0e752614df0a21408c24cfbea284b6829c71c2a47d3c31ee49b9d245038e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64884,
+          "sha256": "a27c38e6b954ead39bb4a08b7b1efa0ddf507eccd4627a6628c3fca268856bd1"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "648e3886b72e528d24f1794a703bb0668f8f8d73f48d735bc857dff671c95cb4",
+      "outputTokenIdsHash": "b0a6ebfd362ce04a8e699fa46463eb45369cca829492048306fd7b6c0b4ce957",
+      "completion": "result",
+      "rawText": "奚白尝试扶稳校时壳的现有齿壳。",
+      "error": null,
+      "draftTargetForReviewOnly": "奚白在调整期间扶稳了校时钟外壳。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "action_result_confusion",
+      "reason": "已有时钟仍卡住事实后，下一事实仍是尝试扶稳齿壳，未表达外壳实际被扶稳的后果。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 124,
+      "exampleId": "newentity:D02.2:60:primitive:2",
+      "component": "D02.2.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "4c0268d88fcf4384866663ff0bc5daea35c6a7de74a28cccbc68a0369ea771b6",
+      "outputHash": "3fe2c1f1775fbe60ec852ce6cdecfaf4ea3ca1161458482b2d3dad51844cf807",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64886,
+          "sha256": "15ea607908f11a4f6f00eba36b18dbb7d06fdd9277712ec760896666d1a52117"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "c2d9ebcf0e532afef6aed1a421b5498b82196c78289d753e6d928a825730799a",
+      "outputTokenIdsHash": "a5547e38e2a74d6d0c710d023e52b843a273cbb075cdde2625c5b96eac69ec64",
+      "completion": "result",
+      "rawText": "向校时钟申请调整。",
+      "error": null,
+      "draftTargetForReviewOnly": "方禾尝试在奚白扶稳校时钟外壳时，用拨针杆调整校时钟的现有齿轮，使指针恢复走动并校准到当前时间。",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "recipient_direction",
+      "reason": "NPC方禾输出向校时钟申请调整，将非人物时钟当作申请接收者，也没有实际调整尝试。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 125,
+      "exampleId": "newentity:D07.1:65:primitive:3",
+      "component": "D07.1.text",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "a4cf0893640980909e83c7cd81dfb7acadf72386a2790fccb8181d1be0b014ea",
+      "outputHash": "8a8d04ac3965c0091b9572a30b8d22016a581ee649f786d20ba8408e0d121101",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64888,
+          "sha256": "828f936cdd6f422cc85d492a15d78a355e5b8dc979d2eb2370ed4fc31c31af4d"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "31100645504e1d03025c216c8ce8ece9b04e5f680a2d1bc3d5847b21aae4ad4b",
+      "outputTokenIdsHash": "8d292f3607a371ce0afacd077c1236b8fec7544bd2729491d4391a8ff706764b",
+      "completion": "result",
+      "rawText": "核对校时钟的指示。",
+      "error": null,
+      "draftTargetForReviewOnly": "与奚白共同检查现有齿轮卡住的原因。",
+      "exactDraftMatch": false,
+      "assistantCategory": "locally_satisfied",
+      "issue": "locally_valid_followup",
+      "reason": "当前校时钟仍停摆且新增检查故障任务，核对其指示是相关且完整的拟行动；仅满足D07局部提议，不证明会发生或与主角关联两道判断。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 126,
+      "exampleId": "newentity:D08.1:71:primitive:2",
+      "component": "D08.1.amount",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "880bb5c475e6f3755ce3bce77510093699ebdaa3aa755c9052ddff06f015929e",
+      "outputHash": "5cdb0e752614df0a21408c24cfbea284b6829c71c2a47d3c31ee49b9d245038e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64890,
+          "sha256": "64a0fd0d2da4edeeeefa53968791aa021e7a641bdabbb7c098d72b47303479cc"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "17686a1dbeadeb7b991c8bcc370b7a8d4e40eb1839f4e832c1aadb1fb254ad30",
+      "outputTokenIdsHash": "b0a6ebfd362ce04a8e699fa46463eb45369cca829492048306fd7b6c0b4ce957",
+      "completion": "result",
+      "rawText": "奚白尝试扶稳校时壳的现有齿壳。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "D08.1时间数值输出奚白扶稳齿壳的尝试句，非法值必须拒绝，不能视为一段时长。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    },
+    {
+      "index": 127,
+      "exampleId": "newentity:D08.2:72:primitive:3",
+      "component": "D08.2.time.amount",
+      "sourceGroup": "short-20261109:newentity",
+      "split": "test",
+      "inputHash": "413add1c31733d189ba85a63470eb46c5176be2edc56ec7d2b1ca91bf886def8",
+      "outputHash": "cfeba72371e0e5cf452706ba80e1da95d99dfd9c2e98f829e3ff5a810af0206e",
+      "rawCheckpoint": {
+        "checkpointRef": {
+          "sequence": 64892,
+          "sha256": "5c99ca6d5859e7188ad6a68875e24a7ef113b0d455f5ff908ce92dd49f30c19e"
+        },
+        "name": "generation_output"
+      },
+      "inputTokenIdsHash": "2208e6830f4cf4327a7fe0420c54ca3d14c5a99663f64d539a2ccadd10682c33",
+      "outputTokenIdsHash": "3f07f1546e965ad1492b959f6019c84013c7b84bc6862592758631774068fe31",
+      "completion": "result",
+      "rawText": "在调整齿轮期间扶稳校时钟。",
+      "error": null,
+      "draftTargetForReviewOnly": "1",
+      "exactDraftMatch": false,
+      "assistantCategory": "clearly_unsatisfied",
+      "issue": "time_amount_type",
+      "reason": "分段时间量输出扶稳钟的动作句，无整数值；生成完成不等于时间组件完成。",
+      "humanReview": "pending",
+      "sourceStatus": "unverified",
+      "semanticAcceptance": false
+    }
+  ]
+}

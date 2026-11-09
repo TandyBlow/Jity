@@ -1,0 +1,29 @@
+--- a/experiments/world-components-logic/short_heads_lifecycle.py
++++ b/experiments/world-components-logic/short_heads_lifecycle.py
+@@ -45,11 +45,15 @@
+ 
+     def time(self, prefix, payload):
+         boundary = self.scalar(prefix + '.boundary', payload, ('elapsed', 'instant'))
+-        # The boundary implies the deterministic instant representation. For
+-        # elapsed, both amount and unit are independent semantic predictions.
++        # Instant is a deterministic wire form. Elapsed choices are dependent:
++        # the amount model must see the actual selected boundary and unit.
+         if boundary == 'instant':
+             return {'boundary': 'instant', 'duration': {'amount': 0, 'unit': 'second'}}
+-        raw = self.scalar(prefix + '.amount', payload)
++        unit = self.scalar(prefix + '.unit',
++            dict(payload, timeChoice={'boundary': boundary}),
++            ('second', 'minute', 'hour', 'day', 'month', 'year'))
++        raw = self.scalar(prefix + '.amount',
++            dict(payload, timeChoice={'boundary': boundary, 'unit': unit}))
+         if type(raw) is int:
+             amount = raw
+         elif isinstance(raw, str) and re.fullmatch(r'0|[1-9][0-9]*', raw):
+@@ -58,7 +62,6 @@
+             raise ContractError('time_amount_not_integer')
+         if amount < 0 or amount > 9007199254740991:
+             raise ContractError('time_amount_outside_wire_range')
+-        unit = self.scalar(prefix + '.unit', payload, ('second', 'minute', 'hour', 'day', 'month', 'year'))
+         return {'boundary': boundary, 'duration': {'amount': amount, 'unit': unit}}
+ 
+     def __call__(self, component, payload):

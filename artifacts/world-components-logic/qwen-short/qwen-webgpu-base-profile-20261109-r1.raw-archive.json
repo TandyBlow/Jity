@@ -1,0 +1,49 @@
+{
+  "schema": "jity-local-raw-archive-v1",
+  "runId": "qwen-webgpu-base-profile-20261109-r1",
+  "gitContent": "index_only_large_payloads_local",
+  "gzipMtime": 0,
+  "originalRecordsModified": false,
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.json",
+      "bytes": 347297,
+      "sha256": "ad4b7a88780b1f818d90644cb351f074764b4f50c898b8458725477df4394af9",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.json.gz",
+      "gzipBytes": 103419,
+      "gzipSha256": "5978df177894ae809677a3e25156da43bafef826907bf909c680d957fde852a3",
+      "decompressedByteIdentityVerified": true,
+      "originalRetainedLocally": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.journal.jsonl",
+      "bytes": 19975529,
+      "sha256": "62bd2de51ec69b9d39bbc318e48fda7be896e2cad091c79ba7417a57f50dd6fa",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.journal.jsonl.gz",
+      "gzipBytes": 776104,
+      "gzipSha256": "cf0ca5a18317eedefd94bff36c3b6fa46c6edc9a8f1445e28fed85758d2fda22",
+      "decompressedByteIdentityVerified": true,
+      "originalRetainedLocally": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.webgpu.jsonl",
+      "bytes": 11759331,
+      "sha256": "65417d061ce4235bd50edb86b05bb6dbfd476747755696e5385fae9ef94af788",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.webgpu.jsonl.gz",
+      "gzipBytes": 729382,
+      "gzipSha256": "c80fc7e93ace8042f7eb87648ab32e9dfe1b37263f3132d04b108a77f25adc40",
+      "decompressedByteIdentityVerified": true,
+      "originalRetainedLocally": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.process.log",
+      "bytes": 135,
+      "sha256": "46c687995a164407800a2f6c404e0fc71e43ca0ce8be54ad4926ceeef2d97fd6",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-webgpu-base-profile-20261109-r1.record.process.log.gz",
+      "gzipBytes": 151,
+      "gzipSha256": "9e14d69e20d2f5f177ca20306395e69e260218ef80869f24da761a2e228450ab",
+      "decompressedByteIdentityVerified": true,
+      "originalRetainedLocally": true
+    }
+  ]
+}

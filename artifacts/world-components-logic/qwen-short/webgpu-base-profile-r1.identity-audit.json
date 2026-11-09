@@ -1,0 +1,19 @@
+{
+  "schema": "jity-webgpu-profile-frozen-identity-audit-v1",
+  "runId": "qwen-webgpu-base-profile-20261109-r1",
+  "requestCount": 8,
+  "allRequestModelRuntimeCodeIdentitiesMatchFrozenConfiguration": true,
+  "allPlacementPolicyHashesMatchRegisteredMode": true,
+  "baseTrainingSteps": 0,
+  "trainedExportDisposition": {
+    "effectiveQualification": null,
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-export-20261109-r4.export-record.json",
+    "runId": "qwen-short-time-export-20261109-r4",
+    "sha256": "0a99bf2017e478210b1c12d241721cb2a76b3a64477887ee4975f2a6c18c001a",
+    "status": "failed"
+  },
+  "trainingEffectEvidence": false,
+  "allChecksPassed": true,
+  "auditModelCalls": 0,
+  "planSha256": "8c820efba69439f67954cf94d819e38f0b2896d1bfecef62d0f000d1b7f3b003"
+}

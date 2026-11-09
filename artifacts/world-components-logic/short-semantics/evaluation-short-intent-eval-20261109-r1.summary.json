@@ -1,0 +1,1139 @@
+{
+  "runId": "short-intent-eval-20261109-r1",
+  "registeredCases": 333,
+  "status": "diagnostic_completed",
+  "summary": {
+    "components": {
+      "D01.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D01.1.kind: unconnected_or_untrained_component:D01.1.kind": 4
+        },
+        "semanticPassed": false
+      },
+      "D01.2": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D01.2.parent: unconnected_or_untrained_component:D01.2.parent": 4
+        },
+        "semanticPassed": false
+      },
+      "D01.3": {
+        "registered": 28,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 28,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D01.3": 28
+        },
+        "semanticPassed": false
+      },
+      "D01.4": {
+        "registered": 25,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 25,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D01.4.next: unconnected_or_untrained_component:D01.4.next": 25
+        },
+        "semanticPassed": false
+      },
+      "D01.5": {
+        "registered": 12,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 12,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D01.5": 12
+        },
+        "semanticPassed": false
+      },
+      "D01.6": {
+        "registered": 12,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 12,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D01.6": 12
+        },
+        "semanticPassed": false
+      },
+      "D02.1": {
+        "registered": 12,
+        "result": 12,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 8,
+        "trainedDirect": 12,
+        "trainedDirectResults": 12,
+        "trainedDirectDraftMatches": 8,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D02.2": {
+        "registered": 26,
+        "result": 24,
+        "empty": 0,
+        "incomplete": 2,
+        "draftMatches": 0,
+        "trainedDirect": 26,
+        "trainedDirectResults": 24,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "local_backend:truncated_no_eos": 2
+        },
+        "semanticPassed": false
+      },
+      "D02.3": {
+        "registered": 18,
+        "result": 18,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D02.4": {
+        "registered": 16,
+        "result": 16,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 12,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D02.5": {
+        "registered": 16,
+        "result": 16,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 12,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D04.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:reaction_constraint_budget_or_label": 4
+        },
+        "semanticPassed": false
+      },
+      "D05.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:D05.1.edge:unconnected_or_untrained_component:D05.1.edge": 4
+        },
+        "semanticPassed": false
+      },
+      "D05.2": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:D05.2.label:unconnected_or_untrained_component:D05.2.label": 4
+        },
+        "semanticPassed": false
+      },
+      "D05.3": {
+        "registered": 12,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 12,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D05.3": 12
+        },
+        "semanticPassed": false
+      },
+      "D05.4": {
+        "registered": 6,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 6,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:D05.4.verdict:unconnected_or_untrained_component:D05.4.verdict": 6
+        },
+        "semanticPassed": false
+      },
+      "D05.5": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:D05.5.member:unconnected_or_untrained_component:D05.5.member": 4
+        },
+        "semanticPassed": false
+      },
+      "U1.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:U1.1.change:unconnected_or_untrained_component:U1.1.change": 4
+        },
+        "semanticPassed": false
+      },
+      "D06.P.review": {
+        "registered": 28,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 28,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:D06.P.review.verdict:unconnected_or_untrained_component:D06.P.review.verdict": 28
+        },
+        "semanticPassed": false
+      },
+      "U2.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "U2.1: U2.1.next_op: unconnected_or_untrained_component:U2.1.next_op": 4
+        },
+        "semanticPassed": false
+      },
+      "U2.2": {
+        "registered": 1,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 1,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:U2.2": 1
+        },
+        "semanticPassed": false
+      },
+      "U3.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:U3.1.status:unconnected_or_untrained_component:U3.1.status": 4
+        },
+        "semanticPassed": false
+      },
+      "U4.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "narrow_composite:U4.1.count:unconnected_or_untrained_component:U4.1.count": 4
+        },
+        "semanticPassed": false
+      },
+      "U4.2": {
+        "registered": 2,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 2,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:U4.2": 2
+        },
+        "semanticPassed": false
+      },
+      "D06.P.mapping": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D06.P.mapping: D06.P.mapping.kind: unconnected_or_untrained_component:D06.P.mapping.kind": 4
+        },
+        "semanticPassed": false
+      },
+      "D03.1": {
+        "registered": 4,
+        "result": 4,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 3,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D03.2": {
+        "registered": 8,
+        "result": 8,
+        "empty": 0,
+        "incomplete": 0,
+        "draftMatches": 4,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {},
+        "semanticPassed": false
+      },
+      "D07.1": {
+        "registered": 8,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 8,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D07.1.next: unconnected_or_untrained_component:D07.1.next": 8
+        },
+        "semanticPassed": false
+      },
+      "D07.2": {
+        "registered": 8,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 8,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D07.2": 8
+        },
+        "semanticPassed": false
+      },
+      "D07.3": {
+        "registered": 8,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 8,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:D07.3": 8
+        },
+        "semanticPassed": false
+      },
+      "D08.1": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D08.1.boundary: unconnected_or_untrained_component:D08.1.boundary": 4
+        },
+        "semanticPassed": false
+      },
+      "D08.2": {
+        "registered": 4,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 4,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "D08.2.next_kind: unconnected_or_untrained_component:D08.2.next_kind": 4
+        },
+        "semanticPassed": false
+      },
+      "U5.1": {
+        "registered": 2,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 2,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "U5.1: U5.1.next_op: unconnected_or_untrained_component:U5.1.next_op": 2
+        },
+        "semanticPassed": false
+      },
+      "U5.2": {
+        "registered": 2,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 2,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:U5.2": 2
+        },
+        "semanticPassed": false
+      },
+      "U6.1": {
+        "registered": 2,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 2,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "unconnected_or_untrained_component:U6.1": 2
+        },
+        "semanticPassed": false
+      },
+      "U1.2": {
+        "registered": 1,
+        "result": 0,
+        "empty": 0,
+        "incomplete": 1,
+        "draftMatches": 0,
+        "trainedDirect": 0,
+        "trainedDirectResults": 0,
+        "trainedDirectDraftMatches": 0,
+        "incompleteReasons": {
+          "U1.2: U1.2.container: unconnected_or_untrained_component:U1.2.container": 1
+        },
+        "semanticPassed": false
+      }
+    },
+    "liveCases": [
+      {
+        "caseId": "live:gate:D02.1:22:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:gate:D02.1:22:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:gate:D02.1:55:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:gate:D02.1:55:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:gate:D02.1:58:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:gate:D02.1:58:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:22:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:22:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:56:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:56:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:59:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:waiting:D02.1:59:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:23:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:23:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:60:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:60:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:63:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:jointlift:D02.1:63:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:22:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:22:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:54:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:54:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:57:natural",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      },
+      {
+        "caseId": "live:newentity:D02.1:57:references",
+        "completion": "incomplete",
+        "reason": "fragment needs explicit subject binding",
+        "stages": [
+          {
+            "stage": "D02_D03_D04",
+            "status": "incomplete"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D05",
+            "status": "not_started"
+          },
+          {
+            "reason": "upstream_incomplete",
+            "stage": "D06",
+            "status": "not_started"
+          }
+        ]
+      }
+    ],
+    "semanticQualityApproved": false,
+    "humanReview": "pending",
+    "fullRequest500ms": "unmeasured"
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 1357.4375,
+    "stopReason": null,
+    "wallMs": 894223.8021250814
+  },
+  "frozenEvidenceVerified": true,
+  "currentSourceDrift": [
+    "plan_training.py",
+    "short_evaluation.py",
+    "short_experiment.py",
+    "short_handoff.py",
+    "short_lifecycle.py",
+    "short_training.py"
+  ],
+  "rerunStatus": "new_freeze_required",
+  "formalEvaluationAllowed": false,
+  "fullRequest500ms": "unmeasured",
+  "actualInference": {
+    "primitiveCalls": 911,
+    "encoderForwards": 9066,
+    "generatorForwards": 178,
+    "DModelComputeMs": 372059.08039421774,
+    "providerCallInclusiveMs": 392748.88000031933,
+    "coldLoadMs": 208.08845828287303,
+    "AOfflinePreviewCalls": 0,
+    "AOfflinePreviewMs": 0.0
+  },
+  "liveRepresentationStats": {
+    "natural": {
+      "cases": 12,
+      "result": 0,
+      "incomplete": 12,
+      "prefixWallMs": {
+        "min": 1799.900666,
+        "median": 2962.617625,
+        "max": 5286.61775
+      },
+      "scope": "failed_D02_prefix_only"
+    },
+    "references": {
+      "cases": 12,
+      "result": 0,
+      "incomplete": 12,
+      "prefixWallMs": {
+        "min": 874.23225,
+        "median": 966.0455625,
+        "max": 1961.912041
+      },
+      "scope": "failed_D02_prefix_only"
+    }
+  },
+  "completedAttempts": 333,
+  "unstartedAttempts": 0,
+  "journalRecovery": {
+    "events": 22098,
+    "modelCallsDuringReplay": 0,
+    "partialTailBytes": 0,
+    "readOnlyReplay": true,
+    "sha256": "51e753ee060cfe2b2cbc1c000c41873d0d33ca86e81add23b81a062733b7818c"
+  },
+  "componentPrimitiveCosts": {
+    "D02.1": {
+      "calls": 36,
+      "elapsedMs": 10173.407958587632
+    },
+    "D02.2": {
+      "calls": 50,
+      "elapsedMs": 37970.882495632395
+    },
+    "D02.3.verdict": {
+      "calls": 42,
+      "elapsedMs": 8115.137543994933
+    },
+    "D02.3.role": {
+      "calls": 375,
+      "elapsedMs": 75077.60000298731
+    },
+    "D02.4.check": {
+      "calls": 48,
+      "elapsedMs": 11858.226714422926
+    },
+    "D02.5.check": {
+      "calls": 80,
+      "elapsedMs": 16722.78249799274
+    },
+    "D04.1.next": {
+      "calls": 132,
+      "elapsedMs": 35802.1642412059
+    },
+    "D04.1.text": {
+      "calls": 128,
+      "elapsedMs": 193012.92912941426
+    },
+    "D03.1.relation": {
+      "calls": 12,
+      "elapsedMs": 2346.7346250545233
+    },
+    "D03.2.verdict": {
+      "calls": 8,
+      "elapsedMs": 1669.0147910267115
+    }
+  },
+  "generatorCosts": {
+    "D02.2": {
+      "forwards": 50,
+      "elapsedMs": 37477.16049733572
+    },
+    "D04.1.text": {
+      "forwards": 128,
+      "elapsedMs": 192367.67050274648
+    }
+  },
+  "timingLimits": [
+    "provider inclusive time includes tokenization/loading/logging",
+    "neural measured time excludes small linear heads",
+    "coldLoad is weight/tokenizer construction only; import/hash costs remain in wall",
+    "program/service/C/ready not separately measured; no full-request latency claim"
+  ],
+  "evidence": {
+    "plan": "artifacts/world-components-logic/short-semantics/evaluation-short-intent-eval-20261109-r1.plan.json",
+    "planSha256": "e21193c2322fc8cf4322ce7e4890e15db347f304ca0f58fa5aeaa7fa8e62862a",
+    "record": "artifacts/world-components-logic/short-semantics/evaluation-short-intent-eval-20261109-r1.record.json",
+    "uncompressedRecordSha256": "cc8fcd4cd626a04dbead15be05de4b01d5117480256e18ffda25b110e8f530e0",
+    "journal": "artifacts/world-components-logic/short-semantics/evaluation-short-intent-eval-20261109-r1.record.journal.jsonl",
+    "uncompressedJournalSha256": "51e753ee060cfe2b2cbc1c000c41873d0d33ca86e81add23b81a062733b7818c"
+  }
+}

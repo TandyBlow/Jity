@@ -1,0 +1,34 @@
+{
+  "schema": "jity-local-raw-archive-v1",
+  "runId": "qwen-short-time-20261109-r5",
+  "gitContent": "index_only_large_payloads_local",
+  "files": [
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.json",
+      "bytes": 272064,
+      "sha256": "351744dc604b54fe3550183ce10969a31c1eea1239b30ceeb952920d085447d8",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.json.gz",
+      "gzipBytes": 63256,
+      "gzipSha256": "053926ec0c3361f0d4f1e1417c318d1f7646a3bef5726f90922148bb6eb2b96e",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.journal.jsonl",
+      "bytes": 5483864,
+      "sha256": "9d57a7b815ffdd7a0b57a391ed0ed3628bfd3f71d9fdcd8da5ae1acef25d69d7",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.journal.jsonl.gz",
+      "gzipBytes": 809254,
+      "gzipSha256": "0692eb66c914fffbd48aa2bb5c4b8d5dc90816c6e74912090bd3d7da191c02ef",
+      "decompressedByteIdentityVerified": true
+    },
+    {
+      "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.process.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzipPath": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/qwen-short-time-20261109-r5.record.process.log.gz",
+      "gzipBytes": 20,
+      "gzipSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "decompressedByteIdentityVerified": true
+    }
+  ]
+}

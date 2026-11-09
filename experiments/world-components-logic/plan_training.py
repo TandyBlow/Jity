@@ -290,18 +290,58 @@ def fit_encoded_adapter(torch,model,examples,pad_id,config,checkpoint):
     if not params:raise ValueError('no learned adapter parameters')
     optimizer=torch.optim.AdamW(params,lr=config['learningRate'],weight_decay=config['weightDecay'])
     generator=torch.Generator().manual_seed(config['seed']);order=torch.randperm(len(examples),generator=generator).tolist();losses=[]
-    for step in range(config['steps']):
-        batch=[examples[order[(step*config['batchSize']+j)%len(order)]] for j in range(config['batchSize'])]
-        payload={'step':step+1,'sourceGroups':[e['sourceGroup'] for e in batch],'startedMonotonicNs':time.monotonic_ns()}
-        started=payload['startedMonotonicNs']
-        if config.get('allowGroupedExamples'):payload['annotationIds']=[e['annotationId'] for e in batch]
-        checkpoint('training_step_started',payload)
-        optimizer.zero_grad(set_to_none=True);output=model(**collate(torch,batch,pad_id));loss=output.loss
-        if not torch.isfinite(loss):raise ValueError('nonfinite training loss')
-        loss.backward();norm=torch.nn.utils.clip_grad_norm_(params,config['maxGradNorm'])
-        if not torch.isfinite(norm):raise ValueError('nonfinite adapter gradient')
-        optimizer.step();value=float(loss.detach());losses.append(value)
-        checkpoint('training_step_settled',{'step':step+1,'loss':value,'gradientNorm':float(norm),'elapsedThroughUpdateMs':(time.monotonic_ns()-started)/1e6})
+    schedule=config.get('exampleSchedule')
+    if schedule is not None:
+        if not config.get('allowGroupedExamples') or len(schedule)!=config['steps']*config['batchSize']:
+            raise ValueError('invalid explicit grouped training schedule')
+        lookup={e['annotationId']:e for e in examples}
+        if any(identity not in lookup for identity in schedule):raise ValueError('unknown scheduled training annotation')
+    microbatch=config.get('microbatchSize',config['batchSize'])
+    if type(microbatch) is not int or not 1<=microbatch<=config['batchSize']:raise ValueError('invalid training microbatch size')
+    checkpointed=config.get('gradientCheckpointing',False);dropouts=[];old_cache=None
+    if checkpointed:
+        if config.get('gradientCheckpointingReentrant') is not False or config.get('trainingDropout')!=0.0:
+            raise ValueError('checkpointed fitting requires non-reentrant gradients and explicitly disabled dropout')
+        for name,module in model.named_modules():
+            if isinstance(module,torch.nn.Dropout):dropouts.append((module,'p',module.p,name));module.p=0.0
+            value=getattr(module,'dropout',None)
+            if type(value) in (int,float):dropouts.append((module,'dropout',value,name));module.dropout=0.0
+        old_cache=getattr(model.config,'use_cache',None)
+        model.config.use_cache=False
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
+        model.train()
+        checkpoint('gradient_checkpointing_configured',{'useReentrant':False,'modelTraining':model.training,
+          'dropout':0.0,'disabledDropoutFields':[{'module':name,'field':field,'original':value} for _,field,value,name in dropouts],
+          'microbatchSize':microbatch,'effectiveBatchSize':config['batchSize'],'lossWeighting':'valid_target_tokens'})
+    try:
+        for step in range(config['steps']):
+            batch=([lookup[identity] for identity in schedule[step*config['batchSize']:(step+1)*config['batchSize']]] if schedule is not None else
+                   [examples[order[(step*config['batchSize']+j)%len(order)]] for j in range(config['batchSize'])])
+            payload={'step':step+1,'sourceGroups':[e['sourceGroup'] for e in batch],'startedMonotonicNs':time.monotonic_ns()}
+            started=payload['startedMonotonicNs']
+            if config.get('allowGroupedExamples'):payload['annotationIds']=[e['annotationId'] for e in batch]
+            checkpoint('training_step_started',payload)
+            optimizer.zero_grad(set_to_none=True);value=0.0
+            token_count=sum(sum(token!=-100 for token in e['labels']) for e in batch)
+            if token_count<=0:raise ValueError('training batch has no supervised target tokens')
+            for offset in range(0,len(batch),microbatch):
+                part=batch[offset:offset+microbatch]
+                fraction=sum(sum(token!=-100 for token in e['labels']) for e in part)/token_count
+                if microbatch<len(batch):checkpoint('training_microbatch_started',{'step':step+1,'index':offset//microbatch,
+                  'annotationIds':[e.get('annotationId') for e in part],'targetTokenWeight':fraction})
+                output=model(**collate(torch,part,pad_id));loss=output.loss*fraction
+                if not torch.isfinite(loss):raise ValueError('nonfinite training loss')
+                value+=float(loss.detach());loss.backward();del output,loss
+            norm=torch.nn.utils.clip_grad_norm_(params,config['maxGradNorm'])
+            if not torch.isfinite(norm):raise ValueError('nonfinite adapter gradient')
+            optimizer.step();losses.append(value)
+            checkpoint('training_step_settled',{'step':step+1,'loss':value,'gradientNorm':float(norm),'elapsedThroughUpdateMs':(time.monotonic_ns()-started)/1e6})
+    finally:
+        if checkpointed:
+            model.gradient_checkpointing_disable()
+            for module,field,value,_ in dropouts:setattr(module,field,value)
+            if old_cache is not None:model.config.use_cache=old_cache
+        model.eval()
     return losses
 
 

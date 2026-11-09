@@ -1,0 +1,152 @@
+{
+  "scope": "actual_decoder_and_scheduler_engineering_only",
+  "semanticEvidence": false,
+  "realModelCalls": 0,
+  "fullBrowserChain": false,
+  "passed": true,
+  "checks": [
+    {
+      "id": "D02-multifragment-action",
+      "task": "action",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D02-explicit-skip",
+      "task": "action",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D03-target-set",
+      "task": "targets",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D03-completed-empty-set",
+      "task": "targets",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D04-reaction-text",
+      "task": "reaction",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D05-member-results",
+      "task": "results",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-six-stage-batch",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D07-continue",
+      "task": "continuation",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D07-completed-handback",
+      "task": "continuation",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D08-time",
+      "task": "time",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D08-point-plan",
+      "task": "pointPlan",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "reject-incomplete-envelope-as-action",
+      "task": "action",
+      "passed": true,
+      "outcome": "rejected_invalid_shape",
+      "reason": "act action must carry kind and text"
+    },
+    {
+      "id": "reject-target-dice-from-model",
+      "task": "targets",
+      "passed": true,
+      "outcome": "rejected_invalid_shape",
+      "reason": "target keys"
+    },
+    {
+      "id": "reject-update-wrong-mode",
+      "task": "updates",
+      "passed": true,
+      "outcome": "rejected_invalid_shape",
+      "reason": "split-mode updates must be a single call, not an array"
+    },
+    {
+      "id": "D06-split-position",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-split-appearance",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-split-tasks",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-split-subtasks",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-split-personality",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "D06-split-sanity",
+      "task": "updates",
+      "passed": true,
+      "outcome": "accepted_exact_value"
+    },
+    {
+      "id": "scheduler-six-stage-consumption",
+      "passed": true,
+      "outcome": "exact_candidate_match"
+    },
+    {
+      "id": "scheduler-order-rejection",
+      "passed": true,
+      "outcome": "rejected"
+    }
+  ],
+  "sourceIdentity": {
+    "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+    "frontend/src/lib/world-engine/runtime/structured-output.ts": "3ae9450e3f133a683a1bb0f598ebfb9a7f9bdc4750c346aeb9f82215b510bd87",
+    "design/world-protocol/v2/api-contract.json": "97a7aa1e8f32a42d0bfb56c5628bc3645b8cd5cfd73a26864501717fb19bb7b1"
+  },
+  "environment": {
+    "node": "v26.3.0",
+    "typescript": "5.9.3"
+  },
+  "browserArtifact": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/short-semantics-20261109/protocol-probe-final.html"
+}

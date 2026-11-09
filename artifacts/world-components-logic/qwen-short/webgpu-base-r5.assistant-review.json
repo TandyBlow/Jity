@@ -1,0 +1,278 @@
+{
+  "schema": "jity-qwen-webgpu-assistant-review-v1",
+  "runId": "qwen-webgpu-base-20261109-r5",
+  "technicalAudit": {
+    "path": "/Users/davidz/Documents/GitHub/Jity-D-short-semantics/artifacts/world-components-logic/qwen-short/webgpu-base-r5.technical-audit.json",
+    "sha256": "929635d1a4db5253869979ae8fa9fb4d057d85110068a0eef0308ae1851a7223"
+  },
+  "allFullInputsRead": true,
+  "reviewer": "assistant_independent_review",
+  "humanReviewed": false,
+  "sourceVerified": false,
+  "comparison": "semantic task and actual complete input; not exact-match grading",
+  "counts": {
+    "fails": 9,
+    "needs_review": 1,
+    "locally_adequate": 2,
+    "input_contract_gap": 2
+  },
+  "semanticQualityApproved": false,
+  "cases": [
+    {
+      "caseId": "diagnostic:gate:D01.3:3",
+      "exampleId": "gate:D01.3:3",
+      "component": "D01.3",
+      "inputHash": "eaecccac142d90305ea1ebaa14d65ccf006723ebeeb98e6f17b24f5197244ca7",
+      "rawText": "宋黎站在防潮闸控制室的工作台面，手中握着闸门手柄，神情专注。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "宋黎站在防潮闸控制室的工作台面，手中握着闸门手柄，神情专注。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "wrong_entity",
+        "wrong_output_role"
+      ],
+      "reason": "entityId 是控制室，输出却描述宋黎站立、持手柄和神情；人物还被放在工作台面，既未给控制室外貌，也增添未经当前草稿支持的动作状态。"
+    },
+    {
+      "caseId": "diagnostic:gate:D01.5:16",
+      "exampleId": "gate:D01.5:16",
+      "component": "D01.5",
+      "inputHash": "6eb14fcb1cdce37b59afaef4473c0e7919703abc54e6429364500e48b123eada",
+      "rawText": "宋黎需要确保防潮闸保持关闭。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "宋黎需要确保防潮闸保持关闭。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "task_as_personality"
+      ],
+      "reason": "任务是保持关闭，但该头要求人物的行动偏好；输出只是重述目标，不是个性。"
+    },
+    {
+      "caseId": "diagnostic:gate:U2.2:48",
+      "exampleId": "gate:U2.2:48",
+      "component": "U2.2",
+      "inputHash": "1287acf4323cc95ad53f5477ccb3d002a8f24518838ae446ddf687157554427b",
+      "rawText": "宋黎和易安在闸门手柄上尝试插入锁紧销，但未能完全插入，导致闸门手柄卡阻，防潮闸仍无法确认锁定状态。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "宋黎和易安在闸门手柄上尝试插入锁紧销，但未能完全插入，导致闸门手柄卡阻，防潮闸仍无法确认锁定状态。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "wrong_output_role",
+        "actor_direction"
+      ],
+      "reason": "operation 指向 tool 的局部外貌；输出重述结算经过，且将只负责向外扳手柄的易安说成共同插销，改变冻结角色。"
+    },
+    {
+      "caseId": "diagnostic:gate:U4.2:53",
+      "exampleId": "gate:U4.2:53",
+      "component": "U4.2",
+      "inputHash": "f71495dffe0ea4b253def2c7267ae925c71ef1dd80430292461004c595a99fa7",
+      "rawText": "- 将闸门手柄完全向外扳开。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "- 将闸门手柄完全向外扳开。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "opposite_parent_goal"
+      ],
+      "reason": "owner=a 的父任务是保持闸关闭，生成把手柄向外扳开，是 b 的相反目标，不利于所给父任务。"
+    },
+    {
+      "caseId": "diagnostic:waiting:U5.2:54",
+      "exampleId": "waiting:U5.2:54",
+      "component": "U5.2",
+      "inputHash": "4c59c3d95f0bbffdf9367e142ddb1a9e5602906d01e62237e953063260230e2c",
+      "rawText": "行动偏好变化：Jity 识别到当前情境中，陶青和顾芒已经完成了他们的任务，并且任澈也完成了他的任务。因此，Jity 的行动偏好已经调整为专注于确认稳定观测期的结束以及确认室内人员的安静行为。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": "case_deadline_late_primitive_output",
+        "status": "incomplete",
+        "value": null
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "wrong_subject",
+        "current_task_as_personality"
+      ],
+      "reason": "要求给 off/任澈增加一条行动偏好；输出改写为 Jity 的识别和当下确认任务，没有描述任澈的偏好变化。该原文同时因 case 超时未采纳。"
+    },
+    {
+      "caseId": "diagnostic:gate:D01.1:1:primitive:2",
+      "exampleId": "gate:D01.1:1:primitive:2",
+      "component": "D01.1.name",
+      "inputHash": "f9469f91d98f79c7cee9c0921ec1db363a29a8f57ca562c688cc6fdc548ffd93",
+      "rawText": "防潮闸",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸"
+      },
+      "assistantVerdict": "needs_review",
+      "errorClasses": [
+        "entity_kind_ambiguity"
+      ],
+      "reason": "entityKind=locations 且 brief 的明确地点是控制室/检修道；防潮闸通常是装置而非地点。名称可能作地点借称，单条信息不足以确认；不能只因不等于草稿就判全部命名能力失败。"
+    },
+    {
+      "caseId": "diagnostic:gate:D01.1:1:primitive:4",
+      "exampleId": "gate:D01.1:1:primitive:4",
+      "component": "D01.1.slot_label",
+      "inputHash": "0038dd34e7b2c497b9194aa5e65ac9b8ac41eeb8ccc8343365a0418c84563464",
+      "rawText": "防潮闸控制室",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "防潮闸控制室"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "container_as_slot"
+      ],
+      "reason": "entityName 已是防潮闸控制室，要求该实体内部的槽位名；再次输出整个房间名没有标明局部容纳位置。"
+    },
+    {
+      "caseId": "diagnostic:gate:D01.4:10:primitive:3",
+      "exampleId": "gate:D01.4:10:primitive:3",
+      "component": "D01.4.goal",
+      "inputHash": "2d244653ccc90d7c1d2eaa446f3f5767cc4125e6f6e50afbc19fc09f2999be99",
+      "rawText": "目标：确保防潮闸控制室中的闸门保持关闭状态。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "目标：确保防潮闸控制室中的闸门保持关闭状态。"
+      },
+      "assistantVerdict": "locally_adequate",
+      "errorClasses": [
+        "goal_semantics"
+      ],
+      "reason": "输出虽带“目标：”，但正确给宋黎一个保持闸门关闭的目标，没有冒称已达成；仅此子组件局部满足，不证明初始化整体。"
+    },
+    {
+      "caseId": "diagnostic:gate:D02.2:23:primitive:2",
+      "exampleId": "gate:D02.2:23:primitive:2",
+      "component": "D02.2.text",
+      "inputHash": "426da8e810c861ff46db9d91c0c94e2454cb7bbabf33804203b8a1a26e47fc54",
+      "rawText": "让防潮闸保持关闭。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "让防潮闸保持关闭。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "goal_instead_of_attempt"
+      ],
+      "reason": "只是复述让闸关闭的目的，没有下一条具体尝试、主体或操作；不能替代自主行动意图。"
+    },
+    {
+      "caseId": "diagnostic:gate:D04.1:30:primitive:2",
+      "exampleId": "gate:D04.1:30:primitive:2",
+      "component": "D04.1.text",
+      "inputHash": "1820589992a951c669999d3e6a44c62f20cd13de3c6df83bb1d4954d498d0525",
+      "rawText": "宋黎尝试将锁紧销插入闸门手柄的销孔，但未能成功。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "宋黎尝试将锁紧销插入闸门手柄的销孔，但未能成功。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "wrong_member",
+        "premature_outcome"
+      ],
+      "reason": "memberId=b/易安，要求对其反应形成约束；输出转述 a/宋黎的插销并预断失败，既漏掉易安的约束又提前结算。"
+    },
+    {
+      "caseId": "diagnostic:gate:D05.3:40:primitive:2",
+      "exampleId": "gate:D05.3:40:primitive:2",
+      "component": "D05.3.text",
+      "inputHash": "129c8387f36008c77a62d38d9166dac638c5aca7d630f4fd2a1a81a970116cb6",
+      "rawText": "宋黎成功将锁紧销插入闸门手柄的销孔。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "宋黎成功将锁紧销插入闸门手柄的销孔。"
+      },
+      "assistantVerdict": "fails",
+      "errorClasses": [
+        "partial_to_success"
+      ],
+      "reason": "joint 已给 a:fragment-1=partial、b=not_achieved，输出却断言宋黎成功插入，未保留部分达成的限制，与共同判断不一致。"
+    },
+    {
+      "caseId": "diagnostic:gate:D07.1:65:primitive:3",
+      "exampleId": "gate:D07.1:65:primitive:3",
+      "component": "D07.1.text",
+      "inputHash": "151b190da1b78cdfa1afe96bc82b3e8febad043a2add2593633422f1f9c8a939",
+      "rawText": "拟行动：检查锁紧销卡住的原因。",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "拟行动：检查锁紧销卡住的原因。"
+      },
+      "assistantVerdict": "locally_adequate",
+      "errorClasses": [
+        "proposed_action_semantics"
+      ],
+      "reason": "当前正式状态新增检查卡销原因的 pending 子任务，提议检查原因相符；“拟行动：”前缀不改变语义，但没有证明后续可能性/主角关联判断与自动轮。"
+    },
+    {
+      "caseId": "diagnostic:gate:D08.1:71:primitive:2",
+      "exampleId": "gate:D08.1:71:primitive:2",
+      "component": "D08.1.amount",
+      "inputHash": "d61fae6a804418a79a7ebbfd12b89453d151dc140058806daa08cfcf520852a8",
+      "rawText": "0",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "0"
+      },
+      "assistantVerdict": "input_contract_gap",
+      "errorClasses": [
+        "missing_selected_time_unit_and_boundary"
+      ],
+      "reason": "本冻结 amount 输入没有先选定的 unit/boundary；0 是合法整数，但缺少其量纲/边界无法公平判时间语义，不能把草稿1作为唯一充分真值。需新输入复测。"
+    },
+    {
+      "caseId": "diagnostic:gate:D08.2:72:primitive:3",
+      "exampleId": "gate:D08.2:72:primitive:3",
+      "component": "D08.2.time.amount",
+      "inputHash": "39d5c78bacd14ab21e55e74ef56d2ac5a818b091cd9c6870926904125b456600",
+      "rawText": "0",
+      "browserCompletion": "result",
+      "componentCompletion": {
+        "reason": null,
+        "status": "result",
+        "value": "0"
+      },
+      "assistantVerdict": "input_contract_gap",
+      "errorClasses": [
+        "missing_selected_time_unit_and_boundary"
+      ],
+      "reason": "本冻结分段 amount 只有 proposedKind=normal，没有已经选择的 unit/boundary；0 的数值格式合格，完整时间候选语义仍未获有效输入支持。需新输入复测。"
+    }
+  ]
+}

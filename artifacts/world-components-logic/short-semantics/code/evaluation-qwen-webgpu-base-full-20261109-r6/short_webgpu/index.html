@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jity D · Qwen3 WebGPU 实验</title>
+<body>
+<h1>Jity D · Qwen3 WebGPU 实验</h1>
+<p>此页面只连接本机独立实验。完整输入与原始输出记入实验日志；不写入正式世界。</p>
+<button id="connect">连接实验</button><button id="tokenize" disabled>核对分词</button><button id="load" disabled>加载模型</button><button id="stop" disabled>取消当前生成</button>
+<p id="status" role="status">尚未连接，未加载模型。</p>
+<dl><dt>模型身份</dt><dd id="model">待连接</dd><dt>执行设备</dt><dd id="device">尚未执行</dd></dl>
+<h2>最近结果</h2><pre id="last-result">尚无结果。</pre>
+<h2>最近事件</h2><pre id="events"></pre>
+<script type="module" src="/page.mjs"></script>
+</body></html>
