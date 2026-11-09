@@ -1,0 +1,618 @@
+{
+ "purpose": "narration rows: plumbing run, overfitting expected, no quality claim",
+ "when": "2026-11-09T12:23:43",
+ "host": {
+  "deviceName": "NVIDIA GeForce RTX 4090 D",
+  "torch": "2.5.1+cu124",
+  "cuda": "12.4",
+  "transformers": "4.51.3"
+ },
+ "data": {
+  "path": "rows-xy.jsonl",
+  "sha256": "761036e1d3595c40cca97aec4313f95bc6895a5fa530d1dadbd1a5f0d97018fc",
+  "rows": 20,
+  "trainRows": 18,
+  "holdout": [
+   "row-0010",
+   "row-0017"
+  ]
+ },
+ "base": {
+  "files": {
+   "config.json": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+   "model.safetensors": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+  },
+  "params": 77440384
+ },
+ "lengths": {
+  "maxInput": 1260,
+  "maxTarget": 1128,
+  "meanInput": 667,
+  "meanTarget": 570,
+  "overMaxInput": [],
+  "overMaxTarget": []
+ },
+ "hyper": {
+  "data": "rows-xy.jsonl",
+  "out": "run-narr_rows",
+  "epochs": 40,
+  "lr": 0.0003,
+  "max_input": 1280,
+  "max_target": 1150,
+  "holdout": "row-0010,row-0017",
+  "seed": 20261109,
+  "save_ckpt": true,
+  "weight_decay": 0.01,
+  "repetition_penalty": 1.3,
+  "no_repeat_ngram": 4
+ },
+ "regularisation": {
+  "weightDecay": 0.01,
+  "decayParams": 77418496,
+  "noDecayParams": 21888
+ },
+ "decoding": {
+  "repetitionPenalty": 1.3,
+  "noRepeatNgramSize": 4,
+  "eosTokenId": 1
+ },
+ "bestHoldout": {
+  "epoch": 7,
+  "holdoutLossTF": 3.6936
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "loss": 4.7934,
+   "trainLossTF": 3.8619,
+   "holdoutLossTF": 4.136,
+   "elapsedSec": 2.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 2,
+   "loss": 3.9526,
+   "trainLossTF": 3.4744,
+   "holdoutLossTF": 3.9499,
+   "elapsedSec": 4.0,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 3,
+   "loss": 3.6399,
+   "trainLossTF": 3.206,
+   "holdoutLossTF": 3.7964,
+   "elapsedSec": 5.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 4,
+   "loss": 3.3842,
+   "trainLossTF": 2.9483,
+   "holdoutLossTF": 3.7333,
+   "elapsedSec": 6.9,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 5,
+   "loss": 3.161,
+   "trainLossTF": 2.7623,
+   "holdoutLossTF": 3.711,
+   "elapsedSec": 8.4,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 6,
+   "loss": 3.0039,
+   "trainLossTF": 2.6279,
+   "holdoutLossTF": 3.7147,
+   "elapsedSec": 9.7,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 7,
+   "loss": 2.8504,
+   "trainLossTF": 2.4641,
+   "holdoutLossTF": 3.6936,
+   "elapsedSec": 11.2,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 8,
+   "loss": 2.7336,
+   "trainLossTF": 2.3108,
+   "holdoutLossTF": 3.6952,
+   "elapsedSec": 12.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 9,
+   "loss": 2.5678,
+   "trainLossTF": 2.1567,
+   "holdoutLossTF": 3.7597,
+   "elapsedSec": 13.9,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 10,
+   "loss": 2.4547,
+   "trainLossTF": 2.0478,
+   "holdoutLossTF": 3.7836,
+   "elapsedSec": 15.2,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 11,
+   "loss": 2.3628,
+   "trainLossTF": 1.9137,
+   "holdoutLossTF": 3.7931,
+   "elapsedSec": 16.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 12,
+   "loss": 2.2513,
+   "trainLossTF": 1.8323,
+   "holdoutLossTF": 3.9385,
+   "elapsedSec": 17.8,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 13,
+   "loss": 2.1581,
+   "trainLossTF": 1.6865,
+   "holdoutLossTF": 4.0007,
+   "elapsedSec": 19.2,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 14,
+   "loss": 2.0495,
+   "trainLossTF": 1.5647,
+   "holdoutLossTF": 4.0759,
+   "elapsedSec": 20.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 15,
+   "loss": 1.9478,
+   "trainLossTF": 1.4622,
+   "holdoutLossTF": 4.1204,
+   "elapsedSec": 21.8,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 16,
+   "loss": 1.8604,
+   "trainLossTF": 1.3638,
+   "holdoutLossTF": 4.0797,
+   "elapsedSec": 23.1,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 17,
+   "loss": 1.7879,
+   "trainLossTF": 1.256,
+   "holdoutLossTF": 4.3402,
+   "elapsedSec": 24.5,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 18,
+   "loss": 1.6993,
+   "trainLossTF": 1.2573,
+   "holdoutLossTF": 4.4647,
+   "elapsedSec": 25.8,
+   "peakAllocatedMb": 4110
+  },
+  {
+   "epoch": 19,
+   "loss": 1.6112,
+   "trainLossTF": 1.0997,
+   "holdoutLossTF": 4.4828,
+   "elapsedSec": 27.1,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 20,
+   "loss": 1.5585,
+   "trainLossTF": 1.0809,
+   "holdoutLossTF": 4.4839,
+   "elapsedSec": 28.5,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 21,
+   "loss": 1.5058,
+   "trainLossTF": 0.9726,
+   "holdoutLossTF": 4.4643,
+   "elapsedSec": 29.8,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 22,
+   "loss": 1.451,
+   "trainLossTF": 0.9302,
+   "holdoutLossTF": 4.5911,
+   "elapsedSec": 31.1,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 23,
+   "loss": 1.3476,
+   "trainLossTF": 0.8713,
+   "holdoutLossTF": 4.6454,
+   "elapsedSec": 32.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 24,
+   "loss": 1.3088,
+   "trainLossTF": 0.7849,
+   "holdoutLossTF": 4.7615,
+   "elapsedSec": 33.8,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 25,
+   "loss": 1.2505,
+   "trainLossTF": 0.7484,
+   "holdoutLossTF": 4.9489,
+   "elapsedSec": 35.1,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 26,
+   "loss": 1.1946,
+   "trainLossTF": 0.7205,
+   "holdoutLossTF": 5.0499,
+   "elapsedSec": 36.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 27,
+   "loss": 1.1418,
+   "trainLossTF": 0.669,
+   "holdoutLossTF": 4.8536,
+   "elapsedSec": 37.7,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 28,
+   "loss": 1.1085,
+   "trainLossTF": 0.6223,
+   "holdoutLossTF": 5.0799,
+   "elapsedSec": 39.1,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 29,
+   "loss": 1.0693,
+   "trainLossTF": 0.5997,
+   "holdoutLossTF": 5.0472,
+   "elapsedSec": 40.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 30,
+   "loss": 1.0241,
+   "trainLossTF": 0.5604,
+   "holdoutLossTF": 5.2124,
+   "elapsedSec": 41.7,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 31,
+   "loss": 0.9832,
+   "trainLossTF": 0.5068,
+   "holdoutLossTF": 5.1744,
+   "elapsedSec": 43.1,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 32,
+   "loss": 0.94,
+   "trainLossTF": 0.5246,
+   "holdoutLossTF": 5.4071,
+   "elapsedSec": 44.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 33,
+   "loss": 0.8986,
+   "trainLossTF": 0.4534,
+   "holdoutLossTF": 5.6861,
+   "elapsedSec": 45.7,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 34,
+   "loss": 0.8955,
+   "trainLossTF": 0.4627,
+   "holdoutLossTF": 5.3861,
+   "elapsedSec": 47.0,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 35,
+   "loss": 0.8403,
+   "trainLossTF": 0.4204,
+   "holdoutLossTF": 5.7518,
+   "elapsedSec": 48.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 36,
+   "loss": 0.7986,
+   "trainLossTF": 0.3956,
+   "holdoutLossTF": 5.6123,
+   "elapsedSec": 49.7,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 37,
+   "loss": 0.7823,
+   "trainLossTF": 0.367,
+   "holdoutLossTF": 6.0426,
+   "elapsedSec": 51.0,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 38,
+   "loss": 0.7514,
+   "trainLossTF": 0.3533,
+   "holdoutLossTF": 6.1147,
+   "elapsedSec": 52.4,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 39,
+   "loss": 0.707,
+   "trainLossTF": 0.3177,
+   "holdoutLossTF": 6.0959,
+   "elapsedSec": 53.7,
+   "peakAllocatedMb": 4113
+  },
+  {
+   "epoch": 40,
+   "loss": 0.664,
+   "trainLossTF": 0.3089,
+   "holdoutLossTF": 6.4439,
+   "elapsedSec": 55.0,
+   "peakAllocatedMb": 4113
+  }
+ ],
+ "splitLoss": {
+  "trainPerRow": [
+   {
+    "id": "row-0007",
+    "loss": 0.2842,
+    "tokens": 560
+   },
+   {
+    "id": "row-0014",
+    "loss": 0.1972,
+    "tokens": 484
+   },
+   {
+    "id": "row-0019",
+    "loss": 0.0953,
+    "tokens": 412
+   },
+   {
+    "id": "row-scene-only",
+    "loss": 0.0044,
+    "tokens": 261
+   },
+   {
+    "id": "row-0012",
+    "loss": 0.1783,
+    "tokens": 505
+   },
+   {
+    "id": "row-0011",
+    "loss": 0.2593,
+    "tokens": 548
+   },
+   {
+    "id": "row-0013",
+    "loss": 0.1467,
+    "tokens": 482
+   },
+   {
+    "id": "row-0016",
+    "loss": 0.1413,
+    "tokens": 445
+   },
+   {
+    "id": "row-0002",
+    "loss": 0.7476,
+    "tokens": 1128
+   },
+   {
+    "id": "row-0005",
+    "loss": 0.2753,
+    "tokens": 643
+   },
+   {
+    "id": "row-0006",
+    "loss": 0.2036,
+    "tokens": 550
+   },
+   {
+    "id": "row-0018",
+    "loss": 0.1787,
+    "tokens": 526
+   },
+   {
+    "id": "row-0020",
+    "loss": 0.1778,
+    "tokens": 510
+   },
+   {
+    "id": "row-0015",
+    "loss": 0.1811,
+    "tokens": 479
+   },
+   {
+    "id": "row-0009",
+    "loss": 0.2127,
+    "tokens": 584
+   },
+   {
+    "id": "row-0003",
+    "loss": 0.7052,
+    "tokens": 1057
+   },
+   {
+    "id": "row-0008",
+    "loss": 0.1069,
+    "tokens": 383
+   },
+   {
+    "id": "row-0004",
+    "loss": 0.269,
+    "tokens": 565
+   }
+  ],
+  "holdoutPerRow": [
+   {
+    "id": "row-0010",
+    "loss": 6.5972,
+    "tokens": 749
+   },
+   {
+    "id": "row-0017",
+    "loss": 6.2272,
+    "tokens": 530
+   }
+  ]
+ },
+ "eosProbe": [
+  {
+   "id": "row-0010",
+   "pEos": 6.1e-05,
+   "topTokens": [
+    "「",
+    "",
+    "「"
+   ],
+   "topProbs": [
+    0.8496,
+    0.142,
+    0.0009
+   ]
+  },
+  {
+   "id": "row-0017",
+   "pEos": 0.097718,
+   "topTokens": [
+    "「",
+    "",
+    "</s>"
+   ],
+   "topProbs": [
+    0.6179,
+    0.1654,
+    0.0977
+   ]
+  },
+  {
+   "id": "row-0007",
+   "pEos": 0.177523,
+   "topTokens": [
+    "",
+    "</s>",
+    "「"
+   ],
+   "topProbs": [
+    0.7953,
+    0.1775,
+    0.0096
+   ]
+  },
+  {
+   "id": "row-0014",
+   "pEos": 0.01001,
+   "topTokens": [
+    "",
+    "「",
+    "方"
+   ],
+   "topProbs": [
+    0.8939,
+    0.0773,
+    0.0114
+   ]
+  }
+ ],
+ "samples": [
+  {
+   "id": "row-0007",
+   "weights": "best(epoch 7)",
+   "trainedOnThisRow": true,
+   "targetChars": 745,
+   "target": "缩微胶片室的灯要按两下才亮。\n\n第一次不亮，第二次才慢慢起来，白得刺眼。\n\n沈叙白把那卷胶片从盒子里取出来，放在托盘上，手停在半空，回头看了一眼。\n\n叶既明站在窗边，钥匙串捏在手里，铜片碰在一起，很轻地响。\n\n「可以吗。」\n\n叶既明没有马上回答。\n\n这台机器是他父亲留下的。从前有人来借，他都说坏了。\n\n「……放吧。」\n\n沈叙白把胶片推进去。\n\n机器嗡了一声。白墙上浮出一片灰白的影子，接着是一行一行的字。\n\n「就是这一期。」\n\n「就是这一期。」沈叙白盯着墙，「十年前的十月十八日。」\n\n字在墙上慢慢移过去，一行接一行。他忽然伸手按住滚轴。\n\n「在这儿。」\n\n叶既明走过来，绕过他的肩膀看。\n\n那行字不大，被水洇过，还能认出半句。\n\n两个人谁都没有说话。\n\n过了一会儿，叶既明抬手敲了敲机器顶上那块盖子。\n\n「盖子换了。」\n\n「换了。」他说，「胶布粘着的那块早该换了。上回卡住，胶片差点扯坏。」\n\n「你怎么知道卡住过。」\n\n「我来看过。」叶既明说，「你不在的时候。」\n\n沈叙白转过头。\n\n「你不是不肯让人碰。」\n\n「是不肯让人碰。」叶既明把钥匙串挂回墙上的钉子，「没说不让我自己碰。」\n\n沈叙白笑了一下。\n\n「那这次怎么肯了。」\n\n叶既明没有立刻答。他走到门口，手放在开关上。\n\n「你哥的案子，我听过。」他说，「当年也是听别人说的。」\n\n「听谁说的。」\n\n「记不清了。」他按灭了半边灯，「所以我不爱听别人说。」\n\n室里暗了一半。白墙上的字还在。\n\n「以后要用，跟我说一声。」他在门口停下，「钥匙在这儿，别自己开锁。」\n\n「你以前可不肯。」\n\n「以前是以前。」\n\n门合上了。\n\n沈叙白站在那片灰白的光里，低头把滚轴又往前推了一点。字一行一行地走，走得很慢。\n\n他把手从滚轴上松开，让它自己走。",
+   "outputChars": 143,
+   "output": "缩微胶片室的灯光响亮。 「我知道。」叶既明把手里的纸条推开,按卷号码在铁架上,用一根木簪别着,握住两下。他抬头看了一眼那张页子,伸手摸出一张白发黑的手。「你怎么不肯让人碰?」她说:「这台机器是他的父亲留下的那只铜皮匣子,拿起绳索去擦洗干净的地方。从前没人来接话了。」沈叙白没有马上答应。",
+   "newTokens": 122,
+   "stopReason": "eos",
+   "targetCoverage4": 0.031,
+   "seconds": 1.06
+  },
+  {
+   "id": "row-0010",
+   "weights": "best(epoch 7)",
+   "trainedOnThisRow": false,
+   "targetChars": 986,
+   "target": "古籍库的门有两层。\n\n外边那扇是木头的，推开时有旧木头的响声。里面那扇包着铁皮，钥匙插进去要拧两下。\n\n门轴上有一点锈。推的时候，响声很长。\n\n秦望舒站在门口，没有进去。\n\n门框上贴的封条被撕开了一角。纸边还很新，断口的地方翘着。\n\n「先进去。」柏暮在她身后说。\n\n「等等。」\n\n她伸手摸了摸那道口子。\n\n「这封条是谁撕的。」\n\n「不知道。」柏暮说，「上周我来的时候还是好的。」\n\n「上周你在库里待了多久。」\n\n「一整个下午。」\n\n秦望舒没有再问。她推门进去。\n\n库里没有窗。灯是老式的，按下去要等几秒才亮，亮起来的头两下会闪。\n\n铁架上按年份摆着一叠叠出入签字，用绳扎着，扎得很紧。\n\n柏暮抽出最上面那一叠，一页一页往下翻。\n\n「都在。」\n\n「都签了。」\n\n「这三年都签了。」他把纸摊在桌上，用手指顺着一行行划下去，「再往前的……」\n\n他停住。\n\n「怎么了。」\n\n「少了半年。」\n\n秦望舒走过去看。日期从某一年十月忽然跳到下一年四月，中间什么都没有。绳子还勒在上面，没有散过的痕迹。\n\n「少的半年是哪半年。」\n\n「十年前。十月往后。」\n\n两个人都没有说话。\n\n库里的灯管闪了一下。\n\n秦望舒摘下眼镜，用衣角擦镜片。这副本来是她父亲的，圆框，上个月在楼梯上摔了一跤，镜架断了。她换了一副黑框的，还不太习惯，鼻梁上总有印子。\n\n「你父亲那副，还没修。」\n\n「修不好了。」她把新眼镜戴回去，鼻梁上又压出那道印子，「断在正中间。」\n\n柏暮看了她一会儿。\n\n「你父亲当年管着这里的钥匙。」\n\n「两把里的一把。」秦望舒说，「另一把在他搭档手里。」\n\n「那现在呢。」\n\n「不知道。」她说，「他一直没提过。」\n\n柏暮低头又把那叠纸翻了一遍，翻了两次。\n\n「我先去找那半年的。」秦望舒从口袋里摸出一个小本子，翻开，写到一半停住，又往后面翻了两页，才找到空白处。\n\n「你本子上记的东西真多。」\n\n「记性不好。」她说，「不写下来就忘了。」\n\n「忘了也好。」\n\n「那可不行。」\n\n她合上本子，抬眼看他。\n\n「有些人就指望我们忘。」\n\n柏暮没有接话。他把那叠出入签字重新扎好，绳结打得比原来紧了一点。\n\n「那半年的，我跟你一起找。」\n\n「你不是说少的就是少的。」\n\n「少的就是少的。」他说，「可少在哪儿，得有人指出来。」\n\n秦望舒把小本子收回口袋，又摸了摸门框上那道撕开的口子。\n\n纸边还是新的。",
+   "outputChars": 69,
+   "output": "古籍库的钥匙由两人分管。 「你知道?」她把手里的纸条放进桌上,拿起一张张旧账。」他看了一眼那副黑框眼镜的时候就觉得很轻了。「我记不清什么」",
+   "newTokens": 59,
+   "stopReason": "eos",
+   "targetCoverage4": 0.001,
+   "seconds": 0.49
+  },
+  {
+   "id": "row-0017",
+   "weights": "best(epoch 7)",
+   "trainedOnThisRow": false,
+   "targetChars": 725,
+   "target": "配电间里有一股淡淡的焦味。\n\n韩暮把总闸拉下来，又推上去。灯闪了两下，稳住了。\n\n「还是老样子。」\n\n叶照站在门口，没进来。\n\n「哪儿老样子。」\n\n「合闸的时候手会麻一下。」韩暮甩了甩右手，「一直这样。」\n\n「上回你说不麻。」\n\n「上回我没说真话。」\n\n叶照走进来，凑近看那块配电板。板上的漆掉了一半，露出底下的铁。\n\n「这块板该换了。」\n\n「报过三次。」韩暮说，「都批不下来。」\n\n「写清楚点。」\n\n「写清楚了。」他把手伸出来，手背上红了一块，「这回我自己写。」\n\n叶照看了一眼他的手背。\n\n「烫的？」\n\n「闸一合，火就出来了。」韩暮说，「不大，一冒就灭。可它冒了。」\n\n「这不该冒。」\n\n「我知道不该冒。」\n\n叶照抬头，把整个配电间看了一圈。门后挂着副绝缘手套，他伸手去拿，套上，捏了捏指头。\n\n「这手套破了。」\n\n「破了一年。」\n\n「谁用的。」\n\n「没人用。」韩暮说，「挂在那儿，谁看都觉得有。」\n\n叶照把手套摘下来，摊在手上给他看那个洞。指头的地方磨穿，边缘硬了。\n\n「十年前也挂在这儿？」\n\n韩暮没有立刻回答。\n\n「挂着。」\n\n「那天晚上，有人戴过它吗。」\n\n「不记得了。」\n\n「真不记得，还是不想说。」\n\n韩暮把手套从他手里拿过去，挂回门后。\n\n「我十二年前就管这块板。」他说，「那天晚上跳了闸，我下去合。合的时候手也麻了一下。」\n\n「然后呢。」\n\n「然后我回值班室烧水。」他停了一下，「水还没开，就听见外面喊。」\n\n叶照没有说话。\n\n配电板上的灯还亮着，很稳。\n\n「你那时候没回头看。」\n\n「没有。」\n\n「现在想回头吗。」\n\n韩暮把手套重新挂正，让它垂得平一些。\n\n「明天早上，」他说，「我把十年前那张闸表找出来。你要是还在，一起看。」",
+   "outputChars": 186,
+   "output": "配电间的漆掉了一半,空气里有轻微的光味。 韩暮把手背烫红了一块,指头往后磨了一遍。 「我父亲是馆里的人。」韩暮说,「那天晚上在图书馆工作的时候,他用手指关节发黄,脚下踩着一根绳子擦干净,搓开水龙头,捏紧的手肘很小,握住两道钥匙。她拿起一张纸条走过来,伸手按了一下,拍到桌上的那块砖。墙角被雨打湿过,像个旧名字一样闪亮起来。 「你怎么知道?」他说,「这时候有人管什么登记簿」",
+   "newTokens": 151,
+   "stopReason": "eos",
+   "targetCoverage4": 0.015,
+   "seconds": 1.26
+  },
+  {
+   "id": "row-0010",
+   "weights": "finalEpoch",
+   "trainedOnThisRow": false,
+   "targetChars": 986,
+   "target": "古籍库的门有两层。\n\n外边那扇是木头的，推开时有旧木头的响声。里面那扇包着铁皮，钥匙插进去要拧两下。\n\n门轴上有一点锈。推的时候，响声很长。\n\n秦望舒站在门口，没有进去。\n\n门框上贴的封条被撕开了一角。纸边还很新，断口的地方翘着。\n\n「先进去。」柏暮在她身后说。\n\n「等等。」\n\n她伸手摸了摸那道口子。\n\n「这封条是谁撕的。」\n\n「不知道。」柏暮说，「上周我来的时候还是好的。」\n\n「上周你在库里待了多久。」\n\n「一整个下午。」\n\n秦望舒没有再问。她推门进去。\n\n库里没有窗。灯是老式的，按下去要等几秒才亮，亮起来的头两下会闪。\n\n铁架上按年份摆着一叠叠出入签字，用绳扎着，扎得很紧。\n\n柏暮抽出最上面那一叠，一页一页往下翻。\n\n「都在。」\n\n「都签了。」\n\n「这三年都签了。」他把纸摊在桌上，用手指顺着一行行划下去，「再往前的……」\n\n他停住。\n\n「怎么了。」\n\n「少了半年。」\n\n秦望舒走过去看。日期从某一年十月忽然跳到下一年四月，中间什么都没有。绳子还勒在上面，没有散过的痕迹。\n\n「少的半年是哪半年。」\n\n「十年前。十月往后。」\n\n两个人都没有说话。\n\n库里的灯管闪了一下。\n\n秦望舒摘下眼镜，用衣角擦镜片。这副本来是她父亲的，圆框，上个月在楼梯上摔了一跤，镜架断了。她换了一副黑框的，还不太习惯，鼻梁上总有印子。\n\n「你父亲那副，还没修。」\n\n「修不好了。」她把新眼镜戴回去，鼻梁上又压出那道印子，「断在正中间。」\n\n柏暮看了她一会儿。\n\n「你父亲当年管着这里的钥匙。」\n\n「两把里的一把。」秦望舒说，「另一把在他搭档手里。」\n\n「那现在呢。」\n\n「不知道。」她说，「他一直没提过。」\n\n柏暮低头又把那叠纸翻了一遍，翻了两次。\n\n「我先去找那半年的。」秦望舒从口袋里摸出一个小本子，翻开，写到一半停住，又往后面翻了两页，才找到空白处。\n\n「你本子上记的东西真多。」\n\n「记性不好。」她说，「不写下来就忘了。」\n\n「忘了也好。」\n\n「那可不行。」\n\n她合上本子，抬眼看他。\n\n「有些人就指望我们忘。」\n\n柏暮没有接话。他把那叠出入签字重新扎好，绳结打得比原来紧了一点。\n\n「那半年的，我跟你一起找。」\n\n「你不是说少的就是少的。」\n\n「少的就是少的。」他说，「可少在哪儿，得有人指出来。」\n\n秦望舒把小本子收回口袋，又摸了摸门框上那道撕开的口子。\n\n纸边还是新的。",
+   "outputChars": 69,
+   "output": "古籍库的钥匙由两人分管。 「你知道?」她把手里的纸条放进桌上,拿起一张张旧账。」他看了一眼那副黑框眼镜的时候就觉得很轻了。「我记不清什么」",
+   "newTokens": 59,
+   "stopReason": "eos",
+   "targetCoverage4": 0.001,
+   "seconds": 0.49
+  },
+  {
+   "id": "row-0017",
+   "weights": "finalEpoch",
+   "trainedOnThisRow": false,
+   "targetChars": 725,
+   "target": "配电间里有一股淡淡的焦味。\n\n韩暮把总闸拉下来，又推上去。灯闪了两下，稳住了。\n\n「还是老样子。」\n\n叶照站在门口，没进来。\n\n「哪儿老样子。」\n\n「合闸的时候手会麻一下。」韩暮甩了甩右手，「一直这样。」\n\n「上回你说不麻。」\n\n「上回我没说真话。」\n\n叶照走进来，凑近看那块配电板。板上的漆掉了一半，露出底下的铁。\n\n「这块板该换了。」\n\n「报过三次。」韩暮说，「都批不下来。」\n\n「写清楚点。」\n\n「写清楚了。」他把手伸出来，手背上红了一块，「这回我自己写。」\n\n叶照看了一眼他的手背。\n\n「烫的？」\n\n「闸一合，火就出来了。」韩暮说，「不大，一冒就灭。可它冒了。」\n\n「这不该冒。」\n\n「我知道不该冒。」\n\n叶照抬头，把整个配电间看了一圈。门后挂着副绝缘手套，他伸手去拿，套上，捏了捏指头。\n\n「这手套破了。」\n\n「破了一年。」\n\n「谁用的。」\n\n「没人用。」韩暮说，「挂在那儿，谁看都觉得有。」\n\n叶照把手套摘下来，摊在手上给他看那个洞。指头的地方磨穿，边缘硬了。\n\n「十年前也挂在这儿？」\n\n韩暮没有立刻回答。\n\n「挂着。」\n\n「那天晚上，有人戴过它吗。」\n\n「不记得了。」\n\n「真不记得，还是不想说。」\n\n韩暮把手套从他手里拿过去，挂回门后。\n\n「我十二年前就管这块板。」他说，「那天晚上跳了闸，我下去合。合的时候手也麻了一下。」\n\n「然后呢。」\n\n「然后我回值班室烧水。」他停了一下，「水还没开，就听见外面喊。」\n\n叶照没有说话。\n\n配电板上的灯还亮着，很稳。\n\n「你那时候没回头看。」\n\n「没有。」\n\n「现在想回头吗。」\n\n韩暮把手套重新挂正，让它垂得平一些。\n\n「明天早上，」他说，「我把十年前那张闸表找出来。你要是还在，一起看。」",
+   "outputChars": 186,
+   "output": "配电间的漆掉了一半,空气里有轻微的光味。 韩暮把手背烫红了一块,指头往后磨了一遍。 「我父亲是馆里的人。」韩暮说,「那天晚上在图书馆工作的时候,他用手指关节发黄,脚下踩着一根绳子擦干净,搓开水龙头,捏紧的手肘很小,握住两道钥匙。她拿起一张纸条走过来,伸手按了一下,拍到桌上的那块砖。墙角被雨打湿过,像个旧名字一样闪亮起来。 「你怎么知道?」他说,「这时候有人管什么登记簿」",
+   "newTokens": 151,
+   "stopReason": "eos",
+   "targetCoverage4": 0.015,
+   "seconds": 1.26
+  }
+ ],
+ "totalSeconds": 60.9
+}
