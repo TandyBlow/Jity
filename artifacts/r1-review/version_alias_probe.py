@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 from typing import Annotated, Literal
 
+# 路径已退役：默认 .local/world-server-worktree 不再存在，复跑须以 WORLD_SERVER_WORKTREE 显式指定检出。
 ROOT = Path(os.environ.get('WORLD_SERVER_WORKTREE', '../world-server-worktree'))
 sys.path.insert(0, str(ROOT / 'backend'))
 from pydantic import BeforeValidator, ValidationError, create_model

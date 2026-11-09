@@ -5,11 +5,11 @@
 // P1 连续会话＋提交回执丢失（同 requestId 重试、服务端 replay），
 // P2 提交前放弃（seal 已受理但回执被扣住）→ recover 续走 → 恰好一次提交。
 // Usage: node scripts/review-world-page.mjs [--out artifacts/world-page-review.json]
-//        [--server-checkout .local/world-server-worktree] [--skip-browser]
+//        --server-checkout <服务检出>（必填） [--skip-browser]
 import assert from 'node:assert/strict';
 import { spawn, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createWriteStream, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { once } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
@@ -19,7 +19,30 @@ import { createServer as createNetServer } from 'node:net';
 const frontend = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(frontend, '..');
 const option = (flag, fallback) => process.argv.includes(flag) ? process.argv[process.argv.indexOf(flag) + 1] : fallback;
-const a = resolve(root, option('--server-checkout', '.local/world-server-worktree'));
+// 服务检出必填：旧默认 .local/world-server-worktree 已随工作树重组退役。
+// 缺旗标或检出缺 backend/app/world_app.py 一律拒绝起跑；
+// --expect-server-head <sha 前缀> 可选比对（不写死任何检出 HEAD）。
+const requireServerCheckout = (tag) => {
+  const given = option('--server-checkout', null);
+  if (!given) {
+    console.error(`[${tag}] FAILED: --server-checkout <服务检出> is required (the old default checkout is retired)`);
+    process.exit(1);
+  }
+  const checkout = resolve(root, given);
+  if (!existsSync(resolve(checkout, 'backend', 'app', 'world_app.py'))) {
+    console.error(`[${tag}] FAILED: --server-checkout ${given} has no backend/app/world_app.py`);
+    process.exit(1);
+  }
+  const head = execFileSync('git', ['-c', `safe.directory=${checkout.replaceAll('\\', '/')}`, '-C', checkout, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  console.log(`[${tag}] server checkout HEAD ${head}`);
+  const expected = option('--expect-server-head', null);
+  if (expected && !head.startsWith(expected)) {
+    console.error(`[${tag}] FAILED: server HEAD ${head} does not match --expect-server-head ${expected}`);
+    process.exit(1);
+  }
+  return checkout;
+};
+const a = requireServerCheckout('world-page');
 const output = resolve(root, option('--out', 'artifacts/world-page/review.json'));
 const skipBrowser = process.argv.includes('--skip-browser');
 const privateDir = resolve(root, `.local/world-page-${Date.now()}`);

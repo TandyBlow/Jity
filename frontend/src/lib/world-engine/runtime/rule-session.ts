@@ -16,7 +16,20 @@
  *
  * Narration stays committed-template by default; an optional polisher (the
  * page's model experiment) may rephrase, and its output is accepted only if
- * checkFactNarration admits every clause — any failure keeps the template. */
+ * checkFactNarration admits every clause — any failure keeps the template.
+ *
+ * G5 identity chain: the session registers the program round-identity sink and
+ * runs its driver with the automatic-round identity gate. A confirmed continue
+ * allocates the next round's point plus a group slot per served frozen order
+ * member under a per-round stable allocation key (server-idempotent replays),
+ * an incomplete/failed allocation stops the round entry with a recognizable
+ * reason, and a refresh that lands between continue and the first point
+ * re-provisions through the recovery entry. A blocked round entry is the
+ * driver's sticky terminal: the session promotes it to its own terminal
+ * (stopped) and submit refuses with rule_session_identity_blocked before
+ * writing any input — a lease the server rejected is never reused, and the
+ * documented way forward is a fresh recovered session. Continuation itself
+ * stays handback until the model continuation batch opens (G4). */
 import { ControllerDriver, initialMemory, type DriverStatus, type WorldModelPort } from '../controller';
 import type { AllocationPlan, ControllerMemory, ModelTask, UpdatesCall } from '../schedule';
 import type { WorldTransport } from '../transport';
@@ -28,7 +41,7 @@ import type { CommittedNarration, CommittedRead } from './committed-narration';
 import { projectCommittedNarration, renderCommittedNarration, selectFactNarration } from './committed-narration';
 import { RuleAuthority, decodeRuleAction, describeRuleDecision, encodeRuleAction, parseRuleCommand, type RulePolicy, type RuleReceipt } from './rule-facts';
 import { projectTaskInput } from './focused-input';
-import type { Id, InitialTemplate, Json, PointWork, WorldContext, WorldState } from '../types';
+import type { Id, InitialTemplate, Json, PointWork, RequestMap, WorldContext, WorldState } from '../types';
 
 /** The driver-shaped §7.1 narration input, mirrored from the scheduler's
  * assembleNarrationInput so the polisher can feed the real prompt layer. */
@@ -59,6 +72,9 @@ export type RuleNarrationPolisher = (
   packet: CommittedNarration,
   focused: Json,
   attempt: PolishAttempt,
+  /** 逐调用证据回调（usage/timings/raw）。必须按调用传入——实例级回调会被
+   * polisher 的模块级缓存吞掉（整链验收 v2 的 chain completion 证据为空即此因）。 */
+  onCompletion?: (evidence: unknown) => void,
 ) => Promise<string | null>;
 
 export type RuleSessionEvent =
@@ -198,9 +214,15 @@ export class RuleWorldSession {
           timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }, actorIds: [...this.order] }];
         if (task === 'action') {
           const data = input as unknown as { actor: string; advance: { inputText: string | null; intentStatus: string }; workingState: WorldState };
+          // consumed 输入或非主角的行动机会按设计直接跳过——§6.1 的身份绑定
+          // 保护的是「裁决」（对输入文本的规则判定），skip 不使用任何事实，
+          // 不需要绑定。自动轮（continue 后输入必为 consumed）此前在此抛
+          // rule_input_identity_missing，堵死了产品的 continue→自动轮组合
+          // （G5 真实 HTTP 验收 S2 复现；服务端仅在 pending 时携带
+          // activeInput，consumed 窗口的绑定本就不可得）。
+          if (data.actor !== data.workingState.protagonistId || data.advance.intentStatus !== 'pending') return { kind: 'skip' };
           const scope = requireScope();
-          if (data.actor !== data.workingState.protagonistId || data.advance.intentStatus !== 'pending'
-            || scope.world.advance.intentStatus !== 'pending') return { kind: 'skip' };
+          if (scope.world.advance.intentStatus !== 'pending') return { kind: 'skip' };
           if (data.advance.inputText !== scope.inputText) throw new Error('action_input_binding_changed');
           const proposal = parseRuleCommand(scope.inputText, data.workingState);
           if (!proposal) {
@@ -257,7 +279,13 @@ export class RuleWorldSession {
       clock: options.clock,
       heartbeatLeadMs: options.heartbeatLeadMs,
       retryBackoffMs: options.retryBackoffMs,
-      hooks: { onStatus: (status) => this.onEvent({ kind: 'terminal', status }) },
+      hooks: { onStatus: (status) => {
+        // G5：身份入口阻断（roundIdentityBlocked）是驱动的粘性终态——不会
+        // 自愈，run() 只会反复返回同一阻断。会话随之进入终态（stopped）并
+        // 拒绝新提交，而不是 idle 状态下收下新输入再交回同一个阻断。
+        if (status.kind === 'stop' && status.reason.startsWith('round_identity_blocked:')) this.session.stop();
+        this.onEvent({ kind: 'terminal', status });
+      } },
       createDriver: (io) => {
         const tracked: WorldTransport = {
           execute: async (operation, request, scope, signal) => {
@@ -272,7 +300,45 @@ export class RuleWorldSession {
             return response;
           },
         };
-        this.driver = new ControllerDriver({ transport: tracked, model }, this.memory, {}, {});
+        this.driver = new ControllerDriver({ transport: tracked, model }, this.memory, {}, { identityGate: true });
+        // G5 产品身份链：CONFIRMED continue 之后，新轮需要程序分配的 point 与
+        // 服务端冻结 order 逐人的 group。allocationKey 按轮稳定（product_round_
+        // <roundId>）——重试、且回执或新会话恢复补调时，服务端按 key 幂等重放
+        // 同一批 id，不重复消费；响应在此做槽完整性校验，缺槽抛错交给驱动的
+        // 身份屏障（roundIdentityBlocked → 可辨认 stop）。
+        let identitySequence = 0;
+        this.driver.setRoundIdentitySink(async (roundId, order) => {
+          const live = this.driver!.getMemory();
+          const worldId = this.viewWorld?.worldId;
+          const fenceEpoch = this.viewWorld?.lease?.fenceEpoch;
+          if (!worldId || !live.leaseToken || fenceEpoch == null) throw new Error('round_identity_scope_missing');
+          // 请求命名空间按会话独立（idNamespace 计数器+时间+熵）：接管后新会话
+          // 对同一轮的补调 requestId 不与旧会话碰撞——协议先核验请求幂等
+          // （同 requestId 不同正文即 request_id_reused），业务重放只认
+          // allocationKey。补调恒为新 requestId + 稳定 key，由业务层重放原批次。
+          const namespace = this.session!.idNamespace;
+          const allocationKey: Id = `product_round_${roundId}`;
+          const slots = [{ slotKey: 'point', kind: 'point' as const },
+            ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const }))];
+          identitySequence += 1;
+          // 分配经会话受控 transport（tracked → observed）：stop/失租及时
+          // 结束等待、迟到回执不折入死会话、错误信封进入会话租约观察层；
+          // 绝不绕行裸 transport。
+          const response = await tracked.execute('allocate_ids', {
+            protocolVersion: 2, requestId: `${namespace}_identity_${roundId}_${identitySequence}`, worldId,
+            leaseToken: live.leaseToken, fenceEpoch, allocationKey, slots,
+          } as RequestMap['allocate_ids'], { worldId });
+          const allocations = (response as unknown as { data: { allocations: { slotKey: Id; id: Id }[] } }).data.allocations ?? [];
+          const slotKeys = new Set(allocations.map((entry) => entry.slotKey));
+          if (allocations.length !== slots.length || slotKeys.size !== slots.length || slots.some((slot) => !slotKeys.has(slot.slotKey))) {
+            throw new Error('round_identity_allocation_incomplete');
+          }
+          return {
+            ids: Object.fromEntries(allocations.map((entry) => [entry.slotKey, entry.id])),
+            roundAllocations: { [roundId]: { allocationKey, slots } },
+            allocatedKeys: [allocationKey],
+          };
+        });
         return this.driver;
       },
     });
@@ -308,11 +374,15 @@ export class RuleWorldSession {
    * input binding must never land on a stale external clone. */
   async submit(command: string): Promise<DriverStatus> {
     if (this.sessionStatus === 'running') throw new Error('rule_session_busy');
+    const driver = this.driver;
+    if (!driver) throw new Error('rule_driver_missing');
+    // G5：身份入口被阻断的会话不接受新命令——写 playerInput 前即拒绝（精确
+    // 于通用 stopped），驱动内存不留下永远无法消费的输入；出路是新会话恢复。
+    const identityBlocked = driver.getMemory().roundIdentityBlocked;
+    if (identityBlocked) throw new Error(`rule_session_identity_blocked:${identityBlocked}`);
     if (this.sessionStatus === 'stopped') throw new Error('rule_session_stopped');
     if (this.sessionStatus === 'lost_lease') throw new Error('rule_session_lease_lost');
     if (this.recoverWorldId !== undefined && !this.viewWorld) throw new Error('rule_session_recovery_incomplete');
-    const driver = this.driver;
-    if (!driver) throw new Error('rule_driver_missing');
     this.commandCounter += 1;
     const { plan, slotKeys } = buildCommandPlan(this.memory.holderId, this.order, this.commandCounter);
     driver.preparePlayerInput(command, this.order, plan, slotKeys);

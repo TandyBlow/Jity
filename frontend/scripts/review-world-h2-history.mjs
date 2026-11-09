@@ -45,21 +45,26 @@ try {
       issuedAtEpochMilli: claim.data.issuedAtEpochMilli, outcome: 'ready', text: '固定验收叙事。', failureReason: null });
   };
   await narrate();
-  const slots = ['advance', 'input', 'round', 'point_1', 'point_2', 'point_3', 'group_1', 'group_2', 'group_3'];
+  const roster = Object.keys(initial.characters).sort();
+  const actors = roster;
+  const slots = ['advance', 'input', 'round', ...actors.map((_, i) => `point_${i + 1}`),
+    ...actors.map((_, i) => `group_${i + 1}`), ...actors.map((_, i) => `change_${i + 1}`)];
   const allocation = await execute('allocate_ids', { ...base(), allocationKey: `${namespace}_ids`, slots: slots.map((slotKey) => ({ slotKey, kind: slotKey.split('_')[0] })) });
   const ids = Object.fromEntries(allocation.data.allocations.map((a) => [a.slotKey, a.id]));
-  const actors = ['person_a', 'person_b', 'person_c'];
-  const roster = Object.keys(initial.characters).sort();
+  // A player round freezes the complete roster (control.py refuses anything else).
   await execute('checkpoint_start_advance', { ...checkpoint(), operation: 'start_advance', advanceId: ids.advance, inputId: ids.input,
-    roundId: ids.round, inputText: '进行三点固定验收。', order: actors });
+    roundId: ids.round, inputText: '进行六点固定验收。', order: actors });
   const expectedChanges = [];
-  for (let index = 1; index <= 3; index++) {
+  for (let index = 1; index <= actors.length; index++) {
     const actor = actors[index - 1];
     const pointId = ids[`point_${index}`];
     const groupId = ids[`group_${index}`];
-    const timeAdvance = { boundary: 'elapsed', duration: { amount: index, unit: 'second' } };
-    const change = { id: `${namespace}_change_${index}`, text: `第 ${index} 点的原始变化。`, supersedes: [] };
-    await execute('checkpoint_begin_point', { ...checkpoint(), operation: 'begin_point', pointId, kind: 'normal', timeAdvance });
+    // A round's first point is normal/elapsed; later points in the same round are instant.
+    const timeAdvance = index === 1
+      ? { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }
+      : { boundary: 'instant', duration: { amount: 0, unit: 'second' } };
+    const change = { id: ids[`change_${index}`], text: `第 ${index} 点的原始变化。`, supersedes: [] };
+    await execute('checkpoint_begin_point', { ...checkpoint(), operation: 'begin_point', pointId, kind: index === 1 ? 'normal' : 'instant', timeAdvance });
     await execute('checkpoint_discover_group', { ...checkpoint(), operation: 'discover_group', pointId, groupId, initiatorId: actor, actionText: `${actor} 的固定行动。`, targetIds: null });
     await execute('checkpoint_extend_group', { ...checkpoint(), operation: 'extend_group', pointId, groupId, sourceId: actor, targets: [], admittedMember: null });
     await execute('checkpoint_close_group', { ...checkpoint(), operation: 'close_group', pointId, groupId });
@@ -91,7 +96,7 @@ try {
   assert.equal(await driver.recover(served.world.worldId, { leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch }), undefined);
   assert.equal(await driver.step(), undefined);
   assert.equal(modelCalls.length, 1);
-  assert.equal(recoveryOps.filter((op) => op === 'get_state').length, 3);
+  assert.equal(recoveryOps.filter((op) => op === 'get_state').length, actors.length);
   assert.equal(recoveryOps.includes('round_conclusion_conclude'), false);
   const report = { status: 'PASS_HISTORY_SUBCHECK', recordedAt: new Date().toISOString(), scope: 'real HTTP + A state service + fresh B controller; not full H2 takeover acceptance',
     command: 'node scripts/review-world-h2-history.mjs API_URL [REPORT_PATH] [A_CHECKOUT]',

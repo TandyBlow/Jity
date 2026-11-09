@@ -30,12 +30,20 @@ export function projectCommittedNarration(after: CommittedRead, before: Committe
   const names = new Set<string>();
   const characters = Object.keys(after.state.characters).sort();
   if (before && !same(characters, Object.keys(before.state.characters).sort())) throw new Error('narration_roster_changed');
+  // §6.3 因果链是「任务达成 → 可能的个性变化 → 对应人物理智重算」。
+  // 任务达成可以独立存在（个性变化只是可能发生）；**任何人物的任务达成
+  // 都可能影响任何人物**，所以「有无本批任务达成」按整批 Δ 判断，不要求
+  // 与个性变化同属一个实体。个性与理智仍按对应人物配对（理智变化必须是
+  // 该人物有自己的个性变化）。
+  const batchHasTasks = Object.values(after.entityDeltas)
+    .some((delta) => (delta.tasksAchieved?.length ?? 0) > 0);
   for (const [id, delta] of Object.entries(after.entityDeltas)) {
     if (delta.entityId !== id || !after.state.characters[id]
       || Object.keys(delta).some((key) => !['entityId', 'positionSet', 'sanitySet', 'tasksAchieved', 'personalityChanges'].includes(key))) throw new Error('unsupported_committed_delta');
     if (delta.positionSet === null || delta.sanitySet === null) throw new Error('unsupported_null_delta');
-    if ((delta.tasksAchieved?.length || delta.personalityChanges?.length || delta.sanitySet !== undefined)
-      && !(delta.tasksAchieved?.length && delta.personalityChanges?.length && delta.sanitySet !== undefined)) throw new Error('narration_requires_complete_numeric_cause');
+    const hasPersonality = (delta.personalityChanges?.length ?? 0) > 0;
+    if (hasPersonality && !batchHasTasks) throw new Error('narration_personality_requires_task');
+    if (delta.sanitySet !== undefined && !hasPersonality) throw new Error('narration_sanity_requires_personality');
   }
   for (const actorId of characters) {
     const actor = after.state.characters[actorId];
@@ -58,30 +66,34 @@ export function projectCommittedNarration(after: CommittedRead, before: Committe
       if (previous && !same(previous.position, actor.position)) throw new Error('unrecorded_position_change');
       facts.push({ ...base, id: `${actorId}:position`, kind: 'at', locationId: actor.position.containerId, location });
     }
+    // 任务达成事实独立于个性/理智：task-only Δ 是合法的结算结果（§6.3）。
+    for (const taskId of delta?.tasksAchieved ?? []) {
+      const oldTask = previous?.tasks[taskId];
+      const task = actor.tasks[taskId];
+      if (!oldTask || oldTask.status !== 'pending' || !task || task.status !== 'achieved' || task.goal !== oldTask.goal
+        || task.ownerId !== actorId || oldTask.ownerId !== actorId) throw new Error('committed_task_cause_disagrees');
+      facts.push({ ...base, id: `${actorId}:task:${taskId}`, kind: 'task_achieved', taskId, goal: task.goal });
+    }
+    for (const change of delta?.personalityChanges ?? []) {
+      const stored = actor.personalityChanges.find((entry) => entry.id === change.id);
+      if (!change.text || !stored || stored.text !== change.text || !same(stored.supersedes, change.supersedes)
+        || stored.sourcePointId !== after.pointId || stored.sourceSequence !== after.version || !stored.active
+        || change.supersedes.length) throw new Error('committed_personality_cause_disagrees');
+      facts.push({ ...base, id: `${actorId}:personality:${change.id}`, kind: 'personality_changed', changeId: change.id, text: change.text });
+    }
     if (delta?.sanitySet !== undefined) {
       if (!previous || delta.sanitySet !== actor.sanity) throw new Error('committed_numeric_delta_disagrees');
       facts.push({ ...base, id: `${actorId}:sanity`, kind: 'sanity_changed', from: previous.sanity, to: actor.sanity });
-      for (const taskId of delta.tasksAchieved ?? []) {
-        const oldTask = previous.tasks[taskId];
-        const task = actor.tasks[taskId];
-        if (!oldTask || oldTask.status !== 'pending' || !task || task.status !== 'achieved' || task.goal !== oldTask.goal
-          || task.ownerId !== actorId || oldTask.ownerId !== actorId) throw new Error('committed_task_cause_disagrees');
-        facts.push({ ...base, id: `${actorId}:task:${taskId}`, kind: 'task_achieved', taskId, goal: task.goal });
-      }
-      for (const change of delta.personalityChanges ?? []) {
-        const stored = actor.personalityChanges.find((entry) => entry.id === change.id);
-        if (!change.text || !stored || stored.text !== change.text || !same(stored.supersedes, change.supersedes)
-          || stored.sourcePointId !== after.pointId || stored.sourceSequence !== after.version || !stored.active
-          || change.supersedes.length) throw new Error('committed_personality_cause_disagrees');
-        facts.push({ ...base, id: `${actorId}:personality:${change.id}`, kind: 'personality_changed', changeId: change.id, text: change.text });
-      }
     } else {
       if (previous && previous.sanity !== actor.sanity) throw new Error('unrecorded_numeric_change');
       facts.push({ ...base, id: `${actorId}:sanity`, kind: 'sanity', value: actor.sanity });
     }
     if (previous) {
       const expectedTasks = structuredClone(previous.tasks);
-      for (const taskId of delta?.tasksAchieved ?? []) expectedTasks[taskId].status = 'achieved';
+      for (const taskId of delta?.tasksAchieved ?? []) {
+        if (!expectedTasks[taskId]) throw new Error('committed_task_cause_disagrees');
+        expectedTasks[taskId].status = 'achieved';
+      }
       if (!same(expectedTasks, actor.tasks)) throw new Error('unrecorded_task_change');
       const previousIds = new Set(previous.personalityChanges.map((change) => change.id));
       const newChanges = actor.personalityChanges.filter((change) => !previousIds.has(change.id));

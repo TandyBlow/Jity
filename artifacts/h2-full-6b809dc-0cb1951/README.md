@@ -45,7 +45,7 @@ main 本次造世界尝试两次，第二次原始 a→b 准入；successor 原�
 
 [run-recorded.py](run-recorded.py) 与本次 `.local/run_h2_fixed.py` 字节相同。
 脚本从自己的父目录推导 B 工作区，复跑时须复制到 B 的 `.local/`，
-A checkout 须在 B 的 `.local/world-server-worktree`。
+A checkout 须在 B 的 `.local/world-server-worktree`（该默认路径已退役：现行脚本 --server-checkout 必填，本节为归档运行的历史口径）。
 
 启动等价命令（A/backend；`$dbPath` 为新建隔离数据库的绝对路径）：
 
@@ -85,7 +85,7 @@ Windows PowerShell，在拥有固定提交的仓库根目录执行。使用全�
 
 ```powershell
 git worktree add --detach .local/h2-replay 6b809dca846b407ae24f545adeef7ae068fcf5b5
-git -C .local/h2-replay worktree add --detach .local/world-server-worktree 0cb1951cd1b0181f6a0505026cdd9939dd668de9
+git -C .local/h2-replay worktree add --detach .local/world-server-worktree 0cb1951cd1b0181f6a0505026cdd9939dd668de9  # 路径已退役：归档复现专用，现役脚本以 --server-checkout 显式指定
 Copy-Item -LiteralPath artifacts/h2-full-6b809dc-0cb1951/run-recorded.py -Destination .local/h2-replay/.local/run_h2_fixed.py
 Push-Location .local/h2-replay/frontend
 npm.cmd ci

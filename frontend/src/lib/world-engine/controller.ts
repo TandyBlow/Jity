@@ -21,8 +21,23 @@ import type {
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
 export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
+/** Program-owned per-round identity allocation (review 20, ①b): continue
+ * conclusions must not strand the next round with used point/groups. The sink
+ * allocates via the transport (program authority, §9.3) and returns a DELTA
+ * patch: `ids`/`roundAllocations` merge key-wise and `allocatedKeys` unions
+ * against the driver's CURRENT memory, so a caller that built its patch from a
+ * snapshot taken before recovery cannot erase recovered identities
+ * (review 20-2). A patch is never a memory snapshot. */
+export type RoundIdentitySink =
+  (roundId: Id, order: Id[]) => Promise<Partial<ControllerMemory> | void> | Partial<ControllerMemory> | void;
+
 export interface DriverOptions {
   retryLimit?: number;
+  /** G5 产品身份就绪屏障：automatic 轮在 pointPlan/begin 前必须有完整的
+   * 程序分配入口（roundAllocations 已执行且覆盖 point + 服务端冻结 order
+   * 的全部 group 槽），失败/缺失转为可辨认的 stop。缺省关闭——B3 harness
+   * 的自动轮身份走自己的预分配队列，保持既有行为与归档可复现性。 */
+  identityGate?: boolean;
   /** Scenario identity binding: scheduler key → allocate slotKey (e.g.
    * 'group:person_a' → 'group'). Applied when allocation responses land, so
    * scenario keying stays config, never mid-flight memory steering. */
@@ -48,6 +63,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
+    lastRoundIdentityError: null, roundIdentityBlocked: null,
     continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
 }
@@ -82,6 +98,7 @@ export class ControllerDriver {
   private requestCounter = 0;
   private readonly retryLimit: number;
   private readonly identityAliases: Record<string, string>;
+  private readonly identityGate: boolean;
   private recoveryPromise: Promise<DriverStatus | undefined> | null = null;
   private recoveryBarrier: string | null = null;
   private recoveredSuccessor: PointRecovery | null = null;
@@ -93,9 +110,104 @@ export class ControllerDriver {
     this.state = { world: null, control: INITIAL_CONTROL, work: null, activeInput: null, ...state };
     this.retryLimit = options?.retryLimit ?? 3;
     this.identityAliases = options?.identityAliases ?? {};
+    this.identityGate = options?.identityGate ?? false;
   }
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
+  /** Program-owned per-round identity allocation (①b, review 20): when the
+   * server confirms a continue conclusion, the NEW round needs fresh point/
+   * group identities that the controller cannot derive (the advance plan
+   * belongs to the scenario). Program callers register this hook BEFORE
+   * running the driver; the driver invokes it exactly once per CONFIRMED
+   * continue conclusion, with the server's nextRoundId and the served order of
+   * the round that round opens — the program allocates via the transport and
+   * returns a delta patch (never a whole-memory snapshot). Returning a
+   * decision is not supported: the allocations happen inside the conclude
+   * followup, never as a step. Unregistered sinks are recorded as
+   * `lastRoundIdentityError` unless the next round's allocation was
+   * pre-seeded. */
+  setRoundIdentitySink(sink: RoundIdentitySink | null): void {
+    this.roundIdentitySink = sink;
+  }
+  private roundIdentitySink: RoundIdentitySink | null = null;
+  /** Internal: the conclude adoption notifies the program sink for a
+   * CONFIRMED continue. The confirmation's own kind decides — a handback keeps
+   * the finished automatic round's summary, so gating on `round.trigger` alone
+   * re-allocates an ended round (review 20-3).
+   *
+   * Missing sink: legal only on the PRE-SEEDED path (scenario fixtures put
+   * `roundAllocations[nextRoundId]` into memory before concluding, and
+   * idlePointDecision allocates it as a step). Everywhere else the absence is
+   * recorded, not papered over: the next step runs into the product rejection
+   * (reused point/group ids) instead of silently degrading. */
+  private async notifyRoundIdentity(roundId: Id, order: Id[]): Promise<void> {
+    if (!this.identityGate) {
+      // gate 关闭（B3 harness/既有测试）：维持历史宽松行为——只记诊断，
+      // 不设阻断，完整性由 harness 自己的预分配队列保证。
+      if (!this.roundIdentitySink) {
+        if (this.memory.roundAllocations[roundId]) return;
+        this.memory.lastRoundIdentityError = `round_identity_sink_missing:${roundId}`;
+        return;
+      }
+      try {
+        const patch = await this.roundIdentitySink(roundId, order);
+        if (patch) this.foldRoundIdentityPatch(patch);
+      } catch (error) {
+        this.memory.lastRoundIdentityError = error instanceof Error ? error.message : String(error);
+      }
+      return;
+    }
+    // gate 开启（产品）：身份入口未就绪即阻断——空 sink、空/不完整补丁、
+    // 缺 point/order group 槽都算失败；成功才清阻断。诊断保留首因（sticky）。
+    const expected = ['point', ...order.map((actor) => `group:${actor}`)];
+    const existing = this.memory.roundAllocations[roundId];
+    if (existing && this.memory.allocatedKeys.includes(existing.allocationKey)
+      && expected.every((slot) => this.memory.ids[slot] != null)) return; // 该轮身份已就绪，幂等跳过
+    const block = (detail: string, diagnostic: string) => {
+      this.memory.roundIdentityBlocked = detail;
+      if (!this.memory.lastRoundIdentityError) this.memory.lastRoundIdentityError = diagnostic;
+    };
+    if (!this.roundIdentitySink) {
+      // 合法预置路径：分配由调度器步骤执行（先 allocate 后 pointPlan），
+      // 槽完整性由调度器门在分配落地后校验——通知期不做「未分配即阻断」。
+      if (existing) return;
+      return block(`sink_missing:${roundId}`, `round_identity_sink_missing:${roundId}`);
+    }
+    try {
+      const patch = await this.roundIdentitySink(roundId, order);
+      if (!patch || !patch.roundAllocations?.[roundId]) {
+        return block(`empty_patch:${roundId}`, `round_identity_empty_patch:${roundId}`);
+      }
+      this.foldRoundIdentityPatch(patch);
+      const plan = this.memory.roundAllocations[roundId];
+      // 完整性以「本轮补丁携带」为准：缺槽判定只看 patch.ids，内存里的旧
+      // point/group 不能冒充本轮分配结果（复审 P2：声明完整 + key 已折入
+      // 但补丁不带 ids 时，旧身份曾被放行进 pointPlan）。
+      const missing = expected.filter((slot) => patch.ids?.[slot] == null);
+      if (!plan || !this.memory.allocatedKeys.includes(plan.allocationKey) || missing.length) {
+        return block(`incomplete:${roundId}:${missing.join(',')}`, `round_identity_incomplete:${roundId}`);
+      }
+      this.memory.roundIdentityBlocked = null;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      return block(`sink_failed:${roundId}:${detail}`, detail);
+    }
+  }
+  /** Delta fold, never a snapshot replacement: map fields merge key-wise
+   * against the driver's own current memory, allocatedKeys unions. The first
+   * recorded error stays (diagnostic only; a later success does not clear it). */
+  private foldRoundIdentityPatch(patch: Partial<ControllerMemory>): void {
+    // 补丁契约收窄：身份补丁只允许三个身份字段，其余字段一律不折入并记
+    // 诊断——整包 memory 快照或夹带字段（budget/plan 等）不再是合法补丁。
+    const allowed = ['ids', 'roundAllocations', 'allocatedKeys'] as const;
+    const extra = Object.keys(patch).filter((key) => !allowed.includes(key as typeof allowed[number]));
+    if (extra.length && !this.memory.lastRoundIdentityError) {
+      this.memory.lastRoundIdentityError = `round_identity_patch_extra_fields:${extra.sort().join(',')}`;
+    }
+    if (patch.ids) this.memory.ids = { ...this.memory.ids, ...patch.ids };
+    if (patch.roundAllocations) this.memory.roundAllocations = { ...this.memory.roundAllocations, ...patch.roundAllocations };
+    if (patch.allocatedKeys) this.memory.allocatedKeys = [...new Set([...this.memory.allocatedKeys, ...patch.allocatedKeys])];
+  }
   getRequestCounter(): number { return this.requestCounter; }
   /** The advance the driver itself started (§6.1): the identity-bound player
    * text model tasks read. A live accessor instead of a captured clone —
@@ -130,6 +242,17 @@ export class ControllerDriver {
       this.recoveringPointIds = new Set(recovered.plan?.map((p) => p.pointId));
       this.nextRequestId();
       this.recoveryBarrier = null;
+      // G5 恢复入口：服务端已接受 continue（automatic 轮开启）但尚未建点时，
+      // 真实 recovery 返回空 ids/plan——conclude 采纳钩子不会再触发。门开启
+      // 的组合在此按当前冻结 order 补调一次身份 sink（稳定 allocationKey，
+      // 服务端幂等重放同一批 id）；失败记阻断，首个 step 以可辨认原因停止。
+      if (this.identityGate) {
+        const world = this.state.world;
+        const round = world?.round;
+        if (world?.advance.advanceId != null && round?.trigger === 'automatic' && !this.state.work && !this.memory.plan) {
+          await this.notifyRoundIdentity(world.activeRoundId ?? round.roundId, round.order);
+        }
+      }
       return undefined;
     } catch (error) {
       this.recoveryBarrier = error instanceof RecoveryStopped ? error.reason : `recovery_failed:${error instanceof Error ? error.message : String(error)}`;
@@ -140,7 +263,7 @@ export class ControllerDriver {
   /** Read-only scheduler introspection for declared scenario boundaries. */
   pendingDecision(): Decision {
     if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
-    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput });
+    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput, identityGate: this.identityGate });
   }
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
@@ -190,7 +313,7 @@ export class ControllerDriver {
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
-    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined, activeInput: this.state.activeInput });
+    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined, activeInput: this.state.activeInput, identityGate: this.identityGate });
     switch (decision.kind) {
       case 'await_command':
         if (this.command === command) this.command = null;
@@ -213,6 +336,14 @@ export class ControllerDriver {
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
+          if (decision.operation === 'round_conclusion_conclude') {
+            const confirmed = (outcome.response as { data?: { kind?: string; nextRoundId?: Id | null } }).data ?? {};
+            if (confirmed.kind === 'continue') {
+              const nextRoundId = confirmed.nextRoundId ?? this.state.world?.activeRoundId ?? this.state.world?.round?.roundId ?? null;
+              if (nextRoundId) await this.notifyRoundIdentity(nextRoundId, this.state.world?.round?.order ?? []);
+              else this.memory.lastRoundIdentityError = 'round_identity_target_missing';
+            }
+          }
           this.memory.lastModel = null;
           this.nextRequestId();
           return undefined;
@@ -830,6 +961,9 @@ export class ControllerDriver {
         if (kind === 'continue') {
           this.memory.plan = null;
           this.memory.planIndex = 0;
+          // ①b 分配走 execute() 的统一挂点（见 transport 分支）：conclude
+          // 成功且服务端已切到 automatic round 后触发 sink；失败记录在
+          // lastRoundIdentityError，后续 step 按产品拒绝走。
         } else if (kind === 'handback') {
           this.clearRoundWork();
         }
@@ -863,7 +997,7 @@ export class ControllerDriver {
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
       restoredUnit: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-      continuation: null, successorTime: null, commitPayload: null, narration: null,
+      continuation: null, successorTime: null, commitPayload: null, narration: null, roundIdentityBlocked: null,
     });
   }
 }

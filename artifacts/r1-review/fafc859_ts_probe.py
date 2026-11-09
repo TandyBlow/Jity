@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 
+# 路径已退役：默认 .local/world-server-worktree 不再存在，复跑须以 WORLD_SERVER_WORKTREE 显式指定检出。
 ROOT = Path(os.environ.get('WORLD_SERVER_WORKTREE', '../world-server-worktree'))
 parent = (ROOT / 'frontend/src/lib').resolve()
 report_dir = Path(__file__).resolve().parent

@@ -1,0 +1,3766 @@
+{
+  "status": "PASS_BOTH",
+  "recordedAt": "2026-10-28T16:27:00.951Z",
+  "phase": "both",
+  "browserSource": {
+    "head": "4ca93d81460b230ebae8ba71b2e81ad178248f79",
+    "status": "?? artifacts/a4-browser-transport.json\n?? artifacts/world-chain/first-round-v2.json\n?? frontend/scripts/review-world-a4-transport.mjs",
+    "sha256": {
+      "frontend/scripts/run-world-chain-full.mjs": "97715b486001f08d15771f534de498aa1dcbaf0495f347a54d623dc828ff3201",
+      "frontend/src/app/world/page.tsx": "f8b077c564216e4e777444ccb7f2e937eea322ee73875d10657822807170a55f",
+      "frontend/src/app/world/narration-polisher.ts": "8f3bd4fe68e1112116e4a2132a6f0939976f4d5b8615d17c2ae5d7a614e73603",
+      "frontend/src/lib/world-engine/runtime/rule-session.ts": "b3652b317e5d9eeffd631ba84b7f3877c727d7cfa942ef645e0fbcb8bd74bcb4",
+      "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "309ca19fd2f2fa8f22f8d4b1e1cbb22f67cad902da7a418102d8a9422ee4c9cd",
+      "frontend/src/lib/world-engine/runtime/prompts.ts": "e5c666b64949ea21a9e840d6823b5b4c857c37e09c5661f3d0d27609cc70151f",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+      "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
+      "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+      "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58",
+      "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b"
+    }
+  },
+  "serverSource": {
+    "head": "1200cbde99951a815ae4a901012eb97d4b6518f1",
+    "status": "?? backend/_proj_create.json\n?? backend/scripts/_smoke_ttl_logic.py\n?? backend/scripts/check_world_ttl_realtime.py",
+    "sha256": {
+      "backend/app/config.py": "ab0379700a7f20b2e3613702d624515720fb1c5edb1940c87bd8a38a6c196667",
+      "backend/app/database/campaign_store.py": "f919e8f769791fd6bb69be5c0abcdee2a60a8c61816bda7f8b407257ccbe84f3",
+      "backend/app/database/connection.py": "fa3bc209d88f37d71bb9e11903dbac55217c70dfbfb199c6bcb26b132b259e4d",
+      "backend/app/database/knowledge_store.py": "47407b33c3a42893e304912295de4e38f1490ec6897d725e7969882880e3229d",
+      "backend/app/database/outputs.py": "a8743dbb4298ad4572e29af536d0a7ca43899403d0452e90981a7a55aa38b06d",
+      "backend/app/database/schema.py": "e0b5f11d7dfa33767099b2b95a47502c998072e0b8e7499426a01e90385709d9",
+      "backend/app/database/sessions.py": "49d35de3ed71400d70355f476a564580616df11b6f5b1d3f048996dd8586ab9e",
+      "backend/app/database/timeline.py": "ad4e7c5b753a5b2df192acfe8d59726c6d02e6452e8ca417b1ba4f8cfc760431",
+      "backend/app/database/world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559",
+      "backend/app/database/world_judgment_repository.py": "42941bd1a07f3dd6f400899c612fd4b76fe054edb1d4c79be3804c25507d174e",
+      "backend/app/database/world_progress_repository.py": "2db2aaa7d1ef52531a7ed94f0f85482c92d2bb1bd9770c6bc249c46a2a398175",
+      "backend/app/database/world_repository.py": "35ee95f9f78acd3b4b01d7e2cbf154068557c180ec9fa253f82deb1c30621068",
+      "backend/app/database/world_storage_v2.sql": "041bf83d4b7683c68ae5877f8c0ab9992bcb33399bd5a431655b0b19935a8831",
+      "backend/app/database/world_store.py": "b130b13274180d33f9ef532c2674a0211dadd5544ab6f127c9e2e1211168ecef",
+      "backend/app/database/world_work_repository.py": "f7715b333b2be91f76292a5ab15c0734387184debbb3e46ebc56e2028471a886",
+      "backend/app/database/__init__.py": "f8cc9239afed3ffd600ffe11fd41de2337550506ca94e661fa985d9e761fd684",
+      "backend/app/dependencies/campaign_cache.py": "9a1cddbe03d01cbb05d14eb7b85d9fc987bfcb44f1e2a8a4f03e910d5e3ff3eb",
+      "backend/app/dependencies/knowledge_service.py": "0c00f6cc155baaae9792817ff7e806a5dec916cd89971aa9953cf4ca81613212",
+      "backend/app/dependencies/singletons.py": "9cafb4c39e477af71af324fb0be51970ce661c01a4c6d4b8bf773781c2acc512",
+      "backend/app/dependencies/__init__.py": "009e6ce2f1045892cc3e9818a871ee406801aa8c343801da18d58e0ae0684c1d",
+      "backend/app/exceptions.py": "f088db34094e261f239a9cb025789e4779859fa91a133a80cf9a5a98863d09bb",
+      "backend/app/main.py": "d40c33a9d227a2b1a29f61a8091655da0232a427e812720a2509e05520ff9a91",
+      "backend/app/repositories/campaign_progress.py": "a3005fdcca7e32cd501c84ae11d18db3b1bb885d3b144f6ce571ef683c600dae",
+      "backend/app/repositories/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/app/routers/backgrounds.py": "56fcf0ae8f3484e857f64844a9156cac89ee26292b7ec23c3cce5c05eb6ab2f9",
+      "backend/app/routers/campaigns.py": "28e586bf39ddf737aca7e1f8e4965744ac82c06a41c089a1724baaa48ecd4636",
+      "backend/app/routers/generate.py": "988044d1f9b00241368d2a4bb746db286c484bf7ba99256352ea56991af2c4f8",
+      "backend/app/routers/meta.py": "2f1541be3f9b019b6997cf53174f68bf534a16819c9eabfaeea2534182499a7b",
+      "backend/app/routers/sessions.py": "cedc7eeb7f4496e748bf4515fb98fd045aa814e640684ed061bfab952b3ae177",
+      "backend/app/routers/slots.py": "9250685dd9bdebe3ef06aa30d512a1bd7bd03a70169ca371a3637d702e76c802",
+      "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
+      "backend/app/routers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/app/schemas/agent_io/director.py": "3f18a75fb53d061485d3e1f10fe638f1b906c49f74e44df3b656bffed78e6701",
+      "backend/app/schemas/agent_io/examiner.py": "db30437cf940b520acb652f9e74e6c1b8e0998a5a184bd01797cc393147fe8bf",
+      "backend/app/schemas/agent_io/memory_branches.py": "8bb1af2b2a08e8382c6f07613b804d0e0310ee1d84153212523fd297db31c5f2",
+      "backend/app/schemas/agent_io/opener.py": "12c7fcdced97409a62fd304a987a200de18f7498459e885c1ab2e4dd908633b2",
+      "backend/app/schemas/agent_io/__init__.py": "d0f170a665354a2f6f9d5a43517e2127d5f947cf78271631f0db0c8bdd715735",
+      "backend/app/schemas/background.py": "f10f3465beaf2841f3609110a02548abb8b20945fb1e172022621ee58780ef40",
+      "backend/app/schemas/campaign.py": "1649f282d7f87c12336b9823effa784f635f20ae2f27bb8f60c1221b624eefbe",
+      "backend/app/schemas/game/em_dash.py": "38cdf2a13de88bb59855ac828bebf7c648a6c323aa99f0e42e1a86a30a59eed1",
+      "backend/app/schemas/game/memory.py": "a65c362ac9647ab5a6cda3bc1457af01f7cea1277650702ae3ea72b35da3c879",
+      "backend/app/schemas/game/requests_responses.py": "d047adb603a40b7ae05c2d54e1c02b475d43492f7693e25dbfd5d1902db52cbb",
+      "backend/app/schemas/game/story_output.py": "71a6236357f5fb562af231e7a836c0c43e45ccfcde19b6f1ca006b332aa5eed8",
+      "backend/app/schemas/game/__init__.py": "8e6ab3f5b871df29eebfe5aa3f9e50f22e4c6c6b05fb2480cd3840a9a21102ec",
+      "backend/app/schemas/world/canonical.py": "b9bb05fd8acfd346c767c088748eee73e27e6c3f3437c3296d98594332e5dfa9",
+      "backend/app/schemas/world/contracts.py": "236038a933d14ebf37507382cd8c8ef143f2a4fcefb3837fa071bc795b754f93",
+      "backend/app/schemas/world/v2/base.py": "1bb09d27a6f7c496ac32e404170e81c4e43fe5be416afd4366499178527bfea0",
+      "backend/app/schemas/world/v2/contexts.py": "13eeead48449a4c1477e88f8e3da52b634295b180050ecaa22101da4d8796ca8",
+      "backend/app/schemas/world/v2/envelopes.py": "bb73d54acc7c515b2f00a8818cb8a07a7029d293c99ade35c2d21e464a9854aa",
+      "backend/app/schemas/world/v2/errors.py": "f53e9008ad7f8006f9a0ea44256efe83b01240b07114af2afcbfa13050b4fe62",
+      "backend/app/schemas/world/v2/judgments.py": "830f6cf327ae3c960e6df4b536f9e87c793d23af21c36952fb5c2ad3be1158ee",
+      "backend/app/schemas/world/v2/projections.py": "790dbb0d30bd9869c8d59dbed12ebd1cea4fce41ff8c3e1b3c87b934fc856820",
+      "backend/app/schemas/world/v2/registry.py": "fce56daa9d33184bc6c3fb02d28b20d76d641c0a2320a5baf0f2d0659ead0671",
+      "backend/app/schemas/world/v2/requests.py": "486e23f87e8d43d80d3b18721de6472c22314683e06e78bb84e48b20e7aa52c5",
+      "backend/app/schemas/world/v2/schema.py": "5468acfdc29d00ce116bb7310ec46a8043868e0f5b621c3a4eeb97df666fd8a9",
+      "backend/app/schemas/world/v2/trace.py": "5b37f46db9d7e003be483bb6c2c942b1769faedd997a5dc2535936b630043804",
+      "backend/app/schemas/world/v2/work.py": "110e3e7cf8ce0fae67cd49ab1dcb996520ffea640acb245e53eea05ab124ad09",
+      "backend/app/schemas/world/v2/__init__.py": "6c41c0b331f6ad799477ce7d54884b0a0cbcfb0cbe0abc5c6452df0abc0b038b",
+      "backend/app/schemas/world/__init__.py": "17a8c1e12b4d5ddd7b6064929d1a4b6506cb49c6723c8cd7851159a1ce9925ed",
+      "backend/app/schemas/__init__.py": "0db34769b6b22e116d4459e2e446f72e758921642052c65c822cfaf840ced407",
+      "backend/app/services/agents/director.py": "42af7f428c3bc3aeb059d7655229cb96f0e9c8b9b910ef0b7488555d4f8ef58a",
+      "backend/app/services/agents/examiner.py": "4d76289f86ab79c7b60dac9c42a5b74b812e511027bcdae44797d6267f0533d3",
+      "backend/app/services/agents/opening_options.py": "3a62f446694658fcb69d6f4fb5a1d6809fdf8d7aebfffe7b7b761b2ccb97f98e",
+      "backend/app/services/agents/__init__.py": "d9e7adc46e7ddad660d077fde525ad6ba2ac87de4b1e9fa8b2140b1067f8231e",
+      "backend/app/services/background_generator.py": "1e04b8a152b2555b6b2b584240c7b4b308fda4ef865c1dab5d9c1e8dc970b0c5",
+      "backend/app/services/campaign_advancer.py": "01d3676201b6b7d1211085bd66585b52706ac1979317f0167d215a57b1685185",
+      "backend/app/services/campaign_anchors.py": "d758b119dc72bd971eccffc75334058303171c839704ea095938b575f8f5fa2d",
+      "backend/app/services/campaign_context.py": "c1e7b77b55748c1ee214fd6e8c375552238264f6676460f320cf8fadacff15e8",
+      "backend/app/services/campaign_fsm.py": "51d35e3a890cfce8711f3e59d911027dd882915dedfcf928d0b421676022d672",
+      "backend/app/services/campaign_generator/errors.py": "3ab97515b41b8062646836e4d122d67c18e09a7006e1bc619093f5874927be14",
+      "backend/app/services/campaign_generator/generator.py": "8d8cb0c6093b359e9b8c3e65cb79b6de85939e2c2468fa011dc61506583bdc14",
+      "backend/app/services/campaign_generator/novel_ingestor.py": "1198e57ef8203a27efaf099b744eedbfbae2cde64e45b3d873bcd59ea4b79298",
+      "backend/app/services/campaign_generator/novel_pipeline.py": "21116b23b907d6204df969867895f40e85d589ef7b165aa13076e56c08b2264b",
+      "backend/app/services/campaign_generator/__init__.py": "f7bb0450ddbc0510aa5d770e72bd901266e6986c3c3556bceb3d37d0e8a2ca24",
+      "backend/app/services/campaign_loader.py": "0694a85ea284ceb48ae3c5fd303e3f00e57bba0f3dc17dfb8cc4699a331be155",
+      "backend/app/services/campaign_manager/facade.py": "0c7f51d47b19c462bb003ef129859d4b1aaaa945a5f3341155af1814b5ab9578",
+      "backend/app/services/campaign_manager/facades.py": "683fc83e7762ed124d0cc269c333d615b3baa86a0041265fa97b60970aa8fa9f",
+      "backend/app/services/campaign_manager/metrics.py": "9b694b4e8ddc0fd91beb06394f3f6305c94240a193de9e475e1f32ce0ddac2c1",
+      "backend/app/services/campaign_manager/recap_advancer.py": "d198f572a877780dac12807f07e26e82f2b19ed209722cf1fb5ab87a53a7ca98",
+      "backend/app/services/campaign_manager/__init__.py": "8c9687ed0d93ff38cb8114bc061665a16448e522cb94ab220cbfabe971cf4cac",
+      "backend/app/services/campaign_persistence.py": "bcadf9b8eccfdd51740f03d658749642562cf7ba7a8f703b46e0c4786d8cf873",
+      "backend/app/services/campaign_recap.py": "02d71b36f14c0d12d4a3665281727b43312c2234295ce84cf3f34d7e9abdc21a",
+      "backend/app/services/commit_turn.py": "a39226a1b376da5ca9195c9e32c81f07be90ac111df385f66d4a1ba750572c6f",
+      "backend/app/services/context_strategy.py": "0b2e4364b36db721c545f91d13afbf94bcdfe28af49eaeada4c58cb6d6e17c92",
+      "backend/app/services/embedding_client.py": "80eef7b01bad72beb779d4277a2b7207794772bb3cc2ca3bf99e96c370a6d511",
+      "backend/app/services/evaluation.py": "195c57c58ca5f0c463d0b26ab4c65daef516106251485395e40be30c4e349de7",
+      "backend/app/services/game_state/defaults.py": "06a70314b9a1b7c073de401f9ac26f8f85135db99ab92e6ce81eaa3addb78097",
+      "backend/app/services/game_state/entry_state.py": "7b0e298feb6a9ce3ed184df16e759cae5f09b8a52b0bac1d33123625f6ae66ee",
+      "backend/app/services/game_state/inference.py": "e2a3636951d00548e5759864c1c7c31b9ee558f3cf30fb7f73696022179a1560",
+      "backend/app/services/game_state/manager.py": "2a1dd5d7bf384a96d1a23ad433a5ad1577f6a334494ee9eec9ba2a9fdb3ba683",
+      "backend/app/services/game_state/normalization.py": "d73dfe2da0c89d8f3b6ad0e12393a74a85f8333280b62de8a3eaf837ad7b55e9",
+      "backend/app/services/game_state/__init__.py": "b113342895c3d285d9d86572511d5866255b4f4d9787b7b21f10a489d2f0a925",
+      "backend/app/services/health_monitor.py": "47f5621ba083ac396893f23ed62e0a6fcbe7ccefb8aa0c82065f5ce56a9a3136",
+      "backend/app/services/knowledge_base.py": "60cf1fa867415dcb5c82d0c7cd38cc888e94d779aaae63671ad4d28fc67e9dbe",
+      "backend/app/services/llm_client/client.py": "c65de1f2c743d18353440477d562b23e9f18eb6d2855e265726ed9f8eff51061",
+      "backend/app/services/llm_client/errors.py": "33b988d3ebe38f6632015c97546ebbb81786bbd9d2ac118c6fdb0ae7c48941d5",
+      "backend/app/services/llm_client/output_normalizer.py": "835e1c0bb4c919997dcf6dab4c7ba6d553ab4c45d929af9b3ce86217a7897486",
+      "backend/app/services/llm_client/repair.py": "7a68de5fe2b8e4ed358bcec29edf50cf0fd012f7e7ee5bf78ab02f114699a530",
+      "backend/app/services/llm_client/structured.py": "64428ed2af39fc1d6850878639c8fbd1f7829b38799a5cdb0b94721bb19de11d",
+      "backend/app/services/llm_client/__init__.py": "ce1498b4c045c40dcc92a5daa353076f4a8f6fd821af76b01c20dd3644ca35da",
+      "backend/app/services/memory/forgetting.py": "b2078005d34de88fbbbfb1fd8290028252447daf63643b26dd0b173d939798aa",
+      "backend/app/services/memory/halumem_eval/evaluator.py": "eb3ee49f25a4807c850d76086bb9736b7fb07eb56a24343127337af0d4aa2971",
+      "backend/app/services/memory/halumem_eval/parsing.py": "7866434817044cd82ed65f1fc1ef5cf0aaf686617f7fce44439b2e596e6ddd74",
+      "backend/app/services/memory/halumem_eval/prompts.py": "98de01b382b781165a449565918e34d53a9662a8649e33e75ad5f727c15f09b6",
+      "backend/app/services/memory/halumem_eval/__init__.py": "f33b52b59620338ce3e7b3760dc42ed1474d459ec961f15229895bee97404051",
+      "backend/app/services/memory/memory_controller/controller.py": "fa91f48247ce31ebc2657b5d9764ad922712b48a79b8b6630c9591c3594bae1a",
+      "backend/app/services/memory/memory_controller/maintenance.py": "340a5d56c5bd4c575c7283b5c48680f34c7d354e94dcd1cbde58bc91caf57fc6",
+      "backend/app/services/memory/memory_controller/__init__.py": "1e27dca3bbf492981ad926ce9e527798d9ff90f4fdbfc37aaae2c993b447496c",
+      "backend/app/services/memory/nsb/branch.py": "17f3b4f4e74b19f90f28f1fca46624b396e62c2602933c3b4ce10c7624243817",
+      "backend/app/services/memory/nsb/generation.py": "59a0ce7264f25c07ce23620815faefbc352255a647806fedbe3369efa590431c",
+      "backend/app/services/memory/nsb/parsing.py": "0b390e695e89b177239ebb4ca2c4d7ead718d01455f88f3f227aa3616f4e011e",
+      "backend/app/services/memory/nsb/prompts.py": "a455a86d7c1bc76d589aa708be4ac07d7d592b15a6cc37d6744d3058e541a3c8",
+      "backend/app/services/memory/nsb/__init__.py": "d98b16f2f8f6676881dbc6124d097d1d69e66812fafe61697efa90cc0f887d2f",
+      "backend/app/services/memory/pcb/branch.py": "19e4f0c59651db7f957304863718a2656988a896f7e2f05c246fa513a94ed84f",
+      "backend/app/services/memory/pcb/keys.py": "f38117b973090e194ddfeb85f28165a54c8d48b58ce13bd4e8f45824be08c24f",
+      "backend/app/services/memory/pcb/merge.py": "ffc97f9b84f6ec9955581c0e8ba0a2945c4f84adf48b5856e5de867496c2745e",
+      "backend/app/services/memory/pcb/__init__.py": "a0a968ea79aedc8a72a1a6416dc9d164a16d64b0426ca94acc1082134a6d9967",
+      "backend/app/services/memory/score_tracker.py": "cc09690d6b9441390ebd5b547d7f4e60852f02155f6924dc568d7de73265a3b5",
+      "backend/app/services/memory/similarity.py": "95a3fa6f133ef2256f77ff8bebe9eeb94d591f5cd0e930a2f6da323393bbc71d",
+      "backend/app/services/memory/__init__.py": "057254c23d3df13306d6519de31ee1356d07519cf844e70925a2228e07f35e4b",
+      "backend/app/services/prompt_builder/builder.py": "5587c07116e0578a82d659877419ccd4c2ea822e205eb6c000706cd142cfc34e",
+      "backend/app/services/prompt_builder/helpers.py": "f980630e4c08f09ff32e3cae164ffb3a530b52723ea48173cac6b9b76627b3ff",
+      "backend/app/services/prompt_builder/input.py": "1e738e0c76d43d4f897d1d0afb03149bfa169beeb3c3267986a3f26633e20193",
+      "backend/app/services/prompt_builder/prompts.py": "784b2989d043e47d8271b950ee1e3e22fa58b8e48878b92c7222b0a15fcb19e4",
+      "backend/app/services/prompt_builder/__init__.py": "91f34a3ab35d63805f324ab9a2a126f1398d9248bb11041260bac197b41e8d99",
+      "backend/app/services/retriever.py": "f23451101925d74b3bc37f61514be7ac31524baee1d40e270df736d17a350d09",
+      "backend/app/services/scenario_generator/agent_pipeline.py": "9a8b75fde54d77bc350f19be963e6c95aa8140c26e241c8b662a7a72604c233d",
+      "backend/app/services/scenario_generator/director_support.py": "d7ced91b7c53d495218acfb1c9c6cc3da2c7d69a670d9278d9a70c9759869711",
+      "backend/app/services/scenario_generator/errors.py": "f2e4c95ec11bee62e999827ca23a88b4e759710cbb3c06b1684d12a1b9849381",
+      "backend/app/services/scenario_generator/generator.py": "674b1759d863d1220c329ab31406637faac38544fde1a396302058e70ac2b8fd",
+      "backend/app/services/scenario_generator/opening_scene.py": "57fdaa485d103cbb1b15a40bd185c457a76fe3a868c622f677eb060487de4650",
+      "backend/app/services/scenario_generator/post_generation.py": "61c4eac780115f4bd9cac2d936a969a3f01b1b7afc217a435f1e000fdb85b9ee",
+      "backend/app/services/scenario_generator/prompting.py": "f7dc35f0c4349530748830848ccc22bfcbd0ae5e057080b5aebb6a0c1426c159",
+      "backend/app/services/scenario_generator/__init__.py": "040353585602826fbb2b8d4fc2eeebcbed1c79d909e949ca2a7368d6f275b50c",
+      "backend/app/services/scripted_story.py": "f6bb37653e44512eb8b1e2872988c6f85d04ae778316b4fce4713de446de79fe",
+      "backend/app/services/world/apply.py": "e626fdbb0679ca0cff73053f06b5887bf8a8a0f42280219fdd94b8e4b257af66",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/services/world/commit.py": "53d9c82b296e6b5ce1108a4117e929ad4f6b196ecc85386c633c69ad7c586e6f",
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/services/world/judgments.py": "4d883d0d875ea73a42c0e618feea332ee803d40f669b7969ec039135076f876a",
+      "backend/app/services/world/ladder.py": "06533d0ca2b3cdd0d7e602a50ab30986f9567a48b228f67c761c82d9ad55002a",
+      "backend/app/services/world/merge.py": "dbe5fb4b22c62d0bc6bc86599c84227528cb9a636e5728021ad44d748a4647c4",
+      "backend/app/services/world/preview.py": "55e7852e74b0db0de9b213833155b33d3577cb8388f43d0c31bd7f4e63fd888d",
+      "backend/app/services/world/progress.py": "32f9036260c74a09879df4f6743db7b3c85a40d474238076d34f7a339b554040",
+      "backend/app/services/world/recovery.py": "12d2e6e771f8b86ad0e620e90f9cc49c07dcade3cb487bf0a49d1e3459eaca19",
+      "backend/app/services/world/replay.py": "af45a5d18bdb4adc08282082f3b7555c48353f7757b574a948f8a3f4f5cde7ed",
+      "backend/app/services/world/state.py": "b13ce5de770e7be883bae03ad682482f097393b597dce7e8d117b151df0a1ed6",
+      "backend/app/services/world/store.py": "e4784c38347895326f638e7c0f15e3dad2ea61924d0f0fca8384a8977238dbc4",
+      "backend/app/services/world/successor.py": "93c7e398e6dc6a0de4d17e83078b29018e28413647664862815e575ec0918a4e",
+      "backend/app/services/world/timing.py": "3dfd9c8072177dd26cf8875fe0b09881af41f56c3124bea2a60ca29d4d4b2407",
+      "backend/app/services/world/units.py": "1b62625219658735387557436944c2c7ca8e4ce23c0b1d3117138c1ce28ce1c5",
+      "backend/app/services/world/violations.py": "84b8a529cb688675f2a7e12da7ed0f84838f58c182f81f1234065644c8fd5e7e",
+      "backend/app/services/world/__init__.py": "7b69f36a39e571846df32c14dc632a713d536a6fc6d436755b8557456011f086",
+      "backend/app/services/__init__.py": "a89841ea56fbe88e6e3b8a7ec9933aa35f0cbd780c012e3c410cc33b43abc263",
+      "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
+      "backend/app/__init__.py": "5e3d01adf1d2a11b541b375a1f2dff8ad55e1207b2c58bfe9d660eb399a1b246"
+    }
+  },
+  "modelLoad": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "loadMs": 13666,
+    "topology": {
+      "multithread": true,
+      "numThreads": 10
+    }
+  },
+  "action": {
+    "worldId": "world_1",
+    "attach": {
+      "ms": 11471,
+      "status": {
+        "kind": "await",
+        "reason": "player_input"
+      },
+      "narrations": [
+        {
+          "kind": "narration",
+          "pointId": "root_3",
+          "version": 0,
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+          "polished": true,
+          "polishReason": null,
+          "attempts": 1,
+          "at": 1793204851583
+        }
+      ],
+      "modelAttempts": [
+        {
+          "at": 1793204851582,
+          "attempt": 1,
+          "ms": 11028,
+          "chars": 34,
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+          "pointId": "root_3",
+          "facts": [
+            {
+              "id": "person_a:position",
+              "phrase": "林川位于走廊"
+            },
+            {
+              "id": "person_a:sanity",
+              "phrase": "林川的精神值为10"
+            },
+            {
+              "id": "person_c:position",
+              "phrase": "周宁位于走廊"
+            },
+            {
+              "id": "person_c:sanity",
+              "phrase": "周宁的精神值为10"
+            }
+          ],
+          "completion": [
+            {
+              "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+              "finishReason": "stop",
+              "firstTokenMs": 8094.904999732971,
+              "wallMs": 11026.914999961853,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 259,
+                "prompt_ms": 7858.544,
+                "prompt_per_token_ms": 30.341868725868725,
+                "prompt_per_second": 32.95775909634151,
+                "predicted_n": 27,
+                "predicted_ms": 3092.656,
+                "predicted_per_token_ms": 118.9483076923077,
+                "predicted_per_second": 8.40701325979999
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "inputs": [
+      {
+        "command": "走到门厅",
+        "wallMs": 11151,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到门厅",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从走廊走到门厅。",
+          "at": 1793204852181
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_7",
+            "version": 1,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204862623,
+            "attempt": 1,
+            "ms": 10027,
+            "chars": 46,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+            "pointId": "point_7",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁从走廊走到门厅"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值为10"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+                "finishReason": "stop",
+                "firstTokenMs": 6580.590000152588,
+                "wallMs": 10026.685000419617,
+                "timings": {
+                  "cache_n": 53,
+                  "prompt_n": 212,
+                  "prompt_ms": 6390.531,
+                  "prompt_per_token_ms": 30.144014150943395,
+                  "prompt_per_second": 33.174082091143916,
+                  "predicted_n": 33,
+                  "predicted_ms": 3571.525,
+                  "predicted_per_token_ms": 111.61015625,
+                  "predicted_per_second": 8.959758086531663
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "完成压力试验",
+        "wallMs": 10708,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成压力试验",
+          "outcome": "refused",
+          "reason": "milestone_location_mismatch",
+          "text": "规则拒绝执行（milestone_location_mismatch）；没有位置或数值变化。",
+          "at": 1793204863392
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_13",
+            "version": 2,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204873354,
+            "attempt": 1,
+            "ms": 9489,
+            "chars": 34,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+            "pointId": "point_13",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁位于门厅"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值为10"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+                "finishReason": "stop",
+                "firstTokenMs": 6474.045000076294,
+                "wallMs": 9488.72500038147,
+                "timings": {
+                  "cache_n": 55,
+                  "prompt_n": 208,
+                  "prompt_ms": 6296.37,
+                  "prompt_per_token_ms": 30.271009615384614,
+                  "prompt_per_second": 33.03490741490732,
+                  "predicted_n": 28,
+                  "predicted_ms": 3141.104,
+                  "predicted_per_token_ms": 116.33718518518518,
+                  "predicted_per_second": 8.595703930847245
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "走到走廊",
+        "wallMs": 11620,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到走廊",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从门厅走到走廊。",
+          "at": 1793204874170
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_19",
+            "version": 3,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204884863,
+            "attempt": 1,
+            "ms": 10047,
+            "chars": 46,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+            "pointId": "point_19",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁从门厅走到走廊"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值为10"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+                "finishReason": "stop",
+                "firstTokenMs": 6543.60000038147,
+                "wallMs": 10046.970000267029,
+                "timings": {
+                  "cache_n": 56,
+                  "prompt_n": 211,
+                  "prompt_ms": 6377.735,
+                  "prompt_per_token_ms": 30.22623222748815,
+                  "prompt_per_second": 33.083845597222215,
+                  "predicted_n": 33,
+                  "predicted_ms": 3612.596,
+                  "predicted_per_token_ms": 112.893625,
+                  "predicted_per_second": 8.857896094664335
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "完成压力试验",
+        "wallMs": 22574,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成压力试验",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。",
+          "at": 1793204886035
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_25",
+            "version": 4,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204907443,
+            "attempt": 1,
+            "ms": 20507,
+            "chars": 74,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+            "pointId": "point_25",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁位于走廊"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值从10变为8"
+              },
+              {
+                "id": "person_c:task:task_pressure",
+                "phrase": "周宁完成了任务「完成压力试验」"
+              },
+              {
+                "id": "person_c:personality:change_28",
+                "phrase": "周宁的人格变化为「经历压力试验后更谨慎」"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+                "finishReason": "stop",
+                "firstTokenMs": 13084.469999313354,
+                "wallMs": 20505.625,
+                "timings": {
+                  "cache_n": 55,
+                  "prompt_n": 295,
+                  "prompt_ms": 12880.304,
+                  "prompt_per_token_ms": 43.66204745762712,
+                  "prompt_per_second": 22.9031861359794,
+                  "predicted_n": 54,
+                  "predicted_ms": 7562.596,
+                  "predicted_per_token_ms": 142.69049056603774,
+                  "predicted_per_second": 7.008175499524238
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 18
+      },
+      {
+        "command": "完成恢复练习",
+        "wallMs": 18100,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成恢复练习",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁完成任务「完成恢复练习」，完成恢复练习后更善于自我调节；精神值从8变为9。",
+          "at": 1793204908790
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_32",
+            "version": 5,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204925454,
+            "attempt": 1,
+            "ms": 15444,
+            "chars": 77,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+            "pointId": "point_32",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁位于走廊"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值从8变为9"
+              },
+              {
+                "id": "person_c:task:task_recover",
+                "phrase": "周宁完成了任务「完成恢复练习」"
+              },
+              {
+                "id": "person_c:personality:change_35",
+                "phrase": "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+                "finishReason": "stop",
+                "firstTokenMs": 9128.309999465942,
+                "wallMs": 15443.514999389648,
+                "timings": {
+                  "cache_n": 55,
+                  "prompt_n": 298,
+                  "prompt_ms": 8945.966,
+                  "prompt_per_token_ms": 30.02002013422819,
+                  "prompt_per_second": 33.311103574504976,
+                  "predicted_n": 55,
+                  "predicted_ms": 6426.684,
+                  "predicted_per_token_ms": 119.01266666666668,
+                  "predicted_per_second": 8.402466964300718
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 18
+      },
+      {
+        "command": "上下打量四周",
+        "wallMs": 11492,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": null,
+        "unparsed": true,
+        "narration": [
+          {
+            "pointId": "point_39",
+            "version": 6,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204936865,
+            "attempt": 1,
+            "ms": 8935,
+            "chars": 33,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+            "pointId": "point_39",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁位于走廊"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值为9"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+                "finishReason": "stop",
+                "firstTokenMs": 6279.095000267029,
+                "wallMs": 8934.675000190735,
+                "timings": {
+                  "cache_n": 56,
+                  "prompt_n": 203,
+                  "prompt_ms": 6114.785,
+                  "prompt_per_token_ms": 30.122093596059113,
+                  "prompt_per_second": 33.198223649727666,
+                  "predicted_n": 26,
+                  "predicted_ms": 2757.756,
+                  "predicted_per_token_ms": 110.31024,
+                  "predicted_per_second": 9.065341531302987
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 16
+      },
+      {
+        "command": "走到门厅",
+        "wallMs": 12739,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到门厅",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从走廊走到门厅。",
+          "at": 1793204938586
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_45",
+            "version": 7,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793204949604,
+            "attempt": 1,
+            "ms": 9599,
+            "chars": 36,
+            "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+            "pointId": "point_45",
+            "facts": [
+              {
+                "id": "person_a:position",
+                "phrase": "林川位于走廊"
+              },
+              {
+                "id": "person_a:sanity",
+                "phrase": "林川的精神值为10"
+              },
+              {
+                "id": "person_c:position",
+                "phrase": "周宁从走廊走到门厅"
+              },
+              {
+                "id": "person_c:sanity",
+                "phrase": "周宁的精神值为9"
+              }
+            ],
+            "completion": [
+              {
+                "raw": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+                "finishReason": "stop",
+                "firstTokenMs": 6488.635000228882,
+                "wallMs": 9598.26999950409,
+                "timings": {
+                  "cache_n": 55,
+                  "prompt_n": 210,
+                  "prompt_ms": 6264.545,
+                  "prompt_per_token_ms": 29.831166666666668,
+                  "prompt_per_second": 33.52198763038656,
+                  "predicted_n": 29,
+                  "predicted_ms": 3262.459,
+                  "predicted_per_token_ms": 116.51639285714285,
+                  "predicted_per_second": 8.58248333542276
+                }
+              }
+            ]
+          }
+        ],
+        "serverOps": 17
+      }
+    ],
+    "finalState": {
+      "version": 7,
+      "location": "hall",
+      "sanity": 9,
+      "tasks": [
+        {
+          "goal": "完成压力试验",
+          "status": "achieved"
+        },
+        {
+          "goal": "完成恢复练习",
+          "status": "achieved"
+        }
+      ],
+      "personality": [
+        "经历压力试验后更谨慎",
+        "完成恢复练习后更善于自我调节"
+      ]
+    },
+    "points": [
+      {
+        "pointId": "root_3",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_7",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_13",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_19",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_25",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+      },
+      {
+        "pointId": "point_32",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+      },
+      {
+        "pointId": "point_39",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+      },
+      {
+        "pointId": "point_45",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+      }
+    ],
+    "totals": {
+      "modelAttempts": 7,
+      "serverOps": 124,
+      "completionEvidence": 8,
+      "inputWallRange": {
+        "minMs": 10708,
+        "maxMs": 22574
+      }
+    },
+    "opLog": [
+      {
+        "op": "create_world",
+        "ms": 192
+      },
+      {
+        "op": "narration_claim",
+        "ms": 84
+      },
+      {
+        "op": "get_state",
+        "ms": 82
+      },
+      {
+        "op": "narration_submit",
+        "ms": 78
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 57
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 60
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 60
+      },
+      {
+        "op": "preview_point",
+        "ms": 64
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 56
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 74
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 79
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 62
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 79
+      },
+      {
+        "op": "preview_point",
+        "ms": 32
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 65
+      },
+      {
+        "op": "commit_point",
+        "ms": 131
+      },
+      {
+        "op": "narration_claim",
+        "ms": 53
+      },
+      {
+        "op": "get_state",
+        "ms": 26
+      },
+      {
+        "op": "get_state",
+        "ms": 25
+      },
+      {
+        "op": "narration_submit",
+        "ms": 80
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 108
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 57
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 55
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 65
+      },
+      {
+        "op": "preview_point",
+        "ms": 27
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 81
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 74
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 137
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 77
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 81
+      },
+      {
+        "op": "preview_point",
+        "ms": 30
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 103
+      },
+      {
+        "op": "commit_point",
+        "ms": 82
+      },
+      {
+        "op": "narration_claim",
+        "ms": 74
+      },
+      {
+        "op": "get_state",
+        "ms": 31
+      },
+      {
+        "op": "get_state",
+        "ms": 69
+      },
+      {
+        "op": "narration_submit",
+        "ms": 98
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 68
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 70
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 75
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 77
+      },
+      {
+        "op": "preview_point",
+        "ms": 64
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 104
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 83
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 94
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 80
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 160
+      },
+      {
+        "op": "preview_point",
+        "ms": 60
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 117
+      },
+      {
+        "op": "commit_point",
+        "ms": 93
+      },
+      {
+        "op": "narration_claim",
+        "ms": 133
+      },
+      {
+        "op": "get_state",
+        "ms": 39
+      },
+      {
+        "op": "get_state",
+        "ms": 41
+      },
+      {
+        "op": "narration_submit",
+        "ms": 183
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 94
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 133
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 93
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 92
+      },
+      {
+        "op": "preview_point",
+        "ms": 39
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 157
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 140
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 97
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 140
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 165
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 101
+      },
+      {
+        "op": "preview_point",
+        "ms": 38
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 187
+      },
+      {
+        "op": "commit_point",
+        "ms": 154
+      },
+      {
+        "op": "narration_claim",
+        "ms": 130
+      },
+      {
+        "op": "get_state",
+        "ms": 41
+      },
+      {
+        "op": "get_state",
+        "ms": 81
+      },
+      {
+        "op": "narration_submit",
+        "ms": 146
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 124
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 165
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 157
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 156
+      },
+      {
+        "op": "preview_point",
+        "ms": 87
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 158
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 160
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 189
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 153
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 161
+      },
+      {
+        "op": "preview_point",
+        "ms": 77
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 156
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 205
+      },
+      {
+        "op": "commit_point",
+        "ms": 170
+      },
+      {
+        "op": "narration_claim",
+        "ms": 156
+      },
+      {
+        "op": "get_state",
+        "ms": 92
+      },
+      {
+        "op": "get_state",
+        "ms": 47
+      },
+      {
+        "op": "narration_submit",
+        "ms": 166
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 194
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 188
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 208
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 162
+      },
+      {
+        "op": "preview_point",
+        "ms": 43
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 204
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 153
+      },
+      {
+        "op": "checkpoint_stage_time_scan",
+        "ms": 292
+      },
+      {
+        "op": "preview_point",
+        "ms": 49
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 173
+      },
+      {
+        "op": "commit_point",
+        "ms": 247
+      },
+      {
+        "op": "narration_claim",
+        "ms": 226
+      },
+      {
+        "op": "get_state",
+        "ms": 102
+      },
+      {
+        "op": "get_state",
+        "ms": 61
+      },
+      {
+        "op": "lease_renew",
+        "ms": 184
+      },
+      {
+        "op": "narration_submit",
+        "ms": 215
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 226
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 154
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 210
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 164
+      },
+      {
+        "op": "preview_point",
+        "ms": 53
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 255
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 247
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 197
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 272
+      },
+      {
+        "op": "preview_point",
+        "ms": 58
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 214
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 212
+      },
+      {
+        "op": "commit_point",
+        "ms": 269
+      },
+      {
+        "op": "narration_claim",
+        "ms": 208
+      },
+      {
+        "op": "get_state",
+        "ms": 111
+      },
+      {
+        "op": "get_state",
+        "ms": 72
+      },
+      {
+        "op": "narration_submit",
+        "ms": 182
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 258
+      }
+    ],
+    "modelAttempts": [
+      {
+        "at": 1793204862623,
+        "attempt": 1,
+        "ms": 10027,
+        "chars": 46,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+        "pointId": "point_7",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁从走廊走到门厅"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为10"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+            "finishReason": "stop",
+            "firstTokenMs": 6580.590000152588,
+            "wallMs": 10026.685000419617,
+            "timings": {
+              "cache_n": 53,
+              "prompt_n": 212,
+              "prompt_ms": 6390.531,
+              "prompt_per_token_ms": 30.144014150943395,
+              "prompt_per_second": 33.174082091143916,
+              "predicted_n": 33,
+              "predicted_ms": 3571.525,
+              "predicted_per_token_ms": 111.61015625,
+              "predicted_per_second": 8.959758086531663
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204873354,
+        "attempt": 1,
+        "ms": 9489,
+        "chars": 34,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+        "pointId": "point_13",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁位于门厅"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为10"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+            "finishReason": "stop",
+            "firstTokenMs": 6474.045000076294,
+            "wallMs": 9488.72500038147,
+            "timings": {
+              "cache_n": 55,
+              "prompt_n": 208,
+              "prompt_ms": 6296.37,
+              "prompt_per_token_ms": 30.271009615384614,
+              "prompt_per_second": 33.03490741490732,
+              "predicted_n": 28,
+              "predicted_ms": 3141.104,
+              "predicted_per_token_ms": 116.33718518518518,
+              "predicted_per_second": 8.595703930847245
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204884863,
+        "attempt": 1,
+        "ms": 10047,
+        "chars": 46,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+        "pointId": "point_19",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁从门厅走到走廊"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为10"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+            "finishReason": "stop",
+            "firstTokenMs": 6543.60000038147,
+            "wallMs": 10046.970000267029,
+            "timings": {
+              "cache_n": 56,
+              "prompt_n": 211,
+              "prompt_ms": 6377.735,
+              "prompt_per_token_ms": 30.22623222748815,
+              "prompt_per_second": 33.083845597222215,
+              "predicted_n": 33,
+              "predicted_ms": 3612.596,
+              "predicted_per_token_ms": 112.893625,
+              "predicted_per_second": 8.857896094664335
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204907443,
+        "attempt": 1,
+        "ms": 20507,
+        "chars": 74,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+        "pointId": "point_25",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁位于走廊"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值从10变为8"
+          },
+          {
+            "id": "person_c:task:task_pressure",
+            "phrase": "周宁完成了任务「完成压力试验」"
+          },
+          {
+            "id": "person_c:personality:change_28",
+            "phrase": "周宁的人格变化为「经历压力试验后更谨慎」"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+            "finishReason": "stop",
+            "firstTokenMs": 13084.469999313354,
+            "wallMs": 20505.625,
+            "timings": {
+              "cache_n": 55,
+              "prompt_n": 295,
+              "prompt_ms": 12880.304,
+              "prompt_per_token_ms": 43.66204745762712,
+              "prompt_per_second": 22.9031861359794,
+              "predicted_n": 54,
+              "predicted_ms": 7562.596,
+              "predicted_per_token_ms": 142.69049056603774,
+              "predicted_per_second": 7.008175499524238
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204925454,
+        "attempt": 1,
+        "ms": 15444,
+        "chars": 77,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+        "pointId": "point_32",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁位于走廊"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值从8变为9"
+          },
+          {
+            "id": "person_c:task:task_recover",
+            "phrase": "周宁完成了任务「完成恢复练习」"
+          },
+          {
+            "id": "person_c:personality:change_35",
+            "phrase": "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+            "finishReason": "stop",
+            "firstTokenMs": 9128.309999465942,
+            "wallMs": 15443.514999389648,
+            "timings": {
+              "cache_n": 55,
+              "prompt_n": 298,
+              "prompt_ms": 8945.966,
+              "prompt_per_token_ms": 30.02002013422819,
+              "prompt_per_second": 33.311103574504976,
+              "predicted_n": 55,
+              "predicted_ms": 6426.684,
+              "predicted_per_token_ms": 119.01266666666668,
+              "predicted_per_second": 8.402466964300718
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204936865,
+        "attempt": 1,
+        "ms": 8935,
+        "chars": 33,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+        "pointId": "point_39",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁位于走廊"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为9"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+            "finishReason": "stop",
+            "firstTokenMs": 6279.095000267029,
+            "wallMs": 8934.675000190735,
+            "timings": {
+              "cache_n": 56,
+              "prompt_n": 203,
+              "prompt_ms": 6114.785,
+              "prompt_per_token_ms": 30.122093596059113,
+              "prompt_per_second": 33.198223649727666,
+              "predicted_n": 26,
+              "predicted_ms": 2757.756,
+              "predicted_per_token_ms": 110.31024,
+              "predicted_per_second": 9.065341531302987
+            }
+          }
+        ]
+      },
+      {
+        "at": 1793204949604,
+        "attempt": 1,
+        "ms": 9599,
+        "chars": 36,
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+        "pointId": "point_45",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值为10"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁从走廊走到门厅"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为9"
+          }
+        ],
+        "completion": [
+          {
+            "raw": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+            "finishReason": "stop",
+            "firstTokenMs": 6488.635000228882,
+            "wallMs": 9598.26999950409,
+            "timings": {
+              "cache_n": 55,
+              "prompt_n": 210,
+              "prompt_ms": 6264.545,
+              "prompt_per_token_ms": 29.831166666666668,
+              "prompt_per_second": 33.52198763038656,
+              "predicted_n": 29,
+              "predicted_ms": 3262.459,
+              "predicted_per_token_ms": 116.51639285714285,
+              "predicted_per_second": 8.58248333542276
+            }
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "kind": "decision",
+        "inputText": "走到门厅",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从走廊走到门厅。",
+        "at": 1793204852181
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_7",
+        "version": 1,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204862624
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204862813
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成压力试验",
+        "outcome": "refused",
+        "reason": "milestone_location_mismatch",
+        "text": "规则拒绝执行（milestone_location_mismatch）；没有位置或数值变化。",
+        "at": 1793204863392
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_13",
+        "version": 2,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204873354
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204873521
+      },
+      {
+        "kind": "decision",
+        "inputText": "走到走廊",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从门厅走到走廊。",
+        "at": 1793204874170
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_19",
+        "version": 3,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204884863
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204885140
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成压力试验",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。",
+        "at": 1793204886035
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_25",
+        "version": 4,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204907443
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204907715
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成恢复练习",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁完成任务「完成恢复练习」，完成恢复练习后更善于自我调节；精神值从8变为9。",
+        "at": 1793204908790
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_32",
+        "version": 5,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204925454
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204925814
+      },
+      {
+        "kind": "unparsed",
+        "inputText": "上下打量四周",
+        "at": 1793204926418
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_39",
+        "version": 6,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204936865
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204937306
+      },
+      {
+        "kind": "decision",
+        "inputText": "走到门厅",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从走廊走到门厅。",
+        "at": 1793204938586
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_45",
+        "version": 7,
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204949604
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793204950045
+      }
+    ],
+    "netTrail": [
+      {
+        "at": "2026-10-28T16:27:20.236Z",
+        "method": "POST",
+        "url": "/worlds",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_0\",\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\"},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":n",
+        "status": 201
+      },
+      {
+        "at": "2026-10-28T16:27:20.401Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/root_3/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_1\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"root_3\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:20.478Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=root_3",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.600Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/root_3/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_3\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"root_3\",\"claimToken\":\"claim_0c5e5da7141bcf0b66d2f71e5e55f55d1df9aac2da9a111b7151af51dc5fdecb\",\"generation\":1,\"issuedAtEpochMilli\":1793204840283,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.669Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_4\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd1\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\":",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.726Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_5\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":0,\"operation\":\"start_advance\",\"advanceId\":\"advance_4\",\"inputId\":\"input_5\",\"roundId\":\"round_6\",\"inputText\":\"走到门厅\",\"order\":[\"person_a\",\"person_c\"]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.787Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_6\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":1,\"operation\":\"begin_point\",\"pointId\":\"point_7\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.863Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_4\",\"roundId\":\"round_6\",\"pointId\":\"point_7\",\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":2,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.911Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_8\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":2,\"operation\":\"record_skip\",\"pointId\":\"point_7\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:31.971Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_9\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":3,\"operation\":\"discover_group\",\"pointId\":\"point_7\",\"groupId\":\"group_9\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"move\\\",\\\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.051Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_10\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":4,\"operation\":\"extend_group\",\"pointId\":\"point_7\",\"groupId\":\"group_9\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.123Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_11\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":5,\"operation\":\"close_group\",\"pointId\":\"point_7\",\"groupId\":\"group_9\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.194Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_12\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":6,\"operation\":\"stage_unit\",\"pointId\":\"point_7\",\"groupId\":\"group_9\",\"candidates\":{\"groupId\":\"group_9\",\"actorIds\":[\"person_c\"],\"positions\":{\"person_c",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.265Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_4\",\"roundId\":\"round_6\",\"pointId\":\"point_7\",\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":7,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_9\",\"actorIds\":[\"person_c\"],\"positions\":{\"person_c\":{\"containerId\":\"hall\",\"slotId\":null,\"relativeTo\":nu",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.300Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_14\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":7,\"operation\":\"seal_point\",\"pointId\":\"point_7\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.366Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_15\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"root_3\",\"expectedVersion\":0,\"expectedCheckpointRevision\":8,\"advanceId\":\"advance_4\",\"roundId\":\"round_6\",\"pointId\":\"point_7\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_7\",\"sequence\":1,\"kind\":\"normal\",\"previou",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.494Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_7/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_16\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_7\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.546Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_7",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:32.571Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=root_3",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.625Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_7/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_19\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_7\",\"claimToken\":\"claim_61a80d8859ad14f6960f4e3e03adfa6d89efd415ba9ef04e5b1991e17bdbf8f2\",\"generation\":1,\"issuedAtEpochMilli\":1793204852400,\"outcome\":\"ready\",\"text\":\"林川位于走廊。  \\n林川的精神值为10。  \\n周宁",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.721Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_20\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":9,\"operation\":\"conclude\",\"advanceId\":\"advance_4\",\"roundId\":\"round_6\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.816Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_21\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd2\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.871Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_22\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":10,\"operation\":\"start_advance\",\"advanceId\":\"advance_10\",\"inputId\":\"input_11\",\"roundId\":\"round_12\",\"inputText\":\"完成压力试验\",\"order\":[\"person_a\",\"person",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.928Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_23\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":11,\"operation\":\"begin_point\",\"pointId\":\"point_13\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:42.992Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_10\",\"roundId\":\"round_12\",\"pointId\":\"point_13\",\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":12,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.023Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_25\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":12,\"operation\":\"record_skip\",\"pointId\":\"point_13\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.104Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_26\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":13,\"operation\":\"discover_group\",\"pointId\":\"point_13\",\"groupId\":\"group_15\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"sani",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.179Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_27\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":14,\"operation\":\"extend_group\",\"pointId\":\"point_13\",\"groupId\":\"group_15\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.316Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_28\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":15,\"operation\":\"close_group\",\"pointId\":\"point_13\",\"groupId\":\"group_15\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.394Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_29\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":16,\"operation\":\"stage_unit\",\"pointId\":\"point_13\",\"groupId\":\"group_15\",\"candidates\":{\"groupId\":\"group_15\",\"actorIds\":[\"person_c\"],\"positions\":{},\"a",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.475Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_10\",\"roundId\":\"round_12\",\"pointId\":\"point_13\",\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":17,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_15\",\"actorIds\":[\"person_c\"],\"positions\":{},\"appearances\":{},\"tasksAchieved\":{},\"subtasksAdded\":{}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.505Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_31\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":17,\"operation\":\"seal_point\",\"pointId\":\"point_13\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.608Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_32\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_7\",\"expectedVersion\":1,\"expectedCheckpointRevision\":18,\"advanceId\":\"advance_10\",\"roundId\":\"round_12\",\"pointId\":\"point_13\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_13\",\"sequence\":2,\"kind\":\"normal\",\"p",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.691Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_13/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_33\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_13\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.764Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_13",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:43.796Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_7",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.357Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_13/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_36\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_13\",\"claimToken\":\"claim_ac03374d489f5f79c4cbaf7c3b71d127535c9a72d0f4f1c03772ad1a0bfee813\",\"generation\":1,\"issuedAtEpochMilli\":1793204863648,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁位于门厅。周宁",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.455Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_37\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":19,\"operation\":\"conclude\",\"advanceId\":\"advance_10\",\"roundId\":\"round_12\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.522Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_38\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd3\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.593Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_39\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":20,\"operation\":\"start_advance\",\"advanceId\":\"advance_16\",\"inputId\":\"input_17\",\"roundId\":\"round_18\",\"inputText\":\"走到走廊\",\"order\":[\"person_a\",\"person_",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.669Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_40\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":21,\"operation\":\"begin_point\",\"pointId\":\"point_19\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.745Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_16\",\"roundId\":\"round_18\",\"pointId\":\"point_19\",\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":22,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.809Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_42\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":22,\"operation\":\"record_skip\",\"pointId\":\"point_19\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.914Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_43\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":23,\"operation\":\"discover_group\",\"pointId\":\"point_19\",\"groupId\":\"group_21\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"mov",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:53.997Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_44\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":24,\"operation\":\"extend_group\",\"pointId\":\"point_19\",\"groupId\":\"group_21\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.091Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_45\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":25,\"operation\":\"close_group\",\"pointId\":\"point_19\",\"groupId\":\"group_21\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.172Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_46\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":26,\"operation\":\"stage_unit\",\"pointId\":\"point_19\",\"groupId\":\"group_21\",\"candidates\":{\"groupId\":\"group_21\",\"actorIds\":[\"person_c\"],\"positions\":{\"pe",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.391Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_16\",\"roundId\":\"round_18\",\"pointId\":\"point_19\",\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":27,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_21\",\"actorIds\":[\"person_c\"],\"positions\":{\"person_c\":{\"containerId\":\"corridor\",\"slotId\":null,\"rel",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.393Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_48\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":27,\"operation\":\"seal_point\",\"pointId\":\"point_19\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.510Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_49\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_13\",\"expectedVersion\":2,\"expectedCheckpointRevision\":28,\"advanceId\":\"advance_16\",\"roundId\":\"round_18\",\"pointId\":\"point_19\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_19\",\"sequence\":3,\"kind\":\"normal\",\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.602Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_19/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_50\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_19\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.736Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_19",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:27:54.775Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_13",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:04.926Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_19/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_53\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_19\",\"claimToken\":\"claim_e0ba1bbe8f58bb1ce4d66c423b69a1583d55d05a916ef403f4101d547669cbe5\",\"generation\":1,\"issuedAtEpochMilli\":1793204874546,\"outcome\":\"ready\",\"text\":\"林川位于走廊。  \\n林川的精神值为10。  \\n周",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.048Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_54\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":29,\"operation\":\"conclude\",\"advanceId\":\"advance_16\",\"roundId\":\"round_18\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.142Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_55\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd4\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.276Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_56\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":30,\"operation\":\"start_advance\",\"advanceId\":\"advance_22\",\"inputId\":\"input_23\",\"roundId\":\"round_24\",\"inputText\":\"完成压力试验\",\"order\":[\"person_a\",\"perso",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.426Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_57\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":31,\"operation\":\"begin_point\",\"pointId\":\"point_25\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.462Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_22\",\"roundId\":\"round_24\",\"pointId\":\"point_25\",\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":32,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.501Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_59\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":32,\"operation\":\"record_skip\",\"pointId\":\"point_25\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.658Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_60\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":33,\"operation\":\"discover_group\",\"pointId\":\"point_25\",\"groupId\":\"group_27\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"san",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.799Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_61\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":34,\"operation\":\"extend_group\",\"pointId\":\"point_25\",\"groupId\":\"group_27\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:05.896Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_62\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":35,\"operation\":\"close_group\",\"pointId\":\"point_25\",\"groupId\":\"group_27\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.038Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_64\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"candidates:31649ca7e4ea9f30c334acc4fcf3e38a\",\"slots\":[{\"slotKey\":\"change:66647e943510e57f3ba6e2faac36ea33\",\"kind\":\"change\"}]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.204Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_63\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":36,\"operation\":\"stage_unit\",\"pointId\":\"point_25\",\"groupId\":\"group_27\",\"candidates\":{\"groupId\":\"group_27\",\"actorIds\":[\"person_c\"],\"positions\":{},\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.304Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_22\",\"roundId\":\"round_24\",\"pointId\":\"point_25\",\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":37,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_27\",\"actorIds\":[\"person_c\"],\"positions\":{},\"appearances\":{},\"tasksAchieved\":{\"person_c\":[\"task_p",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.343Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_66\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":37,\"operation\":\"seal_point\",\"pointId\":\"point_25\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.530Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_67\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_19\",\"expectedVersion\":3,\"expectedCheckpointRevision\":38,\"advanceId\":\"advance_22\",\"roundId\":\"round_24\",\"pointId\":\"point_25\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_25\",\"sequence\":4,\"kind\":\"normal\",\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.684Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_25/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_68\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_25\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.814Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_25",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:06.856Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_19",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:27.447Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_25/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_71\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_25\",\"claimToken\":\"claim_eba67702a3834c84bac100a83598aa4747e596fd17149ebd8256a30cd548828e\",\"generation\":1,\"issuedAtEpochMilli\":1793204886585,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁位于走廊。周宁",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:27.592Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_72\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":39,\"operation\":\"conclude\",\"advanceId\":\"advance_22\",\"roundId\":\"round_24\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:27.717Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_73\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd5\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:27.882Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_74\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":40,\"operation\":\"start_advance\",\"advanceId\":\"advance_29\",\"inputId\":\"input_30\",\"roundId\":\"round_31\",\"inputText\":\"完成恢复练习\",\"order\":[\"person_a\",\"perso",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.039Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_75\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":41,\"operation\":\"begin_point\",\"pointId\":\"point_32\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.196Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_29\",\"roundId\":\"round_31\",\"pointId\":\"point_32\",\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":42,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.283Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_77\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":42,\"operation\":\"discover_group\",\"pointId\":\"point_32\",\"groupId\":\"group_34\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"san",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.442Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_78\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":43,\"operation\":\"extend_group\",\"pointId\":\"point_32\",\"groupId\":\"group_34\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.602Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_79\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":44,\"operation\":\"close_group\",\"pointId\":\"point_32\",\"groupId\":\"group_34\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.793Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_81\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"candidates:874e4066e619dbfbf35075be36f004d8\",\"slots\":[{\"slotKey\":\"change:44b73c641cf0e6a51f3da82a1f7be1e8\",\"kind\":\"change\"}]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:28.945Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_80\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":45,\"operation\":\"stage_unit\",\"pointId\":\"point_32\",\"groupId\":\"group_34\",\"candidates\":{\"groupId\":\"group_34\",\"actorIds\":[\"person_c\"],\"positions\":{},\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.106Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_29\",\"roundId\":\"round_31\",\"pointId\":\"point_32\",\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":46,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_34\",\"actorIds\":[\"person_c\"],\"positions\":{},\"appearances\":{},\"tasksAchieved\":{\"person_c\":[\"task_r",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.184Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_83\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":46,\"operation\":\"record_skip\",\"pointId\":\"point_32\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.340Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_84\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":47,\"operation\":\"seal_point\",\"pointId\":\"point_32\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.545Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_85\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_25\",\"expectedVersion\":4,\"expectedCheckpointRevision\":48,\"advanceId\":\"advance_29\",\"roundId\":\"round_31\",\"pointId\":\"point_32\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_32\",\"sequence\":5,\"kind\":\"normal\",\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.716Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_32/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_86\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_32\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.871Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_32",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:29.963Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_25",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:45.456Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_32/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_89\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_32\",\"claimToken\":\"claim_39f6fc242cd0a3524c63edcd5c1095ef4b749c50c6d02a42eeb2f14d1c4ab616\",\"generation\":1,\"issuedAtEpochMilli\":1793204909616,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁位于走廊。周宁",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:45.622Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_90\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":49,\"operation\":\"conclude\",\"advanceId\":\"advance_29\",\"roundId\":\"round_31\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:45.816Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_91\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd6\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.004Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_92\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":50,\"operation\":\"start_advance\",\"advanceId\":\"advance_36\",\"inputId\":\"input_37\",\"roundId\":\"round_38\",\"inputText\":\"上下打量四周\",\"order\":[\"person_a\",\"perso",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.213Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_93\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":51,\"operation\":\"begin_point\",\"pointId\":\"point_39\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.375Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_36\",\"roundId\":\"round_38\",\"pointId\":\"point_39\",\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":52,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.420Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_95\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":52,\"operation\":\"record_skip\",\"pointId\":\"point_39\",\"slotActorId\":\"person_c\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.624Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_96\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":53,\"operation\":\"record_skip\",\"pointId\":\"point_39\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:46.782Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_97\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":54,\"operation\":\"stage_time_scan\",\"pointId\":\"point_39\",\"candidates\":{\"groupId\":null,\"actorIds\":[],\"positions\":{},\"appearances\":{},\"tasksAchieved\":",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.070Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_36\",\"roundId\":\"round_38\",\"pointId\":\"point_39\",\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":55,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":null,\"actorIds\":[],\"positions\":{},\"appearances\":{},\"tasksAchieved\":{},\"subtasksAdded\":{},\"personalities",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.121Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_99\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":55,\"operation\":\"seal_point\",\"pointId\":\"point_39\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.293Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_100\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_32\",\"expectedVersion\":5,\"expectedCheckpointRevision\":56,\"advanceId\":\"advance_36\",\"roundId\":\"round_38\",\"pointId\":\"point_39\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_39\",\"sequence\":6,\"kind\":\"normal\",",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.540Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_39/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_101\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_39\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.768Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_39",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:47.870Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_32",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:50.292Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/lease",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"hb_s1_mvsbv20u_4a63f2cc_1\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:56.866Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_39/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_104\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_39\",\"claimToken\":\"claim_644207e9d45e54a054d0f25dfc74601652c7a83b9735a26a0f38ad6e81eabbb0\",\"generation\":1,\"issuedAtEpochMilli\":1793204927408,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁位于走廊。周",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.081Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_105\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":57,\"operation\":\"conclude\",\"advanceId\":\"advance_36\",\"roundId\":\"round_38\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.307Z",
+        "method": "POST",
+        "url": "/worlds/world_1/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_106\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"allocationKey\":\"chain_action_cmd7\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point\",\"kind\":\"point\"},{\"slotKey\":\"group:person_a\",\"kind",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.461Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_107\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":58,\"operation\":\"start_advance\",\"advanceId\":\"advance_42\",\"inputId\":\"input_43\",\"roundId\":\"round_44\",\"inputText\":\"走到门厅\",\"order\":[\"person_a\",\"person",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.671Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_108\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":59,\"operation\":\"begin_point\",\"pointId\":\"point_45\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.835Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_42\",\"roundId\":\"round_44\",\"pointId\":\"point_45\",\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":60,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:57.888Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_110\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":60,\"operation\":\"discover_group\",\"pointId\":\"point_45\",\"groupId\":\"group_47\",\"initiatorId\":\"person_c\",\"actionText\":\"rule-proposal-v1:{\\\"kind\\\":\\\"mo",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:58.143Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_111\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":61,\"operation\":\"extend_group\",\"pointId\":\"point_45\",\"groupId\":\"group_47\",\"sourceId\":\"person_c\",\"targets\":[],\"admittedMember\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:58.390Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_112\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":62,\"operation\":\"close_group\",\"pointId\":\"point_45\",\"groupId\":\"group_47\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:58.588Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_113\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":63,\"operation\":\"stage_unit\",\"pointId\":\"point_45\",\"groupId\":\"group_47\",\"candidates\":{\"groupId\":\"group_47\",\"actorIds\":[\"person_c\"],\"positions\":{\"p",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:58.860Z",
+        "method": "POST",
+        "url": "/worlds/world_1/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_1\",\"advanceId\":\"advance_42\",\"roundId\":\"round_44\",\"pointId\":\"point_45\",\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":64,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_47\",\"actorIds\":[\"person_c\"],\"positions\":{\"person_c\":{\"containerId\":\"hall\",\"slotId\":null,\"relativ",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:58.919Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_115\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":64,\"operation\":\"record_skip\",\"pointId\":\"point_45\",\"slotActorId\":\"person_a\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:59.133Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_116\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":65,\"operation\":\"seal_point\",\"pointId\":\"point_45\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:59.345Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_117\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_39\",\"expectedVersion\":6,\"expectedCheckpointRevision\":66,\"advanceId\":\"advance_42\",\"roundId\":\"round_44\",\"pointId\":\"point_45\",\"point\":{\"worldId\":\"world_1\",\"id\":\"point_45\",\"sequence\":7,\"kind\":\"normal\",",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:59.614Z",
+        "method": "POST",
+        "url": "/worlds/world_1/points/point_45/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_118\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_45\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:59.822Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_45",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:28:59.933Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state?point=point_39",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:09.606Z",
+        "method": "PUT",
+        "url": "/worlds/world_1/points/point_45/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_121\",\"worldId\":\"world_1\",\"mode\":\"head\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"pointId\":\"point_45\",\"claimToken\":\"claim_edc199c88ad8e6b333174c0f39018546b37bbe76a50fc7ddf9b49ec61e17efbf\",\"generation\":1,\"issuedAtEpochMilli\":1793204939431,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值为10。周宁从走廊走到门",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:09.789Z",
+        "method": "POST",
+        "url": "/worlds/world_1/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"rule_chain_action_122\",\"worldId\":\"world_1\",\"leaseToken\":\"lease_22bce7a2e93ace5c19ca1b3aab8267efb6ab1e2f2fab81587464bcd7ce36d91e\",\"fenceEpoch\":1,\"expectedPointId\":\"point_45\",\"expectedVersion\":7,\"expectedCheckpointRevision\":67,\"operation\":\"conclude\",\"advanceId\":\"advance_42\",\"roundId\":\"round_44\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":null}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.047Z",
+        "method": "GET",
+        "url": "/worlds/world_1/state",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.112Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points?limit=100",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.205Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/root_3/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.264Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_7/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.310Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_13/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.401Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_19/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.449Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_25/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.501Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_32/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.553Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_39/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.639Z",
+        "method": "GET",
+        "url": "/worlds/world_1/points/point_45/narration",
+        "body": null,
+        "status": 200
+      }
+    ]
+  },
+  "chain": {
+    "worldId": "world_68",
+    "attempts": 3,
+    "worldAttempts": [
+      {
+        "attempt": 1,
+        "worldId": "world_48",
+        "roll": {
+          "admitted": false,
+          "rollId": "roll_57",
+          "result": 9,
+          "ruleVersion": "reaction-d20-v1"
+        }
+      },
+      {
+        "attempt": 2,
+        "worldId": "world_58",
+        "roll": {
+          "admitted": false,
+          "rollId": "roll_67",
+          "result": 5,
+          "ruleVersion": "reaction-d20-v1"
+        }
+      },
+      {
+        "attempt": 3,
+        "worldId": "world_68",
+        "roll": {
+          "admitted": true,
+          "rollId": "roll_77",
+          "result": 18,
+          "ruleVersion": "reaction-d20-v1"
+        }
+      }
+    ],
+    "status": "COMPLETED",
+    "setupMs": 1388,
+    "walkMs": 17287,
+    "modelTasks": [
+      {
+        "task": "targets",
+        "key": "person_c",
+        "at": 1793204952438,
+        "returned": {
+          "targets": [
+            {
+              "targetId": "person_a"
+            }
+          ]
+        }
+      },
+      {
+        "task": "results",
+        "key": "group_75",
+        "at": 1793204952730,
+        "returned": {
+          "person_a": "person_a 的既定结果。",
+          "person_c": "person_c 的既定结果。"
+        }
+      },
+      {
+        "task": "updates",
+        "key": "group_75",
+        "at": 1793204952730,
+        "returned": [
+          {
+            "stage": "tasks",
+            "changes": {
+              "person_a": {
+                "entityId": "person_a",
+                "tasksAchieved": [
+                  "task_watch"
+                ]
+              }
+            }
+          },
+          {
+            "stage": "personality",
+            "changes": {
+              "person_a": {
+                "entityId": "person_a",
+                "personalityChanges": [
+                  {
+                    "id": "change_80",
+                    "text": "撑住重门后更加沉稳",
+                    "supersedes": []
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "stage": "sanity",
+            "changes": {
+              "person_a": {
+                "entityId": "person_a",
+                "sanitySet": 8
+              }
+            }
+          }
+        ]
+      },
+      {
+        "task": "narration",
+        "key": "point_74",
+        "at": 1793204969284,
+        "returned": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。"
+      },
+      {
+        "task": "continuation",
+        "key": "round_73",
+        "at": 1793204969380,
+        "returned": {
+          "kind": "handback",
+          "closedBy": "model",
+          "cancelReason": null
+        }
+      }
+    ],
+    "narrationEvents": [
+      {
+        "kind": "narration",
+        "pointId": "point_74",
+        "version": 1,
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793204969284
+      }
+    ],
+    "modelAttempts": [
+      {
+        "at": 1793204969283,
+        "attempt": 1,
+        "ms": 16036,
+        "chars": 78,
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。",
+        "pointId": "point_74",
+        "facts": [
+          {
+            "id": "person_a:position",
+            "phrase": "林川位于走廊"
+          },
+          {
+            "id": "person_a:sanity",
+            "phrase": "林川的精神值从10变为8"
+          },
+          {
+            "id": "person_a:task:task_watch",
+            "phrase": "林川完成了任务「留在走廊守门，不碰盒子」"
+          },
+          {
+            "id": "person_a:personality:change_80",
+            "phrase": "林川的人格变化为「撑住重门后更加沉稳」"
+          },
+          {
+            "id": "person_c:position",
+            "phrase": "周宁位于走廊"
+          },
+          {
+            "id": "person_c:sanity",
+            "phrase": "周宁的精神值为10"
+          }
+        ],
+        "completion": []
+      }
+    ],
+    "commitCount": 1,
+    "rollsRolled": [
+      {
+        "sourceId": "person_a",
+        "targetId": "person_c",
+        "admitted": false,
+        "result": 9
+      },
+      {
+        "sourceId": "person_a",
+        "targetId": "person_c",
+        "admitted": false,
+        "result": 5
+      },
+      {
+        "sourceId": "person_a",
+        "targetId": "person_c",
+        "admitted": true,
+        "result": 18
+      },
+      {
+        "sourceId": "person_c",
+        "targetId": "person_a",
+        "admitted": false,
+        "result": 9
+      }
+    ],
+    "points": [
+      {
+        "pointId": "root_70",
+        "narrationStatus": "ready",
+        "text": "根点模板叙事（脚本引导，不计入模型成本）。"
+      },
+      {
+        "pointId": "point_74",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。"
+      }
+    ],
+    "finalState": {
+      "version": 1,
+      "time": "2026-10-27T09:00:02",
+      "characters": {
+        "person_a": {
+          "position": "corridor",
+          "sanity": 8,
+          "tasks": [
+            {
+              "goal": "留在走廊守门，不碰盒子",
+              "status": "achieved"
+            }
+          ],
+          "personality": [
+            "撑住重门后更加沉稳"
+          ],
+          "appearance": []
+        },
+        "person_c": {
+          "position": "corridor",
+          "sanity": 10,
+          "tasks": [
+            {
+              "goal": "完成压力试验",
+              "status": "pending"
+            },
+            {
+              "goal": "完成恢复练习",
+              "status": "pending"
+            }
+          ],
+          "personality": [],
+          "appearance": []
+        }
+      }
+    },
+    "totals": {
+      "modelAttempts": 1,
+      "serverOps": 48,
+      "completionEvidence": 0
+    },
+    "opLog": [
+      {
+        "op": "create_world",
+        "ms": 42
+      },
+      {
+        "op": "narration_claim",
+        "ms": 38
+      },
+      {
+        "op": "narration_submit",
+        "ms": 41
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 35
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 40
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 44
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 58
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 54
+      },
+      {
+        "op": "create_rolls",
+        "ms": 87
+      },
+      {
+        "op": "create_world",
+        "ms": 37
+      },
+      {
+        "op": "narration_claim",
+        "ms": 35
+      },
+      {
+        "op": "narration_submit",
+        "ms": 39
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 36
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 42
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 41
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 53
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 59
+      },
+      {
+        "op": "create_rolls",
+        "ms": 64
+      },
+      {
+        "op": "create_world",
+        "ms": 37
+      },
+      {
+        "op": "narration_claim",
+        "ms": 38
+      },
+      {
+        "op": "narration_submit",
+        "ms": 40
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 42
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 44
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 43
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 55
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 56
+      },
+      {
+        "op": "create_rolls",
+        "ms": 120
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 66
+      },
+      {
+        "op": "lease_renew",
+        "ms": 47
+      },
+      {
+        "op": "get_context",
+        "ms": 105
+      },
+      {
+        "op": "list_points",
+        "ms": 28
+      },
+      {
+        "op": "get_state",
+        "ms": 33
+      },
+      {
+        "op": "get_context",
+        "ms": 29
+      },
+      {
+        "op": "preview_point",
+        "ms": 32
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 82
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 73
+      },
+      {
+        "op": "create_rolls",
+        "ms": 66
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 68
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 73
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 75
+      },
+      {
+        "op": "preview_point",
+        "ms": 30
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 130
+      },
+      {
+        "op": "commit_point",
+        "ms": 81
+      },
+      {
+        "op": "narration_claim",
+        "ms": 65
+      },
+      {
+        "op": "get_state",
+        "ms": 34
+      },
+      {
+        "op": "get_state",
+        "ms": 27
+      },
+      {
+        "op": "narration_submit",
+        "ms": 96
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 66
+      }
+    ],
+    "setupOps": [
+      {
+        "op": "create_world",
+        "at": 1793204950772
+      },
+      {
+        "op": "narration_claim",
+        "at": 1793204950814
+      },
+      {
+        "op": "narration_submit",
+        "at": 1793204950852
+      },
+      {
+        "op": "allocate_ids",
+        "at": 1793204950893
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "at": 1793204950928
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "at": 1793204950967
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "at": 1793204951011
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "at": 1793204951069
+      },
+      {
+        "op": "create_rolls",
+        "at": 1793204951123
+      },
+      {
+        "op": "create_world",
+        "at": 1793204951209
+      },
+      {
+        "op": "narration_claim",
+        "at": 1793204951246
+      },
+      {
+        "op": "narration_submit",
+        "at": 1793204951281
+      },
+      {
+        "op": "allocate_ids",
+        "at": 1793204951320
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "at": 1793204951356
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "at": 1793204951399
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "at": 1793204951440
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "at": 1793204951494
+      },
+      {
+        "op": "create_rolls",
+        "at": 1793204951552
+      },
+      {
+        "op": "create_world",
+        "at": 1793204951617
+      },
+      {
+        "op": "narration_claim",
+        "at": 1793204951654
+      },
+      {
+        "op": "narration_submit",
+        "at": 1793204951693
+      },
+      {
+        "op": "allocate_ids",
+        "at": 1793204951733
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "at": 1793204951775
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "at": 1793204951819
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "at": 1793204951862
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "at": 1793204951917
+      },
+      {
+        "op": "create_rolls",
+        "at": 1793204951973
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "at": 1793204952093
+      }
+    ],
+    "readPointIds": [
+      "root_70",
+      "point_74"
+    ],
+    "netTrail": [
+      {
+        "at": "2026-10-28T16:29:10.774Z",
+        "method": "POST",
+        "url": "/worlds",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_1\",\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\"},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null",
+        "status": 201
+      },
+      {
+        "at": "2026-10-28T16:29:10.816Z",
+        "method": "POST",
+        "url": "/worlds/world_48/points/root_50/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_2\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_50\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.853Z",
+        "method": "PUT",
+        "url": "/worlds/world_48/points/root_50/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_3\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_50\",\"claimToken\":\"claim_e4ae354426d2ba39e5870932d37507bcb1176277b2d4ee11dbc00fcd3a3ab2f5\",\"generation\":1,\"issuedAtEpochMilli\":1793204950786,\"outcome\":\"ready\",\"text\":\"根点模板叙事（脚本引导，不计入模型成本）。\",\"failur",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.894Z",
+        "method": "POST",
+        "url": "/worlds/world_48/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_4\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"allocationKey\":\"chain_mvsbxfcj_ids\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point_1\",\"kind\":\"point\"},{\"slotKey\":\"group_1\",\"kind\":\"group",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.929Z",
+        "method": "PUT",
+        "url": "/worlds/world_48/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_5\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"expectedPointId\":\"root_50\",\"expectedVersion\":0,\"expectedCheckpointRevision\":0,\"operation\":\"start_advance\",\"advanceId\":\"advance_51\",\"inputId\":\"input_52\",\"roundId\":\"round_53\",\"inputText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"order\":[\"per",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:10.968Z",
+        "method": "PUT",
+        "url": "/worlds/world_48/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_6\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"expectedPointId\":\"root_50\",\"expectedVersion\":0,\"expectedCheckpointRevision\":1,\"operation\":\"begin_point\",\"pointId\":\"point_54\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.013Z",
+        "method": "PUT",
+        "url": "/worlds/world_48/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_7\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"expectedPointId\":\"root_50\",\"expectedVersion\":0,\"expectedCheckpointRevision\":2,\"operation\":\"discover_group\",\"pointId\":\"point_54\",\"groupId\":\"group_55\",\"initiatorId\":\"person_a\",\"actionText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"targetIds\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.070Z",
+        "method": "PUT",
+        "url": "/worlds/world_48/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_8\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"expectedPointId\":\"root_50\",\"expectedVersion\":0,\"expectedCheckpointRevision\":3,\"operation\":\"extend_group\",\"pointId\":\"point_54\",\"groupId\":\"group_55\",\"sourceId\":\"person_a\",\"targets\":[{\"targetId\":\"person_c\",\"triggerKey\":\"trigger_",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.129Z",
+        "method": "POST",
+        "url": "/worlds/world_48/rolls",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_9\",\"worldId\":\"world_48\",\"leaseToken\":\"lease_fcd94f4e809f2238a33edfff9f86004fa7585bf2b9b6acc187f4eae763a113bb\",\"fenceEpoch\":1,\"expectedPointId\":\"root_50\",\"expectedVersion\":0,\"expectedCheckpointRevision\":4,\"rolls\":[{\"advanceId\":\"advance_51\",\"roundId\":\"round_53\",\"groupId\":\"group_55\",\"sourceId\":\"person_a\",\"targetId\":\"person_c\",\"triggerKey\":\"trigger_56\",",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.212Z",
+        "method": "POST",
+        "url": "/worlds",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_10\",\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\"},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":nul",
+        "status": 201
+      },
+      {
+        "at": "2026-10-28T16:29:11.248Z",
+        "method": "POST",
+        "url": "/worlds/world_58/points/root_60/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_11\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_60\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.283Z",
+        "method": "PUT",
+        "url": "/worlds/world_58/points/root_60/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_12\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_60\",\"claimToken\":\"claim_56b3f6569e29f476af5f50ab7529b6c18bf630f73b76d25ae14a8d89ccd10fa4\",\"generation\":1,\"issuedAtEpochMilli\":1793204951222,\"outcome\":\"ready\",\"text\":\"根点模板叙事（脚本引导，不计入模型成本）。\",\"failu",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.322Z",
+        "method": "POST",
+        "url": "/worlds/world_58/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_13\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"allocationKey\":\"chain_mvsbxfcj_ids\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point_1\",\"kind\":\"point\"},{\"slotKey\":\"group_1\",\"kind\":\"grou",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.359Z",
+        "method": "PUT",
+        "url": "/worlds/world_58/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_14\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"expectedPointId\":\"root_60\",\"expectedVersion\":0,\"expectedCheckpointRevision\":0,\"operation\":\"start_advance\",\"advanceId\":\"advance_61\",\"inputId\":\"input_62\",\"roundId\":\"round_63\",\"inputText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"order\":[\"pe",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.401Z",
+        "method": "PUT",
+        "url": "/worlds/world_58/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_15\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"expectedPointId\":\"root_60\",\"expectedVersion\":0,\"expectedCheckpointRevision\":1,\"operation\":\"begin_point\",\"pointId\":\"point_64\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.442Z",
+        "method": "PUT",
+        "url": "/worlds/world_58/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_16\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"expectedPointId\":\"root_60\",\"expectedVersion\":0,\"expectedCheckpointRevision\":2,\"operation\":\"discover_group\",\"pointId\":\"point_64\",\"groupId\":\"group_65\",\"initiatorId\":\"person_a\",\"actionText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"targetIds",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.496Z",
+        "method": "PUT",
+        "url": "/worlds/world_58/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_17\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"expectedPointId\":\"root_60\",\"expectedVersion\":0,\"expectedCheckpointRevision\":3,\"operation\":\"extend_group\",\"pointId\":\"point_64\",\"groupId\":\"group_65\",\"sourceId\":\"person_a\",\"targets\":[{\"targetId\":\"person_c\",\"triggerKey\":\"trigger",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.553Z",
+        "method": "POST",
+        "url": "/worlds/world_58/rolls",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_18\",\"worldId\":\"world_58\",\"leaseToken\":\"lease_f8a95289a8162f07e13433d05682a6a1d16db557df19437db4c19abdda947419\",\"fenceEpoch\":1,\"expectedPointId\":\"root_60\",\"expectedVersion\":0,\"expectedCheckpointRevision\":4,\"rolls\":[{\"advanceId\":\"advance_61\",\"roundId\":\"round_63\",\"groupId\":\"group_65\",\"sourceId\":\"person_a\",\"targetId\":\"person_c\",\"triggerKey\":\"trigger_66\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.618Z",
+        "method": "POST",
+        "url": "/worlds",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_19\",\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\"},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":nul",
+        "status": 201
+      },
+      {
+        "at": "2026-10-28T16:29:11.655Z",
+        "method": "POST",
+        "url": "/worlds/world_68/points/root_70/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_20\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_70\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.694Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/points/root_70/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_21\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"mode\":\"head\",\"pointId\":\"root_70\",\"claimToken\":\"claim_1b5e2199d1df5bae2502c40538230576dd96da6ad74e8ff55e9e2190ead23b42\",\"generation\":1,\"issuedAtEpochMilli\":1793204951630,\"outcome\":\"ready\",\"text\":\"根点模板叙事（脚本引导，不计入模型成本）。\",\"failu",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.734Z",
+        "method": "POST",
+        "url": "/worlds/world_68/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_22\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"allocationKey\":\"chain_mvsbxfcj_ids\",\"slots\":[{\"slotKey\":\"advance\",\"kind\":\"advance\"},{\"slotKey\":\"input\",\"kind\":\"input\"},{\"slotKey\":\"round\",\"kind\":\"round\"},{\"slotKey\":\"point_1\",\"kind\":\"point\"},{\"slotKey\":\"group_1\",\"kind\":\"grou",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.776Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_23\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":0,\"operation\":\"start_advance\",\"advanceId\":\"advance_71\",\"inputId\":\"input_72\",\"roundId\":\"round_73\",\"inputText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"order\":[\"pe",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.822Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_24\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":1,\"operation\":\"begin_point\",\"pointId\":\"point_74\",\"kind\":\"normal\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}}}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.863Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_25\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":2,\"operation\":\"discover_group\",\"pointId\":\"point_74\",\"groupId\":\"group_75\",\"initiatorId\":\"person_a\",\"actionText\":\"林川推开门厅深处的重门，示意周宁到门边一起撑住。\",\"targetIds",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.918Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_26\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":3,\"operation\":\"extend_group\",\"pointId\":\"point_74\",\"groupId\":\"group_75\",\"sourceId\":\"person_a\",\"targets\":[{\"targetId\":\"person_c\",\"triggerKey\":\"trigger",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:11.976Z",
+        "method": "POST",
+        "url": "/worlds/world_68/rolls",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_27\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":4,\"rolls\":[{\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"groupId\":\"group_75\",\"sourceId\":\"person_a\",\"targetId\":\"person_c\",\"triggerKey\":\"trigger_76\"",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.094Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_28\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":4,\"operation\":\"extend_group\",\"pointId\":\"point_74\",\"groupId\":\"group_75\",\"sourceId\":\"person_a\",\"targets\":null,\"admittedMember\":{\"memberId\":\"person_c\",",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.163Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/lease",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_1\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.211Z",
+        "method": "GET",
+        "url": "/worlds/world_68/context?includeRecovery=true&leaseToken=lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9&fenceEpoch=1",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.316Z",
+        "method": "GET",
+        "url": "/worlds/world_68/points?limit=100",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.344Z",
+        "method": "GET",
+        "url": "/worlds/world_68/state?point=root_70",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.376Z",
+        "method": "GET",
+        "url": "/worlds/world_68/context?includeRecovery=true&leaseToken=lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9&fenceEpoch=1",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.407Z",
+        "method": "POST",
+        "url": "/worlds/world_68/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_68\",\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"pointId\":\"point_74\",\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":5,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}},\"settlementGroups\":[]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.441Z",
+        "method": "POST",
+        "url": "/worlds/world_68/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_3\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"allocationKey\":\"trigger:60d0def104ffc3605725415db7380287\",\"slots\":[{\"slotKey\":\"trigger:3944c3338fe0f0e78b2d472355c78691\",\"kind\":\"trigger\"}]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.523Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_4\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":5,\"operation\":\"extend_group\",\"pointId\":\"point_74\",\"groupId\":\"group_75\",\"sourceId\":\"person_c\",\"targets\":[{\"targetId\":\"person_a\",\"triggerKey\":\"t",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.596Z",
+        "method": "POST",
+        "url": "/worlds/world_68/rolls",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_5\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":6,\"rolls\":[{\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"groupId\":\"group_75\",\"sourceId\":\"person_c\",\"targetId\":\"person_a\",\"triggerKey\":\"trigg",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.663Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_6\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":6,\"operation\":\"close_group\",\"pointId\":\"point_74\",\"groupId\":\"group_75\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.732Z",
+        "method": "POST",
+        "url": "/worlds/world_68/ids",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_8\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"allocationKey\":\"candidates:1a809c6c6deab3ff3c63fa820e906ebc\",\"slots\":[{\"slotKey\":\"change:024c8fd7ca1468e23ea617c41c6b173c\",\"kind\":\"change\"}]}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.805Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_7\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":7,\"operation\":\"stage_unit\",\"pointId\":\"point_74\",\"groupId\":\"group_75\",\"candidates\":{\"groupId\":\"group_75\",\"actorIds\":[\"person_a\",\"person_c\"],\"po",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.881Z",
+        "method": "POST",
+        "url": "/worlds/world_68/preview",
+        "body": "{\"protocolVersion\":2,\"worldId\":\"world_68\",\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"pointId\":\"point_74\",\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":8,\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}},\"settlementGroups\":[{\"groupId\":\"group_75\",\"actorIds\":[\"person_a\",\"person_c\"],\"positions\":{},\"appearances\":{},\"tasksAchieved\":{\"person_a",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:12.911Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/checkpoint",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_10\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":8,\"operation\":\"seal_point\",\"pointId\":\"point_74\"}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:13.041Z",
+        "method": "POST",
+        "url": "/worlds/world_68/points",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_11\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"root_70\",\"expectedVersion\":0,\"expectedCheckpointRevision\":9,\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"pointId\":\"point_74\",\"point\":{\"worldId\":\"world_68\",\"id\":\"point_74\",\"sequence\":1,\"kind\":\"norma",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:13.122Z",
+        "method": "POST",
+        "url": "/worlds/world_68/points/point_74/narration-jobs",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_12\",\"worldId\":\"world_68\",\"mode\":\"head\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"pointId\":\"point_74\",\"currentClaim\":null}",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:13.186Z",
+        "method": "GET",
+        "url": "/worlds/world_68/state?point=point_74",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:13.221Z",
+        "method": "GET",
+        "url": "/worlds/world_68/state?point=root_70",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.286Z",
+        "method": "PUT",
+        "url": "/worlds/world_68/points/point_74/narration",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_15\",\"worldId\":\"world_68\",\"mode\":\"head\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"pointId\":\"point_74\",\"claimToken\":\"claim_8df98bcb39ffe1268aacc6b8b29d113cc138d0f86295756656130cddf451b8fa\",\"generation\":1,\"issuedAtEpochMilli\":1793204953079,\"outcome\":\"ready\",\"text\":\"林川位于走廊。林川的精神值从10变为8。林",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.381Z",
+        "method": "POST",
+        "url": "/worlds/world_68/round-conclusion",
+        "body": "{\"protocolVersion\":2,\"requestId\":\"chain_mvsbxfcj_driver_16\",\"worldId\":\"world_68\",\"leaseToken\":\"lease_2e8974d7d8ff46808c3af4b4a423062a8231d1a7e271fd9e95712603faeef7c9\",\"fenceEpoch\":1,\"expectedPointId\":\"point_74\",\"expectedVersion\":1,\"expectedCheckpointRevision\":10,\"operation\":\"conclude\",\"advanceId\":\"advance_71\",\"roundId\":\"round_73\",\"conclusion\":{\"kind\":\"handback\",\"closedBy\":\"model\",\"cancelReason\":nu",
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.447Z",
+        "method": "GET",
+        "url": "/worlds/world_68/state",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.480Z",
+        "method": "GET",
+        "url": "/worlds/world_68/points?limit=100",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.505Z",
+        "method": "GET",
+        "url": "/worlds/world_68/points/root_70/narration",
+        "body": null,
+        "status": 200
+      },
+      {
+        "at": "2026-10-28T16:29:29.531Z",
+        "method": "GET",
+        "url": "/worlds/world_68/points/point_74/narration",
+        "body": null,
+        "status": 200
+      }
+    ]
+  },
+  "lifecycle": {
+    "apiOrigin": "http://127.0.0.1:63751",
+    "viteOrigin": "http://127.0.0.1:63752",
+    "serviceReady": true
+  }
+}
