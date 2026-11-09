@@ -87,7 +87,9 @@ export function validateNovelNarration(packet: CommittedNarration, text: string,
   const verdict = alignNarration(packet, text, { time, requireTime: false });
   // Minor physical gestures are literary detail; flagging every such verb would make
   // prose impossible. Other detected contradictions still reject the passage.
-  const blocking = verdict.violations.filter((violation) => violation.kind !== 'added_event');
+  const severeAddedEvent = /攻击|开枪|砸碎|点燃|踹开|踢开|撕开|捡起|拾起|锁上|夺走|杀死|打伤/;
+  const blocking = verdict.violations.filter((violation) =>
+    violation.kind !== 'added_event' || severeAddedEvent.test(violation.sentence));
   const required = new Set(packet.facts.filter((fact) => fact.kind === 'moved' || fact.kind === 'task_achieved').map((fact) => fact.id));
   const missing = verdict.coverage.filter((item) => required.has(item.id) && !item.expressed);
   if (blocking.length) return { accepted: false, reason: blocking[0].kind };
