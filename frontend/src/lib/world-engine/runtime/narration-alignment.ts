@@ -287,6 +287,9 @@ export interface AlignmentOptions {
    * so without this list a claimed movement to a known place would slip
    * through as an unverified sentence instead of a contradiction. */
   locations?: string[];
+  /** Positions that are already true in the projected scene but are not
+   * required facts (e.g. a bystander who did not move this point). */
+  knownPositions?: { name: string; location: string }[];
   /** 是否把「未述时间」算作失败。默认 false：现有 renderCommittedNarration
    * 根本不写时间，把它并进事实错误会掩盖「模板缺时间」这个独立发现。
    * 三个臂都按同一口径判事实，时间覆盖由 harness 单独统计。 */
@@ -424,7 +427,8 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       .find((claim) => !positions.some((fact) => fact.name === claim.name
         && (fact.kind === 'at' ? fact.location === claim.location
           : fact.to === claim.location || fact.from === claim.location)));
-    if (stateClaim) {
+    const knownPosition = stateClaim && (options.knownPositions ?? []).some((entry) => entry.name === stateClaim.name && entry.location === stateClaim.location);
+    if (stateClaim && !knownPosition) {
       violations.push({ kind: 'state_claim_without_fact', sentence,
         detail: `${stateClaim.name} at ${stateClaim.location} has no committed position fact` });
       continue;

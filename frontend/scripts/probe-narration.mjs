@@ -1,0 +1,28 @@
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+const require = createRequire(resolve('package.json'));
+const { createServer } = await import(pathToFileURL(require.resolve('vite')).href);
+const { chromium } = require('@playwright/test');
+const row = JSON.parse(readFileSync('../experiments/world-components/narration-dataset-v1/yuyan/rows-yuyan.jsonl','utf8').split('\n')[1]);
+const model = process.argv[2] ?? '/models/qwen25-0.5b-narration-Q4_K_M.gguf';
+const server = await createServer({ root: process.cwd(), configFile: false, logLevel: 'warn', server: { host:'127.0.0.1', port:0 }, plugins:[{ name:'p', configureServer(v){ v.middlewares.use((req,res,next)=>{ if(req.url!=='/__n') return next(); res.setHeader('Content-Type','text/html'); res.end('<!doctype html><title>n</title>'); }); } }] });
+await server.listen();
+const browser = await chromium.launch({ headless:true, channel:'msedge', args:['--enable-unsafe-webgpu'] });
+const page = await browser.newPage();
+page.on('console', m=>{ if(m.type()==='error') console.log('ERR',m.text().slice(0,300)); });
+await page.goto(`http://127.0.0.1:${server.config.server.port}/__n`);
+const out = await page.evaluate(async ({ model, xProse }) => {
+  const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
+  const e = new WllamaInferenceEngine({ modelUrl:model, contextSize:4096, nGpuLayers:99999 });
+  const t0=performance.now(); await e.load(); const loadMs=performance.now()-t0;
+  const t1=performance.now(); let first=null; let raw='';
+  const text = await e.complete(xProse, { maxTokens:700, temperature:0.7, timeoutMs:180000, onProgress:(p)=>{ if(first===null&&p.raw.length) first=performance.now()-t1; raw=p.raw; } });
+  const ms=performance.now()-t1;
+  await e.dispose();
+  return { loadMs, firstMs:first, ms, chars:text.length, text };
+}, { model, xProse: row.xProse });
+console.log(JSON.stringify({loadMs:out.loadMs, firstMs:out.firstMs, ms:out.ms, chars:out.chars}, null, 2));
+console.log(out.text);
+await browser.close(); await server.close();

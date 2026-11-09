@@ -15,6 +15,16 @@ export interface WllamaEngineOptions {
   modelUrl?: string;
   contextSize?: number;
   numThreads?: number;
+  /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
+   * browser exposes it. */
+  nGpuLayers?: number;
+  /** Keep the GGUF in OPFS across reloads. Off by default because a large
+   * model plus the browser's temporary files can exhaust the origin quota. */
+  useCache?: boolean;
+  /** Fetch the GGUF into a Blob and hand it to wllama directly. Avoids the
+   * OPFS cache write, which can fail on a nearly-full origin even when the
+   * model itself fits. */
+  directBlob?: boolean;
 }
 
 export class WllamaInferenceEngine implements InferenceEngine {
@@ -58,14 +68,23 @@ export class WllamaInferenceEngine implements InferenceEngine {
     else options?.signal?.addEventListener('abort', onCallerAbort, { once: true });
     try {
       const instance = await this.factory();
-      const modelUrl = options?.modelUrl ?? this.options.modelUrl;
-      if (!modelUrl) throw new Error('wllama engine needs a modelUrl');
-      await instance.loadModelFromUrl(modelUrl, {
+      const configured = options?.modelUrl ?? this.options.modelUrl;
+      if (!configured) throw new Error('wllama engine needs a modelUrl');
+      const modelUrl = typeof location !== 'undefined' ? new URL(configured, location.href).href : configured;
+      const params = {
         n_ctx: this.options.contextSize ?? 4096,
-        n_gpu_layers: 0,
+        n_gpu_layers: this.options.nGpuLayers ?? 99999,
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
-      });
+      };
+      if (this.options.directBlob ?? true) {
+        const response = await fetch(modelUrl, { signal: controller.signal });
+        if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${modelUrl}`);
+        const blob = await response.blob();
+        await instance.loadModel([blob], params);
+      } else {
+        await instance.loadModelFromUrl(modelUrl, { ...params, useCache: this.options.useCache ?? false });
+      }
       if (this.disposed) {
         // Dispose landed mid-load: clean up immediately and register
         // nothing — the produced instance must never resurrect.
