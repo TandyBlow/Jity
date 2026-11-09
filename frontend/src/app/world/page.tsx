@@ -99,7 +99,7 @@ function polishEngine(modelUrl: string, mode: 'strict' | 'novel'): Promise<RuleN
         import('@/lib/world-engine/runtime/prompts'),
         import('@/lib/world-engine/runtime/novel-narration'),
       ]);
-      const wllama = new WllamaInferenceEngine({ modelUrl, contextSize: mode === 'novel' ? 4096 : 2048 });
+      const wllama = new WllamaInferenceEngine({ modelUrl, contextSize: mode === 'novel' ? 4096 : 2048, preferWebGPU: mode === 'novel' });
       return async (input, packet, focused, attempt) => {
         if (mode === 'novel') {
           const prompt = buildNovelNarrationPrompt(input, packet, attempt);
