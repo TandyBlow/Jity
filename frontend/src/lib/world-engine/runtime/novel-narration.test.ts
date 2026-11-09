@@ -18,7 +18,7 @@ function fixture() {
     entityDeltas: { person_c: { entityId: 'person_c', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } },
   });
   after.state.characters.person_c.position.containerId = 'hall';
-  after.state.time.dateTime = '2026-10-27T09:00:01';
+  after.state.time = { ...after.state.time, dateTime: '2026-10-27T09:00:01' };
   return { before, after };
 }
 
