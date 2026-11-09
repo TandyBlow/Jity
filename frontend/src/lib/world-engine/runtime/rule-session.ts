@@ -26,6 +26,7 @@ import { WorldSession } from './session';
 import type { RuntimePortLike } from './model-port';
 import type { CommittedNarration, CommittedRead } from './committed-narration';
 import { projectCommittedNarration, renderCommittedNarration, selectFactNarration } from './committed-narration';
+import { validateNovelNarration } from './novel-narration';
 import { RuleAuthority, decodeRuleAction, describeRuleDecision, encodeRuleAction, parseRuleCommand, type RulePolicy, type RuleReceipt } from './rule-facts';
 import { projectTaskInput } from './focused-input';
 import type { Id, InitialTemplate, Json, PointWork, WorldContext, WorldState } from '../types';
@@ -59,7 +60,7 @@ export type RuleNarrationPolisher = (
   packet: CommittedNarration,
   focused: Json,
   attempt: PolishAttempt,
-) => Promise<string | null>;
+) => Promise<string | { text: string; mode: 'novel' } | null>;
 
 export type RuleSessionEvent =
   | { kind: 'terminal'; status: DriverStatus }
@@ -120,14 +121,18 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
         const candidate = await polisher(assembled, packet, focused, { index, previous });
         if (candidate === null) break; // polish disabled mid-session
         attempts = index;
-        const verdict = selectFactNarration(packet, candidate, render);
+        const prose = typeof candidate === 'string' ? candidate : candidate.text;
+        const novel = typeof candidate !== 'string' && candidate.mode === 'novel';
+        const verdict = novel
+          ? validateNovelNarration(packet, prose, render.time)
+          : selectFactNarration(packet, prose, render);
         polishReason = verdict.reason;
         if (verdict.accepted) {
-          text = verdict.text;
+          text = novel ? prose : (verdict as ReturnType<typeof selectFactNarration>).text;
           polished = true;
           break;
         }
-        previous = { text: candidate, reason: verdict.reason ?? 'unknown' };
+        previous = { text: prose, reason: verdict.reason ?? 'unknown' };
         if (index === 1) continue; // §8.2: one regeneration with feedback
         break;
       }
