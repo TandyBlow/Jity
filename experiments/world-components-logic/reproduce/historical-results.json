@@ -1,0 +1,18 @@
+{
+  "runId": "qwen-short-time-20261109-r5",
+  "trainedSteps": 32,
+  "cumulativeSteps": 144,
+  "afterExamples": 128,
+  "assistantReview": {
+    "locallyAcceptable": 52,
+    "notAcceptable": 62,
+    "pending": 14
+  },
+  "humanReviewCount": 0,
+  "independentGeneralizationEstablished": false,
+  "webgpuValidated": false,
+  "semanticQualityApproved": false,
+  "sourceReport": "design/world-engine-reports/components-logic/short-qwen-time-review-r5.md",
+  "sourceReportSha256": "5663a8b30259386433aa1f5d9b5dbb9c3c5de6a8e3f4b3f6390450faf5bcb98b",
+  "newPortableRunnerResults": "No full-size real-model retraining performed for this handoff."
+}

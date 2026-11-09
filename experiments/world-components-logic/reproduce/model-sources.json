@@ -1,0 +1,167 @@
+{
+  "qwen": {
+    "files": [
+      {
+        "git_blob_sha1": "6634c8cc3133b3848ec74b9f275acaaa1ea618ab",
+        "lfs_sha256": null,
+        "path": "LICENSE",
+        "size_bytes": 11343,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE"
+      },
+      {
+        "git_blob_sha1": "a50b19e76f5274f9ec99f5a5d99873dca5bff25e",
+        "lfs_sha256": null,
+        "path": "README.md",
+        "size_bytes": 13965,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/README.md"
+      },
+      {
+        "git_blob_sha1": "f5c3703b78ae2a478ae15b247e9f855e0ce2107b",
+        "lfs_sha256": null,
+        "path": "config.json",
+        "size_bytes": 726,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/config.json"
+      },
+      {
+        "git_blob_sha1": "20a8a9156fc8c3f25295ca067f61fdf120d517c5",
+        "lfs_sha256": null,
+        "path": "generation_config.json",
+        "size_bytes": 239,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/generation_config.json"
+      },
+      {
+        "git_blob_sha1": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7",
+        "lfs_sha256": null,
+        "path": "merges.txt",
+        "size_bytes": 1671853,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/merges.txt"
+      },
+      {
+        "git_blob_sha1": null,
+        "lfs_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "path": "tokenizer.json",
+        "size_bytes": 11422654,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer.json"
+      },
+      {
+        "git_blob_sha1": "417d038a63fa3de29cfde265caedae14d1a58d92",
+        "lfs_sha256": null,
+        "path": "tokenizer_config.json",
+        "size_bytes": 9732,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/tokenizer_config.json"
+      },
+      {
+        "git_blob_sha1": "4783fe10ac3adce15ac8f358ef5462739852c569",
+        "lfs_sha256": null,
+        "path": "vocab.json",
+        "size_bytes": 2776833,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/vocab.json"
+      },
+      {
+        "git_blob_sha1": null,
+        "lfs_sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+        "path": "model.safetensors",
+        "size_bytes": 1503300328,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B/resolve/c1899de289a04d12100db370d81485cdf75e47ca/model.safetensors"
+      }
+    ],
+    "license": "apache-2.0",
+    "modelExecutions": 0,
+    "modelId": "Qwen/Qwen3-0.6B",
+    "paidServices": false,
+    "registeredAt": "2026-11-09T10:17:15.265176+00:00",
+    "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "schema": "jity-qwen-source-registration-v1",
+    "sourceApi": "https://huggingface.co/api/models/Qwen/Qwen3-0.6B/revision/c1899de289a04d12100db370d81485cdf75e47ca?blobs=true"
+  },
+  "encoder": {
+    "id": "hfl/minirbt-h256",
+    "revision": "446e1b4012b10946f479563005700c54c9db3f7c",
+    "metadata_url": "https://huggingface.co/api/models/hfl/minirbt-h256/revision/446e1b4012b10946f479563005700c54c9db3f7c?blobs=true",
+    "model_card_url": "https://huggingface.co/hfl/minirbt-h256/blob/446e1b4012b10946f479563005700c54c9db3f7c/README.md",
+    "card_data": {
+      "language": [
+        "zh"
+      ],
+      "tags": [
+        "bert"
+      ],
+      "license": "apache-2.0"
+    },
+    "safetensors_metadata": null,
+    "files": [
+      {
+        "path": "README.md",
+        "size_bytes": 974,
+        "git_blob_sha1": "0e2093d2ffc54d2e945b5ada1f81139f32493c4a",
+        "url": "https://huggingface.co/hfl/minirbt-h256/resolve/446e1b4012b10946f479563005700c54c9db3f7c/README.md",
+        "sha256_of_fetched_bytes": "667be60e0b89d63d308d3d1e76f906d056ad4a2c56e6a2f785544098e220f3eb",
+        "fetched_bytes": 974
+      },
+      {
+        "path": "config.json",
+        "size_bytes": 598,
+        "git_blob_sha1": "b2b054760aa0bf4f3cb8191d9318e37ffd649ae1",
+        "url": "https://huggingface.co/hfl/minirbt-h256/resolve/446e1b4012b10946f479563005700c54c9db3f7c/config.json",
+        "sha256_of_fetched_bytes": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+        "fetched_bytes": 598
+      },
+      {
+        "path": "pytorch_model.bin",
+        "size_bytes": 41514155,
+        "git_blob_sha1": "25049e09ead92a0fafb21e048ee2317b3b9a4e10",
+        "url": "https://huggingface.co/hfl/minirbt-h256/resolve/446e1b4012b10946f479563005700c54c9db3f7c/pytorch_model.bin",
+        "lfs_sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+      },
+      {
+        "path": "vocab.txt",
+        "size_bytes": 109540,
+        "git_blob_sha1": "ca4f9781030019ab9b253c6dcb8c7878b6dc87a5",
+        "url": "https://huggingface.co/hfl/minirbt-h256/resolve/446e1b4012b10946f479563005700c54c9db3f7c/vocab.txt",
+        "sha256_of_fetched_bytes": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+        "fetched_bytes": 109540
+      }
+    ],
+    "parsed_small_json_files": {
+      "config.json": {
+        "_name_or_path": "hfl/MiniRBT-H256",
+        "architectures": [
+          "BertForMaskedLM"
+        ],
+        "attention_probs_dropout_prob": 0.1,
+        "classifier_dropout": null,
+        "hidden_act": "gelu",
+        "hidden_dropout_prob": 0.1,
+        "hidden_size": 256,
+        "initializer_range": 0.02,
+        "intermediate_size": 1024,
+        "layer_norm_eps": 1e-12,
+        "max_position_embeddings": 512,
+        "model_type": "bert",
+        "num_attention_heads": 8,
+        "num_hidden_layers": 6,
+        "pad_token_id": 0,
+        "position_embedding_type": "absolute",
+        "transformers_version": "4.22.2",
+        "type_vocab_size": 2,
+        "use_cache": true,
+        "vocab_size": 21128
+      }
+    },
+    "parameter_count": {
+      "official_rounded_total": 10400000,
+      "source": "https://github.com/iflytek/MiniRBT/blob/main/README_EN.md",
+      "precision": "official rounded 10.4M; not a locally loaded tensor count",
+      "task_backbone_proposal": {
+        "bert_model_with_pooler_formula_from_config": 10345216,
+        "formula_status": "architecture-derived estimate, not verified against loaded checkpoint",
+        "new_linear_head_parameters": {
+          "two_logit_classifier": 514,
+          "one_logit_pair_scorer": 257
+        }
+      },
+      "note": "MaskedLM source checkpoint and downstream BertModel/task-head totals differ; report exact trained/exported tensor total in L3."
+    },
+    "license_note": "Apache-2.0 model-card declaration; this pinned HF tree has no LICENSE file. Author GitHub repository also exposes Apache-2.0 LICENSE; downstream distribution must retain applicable notice."
+  }
+}

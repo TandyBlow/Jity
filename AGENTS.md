@@ -1,3 +1,13 @@
+# Source-only training handoff (2026-11-10)
+
+This branch starts from remote `world-components-logic@d80a031`, not from either aborted model-backup commit. The user authorizes publishing training code and necessary reproducibility material only. Never publish weights, adapters, learned heads, checkpoints, optimizer states, model backup archives, or large raw logs. Keep all author-machine training/diagnostic work untouched.
+
+The teammate entry is `experiments/world-components-logic/reproduce/README.md`. Its portable fresh-training recipe creates new candidates from pinned public bases and frozen synthetic data. Historical scripts and outcome records do not establish cross-device reproducibility. CUDA and full CPU Qwen training remain unvalidated. No existing checkpoint is required by the new entry.
+
+Do not start the historical final-training claim as part of packaging. It belongs to another ongoing task. The prior 5 remote LFS objects (~1.96 MB) are a separate unfinished support-cleanup matter; do not resume their upload. Use explicit staging paths.
+
+---
+
 # D 工作树：非叙事组件专项工作说明
 
 本工作树统一代号为 **D**，对应 `world-components-logic`，从 C / `world-components` 的 `30069354cc061be94fc31c897dada0f641ed3f90` 创建。本专项负责非叙事组件架构、程序与模型分工、模型选型及专项验证，由项目协调人统筹跨分支协作。D 即此前的 logic 专项，分支名和目录名不变；原设计 C1–C7 是职责编号，不是工作树代号。

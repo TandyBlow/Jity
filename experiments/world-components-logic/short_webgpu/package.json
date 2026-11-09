@@ -1,0 +1,9 @@
+{
+  "name": "jity-d-short-webgpu",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {"@huggingface/transformers": "3.8.1"},
+  "devDependencies": {"esbuild": "0.25.5"},
+  "scripts": {"test": "node --test test_core.mjs"}
+}

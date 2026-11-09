@@ -140,3 +140,16 @@ artifacts/benchmark/minirbt-h256-snapshot/
 
 # === Local tooling ignore list (ZCode); duplicates .gitignore ===
 .zcodeignore
+
+# Source-only distribution: local weights, optimizer states and model exports.
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.onnx_data
+*.ckpt
+/artifacts/world-components-logic/model-archive-*/
+/artifacts/world-components-logic/large-file-backup-*/
+/artifacts/world-components-logic/qwen-short/
+/artifacts/world-components-logic/short-semantics/
+/retraining-output/
