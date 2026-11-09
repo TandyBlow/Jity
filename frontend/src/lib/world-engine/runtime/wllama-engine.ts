@@ -15,6 +15,8 @@ export interface WllamaEngineOptions {
   modelUrl?: string;
   contextSize?: number;
   numThreads?: number;
+  /** Try WebGPU for the narrative mode. If unavailable, retry with WASM CPU. */
+  preferWebGPU?: boolean;
 }
 
 export class WllamaInferenceEngine implements InferenceEngine {
@@ -57,23 +59,42 @@ export class WllamaInferenceEngine implements InferenceEngine {
     if (options?.signal?.aborted) onCallerAbort();
     else options?.signal?.addEventListener('abort', onCallerAbort, { once: true });
     try {
-      const instance = await this.factory();
+      let instance = await this.factory();
       const modelUrl = options?.modelUrl ?? this.options.modelUrl;
       if (!modelUrl) throw new Error('wllama engine needs a modelUrl');
-      await instance.loadModelFromUrl(modelUrl, {
+      const load = (gpuLayers: number) => instance.loadModelFromUrl(modelUrl, {
         n_ctx: this.options.contextSize ?? 4096,
-        n_gpu_layers: 0,
+        n_gpu_layers: gpuLayers,
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       });
-      if (this.disposed) {
-        // Dispose landed mid-load: clean up immediately and register
-        // nothing — the produced instance must never resurrect.
-        await instance.exit();
-        return;
+      const useGPU = this.options.preferWebGPU === true && instance.isSupportWebGPU();
+      try {
+        if (useGPU) {
+          try {
+            await load(99999);
+          } catch (error) {
+            // A failed GPU context may leave the instance partially initialized.
+            // Never retry on cancellation, and never reuse that instance on CPU.
+            await instance.exit();
+            if (controller.signal.aborted || this.disposed) throw error;
+            instance = await this.factory();
+            await load(0);
+          }
+        } else {
+          await load(0);
+        }
+        if (this.disposed || controller.signal.aborted) {
+          await instance.exit();
+          throw abortError();
+        }
+        this.instance = instance;
+        this.info.modelId = modelUrl.split('/').pop() ?? modelUrl;
+      } catch (error) {
+        // On failure avoid retaining a loaded model or leaking its GPU/CPU buffers.
+        try { await instance.exit(); } catch { /* preserve original error */ }
+        throw error;
       }
-      this.instance = instance;
-      this.info.modelId = modelUrl.split('/').pop() ?? modelUrl;
     } finally {
       options?.signal?.removeEventListener('abort', onCallerAbort);
       if (this.loadAbort === controller) this.loadAbort = null;
