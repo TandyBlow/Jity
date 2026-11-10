@@ -17,11 +17,24 @@
  * free; a different URL is a configuration error instead of silently reusing
  * the old model. A failed or cancelled load exits the factory instance so a
  * leaked worker cannot keep wasm memory alive across retries.
+ *
+ * `chat()` is additive next to the InferenceEngine contract: `complete()`
+ * sends a single user turn, which makes an instruct checkpoint use its own
+ * default system prompt. Narrative candidates need their own system turn
+ * (2026-11-10 candidate-model registration), so `chat()` forwards a real
+ * message list and shares the same cancellation/evidence path.
  */
 import type { Wllama } from '@wllama/wllama';
 import { createWllama } from '../../benchmark/wllama-loader';
 import { abortError, IncompleteGenerationError, type CompletionEvidence, type CompleteOptions, type EngineInfo, type InferenceEngine } from './engine';
 import type { AbortCause, GenerationEvidence, ModelLoadEvidence } from '../local/runtime-diagnostics/types';
+
+/** A chat turn for `chat()`. Mirrors the parts of the OpenAI message shape
+ * the wllama adapter forwards; the GGUF's own template decides the rendering. */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
 
 export interface WllamaEngineOptions {
   /** Default model source for load(); a per-call modelUrl overrides it. */
@@ -42,6 +55,10 @@ export interface WllamaEngineOptions {
    * terminated. Default 2500 ms; 0 terminates as soon as the abort is
    * requested. A terminated worker drops the loaded model. */
   abortGraceMs?: number;
+  /** Upper bound for one model load (fetch + parse + compile). Default
+   * 120000 ms. A timeout aborts the load and exits the landing worker, so a
+   * page can retry instead of showing a frozen first turn forever. */
+  loadTimeoutMs?: number;
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -93,6 +110,12 @@ export class WllamaInferenceEngine implements InferenceEngine {
   private disposePromise: Promise<void> | null = null;
   private loadCount = 0;
   private hardStops = 0;
+  private generations = 0;
+  private workersCreated = 0;
+  private workersExited = 0;
+  /** Last model a load was attempted for. Survives a hard stop, so the next
+   * request reloads the same weights instead of erroring on a missing url. */
+  private lastModelUrl: string | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -120,6 +143,14 @@ export class WllamaInferenceEngine implements InferenceEngine {
     loadCount: number;
     hardStops: number;
     activeCalls: number;
+    generations: number;
+    workersCreated: number;
+    workersExited: number;
+    disposed: boolean;
+    /** True when a model was loaded before, the worker is gone, and the
+     * engine can reload the same weights (e.g. after a timeout hard stop). */
+    needsReload: boolean;
+    lastModelUrl: string | null;
   } {
     return {
       backend: this.info.backend,
@@ -130,6 +161,12 @@ export class WllamaInferenceEngine implements InferenceEngine {
       loadCount: this.loadCount,
       hardStops: this.hardStops,
       activeCalls: this.activeCalls.size,
+      generations: this.generations,
+      workersCreated: this.workersCreated,
+      workersExited: this.workersExited,
+      disposed: this.disposed,
+      needsReload: !this.disposed && this.instance === null && this.lastModelUrl !== null,
+      lastModelUrl: this.lastModelUrl,
     };
   }
 
@@ -139,7 +176,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
 
   async load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
     if (this.disposed) throw abortError();
-    const configured = options?.modelUrl ?? this.options.modelUrl;
+    const configured = options?.modelUrl ?? this.options.modelUrl ?? this.lastModelUrl;
     if (!configured) throw new Error('wllama engine needs a modelUrl');
     const modelUrl = this.resolveModelUrl(configured);
     if (this.instance) {
@@ -170,14 +207,56 @@ export class WllamaInferenceEngine implements InferenceEngine {
     return inFlight;
   }
 
+  /** Reload the last model after a hard stop, or no-op when the same model is
+   * already live. A different explicit modelUrl is a configuration error.
+   * This is the entry 06 should call before the first turn and after a
+   * timeout/cancel that terminated the worker. */
+  async ensureLoaded(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
+    if (this.disposed) throw abortError();
+    if (this.instance) {
+      if (options?.modelUrl) {
+        const requested = this.resolveModelUrl(options.modelUrl);
+        if (this.loadedIdentity?.modelUrl !== requested) {
+          throw new Error(`wllama engine is loaded with ${this.loadedIdentity?.modelUrl ?? 'another model'}; dispose it before loading ${requested}`);
+        }
+      }
+      return;
+    }
+    const modelUrl = options?.modelUrl ?? this.lastModelUrl ?? this.options.modelUrl;
+    if (!modelUrl) throw new Error('wllama engine has no model to reload; pass modelUrl');
+    await this.load({ signal: options?.signal, modelUrl });
+  }
+
+  /** Stop an in-flight load without disposing the engine. The load rejects
+   * with AbortError, its landing worker is exited, and a later load() is
+   * retryable. Returns false when no load is running. */
+  cancelLoad(): boolean {
+    if (!this.loading || !this.loadAbort) return false;
+    this.loadAbort.abort();
+    return true;
+  }
+
   private async doLoad(modelUrl: string, callerSignal?: AbortSignal): Promise<void> {
     const started = performance.now();
+    this.lastModelUrl = modelUrl;
     const controller = new AbortController();
     this.loadAbort = controller;
+    const loadTimeoutMs = this.options.loadTimeoutMs ?? 120_000;
+    if (!Number.isFinite(loadTimeoutMs) || loadTimeoutMs <= 0) throw new Error('loadTimeoutMs must be positive and finite');
+    let timedOut = false;
+    let instance: Wllama | null = null;
+    const deadline = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+      // A load can sit inside a native compile step that ignores the abort.
+      // Terminating the landing worker is the only guaranteed stop; the
+      // pending loadModel/loadModelFromUrl then rejects and the catch path
+      // reports a timeout. The page can retry with a fresh worker.
+      if (instance) void this.exitInstance(instance);
+    }, loadTimeoutMs);
     const onCallerAbort = () => controller.abort(callerSignal?.reason);
     if (callerSignal?.aborted) onCallerAbort();
     else callerSignal?.addEventListener('abort', onCallerAbort, { once: true });
-    let instance: Wllama | null = null;
     // The blob path needs a page URL to resolve a relative model path, so it
     // is the browser default; outside a browser the OPFS/url path is used.
     const directBlob = this.options.directBlob ?? (typeof location !== 'undefined');
@@ -187,8 +266,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
     let failure: unknown = null;
     try {
       instance = await this.factory();
-      if (this.disposed) {
-        outcome = 'discarded';
+      this.workersCreated += 1;
+      if (this.disposed || timedOut) {
+        outcome = this.disposed ? 'discarded' : 'timeout';
         throw abortError();
       }
       const params = {
@@ -225,15 +305,23 @@ export class WllamaInferenceEngine implements InferenceEngine {
     } catch (error) {
       failure = error;
       if (outcome !== 'discarded') {
-        outcome = this.disposed ? 'discarded' : controller.signal.aborted || callerSignal?.aborted ? 'aborted' : 'failed';
+        outcome = this.disposed ? 'discarded'
+          : timedOut ? 'timeout'
+          : controller.signal.aborted || callerSignal?.aborted ? 'aborted' : 'failed';
       }
       // The factory instance is not registered unless load completed. Exit
       // it on every failure path: a dropped wllama instance still owns a
       // wasm worker and its model buffers.
       if (instance && this.instance !== instance) await this.exitInstance(instance);
       if (outcome === 'aborted' || outcome === 'discarded') throw abortError();
+      if (outcome === 'timeout') {
+        const timeoutError = new Error(`model load timed out after ${loadTimeoutMs} ms`);
+        timeoutError.name = 'TimeoutError';
+        throw timeoutError;
+      }
       throw error;
     } finally {
+      clearTimeout(deadline);
       callerSignal?.removeEventListener('abort', onCallerAbort);
       if (this.loadAbort === controller) this.loadAbort = null;
       if (this.loadingUrl === modelUrl) this.loadingUrl = null;
@@ -249,6 +337,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
         fetchMs,
         compileMs,
         totalMs: performance.now() - started,
+        loadTimeoutMs,
         outcome,
         ...(failure !== null && outcome !== 'loaded' ? { error: errorText(failure) } : {}),
         at: performance.now(),
@@ -257,6 +346,19 @@ export class WllamaInferenceEngine implements InferenceEngine {
   }
 
   async complete(prompt: string, options?: CompleteOptions): Promise<string> {
+    return this.generate([{ role: 'user', content: prompt }], options);
+  }
+
+  /** Chat completion with a real message list, so an instruct model receives
+   * the caller's system prompt instead of the checkpoint's default system
+   * turn. Additive to the InferenceEngine contract: the interface keeps
+   * complete() and callers that only know the interface still work. */
+  async chat(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
+    if (messages.length === 0) throw new Error('chat needs at least one message');
+    return this.generate(messages, options);
+  }
+
+  private async generate(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
     if (options?.signal?.aborted || this.disposed) throw abortError();
@@ -266,6 +368,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     if (!Number.isFinite(graceMs) || graceMs < 0) throw new Error('abortGraceMs must be finite and non-negative');
     const maxTokens = options?.maxTokens ?? 256;
     const cachePrompt = options?.cachePrompt ?? true;
+    this.generations += 1;
     const started = performance.now();
     const evidence: GenerationEvidence = {
       kind: 'generation',
@@ -332,7 +435,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     let enginePromise: Promise<unknown>;
     try {
       enginePromise = Promise.resolve(instance.createChatCompletion({
-        messages: [{ role: 'user', content: prompt }],
+        messages: messages.map((message) => ({ role: message.role, content: message.content })),
         chat_template_kwargs: { enable_thinking: false },
         cache_prompt: cachePrompt,
         stream: true,
@@ -464,6 +567,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
         } catch {
           // Worker termination is best effort; the device is stopped either
           // way. Never let a teardown hiccup mask the caller's abort.
+        } finally {
+          this.workersExited += 1;
         }
       })();
       this.exited.set(instance, exiting);
@@ -486,6 +591,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
    * path does not depend on a signal being threaded through every task.
    * Returns the number of calls asked to stop. */
   cancelActive(): number {
+    // The load is the first 30-45 s of a cold session; a stop button must
+    // stop it too. cancelLoad() is non-terminal, so the page can retry.
+    this.cancelLoad();
     const calls = [...this.activeCalls];
     for (const call of calls) call.abort('caller');
     return calls.length;

@@ -35,7 +35,28 @@ function fakeWllama() {
   let loadFailure: string | null = null;
   let chunks: FakeChunk[] = [{ text: 'ok', finish: 'stop' }];
   let mode: 'chunks' | 'hang-until-abort' | 'never' = 'chunks';
-  const loadGates: Array<() => void> = [];
+  interface LoadGate { resolve: () => void; reject: (error: unknown) => void }
+  const loadGates: LoadGate[] = [];
+  /** Holds a load until the test releases it, while still honouring a real
+   * abort (the production fetch does; a wasm compile may not, which is why
+   * the engine also terminates the landing worker). exit() rejects every
+   * pending gate, exactly like a terminated worker rejecting its call. */
+  const awaitLoadGate = async (params: Record<string, unknown>) => {
+    if (!holdLoads) return;
+    const signal = params.signal as AbortSignal | undefined;
+    await new Promise<void>((resolve, reject) => {
+      const gate: LoadGate = { resolve, reject };
+      loadGates.push(gate);
+      const onAbort = () => {
+        if (!honorLoadAbort) return;
+        const index = loadGates.indexOf(gate);
+        if (index !== -1) loadGates.splice(index, 1);
+        reject(abortDom());
+      };
+      if (signal?.aborted) onAbort();
+      else signal?.addEventListener('abort', onAbort, { once: true });
+    });
+  };
 
   const runCompletion = async (options: FakeCompletionOptions) => {
     const signal = options.abortSignal;
@@ -66,13 +87,13 @@ function fakeWllama() {
     getNumThreads: () => 4,
     loadModelFromUrl: async (url: string, params: Record<string, unknown>) => {
       calls.loads.push({ url, params });
-      if (holdLoads) await new Promise<void>((resolve) => loadGates.push(resolve));
+      await awaitLoadGate(params);
       if (loadFailure) throw new Error(loadFailure);
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
     },
     loadModel: async (files: Blob[], params: Record<string, unknown>) => {
       calls.blobs.push({ size: files.reduce((sum, file) => sum + file.size, 0), params });
-      if (holdLoads) await new Promise<void>((resolve) => loadGates.push(resolve));
+      await awaitLoadGate(params);
       if (loadFailure) throw new Error(loadFailure);
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
     },
@@ -82,6 +103,7 @@ function fakeWllama() {
     },
     exit: async () => {
       calls.exits += 1;
+      for (const gate of loadGates.splice(0)) gate.reject(new DOMException('Worker terminated', 'AbortError'));
     },
   } as unknown as Wllama;
 
@@ -91,7 +113,7 @@ function fakeWllama() {
     holdLoads(value: boolean) { holdLoads = value; },
     honorLoadAbort(value: boolean) { honorLoadAbort = value; },
     failLoad(message: string | null) { loadFailure = message; },
-    releaseLoads() { for (const gate of loadGates.splice(0)) gate(); },
+    releaseLoads() { for (const gate of loadGates.splice(0)) gate.resolve(); },
     chunks(value: FakeChunk[]) { chunks = value; },
     mode(value: 'chunks' | 'hang-until-abort' | 'never') { mode = value; },
   };
@@ -140,7 +162,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/a.gguf', directBlob: false }, async () => fake.instance);
     await engine.load();
-    await expect(engine.load({ modelUrl: '/models/b.gguf' })).rejects.toThrow(/already loaded/);
+    await expect(engine.load({ modelUrl: '/models/b.gguf' })).rejects.toThrow(/loaded with/);
     expect(fake.calls.loads).toHaveLength(1);
     await engine.load({ modelUrl: '/models/a.gguf' }); // same identity stays idempotent
     expect(fake.calls.loads).toHaveLength(1);
@@ -312,6 +334,21 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(row.streamChunks).toBe(3);
   });
 
+  test('chat() forwards a real system turn and shares the completion contract', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
+    await engine.load();
+    await engine.chat([
+      { role: 'system', content: 'SYSTEM' },
+      { role: 'user', content: 'USER' },
+    ], { maxTokens: 32, temperature: 0.2 });
+    expect(fake.calls.completions[0]).toMatchObject({
+      messages: [{ role: 'system', content: 'SYSTEM' }, { role: 'user', content: 'USER' }],
+      max_tokens: 32, temperature: 0.2, stream: true,
+    });
+    await expect(engine.chat([])).rejects.toThrow(/at least one message/);
+  });
+
   test('text generation has no JSON grammar and uses bounded defaults', async () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
@@ -441,6 +478,91 @@ describe('WllamaInferenceEngine option mapping', () => {
     await engine.load();
     const text = await engine.complete('P', { onCompletion: () => { throw new Error('completion observer'); } });
     expect(text).toBe('ok');
+  });
+
+  test('a load that exceeds its budget is a timeout, exits the worker, and is retryable', async () => {
+    let factories = 0;
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    const evidence: ModelLoadEvidence[] = [];
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false, loadTimeoutMs: 20,
+      onEvidence: (record) => { if (record.kind === 'load') evidence.push(record); } }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) fake.holdLoads(true); // compile hangs past the deadline
+      fakes.push(fake);
+      return fake.instance;
+    });
+    const first = engine.load();
+    await expect(first).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(fakes[0]!.calls.exits).toBe(1);
+    expect(evidence.at(-1)).toMatchObject({ outcome: 'timeout', modelId: null, loadTimeoutMs: 20 });
+    expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, workersCreated: 1, workersExited: 1, loadCount: 0 });
+
+    await engine.ensureLoaded();
+    expect(factories).toBe(2);
+    expect(engine.runtime).toMatchObject({ loaded: true, needsReload: false, workersCreated: 2, workersExited: 1, loadCount: 1 });
+    expect(await engine.complete('P')).toBe('ok'); // retry uses a fresh worker, not the timed-out one
+  });
+
+  test('cancelLoad stops an in-flight load without disposing the engine, and a later load works', async () => {
+    let factories = 0;
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    const evidence: ModelLoadEvidence[] = [];
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false,
+      onEvidence: (record) => { if (record.kind === 'load') evidence.push(record); } }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) fake.holdLoads(true);
+      fakes.push(fake);
+      return fake.instance;
+    });
+    const first = engine.load();
+    await sleep(5);
+    expect(engine.cancelLoad()).toBe(true);
+    await expect(first).rejects.toMatchObject({ name: 'AbortError' });
+    expect(evidence.at(-1)).toMatchObject({ outcome: 'aborted', modelId: null });
+    expect(engine.runtime).toMatchObject({ loaded: false, disposed: false, needsReload: true });
+    expect(engine.cancelLoad()).toBe(false); // nothing left to cancel
+
+    await engine.ensureLoaded();
+    expect(factories).toBe(2);
+    expect(engine.runtime.loaded).toBe(true);
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('ensureLoaded reloads the per-call model url after a hard stop and rejects a different model', async () => {
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    let factories = 0;
+    const engine = new WllamaInferenceEngine({ directBlob: false, abortGraceMs: 10 }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) {
+        fake.chunks([{ text: 'partial' }]);
+        fake.mode('never');
+      }
+      fakes.push(fake);
+      return fake.instance;
+    });
+    // No configured modelUrl: the per-call url must survive the hard stop.
+    await engine.load({ modelUrl: '/models/m.gguf' });
+    await expect(engine.complete('P', { timeoutMs: 10 })).rejects.toBeInstanceOf(IncompleteGenerationError);
+    expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, lastModelUrl: '/models/m.gguf' });
+
+    await engine.ensureLoaded();
+    expect(factories).toBe(2);
+    expect(engine.info.modelId).toBe('m.gguf');
+    await expect(engine.ensureLoaded({ modelUrl: '/models/other.gguf' })).rejects.toThrow(/loaded with/);
+  });
+
+  test('one worker serves many turns without growth, and dispose closes exactly that worker', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
+    await engine.load();
+    for (let turn = 0; turn < 6; turn += 1) expect(await engine.complete(`turn ${turn}`)).toBe('ok');
+    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 0, generations: 6, loadCount: 1 });
+    await engine.dispose();
+    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 1, disposed: true, needsReload: false, loaded: false });
+    expect(fake.calls.exits).toBe(1);
   });
 
   test('complete before load is an ordering error, and dispose is terminal', async () => {

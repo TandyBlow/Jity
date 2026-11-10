@@ -58,12 +58,67 @@ new WllamaInferenceEngine({
   onEvidence?: (record: ModelLoadEvidence | GenerationEvidence) => void,
 });
 engine.load({ signal?, modelUrl? }): Promise<void>;   // unchanged contract
+engine.ensureLoaded({ signal?, modelUrl? }): Promise<void>; // NEW: reload last model after a hard stop
 engine.complete(prompt, options?): Promise<string>;   // unchanged contract; onCompletion unchanged
-engine.cancelActive(): number;      // NEW: stop running generations, keep the engine loaded
+engine.chat(messages, options?): Promise<string>;     // NEW: real system turn for instruct models
+engine.cancelActive(): number;      // NEW: stop running generations AND an in-flight load; keep the engine usable
+engine.cancelLoad(): boolean;       // NEW: stop only the load; retryable
 engine.dispose(): Promise<void>;    // terminal, idempotent
 engine.diagnostics;                 // UNCHANGED shape {multithread,numThreads}|null
-engine.runtime;                     // NEW: {backend,modelId,loaded,contextSize,gpuLayers,loadCount,hardStops,activeCalls}
+engine.runtime;                     // NEW: {backend,modelId,loaded,contextSize,gpuLayers,loadCount,hardStops,activeCalls,generations,workersCreated,workersExited,disposed,needsReload,lastModelUrl}
 ```
+
+## Product runtime contract (reorganization 2026-11-10)
+
+The model that is actually deployable on this machine, with the template that
+was used in the real accepted runs:
+
+| item | value |
+|---|---|
+| model | `qwen3-1.7b-q4km` = `Qwen3-1.7B-Q4_K_M.gguf`, SHA-256 `b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897`, 1,107,409,472 bytes |
+| path used by the real runs | `D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf` (read-only; 09 serves it from its own tree as `/models/Qwen3-1.7B-Q4_K_M.gguf`) |
+| template | Qwen3 ChatML with `enable_thinking:false`; wllama applies the GGUF's own Jinja template. The residual `<think>` block is stripped by `ThinkingFilter` in `model-runtime/template.ts` |
+| engine | `WllamaInferenceEngine` with `nGpuLayers: 99999`, `contextSize: 4096`, `directBlob` in browser, Edge `--force_high_performance_gpu` |
+| adapter proof | `ggml_webgpu: adapter_info: vendor: nvidia | architecture: lovelace` plus `navigator.gpu.requestAdapter()` reporting `nvidia / lovelace`; `--gpu`/`nGpuLayers` alone is not proof |
+| load time | 32-46 s cold on the RTX 4060 Laptop, one load reused across the following turns |
+| generation | dev points first readable 1.5-2.2 s, 8-11 s wall; free-day opening first readable 15-27 s, 26-47 s wall |
+| quality | NOT passed. Automatic fact checks accepted some runs, but the user/product review found gender, invented footsteps, item misattribution and cross-turn repetition in the same accepted texts. 02 owns generation, 01 owns quality; this lane only supplies the runtime/model |
+
+Runtime states and what the page should do:
+
+- `runtime.loaded === true`: the same weights are usable; do not reload per turn.
+- `runtime.needsReload === true` (a timeout/cancel terminated the worker; the
+  url is still known): call `await engine.ensureLoaded()` before the next
+  turn. This is the same weights, not a silent model switch.
+- `ensureLoaded({modelUrl})` with a different url while loaded throws: a
+  request must not silently change weights mid-session.
+- `cancelLoad()` stops the first 30-46 s of a cold session and remains
+  retryable; `cancelActive()` stops both the load and running generations.
+- `loadTimeoutMs` (default 120000) bounds the load; on expiry the landing
+  worker is terminated, the load rejects with `name: 'TimeoutError'`, and the
+  next `ensureLoaded()` starts a fresh worker. The page must show a retry,
+  not a frozen turn.
+- `workersCreated` / `workersExited` are the leak counters; across N turns
+  with one load they stay at 1/0, and `dispose()` brings them to 1/1.
+- `generations` counts model calls served by this engine, so a 10-turn log
+  can show `generations: 10, loadCount: 1`.
+
+## 02/06 integration entry points
+
+- 06 product page / game-model: construct one engine and call
+  `await engine.ensureLoaded()` at session start, `engine.chat(messages, {signal,
+  timeoutMs, maxTokens, temperature, onProgress})` per narration call,
+  `engine.cancelActive()` from the stop button, `engine.dispose()` on leaving
+  the world. For the candidate module use
+  `generateCandidate({engine, committed, inputText, policy, onProgress, signal})`.
+- 02 generation: `narration-candidates/model-runtime/` is the reference
+  candidate (scene-first prompt, prose fact projection, repair with the prior
+  draft, thinking strip). Its `NARRATOR_SYSTEM_PROMPT`, `renderNarrationUser`
+  and `projectProseFacts` are the parts to compare against the training route;
+  the engine/template above is fixed and should not be re-derived per run.
+- No 4B retry: the 2.5 GB single GGUF fails `arrayBuffer()` in wllama 3.8.1 on
+  both WebGPU and CPU. A split/quantized/streaming loader needs a technical
+  feasibility artifact before another browser run.
 
 `frontend/src/lib/world-engine/runtime/inference-queue.ts`
 
@@ -128,9 +183,11 @@ stop.
    unload call `queue.dispose()` then `engine.dispose()`.
 
 5. Hard stop is rare (native abort did not settle within `abortGraceMs`). If it
-   happens, `engine.runtime.loaded === false`; the next direct `load()` pays the
-   model compile again. The model-port path reloads by itself; a direct
-   game-model call should check `runtime.loaded` and show a reload state.
+   happens, `engine.runtime.loaded === false` and `runtime.needsReload === true`;
+   call `await engine.ensureLoaded()` before the next turn (same weights, one
+   compile) instead of constructing a second engine. A direct `load()` without
+   a url also falls back to the last attempted model, so a per-call url is not
+   lost after a hard stop.
 
 6. `onCompletion` still receives `CompletionEvidence`. To read the new fields,
    import `GenerationEvidence` and cast (they are present at runtime):
