@@ -170,8 +170,8 @@ if (source !== state.protagonistId && !this.lastPlayerInput.includes(state.initi
 
 ```bash
 cd frontend
-npx vitest run src/lib/world-engine/local/semantics/actions/actions.test.ts --maxWorkers=1
-# 33 passed
+npx vitest run src/lib/world-engine/local/semantics/actions --no-file-parallelism
+# 51 passed（含 run-1 / run-5 真实失败回放回归）
 npx tsc --noEmit -p tsconfig.json
 # 0 errors
 node scripts/parallel-actions/run-action-eval.mjs --dry \
@@ -180,45 +180,53 @@ node scripts/parallel-actions/run-action-eval.mjs --dry \
 ```
 
 测试覆盖（脚本化 engine，仅结构/规则证据）：不点名自主行动、点名但合法不行动、
-复述/第一人称/冒名归属/缺席人物/异地物品的重试与回退、解析失败保留原始证据、
-异地角色 0 调用、主角待处理命令原样冻结、consumed 继续判断、指代单选/歧义、
-姓名回映射、缺席目标/物品目标/空目标/上限、合法空目标、容器内人物不可选、
-反应因果、复述威胁、替发起者/主角行动、现场外人物、主角成员 0 调用、连续失败回退。
+复述/改写复述/任务目标照抄/第一人称/冒名归属/缺席人物/异地物品的重试与回退、
+解析失败保留原始证据、异地角色 0 调用、异地 judge 隐藏主角上下文、主角待处理
+命令原样冻结、consumed 继续判断、指代单选/歧义、姓名回映射、未点名目标/缺席目标/
+物品目标/空目标/上限、合法空目标、容器内人物不可选、反应因果与任务目标照抄、
+替发起者/主角行动、现场外人物、主角成员 0 调用、连续失败回退、model-port 适配器。
 
 真实模型：`frontend/scripts/parallel-actions/run-action-eval.mjs`（Edge 157 +
 wllama + Qwen3-0.6B Q4_K_M，17 个案例：含异地 skip 与异地 judge 两臂，COOP/COEP，
 温度 0/种子 42）。资源锁由其他线占用时不抢跑；归档在 `artifacts/action-eval/`，
 逐案记录 prompt、原始输出、解码值、issues、repair、耗时。
 
-### 真实模型第一轮（`run-1-unguarded.json`，16 次调用，均值 6.3s / p50 7.1s / 最大 11.3s）
+### 真实模型迭代（同一 17 案例、同设备同参数）
 
-结论不是“模型不行”，而是第一版守卫漏了三类真错误，已按证据补上：
+| 归档 | 改动 | 结果 |
+|---|---|---|
+| `run-1-unguarded.json` | 首版处理器 | 16 次调用，均值 6.3s。发现三类误收：A1 玩家动作去主语复述、A4b/A6/A7 照抄任务目标、T3/T4/T5 幻影目标；A2 首答复述玩家、A3 两次复述 |
+| `run-2-guarded.json` | 加改写复述、任务目标、未点名目标守卫 | T3/T5 空目标、T4 选中诺诺、A3 正常出行动；A1/A6 被守卫拦下后回退；A4b 接受了一句计划式长句；R1/R3 仍让物品发烫 |
+| `run-3-action-prompt.json` | 在指令里加具体反例 | 反例被逐字复制进 5 个无关案例（“伸手把电池按进卡槽”）→ 该提示方向作废，反例删除 |
+| `run-4-copy-constraint.json` | 改为“不能包含玩家原话连续 8 字” | A2 首答即过；A1/A6 仍复述后回退 |
+| `run-5-subject.json` | 要求行动句带主语 | A1/A6 看似通过，实为假通过：A1 把“诺诺”加在玩家句前，A6 照抄诺诺的任务目标；守卫按证据收紧（双向覆盖 + 全人物目标），主语要求回退 |
+| `run-6-final.json` | 交付代码 | 17 案例 / 16 次调用，均值 6.1s，p50 6.9s，最大 10.6s。见下 |
 
-| 案例 | 模型实际输出 | 第一版处理 | 现在的处理 |
-|---|---|---|---|
-| A1 不点名自主行动 | “靠在巷口墙边，确认护目镜是否起雾”（把玩家动作去掉主语复述） | **误收**为诺诺行动 | 顺序覆盖 ≥80% 判 `npc_repeats_player`，重试 |
-| A4b 异地 NPC | “换上相机备用电池，拍到有辨识度的争旗场面”（照抄任务目标） | **误收** | `action_is_task_goal`，重试 |
-| A6 主角 consumed | “向诺诺问清当前红蓝两方局势…中立”（照抄主角任务目标） | **误收** | 同上 |
-| A7 玩家提楚子航 | “让红方的旗台行动有可执行的掩护…”（照抄诺诺任务目标） | **误收** | 同上 |
-| A2 点名请求 | 第一次原句复述玩家；重试后 “诺诺查看西回廊是否有需要帮助的人” | 守卫拦下并修好 | 保留；提示词补了合法对白写法 |
-| A3 点名闲聊 | 两次都复述 “诺诺，你叫什么名字？” | 回退不行动（诚实但生硬） | 提示词允许“诺诺回答：‘……’”，待复测 |
-| T3 去钟楼找楚子航 | 把唯一在场的诺诺当目标 | 仅 warn，**误收** | `target_unmentioned` 升 error，重试；再失败空目标 |
-| T4 递给诺诺 | 把旁观的芬格尔当目标 | 仅 warn，**误收** | 同上 |
-| T5 走向检修口 | 把诺诺当目标 | 仅 warn，**误收** | 同上 |
-| T6 同时问两人 | 只选芬格尔，漏诺诺 | 无守卫（少选） | 提示词要求“点名要回应的人通常都列入”，待复测 |
-| R1/R3 反应 | 让识别带“闪烁/发烫”、短讯机自己移动 | 词面因果通过，误收 | 提示词禁止物品凭空变化；程序无守卫，仍靠读评 |
+`run-6-final` 的具体结论：
 
-第一轮之后新增/收紧的守卫都在这份代码里：`sharedSubsequence` 改写复述检查、
-`taskGoalCopy`（行动与反应都查）、`target_unmentioned` 升级为 error + 重试。
-第二轮（`run-2-guarded.json`）用同一 17 案例、同设备同参数复测；若资源锁被占，
-`completion.json` 会明确写“第一轮已跑、第二轮待跑”，不把第一轮当成达标。
+- **行动（8）**：A1 不点名自主行动两次都复述玩家 → 守卫拒绝并回退 `skip`（不冒名，
+  但这个 0.6B 模型确实写不出独立的诺诺行动）；A2/A3/A7 正常出行动（A2 首答即过）；
+  A4a 范围跳过 0 调用；A4b 异地判断接受了一句计划式长句（质量缺口，不是守卫漏放）；
+  A5 玩家待处理命令原样冻结 0 调用；A6 consumed 首答复述玩家被拒，第二答
+  “把胸前护目镜推上去”被接受（部分复述，仍是限制）。
+- **目标（6）**：T1 指代→诺诺、T2 歧义指代→芬格尔（按现场论证）、T3 找楚子航→空目标
+  并记 `absent_character_named`、T4 容器场景→诺诺（笼内秦越不可选）、T5 移动→空目标；
+  T6 同时点名两人只回诺诺（少选，提示词已要求“点名要回应的人通常都列入”但模型未做到）。
+- **反应（3）**：R1/R3 通过归属/复述/因果守卫，但仍写出“识别带微微发烫”这类未登记的
+  物品状态，且没有真正回应递地图这条威胁；R2 主角成员 0 调用，程序返回
+  “路明非没有作出反应。”。
+
+结论：点名门已移除（A1/A2/A3/A7 都真实调用模型），目标因果由 T3/T4/T5 的修复验证，
+反应归属/复述由守卫保证；剩余失败集中在 **0.6B 语义模型自身的行动/反应写作能力**
+（A1、A6、A4b、R1/R3）。主 agent 接入时若要这两类也达标，需要换更强的语义模型或
+接受“写不出就回退不行动/最小反应”的保守行为，不能把回退冒充成模型通过。
+
+运行方式（资源锁被占时不抢跑）：
 
 ```bash
 python D:/others/Jity/.local/parallel-local-game/resource_lease.py acquire --lane 03-actions --purpose "action/targets/reaction real-model probe"
 cd frontend
-node scripts/parallel-actions/run-action-eval.mjs \
-  --assets D:/others/Jity/.local/world-narration-worktree/frontend/public \
-  --out ../artifacts/action-eval/run.json
+node scripts/parallel-actions/run-action-eval.mjs   --assets D:/others/Jity/.local/world-narration-worktree/frontend/public   --out ../artifacts/action-eval/run.json
 python D:/others/Jity/.local/parallel-local-game/resource_lease.py release --lane 03-actions
 ```
 
@@ -236,5 +244,11 @@ python D:/others/Jity/.local/parallel-local-game/resource_lease.py release --lan
   无呼应），不能证明语义因果；最终仍由读评/叙事事实门确认。
 - 主角作为反应成员时返回“没有作出反应。”是保守程序下限，保留玩家决定权；是否要在
   页面层改成“给玩家一个反应机会”的交互，不在本线范围。
+- 0.6B 语义模型在 A1（不点名自主行动）和 A6（主角续写）上写不出合格行动，守卫会
+  回退为不行动；A4b 接受计划式长句；R1/R3 仍会写未登记的物品状态。这些是模型能力
+  限制，不是守卫漏放（回放测试证明同类错误会被拒绝），换模型或接受保守回退由主
+  agent 决定。
+- 行动的部分复述（A6 第二答“把胸前护目镜推上去”）在现有阈值下会通过；再收紧会
+  误伤 A2 这类“按玩家请求行动”的合法回复，故保留并如实记录。
 - 本线没有接入页面/E2E，也没有改 `game-model.ts`、`prompt.ts`、controller/schedule/types；
-  真实模型结果未跑前不能声称语义达标。
+  真实模型结果已跑，但不等于整链验收通过。

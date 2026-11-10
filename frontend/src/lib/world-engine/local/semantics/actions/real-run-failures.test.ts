@@ -1,11 +1,12 @@
 /** Regression tests built from the FIRST real-model run.
  *
- * The raw completions below are copied verbatim from
- * `artifacts/action-eval/run-1-unguarded.json` (Edge + wllama Qwen3-0.6B,
- * 2026-11-10). That run is evidence of the failures; replaying its exact
- * outputs through a scripted engine proves the current guards reject them.
- * These are not new semantic results — they are the failure corpus that must
- * stay rejected.
+ * The raw completions below are copied verbatim from the real-model archives
+ * (Edge + wllama Qwen3-0.6B, 2026-11-10): `run-1-unguarded.json` (first
+ * handlers) and `run-5-subject.json` (the "start with the actor name" prompt
+ * experiment, which produced two new false accepts). Those runs are evidence
+ * of the failures; replaying their exact outputs through a scripted engine
+ * proves the current guards reject them. These are not new semantic results —
+ * they are the failure corpus that must stay rejected.
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -132,5 +133,37 @@ describe('run-1 failures stay rejected', () => {
     expect(codes(result)).toContain('target_unmentioned');
     expect(result.value).toEqual({ targets: [] });
     expect(result.fallback).toBe(true);
+  });
+});
+
+describe('run-5 prompt-experiment false accepts stay rejected', () => {
+  it('A1: the actor name prefixed onto the player sentence is still an echo', async () => {
+    // run-5: the model answered the unnamed-NPC case with the player's own
+    // sentence plus a subject. Value-normalized coverage alone missed it.
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"诺诺靠在巷口墙边，确认护目镜是否起雾"}',
+      '{"kind":"act","text":"诺诺把故障短讯机举到耳边，试了试信号。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('nono', action(base, 'nono', '我靠在巷口墙边，先确认护目镜有没有起雾。'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('npc_repeats_player');
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺把故障短讯机举到耳边，试了试信号。' });
+  });
+
+  it('A6: another character goal is not the protagonist continuation', async () => {
+    // run-5: the model produced Nono's goal as the protagonist's next step;
+    // the actor-only goal list missed it.
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}',
+      '{"kind":"act","text":"路明非把护目镜往上推了推，眯眼看向巷口。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('lu', action(base, 'lu', '我把护目镜推上去，先看巷口的动静。', 'consumed'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('action_is_task_goal');
+    expect(result.value).toEqual({ kind: 'act', text: '路明非把护目镜往上推了推，眯眼看向巷口。' });
   });
 });

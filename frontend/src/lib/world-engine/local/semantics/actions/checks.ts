@@ -55,17 +55,25 @@ function interactionNear(text: string, index: number, length: number): boolean {
  * objective, not one action a character performs now. Small models copy it
  * verbatim — the first real probe produced three such "actions" (all three
  * were goal copies), so the guard rejects equality or near-total coverage. */
-function taskGoalCopy(text: string, tasks: readonly { goal: string }[]): string | null {
+function taskGoalCopy(text: string, goals: readonly string[]): string | null {
   const value = skeleton(text);
   if (value.length < 4) return null;
-  for (const task of tasks) {
-    const goal = skeleton(task.goal);
+  for (const goalText of goals) {
+    const goal = skeleton(goalText);
     if (goal.length < 4) continue;
-    if (value === goal) return task.goal;
-    if (goal.length <= 12 && longestSharedSpan(text, task.goal).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return task.goal;
-    if (sharedSubsequence(text, task.goal).coverage >= 0.85) return task.goal;
+    if (value === goal) return goalText;
+    if (goal.length <= 12 && longestSharedSpan(text, goalText).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return goalText;
+    if (sharedSubsequence(text, goalText).coverage >= 0.85) return goalText;
   }
   return null;
+}
+
+/** Every registered character's pending/achieved goal. A goal copy is wrong
+ * even when it is another character's goal: the run-5 probe produced Nono's
+ * goal as the protagonist's continuation, which the actor-only list missed. */
+function allGoals(state: WorldState): string[] {
+  return Object.keys(state.characters).sort()
+    .flatMap((id) => Object.values(state.characters[id].tasks).map((task) => task.goal));
 }
 
 /** Action text of one character. `actorIsProtagonist` relaxes exactly the
@@ -83,7 +91,7 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
   if ([...value].length > options.maxActionChars) {
     push(issue('action_too_long', 'warn', `行动描述 ${[...value].length} 字，超过建议长度 ${options.maxActionChars}`));
   }
-  const goal = taskGoalCopy(value, scene.actor.tasks);
+  const goal = taskGoalCopy(value, allGoals(state));
   if (goal) {
     push(issue('action_is_task_goal', 'error', `行动句照抄了待办任务目标：“${goal}”；这不是这一刻的具体行动`, { detail: goal }),
       '不要照抄待办任务；写这个角色此刻具体做的这一步');
@@ -105,12 +113,17 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       push(issue('npc_repeats_player', 'error', `行动句与玩家原话有 ${shared.length} 字连续重合（“${shared.text}”）`, { detail: shared.text }),
         '不要复述玩家的原话，只写这个角色自己做了什么');
     } else {
-      // Paraphrase echo: the player's words in order with a token swapped.
-      // A real standalone action rarely covers >=80% of the player's text.
+      // Paraphrase echo: the player's words in order with a token swapped or
+      // dropped. Two directions matter: an action that is mostly the player's
+      // text (value coverage), and an action that contains most of the
+      // player's text behind a subject ("诺诺" + the player's sentence).
       const subsequence = sharedSubsequence(value, player);
-      if (valueSkeleton.length >= 6 && subsequence.coverage >= 0.8) {
+      const playerCoverage = playerSkeleton.length ? subsequence.length / playerSkeleton.length : 0;
+      const mostlyPlayer = valueSkeleton.length >= 6 && subsequence.coverage >= 0.8;
+      const containsPlayer = subsequence.length >= 8 && playerCoverage >= 0.7;
+      if (mostlyPlayer || containsPlayer) {
         push(issue('npc_repeats_player', 'error',
-          `行动句把玩家原话改写了一遍（覆盖 ${Math.round(subsequence.coverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
+          `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
           { detail: value }), '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
       }
     }
@@ -281,7 +294,7 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
   const memberName = scene.actorName;
   const sourceName = source.name;
 
-  const copiedGoal = taskGoalCopy(value, scene.actor.tasks);
+  const copiedGoal = taskGoalCopy(value, allGoals(state));
   if (copiedGoal) {
     push(issue('reaction_goal_copy', 'error', `反应照抄了${memberName}的任务目标：“${copiedGoal}”`, { detail: copiedGoal }),
       '不要照抄任务目标；写这个角色此刻被这条行动逼出的具体反应');
