@@ -278,6 +278,11 @@ export class LocalGameSession {
     const snapshot: LocalGameSnapshot = { transport: this.transport.snapshot(), commands: [...this.commands] };
     const checkpoint = this.currentCheckpoint();
     if (checkpoint) snapshot.checkpoint = checkpoint;
+    // Provenance travels with every snapshot (public and persisted), otherwise
+    // __worldSnapshot/restore lose the program/draft labels the transport does
+    // not store.
+    const sources = this.options.narrationSourceOf?.();
+    if (sources && Object.keys(sources).length) snapshot.narrationSources = { ...sources };
     return snapshot;
   }
 
