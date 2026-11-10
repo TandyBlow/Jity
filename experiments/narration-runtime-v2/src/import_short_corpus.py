@@ -102,6 +102,7 @@ def main() -> int:
             "sourceRowId": row["sourceRowId"],
             "split": row["sourceSplit"],
             "xProse": serialized.text,
+            "input": normalized,
             "target": row["targetText"],
             "requiredFacts": row["requiredFacts"],
             "categories": row["categories"],

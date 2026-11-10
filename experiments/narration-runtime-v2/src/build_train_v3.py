@@ -20,6 +20,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import sys
 from typing import Any, Dict, List
 
@@ -59,6 +60,10 @@ def main() -> int:
     parser.add_argument("--kept", default=os.path.join(V2, "data", "beats-teacher-kept-v1.jsonl"))
     parser.add_argument("--out", default=os.path.join(V2, "data", "train-v3.jsonl"))
     parser.add_argument("--beat-weight", type=int, default=2)
+    parser.add_argument("--short-weight", type=int, default=6)
+    parser.add_argument("--scene-weight", type=int, default=1)
+    parser.add_argument("--world-targets", default="")
+    parser.add_argument("--world-weight", type=int, default=6)
     args = parser.parse_args()
 
     with io.open(SPLIT, encoding="utf-8") as handle:
@@ -73,13 +78,13 @@ def main() -> int:
     for row in read_jsonl(ROWS_V2):
         out.append({"id": row["id"], "split": split_of[row["id"]], "mode": "scene",
                     "user": user_text("scene", row["xProse"]), "target": row["y"],
-                    "weight": 1, "source": "rows-v2"})
+                    "weight": args.scene_weight, "source": "rows-v2"})
 
     sources["rows-short-v1"] = sha256(SHORT_ROWS)
     for row in read_jsonl(SHORT_ROWS):
         out.append({"id": row["id"], "split": row["split"], "mode": "short",
                     "user": user_text("short", row["xProse"]), "target": row["target"],
-                    "weight": 6, "source": "short-01"})
+                    "weight": args.short_weight, "source": "short-01"})
 
     beats = {beat["id"]: beat for beat in read_jsonl(args.beats)}
     kept = read_jsonl(args.kept)
@@ -87,7 +92,8 @@ def main() -> int:
     seen = set()
     for row in kept:
         source_id = row.get("sourceId") or ""
-        beat = beats.get(source_id) or beats.get(row["id"])
+        beat = (beats.get(source_id) or beats.get(row["id"])
+                or beats.get(re.sub(r"-\d+$", "", row["id"])))
         if beat is None:
             raise SystemExit(f"{row['id']}: no beat for the kept sentence")
         if row["id"] in seen:
@@ -97,6 +103,18 @@ def main() -> int:
                     "user": beat["prompt"], "target": row["target"],
                     "weight": args.beat_weight,
                     "source": "teacher-beat:" + row["kind"]})
+
+    if args.world_targets:
+        sources["world-targets"] = sha256(args.world_targets)
+        authored = {row["id"]: row for row in read_jsonl(args.world_targets)}
+        for beat_id, row in authored.items():
+            beat = beats.get(beat_id)
+            if beat is None:
+                raise SystemExit(f"{beat_id}: no beat for the authored target")
+            out.append({"id": beat_id, "split": beat["split"], "mode": "beat",
+                        "user": beat["prompt"], "target": row["target"],
+                        "weight": args.world_weight,
+                        "source": "authored-world"})
 
     with io.open(args.out, "w", encoding="utf-8", newline="\n") as handle:
         for row in out:
