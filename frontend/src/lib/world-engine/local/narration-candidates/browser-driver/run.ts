@@ -207,6 +207,40 @@ export function attachEngine(modelUrl: string, engine: InferenceEngine, evidence
   return resolved;
 }
 
+export interface EngineProbeConfig {
+  /** Plain engine slot without a candidate loader. */
+  modelUrl: string;
+  prompt: string;
+  maxTokens: number;
+  timeoutMs: number;
+  temperature?: number;
+}
+
+/** Minimal stack probe: one plain completion on the loaded engine. It proves
+ * whether the browser/wllama/page path produces tokens at all, separately from
+ * any candidate prompt. It is not a quality sample. */
+export async function probeEngine(config: EngineProbeConfig): Promise<Record<string, unknown>> {
+  const store = state();
+  const slot = store.engines.get(engineKey(config.modelUrl, null));
+  if (!slot) throw new Error(`engine_not_loaded_for:${config.modelUrl}`);
+  const progress: string[] = [];
+  const started = performance.now();
+  const text = await slot.engine.complete(config.prompt, {
+    maxTokens: config.maxTokens,
+    temperature: config.temperature ?? 0.7,
+    timeoutMs: config.timeoutMs,
+    onProgress: (event) => { progress.push(event.raw); },
+  });
+  return {
+    text,
+    chars: [...text].length,
+    wallMs: performance.now() - started,
+    progressEvents: progress.length,
+    lastProgressChars: progress.length ? [...progress.at(-1) ?? ''].length : 0,
+    modelUrl: config.modelUrl,
+  };
+}
+
 export interface RunOneConfig {
   candidateId: string;
   scenarioId: string;
@@ -360,6 +394,12 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
     timeAdvance: scenario.delta.timeAdvance,
     entityDeltas: structuredClone(scenario.delta.entityDeltas),
   };
+  const effectivePolicy = structuredClone({
+    ...scenario.policy,
+    ...(config.maxTokens !== undefined ? { maxTokens: config.maxTokens } : {}),
+    ...(config.temperature !== undefined ? { temperature: config.temperature } : {}),
+    ...(config.policyOverride ?? {}),
+  });
   const progress: (ProgressEvent & { atMs?: number })[] = [];
   const startedAt = new Date().toISOString();
   const started = performance.now();
@@ -379,12 +419,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       delta: structuredClone({ timeAdvance: scenario.delta.timeAdvance, entityDeltas: scenario.delta.entityDeltas }),
       inputText: scenario.inputText,
       priorText,
-      policy: structuredClone({
-        ...scenario.policy,
-        ...(config.maxTokens !== undefined ? { maxTokens: config.maxTokens } : {}),
-        ...(config.temperature !== undefined ? { temperature: config.temperature } : {}),
-        ...(config.policyOverride ?? {}),
-      }),
+      policy: effectivePolicy,
       signal: controller.signal,
       onProgress: (event) => {
         progress.push({ ...event, atMs: Math.round(performance.now() - started) });
@@ -435,7 +470,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       textChars: scenario.inputText.length,
       text: scenario.inputText,
       scene: scenario.scene,
-      policy: scenario.policy,
+      policy: effectivePolicy,
       priorText,
       committedExtras: ['state', 'beforeState', 'timeAdvance', 'entityDeltas'],
     },

@@ -77,6 +77,7 @@ const config = {
   leaseWaitSeconds: Number(value('--lease-wait-seconds', '0')),
   dry: flag('--dry'),
   inspect: flag('--inspect'),
+  probe: flag('--probe'),
   quiet: flag('--quiet'),
   aliasSrc: resolve(value('--alias-src', resolve(frontend, 'src'))),
   allowDirs: values('--allow-dir'),
@@ -120,8 +121,8 @@ function fail(message) {
   process.exit(1);
 }
 
-if (!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) {
-  fail('at least one --candidate <id>=<module path> is required');
+if ((!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) && !config.probe) {
+  fail('at least one --candidate <id>=<module path> is required (or use --probe)');
 }
 if (!['short', 'free-day', 'all'].includes(config.set)) fail(`--set must be short|free-day|all, got ${config.set}`);
 if (!existsSync(config.world)) fail(`world asset missing: ${config.world}`);
@@ -333,7 +334,7 @@ async function acquireLease() {
       return false;
     }
     console.log(`[lease] busy, waiting: ${holder}`);
-    await new Promise((resolve) => setTimeout(resolve, 20_000));
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
   }
 }
 
@@ -386,6 +387,7 @@ try {
     if (operation === 'inspect') return { ok: true, value: await driver.inspectCandidate(payload) };
     if (operation === 'loadEngine') return { ok: true, value: await driver.loadEngine(payload) };
     if (operation === 'runOne') return { ok: true, value: await driver.runOne(payload) };
+    if (operation === 'probeEngine') return { ok: true, value: await driver.probeEngine(payload) };
     if (operation === 'dispose') return { ok: true, value: await driver.disposeEngines() };
     throw new Error(`unknown operation ${operation}`);
   }, { driverUrl, operation, payload });
@@ -410,7 +412,32 @@ try {
   if (!prepared.ok) fail(prepared.error ?? 'prepare failed');
   const scenarios = prepared.value;
   const scenarioIds = scenarios.map((scenario) => scenario.id);
-  if (config.inspect) {
+  if (config.probe) {
+    if (!config.noLease && !leaseHeld && !(await acquireLease())) { process.exitCode = 2; }
+    else {
+      const loaded = await call('loadEngine', {
+        modelUrl: config.model, contextSize: config.contextSize, threads: config.threads, gpu: config.gpu, reuse: false,
+      });
+      if (!loaded.ok) { recordFailure('probe', '*', `engine_load_failed:${loaded.error}`); process.exitCode = 1; }
+      else {
+        console.log(`[probe] engine loaded in ${Math.round(loaded.value.loadMs)}ms backend=${loaded.value.info.backend} model=${loaded.value.info.modelId}`);
+        const probe = await call('probeEngine', {
+          modelUrl: config.model,
+          prompt: value('--prompt', '用一句中文描写走廊里的脚步声。'),
+          maxTokens: Number(value('--probe-max-tokens', '32')),
+          timeoutMs: Number(value('--probe-timeout-ms', '30000')),
+          temperature: 0.7,
+        });
+        if (!probe.ok) { recordFailure('probe', '*', `probe_failed:${probe.error}`); process.exitCode = 1; }
+        else {
+          console.log(`[probe] ${probe.value.chars} chars in ${Math.round(probe.value.wallMs)}ms progress=${probe.value.progressEvents}`);
+          console.log(`[probe-text] ${String(probe.value.text).slice(0, 200)}`);
+          evidence.probes = [...(evidence.probes ?? []), { at: new Date().toISOString(), model: config.model, ...probe.value, engine: loaded.value }];
+        }
+      }
+      await call('dispose', {});
+    }
+  } else if (config.inspect) {
     for (const candidate of candidates) {
       const inspected = await call('inspect', {
         id: candidate.id, owner: candidate.owner, moduleUrl: candidate.moduleUrl,
