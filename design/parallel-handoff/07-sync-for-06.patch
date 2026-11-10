@@ -66,10 +66,10 @@ index 825da678..99a62e87 100644
        head: pulled.head,
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts b/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts
 new file mode 100644
-index 00000000..3037d11f
+index 00000000..8eafcfd1
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts
-@@ -0,0 +1,199 @@
+@@ -0,0 +1,228 @@
 +/** The exact wiring 06 has today vs the one that survives a reload.
 + *
 + * 06's page builds `createProductSync({store, worldId, baseUrl})` without
@@ -268,9 +268,38 @@ index 00000000..3037d11f
 +    // Default restore does not write the session-owned store either.
 +    expect(store.records.get('w1')).toBeUndefined();
 +  });
++
++  it('warns once in a browser when storage is not passed', () => {
++    const memory = new Map<string, string>();
++    const fake = {
++      getItem: (key: string) => memory.get(key) ?? null,
++      setItem: (key: string, value: string) => { memory.set(key, value); },
++      removeItem: (key: string) => { memory.delete(key); },
++    };
++    const globals = globalThis as { localStorage?: unknown };
++    const previous = globals.localStorage;
++    const warnings: string[] = [];
++    const originalWarn = console.warn;
++    globals.localStorage = fake;
++    console.warn = (...args: unknown[]) => { warnings.push(args.join(' ')); };
++    try {
++      createProductSync<{ turn: number }>({
++        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress', sleep: async () => undefined,
++      });
++      createProductSync<{ turn: number }>({
++        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
++        storage: fake, sleep: async () => undefined,
++      });
++    } finally {
++      console.warn = originalWarn;
++      globals.localStorage = previous;
++    }
++    expect(warnings).toHaveLength(1);
++    expect(warnings[0]).toContain('storage is not passed');
++  });
 +});
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/product.ts b/frontend/src/lib/world-engine/local/progress-sync/product.ts
-index 0fcd007c..ecfe5687 100644
+index 0fcd007c..10f9d4bb 100644
 --- a/frontend/src/lib/world-engine/local/progress-sync/product.ts
 +++ b/frontend/src/lib/world-engine/local/progress-sync/product.ts
 @@ -6,10 +6,16 @@
@@ -315,7 +344,23 @@ index 0fcd007c..ecfe5687 100644
    /** Upload a snapshot the caller already saved locally (06's repository).
     * Keeps one durable record instead of writing it twice. */
    push(snapshot: P, options?: { requestId?: string }): Promise<ProductSaveResult<P>>;
-@@ -185,13 +196,18 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+@@ -161,6 +172,15 @@ export interface ProductSync<P> {
+ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSync<P> {
+   const { worldId } = options;
+   const baseUrl = options.baseUrl?.trim() ? options.baseUrl.trim() : null;
++  if (!options.storage && typeof globalThis.localStorage !== 'undefined') {
++    // 06's page used to forget this: the queue and the last known head then
++    // vanish on reload and an offline save cannot be uploaded later. Loud on
++    // purpose, once per adapter, so a real-page run notices instead of
++    // silently losing progress.
++    console.warn('[progress-sync] storage is not passed: the offline queue and the last known head will be lost on reload. '
++      + 'Pass storage: window.localStorage.');
++  }
++
+   const client = new ProgressSyncClient<P>({
+     baseUrl: baseUrl ?? 'http://unconfigured.invalid',
+     token: options.token ?? undefined,
+@@ -185,13 +205,18 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
      client,
      worldId,
      async save(snapshot, saveOptions = {}) {
@@ -336,7 +381,7 @@ index 0fcd007c..ecfe5687 100644
        });
        return { localSaved, outcome };
      },
-@@ -219,7 +235,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+@@ -219,7 +244,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
          return { source: 'local', snapshot: local };
        }
        try {
@@ -345,7 +390,7 @@ index 0fcd007c..ecfe5687 100644
          return {
            source: pulled.snapshot ? 'remote' : 'none',
            snapshot: pulled.snapshot ? pulled.snapshot.payload : null,
-@@ -316,7 +332,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+@@ -316,7 +341,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
        }
      },
      choose(choice, conflict) {
