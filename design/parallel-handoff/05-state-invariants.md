@@ -552,3 +552,10 @@ snapshot or point; not state or product evidence.
 Run `2026-11-10T2236-fb80` completed with model prose (129.3s), one point,
 all tasks pending and clean restore; no full snapshot because 09 still reads the
 function getter as a property. State/recovery pass, product acceptance not.
+
+## a178 3-turn state/recovery
+
+Run `2026-11-10T2241-5ac2`: three points, history 3, recovery 3/3, places
+西侧服务巷 → 钟楼, tasks pending, sources model/program/program/program. State
+holds, but all three narrations fell back to program text at 128-163s and no
+full snapshot exists. Product still fails narration and latency.
