@@ -159,6 +159,41 @@ NARRATION_CORPUS=D:/others/Jity/.local/parallel-local-game/worktrees/01-input/ex
 
 这些修复都有单元测试（57 项）；语料兼容测试本身是手工入口，不进入默认 CI。
 
+### 3.8 面向可部署 instruct 模型的两种整段提示（2026-11-10 重组后）
+
+08 的可部署模型是 Qwen3-1.7B（ChatML + `enable_thinking:false`，NVIDIA WebGPU）。
+01 的序列化串是**微调检查点**的训练形状（`【视角】【地点】【人物】【变化】`），
+instruct 模型接着写会复述状态并补造连接事件。所以整段模式现在有两种提示形状：
+
+| 形状 | 触发 | 适用 | 内容 |
+|---|---|---|---|
+| `serialized`（默认） | `policy.promptShape` 省略 | 微调检查点（YuYan / qwen05b 系列） | 01 的序列化串 + `【写法】`合同（`prompt.ts` 的 `writingContract`） |
+| `prose-facts` | `policy.promptShape='prose-facts'` | Qwen3-1.7B 等 instruct | 08 参考候选的闭卷形（system + 场景/必述/时间/站位/长度），`scene-prompt.ts` 的 `renderProseFactsPrompt` |
+
+`prose-facts` 的分工沿用 08 的 `projectProseFacts`：**移动、任务达成**是必述事实；
+站位只是场景既有状态；理智/个性变化作为行为提示（不写数字、不照抄原句）。这符合
+goal「不要求把每个变化逐条念出来，关键结果必须表达清楚」。
+
+针对真实读评发现的四类缺陷，两套提示都写了明确规则（不是降低判分，而是让模型
+少犯）：
+
+- 指代/性别：人物用名字或省略主语，不用「他/她」（世界文件没有性别字段）；
+- 无依据声音：只写给出的声音气味，不补脚步/枪声/风/心跳；
+- 物品归属：`某人的某物`只写在那个人手上；
+- 重复收尾：提示里要求最后一句不同于上一回合；装配层再兜底（见 §3.9）。
+
+`frontend/scripts/parallel-narration/dump-scene-prompt.mjs` 不加载模型就能打印每种
+形状的真实提示（free-day 夹具：serialized 1441 字符 / prose 约 1000 / 单拍 519），
+用于在花浏览器时间前检查提示本身。
+
+### 3.9 跨回合复读的装配层处理
+
+`trimEchoedEnding(text, priorText, {protect, minChars})`：当最后一句与上一回合
+结尾的字符 bigram 重合 ≥0.6，且该句不含任何必述事实内容（移动两端、任务目标、
+个性原文、理智两个数字、地点名）时删掉它；最多删两句，且剩余长度不得低于
+`minChars`。整段模式删完会再用同一套校验复查一次，有硬问题就保留原稿；分段模式
+直接进入最终校验。删除记录在 `assembly.droppedSentences`，不隐藏。
+
 ### 4. 有界重试
 
 默认 `maxAttempts = 2`（可配 1–4）。第二稿的提示只在正文标记前加入：
