@@ -196,4 +196,33 @@ describe('product wiring survives a reload only with browser storage', () => {
     // Default restore does not write the session-owned store either.
     expect(store.records.get('w1')).toBeUndefined();
   });
+
+  it('warns once in a browser when storage is not passed', () => {
+    const memory = new Map<string, string>();
+    const fake = {
+      getItem: (key: string) => memory.get(key) ?? null,
+      setItem: (key: string, value: string) => { memory.set(key, value); },
+      removeItem: (key: string) => { memory.delete(key); },
+    };
+    const globals = globalThis as { localStorage?: unknown };
+    const previous = globals.localStorage;
+    const warnings: string[] = [];
+    const originalWarn = console.warn;
+    globals.localStorage = fake;
+    console.warn = (...args: unknown[]) => { warnings.push(args.join(' ')); };
+    try {
+      createProductSync<{ turn: number }>({
+        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress', sleep: async () => undefined,
+      });
+      createProductSync<{ turn: number }>({
+        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
+        storage: fake, sleep: async () => undefined,
+      });
+    } finally {
+      console.warn = originalWarn;
+      globals.localStorage = previous;
+    }
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('storage is not passed');
+  });
 });

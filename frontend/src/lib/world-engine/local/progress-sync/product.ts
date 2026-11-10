@@ -172,6 +172,15 @@ export interface ProductSync<P> {
 export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSync<P> {
   const { worldId } = options;
   const baseUrl = options.baseUrl?.trim() ? options.baseUrl.trim() : null;
+  if (!options.storage && typeof globalThis.localStorage !== 'undefined') {
+    // 06's page used to forget this: the queue and the last known head then
+    // vanish on reload and an offline save cannot be uploaded later. Loud on
+    // purpose, once per adapter, so a real-page run notices instead of
+    // silently losing progress.
+    console.warn('[progress-sync] storage is not passed: the offline queue and the last known head will be lost on reload. '
+      + 'Pass storage: window.localStorage.');
+  }
+
   const client = new ProgressSyncClient<P>({
     baseUrl: baseUrl ?? 'http://unconfigured.invalid',
     token: options.token ?? undefined,
