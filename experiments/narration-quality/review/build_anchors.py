@@ -983,6 +983,20 @@ anchors += [
     },
 ]
 
+
+rows_q3 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-new2.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-ext-prose",
+        "source": "02 Qwen3-1.7B free-day extended run (78 chars, rejected by 02); goggles settled hanging, text says 摘下",
+        "input": rows_q3["q3-ext"]["input"],
+        "text": rows_q3["q3-ext"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "发圈 belongs to 诺诺; 摘下护目镜 implies they were worn, but they hang on the chest."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

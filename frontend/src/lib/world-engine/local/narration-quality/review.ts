@@ -1183,7 +1183,7 @@ export function reviewNarration(args: {
           if (!/(护目镜|眼镜)/u.test(narration)) continue;
           // A rule board saying "护目镜必须戴好" is not someone wearing them.
           if (/(牌面|写明|规则|规定|必须|禁止|要求|白线)/u.test(narration)) continue;
-          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛)/u.test(narration)) continue;
+          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(narration)) continue;
           if (/(未|没|不|尚未|没有)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
