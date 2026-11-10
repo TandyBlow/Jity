@@ -18,6 +18,8 @@
 | `minicpm5-2b` | 1,561,318,368 | Apache-2.0 | 期望 minicpm（base config）/ 在 wasm 表中 | 未过门：超出 1,500,000,000 字节初批上限（超 61 MB） |
 | `minicpm-2b-dpo`（第三方 Q4_K_M） | 1,729,503,200 | 仓库无许可标签 | 期望 minicpm / 在 wasm 表中 | 未过门：超尺寸，且许可不清 |
 
+运行时预算：08 实测浏览器 Blob 总容量上限约 2 GB；页面还要加载语义模型 Qwen3-0.6B（396,705,472 B），所以候选 + 语义模型都按 2.0 GB 检查。四个候选分别是 1.51/1.57/1.38/1.53 GB，全部通过。
+
 基线（不重复下载）：`qwen3-1.7b-instruct`（本地 sha256 `b139949c…` 等于 unsloth/Qwen3-1.7B-GGUF 的 LFS 哈希）与当前产品叙事 LoRA `product-narr-qwen25-1.5b`（`6ed2268d…`）。08 已实测浏览器 Blob 总容量上限约 2 GB；批次 1 候选都 ≤1.18 GB，和 1.5 GB 单文件门一致。4B 不再排。
 
 **真实 GGUF 头证据**：`src/remote_gguf_head.py` 用 HTTP Range 只读文件开头（8–16 MB），从 pinned revision 直接读出 `general.architecture`、量化类型、tensor 类型、内嵌 chat template 与哈希；没有下载完整权重，也没有推理。四个候选都是 Q4_K_M（F32/Q4_K/Q6_K），没有未知 tensor 类型。GLM-Edge 的真实架构是 `chatglm`（可加载），Hunyuan 是 `hunyuan-dense`，其模板含 `enable_thinking`，批量执行时必须传 `chat_template_kwargs={enable_thinking:false}`；Qwen2.5 的 GGUF 内嵌模板与 base tokenizer_config 不是同一份（哈希 `d5495a1e…` vs `cd8e9439…`），以 GGUF 为准。
@@ -40,7 +42,7 @@
 - `tide-continuity-tide-duty-t3`：`解除外貌` 是字符串（应为数组）
 - `fixture-goggles-transfer`：`外貌` 操作（应为 `新增外貌`），而且它是唯一一例物品转交，不能静默跳过
 
-已写 `results/11-model-search/requests/01-dev-package-canonical-delta.json` 给 01。当前冻结的是**在看任何模型输出之前就声明的 12 例子集**（`subset-declaration.json`），只作为子集证据；完整 10/15 晋级门必须等 01 修好或明确确认子集。没有把 05 的事实改写成另一种形状。
+已写 `results/11-model-search/requests/01-dev-package-canonical-delta.json` 给 01；另用 `src/propose_case_fix.py` 在**内存副本**上验证了最小改写（`任务`→`完成任务`、`外貌`→`新增外貌`、字符串→数组）可以让三例都通过参考序列化器，方案在 `results/11-model-search/requests/01-case-fix-proposal.json`。没有改 01 的包。当前冻结的是**在看任何模型输出之前就声明的 12 例子集**（`subset-declaration.json`），只作为子集证据；完整 10/15 晋级门必须等 01 修好或明确确认子集。没有把 05 的事实改写成另一种形状。
 
 ## 比较条件（已冻结在 `preregistration.draft.json`）
 

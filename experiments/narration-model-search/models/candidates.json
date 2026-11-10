@@ -213,6 +213,19 @@
     "licenseDecisionRequired": false,
     "passed": true,
     "reasons": []
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1514026208,
+    "pass": true
    }
   },
   {
@@ -306,6 +319,19 @@
     "licenseDecisionRequired": true,
     "passed": true,
     "reasons": []
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1569069504,
+    "pass": true
    }
   },
   {
@@ -399,6 +425,19 @@
     "licenseDecisionRequired": true,
     "passed": true,
     "reasons": []
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1377175616,
+    "pass": true
    }
   },
   {
@@ -468,6 +507,19 @@
     "reasons": [
      "chat template not captured from the base tokenizer_config"
     ]
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1400246624,
+    "pass": true
    }
   },
   {
@@ -557,6 +609,19 @@
     "licenseDecisionRequired": true,
     "passed": true,
     "reasons": []
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1529790560,
+    "pass": true
    }
   },
   {
@@ -625,8 +690,22 @@
     "licenseDecisionRequired": true,
     "passed": false,
     "reasons": [
-     "size 1729503200 > gate 1500000000"
+     "size 1729503200 > gate 1500000000",
+     "candidate + semantic model 2126208672 > runtime cap 2000000000"
     ]
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 2126208672,
+    "pass": false
    }
   },
   {
@@ -706,6 +785,19 @@
      "size 1561318368 > gate 1500000000",
      "chat template not captured from the base tokenizer_config"
     ]
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1958023840,
+    "pass": true
    }
   }
  ],

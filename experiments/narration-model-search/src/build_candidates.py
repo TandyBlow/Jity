@@ -26,6 +26,10 @@ SUPPORT = ROOT / "models/wllama-support.json"
 OUT = ROOT / "models/candidates.json"
 
 SIZE_GATE = 1_500_000_000
+# Browser Blob-store aggregate cap measured by lane 08 (team-08-runtime.json):
+# ~2 GB; a 1.3 GB blob loads, adding another 1.2 GB fails. A real page also
+# loads the semantic model, so the budget covers both.
+RUNTIME_BLOB_CAP = 2_000_000_000
 
 # License interpretation is written by hand on purpose: it is a reading of the
 # captured licence text, not something a script can decide. Each note points at
@@ -281,7 +285,24 @@ def main() -> int:
         }
         return entry
 
+    semantic = next((entry for entry in inventory
+                     if pathlib.Path(entry.get("path", "")).name == "Qwen3-0.6B-Q4_K_M.gguf"), None)
     rows = [build(slug) for slug in capture]
+    for entry in rows:
+        candidate_bytes = entry["gguf"]["bytes"]
+        other = semantic["bytes"] if semantic else 0
+        entry["runtimeBudget"] = {
+            "capBytes": RUNTIME_BLOB_CAP,
+            "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+            "otherLoadedModels": ([{"id": "Qwen3-0.6B-Q4_K_M", "bytes": other,
+                                    "sha256": semantic.get("sha256")}] if semantic else []),
+            "candidatePlusOtherBytes": candidate_bytes + other,
+            "pass": candidate_bytes + other <= RUNTIME_BLOB_CAP,
+        }
+        if not entry["runtimeBudget"]["pass"]:
+            entry["preInferenceGate"]["reasons"].append(
+                f"candidate + semantic model {candidate_bytes + other} > runtime cap {RUNTIME_BLOB_CAP}")
+            entry["preInferenceGate"]["passed"] = False
     # Baselines are already local product/training artifacts; they are not
     # candidates and are never downloaded again.
     baselines = []
