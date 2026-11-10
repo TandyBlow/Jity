@@ -135,8 +135,12 @@ function renderScene(scene: CandidateScene | null): string[] {
   // 红色识别带缠在左臂…"). The first two clauses carry the visible detail; the
   // rest is state that belongs to the world, not to this passage.
   const clip = (note: string) => {
-    const clauses = note.split(/[；;]/).map((part) => part.trim()).filter(Boolean).slice(0, 2).join('；');
-    return [...clauses].length > 64 ? `${[...clauses].slice(0, 64).join('')}…` : clauses;
+    // Three short clauses, 48 chars. Clipping a whole 64-char segment kept
+    // “手里的短枪枪口压向地面” in 诺诺's note, and the 1.7B model then put the
+    // gun in 路明非's hand. Cut at clause boundaries so a note never ends
+    // mid-detail and never drags in a neighbouring character's prop.
+    const clauses = note.split(/[，,；;]/).map((part) => part.trim()).filter(Boolean).slice(0, 3).join('；');
+    return [...clauses].length > 48 ? `${[...clauses].slice(0, 48).join('')}…` : clauses;
   };
   if (scene.present?.length) {
     const people = scene.present.map((entry) => (entry.note ? `${entry.name}（${clip(entry.note)}）` : entry.name));
