@@ -8,7 +8,8 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyDisplayedCommit, verifyTaskCoverage, verifyTaskDecisionEvidence,
+  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyDisplayedCommit,
+  verifySessionSnapshot, verifyTaskCoverage, verifyTaskDecisionEvidence,
   verifyVisibleAcceptance,
   verifySnapshotSequence, verifyWorldRecord, type WorldRecordLike,
 } from './index';
@@ -368,5 +369,23 @@ describe('visible acceptance summary', () => {
     }]);
     expect(report.errors).toEqual([]);
     expect(report.ok).toBe(true);
+  });
+});
+
+
+describe('session command point map', () => {
+  it('accepts a map aligned with commands and rejects a dangling or repeated point', async () => {
+    const initial = fixture.normal.initial as InitialState;
+    const s0 = buildInitialState(structuredClone(initial));
+    const p1 = point(s0, 1, {});
+    const record = await recordOf(initial, [p1]);
+    const ok = await verifySessionSnapshot({ transport: record, commands: ['我打开盒盖。'], commandPointIds: ['p1'] });
+    expect(ok.errors, JSON.stringify(ok.errors)).toEqual([]);
+    const dangling = await verifySessionSnapshot({ transport: record, commands: ['我打开盒盖。'], commandPointIds: ['p_missing'] });
+    expect(dangling.errors.map((item) => item.code)).toContain('commands_invalid');
+    const repeated = await verifySessionSnapshot({ transport: record, commands: ['A', 'B'], commandPointIds: ['p1', 'p1'] });
+    expect(repeated.errors.map((item) => item.code)).toContain('commands_invalid');
+    const wrongLength = await verifySessionSnapshot({ transport: record, commands: ['A', 'B'], commandPointIds: ['p1'] });
+    expect(wrongLength.errors.map((item) => item.code)).toContain('commands_invalid');
   });
 });

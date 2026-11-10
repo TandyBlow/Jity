@@ -105,6 +105,8 @@ export interface WorldRecordLike {
 export interface SessionSnapshotLike {
   transport?: unknown;
   commands?: unknown;
+  /** Optional page/session map: command index → committed player point id. */
+  commandPointIds?: unknown;
   checkpoint?: unknown;
 }
 
@@ -596,6 +598,32 @@ export async function verifySessionSnapshot(value: unknown): Promise<InvariantRe
   if (snapshot.commands !== undefined) {
     if (!isStringArray(snapshot.commands) || snapshot.commands.some((command) => !command.trim())) {
       report.errors.push(issue('commands_invalid', 'commands must be a list of non-blank strings'));
+    }
+  }
+  if (snapshot.commandPointIds !== undefined) {
+    const map = snapshot.commandPointIds;
+    const commands = snapshot.commands;
+    if (!Array.isArray(map)) {
+      report.errors.push(issue('commands_invalid', 'commandPointIds must be an array'));
+    } else if (!isStringArray(commands) || map.length !== commands.length) {
+      report.errors.push(issue('commands_invalid', 'commandPointIds must be aligned with commands'));
+    } else {
+      const rawPoints = (transport as WorldRecordLike).points;
+      const points = isRecord(rawPoints) ? rawPoints as Record<string, unknown> : null;
+      const seen = new Set<string>();
+      for (const [index, value] of map.entries()) {
+        if (value === null) continue;
+        if (typeof value !== 'string' || !value) {
+          report.errors.push(issue('commands_invalid', `commandPointIds[${index}] must be a point id or null`));
+          continue;
+        }
+        if (seen.has(value)) report.errors.push(issue('commands_invalid', `commandPointIds repeats point ${value}`));
+        seen.add(value);
+        const point = points && isRecord(points[value]) ? points[value] as Record<string, unknown> : null;
+        if (!point || point.trigger !== 'player') {
+          report.errors.push(issue('commands_invalid', `commandPointIds[${index}] is not a committed player point: ${value}`));
+        }
+      }
     }
   }
   if (snapshot.checkpoint !== undefined && snapshot.checkpoint !== null) {
