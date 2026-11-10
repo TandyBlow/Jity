@@ -10,10 +10,10 @@ import {
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
 import { buildBeatPrompt, planBeats } from './beats';
-import { BACKGROUND_RULES, renderProseFactsPrompt } from './scene-prompt';
+import { BACKGROUND_RULES, projectProseFacts, renderProseFactsPrompt } from './scene-prompt';
 import { composeNarrationPrompt } from './prompt';
 import { buildLedger } from './ledger';
-import { missingRequired, projectProseFacts } from './scene-prompt';
+import { missingRequired } from './scene-prompt';
 
 // ---------------------------------------------------------------------------
 // Scripted engine: real interface, canned outputs. Progress is emitted in
@@ -1397,5 +1397,40 @@ describe('cross-turn echo: the previous opening is as reusable as its ending', (
       policy: { ...basePolicy, mode: 'scene', promptShape: 'prose-facts', writingContract: false },
     });
     expect(engine.calls[1].prompt).toContain('上一回合的开头是');
+  });
+});
+
+describe('personality change is required, and required as behaviour', () => {
+  const personalityFact = {
+    id: 'p1', kind: 'personality_changed' as const, actorId: 'lin', name: '林川',
+    changeId: 'c1', text: '遇事先替别人想',
+  };
+
+  test('the prose projection makes it a mandatory fact, with a behaviour hint', () => {
+    const projection = projectProseFacts({ anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: null }, facts: [personalityFact] });
+    expect(projection.required.map((fact) => fact.id)).toContain('p1');
+    expect(projection.hints.join('')).toContain('用一句行为或反应');
+    const prompt = renderProseFactsPrompt({
+      committed: { anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: null }, facts: [personalityFact] },
+      policy: basePolicy, scene: null, priorTail: null,
+    });
+    expect(prompt).toContain('必须写到');
+  });
+
+  // Known hole in the shared verifier (01 owns verify.ts; filed as
+  // 02-narration-counterexample-personality-overlap): TRAIT_BEHAVIOUR matches
+  // 走/停, so a pure movement sentence counts as a personality expression and
+  // the omission is not flagged. The prompt now requires the change, but the
+  // checker cannot yet tell a move from a behaviour. Re-enable this test when
+  // 01 tightens it; it documents the current gap, not accepted behaviour.
+  test.skip('a scene that only shows the old behaviour is rejected, so the two sides agree', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '走廊的灯还亮着。林川从走廊走到门厅，在门口停住。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: null }, facts: [personalityFact, { id: 'm1', kind: 'moved', actorId: 'lin', name: '林川', fromId: '走廊', from: '走廊', toId: '门厅', to: '门厅' }] },
+      inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, maxAttempts: 1 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted' && issue.severity === 'hard')).toBe(true);
   });
 });

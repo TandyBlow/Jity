@@ -53,7 +53,12 @@ export function projectProseFacts(committed: CommittedNarration): ProseProjectio
     else if (fact.kind === 'sanity_changed') {
       hints.push(`${fact.name}的心神变了：${fact.to < fact.from ? '更沉、更紧' : '缓了一些'}。只用动作、呼吸或视线表现，不要写出任何数值。`);
     } else if (fact.kind === 'personality_changed') {
-      hints.push(`${fact.name}的性情有了变化：${fact.text}。用行为表现它，不要照抄这句话。`);
+      // The ledger makes a personality change a mandatory fact, and lane 01's
+      // corpus requires it to be expressed. Leaving it as an optional hint made
+      // the two sides disagree: the prompt said 'hint', the checker said 'omitted'.
+      // It stays required, but it must be shown as behaviour, not as a label.
+      required.push(fact);
+      hints.push(`${fact.name}的性情有了变化（见必述）：${fact.text}。用一句行为或反应让人看出来，不要照抄这句话，也不要写「个性」两个字。`);
     }
   }
   return { required, positions, hints, withheld };
