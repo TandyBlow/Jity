@@ -1,7 +1,7 @@
 {
   "version": "narration-best-of-n-prereg-v3",
   "owner": "12-best-of-n",
-  "createdAt": "2026-11-10T12:35:00Z",
+  "createdAt": "2026-11-10T12:31:00Z",
   "status": "frozen-before-any-b02-v2-output",
   "conditional": true,
   "condition": "Run only if b01-template-v2 has >=2 fact-qualified candidates in >=2 realization clusters (the v2 gate in results/b01-template-v2/report.json). If v2 fails, do not run b02-v2; keep these files as an unused conditional preparation and report the v2 failure.",
@@ -36,8 +36,21 @@
       "short2-0056-duty-name-and-copy",
       "tide-continuity-tide-duty-t2"
     ],
-    "categories": ["no_change", "move_direction", "item_transfer_fixture", "gender_pronoun", "continuity"],
-    "seeds": [17, 29, 43, 61, 79, 97],
+    "categories": [
+      "no_change",
+      "move_direction",
+      "item_transfer_fixture",
+      "gender_pronoun",
+      "continuity"
+    ],
+    "seeds": [
+      17,
+      29,
+      43,
+      61,
+      79,
+      97
+    ],
     "calls": 30,
     "model": {
       "hpcPath": "~/qwen15b",
