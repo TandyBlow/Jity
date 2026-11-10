@@ -92,6 +92,7 @@ def build_prompt(state: dict[str, Any], results: dict[str, str]) -> tuple[str, l
         "- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。",
         "- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。",
         "- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。",
+        "- taskId 必须逐字复制该人物行里已有的任务 id，不能自己造 id；不确定就留空，不要写近似的名字。",
         f"当前世界时间：{now}",
         f"结算结果：{result_text or '（无）'}",
         "人物和任务：",

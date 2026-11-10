@@ -1,23 +1,24 @@
 {
  "kind": "real-state-semantic-case-draft",
- "status": "prompt follows 04's committed copyable-skeleton fix (ad90cfba, ledger f97c90bc); frozen prompt pack exists; expected decisions are lane-11 proposals for an exploratory semantic probe",
+ "status": "prompt follows 04 117befcf (copyable skeleton + verbatim taskId rule); expected decisions are lane-11 proposals for an exploratory semantic probe",
  "source": "06-recovery/artifacts/local-game/local-turn-15blora.json",
  "sourceSha256": "33010db02d5ff6488dece53c8b04cc63287379cb27da56de9ef03e54cd071aa9",
  "sourceStateCharacterCount": 14,
  "sourceStateTaskCount": 73,
- "contractCommit": "f97c90bcc2438006976c970e2a6e233565382989",
+ "contractCommit": "117befcfa068fd340c1f1e581eccdab1feed8762",
  "contractFixes": [
   "ad90cfba: task prompt carries one copyable empty row for every required character",
-  "f97c90bc: ledger records achievedByCharacter/emptyCharacters"
+  "f97c90bc: ledger records achievedByCharacter/emptyCharacters",
+  "117befcf: taskId must be verbatim; unknown/placeholder/other-owner ids are rejected per entry"
  ],
  "cases": [
   {
    "caseId": "tasks-free-day-real-73-no-change",
    "casePath": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.json",
-   "caseSha256": "763e5d4b86c8b9e284f44d20182c7c5d390453930a6f0667049ead98fabf4245",
+   "caseSha256": "bd6e05ec82147e4088bfc5f7b0e214273fcf16e09c414d877c6a1b5d744d12f7",
    "packPath": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.pack.jsonl",
-   "packSha256": "b471f3e983662bd22d08d4b79ed8b2d8718d419d1d39704aafd7e76ec5252043",
-   "promptChars": 6650,
+   "packSha256": "482e119e3737e28ee0ca53d5747b26f4eb2da88129b3953eb03874bee6abd641",
+   "promptChars": 6705,
    "expectedDecisions": 14,
    "achievedExpected": [],
    "constructedResult": false,
@@ -26,10 +27,10 @@
   {
    "caseId": "tasks-free-day-real-73-one-achieved",
    "casePath": "evidence\\semantic-cases\\tasks-free-day-real-73-one-achieved.json",
-   "caseSha256": "dd025a9094740c7695cdd0cbf3ed2219cfab9a347e152b0f6699376b49bdb4e5",
+   "caseSha256": "63d085a896b02b97b69e62fb89c00ad69a8f85c7ea04e64334dfeafc0415ec44",
    "packPath": "evidence\\semantic-cases\\tasks-free-day-real-73-one-achieved.pack.jsonl",
-   "packSha256": "b3216c3005ffc751fd9b77c2094df4fbb9848c39a30e7abdcba145968bee1a64",
-   "promptChars": 6664,
+   "packSha256": "a07a1f8799d897cd2440eaf0ca6bbf943556fc19465665d26986799d1992a7d2",
+   "promptChars": 6719,
    "expectedDecisions": 14,
    "achievedExpected": [
     {
@@ -46,17 +47,17 @@
  "combinedPack": "evidence\\semantic-cases\\tasks-73-two-cases.pack.jsonl",
  "combinedPackSha256": "44fe552768ae2c2dc837e17013e2f4b971dcc6c40359c287ab35c618e7445abe",
  "promptTokenEstimate": {
-  "low": 3392,
-  "high": 4322,
+  "low": 3420,
+  "high": 4358,
   "method": "char count x 0.51-0.65 observed in 09 benchmark metadata; estimate, not tokenizer",
   "semanticContextSize": 12288,
-  "conclusion": "about 3.4-4.3k tokens against 12,288; context truncation is not the obvious cause"
+  "conclusion": "about 3.4-4.4k tokens against 12,288; context truncation is not the obvious cause"
  },
  "copyTest": "the positive case must mark task_lu_goggles for lu; copying the all-empty skeleton is rejected by semantic_validate --expected",
  "freezeRefused": false,
  "note": "No model has run this pack. The no-change result is a real move; the positive settled result is constructed to state the goggles goal explicitly and is labeled constructedResult=true.",
- "releasePack": "semantic-probes\\tasks-73-release.pack.jsonl",
- "releasePackSha256": "4ba297288c2329f453eaa30fdccfe5dcbaebc74af3e3cd1a6bd7bd362ce3b0f9",
- "frozenPromptPack": "evidence/semantic-prompts-v1/prompts.manifest.json",
- "frozenPromptPackSha256": "03341e788c02c9cd687108f9d5eba29780e2097b41daad8da4daffe3a6e2b2fc"
+ "releasePack": "semantic-probes/tasks-73-release.pack.jsonl",
+ "releasePackSha256": "12d5de45d04054918fbbdfd1f919bb35be91b354b9bad062afdb3d4d3d9f4c34",
+ "frozenPromptPack": "evidence/semantic-prompts-v2/prompts.manifest.json",
+ "frozenPromptPackSha256": "71f890ea56400c62a4ac72d2ee0bb6f11eb9983af4170e7351d62adc24c6db10"
 }

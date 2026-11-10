@@ -1,0 +1,164 @@
+{
+ "kind": "narration-model-search-semantic-probe-preregistration-v1",
+ "owner": "11-model-search",
+ "at": "2026-11-10T16:50:00Z",
+ "purpose": "Check whether 04's corrected per-character task prompt gets 14/14 and a real task decision from the page's 0.6B semantic model, and whether the five narration candidates do better. Separate from the frozen prose-quality batch.",
+ "contractCommit": "117befcfa068fd340c1f1e581eccdab1feed8762",
+ "contractFixes": [
+  "ad90cfba: one copyable empty decision row per required character",
+  "f97c90bc: ledger records achievedByCharacter/emptyCharacters",
+  "117befcf: taskId must be copied verbatim; unknown/placeholder/other-owner ids are rejected per entry and kept in evidence"
+ ],
+ "promptFreeze": {
+  "manifest": "evidence\\semantic-prompts-v2\\prompts.manifest.json",
+  "manifestSha256": "71f890ea56400c62a4ac72d2ee0bb6f11eb9983af4170e7351d62adc24c6db10",
+  "prompts": "evidence\\semantic-prompts-v2\\prompts.jsonl",
+  "promptsSha256": "aca833580d2de80bd6160d807c8861d8bc85738cacecad434977cf7199e35e94",
+  "frozen": true,
+  "promptCount": 2,
+  "pack": "semantic-probes\\tasks-73-release.pack.jsonl",
+  "packSha256": "12d5de45d04054918fbbdfd1f919bb35be91b354b9bad062afdb3d4d3d9f4c34"
+ },
+ "cases": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "caseSha256": "bd6e05ec82147e4088bfc5f7b0e214273fcf16e09c414d877c6a1b5d744d12f7",
+   "packSha256": "482e119e3737e28ee0ca53d5747b26f4eb2da88129b3953eb03874bee6abd641",
+   "promptSha256": "2d507789a9ada391fa5ededf08f02f62c13345f7a5caba0c79cdf31ed6b394ef",
+   "promptChars": 6705,
+   "expectedDecisions": 14,
+   "expectedAchieved": [],
+   "constructedResult": false
+  },
+  {
+   "caseId": "tasks-free-day-real-73-one-achieved",
+   "caseSha256": "63d085a896b02b97b69e62fb89c00ad69a8f85c7ea04e64334dfeafc0415ec44",
+   "packSha256": "a07a1f8799d897cd2440eaf0ca6bbf943556fc19465665d26986799d1992a7d2",
+   "promptSha256": "27242f1435edebd64c7c0fab81b2a138a0f4bbdbf20e42cabf2bea15c2aecc65",
+   "promptChars": 6719,
+   "expectedDecisions": 14,
+   "expectedAchieved": [
+    {
+     "characterId": "lu",
+     "achieved": [
+      "task_lu_goggles"
+     ]
+    }
+   ],
+   "constructedResult": true
+  }
+ ],
+ "models": [
+  {
+   "id": "qwen3-0.6b",
+   "role": "page-semantic-baseline",
+   "repo": "local product model (hash pinned)",
+   "revision": "not-applicable: local blob",
+   "file": "Qwen3-0.6B-Q4_K_M.gguf",
+   "bytes": 396705472,
+   "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+   "localPath": "D:\\others\\Jity\\.local\\world-narration-worktree\frontend\\public\\models\\Qwen3-0.6B-Q4_K_M.gguf",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  },
+  {
+   "id": "qwen25-1.5b-instruct",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+   "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+   "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "bytes": 1117320736,
+   "sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "internlm2_5-1.8b-chat",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "internlm/internlm2_5-1_8b-chat-gguf",
+   "revision": "916410ad25d03d5dee11b451fe2b6e0353913b64",
+   "file": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+   "bytes": 1172364032,
+   "sha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "glm-edge-1.5b-chat",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "zai-org/glm-edge-1.5b-chat-gguf",
+   "revision": "5fee502f1f6312dde56281cc8c5c0db2254198a9",
+   "file": "ggml-model-Q4_K_M.gguf",
+   "bytes": 980470144,
+   "sha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "hunyuan-1.8b-instruct",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+   "revision": "f5c690589f011bebe798fa2634b79a94f95463e3",
+   "file": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+   "bytes": 1133085088,
+   "sha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  },
+  {
+   "id": "qwen35-2b",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "unsloth/Qwen3.5-2B-GGUF",
+   "revision": "f6d5376be1edb4d416d56da11e5397a961aca8ae",
+   "file": "Qwen3.5-2B-Q4_K_M.gguf",
+   "bytes": 1280835840,
+   "sha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  }
+ ],
+ "sampling": {
+  "temperature": 0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokensPerCase": 520,
+  "contextSize": 8192,
+  "template": "each model's own GGUF template via llama-server --jinja",
+  "templateKwargs": "per models[].chatTemplateKwargs; enable_thinking=false for Qwen3/Qwen3.5/Hunyuan"
+ },
+ "scoring": {
+  "structural": "src/semantic_validate.py (ids, placeholders, coverage, declared targets, protagonist continuation)",
+  "expected": "src/semantic_validate.py --expected compares decisions with case.expected; this catches copying the all-empty skeleton",
+  "notScored": "prose quality, speed, browser behaviour, product acceptance"
+ },
+ "gates": {
+  "exploratoryOnly": true,
+  "qualityGateClaim": "none: this is a semantic capability probe, not the narration RUBRIC gate",
+  "routeDecision": "only after both cases and comparison with the 0.6B baseline; one failed case is not proof of incapacity"
+ },
+ "notAQualityGate": true,
+ "knownLimits": [
+  "the no-change result is real but its expected all-empty decision is mechanically derived",
+  "the positive result is constructed to state the goggles task explicitly; expected is lane-11's proposal",
+  "the 09 run at 81d5507a got coverage 14/14 but marked no task; it did not test a positive achievement",
+  "12 calls is a probe, not a benchmark; no latency conclusion"
+ ],
+ "sourceState": {
+  "path": "worktrees/06-recovery/artifacts/local-game/local-turn-15blora.json",
+  "sha256": "33010db02d5ff6488dece53c8b04cc63287379cb27da56de9ef03e54cd071aa9",
+  "characters": 14,
+  "taskRows": 73
+ },
+ "preregistrationVersion": "narration-model-search-semantic-prereg-v2",
+ "supersedes": {
+  "path": "semantic-probes/preregistration.v1.json",
+  "sha256": "27b60a1c54c5486d41a64fabbda3f1945fc32a4eee16966125f9d5a3d182dfd2",
+  "reason": "04 117befcf added the verbatim-taskId rule after the 09 a5ca28d7 page run invented task_doctor_flag; rebuild the prompt and cases"
+ },
+ "realPageEvidence": {
+  "path": "results/product/reviews/09-one-turn-81d5507a.json",
+  "observed": "coverage.tasks=14/taskRows=73/mode=per_character_decision; achievedByCharacter=[]; a later time_scan invented task_doctor_flag and failed before 04 117befcf",
+  "implication": "coverage is fixed, but copying the all-empty skeleton still needs the positive case; the unknown-id path is now bounded by 117befcf"
+ }
+}

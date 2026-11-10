@@ -4,6 +4,8 @@
 
 当前产品叙事模型是 Qwen2.5-1.5B 叙事 LoRA，历史基线是 Qwen3-1.7B。需要找这两者之外、能在同一个 Edge+wllama 运行时（浏览器 Blob 总容量上限约 2 GB）加载、中文小说叙事可能更好的 GGUF。不能按榜单或参数量猜正文质量；必须用 01/10 的同一公开冻结开发包、同条件采样、01 的 rubric 比较。
 
+**09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。
+
 **当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器和两例真实状态语义探针（selftest 18/18；frozen prompt pack 已生成），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight、15 例质量批次和一个独立语义探针请求仍 ready，10 尚未登记领取；01 已发布 v1.1：`d6c7e766…`，15/15 可序列化，三个旧 delta 形状已规范化。没有任何模型正文、语义或质量结论。
 
 ## 本轮实际交付
@@ -64,7 +66,7 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接。04 的 `ad90cfba` 已把任务提示词改成每个 required 人物一条可抄的空决定行，`f97c90bc` 记录实际达成人物；11 据此冻结了两例 73 任务探针：`tasks-free-day-real-73-no-change`（6650 字符，expected 全空）和 `tasks-free-day-real-73-one-achieved`（6664 字符，expected 只给 `lu: [task_lu_goggles]`，结算结果是构造的）。`semantic_validate.py --expected` 会拒绝照抄全空骨架。frozen prompts 在 `evidence/semantic-prompts-v1/`，prereg 在 `semantic-probes/preregistration.v1.json`；独立 10 请求 `results/product/hpc-requests/11-model-search-semantic-001.json` 已生成（2 case × 6 models，12 calls，`--expected` 评分）待 10 领取；给 09 的小回归请求在 `results/11-model-search/requests/11-to-09-semantic-fix-check.json`（目标 06 head `81d5507a`、merge `98a3eb53`，不跑十回合、不判质量）。没有候选语义结果。
+真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接。04 的 `ad90cfba` 已把任务提示词改成每个 required 人物一条可抄的空决定行，`117befcf` 记录实际达成人物；11 据此冻结了两例 73 任务探针：`tasks-free-day-real-73-no-change`（6705 字符，expected 全空）和 `tasks-free-day-real-73-one-achieved`（6719 字符，expected 只给 `lu: [task_lu_goggles]`，结算结果是构造的）。`semantic_validate.py --expected` 会拒绝照抄全空骨架。frozen prompts 在 `evidence/semantic-prompts-v2/`，prereg 在 `semantic-probes/preregistration.v2.json`；独立 10 请求 `results/product/hpc-requests/11-model-search-semantic-001.json` 已生成（2 case × 6 models，12 calls，`--expected` 评分）待 10 领取；给 09 的小回归请求在 `results/11-model-search/requests/11-to-09-semantic-fix-check.json`（目标 06 head `81d5507a`、merge `98a3eb53`，不跑十回合、不判质量）。没有候选语义结果。
 
 ## 限制与未验证
 

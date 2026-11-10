@@ -17,10 +17,10 @@ ROOT = HERE.parent
 OUT = pathlib.Path("D:/others/Jity/.local/parallel-local-game/results/product/hpc-requests")
 CANDIDATES = ROOT / "models/candidates.json"
 CASES = ROOT / "evidence/semantic-cases"
-PREREG = ROOT / "semantic-probes/preregistration.v1.json"
+PREREG = ROOT / "semantic-probes/preregistration.v2.json"
 RELEASE = ROOT / "semantic-probes/tasks-73-release.pack.jsonl"
-PROMPTS = ROOT / "evidence/semantic-prompts-v1/prompts.jsonl"
-PROMPT_MANIFEST = ROOT / "evidence/semantic-prompts-v1/prompts.manifest.json"
+PROMPTS = ROOT / "evidence/semantic-prompts-v2/prompts.jsonl"
+PROMPT_MANIFEST = ROOT / "evidence/semantic-prompts-v2/prompts.manifest.json"
 SCHEMA = ROOT / "semantic-probes/schemas/tasks.schema.json"
 
 
@@ -75,7 +75,7 @@ def main() -> int:
                    "the positive case. This is not a prose-quality or product gate.",
         "preregistrationPath": str(PREREG),
         "preregistrationSha256": sha(PREREG),
-        "contractCommit": "f97c90bcc2438006976c970e2a6e233565382989",
+        "contractCommit": "117befcfa068fd340c1f1e581eccdab1feed8762",
         "frozenPromptPack": {"manifest": str(PROMPT_MANIFEST), "manifestSha256": sha(PROMPT_MANIFEST),
                              "prompts": str(PROMPTS), "promptsSha256": sha(PROMPTS),
                              "promptCount": 2, "frozen": True},
@@ -93,7 +93,7 @@ def main() -> int:
         "modelSource": models,
         "estimatedResources": {"calls": 12, "models": len(models), "callsTotal": 12,
                                "loads": len(models),
-                               "perCall": "520 max tokens; prompt ~3.4-4.3k tokens estimated; expect "
+                               "perCall": "520 max tokens; prompt ~3.4-4.4k tokens estimated; expect "
                                           "10-120 s on GPU depending on model",
                                "wall": "~15-45 min including six loads; one GPU; no training",
                                "gpu": 1,
@@ -103,8 +103,8 @@ def main() -> int:
             "use the preflight model files; for qwen3-0.6b upload/use the product blob with sha256 "
             "ac2d9771...; do not download a second copy",
             "for each model: llama-server --jinja with its own GGUF, then python -X utf8 src/screen.py "
-            "--prompts <upload>/evidence/semantic-prompts-v1/prompts.jsonl --prompt-manifest "
-            "<upload>/evidence/semantic-prompts-v1/prompts.manifest.json --json-schema "
+            "--prompts <upload>/evidence/semantic-prompts-v2/prompts.jsonl --prompt-manifest "
+            "<upload>/evidence/semantic-prompts-v2/prompts.manifest.json --json-schema "
             "<upload>/semantic-probes/schemas/tasks.schema.json --model-id <id> --model-path <file> "
             "--expect-sha256 <sha> --llama-server <build>/llama-server --ngl 99 "
             "--template-kwargs '{\"enable_thinking\":false}' --out <out>/<id>",
@@ -137,7 +137,7 @@ def main() -> int:
         "commit": commit(),
         "scriptsToUpload": ["experiments/narration-model-search/src/screen.py",
                             "experiments/narration-model-search/src/semantic_validate.py",
-                            "experiments/narration-model-search/evidence/semantic-prompts-v1/",
+                            "experiments/narration-model-search/evidence/semantic-prompts-v2/",
                             "experiments/narration-model-search/semantic-probes/tasks-73-release.pack.jsonl",
                             "experiments/narration-model-search/semantic-probes/schemas/tasks.schema.json"],
         "readyToSubmit": True,

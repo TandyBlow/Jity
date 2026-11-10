@@ -14,9 +14,9 @@
 04 已提交两层修正：
 
 - `ad90cfba`：任务提示词为每个 required 人物放一条**可抄的空决定行**，抄示例也会得到全人物覆盖；
-- `f97c90bc`：ledger 记录 `achievedByCharacter` / `emptyCharacters`，区分“抄了空骨架”和“真的判断过”。
+- `117befcf`：ledger 记录 `achievedByCharacter` / `emptyCharacters`，区分“抄了空骨架”和“真的判断过”。
 
-本仓库的 frozen pack 固定使用 `f97c90bc` 的提示词。它仍是探索性探针：positive case 的 expected 是 11 线提出的，不是 03/04 的最终质量结论。
+本仓库的 frozen pack 固定使用 `117befcf` 的提示词。它仍是探索性探针：positive case 的 expected 是 11 线提出的，不是 03/04 的最终质量结论。
 
 ## 两个真实状态案例
 
@@ -32,7 +32,7 @@
   - 测模型会不会真的填一个达成任务；**照抄全空骨架会被 `--expected` 判错**。
   - 这条 settled result 是构造的（`constructedResult: true`），不是原始模型输出；它不是产品事实。
 
-按 09 实测的 0.51–0.65 token/字符比例，两条提示词约 **3.4–4.3k token**；页面语义模型加载的上下文是 **12,288**。这只是估算，不是 tokenizer 实测；上下文截断不是 1/14 或 12/73 的显然原因。
+按 09 实测的 0.51–0.65 token/字符比例，两条提示词约 **3.4–4.4k token**；页面语义模型加载的上下文是 **12,288**。这只是估算，不是 tokenizer 实测；上下文截断不是 1/14 或 12/73 的显然原因。
 
 ## 校验和打分
 
@@ -47,9 +47,9 @@
 
 ## 冻结的提示词
 
-`semantic-probes/tasks-73-release.pack.jsonl` 是两例的 release pack，`correctedContract: true`、`contractCommit: f97c90bc…`。已冻结到：
+`semantic-probes/tasks-73-release.pack.jsonl` 是两例的 release pack，`correctedContract: true`、`contractCommit: 117befcf…`。已冻结到：
 
-`evidence/semantic-prompts-v1/{prompts.jsonl,prompts.manifest.json}`
+`evidence/semantic-prompts-v2/{prompts.jsonl,prompts.manifest.json}`
 
 manifest 记录 `frozen: true`、`promptCount: 2`、contract commit、pack sha256 和每例 prompt sha256。冻结器仍会在缺 `correctedContract`/`contractCommit` 时拒绝；draft pack 保持 `false`，用于对照。
 

@@ -1,0 +1,21 @@
+{
+ "kind": "structured-semantic-prompts",
+ "frozen": true,
+ "frozenAt": "2026-11-10T17:05:32.105147+00:00",
+ "pack": "semantic-probes\\tasks-73-release.pack.jsonl",
+ "packSha256": "e3966cd1fab9beead1e1aacaa388963a4cc72917fc998831c46ca67fb718dec7",
+ "contractCommits": [
+  "117befcfa068fd340c1f1e581eccdab1feed8762"
+ ],
+ "promptCount": 2,
+ "sampling": {
+  "temperature": 0.0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokens": 520,
+  "contextSize": 8192,
+  "stop": []
+ },
+ "note": "system/user are the corrected 03/04 production prompts; this is a structural capability probe, not the narration quality gate"
+}
