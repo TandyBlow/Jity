@@ -15,7 +15,7 @@
  *
  * It exits 1 on any hard failure so a runner can gate on it.
  *
- *   node scripts/parallel-settlement/check-run.mjs <file.json> [--cast 14]
+ *   node scripts/parallel-settlement/check-run.mjs <file.json> [--cast 14] [--task-rows 73]
  *   node scripts/parallel-settlement/check-run.mjs --self-test
  */
 import { readFileSync } from 'node:fs';
@@ -53,6 +53,7 @@ function stageProblems(call, where) {
 
 export function checkRun(input, options = {}) {
   const cast = options.cast ?? 14;
+  const expectedTaskRows = Number(options.taskRows) || 0;
   const collectTimings = options.timings === true;
   const timingRows = [];
   const subs = submissionsOf(input);
@@ -93,6 +94,25 @@ export function checkRun(input, options = {}) {
           hard.push(`${where} updates/${call.key}: task rows ${coverage.taskRows} < characters ${coverage.tasks}`);
         }
         if (coverage.taskRows == null) soft.push(`${where} updates/${call.key}: taskRows not recorded (pre-04-15ac9d93 evidence)`);
+        if (expectedTaskRows && Number(coverage.taskRows) !== expectedTaskRows) {
+          hard.push(`${where} updates/${call.key}: task rows ${coverage.taskRows} != expected ${expectedTaskRows}`);
+        }
+        if (Array.isArray(coverage.achievedByCharacter)) {
+          for (const row of coverage.achievedByCharacter) {
+            if (!row || typeof row.characterId !== 'string' || !Array.isArray(row.taskIds)) {
+              hard.push(`${where} updates/${call.key}: achievedByCharacter entry is not {characterId, taskIds}`);
+              break;
+            }
+          }
+          if (coverage.achievedByCharacter.length === coverage.tasks && (coverage.taskRows ?? 0) > coverage.tasks) {
+            soft.push(`${where} updates/${call.key}: every one of ${coverage.tasks} characters achieved something; check the semantic decisions, not just coverage`);
+          }
+        } else {
+          soft.push(`${where} updates/${call.key}: achievedByCharacter not recorded (pre-f97c90bc evidence)`);
+        }
+        if (coverage.rejectedTaskIds != null && !Array.isArray(coverage.rejectedTaskIds)) {
+          hard.push(`${where} updates/${call.key}: rejectedTaskIds is not an array`);
+        }
       }
       if (call.fallback) soft.push(`${where} updates/${call.key}: fell back (${call.error ?? 'no error text'})`);
       if (call.error) soft.push(`${where} updates/${call.key}: error ${call.error}`);
@@ -180,12 +200,16 @@ if (args.includes('--self-test')) {
 } else {
   const file = args.find((arg) => !arg.startsWith('--'));
   if (!file) {
-    console.error('usage: node check-run.mjs <file.json> [--cast 14] [--timings]');
+    console.error('usage: node check-run.mjs <file.json> [--cast 14] [--task-rows 73] [--timings]');
     process.exit(2);
   }
   const castIndex = args.indexOf('--cast');
   const cast = castIndex >= 0 ? Number(args[castIndex + 1]) : undefined;
-  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), { ...(cast ? { cast } : {}), timings: args.includes('--timings') });
+  const rowsIndex = args.indexOf('--task-rows');
+  const taskRows = rowsIndex >= 0 ? Number(args[rowsIndex + 1]) : undefined;
+  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), {
+    ...(cast ? { cast } : {}), ...(taskRows ? { taskRows } : {}), timings: args.includes('--timings'),
+  });
   print(result);
   process.exitCode = result.ok ? 0 : 1;
 }
