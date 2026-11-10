@@ -866,6 +866,7 @@ export function reviewNarration(args: {
       // Ambient sounds of a settled action (a door the text says opened, an
       // object the text says was handled) are licensed by that action.
       const actionHere = ITEM_STATE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
+        || HANDLING_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
         || MOVE_VERBS.some((verb) => narration.includes(verb) && moverHere);
       if (actionHere && sound !== '脚步声') continue;
       findings.push(finding(ctx, 'fact.sound_added', sentence.text,

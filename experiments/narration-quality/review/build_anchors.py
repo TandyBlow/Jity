@@ -752,6 +752,19 @@ anchors += [
     },
 ]
 
+
+anchors += [
+    {
+        "id": "neg/09-smoke-beats",
+        "source": "results/02-narration/smoke-probe-05b-beats.json free-day-root::beats (0.5B narration model, accepted)",
+        "input": arms_scene,
+        "text": "西侧服务巷的巷口传来一声闷响，立刻让诺诺停下脚步。\n\n路明非抬头看。巷子里没人应声。\n\n「有人？」他问。\n\n「没。」诺诺说，「门是开着的。」\n\n「开了多久。」\n\n「不知道。」诺诺把袖子往上捋了捋，「可声音传进来。」\n\n路明非把绳子收好，放在地上，把手掌贴在墙上，回过头看了看巷口那道光。\n\n远处有声音，比街上的更近。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.sound_added"], "style": [],
+                   "notes": "An empty hand puts away a rope that was never settled, and a muffled sound starts the scene."},
+    },
+]
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
