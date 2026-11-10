@@ -377,7 +377,8 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
         }
         continue;
       }
-      held = sentence.slice(0, 40);
+      const clause = sentence.split(/[，,；;]/u).find((part) => HAND.test(part)) ?? sentence;
+      held = clause.slice(0, 24);
     }
   }
 
@@ -430,7 +431,14 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 2
     && !repeatedSentences.some(([sentence]) => sentence.includes(entry)));
   for (const [entry, count] of repeatedClauses) {
-    issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    // Two occurrences in a long page passage is a style flaw; three is a loop.
+    // The page's trained candidate was rejected twice for a 2x clause and the
+    // turn fell back to program text, which is a worse outcome than the echo.
+    if (count >= 3) {
+      issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    } else {
+      issues.push(soft('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    }
   }
 
   // Item-state changes the point did not settle. The upstream event list is
@@ -496,9 +504,15 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // A shorter name inside a licensed longer name is not a separate mention
     // (钟楼 vs 钟楼西门); prefer avoiding a false rejection.
     if ([...licensed].some((entry) => entry.includes(name))) continue;
-    if (text.includes(name)) {
-      issues.push(hard('unlicensed_entity', attempt, `${name} is in no committed fact or licensed context`));
+    if (!text.includes(name)) continue;
+    // A distant landmark is background, not an event: the page's own roster
+    // carries places the scene input does not spell out, and failing a scene
+    // for naming 钟楼 while standing in the alley is a false rejection.
+    if ((policy.locations ?? []).includes(name)) {
+      issues.push(soft('unverified_sentence', attempt, `distant place ${name} named in passing`, undefined));
+      continue;
     }
+    issues.push(hard('unlicensed_entity', attempt, `${name} is in no committed fact or licensed context`));
   }
 
   for (const marker of input.promptEchoMarkers ?? []) {

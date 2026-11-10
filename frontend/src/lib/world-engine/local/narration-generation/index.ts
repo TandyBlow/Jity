@@ -772,7 +772,16 @@ async function repairSentences(args: {
     const acts = senses.length || marks.length ? [] : actionViolations(text, args.inputText);
     const echo = senses.length || marks.length || acts.length ? null : repeatTarget(text);
     const contradiction = senses.length || marks.length || acts.length || echo ? null : contradictionTarget(text);
-    if (!senses.length && !marks.length && !acts.length && !echo) return text;
+    const timePhrase = (() => {
+      if (!args.ledger.requireTime || !args.ledger.time) return null;
+      const duration = args.ledger.time.duration;
+      const units: Record<string, string> = { minute: '分钟', second: '秒', hour: '小时', day: '天', month: '个月', year: '年' };
+      const unit = units[duration.unit] ?? duration.unit;
+      const amount = duration.amount === 1 ? '一' : duration.amount === 2 ? '两' : String(duration.amount);
+      return { duration, unit, amount, phrase: `${amount}${unit}过去` };
+    })();
+    const missingTime = Boolean(timePhrase && !text.includes(timePhrase.phrase));
+    if (!senses.length && !marks.length && !acts.length && !echo && !missingTime) return text;
     // Priority: a world-fact error (contradiction, invented appearance) is
     // repaired before a style echo; repairing the echo first made the two
     // defects take turns and both survived.
@@ -804,6 +813,15 @@ async function repairSentences(args: {
         '只输出重写后的这一句，不要解释。',
       ] };
     }
+    if (!target && missingTime && timePhrase) {
+      // The model keeps leaving the elapsed time out of a quiet turn. Ask for
+      // that one sentence and append it; the rest of the passage stays as it
+      // was written.
+      target = { sentence: '', lines: [
+        `这一段没有写时间过去了多久。这一回合过去了${timePhrase.duration.amount}${timePhrase.unit}。`,
+        '', `只写一句「${timePhrase.phrase}。」，不要改写别的句子，不要解释。`,
+      ], append: timePhrase.phrase } as never;
+    }
     if (!target) target = echo;
     if (!target) return text;
     let answer = '';
@@ -820,6 +838,13 @@ async function repairSentences(args: {
     }
     const clean = answer.split(new RegExp(String.fromCharCode(10) + '+', 'u'))[0]?.trim() ?? '';
     if (!clean || clean.length > 120) return null;
+    const append = (target as { append?: string }).append;
+    if (append) {
+      // The model was asked for one time sentence; keep the passage and add it.
+      const sentence = clean.replace(/[。！？!?]+$/u, '');
+      text = `${text.replace(/[。！？!?]+$/u, '')}。${sentence}。`.replace(/……。/gu, '……');
+      continue;
+    }
     const at = text.indexOf(target.sentence);
     if (at < 0) return null;
     const after = text.slice(at + target.sentence.length);
@@ -985,7 +1010,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
       || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
       || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction'
-      || issue.kind === 'unlicensed_appearance');
+      || issue.kind === 'unlicensed_appearance' || issue.kind === 'time_missing');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,
