@@ -549,11 +549,27 @@ export default function WorldLocalPage() {
           await session.start();
         }
         sessionRef.current = session;
+        let restoredCount = 0;
         if (restored) {
           const history = restoredEntries(session.snapshot);
           setEntries(history);
-          if (history.length > 0) console.info('[world-local] restored entries', history.length);
+          restoredCount = history.filter((entry) => entry.text.length > 0).length;
+          if (history.length > 0) console.info('[world-local] restored entries', history.length, 'with text', restoredCount);
         }
+        // Field semantics for 09: state restoration and history restoration are
+        // separate facts. `overallRestored` is only true when both hold and no
+        // player input is left half-consumed.
+        const hydrated = await session.state();
+        const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
+        (window as unknown as { __worldRestore?: unknown }).__worldRestore = {
+          stateRestored: restored,
+          entriesRestored: restoredCount,
+          entriesTotal: session.snapshot.commands.length,
+          inputConsumptionRestored: context.world.advance.intentStatus !== 'pending',
+          commandsPlayed: session.commandsPlayed,
+          headPointId: session.snapshot.transport.headPointId,
+          sanity: hydrated.characters[hydrated.protagonistId]?.sanity ?? null,
+        };
         await refresh();
         if (!alive) return;
         setPhase('ready');
