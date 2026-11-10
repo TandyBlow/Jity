@@ -240,6 +240,28 @@ describe('generateCandidate', () => {
     expect(result.attemptIndex).not.toBeNull();
   });
 
+  it('keeps the paid text from a foreign IncompleteGenerationError copy', async () => {
+    const partial = '陈默从大厅走到庭院，前后大约两分钟。院里没有人，他站在石阶边';
+    // Lane 09 loads 03's candidate next to 08's engine; the two modules import
+    // different runtime/engine copies, so the class identity differs but the
+    // name and completion shape are the contract.
+    const foreign = Object.assign(new Error('generation ended with length'), {
+      name: 'IncompleteGenerationError',
+      completion: { raw: partial, finishReason: 'length', firstTokenMs: 1, wallMs: 2 },
+    });
+    const engine = {
+      info: { backend: 'wllama', modelId: 'qwen2.5-1.5b-instruct-q4_k_m.gguf' },
+      async load() {}, async dispose() {},
+      async complete() { throw foreign; },
+      async chat() { throw foreign; },
+    };
+    const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
+    const result = await generateCandidate(baseArgs(engine, point, { policy: { targetChars: 120, minChars: 20, maxAttempts: 1 } }));
+    expect(result.rawAttempts[0].raw).toBe(partial);
+    expect(result.rawAttempts[0].issues.map((issue) => issue.kind)).toContain('truncated');
+    expect(result.status).toBe('rejected');
+  });
+
   it('strips a leaked think block and still accepts the prose', async () => {
     const engine = new ScriptedEngine([`<think>先想移动。</think>${GOOD_MOVE}`]);
     const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });

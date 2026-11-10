@@ -138,15 +138,20 @@ export async function generateCandidate(args: GenerateInstructCandidateArgs): Pr
       } else if (caught instanceof Error && /timeout|timed out/i.test(caught.message)) {
         attemptTimedOut = true;
         timedOut = true;
-      } else if (caught instanceof IncompleteGenerationError) {
+      } else if (caught instanceof IncompleteGenerationError
+        || (caught as { name?: string })?.name === 'IncompleteGenerationError') {
         // The adapter rejects a generation that stopped at the token cap (or
         // lost its finish reason) instead of returning a silent partial. The
         // paid text still has to be judged: keep it and let `truncated` drive
         // the repair, never relabel it as a transport error. A deadline is a
         // real timeout: keep any partial text as evidence but never accept it.
-        raw = caught.completion.raw;
-        finishReason = caught.completion.finishReason;
-        if (finishReason === 'timeout' || /deadline|timeout|timed out/i.test(caught.message)) {
+        // `name` matters: a candidate loaded from another worktree imports its
+        // OWN runtime/engine copy, so `instanceof` alone misses the adapter's
+        // class (lane 09 loads 03's module together with 08's engine).
+        const incomplete = caught as { completion?: { raw?: string; finishReason?: string | null }; message?: string };
+        raw = incomplete.completion?.raw ?? '';
+        finishReason = incomplete.completion?.finishReason ?? null;
+        if (finishReason === 'timeout' || /deadline|timeout|timed out/i.test(incomplete.message ?? '')) {
           attemptTimedOut = true;
           timedOut = true;
         }
