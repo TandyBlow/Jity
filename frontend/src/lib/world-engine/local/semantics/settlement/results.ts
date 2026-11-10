@@ -11,6 +11,13 @@ import {
 } from './support';
 import { describeCharacter, describeItem, sameRoomItems, visibleCharacters } from '../../prompt';
 
+/** Results decide what the frozen action did, not whether a task goal is
+ * already true. Pending goals in the scene line prime the model to write
+ * “成功完成…任务” as a fact (d101); keep the scene but drop that待办 suffix. */
+function describeResultCharacter(state: WorldState, id: Id): string {
+  return describeCharacter(state, id, false).replace(/；待办=.*$/u, '');
+}
+
 interface RollReceipt {
   targetId: Id;
   rollId: Id;
@@ -259,7 +266,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     for (const roll of member.rolls) sceneIds.add(roll.targetId);
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
-    .map((id) => state.characters[id] ? describeCharacter(state, id, false) : describeItem(state, id));
+    .map((id) => state.characters[id] ? describeResultCharacter(state, id) : describeItem(state, id));
   const exampleMember = members[0];
   const exampleTarget = exampleMember.rolls[0]?.targetId;
   const exampleEffects = exampleTarget ? `[{"targetId":"${exampleTarget}","reacted":true或false}]` : '[]';
@@ -276,6 +283,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
     '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
+    '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
     `本组：${groupId}`,
     '成员：',
     ...memberLines,
@@ -356,13 +364,16 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const actionHint = members
+    .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
+    .join('；');
   for (const rawFact of answer.facts) {
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
     const original = asString(rawFact.text);
     if (!original) throw new Error('fact text must be non-empty');
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
-      throw new Error(`fact only asserted completion, no action result left: ${original}`);
+      throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
@@ -376,13 +387,24 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    // A mechanics clause can take the subject with it. If the remaining result
+    // is a continuation (“且未被允许反应”), prefix the recipient's display name
+    // so the fact is still a natural action result.
+    const mechanicsRemoved = cleaned.removed.some((label) => MECHANIC_TERMS.some((term) => term.label === label));
+    if (mechanicsRemoved) {
+      const recipientName = state.initial.characters[recipientIds[0]]?.name;
+      if (recipientName && !cleaned.text.includes(String(recipientName))) {
+        const continuation = cleaned.text.replace(/^(?:且|并且|并|但|却|而)/u, '');
+        cleaned.text = `${recipientName}${continuation}`;
+      }
+    }
     // A stripped fact that is only the recipient's display name (95dc's
     // “路明非成功完成…完成任务”) is still a completion claim, not an action.
     const nameOnly = cleaned.text.replace(FACT_PUNCTUATION, '');
     if (recipientIds.some((recipient) => {
       const name = state.initial.characters[recipient]?.name;
       return Boolean(name) && nameOnly === String(name).replace(FACT_PUNCTUATION, '');
-    })) throw new Error(`fact only asserted completion, no action result left: ${original}`);
+    })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
@@ -396,6 +418,19 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
 
 const FACT_PUNCTUATION = /[\s，、；。！？.,;!?]/gu;
 
+/** Mechanics vocabulary is not an action result. The d101 fact reached the
+ * narration draft as “诺诺：未，因为路明非的骰点且无法反应。”. A clause that
+ * carries dice/check/boolean vocabulary is removed; if the remaining result
+ * has no subject, the recipient's display name is prefixed. A fact that leaves
+ * no action result aborts instead of narrating mechanics. */
+const MECHANIC_TERMS: { pattern: RegExp; label: string }[] = [
+  { pattern: /骰点/g, label: '骰点' },
+  { pattern: /骰子/g, label: '骰子' },
+  { pattern: /判定/g, label: '判定' },
+  { pattern: /(?:资格|判定)\s*为\s*(?:true|false)/g, label: '资格/判定布尔值' },
+  { pattern: /为\s*(?:true|false)/g, label: '布尔值' },
+];
+
 const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   { pattern: /行动成功完成/g, label: '行动成功完成' },
   { pattern: /成功完成行动/g, label: '成功完成行动' },
@@ -404,7 +439,7 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   // The 95dc model wrote the task goal as a verb-object claim:
   // “成功完成自己的参赛选择并完成任务”. Strip the whole task clause, not
   // just the contiguous 任务完成 string.
-  { pattern: /(?:成功)?完成(?:了)?[^，。；.,;!?]*(?:任务|目标|参赛选择)[^，。；.,;!?]*/g, label: '完成任务' },
+  { pattern: /(?<!未)(?:成功)?完成(?:了)?[^，。；.,;!?]*(?:任务|目标|参赛选择)[^，。；.,;!?]*/g, label: '完成任务' },
   { pattern: /完成了任务/g, label: '完成了任务' },
   { pattern: /任务完成/g, label: '任务完成' },
   { pattern: /任务达成/g, label: '任务达成' },
@@ -424,9 +459,28 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
 
 /** Completion/task claims are not action facts. Keep the observable result and
  * drop only the claim, so the later composer cannot say a pending task finished. */
-function sanitizeFactText(text: string): { text: string; removed: string[] } {
-  let out = text;
+function stripMechanicClauses(text: string): { text: string; removed: string[] } {
   const removed: string[] = [];
+  let out = '';
+  const clauses = text.match(/[^，。；！？.,;!?]+[，。；！？.,;!?]?/gu) ?? [];
+  for (const clause of clauses) {
+    const labels = MECHANIC_TERMS.filter(({ pattern }) => {
+      pattern.lastIndex = 0;
+      return pattern.test(clause);
+    }).map(({ label }) => label);
+    if (labels.length) {
+      removed.push(...labels);
+      continue;
+    }
+    out += clause;
+  }
+  return { text: out, removed };
+}
+
+function sanitizeFactText(text: string): { text: string; removed: string[] } {
+  const mechanics = stripMechanicClauses(text);
+  let out = mechanics.text;
+  const removed: string[] = [...mechanics.removed];
   for (const { pattern, label } of COMPLETION_CLAIMS) {
     const matches = out.match(pattern);
     if (!matches) continue;
@@ -434,9 +488,9 @@ function sanitizeFactText(text: string): { text: string; removed: string[] } {
     out = out.replace(pattern, '');
   }
   out = out
-    .replace(/，\s*(?=[，。；！？]|$)/g, '')
-    .replace(/、\s*(?=[，。；！？]|$)/g, '')
-    .replace(/；\s*(?=[，。；！？]|$)/g, '')
+    .replace(/，\s*(?=[，。；！？.,;!?]|$)/g, '')
+    .replace(/、\s*(?=[，。；！？.,;!?]|$)/g, '')
+    .replace(/；\s*(?=[，。；！？.,;!?]|$)/g, '')
     .replace(/[，、；]\s*(?:因此|所以|因而)\s*([。；！？.,;!?]?)$/u, '$1')
     .replace(/^[，、；\s]+/, '')
     .trim();
