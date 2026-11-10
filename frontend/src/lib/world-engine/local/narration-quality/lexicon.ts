@@ -65,7 +65,7 @@ export const HANDLING_VERBS = ['放在', '放进', '放到', '塞进', '收进',
  * the settled input (task, personality or description). */
 export const PAST_MARKERS = [
   '小时候', '当年', '从前', '十年前', '那年', '上次', '以前', '当初', '那晚', '曾经',
-  '那天晚上', '记得那', '还记得',
+  '那天晚上', '记得那', '还记得', '昨夜',
 ] as const;
 
 export const PROMISE_VERBS = [

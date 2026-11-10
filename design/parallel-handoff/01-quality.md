@@ -165,3 +165,12 @@
 **02/04 已响应（2026-11-11）**：02 `6d4236be` 把"手里 + 挂在腰间"判 `self_contradiction`（e9a5 auto-1 的 125 字），`94d40cdb` 是 prompt/known-defect 批次（160/147/133，不是固定字数）；04 `0394380f` 把 e9a5 的 results 事实清洗成"诺诺：确认并检查故障短讯机状态。"（去掉任务完成/成功执行行动）。06 的下一个 build 必须合 02 的 `6d4236be`，否则 09 的下一次 run 仍会接受枪在腰的模型段；程序层还要去掉 results 的说话人标签，避免 `style.status_panel`。
 
 **95dc 独立复核（2026-11-11）**：`results/quality/findings-95dc.md`。02 `6d4236be` + 04 `0394380f` 已进 build；显示仍为点 130（程序）+ auto-1 101（模型），root 115 不显示；run 因 continuation `settlement_failed` FAILED。点程序把**护目镜**当 actor（「护目镜在原地站了一会儿」；04 的 `changes goggles_lu` 是物品 no-op）；results「诺诺：…为false」整句拼进正文。auto-1 模型动作写出来了（02 prompt 起效），但把诺诺的「袖口红痕」移到路明非（`fact.body_mark_added`）+ 缺一分钟（`time_missing`）；root 编了「这里……没人在。」台词 + 重演束发。04 的 `0394380f` 覆盖「任务完成」但没覆盖 group_10 的「完成任务」，`为false` 也没清洗。L0：袖口加入 body mark，95dc 三锚点；78 锚点、31/4；human-71/final-v1 仍 0。checker 还没有"物品当人 actor"的规则（手工判），64 位不改判。
+
+## 2026-11-11 05:28Z — 415c 独立复核（head 415ccbe0，run 2026-11-10T2055-3e8a）
+
+- 415c：玩家点 121 + 自动点 111 均为程序；开场 131 字模型正文不在最终显示；turn `textSource: program`。首可见草稿 93.2 s 是开场模型；玩家点模型候选 166 字、`violations: []` 未接受。
+- 点程序错句：`路明非的护目镜在原地站了一会儿`（item actor）、`诺诺：未成功触发骰点，路明非未被阻止或反应`（status panel）；输入里的“往里走/看清规则牌”没有落实。
+- 自动点（成员诺诺）逐字重复点的后三行（echo），主语是路明非，没有诺诺行动；状态 15:21→15:22，但两个点各写“一分钟过去”。
+- 开场（模型，未显示）：`诺诺的短枪在脚边静静地躺着`（手里的枪）、`昨夜的尘埃`（past）、`暮色`（15:21）、`那场未完成的演习`/`石阶`（review）。
+- 结算：group_10「完成任务」+ `achievedByCharacter: []`；continuation 重复候选 stop；04 的 `09eb0331`/04:58 continuation 修复未并入本 build。
+- 检查器：81 锚点；human-71 0、final-v1 0；item actor、性别近处绑定、持枪在地、昨夜过去标记。

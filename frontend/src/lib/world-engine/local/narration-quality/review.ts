@@ -234,8 +234,13 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
           // the registry says that subject cannot be the referent and another
           // person in the scene can. Then it is genuinely ambiguous.
           const subjectGender = genders?.[subject];
+          // A person named in this or the previous sentence can be the real
+          // referent even when the settled position hides them (the dr-0002
+          // human row: «她绕过领用台…低墙后的路明非还留在原处» — the 她 is the
+          // previous sentence's 诺诺, not the later 路明非). The user's rule:
+          // a visible/named person of the pronoun's gender makes it ambiguous.
           const alternative = people.find((name) => name !== subject
-            && visible.includes(name)
+            && (visible.includes(name) || namedNear.get(sentenceIndex)?.has(name))
             && (genders?.[name] === gender || genders?.[name] === undefined));
           if (subjectGender && subjectGender !== gender && alternative) {
             bindings.push({ pronoun, gender, antecedent: null, candidates: [subject, alternative], strength: 'ambiguous', index, sentence: sentenceIndex });
@@ -998,9 +1003,13 @@ export function reviewNarration(args: {
       if (!hand) continue;
       const prop = hand[1];
       const hung = new RegExp(`${escapeRegExp(prop)}[^，。]{0,8}(?:挂在|吊在|别在|挎在)[^，。]{0,4}(?:腰间|腰上|腰侧|背后|背上|肩上)`, 'u');
-      if (hung.test(narration)) {
+      // A gun settled in the hand cannot also be lying on the ground / at the
+      // feet (415c root: «诺诺的短枪在脚边静静地躺着»). The action «把枪放在»
+      // is a transfer, not a static state; only the static forms are flagged.
+      const grounded = new RegExp(`${escapeRegExp(prop)}[^，。]{0,10}(?:在脚边|在地上|落在地上|躺在地上|躺在地上|搁在|丢在)`).test(narration);
+      if (hung.test(narration) || grounded) {
         findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
-          `${person.name}'s ${prop} is settled in the hand, but the prose hangs it at the waist/back`, [looks.slice(0, 60)], []));
+          `${person.name}'s ${prop} is settled in the hand, but the prose puts it at the waist/back/ground`, [looks.slice(0, 60)], []));
       }
     }
     // The rope is already down; watching it lower is a re-enactment.
@@ -1381,6 +1390,25 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.body_mark_added', sentence.text,
         `${personName}: ${body[1]} has ${mark[1]} in the prose but not in the settled appearance`, [settled.slice(0, 40)], []));
       break;
+    }
+    // An item cannot stand, walk, turn, look, or speak. The page program wrote
+    // «路明非的护目镜在原地站了一会儿» (95dc); the item's holder is the actor,
+    // and an item is not one.
+    {
+      const held = /(戴上|戴着|戴好|摘下|取下|摘掉|拿起|举起|握着|拿着|捏着|端着|提着|背上|挎着|抱着|捧着|递给|接过|透过|隔着|借着|顺着|沿着|穿上|穿着|套上|套着|系上|系着|挂在|别在|绑在)/u;
+      for (const [itemName, item] of Object.entries(projection.items)) {
+        if (itemName.length < 2 || !narration.includes(itemName)) continue;
+        const acting = new RegExp(`${escapeRegExp(itemName)}[^，。；]{0,8}(?:站着|站了|站在|走到|走了|走向|来到|转身|伸手|坐下|躺下|低头|抬头|看向|望着|听到|听见|说道|开口|笑|点头|摇头|起身)`, 'u');
+        const hit = acting.exec(narration);
+        if (!hit) continue;
+        const before = narration.slice(Math.max(0, hit.index - 10), hit.index);
+        if (held.test(before) || held.test(narration.slice(0, hit.index))) continue;
+        if (/(?:里|中|内)(?:传来|说|响|播|放)/u.test(narration.slice(hit.index + itemName.length, hit.index + itemName.length + 6))) continue;
+        if (/(?:仿佛|像是|如同|好似|宛如|好像)/u.test(narration)) continue;
+        findings.push(finding(ctx, 'fact.item_actor', sentence.text,
+          `${itemName} is settled as an item (${item.positionAfter ?? item.positionBefore ?? "in place"}), but the prose makes it act`, [sentence.text], []));
+        break;
+      }
     }
     // Hair settled tied up (束在脑后) cannot hang loose (垂落/披散) in the
     // same turn; the string is part of the settled appearance.

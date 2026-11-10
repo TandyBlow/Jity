@@ -1224,8 +1224,8 @@ anchors.append(
         "input": b7_inputs["f15d-point"],
         "text": e95["point"],
         "options": {"minChars": 1},
-        "expect": {"fact": [], "style": ["style.status_panel"], "review": [],
-                   "notes": "The item-actor nonsense «护目镜在原地站了一会儿» is a manual finding; the checker does not yet flag an item as a person actor."},
+        "expect": {"fact": ["fact.item_actor"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The goggles are an item held by 路明非; the program makes them stand."},
     },
 )
 anchors.append(
@@ -1248,6 +1248,47 @@ anchors.append(
         "options": {"minChars": 1},
         "expect": {"fact": [], "style": [], "review": [],
                    "notes": "The invented dialogue and the hair re-enactment are review items; the root is not displayed."},
+    },
+)
+
+
+run_415 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-415c.json", encoding="utf-8"))
+n415 = run_415["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e415 = {}
+for key, value in n415.items():
+    e415["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else "auto")] = value.get("text") or ""
+b415_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/415c-point-program",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the player point is a program recital; the goggles stand and 诺诺 speaks a dice result",
+        "input": b415_inputs["f15d-point"],
+        "text": e415["point"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.item_actor"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The player's «往里走 / 看清规则牌» is not narrated; the place/诺诺 blocks are state recitals."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/415c-auto-echo",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the automatic nono point repeats the point's setting/status lines and never narrates the nono action",
+        "input": b415_inputs["f15d-point"],
+        "text": e415["auto"],
+        "options": {"minChars": 1, "priorTexts": [e415["point"]]},
+        "expect": {"fact": [], "style": ["style.echo_prior", "style.status_panel"], "review": [],
+                   "notes": "The subject is 路明非, the round member is nono; «把视线收回来» is a viewpoint micro-action."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/415c-root-gun-past",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the opening puts 诺诺's in-hand gun on the ground and adds a past night",
+        "input": b415_inputs["f15d-opening"],
+        "text": e415["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction", "fact.past_added"], "style": [], "review": [],
+                   "notes": "«暮色» at 15:21, «那场未完成的演习» and «石阶» are review items; the 131-char root is not in the displayed text."},
     },
 )
 
