@@ -312,6 +312,7 @@ describe('generateCandidate', () => {
     expect(result.rawAttempts[0]!.issueKinds).toContain('truncated');
     expect(result.rawAttempts[0]!.accepted).toBe(false);
     expect(result.rawAttempts[1]!.prompt).toContain('被截断');
+    expect(result.rawAttempts[1]!.prompt).toContain('两分钟里，林川从走廊');
     expect(result.accepted).toBe(true);
   });
 

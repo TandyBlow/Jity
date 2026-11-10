@@ -117,6 +117,16 @@ function repairNote(issues: CandidateIssue[], previousText: string): string {
     };
     lines.push(`- ${label[issue.kind] ?? issue.kind}：${issue.detail}`);
   }
+  // Showing the draft stops the model from re-planning the whole scene (and
+  // spending the same tokens twice); a length repair in particular needs
+  // something to extend. The draft is the same model's text for this point.
+  const draft = previousText.trim();
+  if (draft) {
+    const chars = [...draft];
+    const clipped = chars.slice(0, 400).join('');
+    lines.push(`上一版正文（在此基础上改写，不要另起一版）：
+${clipped}${chars.length > 400 ? '…' : ''}`);
+  }
   return lines.join('\n');
 }
 
