@@ -311,10 +311,19 @@ export class WllamaInferenceEngine implements InferenceEngine {
       if (directBlob) {
         const fetchStarted = performance.now();
         const blobs: Blob[] = [];
-        for (const url of modelUrls) {
-          const response = await fetch(url, { signal: controller.signal });
-          if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${url}`);
-          blobs.push(await response.blob());
+        for (const [index, url] of modelUrls.entries()) {
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            blobs.push(await response.blob());
+          } catch (error) {
+            // Keep an abort as an abort (the catch path classifies by signal),
+            // but name the exact shard for a real fetch/body failure: a 2.5 GB
+            // split otherwise reports only "Failed to fetch".
+            if (controller.signal.aborted) throw error;
+            const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+            throw new Error(`model shard ${index + 1}/${modelUrls.length} fetch failed (${url}): ${reason}`);
+          }
         }
         fetchMs = performance.now() - fetchStarted;
         const loadStarted = performance.now();

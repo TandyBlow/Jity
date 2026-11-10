@@ -339,6 +339,19 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(await engine.complete('P')).toBe('ok');
   });
 
+  test('a failing second shard names the shard and exits the landing worker', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    vi.stubGlobal('fetch', async (url: string) => {
+      if (url.includes('-00002-of-')) throw new TypeError('Failed to fetch');
+      return new Response(new Blob([new Uint8Array([1])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true }, async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/model shard 2\/2 fetch failed .*00002-of-00002\.gguf\): TypeError: Failed to fetch/);
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.runtime).toMatchObject({ loaded: false, workersCreated: 1, workersExited: 1 });
+  });
+
   test('a split load without the direct-blob path is a clear error, not a silent single-file load', async () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrls: ['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf'], directBlob: false },
@@ -352,7 +365,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     const fake = fakeWllama();
     vi.stubGlobal('fetch', async () => new Response('nope', { status: 503 }));
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/blob.gguf', directBlob: true }, async () => fake.instance);
-    await expect(engine.load()).rejects.toThrow(/model fetch failed: 503/);
+    await expect(engine.load()).rejects.toThrow(/model shard 1\/1 fetch failed .*HTTP 503/);
     expect(fake.calls.exits).toBe(1);
   });
 
