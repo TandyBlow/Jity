@@ -408,3 +408,20 @@ describe('product regressions: heard water, heard nothing', () => {
     expect(target!.lines.join(String.fromCharCode(10))).toContain('听着远处传来轻微的水声');
   });
 });
+
+describe('product regressions: a repeated closing line', () => {
+  // 09 d101/415c: the trained candidate was rejected for echo_prior and the page
+  // fell back, although scene mode can trim the repeated closing line.
+  const prior = '诺诺站在巷口，红发用发圈束在脑后。路明非把手插进兜里，没有再看诺诺。';
+
+  test('the repeated closing line is trimmed, not turned into a rejection', async () => {
+    const text = '路明非站在西侧服务巷，风从巷口吹过。一分钟过去，他没有动。路明非把手插进兜里，没有再看诺诺。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.assembly.droppedSentences).toContain('路明非把手插进兜里，没有再看诺诺。');
+    expect(result.text).not.toContain('没有再看诺诺');
+  });
+});

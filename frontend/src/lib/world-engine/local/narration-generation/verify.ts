@@ -468,10 +468,18 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // 09's b7cd run was failed for exactly that on a later point.
     const priorParts = priorText.split(/[。！？!?\n]+/u).map(normalizeSentence).filter((entry) => entry.length >= 8);
     const priorSentences = new Set([priorParts[0], priorParts[priorParts.length - 1]].filter(Boolean) as string[]);
-    for (const sentence of sentences) {
+    for (const [index, sentence] of sentences.entries()) {
       const key = normalizeSentence(sentence);
       if (key.length < 8 || !priorSentences.has(key)) continue;
-      issues.push(hard('echo_prior', attempt, 'sentence repeats the previous passage verbatim', sentence));
+      // A repeated closing line has a deterministic fix in scene mode: the
+      // accepted passage is trimmed by trimEchoedEnding. Rejecting the whole
+      // draft for it cost 09 the model prose twice (d101, 415c) and paid for a
+      // second generation. As the last sentence it is a soft note; anywhere
+      // else the trimmer cannot remove it, so it stays hard.
+      const last = index === sentences.length - 1;
+      issues.push(last
+        ? soft('echo_prior', attempt, 'last sentence repeats the previous closing line', sentence)
+        : hard('echo_prior', attempt, 'sentence repeats the previous passage verbatim', sentence));
       break;
     }
   }
