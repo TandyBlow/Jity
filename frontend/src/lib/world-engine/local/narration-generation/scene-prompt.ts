@@ -172,6 +172,17 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     // not another word ban.
     lines.push('这一小段里也没有新回忆：不要写「他记得」「他想起」「以前」「常坐的」这类往事，也不要移动或拿起任何东西。只写此刻的姿势、呼吸、视线和眼前环境的变化。');
   }
+  const time = policy.time ?? null;
+  if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
+    const amount = cnAmount(time.duration.amount);
+    const unit = UNIT_CN[time.duration.unit];
+    // Time is the first thing the passage says: it was the one fact the page's
+    // trained candidate missed in 09's 2324 run (time_missing twice), while the
+    // model had been told further down the prompt. Put it at the top with the
+    // spine, as a sentence shape rather than a reminder.
+    lines.push(`【时间】这一回合过去了${amount}${unit}。开头一两句里要写出「${amount}${unit}过去」，不要含糊成「过了一会儿」。`);
+    lines.push(`本回合经过的时间：${time.duration.amount}${unit}。正文里要明确写出「${amount}${unit}」这句话。`);
+  }
   // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
   // 她 for a male character in prose the grader accepted. `names` avoids that;
   // `model` keeps ordinary Chinese pronouns (53 of lane 01's 71 gold scenes
@@ -240,12 +251,6 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push('不要引入清单之外的新人物、新地点、新物件，也不要替别人做他这一回合没做的动作。');
   }
 
-  const time = policy.time ?? null;
-  if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
-    const amount = cnAmount(time.duration.amount);
-    const unit = UNIT_CN[time.duration.unit];
-    lines.push(`本回合经过的时间：${time.duration.amount}${unit}。正文里要明确写出「${amount}${unit}」这句话。`);
-  }
 
   // Standing positions of the people the viewpoint can see. Only the ones in
   // this scene: 09's driver offers the whole roster, and a smaller model
