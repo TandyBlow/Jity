@@ -2,14 +2,16 @@
 """Structural checks for the short-scene corpus.
 
 This script does not judge prose quality or semantic fact coverage. It checks
-that every row keeps the frozen input intact, comes from the train split, and
-carries the metadata a consumer needs. Fact coverage is checked by hand in
-review.md.
+that every base row keeps the frozen input intact, that derived rows differ
+only in a documented time advance, that all material comes from the train split,
+and that every row carries the metadata a consumer needs. Fact coverage is
+checked by hand in review.md.
 """
 
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import io
 import json
@@ -78,6 +80,7 @@ def main() -> int:
     errors: list[str] = []
     seen_ids: set[str] = set()
     seen_sources: set[str] = set()
+    derived_sources: set[str] = set()
     family_counts: Counter[str] = Counter()
     category_counts: Counter[str] = Counter()
     lengths: list[int] = []
@@ -112,9 +115,15 @@ def main() -> int:
         if rid in seen_ids:
             fail(errors, f"{label}: duplicate id {rid}")
         seen_ids.add(rid)
+        is_derived = record.get("sourceEvidence", {}).get("derived") is True
         if source_id in seen_sources:
-            fail(errors, f"{label}: duplicate sourceRowId {source_id}")
+            if not is_derived:
+                fail(errors, f"{label}: duplicate sourceRowId {source_id}")
+            elif source_id in derived_sources:
+                fail(errors, f"{label}: duplicate derived row for sourceRowId {source_id}")
         seen_sources.add(source_id)
+        if is_derived:
+            derived_sources.add(source_id)
 
         if source_id not in source_rows:
             fail(errors, f"{label}: sourceRowId {source_id} not in frozen rows")
@@ -131,9 +140,21 @@ def main() -> int:
             fail(errors, f"{label}: sourceEvidence.sourceCommit mismatch")
 
         source_input = source_rows[source_id]["x"]
-        if record["input"] != source_input:
-            fail(errors, f"{label}: input differs from frozen x")
-        expected_hash = hashlib.sha256(canonical(source_input).encode("utf-8")).hexdigest()
+        derived = evidence.get("derived") is True
+        if derived:
+            if evidence.get("baseRowId") != source_id:
+                fail(errors, f"{label}: derived row baseRowId must equal sourceRowId")
+            if not evidence.get("derivation"):
+                fail(errors, f"{label}: derived row needs a derivation note")
+            expected_input = copy.deepcopy(source_input)
+            expected_input["本回合变化"]["时间推进"] = record["input"]["本回合变化"]["时间推进"]
+            if record["input"] != expected_input:
+                fail(errors, f"{label}: derived input must differ from the base only in time advance")
+            expected_hash = hashlib.sha256(canonical(record["input"]).encode("utf-8")).hexdigest()
+        else:
+            if record["input"] != source_input:
+                fail(errors, f"{label}: input differs from frozen x")
+            expected_hash = hashlib.sha256(canonical(source_input).encode("utf-8")).hexdigest()
         if record["sourceInputSha256"] != expected_hash:
             fail(errors, f"{label}: sourceInputSha256 mismatch")
 
@@ -178,6 +199,8 @@ def main() -> int:
                 fail(errors, f"{label}: styleReferenceId {ref} not in frozen rows")
 
     print(f"rows: {len(records)}")
+    derived_count = sum(1 for r in records if r.get("sourceEvidence", {}).get("derived") is True)
+    print(f"derived rows: {derived_count}")
     print(f"length: min={min(lengths) if lengths else 0} max={max(lengths) if lengths else 0}")
     print("world families:", dict(sorted(family_counts.items())))
     print("categories:", dict(sorted(category_counts.items())))

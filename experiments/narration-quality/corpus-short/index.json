@@ -1,9 +1,9 @@
 {
   "batch": 1,
-  "createdAt": "2026-11-10T05:48:00Z",
+  "createdAt": "2026-11-10T05:52:00Z",
   "status": "first-batch-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 21,
+  "rowCount": 22,
   "source": {
     "dataset": "narration-dataset-v1",
     "sourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
@@ -12,7 +12,10 @@
       "train"
     ],
     "devOrTestUsed": false,
-    "oldRowsModified": false
+    "oldRowsModified": false,
+    "derivedRows": [
+      "short-0008-two-minute-no-change"
+    ]
   },
   "consumableFields": [
     "input",
@@ -33,7 +36,7 @@
     "reviewState"
   ],
   "worldFamilies": {
-    "library-basement": 3,
+    "library-basement": 4,
     "library-courtyard": 2,
     "library-lending": 2,
     "library-news": 10,
@@ -45,7 +48,7 @@
     "item_change": 4,
     "location_change": 6,
     "movement": 3,
-    "no_change": 1,
+    "no_change": 2,
     "personality_change": 1,
     "sanity_change": 6,
     "secret_reveal": 1,
@@ -56,7 +59,7 @@
   "targetLength": {
     "min": 62,
     "max": 106,
-    "mean": 86.6
+    "mean": 85.6
   },
   "rows": [
     {
@@ -66,7 +69,8 @@
       "categories": [
         "no_change"
       ],
-      "targetChars": 79
+      "targetChars": 79,
+      "derived": false
     },
     {
       "id": "short-0050-backdoor-lock",
@@ -76,7 +80,8 @@
         "item_change",
         "task_complete"
       ],
-      "targetChars": 84
+      "targetChars": 84,
+      "derived": false
     },
     {
       "id": "short-0055-reading-room-reveal",
@@ -86,7 +91,8 @@
         "personality_change",
         "secret_reveal"
       ],
-      "targetChars": 103
+      "targetChars": 103,
+      "derived": false
     },
     {
       "id": "short-0063-stack-room-rope",
@@ -96,7 +102,8 @@
         "location_change",
         "item_change"
       ],
-      "targetChars": 80
+      "targetChars": 80,
+      "derived": false
     },
     {
       "id": "short-0060-corridor-glasses",
@@ -106,7 +113,8 @@
         "appearance_change",
         "sanity_change"
       ],
-      "targetChars": 80
+      "targetChars": 80,
+      "derived": false
     },
     {
       "id": "short-0078-courtyard-drop",
@@ -115,7 +123,8 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 89
+      "targetChars": 89,
+      "derived": false
     },
     {
       "id": "short-0098-newsroom-cup",
@@ -125,7 +134,8 @@
         "item_change",
         "location_change"
       ],
-      "targetChars": 98
+      "targetChars": 98,
+      "derived": false
     },
     {
       "id": "short-0100-desk-swap",
@@ -135,7 +145,8 @@
         "movement",
         "separation"
       ],
-      "targetChars": 78
+      "targetChars": 78,
+      "derived": false
     },
     {
       "id": "short-0101-power-room-doubt",
@@ -144,7 +155,8 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 81
+      "targetChars": 81,
+      "derived": false
     },
     {
       "id": "short-0121-newspaper-clip",
@@ -153,7 +165,8 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 100
+      "targetChars": 100,
+      "derived": false
     },
     {
       "id": "short-0152-archive-two-tasks",
@@ -163,7 +176,8 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 88
+      "targetChars": 88,
+      "derived": false
     },
     {
       "id": "short-0169-archive-fire-answer",
@@ -172,7 +186,8 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 104
+      "targetChars": 104,
+      "derived": false
     },
     {
       "id": "short-0182-corridor-separation",
@@ -183,7 +198,8 @@
         "separation",
         "sanity_change"
       ],
-      "targetChars": 98
+      "targetChars": 98,
+      "derived": false
     },
     {
       "id": "short-0188-archive-two-cover-tasks",
@@ -193,7 +209,8 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 106
+      "targetChars": 106,
+      "derived": false
     },
     {
       "id": "short-0194-power-room-fear",
@@ -202,7 +219,8 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 89
+      "targetChars": 89,
+      "derived": false
     },
     {
       "id": "short-0197-basement-dehumidifier",
@@ -211,7 +229,8 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 96
+      "targetChars": 96,
+      "derived": false
     },
     {
       "id": "short-0199-rooftop-third-name",
@@ -222,7 +241,8 @@
         "separation",
         "task_added"
       ],
-      "targetChars": 102
+      "targetChars": 102,
+      "derived": false
     },
     {
       "id": "short-0138-empty-slots",
@@ -231,7 +251,8 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 64
+      "targetChars": 64,
+      "derived": false
     },
     {
       "id": "short-0161-damp-plant",
@@ -240,7 +261,8 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 75
+      "targetChars": 75,
+      "derived": false
     },
     {
       "id": "short-0175-window-rustle",
@@ -249,7 +271,8 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 62
+      "targetChars": 62,
+      "derived": false
     },
     {
       "id": "short-0178-dirty-hands",
@@ -258,7 +281,18 @@
       "categories": [
         "appearance_change"
       ],
-      "targetChars": 63
+      "targetChars": 63,
+      "derived": false
+    },
+    {
+      "id": "short-0008-two-minute-no-change",
+      "sourceRowId": "row-0008",
+      "worldFamily": "library-basement",
+      "categories": [
+        "no_change"
+      ],
+      "targetChars": 64,
+      "derived": true
     }
   ]
 }
