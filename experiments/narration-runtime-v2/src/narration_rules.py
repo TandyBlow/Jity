@@ -84,19 +84,27 @@ def ordinal_span(words: Sequence[str]) -> re.Pattern:
 
 
 def durations_in(sentence: str, unit: str) -> List[int]:
+    """Numbers written in either form, matched longest-first.
+
+    The first version built one regex per number, so "二十" also matched the
+    "十" pattern and a 20-minute sentence was read as both 10 and 20 minutes:
+    the product checker then flagged human prose as a wrong duration. A single
+    alternation ordered by length consumes the whole numeral instead.
+    """
     words = UNIT_WORDS[unit]
     scanned = ordinal_span(words).sub("§", sentence)
+    readings = {cn_number(value): value for value in range(1, 100)}
+    readings["两"] = 2
+    counted = sorted(readings, key=len, reverse=True)
     found: Set[int] = set()
     for word in words:
-        for match in re.finditer(rf"([0-9]+)\s*(?:个)?\s*{escape(word)}", scanned):
-            found.add(int(match.group(1)))
-        for value in range(1, 100):
-            reading = cn_number(value)
-            if reading and re.search(rf"{reading}\s*(?:个)?\s*{escape(word)}", scanned):
-                found.add(value)
-            for alias in (["两"] if value == 2 else []):
-                if re.search(rf"{alias}\s*(?:个)?\s*{escape(word)}", scanned):
-                    found.add(value)
+        alternatives = "|".join(escape(reading) for reading in counted)
+        pattern = rf"(?:([0-9]+)|({alternatives}))\s*(?:个)?\s*{escape(word)}"
+        for match in re.finditer(pattern, scanned):
+            if match.group(1):
+                found.add(int(match.group(1)))
+            elif match.group(2) in readings:
+                found.add(readings[match.group(2)])
     return sorted(found)
 
 

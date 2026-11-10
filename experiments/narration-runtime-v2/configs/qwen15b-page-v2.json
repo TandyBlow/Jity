@@ -1,0 +1,47 @@
+{
+  "runId": "qwen15b-page-v2",
+  "root": "/home/student/t330034047/beats_v1",
+  "mount": "D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2",
+  "seed": 20261110,
+  "base": {
+    "file": "~/qwen15b"
+  },
+  "tokenizer": {
+    "file": "~/qwen15b"
+  },
+  "beats": {},
+  "scenes": {
+    "file": null,
+    "variants": []
+  },
+  "splits": {
+    "file": "data/splits-page-v1.json"
+  },
+  "training": {
+    "epochs": 2,
+    "lr": 0.0002,
+    "batch": 1,
+    "gradAccum": 2,
+    "maxLen": 1280,
+    "gradClip": 1.0,
+    "weightDecay": 0.01,
+    "sampleMaxNew": 200,
+    "lora": {
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.1,
+      "targetModules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    }
+  },
+  "data": {
+    "file": "data/train-page-v1.jsonl"
+  }
+}

@@ -43,7 +43,8 @@ def sha256(path: str) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--run", required=True)
+    parser.add_argument("--run", required=True, help="remote run dir name, e.g. qwen15b-page-v1-gpu")
+    parser.add_argument("--job", required=True, help="slurm job id that produced the run")
     parser.add_argument("--model-id", required=True)
     parser.add_argument("--base", default="D:/others/Jity/.local/qwen-train/model15")
     parser.add_argument("--dev-limit", type=int, default=14)
@@ -52,17 +53,21 @@ def main() -> int:
     args = parser.parse_args()
 
     import beats_job as B
-    report_path = os.path.join(V2, "hpc", "runs", args.run, "report.json")
+    run_dir = os.path.join(V2, "hpc", "runs", args.job)
+    report_path = os.path.join(run_dir, "report.json")
     if not os.path.exists(report_path):
-        code = B.fetch_train(type("A", (), {"run": args.run})())
-        if code:
-            return code
+        B.fetch_dir(B.hpc(), args.job, (
+            (f"runs/{args.run}/report.json", "report.json"),
+            (f"runs/{args.run}/adapter-best.pt", "adapter-best.pt"),
+            (f"train_{args.job}.out", "job.out"),
+            (f"train_{args.job}.err", "job.err")))
     report = json.load(io.open(report_path, encoding="utf-8"))
 
-    adapter = os.path.join(MODELS, args.run, "adapter-best.pt")
+    adapter = os.path.join(run_dir, "adapter-best.pt")
     if not os.path.exists(adapter):
         raise SystemExit(f"missing adapter {adapter}")
     out_dir = os.path.join(MODELS, args.run)
+    os.makedirs(out_dir, exist_ok=True)
     gguf = os.path.join(out_dir, "model-Q4_K_M.gguf")
     if not os.path.exists(gguf):
         subprocess.run([sys.executable, os.path.join(HERE, "export_candidate.py"),
@@ -89,7 +94,7 @@ def main() -> int:
                     "no independent review has read its output"],
     }
     if not args.skip_eval:
-        eval_out = os.path.join(V2, "hpc", "runs", args.run, "eval-dev.json")
+        eval_out = os.path.join(run_dir, "eval-dev.json")
         subprocess.run([sys.executable, os.path.join(V2, "src", "eval_draft.py"),
                         "--gguf", gguf, "--split", "dev", "--limit", str(args.dev_limit),
                         "--out", eval_out], check=True)
@@ -99,7 +104,7 @@ def main() -> int:
                                    "detail": os.path.relpath(eval_out, REPO).replace("\\", "/"),
                                    "note": "cheap checks only; not product acceptance"}
     print(json.dumps(record, ensure_ascii=False, indent=1))
-    with io.open(os.path.join(V2, "hpc", "runs", args.run, "candidate.json"), "w",
+    with io.open(os.path.join(run_dir, "candidate.json"), "w",
                  encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(record, ensure_ascii=False, indent=1) + "\n")
     return 0

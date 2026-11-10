@@ -142,9 +142,12 @@ def deploy(h) -> None:
             f"{REMOTE}/data/splits-page-v1.json",
         os.path.join(V2, "configs", "qwen15b-page-v1.json"):
             f"{REMOTE}/configs/qwen15b-page-v1.json",
+        os.path.join(V2, "configs", "qwen15b-page-v2.json"):
+            f"{REMOTE}/configs/qwen15b-page-v2.json",
         os.path.join(V2, "data", "train-v5.jsonl"): f"{REMOTE}/data/train-v5.jsonl",
         os.path.join(HERE, "gpu_probe.py"): f"{REMOTE}/hpc/gpu_probe.py",
         os.path.join(HERE, "batch_screen.py"): f"{REMOTE}/hpc/batch_screen.py",
+        os.path.join(HERE, "probe_adapter.py"): f"{REMOTE}/hpc/probe_adapter.py",
         os.path.join(V2, "data", "train-v4.jsonl"): f"{REMOTE}/data/train-v4.jsonl",
     }
     for local, remote in files.items():

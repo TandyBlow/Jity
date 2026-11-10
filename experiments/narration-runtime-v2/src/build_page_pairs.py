@@ -88,6 +88,13 @@ def case_state(x: Dict[str, Any]) -> Dict[str, Any]:
     return {"before": before, "after": after, "delta": delta, "time": time}
 
 
+def cast_names(before: Dict[str, Any]) -> set:
+    """People in the previous state. Items live under '物品' and must not get
+    the 'X没有出声' clause the page reserves for characters."""
+    people = before.get("人物") or {}
+    return set(people.keys())
+
+
 def page_draft(x: Dict[str, Any]) -> str:
     """A reduced but faithful port of `factualNarration`."""
     state = case_state(x)
@@ -116,8 +123,11 @@ def page_draft(x: Dict[str, Any]) -> str:
     appearance = (after.get(room) or {}).get("外貌") if after else None
     if appearance:
         out.append(f"{room}里，{pick_clauses('。'.join(appearance), 2)}。")
+    people = cast_names(before)
     for other, value in (after or {}).items():
         if other == view or other == room:
+            continue
+        if people and other not in people:
             continue
         position = (value or {}).get("位置")
         if position == room:
