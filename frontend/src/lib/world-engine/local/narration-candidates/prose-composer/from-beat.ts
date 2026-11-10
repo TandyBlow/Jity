@@ -407,7 +407,7 @@ function sceneBeats(request: ComposeBeatRequestLike, scene: ProseScene, facts: B
   const variants = [
     `${name}没有再挪步。`,
     `${name}把视线收回来。`,
-    `${name}在原地站了一会儿。`,
+    `${name}还在原处。`,
     `${name}没有再往前。`,
     `${name}没有作声。`,
   ];
