@@ -1,0 +1,437 @@
+{
+ "protocol": "attention-selection-v1-recheck",
+ "source": {
+  "file": "D:\\others\\Jity\\.local\\parallel\\c-fact-selection\\artifacts\\world-components\\organize-wording\\attention-selection-v1.json",
+  "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f"
+ },
+ "rule": "keep all must; drop forbidden/uncertain/prior/time/no_change; keep every remaining optional; ignore attention",
+ "summary": {
+  "conditions": 6,
+  "noAttentionEqualManual": 6,
+  "v1RuleEqualManual": 6,
+  "noAttentionHardPass": 6,
+  "noAttentionMustPrecisionMean": 0.4444444444444444,
+  "v1RuleMustPrecisionMean": 0.4444444444444444,
+  "allMustPrecisionBelow085": true
+ },
+ "rows": [
+  {
+   "caseId": "G1-A",
+   "groupId": "G1",
+   "attention": "裴行舟现在是什么性子？",
+   "prior": [
+    "f4"
+   ],
+   "manual": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "noAttention": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   }
+  },
+  {
+   "caseId": "G1-B",
+   "groupId": "G1",
+   "attention": "沈拾现在是什么性子？",
+   "prior": [
+    "f3"
+   ],
+   "manual": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "noAttention": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f4"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f4"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   }
+  },
+  {
+   "caseId": "G2-A",
+   "groupId": "G2",
+   "attention": "沈拾刚才在忙什么？",
+   "prior": [
+    "f4"
+   ],
+   "manual": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "noAttention": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   }
+  },
+  {
+   "caseId": "G2-B",
+   "groupId": "G2",
+   "attention": "西栅桥的铜锁怎么了？",
+   "prior": [
+    "f3"
+   ],
+   "manual": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "noAttention": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f4"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f1",
+     "f2",
+     "f4"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.6666666666666666,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 3,
+    "optionalCount": 1
+   }
+  },
+  {
+   "caseId": "G3-A",
+   "groupId": "G3",
+   "attention": "我刚才袖口是不是湿了？",
+   "prior": [
+    "f1"
+   ],
+   "manual": [
+    "f0"
+   ],
+   "noAttention": [
+    "f0"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f0"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.0,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 1,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f0"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f0"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.0,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 1,
+    "optionalCount": 1
+   }
+  },
+  {
+   "caseId": "G3-B",
+   "groupId": "G3",
+   "attention": "我刚才指节怎么了？",
+   "prior": [
+    "f0"
+   ],
+   "manual": [
+    "f1"
+   ],
+   "noAttention": [
+    "f1"
+   ],
+   "noAttentionEqualManual": true,
+   "noAttentionScore": {
+    "selected": [
+     "f1"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.0,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 1,
+    "optionalCount": 1
+   },
+   "v1Rule": [
+    "f1"
+   ],
+   "v1RuleEqualManual": true,
+   "v1RuleScore": {
+    "selected": [
+     "f1"
+    ],
+    "hardPass": true,
+    "lenientPass": true,
+    "strictPass": true,
+    "manualEqual": true,
+    "missingMust": [],
+    "forbiddenSelected": [],
+    "uncertainSelected": [],
+    "priorSelected": [],
+    "targetSelected": true,
+    "relatedSelected": [],
+    "unrelatedSelected": [],
+    "mustPrecision": 0.0,
+    "legacyD1Pass": false,
+    "targetRecall": 1.0,
+    "acceptableOptionalPrecision": 1.0,
+    "selectedCount": 1,
+    "optionalCount": 1
+   }
+  }
+ ]
+}

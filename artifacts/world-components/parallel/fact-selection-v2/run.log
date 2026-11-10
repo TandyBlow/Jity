@@ -1,0 +1,62 @@
+$ date -u
+Sun Nov  8 09:24:48 UTC 2026
+
+$ python -X utf8 -m unittest -v test_selector.py
+test_each_fact_has_provenance (test_selector.CaseTests.test_each_fact_has_provenance) ... ok
+test_source_fixture_hash (test_selector.CaseTests.test_source_fixture_hash) ... ok
+test_target_and_related_are_optional (test_selector.CaseTests.test_target_and_related_are_optional) ... ok
+test_ten_cases_nine_controlled_one_coverage (test_selector.CaseTests.test_ten_cases_nine_controlled_one_coverage) ... ok
+test_hard_pass_all_arms (test_selector.InvariantTests.test_hard_pass_all_arms) ... ok
+test_legacy_metric_rejects_the_manual_oracle (test_selector.InvariantTests.test_legacy_metric_rejects_the_manual_oracle) ... ok
+test_manual_is_lenient_oracle (test_selector.InvariantTests.test_manual_is_lenient_oracle) ... ok
+test_selected_ids_in_fact_order (test_selector.InvariantTests.test_selected_ids_in_fact_order) ... ok
+test_content_only_removes_same_location_false_positive (test_selector.LexicalTests.test_content_only_removes_same_location_false_positive) ... ok
+test_lexical_at_false_positive (test_selector.LexicalTests.test_lexical_at_false_positive) ... ok
+test_lexical_misses_indirect_reference (test_selector.LexicalTests.test_lexical_misses_indirect_reference) ... ok
+test_summary_counts (test_selector.LexicalTests.test_summary_counts) ... ok
+test_no_attention_changes_only_when_prior_removes_the_competitor (test_selector.NoAttentionTests.test_no_attention_changes_only_when_prior_removes_the_competitor) ... ok
+test_no_attention_ignores_attention_in_p1_p2 (test_selector.NoAttentionTests.test_no_attention_ignores_attention_in_p1_p2) ... ok
+test_no_attention_passes_hard_but_fails_quality (test_selector.NoAttentionTests.test_no_attention_passes_hard_but_fails_quality) ... ok
+test_no_attention_selects_both_competitors_when_prior_is_empty (test_selector.NoAttentionTests.test_no_attention_selects_both_competitors_when_prior_is_empty) ... ok
+test_semantic_does_not_read_surface_words (test_selector.SemanticTests.test_semantic_does_not_read_surface_words) ... ok
+test_semantic_matches_all_controlled_targets (test_selector.SemanticTests.test_semantic_matches_all_controlled_targets) ... ok
+test_semantic_r1_keeps_only_must (test_selector.SemanticTests.test_semantic_r1_keeps_only_must) ... ok
+test_v1_no_attention_reproduces_six_of_six (test_selector.V1RecheckTests.test_v1_no_attention_reproduces_six_of_six) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.156s
+
+OK
+
+$ python -X utf8 run_selection.py
+wrote D:\others\Jity\.local\parallel\c-fact-selection\artifacts\world-components\parallel\fact-selection-v2\selection-v2.json
+cases 10; cases sha256 b2289c2a158419053cf543dc849327428c73d92db03ab34b7a8d03ee91d3f20e
+manual           all 10/10 lenient, 9/10 strict, 10/10 hard, controlled 9/9, manualEqual 10/10, mustP 0.533
+no_attention     all 3/10 lenient, 2/10 strict, 10/10 hard, controlled 2/9, manualEqual 3/10, mustP 0.450
+lexical          all 7/10 lenient, 7/10 strict, 10/10 hard, controlled 6/9, manualEqual 6/10, mustP 0.567
+lexical_content  all 9/10 lenient, 9/10 strict, 10/10 hard, controlled 8/9, manualEqual 8/10, mustP 0.600
+semantic         all 10/10 lenient, 10/10 strict, 10/10 hard, controlled 9/9, manualEqual 9/10, mustP 0.567
+
+failing controlled cases by arm:
+  P1 no_attention: unrelated=['f4'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  P2 no_attention: unrelated=['f3'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  P2 lexical: unrelated=['f3'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  C1 no_attention: unrelated=['f4'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  C2 no_attention: unrelated=['f4'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  C2 lexical: unrelated=[] target=False missing=[] selected=['f1', 'f2']
+  C2 lexical_content: unrelated=[] target=False missing=[] selected=['f1', 'f2']
+  C3 no_attention: unrelated=['f3'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  C3 lexical: unrelated=['f3'] target=True missing=[] selected=['f1', 'f2', 'f3', 'f4']
+  H1 no_attention: unrelated=['f1'] target=True missing=[] selected=['f0', 'f1']
+  H2 no_attention: unrelated=['f0'] target=True missing=[] selected=['f0', 'f1']
+
+$ python -X utf8 v1_recheck.py
+wrote D:\others\Jity\.local\parallel\c-fact-selection\artifacts\world-components\parallel\fact-selection-v2\v1-recheck.json
+v1 6 conditions; no-attention equal manual 6/6; v1 rule equal manual 6/6
+no-attention mustPrecision mean 0.444; v1 rule mustPrecision mean 0.444; all below 0.85: True
+  G1-A: no-attn ['f1', 'f2', 'f3'] = manual ['f1', 'f2', 'f3']; prior ['f4']
+  G1-B: no-attn ['f1', 'f2', 'f4'] = manual ['f1', 'f2', 'f4']; prior ['f3']
+  G2-A: no-attn ['f1', 'f2', 'f3'] = manual ['f1', 'f2', 'f3']; prior ['f4']
+  G2-B: no-attn ['f1', 'f2', 'f4'] = manual ['f1', 'f2', 'f4']; prior ['f3']
+  G3-A: no-attn ['f0'] = manual ['f0']; prior ['f1']
+  G3-B: no-attn ['f1'] = manual ['f1']; prior ['f0']
