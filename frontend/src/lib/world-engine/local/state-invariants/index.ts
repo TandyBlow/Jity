@@ -36,6 +36,7 @@ export type InvariantCode =
   | 'task_already_achieved'
   | 'task_duplicate_add'
   | 'task_regressed'
+  | 'task_hierarchy'
   | 'change_duplicate'
   | 'position_invalid'
   | 'head_mismatch'
@@ -541,6 +542,18 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
   for (const error of validateWorldPositions(replay)) {
     report.errors.push(issue('position_invalid', error));
   }
+  for (const error of validateTaskHierarchy(replay)) {
+    report.errors.push(issue('task_hierarchy', error));
+  }
+  // A tampered cache can carry a broken hierarchy that is absent from replay;
+  // report it on the stored state too instead of only flagging the mismatch.
+  for (const stored of [headState, record.state]) {
+    if (!isRecord(stored)) continue;
+    const state = (isRecord(stored.state) ? stored.state : stored) as unknown as WorldState;
+    for (const error of validateTaskHierarchy(state)) {
+      report.errors.push(issue('task_hierarchy', `stored: ${error}`));
+    }
+  }
   checkActiveChain(record as Record<string, unknown>, replay, report.replayDigest, report.errors, report.warnings);
 
   report.ok = report.errors.length === 0;
@@ -617,6 +630,7 @@ export async function verifyTurnEntry(entry: unknown): Promise<InvariantReport> 
     if (!same(after, replayed)) report.errors.push(issue('point_state_mismatch', 'turn after state differs from replay'));
   }
   for (const error of validateWorldPositions(replayed)) report.errors.push(issue('position_invalid', error));
+  for (const error of validateTaskHierarchy(replayed)) report.errors.push(issue('task_hierarchy', error));
   report.ok = report.errors.length === 0;
   return report;
 }
@@ -705,4 +719,29 @@ export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; erro
   }
   if (!sawSnapshot) warnings.push(issue('evidence_shape', 'no full transport snapshot in this record; only visible history/task/refresh continuity was checked'));
   return { ok: errors.length === 0, errors, warnings };
+}
+
+/** Every task must belong to its character, keep one id, and point at a parent
+ * that exists in the same character. A subtask with a dangling parent is a
+ * broken hierarchy even when every status is individually legal. */
+export function validateTaskHierarchy(state: WorldState): string[] {
+  const issues: string[] = [];
+  const seen = new Map<Id, Id>();
+  for (const [characterId, character] of Object.entries(state.characters)) {
+    for (const [key, task] of Object.entries(character.tasks)) {
+      if (!task || typeof task !== 'object') {
+        issues.push(`${characterId}.${key}: task is not an object`);
+        continue;
+      }
+      if (task.id !== key) issues.push(`${characterId}.${key}: id is ${String(task.id)}`);
+      if (task.ownerId !== characterId) issues.push(`${characterId}.${key}: owner is ${String(task.ownerId)}`);
+      const previousOwner = seen.get(task.id);
+      if (previousOwner != null) issues.push(`task id ${task.id} appears under ${previousOwner} and ${characterId}`);
+      else seen.set(task.id, characterId);
+      if (task.parentTaskId != null && !character.tasks[task.parentTaskId]) {
+        issues.push(`${characterId}.${key}: parent ${String(task.parentTaskId)} does not exist`);
+      }
+    }
+  }
+  return issues;
 }

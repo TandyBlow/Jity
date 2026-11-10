@@ -201,6 +201,16 @@ describe('visible acceptance summary', () => {
     expect(result.warnings.map((item) => item.code)).toContain('evidence_shape');
   });
 
+  it('rejects a stored task whose parent does not exist in the same character', async () => {
+    const record = await recordOf(fixture.normal.initial as InitialState, []);
+    const state = record.state as WorldState;
+    state.characters.person_a.tasks.task_orphan = {
+      id: 'task_orphan', ownerId: 'person_a', parentTaskId: 'task_missing', goal: '找不到父任务', status: 'pending',
+    };
+    const report = await verifyWorldRecord(record);
+    expect(report.errors.map((item) => item.code)).toContain('task_hierarchy');
+  });
+
   it('rejects a visible task that returns to not-done', () => {
     const result = verifyVisibleAcceptance([
       { before: { historyCount: 1, tasks: [{ goal: '开门', done: false }] }, after: { historyCount: 2, tasks: [{ goal: '开门', done: true }] }, text: '门开了。', historyDelta: 1 },
