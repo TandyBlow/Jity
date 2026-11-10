@@ -1210,6 +1210,35 @@ anchors.append(
     },
 )
 
+
+run21 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-21c3.json", encoding="utf-8"))
+run21_turn = run21["turns"][0]
+run21_root = ((run21_turn.get("snapshotAfterTurn") or {}).get("transport") or {}).get("narrations", {}).get("point_root_world_dragon_raja_free_day", {}).get("text")
+run21_point_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-point")
+run21_root_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-opening")
+anchors.append(
+    {
+        "id": "neg/21c3-final-task",
+        "source": "09 run 2026-11-10T1943-5f25 (06 21c34d67): the program fallback asserts 诺诺 completed a task although every task is still pending",
+        "input": run21_point_input,
+        "text": run21_turn["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": [], "review": [],
+                   "notes": "The task sentence has no committed task; the action/time/location sentences are otherwise settled."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/21c3-opening",
+        "source": "09 run 2026-11-10T1943-5f25 (06 21c34d67): the opening turns the settled muzzle down into «枪口微微抬起»",
+        "input": run21_root_input,
+        "text": run21_root,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "The muzzle is settled down; the hair tying and the rope lowering are re-enactments (review)."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

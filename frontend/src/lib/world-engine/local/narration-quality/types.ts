@@ -47,6 +47,7 @@ export type FindingKind =
   // Facts: omissions of settled, player-visible changes.
   | 'fact.time_missing'
   | 'fact.move_omitted'
+  | 'fact.task_asserted'
   | 'fact.task_omitted'
   | 'fact.sanity_omitted'
   | 'fact.personality_omitted'

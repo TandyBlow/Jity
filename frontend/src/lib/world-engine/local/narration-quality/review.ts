@@ -678,6 +678,16 @@ export function reviewNarration(args: {
     findings.push(finding(ctx, 'fact.task_omitted', sentences[0]?.text ?? text,
       `${task.name}: 「${task.goal}」 is not narrated as completed`, [`${task.name} 完成：${task.goal}`], [task.id]));
   }
+  // A completion the settlement does not contain (21c3's program fallback:
+  // «诺诺：确认任务完成…成功执行行动» with every task still pending).
+  if (!projection.taskCompleted.length) {
+    for (const sentence of sentences) {
+      if (!/(完成任务|任务完成|成功执行行动|完成了「|已经完成)/u.test(sentence.narration)) continue;
+      if (/(未|没有|没|尚未|不)(完成|成功)/u.test(sentence.narration)) continue;
+      findings.push(finding(ctx, 'fact.task_asserted', sentence.text,
+        'a completion is asserted but the settled state has no completed task', [], []));
+    }
+  }
   // A completed task written as still pending.
   for (const task of projection.taskCompleted) {
     for (const sentence of sentences) {
