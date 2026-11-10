@@ -860,7 +860,11 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // Only a draft whose sole hard problem is the invented sense is repaired;
     // any other hard issue means the sentence is not the thing to fix.
     if (attempt.accepted || !attempt.cleaned) continue;
-    const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense' || issue.kind === 'unlicensed_action');
+    // Length is included: a draft can be short *and* invent something, and the
+    // repair only touches the invented sentence. The full verifier still runs
+    // on the repaired text, so a draft that stays too short is rejected.
+    const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
+      || issue.kind === 'unlicensed_action' || issue.kind === 'too_short');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,
