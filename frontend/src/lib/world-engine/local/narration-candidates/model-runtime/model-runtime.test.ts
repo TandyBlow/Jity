@@ -3,6 +3,7 @@ import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { CompleteOptions } from '../../../runtime/engine';
 import { MODEL_CATALOG, DEFAULT_MODEL_ID, modelSpec, modelSpecByFile } from './catalog';
 import { generateCandidate } from './candidate';
+import { mergePositions, projectProseFacts } from './facts';
 import {
   ThinkingFilter, buildMessages, cleanNarration, normalizeTime, renderFallbackPrompt, renderNarrationUser, stripThinking,
 } from './template';
@@ -74,6 +75,40 @@ function args(overrides: Partial<CandidateArgs> = {}): CandidateArgs {
 }
 
 const VERIFIED_TEXT = '两分钟里，林川从走廊走到门厅，脚步不急。';
+
+describe('prose projection', () => {
+  const packet: CommittedNarration = {
+    anchor: ANCHOR,
+    facts: [
+      { id: 'a:position', actorId: 'char_lin', name: '林川', kind: 'moved', fromId: 'corridor', from: '走廊', toId: 'hall', to: '门厅' },
+      { id: 'b:position', actorId: 'char_zhou', name: '周宁', kind: 'at', locationId: 'corridor', location: '走廊' },
+      { id: 'b:sanity', actorId: 'char_zhou', name: '周宁', kind: 'sanity_changed', from: 10, to: 8 },
+    ],
+  };
+
+  test('movement stays required, standing position becomes scene, sanity becomes a hint', () => {
+    const projected = projectProseFacts(packet);
+    expect(projected.packet.facts.map((fact) => fact.kind)).toEqual(['moved']);
+    expect(projected.positions).toEqual([{ name: '周宁', location: '走廊' }]);
+    expect(projected.hints).toHaveLength(1);
+    expect(projected.hints[0]).not.toMatch(/8|10/);
+    expect(projected.withheld.map((fact) => fact.kind)).toEqual(['at', 'sanity_changed']);
+  });
+
+  test('the rendered prompt never lists a stat number and forbids unlisted actions', () => {
+    const text = renderNarrationUser(packet, '', { time: { amount: 2, unit: 'minute' }, targetChars: 240 });
+    expect(text).not.toContain('精神值');
+    expect(text).not.toMatch(/精神.{0,6}\d/);
+    expect(text).toContain('周宁在走廊');
+    expect(text).toContain('不许新增没有列出的动作' .replace('不许', '不要'));
+    expect(text).toContain('写成 3 段');
+  });
+
+  test('caller positions win over the packet and are not duplicated', () => {
+    expect(mergePositions([{ name: '周宁', location: '门厅' }], [{ name: '周宁', location: '走廊' }, { name: '林川', location: '门厅' }]))
+      .toEqual([{ name: '周宁', location: '门厅' }, { name: '林川', location: '门厅' }]);
+  });
+});
 
 describe('model catalog', () => {
   test('every entry carries identity, a template and a real hash', () => {
