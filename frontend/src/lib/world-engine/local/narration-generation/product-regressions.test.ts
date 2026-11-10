@@ -313,3 +313,35 @@ describe('product regressions: a settled task the draft never says', () => {
     expect(result.assembly.appendedSentences).toContain('登记簿比对完了。');
   });
 });
+
+describe('product regressions: no state checklist in prose', () => {
+  // The dense point was accepted at 127 chars only because the projector's own
+  // sentence «路明非完成了任务「比对三份互相矛盾的登记簿」。» was appended. The
+  // product must not read as a checklist, so that fallback is gone: a model that
+  // cannot say the outcome leaves the draft rejected.
+  test('the projector sentence is not appended when the model says nothing', async () => {
+    const taskFact: NarrationFact = {
+      id: 'lu:task', actorId: 'lu', name: '路明非', kind: 'task_achieved',
+      taskId: 'task_books', goal: '把三份互相矛盾的登记簿比对完',
+    };
+    const movedFact: NarrationFact = {
+      id: 'lu:position', actorId: 'lu', name: '路明非', kind: 'moved',
+      fromId: 'lane', from: '西侧服务巷', toId: 'courtyard', to: '中央庭院',
+    };
+    const body = '路明非从西侧服务巷走到中央庭院。两分钟过去，他站在石阶上。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: body }, { kind: 'text', text: body }, { kind: 'text', text: '' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: quiet.anchor, facts: [movedFact, taskFact] },
+      inputText: quietInput.replace('演习规则牌（墙上）', '演习规则牌'),
+      priorText: null,
+      policy: {
+        ...quietPolicy, targetChars: 40, minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+      },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.text).not.toContain('完成了任务');
+  });
+});
