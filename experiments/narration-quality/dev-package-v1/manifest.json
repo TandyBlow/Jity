@@ -1,5 +1,5 @@
 {
-  "package": "narration-dev-package-v1",
+  "package": "narration-dev-package-v1.1",
   "frozenAt": "2026-11-10",
   "owner": "01-input",
   "status": "public_development_regression_not_final",
@@ -44,7 +44,7 @@
       "category": "no_change",
       "worldFamily": "dragon-raja-free-day",
       "knownIssues": [],
-      "inputSha256": "97da3b6a06b00e4b73077d6720f5cbcda3782af3df0d975305c424365d298a37",
+      "inputSha256": "089e27d738edcf23f1ee29072980d56c9ff6ae89f15269356b6eb17093b44581",
       "referenceSha256": "e44c2b94c9921d026de0d0d817a5cc3493254b320a8436cbaa2eb1a4ee7b6b72",
       "priorTextCount": 0
     },
@@ -53,7 +53,7 @@
       "category": "move_direction",
       "worldFamily": "library-courtyard",
       "knownIssues": [],
-      "inputSha256": "ef2e2a4027e70270c9f337830cdde44f17c38d33aac06607d66de3bc8400ce36",
+      "inputSha256": "a24828ca11b0767405f1ea693d24569d801b822259f35c64b0928b80e566abee",
       "referenceSha256": "780a31971a5eb66ef22c36215421eb4bc2ab3fdb375c7230b3d70cfd6e7b0f72",
       "priorTextCount": 0
     },
@@ -62,7 +62,7 @@
       "category": "task_time",
       "worldFamily": "dragon-raja-free-day",
       "knownIssues": [],
-      "inputSha256": "9dadb59cd685355480dd0dfd6340879e58242121654a467da45619191b243b01",
+      "inputSha256": "7520db42b351d3107627600e852e4c0ee5f57e46bdaa9f27697304bcb0452227",
       "referenceSha256": "b6fd27ac1aa8a147be3d06b76e0d7e188bb2b9a3f0d971a18e32df0cea062cd3",
       "priorTextCount": 0
     },
@@ -71,7 +71,7 @@
       "category": "multi_person_reference",
       "worldFamily": "library-news",
       "knownIssues": [],
-      "inputSha256": "dfdcd317cecc6e76191663cc7c16e31aafc8c86f9bbb2e689ee1a9ffa1e3ee6e",
+      "inputSha256": "e4f13318b780433077f9b326ddd1b40116b4024b577b5d60c5a9d485a60ae83f",
       "referenceSha256": "173a0e2e3586d11d348d19e026dabd8108c2af7d76725cb583f78538a1d6b974",
       "priorTextCount": 0
     },
@@ -80,7 +80,7 @@
       "category": "sanity",
       "worldFamily": "dragon-raja-free-day",
       "knownIssues": [],
-      "inputSha256": "326a8efeb23c63abc9c2b1068aaf134299b3a4f143cfc9287c0e4aacdb22c21a",
+      "inputSha256": "9d60e083b42f27bdd8c283bf120f5aa149b7f545f37dc0ea51a908fa760b901b",
       "referenceSha256": "5ada0d16a902729fb25175f13490bb61a4e44d16ddbcd3c477c85ce06e7cc894",
       "priorTextCount": 0
     },
@@ -89,7 +89,7 @@
       "category": "appearance_item",
       "worldFamily": "library-basement",
       "knownIssues": [],
-      "inputSha256": "bbca858c9bacc0fc26a0a62103474b6a0b298d6103d8bf5b92e6fa4030c15ef4",
+      "inputSha256": "7e3de1e129bdb7e01e082388f6e936b1fd995e3403c1884f6ccc37b98002fa6f",
       "referenceSha256": "40138cf30eaa4b92bb1754c9f0d3c744a51b02f59adf315fe227eb6131f5b162",
       "priorTextCount": 0
     },
@@ -98,7 +98,7 @@
       "category": "dialogue",
       "worldFamily": "dragon-raja-free-day",
       "knownIssues": [],
-      "inputSha256": "39382ceda28e99b4823f348c714254ca4b448631ddab412bd62cd29af4b32f39",
+      "inputSha256": "6ba5a98cb73f14d00c7228ed4d47511bb4f218f608f06754cd24aa55e9d049a8",
       "referenceSha256": "64f3624c96e8b07b6b01ae15bfd52c6274f4790cf1061ffe43912a4e88f8fe6b",
       "priorTextCount": 0
     },
@@ -107,7 +107,7 @@
       "category": "gender_pronoun",
       "worldFamily": "library-news",
       "knownIssues": [],
-      "inputSha256": "a58a72638b17beb49caa67cec8de166efefe5a54d1ea590887faedd9018fc608",
+      "inputSha256": "fe0cef947ddb1985e0e7d0fdb664be4aaf81d1274e5c04a8f3b718faaeff6032",
       "referenceSha256": "9f1916ed682d71301a7ff026904e53fa8cad4eb0e3f501595f2dee2e1732d764",
       "priorTextCount": 0
     },
@@ -116,7 +116,7 @@
       "category": "time_only_derived",
       "worldFamily": "library-basement",
       "knownIssues": [],
-      "inputSha256": "1135c978dd43e49ff5861a391820df37f732372e437dec8658631dc9410b51a1",
+      "inputSha256": "684bc1b25892f92c559f33a9e1ab2cc03d01eb5ee3e84553537ff66ff04890f3",
       "referenceSha256": "a213e9a3a8b603738a1510d3d1f6dbf6fb9b3e8a12e1d489e45c60bbd9dc7c9d",
       "priorTextCount": 0
     },
@@ -125,7 +125,7 @@
       "category": "task_sanity",
       "worldFamily": "library-news",
       "knownIssues": [],
-      "inputSha256": "cab3ec53681a2f0adc664328f3a90541e890bbc0408bab10605869da16853c8d",
+      "inputSha256": "529c801a586c195f1f2269a570ecbd835c3f4f123ea3d846cb081b853bb76888",
       "referenceSha256": "e23e6dc4d4c07112065e27c2db174574386cae2e7dba60bea39b9c17701c9301",
       "priorTextCount": 0
     },
@@ -137,7 +137,7 @@
         "The reference text never states the elapsed time (198/199 frozen rows share this gap).",
         "The reference adds footsteps with no settled move."
       ],
-      "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+      "inputSha256": "9d271f87036478b67234985eb9e63e3367a3650ca0b798f6677c738b4254754e",
       "referenceSha256": "551a188b4ea60b821734a50e09d7c6d7f5a55fea2d63ecee731e1300cad50366",
       "priorTextCount": 0
     },
@@ -148,7 +148,7 @@
       "knownIssues": [
         "The reference has an unbound footstep sound (一串脚步声) although nobody moved this point; reported to 05."
       ],
-      "inputSha256": "feaef5bd4d066248a3b411c092c58b577e6287bc6ffb87d0a7f6b02201b0498f",
+      "inputSha256": "4b1e06e61856cf14ae9d14a9a2b7656af616eab97e0092b9e4e005eca7d70ac6",
       "referenceSha256": "80dd7a5fa09f127b8166e1d5fc1234f021a51d4679fc82430deabf9a1ac522d9",
       "priorTextCount": 0
     },
@@ -157,7 +157,7 @@
       "category": "continuity",
       "worldFamily": "tide-watch-1998",
       "knownIssues": [],
-      "inputSha256": "9a5ec1fae57223bfa3eba6299c87ba16c14f51c855afb2ab6e3280a3b5386539",
+      "inputSha256": "0690a0d43e9761ced2b0ff39d6e02ddb76fdbd9face51794577db0567b8a7da3",
       "referenceSha256": "975ac2e27f12672032286c8362c13f9f19891ed9754ffcca362877ac9907d6df",
       "priorTextCount": 1
     },
@@ -166,7 +166,7 @@
       "category": "continuity",
       "worldFamily": "tide-watch-1998",
       "knownIssues": [],
-      "inputSha256": "85379a6cbb01bebe6ef3538060d22212dee52d52ffaeff447322da81cdce72dd",
+      "inputSha256": "9e545964654f0f7c4130bfd3d70264e89a27f2a1bfd8928fdb31b5645574fc16",
       "referenceSha256": "14c82e2caed5e3ab6caaa19c3ef1700f1b5975579be281073ed0ecd6b952da7d",
       "priorTextCount": 2
     },
@@ -175,13 +175,13 @@
       "category": "item_transfer_fixture",
       "worldFamily": "dragon-raja-free-day",
       "knownIssues": [],
-      "inputSha256": "38a9662ebce022575ac6e07576c00cb2cfb97f1acb765ae237087839eb0faf6f",
+      "inputSha256": "f2afcafbcc33ae0d1b5c6dd076930551b6e94e468ae5dc5eb273f11ef77d494d",
       "referenceSha256": "36339fdf14e9cfa115110512665e84bb46da91f6b808367935150ecd9b32e519",
       "priorTextCount": 0
     }
   ],
   "files": {
-    "cases.jsonl": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b"
+    "cases.jsonl": "38db9adee44a0794e4ddbf57b387f780519db5798c4760cd89e31c16e96a6920"
   },
   "rubric": "RUBRIC.md",
   "checkerReference": "frontend/src/lib/world-engine/local/narration-quality/ (reviewNarration) and its batch harness",

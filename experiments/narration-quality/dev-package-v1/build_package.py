@@ -316,7 +316,7 @@ transfer["input"] = {
     },
     "本回合状态": {
         "路明非的护目镜": {"位置": "诺诺"},
-        "路明非": {"外貌": ["护目镜挂在胸前，右手还空着", "右手空着"]},
+        "路明非": {"外貌": ["右手空着"]},
         "诺诺": {"外貌": ["红发用发圈束在脑后，红色识别带缠在左臂，手里没有东西", "护目镜拿在手里"]},
     },
 }
@@ -334,13 +334,65 @@ transfer["reference"] = {
 transfer["notes"] = "The only settled change is an item moving from 路明非 to 诺诺. Writing it as 诺诺 handing it to him, or as a scene object floating in the lane, is a contradiction."
 cases.append(transfer)
 
+
+# ------------------------------------------------- canonical delta (v1.1)
+def canonicalize_input(input_block):
+    """Old 05/fixture delta shapes -> the operations the v2 serializer accepts.
+
+    Facts are unchanged: `任务` snapshots become `完成任务` for the goals whose
+    status is 已完成 (the unchanged tasks stay in 上回合状态), bare `外貌` becomes
+    `新增外貌`, and scalar look/trait strings become arrays.
+    """
+    block = json.loads(json.dumps(input_block))
+    delta = block.get("本回合变化") or {}
+    if isinstance(delta.get("时间推进"), str):
+        delta["时间推进"] = delta["时间推进"].replace(" ", "").replace("	", "").replace("　", "")
+    before = block.get("上回合状态") or {}
+    for name, change in list((delta.get("变化") or {}).items()):
+        if "任务" in change:
+            snapshot = change.pop("任务") or {}
+            listed = []
+            if snapshot.get("大任务"):
+                listed.append(snapshot["大任务"])
+            listed.extend(snapshot.get("小任务") or [])
+            prior = ((before.get("人物") or {}).get(name) or {}).get("任务") or {}
+            prior_goals = set()
+            if prior.get("大任务"):
+                prior_goals.add(prior["大任务"]["目标"])
+            prior_goals.update(task["目标"] for task in prior.get("小任务") or [])
+            completed = [task["目标"] for task in listed if task.get("状态") == "已完成"]
+            if completed:
+                change["完成任务"] = completed
+            added = [task["目标"] for task in listed if task.get("状态") != "已完成" and task["目标"] not in prior_goals]
+            if added:
+                change["新增小任务"] = [{"目标": goal} for goal in added]
+        if "外貌" in change:
+            looks = change.pop("外貌")
+            change["新增外貌"] = looks if isinstance(looks, list) else [looks]
+        for key in ("新增外貌", "解除外貌", "新增个性", "解除个性"):
+            if isinstance(change.get(key), str):
+                change[key] = [change[key]]
+    return block
+
+
+for case in cases:
+    case["input"] = canonicalize_input(case["input"])
+
+# The transfer fixture also kept a stale look on 路明非 (the goggles on his chest
+# after they moved to 诺诺); remove it so the input is internally consistent.
+for case in cases:
+    if case["caseId"] != "fixture-goggles-transfer":
+        continue
+    change = case["input"]["本回合变化"]["变化"]["路明非"]
+    change["解除外貌"] = ["护目镜挂在胸前，右手还空着"]
+
 os.makedirs(OUT, exist_ok=True)
 with io.open(OUT + "/cases.jsonl", "w", encoding="utf-8", newline="\n") as handle:
     for case in cases:
         handle.write(json.dumps(case, ensure_ascii=False) + "\n")
 
 manifest = {
-    "package": "narration-dev-package-v1",
+    "package": "narration-dev-package-v1.1",
     "frozenAt": "2026-11-10",
     "owner": "01-input",
     "status": "public_development_regression_not_final",
