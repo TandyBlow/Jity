@@ -967,6 +967,25 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
           detail: `${borrowed.noun} belongs to another character (${borrowed.sentence})`, sentence: borrowed.sentence,
         });
       }
+      // Reading a scene object's note out loud («上面画着庭院、东西回廊、跨溪
+      //小桥») is grounded but reads like a data field. Soft note only.
+      for (const object of input.policy?.scene?.objects ?? []) {
+        const note = String(object.note ?? '');
+        if (note.length < 12) continue;
+        for (const sentence of result.attempt.cleaned.split(/[。！？!?]/u)) {
+          let hit = '';
+          for (let start = 0; start + 12 <= note.length; start += 1) {
+            const window = note.slice(start, start + 12);
+            if (sentence.includes(window)) { hit = window; break; }
+          }
+          if (!hit) continue;
+          result.attempt.issues.push({
+            kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+            detail: `reads out the note of ${object.name}`, sentence: sentence.trim(),
+          });
+          break;
+        }
+      }
       // A wall prop in a hand is a new fact. 09 batch-5 wrote «演习规则牌在他
       // 手中，牌面写着…»; the fixture's input puts the board on the wall.
       for (const object of input.policy?.scene?.objects ?? []) {

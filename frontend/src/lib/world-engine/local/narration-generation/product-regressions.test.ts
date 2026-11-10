@@ -371,3 +371,16 @@ describe('product regressions: nobody-seen filler', () => {
     expect(hard.map((issue) => issue.kind)).not.toContain('self_contradiction');
   });
 });
+
+describe('product regressions: a scene note read out loud', () => {
+  // quiet-minute-5: «上面画着庭院、东西回廊、跨溪小桥» is the map note verbatim.
+  test('copying a scene object note is a soft note', async () => {
+    const text = '路明非站在西侧服务巷，看了一眼墙上的演习规则牌。牌面写明：使用弗里嘉演习弹。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => /reads out the note of/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
