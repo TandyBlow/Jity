@@ -28,16 +28,28 @@ export function parseTaskLine(line) {
 
 /** One turn's action-family summary; every value is directly present in the evidence. */
 export function summarizeTurn(turn) {
-  const tasks = (turn.console ?? []).map(parseTaskLine).filter((entry) => entry && TASKS.has(entry.task));
-  const submission = turn.submission ?? null;
-  const texts = tasks.map((entry) => entry.raw).join('\n');
+  // Prefer the page's structured per-turn list (`__worldTurns[i].actions`,
+  // copied by 09 into `entry.actions` or `entry.product.actions`); fall back to
+  // the console lines only when the structured list is absent.
+  const structured = turn.actions ?? turn.product?.actions ?? null;
+  const tasks = Array.isArray(structured)
+    ? structured.map((entry) => ({
+        task: entry.task ?? null, key: entry.key ?? null, ms: entry.ms ?? null,
+        fallback: entry.fallback ?? null, source: entry.source ?? null,
+        error: entry.error ?? null, raw: null,
+      })).filter((entry) => TASKS.has(entry.task))
+    : (turn.console ?? []).map(parseTaskLine).filter((entry) => entry && TASKS.has(entry.task));
+  const round = turn.roundOrder ?? turn.submission?.roundOrder ?? turn.product?.roundOrder ?? null;
+  const texts = tasks.map((entry) => entry.raw ?? '').join('\n');
   return {
     turn: turn.turn ?? null,
     input: turn.input ?? null,
-    roundOrder: submission?.roundOrder ?? null,
-    roundTrigger: submission?.roundTrigger ?? null,
+    roundOrder: round,
+    roundTrigger: turn.roundTrigger ?? turn.product?.roundTrigger ?? null,
     tasks,
-    modelCalls: tasks.filter((entry) => entry.fallback === false).length,
+    // source=program is a program decision even when fallback=false; only a
+    // source=model (or, without source, fallback=false) is a model answer.
+    modelCalls: tasks.filter((entry) => (entry.source ? entry.source === 'model' : entry.fallback === false)).length,
     fallbacks: tasks.filter((entry) => entry.fallback === true).length,
     errors: tasks.filter((entry) => entry.error).map((entry) => entry.error),
     // Program lines the page prints when a group member does not act.
@@ -90,14 +102,26 @@ const SAMPLE = {
       text: '芬格尔把电池抛给你，自己退到门边。',
       submission: { roundOrder: ['lin', 'tang', 'shen', 'lu', 'zhou', 'fingel', 'nono'], roundTrigger: 'player' },
     },
+    {
+      turn: 3, input: '我把护目镜戴好。',
+      console: [],
+      product: {
+        roundOrder: ['lin', 'tang', 'shen', 'lu', 'zhou', 'fingel', 'nono'],
+        roundTrigger: 'player',
+        actions: [
+          { task: 'action', key: 'lu', ms: 0, fallback: false, source: 'program', error: null },
+        ],
+      },
+      text: '你戴上护目镜。',
+    },
   ],
 };
 
 if (process.argv.includes('--self-test')) {
   const report = summarize(SAMPLE);
   const expected = {
-    turns: 2,
-    actionFamilyCalls: 7,
+    turns: 3,
+    actionFamilyCalls: 8,
     modelAnswers: 6,
     fallbacks: 1,
     orderRecorded: true,
