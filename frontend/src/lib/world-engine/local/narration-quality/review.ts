@@ -464,9 +464,12 @@ export function reviewNarration(args: {
   }
 
   // ------------------------------------------------------------ positions
+  /** A slot id (`西侧服务巷/slot_wall`) is a spot inside the place; naming the
+   * place itself is consistent. */
+  const basePlace = (value: string | null): string | null => (value ? value.split('/')[0].trim() : null);
   for (const sentence of sentences) {
     for (const person of Object.values(projection.people)) {
-      const settled = person.positionAfter ?? person.positionBefore;
+      const settled = basePlace(person.positionAfter ?? person.positionBefore);
       if (!settled) continue;
       if (!mentions(sentence.narration, person.name, names)) continue;
       for (const place of Object.keys(projection.places)) {
@@ -646,6 +649,48 @@ export function reviewNarration(args: {
       `${change.name}: new personality 「${change.text}」 is not narrated`, [change.text], [change.id]));
   }
 
+  // A settled trait belongs to its person. Writing P's trait onto Q is a fact
+  // error even when the words are copied verbatim from the state.
+  {
+    const owners = new Map<string, Set<string>>();
+    for (const [name, person] of Object.entries(projection.people)) {
+      for (const trait of person.personalityAfter) {
+        if (trait.length < 4) continue;
+        const set = owners.get(trait) ?? new Set<string>();
+        set.add(name);
+        owners.set(trait, set);
+      }
+    }
+    const foreign = (name: string, trait: string): boolean => {
+      if (!owners.has(trait) || owners.get(trait)!.has(name)) return false;
+      return !(projection.people[name]?.personalityAfter ?? []).some((own) => own.includes(trait) || trait.includes(own));
+    };
+    for (const sentence of sentences) {
+      const narration = sentence.narration;
+      for (const name of Object.keys(projection.people)) {
+        for (const hit of nameHits(narration, [name])) {
+          const window = narration.slice(hit.index, hit.index + name.length + 24);
+          if (!/的个性(?:是|就是|偏向|属于)|的性格(?:是|就是|偏向)/u.test(window)) continue;
+          for (const [trait, who] of owners) {
+            if (!foreign(name, trait)) continue;
+            if (!sharesRun(window, trait, 4)) continue;
+            findings.push(finding(ctx, 'fact.trait_misattribution', sentence.text,
+              `${name} is given 「${trait}」, which belongs to ${[...who].join('/')}`,
+              [trait], [`trait:${[...who][0]}:${trait}`]));
+          }
+        }
+      }
+      // Copying several settled traits into one sentence is a field recital even
+      // when each owner is right.
+      const copied = [...owners.keys()].filter((trait) => sharesRun(narration, trait, 4));
+      if (copied.length >= 2) {
+        findings.push(finding(ctx, 'review.personality_recital', sentence.text,
+          `the sentence copies ${copied.length} settled personality strings; whether the behaviour is shown or only recited needs reading`,
+          copied, []));
+      }
+    }
+  }
+
   // Track the last person named before each sentence so a bare pronoun can be
   // read as that person when only one candidate exists.
   const lastPersonBefore = new Map<number, string | null>();
@@ -657,11 +702,42 @@ export function reviewNarration(args: {
       if (hits.length) lastPerson = hits[hits.length - 1].name;
     });
   }
-  const refersTo = (sentenceText: string, index: number, personName: string): boolean => {
+  const refersTo = (sentenceText: string, index: number, personName: string, strict = false): boolean => {
     if (sentenceText.includes(personName)) return true;
-    if (projection.viewpoint === personName && !nameHits(sentenceText, names, Object.keys(projection.people)).length) return true;
+    if (!strict && projection.viewpoint === personName && !nameHits(sentenceText, names, Object.keys(projection.people)).length) return true;
     return /(他|她)/u.test(sentenceText) && lastPersonBefore.get(index) === personName;
   };
+
+  // A settled look that this turn removed must not reappear as current.
+  {
+    const PAST = /(从前|原先|先前|早先|原来|以前|原本|曾|旧|本来|修好|补上|不再|没有|没再|漏过|过去)/u;
+    // A removal is a transition: showing the earlier value and then the change
+    // is allowed; only presenting the removed value as still current is an error.
+    const TRANSITION = /(干|空|净|见底|没|少|浅|淡|消失|散|补|垫|修|换|擦|扫|倒|喝|收|合|关|灭|停)/gu;
+    for (const removed of projection.appearanceRemoved) {
+      if (removed.text.length < 4) continue;
+      for (const [index, sentence] of sentences.entries()) {
+        if (PAST.test(sentence.narration)) continue;
+        const size = Math.min(6, removed.text.length);
+        let fragmentAt = -1;
+        for (let at = 0; at + size <= removed.text.length; at += 1) {
+          const fragment = removed.text.slice(at, at + size);
+          const found = sentence.narration.indexOf(fragment);
+          if (found >= 0) { fragmentAt = found; break; }
+        }
+        if (fragmentAt < 0) continue;
+        // Old value then a change (water that decreases, a seam that dries) is a
+        // transition; the removed value after the change is a contradiction.
+        const sentenceAt = text.indexOf(sentence.text);
+        const absolute = sentenceAt >= 0 ? sentenceAt + Math.max(0, fragmentAt) : -1;
+        const after = absolute >= 0 && [...text.slice(absolute).matchAll(TRANSITION)].some((match) => (match.index ?? 0) > 0);
+        if (after) continue;
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${removed.entity}: 「${removed.text}」 was removed this turn but is narrated as still true`,
+          [removed.text], [removed.id]));
+      }
+    }
+  }
 
   // ---------------------------------------------------------------- items
   const itemStateCovered = new Set<string>();
@@ -985,7 +1061,7 @@ export function reviewNarration(args: {
         return null;
       };
       for (const [personName, person] of Object.entries(projection.people)) {
-        const settledPlace = person.positionAfter ?? person.positionBefore;
+        const settledPlace = basePlace(person.positionAfter ?? person.positionBefore);
         if (!settledPlace) continue;
         const direction = /(?:在|站在|走到|来到|到了)(东|西|南|北)侧/u.exec(narration);
         if (direction && /^[东西南北中]/u.test(settledPlace) && settledPlace[0] !== direction[1]
@@ -1022,8 +1098,15 @@ export function reviewNarration(args: {
     }
     // A body mark (red weal, blood, bruise) on a named body part must exist in
     // the settled appearance; otherwise it is a new physical fact.
+    // A settled look in the sentence identifies whose body is described. When
+    // none is present, the mark needs an explicit name or pronoun: the
+    // viewpoint fallback would pin a copied description of someone else onto
+    // the player.
+    const namedHere = nameHits(narration, names, Object.keys(projection.people)).length > 0;
+    const lookOwner = namedHere ? null : (Object.entries(projection.people).find(([, person]) =>
+      person.appearanceAfter.some((look) => look.length >= 3 && sharesRun(narration, look, 3)))?.[0] ?? null);
     for (const [personName, person] of Object.entries(projection.people)) {
-      if (!refersTo(narration, sentences.indexOf(sentence), personName)) continue;
+      if (lookOwner ? lookOwner !== personName : !refersTo(narration, sentences.indexOf(sentence), personName, namedHere)) continue;
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
@@ -1162,7 +1245,23 @@ export function reviewNarration(args: {
     const hit = sentences.find((entry) => /。。|，，|、、|；；|：：/u.test(entry.text) || entry.text === '。');
     findings.push(finding(ctx, 'style.punctuation', hit?.text ?? text.slice(0, 40), 'duplicated punctuation', []));
   }
+  let firstPersonSentence: string | null = null;
   for (const sentence of sentences) {
+    const narration = sentence.narration;
+    const spoken = /(说|问|答|道|喊|叫|想|觉得|认为|念叨|嘟囔)[^，。！？\s]{0,4}我/u.test(narration);
+    if (!spoken && /(^|[，。！？；：、\s])我(?!们)/u.test(narration)) firstPersonSentence ??= sentence.text;
+    // Name + several settled looks in one breath is the state panel written as
+    // prose: the character is introduced by reciting the appearance fields.
+    for (const [name, person] of Object.entries(projection.people)) {
+      if (!refersTo(sentence.text, sentences.indexOf(sentence), name)) continue;
+      const looks = person.appearanceAfter.filter((look) => look.length >= 4 && sharesRun(narration, look, 3));
+      const posture = /(站在|坐在|靠在|蹲在|立在|在那里)/u.test(narration);
+      if (looks.length >= 3 || (looks.length >= 2 && posture && projection.viewpoint === name)) {
+        findings.push(finding(ctx, 'style.appearance_recital', sentence.text,
+          `${name}: ${looks.length} settled appearance strings are listed in one sentence`,
+          looks, []));
+      }
+    }
     const field = FIELD_WORDS.find((word) => sentence.narration.includes(word));
     if (field && /(精神|理智|任务|个性|外貌|状态)/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.field_sentence', sentence.text,
@@ -1175,9 +1274,13 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'style.roster_recital', sentence.text,
         `recites ${new Set(people).size} people in one place statement`, []));
     }
-    if (/这一回合|本回合|回合结算|本组结算|结算未能确认|未能确认新的结果|系统|状态已|按已结算|程序成文|降级成文/u.test(sentence.text)) {
+    if (/【[^】]{0,6}事实】|本拍|这一回合|本回合|回合结算|本组结算|结算未能确认|未能确认新的结果|系统|状态已|按已结算|程序成文|降级成文/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.meta', sentence.text, 'meta/game-system wording inside prose', []));
     }
+  }
+  if (firstPersonSentence !== null) {
+    findings.push(finding(ctx, 'style.perspective', firstPersonSentence,
+      'first-person prose outside dialogue; the viewpoint is a named person and the rows are third-person', []));
   }
   const bare = text.replace(/[\s。．，,、；;：:！!？?…·.．"“”‘’]/gu, '');
   if (charCount > 0 && bare.length === 0) {
@@ -1414,6 +1517,11 @@ export function reviewNarration(args: {
     factsClean: counts.fact === 0,
     readable: blockingStyles.length === 0,
     blockingStyles,
+    perspective: {
+      viewpoint: projection.viewpoint,
+      firstPerson: firstPersonSentence !== null,
+      qualified: firstPersonSentence === null,
+    },
     fallbackSuspicion,
     reviewer: 'ai-independent-checker-v1',
     disclaimer: 'Automated sentence-scoped review. `review` and `style` items are not passes; only a human reading decides quality. No human signature is implied.',

@@ -32,6 +32,7 @@ export type FindingKind =
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'
   | 'fact.wrong_place'
+  | 'fact.trait_misattribution'
   | 'fact.time_added'
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
@@ -63,6 +64,8 @@ export type FindingKind =
   | 'style.premature_closure'
   | 'style.meta'
   | 'style.placeholder'
+  | 'style.appearance_recital'
+  | 'style.perspective'
   // Undecidable.
   | 'review.unbound'
   | 'review.pronoun'
@@ -73,6 +76,7 @@ export type FindingKind =
   | 'review.trait_as_event'
   | 'review.unseen_entity'
   | 'review.possession'
+  | 'review.personality_recital'
   | 'review.promise_in_dialogue'
   | 'review.natural_sanity'
   | 'review.tone';
@@ -148,6 +152,13 @@ export interface ReviewReport {
   /** Metadata check for integration: a text made only of settled-fact lines,
    * with no dialogue, is what a program fallback emits. It must not be labelled
    * model prose without per-segment metadata. */
+  /** Narration voice. The product's rows are third-person with a named
+   * viewpoint; first-person prose cannot be mapped back to that viewpoint. */
+  perspective: {
+    viewpoint: string | null;
+    firstPerson: boolean;
+    qualified: boolean;
+  };
   fallbackSuspicion: {
     suspected: boolean;
     factOnlySentences: number;

@@ -11,8 +11,15 @@
  *
  * Output: a per-turn table on stdout and a JSON summary next to the input,
  * `<name>.layers.json`. Missing layers are reported as `null`, never guessed.
+ *
+ * A derived file is bound to the exact base bytes: it records `runId`,
+ * `baseSha256` and `baseBytes`. Two runs can share a file name (09 rewrites
+ * `09-one-legal-turn.json`); a derived file from another run must not be read
+ * as this one's. If the name is taken by a different base, the summary goes to
+ * `<name>.layers.<sha8>.json` instead of overwriting it.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { basename, dirname, join } from 'node:path';
 
 const LAYERS = ['raw', 'cleaned', 'pruned', 'shown'];
@@ -74,12 +81,19 @@ function auditTurn(turn) {
   };
 }
 
-function audit(file) {
-  const raw = JSON.parse(readFileSync(file, 'utf8'));
+function audit(file, force) {
+  const bytes = readFileSync(file);
+  const baseSha256 = createHash('sha256').update(bytes).digest('hex');
+  const raw = JSON.parse(bytes.toString('utf8'));
   const turns = Array.isArray(raw) ? raw : raw.turns ?? [];
   const records = turns.map(auditTurn);
   const summary = {
     file,
+    runId: raw.runId ?? raw.id ?? null,
+    baseSha256,
+    baseBytes: bytes.length,
+    startedAt: raw.startedAt ?? null,
+    derivedAt: new Date().toISOString(),
     kind: raw.kind ?? null,
     status: raw.status ?? null,
     updatedAt: raw.updatedAt ?? null,
@@ -97,6 +111,7 @@ function audit(file) {
 const args = process.argv.slice(2);
 const batchFlag = args.indexOf('--batch');
 const batchOut = batchFlag >= 0 ? args[batchFlag + 1] : null;
+const force = args.includes('--force');
 const files = args.filter((arg, index) => !(arg.startsWith('--')) && (batchFlag < 0 || index !== batchFlag + 1));
 if (!files.length) {
   console.error('usage: node frontend/scripts/narration-quality/audit-evidence.mjs <evidence.json> [...]');
@@ -104,7 +119,7 @@ if (!files.length) {
 }
 const batchRows = [];
 for (const file of files) {
-  const { summary, out } = audit(file);
+  const { summary, out } = audit(file, force);
   console.log(`\n== ${file}`);
   console.log(`status=${summary.status} turns=${summary.turns} program_fallback=${summary.programFallbackTurns} unknown=${summary.unknownSourceTurns} missing_layers=${summary.missingLayerTurns}`);
   for (const record of summary.records) {
