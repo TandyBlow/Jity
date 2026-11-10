@@ -267,9 +267,14 @@ run-qwen25-1.5b-all.json, run-qwen25-1.5b-dev-r3.json, via09-free-day.json}`；
 
 第二条是 03 侧的两个问题，证据已写进 `team-08-runtime.json` 的 `for03.findings`：
 
-1. 他们的 verifier 把“已提交移动的执行者（林川）”当成不在场景里的未授权实体；
-2. 他们的提示没有让 1.7B 写出经过时间——参考提示把时长放进最后一句要求后
-   才稳定。
+1. `verify.ts:89-97` 的 `licensedNames` 只收了 `projection.characters/items/place/
+   positions` 和事实的 `from/to`，没有收“已提交移动的执行者”。林川移动到门厅后
+   不在 `projection.characters`，于是被当成未授权人名。最省事的修法：
+   `projection.ts:128` 给 moved 事实加 `entity: String(fact.name)`，
+   `verify.ts` 把 `projection.facts.map((fact) => fact.entity)` 并入
+   `licensedNames`；已提交事实的执行者按定义是授权的。
+2. 他们的提示把【时间】放在前面，1.7B 真实运行里没写。参考提示把时长放进最后
+   一句要求（“正文里必须出现「2分钟」”）之后，dev 与 free-day 都稳定写出。
 
 本线没有改 03 的代码；原文与 prompt 在 `.local/candidate-model/run-03-move*.json`。
 
