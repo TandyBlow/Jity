@@ -1554,9 +1554,25 @@ describe('beats never show a prompt label or an invented sense', () => {
     ]);
     const result = await generateCommittedNarration({
       engine, committed: packet(povAt), inputText: '【正文】', priorText: null,
-      policy: { ...basePolicy, sceneMode: 'beats', scene, targetChars: 80, minChars: 40 },
+      policy: { ...basePolicy, mode: 'beats', scene, targetChars: 80, minChars: 40 },
     });
     expect(result.text ?? '').not.toContain('【环境】');
     expect(result.text ?? '').toContain('墙皮');
+  });
+});
+
+describe('a quiet point asks only for licensed content', () => {
+  test('the quiet beat directive does not ask for light, sound or a new action', () => {
+    const committed = packet(povAt);
+    const beats = planBeats({
+      committed,
+      ledger: buildLedger(committed, '【正文】', null, basePolicy),
+      policy: basePolicy,
+      scene: { location: '走廊', present: [{ name: '林川' }], objects: [{ name: '盒子', note: '盒盖关闭' }] },
+    });
+    const open = beats.find((beat) => beat.id === 'scene-open')!;
+    expect(open.directive).not.toContain('写三到四句眼前的场景');
+    expect(open.directive).not.toContain('小动作');
+    expect(open.directive).toContain('不要写光、声音、气味');
   });
 });
