@@ -573,6 +573,18 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 `chain-10.ts`（20 回合，0 复读）、`review-01-gate.ts`（01 的检查器 0/20 regenerate）、
 `fallback-same-input.ts`（02 复核过的真实页面兜底回合，同输入对照）。
 
+### 补丁交接口（2026-11-11）
+
+四个补丁同时放在 06 的公共收件箱 results/product/patches/：
+
+- `07-progress-sync.patch`
+- `07-checkpoint.patch`
+- `07-page-sync.patch`
+- `07-prose.patch`（可选，成文模块）
+
+`07-manifest.json` 记录 apply 顺序、每个补丁的 sha256、验证过的 06 head 和结果。
+工作树里的 design/parallel-handoff/ 保留同内容副本。
+
 ### 给 06：成文补丁（可选，但页面若用程序兜底应升级）
 
 `design/parallel-handoff/07-prose-for-06.patch` 把 06 树里 `b4c9ea5b` 之后没再
