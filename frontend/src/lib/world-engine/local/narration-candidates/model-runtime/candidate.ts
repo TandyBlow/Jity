@@ -13,7 +13,7 @@
  * caller receives `accepted: false` and the issues, so a page can show the
  * draft as unverified or fall back on its own terms.
  */
-import { IncompleteGenerationError, isAbortError, type CompletionEvidence } from '../../../runtime/engine';
+import { IncompleteGenerationError, type CompletionEvidence } from '../../../runtime/engine';
 import { alignNarration } from '../../../runtime/narration-alignment';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import {
