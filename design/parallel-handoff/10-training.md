@@ -58,7 +58,9 @@ serializer 的逐字节输出必须保留给旧权重；新格式另立版本。
 
 - 本目录 golden：`d699a69734127c4ea763c1ba53dca1f8c5669d955887c6830d97aa177a35b2fc`；
 - 01 的 `result-samples-v1.json`：`c4a05f7270c90e497e353932f53653fd9e2d9dd395eeea2c4a8937bba206a5a1`；
-- 逐字节相同 1/30（只有 `row-0008` 无变化行），其余 29 行不同。
+- 逐字节相同 1/30（只有 `row-0008` 无变化行），其余 29 行不同；
+- 两边 projection 版本也不同：本目录 `narration-result-view-v2`，01 的 meta 是
+  `narration-projection-v1`。先对齐 projection，再谈 serializer 字节。
 
 具体差异（按影响排序）：
 
