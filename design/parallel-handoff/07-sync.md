@@ -156,6 +156,49 @@ const sync = createProductSync<LocalGameSnapshot>({
    自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
    `diverged` 时提示选择，不要自动覆盖。
 
+### 给 06 的最小改动清单（页面不动归属，只贴做法）
+
+现在 `page.tsx` 里的这一段：
+
+```ts
+const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase });
+syncRef.current = sync;
+void sync.flush().then(...)
+```
+
+需要补成下面四步（`storage` 是必须的，其余三步决定产品行为）：
+
+```ts
+const sync = createProductSync<LocalGameSnapshot>({
+  store,
+  worldId: world.worldId,
+  baseUrl: syncBase,
+  storage: window.localStorage,        // 离线队列 + 上次已知 head
+});
+syncRef.current = sync;
+
+// 1) 没有本地存档时，先拉远端 head；有本地存档时不覆盖本地
+const restored = await sync.restore();
+if (restored.source === 'remote' && restored.snapshot) {
+  await store.save(world.worldId, restored.snapshot);   // 或者走 session.open
+}
+if (restored.conflict) showConflict(restored.conflict); // 两份都读出来给玩家
+
+// 2) 开局与重连都 flush（幂等）
+const flushed = await sync.flush();
+if (flushed.conflictList.length) showConflict(flushed.conflictList[0]);
+
+// 3) 提示“另一台设备更新了”
+const status = await sync.status();
+if (status.relation === 'remote-ahead') setSyncLabel('另一台设备有更新的进度：刷新可载入');
+
+// 4) 玩家点选后
+await sync.choose('keep-remote', conflict);
+```
+
+`product-wiring.test.ts` 已经把“少传 storage”的后果固定成测试：断网保存后刷新，
+队列为空、base 为 null，这一笔传不上去，重连时还会把已有世界当新世界。
+
 服务端两种跑法，二选一：
 
 - 嵌进现有后端：`app.include_router(local_progress_router)`（单独前缀
