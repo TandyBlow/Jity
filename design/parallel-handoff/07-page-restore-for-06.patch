@@ -1,5 +1,5 @@
 diff --git a/frontend/src/app/world-local/page.tsx b/frontend/src/app/world-local/page.tsx
-index 8997850b..fde83f62 100644
+index 690bf12e..8fdd2462 100644
 --- a/frontend/src/app/world-local/page.tsx
 +++ b/frontend/src/app/world-local/page.tsx
 @@ -13,6 +13,7 @@ import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore
@@ -98,7 +98,7 @@ index 8997850b..fde83f62 100644
          setSyncLabel(outcome?.status === 'synced' ? '已同步'
            : outcome?.status === 'queued' ? '已存本地，等待联网同步'
            : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
-@@ -620,8 +673,10 @@ export default function WorldLocalPage() {
+@@ -620,10 +673,13 @@ export default function WorldLocalPage() {
          const store = await openLocalProgressStore();
          storeRef.current = store;
          const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
@@ -110,8 +110,11 @@ index 8997850b..fde83f62 100644
 +        if (sync) {
            syncRef.current = sync;
            void sync.flush().then((outcome) => {
++            if (outcome.conflictList.length > 0) setConflict(outcome.conflictList[0]);
              if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
-@@ -639,7 +694,7 @@ export default function WorldLocalPage() {
+           }).catch(() => undefined);
+         }
+@@ -639,7 +695,7 @@ export default function WorldLocalPage() {
          let session: LocalGameSession;
          let restored = false;
          try {
@@ -120,7 +123,7 @@ index 8997850b..fde83f62 100644
            restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
          } catch (openError) {
            if (openError instanceof SessionLeaseHeldError) {
-@@ -652,6 +707,13 @@ export default function WorldLocalPage() {
+@@ -652,6 +708,13 @@ export default function WorldLocalPage() {
              setError('另一个标签页正在使用这个存档。可以等它释放后继续，或在这个标签页接管。');
              return;
            }
@@ -134,7 +137,7 @@ index 8997850b..fde83f62 100644
            console.error('[world-local] saved progress could not be opened', openError);
            const record = await store.load(world.worldId).catch(() => null);
            let archived = false;
-@@ -993,6 +1055,13 @@ export default function WorldLocalPage() {
+@@ -1010,6 +1073,13 @@ export default function WorldLocalPage() {
              </div>
            </div>
  
