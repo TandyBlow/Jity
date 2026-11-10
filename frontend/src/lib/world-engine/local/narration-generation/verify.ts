@@ -527,6 +527,15 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // A distant landmark is background, not an event: the page's own roster
     // carries places the scene input does not spell out, and failing a scene
     // for naming 钟楼 while standing in the alley is a false rejection.
+    // A visible object of the scene is background too: the projector put it in
+    // front of the viewpoint, so naming it cannot be a new world fact even when
+    // the serialized text does not spell out where it lies. 09's 21c3 turn was
+    // rejected for «诺诺的红色识别带», an item worn by a present character.
+    const sceneNames = (policy.scene?.objects ?? []).map((object) => object.name);
+    if (sceneNames.includes(name)) {
+      issues.push(soft('unverified_sentence', attempt, `visible object ${name} named in passing`, undefined));
+      continue;
+    }
     if ((policy.locations ?? []).includes(name)) {
       issues.push(soft('unverified_sentence', attempt, `distant place ${name} named in passing`, undefined));
       continue;

@@ -172,3 +172,22 @@ describe('product regressions: the previous ending must not come back', () => {
     expect(kinds).toContain('echo_prior');
   });
 });
+
+describe('product regressions: a worn item of a present character', () => {
+  // 09 21c3 rejected a model passage for «诺诺的红色识别带» with
+  // unprojected_entity, although the band is worn by a character in the scene.
+  test('naming a visible object of the scene is background, not a new entity', async () => {
+    const policy: NarrationPolicy = {
+      ...quietPolicy,
+      knownEntities: [...(quietPolicy.knownEntities ?? []), '诺诺的红色识别带'],
+      scene: { ...quietPolicy.scene!, objects: [...(quietPolicy.scene?.objects ?? []), { name: '诺诺的红色识别带' }] },
+    };
+    const text = '诺诺站在巷口，红色识别带缠在左臂，她没有说话。一分钟过去，路明非还站在原地。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy,
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard'));
+    expect(hard.map((issue) => issue.kind)).not.toContain('unlicensed_entity');
+  });
+});
