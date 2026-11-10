@@ -1,7 +1,7 @@
 # Narration candidate selection wiring (lane 06 shipping).
 #
 # Inputs (sha256) — regenerate when the live files change:
-#   frontend/src/lib/world-engine/local/game-model.ts  7494654c61891dd24ecd193bde30927e52431d1eb1fc6fff4b02ba7cb158c2fc
+#   frontend/src/lib/world-engine/local/game-model.ts  ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35
 # Prerequisite: lane 02 beats commit 211fd463 (narration-generation beats +
 # trained-input). New module files are additions from lane 06.
 #
@@ -10,11 +10,146 @@
 # in the LocalGameModel options (page.tsx). The default `auto` stays on the
 # existing in-model writer until a candidate has accepted real-model prose.
 
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts
+@@ -0,0 +1,129 @@
++/** C-route adaptation: lane 04's constrained fact-to-prose candidate.
++ *
++ * 04 owns the fact skeleton, beat plan and per-beat verification; this adapter
++ * only passes the settled facts, the read-only scene hints and the caller's
++ * limits, then maps the candidate's own verdict back.
++ *
++ * Two honest grades:
++ *   - `candidate`: at least one beat was written by a model (or an injected
++ *     composer) and every beat passed verification.
++ *   - `program`: every beat was written by the program realizer. The text is
++ *     fact-grounded and verified, but it is a downgrade, not model prose; the
++ *     page must label it.
++ *
++ * The facts-only packet is used on purpose. The full-state packet would require
++ * a `get_state` anchor (version/digest/previousPointId) that the narration call
++ * does not carry; inventing one would be a second truth. Scene detail comes
++ * from the caller's already-settled `BeatSceneContext`.
++ */
++import { generateCandidate as generateConstrained } from '../constrained';
++import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
++
++const PROGRAM_COMPOSERS = new Set(['program', 'fallback']);
++
++function sceneHints(prepared: PreparedNarration) {
++  const scene = prepared.scene;
++  const presentNotes: Record<string, string> = {};
++  for (const person of scene.present ?? []) {
++    if (person.note) presentNotes[person.name] = person.note;
++  }
++  const objectNotes: Record<string, string> = {};
++  for (const object of scene.objects ?? []) {
++    if (object.note) objectNotes[object.name] = object.note;
++  }
++  return {
++    placeNote: [scene.location, ...(scene.placeNotes ?? [])].filter(Boolean).join('：'),
++    presentNotes,
++    objectNotes,
++    ...(scene.previousAction ? { previousAction: scene.previousAction } : {}),
++  };
++}
++
++export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
++  id: 'constrained',
++  route: 'constrained',
++  version: 'constrained-candidate-v1',
++  label: '04/07 · constrained fact-to-prose',
++  requires: {
++    modules: ['local/narration-candidates/constrained'],
++    template: 'program realizer (no model) unless mode=model',
++  },
++  productDefault: true,
++  availability(point, prepared) {
++    // The world-opening narration is a one-off scene the player reads first;
++    // keep the existing in-model writer there. Program prose starts with the
++    // first settled round.
++    if (!point.before) return { available: false, reason: 'root_point' };
++    if (!prepared.facts.facts.some((fact) => fact.kind === 'at' || fact.kind === 'moved')) {
++      return { available: false, reason: 'facts_packet_without_scene' };
++    }
++    return { available: true, reason: null };
++  },
++  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
++    const mode = runPolicy?.mode === 'model' ? 'model' : 'program';
++    const result = await generateConstrained({
++      engine,
++      committed: {
++        anchor: prepared.facts.anchor,
++        facts: prepared.facts.facts,
++        timeAdvance: point.delta.timeAdvance ?? null,
++        inputText: prepared.inputText,
++        priorText: point.priorText ?? null,
++      },
++      inputText: prepared.inputText,
++      priorText: point.priorText ?? null,
++      signal: point.signal,
++      onProgress: (progress) => onProgress?.({
++        text: progress.text, elapsedMs: progress.elapsedMs, verified: progress.verified, attempt: 0,
++      }),
++      policy: {
++        mode,
++        viewpointId: prepared.viewpointId,
++        scene: sceneHints(prepared),
++        resultsText: point.settledResults?.length ? point.settledResults.join('；') : null,
++        // The program realizer states one sentence per settled fact; a thin
++        // point (time + presence) is short on purpose. 40 keeps it readable
++        // without padding it with invented detail.
++        minChars: 40,
++        maxChars: 500,
++        requireTime: prepared.policy.requireTime ?? false,
++        sanityStyle: 'number',
++        model: {
++          maxTokensPerBeat: prepared.policy.maxTokens ?? 160,
++          temperature: prepared.policy.temperature ?? 0.45,
++          timeoutMs: prepared.policy.timeoutMs ?? 90_000,
++          maxAttempts: 2,
++        },
++      },
++    });
++    const modelComposed = result.composers.some((composer) => !PROGRAM_COMPOSERS.has(composer));
++    const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
++    const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
++    return {
++      candidateId: 'constrained',
++      route: 'constrained',
++      text: result.text,
++      accepted: result.accepted && result.text.trim().length > 0,
++      grade,
++      status: result.status === 'rejected' ? 'rejected' : result.status,
++      reason: result.accepted ? null : result.status === 'cancelled' ? 'cancelled' : `rejected:${hard.join('+') || 'unknown'}`,
++      issues: result.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
++      attempts: result.rawAttempts.length,
++      promptChars: result.rawAttempts.reduce((sum, beat) => sum + (beat.prompt?.length ?? 0), 0),
++      timings: {
++        totalMs: result.timings.totalMs,
++        attemptMs: result.timings.beatsMs ?? [],
++        firstTokenMs: result.timings.firstTextMs ?? null,
++      },
++      strategyVersion: result.strategyVersion,
++      allFellBack: !modelComposed,
++      detail: {
++        composers: result.composers,
++        coverage: result.verification.coverage,
++        unverifiedSentences: result.verification.unverifiedSentences,
++        hiddenFactIds: result.verification.hiddenFactIds,
++        plan: result.plan?.beats.map((beat) => ({ id: beat.id, kind: beat.kind, factIds: beat.factIds })) ?? null,
++      },
++    };
++  },
++};
+
 diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +/** Public entry of the narration candidate selection layer.
 + *
 + * The product integration imports only `createNarrationRunner` (and, for an
@@ -22,6 +157,7 @@ new file mode 100644
 + */
 +export { createNarrationRunner, SHIPPED_CANDIDATES, internalCandidateOverride } from './runner';
 +export { TRAINED_CANDIDATE } from './trained';
++export { CONSTRAINED_CANDIDATE } from './constrained';
 +export {
 +  narrationPolicy, narrationScene, prepareNarration, projectNarrationFacts, serializeNarrationInput,
 +} from './projection';
@@ -35,7 +171,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts
-@@ -0,0 +1,279 @@
+@@ -0,0 +1,281 @@
 +/** Read-only projection of one settled point into candidate-ready material.
 + *
 + * Three outputs come from the SAME sealed records (`before`, the point's
@@ -269,8 +405,10 @@ new file mode 100644
 +    licensedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
 +    time,
 +    requireTime: Boolean(time && time.boundary === 'elapsed' && time.duration.amount > 0),
-+    minChars: limits.minChars ?? 120,
-+    targetChars: limits.targetChars ?? 240,
++    // Lane 02's short-scene corpus counts 60–149 chars as a complete scene;
++    // forcing 120 rejected faithful short scenes on the product world.
++    minChars: limits.minChars ?? 60,
++    targetChars: limits.targetChars ?? 200,
 +    maxTokens: limits.maxTokens ?? 200,
 +    maxTokensCeiling: limits.maxTokensCeiling ?? 500,
 +    temperature: limits.temperature ?? 0.7,
@@ -320,7 +458,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,152 @@
 +/** Narration candidate selection for the product page.
 + *
 + * The page sees ONE decision: did a candidate accept a scene for this point?
@@ -344,10 +482,11 @@ new file mode 100644
 +} from './types';
 +import { prepareNarration } from './projection';
 +import { TRAINED_CANDIDATE } from './trained';
++import { CONSTRAINED_CANDIDATE } from './constrained';
 +
 +/** Candidates that exist in this tree. A/C adapters are added here when their
 + * entry modules land; nothing else in the product has to change. */
-+export const SHIPPED_CANDIDATES: NarrationCandidate[] = [TRAINED_CANDIDATE];
++export const SHIPPED_CANDIDATES: NarrationCandidate[] = [TRAINED_CANDIDATE, CONSTRAINED_CANDIDATE];
 +
 +/** QA override. Internal: the page never renders or documents this name. */
 +export function internalCandidateOverride(): string | null {
@@ -420,7 +559,10 @@ new file mode 100644
 +        }
 +        let result: CandidateNarrationResult;
 +        try {
-+          result = await candidate.run({ engine: options.engine, point, prepared, onProgress });
++          result = await candidate.run({
++            engine: options.engine, point, prepared, onProgress,
++            ...(candidate.route === 'constrained' ? { policy: { mode: options.constrainedMode ?? 'program' } } : {}),
++          });
 +        } catch (error) {
 +          problems.push(`error:${candidate.id}|${printable(error)}`);
 +          continue;
@@ -433,7 +575,7 @@ new file mode 100644
 +            route: result.route,
 +            text: result.text,
 +            accepted: true,
-+            grade: 'candidate',
++            grade: result.grade === 'program' ? 'program' : 'candidate',
 +            issues: result.issues,
 +            timings: result.timings,
 +            promptChars: result.promptChars,
@@ -470,231 +612,11 @@ new file mode 100644
 +  };
 +}
 
-diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/selection.test.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/selection.test.ts
-new file mode 100644
---- /dev/null
-+++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/selection.test.ts
-@@ -0,0 +1,214 @@
-+import { afterEach, describe, expect, it } from 'vitest';
-+import type { EntityDelta, TimeAdvance } from '../../../types';
-+import type { InferenceEngine } from '../../../runtime/engine';
-+import { applyDelta, tinyWorld } from '../../narration-input/test-fixtures';
-+import { TRAINED_CANDIDATE } from './trained';
-+import { createNarrationRunner, SHIPPED_CANDIDATES } from './runner';
-+import { prepareNarration } from './projection';
-+import type { NarrationCandidate, NarrationPoint } from './types';
-+
-+const TIME: TimeAdvance = { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } };
-+
-+function settledPoint(): NarrationPoint {
-+  const before = tinyWorld();
-+  const delta: Record<string, EntityDelta> = {
-+    hero: {
-+      entityId: 'hero',
-+      positionSet: { containerId: 'cellar', slotId: null, relativeTo: null },
-+      personalityChanges: [{ id: 'change_1', text: '比刚才更警惕了', supersedes: [] }],
-+      sanitySet: 46,
-+    },
-+    friend: { entityId: 'friend', tasksAchieved: ['friend_root'] },
-+  };
-+  const after = applyDelta(before, delta, TIME);
-+  return {
-+    pointId: 'p_1',
-+    before,
-+    delta: { timeAdvance: TIME, entityDeltas: delta },
-+    after,
-+    playerInput: '我跟着阿白下到地窖，顺手提上铜灯。',
-+    priorText: null,
-+  };
-+}
-+
-+function fakeEngine(answer = '阿青提着铜灯沿石阶往下走。', onCall?: () => void): InferenceEngine {
-+  return {
-+    info: { backend: 'test', modelId: 'fake' },
-+    load: async () => undefined,
-+    complete: async () => {
-+      onCall?.();
-+      return answer;
-+    },
-+    dispose: async () => undefined,
-+  };
-+}
-+
-+function fakeCandidate(overrides: Partial<NarrationCandidate> & Pick<NarrationCandidate, 'run'>): NarrationCandidate {
-+  return {
-+    id: 'trained',
-+    route: 'trained',
-+    version: 'fake-v1',
-+    label: 'fake',
-+    requires: { modules: [], template: 'none' },
-+    productDefault: true,
-+    availability: () => ({ available: true, reason: null }),
-+    ...overrides,
-+  };
-+}
-+
-+afterEach(() => {
-+  delete (globalThis as { __jityNarrationCandidate?: unknown }).__jityNarrationCandidate;
-+});
-+
-+describe('narration projection of a settled point', () => {
-+  it('copies movement, task, personality, sanity and time from the sealed records', () => {
-+    const prepared = prepareNarration(settledPoint());
-+    const kinds = prepared.facts.facts.map((fact) => `${fact.kind}:${fact.id}`);
-+    expect(kinds).toContain('moved:hero:position');
-+    expect(kinds).toContain('task_achieved:friend:task:friend_root');
-+    expect(kinds).toContain('personality_changed:hero:change:change_1');
-+    expect(kinds).toContain('sanity_changed:hero:sanity');
-+    const moved = prepared.facts.facts.find((fact) => fact.kind === 'moved');
-+    expect(moved && moved.kind === 'moved' ? [moved.from, moved.to] : null).toEqual(['大厅', '地窖']);
-+    const task = prepared.facts.facts.find((fact) => fact.kind === 'task_achieved');
-+    expect(task && task.kind === 'task_achieved' ? task.goal : null).toBe('守住大厅的门');
-+    expect(prepared.mandatoryFactIds.sort()).toEqual([
-+      'friend:task:friend_root', 'hero:change:change_1', 'hero:position', 'hero:sanity',
-+    ]);
-+  });
-+
-+  it('serializes the point with the lane-01 result renderer, not a local state dump', () => {
-+    const prepared = prepareNarration(settledPoint());
-+    expect(prepared.inputError).toBeNull();
-+    expect(prepared.inputText).toBeTruthy();
-+    expect(prepared.inputText).toContain('【正文】');
-+    expect(prepared.inputText).toContain('地窖');
-+    expect(prepared.inputText).toContain('找到父亲留下的箱子');
-+  });
-+
-+  it('builds licensing and scene material from the after-state', () => {
-+    const prepared = prepareNarration(settledPoint());
-+    expect(prepared.viewpointName).toBe('阿青');
-+    expect(prepared.policy.roster).toEqual(expect.arrayContaining(['阿青', '阿白', '阿灰']));
-+    expect(prepared.policy.requireTime).toBe(true);
-+    expect(prepared.policy.time).toEqual(TIME);
-+    expect(prepared.scene.location).toBe('地窖');
-+    expect(prepared.scene.previousAction).toBe('我跟着阿白下到地窖，顺手提上铜灯。');
-+    // A visible room item and a carried item are licensed; the cellar box is not
-+    // visible from the room the viewpoint just entered? It is: the box lives there.
-+    expect(prepared.policy.visibleEntities).toEqual(expect.arrayContaining(['木箱', '纸条']));
-+    expect(prepared.policy.visibleEntities).not.toContain('旧照片');
-+  });
-+
-+  it('reports a missing input instead of inventing one when there is no before-state', () => {
-+    const point = settledPoint();
-+    const prepared = prepareNarration({ ...point, before: null });
-+    expect(prepared.inputText).toBeNull();
-+    expect(prepared.inputError).toBe('no_before_state');
-+    expect(prepared.facts.facts.some((fact) => fact.kind === 'moved')).toBe(false);
-+  });
-+});
-+
-+describe('selection policy', () => {
-+  it('stays on the in-model path when no candidate is marked product-default', async () => {
-+    let calls = 0;
-+    const runner = createNarrationRunner({ engine: fakeEngine(undefined, () => { calls += 1; }), candidate: 'auto' });
-+    const result = await runner.generate(settledPoint());
-+    expect(result).toMatchObject({ kind: 'fallback', reason: 'no_product_candidate' });
-+    expect(calls).toBe(0);
-+    expect(SHIPPED_CANDIDATES.every((candidate) => candidate.productDefault === false)).toBe(true);
-+  });
-+
-+  it('honours the internal QA override without letting it leak into the page', () => {
-+    (globalThis as { __jityNarrationCandidate?: unknown }).__jityNarrationCandidate = 'trained';
-+    const runner = createNarrationRunner({ engine: fakeEngine(), candidate: 'builtin' });
-+    expect(runner.selection.requested).toBe('trained');
-+    expect(runner.selection.productDefault).toBeNull();
-+  });
-+
-+  it('adopts verified candidate prose and forwards its real increments', async () => {
-+    const progress: string[] = [];
-+    const runner = createNarrationRunner({
-+      engine: fakeEngine(),
-+      candidate: 'trained',
-+      candidates: [fakeCandidate({
-+        run: async ({ onProgress }) => {
-+          onProgress?.({ text: '阿青提着', elapsedMs: 10, verified: false, attempt: 0 });
-+          onProgress?.({ text: '阿青提着铜灯沿石阶往下走。', elapsedMs: 20, verified: false, attempt: 0 });
-+          return {
-+            candidateId: 'trained', route: 'trained', text: '阿青提着铜灯沿石阶往下走。', accepted: true,
-+            grade: 'candidate', status: 'accepted', reason: null, issues: [], attempts: 1, promptChars: 120,
-+            timings: { totalMs: 30, attemptMs: [30], firstTokenMs: 10 },
-+            strategyVersion: 'fake-v1', allFellBack: false,
-+          };
-+        },
-+      })],
-+    });
-+    const result = await runner.generate(settledPoint(), (state) => progress.push(state.text));
-+    expect(result).toMatchObject({
-+      kind: 'adopted', candidateId: 'trained', text: '阿青提着铜灯沿石阶往下走。', grade: 'candidate',
-+    });
-+    expect(progress).toEqual(['阿青提着', '阿青提着铜灯沿石阶往下走。']);
-+  });
-+
-+  it('never adopts a rejected draft and keeps the reason for the fallback record', async () => {
-+    const runner = createNarrationRunner({
-+      engine: fakeEngine(),
-+      candidates: [fakeCandidate({
-+        run: async () => ({
-+          candidateId: 'trained', route: 'trained', text: '阿青连人带灯摔进了雕像里。', accepted: false,
-+          grade: 'candidate_unverified', status: 'rejected', reason: 'rejected:added_event', issues: [{ kind: 'added_event', severity: 'hard' }],
-+          attempts: 2, promptChars: 240, timings: { totalMs: 60, attemptMs: [30, 30], firstTokenMs: 8 },
-+          strategyVersion: 'fake-v1', allFellBack: false,
-+        }),
-+      })],
-+      candidate: 'trained',
-+    });
-+    const result = await runner.generate(settledPoint());
-+    expect(result.kind).toBe('fallback');
-+    if (result.kind === 'fallback') {
-+      expect(result.reason).toContain('rejected:trained');
-+      expect(result.reason).toContain('added_event');
-+      expect(result.grade).toBe('program_fallback');
-+      expect(result.notice).toBeNull();
-+    }
-+  });
-+
-+  it('survives a candidate that throws and records the error', async () => {
-+    const runner = createNarrationRunner({
-+      engine: fakeEngine(),
-+      candidates: [fakeCandidate({ run: async () => { throw new Error('boom'); } })],
-+      candidate: 'trained',
-+    });
-+    const result = await runner.generate(settledPoint());
-+    expect(result).toMatchObject({ kind: 'fallback' });
-+    if (result.kind === 'fallback') expect(result.reason).toContain('error:trained|Error:boom');
-+  });
-+
-+  it('skips the shipped candidate when the serialized input is unavailable', async () => {
-+    const runner = createNarrationRunner({ engine: fakeEngine(), candidates: [TRAINED_CANDIDATE], candidate: 'trained' });
-+    const point = { ...settledPoint(), before: null };
-+    const result = await runner.generate(point);
-+    expect(result.kind).toBe('fallback');
-+    if (result.kind === 'fallback') expect(result.reason).toContain('unavailable:trained|input_unavailable:no_before_state');
-+  });
-+
-+  it('runs the shipped beats candidate against a real engine contract and reports rejection honestly', async () => {
-+    const runner = createNarrationRunner({
-+      engine: fakeEngine('阿青提着铜灯沿石阶往下走，石阶上落着灰，阿白在下面等他。'),
-+      candidates: [TRAINED_CANDIDATE],
-+      candidate: 'trained',
-+      minChars: 40,
-+      maxTokens: 60,
-+      deadlineMs: 15_000,
-+    });
-+    const result = await runner.generate(settledPoint());
-+    expect(result.kind).toBe('fallback');
-+    if (result.kind === 'fallback') {
-+      expect(result.reason).toContain('trained');
-+      // The strategy may accept or reject this fixture; what must hold is that a
-+      // rejection is reported as a fallback and never as adopted text.
-+      if (result.reason.startsWith('rejected:trained')) expect(result.reason).toMatch(/rejected:trained\|/);
-+    }
-+  });
-+});
-
 diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,104 @@
 +/** B-route adaptation: lane 02's committed-fact narration strategy (beats).
 + *
 + * The strategy owns prompt construction, verification and repair. This adapter
@@ -709,7 +631,7 @@ new file mode 100644
 + * least one accepted narration; the selection layer never promotes a candidate
 + * on unit-test evidence alone.
 + */
-+import { generateCommittedNarration, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
++import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
 +import type { NarrationIssue } from '../../narration-generation/types';
 +import type { CandidateNarrationResult, NarrationCandidate } from './types';
 +
@@ -733,7 +655,7 @@ new file mode 100644
 +    return { available: true, reason: null };
 +  },
 +  async run({ engine, point, prepared, onProgress }): Promise<CandidateNarrationResult> {
-+    const result = await generateCommittedNarration({
++    const result = await generateCandidate({
 +      engine,
 +      committed: prepared.facts,
 +      inputText: prepared.inputText ?? '',
@@ -776,8 +698,25 @@ new file mode 100644
 +      allFellBack,
 +      detail: {
 +        mandatory: prepared.mandatoryFactIds,
-+        beats: result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts })),
++        beats: result.beats.map((beat) => ({
++          id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts,
++          durationMs: beat.durationMs, text: beat.text,
++          issues: beat.issues.map((issue) => `${issue.severity}:${issue.kind}`),
++        })),
 +        assembly: result.assembly,
++        // Raw engine output per attempt. Truncated for the evidence file; the
++        // prompt is already recorded per beat inside the strategy's evidence.
++        attemptsEvidence: result.rawAttempts.map((attempt) => ({
++          attempt: attempt.attempt,
++          promptChars: attempt.promptChars,
++          durationMs: attempt.durationMs,
++          firstTokenMs: attempt.firstTokenMs,
++          finishReason: attempt.finishReason,
++          error: attempt.error,
++          raw: attempt.raw.slice(0, 1200),
++          cleaned: attempt.cleaned.slice(0, 600),
++          issues: attempt.issues.map((issue) => `${issue.severity}:${issue.kind}`),
++        })),
 +      },
 +    };
 +  },
@@ -787,7 +726,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,184 @@
 +/** Product-facing contracts for narration candidate selection.
 + *
 + * One settled point goes in; one submitted narration goes out. The selection
@@ -892,6 +831,9 @@ new file mode 100644
 +  point: NarrationPoint;
 +  prepared: PreparedNarration;
 +  onProgress?: (progress: NarrationProgress) => void;
++  /** Candidate-specific knobs. The selection layer sets `mode` for the
++   * constrained route; no candidate may use it to change facts. */
++  policy?: { mode?: 'program' | 'model' };
 +}
 +
 +/** One shipped adaptation of a candidate group. `id` and `label` stay
@@ -918,7 +860,9 @@ new file mode 100644
 +    route: NarrationCandidate['route'];
 +    text: string;
 +    accepted: true;
-+    grade: 'candidate';
++    /** `program` means every beat came from the deterministic realizer: it is
++     * a labelled downgrade, never model prose. */
++    grade: 'candidate' | 'program';
 +    issues: CandidateIssueSummary[];
 +    timings: CandidateNarrationResult['timings'];
 +    promptChars: number;
@@ -943,6 +887,9 @@ new file mode 100644
 +
 +export interface NarrationRunnerOptions {
 +  engine: InferenceEngine;
++  /** Constrained route only: `program` (default) never calls the model;
++   * `model` writes one verified beat per engine call. Internal. */
++  constrainedMode?: 'program' | 'model';
 +  /** Internal selection. `auto` uses product-default candidates only. */
 +  candidate?: NarrationCandidate['id'] | 'auto' | 'builtin';
 +  /** Test seam: replace the shipped list. Never set by the page. */
@@ -966,7 +913,7 @@ new file mode 100644
 +export type { NarrationIssue };
 
 diff --git a/frontend/src/lib/world-engine/local/game-model.ts b/frontend/src/lib/world-engine/local/game-model.ts
-index 7889cce..3201f61 100644
+index d7798f6..15d83a0 100644
 --- a/frontend/src/lib/world-engine/local/game-model.ts
 +++ b/frontend/src/lib/world-engine/local/game-model.ts
 @@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
@@ -974,10 +921,10 @@ index 7889cce..3201f61 100644
  import { taskOutputSchema } from '../runtime/output-schema';
  import { createActionHandlers, type HandlerResult } from './semantics/actions';
 +import { createNarrationRunner } from './narration-candidates/selection';
+ import { createSettlementHandlers, requireSettlementValue, continuationPolicy } from './semantics/settlement';
  import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
  
- export interface GameModelOptions {
-@@ -29,6 +30,11 @@ export interface GameModelOptions {
+@@ -30,6 +31,11 @@ export interface GameModelOptions {
    /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
     * 'instruct' states the task for an instruction-tuned narration model. */
    narrationMode?: 'legacy' | 'instruct';
@@ -986,18 +933,19 @@ index 7889cce..3201f61 100644
 +   * nothing until one is accepted; `trained` enables the committed-fact
 +   * beats candidate for evaluation runs. Never a player-visible option. */
 +  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
-   maxTokensByTask?: Partial<Record<ModelTask, number>>;
    /** Automatic rounds after one player action. Default 0: one action = one round. */
    maxAutoContinuations?: number;
-@@ -100,12 +106,26 @@ export class LocalGameModel implements WorldModelPort {
+   /** How many non-protagonist actors may open their own frozen group in one
+@@ -56,6 +62,8 @@ export class LocalGameModel implements WorldModelPort {
    private lastResultsText = '';
    private autoContinuations = 0;
    private recentEvents: string[] = [];
 +  private lastAcceptedNarration: string | null = null;
 +  private readonly narrationRunner: ReturnType<typeof createNarrationRunner> | null;
+   private readonly settlement;
    private readonly actionHandlers;
  
-   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
+@@ -63,6 +71,18 @@ export class LocalGameModel implements WorldModelPort {
      this.engine = engine;
      this.narrationEngine = options.narrationEngine ?? engine;
      this.options = options;
@@ -1013,10 +961,10 @@ index 7889cce..3201f61 100644
 +        maxTokens: options.narrationMaxTokens,
 +        timeoutMs: options.narrationTimeoutMs,
 +      });
-     this.actionHandlers = createActionHandlers({ engine, options: {
-       recentEvents: () => this.recentEvents,
-       onCall: (call) => this.options.onTask?.(call.task, call.key, {
-@@ -345,6 +365,10 @@ export class LocalGameModel implements WorldModelPort {
+     this.settlement = createSettlementHandlers({ engine, options: {
+       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
+       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
+@@ -263,6 +283,10 @@ export class LocalGameModel implements WorldModelPort {
      if (!after) throw new Error('narration without after state');
      const pointId = data.pointId ?? key;
      const view = after.protagonistId;
@@ -1024,10 +972,10 @@ index 7889cce..3201f61 100644
 +      const adopted = await this.adoptNarrationCandidate(pointId, data.before ?? null, data.delta ?? {}, after);
 +      if (adopted) return adopted;
 +    }
-     const draft = factualNarration(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput, this.lastResultsText);
-     const brief = this.options.narrationMode === 'instruct'
-       ? instructNarrationInput(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput, this.lastResultsText, draft)
-@@ -406,6 +430,39 @@ export class LocalGameModel implements WorldModelPort {
+     const started = performance.now();
+     const before = data.before ?? null;
+     const delta = data.delta ?? {};
+@@ -346,6 +370,43 @@ export class LocalGameModel implements WorldModelPort {
      return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
    }
  
@@ -1058,12 +1006,16 @@ index 7889cce..3201f61 100644
 +    }
 +    this.lastAcceptedNarration = result.text;
 +    this.options.onTask?.('narration', pointId, {
-+      ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,
++      ms: result.timings.totalMs,
++      fallback: result.grade === 'program',
++      ...(result.grade === 'program' ? { error: '程序按已结算事实成文' } : {}),
++      raw: result.text,
++      promptChars: result.promptChars,
 +    });
 +    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });
 +    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
 +  }
 +
-   private normalizeChanges(input: { changes?: Record<Id, EntityDelta> }, state: WorldState): Json {
-     const stages: { stage: string; changes: Record<Id, EntityDelta> }[] = [];
-     const order: { stage: string; fields: (keyof EntityDelta)[] }[] = [
+   private fallback(task: ModelTask, key: Id): Json {
+     if (task === 'action') return { kind: 'skip' };
+     if (task === 'targets') return { targets: [] };

@@ -5,6 +5,7 @@
  */
 export { createNarrationRunner, SHIPPED_CANDIDATES, internalCandidateOverride } from './runner';
 export { TRAINED_CANDIDATE } from './trained';
+export { CONSTRAINED_CANDIDATE } from './constrained';
 export {
   narrationPolicy, narrationScene, prepareNarration, projectNarrationFacts, serializeNarrationInput,
 } from './projection';

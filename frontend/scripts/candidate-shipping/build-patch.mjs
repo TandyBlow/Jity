@@ -126,7 +126,11 @@ const TRANSFORMS = [
       '    }',
       '    this.lastAcceptedNarration = result.text;',
       "    this.options.onTask?.('narration', pointId, {",
-      '      ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,',
+      '      ms: result.timings.totalMs,',
+      "      fallback: result.grade === 'program',",
+      "      ...(result.grade === 'program' ? { error: '程序按已结算事实成文' } : {}),",
+      '      raw: result.text,',
+      '      promptChars: result.promptChars,',
       '    });',
       '    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });',
       '    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };',
@@ -192,7 +196,9 @@ function addedDiff(relativePath, text) {
 function collectAdditions() {
   const root = join(source, SELECTION_DIR);
   if (!existsSync(root)) throw new Error(`selection module missing in source tree: ${root}`);
-  const files = readdirSync(root).filter((name) => name.endsWith('.ts')).sort();
+  // Runtime files only: a lane-owned test file stays in the lane and is not
+  // shipped into the product tree.
+  const files = readdirSync(root).filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts')).sort();
   return files.map((name) => {
     const relativePath = `${SELECTION_DIR}/${name}`;
     const bytes = readFileSync(join(root, name));
@@ -216,10 +222,17 @@ function verifyApply(patchText, inputText) {
   }
 }
 
+/** Line endings of the integration file: transforms are written against LF,
+ * and the patched text is restored to the file's own ending so the diff applies
+ * to the exact bytes that were hashed. */
+const LF = String.fromCharCode(10);
+const CRLF = String.fromCharCode(13, 10);
 const live = readTarget(GAME_MODEL);
 const sourceText = live.bytes.toString('utf8');
-let patched = sourceText;
+const eol = sourceText.includes(CRLF) ? CRLF : LF;
+let patched = sourceText.split(CRLF).join(LF);
 for (const transform of TRANSFORMS) patched = mustReplace(patched, transform);
+if (eol === CRLF) patched = patched.split(LF).join(CRLF);
 
 const additions = collectAdditions();
 const header = [
@@ -286,7 +299,29 @@ for (const item of patches) {
     return !existsSync(current) || sha256(readFileSync(current)) !== input.sha256;
   });
 }
-writeFileSync(manifestPath, `${JSON.stringify({ updatedAt: new Date().toISOString(), patches }, null, 2)}\n`);
+// `--prune` retires superseded patch files from the shipped directory but
+// keeps their identity (name + sha256 + inputs) in `history`; old bytes are
+// never silently replaced.
+let history = previous.history ?? [];
+if (process.argv.includes('--prune')) {
+  const keep = patches.filter((item) => item.patch === entry.patch);
+  const removed = patches.filter((item) => item.patch !== entry.patch);
+  for (const item of removed) {
+    const absolute = join(here, item.patch);
+    if (existsSync(absolute)) rmSync(absolute);
+  }
+  history = [...history, ...removed
+    .filter((item) => !history.some((old) => old.patchSha256 === item.patchSha256))
+    .map((item) => ({
+      patch: item.patch,
+      patchSha256: item.patchSha256,
+      input: item.inputs,
+      retiredAt: new Date().toISOString(),
+      reason: item.stale ? 'stale_input' : 'superseded',
+    }))];
+  patches.splice(0, patches.length, ...keep);
+}
+writeFileSync(manifestPath, JSON.stringify({ updatedAt: new Date().toISOString(), patches, history }, null, 2) + String.fromCharCode(10));
 console.log(JSON.stringify({
   patch: `patches/${patchFile}`, bytes: entry.patchBytes,
   input: entry.inputs, additions: additions.length, applyCheck: check,

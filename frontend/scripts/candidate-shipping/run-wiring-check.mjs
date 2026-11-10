@@ -8,8 +8,8 @@
 //                            the in-model single-shot call is NOT made;
 //   2. candidate rejects   → the existing in-model writer runs (one call) and
 //                            the result is marked as fallback;
-//   3. `auto` selection    → no product-default candidate, so the in-model
-//                            writer runs and no candidate code is touched;
+//   3. `auto` selection    → the product-default program candidate writes the
+//                            text with no model call and is marked a downgrade;
 //   4. second accepted run → receives the first accepted text as `priorText`
 //                            (continuation reuses the accepted narration).
 //
@@ -157,15 +157,29 @@ try {
   check('rejected: the point is marked as fallback',
     rejected.events.tasks.some((task) => task.task === 'narration' && task.fallback === true), rejected.events.tasks);
 
-  // 4. `auto` never runs a candidate without product evidence.
+  // 4. `auto` runs the product-default candidate (C program) with no model call
+  //    and marks the text as a downgrade.
   selection.SHIPPED_CANDIDATES[0] = original;
   candidateCalls.length = 0;
   engineCalls.length = 0;
   const auto = await makeModel('auto').run();
-  check('auto: no product-default candidate -> no candidate call', candidateCalls.length === 0, candidateCalls.length);
-  check('auto: in-model writer produces the text', engineCalls.length === 1 && auto.value !== '不应出现。', auto.value);
+  check('auto: product-default program candidate writes the text',
+    typeof auto.value === 'string' && auto.value.length > 0 && auto.value !== '不应出现。', auto.value);
+  check('auto: program narration is marked as a downgrade',
+    auto.events.tasks.some((task) => task.task === 'narration' && task.fallback === true), auto.events.tasks);
+  check('auto: no engine call at all', engineCalls.length === 0, engineCalls.length);
 
-  // 5. `builtin` disables the runner entirely.
+  // 5. a rejected/cancelled candidate must not poison the next accepted
+  //    continuation's priorText.
+  installCandidate({ accepted: false, text: '半句被取消的草稿' });
+  const cancelled = await session.run();
+  check('cancelled: rejected/cancelled draft is not submitted', cancelled.value !== '半句被取消的草稿', cancelled.value);
+  installCandidate({ accepted: true, text: '取消之后重新写出的正文。' });
+  await session.run();
+  check('cancelled: a cancelled draft never becomes the next priorText',
+    candidateCalls.at(-1)?.priorText === '走廊里的灯影晃了一下，他把手按在门框上。', candidateCalls.at(-1));
+
+  // 6. `builtin` disables the runner entirely.
   engineCalls.length = 0;
   candidateCalls.length = 0;
   await makeModel('builtin').run();

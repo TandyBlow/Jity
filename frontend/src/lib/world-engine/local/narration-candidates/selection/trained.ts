@@ -12,7 +12,7 @@
  * least one accepted narration; the selection layer never promotes a candidate
  * on unit-test evidence alone.
  */
-import { generateCommittedNarration, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
+import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
 import type { NarrationIssue } from '../../narration-generation/types';
 import type { CandidateNarrationResult, NarrationCandidate } from './types';
 
@@ -36,7 +36,7 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
     return { available: true, reason: null };
   },
   async run({ engine, point, prepared, onProgress }): Promise<CandidateNarrationResult> {
-    const result = await generateCommittedNarration({
+    const result = await generateCandidate({
       engine,
       committed: prepared.facts,
       inputText: prepared.inputText ?? '',
@@ -79,8 +79,25 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       allFellBack,
       detail: {
         mandatory: prepared.mandatoryFactIds,
-        beats: result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts })),
+        beats: result.beats.map((beat) => ({
+          id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts,
+          durationMs: beat.durationMs, text: beat.text,
+          issues: beat.issues.map((issue) => `${issue.severity}:${issue.kind}`),
+        })),
         assembly: result.assembly,
+        // Raw engine output per attempt. Truncated for the evidence file; the
+        // prompt is already recorded per beat inside the strategy's evidence.
+        attemptsEvidence: result.rawAttempts.map((attempt) => ({
+          attempt: attempt.attempt,
+          promptChars: attempt.promptChars,
+          durationMs: attempt.durationMs,
+          firstTokenMs: attempt.firstTokenMs,
+          finishReason: attempt.finishReason,
+          error: attempt.error,
+          raw: attempt.raw.slice(0, 1200),
+          cleaned: attempt.cleaned.slice(0, 600),
+          issues: attempt.issues.map((issue) => `${issue.severity}:${issue.kind}`),
+        })),
       },
     };
   },

@@ -21,10 +21,11 @@ import type {
 } from './types';
 import { prepareNarration } from './projection';
 import { TRAINED_CANDIDATE } from './trained';
+import { CONSTRAINED_CANDIDATE } from './constrained';
 
 /** Candidates that exist in this tree. A/C adapters are added here when their
  * entry modules land; nothing else in the product has to change. */
-export const SHIPPED_CANDIDATES: NarrationCandidate[] = [TRAINED_CANDIDATE];
+export const SHIPPED_CANDIDATES: NarrationCandidate[] = [TRAINED_CANDIDATE, CONSTRAINED_CANDIDATE];
 
 /** QA override. Internal: the page never renders or documents this name. */
 export function internalCandidateOverride(): string | null {
@@ -97,7 +98,10 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
         }
         let result: CandidateNarrationResult;
         try {
-          result = await candidate.run({ engine: options.engine, point, prepared, onProgress });
+          result = await candidate.run({
+            engine: options.engine, point, prepared, onProgress,
+            ...(candidate.route === 'constrained' ? { policy: { mode: options.constrainedMode ?? 'program' } } : {}),
+          });
         } catch (error) {
           problems.push(`error:${candidate.id}|${printable(error)}`);
           continue;
@@ -110,7 +114,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             route: result.route,
             text: result.text,
             accepted: true,
-            grade: 'candidate',
+            grade: result.grade === 'program' ? 'program' : 'candidate',
             issues: result.issues,
             timings: result.timings,
             promptChars: result.promptChars,

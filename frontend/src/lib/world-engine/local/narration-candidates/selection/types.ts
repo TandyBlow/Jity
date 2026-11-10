@@ -102,6 +102,9 @@ export interface CandidateRunArgs {
   point: NarrationPoint;
   prepared: PreparedNarration;
   onProgress?: (progress: NarrationProgress) => void;
+  /** Candidate-specific knobs. The selection layer sets `mode` for the
+   * constrained route; no candidate may use it to change facts. */
+  policy?: { mode?: 'program' | 'model' };
 }
 
 /** One shipped adaptation of a candidate group. `id` and `label` stay
@@ -128,7 +131,9 @@ export type NarrationRunResult =
     route: NarrationCandidate['route'];
     text: string;
     accepted: true;
-    grade: 'candidate';
+    /** `program` means every beat came from the deterministic realizer: it is
+     * a labelled downgrade, never model prose. */
+    grade: 'candidate' | 'program';
     issues: CandidateIssueSummary[];
     timings: CandidateNarrationResult['timings'];
     promptChars: number;
@@ -153,6 +158,9 @@ export type NarrationRunResult =
 
 export interface NarrationRunnerOptions {
   engine: InferenceEngine;
+  /** Constrained route only: `program` (default) never calls the model;
+   * `model` writes one verified beat per engine call. Internal. */
+  constrainedMode?: 'program' | 'model';
   /** Internal selection. `auto` uses product-default candidates only. */
   candidate?: NarrationCandidate['id'] | 'auto' | 'builtin';
   /** Test seam: replace the shipped list. Never set by the page. */

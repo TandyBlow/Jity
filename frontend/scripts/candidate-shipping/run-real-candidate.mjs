@@ -45,6 +45,12 @@ const config = {
   threads: Number(flag('--threads', '4')),
   gpu: process.argv.includes('--gpu'),
   candidate: flag('--candidate', 'trained'),
+  mode: flag('--mode', 'program'),
+  maxTokens: Number(flag('--max-tokens', '240')),
+  minChars: Number(flag('--min-chars', '60')),
+  targetChars: Number(flag('--target-chars', '200')),
+  timeoutMs: Number(flag('--timeout-ms', '120000')),
+  deadlineMs: Number(flag('--deadline-ms', '420000')),
   projectionOnly: process.argv.includes('--projection-only'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -168,6 +174,32 @@ try {
     if (config.projectionOnly) {
       return { selection: null, projection, loadMs: 0, totalMs: 0, progressEvents: 0, progressFirst: null, progressLast: null, run: null };
     }
+    if (config.candidate === 'constrained' && config.mode === 'program') {
+      // Program realizer: the engine must not be called at all.
+      const dummy = {
+        info: { backend: 'none', modelId: null },
+        load: async () => undefined,
+        complete: async () => { throw new Error('program mode must not call the engine'); },
+        dispose: async () => undefined,
+      };
+      const runner = createNarrationRunner({ engine: dummy, candidate: 'constrained', constrainedMode: 'program', minChars: config.minChars });
+      const started = performance.now();
+      const run = await runner.generate(point, () => undefined);
+      return {
+        selection: runner.selection, projection, loadMs: 0, totalMs: Math.round(performance.now() - started),
+        progressEvents: 0, progressFirst: null, progressLast: null,
+        run: {
+          kind: run.kind, candidateId: run.candidateId ?? null,
+          reason: run.kind === 'fallback' ? run.reason : null,
+          grade: run.kind === 'adopted' ? run.grade : null,
+          text: run.kind === 'adopted' ? run.text : run.detail?.text ?? null,
+          textChars: (run.kind === 'adopted' ? run.text : run.detail?.text ?? '').length,
+          issues: run.kind === 'adopted' ? run.issues : run.detail?.issues ?? null,
+          timings: run.kind === 'adopted' ? run.timings : null,
+          detail: run.kind === 'fallback' ? run.detail ?? null : null,
+        },
+      };
+    }
     const engine = new WllamaInferenceEngine({
       modelUrl: config.model, contextSize: 4096, numThreads: config.threads,
       ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
@@ -181,9 +213,9 @@ try {
     const runner = createNarrationRunner({
       engine, candidate: config.candidate,
       temperature: 0.45, retryTemperature: 0.3,
-      maxTokens: 240, maxTokensCeiling: 420,
-      timeoutMs: 90_000, deadlineMs: 240_000,
-      minChars: 120, targetChars: 240,
+      maxTokens: config.maxTokens, maxTokensCeiling: Math.max(420, config.maxTokens),
+      timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs,
+      minChars: config.minChars, targetChars: config.targetChars,
     });
     const run = await runner.generate(point, (state) => {
       progress.push({ chars: state.text.length, elapsedMs: Math.round(state.elapsedMs), verified: state.verified });
@@ -201,6 +233,7 @@ try {
       run: {
         kind: run.kind,
         candidateId: run.candidateId ?? null,
+        grade: run.kind === 'adopted' ? run.grade : null,
         reason: run.kind === 'fallback' ? run.reason : null,
         text: run.kind === 'adopted' ? run.text : run.detail?.text ?? null,
         textChars: (run.kind === 'adopted' ? run.text : run.detail?.text ?? '').length,
@@ -211,7 +244,12 @@ try {
         strategyVersion: run.kind === 'adopted' ? run.strategyVersion : run.detail?.strategyVersion ?? null,
       },
     };
-  }, { model: config.model, threads: config.threads, gpu: config.gpu, candidate: config.candidate, projectionOnly: config.projectionOnly });
+  }, {
+    model: config.model, threads: config.threads, gpu: config.gpu, candidate: config.candidate,
+    projectionOnly: config.projectionOnly, mode: config.mode,
+    maxTokens: config.maxTokens, minChars: config.minChars, targetChars: config.targetChars,
+    timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs,
+  });
   evidence.status = config.projectionOnly ? 'PROJECTION_ONLY' : result.run.kind === 'adopted' ? 'ACCEPTED' : 'REJECTED';
   evidence.result = result;
 } catch (error) {

@@ -4,6 +4,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import { applyDelta, tinyWorld } from '../../narration-input/test-fixtures';
 import { TRAINED_CANDIDATE } from './trained';
 import { createNarrationRunner, SHIPPED_CANDIDATES } from './runner';
+import { CONSTRAINED_CANDIDATE } from './constrained';
 import { prepareNarration } from './projection';
 import type { NarrationCandidate, NarrationPoint } from './types';
 
@@ -110,20 +111,27 @@ describe('narration projection of a settled point', () => {
 });
 
 describe('selection policy', () => {
-  it('stays on the in-model path when no candidate is marked product-default', async () => {
+  it('auto selects the product-default program candidate and never calls the model', async () => {
     let calls = 0;
     const runner = createNarrationRunner({ engine: fakeEngine(undefined, () => { calls += 1; }), candidate: 'auto' });
     const result = await runner.generate(settledPoint());
-    expect(result).toMatchObject({ kind: 'fallback', reason: 'no_product_candidate' });
+    expect(result.kind).toBe('adopted');
+    if (result.kind === 'adopted') {
+      expect(result.candidateId).toBe('constrained');
+      expect(result.grade).toBe('program');
+    }
     expect(calls).toBe(0);
-    expect(SHIPPED_CANDIDATES.every((candidate) => candidate.productDefault === false)).toBe(true);
+  });
+
+  it('has exactly one product-default candidate, and it is the program route', () => {
+    expect(SHIPPED_CANDIDATES.filter((candidate) => candidate.productDefault).map((candidate) => candidate.id)).toEqual(['constrained']);
   });
 
   it('honours the internal QA override without letting it leak into the page', () => {
     (globalThis as { __jityNarrationCandidate?: unknown }).__jityNarrationCandidate = 'trained';
     const runner = createNarrationRunner({ engine: fakeEngine(), candidate: 'builtin' });
     expect(runner.selection.requested).toBe('trained');
-    expect(runner.selection.productDefault).toBeNull();
+    expect(runner.selection.productDefault).toBe('constrained');
   });
 
   it('adopts verified candidate prose and forwards its real increments', async () => {
@@ -210,5 +218,51 @@ describe('selection policy', () => {
       // rejection is reported as a fallback and never as adopted text.
       if (result.reason.startsWith('rejected:trained')) expect(result.reason).toMatch(/rejected:trained\|/);
     }
+  });
+});
+
+describe('constrained (C route) candidate', () => {
+  const point = (): NarrationPoint => ({
+    pointId: 'p_c',
+    before: tinyWorld(),
+    delta: {
+      timeAdvance: TIME,
+      entityDeltas: {
+        hero: { entityId: 'hero', positionSet: { containerId: 'cellar', slotId: null, relativeTo: null } },
+        friend: { entityId: 'friend', tasksAchieved: ['friend_root'] },
+      },
+    },
+    after: applyDelta(tinyWorld(), {
+      hero: { entityId: 'hero', positionSet: { containerId: 'cellar', slotId: null, relativeTo: null } },
+      friend: { entityId: 'friend', tasksAchieved: ['friend_root'] },
+    }, TIME),
+    playerInput: '我去地窖找那只箱子。',
+  });
+
+  it('accepts program-realized prose and marks it as a downgrade, not model prose', async () => {
+    const runner = createNarrationRunner({ engine: fakeEngine(), candidate: 'constrained', minChars: 20 });
+    const result = await runner.generate(point());
+    expect(result.kind).toBe('adopted');
+    if (result.kind === 'adopted') {
+      expect(result.candidateId).toBe('constrained');
+      expect(result.grade).toBe('program');
+      expect(result.text.length).toBeGreaterThan(0);
+      expect(result.text).toContain('地窖');
+    }
+  });
+
+  it('declares itself unavailable for the world-opening point', () => {
+    const prepared = prepareNarration(point());
+    expect(CONSTRAINED_CANDIDATE.availability({ ...point(), before: null }, prepared)).toEqual({
+      available: false, reason: 'root_point',
+    });
+  });
+
+  it('declares itself unavailable when the packet carries no scene fact', () => {
+    const prepared = prepareNarration(point());
+    const withoutScene = { ...prepared, facts: { ...prepared.facts, facts: [] } };
+    expect(CONSTRAINED_CANDIDATE.availability(point(), withoutScene)).toEqual({
+      available: false, reason: 'facts_packet_without_scene',
+    });
   });
 });

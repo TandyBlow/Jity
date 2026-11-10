@@ -231,8 +231,10 @@ export function narrationPolicy(point: NarrationPoint, limits: {
     licensedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
     time,
     requireTime: Boolean(time && time.boundary === 'elapsed' && time.duration.amount > 0),
-    minChars: limits.minChars ?? 120,
-    targetChars: limits.targetChars ?? 240,
+    // Lane 02's short-scene corpus counts 60–149 chars as a complete scene;
+    // forcing 120 rejected faithful short scenes on the product world.
+    minChars: limits.minChars ?? 60,
+    targetChars: limits.targetChars ?? 200,
     maxTokens: limits.maxTokens ?? 200,
     maxTokensCeiling: limits.maxTokensCeiling ?? 500,
     temperature: limits.temperature ?? 0.7,

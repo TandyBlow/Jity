@@ -1,0 +1,129 @@
+/** C-route adaptation: lane 04's constrained fact-to-prose candidate.
+ *
+ * 04 owns the fact skeleton, beat plan and per-beat verification; this adapter
+ * only passes the settled facts, the read-only scene hints and the caller's
+ * limits, then maps the candidate's own verdict back.
+ *
+ * Two honest grades:
+ *   - `candidate`: at least one beat was written by a model (or an injected
+ *     composer) and every beat passed verification.
+ *   - `program`: every beat was written by the program realizer. The text is
+ *     fact-grounded and verified, but it is a downgrade, not model prose; the
+ *     page must label it.
+ *
+ * The facts-only packet is used on purpose. The full-state packet would require
+ * a `get_state` anchor (version/digest/previousPointId) that the narration call
+ * does not carry; inventing one would be a second truth. Scene detail comes
+ * from the caller's already-settled `BeatSceneContext`.
+ */
+import { generateCandidate as generateConstrained } from '../constrained';
+import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
+
+const PROGRAM_COMPOSERS = new Set(['program', 'fallback']);
+
+function sceneHints(prepared: PreparedNarration) {
+  const scene = prepared.scene;
+  const presentNotes: Record<string, string> = {};
+  for (const person of scene.present ?? []) {
+    if (person.note) presentNotes[person.name] = person.note;
+  }
+  const objectNotes: Record<string, string> = {};
+  for (const object of scene.objects ?? []) {
+    if (object.note) objectNotes[object.name] = object.note;
+  }
+  return {
+    placeNote: [scene.location, ...(scene.placeNotes ?? [])].filter(Boolean).join('：'),
+    presentNotes,
+    objectNotes,
+    ...(scene.previousAction ? { previousAction: scene.previousAction } : {}),
+  };
+}
+
+export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
+  id: 'constrained',
+  route: 'constrained',
+  version: 'constrained-candidate-v1',
+  label: '04/07 · constrained fact-to-prose',
+  requires: {
+    modules: ['local/narration-candidates/constrained'],
+    template: 'program realizer (no model) unless mode=model',
+  },
+  productDefault: true,
+  availability(point, prepared) {
+    // The world-opening narration is a one-off scene the player reads first;
+    // keep the existing in-model writer there. Program prose starts with the
+    // first settled round.
+    if (!point.before) return { available: false, reason: 'root_point' };
+    if (!prepared.facts.facts.some((fact) => fact.kind === 'at' || fact.kind === 'moved')) {
+      return { available: false, reason: 'facts_packet_without_scene' };
+    }
+    return { available: true, reason: null };
+  },
+  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
+    const mode = runPolicy?.mode === 'model' ? 'model' : 'program';
+    const result = await generateConstrained({
+      engine,
+      committed: {
+        anchor: prepared.facts.anchor,
+        facts: prepared.facts.facts,
+        timeAdvance: point.delta.timeAdvance ?? null,
+        inputText: prepared.inputText,
+        priorText: point.priorText ?? null,
+      },
+      inputText: prepared.inputText,
+      priorText: point.priorText ?? null,
+      signal: point.signal,
+      onProgress: (progress) => onProgress?.({
+        text: progress.text, elapsedMs: progress.elapsedMs, verified: progress.verified, attempt: 0,
+      }),
+      policy: {
+        mode,
+        viewpointId: prepared.viewpointId,
+        scene: sceneHints(prepared),
+        resultsText: point.settledResults?.length ? point.settledResults.join('；') : null,
+        // The program realizer states one sentence per settled fact; a thin
+        // point (time + presence) is short on purpose. 40 keeps it readable
+        // without padding it with invented detail.
+        minChars: 40,
+        maxChars: 500,
+        requireTime: prepared.policy.requireTime ?? false,
+        sanityStyle: 'number',
+        model: {
+          maxTokensPerBeat: prepared.policy.maxTokens ?? 160,
+          temperature: prepared.policy.temperature ?? 0.45,
+          timeoutMs: prepared.policy.timeoutMs ?? 90_000,
+          maxAttempts: 2,
+        },
+      },
+    });
+    const modelComposed = result.composers.some((composer) => !PROGRAM_COMPOSERS.has(composer));
+    const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
+    const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
+    return {
+      candidateId: 'constrained',
+      route: 'constrained',
+      text: result.text,
+      accepted: result.accepted && result.text.trim().length > 0,
+      grade,
+      status: result.status === 'rejected' ? 'rejected' : result.status,
+      reason: result.accepted ? null : result.status === 'cancelled' ? 'cancelled' : `rejected:${hard.join('+') || 'unknown'}`,
+      issues: result.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
+      attempts: result.rawAttempts.length,
+      promptChars: result.rawAttempts.reduce((sum, beat) => sum + (beat.prompt?.length ?? 0), 0),
+      timings: {
+        totalMs: result.timings.totalMs,
+        attemptMs: result.timings.beatsMs ?? [],
+        firstTokenMs: result.timings.firstTextMs ?? null,
+      },
+      strategyVersion: result.strategyVersion,
+      allFellBack: !modelComposed,
+      detail: {
+        composers: result.composers,
+        coverage: result.verification.coverage,
+        unverifiedSentences: result.verification.unverifiedSentences,
+        hiddenFactIds: result.verification.hiddenFactIds,
+        plan: result.plan?.beats.map((beat) => ({ id: beat.id, kind: beat.kind, factIds: beat.factIds })) ?? null,
+      },
+    };
+  },
+};
