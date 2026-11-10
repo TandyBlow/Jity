@@ -33,6 +33,7 @@ const options = (flag) => process.argv.flatMap((value, index) => (value === flag
 const config = {
   model: option('--model', 'qwen2.5-1.5b-instruct-q4km'),
   set: option('--set', 'dev'),
+  only: option('--only', '').split(',').map((value) => value.trim()).filter(Boolean),
   entry: option('--entry', ''),
   exportName: option('--export', 'generateCandidate'),
   targetChars: Number(option('--target-chars', '220')),
@@ -291,12 +292,13 @@ try {
       scenarios.push({ id: 'continuation-elapsed', before: schoolMoveRead, after: schoolElapsedRead, delta: { timeAdvance: schoolElapsedRead.timeAdvance, entityDeltas: {} }, time: schoolElapsedRead.timeAdvance.duration, continuation: true });
     }
 
+    const selected = config.only.length ? scenarios.filter((scenario) => config.only.includes(scenario.id)) : scenarios;
     const results = [];
     // Prior text is only for a real continuation of the same world. Reusing the
     // root passage for an independent point (or another world) made the model
     // paste stale positions; the shared driver only does this via continuesFrom.
     const acceptedByWorld = new Map();
-    for (const scenario of scenarios) {
+    for (const scenario of selected) {
       const worldId = scenario.after.state.worldId;
       const priorText = scenario.continuation ? acceptedByWorld.get(worldId) ?? null : null;
       const view = scenario.after.state.protagonistId;
