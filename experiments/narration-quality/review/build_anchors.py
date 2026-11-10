@@ -1053,6 +1053,20 @@ anchors.append(
     },
 )
 
+
+rows_cont4 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-cont4.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "pos/q3-cont4-lane",
+        "source": "02 Qwen3-1.7B continuation-4 run (117 chars, accepted by 02): the viewpoint looks at the lane he is in",
+        "input": rows_cont4["q3-cont-4"]["input"],
+        "text": rows_cont4["q3-cont-4"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [], "forbid": ["review.unseen_entity"],
+                   "notes": "路明非 is at 西侧服务巷/slot_wall; looking at 西侧服务巷 is not an unseen place."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

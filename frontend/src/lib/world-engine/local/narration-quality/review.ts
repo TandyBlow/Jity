@@ -1205,7 +1205,9 @@ export function reviewNarration(args: {
           .find((look) => /(束|扎|盘)[^。]{0,3}(脑后|头上|发髻)/u.test(look));
         if (!tied) continue;
         if (!refersTo(sentence.text, sentences.indexOf(sentence), personName)) continue;
-        if (!/(垂落|披散|散开|垂在肩|散在肩|披在肩)/u.test(narration)) continue;
+        // A few strands hanging loose is allowed polish; only the whole hair
+        // (红发/长发/头发) hanging loose contradicts a tied look.
+        if (!/(红发|长发|头发|黑发|金发|短发|卷发)[^，。]{0,4}(垂落|披散|散开|垂在肩|散在肩|披在肩)/u.test(narration)) continue;
         findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
           `${personName}: the hair is settled tied up, but the prose lets it hang loose`, [tied.slice(0, 40)], []));
         break;
@@ -1329,7 +1331,10 @@ export function reviewNarration(args: {
         const viewpointPlace = projection.viewpoint
           ? projection.people[projection.viewpoint]?.positionAfter ?? projection.people[projection.viewpoint]?.positionBefore ?? null
           : null;
-        const inside = viewpointPlace ? place === viewpointPlace || projection.places[place]?.parent === viewpointPlace : false;
+        const inside = viewpointPlace
+          ? basePlace(place) === basePlace(viewpointPlace)
+            || basePlace(projection.places[place]?.parent ?? null) === basePlace(viewpointPlace)
+          : false;
         if (inside) continue;
         findings.push(finding(ctx, 'review.unseen_entity', sentence.text,
           `${place} is outside the viewpoint's location; whether it is visible needs reading`, [], []));
