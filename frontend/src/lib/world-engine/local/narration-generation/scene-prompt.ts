@@ -112,8 +112,11 @@ function paragraphsOf(policy: NarrationPolicy): { count: number; min: number; ma
   // Lane 01's 71 human short scenes are 61-158 chars and ALL single paragraph
   // (median 97). A 240-char, 2-3 paragraph default asked for a shape the
   // reference style never uses; the extra room is where filler appeared.
+  // Gold scenes are 61-155 chars, median 95, p25 81, so a 100-char floor
+  // rejected 43 of the 71 human rows. Half the target stays inside the
+  // reference range without inviting one-line answers.
   const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 160)));
-  const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.7))));
+  const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.5))));
   const count = policy.paragraphs ?? (max > 300 ? 2 : 1);
   return { count: Math.max(1, Math.min(3, Math.round(count))), min, max };
 }
