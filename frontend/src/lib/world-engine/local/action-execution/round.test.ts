@@ -238,4 +238,57 @@ describe('real round through the controller with the action-execution port', () 
     expect(reactionPrompt).toContain('老周');
     expect(reactionPrompt).toContain('路明非');
   });
+
+  it('a forced reaction on the protagonist is a program line and the model never writes the player', async () => {
+    const initial = template();
+    const order = roundOrder(buildTestWorld());
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const captured: Captured[] = [];
+    const actionPrompts: string[] = [];
+    const engine = {
+      info: { backend: 'fake', modelId: 'fake-preempt' },
+      async load() {}, async dispose() {},
+      async complete(prompt: string): Promise<string> {
+        if (prompt.includes('角色行动判断器')) {
+          actionPrompts.push(prompt);
+          return JSON.stringify({ kind: 'act', text: '阿宁把门闩压上，转身挡在路明非面前。' });
+        }
+        if (prompt.includes('牵连判断器')) return JSON.stringify({ targets: [{ targetId: 'hero' }] });
+        if (prompt.includes('反应生成器')) throw new Error('the protagonist reaction must be program, not a model call');
+        throw new Error(`unexpected prompt: ${prompt.slice(0, 40)}`);
+      },
+    };
+    const port = createActionExecutionModel(settlementModel(captured), engine, { attempts: 1 });
+    const playerText = '我靠在墙边喘口气，等阿宁把门关好。';
+    const memory = initialMemory('test_preempt', 'holder_preempt');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: playerText, order };
+    memory.allocPlan = {
+      allocationKey: 'test_preempt_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const driver = new ControllerDriver({ transport, model: port }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+
+    const snapshot = transport.snapshot();
+    // 阿宁's action named the player and the roll admitted him; the reaction
+    // slot is a program non-action, never a model-written player line.
+    const reaction = port.evidence.find((entry) => entry.task === 'reaction');
+    expect(reaction?.source).toBe('program');
+    expect(reaction?.key).toBe('ally');
+    expect(String(reaction?.value)).toContain('路明非');
+    expect(port.evidence.some((entry) => entry.task === 'action' && entry.key === 'hero')).toBe(false);
+    // The forced reaction consumed the player's opportunity: his slot is in
+    // actedIds, so the command was never executed as a separate action.
+    expect(snapshot.round?.actedIds).toEqual(expect.arrayContaining(['hero']));
+    const roll = Object.values(snapshot.rolls ?? {}).find((entry) => entry.sourceId === 'ally' && entry.targetId === 'hero');
+    expect(roll).toMatchObject({ eligible: true, admitted: true });
+    // The protagonist never wrote an action prompt in this round.
+    expect(actionPrompts.some((prompt) => prompt.includes('本次判断的角色】路明非'))).toBe(false);
+  });
 });
