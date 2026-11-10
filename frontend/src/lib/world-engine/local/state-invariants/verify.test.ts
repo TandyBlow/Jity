@@ -201,6 +201,18 @@ describe('visible acceptance summary', () => {
     expect(result.warnings.map((item) => item.code)).toContain('evidence_shape');
   });
 
+  it('rejects a roll ledger with a repeated roll id', async () => {
+    const record = await recordOf(fixture.normal.initial as InitialState, []);
+    const withRolls = record as WorldRecordLike & { rolls?: unknown; rollSeq?: number };
+    withRolls.rolls = {
+      a: { key: 'a', rollId: 'roll_same', result: 7, eligible: true, admitted: true },
+      b: { key: 'b', rollId: 'roll_same', result: 8, eligible: true, admitted: true },
+    };
+    withRolls.rollSeq = 2;
+    const report = await verifyWorldRecord(record);
+    expect(report.errors.map((item) => item.code)).toContain('roll_invalid');
+  });
+
   it('rejects a stored task whose parent does not exist in the same character', async () => {
     const record = await recordOf(fixture.normal.initial as InitialState, []);
     const state = record.state as WorldState;

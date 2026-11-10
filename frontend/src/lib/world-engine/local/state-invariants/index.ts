@@ -43,6 +43,7 @@ export type InvariantCode =
   | 'version_mismatch'
   | 'state_mismatch'
   | 'advance_invalid'
+  | 'roll_invalid'
   | 'round_invalid'
   | 'work_invalid'
   | 'checkpoint_invalid'
@@ -95,6 +96,8 @@ export interface WorldRecordLike {
   work?: unknown;
   control?: unknown;
   commands?: unknown;
+  rolls?: unknown;
+  rollSeq?: unknown;
   checkpoint?: unknown;
 }
 
@@ -558,6 +561,7 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
       report.errors.push(issue('task_hierarchy', `stored: ${error}`));
     }
   }
+  checkRolls(record as Record<string, unknown>, report.errors);
   checkActiveChain(record as Record<string, unknown>, replay, report.replayDigest, report.errors, report.warnings);
 
   report.ok = report.errors.length === 0;
@@ -750,4 +754,37 @@ export function validateTaskHierarchy(state: WorldState): string[] {
     }
   }
   return issues;
+}
+
+/** The persisted roll ledger is the freeze evidence: a request that reuses a
+ * trigger key must reuse the recorded roll, and no two outcomes may share an
+ * id. This is structural; it does not reroll or compare randomness. */
+function checkRolls(record: Record<string, unknown>, errors: InvariantIssue[]): void {
+  if (record.rolls == null) return;
+  if (!isRecord(record.rolls)) {
+    errors.push(issue('roll_invalid', 'rolls is not an object'));
+    return;
+  }
+  const ids = new Set<string>();
+  let count = 0;
+  for (const [key, raw] of Object.entries(record.rolls)) {
+    count += 1;
+    if (!isRecord(raw)) {
+      errors.push(issue('roll_invalid', `roll ${key} is not an object`));
+      continue;
+    }
+    if (raw.key !== key) errors.push(issue('roll_invalid', `roll ${key} has key ${String(raw.key)}`));
+    if (!isNonBlankString(raw.rollId)) errors.push(issue('roll_invalid', `roll ${key} has no id`));
+    else if (ids.has(raw.rollId)) errors.push(issue('roll_invalid', `roll id ${raw.rollId} is repeated`));
+    else ids.add(raw.rollId);
+    if (typeof raw.result !== 'number' || !Number.isInteger(raw.result) || raw.result < 1 || raw.result > 20) {
+      errors.push(issue('roll_invalid', `roll ${key} result ${String(raw.result)} is outside 1..20`));
+    }
+    if (typeof raw.eligible !== 'boolean' || typeof raw.admitted !== 'boolean') {
+      errors.push(issue('roll_invalid', `roll ${key} lacks eligibility flags`));
+    }
+  }
+  if (typeof record.rollSeq === 'number' && record.rollSeq < count) {
+    errors.push(issue('roll_invalid', `rollSeq ${record.rollSeq} is smaller than ${count} recorded rolls`));
+  }
 }
