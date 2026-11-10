@@ -546,6 +546,7 @@ try {
               task: call.task, key: call.key, stage: call.stage ?? null, ms: call.ms ?? null,
               promptChars: call.promptChars ?? null, fallback: Boolean(call.fallback), error: call.error ?? null,
               calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
+              stageMs: call.stageMs ?? null,
             })),
           } : null,
         };
