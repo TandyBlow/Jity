@@ -50,7 +50,7 @@ npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
 npx vitest run src/lib/world-engine/local --maxWorkers=1
 → 6 files passed, 1 skipped; 113 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 11 bridge tests passed (requires the sibling 06 worktree)
+→ 1 file, 11 bridge tests passed + 1 expected fail (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -222,7 +222,8 @@ text; full snapshot chain passes. `restoredEntries` labels the turn `mixed`
 to the player.
 
 `snapshotForPersist` still reads only the live source ref; 05 patch
-`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending.
+`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending; the
+bridge expected-fail test pins the next-write source loss.
 
 ## Real 09 run found a sync-ownership conflict
 
