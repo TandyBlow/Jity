@@ -101,3 +101,13 @@ It never fabricates an input or a paragraph. A command list longer than the
 committed points is a warning because 06's session intentionally keeps failed/
 cancelled inputs for mid-turn resume; page code must not pair those commands by
 index without a command→point map.
+
+## Full-world task coverage
+
+`verifyTaskCoverage(record)` is a read-only check on a full transport record. It
+counts the initial 14 characters and 73 task rows, requires every initial task
+to remain (a subtask may be added), and requires an achieved task to stay
+achieved. It is wired into the 09 evidence test after snapshot replay, so a
+snapshot that silently drops an off-stage row fails even when the visible
+summary looks unchanged. It does **not** prove the settlement call considered
+every row; that semantic duty belongs to 04.
