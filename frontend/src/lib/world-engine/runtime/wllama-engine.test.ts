@@ -308,7 +308,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(engine.runtime.lastModelUrls).toEqual(fetched);
   });
 
-  test('ensureLoaded reloads every shard of the same split model after a hard stop', async () => {
+  test('ensureLoaded reuses both cached shards of the same split model after a hard stop', async () => {
     const fakes: ReturnType<typeof fakeWllama>[] = [];
     let factories = 0;
     const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
@@ -334,8 +334,9 @@ describe('WllamaInferenceEngine option mapping', () => {
 
     await engine.ensureLoaded();
     expect(factories).toBe(2);
-    expect(fetches).toBe(4);
-    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, lastModelUrls: urls });
+    expect(fetches).toBe(2); // both shards came from the cache
+    expect(fakes[1]!.calls.blobs[0]!.files).toBe(2);
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true, lastModelUrls: urls });
     expect(await engine.complete('P')).toBe('ok');
   });
 
@@ -660,6 +661,72 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(factories).toBe(2);
     expect(engine.info.modelId).toBe('m.gguf');
     await expect(engine.ensureLoaded({ modelUrl: '/models/other.gguf' })).rejects.toThrow(/loaded with/);
+  });
+
+  test('a hard-stop reload reuses the fetched Blob, so no second 1.1 GB fetch is allocated', async () => {
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    let factories = 0;
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array([1, 2, 3, 4])]));
+    });
+    const evidence: ModelLoadEvidence[] = [];
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: true, expectedBytes: 4, abortGraceMs: 0,
+      onEvidence: (record) => { if (record.kind === 'load') evidence.push(record); } }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) { fake.chunks([{ text: 'partial' }]); fake.mode('never'); }
+      fakes.push(fake);
+      return fake.instance;
+    });
+    await engine.load();
+    expect(fetched).toHaveLength(1);
+    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4 });
+
+    await expect(engine.complete('P', { timeoutMs: 10, maxTokens: 1 })).rejects.toBeInstanceOf(IncompleteGenerationError);
+    expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, cachedModel: true });
+
+    await engine.ensureLoaded();
+    expect(fetched).toHaveLength(1); // the Blob was reused, not fetched again
+    expect(fakes[1]!.calls.blobs).toHaveLength(1);
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true });
+    expect(evidence.at(-1)).toMatchObject({ outcome: 'loaded', fromCache: true, fetchMs: 0 });
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('a rejected cached Blob drops the cache and allows a real refetch', async () => {
+    const fake = fakeWllama();
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array([1, 2, 3, 4])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: true, expectedBytes: 4, abortGraceMs: 0 },
+      async () => fake.instance);
+    await engine.load();
+    fake.mode('never');
+    await expect(engine.complete('P', { timeoutMs: 10, maxTokens: 1 })).rejects.toBeInstanceOf(IncompleteGenerationError);
+
+    fake.failLoad('cached blob evicted');
+    await expect(engine.ensureLoaded()).rejects.toThrow(/cached blob evicted/);
+    expect(engine.runtime).toMatchObject({ loaded: false, cachedModel: false });
+
+    fake.failLoad(null);
+    await engine.ensureLoaded();
+    expect(fetched).toHaveLength(2); // cache was dropped, the retry fetched for real
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true });
+  });
+
+  test('dispose releases the cached model bytes', async () => {
+    const fake = fakeWllama();
+    vi.stubGlobal('fetch', async () => new Response(new Blob([new Uint8Array([1, 2, 3, 4])])));
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: true, expectedBytes: 4 },
+      async () => fake.instance);
+    await engine.load();
+    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4 });
+    await engine.dispose();
+    expect(engine.runtime).toMatchObject({ cachedModel: false, cachedModelBytes: 0 });
   });
 
   test('one worker serves many turns without growth, and dispose closes exactly that worker', async () => {
