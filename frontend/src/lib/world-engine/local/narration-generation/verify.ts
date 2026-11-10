@@ -186,6 +186,12 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     issues.push(hard('premature_closure', attempt, 'scene closes before the target length', last));
   }
 
+  // Beat mode sets an explicit per-beat ceiling; whole-scene mode leaves it
+  // undefined so a long scene is not rejected for being long.
+  if (policy.beatMaxChars !== undefined && chars > policy.beatMaxChars) {
+    issues.push(hard('too_long', attempt, `${chars} > ${policy.beatMaxChars} characters`));
+  }
+
   const maxOverlap = policy.maxPriorOverlap ?? 0.55;
   if (alignment?.repetition != null && alignment.repetition > maxOverlap) {
     issues.push(hard('echo_prior', attempt, `bigram overlap ${alignment.repetition.toFixed(2)} > ${maxOverlap}`));

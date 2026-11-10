@@ -12,7 +12,7 @@ import type { CompletionEvidence, InferenceEngine } from '../../runtime/engine';
 import type { AlignmentResult } from '../../runtime/narration-alignment';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 
-export const NARRATION_STRATEGY_VERSION = 'committed-narration-strategy-v2';
+export const NARRATION_STRATEGY_VERSION = 'committed-narration-strategy-v3';
 
 export type NarrationIssueKind =
   /** Contradictions reported by the fact-alignment grader. */
@@ -25,7 +25,7 @@ export type NarrationIssueKind =
    * previously accepted source. */
   | 'promise_without_fact' | 'past_without_fact'
   /** Shape and length problems. */
-  | 'empty_narration' | 'too_short' | 'truncated' | 'premature_closure'
+  | 'empty_narration' | 'too_short' | 'too_long' | 'truncated' | 'premature_closure'
   /** Repetition across turns or inside one draft. */
   | 'echo_prior' | 'loop_repeated_sentence' | 'loop_repeated_clause'
   /** Viewpoint / knowledge boundary. */
@@ -34,6 +34,9 @@ export type NarrationIssueKind =
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */
   | 'unverified_sentence'
+  /** Beat mode could not write any beat from the model and used only the
+   * committed fact sentences: readable, but not a generated scene. */
+  | 'all_beats_fell_back'
   /** Transport evidence. A cancelled or timed-out call never becomes accepted. */
   | 'cancelled' | 'timeout' | 'engine_error';
 
@@ -44,6 +47,22 @@ export interface NarrationIssue {
   attempt: number;
   detail: string;
   sentence?: string;
+}
+
+/** Optional scene material for beat-scoped writing. The caller reads it from
+ * the already-settled world state; it licenses names and description, it never
+ * adds facts. */
+export interface BeatSceneContext {
+  /** Display name of the viewpoint character's current location. */
+  location?: string;
+  /** Description lines visible from that location. */
+  placeNotes?: string[];
+  /** Characters the viewpoint can see, with an optional visible detail. */
+  present?: { name: string; note?: string }[];
+  /** Visible objects, with an optional visible detail. */
+  objects?: { name: string; note?: string }[];
+  /** One line summarising what the viewpoint was doing before this point. */
+  previousAction?: string;
 }
 
 /** The caller owns fact projection and serialization. This policy only states
@@ -101,6 +120,17 @@ export interface NarrationPolicy {
   /** Full prompt override. The default only inserts guidance before the body
    * marker; it never re-serializes facts. */
   composePrompt?: (args: ComposePromptArgs) => string;
+  /** 'beats' writes the scene one committed beat at a time (small models);
+   * 'scene' asks for the whole scene in one call. Defaults to 'beats' when
+   * `scene` is supplied, otherwise 'scene'. */
+  mode?: 'scene' | 'beats';
+  /** Scene material for beat mode. Passing it selects beat mode by default. */
+  scene?: BeatSceneContext | null;
+  /** Attempts per beat in beat mode. Default 2, clamped to 1..3. */
+  beatAttempts?: number;
+  /** Hard ceiling for one beat's text. Default 170 characters; a beat that
+   * rambles past it is retried instead of swallowing the whole scene. */
+  beatMaxChars?: number;
 }
 
 export interface ComposePromptArgs {
@@ -166,6 +196,29 @@ export interface NarrationAttempt {
   progressEvents: number;
 }
 
+/** One beat's outcome. `fallback` text is the committed fact sentence used
+ * only when the model could not produce a faithful beat. */
+export interface NarrationBeatEvidence {
+  beatId: string;
+  kind: 'scene' | 'fact' | 'time';
+  directive: string;
+  text: string;
+  source: 'model' | 'fallback' | 'skipped';
+  attempts: number;
+  durationMs: number;
+  issues: NarrationIssue[];
+  prompts: string[];
+  raws: string[];
+}
+
+/** Program-side assembly edits applied after the beats were written. */
+export interface NarrationAssembly {
+  /** Duplicate sentences removed from the assembled scene. */
+  droppedSentences: string[];
+  /** Fact sentences appended because the model never expressed them. */
+  appendedSentences: string[];
+}
+
 export interface NarrationTimings {
   /** Wall time from call start to return, including every retry. */
   totalMs: number;
@@ -198,6 +251,10 @@ export interface GeneratedNarration {
   metrics: NarrationMetrics | null;
   /** Index into `rawAttempts` matching `text`, or null when `text` is empty. */
   attemptIndex: number | null;
+  /** Per-beat evidence in beat mode; empty in scene mode. */
+  beats: NarrationBeatEvidence[];
+  /** Program-side assembly edits in beat mode. */
+  assembly: NarrationAssembly;
   /** Last display state emitted to `onProgress`. */
   display: NarrationDisplayState;
 }
