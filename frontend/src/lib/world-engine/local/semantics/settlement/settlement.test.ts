@@ -385,7 +385,7 @@ describe('continuation', () => {
     expect(continuationPolicy.maxAutoContinuations).toBeNull();
   });
 
-  it('hands back after repeated rounds with no committed progress', async () => {
+  it('stops a no-progress chain as a policy stop, never as a model handback', async () => {
     const engine = new ScriptedEngine([
       continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
       continueProposal('甲停下来听。'), continueJudgment('甲停下来听。'),
@@ -394,9 +394,13 @@ describe('continuation', () => {
     const first = await handlers.continuation('r1', continuationInput([]));
     const second = await handlers.continuation('r2', continuationInput([]));
     expect((first.value as { kind: string }).kind).toBe('continue');
-    expect((second.value as { kind: string }).kind).toBe('handback');
-    expect((second.evidence.detail as { reason: string }).reason).toBe('no_progress');
-    expect((second.evidence.detail as { policy: { anomaly: boolean } }).policy.anomaly).toBe(false);
+    // The transport records every handback as closedBy:'model'; a policy stop
+    // therefore must carry no conclusion value at all.
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_no_progress');
+    const detail = second.evidence.detail as { decision: string; policy: { anomaly: boolean } };
+    expect(detail.decision).toBe('policy_stop');
+    expect(detail.policy.anomaly).toBe(false);
     expect(continuationPolicy.noProgressRounds).toBe(2);
   });
 
@@ -412,8 +416,23 @@ describe('continuation', () => {
     const third = await handlers.continuation('r3', continuationInput(progress(57)));
     expect((first.value as { kind: string }).kind).toBe('continue');
     expect((second.value as { kind: string }).kind).toBe('continue');
-    expect((third.value as { kind: string }).kind).toBe('handback');
-    expect((third.evidence.detail as { reason: string }).reason).toBe('repeated_candidate');
+    expect(third.value).toBeNull();
+    expect(third.error).toBe('continuation_policy_repeated_candidate');
+    expect((third.evidence.detail as { decision: string }).decision).toBe('policy_stop');
+  });
+
+  it('turns a configured 0 call cap into a policy stop, not a model handback', async () => {
+    const engine = new ScriptedEngine([continueProposal(), continueJudgment()]);
+    const handlers = createSettlementHandlers({ engine, options: { continuation: { maxAutoContinuations: 0 } } });
+    const outcome = await handlers.continuation('r1', continuationInput(progress(59)));
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toBe('continuation_policy_safety_cap');
+    const detail = outcome.evidence.detail as { decision: string; anomaly: boolean; policy: { reason: string } };
+    expect(detail.decision).toBe('policy_stop');
+    expect(detail.anomaly).toBe(true);
+    expect(detail.policy.reason).toBe('safety_cap');
+    // The model still ran: the cap is a program stop, not a skipped judgement.
+    expect(engine.prompts).toHaveLength(2);
   });
 
   it('surfaces a model failure as no candidate, never as a handback', async () => {

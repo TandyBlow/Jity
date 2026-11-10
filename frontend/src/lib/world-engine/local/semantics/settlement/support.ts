@@ -131,7 +131,7 @@ export function positionLine(state: WorldState, entityId: Id): string {
   return `- ${name}（id=${entityId}，${kind}）当前位置=${containerLabel(state, entityId)}`;
 }
 
-export function appearanceLine(state: WorldState, entityId: Id): string {
+export function appearanceLine(state: WorldState, entityId: Id, options: { compactTail?: number } = {}): string {
   const initial = state.initial.locations[entityId]?.initialAppearance
     ?? state.initial.items[entityId]?.initialAppearance
     ?? state.initial.characters[entityId]?.initialAppearance
@@ -144,6 +144,17 @@ export function appearanceLine(state: WorldState, entityId: Id): string {
   const records = activeRecords(state, 'appearance', entityId).filter((record) => record.active)
     .map((record) => `${record.id}=${record.text ?? '（已解除）'}`);
   const position = kind === '地点' ? '' : `；当前位置=${containerLabel(state, entityId)}`;
+  if (options.compactTail) {
+    // The appearance stage scans the whole cast (114 entities in the product
+    // world), so non-character lines must stay short enough for one call.
+    // Positions are the position stage's input, not this one's; the tail of the
+    // current text is enough for the model to write a different replacement.
+    const current = [...(initial ? [initial] : []), ...records.map((row) => row.split('=').slice(1).join('='))];
+    const tail = current.length ? current[current.length - 1] : '';
+    const cut = [...tail].slice(-options.compactTail).join('');
+    const ids = records.map((row) => row.split('=')[0]).join(',');
+    return `- ${name}（id=${entityId}，${kind}）当前外貌=${cut || '（未记录）'}；记录=[${ids}]`;
+  }
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
 

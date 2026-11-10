@@ -209,9 +209,14 @@ export class ContinuationRunner {
       }
       const decision = this.policy.observe(roundChanges, accepted);
       if (!decision.allow) {
-        return this.handback(key, calls, started, {
-          reason: decision.reason,
-          policy: decision,
+        // A policy stop is NOT a model handback. The model said this follow-up
+        // is likely and protagonist-related; only the no-progress/repeat/safety
+        // rule ends the chain. The local transport hardcodes
+        // `closedBy:'model'` on every handback, so emitting a handback here
+        // would write a decision the model never made. Return a visible stop
+        // with the policy reason instead; the caller surfaces it and keeps the
+        // state exactly as committed. See `policyStop` below.
+        return this.policyStop(key, calls, started, decision, {
           candidates,
           accepted,
           judgments,
@@ -271,6 +276,35 @@ export class ContinuationRunner {
       raw: joinedRaw(calls),
       ms: joinedMs(calls),
       fallback: false,
+      evidence,
+    };
+    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
+    return outcome;
+  }
+
+  /** The chain ended on a program rule, not on the model's judgment. The
+   * outcome has no conclusion value, so the adapter cannot accidentally record
+   * `closedBy:'model'`; the error text carries the explainable reason. */
+  private policyStop(
+    key: Id,
+    calls: ModelCallEvidence[],
+    started: number,
+    decision: ContinuationPolicyDecision,
+    detail: Record<string, unknown>,
+  ): SettlementOutcome<SettlementConclusion> {
+    const reason = `continuation_policy_${decision.reason}`;
+    const evidence = makeEvidence(key, calls, false, reason, {
+      decision: 'policy_stop',
+      anomaly: decision.anomaly,
+      policy: decision,
+      ...detail,
+    });
+    const outcome: SettlementOutcome<SettlementConclusion> = {
+      value: null,
+      raw: joinedRaw(calls),
+      ms: joinedMs(calls),
+      fallback: false,
+      error: reason,
       evidence,
     };
     this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
