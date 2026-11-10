@@ -194,6 +194,22 @@ goal「不要求把每个变化逐条念出来，关键结果必须表达清楚�
 `minChars`。整段模式删完会再用同一套校验复查一次，有硬问题就保留原稿；分段模式
 直接进入最终校验。删除记录在 `assembly.droppedSentences`，不隐藏。
 
+### 3.10 不继承原交互树的语义捷径（2026-11-10 审计后）
+
+对 `.local/world-narration-worktree` 的只读审计指出：那里的 beatPrompt 硬编码男性
+代词，并禁止全部对白、心理和比喻；beats 可能把程序兜底句和模型正文混在一起，页面
+还会在程序草稿上先记 `firstTextMs`。02 的模块不继承这些：
+
+- 性别：不指定任何代词，要求用名字或省略主语（世界文件没有性别字段）。
+- 允许的润色：对白、视角人物自己的感受、普通比喻都允许；只禁止别人的内心和新的
+  剧情事实。此前 02 的 beat 提示也禁过情绪与比喻，2026-11-10 已改回 goal 允许的
+  范围（commit 379ff8b6）。
+- 来源区分：每个 beat 记录 `source = model | fallback | skipped`；全部拍都兜底时整段
+  判 `all_beats_fell_back` 硬失败。部分兜底仍返回原文，但必须由调用方按
+  `assembly.appendedSentences` / `beats[].source` 标明哪几句不是模型写的（已向 06
+  提请求，见 `results/quality/integration-02.json` 的 `programSentenceDisclosure`）。
+- 时间：02 不以程序草稿的进度事件充当“首段可读”；只有通过校验的正文才计。
+
 ### 4. 有界重试
 
 默认 `maxAttempts = 2`（可配 1–4）。第二稿的提示只在正文标记前加入：
