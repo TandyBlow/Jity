@@ -771,6 +771,18 @@ export default function WorldLocalPage() {
             } catch (cancelError) { console.warn('[world-local] cancel of a restored unfinished turn failed', cancelError); }
           }
           restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
+          // A save can also carry a committed point whose narration never
+          // became ready (model crash/failed gate). The kernel then blocks a
+          // new advance (narration_pending), so the next submit is refused.
+          // Drive the narration pipeline once at load to finish that point.
+          const savedHead = session.snapshot.transport.headPointId;
+          const savedNarration = session.snapshot.transport.narrations[savedHead];
+          if (savedNarration && savedNarration.status !== 'ready' && session.snapshot.transport.advance == null) {
+            setStage('正在补写上一回合的正文…');
+            void session.start().catch((narrationError) => {
+              console.warn('[world-local] finishing the saved narration failed', narrationError);
+            });
+          }
         } catch (openError) {
           if (openError instanceof SessionLeaseHeldError) {
             // __worldLease already carries holder/expiry/attempts (set by the
