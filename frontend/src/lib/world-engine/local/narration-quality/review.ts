@@ -1300,10 +1300,15 @@ export function reviewNarration(args: {
     ...projection.personalityAdded.map((entry) => entry.text),
     ...projection.appearanceAdded.map((entry) => entry.text),
     ...projection.itemDescriptions,
+    ...Object.values(projection.places).flatMap((place) => place.description),
+    ...Object.values(projection.people).flatMap((person) => [...person.appearanceBefore, ...person.appearanceAfter]),
     ...(projection.timeText ? [projection.timeText] : []),
   ].filter((entry) => [...entry].length >= 8);
   const restatement = (sentence: SentenceReview): boolean => {
     if (sentence.findings.some((item) => SQUARE_FORM.has(item.kind))) return true;
+    // A program fallback often prints "Name：…" lines and a "still there" line.
+    if (/^[\p{Script=Han}]{2,4}：/u.test(sentence.sentence)) return true;
+    if (/(?:还在|仍在|依旧在|留在原地)[^，。]{0,10}/u.test(sentence.sentence)) return true;
     for (const literal of factLiterals) {
       for (let index = 0; index + 8 <= literal.length; index += 4) {
         if (sentence.sentence.includes(literal.slice(index, index + 8))) return true;
