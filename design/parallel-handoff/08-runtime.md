@@ -242,6 +242,11 @@ and retry path. The runtime load/worker contract held.
 
 ## 02/06 integration entry points
 
+- 06 per-engine load timing: include `lastLoadMs`, `lastLoadFetchMs`,
+  `lastLoadCompileMs`, `lastLoadFromCache` from `engine.runtime` in
+  `window.__worldTurns[i].engines`. The page-level ready time mixes page boot,
+  two model loads and StrictMode; 09 needs the per-engine split to separate
+  cold load from per-turn prefill/decode.
 - 06 product page / game-model: construct one engine and call
   `await engine.ensureLoaded()` at session start, `engine.chat(messages, {signal,
   timeoutMs, maxTokens, temperature, onProgress})` per narration call,
@@ -362,7 +367,11 @@ stop.
 
    **Cached weights.** The engine keeps the fetched model Blob(s) and feeds the
    same bytes to the new worker on reload (`runtime.cachedModel`,
-   `runtime.cachedModelBytes`; load evidence `fromCache: true`, `fetchMs: 0`).
+   `runtime.cachedModelBytes`, `runtime.lastLoadFromCache`; load evidence
+   `fromCache: true`, `fetchMs: 0`). The last successful load split is exposed
+   as `runtime.lastLoadMs`, `lastLoadFetchMs`, `lastLoadCompileMs`; the page
+   should put these in `window.__worldTurns[i].engines` so 09 can separate
+   cold load from generation time.
    This is not an optimization detail; the real browser rejected a second
    1.1 GB fetch immediately after a hard stop with `TypeError: Failed to fetch`
    because the first Blob was still in the browser's Blob store, whose
