@@ -179,6 +179,60 @@ def main() -> int:
             ok, detail = True, "baseline absent; verifier not exercised"
         check("verify_preflight accepts the known Qwen3 file and refuses a mismatch", ok, detail)
 
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = pathlib.Path(tmp)
+        pack = [
+            {"caseId": "tasks-ok", "kind": "tasks", "allowedIds": ["char_a", "char_b", "t1", "t2"],
+             "allowUniqueNames": True, "nameToId": {"乙": "char_b"},
+             "requiredCharacterIds": ["char_a", "char_b"],
+             "allowedTaskIdsByCharacter": {"char_a": ["t1"], "char_b": ["t2"]}},
+            {"caseId": "tasks-placeholder", "kind": "tasks", "allowedIds": ["char_a"],
+             "requiredCharacterIds": ["char_a"], "allowedTaskIdsByCharacter": {"char_a": []}},
+            {"caseId": "tasks-missing", "kind": "tasks", "allowedIds": ["char_a", "char_b"],
+             "requiredCharacterIds": ["char_a", "char_b"],
+             "allowedTaskIdsByCharacter": {"char_a": [], "char_b": []}},
+            {"caseId": "results-undeclared", "kind": "results", "allowedIds": ["char_a", "rules"],
+             "declaredTargetIds": ["char_a"]},
+            {"caseId": "continuation-protagonist", "kind": "continuation",
+             "allowedIds": ["char_a", "char_b"], "nameToId": {"路明非": "char_a"},
+             "allowUniqueNames": True, "protagonistId": "char_a"},
+            {"caseId": "updates-placeholder", "kind": "updates", "allowedIds": ["char_a"]},
+        ]
+        outputs = {
+            "tasks-ok": {"decisions": [{"characterId": "char_a", "achieved": []},
+                                       {"characterId": "乙", "achieved": ["t2"]}]},
+            "tasks-placeholder": {"decisions": [{"characterId": "id", "achieved": []}]},
+            "tasks-missing": {"decisions": [{"characterId": "char_a", "achieved": []}]},
+            "results-undeclared": {"members": [{"memberId": "char_a",
+                                                "effects": [{"targetId": "rules", "reacted": True}]}]},
+            "continuation-protagonist": {"candidates": [{"characterId": "路明非", "text": "他走。"}]},
+            "updates-placeholder": {"operations": [{"entityId": "id", "op": "keep",
+                                                    "recordIds": [], "text": None}]},
+        }
+        (tmp_path / "pack.jsonl").write_text(
+            "\n".join(json.dumps(item, ensure_ascii=False) for item in pack) + "\n", encoding="utf-8")
+        run_dir = tmp_path / "run"
+        run_dir.mkdir()
+        for case_id, value in outputs.items():
+            (run_dir / f"{case_id}.json").write_text(
+                json.dumps({"caseId": case_id, "text": json.dumps(value, ensure_ascii=False)},
+                           ensure_ascii=False), encoding="utf-8")
+        proc = run(["src/semantic_validate.py", "--pack", str(tmp_path / "pack.jsonl"),
+                    "--run-dir", str(run_dir), "--out", str(tmp_path / "report.json")])
+        ok = proc.returncode == 2
+        detail = f"exit={proc.returncode}"
+        if ok:
+            report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+            by_id = {entry["caseId"]: entry for entry in report["reports"]}
+            ok = (by_id["tasks-ok"]["ok"]
+                  and any("placeholder" in error for error in by_id["tasks-placeholder"]["errors"])
+                  and any("coverage" in error for error in by_id["tasks-missing"]["errors"])
+                  and any("undeclared target" in error for error in by_id["results-undeclared"]["errors"])
+                  and any("protagonist" in error for error in by_id["continuation-protagonist"]["errors"])
+                  and any("placeholder" in error for error in by_id["updates-placeholder"]["errors"]))
+            detail = f"passed={report['passed']}/{report['cases']}"
+        check("semantic_validate catches placeholder/coverage/declared-target/continuation errors", ok, detail)
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])
