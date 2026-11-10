@@ -151,6 +151,7 @@ M2 的 `attempt` 标签不能证明工具可用、行动合理或需求已覆盖
 - 针对性样本以模板化短句为主；它覆盖规则分歧，不代表自然分布。
 - 现有 D02.3／D02.5 的 38／32 条整体标注没有直接改写成本批标签；原语数量不等于独立行动样本数。
 - **封存污染**：20 条 `sealed` 试点样本已被 API 代理检查打开，不能再作为最终封存测试；最终验收必须新建封存集。
+- **人审入口**：`artifacts/world-components-logic/d02-checkers/pilot-review.html`。页面不联网，先读原文再展开草稿，分别记录 M1／M2 的认可／需修改／不确定；导出 JSON 带批次哈希。操作与裁决流程见 [人审标注操作说明](../../../experiments/world-components-logic/data/d02-checkers/pilot-v1/HUMAN_REVIEW.md)，回收用 `python3 d02_review.py reconcile <导出文件>`。当前 `humanReview.status=pending`，助手复核不能替代人审。
 
 ## 8. API 代理实验
 

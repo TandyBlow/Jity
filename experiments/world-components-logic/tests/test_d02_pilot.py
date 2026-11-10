@@ -76,6 +76,8 @@ class PilotDataTests(unittest.TestCase):
         self.assertEqual(self.manifest['assistantReview']['status'], 'completed')
         self.assertEqual(self.manifest['assistantReview']['reviewedSamples'], 120)
         self.assertEqual(self.manifest['assistantReview']['humanReview'], 'pending')
+        self.assertEqual(self.manifest['humanReview']['status'], 'pending')
+        self.assertEqual(self.manifest['humanReview']['reviewedSamples'], 0)
 
 
 if __name__ == '__main__':

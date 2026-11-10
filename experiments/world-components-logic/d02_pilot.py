@@ -742,6 +742,10 @@ def build(output=ROOT, include_natural=True):
             'status': 'completed', 'reviewedSamples': len(samples),
             'humanReview': 'pending', 'artifact': 'REVIEW.md',
         },
+        'humanReview': {
+            'status': 'pending', 'packet': 'artifacts/world-components-logic/d02-checkers/pilot-review.html',
+            'sop': 'HUMAN_REVIEW.md', 'reviewedSamples': 0,
+        },
         'groupCount': len(GROUPS),
         'sampleCount': len(samples),
         'targetedCount': len(samples) - len(natural),

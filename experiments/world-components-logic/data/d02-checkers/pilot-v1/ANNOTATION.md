@@ -85,7 +85,11 @@
 4. **别名**：登记别名可被模型识别，但首版不自动采纳；歧义别名必须 `ambiguous`。
 5. **API 自然输出**：提示词要求“提出尝试、不结算结果”，但实际输出仍可能出现完成体；这些样本按同一规则标注，不因来源不同放宽。
 
-## 9. 复核清单
+## 9. 人审操作
+
+见 [人审标注操作说明](HUMAN_REVIEW.md) 和 `artifacts/world-components-logic/d02-checkers/pilot-review.html`。
+
+## 10. 复核清单
 
 - [ ] 每条 `surface` 与原文切片逐字一致，偏移为 code point。
 - [ ] `roleStatus` 五键齐全，`absent`／`insufficient` 没有被合并。
