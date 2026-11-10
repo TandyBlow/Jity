@@ -11,7 +11,7 @@
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
 - CPU 小测试 29 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/narration-generation.test.ts --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
-- 真实浏览器模型（Edge headless + wllama）：两个叙事检查点各 3 个代表性点，共 12 次真实生成全部被拒（legacy 0/3，instruct 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
+- 真实浏览器模型（Edge headless + wllama）：三个叙事检查点各 3 个代表性点，共 18 次真实生成全部被拒（legacy v2 0/3，instruct v1 0/3，1.5B v2 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
   不需要改本模块或另写序列化。
 
@@ -261,11 +261,15 @@ temperature 0.7 / 重试 0.55，seed 42，最多 2 次尝试。模型是用户�
 | instruct `41fbef75…` (v1) | root | 拒 | 343 | 新增事件×2；新增事件＋截断＋句内重复 | 45.4 s |
 | instruct (v1) | move | 拒 | 344 | 时长错误＋移动声明＋新增事件×2＋漏述移动；新增事件×2＋漏述移动 | 35.5 s |
 | instruct (v1) | elapsed 2 分钟 | 拒 | 510 | 新增事件＋未写时间＋句内重复；新增事件＋移动声明＋未写时间 | 49.5 s |
+| 1.5B `6ed2268d…` (v2) | root | 拒 | 167 | 新增事件×2＋移动声明×2；移动声明＋新增事件＋移动声明 | 62.9 s |
+| 1.5B (v2) | move | 拒 | 312 | 移动声明＋漏述移动；移动声明＋漏述移动 | 85.3 s |
+| 1.5B (v2) | elapsed 2 分钟 | 拒 | 555 | 新增事件＋未写时间＋往事“曾经”＋截断；新增事件×2＋时长错误＋移动声明＋未写时间＋往事“十年前” | 134.4 s |
 
-两次运行的模型加载分别为 14.6 s（legacy v2）/ 10.3 s（instruct v1）；legacy 单次生成平均约 29 s，instruct 约 43 s。
-legacy 在 `v2`（新增承诺/往事硬检查）下重跑过，三个场景仍然全拒，问题类型不变。instruct
-的模型文件在 11:44 左右被其他线从共享模型目录替换/移除，v2 无法重跑，保留它的 v1 原始证据；
-v2 的承诺/往事检查只会增加拒绝理由，不会改变已经因其他硬问题被拒的结论。
+三次运行的模型加载分别为 14.6 s（legacy v2）/ 10.3 s（instruct v1）/ 24.4 s（1.5B v2）；单次生成平均约 29 s / 43 s / 94 s。
+legacy 与 1.5B 都在 `v2`（新增承诺/往事硬检查）下跑过，三个场景仍然全拒，问题类型不变；
+1.5B 的 elapsed 场景实际触发了 `past_without_fact`（“曾经”“十年前”）。instruct 的模型文件在
+11:44 左右被其他线从共享模型目录替换/移除，v2 无法重跑，保留它的 v1 原始证据；v2 的承诺/
+往事检查只会增加拒绝理由，不会改变已经因其他硬问题被拒的结论。
 
 逐次完整 prompt、raw 文本、清洗文本、finishReason、问题、对齐 coverage/violations/
 unverified/repetition 都在上面两个 JSON 里。原始输出确实通顺（不是乱码、不是空串），
