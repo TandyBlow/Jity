@@ -339,7 +339,9 @@ const sync = createProductSync<LocalGameSnapshot>({
    `flush` 会补传。
 2. **开局恢复**：先读 06 的本地记录；本地没有才 `await sync.restore()`。
    默认**不写** 06 的存储，只把远端快照返回给页面/会话来打开（`source:
-   'remote'`）。`restore().conflict` 出现时不要自动选，把两份分支交给玩家。
+   'remote'`）。`source` 有四种：`local` / `remote` / `none`（服务答了但没有
+   head，确实是新世界）/ `unavailable`（联系不上或读不到，**不能**当成“远端是
+   空的”去开新世界）。`restore().conflict` 出现时不要自动选，把两份分支交给玩家。
 3. **冲突 UI**：`conflict.branches` 是两条叶子，`conflict.remote` 是远端 head。
    玩家点选后调 `sync.choose('keep-remote' | 'keep-local-fork', conflict)`；
    返回值里的 `snapshot` 由页面交给会话打开（默认不写存储）。两个副本都留在
