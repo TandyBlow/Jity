@@ -153,3 +153,5 @@
 **21c3 独立复核（2026-11-11）**：`results/quality/findings-21c3.md`。最终 130 字是程序回退（source=draft），第 3 句 `诺诺：确认任务完成…` 是假任务（4 次 updates `achieved: []`，73 行全 pending）；模型候选 93 supported/0 violations 被 `unprojected_entity:诺诺的红色识别带` 拒（红带是诺诺已结算持有物，投影漏了）+ `loop_repeated_clause`；玩家点 26.9 s 正文没显示，自动轮回退覆盖；snapshot 是根点，history 0→1；首合格 167.5 s。L0 新增 `fact.task_asserted`（21c3 最终正文命中，human-71/final-v1 仍 0），68 锚点、31/4。已发 04 `requests-01-to-04-21c3-projection.md`、06/02/09 追加。
 
 **`3f54eac0` 复核（2026-11-11）**：06 的 binding 修复只保护了 `record.narrations`/`record.source/acceptedMs`，`onNarrationProgress`（page.tsx:640-643）和 `onNarrationComplete`（681-699）仍对任何 point 执行 `updateLast` 改 entry 文本；f15d/21c3 的"自动轮覆盖玩家点"没有修好。已在 `requests-01-to-06-narration-binding.md` 追加最小修法（entry 加 pointId，只允许玩家点更新）。下一条页面 run 前必须补上，否则显示仍是自动轮。
+
+**06 vendor 落后（2026-11-11）**：06 树的 `narration-generation` 还没有 02 的 `1c826929`（时间补句）、`28f30c7e`（远处地标）、`eede2b23`（2x echo 不算 loop）、`16554f55`（filled-hand 句子定位）。21c3 的 `loop_repeated_clause+loop_repeated_clause` 正是 2x echo，旧副本仍 hard 拒。已在 06 request 里列出四个 commit；下一个 build 必须 vendor 到 02 最新。
