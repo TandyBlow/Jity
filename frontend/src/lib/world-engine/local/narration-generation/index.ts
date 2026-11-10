@@ -19,7 +19,7 @@ import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
 import { renderProseFactsPrompt } from './scene-prompt';
-import { senseViolations } from './licensed-sense';
+import { appearanceViolations, senseViolations } from './licensed-sense';
 import { actionViolations } from './licensed-action';
 import { stripBeatLabel } from './beats';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
@@ -449,12 +449,17 @@ async function writeBeat(
       // A beat label the model echoed («【环境】…») is an instruction, not
       // prose; the page would show it as text. Strip it before using the beat.
       const body = stripBeatLabel(result.attempt.cleaned);
-      const invented = senseViolations(body, input.inputText, {
+      const marks = appearanceViolations(body, input.inputText);
+      const invented = marks.length ? [] : senseViolations(body, input.inputText, {
         staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
       const acted = actionViolations(body, input.inputText);
-      if (acted.length && !invented.length) {
+      if (marks.length) {
+        const detail = marks.map((item) => `${item.noun}（${item.sentence}）`).join('；');
+        issues.push({ kind: 'unlicensed_appearance', severity: 'hard', attempt: attempt + 1, detail, sentence: marks[0].sentence });
+      }
+      if (acted.length && !invented.length && !marks.length) {
         const detail = acted.map((item) => `${item.word}${item.object ? `·${item.object}` : ''}（${item.sentence}）`).join('；');
         return {
           evidence: { ...evidenceBase, text: body, source: 'skipped', issues: [...issues, { kind: 'unlicensed_action', severity: 'hard', attempt: attempt + 1, detail, sentence: acted[0].sentence }] },
@@ -763,25 +768,44 @@ async function repairSentences(args: {
   for (let round = 0; round < 3; round += 1) {
     const movedNames = args.ledger.mandatory.filter((fact) => fact.kind === 'moved').map((fact) => fact.name);
     const senses = senseViolations(text, args.inputText, { movedNames, staticNames: staticNamesOf(args.policy) });
-    const acts = senses.length ? [] : actionViolations(text, args.inputText);
-    const echo = senses.length || acts.length ? null : repeatTarget(text);
-    const contradiction = senses.length || acts.length || echo ? null : contradictionTarget(text);
-    if (!senses.length && !acts.length && !echo) return text;
-    const target = contradiction ?? echo ?? (senses.length
-      ? { sentence: senses[0].sentence, lines: [
+    const marks = senses.length ? [] : appearanceViolations(text, args.inputText);
+    const acts = senses.length || marks.length ? [] : actionViolations(text, args.inputText);
+    const echo = senses.length || marks.length || acts.length ? null : repeatTarget(text);
+    const contradiction = senses.length || marks.length || acts.length || echo ? null : contradictionTarget(text);
+    if (!senses.length && !marks.length && !acts.length && !echo) return text;
+    // Priority: a world-fact error (contradiction, invented appearance) is
+    // repaired before a style echo; repairing the echo first made the two
+    // defects take turns and both survived.
+    let target: { sentence: string; lines: string[] } | null = contradiction;
+    if (!target && marks.length) {
+      target = { sentence: marks[0].sentence, lines: [
+        `下面这句里写了人物身上的「${marks[0].noun}」，但这一回合的状态里没有它：`,
+        `原句：${marks[0].sentence}`,
+        '',
+        '只重写这一句：删掉这个外观细节，保留这句里其它已经发生的事，不要新增任何外观、动作或人物。',
+        '只输出重写后的这一句，不要解释。',
+      ] };
+    }
+    if (!target && senses.length) {
+      target = { sentence: senses[0].sentence, lines: [
         '下面这句里写了没有出现过的声音或气味：',
         `原句：${senses[0].sentence}`,
         '',
         '只重写这一句：删掉那个声音或气味，保留这句里其它已经发生的事，不要新增任何声音、气味、动作或人物。',
         '只输出重写后的这一句，不要解释。',
-      ] }
-      : { sentence: acts[0].sentence, lines: [
+      ] };
+    }
+    if (!target && acts.length) {
+      target = { sentence: acts[0].sentence, lines: [
         '下面这句里写了没有发生的姿势或手上的动作：',
         `原句：${acts[0].sentence}`,
         '',
-        `只重写这一句：删掉「${acts[0].word}」这个动作（${acts[0].object ? `以及摆弄${acts[0].object}的部分` : '如果它只是被这个人拿在手里'}），保留这句里其它已经发生的事，不要新增动作、人物或物品。`,
+        `只重写这一句：删掉「${acts[0].word}」这个动作（${acts[0].object ? '以及摆弄' + acts[0].object + '的部分' : '如果它只是被这个人拿在手里'}），保留这句里其它已经发生的事，不要新增动作、人物或物品。`,
         '只输出重写后的这一句，不要解释。',
-      ] });
+      ] };
+    }
+    if (!target) target = echo;
+    if (!target) return text;
     let answer = '';
     try {
       answer = (await args.engine.complete(target.lines.join(String.fromCharCode(10)), {
@@ -901,10 +925,19 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // The check is independent of the other rules: a draft that is also too
     // short can still assert an invented sound, and the evidence must say so.
     if (result.attempt.cleaned) {
-      const invented = senseViolations(result.attempt.cleaned, input.inputText, {
+      const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText);
+      const invented = markIssues.length ? [] : senseViolations(result.attempt.cleaned, input.inputText, {
         staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
+      if (markIssues.length) {
+        result.attempt.accepted = false;
+        if (!result.attempt.issues.some((issue) => issue.kind === 'unlicensed_appearance')) result.attempt.issues.push({
+          kind: 'unlicensed_appearance', severity: 'hard', attempt: result.attempt.attempt,
+          detail: markIssues.map((item) => `${item.noun}（${item.sentence}）`).join('；'),
+          sentence: markIssues[0].sentence,
+        });
+      }
       if (invented.length) {
         result.attempt.accepted = false;
         if (!result.attempt.issues.some((issue) => issue.kind === 'unlicensed_sense')) result.attempt.issues.push({
@@ -951,14 +984,16 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // asked to say the second occurrence differently instead of dropping it.
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
       || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
-      || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction');
+      || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction'
+      || issue.kind === 'unlicensed_appearance');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,
       policy, attempt: attempt.attempt, ledger, signal: input.signal,
     });
     if (!repaired) continue;
-    const still = senseViolations(repaired, input.inputText, {
+    const marks = appearanceViolations(repaired, input.inputText);
+    const still = marks.length ? [] : senseViolations(repaired, input.inputText, {
       staticNames: staticNamesOf(policy),
       movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
     });

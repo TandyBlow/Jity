@@ -33,6 +33,28 @@ export const AMBIENT_SENSE_NOUNS = [
   '气味', '香味', '木香', '臭味',
 ] as const;
 
+export const APPEARANCE_MARK_NOUNS = [
+  '红痕', '疤痕', '伤口', '淤青', '口红', '纹身', '血迹', '眼影', '胭脂', '唇印', '粉',
+] as const;
+
+/** A visible mark on a person that the input never states. The page's accepted
+ * quiet turn wrote «她耳后有淡淡的粉»; an earlier one wrote «她身上的红痕».
+ * In the 71 reference scenes every mark that appears («演习弹红痕») is also in
+ * the input, so requiring the input gives 0 false positives there. */
+export function appearanceViolations(text: string, inputText: string): SenseViolation[] {
+  const found: SenseViolation[] = [];
+  for (const sentence of sentencesOf(text)) {
+    for (const noun of APPEARANCE_MARK_NOUNS) {
+      if (!sentence.includes(noun) || inputText.includes(noun)) continue;
+      // «粉» is also a colour word and a common noun (粉笔灰, 花粉); only the
+      // applied-to-a-person sense is a mark.
+      if (noun === '粉' && !/(耳后|脸上|颊|腮|唇|眉|妆)/u.test(sentence)) continue;
+      found.push({ sentence, noun });
+    }
+  }
+  return found;
+}
+
 export interface SenseViolation {
   sentence: string;
   noun: string;
