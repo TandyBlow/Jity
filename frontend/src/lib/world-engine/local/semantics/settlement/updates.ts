@@ -17,7 +17,7 @@ import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
-  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, roster, sameChangeText, taskIndex, taskLine, toJson,
+  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
 
@@ -380,12 +380,20 @@ export class UpdatesRunner {
       error: evidence.error,
       evidence,
     };
+    const stageMs: Record<string, number> = {};
+    outcomes.forEach((outcome, index) => {
+      const stage = Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage;
+      const stageTime = joinedMs(outcome.calls);
+      if (stageTime) stageMs[stage] = Math.round(stageTime);
+    });
     this.options.onTask?.('updates', key, {
       ms,
       fallback,
       error: evidence.error,
       raw: evidence.raw,
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
+      stageMs,
+      stages: outcomes.map((outcome, index) => (Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage)),
     });
     return outcome;
   }
@@ -773,6 +781,16 @@ function latestPersonalityOwners(state: WorldState): Set<Id> {
   return owners;
 }
 
+/** Identical first block for all six stage prompts. The runtime caches the
+ * prompt prefix across calls (wllama cache_prompt), so the settled results and
+ * time are read once instead of being re-prefilled by every stage. */
+function sharedHeader(state: WorldState, results: Record<Id, string>): string {
+  return [
+    `当前世界时间：${state.time.dateTime}`,
+    `本组结算结果：${resultText(results) || '（无）'}`,
+  ].join('\n');
+}
+
 function buildPositionPrompt(state: WorldState, results: Record<Id, string>): string {
   const entities = movableIds(state).map((id) => `- ${positionLineFor(state, id)}`);
   const sampleId = movableIds(state)[0] ?? '';
@@ -780,13 +798,13 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>): st
     ?? state.items[sampleId]?.position.containerId
     ?? allEntityIds(state)[0] ?? '';
   return [
+    sharedHeader(state, results),
     '你是中文跑团游戏的位置结算器。只输出 JSON，不要解释。',
     '下面列出所有可移动实体（人物和物品）的当前位置。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。',
     '规则：',
     '- entityId 必须是下面实体之一；containerId 必须是已登记实体 id；slotId 只能填该容器的槽位 id；relativeTo 只能指向同一地点的实体。',
     '- 不要新增地点、物品或人物；不要重复列出同一实体。',
     '- 位置变化是同时发生的，最终结构不能成环。',
-    `结算结果：${resultText(results) || '（无）'}`,
     '实体：',
     ...entities,
     '地点和容器（id=名字，槽位）：',
@@ -881,6 +899,7 @@ function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, 
     : `- ${personalityLine(state, id)}`));
   const title = kind === 'appearance' ? '外貌' : '个性';
   return [
+    sharedHeader(state, results),
     `你是中文跑团游戏的${title}结算器。只输出 JSON，不要解释。`,
     `扫描下面所有${kind === 'appearance' ? '实体（人物、物品、地点）' : '人物（包括不在场人物）'}的${title}。根据结算结果，判断是否需要新增、解除或替换${title}变化。没有变化就返回空操作。`,
     '规则：',
@@ -888,7 +907,6 @@ function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, 
     '- add 的 text 必须非空，recordIds 为空；replace 的 text 必须与旧文本不同；remove 的 text 为 null。',
     '- 同一个有效记录不能被重复 keep/remove/replace；如果一个实体有操作，它的全部有效记录都必须被 keep 或替换/解除覆盖，否则整段拒绝。',
     '- 不要新增实体；没有实际变化就 keep，不要为了凑变化而改写。',
-    `结算结果：${resultText(results) || '（无）'}`,
     kind === 'appearance' ? '实体：' : '人物：',
     ...lines,
     `输出 {"operations":[{"entityId":"${ids[0] ?? ''}","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。`,
@@ -985,8 +1003,8 @@ function readDescriptionOperations(
 }
 
 function buildTasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
-  const now = ctx.state.time.dateTime;
+  const keys = taskKeyIndex(ctx.state);
+  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id, keys));
   const required = [...new Set(allTasks(ctx.state).map((row) => row.ownerId))].sort();
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
   // A 0.6B copies the example verbatim; a one-row example made it answer for a
@@ -995,17 +1013,16 @@ function buildTasksPrompt(ctx: StageContext): string {
   const skeleton = required.map((id) => `{"characterId":"${id}","achieved":[]}`).join(',');
   const exampleId = required[0] ?? '人物id';
   return [
+    sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
     '规则：',
     '- decisions 必须为每个有任务的人物各写一条，characterId 用括号里的 id 或人物全名；不能只写在场人物。',
-    '- achieved 只列本轮新达成的任务 id；该人物其余任务保持原状，不要逐条输出 pending。',
+    '- achieved 只列本轮新达成的任务编号（每行开头的 t1、t2…）；该人物其余任务保持原状，不要逐条输出 pending。',
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
     '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
-    '- taskId 必须逐字复制该人物行里已有的任务 id，不能自己造 id；不确定就留空，不要写近似的名字。',
-    `当前世界时间：${now}`,
-    `结算结果：${resultText(ctx.results) || '（无）'}`,
+    '- 任务编号必须逐字复制该人物行里已有的编号，不能自己造编号；不确定就留空，不要写近似的名字。',
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
@@ -1032,6 +1049,8 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
   if (!Array.isArray(decisions)) throw new Error('decisions must be an array');
   const rows = allTasks(state);
   const byTask = new Map(rows.map((row) => [row.task.id, row]));
+  const keys = taskKeyIndex(state);
+  const realByKey = new Map([...keys].map(([id, key]) => [key, id]));
   const ownerTasks = new Map<Id, Set<Id>>();
   for (const { ownerId, task } of rows) {
     const list = ownerTasks.get(ownerId) ?? new Set<Id>();
@@ -1056,8 +1075,14 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
     if (byCharacter.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
     const seen = new Set<Id>();
     const list: Id[] = [];
-    for (const taskId of achieved) {
-      if (!taskId) { rejected.push({ characterId, taskId, reason: 'empty_task_id' }); continue; }
+    for (const rawTaskId of achieved) {
+      if (!rawTaskId) { rejected.push({ characterId, taskId: rawTaskId, reason: 'empty_task_id' }); continue; }
+      const keyed = /^t\d+$/.test(rawTaskId) ? realByKey.get(rawTaskId) : undefined;
+      if (/^t\d+$/.test(rawTaskId) && !keyed) {
+        rejected.push({ characterId, taskId: rawTaskId, reason: 'unknown_task_key' });
+        continue;
+      }
+      const taskId = keyed ?? rawTaskId;
       if (isPlaceholderId(taskId)) { rejected.push({ characterId, taskId, reason: 'placeholder_task_id' }); continue; }
       if (!byTask.has(taskId)) { rejected.push({ characterId, taskId, reason: 'unknown_task_id' }); continue; }
       const row = byTask.get(taskId)!;
@@ -1086,13 +1111,13 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
 function buildSubtasksPrompt(ctx: StageContext): string {
   const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
   return [
+    sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
     '根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。',
     '规则：',
     '- 小任务必须挂在已有任务下，parentTaskId 必须是下面出现的任务 id；负责人必须是父任务的负责人。',
     '- 新任务一律 pending，不要输出 status 或 ownerId；没有就输出空数组。',
     '- 不要为了凑数量新增任务；只有结算结果确实产生了新的具体目标时才新增。',
-    `结算结果：${resultText(ctx.results) || '（无）'}`,
     '人物和任务：',
     ...rows,
     '输出 {"subtasks":[{"parentTaskId":"任务id","goal":"一句话具体目标"}]}。',
@@ -1149,6 +1174,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     return `{"entityId":"${id}","op":"keep","recordIds":[${records}],"text":null}`;
   }).join(',');
   return [
+    sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物个性变化判断器。只输出 JSON，不要解释。',
     '本轮有新任务达成。请扫描所有人物（包括不在场人物），判断他们的个性是否因这些达成或当前处境发生变化。',
     '规则：',
@@ -1158,7 +1184,6 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     '- 新个性文本必须与旧文本有实际差异；没有实际变化就 keep。',
     '- 个性变化只由新达成任务触发；不要因为普通动作直接改个性。',
     recovered ? '- 本次是恢复后的补判定：只考虑本轮结算结果能够支持的新达成任务，不要把以前达成的任务当成新触发。' : '',
-    `本组结算结果：${resultText(ctx.results) || '（无）'}`,
     '触发任务：',
     ...triggerLines,
     '人物个性：',
@@ -1170,13 +1195,13 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
 function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
   const skeleton = owners.map((id) => `{"characterId":"${id}","value":${ctx.state.characters[id]?.sanity ?? 50}}`).join(',');
   return [
+    sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物理智重算器。只输出 JSON，不要解释。',
     '下面这些人物在本轮发生了有效个性变化。请根据他们变化后的当前个性，重新给出 0-100 的整数理智值。',
     '规则：',
     '- 只为下面列出的人物输出；没有个性变化的人物不要输出。',
     '- 理智必须是 0 到 100 的整数；不要用小数、布尔或字符串。',
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
-    `本组结算结果：${resultText(ctx.results) || '（无）'}`,
     ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
     `输出 {"sanity":[${skeleton}]}（只为上面每个人物各一条，value 为 0-100 整数；characterId 用真实 id 或人物全名）。`,
   ].join('\n');

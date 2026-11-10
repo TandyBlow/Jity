@@ -15,6 +15,7 @@ import type { InitialState, InitialTemplate, Json, WorldState } from '../../type
 import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createSettlementModelPort } from './index';
+import { taskKeyIndex } from '../semantics/settlement/support';
 
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
   const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
@@ -124,7 +125,10 @@ describe('real product world through the real kernel', () => {
     const taskPrompt = seen.find((prompt) => prompt.includes('任务判定器')) ?? '';
     for (const id of Object.keys(state.characters)) expect(taskPrompt).toContain(`id=${id}`);
     const taskIds = Object.values(state.characters).flatMap((character) => Object.keys(character.tasks));
-    for (const id of taskIds) expect(taskPrompt).toContain(id);
+    expect(taskIds).toHaveLength(73);
+    const keys = taskKeyIndex(state);
+    expect(keys.size).toBe(73);
+    for (const key of keys.values()) expect(taskPrompt).toContain(`${key}：`);
     // And the appearance stage still holds every entity after compression.
     const appearancePrompt = seen.find((prompt) => prompt.includes('外貌结算器')) ?? '';
     expect(appearancePrompt.length).toBeLessThan(8000);

@@ -77,7 +77,12 @@ export interface GameModelOptions {
   /** Internal evidence sink for candidate runs: candidate id, grade, per-beat
    * segments and the candidate's own attempt record. Never rendered. */
   onNarrationEvidence?: (record: Record<string, unknown>) => void;
-  onTask?: (task: ModelTask, key: string, detail: { ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number }) => void;
+  onTask?: (task: ModelTask, key: string, detail: {
+    ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
+    /** Per-stage milliseconds for a multi-stage (updates) call. */
+    stageMs?: Record<string, number>;
+    stages?: string[];
+  }) => void;
 }
 
 interface Generated { value: Json; raw: string; ms: number; fallback: boolean; error?: string }

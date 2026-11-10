@@ -559,7 +559,13 @@ export default function WorldLocalPage() {
           narrationMaxTokens: 200,
           narrationTemperature: 0.45,
           onTask: (task, key, detail) => {
-            console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
+            // stageMs/stages arrive on the updates task detail: printing them
+            // here keeps the per-stage cost visible even when the turn times out
+            // before the submission ledger is closed.
+            const stageNote = detail.stageMs && typeof detail.stageMs === 'object'
+              ? ` stages=${Object.entries(detail.stageMs).map(([name, ms]) => `${name}:${Math.round(Number(ms))}`).join(',')}`
+              : '';
+            console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}${stageNote}`);
             if (task === 'action' || task === 'targets' || task === 'reaction') {
               const live = turnRecordRef.current;
               if (live) (live.actions ??= []).push({
@@ -937,6 +943,7 @@ export default function WorldLocalPage() {
           continuationCalls: submission.continuationCalls,
           decision: submission.continuationDecision,
           stops: submission.stops,
+          stageMs: submission.calls.map((call) => ({ task: call.task, key: call.key, stageMs: call.stageMs ?? null })),
         }));
         (window as unknown as { __worldSubmission?: unknown }).__worldSubmission = submission;
       }
