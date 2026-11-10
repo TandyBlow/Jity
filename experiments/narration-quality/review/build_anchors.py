@@ -1194,6 +1194,22 @@ for suffix, note in (
         },
     )
 
+
+quiet = json.load(io.open(WT + "/../../results/02-narration/real-qwen3-quiet-minute-4.json", encoding="utf-8"))
+quiet_text = next(run["text"] for run in quiet["runs"] if run.get("text"))
+quiet_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-point")
+anchors.append(
+    {
+        "id": "neg/02-quiet-minute-4",
+        "source": "02 re-run on 28f30c7e (real-qwen3-quiet-minute-4.json, accepted 147 chars, 24.0 s): 诺诺 walks with no settled move",
+        "input": quiet_input,
+        "text": quiet_text,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.event_added"], "style": [], "review": [],
+                   "notes": "The only hard defect is 诺诺一步步走近; 钟声/泥土味/铃铛 are review atmosphere."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

@@ -533,6 +533,20 @@ export function reviewNarration(args: {
       [`${move.name}: ${move.from ?? '?'} → ${move.to}`], [move.id]));
   }
 
+  // A non-viewpoint person walking toward or away is either a settled move
+  // or an invented event. The f15d-adjacent 02 quiet-turn re-run wrote
+  // «诺诺一步步走近» with no move in the settled input.
+  for (const sentence of sentences) {
+    for (const person of Object.values(projection.people)) {
+      if (person.name === projection.viewpoint) continue;
+      const walking = new RegExp(`${escapeRegExp(person.name)}[^。]{0,8}(?:一步步)?(?:走近|走过来|走来|走向|上前|凑近|退后|退开|转身走|迈步)`, 'u');
+      if (!walking.test(sentence.narration)) continue;
+      if (projection.moves.some((move) => move.kind === 'person' && move.name === person.name)) continue;
+      findings.push(finding(ctx, 'fact.event_added', sentence.text,
+        `${person.name} moves without a settled move`, [], [`position:${person.name}`]));
+    }
+  }
+
   // ------------------------------------------------------------ positions
   /** A slot id (`西侧服务巷/slot_wall`) is a spot inside the place; naming the
    * place itself is consistent. */
@@ -1147,6 +1161,10 @@ export function reviewNarration(args: {
       const movedHere = MOVE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb));
       const moverHere = movedHere && projection.moves.some((move) => move.kind === 'person' && narration.includes(move.name));
       if (sound === '脚步声' && moverHere) continue;
+      // A distant bell from a settled landmark is atmosphere, not an event:
+      // 02's re-run «远处传来…钟声» changes no world fact. The sentence still
+      // gets review.tone for being unbound atmosphere.
+      if ((sound === '钟声' || sound === '铃声') && /(远处|远方|远处传来|远远)/u.test(narration)) continue;
       // Laughter needs someone the viewpoint can see; 孩童的笑声 with no child
       // in the scene is an invented source.
       if (sound === '笑声' && projection.visibleNames.some((name) => narration.includes(name))) continue;
