@@ -200,13 +200,16 @@ function isRequired(beat: ProseBeat): boolean {
  * clause keeps real scene content in the sentence without inventing anything.
  * Only the first clause of each detail sentence is used; splitting on every
  * comma produced fragments that read worse than the panel. */
-function freshPlaceClause(scene: ProseScene, seenText: string | null, salt: string): string {
+function freshPlaceClause(scene: ProseScene, seenText: string | null, salt: string, usedText = ''): string {
   const clauses = (scene.location.details ?? [])
     .flatMap((detail) => detail.split('。'))
     .map((sentence) => sentence.split(/[，；]/u)[0]?.trim() ?? '')
     .filter((clause) => charCount(clause) >= 6 && charCount(clause) <= 24);
-  const fresh = seenText ? clauses.filter((clause) => !seenText.includes(clause)) : clauses;
-  const pool = fresh.length ? fresh : clauses;
+  // Do not use a clause this narration already printed as scene texture.
+  const unused = clauses.filter((clause) => !usedText.includes(clause));
+  const fresh = (unused.length ? unused : clauses)
+    .filter((clause) => !seenText || !seenText.includes(clause));
+  const pool = fresh.length ? fresh : unused.length ? unused : clauses;
   if (!pool.length) return '';
   return pool[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|${salt}`) % pool.length];
 }
@@ -529,12 +532,10 @@ export function composeProse(scene: ProseScene): ComposedProse {
         // reports a completed task reads as a status panel. When nothing else
         // happened, open with a licensed place clause; with a move or a line in
         // the same turn the sentence already has scene content.
-        const onlyClockAndTask = body.every((entry) => entry.kind === 'time' || entry.kind === 'scene'
-          || entry.kind === 'task')
-          && body.filter((entry) => entry.kind === 'task').length === 1;
-        // The constrained beat keeps its subject-first contract; only a whole
-        // scene narration opens with the place clause.
-        const lead = onlyClockAndTask && !beatOnly ? freshPlaceClause(scene, seenText, 'task') : '';
+        // The constrained beat keeps its subject-first contract; a whole scene
+        // narration opens with a place clause, because 01 strips the actor and
+        // the exact goal and the sentence alone would read as a status panel.
+        const lead = beatOnly ? '' : freshPlaceClause(scene, seenText, 'task', units.map((unit) => unit.text).join('\n'));
         const sentence = beat.factText
           ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId))
           : templates.pick('task', [
@@ -593,7 +594,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
           // personality text; a bare place name therefore still reads as a
           // status panel. A licensed place clause keeps real scene content in
           // the same sentence.
-          const clause = freshPlaceClause(scene, seenText, 'mental');
+          const clause = freshPlaceClause(scene, seenText, 'mental', units.map((unit) => unit.text).join('\n'));
           const lead = `${pendingTime.clause}${clause ? `，${clause}` : place ? `，${place}里` : ''}`;
           pushBeat(ensurePeriod(`${lead}，${named}`), beat);
           record(pendingTime.beat, units.length - 1, ensurePeriod(lead));

@@ -227,6 +227,31 @@ describe('validateScene and generateCandidate', () => {
     expect(result.text).toContain('过了五分钟，林川从走廊');
   });
 
+  it('anchors a task sentence in the place instead of reporting a bare status field', () => {
+    const base = {
+      ...SHORT_MOVE_SCENE,
+      policy: { minChars: 20, requireTime: true },
+      priorText: null,
+    };
+    const task = generateCandidate({
+      policy: {
+        scene: {
+          ...base,
+          location: { ...base.location, details: ['值班桌旁的登记簿摊开着。', '窗台的告示板贴着手写名单。'] },
+          beats: [
+            { kind: 'time', amount: 3, unit: 'minute' },
+            { kind: 'task', actorId: 'person_a', label: '问清局势', scope: 'sub' },
+          ],
+        },
+      },
+    });
+    // 01 strips the actor and the exact goal; without a scene clause the
+    // sentence is only a settled field. The place detail keeps it concrete.
+    const last = task.text.split(/\n{2,}/u).at(-1) ?? '';
+    expect(last).toMatch(/值班桌旁的登记簿摊开着|窗台的告示板贴着手写名单/u);
+    expect(last).toContain('「问清局势」');
+  });
+
   it('joins a time line to a quoted task sentence, but not to dialogue', () => {
     const base = {
       ...SHORT_MOVE_SCENE,
