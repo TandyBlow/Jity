@@ -515,11 +515,17 @@ export function reviewNarration(args: {
       moveSentences.set(move.id, sentence.text);
     }
   }
+  const basePlace = (value: string | null): string | null => (value
+    ? value.split('/')[0].replace(/（[^）]*）$/u, '').trim()
+    : null);
   const reversedMoves = new Set(findings
     .filter((entry) => entry.kind === 'fact.direction_reversed')
     .flatMap((entry) => entry.factIds ?? []));
   for (const move of projection.moves.filter((entry) => entry.kind === 'person')) {
     if (expressedMoves.has(move.id) || reversedMoves.has(move.id)) continue;
+    // A slot change inside the same place (低墙后的掩蔽处 → 巷口) is not a move
+    // the prose must narrate; the point's place is unchanged.
+    if (basePlace(move.from) !== null && basePlace(move.from) === basePlace(move.to)) continue;
     const actorSeen = text.includes(move.name);
     const destinationSeen = text.includes(move.to);
     if (actorSeen && destinationSeen) {
@@ -550,7 +556,6 @@ export function reviewNarration(args: {
   // ------------------------------------------------------------ positions
   /** A slot id (`西侧服务巷/slot_wall`) is a spot inside the place; naming the
    * place itself is consistent. */
-  const basePlace = (value: string | null): string | null => (value ? value.split('/')[0].trim() : null);
   for (const sentence of sentences) {
     for (const person of Object.values(projection.people)) {
       const settled = basePlace(person.positionAfter ?? person.positionBefore);

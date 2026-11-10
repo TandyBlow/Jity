@@ -120,3 +120,21 @@ limits, and the real free-day world.
 - Location dependencies add the room seeds plus one immediate parent, matching
   the source dataset rule. A deeper ancestor policy needs a new projection
   version and matching training inputs.
+
+## Dev review against a real 09 run
+
+`review-run.test.ts` is skipped by default. With a 09 evidence file it builds
+the independent checker row from the real snapshot (before = the initial state,
+after = the per-point state, time = 1 minute for the player point and each
+automatic round) and reviews every narration:
+
+```bash
+REVIEW_EVIDENCE=../../../results/product/evidence/09-one-legal-turn-b7cd.json \
+REVIEW_OUT=../.local/narration-quality/b7cd-state.json \
+npx vitest run src/lib/world-engine/local/narration-input/review-run.test.ts --maxWorkers=1
+```
+
+This catches what the static q3 fixture cannot: the b7cd auto-1 model text is a
+verbatim opening echo (`style.repeated_opening` + `style.echo_prior` 0.78)
+although the page accepted it, and the shown auto-2 program fallback asserts a
+task (`fact.task_asserted`) plus a field line (`style.status_panel`).
