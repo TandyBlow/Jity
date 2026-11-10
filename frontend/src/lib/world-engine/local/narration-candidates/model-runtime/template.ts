@@ -10,6 +10,7 @@
  *    removed (also while streaming, so the page never flashes it).
  */
 import type { CommittedNarration } from '../../../runtime/committed-narration';
+import type { TimeAdvance } from '../../../types';
 import type { CandidatePolicy, CandidateScene, ChatTurn, ModelSpec } from './types';
 import { NARRATOR_SYSTEM_PROMPT, describeCommitted } from './types';
 
@@ -32,7 +33,8 @@ export function renderNarrationUser(
   } else {
     lines.push('本回合没有实体变化。不要写任何移动、任务达成或状态改变。');
   }
-  if (policy.time) lines.push(`本回合经过的时间：${policy.time.amount}${timeUnitWord(policy.time.unit)}。`);
+  const time = normalizeTime(policy.time);
+  if (time) lines.push(`本回合经过的时间：${time.amount}${timeUnitWord(time.unit)}。`);
   if (policy.knownPositions?.length) {
     lines.push('已知在场位置（现状，不是本回合变化）：');
     for (const entry of policy.knownPositions) lines.push(`- ${entry.name}在${entry.location}。`);
@@ -76,6 +78,14 @@ const TIME_WORDS: Record<string, string> = {
   second: '秒', minute: '分钟', hour: '小时', day: '天', turn: '回合',
 };
 function timeUnitWord(unit: string): string { return TIME_WORDS[unit] ?? unit; }
+
+export function normalizeTime(
+  value: CandidatePolicy['time'],
+): { amount: number; unit: TimeAdvance['duration']['unit'] } | null {
+  if (!value) return null;
+  if ('duration' in value) return value.duration ?? null;
+  return value;
+}
 
 function trim(text: string, max: number): string {
   const chars = [...text.trim()];

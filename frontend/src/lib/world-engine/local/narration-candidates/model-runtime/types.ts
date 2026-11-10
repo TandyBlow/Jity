@@ -91,7 +91,11 @@ export interface CandidatePolicy {
   knownPositions?: { name: string; location: string }[];
   knownEntities?: string[];
   visibleEntities?: string[];
-  time?: { amount: number; unit: TimeAdvance['duration']['unit'] } | null;
+  /** Either the plain duration or a settled TimeAdvance ({duration:{...}});
+   * 09's driver passes the latter. */
+  time?: { amount: number; unit: TimeAdvance['duration']['unit'] } | { duration: { amount: number; unit: TimeAdvance['duration']['unit'] } } | null;
+  /** Require the passage to state the elapsed time even without a TimeAdvance. */
+  requireTime?: boolean;
   minChars?: number;
   targetChars?: number;
   temperature?: number;

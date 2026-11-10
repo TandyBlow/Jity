@@ -17,7 +17,7 @@ import { IncompleteGenerationError, type CompletionEvidence } from '../../../run
 import { alignNarration } from '../../../runtime/narration-alignment';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import {
-  buildMessages, cleanNarration, describeCommitted, renderFallbackPrompt, renderNarrationUser, ThinkingFilter,
+  buildMessages, cleanNarration, describeCommitted, normalizeTime, renderFallbackPrompt, renderNarrationUser, ThinkingFilter,
 } from './template';
 import { modelSpecByFile } from './catalog';
 import type {
@@ -58,7 +58,7 @@ function verifiedResult(
   policy: CandidatePolicy,
 ): CandidateVerification {
   const alignment = alignNarration(committed, text, {
-    time: policy.time ?? null,
+    time: normalizeTime(policy.time),
     roster: policy.roster,
     locations: policy.locations,
     knownPositions: policy.knownPositions,

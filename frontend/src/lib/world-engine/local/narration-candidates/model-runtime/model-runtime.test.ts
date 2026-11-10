@@ -4,7 +4,7 @@ import type { CompleteOptions } from '../../../runtime/engine';
 import { MODEL_CATALOG, DEFAULT_MODEL_ID, modelSpec, modelSpecByFile } from './catalog';
 import { generateCandidate } from './candidate';
 import {
-  ThinkingFilter, buildMessages, cleanNarration, renderFallbackPrompt, renderNarrationUser, stripThinking,
+  ThinkingFilter, buildMessages, cleanNarration, normalizeTime, renderFallbackPrompt, renderNarrationUser, stripThinking,
 } from './template';
 import type { CandidateArgs, ChatCapableEngine } from './types';
 
@@ -238,6 +238,17 @@ describe('generateCandidate', () => {
     // The draft stays the model's own text; the candidate never substitutes prose.
     expect(result.text).toContain('走廊里安静了下来');
     expect(result.model).toEqual({ id: SPEC.id, templateId: SPEC.template.id });
+  });
+
+  test('accepts a settled TimeAdvance (09 driver shape) and states the duration', async () => {
+    const packet = movePacket();
+    const timeAdvance = { kind: 'advance' as const, duration: { amount: 2, unit: 'minute' as const } };
+    const text = renderNarrationUser(packet, '', { time: timeAdvance });
+    expect(text).toContain('本回合经过的时间：2分钟');
+    expect(text).not.toContain('[object Object]');
+    expect(normalizeTime(timeAdvance)).toEqual({ amount: 2, unit: 'minute' });
+    expect(normalizeTime({ amount: 3, unit: 'second' })).toEqual({ amount: 3, unit: 'second' });
+    expect(normalizeTime(null)).toBeNull();
   });
 
   test('a length-capped answer is kept as a non-accepted draft and retried shorter', async () => {
