@@ -503,7 +503,7 @@ export class LocalGameModel implements WorldModelPort {
     const audit = proseAudit(safe, protagonistName);
     const grounding = groundingRatio(safe, sceneNamesList);
     const accepted = best.validation.ok && finalAlignment.ok && audit.ok
-      && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 100;
+      && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 140;
     const text = accepted ? safe : draft;
     if (accepted) this.lastAcceptedNarration = text;
     const reason = accepted ? undefined : [...new Set([

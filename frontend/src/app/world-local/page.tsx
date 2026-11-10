@@ -625,6 +625,8 @@ export default function WorldLocalPage() {
                   ? { ...entry, text, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
                   : source === 'mixed'
                     ? { ...entry, text, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
+                    : source === 'draft'
+                    ? { ...entry, text, note: entry.note ?? '这段没有通过事实自检，只是按已结算事实列出的草稿，不是成文正文。' }
                     : { ...entry, text }
             )));
             setPhase('ready');

@@ -110,7 +110,10 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
       let prepared: PreparedNarration;
       try {
         prepared = prepareNarration(point, limits);
-      } catch {
+      } catch (error) {
+        // Evidence, not a decision: without this the page only sees that the
+        // program scene was absent, not why.
+        console.info('[narration] program fallback prepare error', printable(error));
         return null;
       }
       const candidate = candidates.find((entry) => entry.id === 'constrained') ?? CONSTRAINED_CANDIDATE;
@@ -119,14 +122,19 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
           engine, point, prepared,
           policy: { mode: 'program' },
         });
-        if (!result.accepted || result.text.trim().length === 0) return null;
+        if (!result.accepted || result.text.trim().length === 0) {
+          const kinds = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind).join('+');
+          console.info('[narration] program fallback rejected', result.reason ?? result.status, kinds);
+          return null;
+        }
         return {
           text: result.text,
           strategyVersion: result.strategyVersion,
           timings: result.timings,
           issues: result.issues,
         };
-      } catch {
+      } catch (error) {
+        console.info('[narration] program fallback error', printable(error));
         return null;
       }
     },
