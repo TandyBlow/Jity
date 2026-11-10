@@ -435,6 +435,11 @@ export default function WorldLocalPage() {
   const [history, setHistory] = useState<string[]>([]);
   const [stage, setStage] = useState<string>('');
   const sessionRef = useRef<LocalGameSession | null>(null);
+  /** Product cap: one submit may wait 300 s at most. Automatic follow-up rounds
+   * are stopped at 295 s so the player gets the committed point back inside the
+   * cap instead of watching a chain of auto rounds. */
+  const turnDeadlineRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deadlineHitRef = useRef(false);
   const semanticRef = useRef<ProductEnginePort | null>(null);
   const narrationRef = useRef<ProductEnginePort | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
@@ -860,6 +865,13 @@ export default function WorldLocalPage() {
     // The settlement side keeps its own per-submission ledger (which stages
     // ran, model calls, milliseconds). It is evidence, not page text.
     modelRef.current?.beginSubmission(text);
+    deadlineHitRef.current = false;
+    if (turnDeadlineRef.current) clearTimeout(turnDeadlineRef.current);
+    turnDeadlineRef.current = setTimeout(() => {
+      deadlineHitRef.current = true;
+      console.info('[world-local] 295 s turn deadline: stopping automatic follow-up work');
+      void session.cancel('turn_deadline').catch((error) => console.warn('[world-local] deadline cancel failed', error));
+    }, 295_000);
     save(session.snapshot);
     const commandsAtStart = session.commandsPlayed;
     const playerPointsAtStart = Object.values(session.snapshot.transport.points ?? {}).filter((point) => point.trigger === 'player').length;
@@ -884,7 +896,9 @@ export default function WorldLocalPage() {
         // not silently playing on a diverged save.
         setError('本地存档被另一处写入过，本回合没有结算。请点右上角“重新开始”清掉这份存档（或回到原来的标签页继续）。');
       }
-      setMessage(status.kind === 'stop' && status.reason === 'world_complete' ? '本轮已交还，继续输入下一步行动。' : status.kind === 'stop' ? `本轮停止：${status.reason}` : '本轮完成。');
+      setMessage(deadlineHitRef.current
+        ? '本轮已到 295 秒时限：已停止后续自动推进，已结算的正文和状态保留。可以继续下一步行动。'
+        : status.kind === 'stop' && status.reason === 'world_complete' ? '本轮已交还，继续输入下一步行动。' : status.kind === 'stop' ? `本轮停止：${status.reason}` : '本轮完成。');
     } catch (e) {
       console.error(e);
       const raw = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
@@ -932,6 +946,7 @@ export default function WorldLocalPage() {
         live.generations = [lastGeneration('semantic'), lastGeneration('narration')]
           .filter((note): note is GenerationNote => note != null);
       }
+      if (turnDeadlineRef.current) { clearTimeout(turnDeadlineRef.current); turnDeadlineRef.current = null; }
       const submission = modelRef.current?.endSubmission() ?? null;
       if (submission && turnRecordRef.current) turnRecordRef.current.submission = submission;
       if (submission) {
