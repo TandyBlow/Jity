@@ -362,7 +362,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     if (!original) throw new Error('fact text must be non-empty');
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
-      throw new Error(`fact only asserted completion, no action result left: ${original}`);
+      throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}`);
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
@@ -376,13 +376,24 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    // A mechanics clause can take the subject with it. If the remaining result
+    // is a continuation (“且未被允许反应”), prefix the recipient's display name
+    // so the fact is still a natural action result.
+    const mechanicsRemoved = cleaned.removed.some((label) => MECHANIC_TERMS.some((term) => term.label === label));
+    if (mechanicsRemoved) {
+      const recipientName = state.initial.characters[recipientIds[0]]?.name;
+      if (recipientName && !cleaned.text.includes(String(recipientName))) {
+        const continuation = cleaned.text.replace(/^(?:且|并且|并|但|却|而)/u, '');
+        cleaned.text = `${recipientName}${continuation}`;
+      }
+    }
     // A stripped fact that is only the recipient's display name (95dc's
     // “路明非成功完成…完成任务”) is still a completion claim, not an action.
     const nameOnly = cleaned.text.replace(FACT_PUNCTUATION, '');
     if (recipientIds.some((recipient) => {
       const name = state.initial.characters[recipient]?.name;
       return Boolean(name) && nameOnly === String(name).replace(FACT_PUNCTUATION, '');
-    })) throw new Error(`fact only asserted completion, no action result left: ${original}`);
+    })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}`);
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
@@ -396,6 +407,19 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
 
 const FACT_PUNCTUATION = /[\s，、；。！？.,;!?]/gu;
 
+/** Mechanics vocabulary is not an action result. The d101 fact reached the
+ * narration draft as “诺诺：未，因为路明非的骰点且无法反应。”. A clause that
+ * carries dice/check/boolean vocabulary is removed; if the remaining result
+ * has no subject, the recipient's display name is prefixed. A fact that leaves
+ * no action result aborts instead of narrating mechanics. */
+const MECHANIC_TERMS: { pattern: RegExp; label: string }[] = [
+  { pattern: /骰点/g, label: '骰点' },
+  { pattern: /骰子/g, label: '骰子' },
+  { pattern: /判定/g, label: '判定' },
+  { pattern: /(?:资格|判定)\s*为\s*(?:true|false)/g, label: '资格/判定布尔值' },
+  { pattern: /为\s*(?:true|false)/g, label: '布尔值' },
+];
+
 const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   { pattern: /行动成功完成/g, label: '行动成功完成' },
   { pattern: /成功完成行动/g, label: '成功完成行动' },
@@ -404,7 +428,7 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   // The 95dc model wrote the task goal as a verb-object claim:
   // “成功完成自己的参赛选择并完成任务”. Strip the whole task clause, not
   // just the contiguous 任务完成 string.
-  { pattern: /(?:成功)?完成(?:了)?[^，。；.,;!?]*(?:任务|目标|参赛选择)[^，。；.,;!?]*/g, label: '完成任务' },
+  { pattern: /(?<!未)(?:成功)?完成(?:了)?[^，。；.,;!?]*(?:任务|目标|参赛选择)[^，。；.,;!?]*/g, label: '完成任务' },
   { pattern: /完成了任务/g, label: '完成了任务' },
   { pattern: /任务完成/g, label: '任务完成' },
   { pattern: /任务达成/g, label: '任务达成' },
@@ -424,9 +448,28 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
 
 /** Completion/task claims are not action facts. Keep the observable result and
  * drop only the claim, so the later composer cannot say a pending task finished. */
-function sanitizeFactText(text: string): { text: string; removed: string[] } {
-  let out = text;
+function stripMechanicClauses(text: string): { text: string; removed: string[] } {
   const removed: string[] = [];
+  let out = '';
+  const clauses = text.match(/[^，。；！？.,;!?]+[，。；！？.,;!?]?/gu) ?? [];
+  for (const clause of clauses) {
+    const labels = MECHANIC_TERMS.filter(({ pattern }) => {
+      pattern.lastIndex = 0;
+      return pattern.test(clause);
+    }).map(({ label }) => label);
+    if (labels.length) {
+      removed.push(...labels);
+      continue;
+    }
+    out += clause;
+  }
+  return { text: out, removed };
+}
+
+function sanitizeFactText(text: string): { text: string; removed: string[] } {
+  const mechanics = stripMechanicClauses(text);
+  let out = mechanics.text;
+  const removed: string[] = [...mechanics.removed];
   for (const { pattern, label } of COMPLETION_CLAIMS) {
     const matches = out.match(pattern);
     if (!matches) continue;
@@ -434,9 +477,9 @@ function sanitizeFactText(text: string): { text: string; removed: string[] } {
     out = out.replace(pattern, '');
   }
   out = out
-    .replace(/，\s*(?=[，。；！？]|$)/g, '')
-    .replace(/、\s*(?=[，。；！？]|$)/g, '')
-    .replace(/；\s*(?=[，。；！？]|$)/g, '')
+    .replace(/，\s*(?=[，。；！？.,;!?]|$)/g, '')
+    .replace(/、\s*(?=[，。；！？.,;!?]|$)/g, '')
+    .replace(/；\s*(?=[，。；！？.,;!?]|$)/g, '')
     .replace(/[，、；]\s*(?:因此|所以|因而)\s*([。；！？.,;!?]?)$/u, '$1')
     .replace(/^[，、；\s]+/, '')
     .trim();

@@ -283,6 +283,25 @@ describe('21c3 trace replay (CPU)', () => {
     expect(outcome.evidence.calls).toHaveLength(2);
   });
 
+  it('strips the d101 dice/check clause into a natural result', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '诺诺无法反应。', effects: [] }],
+      facts: [{ text: '诺诺未成功完成目标，因为路明非的骰点资格为false且无法反应。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺观察路明非。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.nono).toBe('诺诺未成功');
+    expect(outcome.value!.nono).not.toMatch(/骰点|骰子|false|判定|完成目标/u);
+    const detail = outcome.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
+    expect(detail.sanitizedFacts[0].removed).toEqual(expect.arrayContaining(['骰点']));
+  });
+
   it('sanitizes the b7cd result fact so a pending task cannot read as finished', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
@@ -353,22 +372,23 @@ describe('21c3 trace replay (CPU)', () => {
     expect(outcome.error).toContain('fact only asserted completion');
   });
 
-  it('strips 95dc internal false and negative task claims from result facts', async () => {
+  it('strips 95dc dice mechanics into a natural result and still strips task claims', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
       judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '没有允许路明非反应。', effects: [] }],
       facts: [{ text: '诺诺未成功触发路明非的骰点资格为false，且未被允许反应。', memberIds: ['nono'] }],
     });
-    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
     const outcome = await handlers.results('g1', {
       groupId: 'g1',
       members: [{ memberId: 'nono', actionText: '诺诺观察路明非。', rollRefs: [] }],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value!.nono).toBe('诺诺未成功触发路明非的骰点，且未被允许反应。');
+    expect(outcome.value!.nono).toBe('诺诺未被允许反应。');
+    expect(outcome.value!.nono).not.toContain('骰点');
     expect(outcome.value!.nono).not.toContain('false');
     const detail = outcome.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
-    expect(detail.sanitizedFacts[0]?.removed).toContain('资格为布尔值');
+    expect(detail.sanitizedFacts[0]?.removed).toContain('骰点');
 
     const raw2 = JSON.stringify({
       judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '没有允许路明非反应。', effects: [] }],
