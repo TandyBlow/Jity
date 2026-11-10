@@ -23,7 +23,9 @@ import { readFileSync } from 'node:fs';
 const STAGES = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'];
 
 function submissionsOf(input) {
-  if (Array.isArray(input)) return input;
+  // A raw window.__worldTurns dump is an array of turn records; each record
+  // carries its settlement ledger under `submission`.
+  if (Array.isArray(input)) return input.map((item) => item?.submission ?? item).filter(Boolean);
   if (Array.isArray(input?.submissions)) return input.submissions;
   if (Array.isArray(input?.turns)) return input.turns.map((turn) => turn?.submission ?? turn).filter(Boolean);
   if (input?.submission) return [input.submission];
@@ -133,6 +135,7 @@ function selfTest() {
         ? { ...call, stages: ['tasks', 'subtasks'], coverage: { tasks: 14, personality: 0 } }
         : call
     )) }, true],
+    ['raw __worldTurns array', [{ index: 1, submission: base }], true],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {
