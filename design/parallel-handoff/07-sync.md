@@ -586,13 +586,14 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 `07-manifest.json` 记录 apply 顺序、每个补丁的 sha256、验证过的 06 head 和结果。
 工作树里的 design/parallel-handoff/ 保留同内容副本。
 
-### 给 06：成文补丁（可选，只在 06 用 07 的拍接口/整场接口时生效）
+### 给 06：成文补丁（可选，页面兜底的场景/动作/收尾句会换成 07 的实现）
 
 `design/parallel-handoff/07-prose-for-06.patch` 把 06 树里 `b4c9ea5b` 之后没再
-更新过的 `narration-candidates/prose-composer/` 换成 07 当前实现。**注意**：页面
-当前的兜底（`selection/runner.ts::generateProgram`）没有传 `policy.composer`，
-它用的是 03 的 `constrained/realize.ts`，所以这个补丁不会改变页面现在看到的
-兜底句子；它只在 06 把 04 的拍接口或 07 的整场入口接进兜底时生效。补丁内容：
+更新过的 `narration-candidates/prose-composer/` 换成 07 当前实现。页面兜底的
+适配层（`selection/constrained.ts`）会把 07 的拍接口作为 `policy.composer` 传进
+04 的候选（`result` 拍除外，那一拍由 04 的 realizer 写），所以应用后页面兜底的
+场景/动作/收尾句会换成 07 的实现；每拍之间的拼装仍由 06 的 `joinText` 决定。
+补丁内容：
 
 - 删除无依据的声音句：离开后的“X 的脚步声往 Y 那边去了”、进场时的
   “没有别的声音”、no-change 收束里的“在原地站了一会儿”；
@@ -622,7 +623,7 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 ')`。
 
-页面兜底的句子本身由 03 的 `constrained/realize.ts` 写，07 的成文补丁改不到；
+页面兜底的句子由 07 的拍接口写（`result` 拍除外，由 04 的 realizer 写），
 一拍一句的卡片形状则来自 06 的拼装。为此另给了一个只改 `joinText` 的最小补丁
 `07-fallback-shape.patch`：
 
