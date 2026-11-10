@@ -100,7 +100,9 @@ const fileFor = (sources, model) => {
   return null;
 };
 
-const catalogSource = readFileSync(resolve(frontend, 'src/lib/world-engine/local/narration-candidates/model-runtime/catalog.ts'), 'utf8');
+// The checkout may use CRLF on Windows; parse the catalog as LF.
+const catalogSource = readFileSync(resolve(frontend, 'src/lib/world-engine/local/narration-candidates/model-runtime/catalog.ts'), 'utf8').split(String.fromCharCode(13, 10)).join(String.fromCharCode(10));
+
 const parseCatalog = () => {
   const entries = [];
   for (const block of catalogSource.split('{\n    id:').slice(1)) {
