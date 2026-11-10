@@ -209,3 +209,4 @@
 - 04 `b2e1dab2`/`c2c8484b`：results 提示加具体走/看行动例；repair 错误带冻结成员行动并要求直接可见结果。repair 改善，但 mixed 答案 drop/retry 仍未实现，06 未构建。
 - dfde 结束 **FAILED**（22:13:55Z），1 回合 0 字；06 `12175c21`（加载时补完未 ready 的 head narration）是页面修复，不解决 results 中止。下个构建需含 04 `1f65b0b2`/`b2e1dab2`/`c2c8484b` 与 drop/retry。
 - prompt-route hour 独立复核（7 case）：全部有硬/重大无据错误（路明非红发×2、诺诺束发变散×3、无据风声/声音×5、新/移动物件×4、状态清单），6/7 自动 accepted 不是质量；71 字两例也因事实失败。**建议 no-go**：当前 prompt 不作为主路线，停止串行 prompt 补丁，保留 7 例作回归，转向已结算事实结构+模型正文。见 `decision.md`/`review/`。
+- 102f（run 2026-11-10T2230-7ddd，head 102fdf1a，build 9B4it4o6pdxfJIWYX5UiH）**FAILED**：page `0d72d63d` ≠ frozen `07690eb4`；0.6B shard fetch 失败（4-12 ms）；0 字/749 ms，未进正文。03ec 同类 setup 失败；06/09 修页面冻结与 0.6B shard，不当作正文样本。
