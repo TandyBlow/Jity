@@ -729,12 +729,12 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(engine.runtime).toMatchObject({ cachedModel: false, cachedModelBytes: 0 });
   });
 
-  test('one worker serves many turns without growth, and dispose closes exactly that worker', async () => {
+  test('one worker serves 20 turns without growth, and dispose closes exactly that worker', async () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
     await engine.load();
-    for (let turn = 0; turn < 6; turn += 1) expect(await engine.complete(`turn ${turn}`)).toBe('ok');
-    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 0, generations: 6, loadCount: 1 });
+    for (let turn = 0; turn < 20; turn += 1) expect(await engine.complete(`turn ${turn}`)).toBe('ok');
+    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 0, generations: 20, loadCount: 1 });
     await engine.dispose();
     expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 1, disposed: true, needsReload: false, loaded: false });
     expect(fake.calls.exits).toBe(1);
