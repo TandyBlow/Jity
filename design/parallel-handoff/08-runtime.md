@@ -148,6 +148,10 @@ Runtime states and what the page should do:
     (per-call `modelUrl` or `modelUrls`), fetches every shard in the directBlob
     path, and unit tests cover two-blob load, auto-expansion, per-shard reload
     after a hard stop, and a clear error when the non-blob path sees a split.
+  - browser fetch proof (no model load, no inference): headless Edge 157
+    fetched each shard through the probe and materialized the full
+    `arrayBuffer` — 1,305,220,960 B and 1,192,060,352 B. So the earlier
+    `arrayBuffer()` failure was the 2.5 GB single file, not the transport.
   - still open: a real Edge/RTX 4060 run (VRAM: ~2.5 GB weights plus KV), its
     load time, first-readable time and decode rate. Requested from 09; the 4B
     must not be reported as deployable until that run exists. The shard files
