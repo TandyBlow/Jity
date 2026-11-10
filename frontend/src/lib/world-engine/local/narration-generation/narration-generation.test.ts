@@ -1217,3 +1217,23 @@ describe('beat prompt: settled detail instead of invention', () => {
     expect(prompt).toContain('不要用他/她指代');
   });
 });
+
+describe('beat prompt: allowed polish is not forbidden', () => {
+  test('dialogue, the viewpoint’s feelings and ordinary imagery stay allowed; no pronoun gender rule is baked in', () => {
+    const beats = planBeats({
+      committed: packet(povAt), ledger: buildLedger(packet(povAt), '【正文】', null, basePolicy),
+      policy: basePolicy,
+      scene: { location: '走廊', placeNotes: ['灯管有一支在闪。'] },
+    });
+    const prompt = buildBeatPrompt({
+      beat: beats[0], ledger: buildLedger(packet(povAt), '【正文】', null, basePolicy),
+      policy: basePolicy, scene: { location: '走廊', placeNotes: ['灯管有一支在闪。'] }, written: [],
+    });
+    expect(prompt).toContain('对话用「」');
+    expect(prompt).toContain('可以写视角人物的感受');
+    expect(prompt).not.toContain('不写“他心想”');
+    expect(prompt).not.toContain('仿佛');
+    // The gender-safe rule is "use names", not "everyone is 他".
+    expect(prompt).not.toMatch(/他(?!们)|她/u.test('') ? /x/ : /他\//u);
+  });
+});

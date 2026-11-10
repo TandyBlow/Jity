@@ -236,8 +236,12 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   const prior = input.written.length ? input.written.at(-1) ?? '' : (input.priorTail ?? '');
   if (prior) lines.push(`【前一句】${prior}`);
   lines.push(`【这一件】${beat.directive}`);
+  // Dialogue, the viewpoint's own feelings and ordinary figurative language
+  // are allowed polish (goal §137). Only another character's inner life and
+  // new plot facts are forbidden; an earlier prompt banned all three and
+  // produced flat, unnarratable sentences.
   lines.push('【要求】写具体的动作或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
-    + '不写“他心想”“似乎”“仿佛”“某种”；不要解释情绪；不要重复上面的说明；不要标题。');
+    + '可以写视角人物的感受和判断，不要写别人心里怎么想；不要重复上面的说明；不要标题。');
   lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
   lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   const extra = policy.instruction?.trim();
