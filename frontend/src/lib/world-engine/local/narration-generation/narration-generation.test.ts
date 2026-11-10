@@ -9,7 +9,8 @@ import {
   NARRATION_STRATEGY_VERSION, dropDuplicateSentences, generateCommittedNarration, sanitizeNarration, trimEchoedEnding,
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
-import { planBeats } from './beats';
+import { buildBeatPrompt, planBeats } from './beats';
+import { buildLedger } from './ledger';
 import { missingRequired, projectProseFacts } from './scene-prompt';
 
 // ---------------------------------------------------------------------------
@@ -1187,5 +1188,32 @@ describe('assembly hygiene: a scene must not end on the previous turn’s senten
     const trimmed = trimEchoedEnding(short, PRIOR, { minChars: 60 });
     expect(trimmed.dropped).toEqual([]);
     expect(trimmed.text).toBe(short);
+  });
+});
+
+describe('beat prompt: settled detail instead of invention', () => {
+  test('present people and owned objects reach the beat prompt as settled detail', () => {
+    const beats = planBeats({
+      committed: packet(moved, povAt), ledger: buildLedger(packet(moved, povAt), '【正文】', null, basePolicy),
+      policy: basePolicy,
+      scene: {
+        location: '走廊', placeNotes: ['灯管有一支在闪。'],
+        present: [{ name: '林川', note: '袖口沾了墨，右手空着。' }],
+        objects: [{ name: '林川的护目镜', note: '镜带松着' }],
+      },
+    });
+    const prompt = buildBeatPrompt({
+      beat: beats[0], ledger: buildLedger(packet(moved, povAt), '【正文】', null, basePolicy),
+      policy: basePolicy,
+      scene: {
+        location: '走廊', placeNotes: ['灯管有一支在闪。'],
+        present: [{ name: '林川', note: '袖口沾了墨，右手空着。' }],
+        objects: [{ name: '林川的护目镜', note: '镜带松着' }],
+      },
+      written: [],
+    });
+    expect(prompt).toContain('林川（袖口沾了墨，右手空着）');
+    expect(prompt).toContain('林川的护目镜（属于林川；镜带松着）');
+    expect(prompt).toContain('不要用他/她指代');
   });
 });
