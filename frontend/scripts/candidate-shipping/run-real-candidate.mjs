@@ -212,6 +212,8 @@ try {
     const started = performance.now();
     const runner = createNarrationRunner({
       engine, candidate: config.candidate,
+      ...(config.candidate === 'constrained' ? { constrainedMode: config.mode } : {}),
+      ...(config.candidate === 'trained' ? { trainedMode: config.mode } : {}),
       temperature: 0.45, retryTemperature: 0.3,
       maxTokens: config.maxTokens, maxTokensCeiling: Math.max(420, config.maxTokens),
       timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs,

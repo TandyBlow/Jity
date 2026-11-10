@@ -2,8 +2,8 @@
 #
 # Inputs (sha256) — regenerate when the live files change:
 #   frontend/src/lib/world-engine/local/game-model.ts  ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35
-# Prerequisite: lane 02 beats commit 211fd463 (narration-generation beats +
-# trained-input). New module files are additions from lane 06.
+# Prerequisites: lane 02 beats commits 211fd463 / 92c2d95e and lane 04
+# constrained candidate 05aa9562. New module files are additions from lane 06.
 #
 # Default `auto` selects the constrained program candidate (C): fact-grounded,
 # instant, and labelled by the page as a downgrade. To evaluate the committed-
@@ -15,7 +15,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts
-@@ -0,0 +1,129 @@
+@@ -0,0 +1,134 @@
 +/** C-route adaptation: lane 04's constrained fact-to-prose candidate.
 + *
 + * 04 owns the fact skeleton, beat plan and per-beat verification; this adapter
@@ -37,7 +37,12 @@ new file mode 100644
 +import { generateCandidate as generateConstrained } from '../constrained';
 +import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
 +
-+const PROGRAM_COMPOSERS = new Set(['program', 'fallback']);
++/** `program+model-failed` is still program text: the model attempt failed its
++ * own beat verification and the realizer wrote that beat. Only a composer that
++ * is not program-prefixed (the model itself, or an injected external composer)
++ * counts as model prose. */
++const isProgramComposer = (composer: string): boolean =>
++  composer === 'fallback' || composer.startsWith('program');
 +
 +function sceneHints(prepared: PreparedNarration) {
 +  const scene = prepared.scene;
@@ -66,7 +71,7 @@ new file mode 100644
 +    modules: ['local/narration-candidates/constrained'],
 +    template: 'program realizer (no model) unless mode=model',
 +  },
-+  productDefault: true,
++  productDefault: false,
 +  availability(point, prepared) {
 +    // The world-opening narration is a one-off scene the player reads first;
 +    // keep the existing in-model writer there. Program prose starts with the
@@ -114,7 +119,7 @@ new file mode 100644
 +        },
 +      },
 +    });
-+    const modelComposed = result.composers.some((composer) => !PROGRAM_COMPOSERS.has(composer));
++    const modelComposed = result.composers.length > 0 && !result.composers.every(isProgramComposer);
 +    const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
 +    const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
 +    return {
@@ -459,7 +464,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,156 @@
 +/** Narration candidate selection for the product page.
 + *
 + * The page sees ONE decision: did a candidate accept a scene for this point?
@@ -562,7 +567,11 @@ new file mode 100644
 +        try {
 +          result = await candidate.run({
 +            engine: options.engine, point, prepared, onProgress,
-+            ...(candidate.route === 'constrained' ? { policy: { mode: options.constrainedMode ?? 'program' } } : {}),
++            ...(candidate.route === 'constrained'
++              ? { policy: { mode: options.constrainedMode ?? 'program' } }
++              : candidate.route === 'trained'
++                ? { policy: { sceneMode: options.trainedMode ?? 'beats' } }
++                : {}),
 +          });
 +        } catch (error) {
 +          problems.push(`error:${candidate.id}|${printable(error)}`);
@@ -617,7 +626,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
-@@ -0,0 +1,104 @@
+@@ -0,0 +1,108 @@
 +/** B-route adaptation: lane 02's committed-fact narration strategy (beats).
 + *
 + * The strategy owns prompt construction, verification and repair. This adapter
@@ -655,7 +664,7 @@ new file mode 100644
 +    }
 +    return { available: true, reason: null };
 +  },
-+  async run({ engine, point, prepared, onProgress }): Promise<CandidateNarrationResult> {
++  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
 +    const result = await generateCandidate({
 +      engine,
 +      committed: prepared.facts,
@@ -665,7 +674,11 @@ new file mode 100644
 +      onProgress: (state) => onProgress?.({
 +        text: state.text, elapsedMs: state.elapsedMs, verified: state.verified, attempt: state.attempt,
 +      }),
-+      policy: { ...prepared.policy, mode: 'beats', scene: prepared.scene },
++      policy: {
++        ...prepared.policy,
++        mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
++        scene: prepared.scene,
++      },
 +    });
 +    const issues = result.issues.map((issue) => ({
 +      kind: issue.kind,
@@ -727,7 +740,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
-@@ -0,0 +1,184 @@
+@@ -0,0 +1,187 @@
 +/** Product-facing contracts for narration candidate selection.
 + *
 + * One settled point goes in; one submitted narration goes out. The selection
@@ -834,7 +847,7 @@ new file mode 100644
 +  onProgress?: (progress: NarrationProgress) => void;
 +  /** Candidate-specific knobs. The selection layer sets `mode` for the
 +   * constrained route; no candidate may use it to change facts. */
-+  policy?: { mode?: 'program' | 'model' };
++  policy?: { mode?: 'program' | 'model'; sceneMode?: 'beats' | 'scene' };
 +}
 +
 +/** One shipped adaptation of a candidate group. `id` and `label` stay
@@ -888,9 +901,12 @@ new file mode 100644
 +
 +export interface NarrationRunnerOptions {
 +  engine: InferenceEngine;
-+  /** Constrained route only: `program` (default) never calls the model;
-+   * `model` writes one verified beat per engine call. Internal. */
++  /** Constrained route only: `program` never calls the model; `model` writes
++   * one verified beat per engine call. Internal. */
 +  constrainedMode?: 'program' | 'model';
++  /** Trained beats route only: `beats` (default) writes one committed fact at a
++   * time; `scene` asks for the whole scene from the serialized input. Internal. */
++  trainedMode?: 'beats' | 'scene';
 +  /** Internal selection. `auto` uses product-default candidates only. */
 +  candidate?: NarrationCandidate['id'] | 'auto' | 'builtin';
 +  /** Test seam: replace the shipped list. Never set by the page. */

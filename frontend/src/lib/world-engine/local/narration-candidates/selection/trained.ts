@@ -35,7 +35,7 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
     }
     return { available: true, reason: null };
   },
-  async run({ engine, point, prepared, onProgress }): Promise<CandidateNarrationResult> {
+  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
     const result = await generateCandidate({
       engine,
       committed: prepared.facts,
@@ -45,7 +45,11 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       onProgress: (state) => onProgress?.({
         text: state.text, elapsedMs: state.elapsedMs, verified: state.verified, attempt: state.attempt,
       }),
-      policy: { ...prepared.policy, mode: 'beats', scene: prepared.scene },
+      policy: {
+        ...prepared.policy,
+        mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
+        scene: prepared.scene,
+      },
     });
     const issues = result.issues.map((issue) => ({
       kind: issue.kind,

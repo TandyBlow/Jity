@@ -19,7 +19,12 @@
 import { generateCandidate as generateConstrained } from '../constrained';
 import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
 
-const PROGRAM_COMPOSERS = new Set(['program', 'fallback']);
+/** `program+model-failed` is still program text: the model attempt failed its
+ * own beat verification and the realizer wrote that beat. Only a composer that
+ * is not program-prefixed (the model itself, or an injected external composer)
+ * counts as model prose. */
+const isProgramComposer = (composer: string): boolean =>
+  composer === 'fallback' || composer.startsWith('program');
 
 function sceneHints(prepared: PreparedNarration) {
   const scene = prepared.scene;
@@ -48,7 +53,7 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
     modules: ['local/narration-candidates/constrained'],
     template: 'program realizer (no model) unless mode=model',
   },
-  productDefault: true,
+  productDefault: false,
   availability(point, prepared) {
     // The world-opening narration is a one-off scene the player reads first;
     // keep the existing in-model writer there. Program prose starts with the
@@ -96,7 +101,7 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         },
       },
     });
-    const modelComposed = result.composers.some((composer) => !PROGRAM_COMPOSERS.has(composer));
+    const modelComposed = result.composers.length > 0 && !result.composers.every(isProgramComposer);
     const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
     const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
     return {

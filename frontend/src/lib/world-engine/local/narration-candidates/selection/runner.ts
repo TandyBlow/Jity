@@ -100,7 +100,11 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
         try {
           result = await candidate.run({
             engine: options.engine, point, prepared, onProgress,
-            ...(candidate.route === 'constrained' ? { policy: { mode: options.constrainedMode ?? 'program' } } : {}),
+            ...(candidate.route === 'constrained'
+              ? { policy: { mode: options.constrainedMode ?? 'program' } }
+              : candidate.route === 'trained'
+                ? { policy: { sceneMode: options.trainedMode ?? 'beats' } }
+                : {}),
           });
         } catch (error) {
           problems.push(`error:${candidate.id}|${printable(error)}`);

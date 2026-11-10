@@ -111,27 +111,21 @@ describe('narration projection of a settled point', () => {
 });
 
 describe('selection policy', () => {
-  it('auto selects the product-default program candidate and never calls the model', async () => {
+  it('stays on the in-model writer when no candidate marks itself product-default', async () => {
     let calls = 0;
     const runner = createNarrationRunner({ engine: fakeEngine(undefined, () => { calls += 1; }), candidate: 'auto' });
     const result = await runner.generate(settledPoint());
-    expect(result.kind).toBe('adopted');
-    if (result.kind === 'adopted') {
-      expect(result.candidateId).toBe('constrained');
-      expect(result.grade).toBe('program');
-    }
+    expect(result).toMatchObject({ kind: 'fallback', reason: 'no_product_candidate' });
     expect(calls).toBe(0);
-  });
-
-  it('has exactly one product-default candidate, and it is the program route', () => {
-    expect(SHIPPED_CANDIDATES.filter((candidate) => candidate.productDefault).map((candidate) => candidate.id)).toEqual(['constrained']);
+    // Program/ledger prose is a debug downgrade, never the product's narrator.
+    expect(SHIPPED_CANDIDATES.filter((candidate) => candidate.productDefault)).toEqual([]);
   });
 
   it('honours the internal QA override without letting it leak into the page', () => {
     (globalThis as { __jityNarrationCandidate?: unknown }).__jityNarrationCandidate = 'trained';
     const runner = createNarrationRunner({ engine: fakeEngine(), candidate: 'builtin' });
     expect(runner.selection.requested).toBe('trained');
-    expect(runner.selection.productDefault).toBe('constrained');
+    expect(runner.selection.productDefault).toBeNull();
   });
 
   it('adopts verified candidate prose and forwards its real increments', async () => {
