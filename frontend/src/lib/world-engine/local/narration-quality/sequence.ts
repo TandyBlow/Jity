@@ -160,6 +160,16 @@ export function reviewSequence(turns: TurnRecord[]): SequenceReport {
         });
       }
     }
+    // A turn with no words cannot be judged for continuity; say so instead of
+    // silently passing it.
+    const bare = fullText.replace(/[\s。．，,、；;：:！!？?…·.．"“”‘’]/gu, '');
+    if (!bare.length) {
+      findings.push({
+        groupId, turn: record.turn, check: 'presence', status: 'undetermined',
+        conflictsWithTurn: null, earlierQuote: '', currentQuote: quote(fullText || '(empty)'),
+        sourceRefs: ['text'], note: 'no narration text; presence, tasks and knowledge cannot be judged from this turn',
+      });
+    }
     const people = settledPeople(record.input);
 
     // ------------------------------------------------------------ presence
