@@ -227,10 +227,12 @@ with `import { roundOrder } from './action-execution/order';` at the top.
 with `import { orderSubset } from '../action-execution/order';`.
 
 **c. `local/semantics/actions/index.ts` + `types.ts` + tests**: cherry-pick
-`33697da8` (a consumed protagonist opportunity is a program skip). This matters
-now that 06 routes continuation through 04's port: an automatic round can
-revisit the protagonist's slot with the old command text still bound to the
-same advance, and the pre-fix handler asks the model to continue it.
+`33697da8` (a consumed protagonist opportunity is a program skip). 04's
+continuation port rejects the protagonist as an automatic-round candidate
+(`protagonist_action_belongs_to_player`), so this is not an automatic-round bug
+today; it is the correctness guard for a multi-point player round, where a
+deferred protagonist slot would otherwise be model-written (and would replay
+the old command). It also matches the accepted G5 rule (`54f630ca`).
 
 **d. `local/game-model.ts`** `reportAction` (line ~202): add the source so the
 submission log can tell a model answer from a program decision:
