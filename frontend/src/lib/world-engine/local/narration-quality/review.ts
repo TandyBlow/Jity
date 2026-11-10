@@ -739,6 +739,26 @@ export function reviewNarration(args: {
     }
   }
 
+  // A settled container that is closed cannot receive or give up contents in
+  // the same breath; opening it first would be the settled change.
+  {
+    const CLOSED = /(关闭|合上|关着|盖着|锁着|扣着)/u;
+    const INTO = /(放进|放入|塞进|装进|丢进|搁进|倒进|放回|伸进|取出|掏出|拿出|翻出)/u;
+    const OPENED = /(打开|开启|掀开|揭开|拧开|撬开)/u;
+    for (const [name, item] of Object.entries(projection.items)) {
+      const looks = item.descriptions.join('｜');
+      if (!CLOSED.test(looks)) continue;
+      for (const sentence of sentences) {
+        if (!sentence.narration.includes(name) || OPENED.test(sentence.narration)) continue;
+        if (!INTO.test(sentence.narration)) continue;
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${name} is settled closed, but the prose puts something in or takes something out without opening it`,
+          [looks.slice(0, 40)], []));
+        break;
+      }
+    }
+  }
+
   // ---------------------------------------------------------------- items
   const itemStateCovered = new Set<string>();
   for (const sentence of sentences) {
@@ -1102,11 +1122,15 @@ export function reviewNarration(args: {
     // none is present, the mark needs an explicit name or pronoun: the
     // viewpoint fallback would pin a copied description of someone else onto
     // the player.
-    const namedHere = nameHits(narration, names, Object.keys(projection.people)).length > 0;
-    const lookOwner = namedHere ? null : (Object.entries(projection.people).find(([, person]) =>
+    const namedHere = nameHits(narration, names, Object.keys(projection.people)).map((hit) => hit.name);
+    const lookOwner = namedHere.length ? null : (Object.entries(projection.people).find(([, person]) =>
       person.appearanceAfter.some((look) => look.length >= 3 && sharesRun(narration, look, 3)))?.[0] ?? null);
     for (const [personName, person] of Object.entries(projection.people)) {
-      if (lookOwner ? lookOwner !== personName : !refersTo(narration, sentences.indexOf(sentence), personName, namedHere)) continue;
+      if (namedHere.length) {
+        if (!namedHere.includes(personName)) continue;
+      } else if (lookOwner ? lookOwner !== personName : !refersTo(narration, sentences.indexOf(sentence), personName, true)) {
+        continue;
+      }
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);

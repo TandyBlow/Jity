@@ -40,6 +40,9 @@ export interface DeltaBlock {
   解除外貌?: string | string[];
   新增个性?: string | string[];
   解除个性?: string | string[];
+  /** Legacy rows list finished goals by text. */
+  完成任务?: string | string[];
+  新增小任务?: Array<string | { 目标: string }> | string;
 }
 
 export interface DatasetInput {
@@ -246,11 +249,23 @@ export function projectScene(input: DatasetInput): SceneProjection {
     const appearanceAfterBase = mergeStrings(block.外貌, change.新增外貌 ?? afterBlock.新增外貌, change.解除外貌 ?? afterBlock.解除外貌);
     const tasks = taskEntries(block);
     const afterStatus = statusMap({ 任务: change.任务 ?? afterBlock.任务 ?? block.任务 });
+    // Legacy rows list finished goals under 完成任务 instead of a status map.
+    const completedGoals = listOf(change.完成任务);
     for (const task of tasks) {
-      const next = afterStatus.get(task.goal) ?? null;
+      const next = completedGoals.includes(task.goal)
+        ? '已完成'
+        : (afterStatus.get(task.goal) ?? null);
       task.after = next;
       if (task.before !== '已完成' && next === '已完成') {
         taskCompleted.push({ id: `task:${name}:${task.goal}`, name, goal: task.goal });
+      }
+    }
+    const addedTasks = change.新增小任务 === undefined ? []
+      : Array.isArray(change.新增小任务) ? change.新增小任务 : [change.新增小任务];
+    for (const added of addedTasks) {
+      const goal = typeof added === 'string' ? added : added.目标;
+      if (goal && !tasks.some((task) => task.goal === goal)) {
+        taskAdded.push({ id: `task-new:${name}:${goal}`, name, goal });
       }
     }
     for (const goal of afterStatus.keys()) {
