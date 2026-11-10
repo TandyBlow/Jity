@@ -2,7 +2,13 @@
 
 本线把已经可用的叙述候选（B=02 committed-fact beats、C=04 constrained fact-to-prose）做成薄适配：从已结算点投影出候选需要的材料、按内部配置选一个、把候选的真实增量与最终裁决映射回页面现有回调。不训练模型、不改页面文件、不造第二套状态。
 
-**当前产品默认不启用任何候选。** 原因是用户的产品口径：状态流水账回退只能是调试降级，不能当合格叙事交付。B 在页面叙述模型上没有被接受；C 程序版是明确降级；C 模型版在 instruct 模型上虽有 223 字接受记录，但夹带编造动作、且部分是程序段。三者都还不满足“事实 + 文风”的合格叙事条件，所以选择层默认 `auto` 找不到产品默认候选，页面继续用原来的单发写作。候选通过内部开关随时可开，等 02/10/03/04 交出真正合格的正文后，主集成者只需改一行。
+**当前没有合格的模型候选，但页面不会退回成流水账。** 用户的产品口径是：模型正文优先，状态流水账/程序文本只能是明确降级的回退。B 在页面叙述模型上没有被接受；C 程序版是明确降级；C 模型版在 instruct 模型上虽有 223 字接受记录，但夹带编造动作、且部分是程序段。三者都还不满足“事实 + 文风”的合格叙事条件，所以：
+
+- `auto` 仍然先让原来的单发写作生成；模型正文通过它自己的事实校验时，页面显示模型正文。
+- 单发写作自己拒绝这一轮时，补丁用 C 的骨架 + 07 合成器写一段程序正文（约 0.1 s、不调用模型），并在页面标注“程序按已结算事实成文”。这只是可读的降级，不是合格叙事。
+- 程序文本不会写入下一轮的 `priorText`，也不会被标记成高质量结果。
+
+候选通过内部开关随时可开；等 02/10/03/04 交出真正合格的正文后，主集成者只需把该候选设为 `productDefault`。
 
 ## 1. 页面拿到一段正文的完整路径
 
@@ -20,6 +26,7 @@ controller 把已结算点组装成 `narration` 输入：
    - `policy`/`scene`：视角、名册、地点、同房间的人与物、时间推进、长度与温度上限。只做许可，不产生事实。
 2. **选候选**（`selection/runner.ts`）：`globalThis.__jityNarrationCandidate`（内部 QA）→ `narrationCandidate` 选项 → `auto`（只跑 `productDefault` 的候选）。
 3. **裁决**：候选自己 `accepted` 才可能成为本点正文；拒绝/超时/取消/抛错一律回落到原来的单发写作，原因写在内部 console。被拒绝的草稿不会提交。程序成文即使被接受，也以 `grade: 'program'` 送进 `onTask`，页面标注降级。
+4. **单发写作之后的降级**：如果单发写作也没有通过事实校验，补丁调用 `runner.generateProgram()`，用同一个已结算点让 C 的骨架 + 07 合成器写程序正文；它按 `fallback:true` + “程序按已结算事实成文”提交。模型正文已经被接受时不会走这一步。
 
 ## 2. 装进来的候选
 
@@ -40,7 +47,8 @@ controller 把已结算点组装成 `narration` 输入：
 - 新增内部选项 `narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin'`（默认 `auto`）。
 - 构造函数按选项建 `createNarrationRunner`；`builtin` 不建。
 - `narration()` 先尝试候选；只有 `adopted` 直接返回，其余继续原来的单发路径。
-- 新增 `adoptNarrationCandidate()`：真实流式片段 → `onNarrationProgress`；`accepted && grade==='candidate'` → `onTask(fallback:false)` + `onNarrationComplete`；`accepted && grade==='program'` → 同样提交正文，但 `onTask(fallback:true, error:'程序按已结算事实成文')`，页面显示降级标注；拒绝 → 返回 null，原位写作接管。只有接受过的正文进入下一轮 `priorText`。
+- 新增 `adoptNarrationCandidate()`：真实流式片段 → `onNarrationProgress`；`accepted && grade==='candidate'` → `onTask(fallback:false)` + `onNarrationComplete`；`accepted && grade==='program'` → 同样提交正文，但 `onTask(fallback:true, error:'程序按已结算事实成文')`，页面显示降级标注；拒绝 → 返回 null，原位写作接管。
+- 单发写作拒绝时，`generateProgram()` 写程序正文并同样标注降级；单发写作接受时把正文写入 `lastAcceptedNarration`，下一轮作为 `priorText`。只有非程序的接受文本进入下一轮 `priorText`。
 
 补丁文件（内容寻址，不覆盖旧文件）：
 
@@ -136,7 +144,7 @@ node scripts/candidate-shipping/run-real-candidate.mjs --tree <打过补丁的�
 node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<port> --candidate constrained
 ```
 
-`run-wiring-check.mjs` 用补丁后的真实 `game-model.ts` 驱动 `generate('narration')`，16 项全过：接受候选时正文与真实增量直达页面；拒绝时回落到原位路径；`auto` 不碰候选、原位模型写正文；`builtin` 完全不建 runner；被取消的草稿不会成为下一轮 `priorText`。
+`run-wiring-check.mjs` 用补丁后的真实 `game-model.ts` 驱动 `generate('narration')`，20 项全过：接受候选时正文与真实增量直达页面；拒绝时回落到原位路径；`auto` 先让原位模型写，模型自己拒绝时用 04+07 程序正文降级并标注；`builtin` 完全不建 runner；被取消的草稿不会成为下一轮 `priorText`。
 
 证据文件：
 
@@ -151,7 +159,7 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 - `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B（160 token/段），223 字，模型段与程序段混合，含编造动作。
 - `results/06-recovery/real-candidate-constrained-model-narr-short.json`、`…-instruct-short.json`：把每段压到 60–80 token 后，模型段全部被 C 的逐段校验打回，整篇变成程序文本（composers 全为 `program+model-failed`）。
 - `results/06-recovery/product-turn*.json`：真实页面整轮（B 选择、C v1.1、C v1.2、C v1.3），含内部日志、页面正文、降级标注、快照字节数。
-- `results/06-recovery/wiring-check.json`：16 项接线检查。
+- `results/06-recovery/wiring-check.json`：20 项接线检查。
 
 ## 6. 已知限制
 
@@ -162,5 +170,12 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 - 07 的 composer 是内嵌进补丁的运行时文件（8 个，源提交 `69915b49`），主树不需要合入 07 的大分支；07 仍拥有这份代码。
 - A 未交付（fixture 与整合内核不兼容）。
 - 开局叙述仍由原位模型写（约 66–73 s）；候选主动让位。
-- 取消：程序候选瞬时完成，没有取消窗口；B 的多段生成在取消后要等当前引擎调用返回（引擎中断属 runtime 线）。刷新：页面仍用主树 localStorage 单槽；lane 06 的 IndexedDB checkpoint 可用但本补丁不接页面。继续回合：只有接受过的正文进入 `priorText`。
+- 取消：选择层把 `point.signal` 传给候选；页面取消仍是 controller 的回合结论命令，未完成的候选结果不会提交。程序候选瞬时完成，没有取消窗口；B 的多段生成在取消后要等当前引擎调用返回（引擎中断属 runtime 线）。刷新：叙述发生在 transport 检查点内；刷新按既有恢复模块从最近检查点继续。继续回合：只有非程序的接受正文进入 `priorText`。
 - 只在 Chromium/Edge（Windows）验证。
+
+## 7. 用户试玩（同一页面）
+
+1. 主集成者按上面的 `git apply` 应用补丁，`npx tsc --noEmit -p tsconfig.json` 通过后启动现有 `/world-local` 页面；不需要开任何实验站点。
+2. 打开 `/world-local`，等“本地世界已就绪”。开局叙述由原模型写；若它被自己的事实校验拒绝，页面会显示 04 骨架 + 07 合成器写出的程序正文，并标注“程序按已结算事实成文”。
+3. 输入行动，等回合结束。模型正文被接受时显示模型正文；被拒绝时显示同一标注的程序降级正文，不会退回成字段流水账。
+4. 候选的开关是内部配置（`narrationCandidate` 或 QA 的 `__jityNarrationCandidate`），页面不显示训练/测试细节；试玩时保持默认 `auto` 即可。
