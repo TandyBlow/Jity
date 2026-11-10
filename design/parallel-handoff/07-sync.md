@@ -375,6 +375,21 @@ const sync = createProductSync<LocalGameSnapshot>({
    自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
    `diverged` 时提示选择，不要自动覆盖。
 
+### 合并到 06 的树：在临时克隆里验证过（2026-11-10）
+
+在 `.tmp/06-merge-check` 里 `git clone --shared` 了 06 的 `cef95c7e`，打上
+`design/parallel-handoff/07-sync-for-06.patch`（`84d932cf..ed089ccc`）：
+
+- `git apply` 干净；
+- 06 自己的 `tsc -p tsconfig.json --noEmit`：0 错误；
+- 带真实服务跑 progress-sync：43 passed；
+- 跑他们整个前端测试：1147 passed、4 failed，失败全在 `src/app/styles.test.ts`，
+  在**未打补丁**的同一提交上用 `git stash` 复跑得到同样的 4 个失败，所以是既有问题，
+  不是这次合并带来的。
+
+也就是说 06 只需要应用这一个补丁，不需要改页面，就能解除 `progress_conflict`；
+`restore()`/`choose()` 的接线是另一件事。临时克隆在 `.tmp`，没有写 06 的工作树。
+
 ### 09 排页面之前先跑这个只读检查
 
 `frontend/scripts/parallel-sync/page-wiring-audit.ts` 读 06 的 `page.tsx`（不写），逐条打印
