@@ -52,8 +52,8 @@ def model_entry(candidate: dict) -> dict:
         "license": candidate["license"]["spdx"],
         "licenseDecisionRequired": candidate["license"]["decisionRequired"],
         "publisher": gguf["publisher"],
-        "expectedArchitecture": None,
-        "architectureKnownToShippedWasm": True,
+        "expectedArchitecture": candidate["operatorEvidence"].get("expectedArchitecture"),
+        "architectureKnownToShippedWasm": candidate["operatorEvidence"].get("architectureKnownToShippedWasm"),
         "wllamaWasmSha256": candidate["operatorEvidence"]["wllamaWasmSha256"],
         "chatTemplateKwargs": candidate.get("chatTemplateKwargs") or {},
         "ggufEvidence": {
