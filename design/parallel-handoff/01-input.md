@@ -122,7 +122,8 @@ npx eslint src/lib/world-engine/local/narration-input --ext .ts
 
 结果：
 
-- 6 个测试文件、96 个测试通过。
+- 6 个测试文件、97 个测试通过。
+- 30/30 旧分歧共同行的 v2 字节与 10 线参考一致（旧 01 样本只对 1/30）。
 - 49/49 向量：v2 文本、UTF-8 hex、SHA、segments 全部逐字节相同；13 个负例的
   `stage/errorCode/errorPath` 全部相同。
 - 199/199 训练行：v2 的 SHA/字符数/字节数与 10 线 `xProse` 全部相同；同一投影的
