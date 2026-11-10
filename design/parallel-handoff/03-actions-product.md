@@ -261,16 +261,18 @@ into the per-submission ledger it already exposes on `window.__worldSubmission`
 Without this, 09 cannot distinguish "no NPC acted because the model judged
 skip" from "the program skipped the scene".
 
-**e. `app/world-local/page.tsx`** — after `await session.submit(...)`, put the
-round order and positions into the submission record so 09 can verify R06 from
-`window.__worldSubmission` without parsing IndexedDB:
+**e. `app/world-local/page.tsx`** — the page already records action/targets/
+reaction in `window.__worldTurns[i].actions` (`671aabf3`), which is the right
+place; 04's `__worldSubmission` must stay the settlement account only. Extend
+the **turn record** (not the submission) with the frozen round after
+`await session.submit(...)`:
 
 ```ts
 const transport = session.snapshot.transport;
-submission.roundOrder = transport.round?.order ?? null;
-submission.roundTrigger = transport.round?.trigger ?? null;
-submission.actedIds = transport.round?.actedIds ?? [];
-submission.positions = Object.fromEntries(
+record.roundOrder = transport.round?.order ?? null;
+record.roundTrigger = transport.round?.trigger ?? null;
+record.actedIds = transport.round?.actedIds ?? [];
+record.positions = Object.fromEntries(
   Object.entries(transport.state.characters).map(([id, c]) => [id, c.position.containerId]),
 );
 ```
