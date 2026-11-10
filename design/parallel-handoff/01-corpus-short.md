@@ -133,7 +133,7 @@ python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 
 当前输出：71 行；长度 61–152（15 行 60–79、49 行 80–119、7 行 120–160）；51 行旧材料（22 行首批 + 4 行同冻结输入的长正文 + 25 行同冻结输入的短正文，含 1 行派生对照只改时间）+ 20 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性、姿势词（输入有依据除外）、未授权实体、事件动词、时间推进和 `requiredFacts` 检查通过。语义检查是人工的，脚本不替代。
 
-10 线 `import_short_corpus.py` 的只读副本（`/tmp`，不改 10 线工作树）已经跑过本批：71 行、84 条 beat、84 条强制事实、`problems: []`；其中 19 行本来就没有强制事实（无变化/纯外貌/纯物品/仅地点），所以 `beatCount=0`，其余 52 行每条事实都切出了 beat。
+10 线 `import_short_corpus.py` 的只读副本（`/tmp`，不改 10 线工作树）已经跑过本批：71 行、84 条 beat、84 条强制事实、`problems: []`；其中 19 行本来就没有强制事实（无变化/纯外貌/纯物品/仅地点），所以 `beatCount=0`，其余 52 行每条事实都切出了 beat。当次 `rows.jsonl` 的 SHA-256 是 `7689218665fca9ff1c7935a4810d5839d870cd5179be89e250b08783a7683862`。
 
 ## 已知限制
 
