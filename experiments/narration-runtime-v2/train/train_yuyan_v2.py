@@ -234,26 +234,30 @@ def main() -> int:
     max_len = int(hyper["maxLen"])
     batch_size = int(hyper.get("batch", 1))
 
-    def pack(row: Dict[str, Any]) -> Tuple[List[int], List[int]]:
+    def pack(row: Dict[str, Any]) -> Tuple[List[int], List[int], bool]:
         prompt = source.encode(row["xProse"], index)
         target = source.encode(row["yMarked"], index) + [eos]
-        ids = (prompt + target)[:max_len + 1]
-        labels = [-100] * (len(prompt) - 1) + ids[len(prompt):]
-        if len(labels) != len(ids) - 1:
+        full = prompt + target
+        if len(full) > max_len + 1:
+            raise SystemExit(
+                f"{row['id']}: {len(full)} tokens > maxLen {max_len}; "
+                "refusing silent truncation")
+        labels = [-100] * (len(prompt) - 1) + full[len(prompt):]
+        if len(labels) != len(full) - 1:
             raise SystemExit("response mask length mismatch")
         if any(label != -100 for label in labels[:max(0, len(prompt) - 1)]):
             raise SystemExit("prompt token received a supervised label")
-        return ids[:-1], labels
+        return full[:-1], labels, False
 
     # measure lengths and response-token counts
     lengths: List[Dict[str, Any]] = []
     for row in rows:
-        ids, labels = pack(row)
+        ids, labels, truncated = pack(row)
         prompt_len = len(ids) - sum(1 for label in labels if label != -100)
         target_len = sum(1 for label in labels if label != -100)
         lengths.append({"id": row["id"], "inputTokens": len(ids),
                         "promptTokens": prompt_len, "targetTokens": target_len,
-                        "truncated": len(row["xProse"]) + len(row["yMarked"]) > max_len})
+                        "truncated": truncated})
     if any(item["truncated"] for item in lengths):
         raise SystemExit("a row was truncated; refusing to train silently")
 
@@ -294,7 +298,7 @@ def main() -> int:
         per_row: List[Dict[str, Any]] = []
         with torch.no_grad():
             for row in subset:
-                ids, labels = pack(row)
+                ids, labels, _ = pack(row)
                 x = torch.tensor([ids], device=device)
                 y = torch.tensor([labels], device=device)
                 logits = model(x)[0]
@@ -380,7 +384,7 @@ def main() -> int:
             batch_ids, batch_labels = [], []
 
         for row in train_rows:
-            ids, labels = pack(row)
+            ids, labels, _ = pack(row)
             batch_ids.append(ids)
             batch_labels.append(labels)
             if len(batch_ids) == batch_size:
