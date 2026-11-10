@@ -553,3 +553,20 @@ def test_read_refuses_a_snapshot_whose_digest_or_size_was_edited(tmp_path):
         response = client.get(f"/local-progress/worlds/w1/snapshots/{created['snapshotId']}")
         assert response.status_code == 500
         assert response.json()["detail"]["code"] == "snapshot_corrupt"
+
+
+def test_progress_service_does_not_import_game_or_model_code():
+    from pathlib import Path
+
+    import app.services.local_progress as package
+
+    root = Path(package.__file__).parent
+    source = "\n".join(path.read_text(encoding="utf-8") for path in root.rglob("*.py"))
+    # The service stores opaque snapshots: it must not reach for state apply,
+    # prompt building, scenario generation or any model/HTTP client.
+    forbidden = (
+        "game_state", "prompt_builder", "scenario_generator", "llm_client",
+        "retriever", "httpx", "openai", "llama", "transformers",
+    )
+    hits = [name for name in forbidden if name in source]
+    assert hits == [], f"local_progress imports game/model code: {hits}"
