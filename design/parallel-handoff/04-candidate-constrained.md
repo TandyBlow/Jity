@@ -109,8 +109,11 @@ const result = await generateCandidate({
 - `node frontend/scripts/candidate-constrained/run-sweep.mjs`：自由一日世界 12 个连续点位（移动、任务完成、子任务、人格、精神、外貌、物品易手、房间变化、纯隐藏改动、纯时间、纯结算原话），12/12 `accepted`。
 - 把 07 的语言层注入同一个入口（`--composer <07 的 prose-composer/index.ts>`）：上述 6 个场景与 12 个点位同样全部 `accepted`，07 写的段直接通过本线的分段门禁；07 尚未实现 `kind:'result'` 段（结算原话）时，该段由本线程序写，不丢内容。
 - 连续回合（短场景起点→移动→时间流逝）：没有逐字重复的句子；`repetitionVsPrior` 在 40–50 字短回合为 0.56/0.34，在长回合为 0.10/0.18。
+- 真实浏览器程序模式（09 的 runner + 07 的 stub 装载器，Edge，无模型）：公开短场景 3 个点、自由一日 3 个点全部 `accepted`，页面内 5–17 ms / 首段 3–11 ms。
 - `npx vitest run src/lib/world-engine/local/narration-candidates/constrained --maxWorkers=1`：15 个测试，含真实状态内核点位、方向反写、没登记的人名、已知物品再发现、模型失败换程序写同一段、07 composer 注入。
 - `npx tsc -p tsconfig.world-contract.json --noEmit` 与 eslint 无错误。
+
+真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 5–17 ms、首段 3–11 ms，`strategyVersion=constrained-candidate-v1.1`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
 
 真实浏览器证据（09 的共用入口，05:43Z，qwen2.5-1.5b-instruct，CPU）：
 
