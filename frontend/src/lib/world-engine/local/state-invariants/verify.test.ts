@@ -174,6 +174,15 @@ describe('completion and discovery monotonicity', () => {
     expect(report.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['task_duplicate_add', 'task_regressed']));
   });
 
+  it('detects a cross-character task id and a wrong task owner before apply', () => {
+    const s0 = buildInitialState(structuredClone(fixture.normal.initial) as InitialState);
+    const pointWithBadTask = point(s0, 1, {
+      person_b: { entityId: 'person_b', subtasksAdded: [{ id: 'task_a_root', ownerId: 'person_a', parentTaskId: null, goal: '错误任务', status: 'pending' }] },
+    });
+    const codes = pointContinuityIssues(s0, pointWithBadTask).map((item) => item.code);
+    expect(codes).toEqual(expect.arrayContaining(['task_duplicate_add', 'task_hierarchy']));
+  });
+
   it('detects a repeated location appearance id before it can duplicate a room discovery', () => {
     const s0 = fixtureState();
     const p1 = point(s0, 1, {

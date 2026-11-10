@@ -149,11 +149,24 @@ export function pointContinuityIssues(state: WorldState, point: TimelinePoint): 
         }
       }
       const added = new Set<Id>();
+      const otherTaskIds = new Set<Id>(
+        Object.entries(state.characters)
+          .filter(([characterId]) => characterId !== entityId)
+          .flatMap(([, character]) => Object.keys(character.tasks)),
+      );
       for (const task of delta.subtasksAdded ?? []) {
         if (added.has(task.id)) {
           issues.push(issue('task_duplicate_add', `${entityId} adds task ${task.id} twice in one point`, pointId));
         } else if (characterTasks[task.id]) {
           issues.push(issue('task_duplicate_add', `${entityId} re-adds existing task ${task.id}`, pointId));
+        } else if (otherTaskIds.has(task.id)) {
+          issues.push(issue('task_duplicate_add', `${entityId} reuses task id ${task.id} from another character`, pointId));
+        }
+        if (task.ownerId !== entityId) {
+          issues.push(issue('task_hierarchy', `${entityId} adds task ${task.id} with owner ${task.ownerId}`, pointId));
+        }
+        if (task.parentTaskId != null && !characterTasks[task.parentTaskId] && !added.has(task.parentTaskId)) {
+          issues.push(issue('task_hierarchy', `${entityId} adds task ${task.id} with unknown parent ${task.parentTaskId}`, pointId));
         }
         added.add(task.id);
       }
