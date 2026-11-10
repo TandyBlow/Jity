@@ -186,6 +186,7 @@ interface CaseAnalysis {
   }>;
   diversity: ReturnType<typeof buildDiversityReport>;
   diversityGate: boolean;
+  assessments: Assessment[];
   arms: Array<{
     arm: 1 | 2 | 4;
     selectedId: string | null;
@@ -217,6 +218,7 @@ async function main(): Promise<void> {
   };
 
   const cases: CaseAnalysis[] = [];
+  const expectedById = new Map<string, ExpectedRow>();
   const rawInventory: Array<Record<string, unknown>> = [];
   const envs: Record<string, unknown> = {};
   const batchPlans: Record<string, unknown> = {};
@@ -243,6 +245,7 @@ async function main(): Promise<void> {
     for (const caseId of config.caseIds) {
       const expectedRow = expected.get(caseId);
       if (!expectedRow) throw new Error(`expected row missing:${caseId}`);
+      expectedById.set(caseId, expectedRow);
       const rows = raw.filter((row) => row.caseId === caseId);
       const bySeed = new Map<number, SampleRow>();
       const duplicateSeeds: number[] = [];
@@ -312,43 +315,6 @@ async function main(): Promise<void> {
       }));
 
       const arms: CaseAnalysis['arms'] = [];
-      for (const arm of [1, 2, 4] as const) {
-        const windowSamples = samples.slice(0, arm);
-        const selectionStarted = nowMs();
-        const decision = selectCandidate({
-          candidates: windowSamples.map((sample) => ({ id: sample.id, seed: sample.seed, text: sample.text })),
-          assessments,
-          options: {
-            priorText: expectedRow.priorTexts.join('\n') || null,
-            licensedEntities: expectedRow.licensedEntities,
-          },
-        });
-        const selectionMs = nowMs() - selectionStarted;
-        const selected = samples.find((sample) => sample.id === decision.selectedId) ?? null;
-        const selectedRank = decision.ranking.find((entry) => entry.id === decision.selectedId);
-        arms.push({
-          arm,
-          selectedId: decision.selectedId,
-          selectedSeed: selected?.seed ?? null,
-          selectedFactQualified: Boolean(selected?.checker.factQualified),
-          selectedPass: selected?.checker.decision === 'pass',
-          selectedCoverage: !selectedRank
-            ? 0
-            : selectedRank.mandatoryTotal === 0
-              ? 1
-              : selectedRank.mandatoryCovered / selectedRank.mandatoryTotal,
-          selectedRepetition: selectedRank
-            ? selectedRank.metrics.repeatedSentenceRatio + selectedRank.metrics.repeatedClauseRatio + selectedRank.metrics.emptySentenceRatio
-            : 1,
-          selectedPriorEcho: selectedRank?.metrics.priorEcho ?? 0,
-          decision,
-          callIds: windowSamples.map((sample) => sample.id),
-          callWallMs: windowSamples.reduce((sum, sample) => sum + (sample.timings?.totalMs ?? 0), 0),
-          checkerMs: windowSamples.reduce((sum, sample) => sum + sample.checker.elapsedMs, 0),
-          selectionMs,
-        });
-      }
-
       const stopSignals: string[] = [];
       if (qualifiedIds.length === 0) stopSignals.push('zero_fact_qualified_candidates');
       if (diversity.effectiveRepetition > 0.8) stopSignals.push('effective_repetition_above_0.80');
@@ -360,6 +326,7 @@ async function main(): Promise<void> {
         samples,
         diversity,
         diversityGate,
+        assessments,
         arms,
         stopSignals,
       });
@@ -370,6 +337,29 @@ async function main(): Promise<void> {
         rawRows: rows.length,
         seeds: samples.map((sample) => sample.seed),
       });
+    }
+  }
+
+  const casesWithDiversityGate = cases.filter((entry) => entry.diversityGate).length;
+  const zeroQualifiedCases = cases.filter((entry) => entry.samples.every((sample) => !sample.checker.factQualified)).length;
+  // Preregistered gate: best-of-2/4 is only tested after at least two cases
+  // have >=2 fact-qualified, non-homogeneous candidates and no case is fully
+  // fact-unqualified. Before that, the N arms are not computed at all.
+  const armTestGate = {
+    allowed: cases.length >= 2 && zeroQualifiedCases === 0 && casesWithDiversityGate >= 2,
+    reason: cases.length < 2
+      ? 'fewer_than_two_cases'
+      : zeroQualifiedCases > 0
+        ? `zero_fact_qualified_cases:${zeroQualifiedCases}`
+        : casesWithDiversityGate < 2
+          ? `diversity_gate_cases:${casesWithDiversityGate}<2`
+          : 'gate_passed',
+  };
+  if (armTestGate.allowed) {
+    for (const entry of cases) {
+      const expectedRow = expectedById.get(entry.caseId);
+      if (!expectedRow) throw new Error(`expected row unavailable for arms:${entry.caseId}`);
+      entry.arms = computeArms(entry.samples, entry.assessments, expectedRow);
     }
   }
 
@@ -393,8 +383,6 @@ async function main(): Promise<void> {
     };
   });
 
-  const casesWithDiversityGate = cases.filter((entry) => entry.diversityGate).length;
-  const zeroQualifiedCases = cases.filter((entry) => entry.samples.every((sample) => !sample.checker.factQualified)).length;
   const base = armSummary.find((entry) => entry.arm === 1);
   const betterArms = armSummary.filter((entry) => entry.arm !== 1).filter((entry) => {
     if (!base) return false;
@@ -407,17 +395,11 @@ async function main(): Promise<void> {
     return higherQualified || (equalQualified && higherPass)
       || (equalQualified && equalPass && higherCoverage && repetitionNotWorse);
   }).map((entry) => entry.arm);
-  const benefitStatus = cases.length < 2
+  const benefitStatus = !armTestGate.allowed
     ? 'not_evaluated'
-    : zeroQualifiedCases > 0
-      ? 'no_benefit'
-      : casesWithDiversityGate < 2
-        ? 'no_benefit'
-        : betterArms.length > 0 ? 'benefit' : 'no_benefit';
+    : betterArms.length > 0 ? 'benefit' : 'no_benefit';
   const benefitReasons: string[] = [];
-  if (cases.length < 2) benefitReasons.push('fewer_than_two_cases_no_paired_trials');
-  if (zeroQualifiedCases > 0) benefitReasons.push(`zero_fact_qualified_cases:${zeroQualifiedCases}`);
-  if (casesWithDiversityGate < 2) benefitReasons.push(`diversity_gate_cases:${casesWithDiversityGate}<2`);
+  if (!armTestGate.allowed) benefitReasons.push(`arm_test_not_allowed:${armTestGate.reason}`);
   if (benefitStatus === 'benefit') benefitReasons.push(`arms_better_than_n1:${betterArms.join(',')}`);
   if (benefitStatus === 'no_benefit' && cases.length >= 2) benefitReasons.push('no_arm_strictly_better_on_preregistered_endpoints');
 
@@ -438,7 +420,9 @@ async function main(): Promise<void> {
       const qualifiedUnselected = entry.samples
         .filter((sample) => sample.checker.factQualified && !selectedIds.has(sample.id))
         .sort((a, b) => a.textSha256.localeCompare(b.textSha256))[0];
-      const sampleIds = new Set([...selectedIds, ...(qualifiedUnselected ? [qualifiedUnselected.id] : [])]);
+      const sampleIds = entry.arms.length === 0
+        ? new Set(entry.samples.map((sample) => sample.id))
+        : new Set([...selectedIds, ...(qualifiedUnselected ? [qualifiedUnselected.id] : [])]);
       return {
         caseId: entry.caseId,
         category: entry.category,
@@ -533,6 +517,7 @@ async function main(): Promise<void> {
       status: benefitStatus,
       reasons: benefitReasons,
       betterArms,
+      armTestGate,
       cases: cases.length,
       casesWithDiversityGate,
       zeroQualifiedCases,
@@ -569,6 +554,51 @@ async function main(): Promise<void> {
       diversityGate: entry.diversityGate,
     })),
   }, null, 2));
+}
+
+function computeArms(
+  samples: CaseAnalysis['samples'],
+  assessments: Assessment[],
+  expectedRow: ExpectedRow,
+): CaseAnalysis['arms'] {
+  const arms: CaseAnalysis['arms'] = [];
+  for (const arm of [1, 2, 4] as const) {
+    const windowSamples = samples.slice(0, arm);
+    const selectionStarted = nowMs();
+    const decision = selectCandidate({
+      candidates: windowSamples.map((sample) => ({ id: sample.id, seed: sample.seed, text: sample.text })),
+      assessments,
+      options: {
+        priorText: expectedRow.priorTexts.join('\n') || null,
+        licensedEntities: expectedRow.licensedEntities,
+      },
+    });
+    const selectionMs = nowMs() - selectionStarted;
+    const selected = samples.find((sample) => sample.id === decision.selectedId) ?? null;
+    const selectedRank = decision.ranking.find((entry) => entry.id === decision.selectedId);
+    arms.push({
+      arm,
+      selectedId: decision.selectedId,
+      selectedSeed: selected?.seed ?? null,
+      selectedFactQualified: Boolean(selected?.checker.factQualified),
+      selectedPass: selected?.checker.decision === 'pass',
+      selectedCoverage: !selectedRank
+        ? 0
+        : selectedRank.mandatoryTotal === 0
+          ? 1
+          : selectedRank.mandatoryCovered / selectedRank.mandatoryTotal,
+      selectedRepetition: selectedRank
+        ? selectedRank.metrics.repeatedSentenceRatio + selectedRank.metrics.repeatedClauseRatio + selectedRank.metrics.emptySentenceRatio
+        : 1,
+      selectedPriorEcho: selectedRank?.metrics.priorEcho ?? 0,
+      decision,
+      callIds: windowSamples.map((sample) => sample.id),
+      callWallMs: windowSamples.reduce((sum, sample) => sum + (sample.timings?.totalMs ?? 0), 0),
+      checkerMs: windowSamples.reduce((sum, sample) => sum + sample.checker.elapsedMs, 0),
+      selectionMs,
+    });
+  }
+  return arms;
 }
 
 function renderMarkdown(report: Record<string, unknown>, cases: CaseAnalysis[]): string {
