@@ -903,6 +903,23 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.past_added', sentence.text,
         `passive past event ${passive[0]} has no settled basis`, [], []));
     }
+    // A body mark (red weal, blood, bruise) on a named body part must exist in
+    // the settled appearance; otherwise it is a new physical fact.
+    for (const [personName, person] of Object.entries(projection.people)) {
+      const named = narration.includes(personName)
+        || (projection.viewpoint === personName && !nameHits(narration, names, Object.keys(projection.people)).length);
+      if (!named) continue;
+      const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
+      if (!mark) continue;
+      const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
+      const body = /(手背|手心|手指|手腕|手臂|胳膊|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
+      if (!body) continue;
+      const settled = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
+      if (settled.includes(mark[1])) continue;
+      findings.push(finding(ctx, 'fact.body_mark_added', sentence.text,
+        `${personName}: ${body[1]} has ${mark[1]} in the prose but not in the settled appearance`, [settled.slice(0, 40)], []));
+      break;
+    }
     // A settled appearance can be contradicted by its opposite direction.
     const settledLooks = [
       ...Object.values(projection.people).flatMap((person) => person.appearanceAfter),

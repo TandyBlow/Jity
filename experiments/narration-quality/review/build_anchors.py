@@ -327,7 +327,7 @@ anchors += [
         "input": arms_scene,
         "text": "光从巷口斜斜洒来，映着诺诺发圈上的红光，右袖的红痕在光下泛着暗色。路明非伸手摸了摸手背，指尖触到那道浅浅的红痕，忽然想起刚才被弹片击中时，自己也摸到了类似的东西。",
         "options": {"genders": {}, "minChars": 1},
-        "expect": {"fact": ["fact.past_added"], "style": [],
+        "expect": {"fact": ["fact.past_added", "fact.body_mark_added"], "style": [],
                    "notes": "An invented fragment hit remembered as past; the protagonist has no such mark in the settled appearance."},
     },
 ]
