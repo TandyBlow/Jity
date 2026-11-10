@@ -12,6 +12,7 @@ import type { Change, EntityDelta, Id, Json, WorldState } from '../../../types';
 import type { InferenceEngine } from '../../../runtime/engine';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import { callJson, JsonCallError, joinedMs, joinedRaw } from './engine-call';
+import { filterSubtasksByAccepted, verifyTaskAchievements, type VerifierVerdict } from './task-verifier';
 import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, SettlementOutcome } from './types';
 import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
@@ -633,11 +634,50 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds }),
     });
     const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds });
-    const changes = read.changes;
+    let changes = read.changes;
+    let acceptedSupports = read.supports;
+    let rejected = read.rejected;
+    let verifier: VerifierVerdict[] | null = null;
+    let verifierCalls: ModelCallEvidence[] = [];
+    if (strictSupport && read.supports.length) {
+      try {
+        const checked = await verifyTaskAchievements(
+          { engine: ctx.engine, state: ctx.state, results: ctx.results, options: ctx.options },
+          read.supports,
+        );
+        verifier = checked.judgments;
+        verifierCalls = checked.calls;
+      } catch (error) {
+        if (error instanceof JsonCallError) {
+          throw new JsonCallError(error.message, [...answer.calls, ...error.calls]);
+        }
+        throw error;
+      }
+      const accepted = new Set((verifier ?? [])
+        .filter((row) => row.satisfied === 'yes')
+        .map((row) => `${row.characterId}:${row.taskId}`));
+      const filtered: Record<Id, Partial<EntityDelta>> = {};
+      for (const [ownerId, delta] of Object.entries(changes)) {
+        const taskIds = (delta.tasksAchieved ?? []).filter((taskId) => accepted.has(`${ownerId}:${taskId}`));
+        if (taskIds.length) filtered[ownerId] = { tasksAchieved: taskIds };
+      }
+      changes = filtered;
+      acceptedSupports = read.supports.filter((row) => accepted.has(`${row.characterId}:${row.taskId}`));
+      for (const support of read.supports) {
+        if (accepted.has(`${support.characterId}:${support.taskId}`)) continue;
+        const verdict = verifier?.find((row) => row.characterId === support.characterId && row.taskId === support.taskId);
+        rejected = [...rejected, {
+          characterId: support.characterId,
+          taskId: support.taskId,
+          reason: verdict?.satisfied === 'partial' ? 'condition_partial' : 'condition_not_satisfied',
+        }];
+      }
+    }
     if (ctx.shared && Array.isArray(asRecord(answer.value).subtasks)) {
-      ctx.shared.pendingSubtasks = readSubtaskProposals(
+      const parsed = readSubtaskProposals(
         answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
       );
+      ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
     }
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
@@ -652,14 +692,15 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           assertedUnchanged: rows.length - newlyAchieved.length,
           achievedByCharacter,
           emptyCharacters: taskScope.characters - achievedByCharacter.length,
-          rejectedTaskIds: read.rejected,
-          supports: read.supports,
+          rejectedTaskIds: rejected,
+          supports: acceptedSupports,
+          verifier: verifier ?? undefined,
         },
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
         newlyAchievedTaskIds: newlyAchieved.sort(),
       },
       fallback: false,
-      calls: answer.calls,
+      calls: [...answer.calls, ...verifierCalls],
     };
   } catch (error) {
     return stageFailure({ taskCoverageIds: characters, taskScope, decidedTaskIds: rows.map(({ task }) => task.id).sort() }, error);

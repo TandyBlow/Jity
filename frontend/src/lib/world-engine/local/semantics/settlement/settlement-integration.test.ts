@@ -27,6 +27,11 @@ function settlementEngine(): InferenceEngine {
       }
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });
       if (prompt.includes('外貌结算器')) return JSON.stringify({ operations: [] });
+      if (prompt.includes('任务条件核验器')) {
+        return JSON.stringify({ judgments: [{
+          characterId: 'person_a', taskId: 'task_watch', satisfied: 'yes', reason: '看住门的结果已经发生。',
+        }] });
+      }
       if (prompt.includes('任务判定器')) {
         return JSON.stringify({ unchanged: [], achieved: [
           { characterId: 'person_a', tasks: [{ taskId: 'task_watch', basis: 'f1' }] },

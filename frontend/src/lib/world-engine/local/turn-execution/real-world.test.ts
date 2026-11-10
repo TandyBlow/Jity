@@ -45,6 +45,11 @@ function engineFor(state: WorldState, seen: string[]): InferenceEngine {
       }
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });
       if (prompt.includes('外貌结算器')) return JSON.stringify({ operations: [] });
+      if (prompt.includes('任务条件核验器')) {
+        return JSON.stringify({ judgments: [{
+          characterId: OFFSCREEN, taskId: OFFSCREEN_TASK, satisfied: 'yes', reason: '地下门闩的事实已经满足任务条件。',
+        }] });
+      }
       if (prompt.includes('任务判定器')) {
         // One decision per character; achieved lists only newly achieved tasks.
         const owners = Object.entries(state.characters)

@@ -82,6 +82,11 @@ function scriptedEngine(brain: Brain): InferenceEngine {
       if (prompt.includes('外貌结算器')) {
         return JSON.stringify({ operations: brain.appearanceOps ? brain.appearanceOps(prompt) : [] });
       }
+      if (prompt.includes('任务条件核验器')) {
+        return JSON.stringify({ judgments: [{
+          characterId: 'person_a', taskId: 'task_watch', satisfied: 'yes', reason: '守门的条件已经成立。',
+        }] });
+      }
       if (prompt.includes('任务判定器')) {
         // One decision per character with tasks; the off-screen owner must be
         // decided too, and the decision covers all of that character's tasks.
