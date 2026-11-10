@@ -668,6 +668,7 @@ try {
           progressEvents: attempt.progressEvents, accepted: attempt.accepted,
           cancelled: attempt.cancelled, timedOut: attempt.timedOut,
           issues: attempt.issues,
+          repairedIssues: attempt.repairedIssues ?? null,
           metrics: attempt.metrics,
           alignment: attempt.alignment ? {
             timeExpressed: attempt.alignment.timeExpressed,
