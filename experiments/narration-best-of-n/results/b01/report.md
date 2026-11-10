@@ -1,6 +1,6 @@
 # best-of-N 分析报告
 
-- 生成时间：2026-11-10T12:56:19.333Z
+- 生成时间：2026-11-10T15:21:41.909Z
 - 批次：b01
 - 预注册 SHA-256：`b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3`
 - 检查器（机械，不是人工）：`92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f`
@@ -33,14 +33,14 @@
 
 ### frozen-row-0012 (long_text)
 
-| seed | 判定 | 字数 | 事实 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |
-|---|---|---|---|---|---|---|---|---|---|
-| 17 | fail | 52 | 2 | 0 | 1 | 1/3 | 9727.352496236563 | 11983 | `73df7e315e92` |
-| 29 | fail | 20 | 2 | 0 | 1 | 1/3 | 41.63921996951103 | 520 | `c2ea4c892319` |
-| 43 | fail | 62 | 2 | 0 | 2 | 1/3 | 41.62045568227768 | 1322 | `0381870a9abd` |
-| 61 | fail | 94 | 2 | 0 | 2 | 1/3 | 46.660467982292175 | 1791 | `145d0c38fdbe` |
-| 79 | fail | 50 | 2 | 0 | 1 | 1/3 | 41.24122858047485 | 1125 | `d113c3b5fa59` |
-| 97 | fail | 22 | 3 | 0 | 1 | 0/3 | 41.25695675611496 | 530 | `7dfca68bedcc` |
+| seed | 判定 | 字数 | 事实 | 视角 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 17 | fail | 52 | 2 | ok | 0 | 1 | 1/3 | 9727.352496236563 | 11983 | `73df7e315e92` |
+| 29 | fail | 20 | 2 | ok | 0 | 1 | 1/3 | 41.63921996951103 | 520 | `c2ea4c892319` |
+| 43 | fail | 62 | 2 | ok | 0 | 2 | 1/3 | 41.62045568227768 | 1322 | `0381870a9abd` |
+| 61 | fail | 94 | 2 | reject | 0 | 2 | 1/3 | 46.660467982292175 | 1791 | `145d0c38fdbe` |
+| 79 | fail | 50 | 2 | ok | 0 | 1 | 1/3 | 41.24122858047485 | 1125 | `d113c3b5fa59` |
+| 97 | fail | 22 | 3 | ok | 0 | 1 | 0/3 | 41.25695675611496 | 530 | `7dfca68bedcc` |
 
 ## 各 arm
 
@@ -73,7 +73,9 @@
   "stop": {
     "stopCurrentScheme": true,
     "effectiveRepetitionAbove80": [],
-    "note": "preregistered stop also needs a second comparable experiment without improvement; one batch alone does not expand N"
+    "source": "RESTART-AFTER-REVIEW.md",
+    "sourceSha256": "20238282a0069cf34f40e49d8ab1691e2fc35de47faf99a0762a68ff30d016ce",
+    "note": "stopCurrentScheme=true: no N expansion and no rerun of this zero-qualified scheme; keep the six raw outputs. A scheme stop is not product completion."
   }
 }
 ```

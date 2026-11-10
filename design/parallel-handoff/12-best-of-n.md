@@ -1,5 +1,15 @@
 # 12 — best-of-N 探索线交接
 
+## 0. 充值后恢复执行（2026-11-10）
+
+补充文件 `RESTART-AFTER-REVIEW.md`（SHA-256 `20238282…`）的本线指令已执行：
+
+- `stopCurrentScheme=true`：**不扩大 N，不重跑当前零合格方案**；六份 b01 原文、预注册和负面结论全部保留；
+- HPC v2 请求改为 `withdrawn-by-recharge-stop`，b02-v2 仍只是条件准备，均不运行；
+- 只做 N=1 的失败诊断/选择器修正：选择器新增显式 `perspectiveQualified=false` 拒绝（事实干净但视角有 finding 的候选不再可采纳）；不修改 01 标准，不另建质量平台；
+- 具体失败交 01/02/10：见 `results/12-best-of-n/handoff-recharge.json`（漏时间/个性、seed 61 个性归属错、seed 43 旧物品状态、seed 97 第一人称、状态面板文风未被机械 checker 报出）；
+- 没有新输入前不自转、不反复写报告；本线保留为可恢复的暂停任务，产品未完成。
+
 ## 1. 问题
 
 产品每回合只写一份正文。单份可能事实错、漏必述项或复读上一回合。要判断“多生成几份再选”是否值得，必须先回答：
@@ -32,7 +42,7 @@ HPC 作业 251512（V100-SXM2-32GB，fp16，hpcgpu01）完成了 6 次真实生�
 |---|---|
 | `types.ts` | `CandidateSample`、`CandidateAssessment`、`DiversityConfig`、`PairVerdict`、`DiversityReport`、`TextMetrics`、`SelectionDecision`、`PoolConfig`、`PoolRun` 等 |
 | `diversity.ts` | `profileSample`、`comparePair`、`clusterProfiles`、`buildDiversityReport`、`effectiveRepetition`、`textMetrics`、`normalizeProse`、`jaccard`、`containment` |
-| `select.ts` | `selectCandidate`、`transportFailed` |
+| `select.ts` | `selectCandidate`、`transportFailed`；显式 `perspectiveQualified=false` 拒绝 |
 | `pool.ts` | `runCandidatePool` |
 | `index.ts` | 以上稳定导出 |
 

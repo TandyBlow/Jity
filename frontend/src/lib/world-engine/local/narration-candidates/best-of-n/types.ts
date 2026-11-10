@@ -40,6 +40,12 @@ export interface CandidateAssessment {
   qualified: boolean | null;
   /** Hard issue kinds, copied verbatim from the checker. */
   hardIssueKinds: string[];
+  /** Explicit viewpoint verdict from the same checker. `false` means the text
+   * has a viewpoint/pronoun/knowledge finding; the selector must not adopt it.
+   * `undefined`/`null` means the caller did not separate this dimension. */
+  perspectiveQualified?: boolean | null;
+  /** Viewpoint/pronoun/knowledge findings behind `perspectiveQualified`. */
+  perspectiveIssueKinds?: string[];
   /** Settled facts the checker proved expressed / required. */
   mandatoryCovered: number;
   mandatoryTotal: number;
@@ -177,7 +183,7 @@ export interface CandidateRank {
 
 export interface SelectionRejection {
   id: string;
-  reason: 'not_qualified' | 'unjudged' | 'empty' | 'transport_failed' | 'budget_exceeded' | 'homogeneous_duplicate';
+  reason: 'not_qualified' | 'not_perspective_qualified' | 'unjudged' | 'empty' | 'transport_failed' | 'budget_exceeded' | 'homogeneous_duplicate';
   detail: string;
 }
 

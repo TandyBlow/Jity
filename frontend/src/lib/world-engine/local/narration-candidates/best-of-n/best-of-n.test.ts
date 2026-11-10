@@ -150,8 +150,13 @@ function assessment(
   mandatoryCovered = 1,
   mandatoryTotal = 1,
   hardIssueKinds: string[] = [],
+  perspectiveQualified: boolean | null = true,
+  perspectiveIssueKinds: string[] = [],
 ): CandidateAssessment {
-  return { id, qualified, mandatoryCovered, mandatoryTotal, hardIssueKinds };
+  return {
+    id, qualified, mandatoryCovered, mandatoryTotal, hardIssueKinds,
+    perspectiveQualified, perspectiveIssueKinds,
+  };
 }
 
 describe('candidate selection', () => {
@@ -186,6 +191,16 @@ describe('candidate selection', () => {
     });
     expect(decision.selectedId).toBe('x');
     expect(decision.verdict).toBe('provisional');
+  });
+
+  it('rejects a fact-clean candidate with an explicit viewpoint finding', () => {
+    const decision = selectCandidate({
+      candidates: [sample('pov', 1, A)],
+      assessments: [assessment('pov', true, 1, 1, [], false, ['review.pronoun'])],
+    });
+    expect(decision.selectedId).toBeNull();
+    expect(decision.verdict).toBe('none');
+    expect(decision.rejected[0].reason).toBe('not_perspective_qualified');
   });
 
   it('never selects a transport-failed partial text', () => {

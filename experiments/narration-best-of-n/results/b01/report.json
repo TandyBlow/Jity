@@ -1,6 +1,6 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T12:56:19.333Z",
+  "createdAt": "2026-11-10T15:21:41.909Z",
   "batches": [
     "b01"
   ],
@@ -75,8 +75,8 @@
   },
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
-    "select": "88014ef747c5bbdb87a6dd4a535260650a821343b4d5f30d14b3ce84e556a69c",
-    "analyzer": "68e39bc022b06c898430517540d3e90bdbbd97259d84968653a75c4ed9126c04"
+    "select": "b2e2dba44c76d3ac80daced0869a77c1aa6f241ef91ac5c46cd0c706f1c7fa5c",
+    "analyzer": "97c2f7ce25bad7abe4b939aac62b2564c8613187070dfff0de4d6a3e48b57bfb"
   },
   "analysisPlan": {
     "path": "analysis-addendum-arms.md",
@@ -270,6 +270,9 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": true,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.personality_omitted"
@@ -338,7 +341,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 9.443700000000035
+            "elapsedMs": 9.69240000000002
           },
           "metrics": {
             "chars": 52,
@@ -369,6 +372,9 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": true,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.personality_omitted"
@@ -437,7 +443,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.8355000000000246
+            "elapsedMs": 0.7770000000000437
           },
           "metrics": {
             "chars": 20,
@@ -468,6 +474,9 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": true,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.personality_omitted"
@@ -544,7 +553,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.782699999999977
+            "elapsedMs": 1.4362999999999602
           },
           "metrics": {
             "chars": 62,
@@ -575,6 +584,11 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": false,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [
+              "review.pronoun"
+            ],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.personality_omitted"
@@ -654,7 +668,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.9891000000000076
+            "elapsedMs": 1.1254000000000133
           },
           "metrics": {
             "chars": 94,
@@ -685,6 +699,9 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": true,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.personality_omitted"
@@ -753,7 +770,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.3488999999999578
+            "elapsedMs": 0.4451999999999998
           },
           "metrics": {
             "chars": 50,
@@ -784,6 +801,9 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
+            "perspectiveQualified": true,
+            "qualifiedForSelection": false,
+            "perspectiveIssueKinds": [],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.move_omitted",
@@ -865,7 +885,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.14659999999992124
+            "elapsedMs": 0.1913000000000693
           },
           "metrics": {
             "chars": 22,
@@ -1179,7 +1199,7 @@
       },
       "arms": [],
       "stopSignals": [
-        "zero_fact_qualified_candidates"
+        "zero_fact_or_perspective_qualified_candidates"
       ]
     }
   ],
@@ -1244,7 +1264,9 @@
   "stop": {
     "stopCurrentScheme": true,
     "effectiveRepetitionAbove80": [],
-    "note": "preregistered stop also needs a second comparable experiment without improvement; one batch alone does not expand N"
+    "source": "RESTART-AFTER-REVIEW.md",
+    "sourceSha256": "20238282a0069cf34f40e49d8ab1691e2fc35de47faf99a0762a68ff30d016ce",
+    "note": "stopCurrentScheme=true: no N expansion and no rerun of this zero-qualified scheme; keep the six raw outputs. A scheme stop is not product completion."
   },
   "cost": {
     "perArm": [

@@ -4,7 +4,9 @@
  * submit? It is deliberately NOT "the longest" and NOT "the model's own
  * score":
  *
- *   1. hard fact/perspective qualification from the caller's checker;
+ *   1. hard fact qualification, then an explicit viewpoint rejection, from the
+ *      caller's checker; a fact-clean text with a viewpoint finding is not
+ *      adopted;
  *   2. mandatory-fact coverage;
  *   3. in-text repetition / empty sentences;
  *   4. cross-turn echo against the already accepted prior narration;
@@ -74,6 +76,14 @@ export function selectCandidate(input: {
         id: candidate.id,
         reason: 'not_qualified',
         detail: assessment.hardIssueKinds.join('+') || 'hard issue',
+      });
+      continue;
+    }
+    if (assessment.perspectiveQualified === false) {
+      rejected.push({
+        id: candidate.id,
+        reason: 'not_perspective_qualified',
+        detail: assessment.perspectiveIssueKinds?.join('+') || 'viewpoint issue',
       });
       continue;
     }

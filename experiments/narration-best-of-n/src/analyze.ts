@@ -30,6 +30,7 @@ const EXP = resolve(HERE, '..');
 // identical bytes. Source and hashes are in checker-source.json.
 const CHECKER_DIR = join(EXP, 'checker-pinned');
 const CHECKER_ENTRY = join(CHECKER_DIR, 'index.ts');
+const PERSPECTIVE_KINDS = new Set(['review.pronoun', 'fact.viewpoint_interiority', 'fact.knowledge_leak']);
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
 const nowIso = (): string => new Date().toISOString();
@@ -38,6 +39,8 @@ const nowMs = (): number => performance.now();
 interface Assessment {
   id: string;
   qualified: boolean | null;
+  perspectiveQualified: boolean;
+  perspectiveIssueKinds: string[];
   mandatoryCovered: number;
   mandatoryTotal: number;
   hardIssueKinds: string[];
@@ -157,6 +160,9 @@ function preregGuard(batch: string): PreregDoc {
 function classify(seed: number, report: CheckerReport, text: string): {
   decision: 'pass' | 'pending' | 'style_fail' | 'fail';
   factQualified: boolean;
+  perspectiveQualified: boolean;
+  qualifiedForSelection: boolean;
+  perspectiveIssueKinds: string[];
   styleIssueKinds: string[];
   reviewIssueKinds: string[];
   factIssueKinds: string[];
@@ -164,6 +170,11 @@ function classify(seed: number, report: CheckerReport, text: string): {
   const factIssueKinds = [...new Set(report.findings.filter((entry) => entry.severity === 'fact').map((entry) => entry.kind))];
   const styleIssueKinds = [...new Set(report.findings.filter((entry) => entry.severity === 'style').map((entry) => entry.kind))];
   const reviewIssueKinds = [...new Set(report.findings.filter((entry) => entry.severity === 'review').map((entry) => entry.kind))];
+  const perspectiveIssueKinds = [...new Set(report.findings
+    .filter((entry) => PERSPECTIVE_KINDS.has(entry.kind))
+    .map((entry) => entry.kind))];
+  const perspectiveQualified = perspectiveIssueKinds.length === 0;
+  const factQualified = !text.trim() ? false : factIssueKinds.length === 0;
   const decision = !text.trim() || factIssueKinds.length
     ? 'fail'
     : styleIssueKinds.length
@@ -174,7 +185,10 @@ function classify(seed: number, report: CheckerReport, text: string): {
   void seed;
   return {
     decision,
-    factQualified: decision !== 'fail',
+    factQualified,
+    perspectiveQualified,
+    qualifiedForSelection: factQualified && perspectiveQualified,
+    perspectiveIssueKinds,
     factIssueKinds,
     styleIssueKinds,
     reviewIssueKinds,
@@ -227,6 +241,9 @@ interface CaseAnalysis {
     checker: {
       decision: string;
       factQualified: boolean;
+      perspectiveQualified: boolean;
+      qualifiedForSelection: boolean;
+      perspectiveIssueKinds: string[];
       counts: Record<string, number>;
       mandatoryCovered: number;
       mandatoryTotal: number;
@@ -374,7 +391,9 @@ async function main(): Promise<void> {
         text: sample.text,
         licensedEntities: expectedRow.licensedEntities,
       }));
-      const qualifiedIds = samples.filter((sample) => sample.checker.factQualified).map((sample) => sample.id);
+      const qualifiedIds = samples
+        .filter((sample) => sample.checker.qualifiedForSelection)
+        .map((sample) => sample.id);
       const diversity = buildDiversityReport({ profiles, qualifiedIds });
       const diversityGate = qualifiedIds.length >= 2
         && (diversity.qualifiedDistinctClusters ?? 0) >= 2;
@@ -382,6 +401,8 @@ async function main(): Promise<void> {
       const assessments: Assessment[] = samples.map((sample) => ({
         id: sample.id,
         qualified: sample.checker.factQualified,
+        perspectiveQualified: sample.checker.perspectiveQualified,
+        perspectiveIssueKinds: sample.checker.perspectiveIssueKinds,
         mandatoryCovered: sample.checker.mandatoryCovered,
         mandatoryTotal: sample.checker.mandatoryTotal,
         hardIssueKinds: sample.checker.factIssueKinds,
@@ -390,7 +411,7 @@ async function main(): Promise<void> {
 
       const arms: CaseAnalysis['arms'] = [];
       const stopSignals: string[] = [];
-      if (qualifiedIds.length === 0) stopSignals.push('zero_fact_qualified_candidates');
+      if (qualifiedIds.length === 0) stopSignals.push('zero_fact_or_perspective_qualified_candidates');
       if (diversity.effectiveRepetition > 0.8) stopSignals.push('effective_repetition_above_0.80');
       if (duplicateSeeds.length) stopSignals.push(`duplicate_seed_rows:${duplicateSeeds.join(',')}`);
 
@@ -422,7 +443,7 @@ async function main(): Promise<void> {
   }
 
   const casesWithDiversityGate = cases.filter((entry) => entry.diversityGate).length;
-  const zeroQualifiedCases = cases.filter((entry) => entry.samples.every((sample) => !sample.checker.factQualified)).length;
+  const zeroQualifiedCases = cases.filter((entry) => entry.samples.every((sample) => !sample.checker.qualifiedForSelection)).length;
   // Preregistered gate: best-of-2/4 is only tested after at least two cases
   // have >=2 fact-qualified, non-homogeneous candidates and no case is fully
   // fact-unqualified. Before that, the N arms are not computed at all.
@@ -431,7 +452,7 @@ async function main(): Promise<void> {
     reason: cases.length < 2
       ? 'fewer_than_two_cases'
       : zeroQualifiedCases > 0
-        ? `zero_fact_qualified_cases:${zeroQualifiedCases}`
+        ? `zero_fact_or_perspective_qualified_cases:${zeroQualifiedCases}`
         : casesWithDiversityGate < 2
           ? `diversity_gate_cases:${casesWithDiversityGate}<2`
           : 'gate_passed',
@@ -634,9 +655,11 @@ async function main(): Promise<void> {
       zeroQualifiedCases,
     },
     stop: {
-      stopCurrentScheme: cases.some((entry) => entry.stopSignals.includes('zero_fact_qualified_candidates')),
+      stopCurrentScheme: cases.some((entry) => entry.stopSignals.includes('zero_fact_or_perspective_qualified_candidates')),
       effectiveRepetitionAbove80: cases.filter((entry) => entry.diversity.effectiveRepetition > 0.8).map((entry) => entry.caseId),
-      note: 'preregistered stop also needs a second comparable experiment without improvement; one batch alone does not expand N',
+      source: 'RESTART-AFTER-REVIEW.md',
+      sourceSha256: '20238282a0069cf34f40e49d8ab1691e2fc35de47faf99a0762a68ff30d016ce',
+      note: 'stopCurrentScheme=true: no N expansion and no rerun of this zero-qualified scheme; keep the six raw outputs. A scheme stop is not product completion.',
     },
     cost: {
       perArm: armSummary,
@@ -792,10 +815,11 @@ function renderMarkdown(report: Record<string, unknown>, cases: CaseAnalysis[]):
     lines.push('');
     lines.push(`### ${entry.caseId} (${entry.category})`);
     lines.push('');
-    lines.push('| seed | 判定 | 字数 | 事实 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |');
-    lines.push('|---|---|---|---|---|---|---|---|---|---|');
+    lines.push('| seed | 判定 | 字数 | 事实 | 视角 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |');
+    lines.push('|---|---|---|---|---|---|---|---|---|---|---|');
     for (const sample of entry.samples) {
-      lines.push(`| ${sample.seed} | ${sample.checker.decision} | ${sample.metrics.chars} | ${sample.checker.counts.fact} | ${sample.checker.counts.style} | `
+      lines.push(`| ${sample.seed} | ${sample.checker.decision} | ${sample.metrics.chars} | ${sample.checker.counts.fact} | `
+        + `${sample.checker.perspectiveQualified ? 'ok' : 'reject'} | ${sample.checker.counts.style} | `
         + `${sample.checker.counts.review} | ${sample.checker.mandatoryCovered}/${sample.checker.mandatoryTotal} | `
         + `${sample.timings?.firstTokenMs ?? 'unknown'} | ${sample.timings?.totalMs == null ? 'unknown' : Math.round(sample.timings.totalMs)} | `
         + `\`${sample.textSha256.slice(0, 12)}\` |`);
