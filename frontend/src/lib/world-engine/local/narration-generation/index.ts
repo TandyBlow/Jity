@@ -950,12 +950,22 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // The check is independent of the other rules: a draft that is also too
     // short can still assert an invented sound, and the evidence must say so.
     if (result.attempt.cleaned) {
-      const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText);
+      const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText, input.policy?.roster ?? []);
       const invented = senseViolations(result.attempt.cleaned, input.inputText, {
         staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
-      if (markIssues.length) {
+      // A mark that belongs to someone else in the state is a soft note: the
+      // passage is not inventing it, it is moving it. 09 95dc put 诺诺's
+      // «右袖的红痕» on the viewpoint.
+      for (const borrowed of markIssues.filter((issue) => issue.borrowed)) {
+        result.attempt.issues.push({
+          kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+          detail: `${borrowed.noun} belongs to another character (${borrowed.sentence})`, sentence: borrowed.sentence,
+        });
+      }
+      const ownedMarks = markIssues.filter((issue) => !issue.borrowed);
+      if (ownedMarks.length) {
         result.attempt.accepted = false;
         if (!result.attempt.issues.some((issue) => issue.kind === 'unlicensed_appearance')) result.attempt.issues.push({
           kind: 'unlicensed_appearance', severity: 'hard', attempt: result.attempt.attempt,

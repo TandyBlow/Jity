@@ -245,3 +245,22 @@ describe('product regressions: the batch-3 quiet passage', () => {
     expect(kinds).toContain('hard:unlicensed_appearance');
   });
 });
+
+describe('product regressions: a mark that belongs to another character', () => {
+  // 09 95dc auto point: 诺诺's «右袖的红痕» was on the viewpoint's sleeve.
+  test('a borrowed mark is a soft note, not a rejection', async () => {
+    const policy: NarrationPolicy = {
+      ...quietPolicy,
+      knownEntities: [...(quietPolicy.knownEntities ?? []), '红痕'],
+    };
+    const input = `${quietInput}\n诺诺：右袖的红痕是扶过石墙时蹭上的。`;
+    const text = '路明非站在西侧服务巷，低头看见袖口的红痕。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: input, priorText: null, policy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => issue.kind === 'unlicensed_appearance' && issue.severity === 'hard')).toBe(false);
+    expect(issues.some((issue) => issue.severity === 'soft' && /belongs to another character/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
