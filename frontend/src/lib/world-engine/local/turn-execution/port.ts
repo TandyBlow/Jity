@@ -46,6 +46,10 @@ export interface PortCallRecord {
   /** Calls the model actually made, including validation retries. */
   calls: number;
   evidenceCalls: number;
+  /** Raw model text per attempt (bounded), with prompt size and the attempt's
+   * error. Kept for successful answers too: a schema-valid but semantically
+   * invalid answer must remain visible to review. */
+  rawAttempts?: { ms: number; promptChars: number; error?: string; raw: string }[];
   /** Updates stages in the order this task ran them (merged or split). */
   stages?: string[];
   /** How many characters the stage answers covered. The full cast is a product
@@ -179,13 +183,25 @@ export function createSettlementModelPort(
           : {}),
       };
     }
-    if (outcome.error) {
+    // Keep the successful attempt's raw output too: a semantically invalid
+    // answer can pass the structural schema, and the reviewer needs the text
+    // that was actually accepted (not only failing attempts).
+    if (outcome.evidence.raw) {
       record.raw = outcome.evidence.raw.slice(0, 4000);
       record.rawChars = outcome.evidence.raw.length;
+    }
+    if (outcome.evidence.calls.length) {
       record.attempts = outcome.evidence.calls.map((call) => ({
         ms: Math.round(call.ms),
         error: call.error,
         rawChars: call.raw.length,
+      }));
+      // Every attempt's raw text (bounded), linked to its prompt size and error.
+      record.rawAttempts = outcome.evidence.calls.map((call) => ({
+        ms: Math.round(call.ms),
+        promptChars: call.prompt.length,
+        error: call.error,
+        raw: call.raw.slice(0, 2000),
       }));
     }
     calls.push(record);
