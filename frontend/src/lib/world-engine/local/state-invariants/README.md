@@ -8,7 +8,7 @@ recorded initial template, replays the committed points through the same
 ## Files
 
 - `index.ts` — `verifyWorldRecord`, `verifySessionSnapshot`, `verifyTurnEntry`,
-  `pointContinuityIssues`, `assertPointContinuity`.
+  `pointContinuityIssues`, `assertPointContinuity`, `verifyVisibleAcceptance`.
 - `guarded-restore.ts` — `restoreVerified` / `verifyBeforeRestore`; validates a
   snapshot before `LocalWorldTransport.restore` accepts it.
 - `verify.test.ts` — golden replay, corruption, task/change monotonicity and
@@ -29,6 +29,10 @@ recorded initial template, replays the committed points through the same
   cache equal replay; positions and slots pass the kernel's graph check.
 - A completed task never returns to `pending`; a point cannot re-add an existing
   task id, achieve an already achieved task, or repeat a stored change id.
+- Every task belongs to its character, has one id, and points at a parent that
+  exists in the same character; the persisted roll ledger has unique ids,
+  1..20 results and matching eligibility flags.
+- Replayed clock time never moves backwards.
 - Player rounds freeze the complete roster; `round.cursor` equals the visited
   prefix; acted/visited ids stay inside the frozen order.
 - An active advance has an active round and a work baseline bound to the current
@@ -52,16 +56,23 @@ WORLD_STATE_EVIDENCE=/path/to/09-turns.json \
 ```
 
 The test prints `{file,label,ok,worldId,version,points,errors,warnings}` for each
-record and fails on any invariant error. It does not accept a hand-written
-before/after pair as a settlement: a turn entry must carry a real transport
-snapshot, or a `before` state plus the committed point (the verifier replays it).
+record and fails on any invariant error. A full transport snapshot (or a real
+`before` state plus the committed point) is replayed. A page-visible acceptance
+summary without a snapshot gets a separate `visible-summary` check for history
+and task monotonicity and the refresh marker, with an `evidence_shape` warning;
+that is not a substitute for the replay.
 
 ## Current limits
 
-- The raw `LocalWorldTransport.restore` still trusts its input; the guarded
-  restore and the patch in `results/product/evidence/05-kernel/` are the fix.
-- The reference Python kernel also overwrites an existing task on
-  `subtasksAdded` with the same id. The browser commit guard is intentionally
-  stricter than that reference shape; no existing golden record exercises it.
+- The raw `LocalWorldTransport.restore` still trusts its input in 06's current
+  tree; `06-transport-invariants.patch` was validated in a disposable 06 copy
+  and waits for 06 to merge. 06 already contains the location-appearance
+  `inputIds` fix; 04 still needs `04-schedule-location-appearance.patch`.
+- `state.ts` still overwrites an existing task and a reused change id;
+  `06-state-apply-guards.patch` was validated in a disposable tree and waits
+  for 06 to confirm shared-file ownership. The verifier rejects the resulting
+  records even before that patch is applied.
+- 09 cannot yet capture a full snapshot from the real page; 06 needs to apply
+  `06-page-snapshot-hook.patch` (or an equivalent read-only hook).
 - This suite is CPU-only. It says nothing about real model prose, page latency
   or user acceptance; 09 owns those runs.
