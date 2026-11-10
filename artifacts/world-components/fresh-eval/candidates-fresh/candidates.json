@@ -1,0 +1,2993 @@
+{
+ "packVersion": 3,
+ "generatedFrom": {
+  "templateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+  "specsSha256": "10d3c0fabc34b2f2320e9248e5275d1b7e449a9d68987147c649e6efa202c28e",
+  "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+  "databaseSha256": "04878c4f6ca9f39b6cc611d872f37a4e6791ffad7b1f92c8faa510dac35e4b68",
+  "generatorSha256": "0671d19ad0f1bfc513d540f7bb4e188c409641a9d366e0e57ecc98ff71f3b54f",
+  "screeningSha256": "811486814feca52034533d46ec6f22998df42b61af2eeb8b09b55412af686be4",
+  "n2Sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "note": "来源用固定输入哈希记录；不记 HEAD，否则每次提交都会让生成结果变化"
+ },
+ "fixture": {
+  "registration": {
+   "id": "c8-eval-geothermal-v1",
+   "status": "registered-before-service-creation",
+   "createdUtc": "2026-11-08T07:55:58.132062+00:00",
+   "author": "Codex in this user-authorized C8 session",
+   "purpose": "evaluation-only",
+   "sourceKind": "newly-authored-synthetic-registered-fixture",
+   "trainingOrTuningUse": "none in this session; not supplied to tuning agents",
+   "isR01ModelOutput": false,
+   "isRealPlayerTranscript": false,
+   "humanReviewer": "user (identity/date/conclusions pending)",
+   "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+   "protocolSha256": "49823c3016f18cc77bacd9681135af302d64ef9b6a15280a08a37133d5b5a994",
+   "templateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+   "specsSha256": "10d3c0fabc34b2f2320e9248e5275d1b7e449a9d68987147c649e6efa202c28e",
+   "generatorSha256": "9319147218963855accb0a4be84017dd4cd44697bdda4fe98ebc71997f1ec6a8",
+   "parentC8Commit": "7706026bb1449ef22804221b9f9081efe7682955",
+   "authorityCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
+   "python": "3.11.15 (main, Jun 23 2026, 15:20:37) [MSC v.1944 64 bit (AMD64)]",
+   "device": "Windows-10-10.0.26200-SP0",
+   "modelCalls": 0
+  },
+  "templateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+  "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+  "database": "fresh/source/authority.sqlite3",
+  "databaseSha256": "04878c4f6ca9f39b6cc611d872f37a4e6791ffad7b1f92c8faa510dac35e4b68"
+ },
+ "n2": {
+  "path": "experiments/world-components/n2_perspective.py",
+  "sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "mayPolicy": "select",
+  "visibleOtherActions": true,
+  "note": "N2 为只读导入；mayPolicy/visibleOtherActions 是本文档选择，不改 N2"
+ },
+ "summary": {
+  "candidates": 6,
+  "pageSupported": 2,
+  "capabilityLimited": 4,
+  "withWithheldFacts": 2,
+  "v1Rejected": 0,
+  "v2Rejected": 0,
+  "formalItems": 0,
+  "frozen": 0,
+  "modelCalls": 0,
+  "reviewRows": 40,
+  "reviewRowsPassed": 40
+ },
+ "candidates": [
+  {
+   "id": "c8e01",
+   "title": "三项转运，各有起终点",
+   "coverage": [
+    "多人物",
+    "多地点"
+   ],
+   "view": "omniscient",
+   "seconds": 90,
+   "committed": {
+    "worldId": "world_1",
+    "pointId": "point_7",
+    "rootDigest": "b21a870bddb375ba4deb0305a9834359ef50dc97da54d48298e670a0cc0bd581",
+    "afterDigest": "2f959cc7186179374a260440f610ab42aa20e638156bdcba0add25cab9a2a3bd",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "actorKind": "character",
+      "name": "郁棠序",
+      "fromId": "fy_bridge",
+      "from": "苔铎栈桥",
+      "toId": "fy_watch",
+      "to": "弧砂观测台",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_yu.position"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position",
+      "factId": "fe_shao:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "actorKind": "character",
+      "name": "郁棠序",
+      "fromId": "fy_bridge",
+      "from": "苔铎栈桥",
+      "toId": "fy_watch",
+      "to": "弧砂观测台",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_yu.position",
+      "factId": "fe_yu:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "withheld": [],
+    "standing": [
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "locationId": "fy_cal",
+      "location": "砾脊校准间",
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "value": 43,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "omniscient",
+     "entityId": null,
+     "at": "全局"
+    },
+    "summary": {
+     "must": 3,
+     "may": 0,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_7",
+    "worldId": "world_1",
+    "stateDigest": "2f959cc7186179374a260440f610ab42aa20e638156bdcba0add25cab9a2a3bd",
+    "timeAdvance": {
+     "amount": 90,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "omniscient",
+     "entityId": null,
+     "at": "全局"
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position",
+      "factId": "fe_shao:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "actorKind": "character",
+      "name": "郁棠序",
+      "fromId": "fy_bridge",
+      "from": "苔铎栈桥",
+      "toId": "fy_watch",
+      "to": "弧砂观测台",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_yu.position",
+      "factId": "fe_yu:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "currentState": [
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "at",
+      "value": "砾脊校准间"
+     },
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "sanity",
+      "value": 61
+     },
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "task_pending",
+      "value": "将未拆封阀芯按批次分入陶格"
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "at",
+      "value": "弧砂观测台"
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "sanity",
+      "value": 38
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "task_pending",
+      "value": "读出弧砂刻槽的偏移刻度"
+     },
+     {
+      "entityId": "fe_shao",
+      "name": "邵苇衡",
+      "kind": "sanity",
+      "value": 57
+     },
+     {
+      "entityId": "fe_shao",
+      "name": "邵苇衡",
+      "kind": "task_pending",
+      "value": "复核穹榛机架背面的联接编号"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "sanity",
+      "value": 43
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "核验瓷铯量规的双区刻度"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "登记量规右区的第三条刻线"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "更换绛纹阀芯上的锆丝封签"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "sanity",
+      "value": 72
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "task_pending",
+      "value": "登记苔铎挡板的紧固次序"
+     }
+    ],
+    "playerInstruction": null,
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e01",
+     "verdict": "candidate",
+     "signature": "moved*3|3|90s",
+     "fullSignature": "moved*3|3|90s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e01",
+     "verdict": "candidate",
+     "signature": "moved*3|3|90s",
+     "fullSignature": "moved*3|3|90s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "moved*3|3|90s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": true,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": true,
+    "flags": [],
+    "module": "页面已提交叙事路径",
+    "scopeNote": "三条都是普通人物位移，页面路径能全部写出；不覆盖限知与物品。"
+   },
+   "checks": [
+    "三条移动的人物与起终点各自对应，不互换。",
+    "未变化人物不得写成参与转运。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "三条移动的人物与起终点各自对应，不互换。",
+     "未变化人物不得写成参与转运。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "输入未提供的完整状态字段"
+    ]
+   }
+  },
+  {
+   "id": "c8e02",
+   "title": "两栋建筑，视角只在校准间",
+   "coverage": [
+    "多人物",
+    "多地点",
+    "可见性"
+   ],
+   "view": "protagonist",
+   "seconds": 45,
+   "committed": {
+    "worldId": "world_11",
+    "pointId": "point_17",
+    "rootDigest": "4a66f7b59b6765106a5aa4466b97ac8c62bf2b9f39c7963e2148005843667856",
+    "afterDigest": "3567903a66787a00c4bfe063557ee8ebd977e176239fe4390be83cd057957204",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "withheld": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position",
+      "factId": "fe_shao:position",
+      "n2Class": "invisible",
+      "n2Ground": "other-location",
+      "n2Reason": "发生在视角人物感知范围之外，省略",
+      "expression": "withheld",
+      "requirementSource": "n2-invisible"
+     }
+    ],
+    "standing": [
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "locationId": "fy_cal",
+      "location": "砾脊校准间",
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "value": 43,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "locationId": "fy_bridge",
+      "location": "苔铎栈桥",
+      "fieldPath": "state.characters.fe_yu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "summary": {
+     "must": 1,
+     "may": 0,
+     "invisible": 1,
+     "selected": 1,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_17",
+    "worldId": "world_11",
+    "stateDigest": "3567903a66787a00c4bfe063557ee8ebd977e176239fe4390be83cd057957204",
+    "timeAdvance": {
+     "amount": 45,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "currentState": [
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "at",
+      "value": "砾脊校准间"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "sanity",
+      "value": 43
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "核验瓷铯量规的双区刻度"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "登记量规右区的第三条刻线"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "更换绛纹阀芯上的锆丝封签"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "at",
+      "value": "苔铎栈桥"
+     }
+    ],
+    "playerInstruction": null,
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e02",
+     "verdict": "candidate",
+     "signature": "moved*2|2|45s",
+     "fullSignature": "moved*2|2|45s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e02",
+     "verdict": "candidate",
+     "signature": "moved*2|2|45s",
+     "fullSignature": "moved*2|2|45s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "moved*1|1|45s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": true,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": false,
+    "flags": [
+     {
+      "rule": "P5-no-perspective-filter",
+      "detail": "页面叙事路径不做视角过滤：N2 判为不可见或按指令推迟的事实仍会从世界状态被照写；本条只能由 N2 规则臂或人工判定",
+      "line": "committed-narration.ts:24-60"
+     }
+    ],
+    "module": "仅内核/接口层（页面投影或视角不支持）",
+    "scopeNote": "限知由 N2 规则判定：远处移动被标为 invisible/other-location，不进入成句输入。页面叙事路径本身不做视角过滤，所以本条不计页面叙述成绩。"
+   },
+   "checks": [
+    "视角位置从 after 解析为砾脊校准间。",
+    "邵苇衡在另一栋建筑的移动不进入限知成句输入。",
+    "不得把完整状态中的远处信息当成主体所见。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "视角位置从 after 解析为砾脊校准间。",
+     "邵苇衡在另一栋建筑的移动不进入限知成句输入。",
+     "不得把完整状态中的远处信息当成主体所见。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生",
+     "在输入或叙述里出现 `邵苇衡` 的移动起终点"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "`邵苇衡` 的移动（N2 判为不可见：other-location）",
+     "输入未提供的完整状态字段"
+    ]
+   }
+  },
+  {
+   "id": "c8e03",
+   "title": "父子任务同时校准，另有人完成转移",
+   "coverage": [
+    "任务",
+    "多人物",
+    "多地点"
+   ],
+   "view": "protagonist",
+   "seconds": 180,
+   "committed": {
+    "worldId": "world_20",
+    "pointId": "point_26",
+    "rootDigest": "42a882b7851a0c4e9b148dee2cf716a137322554737d4595338287207d265004",
+    "afterDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "actorKind": "character",
+      "name": "聂汀穗",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "toId": "fy_bridge",
+      "to": "苔铎栈桥",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     },
+     {
+      "kind": "sanity_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "from": 43,
+      "to": 47,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "personality_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "text": "复测一致后愿意把核验步骤交给同伴复查。",
+      "fieldPath": "state.characters.fe_wen.personalityChanges"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "sanity_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "from": 43,
+      "to": 47,
+      "fieldPath": "state.characters.fe_wen.sanity",
+      "factId": "fe_wen:sanity",
+      "n2Class": "must",
+      "n2Ground": "self-safety",
+      "n2Reason": "视角人物自己的理智变化（安全），必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status",
+      "factId": "fe_wen:task:ft_check",
+      "n2Class": "must",
+      "n2Ground": "self-task",
+      "n2Reason": "视角人物自己的任务达成，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status",
+      "factId": "fe_wen:task:ft_mark",
+      "n2Class": "must",
+      "n2Ground": "self-task",
+      "n2Reason": "视角人物自己的任务达成，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "personality_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "text": "复测一致后愿意把核验步骤交给同伴复查。",
+      "fieldPath": "state.characters.fe_wen.personalityChanges",
+      "factId": "fe_wen:personality",
+      "n2Class": "may",
+      "n2Ground": "self-state",
+      "n2Reason": "视角人物自己的描述类变化，可见但可省",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "actorKind": "character",
+      "name": "聂汀穗",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "toId": "fy_bridge",
+      "to": "苔铎栈桥",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_nie.position",
+      "factId": "fe_nie:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "may",
+      "requirementSource": "n2-may"
+     }
+    ],
+    "withheld": [],
+    "standing": [
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "locationId": "fy_store",
+      "location": "霜珀备件库",
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "locationId": "fy_bridge",
+      "location": "苔铎栈桥",
+      "fieldPath": "state.characters.fe_yu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "summary": {
+     "must": 4,
+     "may": 2,
+     "invisible": 0,
+     "selected": 6,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_26",
+    "worldId": "world_20",
+    "stateDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08",
+    "timeAdvance": {
+     "amount": 180,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "sanity_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "from": 43,
+      "to": 47,
+      "fieldPath": "state.characters.fe_wen.sanity",
+      "factId": "fe_wen:sanity",
+      "n2Class": "must",
+      "n2Ground": "self-safety",
+      "n2Reason": "视角人物自己的理智变化（安全），必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status",
+      "factId": "fe_wen:task:ft_check",
+      "n2Class": "must",
+      "n2Ground": "self-task",
+      "n2Reason": "视角人物自己的任务达成，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status",
+      "factId": "fe_wen:task:ft_mark",
+      "n2Class": "must",
+      "n2Ground": "self-task",
+      "n2Reason": "视角人物自己的任务达成，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "personality_changed",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "text": "复测一致后愿意把核验步骤交给同伴复查。",
+      "fieldPath": "state.characters.fe_wen.personalityChanges",
+      "factId": "fe_wen:personality",
+      "n2Class": "may",
+      "n2Ground": "self-state",
+      "n2Reason": "视角人物自己的描述类变化，可见但可省",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "actorKind": "character",
+      "name": "聂汀穗",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "toId": "fy_bridge",
+      "to": "苔铎栈桥",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_nie.position",
+      "factId": "fe_nie:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "may",
+      "requirementSource": "n2-may"
+     }
+    ],
+    "currentState": [
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "更换绛纹阀芯上的锆丝封签"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "at",
+      "value": "苔铎栈桥"
+     }
+    ],
+    "playerInstruction": null,
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e03",
+     "verdict": "candidate",
+     "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+     "fullSignature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e03",
+     "verdict": "candidate",
+     "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+     "fullSignature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "moved*1+personality_changed*1+sanity_changed*1+task_achieved*2|1|180s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": true,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": true,
+    "flags": [],
+    "module": "页面已提交叙事路径",
+    "scopeNote": "视角人物的任务、理智、人格与本点移动是必述；聂汀穗的移动被 N2 判为 may（同院可见），可写可省。不覆盖“父达成/子未达成”的情形。"
+   },
+   "checks": [
+    "明确只达成 ft_check 与 ft_mark，不把 ft_seal 算入。",
+    "给定事实中的理智是43→47，人格文本保留原意。",
+    "不因未提输入未给的其他 pending 状态扣分。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "明确只达成 ft_check 与 ft_mark，不把 ft_seal 算入。",
+     "给定事实中的理智是43→47，人格文本保留原意。",
+     "不因未提输入未给的其他 pending 状态扣分。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "省略 `聂汀穗` 的 `moved`（N2 判为 may）",
+     "输入未提供的完整状态字段"
+    ]
+   }
+  },
+  {
+   "id": "c8e04",
+   "title": "持有人与参照物，明确空间关系",
+   "coverage": [
+    "关系",
+    "多人物"
+   ],
+   "view": "protagonist",
+   "seconds": 30,
+   "committed": {
+    "worldId": "world_30",
+    "pointId": "point_36",
+    "rootDigest": "fa68255f59363d5960be978c6af03ecd83dc6409a0025c259758277d4b728f2d",
+    "afterDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_gauge",
+      "actor": "fi_gauge",
+      "actorKind": "item",
+      "name": "瓷铯量规",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "fromKind": "location",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "toKind": "location",
+      "holderChanged": false,
+      "relativeTo": {
+       "entityId": "fe_nie",
+       "name": "聂汀穗",
+       "relation": "beside"
+      },
+      "fieldPath": "state.items.fi_gauge.position"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_gauge",
+      "actor": "fi_gauge",
+      "actorKind": "item",
+      "name": "瓷铯量规",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "fromKind": "location",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "toKind": "location",
+      "holderChanged": false,
+      "relativeTo": {
+       "entityId": "fe_nie",
+       "name": "聂汀穗",
+       "relation": "beside"
+      },
+      "fieldPath": "state.items.fi_gauge.position",
+      "factId": "fi_gauge:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [],
+    "withheld": [],
+    "standing": [
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "locationId": "fy_cal",
+      "location": "砾脊校准间",
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "locationId": "fy_store",
+      "location": "霜珀备件库",
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "value": 43,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "locationId": "fy_bridge",
+      "location": "苔铎栈桥",
+      "fieldPath": "state.characters.fe_yu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 2,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_36",
+    "worldId": "world_30",
+    "stateDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452",
+    "timeAdvance": {
+     "amount": 30,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_gauge",
+      "actor": "fi_gauge",
+      "actorKind": "item",
+      "name": "瓷铯量规",
+      "fromId": "fy_cal",
+      "from": "砾脊校准间",
+      "fromKind": "location",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "toKind": "location",
+      "holderChanged": false,
+      "relativeTo": {
+       "entityId": "fe_nie",
+       "name": "聂汀穗",
+       "relation": "beside"
+      },
+      "fieldPath": "state.items.fi_gauge.position",
+      "factId": "fi_gauge:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [],
+    "currentState": [
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "at",
+      "value": "砾脊校准间"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "sanity",
+      "value": 43
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "核验瓷铯量规的双区刻度"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "登记量规右区的第三条刻线"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "更换绛纹阀芯上的锆丝封签"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "at",
+      "value": "苔铎栈桥"
+     }
+    ],
+    "playerInstruction": null,
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e04",
+     "verdict": "candidate",
+     "signature": "moved*1+moved_entity*1|2|30s",
+     "fullSignature": "moved*1+moved_entity*1|2|30s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e04",
+     "verdict": "candidate",
+     "signature": "moved*1+moved_entity*1|2|30s",
+     "fullSignature": "moved*1+moved_entity*1|2|30s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "moved*1+moved_entity*1|2|30s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": false,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": false,
+    "flags": [
+     {
+      "rule": "P1-item-or-location-delta",
+      "detail": "物品/地点的位移与外貌变化都会被拒（world change 比较整块）",
+      "line": "committed-narration.ts:28"
+     }
+    ],
+    "module": "仅内核/接口层（页面投影或视角不支持）",
+    "scopeNote": "空间相对位置（beside）只在夹具与内核层成立；页面投影拒绝该形状。物品位移被 N2 判为 may，省略不扣分。"
+   },
+   "checks": [
+    "量规是关系主体，聂汀穗是参照物，不反转。",
+    "位置只支持 beside，不引申交付、所有权或长期人际关系。",
+    "限于支持 position_relative 的模块，不计当前页面投影成绩。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "量规是关系主体，聂汀穗是参照物，不反转。",
+     "位置只支持 beside，不引申交付、所有权或长期人际关系。",
+     "限于支持 position_relative 的模块，不计当前页面投影成绩。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "输入未提供的完整状态字段"
+    ]
+   }
+  },
+  {
+   "id": "c8e05",
+   "title": "封签的持有转移和外貌变化",
+   "coverage": [
+    "关系",
+    "多人物",
+    "外貌"
+   ],
+   "view": "protagonist",
+   "seconds": 60,
+   "committed": {
+    "worldId": "world_38",
+    "pointId": "point_44",
+    "rootDigest": "49b240cc657c0a6b01164eba197be360c8f821e25df88bb7a91e1b81e36e24eb",
+    "afterDigest": "4bc218e24ec7ec7138afb77eaa42dac2779f5418c6b705b3f2398988a6422bcc",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "fromId": "fe_wen",
+      "from": "闻澈岑",
+      "fromKind": "character",
+      "toId": "fe_nie",
+      "to": "聂汀穗",
+      "toKind": "character",
+      "holderChanged": true,
+      "relativeTo": null,
+      "fieldPath": "state.items.fi_seal.position"
+     },
+     {
+      "kind": "appearance_changed",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "text": "接合处新增一道横向压痕。",
+      "fieldPath": "state.items.fi_seal.appearanceChanges"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "fromId": "fe_wen",
+      "from": "闻澈岑",
+      "fromKind": "character",
+      "toId": "fe_nie",
+      "to": "聂汀穗",
+      "toKind": "character",
+      "holderChanged": true,
+      "relativeTo": null,
+      "fieldPath": "state.items.fi_seal.position",
+      "factId": "fi_seal:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     },
+     {
+      "kind": "appearance_changed",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "text": "接合处新增一道横向压痕。",
+      "fieldPath": "state.items.fi_seal.appearanceChanges",
+      "factId": "fi_seal:appearance",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [],
+    "withheld": [],
+    "standing": [
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "locationId": "fy_cal",
+      "location": "砾脊校准间",
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "locationId": "fy_store",
+      "location": "霜珀备件库",
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "value": 43,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "locationId": "fy_bridge",
+      "location": "苔铎栈桥",
+      "fieldPath": "state.characters.fe_yu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "summary": {
+     "must": 1,
+     "may": 2,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_44",
+    "worldId": "world_38",
+    "stateDigest": "4bc218e24ec7ec7138afb77eaa42dac2779f5418c6b705b3f2398988a6422bcc",
+    "timeAdvance": {
+     "amount": 60,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "protagonist",
+     "entityId": "fe_wen",
+     "at": "砾脊校准间",
+     "atPath": [
+      "fy_cal",
+      "fy_yard"
+     ]
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "self-position",
+      "n2Reason": "视角人物自己的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "moved_entity",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "fromId": "fe_wen",
+      "from": "闻澈岑",
+      "fromKind": "character",
+      "toId": "fe_nie",
+      "to": "聂汀穗",
+      "toKind": "character",
+      "holderChanged": true,
+      "relativeTo": null,
+      "fieldPath": "state.items.fi_seal.position",
+      "factId": "fi_seal:position",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     },
+     {
+      "kind": "appearance_changed",
+      "phase": "change",
+      "entityId": "fi_seal",
+      "actor": "fi_seal",
+      "actorKind": "item",
+      "name": "锆丝封签",
+      "text": "接合处新增一道横向压痕。",
+      "fieldPath": "state.items.fi_seal.appearanceChanges",
+      "factId": "fi_seal:appearance",
+      "n2Class": "may",
+      "n2Ground": "co-location",
+      "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+      "expression": "must",
+      "requirementSource": "scenario-requirement"
+     }
+    ],
+    "mayMention": [],
+    "currentState": [
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "at",
+      "value": "砾脊校准间"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "sanity",
+      "value": 43
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "核验瓷铯量规的双区刻度"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "登记量规右区的第三条刻线"
+     },
+     {
+      "entityId": "fe_wen",
+      "name": "闻澈岑",
+      "kind": "task_pending",
+      "value": "更换绛纹阀芯上的锆丝封签"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "at",
+      "value": "苔铎栈桥"
+     }
+    ],
+    "playerInstruction": null,
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e05",
+     "verdict": "candidate",
+     "signature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+     "fullSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e05",
+     "verdict": "candidate",
+     "signature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+     "fullSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": false,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": false,
+    "flags": [
+     {
+      "rule": "P1-item-or-location-delta",
+      "detail": "物品/地点的位移与外貌变化都会被拒（world change 比较整块）",
+      "line": "committed-narration.ts:28"
+     }
+    ],
+    "module": "仅内核/接口层（页面投影或视角不支持）",
+    "scopeNote": "持有转移与外貌变化都在物品上；页面投影既不接受物品位移，也不接受外貌变化。两条都被 N2 判为 may，只在模型写到时判正确性。"
+   },
+   "checks": [
+    "转移的是封签，不是人物移动；持有人从闻澈岑变为聂汀穗。",
+    "外貌变化归于封签，不归于持有人。",
+    "持有关系不等于所有权、友谊或因果；当前页面投影不支持这类包。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "转移的是封签，不是人物移动；持有人从闻澈岑变为聂汀穗。",
+     "外貌变化归于封签，不归于持有人。",
+     "持有关系不等于所有权、友谊或因果；当前页面投影不支持这类包。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "输入未提供的完整状态字段"
+    ]
+   }
+  },
+  {
+   "id": "c8e06",
+   "title": "关注指令与世界事实分开",
+   "coverage": [
+    "玩家关注",
+    "任务",
+    "多人物"
+   ],
+   "view": "omniscient",
+   "seconds": 120,
+   "committed": {
+    "worldId": "world_47",
+    "pointId": "point_53",
+    "rootDigest": "e5e81ecfd5f7b506e79f0c6ec52146fe57d9abf42f86789fdaaccaec2595cd26",
+    "afterDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370",
+    "database": "fresh/source/authority.sqlite3",
+    "reopenVerified": true
+   },
+   "facts": {
+    "change": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+     },
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position"
+     }
+    ],
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position",
+      "factId": "fe_shao:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status",
+      "factId": "fe_shao:task:ft_relay",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-goal",
+      "n2Reason": "全知视角焦点人物的目标/在追任务，必述（rubric §4）",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "withheld": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "actorKind": "character",
+      "name": "闻澈岑",
+      "fromId": "fy_pump",
+      "from": "玄藻泵舱",
+      "toId": "fy_cal",
+      "to": "砾脊校准间",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_wen.position",
+      "factId": "fe_wen:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "玩家指令要求本轮暂不展开该角色：不进入成句输入；不得据此推出关注对象或任务达成。",
+      "expression": "withheld-by-instruction",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "standing": [
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "locationId": "fy_cal",
+      "location": "砾脊校准间",
+      "fieldPath": "state.characters.fe_nie.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "value": 61,
+      "fieldPath": "state.characters.fe_nie.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_nie",
+      "actor": "fe_nie",
+      "name": "聂汀穗",
+      "taskId": "ft_sort",
+      "goal": "将未拆封阀芯按批次分入陶格",
+      "fieldPath": "state.characters.fe_nie.tasks.ft_sort.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "locationId": "fy_watch",
+      "location": "弧砂观测台",
+      "fieldPath": "state.characters.fe_pu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "value": 38,
+      "fieldPath": "state.characters.fe_pu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_pu",
+      "actor": "fe_pu",
+      "name": "蒲砺弦",
+      "taskId": "ft_watch",
+      "goal": "读出弧砂刻槽的偏移刻度",
+      "fieldPath": "state.characters.fe_pu.tasks.ft_watch.status"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "value": 57,
+      "fieldPath": "state.characters.fe_shao.sanity"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "value": 43,
+      "fieldPath": "state.characters.fe_wen.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_check",
+      "goal": "核验瓷铯量规的双区刻度",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_check.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_mark",
+      "goal": "登记量规右区的第三条刻线",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_wen",
+      "actor": "fe_wen",
+      "name": "闻澈岑",
+      "taskId": "ft_seal",
+      "goal": "更换绛纹阀芯上的锆丝封签",
+      "fieldPath": "state.characters.fe_wen.tasks.ft_seal.status"
+     },
+     {
+      "kind": "at",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "locationId": "fy_bridge",
+      "location": "苔铎栈桥",
+      "fieldPath": "state.characters.fe_yu.position"
+     },
+     {
+      "kind": "sanity",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "value": 72,
+      "fieldPath": "state.characters.fe_yu.sanity"
+     },
+     {
+      "kind": "task_pending",
+      "phase": "standing",
+      "entityId": "fe_yu",
+      "actor": "fe_yu",
+      "name": "郁棠序",
+      "taskId": "ft_bridge",
+      "goal": "登记苔铎挡板的紧固次序",
+      "fieldPath": "state.characters.fe_yu.tasks.ft_bridge.status"
+     }
+    ]
+   },
+   "n2": {
+    "perspective": {
+     "type": "omniscient",
+     "entityId": null,
+     "at": "全局"
+    },
+    "summary": {
+     "must": 3,
+     "may": 0,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "status": "ok"
+   },
+   "input": {
+    "packVersion": 3,
+    "pointId": "point_53",
+    "worldId": "world_47",
+    "stateDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370",
+    "timeAdvance": {
+     "amount": 120,
+     "unit": "second"
+    },
+    "perspective": {
+     "type": "omniscient",
+     "entityId": null,
+     "at": "全局"
+    },
+    "mustExpress": [
+     {
+      "kind": "moved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "actorKind": "character",
+      "name": "邵苇衡",
+      "fromId": "fy_store",
+      "from": "霜珀备件库",
+      "toId": "fy_relay",
+      "to": "穹榛中继室",
+      "relativeTo": null,
+      "fieldPath": "state.characters.fe_shao.position",
+      "factId": "fe_shao:position",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-position",
+      "n2Reason": "全知视角焦点人物的位置变化，必述",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     },
+     {
+      "kind": "task_achieved",
+      "phase": "change",
+      "entityId": "fe_shao",
+      "actor": "fe_shao",
+      "name": "邵苇衡",
+      "taskId": "ft_relay",
+      "goal": "复核穹榛机架背面的联接编号",
+      "status": "achieved",
+      "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status",
+      "factId": "fe_shao:task:ft_relay",
+      "n2Class": "must",
+      "n2Ground": "omniscient-focus-goal",
+      "n2Reason": "全知视角焦点人物的目标/在追任务，必述（rubric §4）",
+      "expression": "must",
+      "requirementSource": "n2-must"
+     }
+    ],
+    "mayMention": [],
+    "currentState": [
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "at",
+      "value": "砾脊校准间"
+     },
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "sanity",
+      "value": 61
+     },
+     {
+      "entityId": "fe_nie",
+      "name": "聂汀穗",
+      "kind": "task_pending",
+      "value": "将未拆封阀芯按批次分入陶格"
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "at",
+      "value": "弧砂观测台"
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "sanity",
+      "value": 38
+     },
+     {
+      "entityId": "fe_pu",
+      "name": "蒲砺弦",
+      "kind": "task_pending",
+      "value": "读出弧砂刻槽的偏移刻度"
+     },
+     {
+      "entityId": "fe_shao",
+      "name": "邵苇衡",
+      "kind": "sanity",
+      "value": 57
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "at",
+      "value": "苔铎栈桥"
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "sanity",
+      "value": 72
+     },
+     {
+      "entityId": "fe_yu",
+      "name": "郁棠序",
+      "kind": "task_pending",
+      "value": "登记苔铎挡板的紧固次序"
+     }
+    ],
+    "playerInstruction": "我只关心邵苇衡复核机架联接编号的结果；暂时别展开闻澈岑的移动。",
+    "rules": {
+     "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+     "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+     "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+     "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+    },
+    "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+   },
+   "screening": {
+    "v1": {
+     "id": "c8e06",
+     "verdict": "candidate",
+     "signature": "moved*2+task_achieved*1|2|120s",
+     "fullSignature": "moved*2+task_achieved*1|2|120s",
+     "mode": "new-world",
+     "r1Version": "v1",
+     "reasons": [],
+     "warnings": []
+    },
+    "v2": {
+     "id": "c8e06",
+     "verdict": "candidate",
+     "signature": "moved*2+task_achieved*1|2|120s",
+     "fullSignature": "moved*2+task_achieved*1|2|120s",
+     "mode": "new-world",
+     "r1Version": "v2",
+     "reasons": [],
+     "warnings": []
+    },
+    "expressionSignature": "moved*1+task_achieved*1|1|120s",
+    "differs": false
+   },
+   "capability": {
+    "stages": {
+     "stateCommitted": true,
+     "pageProjectionAcceptsDelta": false,
+     "perspectiveFilterEnforced": false,
+     "narrationGenerated": false
+    },
+    "pagePathSatisfiesExpectation": false,
+    "flags": [
+     {
+      "rule": "P3-incomplete-numeric-cause",
+      "detail": "按人物逐一看：fe_shao 缺 personality_changed,sanity_changed，投影会拒绝",
+      "line": "committed-narration.ts:33-39"
+     },
+     {
+      "rule": "P5-no-perspective-filter",
+      "detail": "页面叙事路径不做视角过滤：N2 判为不可见或按指令推迟的事实仍会从世界状态被照写；本条只能由 N2 规则臂或人工判定",
+      "line": "committed-narration.ts:24-60"
+     }
+    ],
+    "module": "仅内核/接口层（页面投影或视角不支持）",
+    "scopeNote": "玩家关注是本次作者编写的合成指令，不是真实玩家原话；只核关注解析，不称 N2 已支持该功能。被指令推迟的移动不进成句输入。"
+   },
+   "checks": [
+    "关注主体解析为fe_shao、任务为ft_relay；fe_wen只是暂不展开。",
+    "指令本身不证明任务达成，达成必须来自提交事实。",
+    "这是本轮作者提供的合成玩家指令，不是真实玩家原话；只核验关注解析数据，不称N2已支持此功能。"
+   ],
+   "reviewItems": {
+    "mustHold": [
+     "关注主体解析为fe_shao、任务为ft_relay；fe_wen只是暂不展开。",
+     "指令本身不证明任务达成，达成必须来自提交事实。",
+     "这是本轮作者提供的合成玩家指令，不是真实玩家原话；只核验关注解析数据，不称N2已支持此功能。"
+    ],
+    "mustNotAppear": [
+     "把未提供的人物或地点写进叙述",
+     "把本点没有的变化写成发生",
+     "把 `闻澈岑` 的移动当成关注对象或任务达成依据"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "`闻澈岑` 的移动（玩家指令要求暂不展开，且不在输入里）",
+     "输入未提供的完整状态字段"
+    ]
+   }
+  }
+ ],
+ "gaps": [
+  {
+   "id": "g06",
+   "dimension": "长期人际关系",
+   "status": "无权威字段",
+   "why": "世界状态没有人物关系字段；c8e04/c8e05 只覆盖空间相对位置与持有。"
+  },
+  {
+   "id": "g07",
+   "dimension": "物品由人物持有时 N2 的位置解析",
+   "status": "适配层补齐",
+   "why": "n2_perspective 只解析地点容器；物品被人物持有时，本包用持有人的地点链代替并记录，未改 N2。"
+  }
+ ],
+ "revisions": [
+  {
+   "version": 2,
+   "date": "2026-11-08",
+   "trigger": "外部静态审查（第一轮）",
+   "fixed": [
+    "c8e02 远处移动移出必述",
+    "c8e06 被推迟移动移出必述",
+    "c8e05 物品位移补起止两端",
+    "c8e04 参照对象补名称",
+    "能力拆四段",
+    "currentState 不再吞 0"
+   ],
+   "notChanged": [
+    "夹具、数据库、六个提交点与摘要"
+   ]
+  },
+  {
+   "version": 3,
+   "date": "2026-11-08",
+   "trigger": "外部静态审查（第二轮）",
+   "fixed": [
+    "R1/R2/R3 回到完整变化集合，另存必述子集签名",
+    "视野筛选改由真实 N2 判定（不可见事实只留在 answer.json）",
+    "c8e03 同一套 N2 判定：聂汀穗的移动为 may，不再当必述",
+    "能力判断按人物逐一检查任务/人格/理智三件套"
+   ],
+   "notChanged": [
+    "夹具、数据库、六个提交点与摘要",
+    "R1 v1/v2、R2、R3 口径本身"
+   ]
+  }
+ ]
+}

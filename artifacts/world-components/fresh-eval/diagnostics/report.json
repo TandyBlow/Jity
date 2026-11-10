@@ -1,0 +1,2385 @@
+{
+ "worktreeHead": "2afac96eab682889f0f3e5c98d4300527223eae8",
+ "positioning": {
+  "whatThisIs": "六条诊断夹具：用已登记夹具的初始状态构造假设点位，经 A 侧内核应用、跑排除规则、并给出人工核验要求。",
+  "whatThisIsNot": "不是正式独立评测题，不冻结，不主张点位级独立，不计入任何能力成绩。",
+  "threeStatuses": {
+   "sourceBinding": "来源绑定：只说明 before 状态来自哪个已登记文件、哈希多少。",
+   "kernelValidation": "内核校验：只说明 apply_point 接受了这个增量并给出后状态摘要；不说明该点已提交。",
+   "commitStatus": "提交状态：本批全部是假设点，没有 round / group / settle / points 提交记录。",
+   "independence": "独立性：undetermined。夹具词表已在语料与归档中出现（见 report 的 R2 命中），且没有任何证据能证明这些点位未参与训练或调参。"
+  },
+  "parameterPolicy": "所有时长与理智目标值都是本轮人工指定，逐条写在 declaredParameters；人格文本保留夹具 time-only.json 原文。"
+ },
+ "kernelSource": {
+  "tree": "main (world-server checkout, read-only import)",
+  "applyPySha256": "08deedf8e4b13ac805e38455f204572760b7d8c8221023846a1bf2f92ed7b4f6",
+  "applyHead": "005ea5be46e09b72f219defca047a8fb0d281045"
+ },
+ "fixture": {
+  "file": "design/world-protocol/v1/fixtures/school.initial-state.json",
+  "sha256": "285468a395bde87e6e44c1a3c16570d5765dd2c07187103db699913e70fbaf76",
+  "rootDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+  "matchesCommittedRoot": true
+ },
+ "projectionRuleSource": {
+  "file": "frontend/src/lib/world-engine/runtime/committed-narration.ts",
+  "sha256": "309ca19fd2f2fa8f22f8d4b1e1cbb22f67cad902da7a418102d8a9422ee4c9cd",
+  "how": "人工阅读 TS 的 throw 分支写成规则表；未执行 TS 代码",
+  "rules": {
+   "P1-non-character-delta": "地点或物品有任何变化 → unsupported_narration_world_change（第 28 行）",
+   "P2-appearance-change": "人物外貌变化 → unrecorded_appearance_change（第 51 行）",
+   "P2-subtask-added": "delta 含 subtasksAdded → unsupported_committed_delta（第 35 行）",
+   "P3-incomplete-numeric-cause": "任务/人格/理智未同时出现 → narration_requires_complete_numeric_cause（第 38 行）",
+   "P4-position-slot-or-relative": "position 带槽位或相对关系 → unsupported_narration_position（第 49 行）"
+  }
+ },
+ "signatureStandard": {
+  "used": "change-only：只统计本点原始 Δ 产生的事实；现状读数不进签名",
+  "time": "时长折算秒数后比较（保留）",
+  "oldItemCollisions": {
+   "none|0|300s": [
+    "nv-empty-1",
+    "nv-cont-3"
+   ]
+  },
+  "diagnosticCollisions": [
+   {
+    "item": "c8d06",
+    "point": "c8d06_p2",
+    "signature": "none|0|120s",
+    "matches": [
+     "nv-cont-2"
+    ]
+   }
+  ]
+ },
+ "summary": {
+  "diagnostics": 6,
+  "formalItems": 0,
+  "kernelAccepted": 6,
+  "frozen": 0
+ },
+ "items": [
+  {
+   "id": "c8d01",
+   "title": "单人移动 + 其余五人现状陈述",
+   "module": "页面已提交叙事路径（committed-narration）",
+   "kind": "覆盖诊断",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "时长 3 分钟（本轮人工指定）",
+    "目的地 corridor（夹具既有地点）"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "person_a 的移动方向必须是大堂→走廊",
+     "其余五人只写现状，不写他们移动"
+    ],
+    "mustNotAppear": [
+     "学生以外的人物",
+     "任何任务达成",
+     "任何人格或理智变化"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d01_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:02:00",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "286e112598cc96b6b5d7123a42f4d44b9e14bdd2addf89e7abe5dbf22f10a4b1",
+     "timeAdvance": "三分钟",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|180s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|180s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d01_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d01:c8d01_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|180s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|180s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d01:c8d01_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|180s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|180s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    }
+   ]
+  },
+  {
+   "id": "c8d02",
+   "title": "三人三地同时变化（含跨父地点）",
+   "module": "页面已提交叙事路径",
+   "kind": "覆盖诊断",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "时长 90 秒（本轮人工指定）",
+    "三条目的地均为夹具既有地点"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "三条移动的起点与终点必须各自对应，不得互换",
+     "person_e 的终点是它的父地点二楼，不是同层教室"
+    ],
+    "mustNotAppear": [
+     "第四条移动",
+     "把三人写成同一目的地"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d02_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:00:30",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom2",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "floor2",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "0cbac3e6ce6b0c37331dfbb910ab400924f3c5e6b799a75d28429f2fcd4c939d",
+     "timeAdvance": "90秒",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      },
+      "person_c": {
+       "entityId": "person_c",
+       "positionSet": {
+        "containerId": "classroom2",
+        "slotId": null,
+        "relativeTo": null
+       }
+      },
+      "person_e": {
+       "entityId": "person_e",
+       "positionSet": {
+        "containerId": "floor2",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      },
+      {
+       "kind": "moved",
+       "actorId": "person_c",
+       "name": "C",
+       "from": "一号教室",
+       "to": "二号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "fromValue": "classroom1",
+       "toValue": "classroom2"
+      },
+      {
+       "kind": "moved",
+       "actorId": "person_e",
+       "name": "E",
+       "from": "一号教室",
+       "to": "二楼",
+       "fieldPath": "characters.person_e.position.containerId",
+       "fromValue": "classroom1",
+       "toValue": "floor2"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*3|3|90s",
+     "fullSignature": "at*3+moved*3+sanity*6|6|90s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d02_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d02:c8d02_p1",
+       "verdict": "source-bound",
+       "signature": "moved*3|3|90s",
+       "fullSignature": "at*3+moved*3+sanity*6|6|90s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d02:c8d02_p1",
+       "verdict": "source-bound",
+       "signature": "moved*3|3|90s",
+       "fullSignature": "at*3+moved*3+sanity*6|6|90s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    }
+   ]
+  },
+  {
+   "id": "c8d03",
+   "title": "视角外的人移动（N2 视角诊断）",
+   "module": "C 侧 N2 视角规则臂（narration_pipeline.select_facts）",
+   "kind": "视角诊断",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "时长 50 秒（本轮人工指定）",
+    "视角取夹具主角 person_c"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "N2 规则臂把 person_a 的移动判为不可见（invisible），理由记录观察依据缺失",
+     "person_c 自身的现状可以进 must"
+    ],
+    "mustNotAppear": [
+     "页面叙事臂的输出被当作视角过滤结果",
+     "把本项计入端到端能力成绩"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d03_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:50",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "067f3dbf15a7d7426161f742452b2f09de08d373bc38c2324fc1b9f94d2c4d85",
+     "timeAdvance": "50秒",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|50s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|50s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d03_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d03:c8d03_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|50s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|50s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d03:c8d03_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|50s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|50s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    }
+   ]
+  },
+  {
+   "id": "c8d04",
+   "title": "任务达成 + 人格变化 + 理智下降（回归诊断）",
+   "module": "页面已提交叙事路径",
+   "kind": "回归诊断（针对已确认的‘下降写成上升’错误）",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "时长 2 分钟（本轮人工指定）",
+    "理智 30→26（本轮人工指定；夹具 time-only 用的是 35）",
+    "人格文本＝夹具原文"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "必须写成下降（30→26）",
+     "任务目标原文必须逐字出现",
+     "人格文本按夹具原文"
+    ],
+    "mustNotAppear": [
+     "升到了 26",
+     "把任务说成未完成",
+     "把人格写成相反意思"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d04_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:01:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 26,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "achieved"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "b2e9b24144f5ed7f0d9865a61cef779cf84bc0fdc2c9eb64032e49d433ae69f9",
+     "timeAdvance": "两分钟",
+     "rawDelta": {
+      "person_c": {
+       "entityId": "person_c",
+       "tasksAchieved": [
+        "task_wait_noon"
+       ],
+       "personalityChanges": [
+        {
+         "id": "c8d04_relief",
+         "text": "暂时放松了对周围的警戒。",
+         "supersedes": []
+        }
+       ],
+       "sanitySet": 26
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "sanity_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "from": 30,
+       "to": 26,
+       "fieldPath": "characters.person_c.sanity",
+       "fromValue": 30,
+       "toValue": 26
+      },
+      {
+       "kind": "task_achieved",
+       "actorId": "person_c",
+       "name": "C",
+       "taskId": "task_wait_noon",
+       "goal": "坚持到中午十二点。",
+       "fieldPath": "characters.person_c.tasks.task_wait_noon.status",
+       "fromValue": "pending",
+       "toValue": "achieved"
+      },
+      {
+       "kind": "personality_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "changeId": "c8d04_relief",
+       "text": "暂时放松了对周围的警戒。",
+       "fieldPath": "characters.person_c.personalityChanges",
+       "toValue": "c8d04_relief"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "大堂",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|120s",
+     "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|120s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d04_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d04:c8d04_p1",
+       "verdict": "rejected",
+       "signature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|120s",
+       "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|120s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [
+        {
+         "rule": "R1-substring",
+         "r1Version": "v1",
+         "hits": [
+          {
+           "candidateText": "C完成了任务「坚持到中午十二点。」",
+           "excluded": "坚持到中午",
+           "sources": [
+            "s03"
+           ],
+           "direction": "any"
+          }
+         ],
+         "hitCount": 1
+        }
+       ],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d04:c8d04_p1",
+       "verdict": "source-bound",
+       "signature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|120s",
+       "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|120s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": [
+        {
+         "rule": "R1-short-phrase",
+         "hits": [
+          {
+           "candidateText": "C完成了任务「坚持到中午十二点。」",
+           "excluded": "坚持到中午",
+           "sources": [
+            "s03"
+           ],
+           "direction": "exclusion-inside-candidate",
+           "shorterCjk": 5
+          }
+         ],
+         "hitCount": 1,
+         "note": "较短一侧不足 8 个汉字，只登记不判失败"
+        }
+       ]
+      },
+      "differs": true,
+      "v1Reasons": [
+       "R1-substring"
+      ],
+      "v2Reasons": []
+     }
+    }
+   ]
+  },
+  {
+   "id": "c8d05",
+   "title": "空增量点（只有时间流逝）",
+   "module": "页面已提交叙事路径",
+   "kind": "覆盖诊断",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "时长 40 秒（本轮人工指定）"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "必须写出时间流逝",
+     "不得编造任何变化"
+    ],
+    "mustNotAppear": [
+     "任何移动、任务、人格、理智变化"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d05_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:40",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "29e512d6533a65509b9cc611f6c39c34e0e7b979651a7d73bd3d75292bc4865b",
+     "timeAdvance": "40秒",
+     "rawDelta": {},
+     "changeFacts": [],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "大堂",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "none|0|40s",
+     "fullSignature": "at*6+sanity*6|6|40s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d05_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d05:c8d05_p1",
+       "verdict": "source-bound",
+       "signature": "none|0|40s",
+       "fullSignature": "at*6+sanity*6|6|40s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d05:c8d05_p1",
+       "verdict": "source-bound",
+       "signature": "none|0|40s",
+       "fullSignature": "at*6+sanity*6|6|40s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    }
+   ]
+  },
+  {
+   "id": "c8d06",
+   "title": "三点链：移动 → 空点 → 父任务达成＋人格＋理智",
+   "module": "页面已提交叙事路径",
+   "kind": "覆盖诊断（含任务树边界）",
+   "statuses": {
+    "sourceBinding": "registered-fixture design/world-protocol/v1/fixtures/school.initial-state.json sha256 285468a395bde87e… state root_0 digest 9301b7992248a972…",
+    "kernelValidation": "accepted by apply_point",
+    "commitStatus": "not-committed: hypothetical point, no round/group/settle/points record",
+    "independence": "undetermined: fixture vocabulary appears in corpora and archives; no evidence shows these points were excluded from training or tuning"
+   },
+   "declaredParameters": [
+    "三段时长 4 秒 / 2 分钟 / 3 分钟（本轮人工指定）",
+    "理智 30→28（本轮人工指定）",
+    "人格文本＝夹具原文"
+   ],
+   "reviewChecks": {
+    "mustHold": [
+     "第三点只写父任务 task_c_root（安全度过校园中的这段时间）达成",
+     "理智 30→28 为下降"
+    ],
+    "mustNotAppear": [
+     "把 28 写成上升"
+    ],
+    "notRequiredBecauseNotInInput": [
+     "子任务 task_wait_noon 的 pending 状态：本点事实包不提供，不得要求模型写出，也不得因省略扣分"
+    ],
+    "beyondInputSupport": [
+     "“全部任务完成”“两个任务都已完成”这类断言：输入只支持 task_c_root 达成，超出即没有输入支持，可作为人工判定项"
+    ],
+    "humanEvidenceOnly": [
+     "若用完整状态核对：task_wait_noon=pending，与“全部完成”矛盾；该矛盾单列为人工核验依据，不由判定器判、也不算模型漏述"
+    ]
+   },
+   "points": [
+    {
+     "pointId": "c8d06_p1",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:00",
+      "characters": {
+       "person_a": {
+        "position": "lobby",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T11:59:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "42e1bc7833716c8af5ff1783a524e81469a2d1c7a795508d50ded081126f3e72",
+     "timeAdvance": "四秒",
+     "rawDelta": {
+      "person_a": {
+       "entityId": "person_a",
+       "positionSet": {
+        "containerId": "corridor",
+        "slotId": null,
+        "relativeTo": null
+       }
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "moved",
+       "actorId": "person_a",
+       "name": "A",
+       "from": "大堂",
+       "to": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "fromValue": "lobby",
+       "toValue": "corridor"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "moved*1|1|4s",
+     "fullSignature": "at*5+moved*1+sanity*6|6|4s",
+     "projectionProblems": []
+    },
+    {
+     "pointId": "c8d06_p2",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T11:59:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:01:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "7139e6d7fc906b1ed2489031b29583a2cd4f74c7299b899e21ad0650d583494b",
+     "timeAdvance": "两分钟",
+     "rawDelta": {},
+     "changeFacts": [],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "corridor"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_c",
+       "name": "C",
+       "value": 30,
+       "fieldPath": "characters.person_c.sanity",
+       "rawValue": 30
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "none|0|120s",
+     "fullSignature": "at*6+sanity*6|6|120s",
+     "projectionProblems": []
+    },
+    {
+     "pointId": "c8d06_p3",
+     "kernel": "ok",
+     "before": {
+      "time": "2026-01-01T12:01:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 30,
+        "tasks": {
+         "task_c_root": "pending",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "after": {
+      "time": "2026-01-01T12:04:04",
+      "characters": {
+       "person_a": {
+        "position": "corridor",
+        "sanity": 10,
+        "tasks": {
+         "task_a_root": "pending"
+        }
+       },
+       "person_b": {
+        "position": "lobby",
+        "sanity": 20,
+        "tasks": {
+         "task_b_root": "pending"
+        }
+       },
+       "person_c": {
+        "position": "classroom1",
+        "sanity": 28,
+        "tasks": {
+         "task_c_root": "achieved",
+         "task_wait_noon": "pending"
+        }
+       },
+       "person_d": {
+        "position": "classroom1",
+        "sanity": 40,
+        "tasks": {
+         "task_d_root": "pending"
+        }
+       },
+       "person_e": {
+        "position": "classroom1",
+        "sanity": 50,
+        "tasks": {
+         "task_e_root": "pending"
+        }
+       },
+       "person_f": {
+        "position": "classroom1",
+        "sanity": 60,
+        "tasks": {
+         "task_f_root": "pending"
+        }
+       }
+      }
+     },
+     "stateDigestAfter": "be6c0fcc291b5b62e6e8834d30b08d75d194e8311ff6caad181866bf35d6e22a",
+     "timeAdvance": "三分钟",
+     "rawDelta": {
+      "person_c": {
+       "entityId": "person_c",
+       "tasksAchieved": [
+        "task_c_root"
+       ],
+       "personalityChanges": [
+        {
+         "id": "c8d06_relief",
+         "text": "暂时放松了对周围的警戒。",
+         "supersedes": []
+        }
+       ],
+       "sanitySet": 28
+      }
+     },
+     "changeFacts": [
+      {
+       "kind": "sanity_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "from": 30,
+       "to": 28,
+       "fieldPath": "characters.person_c.sanity",
+       "fromValue": 30,
+       "toValue": 28
+      },
+      {
+       "kind": "task_achieved",
+       "actorId": "person_c",
+       "name": "C",
+       "taskId": "task_c_root",
+       "goal": "安全度过校园中的这段时间。",
+       "fieldPath": "characters.person_c.tasks.task_c_root.status",
+       "fromValue": "pending",
+       "toValue": "achieved"
+      },
+      {
+       "kind": "personality_changed",
+       "actorId": "person_c",
+       "name": "C",
+       "changeId": "c8d06_relief",
+       "text": "暂时放松了对周围的警戒。",
+       "fieldPath": "characters.person_c.personalityChanges",
+       "toValue": "c8d06_relief"
+      }
+     ],
+     "standingRefs": [
+      {
+       "kind": "at",
+       "actorId": "person_a",
+       "name": "A",
+       "location": "走廊",
+       "fieldPath": "characters.person_a.position.containerId",
+       "value": "corridor"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_a",
+       "name": "A",
+       "value": 10,
+       "fieldPath": "characters.person_a.sanity",
+       "rawValue": 10
+      },
+      {
+       "kind": "at",
+       "actorId": "person_b",
+       "name": "B",
+       "location": "大堂",
+       "fieldPath": "characters.person_b.position.containerId",
+       "value": "lobby"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_b",
+       "name": "B",
+       "value": 20,
+       "fieldPath": "characters.person_b.sanity",
+       "rawValue": 20
+      },
+      {
+       "kind": "at",
+       "actorId": "person_c",
+       "name": "C",
+       "location": "一号教室",
+       "fieldPath": "characters.person_c.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "at",
+       "actorId": "person_d",
+       "name": "D",
+       "location": "一号教室",
+       "fieldPath": "characters.person_d.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_d",
+       "name": "D",
+       "value": 40,
+       "fieldPath": "characters.person_d.sanity",
+       "rawValue": 40
+      },
+      {
+       "kind": "at",
+       "actorId": "person_e",
+       "name": "E",
+       "location": "一号教室",
+       "fieldPath": "characters.person_e.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_e",
+       "name": "E",
+       "value": 50,
+       "fieldPath": "characters.person_e.sanity",
+       "rawValue": 50
+      },
+      {
+       "kind": "at",
+       "actorId": "person_f",
+       "name": "F",
+       "location": "一号教室",
+       "fieldPath": "characters.person_f.position.containerId",
+       "value": "classroom1"
+      },
+      {
+       "kind": "sanity",
+       "actorId": "person_f",
+       "name": "F",
+       "value": 60,
+       "fieldPath": "characters.person_f.sanity",
+       "rawValue": 60
+      }
+     ],
+     "changeSignature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|180s",
+     "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|180s",
+     "projectionProblems": []
+    }
+   ],
+   "screening": [
+    {
+     "pointId": "c8d06_p1",
+     "screening": {
+      "v1": {
+       "id": "c8d06:c8d06_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|4s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|4s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d06:c8d06_p1",
+       "verdict": "source-bound",
+       "signature": "moved*1|1|4s",
+       "fullSignature": "at*5+moved*1+sanity*6|6|4s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    },
+    {
+     "pointId": "c8d06_p2",
+     "screening": {
+      "v1": {
+       "id": "c8d06:c8d06_p2",
+       "verdict": "rejected",
+       "signature": "none|0|120s",
+       "fullSignature": "at*6+sanity*6|6|120s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [
+        {
+         "rule": "R3-signature",
+         "signature": "none|0|120s",
+         "matches": [
+          "nv-cont-2"
+         ],
+         "matchBasis": {
+          "nv-cont-2": "undetermined"
+         }
+        }
+       ],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d06:c8d06_p2",
+       "verdict": "rejected",
+       "signature": "none|0|120s",
+       "fullSignature": "at*6+sanity*6|6|120s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [
+        {
+         "rule": "R3-signature",
+         "signature": "none|0|120s",
+         "matches": [
+          "nv-cont-2"
+         ],
+         "matchBasis": {
+          "nv-cont-2": "undetermined"
+         }
+        }
+       ],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [
+       "R3-signature"
+      ],
+      "v2Reasons": [
+       "R3-signature"
+      ]
+     }
+    },
+    {
+     "pointId": "c8d06_p3",
+     "screening": {
+      "v1": {
+       "id": "c8d06:c8d06_p3",
+       "verdict": "source-bound",
+       "signature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|180s",
+       "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|180s",
+       "mode": "source-bound",
+       "r1Version": "v1",
+       "reasons": [],
+       "warnings": []
+      },
+      "v2": {
+       "id": "c8d06:c8d06_p3",
+       "verdict": "source-bound",
+       "signature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|180s",
+       "fullSignature": "at*6+personality_changed*1+sanity*5+sanity_changed*1+task_achieved*1|6|180s",
+       "mode": "source-bound",
+       "r1Version": "v2",
+       "reasons": [],
+       "warnings": []
+      },
+      "differs": false,
+      "v1Reasons": [],
+      "v2Reasons": []
+     }
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  {
+   "id": "g02",
+   "dimension": "空间相对位置（beside / behind / under / above / in_front_of）",
+   "legalInput": "EntityDelta.positionSet.relativeTo = {entityId, relation}；A 侧 apply_point 的 _check_positions 接受并校验引用与房间共处",
+   "throwPoint": "frontend/src/lib/world-engine/runtime/committed-narration.ts:49 → unsupported_narration_position",
+   "condition": "position.slotId != null 或 position.relativeTo != null",
+   "impact": "‘站在门旁边／躲在桌下’这类状态无法进入已提交叙事事实；页面只能拒绝整点，不会部分降级",
+   "ownerAction": "投影需要新增相对位置事实类型（含目标实体名与关系词），并定义关系词的中文表达与歧义处理",
+   "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+   "evidence": "committed-narration.ts sha256 309ca19f…；A 侧 apply.py 005ea5b"
+  },
+  {
+   "id": "g03",
+   "dimension": "外貌变化（人物 / 地点 / 物品）",
+   "legalInput": "EntityDelta.appearanceChanges（人物、物品、地点均合法），内核 _extend_changes 维护 supersedes 链与 sourcePointId",
+   "throwPoint": "committed-narration.ts:28 → unsupported_narration_world_change（地点/物品）；:51 → unrecorded_appearance_change（人物）",
+   "condition": "before.state.items / locations 与 after 不相等；或人物 appearanceChanges 数组发生变化",
+   "impact": "外貌改写、衣物被雨打湿、黑板写满字、地点变暗等全部无法叙述；‘外貌’类覆盖在页面路径上不可测",
+   "ownerAction": "投影需要支持三类实体的外貌事实，并规定只述当前生效描述（折叠 supersedes 链）还是同时述变化",
+   "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+   "evidence": "committed-narration.ts 第 28、51 行；design/world-protocol/v1/fixtures/description-changes.json 提供了已登记的三类变化样例"
+  },
+  {
+   "id": "g04",
+   "dimension": "任务树新增（subtasksAdded）",
+   "legalInput": "EntityDelta.subtasksAdded = [Task]；内核校验同 owner、必须有父任务、不允许环、按层级排序",
+   "throwPoint": "committed-narration.ts:35 → unsupported_committed_delta",
+   "condition": "delta 的键不在 ['entityId','positionSet','sanitySet','tasksAchieved','personalityChanges'] 内",
+   "impact": "新增子任务无法叙述，玩家看不到任务树扩张；已登记夹具 task-normalization.json 的整条路径在页面上不可达",
+   "ownerAction": "投影需要支持新增子任务事实，并先确定产品口径：新增子任务要不要进叙事、以什么粒度（父任务下新增一条还是一条条列）",
+   "afterFix": "补上后必须重新核验来源独立性；不得自动晋升为正式评测题",
+   "evidence": "committed-narration.ts 第 35 行；design/world-protocol/v1/fixtures/task-normalization.json"
+  },
+  {
+   "id": "g03b",
+   "dimension": "部分数值因果（只有任务达成、没有理智/人格）",
+   "legalInput": "EntityDelta.tasksAchieved 单独出现（内核允许）",
+   "throwPoint": "committed-narration.ts:38 → narration_requires_complete_numeric_cause",
+   "condition": "tasksAchieved / personalityChanges / sanitySet 三者未同时出现",
+   "impact": "只达成任务、没有数值变化或人格变化的点无法进入页面叙事；三臂对照里的 nv-task-only-1 正是这种手写包，与投影规则不一致",
+   "ownerAction": "需要产品口径：纯任务达成是否必须伴随理智/人格变化；若不必，投影应放宽为一类事实单独成立",
+   "afterFix": "改口径后要重跑旧题剔除范围（nv-task-only-1 与该规则冲突，可能需要重写或降级）",
+   "evidence": "committed-narration.ts 第 38 行"
+  },
+  {
+   "id": "g05",
+   "dimension": "手写包与生产投影的输入契约不一致（nv-task-only-1）",
+   "legalInput": "EntityDelta.tasksAchieved 单独出现；A 侧内核允许，三臂样本 nv-task-only-1 也正是这种形状（只有任务达成、没有理智/人格）",
+   "throwPoint": "frontend/src/lib/world-engine/runtime/committed-narration.ts:38 → narration_requires_complete_numeric_cause",
+   "condition": "tasksAchieved / personalityChanges / sanitySet 未同时出现（三者必须齐全）",
+   "impact": "输入契约问题：页面生产路径根本不会产出这种事实包，所以该样本**不能代表当前页面生产路径**。这不等于模型在该题上的输出错误可以免计。",
+   "ownerAction": "二选一：a) 生产投影放宽为允许纯任务达成（需产品口径确认）；b) 保留现规则，并把该样本从页面路径评测中移出、只留在判分器单测里。c8 不修改生产投影。",
+   "afterFix": "任一选择都要重跑旧题集合：若选 a，需重算 nv-task-only-1 的签名与碰撞；若选 b，旧题集合从 10 条降为 9 条并更新自检基线。",
+   "evidence": "committed-narration.ts 第 35–38 行；narration-eval-samples.ts 中 nv-task-only-1 的 packet 只有一条 task_achieved",
+   "accounting": {
+    "inputContract": "记为缺口：样本形状与生产投影不一致；处置见 ownerAction。",
+    "outputError": "在**明确给定事实包**的诊断里，模型如果写错事实（换人物、错任务目标、多写或少写事实、把未达成写成达成），仍记为该诊断的输出错误。契约问题只解释“这条包从哪来”，不改变对模型输出的判定。",
+    "separation": "两者分开记录：缺口表记输入契约，诊断结果记输出错误；不得用契约问题把输出错误一概免计。"
+   }
+  }
+ ]
+}

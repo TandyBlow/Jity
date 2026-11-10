@@ -1,0 +1,5127 @@
+{
+ "formatVersion": 2,
+ "purpose": "C8 独立评测场景：来源清点与排除依据",
+ "worktree": {
+  "branch": "exp/c-fresh-eval",
+  "head": "01e0a92fd88a77a4b6aec5799bc9266170ab8be1"
+ },
+ "scopeSemantics": {
+  "text": "贡献整句排除串（叙事文本）",
+  "vocab": "只贡献词表，用于证明新名字",
+  "none": "已登记，不贡献内容"
+ },
+ "sources": [
+  {
+   "id": "s01",
+   "label": "三臂对照 10 题（nv-*，含 mechanical/reference/forbidden）",
+   "role": "eval",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+   "note": "本轮明确排除的主集合；改名派生按事实签名排除，见 exclusion-scope.json",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+     "sha256": "72b568f0476f6acfb2b471a16899495b0334d2f2edac0ae15bac4244e6b50224",
+     "bytes": 11631,
+     "rows": null,
+     "blockingStrings": 51,
+     "vocabTerms": 25
+    }
+   ],
+   "blockingStrings": 51,
+   "vocabTerms": 25
+  },
+  {
+   "id": "s02",
+   "label": "叙事事实核验题（hv-*）",
+   "role": "eval",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+     "sha256": "7186a893ca2c5a7d435ea8a08309f5712491d3956e7e1820142b602c3004ff46",
+     "bytes": 6506,
+     "rows": null,
+     "blockingStrings": 31,
+     "vocabTerms": 23
+    }
+   ],
+   "blockingStrings": 31,
+   "vocabTerms": 23
+  },
+  {
+   "id": "s03",
+   "label": "叙事拆分题（ns-*，四件套输入）",
+   "role": "eval",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+     "sha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+     "bytes": 22485,
+     "rows": null,
+     "blockingStrings": 60,
+     "vocabTerms": 31
+    }
+   ],
+   "blockingStrings": 60,
+   "vocabTerms": 31
+  },
+  {
+   "id": "s04",
+   "label": "B3 四件套输入样本",
+   "role": "eval",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+     "sha256": "78384c56d2a229087f4d3ead14140cdd0c1c710f688bc31cdc1faf52159ccef1",
+     "bytes": 10412,
+     "rows": null,
+     "blockingStrings": 28,
+     "vocabTerms": 22
+    }
+   ],
+   "blockingStrings": 28,
+   "vocabTerms": 22
+  },
+  {
+   "id": "s05",
+   "label": "B3 短句样本（周宁/林川）",
+   "role": "eval",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+     "sha256": "c7bde5867e7be2bb0e7222a7360ea82fa4d8abe4a33832f20fae6332f7d8d7f5",
+     "bytes": 6634,
+     "rows": null,
+     "blockingStrings": 25,
+     "vocabTerms": 19
+    }
+   ],
+   "blockingStrings": 25,
+   "vocabTerms": 19
+  },
+  {
+   "id": "s06",
+   "label": "focus 输入样本",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "frontend/src/lib/world-engine/runtime/focused-input.ts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/runtime/focused-input.ts",
+     "sha256": "0726745d4f42b1f80497fe7ee58f00f52afaae3ede16cb87f128fa94cd713807",
+     "bytes": 4877,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  },
+  {
+   "id": "s07",
+   "label": "三臂真机运行归档（manifest + run）",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/narration-eval",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/narration-eval/manifest.json",
+     "sha256": "464e27a55fedeaeecfc9987cc8ba064123b1160f739ce165fa03b0d6859087c9",
+     "bytes": 5942,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 10
+    },
+    {
+     "path": "artifacts/narration-eval/run.json",
+     "sha256": "78709ce1f02c9514c5270efa576f1fc04c011bd0940879d621b95334bfb14946",
+     "bytes": 86709,
+     "rows": null,
+     "blockingStrings": 27,
+     "vocabTerms": 74
+    }
+   ],
+   "blockingStrings": 27,
+   "vocabTerms": 84
+  },
+  {
+   "id": "s08",
+   "label": "三臂复核归档",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/narration-eval-recheck/run.json",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/narration-eval-recheck/run.json",
+     "sha256": "e4774d6148dbeb9e0c841d35dd49bf7782fb43f8c0d2d65bf7582143c00c20ae",
+     "bytes": 167192,
+     "rows": null,
+     "blockingStrings": 57,
+     "vocabTerms": 96
+    }
+   ],
+   "blockingStrings": 57,
+   "vocabTerms": 96
+  },
+  {
+   "id": "s09",
+   "label": "拆分基线输出",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/narration-split-baseline.json",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/narration-split-baseline.json",
+     "sha256": "0a5fac45845af4a022257529bcebc0b5917ea3266dedf997ac46352e491ddf20",
+     "bytes": 10541,
+     "rows": null,
+     "blockingStrings": 28,
+     "vocabTerms": 35
+    }
+   ],
+   "blockingStrings": 28,
+   "vocabTerms": 35
+  },
+  {
+   "id": "s10",
+   "label": "世界页面整链归档",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/world-page",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/world-page/review.json",
+     "sha256": "da30eb21c8b8f5bf17042a8c5cd1f74f30d3b4a5af17fba0bae2c36616df91cf",
+     "bytes": 8043,
+     "rows": null,
+     "blockingStrings": 3,
+     "vocabTerms": 14
+    }
+   ],
+   "blockingStrings": 3,
+   "vocabTerms": 14
+  },
+  {
+   "id": "s11",
+   "label": "真实 HTTP 叙事复核",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/narration-http-review.json",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/narration-http-review.json",
+     "sha256": "25a8aa98df508039b202e21185f6cd6b772042a39383710cca2ac2617d6703da",
+     "bytes": 2799,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 4
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 4
+  },
+  {
+   "id": "s12",
+   "label": "规则事实整链归档",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/rule-facts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/rule-facts/database-evidence.json",
+     "sha256": "3a77699eddf1977f45d32b2585ef01c594068c4c3150eb21f4941faff7d2bbfd",
+     "bytes": 14878,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 60
+    },
+    {
+     "path": "artifacts/rule-facts/http.json",
+     "sha256": "5e77229b63c3d4dcc54d46af5616a6729ad9489a2d6b19da0ecc452fda19b502",
+     "bytes": 155986,
+     "rows": null,
+     "blockingStrings": 14,
+     "vocabTerms": 59
+    },
+    {
+     "path": "artifacts/rule-facts/latency-first.json",
+     "sha256": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+     "bytes": 65430,
+     "rows": null,
+     "blockingStrings": 8,
+     "vocabTerms": 78
+    },
+    {
+     "path": "artifacts/rule-facts/latency.json",
+     "sha256": "7d685af8a7250d480b207afc60c3fb21bfff83c5774ffe7d9cbe00d19fb99699",
+     "bytes": 82679,
+     "rows": null,
+     "blockingStrings": 8,
+     "vocabTerms": 80
+    },
+    {
+     "path": "artifacts/rule-facts/manifest.json",
+     "sha256": "bbf234351d1c8016646b5ad1a8af56378c8ba6ef52587122d1e1403b9b32d6d2",
+     "bytes": 11489,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/rule-facts/polish-selection.json",
+     "sha256": "fe6ed170d0f96c97a731e04562af3e2ce6b8ea1c3ba6c287868c9675d75c238e",
+     "bytes": 1091,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 5
+    },
+    {
+     "path": "artifacts/rule-facts/review.json",
+     "sha256": "37df3d3d7e98b572fc04dfd788bd1b80cb3a0b50da8fdf5b5dcc180aff0c65f7",
+     "bytes": 5782,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 25
+    }
+   ],
+   "blockingStrings": 31,
+   "vocabTerms": 307
+  },
+  {
+   "id": "s13",
+   "label": "B3 短句真机输出",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/b3-short",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/b3-short/manifest.json",
+     "sha256": "bd38d26e63d06e13a1b68e9407e757c97d29205da4bc3533dca57f4c616c71a2",
+     "bytes": 3890,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/b3-short/qwen3-0.6b.json",
+     "sha256": "dbb2034ea95a25702e9fefc42c9fdece5052f7fe44118c64951ff6c9e95a0d63",
+     "bytes": 63965,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 80
+    },
+    {
+     "path": "artifacts/b3-short/review.json",
+     "sha256": "f111f22a534c25f129a655164dc737bc27fa4ed1aa9eec339a6d89e8d1f42f06",
+     "bytes": 5038,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 29
+    }
+   ],
+   "blockingStrings": 12,
+   "vocabTerms": 109
+  },
+  {
+   "id": "s14",
+   "label": "H2 集成验收报告（无中文内容，仅结构证据）",
+   "role": "report",
+   "scope": "none",
+   "path": "artifacts/h2-integration-d1d2de0",
+   "note": "实测 0 个中文字符：只有 ID / 哈希 / 计数，不贡献排除串",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/h2-integration-d1d2de0/database-evidence.json",
+     "sha256": "f0441bc6effa57dd303552815271d57bc25ce8d880d90ace4f6665ae1665105a",
+     "bytes": 44205,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/lifecycle.json",
+     "sha256": "ebc85825528423306b24e80daeab621a48c5e43b6f9bbd6aeda8002da666386a",
+     "bytes": 8636,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/manifest.json",
+     "sha256": "1a92a165740a861cf8a8b89504bd54a730bdc9d27dfbe5a3de8ed64b64efe21d",
+     "bytes": 5024,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-build-corrupt.json",
+     "sha256": "6e880301ce51ef34ebd4edcb426c657b99a8339836e759b7b87da1571538f219",
+     "bytes": 1721,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-build-frozen-case.json",
+     "sha256": "2a239d0e75e3cd62a3233c049d6ee4287f0716fed41a4b7a390b5545cc009a51",
+     "bytes": 1727,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-build-group.json",
+     "sha256": "c3f03570d3b340881c2b819e5212e94e2b9844caa713d6a12d961ccea913ea47",
+     "bytes": 1721,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-build-missing.json",
+     "sha256": "17efc93450d55ed1302ad4ec281d373bf96676c453c5b48c276f9bdac07c76a9",
+     "bytes": 1727,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-frozen-corrupt.json",
+     "sha256": "083171a5915029814e144cdebc14580cbb8cd0c05d620be7f212b61caf92f513",
+     "bytes": 1514,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-frozen-group.json",
+     "sha256": "1d83cc40139361ec0805a5b2e354eba23a6cac4fd8166a28848197227d7d444b",
+     "bytes": 1514,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-frozen-missing.json",
+     "sha256": "129c8683aba02a8af865df1d22067f63c73ccc23034b624e86ee3463b51ca722",
+     "bytes": 1515,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-main.json",
+     "sha256": "bb15606124c08ed83a920cd7333d95cf457fd557816c52cba5d236ddd4de92f5",
+     "bytes": 2256,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-post-restart.json",
+     "sha256": "b1c4245457f0fbf637dd9ff70a95da25d4a474c956baa81be26af49eac27d2f6",
+     "bytes": 1488,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-integration-d1d2de0/report-successor.json",
+     "sha256": "f0af6d3973fbbb9e61d70353ba98af9d3dec17b6e96af90d97676210bfbdfe25",
+     "bytes": 1598,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  },
+  {
+   "id": "s20",
+   "label": "N4 成句语料（300 seed + 300 rewrite）",
+   "role": "training",
+   "scope": "text",
+   "path": "experiments/world-components/n4_corpus",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_corpus/corpus.seeds.jsonl",
+     "sha256": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
+     "bytes": 702109,
+     "rows": 300,
+     "blockingStrings": 302,
+     "vocabTerms": 190
+    },
+    {
+     "path": "experiments/world-components/n4_corpus/rewrites.jsonl",
+     "sha256": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3",
+     "bytes": 701887,
+     "rows": 300,
+     "blockingStrings": 305,
+     "vocabTerms": 162
+    }
+   ],
+   "blockingStrings": 607,
+   "vocabTerms": 352
+  },
+  {
+   "id": "s21",
+   "label": "N4 v2/v3/v3a 训练与留出语料",
+   "role": "training",
+   "scope": "text",
+   "path": "experiments/world-components/n4_corpus_v2",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/holdout-v2.jsonl",
+     "sha256": "897dfd706b4f916ca630473a588430a4cb9ca5b91271916eeafe5cac99bb56c5",
+     "bytes": 210162,
+     "rows": 66,
+     "blockingStrings": 146,
+     "vocabTerms": 92
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/n5/test.jsonl",
+     "sha256": "ea68c9accc07b5232d0b3662c73fd69085c87a02c5602a84b3971b5b3da457ef",
+     "bytes": 355074,
+     "rows": 758,
+     "blockingStrings": 96,
+     "vocabTerms": 47
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/n5/train.jsonl",
+     "sha256": "321092c78963a6c95f0d22a4c7eaa53ff616afd3f5779d735efddddcbe7bf1ff",
+     "bytes": 3203067,
+     "rows": 6764,
+     "blockingStrings": 444,
+     "vocabTerms": 90
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/train-v2.jsonl",
+     "sha256": "ba7464fb01408a4bf79e53cc0782fb254af27e96a6bf7bc7ce8b4ed2e420cdd0",
+     "bytes": 1819373,
+     "rows": 514,
+     "blockingStrings": 1028,
+     "vocabTerms": 166
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v3/holdout-v3.jsonl",
+     "sha256": "c6f675a8652cc552eefadaf8d4f6bb3eb8ae5c188393029d000af04e8a564147",
+     "bytes": 171517,
+     "rows": 66,
+     "blockingStrings": 146,
+     "vocabTerms": 84
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v3/train-v3.jsonl",
+     "sha256": "64e906b1273d4ecff3579ec55a02cd3c629dba6b96cc47080e466195d1218340",
+     "bytes": 1374729,
+     "rows": 514,
+     "blockingStrings": 1028,
+     "vocabTerms": 151
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v3a/holdout-v3.jsonl",
+     "sha256": "9fbbd136e0bcae88d04dafe39d7732f6160ab3245b7a0bcc2499f4d9ca98fc4a",
+     "bytes": 171517,
+     "rows": 66,
+     "blockingStrings": 146,
+     "vocabTerms": 84
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v3a/train-v3.jsonl",
+     "sha256": "b8782c07df90ffb5782d5fe7881952a581c61aa7cc88c8ae83f66e1c90e81459",
+     "bytes": 1374729,
+     "rows": 514,
+     "blockingStrings": 1028,
+     "vocabTerms": 151
+    }
+   ],
+   "blockingStrings": 4062,
+   "vocabTerms": 865
+  },
+  {
+   "id": "s22",
+   "label": "N5 支持/扰动对（train + test）",
+   "role": "training",
+   "scope": "text",
+   "path": "experiments/world-components/n4_corpus_v2/corpus_v2/n5",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/n5/test.jsonl",
+     "sha256": "ea68c9accc07b5232d0b3662c73fd69085c87a02c5602a84b3971b5b3da457ef",
+     "bytes": 355074,
+     "rows": 758,
+     "blockingStrings": 96,
+     "vocabTerms": 47
+    },
+    {
+     "path": "experiments/world-components/n4_corpus_v2/corpus_v2/n5/train.jsonl",
+     "sha256": "321092c78963a6c95f0d22a4c7eaa53ff616afd3f5779d735efddddcbe7bf1ff",
+     "bytes": 3203067,
+     "rows": 6764,
+     "blockingStrings": 444,
+     "vocabTerms": 90
+    }
+   ],
+   "blockingStrings": 540,
+   "vocabTerms": 137
+  },
+  {
+   "id": "s23",
+   "label": "N4 独立留出集（24 组 / 48 行）",
+   "role": "eval",
+   "scope": "text",
+   "path": "experiments/world-components/n4_holdout/holdout.jsonl",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_holdout/holdout.jsonl",
+     "sha256": "a9323e0334242a1a14e6625dc355f6d64f6aa56c4e624d712a556bdd6bd7fe5e",
+     "bytes": 115330,
+     "rows": 48,
+     "blockingStrings": 64,
+     "vocabTerms": 92
+    }
+   ],
+   "blockingStrings": 64,
+   "vocabTerms": 92
+  },
+  {
+   "id": "s24",
+   "label": "N4 改写语料 60/100",
+   "role": "training",
+   "scope": "text",
+   "path": "experiments/world-components/n4_rewrite60",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_rewrite60/corpus100.jsonl",
+     "sha256": "05ee07416f8d160afd7a3aeecadff669590dd875176d69081d25c50d45860bdb",
+     "bytes": 283335,
+     "rows": 100,
+     "blockingStrings": 301,
+     "vocabTerms": 137
+    },
+    {
+     "path": "experiments/world-components/n4_rewrite60/corpus60.jsonl",
+     "sha256": "377e874be48f9bd9ca227722caf0c9be8c90c663f5b2cd202ad2b923d32c29ce",
+     "bytes": 174278,
+     "rows": 60,
+     "blockingStrings": 191,
+     "vocabTerms": 128
+    }
+   ],
+   "blockingStrings": 492,
+   "vocabTerms": 265
+  },
+  {
+   "id": "s25",
+   "label": "N4 场景/叙事/动词开发集",
+   "role": "training",
+   "scope": "text",
+   "path": "experiments/world-components/n4_narrative_dev",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n4_narrative_dev/coco_scene_dev.jsonl",
+     "sha256": "1646321a8d8ae63af83ea4b5acdc62774ac0db693e22aa338752c613a38c3b28",
+     "bytes": 65062,
+     "rows": 120,
+     "blockingStrings": 139,
+     "vocabTerms": 13
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/coco_scene_pairs.jsonl",
+     "sha256": "38bc17aefa0da1e596b25639ea707b216292b543926c5a19a02a29305f19af2e",
+     "bytes": 1016986,
+     "rows": 1876,
+     "blockingStrings": 1940,
+     "vocabTerms": 18
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/corpus.jsonl",
+     "sha256": "238ee163c2368ed109fa3412ffd7c9878e75a6bb10b1c50a684a68c1f0992bac",
+     "bytes": 47004,
+     "rows": 12,
+     "blockingStrings": 118,
+     "vocabTerms": 339
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/corpus_v1.jsonl",
+     "sha256": "932ba966422cb82b9339da9ced3415d1bc07d415f7825768c40f1ab35daa2ea2",
+     "bytes": 56464,
+     "rows": 20,
+     "blockingStrings": 100,
+     "vocabTerms": 295
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/corpus_v2.jsonl",
+     "sha256": "8f0c0e0fa6a84b749f998beb46a06c9c4ab219681cc27324f44ae7e9db20d787",
+     "bytes": 229636,
+     "rows": 88,
+     "blockingStrings": 154,
+     "vocabTerms": 226
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/dev-units-v1.jsonl",
+     "sha256": "af32783d4c956c8871e593003d41284437fd48183c04291ab0a396852e484089",
+     "bytes": 11137,
+     "rows": 14,
+     "blockingStrings": 26,
+     "vocabTerms": 67
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/formal_pairs.jsonl",
+     "sha256": "bda3afb3f037554619c0476f7e07a2f35ee0faf7fb668b2482286be3c9d2a175",
+     "bytes": 181438,
+     "rows": 120,
+     "blockingStrings": 210,
+     "vocabTerms": 12
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/holdout_corpus.jsonl",
+     "sha256": "1b26d9d5d1413c71d7eb6dae15e54cd7f2895559719545ef19da694bc9cb0837",
+     "bytes": 21653,
+     "rows": 12,
+     "blockingStrings": 45,
+     "vocabTerms": 84
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/holdout_pairs.jsonl",
+     "sha256": "d1522b5ee6cff01a22587a143c4a2b756cd96d26200908ad9e74232195c45759",
+     "bytes": 15035,
+     "rows": 12,
+     "blockingStrings": 24,
+     "vocabTerms": 8
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/pilot_pairs.jsonl",
+     "sha256": "ccbe10496b54585dcdd3ea914c7192dac05e91dadf08eccd692ae1988f2cc46e",
+     "bytes": 48920,
+     "rows": 32,
+     "blockingStrings": 64,
+     "vocabTerms": 10
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scene_holdout.jsonl",
+     "sha256": "cd2d495c522593f5bbc7cc50ad187afc62a6e458f906c59a2d187fb1515269e0",
+     "bytes": 9180,
+     "rows": 12,
+     "blockingStrings": 23,
+     "vocabTerms": 58
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scene_manual.jsonl",
+     "sha256": "dd4d5168da747f3c807f6d9717b3961063683e5fceb33308d593abf27b5aeae9",
+     "bytes": 29820,
+     "rows": 215,
+     "blockingStrings": 215,
+     "vocabTerms": 103
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scene_manual_v2.jsonl",
+     "sha256": "82da85da7679e4cc927f33b3ff5537b80a12b01b74567920e3d3b2b0114c2cf8",
+     "bytes": 26895,
+     "rows": 187,
+     "blockingStrings": 187,
+     "vocabTerms": 93
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scene_pairs.jsonl",
+     "sha256": "f877e9ae43b2d77e66557274229dae9aa3c296a7212d7c9f330968b8d3c8d050",
+     "bytes": 96273,
+     "rows": 120,
+     "blockingStrings": 118,
+     "vocabTerms": 115
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenegen_dev.jsonl",
+     "sha256": "4e00ff22ada8106d92fa0166dba2708ebb6fb0954230050bc4545e7ee35aba5d",
+     "bytes": 31003,
+     "rows": 64,
+     "blockingStrings": 123,
+     "vocabTerms": 95
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenegen_holdout_frame.jsonl",
+     "sha256": "ab8cd273d7511ba8b0a5740704418d758078d5dea0ca20a9327fc86ab4fcf8f1",
+     "bytes": 146287,
+     "rows": 300,
+     "blockingStrings": 548,
+     "vocabTerms": 42
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenegen_holdout_noun.jsonl",
+     "sha256": "95baf74717582f72ea7795a86b7452768fd23ee4b2b6c5031ff5893b8ef2cc1b",
+     "bytes": 105776,
+     "rows": 216,
+     "blockingStrings": 349,
+     "vocabTerms": 53
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenegen_pairs.jsonl",
+     "sha256": "c2c5a432fa008a566d472c4f89bffd11ba7c955f3ff23fdaec28dee4cf786f0a",
+     "bytes": 579903,
+     "rows": 1199,
+     "blockingStrings": 1981,
+     "vocabTerms": 142
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenevb_cases.jsonl",
+     "sha256": "5dc772ed372f227ef9ac17c04b19deb665797aae76ec857cf4b6c84a703f28ff",
+     "bytes": 4710,
+     "rows": 12,
+     "blockingStrings": 11,
+     "vocabTerms": 13
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenevb_holdout.jsonl",
+     "sha256": "69887d1dec1ab64e098ec13bbd2e1f29ef7eda3ce4d5f4a87c6517454c2bd779",
+     "bytes": 7509,
+     "rows": 17,
+     "blockingStrings": 34,
+     "vocabTerms": 22
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/scenevb_pairs.jsonl",
+     "sha256": "cba8bf484e2b6bec2139574aa85994643f70dc04de2f667024b9a62b093e139f",
+     "bytes": 37644,
+     "rows": 85,
+     "blockingStrings": 102,
+     "vocabTerms": 22
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/training_pairs.jsonl",
+     "sha256": "2338c6dd3ec5a306009cebfeb4089320e61948c707a193e4c09f8477eac6eb6c",
+     "bytes": 18741,
+     "rows": 12,
+     "blockingStrings": 24,
+     "vocabTerms": 9
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/verbalizer_holdout.jsonl",
+     "sha256": "c8f67e8c47207b2fae6b427ca1e3024ea29c277ce9f33cd291fa83234899ba36",
+     "bytes": 19101,
+     "rows": 23,
+     "blockingStrings": 42,
+     "vocabTerms": 76
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_dev/verbalizer_pairs.jsonl",
+     "sha256": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908",
+     "bytes": 194774,
+     "rows": 229,
+     "blockingStrings": 246,
+     "vocabTerms": 144
+    }
+   ],
+   "blockingStrings": 6823,
+   "vocabTerms": 2059
+  },
+  {
+   "id": "s26",
+   "label": "N2 选择样本与标注",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "experiments/world-components/n2_selection",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "experiments/world-components/n2_selection/annotation/d2-labels-template.jsonl",
+     "sha256": "eb08861b3561bf5cb18b61eb31ab4461073e7cd42cffcbb728cc14860eeba04f",
+     "bytes": 1672,
+     "rows": 8,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/items-blind.jsonl",
+     "sha256": "8641b527a319710982db29f5ee46eb098db628d9d997bf8219696d6e07fcd904",
+     "bytes": 15084,
+     "rows": 16,
+     "blockingStrings": 36,
+     "vocabTerms": 60
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-ai-a.jsonl",
+     "sha256": "c3a5f82d318424285813264c2e7b9970705e2bd6f7b25aba86821d004c21740a",
+     "bytes": 10089,
+     "rows": 92,
+     "blockingStrings": 73,
+     "vocabTerms": 16
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-ai-b.jsonl",
+     "sha256": "40a4b0ec82d8b3532cad2291001db663024f29492a95c4df2a9009e34732b2b6",
+     "bytes": 11097,
+     "rows": 92,
+     "blockingStrings": 70,
+     "vocabTerms": 16
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-c-impl.jsonl",
+     "sha256": "8485736630279e85a611448f8cd5bfd99d0c7cd5c2de63ece176c801ba6ea026",
+     "bytes": 6032,
+     "rows": 92,
+     "blockingStrings": 0,
+     "vocabTerms": 16
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-d2-ai-a.jsonl",
+     "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+     "bytes": 3896,
+     "rows": 8,
+     "blockingStrings": 0,
+     "vocabTerms": 18
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-d2-ai-b.jsonl",
+     "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+     "bytes": 3896,
+     "rows": 8,
+     "blockingStrings": 0,
+     "vocabTerms": 18
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-template.jsonl",
+     "sha256": "fb9092e8a2d742edb879484ab58061459def73a5c8f756b4785f6220083fc412",
+     "bytes": 5704,
+     "rows": 92,
+     "blockingStrings": 0,
+     "vocabTerms": 16
+    },
+    {
+     "path": "experiments/world-components/n2_selection/annotation/labels-v3.jsonl",
+     "sha256": "39588eeb7fce2842f3f380e2608aad74468255831b7fc2e30c2879c41b9e2403",
+     "bytes": 4928,
+     "rows": 92,
+     "blockingStrings": 0,
+     "vocabTerms": 16
+    },
+    {
+     "path": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+     "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+     "bytes": 9686,
+     "rows": 8,
+     "blockingStrings": 26,
+     "vocabTerms": 40
+    },
+    {
+     "path": "experiments/world-components/n2_selection/items-v1.jsonl",
+     "sha256": "76b1ccb7c63e974e78663be61701d8308d9e9bab1bd4639af35f7d66c8db2d50",
+     "bytes": 18723,
+     "rows": 16,
+     "blockingStrings": 32,
+     "vocabTerms": 97
+    },
+    {
+     "path": "experiments/world-components/n2_selection/items.jsonl",
+     "sha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+     "bytes": 21776,
+     "rows": 16,
+     "blockingStrings": 40,
+     "vocabTerms": 61
+    }
+   ],
+   "blockingStrings": 277,
+   "vocabTerms": 376
+  },
+  {
+   "id": "s27",
+   "label": "N4/N2 契约与生成抽样（artifacts 侧）",
+   "role": "training",
+   "scope": "text",
+   "path": "artifacts/world-components",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+     "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+     "bytes": 3896,
+     "rows": 8,
+     "blockingStrings": 0,
+     "vocabTerms": 18
+    },
+    {
+     "path": "artifacts/world-components/n4-cf24-contract.jsonl",
+     "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+     "bytes": 68504,
+     "rows": 85,
+     "blockingStrings": 135,
+     "vocabTerms": 135
+    },
+    {
+     "path": "artifacts/world-components/n4-expand36-contract.jsonl",
+     "sha256": "780ad181d5418f16ed2f77e26d0b88a0d9853ce461b6b239a8e9b8d8d81a8b8b",
+     "bytes": 26225,
+     "rows": 36,
+     "blockingStrings": 60,
+     "vocabTerms": 77
+    },
+    {
+     "path": "artifacts/world-components/n4-expand78-unified.jsonl",
+     "sha256": "9fc2f3543cba3ed2828893a62f31d5bdfdd3660cc09941b30a3a607df6685acb",
+     "bytes": 57726,
+     "rows": 78,
+     "blockingStrings": 155,
+     "vocabTerms": 105
+    },
+    {
+     "path": "artifacts/world-components/n4-final24-contract.jsonl",
+     "sha256": "0010c06289801d71792c3c4eaf9d51f382027a03c05ba193eedfe9fec994f0e2",
+     "bytes": 55952,
+     "rows": 76,
+     "blockingStrings": 126,
+     "vocabTerms": 138
+    },
+    {
+     "path": "artifacts/world-components/n4-mix431-draws.jsonl",
+     "sha256": "0a32a30158a39ba3ddcf80ceb14652255f38dee24232b582e50f02480d6ffffb",
+     "bytes": 1769547,
+     "rows": 23040,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/world-components/n4-object-train40-clean.jsonl",
+     "sha256": "2856ce3d56912e3e7380cd11522c8170898369ce59c0e6e66f9269a8ce6a966a",
+     "bytes": 25043,
+     "rows": 34,
+     "blockingStrings": 68,
+     "vocabTerms": 94
+    },
+    {
+     "path": "artifacts/world-components/n4-object18-contract.jsonl",
+     "sha256": "3571d9eb65c48a2be9db7fef5add4a29e2c9ff2084b4badb5b18510df7553091",
+     "bytes": 13271,
+     "rows": 18,
+     "blockingStrings": 35,
+     "vocabTerms": 91
+    }
+   ],
+   "blockingStrings": 579,
+   "vocabTerms": 658
+  },
+  {
+   "id": "s28",
+   "label": "organize/wording 三档语料与运行抽样",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/world-components/organize-wording",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/world-components/organize-wording/clean-group-v1.jsonl",
+     "sha256": "78f698e91062526b5b3464fff5c6f25923b903a7775a72caebad40ada77bb146",
+     "bytes": 60158,
+     "rows": 36,
+     "blockingStrings": 261,
+     "vocabTerms": 99
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/controllability-v1.jsonl",
+     "sha256": "8c613633a0e0fa4fa332861346264cbb28eb87f9945cafc8eb6b908c54dcc8e7",
+     "bytes": 60455,
+     "rows": 36,
+     "blockingStrings": 177,
+     "vocabTerms": 99
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/holdout-v1.jsonl",
+     "sha256": "9897d17d042a510dbdc3945d2697eba15206ec13c7797fb16a81a87fcac0534d",
+     "bytes": 13664,
+     "rows": 12,
+     "blockingStrings": 56,
+     "vocabTerms": 79
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/pairs-v1.jsonl",
+     "sha256": "a0bb3bd15d3c045c37d533ad992abae5b20b4e0198facee0556c6e8b6caf93f8",
+     "bytes": 13770,
+     "rows": 14,
+     "blockingStrings": 64,
+     "vocabTerms": 57
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/pairs-v2.jsonl",
+     "sha256": "7a7205b32cc2367c3410a6176c6e243e6dc469bd355ec3a3b44c5c8f2ff9b987",
+     "bytes": 50111,
+     "rows": 44,
+     "blockingStrings": 164,
+     "vocabTerms": 99
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/plan-variants-v1.jsonl",
+     "sha256": "5568cd943df6b8667a51d40b2526184a560b3902f150ce69612ab09695583737",
+     "bytes": 2323,
+     "rows": 4,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/sentence-scale-run-v1/sampled_calls-A-large.jsonl",
+     "sha256": "0df71f99cfe88b905bcce71f5a46dcaf1d744967fa558d4f854935861696902f",
+     "bytes": 53657,
+     "rows": 480,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/sentence-scale-run-v1/sampled_calls-B-large.jsonl",
+     "sha256": "513c76c24e0aa9610b88ae633984eeaee0d413fef5a372b1a069100c6aa70a84",
+     "bytes": 56130,
+     "rows": 480,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/sentence-scale-run-v1/sampled_calls-B-small.jsonl",
+     "sha256": "fe6e26f05b2ecbf22dbd55b17bd061eabc4d098b8fe5b4654160cdc3b4c32630",
+     "bytes": 56280,
+     "rows": 480,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/world-components/organize-wording/sentence-scale-v1.jsonl",
+     "sha256": "712db524c2e0fdf671e763ae81998e49b9bf91d591ee43babc55c9d47090981a",
+     "bytes": 186328,
+     "rows": 120,
+     "blockingStrings": 447,
+     "vocabTerms": 177
+    }
+   ],
+   "blockingStrings": 1169,
+   "vocabTerms": 610
+  },
+  {
+   "id": "s29",
+   "label": "行动分类器调参语料",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/benchmark",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/benchmark/classifier-action-corpus.json",
+     "sha256": "89366234828b9266968ef49dfc89a7fea02c94a7929aced55c9ce5a46e26c845",
+     "bytes": 16047,
+     "rows": null,
+     "blockingStrings": 173,
+     "vocabTerms": 8
+    },
+    {
+     "path": "artifacts/benchmark/classifier-trial-1791485810864-action.json",
+     "sha256": "97cb6153bf4279040c884fd07f2916e801b88775f734f8b517480a58eb3357f6",
+     "bytes": 18960,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    },
+    {
+     "path": "artifacts/benchmark/classifier-trial-1791486826233-action.json",
+     "sha256": "8bf0382767fdba011bdefe48c07c14d349baf861e187fe5f8e3e635620c50a19",
+     "bytes": 19844,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    }
+   ],
+   "blockingStrings": 173,
+   "vocabTerms": 26
+  },
+  {
+   "id": "s33",
+   "label": "attention-selection 六条件与人工选择",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+     "sha256": "0bfe94ae7e8e187061f8a28e74d37b1e89e215ce06251650d38887a439e383f3",
+     "bytes": 13013,
+     "rows": null,
+     "blockingStrings": 15,
+     "vocabTerms": 57
+    }
+   ],
+   "blockingStrings": 15,
+   "vocabTerms": 57
+  },
+  {
+   "id": "s30",
+   "label": "v1 学校世界夹具（10 份）",
+   "role": "fixture",
+   "scope": "vocab",
+   "path": "design/world-protocol/v1/fixtures",
+   "note": "夹具共用 world_school / person_a-f / 走廊大厅门厅教室；新场景不得复用",
+   "exists": true,
+   "files": [
+    {
+     "path": "design/world-protocol/v1/fixtures/advance-chain.json",
+     "sha256": "605091d1cbfaae496de0edfc1c89f8a97031fc591ced12ba57684a7dd150a43a",
+     "bytes": 2878,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/associated-points.json",
+     "sha256": "8ad139c600fe1f2f830875d0724b8178dc6c0f99ec201d850c11eff690074b50",
+     "bytes": 4899,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 10
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/claims.json",
+     "sha256": "a14a986a932a8b27e8d24b8218b938b8902641563ce7cd61bb9642dbc808ac82",
+     "bytes": 1040,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/description-changes.json",
+     "sha256": "b4274032dd9ef9b710176e64ba94f2d65013c6c8b11d63d1b4844e9ad7acb685",
+     "bytes": 853,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 1
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/frozen-action.json",
+     "sha256": "44a3bee1d9a701bd253aa40908a51a58efe4975e50d401b69f6860331ab19ca8",
+     "bytes": 395,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/requests.json",
+     "sha256": "9d133b50fc59a222cf62db1ce26f3484605797e82c4d91d3cf66f7419e8e0482",
+     "bytes": 7464,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 12
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/school.initial-state.json",
+     "sha256": "285468a395bde87e6e44c1a3c16570d5765dd2c07187103db699913e70fbaf76",
+     "bytes": 16049,
+     "rows": null,
+     "blockingStrings": 20,
+     "vocabTerms": 37
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/school.initial.json",
+     "sha256": "bf865d6d378cf32d14d838b0d190931f60ba8d83b12ef94f153ba048b67ae215",
+     "bytes": 9411,
+     "rows": null,
+     "blockingStrings": 20,
+     "vocabTerms": 37
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/task-normalization.json",
+     "sha256": "dd313792e41663c59d0678fa7ad37bf6d14c89fff8e9af10c1066d0fb7e8acb5",
+     "bytes": 1527,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 6
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/time-only.json",
+     "sha256": "8e74161ab2b8e41d26f063b3bb9b1699d508f92a5fbe5cda705b34f5f3127268",
+     "bytes": 20141,
+     "rows": null,
+     "blockingStrings": 21,
+     "vocabTerms": 42
+    }
+   ],
+   "blockingStrings": 66,
+   "vocabTerms": 161
+  },
+  {
+   "id": "s31",
+   "label": "v2 契约夹具与轨迹",
+   "role": "fixture",
+   "scope": "none",
+   "path": "design/world-protocol/v2",
+   "note": "只登记：api/branches/errors 是结构夹具，内容不进入叙事排除语料",
+   "exists": true,
+   "files": [
+    {
+     "path": "design/world-protocol/v2/api-contract.json",
+     "sha256": "97a7aa1e8f32a42d0bfb56c5628bc3645b8cd5cfd73a26864501717fb19bb7b1",
+     "bytes": 77536,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/canonical-vectors.json",
+     "sha256": "a69291a5e4e9210c652c32753f6fd739bf5eeb76ebbb44d0d3b26f4150c64143",
+     "bytes": 153092,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/failure-cases.json",
+     "sha256": "4c8186d888b383508bbcd039ee6df182bf3809bd6899edc002aeea6651c467b1",
+     "bytes": 27896,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/allocate_ids/error.json",
+     "sha256": "fb6b923f991b65c0a0522b019870c67f91963fc6dd660ec19b069c137505a628",
+     "bytes": 571,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/allocate_ids/request.json",
+     "sha256": "5be0af9e150421ee827e4cf5ba98cdb694333d7a765411acd7fb215e95a7b306",
+     "bytes": 390,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/allocate_ids/success.json",
+     "sha256": "b522e714fbdf01d2f9680b571523b4be7ad285363ccfab5503f2e4b6f8bdcfbb",
+     "bytes": 2514,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_begin_point/error.json",
+     "sha256": "3130e96d633e94159fc16cd56cd121bb640f17c1aa4047fc1752b1ae3b809948",
+     "bytes": 1806,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_begin_point/request.json",
+     "sha256": "aa698735198e382f11cdd0fa4fca9d977c8cccc450c7d14f209afead2910b658",
+     "bytes": 413,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_begin_point/success.json",
+     "sha256": "4842a63e19f2a010747789b7e210748b1ad17a5fcf076bd032d56cb55c59441e",
+     "bytes": 2356,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_close_group/error.json",
+     "sha256": "c19d5ddb0082ecede20662ab82a2b15d30e3240b36df2de919063cc41cf3fea8",
+     "bytes": 1487,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_close_group/request.json",
+     "sha256": "0383b6d7f9747ad8ce79ae4a9e6eacd1dba65459163e73bb204ede7ba8a133cd",
+     "bytes": 301,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_close_group/success.json",
+     "sha256": "8e13ccfb8feb8cc16fe40f77757a56b5001ac06698ac14f5e25446117d90c0e4",
+     "bytes": 2607,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_discover_group/error.json",
+     "sha256": "c6d2dfa574539ca5e61abf3d22304cb45ffcd7dc1f208f28e3748f32c09dd722",
+     "bytes": 1499,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_discover_group/request.json",
+     "sha256": "33222ddb8f391d3fa03d4e08605f976dbd6ef937c65f70a3501ca070ab80e2fc",
+     "bytes": 434,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_discover_group/success.json",
+     "sha256": "7b890537c997477b8c2bdedbd6c535ea77e9dd4c97db30fde4f72b460a1bf645",
+     "bytes": 2661,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_extend_group/error.json",
+     "sha256": "9cfc6eec64021be75d15c9a680e44c6614f7564cd7cda6f981f7d10a5dace2e0",
+     "bytes": 2710,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_extend_group/request.json",
+     "sha256": "7355297ae86005f29b87528ac4f0e2cf40e669c0cfe06e326d75c25cc4974b65",
+     "bytes": 450,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_extend_group/success.json",
+     "sha256": "7ac380dc9853e4892420b43f7eca464609270bb8309e3fb7af0f0898ef5f9d1d",
+     "bytes": 2720,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_pause/error.json",
+     "sha256": "c9f613758182afafd1039dd0df4c7311d80fe3907597c1ec0128e9feddd7d587",
+     "bytes": 1740,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_pause/request.json",
+     "sha256": "0daed85e05ac1cdafcc7c24fc00db729f97ead9c2bf5afa859f715a1c4101e41",
+     "bytes": 248,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_pause/success.json",
+     "sha256": "af5c0e781a3639aea6e15f789700214562da656f86f2a6585e43c65436253961",
+     "bytes": 2411,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_prepare_successor/error.json",
+     "sha256": "d67bcf15b907d7cc991beb8f727cc9598e68b7b34d0857d45bb034aee5839319",
+     "bytes": 1519,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_prepare_successor/request.json",
+     "sha256": "9ed10eccf132a8681e161fc4ab05a565c6b4782e86df863594227c2858d96794",
+     "bytes": 426,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_prepare_successor/success.json",
+     "sha256": "d7fe6bd6c695fb3b48510d1ddcf1531c9332528f32870975967cce2132f01457",
+     "bytes": 4759,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_record_skip/error.json",
+     "sha256": "514f13d0f8c14b486b59ff2e6b15a41b0a3306a718ebac2ee87609cb20df7f02",
+     "bytes": 1500,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_record_skip/request.json",
+     "sha256": "470a439b49dd64d8896b6b03d13bec5e5d5a18c9b4566fc687eff116914c225f",
+     "bytes": 303,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_record_skip/success.json",
+     "sha256": "12edce8982a36d497185cbdb71f9836cd5f85459f2629da39019b61d4f1f364c",
+     "bytes": 3023,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_restore_group_work/error.json",
+     "sha256": "d07a1a12d2be296260a6f5898a49c8b5de6ac845f453ecc2f11edd38d3eb6476",
+     "bytes": 590,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_restore_group_work/request.json",
+     "sha256": "b4298bd5dd61082e9e980f430d3b24064cab00199f923665019b5a9e8e9f2601",
+     "bytes": 1226,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_restore_group_work/success.json",
+     "sha256": "7be3db957489acd3d17ad8c4bca3ada965f021ed8d5bfac968125318057bc052",
+     "bytes": 2797,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_resume/error.json",
+     "sha256": "544da0fbd6d6ab3b09b857ff412d6a07bc1c7c7b8581f03aa81768f6f16efdf4",
+     "bytes": 1814,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_resume/request.json",
+     "sha256": "cf60ed798d1f5ebcd97f09b41d765a04b0c1423e7021062d8611d023eb004a88",
+     "bytes": 250,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_resume/success.json",
+     "sha256": "07ea2fdd1ee049193a524905e3f5c9ae09ef0f3c4d5aaf812d0fb9865e93e063",
+     "bytes": 2377,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_seal_point/error.json",
+     "sha256": "899b1a232ad4cc28292571a6578458becaae703b7f2738783ad5268d5bac084f",
+     "bytes": 1729,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_seal_point/request.json",
+     "sha256": "ea0b004d659f761f84e08e43bf4bbbb9d852dddc5feb8a8d7a0f2ea185537766",
+     "bytes": 274,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_seal_point/success.json",
+     "sha256": "4bbb028722a64e5eeb6dff6d94dd169cbb0a6b3d35dce2b57e70b8ed247da78c",
+     "bytes": 2866,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_set_point_time/error.json",
+     "sha256": "b86229185e4292f6cd14d9dd6f839a6e37aae2d93e01d75e59f50899db319140",
+     "bytes": 572,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_set_point_time/request.json",
+     "sha256": "00074b9abbde0e4c767dc142293f309aba40b9fae600765b37c5a4b99f42f93a",
+     "bytes": 395,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_set_point_time/success.json",
+     "sha256": "67d446382d0b05db0f18c8562af819e6c4bdfa5f8b39597cb914ff55ecfd134b",
+     "bytes": 2489,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_time_scan/error.json",
+     "sha256": "21fe019c10fe506bc88192fd6067331bb806269255bd7cabaec75769bac8339a",
+     "bytes": 1734,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_time_scan/request.json",
+     "sha256": "1d6011addf3b74625dbed173dcf85881b3144d9bd6c0ba436682313e6159a56c",
+     "bytes": 1017,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_time_scan/success.json",
+     "sha256": "f39c776a87fa8b132dcabdf4597143fd6564f752a0ebe6b886332e19aa1a8e2f",
+     "bytes": 2500,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_unit/error.json",
+     "sha256": "c835d0f69ea2ffd18327d6eb85b06b88670e0308493b5b206262a94e71768f20",
+     "bytes": 1748,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_unit/request.json",
+     "sha256": "84199aeeab5f65341192b2872d17880b5951b819afcefbd3d63dde44dad216ec",
+     "bytes": 1104,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_stage_unit/success.json",
+     "sha256": "0ba4eb5383a3669947b007dc8c22c3183ebdd7df213f96577889e9ae9d265e3d",
+     "bytes": 3014,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_start_advance/error.json",
+     "sha256": "cc070900c4201ea0a9fe0a67f96d5155572aa85fd9a41a965496ccb2caed6325",
+     "bytes": 1805,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_start_advance/request.json",
+     "sha256": "4d4ec4670590d724c32a0c6915c8218d1a8e7a41ab0fdd64b42589f730950224",
+     "bytes": 447,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/checkpoint_start_advance/success.json",
+     "sha256": "d4c1b4f5a8039a15453cdc540ba4a7a554588bc86e52433934adaed0ac7c1eed",
+     "bytes": 1689,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/commit_point/error.json",
+     "sha256": "23637a717d632df07b4e3d74f8c9245b0148650c079fa7ad2e9014ff6ada4b55",
+     "bytes": 1499,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/commit_point/request.json",
+     "sha256": "1dc86f9d92943489beca9ce2e6d4d51da719a20b4afe9088d3b71c9c24cb9785",
+     "bytes": 1503,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/commit_point/success.json",
+     "sha256": "60f79c95525ac2a00e3a9a40469fe5b61896e0f4150aaefcf357d3cdd3c063f9",
+     "bytes": 1773,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_rolls/error.json",
+     "sha256": "14de5c4dc4fd89f7ac25b181527c7696b29a92e63476c04ac82eaaf882db36a9",
+     "bytes": 1746,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_rolls/request.json",
+     "sha256": "800b5af50d680c16a5eb244a2dc24dde5e632e72abad0cf2e1db7c84787b200d",
+     "bytes": 499,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_rolls/success.json",
+     "sha256": "40144593f56ba1c415aaa0c00d9e1b7368a08d3ef504f36c64d1b863bab599bc",
+     "bytes": 3015,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_world/error.json",
+     "sha256": "3e90a34985950da89c3924f7636e5c45366e41bef2e7cc7da600980061e54131",
+     "bytes": 558,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_world/request.json",
+     "sha256": "a44533e5bd3966eb5de14ed9e24922e8239a068f660aaecbd8f6d93aadba200f",
+     "bytes": 10152,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_world/success.json",
+     "sha256": "55c353ca20296930efe4912d270fa3063416af4197cc8543330b3dfdac5ad88a",
+     "bytes": 1558,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_context/error.json",
+     "sha256": "d8be4527efe569f2ef44692020ee0c4ba06cfe6819ac0045bff547f8803d45e0",
+     "bytes": 518,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_context/request.json",
+     "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+     "bytes": 3,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_context/success.json",
+     "sha256": "6df4a4cdbf328f996d58cf0e0f1a11925a4cf825a61f36a179f3e4afa8a3f045",
+     "bytes": 1540,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_state/error.json",
+     "sha256": "4f5ed69207fcf7c2afedfb7ae8115831fb62b99092e51d7c67a2c11e5196d2dd",
+     "bytes": 511,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_state/request.json",
+     "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+     "bytes": 3,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_state/success.json",
+     "sha256": "c0a25661ab7a87d7f29ae0a97d23abe74a9743bf992ebf0a65f60ba278c8e154",
+     "bytes": 20148,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_acquire/error.json",
+     "sha256": "9514df35e5507b9ed3a92f61db4405731858c9dff1c6d26cf8468b842e9bc39c",
+     "bytes": 596,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_acquire/request.json",
+     "sha256": "1b8521d7e4cb9159cc1b5fbd512194738a27f158e661869f6026c602d448bed8",
+     "bytes": 113,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_acquire/success.json",
+     "sha256": "94f8e65009f2d1b76b0ea4fa0818f9439cd7db523ee284b63dbe92bd98b97ba0",
+     "bytes": 1448,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_release/error.json",
+     "sha256": "09a00c8bb9aae11080917029d2e973217833ea08f17989a8208f7956bb8eefaa",
+     "bytes": 534,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_release/request.json",
+     "sha256": "33fa8f11b3fa25916b3bea1a011d59aa0bd2a0215375d3b69e750a27dd76e5e7",
+     "bytes": 107,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_release/success.json",
+     "sha256": "2c3b922ea09d10d4bc69646a40cf1f13e147e18e36dca03cb2f1e65b9cb712d9",
+     "bytes": 1284,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_renew/error.json",
+     "sha256": "02b2c5c6225894687468fe9a3c22e7b6b7faca42683990b9a52dfa4b709a7e37",
+     "bytes": 1468,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_renew/request.json",
+     "sha256": "9c4d76df5edcaeca46d59d70e948d12f0bf907b4b06c1eba309928869092c638",
+     "bytes": 134,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/lease_renew/success.json",
+     "sha256": "3e558b3301c267e3c273b64d6c95224cef238b5bd0e01224464d07150b6a4f40",
+     "bytes": 1419,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/list_points/error.json",
+     "sha256": "c2270e3cf39af27d1daa2d28847ef89562f060edcbff2336e9dc9b4f790715f4",
+     "bytes": 518,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/list_points/request.json",
+     "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+     "bytes": 3,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/list_points/success.json",
+     "sha256": "f052d1033e641ffda42df389e22893e9ad8b10fb22ec56a418b30cf1a418cb6e",
+     "bytes": 1635,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim/error.json",
+     "sha256": "4772756490689fff85ad7f8a625499ea8d70a045828c671a140e6a9965ac3314",
+     "bytes": 1524,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim/request.json",
+     "sha256": "64b75c567eadcbf89314d8e008af1a2cffba8f72de9778bf67ec23c3952e69cc",
+     "bytes": 204,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim/success.json",
+     "sha256": "e6232ba8be9475ce15fe375b200c75c0620087422385951725b0cba32fd83809",
+     "bytes": 1588,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim_renew/error.json",
+     "sha256": "22e6ebba69bd2e71d3869a1f64fa3bf29a32ea39bccb3b882029bab3f239e2cb",
+     "bytes": 1553,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim_renew/request.json",
+     "sha256": "b766d08aa31d1f81bd818e1e320cc18f7a373a1749d01f76ffc44825f3a5a947",
+     "bytes": 269,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_claim_renew/success.json",
+     "sha256": "03aa5efd810cb74d5f8c91259326647ffc7a0d70296725539dfeb7e92c174bf9",
+     "bytes": 1563,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_delete/error.json",
+     "sha256": "f220cb8e297975d5d10673012ef2a8697f774586805ec0f0cb94643e4f3bd39c",
+     "bytes": 593,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_delete/request.json",
+     "sha256": "18aaec9776405ad260a3aae89df7928f3dd2e8bce989557cc88f0aab7bf8725a",
+     "bytes": 222,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_delete/success.json",
+     "sha256": "bd1f5f842b8564e3b619fe801e51a126dd342ce1e3746d6e4a49216864338daa",
+     "bytes": 1465,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_get/error.json",
+     "sha256": "bbce5b8ba3a40b014c59f02792c3cc43eba221a75fbc43d54424bdad71191dc3",
+     "bytes": 515,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_get/request.json",
+     "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+     "bytes": 3,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_get/success.json",
+     "sha256": "0f549d34c5bb46210f1b132871dc872f21c4f84212e4c6ed412a124d56fc1ce0",
+     "bytes": 1033,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_submit/error.json",
+     "sha256": "c25675847c1546c2002c62ec60d670413d13d9a307a19c59df9820a105413f48",
+     "bytes": 593,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_submit/request.json",
+     "sha256": "0662c92ab4c994668cf4b970b0033ccc9e58c82f6402d7f10402ea891214abaf",
+     "bytes": 410,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/narration_submit/success.json",
+     "sha256": "fbe4923248795a9618bc75feb03cb0e867b1f77873c567080bfe6082ee24b8b6",
+     "bytes": 1419,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/operations.json",
+     "sha256": "f993a0eb372b6d83ed3ee2a6efca871d53a42088bd81fe5c4c13ee68e98c903d",
+     "bytes": 884,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/preview_point/error.json",
+     "sha256": "408c1b7763fd9e67a25002d96016f34d62fb74c98158ec7317145821f5552ecf",
+     "bytes": 572,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/preview_point/request.json",
+     "sha256": "ff9a3ae63b9aabb2ca0926d1247da893dd9afa8928362e273d41c9d5bcd1dd67",
+     "bytes": 1133,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/preview_point/success.json",
+     "sha256": "4e88b43cd0c913cce74ffb97f1bc7c2dc84151dcf88fe61eb6f7da80b92ef974",
+     "bytes": 21394,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_cancel/error.json",
+     "sha256": "01ebe8158e2c52217a93a525e39ffe5d5d6796ac5f34e97c25ee842adfdc6b86",
+     "bytes": 1515,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_cancel/request.json",
+     "sha256": "1063f897fedf5b685df2108db2ba7c2dc78b56ac3fed509c03ad22d42bdfdd1d",
+     "bytes": 347,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_cancel/success.json",
+     "sha256": "229a33b1f371115e90129964d9951a598ece743f926e1acbcd60da0517a682eb",
+     "bytes": 1790,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_conclude/error.json",
+     "sha256": "ab66e03351fe306ba00969eb1cbe3d594ffe0829490eb51e530062040c79a8fc",
+     "bytes": 1818,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_conclude/request.json",
+     "sha256": "2bbb0968482d2d10316f6885b0b2d1fce08f7b92b12c26f9eee8d3bfe351744f",
+     "bytes": 484,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/round_conclusion_conclude/success.json",
+     "sha256": "2a9a58594a998947de7ef6d14fbbdc7dd178e2374f63af7e76e507622021d8ed",
+     "bytes": 1729,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/claim-replay.success.json",
+     "sha256": "375fd1402e599459d7e08856438c540ba4f8f6d8d20002933f518ac1b87065a1",
+     "bytes": 1555,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/handback.error.json",
+     "sha256": "ab66e03351fe306ba00969eb1cbe3d594ffe0829490eb51e530062040c79a8fc",
+     "bytes": 1818,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/handback.request.json",
+     "sha256": "7f457d555cb91bc72e2e20ab1684a94718507fcf106932948729b6c4744e53a0",
+     "bytes": 399,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/handback.success.json",
+     "sha256": "959233a8236bd3220e9db94e27f34ddcddb5d2a9b493e6fe4af073f263348a37",
+     "bytes": 1800,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery-frozen_work_corrupt.error.json",
+     "sha256": "2ec823fd7a27e06890cfae361bbe020c4f1d2110b1f4063527b3b622e7022efd",
+     "bytes": 601,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery-frozen_work_missing.error.json",
+     "sha256": "252f46bb543e026008f56ca4bdedd31ac3b5353e8c2280ca9f7ad6946aea108b",
+     "bytes": 597,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery-successor.success.json",
+     "sha256": "d083ae71c880cc72be3566d3af6418b0f5d4c68ae285f349f70f1b3a69bc4a3b",
+     "bytes": 12612,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery-unconfirmed.success.json",
+     "sha256": "6dadda7f668ba98773a021b64e7e525f70ff254c9aa1929458fe2c7361dda61b",
+     "bytes": 5301,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery.request.json",
+     "sha256": "cbd185427dc9110f5b3b335a6f9648e7c1c185ad0ef3277dacbc530632df19b5",
+     "bytes": 76,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/recovery.success.json",
+     "sha256": "2fcb4da1c35a6bccbdb0a6cb7923c52bb3406762b6d8c050bd9a5311cdbb1b85",
+     "bytes": 9418,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/branches/takeover.json",
+     "sha256": "2d58802e7c9b86ec4e4798474bd0a3472b95e91cb8f45ed2be2caa347fa707b3",
+     "bytes": 116802,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/cache_missing.json",
+     "sha256": "4772756490689fff85ad7f8a625499ea8d70a045828c671a140e6a9965ac3314",
+     "bytes": 1524,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/claim_expired.json",
+     "sha256": "22e6ebba69bd2e71d3869a1f64fa3bf29a32ea39bccb3b882029bab3f239e2cb",
+     "bytes": 1553,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/claim_fenced.json",
+     "sha256": "c25675847c1546c2002c62ec60d670413d13d9a307a19c59df9820a105413f48",
+     "bytes": 593,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/frozen_work_corrupt.json",
+     "sha256": "359456eef01e63ef688210465b4a26ac214a42c4358994571838aed9bad41db1",
+     "bytes": 687,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/frozen_work_missing.json",
+     "sha256": "d07a1a12d2be296260a6f5898a49c8b5de6ac845f453ecc2f11edd38d3eb6476",
+     "bytes": 590,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/lease_invalid.json",
+     "sha256": "9514df35e5507b9ed3a92f61db4405731858c9dff1c6d26cf8468b842e9bc39c",
+     "bytes": 596,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/narration_blocked.json",
+     "sha256": "3130e96d633e94159fc16cd56cd121bb640f17c1aa4047fc1752b1ae3b809948",
+     "bytes": 1806,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/paused.json",
+     "sha256": "14becce103db26acf77345a048f4280a7d7d5249ad58aa0450a1a540bc6541f8",
+     "bytes": 2786,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/phase_invalid.json",
+     "sha256": "9cfc6eec64021be75d15c9a680e44c6614f7564cd7cda6f981f7d10a5dace2e0",
+     "bytes": 2710,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/point_time_locked.json",
+     "sha256": "b86229185e4292f6cd14d9dd6f839a6e37aae2d93e01d75e59f50899db319140",
+     "bytes": 572,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/preview_budget_exceeded.json",
+     "sha256": "408c1b7763fd9e67a25002d96016f34d62fb74c98158ec7317145821f5552ecf",
+     "bytes": 572,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/protocol_version_unsupported.json",
+     "sha256": "7e0a9fb4ff47be880d5c2013b56f6c9c4ffa87ddb82b5ecdb5e98d52512589a1",
+     "bytes": 548,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/request_id_reused.json",
+     "sha256": "3e90a34985950da89c3924f7636e5c45366e41bef2e7cc7da600980061e54131",
+     "bytes": 558,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/request_in_progress.json",
+     "sha256": "52a2e30018fd5c977564444a34cdeae890e6c069c20ed22c86922f0a81d7ac33",
+     "bytes": 549,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/request_malformed.json",
+     "sha256": "31497971fa8161fc563fe0707f3f5f7ad0bae9965da552e72af5e0083365aec4",
+     "bytes": 574,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/revision_mismatch.json",
+     "sha256": "544da0fbd6d6ab3b09b857ff412d6a07bc1c7c7b8581f03aa81768f6f16efdf4",
+     "bytes": 1814,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/stale_epoch.json",
+     "sha256": "c835d0f69ea2ffd18327d6eb85b06b88670e0308493b5b206262a94e71768f20",
+     "bytes": 1748,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/errors/version_mismatch.json",
+     "sha256": "23637a717d632df07b4e3d74f8c9245b0148650c079fa7ad2e9014ff6ada4b55",
+     "bytes": 1499,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/description-collapse.expected.json",
+     "sha256": "a2bde20d7d21fadf147cffba1231a0a4238c4a9970c917b956079e0f2ef26986",
+     "bytes": 79,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/normal.expected.json",
+     "sha256": "28fb24ebd3b3adb3753554c3dc2af0449c63d0820730495978dff08e19f673f2",
+     "bytes": 16052,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/segmented.expected.json",
+     "sha256": "459649984bb4e096acb416aa11574dad10735a1d330f12ece6875e83c5d6c5fe",
+     "bytes": 16049,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/task-normalization.expected.json",
+     "sha256": "cdf4c382e6501cb325a367a915b1f95a97540baa23b21bed90bbececca848884",
+     "bytes": 426,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/time.expected.json",
+     "sha256": "5cea7a2aee3f7bd10941078060768f6b13e35fb56635bffe3e959005b6f942ca",
+     "bytes": 16292,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/manifest.json",
+     "sha256": "70c9144b2b4a91187a1766a51900a4ae8f74ea5acfc1899cc7e11a1485ffdbe8",
+     "bytes": 26889,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/trace.schema.json",
+     "sha256": "64d8c8964cf982c626aea425253894f687416f2b5c1b74e3bf2b9af67d4d011f",
+     "bytes": 10929,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T01.json",
+     "sha256": "e8759a4f384279f6b0e0e482749c24cfa3409c04e11fdbf2708fbeea9b4c5f9e",
+     "bytes": 209305,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T02-empty-linked.json",
+     "sha256": "f20e71a35e4f6eea208086e0fff61f00e487fd2265f55b66aa3c59cbe9721153",
+     "bytes": 210225,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T02.json",
+     "sha256": "a79ca6a716d867f4a5ef6616c447ed7540d8c8ed778c7b77ca954879b92f6e1e",
+     "bytes": 315418,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T03-collapse.json",
+     "sha256": "bf38630cd6630f84f561106e9a5eb2aa3655b0c2228751c3734cb487120d5839",
+     "bytes": 119415,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T03.json",
+     "sha256": "6749477e8d2b76c92ebded0fda394eec22ed1eb5614abc5ee21b5e5cbc138ba4",
+     "bytes": 90144,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T04.json",
+     "sha256": "0aeb1ab5c44f70823620eeb341c8012d8188ec6d26a7ca0a67fb7d709fefe01e",
+     "bytes": 130581,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T05.json",
+     "sha256": "dad0c2483f0611d4ac763395d957c84316198553af9d6a594f4bd98572ed42e3",
+     "bytes": 86187,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T06.json",
+     "sha256": "1fb32c618af80a51c796b59ddae25f152dbd31913f5efd27f732e189a8927637",
+     "bytes": 85836,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T07.json",
+     "sha256": "0998cd79f9d6fcdc1340d13db7ed6b10643b53233e0f587a28438fcb7bf353c1",
+     "bytes": 191245,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T08.json",
+     "sha256": "8a5dc62255e7ad73b3347542f0331399f64fe374c5907ba197f41d92ce7be78a",
+     "bytes": 137270,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T09.json",
+     "sha256": "2c4fbcc36374d0ccd600b020d01480effb6c2298936614797a2306743f01d3e4",
+     "bytes": 103771,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/versions.json",
+     "sha256": "c5ed8d75768eacb273c98b6e47027ff46677fe894797c4f49764564de45be615",
+     "bytes": 226,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/world-protocol.schema.json",
+     "sha256": "8fa805c8360b090cdf09b9daddedf9dbd58dff809e22e46ba3373cb4967e58bd",
+     "bytes": 331480,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  },
+  {
+   "id": "s32",
+   "label": "前端世界夹具与 t01-t08 场景",
+   "role": "fixture",
+   "scope": "vocab",
+   "path": "frontend/src/lib/world-engine",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "frontend/src/lib/world-engine/candidate-derivation.ts",
+     "sha256": "d646e8597b6be909940b06fed726b042b2bb4b985658de7e1ea4acdb3e85695e",
+     "bytes": 9718,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/contract.test.ts",
+     "sha256": "fc481672939593bc24393ba49b4eaca296a137127119d705a96f0da122268b1f",
+     "bytes": 11488,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 4
+    },
+    {
+     "path": "frontend/src/lib/world-engine/controller.test.ts",
+     "sha256": "b3f2c52e39d7bde6b05ba40531ba8526dd211be46dc21c0cdc3a7845de2e2d64",
+     "bytes": 127947,
+     "rows": null,
+     "blockingStrings": 21,
+     "vocabTerms": 29
+    },
+    {
+     "path": "frontend/src/lib/world-engine/controller.ts",
+     "sha256": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+     "bytes": 50860,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 4
+    },
+    {
+     "path": "frontend/src/lib/world-engine/fault-transport.ts",
+     "sha256": "36a407facaedc3b81fc892baee25f9c8cd8deb66c44966d04fb91c36810e0278",
+     "bytes": 8631,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "frontend/src/lib/world-engine/fixture-model.ts",
+     "sha256": "551eb89ade23115148733d33617f95261d34fb38bfaab654bda2cf793e058ff7",
+     "bytes": 1318,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/fixture-transport.ts",
+     "sha256": "8dbfd87ed6c47ef7d4e369485ced5f4a9a98564014e671c352c1de203f0762ea",
+     "bytes": 2246,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/harness.test.ts",
+     "sha256": "8134249343a225bfc71c499f825829bb80daeef16c41bd955368c4a556ac1b63",
+     "bytes": 16635,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 8
+    },
+    {
+     "path": "frontend/src/lib/world-engine/harness.ts",
+     "sha256": "73956a59dda24b4f94ed43a01a6a5dccca2d4a0a7a54655d81d95dfed3a14411",
+     "bytes": 36945,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "frontend/src/lib/world-engine/http-transport.test.ts",
+     "sha256": "cc54ce1f80aeba7668f13a4cb9f53b74a443bf201c7b02dc3e7ec6e6c225cdd0",
+     "bytes": 2134,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "frontend/src/lib/world-engine/http-transport.ts",
+     "sha256": "e0da1da81d45df6e4c1ba417a9ff602d976fe5610ce3764e752457093006409b",
+     "bytes": 4830,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/protocol.ts",
+     "sha256": "5fc5ae0445bd5f289f4c522ee9c4b5deca0fe67a68522aec6e457cdb965459e4",
+     "bytes": 3663,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 3
+    },
+    {
+     "path": "frontend/src/lib/world-engine/recovery.test.ts",
+     "sha256": "0a28ae258a6b0d0427ab0a74a3534aa2ec0c3c6f8790c6b8169e9513d5ef2e61",
+     "bytes": 53649,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 13
+    },
+    {
+     "path": "frontend/src/lib/world-engine/recovery.ts",
+     "sha256": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8",
+     "bytes": 22652,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/schedule.test.ts",
+     "sha256": "6ee495a41e638d140f288de630dde88861b0b4bb9c91fb3774e83ae0fd277ac4",
+     "bytes": 61594,
+     "rows": null,
+     "blockingStrings": 20,
+     "vocabTerms": 20
+    },
+    {
+     "path": "frontend/src/lib/world-engine/schedule.ts",
+     "sha256": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+     "bytes": 58933,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 6
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t01.scenario.ts",
+     "sha256": "ee3663aa8826520802d1ecad0bab17b9006a65d0471309768f63bf54d81fbd5b",
+     "bytes": 15367,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 8
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t02.scenario.test.ts",
+     "sha256": "5ce8ec8bfb3f56efe0d105c762be471e575e3a30d2630b8f936dcb25190c17d4",
+     "bytes": 9926,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 7
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t02.scenario.ts",
+     "sha256": "fa8dfbeeaf903c11ca577a874c29817709fa852ebb85697a0493747ff7d7e1c3",
+     "bytes": 22268,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t03.scenario.test.ts",
+     "sha256": "a46d92b150c8cb447d3dd7bf290b9e788f16b3cc24617179677550c9b8ab8acd",
+     "bytes": 24802,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 15
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t03.scenario.ts",
+     "sha256": "52b0b1ef69004ec88f4b615e3977de5a52a6d5260d1928b2607503fd498c3ff1",
+     "bytes": 37480,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 5
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t04.scenario.test.ts",
+     "sha256": "fd9269c0791d120c48bcfbcfdcbd0602bd11509e0dc64bfc942d37d9e25ea34b",
+     "bytes": 7024,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 4
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t04.scenario.ts",
+     "sha256": "4cdbda0b4091910329bbe125949ed64260b3ee516c297e9a8b679bc33446e87c",
+     "bytes": 11351,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 4
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t05.scenario.test.ts",
+     "sha256": "f55eee6604e2c532f76d5d1261337ce6f2c80e9536f48600fa946c2efdca2303",
+     "bytes": 7934,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t05.scenario.ts",
+     "sha256": "00228355dbebf108f36b868159a8d46600c61530602bd9774ab72f68ea4e8557",
+     "bytes": 6446,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t06.scenario.test.ts",
+     "sha256": "c1599549704d3a06278d476061748c5bfb8c2c53a114ae903f4b452b088ebe2d",
+     "bytes": 13690,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t06.scenario.ts",
+     "sha256": "9f6e9185e048e9617d1050a1cc4dab31432a9cd8c097cd2da2fc45a8ffe03ffe",
+     "bytes": 1046,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t08.scenario.test.ts",
+     "sha256": "1c20f561d0344f1c4935ce538dda7480106c108029d88cfd74528b2dd7f52512",
+     "bytes": 5014,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 3
+    },
+    {
+     "path": "frontend/src/lib/world-engine/t08.scenario.ts",
+     "sha256": "a842cd1c0222a51b180151c489e70a9d998d9451291b778d775002fba5584c39",
+     "bytes": 8961,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 7
+    },
+    {
+     "path": "frontend/src/lib/world-engine/trace-runner.ts",
+     "sha256": "deb9818bf54fc6f2d3539a031a933b9e47fc8aaf71401f729e4bef6424188040",
+     "bytes": 14828,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "frontend/src/lib/world-engine/traces.test.ts",
+     "sha256": "5cf296816f21d47abac8457e1b56769a62c0ca4ca037814941dd0b8d037e5eb2",
+     "bytes": 9342,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 7
+    },
+    {
+     "path": "frontend/src/lib/world-engine/transport.ts",
+     "sha256": "b1d4eb4f4c252f72edf94cd4037cab1039e7b14041019748a222ef2b8c987bac",
+     "bytes": 513,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "frontend/src/lib/world-engine/types.ts",
+     "sha256": "61b5cdc8de212373c7feddd685dd3546e7e18a9ecd6788357f24072e10de9f6f",
+     "bytes": 18622,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 5
+    }
+   ],
+   "blockingStrings": 64,
+   "vocabTerms": 164
+  },
+  {
+   "id": "s34",
+   "label": "旧产品战役与开场剧本（龙族内容，词表来源）",
+   "role": "fixture",
+   "scope": "vocab",
+   "path": "backend/data",
+   "note": "旧 TRPG 战役/剧本非本引擎素材；只收词表，避免新场景撞回旧人名地名",
+   "exists": true,
+   "files": [
+    {
+     "path": "backend/data/campaigns/campaign.schema.json",
+     "sha256": "daddd9d2306da657c4c74e7a16c89e597e1c794b23c916cbf68229b469dfa9b6",
+     "bytes": 3907,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "backend/data/campaigns/default_campaign.json",
+     "sha256": "6aa4a8b8a7c1e9e1d4f6062175b0e5da12f25f13afeeb2fe841f9dd2d5014559",
+     "bytes": 7539,
+     "rows": null,
+     "blockingStrings": 14,
+     "vocabTerms": 65
+    },
+    {
+     "path": "backend/data/campaigns/龙族Ⅰ_火之晨曦_campaign.json",
+     "sha256": "6d2287760e689ebe4ba9056b901a02dbd9dc48efa5b9302bb3b3400027fbf926",
+     "bytes": 13008,
+     "rows": null,
+     "blockingStrings": 9,
+     "vocabTerms": 132
+    },
+    {
+     "path": "backend/data/campaigns/龙族Ⅱ_悼亡者之瞳_campaign.json",
+     "sha256": "4c5867bf9424793cfff0bc17c1eee7146c6b53b5972f74f93c279c196e11c8e7",
+     "bytes": 15125,
+     "rows": null,
+     "blockingStrings": 27,
+     "vocabTerms": 188
+    },
+    {
+     "path": "backend/data/campaigns/龙族Ⅲ_黑月之潮_campaign.json",
+     "sha256": "e25833638ecd811e54630aaf72b5fcc56c9c1f7943749bc970fd6a9dc9ef8484",
+     "bytes": 15557,
+     "rows": null,
+     "blockingStrings": 22,
+     "vocabTerms": 169
+    },
+    {
+     "path": "backend/data/scripted_story/branch_scenes.json",
+     "sha256": "c2adeba2e7361bee9eefae90ce8f3678caf4bdf5c9ee9fbb8c0b84a6d6afa511",
+     "bytes": 18270,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 266
+    },
+    {
+     "path": "backend/data/scripted_story/opening_scenes.json",
+     "sha256": "22a1ceb3be031a04a091dc77b81c2dc04fa679e3535163fc82d14635cd5643ae",
+     "bytes": 14482,
+     "rows": null,
+     "blockingStrings": 8,
+     "vocabTerms": 146
+    }
+   ],
+   "blockingStrings": 92,
+   "vocabTerms": 966
+  },
+  {
+   "id": "s35",
+   "label": "仓库根验收/签署 Markdown",
+   "role": "report",
+   "scope": "none",
+   "path": "artifacts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "artifacts/a3-2-signoff-d1d2de0.md",
+     "sha256": "b8fba7a551c0fcf3715d67546bbf40f8313013bae32fd09d7580f900dae6a8c0",
+     "bytes": 3829,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-r1-review-4739ae4.md",
+     "sha256": "0febf840e77b945cce546121dec01ea64aefd0a7871b57aa0f73113bd5c9bf65",
+     "bytes": 6787,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-r1-review-fafc859.md",
+     "sha256": "ea20671fa65bf993592d1686534bcdca16ca4aa7530b7b153f8faab96b030891",
+     "bytes": 5031,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "artifacts/h2-r1-signoff-812e721.md",
+     "sha256": "1c452d6b88cf00e7e886368e8c513167c5c004e0eaa29b44ca989ae5741518f4",
+     "bytes": 2768,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  },
+  {
+   "id": "s50",
+   "label": "主树 cohesion-split（组内聚与拆分组调参）",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/cohesion-split",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/cohesion-split/a1-freeze.json",
+     "sha256": "e7edb3c03fc79dc2cdd9fc06869c8be07a95fad2edfc25b8045312024f436c20",
+     "bytes": 2450,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/background-candidates.json",
+     "sha256": "f7a1e7bab4425b2694e31be28b03e6288236e890334676235615a185f3b0eafe",
+     "bytes": 31593,
+     "rows": null,
+     "blockingStrings": 4,
+     "vocabTerms": 61
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/background-select-human-review.json",
+     "sha256": "feb06294239fd0548c206adaf191e5b766aeb19f36a687ea8792e7034b01da30",
+     "bytes": 5611,
+     "rows": null,
+     "blockingStrings": 8,
+     "vocabTerms": 5
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/background-select-run-manifest.json",
+     "sha256": "d99fc406714235fb68fa6ad0ebd70bc2c5608a4c1a014d85da9ef3b2799fa797",
+     "bytes": 1025,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/background-select-summary.json",
+     "sha256": "0f466d29ea06b0abf55307a269761399ef6dd97e5ad1cc482b9890ee12c209ab",
+     "bytes": 1005,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/blind.json",
+     "sha256": "0817f91257320c77014986270204ce16d013b87060e7f6e021d9fff37921eae1",
+     "bytes": 10037,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 93
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/dw-results.json",
+     "sha256": "c7b8af7a506ba4c0198983b23c463b63e7eae478e33bd04e5ce2926578aaa9a7",
+     "bytes": 77446,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 266
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/dw-scores.json",
+     "sha256": "8ad0df60b14effb02a9a672b689e38276bf1a1f17d9997bdea6a1e869bfd77e9",
+     "bytes": 52569,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 120
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/organize-v2-human-review.json",
+     "sha256": "5a8683a4098ed314aa42f477e2b9c40b9c56ae0b11ced91e73045e7a39e95078",
+     "bytes": 3871,
+     "rows": null,
+     "blockingStrings": 13,
+     "vocabTerms": 3
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/organize-v2-run-manifest.json",
+     "sha256": "dcc38b49a9da58d07c557e626add112db9f64dacaadd5fb3c314557c5c2df498",
+     "bytes": 1315,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/organize-v2-scores-summary.json",
+     "sha256": "2b2df93ac52fb8a156acee077325b26527fc3d81e05c7572a83f631a431f1f60",
+     "bytes": 538,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/organize-v2-summary.json",
+     "sha256": "33a056b43b065ad7e616e1ca14050138e0fac93bdc951e1e34e6af63aee84f03",
+     "bytes": 1513,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/plan-compare.json",
+     "sha256": "a29593e2f83d59a5a5108edd1e7a8547c524523854784a533df05eb62b5fc5e0",
+     "bytes": 7081,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 36
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/plan-results.json",
+     "sha256": "aea22287e1c33a1321c256cc211ae3073b8a188a4e4ddacd79f9b0f3152aeb97",
+     "bytes": 44948,
+     "rows": null,
+     "blockingStrings": 3,
+     "vocabTerms": 82
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/results.json",
+     "sha256": "3ac6f00e89c2fe36214e87c964ec13887e695237d91d23957e433b58512b2adb",
+     "bytes": 25641,
+     "rows": null,
+     "blockingStrings": 52,
+     "vocabTerms": 89
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/scores.json",
+     "sha256": "3f6342f4d67a5ad72a0884d9822391e08f806516d7acac35130cb02f2993f9c9",
+     "bytes": 27892,
+     "rows": null,
+     "blockingStrings": 39,
+     "vocabTerms": 67
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/semantic-correct-human-review.json",
+     "sha256": "b617e679542c493f151f28683280f41fc5d175bb7be442dbdc7a31fee51712e3",
+     "bytes": 5139,
+     "rows": null,
+     "blockingStrings": 20,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/semantic-correct-run-manifest.json",
+     "sha256": "dbc102c1612cb81bbe49b5509ed684ce523fb560717b8b7992700c457395daa0",
+     "bytes": 1315,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/semantic-correct-scores-summary.json",
+     "sha256": "d5795c323f283a4afa6f880272e7159635135751f3a7585e45d081b37d0f63e3",
+     "bytes": 400,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/semantic-correct-summary.json",
+     "sha256": "1797da31497305f498fd36f3c950580ded9e13e5d8cec9d8ef2deffeb81b6fea",
+     "bytes": 564,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/cohesion-split/v2-criteria-freeze.json",
+     "sha256": "89fda0e9fc0e87f55cc56fc494fce38eb45e362a93ceaa92c179cd889f6e1a70",
+     "bytes": 2377,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 25
+    }
+   ],
+   "blockingStrings": 235,
+   "vocabTerms": 856
+  },
+  {
+   "id": "s51",
+   "label": "主树 decode-compare（解码对照 215/40 例）",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/decode-compare",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/decode-compare/arm-ab.json",
+     "sha256": "005d2d14d7fee03236b65735c30906bf7d87e07c8ee49165cd5d2d0f78413787",
+     "bytes": 46570,
+     "rows": null,
+     "blockingStrings": 99,
+     "vocabTerms": 51
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/cases.json",
+     "sha256": "48dbda093ef85ee2923f5456797ca14d13bb97736e90ce2afda5a230b64f6dad",
+     "bytes": 54890,
+     "rows": null,
+     "blockingStrings": 89,
+     "vocabTerms": 175
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/cases.manifest.json",
+     "sha256": "edc2aea8713a4b34171c08f7e182a104c2a6594857a5e8780e0e5d139dc176fa",
+     "bytes": 174,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/confirm40-ab.json",
+     "sha256": "a95f323c9e008f164c1ed43d35eb81b4ab76f8ca8e6cdcd81c786709bfdda12f",
+     "bytes": 21399,
+     "rows": null,
+     "blockingStrings": 48,
+     "vocabTerms": 56
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/confirm40-scores.json",
+     "sha256": "b393118198c585f73ae3a1719b4db4c42ad74549596f2d66202f9485d2bc4635",
+     "bytes": 21026,
+     "rows": null,
+     "blockingStrings": 48,
+     "vocabTerms": 84
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/confirm40.json",
+     "sha256": "1fd89415e9f8456509e375a0aa4ae4054254170e492b7777aca798a750041628",
+     "bytes": 17502,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 172
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/confirm40.manifest.json",
+     "sha256": "6bfd48987bcef0be3abca11e066c7165cc58b57387af94bacefb01028c6269f2",
+     "bytes": 196,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/diag215-ab.json",
+     "sha256": "0b450798b0f14f8f5926eec6d42022d8d7ba4bfc57743324d34c7a29ffec8f65",
+     "bytes": 112217,
+     "rows": null,
+     "blockingStrings": 161,
+     "vocabTerms": 90
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/diag215-scores.json",
+     "sha256": "e43006f1fbcf7f89f53fcf3be685770c94aa8f19a520046ff09b065b478119bb",
+     "bytes": 107926,
+     "rows": null,
+     "blockingStrings": 161,
+     "vocabTerms": 127
+    },
+    {
+     "path": "main-tree:artifacts/decode-compare/scores.json",
+     "sha256": "9e55ce5af98cf7e37ae299c31022d04174f46239b305fcc7d64deebd686b42aa",
+     "bytes": 44551,
+     "rows": null,
+     "blockingStrings": 99,
+     "vocabTerms": 74
+    }
+   ],
+   "blockingStrings": 745,
+   "vocabTerms": 829
+  },
+  {
+   "id": "s52",
+   "label": "主树 statement-extractor / statement-verification（陈述抽取与核验）",
+   "role": "training",
+   "scope": "text",
+   "path": "artifacts/statement-extractor",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/statement-extractor/extractor-freeze-v1.json",
+     "sha256": "8e01d147a396aeeb4bc01b64a544f9696e7144fd2e144ea16c77330b46496d14",
+     "bytes": 1190,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-extractor/extractor-run-manifest-v1.json",
+     "sha256": "ace38034cd9912ee647f6a0a9eaec589d1a1aa21e1f1a5ddd6ae2d200c8927e1",
+     "bytes": 6897,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "main-tree:artifacts/statement-extractor/extractor-train-report.json",
+     "sha256": "d39f2f9144c14c4f25c5b2288beb4669952daacd5972c53d042609c8015534ab",
+     "bytes": 49630,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 34
+    },
+    {
+     "path": "main-tree:artifacts/statement-extractor/extractor-training-protocol-v1.json",
+     "sha256": "ca03b2bd1e57892c372566171674896e7af26702a3ef460b12784b04c7fb5f1f",
+     "bytes": 2373,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/statement-extractor/material-v1-freeze.json",
+     "sha256": "22451695d0c419c20b07f62b6a4936562dda0e6ce115218ad9344060af1402ed",
+     "bytes": 1781,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/statement-extractor/regression-a0-v1-freeze.json",
+     "sha256": "be02169ae70c526c9005a2c1eab4b3653865241826b768b8abf8811df3097a69",
+     "bytes": 684,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 38
+  },
+  {
+   "id": "s53",
+   "label": "主树 statement-verification（标签、切分冻结与报告）",
+   "role": "training",
+   "scope": "text",
+   "path": "artifacts/statement-verification",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/statement-verification/audit-target-v1.json",
+     "sha256": "50f5e9cc1a82ad6aa7a1b4b0c4589836433e9be4265464c7637c93ccf41797c2",
+     "bytes": 4161,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/audit.json",
+     "sha256": "5711a72b55ddfdb83301ee865f6259865697c7c97e9b9c663f2653f3fb7c31f0",
+     "bytes": 2692,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-dev.json",
+     "sha256": "b295e31b4e5f041548582abcf148b5c0f5d631743ded0fe2390c4ef5b5743e8b",
+     "bytes": 864952,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-freeze-v1.json",
+     "sha256": "e264e7a04f451aaf62eb267bb12c5e4ad7b524ea3ee7a9948cbd0f842dbbdc35",
+     "bytes": 808,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 5
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-general-confirm-summary.json",
+     "sha256": "5efd8b1ba294fb020eb3132826ec54751204078c0ad58855c17d091e3719eb53",
+     "bytes": 1299,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-regression-summary.json",
+     "sha256": "1df3d1802907255c8d4b5d273fb245a7da5fd493b2ab0397f62d29b6bfa2fe70",
+     "bytes": 3665,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-run-manifest-v1.json",
+     "sha256": "88fa9c24032e44430d9bdeba9eb942165334424b35985022a4e74fae93e27b85",
+     "bytes": 12822,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-target-confirm-summary.json",
+     "sha256": "155a596d056813547265bd76e631f8e520147fe3ce6b5f967d750eaeceb93ea8",
+     "bytes": 2835,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-train-report.json",
+     "sha256": "5e2ba2c951a59418e887655345c041dd8f98d975e7dbc64ee80a46a052c15526",
+     "bytes": 14117,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/joint-training-protocol-v1.json",
+     "sha256": "20ec731168e95a292579550102ce79f3f90b9efbe1a356c5cc6988ff54c64266",
+     "bytes": 3987,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/label-compatibility-v1.json",
+     "sha256": "29f1cd55719e050e66bf5efaf7b0f292691b7160a7b6e6d3e9e82fb04f9ed311",
+     "bytes": 5280,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 16
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/metric-freeze.json",
+     "sha256": "6014c7d2feca07c4615c354c089f704317040d2a2db8e977834ad60845f6552e",
+     "bytes": 2991,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/review-target-v1-summary.json",
+     "sha256": "3045018d8df3190e1e537ad53ec9342d877ad67d5ff9ca6e16657b22ab124717",
+     "bytes": 6712,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 49
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/review-v1-summary.json",
+     "sha256": "490c3dbf3a190b4f39d2d4e12d1492f9af98f9e0fe57d2c35d3d29ea4c833794",
+     "bytes": 2135,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 4
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/split-freeze-target-v1.json",
+     "sha256": "0c0d3a99ce14a8aec9d6b08c241bbfee26cf857b5a3e2f89de7a31f739f2439c",
+     "bytes": 6637,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 9
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/split-freeze.json",
+     "sha256": "914dcf6522ef65ed2e7b79c717ef9d2d12976d90e351095c35e2681909a56ebf",
+     "bytes": 2608,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/statement-authorization-overlap-v1.json",
+     "sha256": "6a0419bd4bf0b9894edf85fcf0fd320832111ad3e9ea9741aa45f3647483a5cf",
+     "bytes": 13658,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 34
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/statement-authorization-pairs-v1-summary.json",
+     "sha256": "30043244bbafb575cc883dcbc4d4c56fbedbbbcd9607ad82e049a6d7a069bf2e",
+     "bytes": 1409,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-confirm-new-summary.json",
+     "sha256": "0cb489bc16875ad65f8f49e212b8b1ee7880f122d185a0a4da8de72517d0b1b8",
+     "bytes": 3200,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-confirm-old-summary.json",
+     "sha256": "5e51dce80ed9827c23d084e5da0013889f37b33eb6511aaef156f26ae13b3ba1",
+     "bytes": 3264,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-dev.json",
+     "sha256": "c469239d7f5b721ba0f0bb290acf49fd5601313c6bc617d6d9691263313002c0",
+     "bytes": 367397,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-general-summary.json",
+     "sha256": "7e83dadb02575d32400b8c73ff382c99c44e0d79692b2b9935b9b4f8fe43f9c7",
+     "bytes": 1159,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-regression-summary.json",
+     "sha256": "cd8fa322879d4bd1c6e3b2c6d5519a6ac6af3973bd2436946e8074ce380dd85c",
+     "bytes": 3724,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-run-manifest-v1.json",
+     "sha256": "b82bb466620c1755825dda6a1c31081dd88b0e1b201dce1f3eb407b3e71eb578",
+     "bytes": 13309,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/target-train-report.json",
+     "sha256": "cbc44f7d5c8de2712054c78b97b830c4220b31e0e568f6138394ea9dde10fc18",
+     "bytes": 417521,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 11
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/train-verify-binary-report.json",
+     "sha256": "2f414f6a8f10d9e5dd8f7f65c126c2b2086770ec6ab943c6c9747314595f129a",
+     "bytes": 441581,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/training-protocol-target-v1.json",
+     "sha256": "8f38a05196cd5c042a7c98a1a593ee7ebcbebdab2a4eaa571773e09ffb5bf353",
+     "bytes": 4000,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 2
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/verify-binary-confirm-summary.json",
+     "sha256": "eba3e1d33e1882cdad430e77bd58c014cbfb28532777e5944c93ccf9dd650852",
+     "bytes": 3542,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/verify-binary-dev.json",
+     "sha256": "fb2be90a4232b561909537f965c892f340f489b19e57ed3b91119d6fa2ff39cb",
+     "bytes": 405323,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/verify-binary-regression-summary.json",
+     "sha256": "a376c4f3fad791527be33846a272e46d715af149e3688b09500e31d68a50a175",
+     "bytes": 3709,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/statement-verification/verify-binary-run-manifest.json",
+     "sha256": "ac72c566ad0f3973c1b640cbaed9cc762d7c599f6d9be20ae0ec43d5df4bf16a",
+     "bytes": 9140,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 3
+    }
+   ],
+   "blockingStrings": 7,
+   "vocabTerms": 151
+  },
+  {
+   "id": "s54",
+   "label": "主树 world-provenance（叙事来源/证据对照）",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/world-provenance",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/world-provenance/boundary-manifest.json",
+     "sha256": "1c1a99adf4b11469bf8d84ce3b5c2d13fae425b26a8ea9d54ca2bfb3f43703a3",
+     "bytes": 1125,
+     "rows": null,
+     "blockingStrings": 25,
+     "vocabTerms": 3
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/boundary-train.json",
+     "sha256": "da2a3e43ec59ef0c4c00e7a32f8ee4efdc0d4e381a1949a6d1f5af9c6cea82b8",
+     "bytes": 875,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/boundary2-manifest.json",
+     "sha256": "6479bb039a6c4d171b2931d137e30069853593c345c8e9e4c0fcbad3896a3034",
+     "bytes": 1259,
+     "rows": null,
+     "blockingStrings": 31,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/boundary2-train.json",
+     "sha256": "dcc0bc4adaf49867a4664d3bc0dc96312db4aaa9de95134db407d7aca926eee2",
+     "bytes": 876,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm-b.json",
+     "sha256": "93c74f04be4227015a7985497264a265aeda84d78b531028d5869b7793f220b9",
+     "bytes": 7627,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 33
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm-b240.json",
+     "sha256": "34a0325f5c18c9e10b6c009971e69565a049c66f59e9ef9182a671f3c7bb346e",
+     "bytes": 7654,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 33
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm-u240.json",
+     "sha256": "b1587353ee2463e836c8d497ff1e3d5fc13010d3c6102fea4d98eb9422064cc7",
+     "bytes": 7667,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 33
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm2-u240.json",
+     "sha256": "ac4d56afadd2044bc4fe348cc32bbb86b6d2ab304cd23a6537a61ea1a9d2c772",
+     "bytes": 7813,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 50
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm2-v2-240.json",
+     "sha256": "b2003ead717c36cef0e26325f832b3f5bdfa044e908b16294430b3797db4e2e7",
+     "bytes": 7806,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 50
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/confirm2-v2best.json",
+     "sha256": "c96a561103fe8196a05728f2030dffb8d5e41c937f4673f8b556fa4d71960ce2",
+     "bytes": 7806,
+     "rows": null,
+     "blockingStrings": 40,
+     "vocabTerms": 50
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/diag-b.json",
+     "sha256": "72d90e56f98585ea847e617db4231d03a4702119fef5284a9edec0a3b6f3a637",
+     "bytes": 39805,
+     "rows": null,
+     "blockingStrings": 157,
+     "vocabTerms": 85
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/diag-b240.json",
+     "sha256": "d8436c10723977b9b29ddd368a01875e0b4a87dd8938b24a2d9569ded38a4168",
+     "bytes": 39535,
+     "rows": null,
+     "blockingStrings": 152,
+     "vocabTerms": 85
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/diag2-v2best.json",
+     "sha256": "ce9686f051cd8659874aeb2a71ee6c5d2dd664508accfbd970bd90c5389bd650",
+     "bytes": 40108,
+     "rows": null,
+     "blockingStrings": 161,
+     "vocabTerms": 85
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-plan.json",
+     "sha256": "a71f238c9e557f00d180a9d94d5b50708265162627f10eec7782fb77cf3ef186",
+     "bytes": 251,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-result.json",
+     "sha256": "a03e579e73510a7ccad1a903b602c0c0dfb3ffed9ce1e3a088719a96461f7445",
+     "bytes": 3939,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-round-authorized.json",
+     "sha256": "8bad51100279114ab0df31ae07e6893187462938000d4b5ccfe8f03c69ca9063",
+     "bytes": 3411,
+     "rows": null,
+     "blockingStrings": 6,
+     "vocabTerms": 16
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-round.json",
+     "sha256": "f658981e96503314f6f5c8d18a54ec582604f10e9b5603fd1cce347b8ec02f87",
+     "bytes": 2591,
+     "rows": null,
+     "blockingStrings": 6,
+     "vocabTerms": 14
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-timeout-f3.json",
+     "sha256": "adceb95fa688e16146c16dd51b01acc2bed2acc6ed481caf9fe9e285aaa72c00",
+     "bytes": 3238,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 15
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/mixed-timeout-f4.json",
+     "sha256": "db912a60530e3bb4c3b662225da9159f78b819db93f114f9da2042c5a89164cc",
+     "bytes": 3965,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/n3-authorized-relation.json",
+     "sha256": "9e3589231d45d7ce8e9cb108502fc0e09f6a91dd34dc8529ff47c6f175e0a335",
+     "bytes": 1415,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/narration-page.json",
+     "sha256": "3e48b49468dce1ae942e53988a708e1af2af02829e23bd8e33af51bfbb04a853",
+     "bytes": 2796,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r1-authorized.json",
+     "sha256": "f7619a71382374ac6c8775260ffe9af99b0d163d5ed192d73c89bbe62c93482d",
+     "bytes": 2995,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r1-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r1-round.json",
+     "sha256": "9c21ea6df34516986eda63da52756de76b77e1bf801baa6e7445ccb884c093c3",
+     "bytes": 2359,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r2-authorized.json",
+     "sha256": "4ac8a4860f16f7c50ef9db6247936d9b96a338f84320a32045d261cbb0b76a2a",
+     "bytes": 3002,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r2-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r2-round.json",
+     "sha256": "e000193bbb80c545ed147c5173dd94e2b89ab4e441775167f700b713b8c5782a",
+     "bytes": 2366,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r3-authorized.json",
+     "sha256": "10d8eb590af684dce93f4773ee28f06a85a83a724e9810e5d0a16140b8a85528",
+     "bytes": 3003,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r3-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r3-round.json",
+     "sha256": "561e94493baf1f759a46b9429d7253cdb29419e2cd5afc20647bdaffcd6fef4f",
+     "bytes": 2367,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r4-authorized.json",
+     "sha256": "0505c140b876131777adaa2c7fcfb1c36aefa05b786e7eb2d0e84bd560b606a0",
+     "bytes": 3008,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r4-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r4-round.json",
+     "sha256": "64b55cb75dc2548fa498578cfa3c989c1d0cbd641872594c5039a37cab3a46cb",
+     "bytes": 2372,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r5-authorized.json",
+     "sha256": "8f75058aff3c0b2a2a82f4d31844a916f4803fcb1a836b4acd46677dd3958a02",
+     "bytes": 2797,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r5-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/fixture-r5-round.json",
+     "sha256": "8e70bf1458ed780d052f12185d1f2687013f20011557f7eeb82a87f63e52d0c1",
+     "bytes": 2161,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/pair-worlds.json",
+     "sha256": "533142dfa010c39497b2e1975ac51cb6bcc0148d867d88b58039393bef5da454",
+     "bytes": 1409,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 1
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r1-authorized.json",
+     "sha256": "832e8a55140089b7534c71d303179c8ffe0eccc87309c3ee0a04a105ba36df07",
+     "bytes": 2948,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r1-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r1-round.json",
+     "sha256": "240a09529a74ea0b83745d2b4c63e05ef20b13212acfcf88997dea412e2bdd97",
+     "bytes": 2322,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r2-authorized.json",
+     "sha256": "d5616ac5cf82bef938009e4746384104b9b5557a6e9fcc75a4ea80457ea09b67",
+     "bytes": 2953,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r2-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r2-round.json",
+     "sha256": "2a985ef768199a822416801fd315405fdeda5b1f10a098f8b8b78a7cc011d3a3",
+     "bytes": 2327,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r3-authorized.json",
+     "sha256": "86e7791e5889f5e3abd7dd3f552b88216d0934972b11e2ff265fcad36132cd22",
+     "bytes": 2954,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r3-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r3-round.json",
+     "sha256": "d977abcb0045de62e1af806903e3a30ea201ba747e5e77e4fd13cc064262a181",
+     "bytes": 2328,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r4-authorized.json",
+     "sha256": "5c03c646709a805cc8424603dfd4580c3eb1eed5debea2609353625d69515e91",
+     "bytes": 2959,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r4-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r4-round.json",
+     "sha256": "97b0b33f12002f0980f0110766cb1a004f37aa44cba11bd810ef5285d2bad70d",
+     "bytes": 2333,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r5-authorized.json",
+     "sha256": "51e43edc90b030dd95a0d6a78d7f6b38ef9bad8e42842d1b9ee3b87756b2e890",
+     "bytes": 2752,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r5-plan.json",
+     "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+     "bytes": 64,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/pairs/train-r5-round.json",
+     "sha256": "9306a600ac355a245126f194ab4b6f8a8f2c20f3e0f9086019e5231aa7da123b",
+     "bytes": 2126,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 7
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/provenance-browser-verify.json",
+     "sha256": "18715dd03b6b283a2304d0e897f7127cddfe0958ceba979c29f7f3f353b8c66d",
+     "bytes": 589,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/provenance-browser.json",
+     "sha256": "3197c94216e027ab912e37b0a0072c71cc130698e3abb3d005810e154c337d23",
+     "bytes": 814,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 5
+    },
+    {
+     "path": "main-tree:artifacts/world-provenance/train-r1-authorized.json",
+     "sha256": "832e8a55140089b7534c71d303179c8ffe0eccc87309c3ee0a04a105ba36df07",
+     "bytes": 2948,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 8
+    }
+   ],
+   "blockingStrings": 908,
+   "vocabTerms": 792
+  },
+  {
+   "id": "s55",
+   "label": "主树 world-integration 与 h2 归档（结构证据）",
+   "role": "report",
+   "scope": "none",
+   "path": "artifacts",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/world-integration-a9321409-cd077a2/executor-report.json",
+     "sha256": "2b031691450d4179cc498931309511fa436bd88f151e571ad82749525e525ee2",
+     "bytes": 8380,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/world-integration-a9321409-cd077a2/transport-report.json",
+     "sha256": "34d3998e9629bf443f3ea485252f810ba937336a22e2cf48dc96db5f90cf994a",
+     "bytes": 5635,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  },
+  {
+   "id": "s56",
+   "label": "主树 benchmark 全量（分类器/CRF/叙述样本）",
+   "role": "tuning-dev",
+   "scope": "text",
+   "path": "artifacts/benchmark",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/benchmark/classifier-action-corpus.json",
+     "sha256": "89366234828b9266968ef49dfc89a7fea02c94a7929aced55c9ce5a46e26c845",
+     "bytes": 16047,
+     "rows": null,
+     "blockingStrings": 173,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/classifier-trial-1791485810864-action.json",
+     "sha256": "0c17baf224b1ac505af2fed3923b8d8a72b489fee5ea43783f2b77e8a43dcaab",
+     "bytes": 18145,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/classifier-trial-1791486826233-action.json",
+     "sha256": "d16be39c083b64aedbdbcaa3b3dc91dd22506c5cc3c58eb4abf7c28b9f335cfa",
+     "bytes": 19010,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 9
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/combo-trial-1791517796952.json",
+     "sha256": "9973984ba31d44171c074293e19c8f9d19900cb5e37bce2524122d8b9a09e5a9",
+     "bytes": 688763,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 69
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/combo-trial-1791518688043.json",
+     "sha256": "9f2614f9c1f9451a655265d3b285772e74e94548ea0ccbb11bf863c336fc510c",
+     "bytes": 685327,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 69
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/combo-trial-python-1791517852354.json",
+     "sha256": "a4ccf6fbf1c784f10fce485cb5b15a3ee92661819b2293ea7df7d5c4f2be96cc",
+     "bytes": 124727,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 67
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/combo-trial-python-1791518708451.json",
+     "sha256": "bd0937e60f240faa0347f4209520829756abad7fc68b7747b434c25f1d8c8631",
+     "bytes": 124719,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 67
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-1791520999608.json",
+     "sha256": "c9996b88f106637c59a9dd1985f447e66cc00428a4f490e16faff624620b2d55",
+     "bytes": 262618,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 91
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-1791522448072.json",
+     "sha256": "4bb21dd8d45011272d59d566785c740f13d8fa45c0606f25b148ec3e2dc1ab12",
+     "bytes": 259181,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 87
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-1791522475600.json",
+     "sha256": "7822153d1a8914bce16b05bbe83639f8a63ab36d1cf6251043a07e1007c2bce8",
+     "bytes": 250502,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 87
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-1791711630525.json",
+     "sha256": "6f0bccf85c3a419f3300dee5510b08a15e22176267c4a2a549f90608c81fd7e5",
+     "bytes": 252535,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 91
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-1791714189547.json",
+     "sha256": "e9869757df9d12862572063df2b9d92bdd380090a583fb5f41a3a640dc826815",
+     "bytes": 252570,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 91
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-raw-1791520812350.json",
+     "sha256": "4d5fa52ba8943bb03672b6508f17c54cd565820730bbbc3ed62fdfb0a307879a",
+     "bytes": 111999,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 91
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-raw-cpu-1791521564538.json",
+     "sha256": "ee03e44a7c7a2215936b70dccd8ce66a4fcfe3b93cb5e339046043387dc6c7c9",
+     "bytes": 37129,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 71
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-raw-cpu-legacyval-1791522282705.json",
+     "sha256": "c2fdbea935061be1315ecb9410c18ff26648469d64c7799a8cc32199963ae8f9",
+     "bytes": 36957,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 70
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/crf-compare-raw-cuda-1791711431064.json",
+     "sha256": "0a9bef5f687649681666df47b3f19cfcf115ad810f3ff92dee0dcce182691e79",
+     "bytes": 111523,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 91
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791487912006-spans.json",
+     "sha256": "65eb7f10871f79be8f001c77e11cd6dadc8624fa06cd00bb73029553568cee60",
+     "bytes": 24777,
+     "rows": null,
+     "blockingStrings": 22,
+     "vocabTerms": 27
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791488935701-spans.json",
+     "sha256": "de3f4e3bdeb47242195f13da68c0ec719170960a3f16921dfe9b8917b9c575a2",
+     "bytes": 36053,
+     "rows": null,
+     "blockingStrings": 32,
+     "vocabTerms": 44
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791490272471-spans.json",
+     "sha256": "dfa6e835ff9a9004ba7bf14cc1daa3c041ff7ff5cf1f42edff9e37d115e702ba",
+     "bytes": 35232,
+     "rows": null,
+     "blockingStrings": 32,
+     "vocabTerms": 40
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791490412586-spans.json",
+     "sha256": "4a55814b5c79fd5fe1971652791c8cfd8a6d84e4b9e63897afed8660dde317c6",
+     "bytes": 34996,
+     "rows": null,
+     "blockingStrings": 32,
+     "vocabTerms": 36
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791511301490-spans.json",
+     "sha256": "9fb2666139d8263a8aca96757e417d8aa24865d4fdd1afeb0bd0ab6a70d8d8eb",
+     "bytes": 268364,
+     "rows": null,
+     "blockingStrings": 53,
+     "vocabTerms": 65
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791513536813-spans.json",
+     "sha256": "a232105f00cbfc9f18e216bb42193ae51fd8f97bf74569350525ef85e9db89e2",
+     "bytes": 479058,
+     "rows": null,
+     "blockingStrings": 54,
+     "vocabTerms": 68
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/labeler-trial-1791516015611-spans.json",
+     "sha256": "324138a0b3767bb766c412c98b5d24e7936b10d1d74ac35058c341218fe4b39c",
+     "bytes": 505790,
+     "rows": null,
+     "blockingStrings": 54,
+     "vocabTerms": 68
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/minirbt-h256-snapshot/config.json",
+     "sha256": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+     "bytes": 598,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/narration-samples/qwen2.5-0.5b-2048in.meta.json",
+     "sha256": "875d2a45496b2a77aa5e6d9a26143bccb6d2a93b594b5bc5a02663848ed8cd68",
+     "bytes": 253,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/narration-samples/qwen3-0.6b-2048in.meta.json",
+     "sha256": "aada8e1c7c9012ceff973c66de5547205fdabbc8ba3058dc46a6084465a0b877",
+     "bytes": 576,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/narration-samples/qwen3-0.6b-seed42-2048in.meta.json",
+     "sha256": "ae634a18d12d4a6eb51d22b25b8ae2a555412257747bd0a5c6dd9dd83cc9028e",
+     "bytes": 564,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/narration-trial-1791713208385.json",
+     "sha256": "ca6664036bc513e3fc4fced308d91347dc46e06afb72e64a64ee558b4cfdd10b",
+     "bytes": 26820,
+     "rows": null,
+     "blockingStrings": 4,
+     "vocabTerms": 210
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/native-pp-b11364.json",
+     "sha256": "7a9e29408827e596fe57c984e6aa9d92862d03b5ed8643247d5d7ae1dabcb995",
+     "bytes": 5216,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/native-tg-b11364.json",
+     "sha256": "d63d195c2752df54f71ec9114222f6938ef8c85d592d1b4da1afaf8ee13b2974",
+     "bytes": 2608,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/native-tg-d2013-b11364.json",
+     "sha256": "c4a1e1227d87a65fa3bd311dc4631e7f59e2fd2a0ab758e4b2850cdbd469c27c",
+     "bytes": 2617,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/span-labeler-corpus.json",
+     "sha256": "1aa9e018f0a2e24a3b708aa3c45fbe98cf0b48fc704199c89473a08cf8703e34",
+     "bytes": 116811,
+     "rows": null,
+     "blockingStrings": 859,
+     "vocabTerms": 137
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/span-labeler-dev-categories.json",
+     "sha256": "ac9fb41075e5451e765cb7b82e06c3f865c92a7ab33c07aecc670e387a7878a3",
+     "bytes": 6125,
+     "rows": null,
+     "blockingStrings": 54,
+     "vocabTerms": 29
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791460272626.context.json",
+     "sha256": "b00bf5803bdbd2372f249997b6a3b440e3149acd628327928e99b5ff2b9e8d5e",
+     "bytes": 1241,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791460272626.json",
+     "sha256": "0e404a883fa651f7199eb1d7ca458526559b6f14f01e6880f9f7c94ef6fc3327",
+     "bytes": 17685,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 8
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791461901754.context.json",
+     "sha256": "b00bf5803bdbd2372f249997b6a3b440e3149acd628327928e99b5ff2b9e8d5e",
+     "bytes": 1241,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791461901754.json",
+     "sha256": "dce48be09ce9aac01ffc718229ff057c867bfbd86b9e59addc551928fc100279",
+     "bytes": 7891,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791462136175.context.json",
+     "sha256": "84f5b2a3665904ac1e17ffb03d6e89a7a49964debaf0779be8884be0962a3991",
+     "bytes": 1240,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791462136175.json",
+     "sha256": "d57e00855681367a96cdb03de33196651d3dc7f8dc937a64cc48db8cb45ebe01",
+     "bytes": 7889,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791462473107.context.json",
+     "sha256": "e841bf7bdb0ffefb702274c45f1ae7dc387e2c8ce4048a7df3c2c61735cd8f4a",
+     "bytes": 1239,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791462473107.json",
+     "sha256": "f671e00e68ff320d489ab35033b368c56df96875066073d5089ac617787d26f8",
+     "bytes": 7866,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 6
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791469111243.context.json",
+     "sha256": "15c48edd5ce16928aea6e82fd38f20681286604ca355e7f4b86889c74daef009",
+     "bytes": 1241,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 19
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/target-retest-1791469111243.json",
+     "sha256": "73eeedb914e2cb31e17da29fa7e1c36e3c59abe43eb0eea045305384c1dccd25",
+     "bytes": 19814,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 81
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial-1791463825668-qwen3-0.6b.json",
+     "sha256": "13a45410a3a7adbaa02fa1a8ae0f5afa9738a21620b64131c478804d3dbcd70a",
+     "bytes": 12603,
+     "rows": null,
+     "blockingStrings": 3,
+     "vocabTerms": 13
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial-1791464133269-qwen3-0.6b.json",
+     "sha256": "72d1a2317efebb504c51196ebf5849f86e4ea6d3651612123741a56219823f66",
+     "bytes": 17050,
+     "rows": null,
+     "blockingStrings": 20,
+     "vocabTerms": 13
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial-1791464375667-qwen2.5-0.5b.json",
+     "sha256": "a2ed30e2c3edaffd6729a9a5b3f6330d2b03c847b568c0b333024b7a5b3ef78a",
+     "bytes": 14805,
+     "rows": null,
+     "blockingStrings": 22,
+     "vocabTerms": 17
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial2-1791467196749-qwen3-0.6b-zero.json",
+     "sha256": "cd26955414f09162d2d6b5c5340a6456c051ea1829c89f7df194c13786d5002a",
+     "bytes": 9219,
+     "rows": null,
+     "blockingStrings": 11,
+     "vocabTerms": 20
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial2-1791467483638-qwen3-0.6b-few.json",
+     "sha256": "b4796143132161b572de64aef4a238b65b98e4653df8d0290beae1bcbae3e862",
+     "bytes": 9145,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial2-1791467737622-qwen2.5-0.5b-zero.json",
+     "sha256": "14f11f96166598a6108af7a47ed0d9054bcad725b45d7d3700befd6298c0847b",
+     "bytes": 9666,
+     "rows": null,
+     "blockingStrings": 16,
+     "vocabTerms": 26
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial2-1791468357816-qwen2.5-0.5b-few.json",
+     "sha256": "124791c591ba74e08dea7e3a6634e5c2e993a5665a071160bc69da8b979191c7",
+     "bytes": 9235,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791471521660-qwen3-0.6b-zero.json",
+     "sha256": "ab18df2f512343c8a23e9a89442308b68fb197e57df1484fafc5998ad4333e14",
+     "bytes": 9690,
+     "rows": null,
+     "blockingStrings": 11,
+     "vocabTerms": 20
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791471996569-qwen3-0.6b-few.json",
+     "sha256": "4918fec1c725b90173d0f7eecf584a619d94e3e15723f5e55105b09e69ff44b4",
+     "bytes": 9623,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791472258383-qwen3-0.6b-few-compact.json",
+     "sha256": "d77f56ed5ed59c60c3d86b3664569acde9d59a927c7131cf1b616543d62fdea8",
+     "bytes": 9617,
+     "rows": null,
+     "blockingStrings": 11,
+     "vocabTerms": 22
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791472530917-qwen2.5-0.5b-zero.json",
+     "sha256": "94c482c72153f7b2a67e320dd02f7beeba7d247d4003bf00f4ebb1988efe6a2e",
+     "bytes": 10141,
+     "rows": null,
+     "blockingStrings": 16,
+     "vocabTerms": 26
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791473114895-qwen2.5-0.5b-few.json",
+     "sha256": "044b05191142a77c5508d932898d292663911ba7f9df5eef458d1e9a0c24018c",
+     "bytes": 9710,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial3-1791473398046-qwen2.5-0.5b-few-compact.json",
+     "sha256": "576474de5d33d75d3c3802fc8474b7af547c62630775d3ca0dd98534df3b5539",
+     "bytes": 9787,
+     "rows": null,
+     "blockingStrings": 14,
+     "vocabTerms": 23
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial4-1791474890874-qwen3-0.6b-zero.json",
+     "sha256": "22a037c8621d0d5d0df810a2958eff11df571c6821ef66f5d1c86f5e6dff83e1",
+     "bytes": 19136,
+     "rows": null,
+     "blockingStrings": 38,
+     "vocabTerms": 11
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial4-1791475222394-qwen3-0.6b-compact.json",
+     "sha256": "ed329ee0b14aee075bd1e58a8e968d0ad3b3d8180d5c4578e87e7ce263e02ddc",
+     "bytes": 21728,
+     "rows": null,
+     "blockingStrings": 38,
+     "vocabTerms": 22
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial4-1791475222394-qwen3-0.6b.json",
+     "sha256": "6d829b427d814e6d2e2f706bd3e4a1cf8d77fd98538a506ffc739750d711fb89",
+     "bytes": 22492,
+     "rows": null,
+     "blockingStrings": 38,
+     "vocabTerms": 22
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial5-1791476597683-parse-compact.json",
+     "sha256": "b740cd27586fbe0e66bdcc17a9994ac28d86085d601eb1e6c0b8e46f158725c8",
+     "bytes": 33722,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 46
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial5-1791476784483-parse-minimal.json",
+     "sha256": "3839be25fd73c2b85026a2bd001a230681fd6b1c942ebff6499f12d4e5cc3699",
+     "bytes": 24365,
+     "rows": null,
+     "blockingStrings": 11,
+     "vocabTerms": 36
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial5-1791476841474-names-json.json",
+     "sha256": "223cbd7193a069df9ae3939d22ea4939f490080b68c3be753905db7d33c9ee4e",
+     "bytes": 13025,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 26
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial5-1791476875697-names-plain.json",
+     "sha256": "d59e3600c3ebce9e2eb44798dcc2a6490cb16532a2529757746c105b3a7e2108",
+     "bytes": 11622,
+     "rows": null,
+     "blockingStrings": 15,
+     "vocabTerms": 32
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial6-1791478525078-parse-compact.json",
+     "sha256": "24d1df5cf33d2524ac12bc1a1705099493ab7e064160dc029597d9a74fd82791",
+     "bytes": 34061,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 46
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial6-1791478788210-parse-no-state.json",
+     "sha256": "d65e3b46930cd838fd6191b920ebe3c0d7c5ec3aca6febad6dbd2ba86369c594",
+     "bytes": 31022,
+     "rows": null,
+     "blockingStrings": 9,
+     "vocabTerms": 38
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial6-1791478849103-names-json.json",
+     "sha256": "3ccc9113d55a747bff1694b4f9b8f845584087c10101d21a686c7889fd6c80c5",
+     "bytes": 14869,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 26
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial6-1791478932780-names-plain.json",
+     "sha256": "2b607818fb7ee859b6718995025ca2ed999c7a719e601867de41dd6c0d0c63e3",
+     "bytes": 14653,
+     "rows": null,
+     "blockingStrings": 2,
+     "vocabTerms": 25
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial7-1791480258373-parse-compact.json",
+     "sha256": "cb36fb614302d89332649838a5d9bf7e424fdc8df9c7f28f7516799c64fde344",
+     "bytes": 39861,
+     "rows": null,
+     "blockingStrings": 7,
+     "vocabTerms": 46
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial7-1791480786384-parse-split-state.json",
+     "sha256": "b667d0960bbbf36e129771350aabbf1d9db0bbee3452574b31db86da82f58b60",
+     "bytes": 76904,
+     "rows": null,
+     "blockingStrings": 8,
+     "vocabTerms": 51
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial7-1791481125100-parse-split-bare.json",
+     "sha256": "2979a3cf28e45766c1ca58914c07552afe6616e08ab5717f177b6776f7f3ca5c",
+     "bytes": 67830,
+     "rows": null,
+     "blockingStrings": 12,
+     "vocabTerms": 43
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial7-1791481181711-names-json.json",
+     "sha256": "8e0e94bc6dbf34ea28845c715b3e499885507ee7f7d345caa24d3cf04191a819",
+     "bytes": 15573,
+     "rows": null,
+     "blockingStrings": 5,
+     "vocabTerms": 26
+    },
+    {
+     "path": "main-tree:artifacts/benchmark/task-trial7-1791481256852-names-discovery.json",
+     "sha256": "98d4a2b97ffb92255bf64472206379b1e2ef39da970ad2b1041eebbf5757c56c",
+     "bytes": 15744,
+     "rows": null,
+     "blockingStrings": 1,
+     "vocabTerms": 23
+    }
+   ],
+   "blockingStrings": 2441,
+   "vocabTerms": 2785
+  },
+  {
+   "id": "s57",
+   "label": "主树 smoke（旧战役冒烟）",
+   "role": "live-archive",
+   "scope": "text",
+   "path": "artifacts/smoke",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "main-tree:artifacts/smoke/campaign-transition-smoke-20260915-165635.json",
+     "sha256": "7ea42271e1799d4aa8cc31de1b302f801e1ac79f4ef30ce2be8795510bc0574b",
+     "bytes": 34111,
+     "rows": null,
+     "blockingStrings": 30,
+     "vocabTerms": 376
+    },
+    {
+     "path": "main-tree:artifacts/smoke/campaign-transition-smoke-20260916-153514.json",
+     "sha256": "34fc7d30b8ab5dc703b9fd16f0661180545213cbbd0f788f16daf92c27f18940",
+     "bytes": 38862,
+     "rows": null,
+     "blockingStrings": 33,
+     "vocabTerms": 442
+    }
+   ],
+   "blockingStrings": 63,
+   "vocabTerms": 818
+  },
+  {
+   "id": "s40",
+   "label": "组件/世界引擎报告",
+   "role": "report",
+   "scope": "none",
+   "path": "design",
+   "note": "",
+   "exists": true,
+   "files": [
+    {
+     "path": "design/browser-world-state-work-split.md",
+     "sha256": "44d732dfd163bbe45eabfbb3d2cde10749815b4d5abed6d0072a89626d387da2",
+     "bytes": 24815,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/browser-world-state-workflow.md",
+     "sha256": "7258968b3a0eb27189d27aa54d89b9bdab022510cd6614d5df02d77728e6c173",
+     "bytes": 114227,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/component-io-and-commit-turn.md",
+     "sha256": "10d8b68bb1f662acbc6ec5295688c508e37f97ab440906abf7b54bc7b7a1328f",
+     "bytes": 36774,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/b1-controller-design.md",
+     "sha256": "7178483127d1b3d60dbb3317eeec27d04c75c1b44320808b78d6e4e8f9cc017d",
+     "bytes": 20126,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/b2-runtime-design.md",
+     "sha256": "fb636c1fd275d293a99c8a6879f8329cc3207369bbc747a0e0736e19be104558",
+     "bytes": 9095,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/b3-prompt-eval-design.md",
+     "sha256": "7964712000ffa34981d345827910b552eecd78be1bbe46c310128520a24e7dcc",
+     "bytes": 8605,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/b4-session-design.md",
+     "sha256": "0092528aae1e6f66952dc1a60d62b3997160eb65c0839ccb4dbf08fd8ab61b85",
+     "bytes": 6371,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/branch-cleanup-20261028.md",
+     "sha256": "c208813c03182557490bc5536143b420c832814e22a6f3fea0aecb0d0c36054b",
+     "bytes": 2235,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/browser.md",
+     "sha256": "6faa7b04f735a4afd40ed03d02c546feb983f2a14c549c57064bfec5f876b8dd",
+     "bytes": 75111,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/component-boundary-audit-20261028.md",
+     "sha256": "5c1c13f774ef08f76c575c626aceec3a43f7fede809cd62f8488a86b565d6e0f",
+     "bytes": 18913,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/ab-sentence-pairing-v1.md",
+     "sha256": "89584bf433076a9dd37867d44a456fd259cb5a44ec0d734ca817a4aa3861675a",
+     "bytes": 9719,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/attention-selection-v1.md",
+     "sha256": "93729b75bf68d23120ccdd8cdc4b6876b3bf632faa2d99fd70c724cdbd39f4b8",
+     "bytes": 7702,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/batch-delivery-registration.md",
+     "sha256": "4092e8dff00aa94c9b582b62c74185ed1b227f5fc673dd56c43a9b9d2da84083",
+     "bytes": 5399,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/candidate-selection-space-v1.md",
+     "sha256": "3df05be4cd09d0159a60f76f93152934d06b2924acfc83f01a49845e2adc5aa5",
+     "bytes": 8578,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/clean-group-comparison-v1.md",
+     "sha256": "09aba1d1d1d7ace9ec039c2c8468e070dde06ca35ee50f865808ef0024d9d2cf",
+     "bytes": 4449,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/component-contracts.md",
+     "sha256": "17a99ae5f90603865848393b62f25427f5cf67c648a576e6b2be036a59c471c2",
+     "bytes": 42699,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/d1-ai-closure.md",
+     "sha256": "e2c0f659e9bee4677203afe3c937141802e218e414bc8cc6317453ad89a60389",
+     "bytes": 6485,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/d2-gold-prep.md",
+     "sha256": "2645d80408211d17f686aa15614d13685bc1896872c1565395ecda82b6903710",
+     "bytes": 14500,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/fix-round-1c41587.md",
+     "sha256": "02ffe2ad55a5f2ec0fc31f3294305080e8268b76b85a65b98ddf726ec4e080a7",
+     "bytes": 7361,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/group-handoff-v1.md",
+     "sha256": "74178aba7499823eff7d4cb4c08a9d0199118fc64201774e3fc720d7ab4b2973",
+     "bytes": 6977,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/interaction-sample-v1.md",
+     "sha256": "15c4ddf343ebf23923aae3f30179650a505da32917fa8982146f44c647519b06",
+     "bytes": 9921,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/material-scaleup-v1.md",
+     "sha256": "c86842c0e73330968b2f44b7d1c1d766be1ebc942c95c18418f36116301d88da",
+     "bytes": 11037,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/model-retirement-qwen3-06b.md",
+     "sha256": "b846452b58ecc79a4c0c45af1e37c2f419b409227d93e0df6725adba827cd027",
+     "bytes": 3288,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/model-training-runtime.md",
+     "sha256": "2fa7cb527f44e2a9a9a4ceb8685d32937acbe15a6996d1d6309481bc910a32c7",
+     "bytes": 42011,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n2-annotation-rubric.md",
+     "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631",
+     "bytes": 5827,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n2-content-selection.md",
+     "sha256": "e373bf855abec27a929c7c95cd9d70c7e5122e6b4f74507fe811d9aa840f8b8f",
+     "bytes": 18457,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n3-n4-interface-plan.md",
+     "sha256": "d37fae9205c85bf4fd7303c35722593486d5f49d8c95f047cd477ce46c6416c0",
+     "bytes": 11366,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n3-program-arm-plan.md",
+     "sha256": "901e60b21fe84e7ded3d23186a93ede92be837e631f75bf5918063765d90d7ad",
+     "bytes": 10531,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-group-contract-diagnostic.md",
+     "sha256": "c2601a92303e628f43007aaedd8d2526f0f97192e4bdbfe6d77b3b4843519afd",
+     "bytes": 6704,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-group-input-ablation-v1.md",
+     "sha256": "884738727dc43e6d2b4e9e9bf72b9850b653abbdd7d963937000846f4528fdbb",
+     "bytes": 3857,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-input-packing.md",
+     "sha256": "04c9683b9bcf1fcc05fc5f878fd34a3de97e46c7103cc44d0a9d34e851f08a89",
+     "bytes": 9263,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-integration-package.md",
+     "sha256": "c177098c2a23100cbbfb23fb2ca07be763baa5a1c5e9720cd60cf0ee420202aa",
+     "bytes": 12841,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-dev-v1.md",
+     "sha256": "123ef82e79e34a7085e0a61887ee8b8c5e44111ab3dc9f9887e05a309d32059a",
+     "bytes": 27675,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-dev-v2.md",
+     "sha256": "60cb19ce12fe0ba42e136afb0f22afecf7b7bc5c2f9f5876ce980f5ada8d713d",
+     "bytes": 71581,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-dev.md",
+     "sha256": "d3b41f411fd6433df0be26f09a7af79edc3abc6bef3d80c60eeacb6053552e07",
+     "bytes": 50294,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-input-packing-preview.md",
+     "sha256": "b6567de0a194bdde6ed9bba9ac6952bc8ffba2383fd71aec2576df97960c09cb",
+     "bytes": 19117,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-input-preview.md",
+     "sha256": "2858a3f1822f2bb9032e682b9d394caeb382122536fe6abcad8ed32e789deb92",
+     "bytes": 18261,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-pipeline-input-preview.md",
+     "sha256": "73688b22fe3bb2f09b440a3c9576d307c53b0b08bb64618fd3f9c87a3b85a634",
+     "bytes": 23222,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-narrative-runner.md",
+     "sha256": "619bb7c1db37e754411d0a4d28f96f091680e1f2f0fd8fc9ee422d424c9b351b",
+     "bytes": 3565,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/n4-training-plan.md",
+     "sha256": "7f8f7fe0063dfb5ccd7c73fe874ea7e76613de595af2e1e42ae68029f1dd4362",
+     "bytes": 36167,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/organize-before-wording-v1.md",
+     "sha256": "5239728a9cc1bed0b15512a393b01222ea999d5019d986ebc9a11fd25e56df89",
+     "bytes": 10246,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/p-boundary-run-v1.md",
+     "sha256": "ec159ef460761fd3dff4dcc4811de3d1857dfde426660620902f417d3b31d1ae",
+     "bytes": 14376,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/plan-controllability-v1.md",
+     "sha256": "6e6d12d1799a373181e76f1a11f02ec91973d6a7b002fd10d9b4a8642e0e9534",
+     "bytes": 4741,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/README.md",
+     "sha256": "bcf3f1ba916d2c128b7391dee75c3cb6ae95ba864493ea51b354d0c755954e6f",
+     "bytes": 76217,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/route-split-report-v1.md",
+     "sha256": "4f432b00c1ba64c26382c4905a92854abe393106f1ba5aa9ba163649e6d3d089",
+     "bytes": 20479,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-base-784m-fit-diagnostic-v1.md",
+     "sha256": "49f272b5033908bfb361ad3464b866ea27ae56ed071f1cf05c5dc33bd772d79b",
+     "bytes": 8128,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-base-784m-plan-v1.md",
+     "sha256": "bbb3d3c1860a9ad24cb7322189e6807884f3bd13f6fe3040ca2b74186e931c39",
+     "bytes": 6555,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-base-784m-result-v1.md",
+     "sha256": "e68bd37dcc3ccf6732038f683f808f5b7febe2afb483c83efa6ec293d4aae5fa",
+     "bytes": 7262,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-module-data-scale-v1.md",
+     "sha256": "ff7bfec6ef34bf4ca8cde20f55a6bac25ddec038b965629414a0b5f86db95cd3",
+     "bytes": 6812,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-module-source-inventory-v1.md",
+     "sha256": "faa09f84070f68b4bd1e8ae59ddafe448eec82779d20c7e6011546764da867fb",
+     "bytes": 4734,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-scale-result-v1.md",
+     "sha256": "44a270c8117346497fcf3c83dcab97595ca94850185c9aaf50d41662ef6b9a94",
+     "bytes": 6980,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/components/sentence-scale-v1.md",
+     "sha256": "337e2d546aa077731acc259d855b46d9b99704d0af62d54a2bc429f64c0179c4",
+     "bytes": 5461,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/full-design-implementation-direction.md",
+     "sha256": "f586fd0e3b3ec28a9015a4fac2bcf13bf3ffbfa6442669c86de7c834ca82e9e4",
+     "bytes": 15520,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/h2-recovery-read-contract.md",
+     "sha256": "276adcc56289855be56d3ea75d6e9317354ff48fcca557e928691cbe87308ca7",
+     "bytes": 18212,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/h2-recovery.md",
+     "sha256": "79c4a56fe3d6433451fb865eb1c78572830686b0962e8d044905a3835b311eeb",
+     "bytes": 9926,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/model-task-alignment-fix-list.md",
+     "sha256": "2336ac7ea7e5acc2a65fe85dd1589e16bfd48b903f46ecd154e23eb821a2af83",
+     "bytes": 38003,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/narration-split-experiment-design.md",
+     "sha256": "7b16f9f50d01b0be23fbfb1d6a7111cba457db53e9ea9d4eee054d3eb0c75ccb",
+     "bytes": 10994,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-engine-reports/server.md",
+     "sha256": "2dbeda40b406645c231b6acd42f0f5bdadac5ccc5524e7d07a38b38889e55474",
+     "bytes": 3354,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v1/README.md",
+     "sha256": "f85e8433b47feed04d4a1653609a188a8c19ca22241f90f2f0c22ac3bc9b4927",
+     "bytes": 7374,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/a1-kernel-plan.md",
+     "sha256": "6491f9439e820cbdf54494b05cb3db58fb8bccf0c5af16c25c8aa414b06955c8",
+     "bytes": 9778,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/change-list.md",
+     "sha256": "422826cca9984a6d51c9b4bd0585d7304e70d8f96c22322fba53971367a10b97",
+     "bytes": 59112,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/interface-baseline-plan.md",
+     "sha256": "c26743682459447dc08eab6291628f7bebd5b0ba71004490e5314e5be80679bc",
+     "bytes": 37729,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    },
+    {
+     "path": "design/world-protocol/v2/README.md",
+     "sha256": "f143affef305dd45a0c33f8e46d9ccf2a0e03ccc35abddba1def57dad6ef9fa3",
+     "bytes": 15693,
+     "rows": null,
+     "blockingStrings": 0,
+     "vocabTerms": 0
+    }
+   ],
+   "blockingStrings": 0,
+   "vocabTerms": 0
+  }
+ ],
+ "knownSourceGaps": [
+  {
+   "path": "artifacts/world-chain/*.json",
+   "checkedRoots": [
+    "D:/others/Jity/.local/parallel/c-fresh-eval",
+    "D:/others/Jity"
+   ],
+   "foundFiles": [],
+   "status": "missing-in-checked-roots",
+   "coverage": "undetermined"
+  }
+ ],
+ "blockingTotal": 13341,
+ "vocabTotal": {
+  "characters": 75,
+  "locations": 225,
+  "tasks": 443,
+  "items": 103,
+  "other": 3674,
+  "protocolIds": 460
+ }
+}

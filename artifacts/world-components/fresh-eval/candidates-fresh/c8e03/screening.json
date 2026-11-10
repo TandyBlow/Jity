@@ -1,0 +1,24 @@
+{
+ "v1": {
+  "id": "c8e03",
+  "verdict": "candidate",
+  "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "fullSignature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "mode": "new-world",
+  "r1Version": "v1",
+  "reasons": [],
+  "warnings": []
+ },
+ "v2": {
+  "id": "c8e03",
+  "verdict": "candidate",
+  "signature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "fullSignature": "moved*2+personality_changed*1+sanity_changed*1+task_achieved*2|2|180s",
+  "mode": "new-world",
+  "r1Version": "v2",
+  "reasons": [],
+  "warnings": []
+ },
+ "expressionSignature": "moved*1+personality_changed*1+sanity_changed*1+task_achieved*2|1|180s",
+ "note": "R1/R2/R3 使用完整变化集合；expressionSignature 只用于叙述分析"
+}

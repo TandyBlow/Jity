@@ -1,0 +1,337 @@
+{
+ "formatVersion": 1,
+ "question": "旧题的变化事实是否有权威读取支撑？",
+ "rule": "只有能按点位身份绑定到已存读取（trace step / 归档点）的，才算 authoritative-read；手写叙事包、占位 anchor、或引用夹具里不存在的 ID 一律记 undetermined。",
+ "sourcesSearched": [
+  "design/world-protocol/v2/traces",
+  "artifacts/rule-facts",
+  "artifacts/world-page",
+  "artifacts/narration-eval"
+ ],
+ "committedPointsFound": 28,
+ "items": [
+  {
+   "id": "nv-move-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_move_1",
+   "declaredKinds": [
+    "moved"
+   ],
+   "declaredActors": [
+    "person_a"
+   ],
+   "declaredTime": {
+    "amount": 2,
+    "unit": "minute"
+   },
+   "changeSignature": "moved*1|1|120s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-task-pers-sanity-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_tps_1",
+   "declaredKinds": [
+    "task_achieved",
+    "personality_changed",
+    "sanity_changed"
+   ],
+   "declaredActors": [
+    "person_b"
+   ],
+   "declaredTime": {
+    "amount": 1,
+    "unit": "minute"
+   },
+   "changeSignature": "personality_changed*1+sanity_changed*1+task_achieved*1|1|60s",
+   "idsNotInFixture": [
+    "task_intro"
+   ],
+   "shapeMatchCount": 2,
+   "shapeMatches": [
+    {
+     "file": "design/world-protocol/v2/traces/T03.json",
+     "pointId": {
+      "$var": "v11"
+     }
+    },
+    {
+     "file": "design/world-protocol/v2/traces/T03.json",
+     "pointId": {
+      "$var": "v11"
+     }
+    }
+   ],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：task_intro",
+    "形状相同 2 处，但无法按点位身份绑定"
+   ]
+  },
+  {
+   "id": "nv-multi-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_multi_1",
+   "declaredKinds": [
+    "moved",
+    "at"
+   ],
+   "declaredActors": [
+    "person_a",
+    "person_c"
+   ],
+   "declaredTime": {
+    "amount": 1,
+    "unit": "minute"
+   },
+   "changeSignature": "moved*1|1|60s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-task-only-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_task_1",
+   "declaredKinds": [
+    "task_achieved"
+   ],
+   "declaredActors": [
+    "person_c"
+   ],
+   "declaredTime": {
+    "amount": 30,
+    "unit": "second"
+   },
+   "changeSignature": "task_achieved*1|1|30s",
+   "idsNotInFixture": [
+    "task_shelf"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：task_shelf",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-refused-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_refused_1",
+   "declaredKinds": [],
+   "declaredActors": [],
+   "declaredTime": {
+    "amount": 1,
+    "unit": "second"
+   },
+   "changeSignature": "none|0|1s",
+   "idsNotInFixture": [],
+   "shapeMatchCount": 6,
+   "shapeMatches": [
+    {
+     "file": "artifacts/rule-facts/http.json",
+     "pointId": "point_16"
+    },
+    {
+     "file": "artifacts/rule-facts/http.json",
+     "pointId": "point_35"
+    },
+    {
+     "file": "artifacts/rule-facts/http.json",
+     "pointId": "point_54"
+    },
+    {
+     "file": "artifacts/rule-facts/http.json",
+     "pointId": "point_63"
+    },
+    {
+     "file": "artifacts/rule-facts/http.json",
+     "pointId": "point_72"
+    }
+   ],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "形状相同 6 处，但无法按点位身份绑定"
+   ]
+  },
+  {
+   "id": "nv-empty-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_empty_1",
+   "declaredKinds": [],
+   "declaredActors": [],
+   "declaredTime": {
+    "amount": 5,
+    "unit": "minute"
+   },
+   "changeSignature": "none|0|300s",
+   "idsNotInFixture": [],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-cont-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_cont_1",
+   "declaredKinds": [
+    "moved"
+   ],
+   "declaredActors": [
+    "person_a"
+   ],
+   "declaredTime": {
+    "amount": 2,
+    "unit": "second"
+   },
+   "changeSignature": "moved*1|1|2s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 3,
+   "shapeMatches": [
+    {
+     "file": "design/world-protocol/v2/traces/T01.json",
+     "pointId": {
+      "$var": "v16"
+     }
+    },
+    {
+     "file": "design/world-protocol/v2/traces/T01.json",
+     "pointId": {
+      "$var": "v16"
+     }
+    },
+    {
+     "file": "design/world-protocol/v2/traces/T01.json",
+     "pointId": {
+      "$var": "v16"
+     }
+    }
+   ],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "形状相同 3 处，但无法按点位身份绑定"
+   ]
+  },
+  {
+   "id": "nv-cont-2",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_cont_2",
+   "declaredKinds": [
+    "at"
+   ],
+   "declaredActors": [
+    "person_b"
+   ],
+   "declaredTime": {
+    "amount": 2,
+    "unit": "minute"
+   },
+   "changeSignature": "none|0|120s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-cont-3",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_cont_3",
+   "declaredKinds": [
+    "at"
+   ],
+   "declaredActors": [
+    "person_a"
+   ],
+   "declaredTime": {
+    "amount": 5,
+    "unit": "minute"
+   },
+   "changeSignature": "none|0|300s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  },
+  {
+   "id": "nv-multi-opposite-1",
+   "anchorDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "anchorCall": "p_nv_opposite_1",
+   "declaredKinds": [
+    "moved",
+    "moved"
+   ],
+   "declaredActors": [
+    "person_a",
+    "person_b"
+   ],
+   "declaredTime": {
+    "amount": 3,
+    "unit": "second"
+   },
+   "changeSignature": "moved*2|2|3s",
+   "idsNotInFixture": [
+    "hall"
+   ],
+   "shapeMatchCount": 0,
+   "shapeMatches": [],
+   "basis": "undetermined",
+   "reasons": [
+    "sample 的 stateDigest 是占位值（全 f），不指向任何已提交读取",
+    "引用的 ID 在夹具里不存在：hall",
+    "登记的轨迹与归档里没有形状相同的已提交点"
+   ]
+  }
+ ],
+ "summary": {
+  "authoritative": 0,
+  "undetermined": 10
+ },
+ "limits": [
+  "形状相同不等于同一事实：即使签名相同，也仍可能不是旧题当年的那个点。",
+  "本脚本只读登记的轨迹与归档；未登记的运行产物不在检查范围内。"
+ ]
+}
