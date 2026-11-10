@@ -694,6 +694,8 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true, lastLoadFromCache: true, lastLoadFetchMs: 0 });
     expect(evidence.at(-1)).toMatchObject({ outcome: 'loaded', fromCache: true, fetchMs: 0 });
     expect(await engine.complete('P')).toBe('ok');
+    expect(engine.runtime.lastGeneration).toMatchObject({ outcome: 'completed', finishReason: 'stop' });
+    expect(engine.runtime.lastGeneration?.wallMs).toBeGreaterThan(0);
   });
 
   test('a rejected cached Blob drops the cache and allows a real refetch', async () => {

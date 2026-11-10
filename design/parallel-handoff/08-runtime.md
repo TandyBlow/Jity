@@ -242,6 +242,14 @@ and retry path. The runtime load/worker contract held.
 
 ## 02/06 integration entry points
 
+- 06 per-engine generation timing: include `engine.runtime.lastGeneration` in
+  `window.__worldTurns[i].engines` too. It carries `outcome`, `wallMs`,
+  `firstTokenMs`, `firstReadableMs` (first non-whitespace fragment),
+  `streamChunks`, `maxStreamGapMs`, `promptTokens`, `cachedPromptTokens`,
+  `timings` (wllama `prompt_ms`/`predicted_ms`/`prompt_n`/`predicted_n`),
+  `hardStopped` and `stoppedMs`, without the raw text. That gives 09 the
+  prefill/decode split and streaming proof; the page's older `onEvidence`
+  record only keeps promptTokens and wallMs.
 - 06 per-engine load timing: include `lastLoadMs`, `lastLoadFetchMs`,
   `lastLoadCompileMs`, `lastLoadFromCache` from `engine.runtime` in
   `window.__worldTurns[i].engines`. The page-level ready time mixes page boot,
