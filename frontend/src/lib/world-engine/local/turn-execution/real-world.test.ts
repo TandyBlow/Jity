@@ -284,6 +284,22 @@ describe('21c3 trace replay (CPU)', () => {
     expect(outcome.evidence.calls).toHaveLength(2);
   });
 
+  it('keeps the real d101 pending task goal out of the results prompt', async () => {
+    const { state } = loadWorld();
+    const seen: string[] = [];
+    const handlers = createSettlementHandlers({ engine: engineFor(state, seen) });
+    const outcome = await handlers.results('group_10', {
+      groupId: 'group_10',
+      members: [{ memberId: 'lu', actionText: '我沿着服务巷往里走，先看清墙上的演习规则牌。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    const prompt = seen.find((text) => text.includes('共同结算器')) ?? '';
+    expect(prompt).toContain('我沿着服务巷往里走');
+    expect(prompt).not.toContain('待办=');
+    expect(prompt).not.toContain('作出自己的参赛选择');
+  });
+
   it('strips the d101 dice/check clause into a natural result', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
