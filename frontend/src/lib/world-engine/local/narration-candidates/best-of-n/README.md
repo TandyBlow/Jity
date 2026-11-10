@@ -63,6 +63,17 @@ only for offline arm comparisons and the decision is labelled `provisional`.
   `experiments/narration-best-of-n/`; the preregistration and thresholds are
   frozen there before any generation was run.
 
+## Evidence status (2026-11-10)
+
+The first real b01 pilot produced six outputs from the HPC `~/qwen15b` base on
+one frozen input: four realization clusters (`1 - 4/6 = 0.333`) but **zero
+fact-qualified** samples. All six omitted the settled time and a personality
+change; the four clusters were four different error shapes. There is therefore
+**no best-of-N benefit evidence and no product wiring** yet. The v2 template
+test is frozen and waiting for the HPC owner; see
+`experiments/narration-best-of-n/cause-analysis-b01.md` and
+`design/parallel-handoff/12-best-of-n.md`.
+
 ## Not a product verdict
 
 Passing unit tests or producing diverse candidates does not make a product
