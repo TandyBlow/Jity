@@ -490,6 +490,6 @@ does not recover the exact mapping. `06-command-point-map-v3.patch` adds optiona
 the committed player point to its command, a failed/cancelled command stays
 null, and the map is saved/restored. `history.ts` then shows A and C with their
 own sentences and B as unfinished; older saves with unequal counts show blank
-labels rather than a wrong sentence. v3 applies at 06 `415ccbe0` and
-together with the `snapshotForPersist` source patch; the v2 disposable session
+labels rather than a wrong sentence. v3 applies at 06 `415ccbe0`/`624f5cd2`
+and together with the `snapshotForPersist` source patch; the v2 disposable session
 test passed at the older tree, so current 06 still needs to run it.
