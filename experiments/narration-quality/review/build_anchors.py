@@ -1132,6 +1132,20 @@ anchors.append(
     },
 )
 
+
+rows_unseen_accepted = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-unseen-accepted.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/unseen-accepted-knife",
+        "source": "02 Qwen3 unseen-archive accepted 189-char text: a 裁纸刀 prop that the settled state never mentions, plus the same 三分钟 twice",
+        "input": rows_unseen_accepted["unseen-accepted-189"]["input"],
+        "text": rows_unseen_accepted["unseen-accepted-189"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": ["style.punctuation"], "review": [],
+                   "notes": "02's own gate accepted this text; the knife is a new object and the advance is stated twice."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

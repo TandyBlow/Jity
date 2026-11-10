@@ -7411,6 +7411,70 @@
         ],
         "notes": "纸张摩擦的声响 is the ledger's paper, present in the same sentence."
       }
+    },
+    {
+      "id": "neg/unseen-accepted-knife",
+      "source": "02 Qwen3 unseen-archive accepted 189-char text: a 裁纸刀 prop that the settled state never mentions, plus the same 三分钟 twice",
+      "input": {
+        "视角": "主角视角（黎含章）",
+        "上回合状态": {
+          "人物": {
+            "黎含章": {
+              "位置": "装订间",
+              "精神值": 52
+            },
+            "赵掌柜": {
+              "位置": "装订间",
+              "外貌": [
+                "手里捏着算盘"
+              ]
+            }
+          },
+          "地点": {
+            "装订间": {
+              "位于": null,
+              "外貌": [
+                "桌上摊着三本登记簿，纸页发黄"
+              ]
+            }
+          },
+          "物品": {
+            "三本登记簿": {
+              "位置": "桌上",
+              "外貌": [
+                "墨迹深浅不一"
+              ]
+            },
+            "算盘": {
+              "位置": "赵掌柜手里"
+            }
+          }
+        },
+        "本回合变化": {
+          "时间推进": "三分钟",
+          "变化": {
+            "黎含章": {
+              "完成任务": [
+                "比对三份互相矛盾的登记簿"
+              ]
+            }
+          }
+        }
+      },
+      "text": "黎含章盯着三本登记簿，手指在纸页间滑动，三分钟过去，他终于将它们比对完毕。算盘在赵掌柜手里，他看见赵掌柜的灰布褂子下摆微微晃动，像一尾沉睡的鱼。黎含章的裁纸刀在桌角，刀刃泛着冷光，他忽然觉得这把刀比任何登记簿都更沉。赵掌柜没有说话，只在偶尔的呼吸声中，将纸页翻动的节奏与他的心跳重合。黎含章没有动，只在心里嘀咕着，三分钟过去，他看见赵掌柜的影子在光斑里游移，像一尾被风吹散的鱼。",
+      "options": {
+        "minChars": 1
+      },
+      "expect": {
+        "fact": [
+          "fact.object_added"
+        ],
+        "style": [
+          "style.punctuation"
+        ],
+        "review": [],
+        "notes": "02's own gate accepted this text; the knife is a new object and the advance is stated twice."
+      }
     }
   ]
 }

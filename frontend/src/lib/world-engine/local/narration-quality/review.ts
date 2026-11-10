@@ -920,16 +920,27 @@ export function reviewNarration(args: {
     // A handled tool whose name is not settled (裁纸刀 cutting a ledger) is an
     // invented object even though no fixed noun list knows it.
     for (const match of narration.matchAll(/([一-龥]{1,3}(?:刀|剪|锥|钳|锤|棍|棒))/gu)) {
-      const tool = match[1];
+      // The greedy match can start on a verb or measure ("只有裁纸刀",
+      // "这把刀"); strip those and keep a bare 刀 too generic to judge.
+      let tool = match[1];
+      const junk = /^[有的了着把将一两几每这那半只还又就都也支根柄条片得]/u;
+      while (junk.test(tool)) tool = tool.replace(junk, '');
+      if ([...tool].length < 2) continue;
       if (projection.sourceText.includes(tool) || ctx.stateLicensed(tool)) continue;
       if (negatedAt(narration, tool)) continue;
       const head = [...tool].slice(0, 2).join('');
       if ([...head].length === 2 && projection.sourceText.includes(head)) continue;
       const at = match.index ?? 0;
+      const before = narration.slice(Math.max(0, at - 6), at);
+      if (/(?:像|仿佛|如同|似的)[^。]{0,4}$/u.test(before)) {
+        findings.push(finding(ctx, 'review.object_added', sentence.text,
+          `${tool} appears only inside a simile; needs reading`, [], []));
+        continue;
+      }
       const window = narration.slice(Math.max(0, at - 6), at + tool.length + 6);
-      if (!/(用|拿|握|捏|放|碰|磕|划|切|割|递|收|别|插|执|持)/u.test(window)) continue;
+      const handled = /(用|拿|握|捏|放|碰|磕|划|切|割|递|收|别|插|执|持)/u.test(window);
       findings.push(finding(ctx, 'fact.object_added', sentence.text,
-        `${tool} is not in the settled state but is handled`, [], []));
+        `${tool} is not in the settled state${handled ? ' but is handled' : ''}`, [], []));
     }
     // Invented concrete objects: absent from the input, yet handled or claimed
     // as the contents of a settled container.
