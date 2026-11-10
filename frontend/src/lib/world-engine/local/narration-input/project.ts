@@ -76,9 +76,16 @@ function sameStrings(left: readonly string[], right: readonly string[]): boolean
 
 function samePosition(left: Position | undefined, right: Position | undefined): boolean {
   if (!left || !right) return left === right;
+  const leftRelative = left.relativeTo ?? null;
+  const rightRelative = right.relativeTo ?? null;
+  const sameRelative = leftRelative === null
+    ? rightRelative === null
+    : rightRelative !== null
+      && leftRelative.entityId === rightRelative.entityId
+      && leftRelative.relation === rightRelative.relation;
   return left.containerId === right.containerId
     && (left.slotId ?? null) === (right.slotId ?? null)
-    && JSON.stringify(left.relativeTo ?? null) === JSON.stringify(right.relativeTo ?? null);
+    && sameRelative;
 }
 
 function taskRows(state: WorldState, entityId: Id): RowTasks | null {
