@@ -114,7 +114,9 @@ export interface ProductSaveResult<P> {
 }
 
 export interface ProductRestoreResult<P> {
-  source: 'local' | 'remote' | 'none';
+  /** `none` = the service answered and has no head; `unavailable` = it could not
+   * be asked (offline/5xx), so "no remote copy" is not known. */
+  source: 'local' | 'remote' | 'none' | 'unavailable';
   snapshot: P | null;
   /** Unresolved conflict the player must decide; both copies stay stored. */
   conflict?: ProgressConflictError<P>;
@@ -251,8 +253,10 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
           snapshot: pulled.snapshot ? pulled.snapshot.payload : null,
         };
       } catch (error) {
+        // Do not report "no remote copy" when the question could not be asked:
+        // the page would silently start a new world over an existing one.
         return {
-          source: 'none',
+          source: 'unavailable',
           snapshot: null,
           note: error instanceof Error ? error.message : String(error),
         };
