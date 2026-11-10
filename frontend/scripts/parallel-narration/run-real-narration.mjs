@@ -57,6 +57,10 @@ const config = {
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
+  // With a scenario file, also run the built-in dev move + elapsed points on
+  // the declared SHORT_STATE fixture: the product opening has no settled
+  // change, so fact expression needs a point that does.
+  withDev: process.argv.includes('--with-dev'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 if (config.scenarioFile) {
@@ -453,6 +457,11 @@ try {
       if (config.set === 'dev' || config.set === 'all') addDev();
       if (config.set === 'unseen' || config.set === 'all') addUnseen();
       if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    } else if (config.withDev) {
+      // Only the two points that carry a settled change and a required time.
+      addDev();
+      const quietRoot = scenarios.findIndex((entry) => entry.id === 'root-scene');
+      if (quietRoot >= 0) scenarios.splice(quietRoot, 1);
     }
 
     const runs = [];
