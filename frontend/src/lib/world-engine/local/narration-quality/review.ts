@@ -1422,6 +1422,23 @@ export function reviewNarration(args: {
         break;
       }
     }
+    // A paragraph cannot both hear a sound and deny hearing any sound (02
+    // dense-point-4: «听着远处传来轻微的水声» then «也没有听到任何声音»).
+    {
+      const heard = /(?:听到|听见|听着|传来|响起)[^。；]{0,24}(?:声|响)/u.exec(text);
+      const denied = /(?:没有|没|未)(?:听到|听见|听到过)[^。；]{0,10}(?:任何)?声音|(?:任何)?(?:声音|声响)(?:都|也)?(?:没有|没|未)(?:听到|听见)/u.exec(text);
+      if (heard && denied && !findings.some((f) => f.kind === 'fact.sound_denied')) {
+        findings.push(finding(ctx, 'fact.sound_denied', sentences[0]?.text ?? text,
+          `the prose hears «${heard[0].slice(0, 24)}» and also denies hearing any sound («${denied[0].slice(0, 24)}»); the two cannot both be true`, [heard[0], denied[0]], []));
+      }
+    }
+    // Rain is a new weather object here: the 02 dense-point-4 prompt explicitly
+    // forbids 雨水 and the settled place is a stopped fountain (停水喷泉池).
+    if (/(?:雨水|雨点|雨幕|雨声|细雨|大雨)/u.test(text) && !stateLicensed('雨') && !findings.some((f) => f.kind === 'fact.object_added' && f.detail.includes('rain'))) {
+      const rain = /(?:雨水|雨点|雨幕|雨声|细雨|大雨)[^。；]{0,20}/u.exec(text);
+      findings.push(finding(ctx, 'fact.object_added', sentences[0]?.text ?? text,
+        `«${rain?.[0].slice(0, 30) ?? '雨'}» is rain in the prose but not in the settled state`, [], []));
+    }
     // The player's action must be narrated: the prose cannot replace it with a
     // state recital (415c point: «我沿着服务巷往里走，先看清墙上的演习规则牌»
     // while the text only says the goggles «还在» and «站了一会儿»). Judge the

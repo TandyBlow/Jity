@@ -30,6 +30,7 @@ export type FindingKind =
   | 'fact.item_misattribution'
   | 'fact.item_actor'
   | 'fact.action_omitted'
+  | 'fact.sound_denied'
   | 'fact.gender'
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'

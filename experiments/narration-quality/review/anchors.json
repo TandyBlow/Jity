@@ -9204,6 +9204,66 @@
       }
     },
     {
+      "id": "neg/02-dense-point-4",
+      "source": "02 run free-day-dense-point::prose (git dd9b02eb): accepted text hears 水声, denies any sound, adds rain, omits the move",
+      "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {
+          "人物": {
+            "路明非": {
+              "位置": "西侧服务巷",
+              "精神值": 43
+            },
+            "诺诺": {
+              "位置": "西侧服务巷",
+              "外貌": [
+                "红发用发圈束在脑后"
+              ]
+            }
+          },
+          "地点": {
+            "中央庭院": {
+              "位于": "西侧器材区",
+              "外貌": [
+                "停水喷泉池边有石阶。"
+              ]
+            }
+          },
+          "物品": {}
+        },
+        "本回合变化": {
+          "变化": {
+            "路明非": {
+              "位置": "中央庭院",
+              "任务": {
+                "大任务": {
+                  "目标": "比对三份互相矛盾的登记簿",
+                  "状态": "已完成"
+                }
+              }
+            }
+          },
+          "时间推进": "两分钟"
+        }
+      },
+      "text": "路明非站在中央庭院的石阶上，护目镜挂在胸前，镜片映出他紧绷的神情。西侧服务巷的风穿过他肩头，带着一丝潮湿的凉意。他低头看了看手中的登记簿，指尖轻轻摩挲着纸页边缘。两分钟过去，他没有移动，只是静静站在原地，听着远处传来轻微的水声。他没有看到任何人，也没有听到任何声音，只是静静地注视着脚下那块被雨水打湿的青石。路明非比对完了登记簿。",
+      "options": {
+        "minChars": 1,
+        "action": "路明非从西侧服务巷走到中央庭院"
+      },
+      "expect": {
+        "fact": [
+          "fact.sound_denied",
+          "fact.sound_added",
+          "fact.object_added",
+          "fact.action_omitted"
+        ],
+        "style": [],
+        "review": [],
+        "notes": "The same paragraph has 水声 and 没有听到任何声音; 雨水 is not settled; the move is replaced by 他没有移动."
+      }
+    },
+    {
       "id": "neg/e9a5-root",
       "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the opening lowers the already-down rope and lifts the settled muzzle",
       "input": {

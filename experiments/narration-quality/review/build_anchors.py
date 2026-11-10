@@ -1296,6 +1296,37 @@ anchors.append(
     },
 )
 
+
+# 02 dense-point-4: the accepted text hears water and then denies any sound;
+# the real input is compressed v3, so build the equivalent DatasetInput.
+d4 = json.load(io.open(WT + "/../../results/02-narration/real-qwen3-dense-point-4.json", encoding="utf-8"))["runs"][0]
+d4_input = {
+    "视角": "主角视角（路明非）",
+    "上回合状态": {
+        "人物": {
+            "路明非": {"位置": "西侧服务巷", "精神值": 43},
+            "诺诺": {"位置": "西侧服务巷", "外貌": ["红发用发圈束在脑后"]},
+        },
+        "地点": {"中央庭院": {"位于": "西侧器材区", "外貌": ["停水喷泉池边有石阶。"]}},
+        "物品": {},
+    },
+    "本回合变化": {
+        "变化": {"路明非": {"位置": "中央庭院", "任务": {"大任务": {"目标": "比对三份互相矛盾的登记簿", "状态": "已完成"}}}},
+        "时间推进": "两分钟",
+    },
+}
+anchors.append(
+    {
+        "id": "neg/02-dense-point-4",
+        "source": "02 run free-day-dense-point::prose (git dd9b02eb): accepted text hears 水声, denies any sound, adds rain, omits the move",
+        "input": d4_input,
+        "text": d4["text"],
+        "options": {"minChars": 1, "action": "路明非从西侧服务巷走到中央庭院"},
+        "expect": {"fact": ["fact.sound_denied", "fact.sound_added", "fact.object_added", "fact.action_omitted"], "style": [], "review": [],
+                   "notes": "The same paragraph has 水声 and 没有听到任何声音; 雨水 is not settled; the move is replaced by 他没有移动."},
+    },
+)
+
 run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
 e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
 e9 = {}
