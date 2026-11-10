@@ -211,6 +211,15 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 `frontend/scripts/parallel-sync/refresh-next-turn-repro.ts`。验收计划里“第 6 回合后刷新”
 正好会踩到它；页面没有 `await` 分支也没有恢复按钮。
 
+**已定位到原因**（06 的代码，07 只报告不修）：回合结束后保存的快照里仍带着
+`checkpoint: {roundId, plan, planIndex}`，而这时 plan 已经用完
+（`planIndex === plan.length`）。`LocalGameSession.restore` 通过 `planUsable` 把它原样
+恢复（该检查只核对已提交点是不是 plan 的前缀），于是 `memory.plan` 非空且
+`planIndex >= plan.length`，调度器直接返回 `await/round_points_exhausted`，模型不再被
+问一次。实验：同一份快照删掉 `checkpoint` 再 restore，下一条命令正常完成
+（`stop/world_complete`，2 条命令）。建议 06 在 `currentCheckpoint()` 里，plan 用完且
+没有未结算 work 时返回 null；`planUsable()` 也拒绝这种“已消耗的 plan”。
+
 ### 分叉：两台设备各走一步，重连冲突，玩家显式保留（2026-11-10）
 
 `frontend/scripts/parallel-sync/fork-session-check.ts`，用 06 的真实 session 快照和真实服务：
