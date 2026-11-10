@@ -62,6 +62,14 @@ interface WorldTurnRecord {
   /** Action-family calls for this turn (action/targets/reaction), kept out of
    * the settlement ledger so its coverage/stage counts stay one defined thing. */
   actions?: Array<{ task: string; key: string; ms: number; fallback: boolean; error: string | null }>;
+  /** Narration attempt evidence for the last point of this turn: the draft the
+   * model saw, every raw attempt, why it was rejected and the echo ratio. 02
+   * needs the raw text to fix wrong_person/low_support, and the turn record must
+   * carry it without reading worker internals. Capped; no prompt. */
+  narration?: {
+    pointId: string; violations: string[]; attempts: number[]; rawAttempts: string[];
+    draft: string; text: string; draftEcho: number; programFallback: boolean;
+  } | null;
   modelId: string | null;
   /** Requested narration variant and prompt shape, copied from window.__worldArm
    * at submit so one evidence file cannot mix two arms unknowingly. */
@@ -576,7 +584,18 @@ export default function WorldLocalPage() {
             if (task !== 'narration') return;
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
-          onNarrationDebug: (debug) => { (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug; },
+          onNarrationDebug: (debug) => {
+            (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug;
+            const liveRecord = turnRecordRef.current;
+            if (liveRecord) {
+              liveRecord.narration = {
+                pointId: debug.pointId, violations: debug.violations, attempts: debug.attempts,
+                rawAttempts: debug.rawAttempts.map((text) => text.slice(0, 2000)),
+                draft: debug.draft.slice(0, 2000), text: debug.text.slice(0, 2000),
+                draftEcho: debug.draftEcho, programFallback: debug.programFallback,
+              };
+            }
+          },
           // Candidate provenance (grade, per-sentence sources, attempts) is kept
           // apart from the in-model debug record and from the program draft.
           onNarrationEvidence: (record) => {
