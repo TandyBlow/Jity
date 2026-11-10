@@ -1211,6 +1211,57 @@ anchors.append(
 )
 
 
+run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
+e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e9 = {}
+for key, value in e9_narr.items():
+    e9["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else ("auto1" if "mwb4vrek" in key else "auto2"))] = value.get("text") or ""
+b7_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/e9a5-root",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the opening lowers the already-down rope and lifts the settled muzzle",
+        "input": b7_inputs["f15d-opening"],
+        "text": e9["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "The lane is settled with 黄黑绳已放下; the nono's muzzle is settled down."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-point-rope-echo",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the player point repeats the opening's first sentence and lowers the down rope again",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["point"],
+        "options": {"minChars": 1, "priorTexts": [e9["root"]]},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.repeated_opening"], "review": [],
+                   "notes": "The point also omits the player's move/read action; the program auto-2 narrates it."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-auto1-gun-echo",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the auto-1 model text hangs the in-hand short gun at the waist and echoes the point",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["auto1"],
+        "options": {"minChars": 1, "priorTexts": [e9["point"]]},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.echo_prior"], "review": [],
+                   "notes": "The nono's look settles the short gun in her hand; the page accepted this model text."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-auto2-task",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the shown auto-2 program paragraph asserts a task although all 73 rows stay pending",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["auto2"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The rest of the paragraph (rope down, wall red marks, red band, nono's right sleeve) is settled."},
+    },
+)
+
 run_b7 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-b7cd.json", encoding="utf-8"))
 b7_turn = run_b7["turns"][0]
 b7_rows = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-b7cd.jsonl", encoding="utf-8"))}
@@ -1244,8 +1295,8 @@ anchors.append(
         "input": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["input"],
         "text": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["text"],
         "options": {"minChars": 1, "priorTexts": [b7_rows["b7cd-point_root_world_dragon_raja_free_day"]["text"]]},
-        "expect": {"fact": [], "style": ["style.repeated_opening"], "review": [],
-                   "notes": "The first sentence is verbatim the root opening; the page accepted it (fallback=false)."},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.repeated_opening"], "review": [],
+                   "notes": "The first sentence is verbatim the root opening; the page accepted it (fallback=false); the rope is settled down."},
     },
 )
 

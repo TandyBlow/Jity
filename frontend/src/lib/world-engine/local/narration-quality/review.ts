@@ -991,6 +991,27 @@ export function reviewNarration(args: {
           `${name} is settled worn/hanging, but the prose has it in a hand`, [worn.slice(0, 60)], []));
       }
     }
+    // A gun settled in the hand is not hung at the waist/back.
+    for (const person of Object.values(projection.people)) {
+      const looks = [...person.appearanceBefore, ...person.appearanceAfter].join('；');
+      const hand = /(?:手里|手中)的?(短枪|演习短枪|长枪|枪|刀)/u.exec(looks);
+      if (!hand) continue;
+      const prop = hand[1];
+      const hung = new RegExp(`${escapeRegExp(prop)}[^，。]{0,8}(?:挂在|吊在|别在|挎在)[^，。]{0,4}(?:腰间|腰上|腰侧|背后|背上|肩上)`, 'u');
+      if (hung.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${person.name}'s ${prop} is settled in the hand, but the prose hangs it at the waist/back`, [looks.slice(0, 60)], []));
+      }
+    }
+    // The rope is already down; watching it lower is a re-enactment.
+    for (const place of Object.values(projection.places)) {
+      const looks = (place.description ?? []).join('；');
+      if (!/(?:黄黑绳|绳)[^。；]{0,8}已放下/u.test(looks)) continue;
+      if (/(?:黄黑绳|绳)[^。]{0,10}(?:缓缓|慢慢|正在)?放下/u.test(narration) && !/已放下/u.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          'the rope is settled already down, but the prose lowers it again', [looks.slice(0, 60)], []));
+      }
+    }
     // A tied hair tie is not loose.
     if (projection.sourceText.includes('发圈') && /束(?:在|着)/u.test(projection.sourceText)
       && /发圈(?:松散|松了|松开|滑落)/u.test(narration)) {
