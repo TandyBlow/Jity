@@ -24,7 +24,7 @@ import { factPhrases, type CommittedNarration, type NarrationFact } from './comm
 export type ViolationKind =
   | 'actor_swap' | 'direction_reversed' | 'wrong_number'
   | 'task_claimed_without_fact' | 'movement_without_fact' | 'state_claim_without_fact'
-  | 'wrong_time' | 'added_event' | 'empty_narration';
+  | 'wrong_time' | 'added_event' | 'empty_narration' | 'wrong_person';
 
 export interface AlignmentViolation { kind: ViolationKind; sentence: string; detail: string }
 export interface FactCoverage { id: string; kind: NarrationFact['kind']; expressed: boolean }
@@ -323,6 +323,15 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // joins a task with its personality/sanity consequence); every bound fact
     // counts, but only once per fact overall.
     for (const fact of bound) coverage.set(fact.id, true);
+
+    // 0. Point of view. The scene is told in third person about the
+    // protagonist; a stray 「我」 turns the narration into the player's own
+    // voice mid-paragraph. Quoted speech is exempt because a character saying
+    // 「我」 is legitimate dialogue.
+    if (/[^「『“‘]我(?!们)/u.test(maskFrozenQuotes(sentence.replace(/[「『“][^」』”]*[」』”]/gu, '')))) {
+      violations.push({ kind: 'wrong_person', sentence, detail: 'first-person pronoun outside dialogue' });
+      continue;
+    }
 
     // 1. Wrong duration. ANY time unit in the sentence is checked, not only
     // the expected one: a 2-second point narrated as "两分钟" states the wrong

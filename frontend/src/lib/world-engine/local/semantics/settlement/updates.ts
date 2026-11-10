@@ -173,6 +173,55 @@ const SANITY_SCHEMA = {
   },
 };
 
+
+const MERGED_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'],
+  properties: {
+    position: POSITION_SCHEMA.properties.changes,
+    appearance: OPERATIONS_SCHEMA.properties.operations,
+    tasks: TASKS_SCHEMA.properties.decisions,
+    subtasks: SUBTASKS_SCHEMA.properties.subtasks,
+    personality: OPERATIONS_SCHEMA.properties.operations,
+    sanity: SANITY_SCHEMA.properties.sanity,
+  },
+};
+
+const MERGED_NOTE = [
+  '一次回答，六个键，没有变化的键给空数组。',
+  '规则：',
+  '- position：只列真的换了位置的实体；containerId 必须是已登记 id；不能成环。',
+  '- appearance：只列本回合外貌有变化的实体；op=add/remove/replace/keep，recordIds 指向已有记录 id，text 是新描述。',
+  '- tasks：逐个判断待办任务；只有结果明确表明目标达成才写 achieved，只是尝试、接近、被制止都写 pending。没把握就不要列。',
+  '- subtasks：只为已达成的大任务补下一步小目标，最多 3 条。',
+  '- personality：只有本回合有新任务达成时才写；op=keep/add/remove/replace。',
+  '- sanity：只为个性真的变化的人物写 0-100 的整数，其他人不要列。',
+  '- 不得新增人物、地点、物品、任务、往事；不得把行动结果当成任务达成。',
+];
+
+function buildMergedPrompt(ctx: StageContext): string {
+  const scope = ctx.scope;
+  const entities = movableIds(scope).map((id) => `- ${positionLineFor(scope, id)}`);
+  const tasks = roster(scope).map((id) => taskLine(scope, id));
+  const people = roster(scope).map((id) => `- ${id}=${scope.initial.characters[id].name}：${personalityLine(scope, id)}`);
+  return [
+    '你是中文跑团游戏的结算记录器。只输出一个 JSON 对象，不要解释。',
+    ...MERGED_NOTE,
+    `结算结果：${resultText(ctx.results) || '（无）'}`,
+    '可移动实体和当前位置：',
+    ...entities,
+    '地点和容器（id=名字，槽位）：',
+    ...containerCatalog(scope),
+    '人物和任务：',
+    ...tasks,
+    '人物个性：',
+    ...people,
+    `当前时间：${scope.time.dateTime}`,
+    '输出：{"position":[],"appearance":[],"tasks":[],"subtasks":[],"personality":[],"sanity":[]}。',
+  ].join('\n');
+}
+
 export class UpdatesRunner {
   private readonly batches = new Map<Id, BatchMemory>();
   private readonly allocator = new LocalIdAllocator();
@@ -246,6 +295,7 @@ export class UpdatesRunner {
             : [],
       });
     }
+    if (this.options.mergedStages) return this.runMerged(key, ctx, started);
     const calls: UpdatesCall[] = [];
     const outcomes: StageOutcome[] = [];
     let view = ctx.state;
@@ -291,6 +341,128 @@ export class UpdatesRunner {
         fallback: outcome.fallback,
         ...outcome.detail,
       })),
+    };
+    return this.finish(key, calls, outcomes, started, detail);
+  }
+
+
+  /** One model call carrying all six stage sections. The stage order, the
+   * validators and the projection checks stay identical; only the number of
+   * round trips changes, which is what makes a six-stage settlement fit the
+   * browser wait budget. Each section is validated on its own: a broken
+   * section becomes an empty stage with evidence, never a discarded round. */
+  private async runMerged(key: Id, ctx: StageContext, started: number): Promise<SettlementOutcome<UpdatesCall[] | UpdatesCall>> {
+    const prompt = buildMergedPrompt(ctx);
+    const outcomes: StageOutcome[] = [];
+    const calls: UpdatesCall[] = [];
+    let view = ctx.state;
+    let newAchieved = new Set<Id>();
+    let personalityOwners = new Set<Id>();
+    let answer: { value: unknown; calls: ModelCallEvidence[] } | null = null;
+    let overallError: string | undefined;
+    try {
+      answer = await callJson(this.engine, prompt, {
+        maxTokens: this.options.maxTokens?.updates ?? 420,
+        temperature: this.options.temperature ?? 0,
+        timeoutMs: this.options.timeoutMs ?? 120_000,
+        maxPromptChars: this.options.maxPromptChars ?? 11_000,
+        jsonSchema: MERGED_SCHEMA,
+        validate: (value) => {
+          if (!isRecord(value)) throw new Error('merged answer must be an object');
+          for (const section of ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']) {
+            if (!Array.isArray(value[section])) throw new Error(`merged answer is missing ${section}`);
+          }
+        },
+      });
+    } catch (error) {
+      overallError = errorText(error);
+    }
+    const sections = (answer?.value ?? {}) as Record<string, unknown>;
+    const read = <T>(label: string, fn: () => T, fallbackValue: T): T => {
+      try {
+        return fn();
+      } catch (error) {
+        outcomes.push({ changes: {}, detail: { mergedSection: label }, error: errorText(error), fallback: true, calls: [] });
+        return fallbackValue;
+      }
+    };
+    const nextCtx = (): StageContext => ({
+      ...ctx,
+      state: view,
+      scope: this.options.sceneScope ? scopedState(view, view.protagonistId) : view,
+      newAchieved,
+      recoveredAchieved: new Set<Id>(),
+      personalityOwners,
+    });
+    // The single merged model call is the evidence for the whole batch: attach
+    // its call records to the first stage that lands so `ms`/`raw` report the
+    // real generation instead of zero.
+    let callsAttached = false;
+    const mergedCalls = answer?.calls ?? [];
+    const apply = (stage: UpdatesStage, changes: Record<Id, Partial<EntityDelta>>, detail: Record<string, unknown>) => {
+      const attach = !callsAttached ? mergedCalls : [];
+      callsAttached = true;
+      try {
+        view = projectStage(view, stage, changes);
+      } catch (error) {
+        outcomes.push({ changes: {}, detail: { ...detail, stage }, error: `stage_projection_rejected:${errorText(error)}`, fallback: true, calls: [] });
+        calls.push({ stage, changes: {} });
+        return;
+      }
+      outcomes.push({ changes, detail: { ...detail, stage, mergedSection: true }, fallback: false, calls: attach });
+      calls.push({ stage, changes: changes as UpdatesCall['changes'] });
+      if (stage === 'tasks') newAchieved = achievedFromChanges(changes);
+      if (stage === 'personality') personalityOwners = new Set(Object.keys(changes));
+    };
+
+    const positionScope = nextCtx().scope;
+    const position = read('position', () => readPositionChanges({ changes: sections.position }, positionScope), {});
+    apply('position', position, { changedEntityIds: Object.keys(position).sort() });
+
+    const appearanceScope = nextCtx().scope;
+    const appearance = read('appearance', () => readDescriptionOperations({ operations: sections.appearance }, appearanceScope, 'appearance', this.allocator, false), {});
+    apply('appearance', appearance, { changedEntityIds: Object.keys(appearance).sort() });
+
+    const taskScope = nextCtx().scope;
+    const tasks = read('tasks', () => readTaskDecisions({ decisions: sections.tasks }, taskScope), {});
+    apply('tasks', tasks, { decisionCoverage: taskDecisionCoverage() });
+
+    const subtaskScope = nextCtx().scope;
+    const subtasks = read('subtasks', () => readSubtaskProposals({ subtasks: sections.subtasks }, subtaskScope, this.allocator, this.options.maxNewTasks ?? 8), {});
+    apply('subtasks', subtasks, { addedTaskIds: Object.values(subtasks).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort() });
+
+    const personalityScope = nextCtx().scope;
+    const personality = newAchieved.size > 0
+      ? read('personality', () => readDescriptionOperations({ operations: sections.personality }, personalityScope, 'personality', this.allocator, true), {})
+      : {};
+    apply('personality', personality, { triggeredByTaskIds: [...newAchieved].sort(), triggered: newAchieved.size > 0 });
+
+    const sanityOwners = [...personalityOwners].sort();
+    const sanity: Record<Id, Partial<EntityDelta>> = {};
+    if (sanityOwners.length) {
+      try {
+        const values = readSanityValues({ sanity: sections.sanity }, sanityOwners);
+        for (const owner of sanityOwners) sanity[owner] = { sanitySet: values[owner] };
+      } catch (error) {
+        const current = nextCtx().scope;
+        for (const owner of sanityOwners) if (current.characters[owner]) sanity[owner] = { sanitySet: current.characters[owner].sanity };
+        outcomes.push({ changes: {}, detail: { mergedSection: 'sanity', fallback: 'current_sanity' }, error: errorText(error), fallback: true, calls: [] });
+      }
+    }
+    apply('sanity', sanity, { owners: sanityOwners });
+
+    if (overallError && calls.every((call) => Object.keys(call.changes).length === 0)) {
+      return this.failure(key, overallError, started);
+    }
+    const detail = {
+      mode: ctx.mode,
+      mergedStages: true,
+      taskCoverageIds: roster(ctx.scope),
+      personalityCoverageIds: newAchieved.size > 0 ? roster(ctx.scope) : [],
+      newlyAchievedTaskIds: [...newAchieved].sort(),
+      personalityChangedIds: [...personalityOwners].sort(),
+      stageErrors: outcomes.filter((outcome) => outcome.error).map((outcome) => outcome.error),
+      stages: outcomes,
     };
     return this.finish(key, calls, outcomes, started, detail);
   }

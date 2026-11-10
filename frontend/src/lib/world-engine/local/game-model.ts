@@ -68,6 +68,7 @@ export class LocalGameModel implements WorldModelPort {
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
       maxPromptChars: 11_000,
       sceneScope: true,
+      mergedStages: true,
       continuation: this.options.maxAutoContinuations == null ? continuationPolicy : { ...continuationPolicy, maxAutoContinuations: this.options.maxAutoContinuations },
     } });
     this.actionHandlers = createActionHandlers({ engine, options: {
@@ -167,7 +168,8 @@ export class LocalGameModel implements WorldModelPort {
       // than feeding them into the narration brief and the page.
       const prose = text.split(/\n+/u).map((part) => part.trim())
         .filter((part) => part && !/id=/u.test(part) && !/^(位置|外貌|精神值|任务)[=：]/u.test(part));
-      return prose.length ? `${name}：${prose.join('')}` : '';
+      const body = prose.join('').replace(new RegExp(`^${name}[：:，,]?`, 'u'), '');
+      return body ? `${name}：${body}` : '';
     }).filter(Boolean);
     this.lastResultsText = /完成了刚才的动作|行动发生了，但没有产生新的结果/u.test(lines.join('；')) ? '' : lines.join('；');
     for (const line of lines) this.recentEvents.push(line);
@@ -213,6 +215,7 @@ export class LocalGameModel implements WorldModelPort {
 
   private async movementJudgement(state: WorldState, results: Record<Id, string>): Promise<Id | null> {
     const current = state.characters[state.protagonistId]?.position.containerId;
+    const named = Object.values(state.initial.locations).map((location) => location.name).filter((name) => name && this.lastPlayerInput.includes(name));
     const candidates = adjacentLocations(state, current, [this.lastPlayerInput]);
     const prompt = [
       '你是中文跑团游戏的位置判断器。只输出 JSON。',
@@ -221,6 +224,8 @@ export class LocalGameModel implements WorldModelPort {
       `玩家输入：${this.lastPlayerInput}`,
       `结算结果：${Object.values(results).join('；') || '（无）'}`,
       `候选地点：${candidates}`,
+      ...(named.length === 1 ? [`玩家这一句只点名了一个地点：${named[0]}。只回答他去没去那里。`] : []),
+      ...(named.length ? [`玩家句子里点名的地点：${named.join('、')}。句子点名它就是要走过去，除非结果明确写他被拦住没走成。`] : []),
       '输出：{"moved":true,"toLocationId":"地点id"} 或 {"moved":false,"toLocationId":null}。toLocationId 只能从候选地点里选，不能等于主角当前地点。',
     ].join(String.fromCharCode(10));
     try {
@@ -236,8 +241,16 @@ export class LocalGameModel implements WorldModelPort {
       const end = text.lastIndexOf('}');
       if (start < 0 || end <= start) return null;
       const output = JSON.parse(text.slice(start, end + 1)) as { moved?: boolean; toLocationId?: string | null };
-      const target = typeof output.toLocationId === 'string' ? output.toLocationId.trim() : '';
-      if (output.moved !== true || !state.initial.locations[target] || target === current) return null;
+      if (output.moved !== true) return null;
+      // When the player's own sentence names exactly one location, that name is
+      // the destination. Letting the model re-pick from the adjacency list made
+      // it answer with the parent area («器材棚» became «演习区»), which moved
+      // the protagonist to the wrong place.
+      const fixed = named.length === 1
+        ? Object.values(state.initial.locations).find((location) => location.name === named[0])?.id ?? null
+        : null;
+      const target = fixed ?? (typeof output.toLocationId === 'string' ? output.toLocationId.trim() : '');
+      if (!state.initial.locations[target] || target === current) return null;
       return target;
     } catch {
       return null;
@@ -279,6 +292,15 @@ export class LocalGameModel implements WorldModelPort {
       allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     };
 
+    const sceneNamesList = sceneNames(after, view);
+    const protagonistName = after.initial.characters[view]?.name ?? view;
+    const acceptCandidate = (candidate: ReturnType<typeof evaluate>): boolean => {
+      if (!candidate.validation.ok) return false;
+      const audit = proseAudit(candidate.supported, protagonistName);
+      const grounding = groundingRatio(candidate.supported, sceneNamesList);
+      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2 && [...candidate.supported].length >= 100;
+    };
+
     const evaluate = (raw: string) => {
       const cleaned = finishSentences(cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10))).trim();
       const validation = validateNarration(cleaned, brief.brief, after, view);
@@ -292,12 +314,34 @@ export class LocalGameModel implements WorldModelPort {
       return { raw, cleaned, pruned: pruned.text, supported, dropped: pruned.dropped, validation };
     };
 
+    /** Same repair chain as the final acceptance, applied to the sentences the
+     * model has finished so far. Only used to publish the stream. */
+    const previewNarration = (partial: string): string => {
+      const cleaned = finishSentences(cleanNarration(partial)).trim();
+      if ([...cleaned].length < 12) return '';
+      const alignment = alignNarration(packet, cleaned, alignmentOptions);
+      const pruned = pruneNarration(cleaned, alignment, after, view);
+      const deduped = dedupeSentences(pruned.text);
+      return supportNarration(bindNarrationAttributes(deduped.text, after, view), draft).trim();
+    };
+
     const generate = async (prompt: string, temperature: number): Promise<{ raw: string; error?: string }> => {
       try {
+        let published = '';
         const raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(prompt) : prompt, {
           maxTokens: this.options.narrationMaxTokens ?? 240, temperature,
           timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
-          onProgress: (progress) => this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started }),
+          onProgress: (progress) => {
+            // Show the scene while it is being written, but only the part that
+            // already holds up against the settled facts. Streaming raw model
+            // text would print invented actions and then take them back.
+            const complete = progress.raw.replace(/[^。！？!?\n]*$/u, '');
+            if ([...complete].length <= [...published].length) return;
+            const preview = previewNarration(complete);
+            if (!preview || preview === published) return;
+            published = preview;
+            this.options.onNarrationProgress?.({ pointId, raw: preview, elapsedMs: performance.now() - started });
+          },
           ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
         });
         return { raw };
@@ -313,12 +357,16 @@ export class LocalGameModel implements WorldModelPort {
     // Two bounded attempts: a free scene first, then a strictly drafted
     // rewrite when the first answer cannot be supported by settled facts. The
     // player sees the better accepted candidate, not the last one generated.
+    // Attempt one rewrites the grounded draft under strict rules: the small
+    // writer model invents less when it is told exactly which facts it may
+    // use. The freer scene prompt runs only if that rewrite is rejected, so a
+    // normal round costs one generation instead of two.
     const attempts: ReturnType<typeof evaluate>[] = [];
-    const first = await generate(brief.prompt, this.options.narrationTemperature ?? 0.45);
+    const rewrite = instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft, 'repair');
+    const first = await generate(rewrite.prompt, Math.min(0.35, this.options.narrationTemperature ?? 0.45));
     attempts.push(evaluate(first.raw));
-    if ([...attempts[0].supported].length < 80 && this.options.narrationMode === 'instruct') {
-      const repair = instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft, 'repair');
-      const second = await generate(repair.prompt, Math.min(0.3, this.options.narrationTemperature ?? 0.45));
+    if (!acceptCandidate(attempts[0]) && this.options.narrationMode === 'instruct') {
+      const second = await generate(brief.prompt, this.options.narrationTemperature ?? 0.45);
       attempts.push(evaluate(second.raw));
     }
     const best = attempts.reduce((left, right) => ([...right.supported].length > [...left.supported].length ? right : left));
@@ -326,19 +374,29 @@ export class LocalGameModel implements WorldModelPort {
     // sentence can survive the first and still assert an uncommitted result,
     // so prune again on the accepted candidate until it stops contradicting
     // the settled facts (bounded: each pass only removes sentences).
-    let safe = best.supported;
-    let finalAlignment = alignNarration(packet, safe, alignmentOptions);
-    for (let pass = 0; pass < 3 && finalAlignment.violations.length > 0; pass += 1) {
-      safe = pruneNarration(safe, finalAlignment, after, view).text;
-      finalAlignment = alignNarration(packet, safe, alignmentOptions);
-    }
-    const accepted = best.dropped.length === 0 && best.validation.ok && finalAlignment.ok && [...safe].length >= 80;
+    // Whole-answer acceptance. Pruning sentence by sentence and then gluing the
+    // remains with draft lines produced text that was fact-clean and unreadable
+    // at the same time, so a candidate is judged as a whole: it either passes
+    // alignment, grounding and point of view by itself, or the page shows the
+    // grounded draft.
+    const deduped = dedupeSentences(best.supported);
+    const safe = deduped.text;
+    const finalAlignment = alignNarration(packet, safe, alignmentOptions);
+    const repetition = deduped.dropped;
+    // Sentence pruning is the repair, not a failure: acceptance is decided on
+    // the text the player will read, not on whether repair had to run.
+    const audit = proseAudit(safe, protagonistName);
+    const grounding = groundingRatio(safe, sceneNamesList);
+    const accepted = best.validation.ok && finalAlignment.ok && audit.ok
+      && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 100;
     const text = accepted ? safe : draft;
     const reason = accepted ? undefined : [...new Set([
       best.validation.reason,
       ...best.dropped.map((entry) => entry.reason),
       ...finalAlignment.violations.map((entry) => entry.kind),
-      'low_support',
+      ...(repetition.length ? ['repetition'] : []),
+      ...(grounding.ratio < 0.5 || grounding.count < 2 ? ['ungrounded'] : []),
+      audit.reason ?? 'low_support',
     ])].filter(Boolean).join(',');
     this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
     this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: brief.prompt.length });
@@ -373,6 +431,7 @@ function cleanNarration(raw: string): string {
     .replace(/^#{1,6}\s*/gmu, '')
     .replace(/^\s*(正文|叙事|输出)[:：]\s*/u, '')
     .replace(/^[\s，。、；：！？·]+/u, '')
+    .replace(/[」』”’"'）)\]]+\s*$/u, (tail) => (/[「『“‘"'（(\[]/u.test(body) ? tail : ''))
     .trim();
 }
 
@@ -447,26 +506,47 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   if (time) out.push(`时间过去了约${time.duration.amount}${timeUnit(time.duration.unit)}。`);
   const change = delta.entityDeltas?.[view];
   const room = roomOf(after, view);
-  const declared = actionText.trim().replace(/^我/u, name);
-  if (change?.positionSet) {
+  const place = locationName(after, room);
+  const declared = actionText.trim().replace(/^我(?!们)/u, '').replace(/[。！？!?]+$/u, '');
+  const moves = Boolean(change?.positionSet);
+  if (moves) {
     const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
-    const to = locationName(after, change.positionSet.containerId);
-    out.push(`${declared && MOVEMENT.test(declared) ? endSentence(declared) : `${name}${from ? `从${from}` : ''}走到${to}。`}`);
+    const to = locationName(after, change?.positionSet?.containerId ?? room);
+    out.push(declared && MOVEMENT.test(declared)
+      ? `${name}${declared}，最后停在${to}。`
+      : `${name}${from ? `从${from}` : ''}走到${to}。`);
+  } else if (declared) {
+    // The player's sentence is first person ("我扶他起来"); narration is third
+    // person, so the protagonist becomes the subject rather than a fragment.
+    out.push(declared.startsWith(name) ? endSentence(declared) : `${name}${declared}。`);
   }
-  if (declared && !(change?.positionSet && MOVEMENT.test(declared))) out.push(endSentence(declared));
+  const actionGrams = bigramsOf(declared);
   for (const settled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
-    if (/完成了刚才的动作|行动发生了，但没有产生新的结果|向.+移动/u.test(settled)) continue;
-    const sentence = endSentence(settled.replace(new RegExp(`^${name}`, 'u'), name));
-    if (!out.includes(sentence)) out.push(sentence);
+    if (/完成了刚才的动作|行动发生了，但没有产生新的结果|本组结算未能确认|未能确认新的结果|向.+移动/u.test(settled)) continue;
+    const sentence = endSentence(settled.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name));
+    if (out.includes(sentence)) continue;
+    const grams = bigramsOf(sentence);
+    let shared = 0;
+    for (const gram of grams) if (actionGrams.has(gram)) shared += 1;
+    if (actionGrams.size && shared / actionGrams.size > 0.6) continue;
+    out.push(sentence);
   }
+
+  // Room and people are written as one look around the scene instead of a list
+  // of records: a place clause, then what the protagonist can see of it, then
+  // whoever is there with the detail that actually matters.
+  const scenery: string[] = [];
   const appearance = after.initial.locations[room]?.initialAppearance;
-  if (appearance) out.push(`${locationName(after, room)}里，${sentenceEnd(shortClause(appearance, 96))}`);
+  if (appearance) scenery.push(shortClause(appearance, 88));
+  if (scenery.length) out.push(`${place}里，${scenery.join('，')}。`);
+
   const others = visibleCharacters(after, view).filter((candidate) => candidate !== view).slice(0, 2);
   for (const id of others) {
     const other = after.initial.characters[id]?.name;
     if (!other) continue;
     const look = after.initial.characters[id]?.initialAppearance;
-    out.push(`${other}在${locationName(after, roomOf(after, id))}${look ? `，${shortClause(look, 52)}` : ''}。`);
+    const where = roomOf(after, id) === room ? '' : `在${locationName(after, roomOf(after, id))}，`;
+    out.push(`${other}${where}${look ? shortClause(look, 46) : '没有出声'}。`);
   }
   for (const [id, entity] of Object.entries(delta.entityDeltas ?? {})) {
     const other = after.initial.characters[id]?.name ?? after.initial.items[id]?.name;
@@ -475,10 +555,8 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
       const goal = after.characters[id]?.tasks[taskId]?.goal;
       if (goal) out.push(`${other}完成了「${goal}」。`);
     }
-    if (entity.sanitySet != null) out.push(`${other}的精神值变成 ${entity.sanitySet}。`);
   }
-  if (!out.length) out.push(`${name}停在${locationName(after, room)}，没有新的变化。`);
-  return out.join('');
+  return out.join('').replace(/\n{3,}/gu, '\n\n').trim();
 }
 
 function endSentence(text: string): string {
@@ -523,7 +601,30 @@ function bindNarrationAttributes(text: string, after: WorldState, view: Id): str
   }).join('').trim();
 }
 
+/** Facts are policed by alignment; wording is not. The only wording rule left
+ * is dialogue: an invented line puts words in a character's mouth, which is a
+ * fact the settlement never produced, so quoted speech must already exist in
+ * the grounded draft. */
 function supportNarration(text: string, draft: string): string {
+  const kept: string[] = [];
+  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
+    const sentence = raw.trim();
+    if (!sentence || [...sentence].length < 4) continue;
+    const opened = /[「『“]/u.test(sentence);
+    const closed = /[」』”]/u.test(sentence);
+    // A sentence that carries any quote mark is dialogue being written by the
+    // model. Only a complete, grounded line may stay: a half-split quote or an
+    // invented line both put words in a character's mouth.
+    if (opened || closed) {
+      const quoted = sentence.match(/[「『“]([^」』”]{1,60})[」』”]/u);
+      if (!quoted || opened !== closed || !draft.includes(quoted[1].trim())) continue;
+    }
+    kept.push(sentence);
+  }
+  return kept.join('').replace(/\n{3,}/gu, '\n\n').trim();
+}
+
+function legacySupportNarration(text: string, draft: string): string {
   const source = bigramsOf(draft);
   if (!source.size) return '';
   const kept: string[] = [];
@@ -538,6 +639,75 @@ function supportNarration(text: string, draft: string): string {
     if (shared / grams.size >= 0.12) kept.push(sentence);
   }
   return kept.join('').replace(/\n{3,}/gu, '\n\n').trim();
+}
+
+/** Repetition is the failure mode a small model falls into once the claims
+ * pass alignment: the same walk restated with different wording for eight
+ * sentences. Those repeats carry no new fact, they only make the page read
+ * like a log. Compare each sentence with what is already kept and drop the
+ * restatements; keep the first mention. */
+function dedupeSentences(text: string): { text: string; dropped: string[] } {
+  const kept: string[] = [];
+  const keptGrams: Set<string>[] = [];
+  const dropped: string[] = [];
+  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
+    const sentence = raw.trim();
+    if (!sentence) continue;
+    const grams = bigramsOf(sentence);
+    if (grams.size) {
+      let restatement = false;
+      for (const other of keptGrams) {
+        let shared = 0;
+        for (const gram of grams) if (other.has(gram)) shared += 1;
+        const smaller = Math.min(grams.size, other.size);
+        if (smaller > 0 && shared / smaller >= 0.5) { restatement = true; break; }
+      }
+      if (restatement) { dropped.push(sentence); continue; }
+      keptGrams.push(grams);
+    }
+    kept.push(sentence);
+  }
+  return { text: kept.join(''), dropped };
+}
+
+/** A scene is told from the protagonist's side. Text that only follows other
+ * characters is not a wrong fact, it is the wrong viewpoint, and it reads as
+ * a report about strangers rather than as the player's own round. */
+function proseAudit(text: string, protagonistName: string): { ok: boolean; reason?: string } {
+  const length = [...text].length;
+  if (length < 80) return { ok: false, reason: 'low_support' };
+  if (protagonistName && !text.includes(protagonistName)) return { ok: false, reason: 'off_perspective' };
+  return { ok: true };
+}
+
+/** Names the settled scene actually contains: the people in the room, the
+ * items lying there, and the place itself. A sentence that mentions none of
+ * them is talking about something the round never produced. */
+function sceneNames(state: WorldState, view: Id): string[] {
+  const room = roomOf(state, view);
+  const names = new Set<string>();
+  const protagonist = state.initial.characters[view]?.name;
+  if (protagonist) names.add(protagonist);
+  for (const id of Object.keys(state.characters)) {
+    const entity = state.initial.characters[id];
+    if (!entity) continue;
+    if (id === view || roomOf(state, id) === room) names.add(entity.name);
+  }
+  for (const id of sameRoomItems(state, view)) {
+    const entity = state.initial.items[id] ?? state.initial.characters[id];
+    if (entity?.name) names.add(entity.name);
+  }
+  const location = state.initial.locations[room];
+  if (location?.name) names.add(location.name);
+  return [...names].filter(Boolean);
+}
+
+function groundingRatio(text: string, names: string[]): { ratio: number; count: number } {
+  const sentences = text.split(/(?<=[。！？!?])|\n+/u).map((sentence) => sentence.trim()).filter((sentence) => [...sentence].length >= 6);
+  if (!sentences.length) return { ratio: 0, count: 0 };
+  let grounded = 0;
+  for (const sentence of sentences) if (names.some((name) => sentence.includes(name))) grounded += 1;
+  return { ratio: grounded / sentences.length, count: grounded };
 }
 
 function sentenceEnd(text: string): string {

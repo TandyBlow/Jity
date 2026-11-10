@@ -34,6 +34,9 @@ export interface SettlementOptions {
    * their carried items and room items) instead of the whole cast. The rest of
    * the world keeps its state untouched by this point. */
   sceneScope?: boolean;
+  /** Ask one model call for all six stage sections instead of six calls. The
+   * stage validators and projection order stay the same. */
+  mergedStages?: boolean;
   /** New task budget for one updates call. Exceeding it is a visible failure,
    * never a partial success. */
   maxNewTasks?: number;

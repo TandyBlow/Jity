@@ -151,7 +151,7 @@ export default function WorldLocalPage() {
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
-          narrationMaxTokens: 240,
+          narrationMaxTokens: 200,
           narrationTemperature: 0.45,
           maxAutoContinuations: 0,
           maxAutonomousActors: 0,
