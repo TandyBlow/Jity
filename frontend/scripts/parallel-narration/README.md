@@ -20,7 +20,21 @@ MSYS_NO_PATHCONV=1 node scripts/parallel-narration/run-real-narration.mjs \
 ```
 
 Useful flags: `--threads`, `--max-tokens`, `--max-attempts`, `--min-chars`,
-`--instruction "<caller task text>"`, `--channel`.
+`--instruction "<caller task text>"`, `--channel`, `--mode beats|scene`,
+`--set dev|unseen|continuation|all`, `--gpu`.
+
+`--mode beats` (the product path) writes the scene one committed fact at a
+time; `--mode scene` is the earlier whole-scene arm, kept as a control.
+`--set dev` uses the short dev world (no change / move / elapsed time),
+`unseen` a second world with different names and a nested location tree, and
+`continuation` a second turn that receives the first turn's accepted prose.
+
+`probe-template.mjs` is a separate, cheaper probe: it calls
+`createCompletion` directly (bypassing the chat wrap the page adapter always
+applies) and feeds the same facts in four shapes — the trained raw
+`【状态】/【视角】/【叙事】` prompt, the legacy flattened prompt, a ChatML instruct
+turn, and a plain instruct preamble. It exists because a 0/3 result on a
+prompt shape the weights never saw says nothing about the weights.
 
 The GGUF and wllama assets are NOT in this worktree. The script serves them
 from `MODEL_DIR` (default: the integration worktree's `frontend/public/models`)

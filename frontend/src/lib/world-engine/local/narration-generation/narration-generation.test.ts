@@ -6,9 +6,10 @@ import { legacyNarrationInput } from '../prompt';
 import { SHORT_STATE } from '../../runtime/b3-short-samples';
 import type { WorldState } from '../../types';
 import {
-  NARRATION_STRATEGY_VERSION, generateCommittedNarration, sanitizeNarration,
+  NARRATION_STRATEGY_VERSION, dropDuplicateSentences, generateCommittedNarration, sanitizeNarration,
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
+import { planBeats } from './beats';
 
 // ---------------------------------------------------------------------------
 // Scripted engine: real interface, canned outputs. Progress is emitted in
@@ -568,6 +569,231 @@ describe('committed narration strategy: wiring shape', () => {
     expect(result.accepted).toBe(true);
     expect(engine.calls[0].prompt).toBe(inputText);
     expect(result.ledger.mandatory.map((fact) => fact.id)).toEqual(['person_c:position']);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Beat mode: one committed thing per model call. The scripted engine answers
+// in the same order the beats are planned.
+// ---------------------------------------------------------------------------
+const sceneContext = {
+  location: '走廊',
+  placeNotes: ['走廊尽头那盏灯不亮'],
+  present: [{ name: '林川' }, { name: '周宁' }],
+};
+const beatPolicy: NarrationPolicy = {
+  ...basePolicy,
+  mode: 'beats',
+  scene: sceneContext,
+  minChars: 20,
+  targetChars: 200,
+  beatAttempts: 2,
+};
+
+describe('beat mode', () => {
+  test('writes one beat per committed thing and assembles paragraphs', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '走廊尽头那盏灯不亮。' },
+      { kind: 'text', text: '林川从走廊走到门厅，脚步不快。' },
+      { kind: 'text', text: '约两分钟过去了。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.status).toBe('accepted');
+    expect(result.strategyVersion).toBe(NARRATION_STRATEGY_VERSION);
+    expect(result.beats.map((beat) => beat.kind)).toEqual(['scene', 'fact', 'time']);
+    expect(result.beats.every((beat) => beat.source === 'model')).toBe(true);
+    expect(result.text).toBe([
+      '走廊尽头那盏灯不亮。',
+      '林川从走廊走到门厅，脚步不快。',
+      '约两分钟过去了。',
+    ].join('\n\n'));
+    expect(engine.calls).toHaveLength(3);
+    // Each beat prompt names only its own thing and forbids new material.
+    expect(engine.calls[1].prompt).toContain('林川从走廊走到门厅');
+    expect(engine.calls[1].prompt).toContain('不新增人物');
+    expect(result.timings.totalMs).toBeGreaterThanOrEqual(0);
+  });
+
+  test('streams the growing scene after every beat and inside a beat', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从走廊走到门厅。', chunkSize: 3 },
+      { kind: 'text', text: '约两分钟过去了。', chunkSize: 3 },
+    ]);
+    const states: NarrationDisplayState[] = [];
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      onProgress: (state) => states.push(state),
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+      },
+    });
+    const streaming = states.filter((state) => state.status === 'streaming');
+    expect(streaming.length).toBeGreaterThan(2);
+    expect(streaming.some((state) => state.text.includes('林川从') && !state.text.includes('两分钟'))).toBe(true);
+    expect(streaming.at(-1)?.text).toContain('约两分钟过去了');
+    expect(result.accepted).toBe(true);
+    expect(states.at(-1)?.status).toBe('accepted');
+    expect(states.at(-1)?.verified).toBe(true);
+  });
+
+  test('repairs one beat instead of regenerating the whole scene', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从门厅走到走廊。' },
+      { kind: 'text', text: '林川从走廊走到门厅，走到一半停了停。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.beats[0].source).toBe('model');
+    expect(result.beats[0].attempts).toBe(2);
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_direction_reversed')).toBe(true);
+    expect(engine.calls[1].prompt).toContain('【改写要求】');
+    expect(result.text).toBe('林川从走廊走到门厅，走到一半停了停。');
+  });
+
+  test('falls back to the committed sentence for a beat that never obeys', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从门厅走到走廊。' },
+      { kind: 'text', text: '林川又从门厅走到走廊。' },
+      { kind: 'text', text: '约两分钟过去了。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.beats[0].source).toBe('fallback');
+    expect(result.beats[0].text).toBe('林川从走廊走到门厅。');
+    expect(result.text).toContain('林川从走廊走到门厅。');
+  });
+
+  test('a scene written only from committed sentences is reported, not passed', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从门厅走到走廊。' },
+      { kind: 'text', text: '林川又从门厅走到走廊。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 1 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'all_beats_fell_back')).toBe(true);
+    expect(result.text).toBe('林川从走廊走到门厅。');
+  });
+
+  test('drops a duplicate sentence that repeats an earlier beat', async () => {
+    const taskFact: NarrationFact = {
+      id: 'person_a:task', actorId: 'person_a', name: '林川', kind: 'task_achieved',
+      taskId: 'task_1', goal: '把盒子送回库房',
+    };
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从走廊走到门厅。' },
+      { kind: 'text', text: '林川从走廊走到门厅。林川完成了「把盒子送回库房」这件事。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, taskFact),
+      inputText: '【正文】',
+      // Echo against the previous beat is allowed here so the assembly-level
+      // duplicate removal is what gets exercised.
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 10, maxPriorOverlap: 1 },
+    });
+    expect(result.assembly.droppedSentences).toEqual(['林川从走廊走到门厅。']);
+    expect(result.text.match(/林川从走廊走到门厅。/gu)).toHaveLength(1);
+    expect(result.text).toContain('林川完成了「把盒子送回库房」这件事。');
+    expect(result.accepted).toBe(true);
+  });
+
+  test('a leaked non-POV interior is repaired by the next beat attempt', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川心里一沉，从走廊走到门厅。' },
+      { kind: 'text', text: '林川从走廊走到门厅。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'perspective_leak')).toBe(true);
+    expect(engine.calls[1].prompt).toContain('只写周宁能看到、能知道的内容');
+  });
+
+  test('cancelling mid-beat keeps the beats already written and reports cancelled', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从走廊走到门厅。' },
+      { kind: 'stream-hold', prefix: '门厅里' },
+    ]);
+    const controller = new AbortController();
+    let firstBeatWritten!: () => void;
+    const wroteFirstBeat = new Promise<void>((resolve) => { firstBeatWritten = resolve; });
+    const pending = generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      signal: controller.signal,
+      onProgress: (state) => {
+        if (state.text.includes('林川从走廊走到门厅。')) firstBeatWritten();
+      },
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+      },
+    });
+    await wroteFirstBeat;
+    controller.abort();
+    const result = await pending;
+    expect(result.status).toBe('cancelled');
+    expect(result.accepted).toBe(false);
+    expect(result.text).toContain('林川从走廊走到门厅。');
+    // The cancelled beat never started, so no fake evidence row is added.
+    expect(result.beats).toHaveLength(1);
+    expect(result.beats[0].source).toBe('model');
+  });
+
+  test('planBeats orders location before movement and adds a time beat only when required', () => {
+    const beats = planBeats({
+      committed: packet(moved, povAt),
+      ledger: {
+        viewpoint: { id: 'person_c', name: '周宁' }, mandatory: [moved, povAt], optional: [],
+        actorNames: ['林川', '周宁'], locationNames: ['走廊', '门厅'], licensedEntities: [],
+        allowedEvents: [], licensedPromises: [], licensedPastMarkers: [],
+        time: null, requireTime: false, forbiddenKnowledge: [],
+      },
+      policy: {},
+      scene: null,
+    });
+    expect(beats.map((beat) => beat.kind)).toEqual(['fact', 'fact']);
+    expect(beats[0].fact?.kind).toBe('at');
+    expect(beats[1].fact?.kind).toBe('moved');
+    expect(beats.every((beat) => beat.fallback !== 'time-sentence')).toBe(true);
+  });
+
+  test('dropDuplicateSentences keeps the first copy inside a paragraph', () => {
+    const result = dropDuplicateSentences('他把灯关了。他把灯关了。\n\n风停了。');
+    expect(result.dropped).toEqual(['他把灯关了。']);
+    expect(result.text).toBe('他把灯关了。\n\n风停了。');
   });
 });
 
