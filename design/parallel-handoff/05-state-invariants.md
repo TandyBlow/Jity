@@ -263,3 +263,30 @@ settlement.
 - No real model/browser/GPU run in this lane; 09 owns that queue. The stricter
   task/change guards are not part of the pinned Python reference; they are
   product continuity checks, not a second state protocol.
+
+## Current 09 one-turn failure and handoff (read-only)
+
+`results/product/evidence/09-one-legal-turn.json` is a real product run at
+`a16aa465` / page `c4e30b66`. It is **FAILED**, not acceptance:
+
+- turn 1: `results group_10` judged non-member `nono` while the sealed group was
+  only `lu`, twice (17.8 s + 18.1 s). `updates`/`continuation` never ran, no
+  point was committed, and the page produced only a failure note.
+- `waitMs=330031`, `firstReadableMs=190` is a stage label, not prose,
+  `firstTokenMs=null`, `text=null`.
+- refresh: `stateRestored=true`, `entriesRestored=0`, `entriesTotal=1`,
+  `inputConsumptionRestored=false`, `historyRestored=false`,
+  `overallRestored=false`, `storageChars=0`; the page reports restored but the
+  history is the failure note, not a committed point.
+- no visible cancel/stop control; no `__worldSnapshot`, so 05 cannot replay this
+  run.
+
+04 has `c4a78f90` (drop a non-member judgment only when it carries no effect or
+fact) and `d051c149`; 06 merged them at `4757df61`, after this run. The current
+06 page still has `entriesTotal: commands.length` and no hook; apply
+`results/product/evidence/05-kernel/patches/06-page-restore-and-hook.patch`.
+
+The invariant reading of this failure is: the failed turn left the committed
+state at the head (correct atomicity), but the failed input must not be counted
+as display history, and the next submit must not be blocked by a pending
+advance. Do not use this run as a state-replay pass.
