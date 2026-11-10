@@ -75,3 +75,19 @@ python ../../.local/parallel-local-game/resource_lease.py release --lane 08-runt
 'high-performance'})` 的 vendor/architecture/limits。`backend:'webgpu'` 只说明
 WebGPU 路径可用；到底是独显还是核显，看这里的 vendor，以及运行日志里的
 `ggml_webgpu: adapter_info:`。
+
+## 大模型能不能读进来（不推理）
+
+```bash
+node scripts/candidate-model/probe-fetch.mjs --file Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+```
+
+在真实浏览器里对模型 URL 做 HEAD、`Range: bytes=0-1023`、读 1 MiB 流、再
+`arrayBuffer()`。2026-11-10 的结果：前三项都正常（200/206/1 MiB），
+`arrayBuffer()` 对 2.5 GB 的 4B 返回 **Failed to fetch**；1.1 GB 的 1.7B 成功。
+wllama 3.8.1 的加载路径最后就是整文件 `arrayBuffer()`，所以 2.5 GB 单文件
+**在 WebGPU 和 CPU 上都进不来**。要上 4B 得换小于 2 GB 的量化、真正的 GGUF
+分片（`llama-gguf-split`），或流式写 OPFS 的加载器。
+
+脚本的模型服务用 `gguf-server.mjs`，支持 `Accept-Ranges` 和 206；生产模型
+服务器也应如此（换加载器时是前提）。
