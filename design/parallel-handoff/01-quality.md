@@ -207,3 +207,4 @@
 - 02 `c5fa1823`/当前 `scene-prompt.ts`：姿势禁单与 2 段/1 段冲突已修；声明行动不再预置手部动作；代词规则仍推两遍（223/231）。`演习规则牌` 是 licensed、`银质手链` 不是，两个检查要分开。
 - dfde（run 2026-11-10T2210-414a，head dfdedb18，build PR70dLlINuWjz8cXgKyoV）重复 2603：第 1 回合 0 字，results 被 `fact only asserted completion` 中止；构建不含 04 `1f65b0b2`。两次独立真实运行，非偶发。
 - 04 `b2e1dab2`/`c2c8484b`：results 提示加具体走/看行动例；repair 错误带冻结成员行动并要求直接可见结果。repair 改善，但 mixed 答案 drop/retry 仍未实现，06 未构建。
+- dfde 结束 **FAILED**（22:13:55Z），1 回合 0 字；06 `12175c21`（加载时补完未 ready 的 head narration）是页面修复，不解决 results 中止。下个构建需含 04 `1f65b0b2`/`b2e1dab2`/`c2c8484b` 与 drop/retry。
