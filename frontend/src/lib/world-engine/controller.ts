@@ -15,11 +15,14 @@ import {
   type AllocationPlan, type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
 } from './schedule';
 import type {
-  Conclusion, ControlState, CurrentClaim, EntityDelta, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
+  Json as RepairJson, Conclusion, ControlState, CurrentClaim, EntityDelta, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
   PointRecovery, SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
-export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
+export interface WorldModelPort {
+  generate(task: ModelTask, key: string, input: Json): Promise<Json>;
+  repairUpdates?(key: string, prefix: UpdatesCall[], workingState: Json, reason: string): Promise<boolean>;
+}
 export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
 export interface DriverOptions {
   retryLimit?: number;
@@ -123,6 +126,7 @@ export class ControllerDriver {
       clean.requestId = this.memory.requestId;
       clean.budget.max = this.memory.budget.max;
       clean.updatesStages = this.memory.updatesStages;
+      clean.localTargets = this.memory.localTargets;
       this.memory = { ...clean, leaseToken: recovered.leaseToken, ids: recovered.ids, plan: recovered.plan,
         workingState: recovered.workingState, roundChanges: recovered.roundChanges, ...recovered.point };
       this.state = { world: context.world, control: context.control, work: context.work, activeInput: context.activeInput };
@@ -199,7 +203,17 @@ export class ControllerDriver {
         if (this.command === command) this.command = null;
         return { kind: 'stop', reason: decision.reason };
       case 'model': {
-        const output = await this.io.model.generate(decision.task, decision.key, decision.input);
+        let output: Json;
+        try {
+          output = await this.io.model.generate(decision.task, decision.key, decision.input);
+        } catch (error) {
+          if (!this.io.model.repairUpdates) throw error;
+          if (decision.task === 'updates') {
+            const repaired = await this.repairUpdateSuffix(String(error));
+            if (repaired) return undefined;
+          }
+          return { kind: 'stop', reason: `d_incomplete:${String(error)}` };
+        }
         if (this.command === command) this.command = null;
         this.consumeModelOutput(decision, output);
         return undefined;
@@ -396,6 +410,19 @@ export class ControllerDriver {
 
   // ---------- transport ----------
 
+  private async repairUpdateSuffix(reason: string): Promise<boolean> {
+    const repair = this.io.model.repairUpdates;
+    if (!repair || !this.memory.workingState || !this.state.work) return false;
+    const key = this.state.work.pendingGroup?.groupId ?? `time_scan:${this.state.work.pointId}`;
+    const prefix = this.memory.updatesCalls.slice(0, this.memory.updatesApplied);
+    try {
+      if (!await repair.call(this.io.model, key, prefix, this.memory.workingState.state as unknown as RepairJson, reason)) return false;
+    } catch { return false; }
+    this.memory.updatesCalls = prefix;
+    this.memory.lastModel = null;
+    return true;
+  }
+
   private async preview(): Promise<DriverStatus | undefined> {
     const { world, control, work } = this.state;
     if (!world || !work) throw new Error('Preview without served point work');
@@ -431,6 +458,10 @@ export class ControllerDriver {
         const forward = achieved.filter((taskId) => liveTasks[entity]?.tasks?.[taskId] == null && !producedByBatch.has(`${entity}:${taskId}`));
         for (const taskId of forward) forwardRefs.push(`${entity}:${taskId}`);
         validDeltas[entity] = forward.length === 0 ? delta : { ...delta, tasksAchieved: achieved.filter((taskId) => !forward.includes(taskId)) };
+      }
+      if (forwardRefs.length && this.io.model.repairUpdates) {
+        if (await this.repairUpdateSuffix(`dangling_updates_refs:${JSON.stringify(forwardRefs)}`)) return undefined;
+        return { kind: 'stop', reason: `d_incomplete:dangling_updates_refs:${JSON.stringify(forwardRefs)}` };
       }
       // Named group → the action-unit shape; time scan → the groupId-less
       // candidates shape (wire rule: a null groupId may not invent actors,
@@ -510,6 +541,7 @@ export class ControllerDriver {
             }
             continue;
           }
+          if ((error.response.error.code === 'request_malformed' || (attempt === 1 && error.response.error.code === 'version_mismatch')) && await this.repairUpdateSuffix(JSON.stringify(error.response.error))) return undefined;
           return { kind: 'stop', reason: `updates_preview_refused:${error.response.error.code}` };
         }
       }

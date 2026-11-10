@@ -8,4 +8,4 @@ Never commit/push weights, checkpoints, optimizer states, model archives, local 
 
 Windows entry: experiments/d03-macbert/portable_train.py. Preserve LF bytes and UTF-8. R3 uses the teammate's own completed R2 model with its recorded SHA, not the author's historical model identity. Do not modify original historical scripts/data/reports to make fresh results appear identical.
 
-The API + D03 demo is explicitly offline-development/shadow only and makes no world writes. Tests use mocked API responses; do not spend API credits for packaging unless authorized separately. Do not merge or publish other branches.
+The historical scripts/hybrid/run.py demo remains offline-development/shadow only. The authoritative D runtime is now documented in D_LINE_AUTHORITY.md: reuse ControllerDriver and A transport, local D03, two API calls per normal settlement unit, sequential previews and bounded suffix repair. Only A may write world state. Tests use mocked API responses; do not spend API credits for packaging unless authorized separately. Do not merge or publish other branches.

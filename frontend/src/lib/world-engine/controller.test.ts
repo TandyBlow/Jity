@@ -1,3 +1,5 @@
+import type { UpdatesCall } from './schedule';
+import { DLinePort } from './runtime/d-line';
 /** Driver-loop tests over scripted transport/model stubs. Response bodies are
  * minimal server envelopes (the contract layer validates shapes elsewhere);
  * the scenarios follow the shared-trace flow for entry (T01 s1–s5), one group
@@ -93,7 +95,13 @@ const memoryWithAdvanceStart = (over: Partial<ControllerMemory> = {}): Controlle
 });
 
 describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => {
-  test('drives the scripted scenario to the round boundary', async () => {
+  test.each([false, true])('drives the scripted scenario to the round boundary (D=%s)', async (useD) => {
+    const scenarioState = () => {
+      const state = workingState();
+      if (!useD) return state;
+      return { ...state, characters: Object.fromEntries(ORDER.map(id => [id, { ...state.characters.person_a, id }])),
+        initial: { ...state.initial, characters: Object.fromEntries(ORDER.map(id => [id, { ...state.initial.characters.person_a, id, name: id }])) } };
+    };
     let world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'pending' } });
     let control = mkControl({
       phase: 'complete',
@@ -106,14 +114,14 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const previewOk = (requestId: Id) => ({
       protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
-      data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd1', pointProjectionDigest: 'ppd1', workingState: workingState() },
+      data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd1', pointProjectionDigest: 'ppd1', workingState: scenarioState() },
       requestId,
     });
     // get_state 读取回包：world/control 沿用闭包当前值；data 携带该点自身记录（根点 null/null/{}）。
     const stateOk = (pointId: Id, previousPointId: Id | null, timeAdvance: TimeAdvance | null, entityDeltas: Record<string, unknown>) => ({
       protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       world, control,
-      data: { pointId, version: pointId === 'root' ? 0 : 1, state: workingState(), stateDigest: pointId === 'root' ? 'd0' : 'd1', previousPointId, timeAdvance, entityDeltas },
+      data: { pointId, version: pointId === 'root' ? 0 : 1, state: scenarioState(), stateDigest: pointId === 'root' ? 'd0' : 'd1', previousPointId, timeAdvance, entityDeltas },
     });
     const transport = new ScriptedTransport([
       { op: 'create_world', respond: (r) => { world = { ...world, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 } }; return writeOk('create_world', (r as { requestId: Id }).requestId, { worldId: 'w1', rootPointId: 'root', lease: { leaseToken: 'lease1', fenceEpoch: 1, expiresAtEpochMilli: 999999 } }); } },
@@ -172,10 +180,57 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     memory.allocPlan = { allocationKey: 'chain_slots', slots: [{ slotKey: 'advance', kind: 'advance', scope: null }, { slotKey: 'input', kind: 'input', scope: null }, { slotKey: 'round', kind: 'round', scope: null }] };
     // 触发键是程序身份（#8）：夹具按调度器槽位键（含来源）预置，模型输出只声明目标。
     memory.ids = { 'group:person_a': 'g1', [triggerSlotKey('g1', 'person_a', 'person_d')]: 'tk_d', [triggerSlotKey('g1', 'person_a', 'person_a')]: 'tk_a' };
-    const driver = new ControllerDriver({ transport, model }, memory);
+    let dPort: DLinePort | undefined;
+    if (useD) {
+      memory.localTargets = true;
+      memory.updatesStages = ['position','appearance','tasks','subtasks','personality','sanity'];
+      // The legacy fixture deliberately targets self as a negative dice case.
+      // D03 only supplies other characters, so only the admitted roll remains.
+      const firstRoll = transport.script.findIndex(s => s.op === 'create_rolls');
+      transport.script.splice(firstRoll, 1);
+      const stageAt = transport.script.findIndex(s => s.op === 'checkpoint_stage_unit');
+      transport.script.splice(stageAt - 1, 0, ...Array.from({ length: 6 }, () => ({
+        op: 'preview_point' as WorldOperation, respond: (r: unknown) => previewOk((r as { requestId: string }).requestId),
+      })));
+      const scripts = [...model.script];
+      const take = (task: ModelTask) => {
+        const index = scripts.findIndex(entry => entry.task === task);
+        if (index < 0) throw Error(`No fixture ${task}`);
+        return scripts.splice(index, 1)[0].output;
+      };
+      dPort = new DLinePort(async (instruction, input) => {
+        if (instruction.includes('全组冻结行动')) {
+          const results = take('results');
+          const original = take('updates') as unknown as UpdatesCall[];
+          return { results, updates: memory.updatesStages.map(stage => original.find(s => s.stage === stage) ?? { stage, changes: {} }) } as unknown as Json;
+        }
+        if (instruction.includes('简短反应尝试')) {
+          expect(input).toMatchObject({ rollId: 'roll_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 },
+            frozenActions: [{ memberId: 'person_a', rolls: [{ targetId: 'person_d', result: 12, eligible: true, admitted: true }] }] });
+          return { action: take('reaction') };
+        }
+        if (instruction.includes('[任务: pointPlan]')) return { plan: take('pointPlan') };
+        return take('action');
+      }, async () => {
+        const result = take('targets') as { targets: { targetId: string }[] };
+        return { targetIds: result.targets.map(t => t.targetId).filter(id => id !== 'person_a') };
+      }, { async generate() { return take('narration'); } }, 2, async () => take('initial'));
+    }
+    const driver = new ControllerDriver({ transport, model: dPort ?? model }, memory);
 
     const status = await driver.run();
     expect(status).toEqual({ kind: 'await', reason: 'round_points_exhausted' });
+    if (dPort) {
+      // 1 point plan + 1 action + 1 reaction + 1 merged settlement + 4 skips.
+      expect(dPort.apiCalls).toBe(8);
+      expect(transport.ops.filter(op => op === 'create_rolls')).toHaveLength(1);
+      expect(transport.ops.filter(op => op === 'preview_point')).toHaveLength(8);
+      const stage = transport.ops.indexOf('checkpoint_stage_unit');
+      expect(transport.ops.slice(0, stage).filter(op => op === 'preview_point')).toHaveLength(7);
+      expect(transport.ops.indexOf('commit_point')).toBeGreaterThan(stage);
+      expect(transport.ops.lastIndexOf('narration_submit')).toBeGreaterThan(transport.ops.indexOf('commit_point'));
+      return;
+    }
 
     expect(transport.ops).toEqual([
       'create_world', 'narration_claim', 'get_state', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
@@ -205,7 +260,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const stageRequest = transport.requests[16] as { candidates: { appearances: Record<Id, { id: Id }[]> } };
     expect(stageRequest.candidates.appearances.person_a[0].id).toBe('alloc_change_0');
     // 叙事模型输入 = 独立手写字面量（不经 assembleNarrationInput）：固定输出验证。
-    const nsState = workingState() as unknown as Json;
+    const nsState = scenarioState() as unknown as Json;
     const perspective = '主角视角（person_a「甲」）；只表达已结算的世界事实';
     expect(model.calls[1].input).toEqual({ pointId: 'root', before: null, delta: { timeAdvance: null, entityDeltas: {} }, after: nsState, perspective });
     expect(model.calls[13].input).toEqual({ pointId: 'p1', before: nsState, delta: { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }, after: nsState, perspective });
@@ -1449,5 +1504,36 @@ describe('slot/continuation guards (2026-10-26 review)', () => {
     expect(model.calls).toEqual([]);
     expect(transport.ops).toEqual([]);
     expect(driver.pendingDecision()).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
+  });
+});
+
+
+describe('D merged settlement repair boundary', () => {
+  test('failed U3 preview retains U1/U2, frozen rolls and state; never stages or commits', async () => {
+    const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
+    const control = mkControl();
+    const work = mkWork({ phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } });
+    const memory = memoryWithAdvanceStart({ localTargets: true, updatesStages: ['position','appearance','tasks','subtasks','personality','sanity'],
+      workingState: { key: workingStateKey(work), state: workingState() },
+      updatesCalls: [{ stage: 'position', changes: {} }, { stage: 'appearance', changes: {} }, { stage: 'tasks', changes: {} }], updatesApplied: 2,
+      lastResults: { person_a: '没有拿到钥匙' },
+      groupActions: [{ memberId: 'person_a', actionText: '尝试拿钥匙', rolls: [] }] });
+    const frozen = structuredClone(memory.groupActions);
+    let repaired = 0;
+    const model: WorldModelPort = {
+      async generate() { throw Error('No regeneration of action/results'); },
+      async repairUpdates(key, prefix, state) {
+        repaired++;
+        expect(key).toBe('g1'); expect(prefix.map(s => s.stage)).toEqual(['position','appearance']);
+        expect(state).toEqual(workingState()); return true;
+      },
+    };
+    const transport = new ScriptedTransport([{ op: 'preview_point', respond: () => apiError('request_malformed', 'req') }]);
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    expect(await driver.step()).toBeUndefined();
+    expect(repaired).toBe(1);
+    expect(driver.getMemory().updatesCalls).toHaveLength(2);
+    expect(driver.getMemory().groupActions).toEqual(frozen);
+    expect(transport.ops).toEqual(['preview_point']);
   });
 });

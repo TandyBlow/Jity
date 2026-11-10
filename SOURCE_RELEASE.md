@@ -27,3 +27,12 @@
 - Historical Mac gameplay result: test 5/6 versus parent 1/6; R2 regression 24/24. Still not quality-approved; no integration or deployment.
 - Local D03 checks: 16 tests passed, including actual eight-epoch tiny CPU gameplay training, input equivalence and parent preservation. Full Windows/CUDA MacBERT training was not run.
 - New commit CI status must be checked independently of the earlier run above. No paid API calls or model publication are part of this update.
+
+## Authoritative D runtime (2026-11-10)
+
+- `D_LINE_AUTHORITY.md` records the user's authoritative two-API-per-unit workflow on this branch.
+- Added DLinePort/createDLineDriver over the inherited scheduler/ControllerDriver: local D03, merged results + six updates, sequential A previews including U6, bounded suffix repair, pure-time scan, committed C narration delegation.
+- D01 batches use program-issued entity/task IDs and graph preflight. D07 uses fresh final-state evidence and a program-owned next-round allocator; D08 remains a fresh standalone request.
+- Added a token-protected loopback Python API/MacBERT bridge. No model weights, API keys or environment files are included. Old run.py remains a historical shadow comparison tool.
+- Validation: world TypeScript check passed; 555 world-engine tests passed (28 files); 7 Python hybrid/bridge tests passed. Targeted lint: no errors, seven existing unused-variable warnings. Added a controlled end-to-end D composition with an admitted reaction, six previews, stage, commit and post-commit narration; not a live-model or live-A-service acceptance.
+- No paid API invocation, full model training, model publication, or browser deployment was performed. MacBERT quality/support limitations remain unchanged. Match A/B protocol and supply the documented transport/identity/C adapters before live integration.

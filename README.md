@@ -1,3 +1,5 @@
+> 当前 D 线权威流程与新运行端口见 [D_LINE_AUTHORITY.md](D_LINE_AUTHORITY.md)。下文原 API→目标 API→影子模型入口保留为历史实验，不代表当前两次 API 结算流程。
+
 # 当前分支：API + D03（Windows 源码交接）
 
 本分支以 D 源码分支为基础。**只有 D03 使用小模型候选，其他语义任务按方案交给 API。** 当前小模型为 MacBERT；旧 MiniRBT/Qwen/D02 小模型实验只作历史资料，不是此方案的活动后端。

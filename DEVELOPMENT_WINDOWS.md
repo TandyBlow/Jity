@@ -1,3 +1,5 @@
+> 当前 D 线权威流程与新运行端口见 [D_LINE_AUTHORITY.md](D_LINE_AUTHORITY.md)。下文原 API→目标 API→影子模型入口保留为历史实验，不代表当前两次 API 结算流程。
+
 # Windows 开发交接：API + 唯一 D03 小模型
 
 ## 当前版本与范围

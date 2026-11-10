@@ -155,6 +155,7 @@ export type HarnessCommand =
   | { kind: 'cancel'; reason: string };
 
 export interface ControllerMemory {
+  localTargets?: boolean;
   /** Driver-owned factory value: stamped into every emitted write request.
    * Retried operations reuse it; definitive rejections retire it. */
   requestId: Id;
@@ -649,6 +650,7 @@ function idlePointDecision(view: ScheduleView): Decision {
 function pointDecision(view: ScheduleView): Decision {
   const { world, control, work, memory } = view;
   const pending = work!.pendingGroup;
+  if (memory.localTargets && memory.updatesCalls.length > memory.updatesApplied) return { kind: 'read_working_state' };
   if (work!.sealed) {
     if (!memory.commitPayload) {
       // A preview can rebuild the projection only when ALL saved candidate
@@ -886,7 +888,7 @@ function buildDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'targets');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'targets', key: current.sourceId, input: { sourceId: current.sourceId, actionText: current.actionText, workingState: asJson(memory.workingState!.state) } };
+    return { kind: 'model', task: 'targets', key: current.sourceId, input: { sourceId: current.sourceId, actionText: current.actionText, ...(memory.localTargets ? { alreadyActedIds: asJson([...new Set([...memory.groupActors, ...pending.memberIds])]) } : {}), workingState: asJson(memory.workingState!.state) } };
   }
   // DFS (T02-el s5–s8): a rolled-and-admitted target finishes its whole
   // subtree — reaction, admitted extend, its own analysis — before the next
@@ -897,7 +899,9 @@ function buildDecision(view: ScheduleView): Decision {
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
     // §6.2 步骤 4：目标读取发起者的具体威胁（冻结行动文本）生成反应。
-    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, sourceActionText: current.actionText, memberId: waiting.targetId, rollId: waiting.rollId, workingState: asJson(memory.workingState!.state) } };
+    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, sourceActionText: current.actionText, memberId: waiting.targetId, rollId: waiting.rollId,
+      ...(memory.localTargets ? { frozenActions: asJson(memory.groupActions), rule: asJson(PROGRAM_ROLL_RULE) } : {}),
+      workingState: asJson(memory.workingState!.state) } };
   }
   const next = current.pendingTargets[0];
   if (next) {
