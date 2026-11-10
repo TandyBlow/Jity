@@ -221,6 +221,16 @@ describe('21c3 trace replay (CPU)', () => {
     expect(time.evidence.timeAdvanced).toBe(true);
     expect(time.evidence.progress).toBe(true);
 
+    // The controller applies the clock before the first results; the captured
+    // before/after can then be identical. The settled timeAdvance still counts.
+    const settledTime = await roundProgressFromState({
+      before: state, after: same, facts: [], actions: [],
+      knownFacts: new Set<string>(), knownActions: new Set<string>(),
+      timeAdvanced: true,
+    });
+    expect(settledTime.evidence.timeAdvanced).toBe(true);
+    expect(settledTime.evidence.progress).toBe(true);
+
     const offscreen = structuredClone(state);
     const fingelTask = Object.keys(offscreen.characters.fingel.tasks)[0];
     offscreen.characters.fingel.tasks[fingelTask].status = 'achieved';

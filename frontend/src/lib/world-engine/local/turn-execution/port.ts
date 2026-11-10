@@ -273,6 +273,10 @@ export function createSettlementModelPort(
             actions: roundActionTexts,
             knownFacts: consumedFacts,
             knownActions: consumedActions,
+            // The controller applies time before settlement, so the before
+            // snapshot may already contain the new clock. The settled point's
+            // timeAdvance is the authoritative event and must still count.
+            timeAdvanced: roundAdvancedTime(input),
           });
           for (const action of computed.newActions) consumedActions.add(action);
           for (const fact of computed.newFacts) consumedFacts.add(fact);
@@ -364,6 +368,21 @@ function stateOf(input: Json): WorldState | null {
   if (input == null || typeof input !== 'object' || Array.isArray(input)) return null;
   const state = (input as { workingState?: unknown }).workingState;
   return state != null && typeof state === 'object' ? state as WorldState : null;
+}
+
+function roundAdvancedTime(input: Json): boolean {
+  if (input == null || typeof input !== 'object' || Array.isArray(input)) return false;
+  const points = (input as { roundChanges?: unknown }).roundChanges;
+  if (!Array.isArray(points)) return false;
+  return points.some((point) => {
+    if (point == null || typeof point !== 'object' || Array.isArray(point)) return false;
+    const advance = (point as { timeAdvance?: unknown }).timeAdvance;
+    if (advance == null || typeof advance !== 'object' || Array.isArray(advance)) return false;
+    const duration = (advance as { duration?: unknown }).duration;
+    if (duration == null || typeof duration !== 'object' || Array.isArray(duration)) return false;
+    const amount = (duration as { amount?: unknown }).amount;
+    return typeof amount === 'number' && Number.isFinite(amount) && amount > 0;
+  });
 }
 
 function readStage(input: Json): string | null {
