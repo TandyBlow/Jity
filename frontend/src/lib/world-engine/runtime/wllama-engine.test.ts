@@ -26,7 +26,7 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 function fakeWllama() {
   const calls = {
     loads: [] as Array<{ url: string; params: Record<string, unknown> }>,
-    blobs: [] as Array<{ size: number; params: Record<string, unknown> }>,
+    blobs: [] as Array<{ size: number; files: number; params: Record<string, unknown> }>,
     completions: [] as FakeCompletionOptions[],
     exits: 0,
   };
@@ -92,7 +92,7 @@ function fakeWllama() {
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
     },
     loadModel: async (files: Blob[], params: Record<string, unknown>) => {
-      calls.blobs.push({ size: files.reduce((sum, file) => sum + file.size, 0), params });
+      calls.blobs.push({ size: files.reduce((sum, file) => sum + file.size, 0), files: files.length, params });
       await awaitLoadGate(params);
       if (loadFailure) throw new Error(loadFailure);
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
@@ -274,11 +274,119 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(evidence[0]!.compileMs).toBeGreaterThanOrEqual(0);
   });
 
+  test('split GGUF shards load as one ordered multi-blob call', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array(url.includes('00001') ? 6 : 4)]));
+    });
+    const evidence: ModelLoadEvidence[] = [];
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true,
+      onEvidence: (record) => { if (record.kind === 'load') evidence.push(record); } }, async () => fake.instance);
+    await engine.load();
+    expect(fetched).toEqual(urls);
+    expect(fake.calls.blobs[0]).toMatchObject({ size: 10, files: 2 });
+    expect(engine.info.modelId).toBe('m.gguf-00001-of-00002.gguf');
+    expect(engine.runtime.lastModelUrls).toEqual(urls);
+    expect(evidence[0]).toMatchObject({ outcome: 'loaded', modelUrl: urls[0], modelUrls: urls, directBlob: true });
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('a single first-shard url expands to all shards automatically', async () => {
+    const fake = fakeWllama();
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array([1])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m-00001-of-00002.gguf', directBlob: true }, async () => fake.instance);
+    await engine.load();
+    expect(fetched).toEqual(['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf']);
+    expect(fake.calls.blobs[0]).toMatchObject({ files: 2, size: 2 });
+    expect(engine.runtime.lastModelUrls).toEqual(fetched);
+  });
+
+  test('ensureLoaded reloads every shard of the same split model after a hard stop', async () => {
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    let factories = 0;
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    let fetches = 0;
+    vi.stubGlobal('fetch', async () => {
+      fetches += 1;
+      return new Response(new Blob([new Uint8Array([1, 2, 3, 4])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true, abortGraceMs: 10 }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) {
+        fake.chunks([{ text: 'partial' }]);
+        fake.mode('never');
+      }
+      fakes.push(fake);
+      return fake.instance;
+    });
+    await engine.load();
+    expect(fetches).toBe(2);
+    await expect(engine.complete('P', { timeoutMs: 10 })).rejects.toBeInstanceOf(IncompleteGenerationError);
+    expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, lastModelUrls: urls });
+
+    await engine.ensureLoaded();
+    expect(factories).toBe(2);
+    expect(fetches).toBe(4);
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, lastModelUrls: urls });
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('a truncated fetch is rejected by the expected size before wllama sees it', async () => {
+    const fake = fakeWllama();
+    vi.stubGlobal('fetch', async () => new Response(new Blob([new Uint8Array([1, 2, 3, 4])])));
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: true, expectedBytes: 9 },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/size 4, expected 9/);
+    expect(fake.calls.blobs).toHaveLength(0); // never reached loadModel
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.runtime).toMatchObject({ loaded: false, workersCreated: 1, workersExited: 1 });
+  });
+
+  test('the expected size applies per shard', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf'];
+    vi.stubGlobal('fetch', async (url: string) => new Response(new Blob([new Uint8Array(url.includes('-00001-of-') ? 6 : 4)])));
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true, expectedBytes: [6, 5] },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/model shard 2\/2 fetch failed .*size 4, expected 5/);
+    expect(fake.calls.exits).toBe(1);
+  });
+
+  test('a failing second shard names the shard and exits the landing worker', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    vi.stubGlobal('fetch', async (url: string) => {
+      if (url.includes('-00002-of-')) throw new TypeError('Failed to fetch');
+      return new Response(new Blob([new Uint8Array([1])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true }, async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/model shard 2\/2 fetch failed .*00002-of-00002\.gguf\): TypeError: Failed to fetch/);
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.runtime).toMatchObject({ loaded: false, workersCreated: 1, workersExited: 1 });
+  });
+
+  test('a split load without the direct-blob path is a clear error, not a silent single-file load', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrls: ['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf'], directBlob: false },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/directBlob/);
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.info.modelId).toBeNull();
+  });
+
   test('a failing fetch is an error, not a silently resolved load', async () => {
     const fake = fakeWllama();
     vi.stubGlobal('fetch', async () => new Response('nope', { status: 503 }));
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/blob.gguf', directBlob: true }, async () => fake.instance);
-    await expect(engine.load()).rejects.toThrow(/model fetch failed: 503/);
+    await expect(engine.load()).rejects.toThrow(/model shard 1\/1 fetch failed .*HTTP 503/);
     expect(fake.calls.exits).toBe(1);
   });
 
@@ -495,7 +603,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     const first = engine.load();
     await expect(first).rejects.toMatchObject({ name: 'TimeoutError' });
     expect(fakes[0]!.calls.exits).toBe(1);
-    expect(evidence.at(-1)).toMatchObject({ outcome: 'timeout', modelId: null, loadTimeoutMs: 20 });
+    expect(evidence.at(-1)).toMatchObject({ outcome: 'timeout', modelId: null, loadTimeoutMs: 20, error: expect.stringMatching(/TimeoutError/) });
     expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, workersCreated: 1, workersExited: 1, loadCount: 0 });
 
     await engine.ensureLoaded();
@@ -563,6 +671,14 @@ describe('WllamaInferenceEngine option mapping', () => {
     await engine.dispose();
     expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 1, disposed: true, needsReload: false, loaded: false });
     expect(fake.calls.exits).toBe(1);
+  });
+
+  test('chat before ready rejects immediately instead of waiting for a model timeout', async () => {
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fakeWllama().instance);
+    const started = Date.now();
+    await expect(engine.chat([{ role: 'user', content: 'P' }])).rejects.toThrow(/not loaded/);
+    expect(Date.now() - started).toBeLessThan(50);
+    await expect(engine.ensureLoaded()).resolves.toBeUndefined(); // the explicit recovery path
   });
 
   test('complete before load is an ordering error, and dispose is terminal', async () => {

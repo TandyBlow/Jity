@@ -20,6 +20,11 @@ import type { WorldState } from '@/lib/world-engine/types';
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
 const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
+// Sizes of the exact files this product serves (measured on this machine).
+// A truncated fetch is rejected before wllama parses it; the full SHA-256 check
+// belongs to 09's host runner.
+const SEMANTIC_MODEL_BYTES = 396_705_472;
+const NARRATION_MODEL_BYTES = 986_048_096;
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
@@ -74,6 +79,7 @@ function viewOf(state: WorldState): ViewState {
 async function loadEngine(
   url: string,
   contextSize = 8192,
+  expectedBytes?: number,
   /** Hand the constructed engine out before the load starts, so the stop
    * button can reach a cold load that has no `current` engine yet. */
   onEngine?: (engine: WllamaInferenceEngine) => void,
@@ -81,7 +87,7 @@ async function loadEngine(
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
   // must not leave the first player turn waiting forever.
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, ...(expectedBytes ? { expectedBytes } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
@@ -90,7 +96,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, ...(expectedBytes ? { expectedBytes } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
@@ -112,7 +118,7 @@ interface ProductEnginePort extends InferenceEngine {
   runtime(): { needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number } | null;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -125,7 +131,7 @@ function resilientEngine(url: string, contextSize: number, label: string): Produ
   const ensure = async (): Promise<WllamaInferenceEngine> => {
     if (current) return current;
     if (!loading) {
-      loading = loadEngine(url, contextSize, (engine) => {
+      loading = loadEngine(url, contextSize, expectedBytes, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
       }).then((engine) => {
@@ -280,14 +286,14 @@ export default function WorldLocalPage() {
         if (!assetResponse.ok) throw new StaticWorldError('file_hash', `world asset HTTP ${assetResponse.status}`);
         const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
-        const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic');
+        const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic', SEMANTIC_MODEL_BYTES);
         // The stop button must reach a cold load. The ref is set before the
         // await so cancelTurn is never blind during the first 30-60 s.
         semanticRef.current = semantic;
         await semantic.load();
         if (!alive) { await semantic.dispose(); return; }
         setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
-        const narration = resilientEngine(NARRATION_MODEL, 3072, 'narration');
+        const narration = resilientEngine(NARRATION_MODEL, 3072, 'narration', NARRATION_MODEL_BYTES);
         narrationRef.current = narration;
         await narration.load();
         if (!alive) { await narration.dispose(); return; }
@@ -491,8 +497,9 @@ export default function WorldLocalPage() {
 
   const cancelTurn = useCallback(async () => {
     const session = sessionRef.current;
-    if (!session) return;
-    setMessage('正在取消本轮…');
+    // During the cold load there is no session yet, but the stop button must
+    // still cancel the model load. The device work is stopped either way.
+    setMessage(session ? '正在取消本轮…' : '正在取消加载…');
     // Stop the device work first (including a cold load), then let the
     // controller conclude the round. The cancel gate discards any answer that
     // still arrives; the engine stays usable for the next turn.
@@ -510,6 +517,14 @@ export default function WorldLocalPage() {
       ? { ...entry, cancelled: true, ms: null, note: entry.note ?? '本轮已取消，正文草稿未通过核对。' }
       : entry;
     }));
+    if (!session) {
+      // No round exists yet: nothing to conclude. The load is aborted; a reload
+      // is the only honest next step because this page has no retry wiring yet.
+      setPhase('error');
+      setError('加载已取消。刷新页面可以重新开始。');
+      setLoadSeconds(0);
+      return;
+    }
     try {
       const status = await session.cancel('player_cancelled');
       console.info('[world-local] cancel status', status);
@@ -555,7 +570,8 @@ export default function WorldLocalPage() {
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
               <span>
                 {phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}
-                {busy && <button onClick={cancelTurn} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消本轮</button>}
+                {busy && <button onClick={() => void cancelTurn()} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消本轮</button>}
+                {phase === 'loading' && <button onClick={() => void cancelTurn()} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消加载</button>}
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>

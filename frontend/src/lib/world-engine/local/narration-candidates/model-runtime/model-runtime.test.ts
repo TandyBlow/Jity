@@ -157,6 +157,11 @@ describe('model catalog', () => {
     expect(modelSpec('qwen3-1.7b-q4km').thinking).toBe('hybrid');
     expect(modelSpec('qwen3-4b-instruct-2507-q4km').thinking).toBe('none');
     expect(modelSpecByFile('D:/models/Qwen3-1.7B-Q4_K_M.gguf').id).toBe('qwen3-1.7b-q4km');
+    expect(modelSpecByFile('D:/models/Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00001-of-00002.gguf').id).toBe('qwen3-4b-instruct-2507-q4km');
+    const split = modelSpec('qwen3-4b-instruct-2507-q4km').split;
+    expect(split?.shards).toHaveLength(2);
+    expect(split?.shards.every((shard) => shard.bytes < 2 * 1024 * 1024 * 1024)).toBe(true);
+    expect(split?.shards.every((shard) => /^[0-9a-f]{64}$/.test(shard.sha256))).toBe(true);
     expect(() => modelSpec('nope')).toThrow(/unknown candidate model/);
   });
 });
@@ -264,6 +269,9 @@ describe('generateCandidate', () => {
     expect(calls[0]!.options).toMatchObject({ maxTokens: 192, temperature: 0.7, seed: 42 });
     expect(result.timings.calls).toBe(1);
     expect(result.timings.firstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedFirstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedReadableMs).not.toBeNull();
+    expect(result.timings.acceptedReadableMs!).toBeGreaterThanOrEqual(result.timings.acceptedFirstReadableMs!);
     expect(seen[0]!.status).toBe('streaming');
     expect(seen.at(-1)).toMatchObject({ status: 'done', verified: true });
   });
@@ -289,6 +297,8 @@ describe('generateCandidate', () => {
     const repairPrompt = result.rawAttempts[1]!.prompt;
     expect(repairPrompt).toContain('方向写反了');
     expect(result.timings.calls).toBe(2);
+    expect(result.timings.acceptedFirstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedFirstReadableMs!).toBeGreaterThanOrEqual(result.timings.firstReadableMs!);
     expect(result.rawAttempts[1]!.temperature).toBeLessThan(result.rawAttempts[0]!.temperature);
     expect(calls).toHaveLength(2);
   });
@@ -300,6 +310,8 @@ describe('generateCandidate', () => {
     ]);
     const result = await generateCandidate(args({ engine }), { spec: SPEC });
     expect(result.accepted).toBe(false);
+    expect(result.timings.acceptedFirstReadableMs).toBeNull();
+    expect(result.timings.acceptedReadableMs).toBeNull();
     const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
     expect(hard).toContain('omitted_fact');
     expect(hard).toContain('time_not_narrated');

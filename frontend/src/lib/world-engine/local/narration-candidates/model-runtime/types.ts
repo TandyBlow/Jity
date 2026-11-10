@@ -45,6 +45,13 @@ export interface ModelSpec {
   };
   /** True for trained/raw-completion checkpoints (not a chat model). */
   rawCompletion?: boolean;
+  /** Set when the deployable artifact is a split GGUF. File names and hashes
+   * are for the shards produced from `gguf`; the combined bytes differ from
+   * the single-file bytes because each shard carries its own header. */
+  split?: {
+    tool: string;
+    shards: Array<{ file: string; bytes: number; sha256: string }>;
+  };
 }
 
 export interface ChatTurn {
@@ -173,6 +180,14 @@ export interface CandidateTimings {
   calls: number;
   totalMs: number;
   perAttemptMs: number[];
+  /** Request start → the first readable text of the attempt that passed fact
+   * verification. Null when no attempt was accepted. This is separate from
+   * `firstReadableMs`, which may belong to a rejected draft. */
+  acceptedFirstReadableMs: number | null;
+  /** Request start → the accepted text finished fact verification. This is the
+   * first fact-verified readable prose the player could be shown; an early
+   * unverified draft must not be reported under this name. Null if rejected. */
+  acceptedReadableMs: number | null;
 }
 
 export interface CandidateProgress {

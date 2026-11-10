@@ -39,6 +39,11 @@ export interface ChatMessage {
 export interface WllamaEngineOptions {
   /** Default model source for load(); a per-call modelUrl overrides it. */
   modelUrl?: string;
+  /** Split GGUF shards, in order. Takes precedence over modelUrl. wllama
+   * renames the blobs to its canonical `model-00001-of-00002.gguf` names and
+   * llama.cpp opens the siblings from the same virtual directory. Only the
+   * directBlob browser path supports more than one file in wllama 3.8.1. */
+  modelUrls?: string[];
   contextSize?: number;
   numThreads?: number;
   /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
@@ -59,6 +64,11 @@ export interface WllamaEngineOptions {
    * 120000 ms. A timeout aborts the load and exits the landing worker, so a
    * page can retry instead of showing a frozen first turn forever. */
   loadTimeoutMs?: number;
+  /** Expected fetched size(s) in bytes, one per shard. A truncated or wrong
+   * file is rejected before it reaches wllama instead of failing deep inside
+   * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
+   * is the cheap size check the page can do itself. */
+  expectedBytes?: number | number[];
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -66,7 +76,8 @@ export interface WllamaEngineOptions {
 }
 
 interface LoadedIdentity {
-  modelUrl: string;
+  modelUrls: string[];
+  identity: string;
   contextSize: number;
   gpuLayers: number;
 }
@@ -115,7 +126,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
   private workersExited = 0;
   /** Last model a load was attempted for. Survives a hard stop, so the next
    * request reloads the same weights instead of erroring on a missing url. */
-  private lastModelUrl: string | null = null;
+  private lastModelUrls: string[] | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -151,6 +162,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
      * engine can reload the same weights (e.g. after a timeout hard stop). */
     needsReload: boolean;
     lastModelUrl: string | null;
+    lastModelUrls: string[] | null;
   } {
     return {
       backend: this.info.backend,
@@ -165,8 +177,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
       workersCreated: this.workersCreated,
       workersExited: this.workersExited,
       disposed: this.disposed,
-      needsReload: !this.disposed && this.instance === null && this.lastModelUrl !== null,
-      lastModelUrl: this.lastModelUrl,
+      needsReload: !this.disposed && this.instance === null && this.lastModelUrls !== null,
+      lastModelUrl: this.lastModelUrls?.[0] ?? null,
+      lastModelUrls: this.lastModelUrls,
     };
   }
 
@@ -174,26 +187,49 @@ export class WllamaInferenceEngine implements InferenceEngine {
     return typeof location !== 'undefined' ? new URL(configured, location.href).href : configured;
   }
 
-  async load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
+  /** A single canonical first-shard URL (`...-00001-of-00002.gguf`) expands
+   * to every sibling. The GGUF split naming already carries the count, so the
+   * page/09 runner can pass one URL and the engine still loads all shards;
+   * wllama renames the blobs to its own canonical names and llama.cpp opens
+   * the siblings from the virtual models directory. */
+  private expandShards(urls: string[]): string[] {
+    if (urls.length !== 1) return urls;
+    const match = /-(\d{5})-of-(\d{5})\.gguf$/i.exec(urls[0]!);
+    if (!match) return urls;
+    const total = Number(match[2]);
+    if (!Number.isInteger(total) || total < 2 || total > 99) return urls;
+    const prefix = urls[0]!.slice(0, match.index);
+    return Array.from({ length: total }, (_, index) => `${prefix}-${String(index + 1).padStart(5, '0')}-of-${match[2]}.gguf`);
+  }
+
+  private resolveRequestedUrls(options?: { modelUrl?: string; modelUrls?: string[] }): string[] | null {
+    const configured = options?.modelUrls ?? (options?.modelUrl ? [options.modelUrl] : null)
+      ?? this.options.modelUrls ?? (this.options.modelUrl ? [this.options.modelUrl] : null)
+      ?? this.lastModelUrls;
+    if (!configured || configured.length === 0) return null;
+    return this.expandShards(configured.map((url) => this.resolveModelUrl(url)));
+  }
+
+  async load(options?: { signal?: AbortSignal; modelUrl?: string; modelUrls?: string[] }): Promise<void> {
     if (this.disposed) throw abortError();
-    const configured = options?.modelUrl ?? this.options.modelUrl ?? this.lastModelUrl;
-    if (!configured) throw new Error('wllama engine needs a modelUrl');
-    const modelUrl = this.resolveModelUrl(configured);
+    const modelUrls = this.resolveRequestedUrls(options);
+    if (!modelUrls) throw new Error('wllama engine needs a modelUrl');
+    const identity = modelUrls.join('|');
     if (this.instance) {
-      if (this.loadedIdentity?.modelUrl !== modelUrl) {
-        throw new Error(`wllama engine is already loaded with ${this.loadedIdentity?.modelUrl ?? 'another model'}; dispose it before loading ${modelUrl}`);
+      if (this.loadedIdentity?.identity !== identity) {
+        throw new Error(`wllama engine is already loaded with ${this.loadedIdentity?.modelUrls.join(', ') ?? 'another model'}; dispose it before loading ${modelUrls.join(', ')}`);
       }
       return;
     }
     if (this.loading) {
-      if (this.loadingUrl !== null && this.loadingUrl !== modelUrl) {
-        throw new Error(`wllama engine is already loading ${this.loadingUrl}; cannot also load ${modelUrl}`);
+      if (this.loadingUrl !== null && this.loadingUrl !== identity) {
+        throw new Error(`wllama engine is already loading ${this.loadingUrl}; cannot also load ${identity}`);
       }
       return this.loading;
     }
-    const inFlight = this.doLoad(modelUrl, options?.signal);
+    const inFlight = this.doLoad(modelUrls, options?.signal);
     this.loading = inFlight;
-    this.loadingUrl = modelUrl;
+    this.loadingUrl = identity;
     // A load, failed or successful, releases its memo: a successful load is
     // served by the instance check above, and a failed/cancelled load must
     // be retryable, while concurrent callers of the SAME load still share
@@ -201,7 +237,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     // callers awaiting this.loading still see it reject.
     const settle = () => {
       if (this.loading === inFlight) this.loading = null;
-      if (this.loadingUrl === modelUrl) this.loadingUrl = null;
+      if (this.loadingUrl === identity) this.loadingUrl = null;
     };
     void inFlight.then(settle, settle);
     return inFlight;
@@ -211,20 +247,20 @@ export class WllamaInferenceEngine implements InferenceEngine {
    * already live. A different explicit modelUrl is a configuration error.
    * This is the entry 06 should call before the first turn and after a
    * timeout/cancel that terminated the worker. */
-  async ensureLoaded(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
+  async ensureLoaded(options?: { signal?: AbortSignal; modelUrl?: string; modelUrls?: string[] }): Promise<void> {
     if (this.disposed) throw abortError();
     if (this.instance) {
-      if (options?.modelUrl) {
-        const requested = this.resolveModelUrl(options.modelUrl);
-        if (this.loadedIdentity?.modelUrl !== requested) {
-          throw new Error(`wllama engine is loaded with ${this.loadedIdentity?.modelUrl ?? 'another model'}; dispose it before loading ${requested}`);
+      if (options?.modelUrl || options?.modelUrls) {
+        const requested = this.resolveRequestedUrls(options);
+        if (this.loadedIdentity?.identity !== requested?.join('|')) {
+          throw new Error(`wllama engine is loaded with ${this.loadedIdentity?.modelUrls.join(', ') ?? 'another model'}; dispose it before loading ${requested?.join(', ') ?? 'another model'}`);
         }
       }
       return;
     }
-    const modelUrl = options?.modelUrl ?? this.lastModelUrl ?? this.options.modelUrl;
-    if (!modelUrl) throw new Error('wllama engine has no model to reload; pass modelUrl');
-    await this.load({ signal: options?.signal, modelUrl });
+    const modelUrls = this.resolveRequestedUrls(options);
+    if (!modelUrls) throw new Error('wllama engine has no model to reload; pass modelUrl');
+    await this.load({ signal: options?.signal, modelUrls });
   }
 
   /** Stop an in-flight load without disposing the engine. The load rejects
@@ -236,9 +272,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
     return true;
   }
 
-  private async doLoad(modelUrl: string, callerSignal?: AbortSignal): Promise<void> {
+  private async doLoad(modelUrls: string[], callerSignal?: AbortSignal): Promise<void> {
     const started = performance.now();
-    this.lastModelUrl = modelUrl;
+    this.lastModelUrls = modelUrls;
     const controller = new AbortController();
     this.loadAbort = controller;
     const loadTimeoutMs = this.options.loadTimeoutMs ?? 120_000;
@@ -279,16 +315,38 @@ export class WllamaInferenceEngine implements InferenceEngine {
       };
       if (directBlob) {
         const fetchStarted = performance.now();
-        const response = await fetch(modelUrl, { signal: controller.signal });
-        if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${modelUrl}`);
-        const blob = await response.blob();
+        const blobs: Blob[] = [];
+        const expected = this.options.expectedBytes === undefined
+          ? null
+          : Array.isArray(this.options.expectedBytes) ? this.options.expectedBytes : [this.options.expectedBytes];
+        for (const [index, url] of modelUrls.entries()) {
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const blob = await response.blob();
+            if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
+              throw new Error(`size ${blob.size}, expected ${expected[index]}`);
+            }
+            blobs.push(blob);
+          } catch (error) {
+            // Keep an abort as an abort (the catch path classifies by signal),
+            // but name the exact shard for a real fetch/body failure: a 2.5 GB
+            // split otherwise reports only "Failed to fetch".
+            if (controller.signal.aborted) throw error;
+            const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+            throw new Error(`model shard ${index + 1}/${modelUrls.length} fetch failed (${url}): ${reason}`);
+          }
+        }
         fetchMs = performance.now() - fetchStarted;
         const loadStarted = performance.now();
-        await instance.loadModel([blob], params);
+        await instance.loadModel(blobs, params);
         compileMs = performance.now() - loadStarted;
       } else {
+        if (modelUrls.length > 1) {
+          throw new Error('split models need the directBlob path; wllama 3.8.1 loadModelFromUrl takes one url');
+        }
         const loadStarted = performance.now();
-        await instance.loadModelFromUrl(modelUrl, { ...params, useCache: this.options.useCache ?? false });
+        await instance.loadModelFromUrl(modelUrls[0]!, { ...params, useCache: this.options.useCache ?? false });
         compileMs = performance.now() - loadStarted;
       }
       if (this.disposed) {
@@ -298,8 +356,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
         throw abortError();
       }
       this.instance = instance;
-      this.loadedIdentity = { modelUrl, contextSize: this.contextSize, gpuLayers: this.gpuLayers };
-      this.info.modelId = modelUrl.split('/').pop() ?? modelUrl;
+      this.loadedIdentity = { modelUrls, identity: modelUrls.join('|'), contextSize: this.contextSize, gpuLayers: this.gpuLayers };
+      this.info.modelId = decodeURIComponent(modelUrls[0]!.split('/').pop() ?? modelUrls[0]!);
       this.loadCount += 1;
       outcome = 'loaded';
     } catch (error) {
@@ -317,6 +375,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       if (outcome === 'timeout') {
         const timeoutError = new Error(`model load timed out after ${loadTimeoutMs} ms`);
         timeoutError.name = 'TimeoutError';
+        failure = timeoutError; // evidence says timeout, not the abort that delivered it
         throw timeoutError;
       }
       throw error;
@@ -324,10 +383,11 @@ export class WllamaInferenceEngine implements InferenceEngine {
       clearTimeout(deadline);
       callerSignal?.removeEventListener('abort', onCallerAbort);
       if (this.loadAbort === controller) this.loadAbort = null;
-      if (this.loadingUrl === modelUrl) this.loadingUrl = null;
+      if (this.loadingUrl === modelUrls.join('|')) this.loadingUrl = null;
       this.emit({
         kind: 'load',
-        modelUrl,
+        modelUrl: modelUrls[0]!,
+        modelUrls,
         modelId: outcome === 'loaded' ? this.info.modelId : null,
         contextSize: this.contextSize,
         gpuLayers: this.gpuLayers,

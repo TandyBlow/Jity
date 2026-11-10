@@ -226,6 +226,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
   let best: { text: string; verification: CandidateVerification | null; issues: CandidateIssue[] } | null = null;
   let status: CandidateResult['status'] = 'rejected';
   let terminalError: string | null = null;
+  let acceptedFirstReadableMs: number | null = null;
+  let acceptedReadableMs: number | null = null;
 
   const baseUser = policy.prompt?.trim()
     ? policy.prompt
@@ -238,6 +240,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     const userText = repair ? `${baseUser}\n\n${repair}` : baseUser;
     let display = '';
     let attemptFirstTokenMs: number | null = null;
+    let attemptFirstReadableMs: number | null = null;
     const filter = new ThinkingFilter();
     const onChunk = (raw: string) => {
       if (firstProgressMs === null) firstProgressMs = performance.now() - started;
@@ -246,6 +249,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       display = raw;
       if (!added) return;
       if (firstReadableMs === null && added.trim().length > 0) firstReadableMs = performance.now() - started;
+      if (attemptFirstReadableMs === null && added.trim().length > 0) attemptFirstReadableMs = performance.now() - started;
       args.onProgress?.({ text: filter.text, status: 'streaming', verified: false, elapsedMs: performance.now() - started });
     };
     let text = '';
@@ -298,6 +302,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     if (accepted) {
       best = { text, verification, issues };
       status = 'accepted';
+      acceptedFirstReadableMs = attemptFirstReadableMs;
+      acceptedReadableMs = performance.now() - started;
       break;
     }
     if (timedOut) { status = 'timeout'; break; }
@@ -321,6 +327,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       calls: attempts.length,
       totalMs: performance.now() - started,
       perAttemptMs,
+      acceptedFirstReadableMs,
+      acceptedReadableMs,
     },
     strategyVersion: CANDIDATE_STRATEGY_VERSION,
     model: spec ? { id: spec.id, templateId: spec.template.id } : null,
