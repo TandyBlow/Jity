@@ -153,7 +153,14 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     const spine = projected.required.map((fact) => fact.kind === 'moved'
       ? `${fact.name}从${fact.from}走到${fact.to}`
       : `${fact.name}办完了「${'goal' in fact ? fact.goal : ''}」这件事`).join('；');
-    lines.push(`【这一幕的骨架】${spine}。先用一句把这个动作写清楚（谁、从哪、到哪），再写他在这之后看见、听见和想到的。`);
+    const hasMove = projected.required.some((fact) => fact.kind === 'moved');
+    const hasTask = projected.required.some((fact) => fact.kind === 'task_achieved');
+    const how = hasMove && hasTask
+      ? '先用一句把移动写清楚（谁、从哪、到哪），再用一句让人看出那件事办完了；'
+      : hasMove
+        ? '先用一句把移动写清楚（谁、从哪、到哪）；'
+        : '先用一句让人看出这件事办完了，不要写出答案或下一件事；';
+    lines.push(`【这一幕的骨架】${spine}。${how}再写他在这之后看见、听见和想到的。`);
   } else {
     lines.push('【这一幕的骨架】这一小段时间没有外部事件：没有人到来或离开，没有人完成任务。写视角人物此刻在一个地方待着的一小段。');
     // A no-event turn is where the model fills the gap with a past memory or a
