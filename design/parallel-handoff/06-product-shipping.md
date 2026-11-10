@@ -83,6 +83,12 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 // result.kind === 'adopted' ? result.text : 交给原位写作
 ```
 
+### 取消 / 刷新 / 继续回合
+
+- **取消**：补丁不新增取消路径。页面取消仍走 session 的 `round_conclusion_cancel`；程序候选瞬时完成，没有取消窗口。B 的多段生成要等当前引擎调用返回，引擎级中断属 runtime 线。
+- **刷新**：本补丁不改页面的 localStorage 单槽。要在“写正文中途刷新”后保住候选进度，按 `design/parallel-handoff/06-recovery.md` §6 把 `LocalGameSession.open(openLocalProgressStore(), …)` 接进页面；候选选择与该改动互不影响（选择层只读状态）。
+- **继续回合**：只有被接受的正文进入 `priorText`（wiring check 已覆盖“被取消/拒绝的草稿不会成为下一轮 priorText”）。
+
 ## 4. 真实页面跑出来的结果
 
 页面 `/world-local`，Edge 157 + WebGPU（Intel gen-12lp），补丁后的 `game-model.ts`：
