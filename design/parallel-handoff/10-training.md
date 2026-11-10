@@ -398,3 +398,58 @@ V100 fp16，同一 5 条 dev 输入、同一提示词（页面自己的 `instruc
 - 说明文档：`results/product/evidence/10-narration-provenance.md`。
 - 还没证明的：模型在自由提示下会不会照抄状态（目前只有那一次运行的 5 条尝试）；草稿式提示词
   是不是失败主因（仍是假设，09 正在同一冻结输入上做三来源对比）。
+
+## 10. 充值恢复后的第一批真实测量（2026-11-10T15:24Z）
+
+按 `RESTART-AFTER-REVIEW.md`（sha256 `20238282a0069cf34f40e49d8ab1691e2fc35de47faf99a0762a68ff30d016ce`）核对：
+我这边所有训练/探针作业都已完成（251511/251513/251514/251515/251516/251547/251553 全部 COMPLETED，
+无排队），没有重投同一配置。两次作业的浪费如实记了：251570 FAILED（model_server.py 没进部署清单，
+1 秒），251571 TIMEOUT（服务起来了但 50 分钟无人连接，因为客户端还没建）。
+
+### 10.1 四个正文臂在同一批 dev 输入上的完整文本对比
+
+同一份页面提示词、同一 5 条 dev 行、temperature 0.5、seed 20261110、V100 fp16：
+
+| 臂 | 总字数 | 漏草稿条款 | 编造数字 | 新增对白 | 与其它训练行 12 字重合 |
+|---|---|---|---|---|---|
+| 未训练基座 | 1428 | 7 | 2 | 1 | 0/5 |
+| v1 r16 3ep 71 行 | 495 | 0 | 0 | 0 | 4/5 |
+| v2 r8 1ep 82 行 | 458 | 3 | 4 | 0 | 2/5 |
+| v3 草稿钳制 2ep | 379 | 4 | 0 | 0 | 2/5 |
+
+三个训练臂都用“编造”换了“漏条款 + 变短 + 背训练句”，没有一臂同时过关；v3 的零编造数字
+是把草稿给不出的数字句从 target 删掉换来的。结论：这个数据量上加 epoch 只会加重记忆。
+明细与复算方式见 `results/product/evidence/10-training-quality-route.md` §1。
+
+### 10.2 可加载候选（质量未通过）
+
+`qwen15b-page-v3`：`D:/others/Jity/.local/models-narration/qwen15b-page-v3/model-Q4_K_M.gguf`，
+986,048,064 B，sha256 `a03bcfeaa4837d6754257a5f6e71cd24ac3ebce4bb26ee92fc2280d096c5632f`，
+提示词与页面 golden 逐字节一致，GGUF 自带 Qwen 对话模板（必须用对话接口调用，不能用裸补全，
+否则模型会续写提示词）。已写进 `results/quality/candidates-10.json`。
+离线筛查 6 条 dev：2 条干净、3 条漏时间/任务、1 条新增对白；**没有跑过真实页面**。
+06 若要试，需要在 `page.tsx` 的 `NARRATION_MODELS` 里加一个变体并在 `public/models/` 放这份文件
+（986 MB，我没有写 06 的树）；09 跑的时候把 `__worldArm` 里的文件与哈希一起记下来。
+
+### 10.3 给 06 的定位：程序兜底被当成小说段落显示
+
+`results/product/evidence/09-product-10turn.json` 第 1 回合四次模型调用全失败，页面正文是
+程序兜底，其中 `路明非：本组结算未能确认新的结果。` 的来源：
+`semantics/settlement/results.ts:147` 在模型失败时把这句话当成**每个成员的结果值**返回，
+正文层再按“人物：句子”排版，于是内部状态句变成角色台词。另一处 `page.tsx:489` 把
+`source === 'program'` 的整段写进 `text`，只把 `ms` 置空加 note，条目仍按正文渲染。
+建议：失败兜底显示为可恢复状态 + 错误类别，不进入正文文字流。详见 evidence §5。
+
+### 10.4 给 09 的定位：首段计时把程序兜底算成可读正文
+
+同一份证据第 1 回合 `firstReadableMs = 267`，`firstStageMs = 267`，四次模型调用都失败，
+最终文本是程序兜底——说明该字段统计的是“屏幕上有字”。建议拆成 `modelFirstTokenMs` /
+`programTextMs` / `firstReadableModelMs`，汇总不把 program 文本计入首段可读。详见 evidence §6。
+
+### 10.5 下一步（10 线自己）
+
+“更多覆盖”只能来自新的、按草稿写的人工正文：两次把 199 行旧池子程序化改造成监督都失败
+（二元组重合筛：target 中位数掉到 21 字；事实锚点筛：moved 44 条只中 1 条，task 133 条 0 条，
+personality 挑中的是景物句）。`build_page_pairs.py` 已加 `--new-rows`，01/05 交来
+`{id,viewpoint,draft,target,worldFamily,lineage}` 就能一条命令生成整组划分的训练集。
+11/12 的请求继续由 10 统一走 `hpc/batch_screen.py`；目前队列里没有任何 11/12 请求。
