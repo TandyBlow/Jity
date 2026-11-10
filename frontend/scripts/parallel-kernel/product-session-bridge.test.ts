@@ -101,6 +101,20 @@ describe('real recovery session continuity', () => {
     expect(session.snapshot.transport.round?.conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
   }, 30_000);
 
+  it('replays twenty consecutive turns without a digest or chain divergence', async () => {
+    const session = await LocalGameSession.create(template(), scriptedModel([]), { roll: () => 13 });
+    await session.start();
+    for (let turn = 1; turn <= 20; turn += 1) {
+      const status = await session.submit(`第 ${turn} 回合：我把盒盖打开一点。`);
+      expect(status.kind, `turn ${turn} status`).not.toBe('error');
+      const report = await verifyWorldRecord(session.snapshot.transport);
+      expect(report.ok, `turn ${turn}: ${JSON.stringify(report.errors)}`).toBe(true);
+      expect(report.version).toBe(turn);
+    }
+    expect(session.commandsPlayed).toHaveLength(20);
+    expect(session.snapshot.transport.advance).toBeNull();
+  }, 60_000);
+
   it('checkpoints mid-settlement, restores it, and finishes without rerolling or duplicating the point', async () => {
     const backend = new MemoryProgressBackend();
     const clock = { value: 1_000_000 };
