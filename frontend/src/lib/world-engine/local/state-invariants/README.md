@@ -93,3 +93,11 @@ persisted them. `06-page-entry-restore.patch` stores them beside the committed
 snapshot, keyed by `worldId + headPointId`, and refuses to attach them after a
 rollback/fork. It does not change `LocalGameSnapshot`, the world asset or the
 save contract.
+
+`verifyDisplayHistory(snapshot)` is the read-only bridge to the page's restored
+entries: it counts player-trigger points, checks the command list is not shorter
+than that history, and warns when a player point has no ready narration text.
+It never fabricates an input or a paragraph. A command list longer than the
+committed points is a warning because 06's session intentionally keeps failed/
+cancelled inputs for mid-turn resume; page code must not pair those commands by
+index without a command→point map.
