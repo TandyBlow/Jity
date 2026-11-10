@@ -487,6 +487,49 @@ try {
     });
   }
 
+  if (decodeCompare) {
+    evidence.decodeCompare = {
+      model: '/models/Qwen3-1.7B-Q4_K_M.gguf', contextSize: 4096, numThreads: 6,
+      maxTokens: 100, temperature: 0, warmupTokens: 8,
+      prompt: '用大约一百个汉字描写一个人清晨走进空旷的车站，只写画面。',
+      phases: [],
+      note: 'same weights/input/context/threads/sampling; nGpuLayers 0 (CPU) vs 99999 (GPU); per-phase cold load recorded separately; flags alone are not proof, adapter/backend/token counts are read from the engine records and console',
+    };
+    const onlyPhase = flag('--decode-only', '');
+    const phases = [['cpu', 0], ['gpu', 99999]].filter(([label]) => !onlyPhase || label === onlyPhase);
+    for (const [label, nGpuLayers] of phases) {
+      await page.goto(`http://127.0.0.1:${port}/__runtime`);
+      const consoleStart = consoleLines.length;
+      const phase = await page.evaluate(async ({ engineUrl, prompt, maxTokens, nGpuLayers }) => {
+        const module = await import(/* @vite-ignore */ engineUrl);
+        const loads = [];
+        const generations = [];
+        const engine = new module.WllamaInferenceEngine({
+          modelUrl: '/models/Qwen3-1.7B-Q4_K_M.gguf', contextSize: 4096, numThreads: 6,
+          nGpuLayers, abortGraceMs: 2500, useCache: false, directBlob: true,
+          onEvidence: (record) => {
+            if (record.kind === 'load') loads.push(record);
+            if (record.kind === 'generation') generations.push(record);
+          },
+        });
+        const result = { load: { ms: null, error: null }, warm: { text: null, error: null }, measured: { text: null, error: null, wallMs: null }, runtime: null, loads, generations };
+        const started = performance.now();
+        try { await engine.load(); result.load.ms = performance.now() - started; } catch (error) { result.load.error = String(error); }
+        try { result.warm.text = await engine.complete(prompt, { maxTokens: 8, temperature: 0, timeoutMs: 180000 }); } catch (error) { result.warm.error = String(error); }
+        const measuredStart = performance.now();
+        try { result.measured.text = await engine.complete(prompt, { maxTokens, temperature: 0, timeoutMs: 300000 }); } catch (error) { result.measured.error = String(error); }
+        result.measured.wallMs = performance.now() - measuredStart;
+        result.runtime = engine.runtime;
+        await engine.dispose().catch(() => undefined);
+        return result;
+      }, { engineUrl, prompt: evidence.decodeCompare.prompt, maxTokens: 100, nGpuLayers }).catch((error) => ({ error: String(error) }));
+      phase.console = consoleLines.slice(consoleStart);
+      evidence.decodeCompare.phases.push({ label, nGpuLayers, ...phase });
+      save();
+      console.log(`[decode-compare ${label}] loadError=${phase.load?.error ?? 'none'} wallMs=${phase.measured?.wallMs ? Math.round(phase.measured.wallMs) : '?'} chars=${phase.measured?.text?.length ?? 0} error=${phase.measured?.error ?? phase.error ?? 'none'}`);
+    }
+  }
+
   evidence.console = consoleLines.slice(-80);
   evidence.status = evidence.failures.length ? 'FAILED' : 'COMPLETED';
   evidence.finishedAt = new Date().toISOString();
