@@ -1,0 +1,72 @@
+{
+ "repo": "internlm/internlm2_5-1_8b-chat-gguf",
+ "revision": "916410ad25d03d5dee11b451fe2b6e0353913b64",
+ "lastModified": "2024-07-29T07:18:59.000Z",
+ "licenseTags": [
+  "apache-2.0"
+ ],
+ "downloads": 543,
+ "likes": 10,
+ "files": [
+  {
+   "path": "README.md",
+   "bytes": 5792,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-fp16.gguf",
+   "bytes": 3780559616,
+   "lfsSha256": "2f2d18adf63dacfa5d35447116e365218508c43debd113de7fbdcf248c9c6dc8",
+   "lfsSize": 3780559616
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q2_k.gguf",
+   "bytes": 771885824,
+   "lfsSha256": "c9459859cdfb4e374038eaa47f10409c673fbd5c555a4b538887fc7fae34d0dd",
+   "lfsSize": 771885824
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q3_k_m.gguf",
+   "bytes": 964412160,
+   "lfsSha256": "fc241b5496c9d863da286d84125bd8a8b8842488237191a55e2b4ad9c4d00194",
+   "lfsSize": 964412160
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q4_0.gguf",
+   "bytes": 1113971456,
+   "lfsSha256": "da6674980efc0caae393f9c5d10c846ec9b34ee5ec598268010de5d0655a4b9a",
+   "lfsSize": 1113971456
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+   "bytes": 1172364032,
+   "lfsSha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+   "lfsSize": 1172364032
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q5_0.gguf",
+   "bytes": 1326406400,
+   "lfsSha256": "eb8540862f5465f90493ddd910d3297f76c8e763ea4e051725d5e8148582ab53",
+   "lfsSize": 1326406400
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q5_k_m.gguf",
+   "bytes": 1356487424,
+   "lfsSha256": "385d62826f341dc97aebfc77248f46b6e1edf0b3d3a1fc4a7f3491ad7c95dcfd",
+   "lfsSize": 1356487424
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q6_k.gguf",
+   "bytes": 1552118528,
+   "lfsSha256": "544f4a569ea169d50a3a7519a11b9396c8f21cd109351860d2790449de4aafa3",
+   "lfsSize": 1552118528
+  },
+  {
+   "path": "internlm2_5-1_8b-chat-q8_0.gguf",
+   "bytes": 2009613056,
+   "lfsSha256": "8526cc24717fcab32b20540c546f8c23a6ea3ff40b86f421a0cd060c8123e8b2",
+   "lfsSize": 2009613056
+  }
+ ]
+}

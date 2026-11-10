@@ -1,0 +1,188 @@
+{
+ "preregistrationVersion": "narration-model-search-prereg-v1-draft",
+ "owner": "11-model-search",
+ "status": "draft-awaiting-01-final-package",
+ "createdAt": "2026-11-10T12:14:41.595724+00:00",
+ "scope": "Offline model comparison for narration on the ONE shared public development package. Development data only; never independent final acceptance. No product-quality claim is made here.",
+ "devPackage": {
+  "owner": "01-input",
+  "note": "01 owns the single frozen manifest/rubric for lanes 11 and 12. This draft records hashes as observed while 01 was still editing; it does not freeze or fork the package.",
+  "manifestPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\manifest.json",
+  "manifestSha256Observed": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+  "casesPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\cases.jsonl",
+  "casesSha256Observed": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+  "rubricPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\RUBRIC.md",
+  "rubricSha256Observed": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+  "statusObserved": "public_development_regression_not_final",
+  "final": false,
+  "finalityRule": "A batch may start only after 01 marks the package final and the manifest/cases/rubric sha256 above are re-read and pinned in preregistration.v1.json. Any change afterwards creates a new version and keeps old results."
+ },
+ "condition": {
+  "promptTemplateId": "narration-trained-instruct-whole-scene-v1",
+  "serializer": "yuyan-prose-result-v2 (experiments/narration-runtime-v2/src/v2_render.py)",
+  "serializerSha256": "5b550bb3c8d7e5e0c5a4f26fa2507f82044a2eea9af86b5d13de6bd94c54132a",
+  "chatWrapper": "lane 10 chatml-instruct-v1: system text + 【已结算输入】 + serialized input + 请写出这一回合的正文。",
+  "chatWrapperSource": "experiments/narration-runtime-v2/configs/hf-instruct.template.json",
+  "chatWrapperSha256": "1c91bd6dbb1d7aa50be0d967f92854e9ecf721f8155f68856419d56132cee8ba",
+  "templateApplication": "each model's own GGUF chat template via llama-server --jinja; the model never receives a hand-pasted ChatML string",
+  "whitespaceRule": "delete space/tab/U+3000 exactly like the browser path; every removal recorded in the prompt ledger",
+  "sampling": {
+   "temperature": 0.0,
+   "topK": 1,
+   "topP": 1.0,
+   "seed": 42,
+   "maxTokens": 320,
+   "contextSize": 8192,
+   "stop": [
+    "<|im_end|>",
+    "<|endoftext|>"
+   ],
+   "stream": false
+  },
+  "promptCount": 15,
+  "subsetPolicy": "No subset. All 15 declared cases must serialize; a case the reference serializer refuses blocks the batch until 01 fixes or formally excludes it.",
+  "knownSerializerRefusals": [
+   "tide-continuity-tide-duty-t2: 本回合变化/变化/沈砚 uses operation 任务 (reported to 01)",
+   "tide-continuity-tide-duty-t3: 本回合变化/变化/潮位计/解除外貌 is a string, not an array (reported to 01)",
+   "fixture-goggles-transfer: 本回合变化/变化/诺诺 uses operation 外貌 (reported to 01)"
+  ],
+  "limitations": [
+   "Whole-scene condition, not the product's current beat-scoped prompt (02's strategy). It is a model-comparison condition only; promotion still runs the real product page via 09.",
+   "Case priorTexts are used by the checker for echo detection, not inserted into the prompt. Cross-turn context is 04/07's scope."
+  ]
+ },
+ "arms": {
+  "baselines": [
+   {
+    "id": "qwen3-1.7b-instruct",
+    "why": "rubric §6 names Qwen3-1.7B existing output as the comparison baseline",
+    "localSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+    "download": "not re-downloaded; already local and on HPC if present"
+   },
+   {
+    "id": "product-narr-qwen25-1.5b",
+    "why": "current product narration checkpoint, a reference arm (not the rubric baseline)",
+    "localSha256": "6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b",
+    "download": "never re-downloaded; local training artifact"
+   }
+  ],
+  "candidates": [
+   {
+    "id": "qwen25-1.5b-instruct",
+    "bytes": 1117320736,
+    "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "lfsSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "license": "Apache-2.0",
+    "licenseDecisionRequired": false
+   },
+   {
+    "id": "internlm2_5-1.8b-chat",
+    "bytes": 1172364032,
+    "file": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+    "lfsSha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+    "license": "other",
+    "licenseDecisionRequired": true
+   },
+   {
+    "id": "glm-edge-1.5b-chat",
+    "bytes": 980470144,
+    "file": "ggml-model-Q4_K_M.gguf",
+    "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+    "license": "other",
+    "licenseDecisionRequired": true
+   },
+   {
+    "id": "hunyuan-1.8b-instruct",
+    "bytes": 1133085088,
+    "file": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+    "lfsSha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+    "license": "other",
+    "licenseDecisionRequired": true
+   }
+  ],
+  "heldOrExcluded": [
+   {
+    "id": "gemma3-1b-it-qat",
+    "bytes": 1003541152,
+    "reasons": [
+     "chat template not captured from the base tokenizer_config"
+    ]
+   },
+   {
+    "id": "minicpm-2b-dpo",
+    "bytes": 1729503200,
+    "reasons": [
+     "size 1729503200 > gate 1500000000"
+    ]
+   },
+   {
+    "id": "minicpm5-2b",
+    "bytes": 1561318368,
+    "reasons": [
+     "size 1561318368 > gate 1500000000",
+     "chat template not captured from the base tokenizer_config"
+    ]
+   }
+  ]
+ },
+ "judging": {
+  "rubric": "01-input RUBRIC.md v1",
+  "reviewer": "01-input independent review; 05-kernel then 03-actions only as conflict-checked substitutes",
+  "thisLane": "produces raw text + mechanical aggregation; self-assessment is not acceptance",
+  "perCaseFields": [
+   "caseId",
+   "inputSha256",
+   "model",
+   "template",
+   "seed",
+   "text",
+   "decision",
+   "violations",
+   "pending",
+   "elapsedMs"
+  ]
+ },
+ "qualityGate": {
+  "source": "01 RUBRIC.md §6 (model search)",
+  "minCasesWithoutHardError": "10/15",
+  "maxStyleFail": 3,
+  "noUnfoundedEntityCase": true,
+  "baselineImprovement": {
+   "baseline": "qwen3-1.7b-instruct",
+   "rule": "at least 2 cases change from style_fail/fail to pass under the same condition",
+   "forbidden": "deleting required facts, lowering severity, swapping in a looser checker"
+  },
+  "promotion": "Only candidates passing this gate may be sent to 09 as browser-requests; a pass is eligibility for a small browser check, not product acceptance."
+ },
+ "failureExits": [
+  "manifest/cases/rubric sha256 mismatch -> stop",
+  "any declared case refused by the serializer -> stop (no silent skip)",
+  "model sha256 mismatch or file size > 1,500,000,000 bytes -> stop",
+  "llama-server load failure -> record and drop that candidate, no retry loop",
+  "generation error/timeout in >2 cases -> record and stop that arm",
+  "no candidate reaches the quality gate -> keep the negative result and report; do not send a weaker candidate to 09 to fill the slot"
+ ],
+ "runtimeConstraint": {
+  "source": "results/quality/team-08-runtime.json: browser Blob store aggregate cap ~2 GB; 1.3 GB blob OK, +1.2 GB fails; 2.5 GB single file fails; splitting does not bypass",
+  "consequence": "A candidate's file plus the page's other loaded models must stay under the measured cap for a real browser run. All batch-1 candidates are <=1.18 GB; the 1.5 GB single-file gate is aligned. No 4B retry is queued."
+ },
+ "resourcePlan": {
+  "hpc": "lane 10 only. Preflight request results/product/hpc-requests/11-model-search-preflight-001.json (download/hash/GGUF probe/load smoke, no quality judgement). Quality batch request is withheld until the final dev-package pin.",
+  "local": "lane 11 runs no local GPU/browser inference; browser runs go to 09 after promotion.",
+  "downloadsBytes": {
+   "qwen25-1.5b-instruct": 1117320736,
+   "internlm2_5-1.8b-chat": 1172364032,
+   "glm-edge-1.5b-chat": 980470144,
+   "hunyuan-1.8b-instruct": 1133085088,
+   "totalCandidates": 4403239000,
+   "optionalBaselineQwen3": 1107409472
+  }
+ },
+ "changeControl": "Any change to candidates, template, sampling, max tokens, stop strings, or case set creates preregistration.v2 and a new batch id; old raw outputs stay.",
+ "nextSteps": [
+  "01 finalizes/fixes the three non-serializable cases and marks the package final",
+  "re-run build_prompts.py with the final manifest sha and no skip flag -> frozen prompts",
+  "10 runs preflight, then the quality batch with the frozen prompts",
+  "01 reviews outputs; 11 reports gate result; only passers go to 09"
+ ]
+}

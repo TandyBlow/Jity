@@ -1,0 +1,42 @@
+{
+ "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+ "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+ "lastModified": "2024-09-25T12:32:50.000Z",
+ "licenseTags": [
+  "apache-2.0"
+ ],
+ "downloads": 5083990,
+ "likes": 937,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 11343,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 4917,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 660,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 242,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 7305,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

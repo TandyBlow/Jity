@@ -1,0 +1,622 @@
+{
+ "registryVersion": "narration-model-search-candidates-v1",
+ "owner": "11-model-search",
+ "preInferenceGate": {
+  "singleFileBytes": 1500000000,
+  "source": "EXPLORATION-AND-ACCEPTANCE.md (11 initial offline promotion gate); quality gates are applied after the frozen batch run",
+  "qualityGates": "not applied yet: require the frozen 01 dev package + rubric and measured outputs"
+ },
+ "runtimeCap": {
+  "source": "results/quality/team-08-runtime.json: browser Blob-store aggregate cap ~2 GB; a 1.3 GB blob loads, adding another 1.2 GB fails; a 2.5 GB single file fails; splitting does not bypass",
+  "consequence": "For a real 09 browser run the candidate plus the page's other loaded model must stay under the measured cap. All batch-1 candidates are <=1.18 GB, and the 1.5e9-byte single-file gate is aligned. No 4B retry is queued."
+ },
+ "baselines": [
+  {
+   "id": "product-narr-qwen25-1.5b",
+   "description": "current product narration checkpoint (Qwen2.5-1.5B narration LoRA, Q4_K_M)",
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\qwen25-1.5b-narr-Q4_K_M.gguf",
+   "bytes": 986048096,
+   "sha256": "6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged15",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 141,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1543714304
+   },
+   "neverRedownload": true,
+   "provenance": {
+    "kind": "local training artifact (lane 10), never re-downloaded"
+   }
+  },
+  {
+   "id": "qwen3-1.7b-instruct",
+   "description": "the historical Qwen3-1.7B baseline named by the task",
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\Qwen3-1.7B-Q4_K_M.gguf",
+   "bytes": 1107409472,
+   "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "Qwen3-1.7B",
+    "sizeLabel": "1.7B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": "Unsloth",
+    "contextLength": 40960,
+    "chatTemplateSha256": "8428c815ac94d82064e35ff1e841dcbe260e7e53a8d0bd3b94afa2eefa9bccab",
+    "chatTemplateChars": 4761,
+    "tensorTypes": {
+     "F32": 113,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1720574976
+   },
+   "neverRedownload": true,
+   "provenance": {
+    "repo": "unsloth/Qwen3-1.7B-GGUF",
+    "revision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
+    "file": "Qwen3-1.7B-Q4_K_M.gguf",
+    "lfsSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+    "matchesLocal": true
+   }
+  }
+ ],
+ "candidates": [
+  {
+   "id": "qwen25-1.5b-instruct",
+   "family": "Qwen2.5",
+   "base": {
+    "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "lastModified": "2024-09-25T12:32:50.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "card": {
+     "path": "sources/hf/qwen25-1.5b-instruct/base-README.md",
+     "bytes": 4917,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+    "publisher": "official",
+    "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+    "lastModified": "2024-09-20T06:31:38.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "bytes": 1117320736,
+    "lfsSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "local": {
+     "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\qwen2.5-1.5b-instruct-q4_k_m.gguf",
+     "sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+     "matchesOfficialLfs": true
+    },
+    "localProbe": {
+     "architecture": "qwen2",
+     "name": "qwen2.5-1.5b-instruct",
+     "sizeLabel": "1.8B",
+     "quantization": "MOSTLY_Q4_K_M",
+     "quantizedBy": null,
+     "contextLength": 32768,
+     "chatTemplateSha256": "d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4",
+     "chatTemplateChars": 2509,
+     "tensorTypes": {
+      "Q6_K": 29,
+      "Q4_K": 169,
+      "F32": 141
+     },
+     "estimatedParameters": 1777088000
+    }
+   },
+   "config": {
+    "path": "sources/hf/qwen25-1.5b-instruct/base-config.json",
+    "architectures": [
+     "Qwen2ForCausalLM"
+    ],
+    "model_type": "qwen2",
+    "hidden_size": 1536,
+    "num_hidden_layers": 28,
+    "num_attention_heads": 12,
+    "num_key_value_heads": 2,
+    "vocab_size": 151936,
+    "max_position_embeddings": 32768,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "base tokenizer_config.json",
+    "chars": 2507,
+    "sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f"
+   },
+   "license": {
+    "spdx": "Apache-2.0",
+    "commercialUse": "allowed",
+    "decisionRequired": false,
+    "note": "HF license tag apache-2.0; captured LICENSE body is Apache License 2.0.",
+    "capturedFile": "hf/qwen25-1.5b-instruct/base-LICENSE",
+    "capturedSha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+    "ggufRepoLicenseTags": [
+     "apache-2.0"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": "qwen2",
+    "architectureKnownToShippedWasm": true,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": false,
+    "passed": true,
+    "reasons": []
+   }
+  },
+  {
+   "id": "internlm2_5-1.8b-chat",
+   "family": "InternLM2.5",
+   "base": {
+    "repo": "internlm/internlm2_5-1_8b-chat",
+    "revision": "57dcbc5455bf050d27a80f0ebd7808387caa714d",
+    "lastModified": "2025-03-13T07:04:49.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "card": {
+     "path": "sources/hf/internlm2_5-1.8b-chat/base-README.md",
+     "bytes": 17231,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "internlm/internlm2_5-1_8b-chat-gguf",
+    "publisher": "official",
+    "revision": "916410ad25d03d5dee11b451fe2b6e0353913b64",
+    "lastModified": "2024-07-29T07:18:59.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "file": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+    "bytes": 1172364032,
+    "lfsSha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/internlm2_5-1.8b-chat/base-config.json",
+    "architectures": [
+     "InternLM2ForCausalLM"
+    ],
+    "model_type": "internlm2",
+    "hidden_size": 2048,
+    "num_hidden_layers": 24,
+    "num_attention_heads": 16,
+    "num_key_value_heads": 8,
+    "vocab_size": 92544,
+    "max_position_embeddings": 32768,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "base tokenizer_config.json",
+    "chars": 211,
+    "sha256": "49aa7cb516942cc5a17d45ed2939828e3b5e4188dc487a3c4b64a570e5b5111f"
+   },
+   "license": {
+    "spdx": "other",
+    "commercialUse": "free commercial usage via application form",
+    "decisionRequired": true,
+    "note": "Base card (base-README.md line ~169) says code Apache-2.0, weights open for academic research and free commercial usage after filling the application form; the GGUF repo is tagged apache-2.0. The two statements are not identical, so product use needs a decision.",
+    "capturedFile": null,
+    "capturedSha256": null,
+    "ggufRepoLicenseTags": [
+     "apache-2.0"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": true,
+    "passed": true,
+    "reasons": []
+   }
+  },
+  {
+   "id": "glm-edge-1.5b-chat",
+   "family": "GLM-Edge",
+   "base": {
+    "repo": "zai-org/GLM-Edge-1.5B-Chat",
+    "revision": "7b201d3c160c25beda4cf0d107617ad975cd1ca8",
+    "lastModified": "2024-11-28T09:25:44.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "card": {
+     "path": "sources/hf/glm-edge-1.5b-chat/base-README.md",
+     "bytes": 1271,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "zai-org/glm-edge-1.5b-chat-gguf",
+    "publisher": "official",
+    "revision": "5fee502f1f6312dde56281cc8c5c0db2254198a9",
+    "lastModified": "2024-11-28T08:56:06.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "file": "ggml-model-Q4_K_M.gguf",
+    "bytes": 980470144,
+    "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/glm-edge-1.5b-chat/base-config.json",
+    "architectures": [
+     "GlmForCausalLM"
+    ],
+    "model_type": "glm",
+    "hidden_size": 2048,
+    "num_hidden_layers": 28,
+    "num_attention_heads": 16,
+    "num_key_value_heads": 4,
+    "vocab_size": 59264,
+    "max_position_embeddings": 8192,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "base tokenizer_config.json",
+    "chars": 305,
+    "sha256": "92d6b9097a4a1514d7905de211d86698509da9880947c6f5b6f7491c5a1e650e"
+   },
+   "license": {
+    "spdx": "other",
+    "commercialUse": "registration required, attribution required",
+    "decisionRequired": true,
+    "note": "Captured base-LICENSE is the GLM-Edge License: free for academic research, commercial use requires registration at the stated form, and distributions must show 'Built with GLM-Edge'. The licence is revocable/non-transferable.",
+    "capturedFile": "hf/glm-edge-1.5b-chat/base-LICENSE",
+    "capturedSha256": "710a4abbfbd30343be4b1d507835a1ae27e4b441e8a1211befc3f2124347e81a",
+    "ggufRepoLicenseTags": [
+     "other"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": true,
+    "passed": true,
+    "reasons": []
+   }
+  },
+  {
+   "id": "gemma3-1b-it-qat",
+   "family": "Gemma3",
+   "base": {
+    "repo": "google/gemma-3-1b-it",
+    "revision": "dcc83ea841ab6100d6b47a070329e1ba4cf78752",
+    "lastModified": "2025-04-04T13:12:40.000Z",
+    "licenseTags": [
+     "gemma"
+    ],
+    "card": {
+     "path": "sources/hf/gemma3-1b-it-qat/base-README.md",
+     "bytes": 24265,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "google/gemma-3-1b-it-qat-q4_0-gguf",
+    "publisher": "official-qat",
+    "revision": "d1be121d36172a4b0b964657e2ee859d61138593",
+    "lastModified": "2025-04-11T00:54:27.000Z",
+    "licenseTags": [
+     "gemma"
+    ],
+    "file": "gemma-3-1b-it-q4_0.gguf",
+    "bytes": 1003541152,
+    "lfsSha256": "95e5b8d891cd6a794f66c2a6fb59a41e9562b4660560b854274eceffb628b22a",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/gemma3-1b-it-qat/base-config.json",
+    "unavailable": true,
+    "reason": "config.json was not retrievable (gated repository or capture error)"
+   },
+   "chatTemplate": {
+    "source": "unavailable",
+    "chars": null,
+    "sha256": null,
+    "reason": "base tokenizer_config.json could not be read (gated or absent)"
+   },
+   "license": {
+    "spdx": "gemma",
+    "commercialUse": "Gemma Terms of Use, access gated",
+    "decisionRequired": true,
+    "note": "HF license tag gemma; the repo requires accepting Google's usage licence to download. config.json and tokenizer_config.json returned HTTP 401 without an authorised token, so the chat template could not be captured here.",
+    "capturedFile": null,
+    "capturedSha256": null,
+    "ggufRepoLicenseTags": [
+     "gemma"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": true,
+    "passed": false,
+    "reasons": [
+     "chat template not captured from the base tokenizer_config"
+    ]
+   }
+  },
+  {
+   "id": "hunyuan-1.8b-instruct",
+   "family": "Hunyuan",
+   "base": {
+    "repo": "tencent/Hunyuan-1.8B-Instruct",
+    "revision": "de940610ab5d45b4fedbd37e08444d0dc502837c",
+    "lastModified": "2025-08-06T07:30:26.000Z",
+    "licenseTags": [],
+    "card": {
+     "path": "sources/hf/hunyuan-1.8b-instruct/base-README.md",
+     "bytes": 21859,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+    "publisher": "third-party",
+    "revision": "f5c690589f011bebe798fa2634b79a94f95463e3",
+    "lastModified": "2025-08-04T07:23:01.000Z",
+    "licenseTags": [],
+    "file": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+    "bytes": 1133085088,
+    "lfsSha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/hunyuan-1.8b-instruct/base-config.json",
+    "architectures": [
+     "HunYuanDenseV1ForCausalLM"
+    ],
+    "model_type": "hunyuan_v1_dense",
+    "hidden_size": 2048,
+    "num_hidden_layers": 32,
+    "num_attention_heads": 16,
+    "num_key_value_heads": 4,
+    "vocab_size": 120818,
+    "max_position_embeddings": 262144,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "base tokenizer_config.json",
+    "chars": 4782,
+    "sha256": "751a70cee1051a921a7592530b5d75766faae8a6ad9d61d72daff0e31246bc3c"
+   },
+   "license": {
+    "spdx": "other",
+    "commercialUse": "allowed inside the Territory under conditions",
+    "decisionRequired": true,
+    "note": "Captured base-LICENSE is the Tencent Hunyuan Community License (release 2025-08-04). It excludes the EU, UK and South Korea and imposes distribution conditions. The GGUF file is a third-party quantisation.",
+    "capturedFile": "hf/hunyuan-1.8b-instruct/base-LICENSE",
+    "capturedSha256": "a01de40400259e000371b84bd112e3a42fbeb33d042bf56dec7cd827c688a63f",
+    "ggufRepoLicenseTags": []
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": true,
+    "passed": true,
+    "reasons": []
+   }
+  },
+  {
+   "id": "minicpm-2b-dpo",
+   "family": "MiniCPM-2B",
+   "base": {
+    "repo": "openbmb/MiniCPM-2B-dpo-bf16",
+    "revision": "9d6de77274c9f364037bf8506b4a831d3520ae79",
+    "lastModified": "2024-09-07T05:29:30.000Z",
+    "licenseTags": [],
+    "card": {
+     "path": "sources/hf/minicpm-2b-dpo/base-README.md",
+     "bytes": 11582,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "runfuture/MiniCPM-2B-dpo-q4km-gguf",
+    "publisher": "third-party",
+    "revision": "5716a1492bb21b66b56d6c454a949ee71471351b",
+    "lastModified": "2024-02-09T02:46:58.000Z",
+    "licenseTags": [],
+    "file": "MiniCPM-2B-dpo-q4km-gguf.gguf",
+    "bytes": 1729503200,
+    "lfsSha256": "b4f2392d1beba99ec494aed8e0baf99fc368a1e50dadc5dfa6fcfa2bfdcb79db",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/minicpm-2b-dpo/base-config.json",
+    "architectures": [
+     "MiniCPMForCausalLM"
+    ],
+    "hidden_size": 2304,
+    "num_hidden_layers": 40,
+    "num_attention_heads": 36,
+    "num_key_value_heads": 36,
+    "vocab_size": 122753,
+    "max_position_embeddings": 4096,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "base tokenizer_config.json",
+    "chars": 158,
+    "sha256": "d9f25394f8be2d8a5fb234670a8596c7a12fa0d21896b5a757d77da8b8686944"
+   },
+   "license": {
+    "spdx": "unclear",
+    "commercialUse": "needs a licence reading",
+    "decisionRequired": true,
+    "note": "No license tag on the base repo; the captured card has no licence section. Excluded for size before a licence decision mattered.",
+    "capturedFile": null,
+    "capturedSha256": null,
+    "ggufRepoLicenseTags": []
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": false,
+    "licenseDecisionRequired": true,
+    "passed": false,
+    "reasons": [
+     "size 1729503200 > gate 1500000000"
+    ]
+   }
+  },
+  {
+   "id": "minicpm5-2b",
+   "family": "MiniCPM5",
+   "base": {
+    "repo": "openbmb/MiniCPM5-2B",
+    "revision": "42433e90dad95123ab87729fd7011e7110629556",
+    "lastModified": "2026-11-09T08:14:20.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "card": {
+     "path": "sources/hf/minicpm5-2b/base-README.md",
+     "bytes": 112168,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "openbmb/MiniCPM5-2B-GGUF",
+    "publisher": "official",
+    "revision": "5eff2ddd90624426f705e9213bb56fcd7209977c",
+    "lastModified": "2026-11-09T08:13:57.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "file": "MiniCPM5-2B-Q4_K_M.gguf",
+    "bytes": 1561318368,
+    "lfsSha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/minicpm5-2b/base-config.json",
+    "architectures": [
+     "LlamaForCausalLM"
+    ],
+    "model_type": "llama",
+    "hidden_size": 2048,
+    "num_hidden_layers": 42,
+    "num_attention_heads": 16,
+    "num_key_value_heads": 2,
+    "vocab_size": 130560,
+    "max_position_embeddings": 131072,
+    "torch_dtype": "bfloat16"
+   },
+   "chatTemplate": {
+    "source": "unavailable",
+    "chars": null,
+    "sha256": null,
+    "reason": "tokenizer_config.json has no chat_template string"
+   },
+   "license": {
+    "spdx": "Apache-2.0",
+    "commercialUse": "allowed",
+    "decisionRequired": false,
+    "note": "HF license tag apache-2.0 and the model card front matter repeats it.",
+    "capturedFile": null,
+    "capturedSha256": null,
+    "ggufRepoLicenseTags": [
+     "apache-2.0"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": null,
+    "architectureKnownToShippedWasm": null,
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": false,
+    "licenseDecisionRequired": false,
+    "passed": false,
+    "reasons": [
+     "size 1561318368 > gate 1500000000",
+     "chat template not captured from the base tokenizer_config"
+    ]
+   }
+  }
+ ],
+ "consideredRejected": [
+  {
+   "id": "baidu/ERNIE-4.5-0.3B-PT",
+   "reason": "0.3B capacity is far below the 1.7B baseline; not a credible replacement for whole-scene Chinese prose. Could be a future semantic-model candidate, not a narration candidate."
+  },
+  {
+   "id": "Tele-AI/TeleChat-1.5B",
+   "reason": "HF search returned no 1.5B chat repository; only 7B/12B releases were found, which exceed the 1.5e9-byte single-file gate."
+  },
+  {
+   "id": "IEITYuan/Yuan2-2B-Mars-hf-GGUF",
+   "reason": "official GGUF repo contains only an f16 file (4.7GB); no official quantisation within the size gate was found in this batch."
+  },
+  {
+   "id": "google/gemma-3-4b-it",
+   "reason": "parameter/quantised size exceeds the single-file gate; 1B QAT was captured instead."
+  },
+  {
+   "id": "Qwen/Qwen3-4B-Instruct-2507",
+   "reason": "2.5GB GGUF already proved an ArrayBuffer load failure and is outside the size gate; not repeated."
+  }
+ ]
+}

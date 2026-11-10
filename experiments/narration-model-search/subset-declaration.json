@@ -1,0 +1,32 @@
+{
+ "subsetVersion": "narration-dev-package-v1-serializable-subset-12",
+ "owner": "11-model-search",
+ "declaredBeforeAnyModelOutput": true,
+ "package": {
+  "path": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1",
+  "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+  "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+  "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+ },
+ "reason": "The reference serializer yuyan-prose-result-v2 refuses these three cases because they use older 05 delta field shapes. A model prompt cannot be built byte-identically for them without changing 05's facts, so they are excluded by a mechanical rule, not by looking at any model output.",
+ "excludedCases": [
+  {
+   "caseId": "tide-continuity-tide-duty-t2",
+   "category": "continuity",
+   "error": "NarrationSerializeError: 本回合变化/变化/沈砚 has unsupported operation(s): 任务"
+  },
+  {
+   "caseId": "tide-continuity-tide-duty-t3",
+   "category": "continuity",
+   "error": "NarrationSerializeError: 本回合变化/变化/潮位计/解除外貌 must be an array, got str"
+  },
+  {
+   "caseId": "fixture-goggles-transfer",
+   "category": "item_transfer_fixture",
+   "error": "NarrationSerializeError: 本回合变化/变化/诺诺 has unsupported operation(s): 外貌"
+  }
+ ],
+ "includedCount": 12,
+ "gateNote": "Results from this batch can only be subset evidence. 01 must confirm this declared subset or fix the cases; the full 10/15 gate requires all 15.",
+ "doNot": "Do not hand-edit these cases into a different shape; report to 01 (results/11-model-search/requests/01-dev-package-canonical-delta.json)."
+}

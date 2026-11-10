@@ -1,0 +1,102 @@
+{
+ "repo": "zai-org/glm-edge-1.5b-chat-gguf",
+ "revision": "5fee502f1f6312dde56281cc8c5c0db2254198a9",
+ "lastModified": "2024-11-28T08:56:06.000Z",
+ "licenseTags": [
+  "other"
+ ],
+ "downloads": 2718,
+ "likes": 8,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 6564,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 1048,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "ggml-model-Q4_0.gguf",
+   "bytes": 931268992,
+   "lfsSha256": "db55499d77d3f41c0947a6b4901f6d0f4fba798c5acd88ad2e42c133e6be186d",
+   "lfsSize": 931268992
+  },
+  {
+   "path": "ggml-model-Q4_1.gguf",
+   "bytes": 1023265152,
+   "lfsSha256": "774238f29a44f97849792cf81372bfdd7111662759e8518b1cf1fe418d06970c",
+   "lfsSize": 1023265152
+  },
+  {
+   "path": "ggml-model-Q4_K.gguf",
+   "bytes": 980470144,
+   "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+   "lfsSize": 980470144
+  },
+  {
+   "path": "ggml-model-Q4_K_M.gguf",
+   "bytes": 980470144,
+   "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+   "lfsSize": 980470144
+  },
+  {
+   "path": "ggml-model-Q4_K_S.gguf",
+   "bytes": 936511872,
+   "lfsSha256": "ea271f32d47fab7dca7e942fb8430578e7150f778fdbd9da042a6fc38cd36cec",
+   "lfsSize": 936511872
+  },
+  {
+   "path": "ggml-model-Q5_0.gguf",
+   "bytes": 1115261312,
+   "lfsSha256": "d99992280e8a15c515e97e15f993186bb8fdcc880b785e8743e1017b6688106f",
+   "lfsSize": 1115261312
+  },
+  {
+   "path": "ggml-model-Q5_1.gguf",
+   "bytes": 1207257472,
+   "lfsSha256": "ff798562e655a996df7ccbaf16bde48f01821ebdca2aa7e3375107b714e4d277",
+   "lfsSize": 1207257472
+  },
+  {
+   "path": "ggml-model-Q5_K.gguf",
+   "bytes": 1140607360,
+   "lfsSha256": "eaf232cad364cb02c42b4895e4852ca649ef6e69d3703526f71401c1f46f4026",
+   "lfsSize": 1140607360
+  },
+  {
+   "path": "ggml-model-Q5_K_M.gguf",
+   "bytes": 1140607360,
+   "lfsSha256": "eaf232cad364cb02c42b4895e4852ca649ef6e69d3703526f71401c1f46f4026",
+   "lfsSize": 1140607360
+  },
+  {
+   "path": "ggml-model-Q5_K_S.gguf",
+   "bytes": 1115261312,
+   "lfsSha256": "17a9b612bb766f15f24b6de7410b214ce6bac107766361586ddec1246243281c",
+   "lfsSize": 1115261312
+  },
+  {
+   "path": "ggml-model-Q6_K.gguf",
+   "bytes": 1310753152,
+   "lfsSha256": "26da076239c5fe040ed033fedca955a0525018bd09797dee1e03bd71b78112b2",
+   "lfsSize": 1310753152
+  },
+  {
+   "path": "ggml-model-Q8_0.gguf",
+   "bytes": 1696633216,
+   "lfsSha256": "fc371f97c8c7f601afb201086a762e528ee955c9a19eba0808734dec5d62cfb8",
+   "lfsSize": 1696633216
+  },
+  {
+   "path": "glm-edge-1.5B-chat-F16.gguf",
+   "bytes": 3190362496,
+   "lfsSha256": "f29fbc8d1be57ccca70853646d99b91938373f8a29cf28ad2f9e5dea0d40824d",
+   "lfsSize": 3190362496
+  }
+ ]
+}

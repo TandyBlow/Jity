@@ -1,0 +1,1653 @@
+{
+ "capturedAt": "2026-11-10T12:01:07.807012+00:00",
+ "host": "huggingface.co",
+ "candidates": [
+  {
+   "id": "qwen25-1.5b-instruct",
+   "family": "Qwen2.5",
+   "baseRepo": "Qwen/Qwen2.5-1.5B-Instruct",
+   "ggufRepo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+   "ggufPublisher": "official",
+   "wantFile": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "capturedAt": "2026-11-10T12:01:07.808039+00:00",
+   "requests": [
+    {
+     "file": "hf/qwen25-1.5b-instruct/api-base.json",
+     "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 717,
+     "sha256": "7c416278753177bd69494407c7b9dfbac0d1aad829570b64eedabe2d25f9abea",
+     "fetchedAt": "2026-11-10T12:01:07.808039+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-README.md",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/README.md?%2FQwen%2FQwen2.5-1.5B-Instruct%2Fresolve%2F989aa7980e4cf806f80c7fef2b1adb7bc71aa306%2FREADME.md=&etag=%22b3327a17e2ffa52e0fd941a2810b18a9fd0e7d94%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 4917,
+     "sha256": "2e1bcd8bd964728a820be709fa0f7b9dd54817a94fd2254c535df70c5e67fada",
+     "fetchedAt": "2026-11-10T12:01:11.333607+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-config.json",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/config.json?%2FQwen%2FQwen2.5-1.5B-Instruct%2Fresolve%2F989aa7980e4cf806f80c7fef2b1adb7bc71aa306%2Fconfig.json=&etag=%22f81ead14ab072d65a07817f83a3ee0e5a1890d10%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 660,
+     "sha256": "98d2ff8cc47488d08a2b0b3acf4eb99ef210779b42bd48605f6b8e36acdbf670",
+     "fetchedAt": "2026-11-10T12:01:14.612537+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-tokenizer_config.json",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/tokenizer_config.json?%2FQwen%2FQwen2.5-1.5B-Instruct%2Fresolve%2F989aa7980e4cf806f80c7fef2b1adb7bc71aa306%2Ftokenizer_config.json=&etag=%2207bfe0640cb5a0037f9322287fbfc682806cf672%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 7305,
+     "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+     "fetchedAt": "2026-11-10T12:01:19.223756+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-generation_config.json",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/generation_config.json?%2FQwen%2FQwen2.5-1.5B-Instruct%2Fresolve%2F989aa7980e4cf806f80c7fef2b1adb7bc71aa306%2Fgeneration_config.json=&etag=%22dfc11073787daf1b0f9c0f1499487ab5f4c93738%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 242,
+     "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6",
+     "fetchedAt": "2026-11-10T12:01:23.121783+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-LICENSE",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/LICENSE",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/LICENSE?%2FQwen%2FQwen2.5-1.5B-Instruct%2Fresolve%2F989aa7980e4cf806f80c7fef2b1adb7bc71aa306%2FLICENSE=&etag=%226634c8cc3133b3848ec74b9f275acaaa1ea618ab%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 11343,
+     "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+     "fetchedAt": "2026-11-10T12:01:26.033142+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/base-LICENSE.txt",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:01:29.665884+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/api-gguf.json",
+     "url": "https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 2114,
+     "sha256": "fe83c08548088215db2424024ad36b57208f2f3a4da88b8ce33b0a31364a431a",
+     "fetchedAt": "2026-11-10T12:01:07.808039+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/gguf-README.md",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF/91cad51170dc346986eccefdc2dd33a9da36ead9/README.md?%2FQwen%2FQwen2.5-1.5B-Instruct-GGUF%2Fresolve%2F91cad51170dc346986eccefdc2dd33a9da36ead9%2FREADME.md=&etag=%22c6d9d97367083098b753d8960ac8b4a76d81039f%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 4856,
+     "sha256": "57c72d4010fb11a98fc8e62dc8ef112b23a7a7525b71e571ca978d35cb3b2eec",
+     "fetchedAt": "2026-11-10T12:01:34.911225+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/gguf-LICENSE",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/LICENSE",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF/91cad51170dc346986eccefdc2dd33a9da36ead9/LICENSE?%2FQwen%2FQwen2.5-1.5B-Instruct-GGUF%2Fresolve%2F91cad51170dc346986eccefdc2dd33a9da36ead9%2FLICENSE=&etag=%226634c8cc3133b3848ec74b9f275acaaa1ea618ab%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 11343,
+     "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+     "fetchedAt": "2026-11-10T12:01:39.814889+00:00"
+    },
+    {
+     "file": "hf/qwen25-1.5b-instruct/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:01:43.645111+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "lastModified": "2024-09-25T12:32:50.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "downloads": 5083990,
+    "likes": 937,
+    "files": [
+     {
+      "path": "LICENSE",
+      "bytes": 11343,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "README.md",
+      "bytes": 4917,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 660,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 242,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 7305,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+    "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+    "lastModified": "2024-09-20T06:31:38.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "downloads": 508182,
+    "likes": 197,
+    "files": [
+     {
+      "path": "LICENSE",
+      "bytes": 11343,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "README.md",
+      "bytes": 4856,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-fp16.gguf",
+      "bytes": 3560416288,
+      "lfsSha256": "fc89e330deb3fd8fa560f1c0f35a1e2b8da96d59e13445559ed190307a6f5649",
+      "lfsSize": 3560416288
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q2_k.gguf",
+      "bytes": 752880160,
+      "lfsSha256": "5ede348e91ce1e7a330926ec5b202c27b864d065149dc463257fde1f98865b3a",
+      "lfsSize": 752880160
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q3_k_m.gguf",
+      "bytes": 924455968,
+      "lfsSha256": "58cb5c05ecef48e82961f1a2be6544145ea26136f69dddda4bbbd092f0e4b993",
+      "lfsSize": 924455968
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q4_0.gguf",
+      "bytes": 1066227232,
+      "lfsSha256": "dcd819ff094852c38faba6873d8ff0c9d51eadb2844539e52042ae5d647bbfdb",
+      "lfsSize": 1066227232
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+      "bytes": 1117320736,
+      "lfsSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+      "lfsSize": 1117320736
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q5_0.gguf",
+      "bytes": 1259173408,
+      "lfsSha256": "a579334a7b19838b19f7855252b6bc08b012b46e338cf1494a88e77509cfe4d9",
+      "lfsSize": 1259173408
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q5_k_m.gguf",
+      "bytes": 1285494304,
+      "lfsSha256": "b46661073c18e5b56a41fa320975f866a00def1ff08feef4718e013258896f8c",
+      "lfsSize": 1285494304
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q6_k.gguf",
+      "bytes": 1464178720,
+      "lfsSha256": "e16d94f3b1eb243f6f6be9eee51090ef5dfd741324394fd5b6e0e425c33df5c7",
+      "lfsSize": 1464178720
+     },
+     {
+      "path": "qwen2.5-1.5b-instruct-q8_0.gguf",
+      "bytes": 1894532128,
+      "lfsSha256": "d7efb072e7724d25048a4fda0a3e10b04bdef5d06b1403a1c93bd9f1240a63c8",
+      "lfsSize": 1894532128
+     }
+    ]
+   }
+  },
+  {
+   "id": "internlm2_5-1.8b-chat",
+   "family": "InternLM2.5",
+   "baseRepo": "internlm/internlm2_5-1_8b-chat",
+   "ggufRepo": "internlm/internlm2_5-1_8b-chat-gguf",
+   "ggufPublisher": "official",
+   "wantFile": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+   "capturedAt": "2026-11-10T12:01:45.876837+00:00",
+   "requests": [
+    {
+     "file": "hf/internlm2_5-1.8b-chat/api-base.json",
+     "url": "https://huggingface.co/api/models/internlm/internlm2_5-1_8b-chat?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/internlm/internlm2_5-1_8b-chat?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 622,
+     "sha256": "76b3ef3c127195407ef7119654117065d4f87c6b71ae084a84c19a137b876e8a",
+     "fetchedAt": "2026-11-10T12:01:45.876837+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-README.md",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/internlm/internlm2_5-1_8b-chat/57dcbc5455bf050d27a80f0ebd7808387caa714d/README.md?%2Finternlm%2Finternlm2_5-1_8b-chat%2Fresolve%2F57dcbc5455bf050d27a80f0ebd7808387caa714d%2FREADME.md=&etag=%224b8fc1d4d35e8a59a61519c82e4d3d1a22b8173c%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 17231,
+     "sha256": "15c2108fd9116cf09df1e66ba120fc2aecedf7625a3aaec6834674f7c7428067",
+     "fetchedAt": "2026-11-10T12:01:47.781926+00:00"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-config.json",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/internlm/internlm2_5-1_8b-chat/57dcbc5455bf050d27a80f0ebd7808387caa714d/config.json?%2Finternlm%2Finternlm2_5-1_8b-chat%2Fresolve%2F57dcbc5455bf050d27a80f0ebd7808387caa714d%2Fconfig.json=&etag=%22c50e3163963f5c4c44485079b478ac8ede86eae6%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 992,
+     "sha256": "b3478ba04ad9f54f568d47c85c8cca70674ab9d7e8153997b86edbe85296f093",
+     "fetchedAt": "2026-11-10T12:01:51.548915+00:00"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-tokenizer_config.json",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/internlm/internlm2_5-1_8b-chat/57dcbc5455bf050d27a80f0ebd7808387caa714d/tokenizer_config.json?%2Finternlm%2Finternlm2_5-1_8b-chat%2Fresolve%2F57dcbc5455bf050d27a80f0ebd7808387caa714d%2Ftokenizer_config.json=&etag=%2278f553cffe793f2867b6550c0db2c1a1bb8b9e52%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 2511,
+     "sha256": "3ad60a8ee8a0a63a1f1d51884787d557eb6a312e5689148b4d599639ac42801b",
+     "fetchedAt": "2026-11-10T12:01:57.366028+00:00"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-generation_config.json",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/internlm/internlm2_5-1_8b-chat/57dcbc5455bf050d27a80f0ebd7808387caa714d/generation_config.json?%2Finternlm%2Finternlm2_5-1_8b-chat%2Fresolve%2F57dcbc5455bf050d27a80f0ebd7808387caa714d%2Fgeneration_config.json=&etag=%22c3b73a7750814c92b44ba7295121593f5d75fa6c%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 123,
+     "sha256": "e25896938a1e9d3a64bc3b62179603de453889f5f049c19233baf0433e3e6aec",
+     "fetchedAt": "2026-11-10T12:02:01.368285+00:00"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-LICENSE",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/LICENSE",
+     "finalUrl": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:04.958097+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/base-LICENSE.txt",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/internlm/internlm2_5-1_8b-chat/resolve/57dcbc5455bf050d27a80f0ebd7808387caa714d/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:06.761725+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/api-gguf.json",
+     "url": "https://huggingface.co/api/models/internlm/internlm2_5-1_8b-chat-gguf?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/internlm/internlm2_5-1_8b-chat-gguf?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 2023,
+     "sha256": "1f3ccb4520b4fda9726405af432ca63dad3091e75adf5966707df7a98865cc6a",
+     "fetchedAt": "2026-11-10T12:01:45.876837+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/gguf-README.md",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat-gguf/resolve/916410ad25d03d5dee11b451fe2b6e0353913b64/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/internlm/internlm2_5-1_8b-chat-gguf/916410ad25d03d5dee11b451fe2b6e0353913b64/README.md?%2Finternlm%2Finternlm2_5-1_8b-chat-gguf%2Fresolve%2F916410ad25d03d5dee11b451fe2b6e0353913b64%2FREADME.md=&etag=%227568497ee9cbb5825a98a7fbff68f71b6377f078%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 5792,
+     "sha256": "e9c595c0cb48068067e9722112458d0edc3c037b3efe37e9081e20fc1533829b",
+     "fetchedAt": "2026-11-10T12:02:10.417133+00:00"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/gguf-LICENSE",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat-gguf/resolve/916410ad25d03d5dee11b451fe2b6e0353913b64/LICENSE",
+     "finalUrl": "https://huggingface.co/internlm/internlm2_5-1_8b-chat-gguf/resolve/916410ad25d03d5dee11b451fe2b6e0353913b64/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:13.603831+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/internlm2_5-1.8b-chat/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/internlm/internlm2_5-1_8b-chat-gguf/resolve/916410ad25d03d5dee11b451fe2b6e0353913b64/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/internlm/internlm2_5-1_8b-chat-gguf/resolve/916410ad25d03d5dee11b451fe2b6e0353913b64/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:15.545650+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "internlm/internlm2_5-1_8b-chat",
+    "revision": "57dcbc5455bf050d27a80f0ebd7808387caa714d",
+    "lastModified": "2025-03-13T07:04:49.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "downloads": 3592,
+    "likes": 26,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 17231,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 992,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 123,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 2511,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "internlm/internlm2_5-1_8b-chat-gguf",
+    "revision": "916410ad25d03d5dee11b451fe2b6e0353913b64",
+    "lastModified": "2024-07-29T07:18:59.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "downloads": 543,
+    "likes": 10,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 5792,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-fp16.gguf",
+      "bytes": 3780559616,
+      "lfsSha256": "2f2d18adf63dacfa5d35447116e365218508c43debd113de7fbdcf248c9c6dc8",
+      "lfsSize": 3780559616
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q2_k.gguf",
+      "bytes": 771885824,
+      "lfsSha256": "c9459859cdfb4e374038eaa47f10409c673fbd5c555a4b538887fc7fae34d0dd",
+      "lfsSize": 771885824
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q3_k_m.gguf",
+      "bytes": 964412160,
+      "lfsSha256": "fc241b5496c9d863da286d84125bd8a8b8842488237191a55e2b4ad9c4d00194",
+      "lfsSize": 964412160
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q4_0.gguf",
+      "bytes": 1113971456,
+      "lfsSha256": "da6674980efc0caae393f9c5d10c846ec9b34ee5ec598268010de5d0655a4b9a",
+      "lfsSize": 1113971456
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+      "bytes": 1172364032,
+      "lfsSha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+      "lfsSize": 1172364032
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q5_0.gguf",
+      "bytes": 1326406400,
+      "lfsSha256": "eb8540862f5465f90493ddd910d3297f76c8e763ea4e051725d5e8148582ab53",
+      "lfsSize": 1326406400
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q5_k_m.gguf",
+      "bytes": 1356487424,
+      "lfsSha256": "385d62826f341dc97aebfc77248f46b6e1edf0b3d3a1fc4a7f3491ad7c95dcfd",
+      "lfsSize": 1356487424
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q6_k.gguf",
+      "bytes": 1552118528,
+      "lfsSha256": "544f4a569ea169d50a3a7519a11b9396c8f21cd109351860d2790449de4aafa3",
+      "lfsSize": 1552118528
+     },
+     {
+      "path": "internlm2_5-1_8b-chat-q8_0.gguf",
+      "bytes": 2009613056,
+      "lfsSha256": "8526cc24717fcab32b20540c546f8c23a6ea3ff40b86f421a0cd060c8123e8b2",
+      "lfsSize": 2009613056
+     }
+    ]
+   }
+  },
+  {
+   "id": "glm-edge-1.5b-chat",
+   "family": "GLM-Edge",
+   "baseRepo": "zai-org/GLM-Edge-1.5B-Chat",
+   "ggufRepo": "zai-org/glm-edge-1.5b-chat-gguf",
+   "ggufPublisher": "official",
+   "wantFile": "ggml-model-Q4_K_M.gguf",
+   "capturedAt": "2026-11-10T12:02:17.042932+00:00",
+   "requests": [
+    {
+     "file": "hf/glm-edge-1.5b-chat/api-base.json",
+     "url": "https://huggingface.co/api/models/zai-org/GLM-Edge-1.5B-Chat?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/zai-org/GLM-Edge-1.5B-Chat?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 707,
+     "sha256": "16db20bb504d7c54b55a36bf29c330e74cc6ef529de0c6e96926cae35fb93164",
+     "fetchedAt": "2026-11-10T12:02:17.042932+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-README.md",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat/7b201d3c160c25beda4cf0d107617ad975cd1ca8/README.md?%2Fzai-org%2Fglm-edge-1.5b-chat%2Fresolve%2F7b201d3c160c25beda4cf0d107617ad975cd1ca8%2FREADME.md=&etag=%22e663bed14ebf60a0db3a85a5dd259976de6368cc%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 1271,
+     "sha256": "edf019f678124b4115c143fa5f697308668f8852e00813a5a91871d916d215bc",
+     "fetchedAt": "2026-11-10T12:02:19.971608+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-config.json",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat/7b201d3c160c25beda4cf0d107617ad975cd1ca8/config.json?%2Fzai-org%2Fglm-edge-1.5b-chat%2Fresolve%2F7b201d3c160c25beda4cf0d107617ad975cd1ca8%2Fconfig.json=&etag=%22a5a21313265c8a80417df4461f7db1ec8a66dbce%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 680,
+     "sha256": "cac06b36fc4fdcee4e40687a4a4550184f7c6367191f1e0988b6d993352d8b14",
+     "fetchedAt": "2026-11-10T12:02:26.417208+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-tokenizer_config.json",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat/7b201d3c160c25beda4cf0d107617ad975cd1ca8/tokenizer_config.json?%2Fzai-org%2Fglm-edge-1.5b-chat%2Fresolve%2F7b201d3c160c25beda4cf0d107617ad975cd1ca8%2Ftokenizer_config.json=&etag=%22ed5b6a0f94bf6cfcaa8c5f4250a364267baf58ef%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 3501,
+     "sha256": "95f8b86ea1b7c11ac49acf7f0b9ec7b90b629c14cebfd12c395e32ee17da8f2a",
+     "fetchedAt": "2026-11-10T12:02:31.221066+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-generation_config.json",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat/7b201d3c160c25beda4cf0d107617ad975cd1ca8/generation_config.json?%2Fzai-org%2Fglm-edge-1.5b-chat%2Fresolve%2F7b201d3c160c25beda4cf0d107617ad975cd1ca8%2Fgeneration_config.json=&etag=%22020f6f60237328166efca8d2b87cd32d31c2c5ad%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 156,
+     "sha256": "2e3bc626d3b012b9200c2634756d4fb17f2ceec2d3d5fcf0cf38e7ddaddfac93",
+     "fetchedAt": "2026-11-10T12:02:34.833364+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-LICENSE",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/LICENSE",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat/7b201d3c160c25beda4cf0d107617ad975cd1ca8/LICENSE?%2Fzai-org%2Fglm-edge-1.5b-chat%2Fresolve%2F7b201d3c160c25beda4cf0d107617ad975cd1ca8%2FLICENSE=&etag=%22d79d7bda35207b86aeff1bde7941c0d68934a9a9%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 6564,
+     "sha256": "710a4abbfbd30343be4b1d507835a1ae27e4b441e8a1211befc3f2124347e81a",
+     "fetchedAt": "2026-11-10T12:02:39.269149+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/base-LICENSE.txt",
+     "url": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/zai-org/GLM-Edge-1.5B-Chat/resolve/7b201d3c160c25beda4cf0d107617ad975cd1ca8/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:43.769523+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/api-gguf.json",
+     "url": "https://huggingface.co/api/models/zai-org/glm-edge-1.5b-chat-gguf?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/zai-org/glm-edge-1.5b-chat-gguf?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 2718,
+     "sha256": "813b7ed641f615b5d7c4dc0c3be69cb20ae9b1c0aea0dff4abce73b929c3c134",
+     "fetchedAt": "2026-11-10T12:02:17.042932+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/gguf-README.md",
+     "url": "https://huggingface.co/zai-org/glm-edge-1.5b-chat-gguf/resolve/5fee502f1f6312dde56281cc8c5c0db2254198a9/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat-gguf/5fee502f1f6312dde56281cc8c5c0db2254198a9/README.md?%2Fzai-org%2Fglm-edge-1.5b-chat-gguf%2Fresolve%2F5fee502f1f6312dde56281cc8c5c0db2254198a9%2FREADME.md=&etag=%22675ad19e1d738c2577a55ab1c9df36c5d541f20e%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 1048,
+     "sha256": "3c5bc35b4700f8640ddd3624943688ac7826f56add561880643182d94f9f4bc2",
+     "fetchedAt": "2026-11-10T12:02:49.691526+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/gguf-LICENSE",
+     "url": "https://huggingface.co/zai-org/glm-edge-1.5b-chat-gguf/resolve/5fee502f1f6312dde56281cc8c5c0db2254198a9/LICENSE",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/zai-org/glm-edge-1.5b-chat-gguf/5fee502f1f6312dde56281cc8c5c0db2254198a9/LICENSE?%2Fzai-org%2Fglm-edge-1.5b-chat-gguf%2Fresolve%2F5fee502f1f6312dde56281cc8c5c0db2254198a9%2FLICENSE=&etag=%22d79d7bda35207b86aeff1bde7941c0d68934a9a9%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 6564,
+     "sha256": "710a4abbfbd30343be4b1d507835a1ae27e4b441e8a1211befc3f2124347e81a",
+     "fetchedAt": "2026-11-10T12:02:52.269299+00:00"
+    },
+    {
+     "file": "hf/glm-edge-1.5b-chat/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/zai-org/glm-edge-1.5b-chat-gguf/resolve/5fee502f1f6312dde56281cc8c5c0db2254198a9/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/zai-org/glm-edge-1.5b-chat-gguf/resolve/5fee502f1f6312dde56281cc8c5c0db2254198a9/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:02:55.162168+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "zai-org/GLM-Edge-1.5B-Chat",
+    "revision": "7b201d3c160c25beda4cf0d107617ad975cd1ca8",
+    "lastModified": "2024-11-28T09:25:44.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "downloads": 2240,
+    "likes": 22,
+    "files": [
+     {
+      "path": "LICENSE",
+      "bytes": 6564,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "README.md",
+      "bytes": 1271,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 680,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 156,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 3501,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "zai-org/glm-edge-1.5b-chat-gguf",
+    "revision": "5fee502f1f6312dde56281cc8c5c0db2254198a9",
+    "lastModified": "2024-11-28T08:56:06.000Z",
+    "licenseTags": [
+     "other"
+    ],
+    "downloads": 2718,
+    "likes": 8,
+    "files": [
+     {
+      "path": "LICENSE",
+      "bytes": 6564,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "README.md",
+      "bytes": 1048,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "ggml-model-Q4_0.gguf",
+      "bytes": 931268992,
+      "lfsSha256": "db55499d77d3f41c0947a6b4901f6d0f4fba798c5acd88ad2e42c133e6be186d",
+      "lfsSize": 931268992
+     },
+     {
+      "path": "ggml-model-Q4_1.gguf",
+      "bytes": 1023265152,
+      "lfsSha256": "774238f29a44f97849792cf81372bfdd7111662759e8518b1cf1fe418d06970c",
+      "lfsSize": 1023265152
+     },
+     {
+      "path": "ggml-model-Q4_K.gguf",
+      "bytes": 980470144,
+      "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+      "lfsSize": 980470144
+     },
+     {
+      "path": "ggml-model-Q4_K_M.gguf",
+      "bytes": 980470144,
+      "lfsSha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+      "lfsSize": 980470144
+     },
+     {
+      "path": "ggml-model-Q4_K_S.gguf",
+      "bytes": 936511872,
+      "lfsSha256": "ea271f32d47fab7dca7e942fb8430578e7150f778fdbd9da042a6fc38cd36cec",
+      "lfsSize": 936511872
+     },
+     {
+      "path": "ggml-model-Q5_0.gguf",
+      "bytes": 1115261312,
+      "lfsSha256": "d99992280e8a15c515e97e15f993186bb8fdcc880b785e8743e1017b6688106f",
+      "lfsSize": 1115261312
+     },
+     {
+      "path": "ggml-model-Q5_1.gguf",
+      "bytes": 1207257472,
+      "lfsSha256": "ff798562e655a996df7ccbaf16bde48f01821ebdca2aa7e3375107b714e4d277",
+      "lfsSize": 1207257472
+     },
+     {
+      "path": "ggml-model-Q5_K.gguf",
+      "bytes": 1140607360,
+      "lfsSha256": "eaf232cad364cb02c42b4895e4852ca649ef6e69d3703526f71401c1f46f4026",
+      "lfsSize": 1140607360
+     },
+     {
+      "path": "ggml-model-Q5_K_M.gguf",
+      "bytes": 1140607360,
+      "lfsSha256": "eaf232cad364cb02c42b4895e4852ca649ef6e69d3703526f71401c1f46f4026",
+      "lfsSize": 1140607360
+     },
+     {
+      "path": "ggml-model-Q5_K_S.gguf",
+      "bytes": 1115261312,
+      "lfsSha256": "17a9b612bb766f15f24b6de7410b214ce6bac107766361586ddec1246243281c",
+      "lfsSize": 1115261312
+     },
+     {
+      "path": "ggml-model-Q6_K.gguf",
+      "bytes": 1310753152,
+      "lfsSha256": "26da076239c5fe040ed033fedca955a0525018bd09797dee1e03bd71b78112b2",
+      "lfsSize": 1310753152
+     },
+     {
+      "path": "ggml-model-Q8_0.gguf",
+      "bytes": 1696633216,
+      "lfsSha256": "fc371f97c8c7f601afb201086a762e528ee955c9a19eba0808734dec5d62cfb8",
+      "lfsSize": 1696633216
+     },
+     {
+      "path": "glm-edge-1.5B-chat-F16.gguf",
+      "bytes": 3190362496,
+      "lfsSha256": "f29fbc8d1be57ccca70853646d99b91938373f8a29cf28ad2f9e5dea0d40824d",
+      "lfsSize": 3190362496
+     }
+    ]
+   }
+  },
+  {
+   "id": "gemma3-1b-it-qat",
+   "family": "Gemma3",
+   "baseRepo": "google/gemma-3-1b-it",
+   "ggufRepo": "google/gemma-3-1b-it-qat-q4_0-gguf",
+   "ggufPublisher": "official-qat",
+   "wantFile": "gemma-3-1b-it-q4_0.gguf",
+   "capturedAt": "2026-11-10T12:02:56.439940+00:00",
+   "requests": [
+    {
+     "file": "hf/gemma3-1b-it-qat/api-base.json",
+     "url": "https://huggingface.co/api/models/google/gemma-3-1b-it?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/google/gemma-3-1b-it?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 619,
+     "sha256": "487cc2247a4eaa4bad719fad75ab023a24c4ea3e98214a62a9adb86379ccaaf9",
+     "fetchedAt": "2026-11-10T12:02:56.439940+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-README.md",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/README.md",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/README.md",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 24265,
+     "sha256": "60be259533fe3acba21d109a51673815a4c29aefdb7769862695086fcedbeb7a",
+     "fetchedAt": "2026-11-10T12:02:57.903846+00:00"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-config.json",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/config.json",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/config.json",
+     "status": 401,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 128,
+     "sha256": "596f05541dcbfbf6e733ce3700fa318d6ca26d9e6dc91cc4a697b27477821055",
+     "fetchedAt": "2026-11-10T12:02:59.254645+00:00",
+     "error": "HTTP 401"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-tokenizer_config.json",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/tokenizer_config.json",
+     "status": 401,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 128,
+     "sha256": "596f05541dcbfbf6e733ce3700fa318d6ca26d9e6dc91cc4a697b27477821055",
+     "fetchedAt": "2026-11-10T12:03:00.511241+00:00",
+     "error": "HTTP 401"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-generation_config.json",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/generation_config.json",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/generation_config.json",
+     "status": 401,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 128,
+     "sha256": "596f05541dcbfbf6e733ce3700fa318d6ca26d9e6dc91cc4a697b27477821055",
+     "fetchedAt": "2026-11-10T12:03:02.146187+00:00",
+     "error": "HTTP 401"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-LICENSE",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/LICENSE",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:04.198903+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/base-LICENSE.txt",
+     "url": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it/resolve/dcc83ea841ab6100d6b47a070329e1ba4cf78752/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:05.530812+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/api-gguf.json",
+     "url": "https://huggingface.co/api/models/google/gemma-3-1b-it-qat-q4_0-gguf?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/google/gemma-3-1b-it-qat-q4_0-gguf?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 506,
+     "sha256": "10094b241d72ce7fedc9be6eba95c6938e081b756827792af6a530ccdde3147c",
+     "fetchedAt": "2026-11-10T12:02:56.439940+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/gguf-README.md",
+     "url": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/README.md",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/README.md",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 23213,
+     "sha256": "ac99b30df3c1219cd3dee9b4f5281f5c107b7c30bd9b4362d3a701e8ddec929e",
+     "fetchedAt": "2026-11-10T12:03:08.185623+00:00"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/gguf-LICENSE",
+     "url": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/LICENSE",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:09.999700+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/gemma3-1b-it-qat/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-gguf/resolve/d1be121d36172a4b0b964657e2ee859d61138593/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:12.105076+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "google/gemma-3-1b-it",
+    "revision": "dcc83ea841ab6100d6b47a070329e1ba4cf78752",
+    "lastModified": "2025-04-04T13:12:40.000Z",
+    "licenseTags": [
+     "gemma"
+    ],
+    "downloads": 212229,
+    "likes": 1312,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 24265,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 899,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 215,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 1156999,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "google/gemma-3-1b-it-qat-q4_0-gguf",
+    "revision": "d1be121d36172a4b0b964657e2ee859d61138593",
+    "lastModified": "2025-04-11T00:54:27.000Z",
+    "licenseTags": [
+     "gemma"
+    ],
+    "downloads": 1285,
+    "likes": 182,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 23213,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "gemma-3-1b-it-q4_0.gguf",
+      "bytes": 1003541152,
+      "lfsSha256": "95e5b8d891cd6a794f66c2a6fb59a41e9562b4660560b854274eceffb628b22a",
+      "lfsSize": 1003541152
+     }
+    ]
+   }
+  },
+  {
+   "id": "hunyuan-1.8b-instruct",
+   "family": "Hunyuan",
+   "baseRepo": "tencent/Hunyuan-1.8B-Instruct",
+   "ggufRepo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+   "ggufPublisher": "third-party",
+   "wantFile": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+   "capturedAt": "2026-11-10T12:03:13.698151+00:00",
+   "requests": [
+    {
+     "file": "hf/hunyuan-1.8b-instruct/api-base.json",
+     "url": "https://huggingface.co/api/models/tencent/Hunyuan-1.8B-Instruct?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/tencent/Hunyuan-1.8B-Instruct?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 799,
+     "sha256": "65a19b0b51864b81b6990709f82f48885c8a7e20deb8815a65d0504270dbb1de",
+     "fetchedAt": "2026-11-10T12:03:13.698151+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-README.md",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/README.md?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2FREADME.md=&etag=%2248e5433b20ce1673b7943c13c32a9c4b389ca83e%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 21859,
+     "sha256": "d07e13f4cdc45f5ac5ae0f1211443b5b34e4ad25bd2fa6d034705f4aa25ac89e",
+     "fetchedAt": "2026-11-10T12:03:16.033133+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-config.json",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/config.json?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2Fconfig.json=&etag=%22b543fd467d27b426ef32b99fbf0c1097c41623f9%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 1369,
+     "sha256": "7fe723bd3fd422e2ad862ed485623799d32eadff100d333fa055fa1b3d46f885",
+     "fetchedAt": "2026-11-10T12:03:19.662213+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-tokenizer_config.json",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/tokenizer_config.json?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2Ftokenizer_config.json=&etag=%2219c952eac837433caed7c72df2566ff899759eb3%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 170766,
+     "sha256": "76b090953b653848a05902c7b536e9b0fb477884cdaeb90625d5bff91d5f510f",
+     "fetchedAt": "2026-11-10T12:03:22.994466+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-generation_config.json",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/generation_config.json?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2Fgeneration_config.json=&etag=%227b6f008d229371b0179f882cdcd12ac7c30bd9ca%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 221,
+     "sha256": "18412541e00d1012d8d3878d2787e49a5d6e5b0997cb49c3d6111ce75b2d8f08",
+     "fetchedAt": "2026-11-10T12:03:27.711640+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-LICENSE",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/LICENSE",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/LICENSE?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2FLICENSE=&etag=%228a4f31e19fb1631611ed849b01a3f17e7e0de260%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15525,
+     "sha256": "a01de40400259e000371b84bd112e3a42fbeb33d042bf56dec7cd827c688a63f",
+     "fetchedAt": "2026-11-10T12:03:30.472946+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/base-LICENSE.txt",
+     "url": "https://huggingface.co/tencent/Hunyuan-1.8B-Instruct/resolve/de940610ab5d45b4fedbd37e08444d0dc502837c/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/tencent/Hunyuan-1.8B-Instruct/de940610ab5d45b4fedbd37e08444d0dc502837c/LICENSE.txt?%2Ftencent%2FHunyuan-1.8B-Instruct%2Fresolve%2Fde940610ab5d45b4fedbd37e08444d0dc502837c%2FLICENSE.txt=&etag=%226eaf0e4cf731a420ea8dcca3d1f87a0ade8d5dcc%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15519,
+     "sha256": "0d666200251ceb38448241425d0d7d5d9ccf2f330d5385b8104a2ba98ad748e8",
+     "fetchedAt": "2026-11-10T12:03:33.455931+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/api-gguf.json",
+     "url": "https://huggingface.co/api/models/gabriellarson/Hunyuan-1.8B-Instruct-GGUF?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/gabriellarson/Hunyuan-1.8B-Instruct-GGUF?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 4838,
+     "sha256": "373d3ccc5a49ce0edd4f7beae162a8694c073a77f252674caccb531cc4cf9b82",
+     "fetchedAt": "2026-11-10T12:03:13.698151+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/gguf-README.md",
+     "url": "https://huggingface.co/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/resolve/f5c690589f011bebe798fa2634b79a94f95463e3/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/f5c690589f011bebe798fa2634b79a94f95463e3/README.md?%2Fgabriellarson%2FHunyuan-1.8B-Instruct-GGUF%2Fresolve%2Ff5c690589f011bebe798fa2634b79a94f95463e3%2FREADME.md=&etag=%22353d38918a6cb634005e5123265cd1c47d6077c7%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 21987,
+     "sha256": "84f11203b568f15c6c21076be7b261cc891e51e36ff7e9fdeb11b763536820c1",
+     "fetchedAt": "2026-11-10T12:03:37.446899+00:00"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/gguf-LICENSE",
+     "url": "https://huggingface.co/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/resolve/f5c690589f011bebe798fa2634b79a94f95463e3/LICENSE",
+     "finalUrl": "https://huggingface.co/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/resolve/f5c690589f011bebe798fa2634b79a94f95463e3/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:40.366983+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/hunyuan-1.8b-instruct/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/resolve/f5c690589f011bebe798fa2634b79a94f95463e3/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/gabriellarson/Hunyuan-1.8B-Instruct-GGUF/resolve/f5c690589f011bebe798fa2634b79a94f95463e3/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:41.744742+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "tencent/Hunyuan-1.8B-Instruct",
+    "revision": "de940610ab5d45b4fedbd37e08444d0dc502837c",
+    "lastModified": "2025-08-06T07:30:26.000Z",
+    "licenseTags": [],
+    "downloads": 2049,
+    "likes": 604,
+    "files": [
+     {
+      "path": "LICENSE",
+      "bytes": 15525,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "LICENSE.txt",
+      "bytes": 15519,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "README.md",
+      "bytes": 21859,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 1369,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 221,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 170766,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+    "revision": "f5c690589f011bebe798fa2634b79a94f95463e3",
+    "lastModified": "2025-08-04T07:23:01.000Z",
+    "licenseTags": [],
+    "downloads": 253,
+    "likes": 3,
+    "files": [
+     {
+      "path": "Hunyuan-1.8B-Instruct-F16.gguf",
+      "bytes": 3587538048,
+      "lfsSha256": "a76850c63245f42b3dbc3957dc61486bd04ccb83306d048952d0ca91c058baa0",
+      "lfsSize": 3587538048
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ2_M.gguf",
+      "bytes": 698486912,
+      "lfsSha256": "95d6deea085ca014f5bba570960fbc4b021c011aa158dd7be8c937ee0f163288",
+      "lfsSize": 698486912
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ2_S.gguf",
+      "bytes": 657068160,
+      "lfsSha256": "a4d3430f3c0f6caf4573f9171384a8c2489f7c905a6b3d4095a646557271f403",
+      "lfsSize": 657068160
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ2_XS.gguf",
+      "bytes": 633081984,
+      "lfsSha256": "6f11bf1d6b4e344e05e221742fc73ac5da75a3892dd7ed3795af10e8f3b97b1a",
+      "lfsSize": 633081984
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ2_XXS.gguf",
+      "bytes": 587468928,
+      "lfsSha256": "03c4f8d99c74b69258e5961e66ba5c76dbae058833be7c3a523feccc68755901",
+      "lfsSize": 587468928
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ3_M.gguf",
+      "bytes": 900825504,
+      "lfsSha256": "bdba11ea1763290570cf7a822acdeb6a999f557efe70e056ad055086d853cc30",
+      "lfsSize": 900825504
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ3_S.gguf",
+      "bytes": 876315040,
+      "lfsSha256": "dd2ce088ff896ddcfae27378d6acc44842504273d2d8ac25b465d1f7af3b7462",
+      "lfsSize": 876315040
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ3_XS.gguf",
+      "bytes": 840139168,
+      "lfsSha256": "8b43c2269474bc4dc9e463fad331bed95962f56953ae19f17c4725b8225820cc",
+      "lfsSize": 840139168
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ3_XXS.gguf",
+      "bytes": 768479360,
+      "lfsSha256": "a3e29b78b51826ec9080159b3d78b5afc85e2e8d89a4ea5950c0ef20c34ce6b2",
+      "lfsSize": 768479360
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ4_NL.gguf",
+      "bytes": 1081049504,
+      "lfsSha256": "f4962fced8db6aeaadf0b4feb7bd5ca694d1963fa70688e03405d2023b928877",
+      "lfsSize": 1081049504
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-IQ4_XS.gguf",
+      "bytes": 1033863584,
+      "lfsSha256": "44964fa8818cdce1a3485f10bafb6449f54990325680f9dd092266a98dca948e",
+      "lfsSize": 1033863584
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q2_K.gguf",
+      "bytes": 777486752,
+      "lfsSha256": "344ba7c896a01f89a9ea15e806cab903f8117ff8a1456403bfd57ff4d66913df",
+      "lfsSize": 777486752
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q2_K_S.gguf",
+      "bytes": 734757280,
+      "lfsSha256": "3840d79d7fe3f71c29d34bcefc5cc8bdcd4e3af8c16b741f10aad1452c47676c",
+      "lfsSize": 734757280
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q3_K_L.gguf",
+      "bytes": 1018921376,
+      "lfsSha256": "4075ab2927c24e31ab669f3ab245c810144b4f8bfec1e16fd942461561052413",
+      "lfsSize": 1018921376
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q3_K_M.gguf",
+      "bytes": 951026080,
+      "lfsSha256": "f14bf12040821cda69f1be2fc55b07632de5ea9c7d982dc18213c57952784835",
+      "lfsSize": 951026080
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q3_K_S.gguf",
+      "bytes": 871858592,
+      "lfsSha256": "f310f9a81f055b853e473c1160872adbda4096e4bbf4fd4a8ff1577fcd035c59",
+      "lfsSize": 871858592
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q4_0.gguf",
+      "bytes": 1080000928,
+      "lfsSha256": "fb36a8507bdb4a409da1a8ce50537a03165aec6a07122a423245978d4ccca40e",
+      "lfsSize": 1080000928
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+      "bytes": 1133085088,
+      "lfsSha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+      "lfsSize": 1133085088
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q4_K_S.gguf",
+      "bytes": 1083670944,
+      "lfsSha256": "41d7485aa4fe32416f633e2c110b53c883197cd5bf6704e09613d9f16f0689a6",
+      "lfsSize": 1083670944
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q5_0.gguf",
+      "bytes": 1272938912,
+      "lfsSha256": "59db516f656d4253afbfc9583d04c1fcd806afdc9fa69079716fe48b492bd19c",
+      "lfsSize": 1272938912
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q5_K_M.gguf",
+      "bytes": 1298760096,
+      "lfsSha256": "e89fe518e47183c9d1ced8ac2bc8de2705f53af8a0a60014a0ad78d25b91b48c",
+      "lfsSize": 1298760096
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q5_K_S.gguf",
+      "bytes": 1269793184,
+      "lfsSha256": "3a7bc2edaa63ad54936e757f15f350bffd71c1d2032f57b9e232dc91be804f30",
+      "lfsSize": 1269793184
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q6_K.gguf",
+      "bytes": 1474789792,
+      "lfsSha256": "dbb48bf835549052a10cf5308c9bb0ed80e7da975fea2828e9f2602a0d1fcefd",
+      "lfsSize": 1474789792
+     },
+     {
+      "path": "Hunyuan-1.8B-Instruct-Q8_0.gguf",
+      "bytes": 1908532864,
+      "lfsSha256": "6f0ab4f5890c6762a7d514a07399ebe4d19f43c2e5835ad3d56b9db2dd211526",
+      "lfsSize": 1908532864
+     },
+     {
+      "path": "README.md",
+      "bytes": 21987,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "minicpm-2b-dpo",
+   "family": "MiniCPM-2B",
+   "baseRepo": "openbmb/MiniCPM-2B-dpo-bf16",
+   "ggufRepo": "runfuture/MiniCPM-2B-dpo-q4km-gguf",
+   "ggufPublisher": "third-party",
+   "wantFile": "MiniCPM-2B-dpo-q4km-gguf.gguf",
+   "capturedAt": "2026-11-10T12:03:43.514889+00:00",
+   "requests": [
+    {
+     "file": "hf/minicpm-2b-dpo/api-base.json",
+     "url": "https://huggingface.co/api/models/openbmb/MiniCPM-2B-dpo-bf16?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/openbmb/MiniCPM-2B-dpo-bf16?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 607,
+     "sha256": "6ce9adc4e610ee81a7f89e2554c26a02764d921384e4366a466d6ecbd1581a57",
+     "fetchedAt": "2026-11-10T12:03:43.514889+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-README.md",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM-2B-dpo-bf16/9d6de77274c9f364037bf8506b4a831d3520ae79/README.md?%2Fopenbmb%2FMiniCPM-2B-dpo-bf16%2Fresolve%2F9d6de77274c9f364037bf8506b4a831d3520ae79%2FREADME.md=&etag=%22c30175cf06b020d76a7f8c2e441d1cd3e4c063fd%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 11582,
+     "sha256": "41fc31a43b184e724ac4a3821fa7ecbe6814c119691c3dfa6366795b45e9ce89",
+     "fetchedAt": "2026-11-10T12:03:44.928970+00:00"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM-2B-dpo-bf16/9d6de77274c9f364037bf8506b4a831d3520ae79/config.json?%2Fopenbmb%2FMiniCPM-2B-dpo-bf16%2Fresolve%2F9d6de77274c9f364037bf8506b4a831d3520ae79%2Fconfig.json=&etag=%22eb4cdaf1cc094d4e184ddb7061a90a0f2a54f414%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 1010,
+     "sha256": "41cf26cfdca93f49209a6c0c26c00b281d6408e010ddc8cca9531c825cc17fc4",
+     "fetchedAt": "2026-11-10T12:03:49.357255+00:00"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-tokenizer_config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM-2B-dpo-bf16/9d6de77274c9f364037bf8506b4a831d3520ae79/tokenizer_config.json?%2Fopenbmb%2FMiniCPM-2B-dpo-bf16%2Fresolve%2F9d6de77274c9f364037bf8506b4a831d3520ae79%2Ftokenizer_config.json=&etag=%2265ea35f0156ae2761692c5f935782013ac2d2469%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 1117,
+     "sha256": "9c87efade54e9b26d3374a42f294d266722cbf9e97c748a12183d8317da074c9",
+     "fetchedAt": "2026-11-10T12:03:52.186210+00:00"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-generation_config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM-2B-dpo-bf16/9d6de77274c9f364037bf8506b4a831d3520ae79/generation_config.json?%2Fopenbmb%2FMiniCPM-2B-dpo-bf16%2Fresolve%2F9d6de77274c9f364037bf8506b4a831d3520ae79%2Fgeneration_config.json=&etag=%224881cde970c0451666c661a3f055c16a1492845d%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 113,
+     "sha256": "a022aa21060c3e0106edf2c9580e5d1878fa3ab01ad1fbe69a277cc847169e20",
+     "fetchedAt": "2026-11-10T12:03:56.054056+00:00"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-LICENSE",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/LICENSE",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:58.526256+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/base-LICENSE.txt",
+     "url": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM-2B-dpo-bf16/resolve/9d6de77274c9f364037bf8506b4a831d3520ae79/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:03:59.910816+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/api-gguf.json",
+     "url": "https://huggingface.co/api/models/runfuture/MiniCPM-2B-dpo-q4km-gguf?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/runfuture/MiniCPM-2B-dpo-q4km-gguf?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 405,
+     "sha256": "5e6b71d4074baeab2fec4abdd55bb083bdb13f0c05559e12e4939850741514f9",
+     "fetchedAt": "2026-11-10T12:03:43.514889+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/gguf-README.md",
+     "url": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/README.md",
+     "finalUrl": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/README.md",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:03.284668+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/gguf-LICENSE",
+     "url": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/LICENSE",
+     "finalUrl": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:04.799326+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm-2b-dpo/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/runfuture/MiniCPM-2B-dpo-q4km-gguf/resolve/5716a1492bb21b66b56d6c454a949ee71471351b/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:06.063504+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "openbmb/MiniCPM-2B-dpo-bf16",
+    "revision": "9d6de77274c9f364037bf8506b4a831d3520ae79",
+    "lastModified": "2024-09-07T05:29:30.000Z",
+    "licenseTags": [],
+    "downloads": 843,
+    "likes": 53,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 11582,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 1010,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 113,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 1117,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "runfuture/MiniCPM-2B-dpo-q4km-gguf",
+    "revision": "5716a1492bb21b66b56d6c454a949ee71471351b",
+    "lastModified": "2024-02-09T02:46:58.000Z",
+    "licenseTags": [],
+    "downloads": 2862,
+    "likes": 3,
+    "files": [
+     {
+      "path": "MiniCPM-2B-dpo-q4km-gguf.gguf",
+      "bytes": 1729503200,
+      "lfsSha256": "b4f2392d1beba99ec494aed8e0baf99fc368a1e50dadc5dfa6fcfa2bfdcb79db",
+      "lfsSize": 1729503200
+     }
+    ]
+   }
+  },
+  {
+   "id": "minicpm5-2b",
+   "family": "MiniCPM5",
+   "baseRepo": "openbmb/MiniCPM5-2B",
+   "ggufRepo": "openbmb/MiniCPM5-2B-GGUF",
+   "ggufPublisher": "official",
+   "wantFile": "MiniCPM5-2B-Q4_K_M.gguf",
+   "capturedAt": "2026-11-10T12:04:07.356727+00:00",
+   "requests": [
+    {
+     "file": "hf/minicpm5-2b/api-base.json",
+     "url": "https://huggingface.co/api/models/openbmb/MiniCPM5-2B?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/openbmb/MiniCPM5-2B?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 623,
+     "sha256": "3c16943d3f6b8134cc7fdbd5e9ea3a357637a150522556c39224b1e726c8dcb9",
+     "fetchedAt": "2026-11-10T12:04:07.356727+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-README.md",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM5-2B/42433e90dad95123ab87729fd7011e7110629556/README.md?%2Fopenbmb%2FMiniCPM5-2B%2Fresolve%2F42433e90dad95123ab87729fd7011e7110629556%2FREADME.md=&etag=%228870a24344c68e71cc10b9c9803af782254cd8a9%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 112168,
+     "sha256": "59e93770502358d56b30b8e2ef7e744cf7fc91bfb923c7c787876defac35cdbe",
+     "fetchedAt": "2026-11-10T12:04:08.700892+00:00"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM5-2B/42433e90dad95123ab87729fd7011e7110629556/config.json?%2Fopenbmb%2FMiniCPM5-2B%2Fresolve%2F42433e90dad95123ab87729fd7011e7110629556%2Fconfig.json=&etag=%229860d7132a243c1c9ce58e39a2704c3f52ad6ea1%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 704,
+     "sha256": "59613157e5357d62bcb121e04cb90f2170b43d789b142380c12c3d4277d95180",
+     "fetchedAt": "2026-11-10T12:04:11.537414+00:00"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-tokenizer_config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/tokenizer_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM5-2B/42433e90dad95123ab87729fd7011e7110629556/tokenizer_config.json?%2Fopenbmb%2FMiniCPM5-2B%2Fresolve%2F42433e90dad95123ab87729fd7011e7110629556%2Ftokenizer_config.json=&etag=%229df89e3f645a975cf87bd22379e9f77b28a1cf02%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 94391,
+     "sha256": "e9b1064649e771d7a8e15637c68b2d2749724877ba3648bd74a4ece31c26303b",
+     "fetchedAt": "2026-11-10T12:04:14.241106+00:00"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-generation_config.json",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/generation_config.json",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM5-2B/42433e90dad95123ab87729fd7011e7110629556/generation_config.json?%2Fopenbmb%2FMiniCPM5-2B%2Fresolve%2F42433e90dad95123ab87729fd7011e7110629556%2Fgeneration_config.json=&etag=%22be1cb19dd96be786cf0dd4ee45630afe1c81238b%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 213,
+     "sha256": "9ac4f32e5f32358697a9f438a3ea89ef80e6ba786c72c49e932f9f21c122fdb1",
+     "fetchedAt": "2026-11-10T12:04:18.347710+00:00"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-LICENSE",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/LICENSE",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:21.209755+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm5-2b/base-LICENSE.txt",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM5-2B/resolve/42433e90dad95123ab87729fd7011e7110629556/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:22.494814+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm5-2b/api-gguf.json",
+     "url": "https://huggingface.co/api/models/openbmb/MiniCPM5-2B-GGUF?blobs=true",
+     "finalUrl": "https://huggingface.co/api/models/openbmb/MiniCPM5-2B-GGUF?blobs=true",
+     "status": 200,
+     "contentType": "application/json",
+     "bytes": 859,
+     "sha256": "75b14f14a55e00d40ff46e29734d16fb4b00bb6d3f52fe8f21d615f6ffa5d0ca",
+     "fetchedAt": "2026-11-10T12:04:07.356727+00:00",
+     "note": "trimmed fields kept: revision/license/file table"
+    },
+    {
+     "file": "hf/minicpm5-2b/gguf-README.md",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/5eff2ddd90624426f705e9213bb56fcd7209977c/README.md",
+     "finalUrl": "https://huggingface.co/api/resolve-cache/models/openbmb/MiniCPM5-2B-GGUF/5eff2ddd90624426f705e9213bb56fcd7209977c/README.md?%2Fopenbmb%2FMiniCPM5-2B-GGUF%2Fresolve%2F5eff2ddd90624426f705e9213bb56fcd7209977c%2FREADME.md=&etag=%22143910c4d1f1511bf6d0c235a3da824b10ac91f4%22",
+     "status": 200,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 112343,
+     "sha256": "7c2fb95746c329cb11551f3d08c990e2b11f31764307b4446bfc455010b601b5",
+     "fetchedAt": "2026-11-10T12:04:25.455761+00:00"
+    },
+    {
+     "file": "hf/minicpm5-2b/gguf-LICENSE",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/5eff2ddd90624426f705e9213bb56fcd7209977c/LICENSE",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/5eff2ddd90624426f705e9213bb56fcd7209977c/LICENSE",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:28.839843+00:00",
+     "error": "HTTP 404"
+    },
+    {
+     "file": "hf/minicpm5-2b/gguf-LICENSE.txt",
+     "url": "https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/5eff2ddd90624426f705e9213bb56fcd7209977c/LICENSE.txt",
+     "finalUrl": "https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/5eff2ddd90624426f705e9213bb56fcd7209977c/LICENSE.txt",
+     "status": 404,
+     "contentType": "text/plain; charset=utf-8",
+     "bytes": 15,
+     "sha256": "f36668ddf22403a332f978057d527cf285b01468bc3431b04094a7bafa6aba59",
+     "fetchedAt": "2026-11-10T12:04:30.398407+00:00",
+     "error": "HTTP 404"
+    }
+   ],
+   "base": {
+    "repo": "openbmb/MiniCPM5-2B",
+    "revision": "42433e90dad95123ab87729fd7011e7110629556",
+    "lastModified": "2026-11-09T08:14:20.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "downloads": 1048867,
+    "likes": 1843,
+    "files": [
+     {
+      "path": "README.md",
+      "bytes": 112168,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "config.json",
+      "bytes": 704,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "generation_config.json",
+      "bytes": 213,
+      "lfsSha256": null,
+      "lfsSize": null
+     },
+     {
+      "path": "tokenizer_config.json",
+      "bytes": 94391,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   },
+   "gguf": {
+    "repo": "openbmb/MiniCPM5-2B-GGUF",
+    "revision": "5eff2ddd90624426f705e9213bb56fcd7209977c",
+    "lastModified": "2026-11-09T08:13:57.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "downloads": 460054,
+    "likes": 390,
+    "files": [
+     {
+      "path": "MiniCPM5-2B-F16.gguf",
+      "bytes": 5039006688,
+      "lfsSha256": "0ffba3682a853295566b98bc38c0ab755d6b2d91b994bc031ed727a08cfcdf25",
+      "lfsSize": 5039006688
+     },
+     {
+      "path": "MiniCPM5-2B-Q4_K_M.gguf",
+      "bytes": 1561318368,
+      "lfsSha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+      "lfsSize": 1561318368
+     },
+     {
+      "path": "MiniCPM5-2B-Q8_0.gguf",
+      "bytes": 2679710688,
+      "lfsSha256": "c5415f8989bf88a8288f1b55a3cc371af53c07b0faa220a63bd7a990cfaba078",
+      "lfsSize": 2679710688
+     },
+     {
+      "path": "README.md",
+      "bytes": 112343,
+      "lfsSha256": null,
+      "lfsSize": null
+     }
+    ]
+   }
+  }
+ ]
+}

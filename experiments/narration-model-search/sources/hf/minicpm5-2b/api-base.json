@@ -1,0 +1,36 @@
+{
+ "repo": "openbmb/MiniCPM5-2B",
+ "revision": "42433e90dad95123ab87729fd7011e7110629556",
+ "lastModified": "2026-11-09T08:14:20.000Z",
+ "licenseTags": [
+  "apache-2.0"
+ ],
+ "downloads": 1048867,
+ "likes": 1843,
+ "files": [
+  {
+   "path": "README.md",
+   "bytes": 112168,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 704,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 213,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 94391,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

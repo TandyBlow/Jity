@@ -1,0 +1,46 @@
+{
+ "repo": "tencent/Hunyuan-1.8B-Instruct",
+ "revision": "de940610ab5d45b4fedbd37e08444d0dc502837c",
+ "lastModified": "2025-08-06T07:30:26.000Z",
+ "licenseTags": [],
+ "downloads": 2049,
+ "likes": 604,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 15525,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "LICENSE.txt",
+   "bytes": 15519,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 21859,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 1369,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 221,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 170766,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

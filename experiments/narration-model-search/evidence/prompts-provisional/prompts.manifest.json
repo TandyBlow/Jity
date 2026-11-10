@@ -1,0 +1,67 @@
+{
+ "templateId": "narration-trained-instruct-whole-scene-v1",
+ "createdAt": "2026-11-10T12:12:06.539061+00:00",
+ "frozen": false,
+ "publishable": false,
+ "frozenReason": "provisional harness test: 01's RUBRIC.md is present but --provisional was passed",
+ "devPackage": {
+  "owner": "01-input",
+  "manifestPath": "d:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\manifest.json",
+  "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+  "casesPath": "d:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\cases.jsonl",
+  "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+  "caseCount": 12,
+  "rubricPath": "d:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\RUBRIC.md",
+  "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+  "status": "public_development_regression_not_final"
+ },
+ "serializer": {
+  "version": "yuyan-prose-result-v2",
+  "projectionVersion": "narration-result-view-v2",
+  "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-runtime-v2\\src\\v2_render.py",
+  "sha256": "5b550bb3c8d7e5e0c5a4f26fa2507f82044a2eea9af86b5d13de6bd94c54132a"
+ },
+ "chatTemplate": {
+  "trainingConfig": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-runtime-v2\\configs\\hf-instruct.template.json",
+  "sha256": "1c91bd6dbb1d7aa50be0d967f92854e9ecf721f8155f68856419d56132cee8ba",
+  "system": "你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。",
+  "userPrefix": "【已结算输入】\n",
+  "userSuffix": "\n请写出这一回合的正文。",
+  "application": "the model's own GGUF chat template is applied by llama-server --jinja to [system, user]"
+ },
+ "sampling": {
+  "temperature": 0.0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokens": 320,
+  "contextSize": 8192,
+  "stop": [
+   "<|im_end|>",
+   "<|endoftext|>"
+  ],
+  "stream": false
+ },
+ "whitespaceRule": "delete space / tab / U+3000, recorded per field in whitespace-ledger.jsonl",
+ "promptCount": 12,
+ "skippedCases": [
+  {
+   "caseId": "tide-continuity-tide-duty-t2",
+   "error": "NarrationSerializeError: 本回合变化/变化/沈砚 has unsupported operation(s): 任务"
+  },
+  {
+   "caseId": "tide-continuity-tide-duty-t3",
+   "error": "NarrationSerializeError: 本回合变化/变化/潮位计/解除外貌 must be an array, got str"
+  },
+  {
+   "caseId": "fixture-goggles-transfer",
+   "error": "NarrationSerializeError: 本回合变化/变化/诺诺 has unsupported operation(s): 外貌"
+  }
+ ],
+ "promptsSha256": "70475f913b2c20f02e0b7539c5fcd5d91dfc066ee1d9cae8a96589e5b21787cb",
+ "ledgerSha256": "e2609c7fe223fb7f46a046371e1bfe9e0fedd3cf7c720d9f89c51086f559db44",
+ "limitations": [
+  "The prompt carries the settled input only; case priorTexts are used by the checker for echo detection, not inserted into the prompt. Cross-turn context is lane 04/07's scope.",
+  "The product currently wraps narrations in beat-scoped prompts (02's strategy). This frozen condition is whole-scene and is a model-comparison condition only; promotion still runs through the real product page and lane 09."
+ ]
+}

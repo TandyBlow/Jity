@@ -1,0 +1,36 @@
+{
+ "repo": "internlm/internlm2_5-1_8b-chat",
+ "revision": "57dcbc5455bf050d27a80f0ebd7808387caa714d",
+ "lastModified": "2025-03-13T07:04:49.000Z",
+ "licenseTags": [
+  "other"
+ ],
+ "downloads": 3592,
+ "likes": 26,
+ "files": [
+  {
+   "path": "README.md",
+   "bytes": 17231,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 992,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 123,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 2511,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

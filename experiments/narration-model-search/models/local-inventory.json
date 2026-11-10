@@ -1,0 +1,411 @@
+{
+ "roots": [
+  "D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery/frontend/public/models",
+  "D:/others/Jity/.local/models",
+  "D:/others/Jity/.local/models-narration",
+  "D:/others/Jity/.local/qwen-train",
+  "D:/others/Jity/.local/yuyan"
+ ],
+ "note": "read-only inventory; weights stay outside Git",
+ "files": [
+  {
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "bytes": 1117320736,
+   "sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "qwen2.5-1.5b-instruct",
+    "sizeLabel": "1.8B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4",
+    "chatTemplateChars": 2509,
+    "tensorTypes": {
+     "Q6_K": 29,
+     "Q4_K": 169,
+     "F32": 141
+    },
+    "estimatedParameters": 1777088000
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\qwen25-0.5b-narration-Q4_K_M.gguf",
+   "bytes": 397807488,
+   "sha256": "a5fea8c3e313786bcb409804355c6f27a4e4804062683c05d996f724c25b9f81",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 121,
+     "Q8_0": 13,
+     "Q5_0": 132,
+     "Q6_K": 12,
+     "Q4_K": 12
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\qwen25-1.5b-narr-Q4_K_M.gguf",
+   "bytes": 986048096,
+   "sha256": "6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged15",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 141,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1543714304
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\Qwen3-0.6B-Q4_K_M.gguf",
+   "bytes": 396705472,
+   "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "Qwen3-0.6B",
+    "sizeLabel": "0.6B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": "Unsloth",
+    "contextLength": 40960,
+    "chatTemplateSha256": "5da44855ab7e0641774d5ed0ff0b4f89671d01df7d316e54d06557a962211cb4",
+    "chatTemplateChars": 4905,
+    "tensorTypes": {
+     "F32": 113,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 596049920
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\Qwen3-1.7B-Q4_K_M.gguf",
+   "bytes": 1107409472,
+   "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "Qwen3-1.7B",
+    "sizeLabel": "1.7B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": "Unsloth",
+    "contextLength": 40960,
+    "chatTemplateSha256": "8428c815ac94d82064e35ff1e841dcbe260e7e53a8d0bd3b94afa2eefa9bccab",
+    "chatTemplateChars": 4761,
+    "tensorTypes": {
+     "F32": 113,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1720574976
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q4_1.gguf",
+   "bytes": 191896672,
+   "sha256": "a281c127e388b16537fd3f5d31ab32d3f87739e6dc514ac1093c80d9eac8d097",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "MNN-Pocket-0.3B-QAT",
+    "sizeLabel": "303M",
+    "quantization": "MOSTLY_Q4_1",
+    "quantizedBy": null,
+    "contextLength": 40960,
+    "chatTemplateSha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "chatTemplateChars": 2630,
+    "tensorTypes": {
+     "Q4_1": 197,
+     "F32": 113
+    },
+    "estimatedParameters": 302830976
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models\\MNN-Pocket-0.3B-Instruct-Q8_0.gguf",
+   "bytes": 386751520,
+   "sha256": "31eb5db92b2e02a80e9e3a9316aa83120cbee98e4f4a22ca19015ba601dbd690",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "MNN Pocket 0.3B Instruct",
+    "sizeLabel": "0.3B",
+    "quantization": "MOSTLY_Q8_0",
+    "quantizedBy": null,
+    "contextLength": 40960,
+    "chatTemplateSha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "chatTemplateChars": 2630,
+    "tensorTypes": {
+     "Q8_0": 198,
+     "F32": 113
+    },
+    "estimatedParameters": 361551232
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+   "bytes": 2497281120,
+   "sha256": "3605803b982cb64aead44f6c1b2ae36e3acdb41d8e46c8a94c6533bc4c67e597",
+   "probe": {
+    "architecture": "qwen3",
+    "name": "Qwen3-4B-Instruct-2507",
+    "sizeLabel": "4B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": "Unsloth",
+    "contextLength": 262144,
+    "chatTemplateSha256": "c979e0e71a3e21b8f208e6ab120d5cb29327885f29d2a8b18fda67a723798e18",
+    "chatTemplateChars": 4051,
+    "tensorTypes": {
+     "F32": 145,
+     "Q6_K": 37,
+     "Q4_K": 216
+    },
+    "estimatedParameters": 4022468096
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models-narration\\qwen05b-beat-v1\\model-Q4_K_M.gguf",
+   "bytes": 397807488,
+   "sha256": "3d4b8e8808449599dfff435e21df3a8c90b98b803d754c07a23af8ca7a1a176e",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Hf",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 121,
+     "Q8_0": 13,
+     "Q5_0": 132,
+     "Q6_K": 12,
+     "Q4_K": 12
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models-narration\\qwen15b-beat-v1\\model-Q4_K_M.gguf",
+   "bytes": 986048064,
+   "sha256": "f85daf580b82f763cfe5119c2dd20e5c678f1a60dafb425a318524bf97fec192",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Hf",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 141,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1543714304
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\models-narration\\qwen15b-beat-v2\\model-Q4_K_M.gguf",
+   "bytes": 986048064,
+   "sha256": "5ab4668ac2afe867bf2075b7bfea0ad2f133dae2a58aba3495078f5f4a33fa0a",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Hf",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 141,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1543714304
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-0.5b-instruct-lora-f16.gguf",
+   "bytes": 994156448,
+   "sha256": "2091bb32e2793d7c8152b627a0f7d1a0c1661b16862532cd5da84c40093b9b0d",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged Instruct2",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_F16",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F16": 169,
+     "F32": 121
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-0.5b-instruct-lora-Q4_K_M.gguf",
+   "bytes": 397807520,
+   "sha256": "725c3f8da9d0ab9ebb92f1ce29440cff62f972328436baf7131690706de70d3f",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged Instruct2",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 121,
+     "Q8_0": 13,
+     "Q5_0": 132,
+     "Q6_K": 12,
+     "Q4_K": 12
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-0.5b-narration-f16.gguf",
+   "bytes": 994156416,
+   "sha256": "38c081d6a9a51cf665d306088aa9e50ac08db1170b9d6907e25880f84474a593",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_F16",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F16": 169,
+     "F32": 121
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-1.5b-narr-f16.gguf",
+   "bytes": 3093668960,
+   "sha256": "d2aa43e6dd2cbe40eff0ae5dac454288550b739a590f52a801bd5479807e85af",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged15",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_F16",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F16": 197,
+     "F32": 141
+    },
+    "estimatedParameters": 1543714304
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-1.5b-narr-Q4_K_M.gguf",
+   "bytes": 986048096,
+   "sha256": "6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged15",
+    "sizeLabel": "1.5B",
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F32": 141,
+     "Q6_K": 29,
+     "Q4_K": 168
+    },
+    "estimatedParameters": 1543714304
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\qwen-train\\qwen25-instr-f16.gguf",
+   "bytes": 994156448,
+   "sha256": "c8d44ee1cf42a0775430adcc615dabd94c329052baf0ad2635e0f8ac4b416361",
+   "probe": {
+    "architecture": "qwen2",
+    "name": "Merged Instr",
+    "sizeLabel": "494M",
+    "quantization": "MOSTLY_F16",
+    "quantizedBy": null,
+    "contextLength": 32768,
+    "chatTemplateSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "chatTemplateChars": 2507,
+    "tensorTypes": {
+     "F16": 169,
+     "F32": 121
+    },
+    "estimatedParameters": 494032768
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\yuyan\\yuyan-700m-f16.gguf",
+   "bytes": 1498755264,
+   "sha256": "fed040aa59116db10f03fbfd006ba05c892d1d60c367629a213223a71c83217c",
+   "probe": {
+    "architecture": "gpt2",
+    "name": "YuYan-700M",
+    "sizeLabel": null,
+    "quantization": "MOSTLY_F16",
+    "quantizedBy": null,
+    "contextLength": 4096,
+    "chatTemplateSha256": "c4123e078b4bdc0f5f63fa38eca171496c1d7ee48987353469d9d611d0428e66",
+    "chatTemplateChars": 65,
+    "tensorTypes": {
+     "F16": 147,
+     "F32": 290
+    },
+    "estimatedParameters": 748633600
+   }
+  },
+  {
+   "path": "D:\\others\\Jity\\.local\\yuyan\\yuyan-700m-Q4_K_M.gguf",
+   "bytes": 488730112,
+   "sha256": "f0187d281eecb8101f92c9e8fca409259c3acd555e483e14ef199efe1e370220",
+   "probe": {
+    "architecture": "gpt2",
+    "name": "YuYan-700M",
+    "sizeLabel": null,
+    "quantization": "MOSTLY_Q4_K_M",
+    "quantizedBy": null,
+    "contextLength": 4096,
+    "chatTemplateSha256": "c4123e078b4bdc0f5f63fa38eca171496c1d7ee48987353469d9d611d0428e66",
+    "chatTemplateChars": 65,
+    "tensorTypes": {
+     "Q6_K": 37,
+     "F32": 290,
+     "F16": 1,
+     "Q4_K": 109
+    },
+    "estimatedParameters": 748633600
+   }
+  }
+ ]
+}

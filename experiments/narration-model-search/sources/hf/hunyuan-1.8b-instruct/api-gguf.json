@@ -1,0 +1,160 @@
+{
+ "repo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+ "revision": "f5c690589f011bebe798fa2634b79a94f95463e3",
+ "lastModified": "2025-08-04T07:23:01.000Z",
+ "licenseTags": [],
+ "downloads": 253,
+ "likes": 3,
+ "files": [
+  {
+   "path": "Hunyuan-1.8B-Instruct-F16.gguf",
+   "bytes": 3587538048,
+   "lfsSha256": "a76850c63245f42b3dbc3957dc61486bd04ccb83306d048952d0ca91c058baa0",
+   "lfsSize": 3587538048
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ2_M.gguf",
+   "bytes": 698486912,
+   "lfsSha256": "95d6deea085ca014f5bba570960fbc4b021c011aa158dd7be8c937ee0f163288",
+   "lfsSize": 698486912
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ2_S.gguf",
+   "bytes": 657068160,
+   "lfsSha256": "a4d3430f3c0f6caf4573f9171384a8c2489f7c905a6b3d4095a646557271f403",
+   "lfsSize": 657068160
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ2_XS.gguf",
+   "bytes": 633081984,
+   "lfsSha256": "6f11bf1d6b4e344e05e221742fc73ac5da75a3892dd7ed3795af10e8f3b97b1a",
+   "lfsSize": 633081984
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ2_XXS.gguf",
+   "bytes": 587468928,
+   "lfsSha256": "03c4f8d99c74b69258e5961e66ba5c76dbae058833be7c3a523feccc68755901",
+   "lfsSize": 587468928
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ3_M.gguf",
+   "bytes": 900825504,
+   "lfsSha256": "bdba11ea1763290570cf7a822acdeb6a999f557efe70e056ad055086d853cc30",
+   "lfsSize": 900825504
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ3_S.gguf",
+   "bytes": 876315040,
+   "lfsSha256": "dd2ce088ff896ddcfae27378d6acc44842504273d2d8ac25b465d1f7af3b7462",
+   "lfsSize": 876315040
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ3_XS.gguf",
+   "bytes": 840139168,
+   "lfsSha256": "8b43c2269474bc4dc9e463fad331bed95962f56953ae19f17c4725b8225820cc",
+   "lfsSize": 840139168
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ3_XXS.gguf",
+   "bytes": 768479360,
+   "lfsSha256": "a3e29b78b51826ec9080159b3d78b5afc85e2e8d89a4ea5950c0ef20c34ce6b2",
+   "lfsSize": 768479360
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ4_NL.gguf",
+   "bytes": 1081049504,
+   "lfsSha256": "f4962fced8db6aeaadf0b4feb7bd5ca694d1963fa70688e03405d2023b928877",
+   "lfsSize": 1081049504
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-IQ4_XS.gguf",
+   "bytes": 1033863584,
+   "lfsSha256": "44964fa8818cdce1a3485f10bafb6449f54990325680f9dd092266a98dca948e",
+   "lfsSize": 1033863584
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q2_K.gguf",
+   "bytes": 777486752,
+   "lfsSha256": "344ba7c896a01f89a9ea15e806cab903f8117ff8a1456403bfd57ff4d66913df",
+   "lfsSize": 777486752
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q2_K_S.gguf",
+   "bytes": 734757280,
+   "lfsSha256": "3840d79d7fe3f71c29d34bcefc5cc8bdcd4e3af8c16b741f10aad1452c47676c",
+   "lfsSize": 734757280
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q3_K_L.gguf",
+   "bytes": 1018921376,
+   "lfsSha256": "4075ab2927c24e31ab669f3ab245c810144b4f8bfec1e16fd942461561052413",
+   "lfsSize": 1018921376
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q3_K_M.gguf",
+   "bytes": 951026080,
+   "lfsSha256": "f14bf12040821cda69f1be2fc55b07632de5ea9c7d982dc18213c57952784835",
+   "lfsSize": 951026080
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q3_K_S.gguf",
+   "bytes": 871858592,
+   "lfsSha256": "f310f9a81f055b853e473c1160872adbda4096e4bbf4fd4a8ff1577fcd035c59",
+   "lfsSize": 871858592
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q4_0.gguf",
+   "bytes": 1080000928,
+   "lfsSha256": "fb36a8507bdb4a409da1a8ce50537a03165aec6a07122a423245978d4ccca40e",
+   "lfsSize": 1080000928
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+   "bytes": 1133085088,
+   "lfsSha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+   "lfsSize": 1133085088
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q4_K_S.gguf",
+   "bytes": 1083670944,
+   "lfsSha256": "41d7485aa4fe32416f633e2c110b53c883197cd5bf6704e09613d9f16f0689a6",
+   "lfsSize": 1083670944
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q5_0.gguf",
+   "bytes": 1272938912,
+   "lfsSha256": "59db516f656d4253afbfc9583d04c1fcd806afdc9fa69079716fe48b492bd19c",
+   "lfsSize": 1272938912
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q5_K_M.gguf",
+   "bytes": 1298760096,
+   "lfsSha256": "e89fe518e47183c9d1ced8ac2bc8de2705f53af8a0a60014a0ad78d25b91b48c",
+   "lfsSize": 1298760096
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q5_K_S.gguf",
+   "bytes": 1269793184,
+   "lfsSha256": "3a7bc2edaa63ad54936e757f15f350bffd71c1d2032f57b9e232dc91be804f30",
+   "lfsSize": 1269793184
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q6_K.gguf",
+   "bytes": 1474789792,
+   "lfsSha256": "dbb48bf835549052a10cf5308c9bb0ed80e7da975fea2828e9f2602a0d1fcefd",
+   "lfsSize": 1474789792
+  },
+  {
+   "path": "Hunyuan-1.8B-Instruct-Q8_0.gguf",
+   "bytes": 1908532864,
+   "lfsSha256": "6f0ab4f5890c6762a7d514a07399ebe4d19f43c2e5835ad3d56b9db2dd211526",
+   "lfsSize": 1908532864
+  },
+  {
+   "path": "README.md",
+   "bytes": 21987,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}
