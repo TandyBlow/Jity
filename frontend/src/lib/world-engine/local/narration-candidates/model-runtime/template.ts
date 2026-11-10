@@ -101,6 +101,7 @@ ${trim(inputText, 1200)}`);
   // stops after two sentences because it thinks the scene is over.
   if (target) lines.push(`写满目标字数再把这一段场景收住，中途不要概括、不要跳跃。`);
   lines.push('用具体的动作、声音和细节推进，不要把「这一小段时间里发生的事」逐条翻译成句子。');
+  lines.push('场景说明只用来了解环境，不要整句照抄；视角人物只拿自己的物品，不要替别人做动作或写别人的枪口朝向。');
   // The same run invented an unlisted box opening. Banning unlisted
   // interaction is cheaper than one repair call and keeps the fact grader
   // meaningful.
