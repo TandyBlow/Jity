@@ -1,136 +1,108 @@
-// Lane 10 draft-rewrite candidate: the page hands over its settled-fact draft,
-// the model rewrites it as prose and may not add anything.
+// Lane 10 page-draft candidate: the page passes its settled-fact draft, the
+// model rewrites it under the page's own instruction, and the result is checked
+// for draft coverage and invention before it may replace the fallback.
 //
-// The prompt is byte-identical to the one used for training
-// (`src/build_draft_pairs.py`):  【事实草稿】/【地点】/【在场】/【要求】/【正文】
-// The draft text itself is rendered by `draftFromFacts`, which mirrors the
-// Python renderer; if these drift, the model sees a shape it was not trained on.
+// The prompt below is the page's `instructNarrationInput(..., draft)` string
+// (worktrees/06-recovery frontend/src/lib/world-engine/local/prompt.ts) copied
+// verbatim, and the model saw exactly this shape during training
+// (src/build_page_pairs.py). If 06 changes that template, regenerate the
+// training data; do not silently adapt the prompt here.
 //
-// Output contract is the shared runner's `generateCandidate` result. This file
-// does not decide product quality; 09 runs it, 01 reads the prose.
+// Output contract is the shared runner's `generateCandidate` result. Quality is
+// decided by 01's review of real page text, not by this file.
 
-const STRATEGY_VERSION = 'lane10-draft-v1';
+export const STRATEGY_VERSION = 'lane10-page-draft-v1';
+export const MODEL_ID = 'qwen25-1.5b-page-draft-v1';
 
-const UNIT_CN = {
-  second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年',
-};
+const SCENE_HEAD = '你是中文小说作者。请把下面这段已经结算的事实草稿改写成 {name} 视角的小说正文，160 到 240 字。';
+const REPAIR_HEAD = '你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 {name} 视角的小说正文，140 到 220 字。';
+const DRAFT_RULES = '要求：只能使用草稿里明确写出的动作、位置、外观和结果；可以调整语序、连接词和短句节奏，'
+  + '但不得新增任何动作、对白、物品、人物、地点、数字、伤情、往事、心理活动或比喻；'
+  + '每个人物的伤势、衣物和物品只属于本人，不要用“他/她”把一个人的特征挪到另一个人身上；'
+  + '不要逐条复述草稿，不要把人物外貌列成清单；以动作为主线写成一个连续场景，'
+  + '环境和人物只保留与当前动作有关的一两笔；不要写标题、列表或 Markdown；分 2 到 3 段。';
 
-const REQUIREMENT_SHORT = '把草稿改写成正文，三句以内。只写草稿里的事实；'
-  + '不新增人物、对白、物品、动作、往事、数字，不解释情绪。';
-
-function draftLine(fact) {
-  if (fact.kind === 'moved') return `${fact.name}从${fact.from}走到${fact.to}。`;
-  if (fact.kind === 'task_achieved') return `${fact.name}完成了「${fact.goal}」。`;
-  if (fact.kind === 'personality_changed') return `${fact.name}多了一条个性：${fact.text}。`;
-  if (fact.kind === 'sanity_changed') return `${fact.name}的精神值从${fact.from}变成${fact.to}。`;
-  return '';
+export function buildPagePrompt(name: string, draft: string, mode: 'scene' | 'repair' = 'scene'): string {
+  const head = (mode === 'repair' ? REPAIR_HEAD : SCENE_HEAD).replace('{name}', name);
+  return [head, DRAFT_RULES, '事实草稿：', draft, '正文：'].join('\n');
 }
 
-export function draftFromFacts(committed, timeAdvance) {
+const UNIT_CN = { second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' };
+
+/** Minimal stand-in for the page's `factualNarration`, used only when the page
+ * does not hand over a draft. The page's own draft always wins. */
+export function draftFromFacts(committed: any, timeAdvance: any): string {
   const parts = [];
-  for (const fact of committed?.facts ?? []) {
-    const line = draftLine(fact);
-    if (line) parts.push(line);
-  }
   const duration = timeAdvance?.duration;
-  if (duration && duration.amount > 0) {
-    parts.push(`时间过去${duration.amount}${UNIT_CN[duration.unit]}。`);
+  const unit = UNIT_CN[duration.unit as keyof typeof UNIT_CN] ?? '';
+  if (duration?.amount) parts.push(`时间过去了约${duration.amount}${unit}。`);
+  for (const fact of committed?.facts ?? []) {
+    if (fact.kind === 'moved') parts.push(`${fact.name}从${fact.from}走到${fact.to}。`);
+    if (fact.kind === 'task_achieved') parts.push(`${fact.name}完成了「${fact.goal}」。`);
+    if (fact.kind === 'personality_changed') parts.push(`${fact.name}多了一条个性：${fact.text}。`);
+    if (fact.kind === 'sanity_changed') parts.push(`${fact.name}的精神值从${fact.from}变成${fact.to}。`);
   }
   return parts.join('');
 }
 
-function sceneOf(state, inputText) {
+function viewpointName(inputText: unknown): string {
   const match = /【视角】[^（(]*[（(]([^）)]+)[）)]/.exec(String(inputText ?? ''));
-  const viewpoint = match ? match[1].trim() : null;
-  const names = {};
-  for (const [id, entry] of Object.entries(state?.initial?.characters ?? {})) names[id] = entry.name;
-  const viewpointId = Object.keys(names).find((id) => names[id] === viewpoint) ?? null;
-  const containerId = viewpointId ? state.characters?.[viewpointId]?.position?.containerId ?? null : null;
-  const location = containerId ? state.initial?.locations?.[containerId]?.name ?? null : null;
-  const present = Object.entries(state?.characters ?? {})
-    .filter(([id, actor]) => id !== viewpointId && actor.position?.containerId === containerId)
-    .map(([id]) => names[id]).filter(Boolean);
-  return { viewpoint, location, present };
+  return match ? match[1].trim() : '';
 }
 
-export function buildDraftPrompt({ draft, place, present }) {
-  const lines = [`【事实草稿】${draft || '这一回合没有结算出变化。'}`];
-  if (place) lines.push(`【地点】${place}`);
-  if (present?.length) lines.push(`【在场】${present.join('、')}`);
-  lines.push(`【要求】${REQUIREMENT_SHORT}`);
-  lines.push('【正文】');
-  return lines.join('\n');
-}
+const FILLER = ['仿佛', '似乎', '像是', '好像', '某种', '不由得', '不禁'];
 
-const STOP_WORDS = ['空气里', '气氛', '仿佛', '似乎', '像是', '好像', '显得', '某种'];
-
-/** Cheap, conservative checks. They are not the product gate (01 owns it):
- * a sentence must carry every draft fact and must not invent a name or a
- * number that the draft and the scene do not contain. */
-export function checkDraftProse(text, { draft, place, present, licensed }) {
+/** Conservative checks so a broken answer cannot silently replace the draft:
+ * every draft sentence must survive, and no number may appear from nowhere. */
+export function checkProse(text: unknown, { draft, name }: { draft: string; name: string }): string[] {
   const issues = [];
-  const plain = String(text ?? '');
-  if (!plain.trim()) issues.push('empty');
-  if (plain.length > 220) issues.push('too_long');
-  if (/\n{2,}/.test(plain)) issues.push('multiple_paragraphs');
-  for (const fact of licensed?.facts ?? []) {
-    if (fact.kind === 'moved' && (!plain.includes(fact.from) || !plain.includes(fact.to))) {
-      issues.push(`missing_places:${fact.name}`);
+  const prose = String(text ?? '').trim();
+  if (!prose) return ['empty'];
+  if (prose.length > 320) issues.push('too_long');
+  for (const clause of String(draft ?? '').split(/(?<=。)/).filter((part) => part.trim())) {
+    const numbers = clause.match(/[0-9]+/g) ?? [];
+    for (const number of numbers) {
+      if (!prose.includes(number)) issues.push(`missing_fact:${clause.slice(0, 8)}`);
     }
-    if (fact.kind === 'task_achieved' && !plain.includes(fact.goal.slice(0, 6))) {
-      issues.push(`missing_task:${fact.name}`);
-    }
-    if (fact.kind === 'personality_changed' && !plain.includes(fact.text.slice(0, 4))) {
-      issues.push(`missing_trait:${fact.name}`);
-    }
-    if (fact.kind === 'sanity_changed'
-      && !plain.includes(String(fact.to)) && !plain.includes(String(fact.from))) {
-      issues.push(`missing_sanity:${fact.name}`);
-    }
+    const goal = /「(.+?)」/.exec(clause);
+    if (goal && !prose.includes(goal[1].slice(0, 6))) issues.push(`missing_task:${goal[1].slice(0, 6)}`);
+    const move = /(.+?)从(.+?)走到(.+?)。/.exec(clause);
+    if (move && !(prose.includes(move[2]) && prose.includes(move[3]))) issues.push('missing_move');
   }
-  const allowedNumbers = new Set((String(plain).match(/[0-9]+/g) ?? []));
-  const draftNumbers = new Set((`${draft} ${place ?? ''} ${(present ?? []).join('')}`.match(/[0-9]+/g) ?? []));
-  for (const number of allowedNumbers) {
-    if (!draftNumbers.has(number)) issues.push(`invented_number:${number}`);
+  const allowed = new Set((String(draft ?? '').match(/[0-9]+/g) ?? []));
+  for (const number of prose.match(/[0-9]+/g) ?? []) {
+    if (!allowed.has(number)) issues.push(`invented_number:${number}`);
   }
-  for (const word of STOP_WORDS) {
-    if (plain.includes(word)) issues.push(`filler:${word}`);
-  }
+  for (const word of FILLER) if (prose.includes(word)) issues.push(`filler:${word}`);
+  if (/[「“『]/.test(prose) && !/[「“『]/.test(String(draft ?? ''))) issues.push('added_dialogue');
+  if (name && !prose.includes(name)) issues.push('missing_viewpoint');
   return issues;
 }
 
-export function fallbackProse(draft) {
-  return draft || '这一回合没有结算出变化。';
-}
-
-export async function generateCandidate(args) {
+export async function generateCandidate(args: any): Promise<any> {
   const started = performance.now();
-  const scene = sceneOf(args.state, args.inputText);
-  const draft = draftFromFacts(args.committed, args.delta?.timeAdvance ?? null);
-  const prompt = buildDraftPrompt({ draft, place: scene.location, present: scene.present });
+  const name = viewpointName(args.inputText) || (args.state ? '' : '');
+  const draft = args.draft || draftFromFacts(args.committed, args.delta?.timeAdvance ?? null);
+  const prompt = buildPagePrompt(name, draft, args.mode === 'repair' ? 'repair' : 'scene');
   const attempts = [];
   const issues = [];
   let text = '';
   for (let attempt = 0; attempt < 2 && !text; attempt += 1) {
-    const asked = attempt === 0 ? prompt
-      : `${prompt}【纠正】上一句没有照住草稿。只写这些事实：${draft}`;
+    const asked = attempt === 0 ? prompt : `${prompt}\n纠正：上一稿没有照住草稿，只写这些事实：${draft}`;
     const before = performance.now();
     let raw = '';
     try {
       raw = await args.engine.complete(asked, {
-        maxTokens: 160,
-        temperature: attempt === 0 ? 0.5 : 0.3,
+        maxTokens: 320,
+        temperature: attempt === 0 ? 0.4 : 0.2,
         signal: args.signal,
       });
     } catch (error) {
-      if (error?.name === 'AbortError') throw error;
-      issues.push(`generation_failed:${error?.message ?? error}`);
+      if ((error as Error)?.name === 'AbortError') throw error;
+      issues.push(`generation_failed:${(error as Error)?.message ?? error}`);
     }
     const candidate = String(raw ?? '').trim();
-    const found = candidate ? checkDraftProse(candidate, {
-      draft, place: scene.location, present: scene.present,
-      licensed: { facts: args.committed?.facts ?? [] },
-    }) : ['empty'];
+    const found = candidate ? checkProse(candidate, { draft, name }) : ['empty'];
     attempts.push({ attempt, prompt: asked, raw: candidate, issues: found,
       ms: Math.round(performance.now() - before) });
     args.onProgress?.({ status: 'draft', text: candidate || undefined,
@@ -139,7 +111,7 @@ export async function generateCandidate(args) {
     else issues.push(...found.map((issue) => `${issue}@${attempt}`));
   }
   const accepted = Boolean(text);
-  if (!accepted) text = fallbackProse(draft);
+  if (!accepted) text = draft;
   return {
     text,
     accepted,

@@ -72,9 +72,18 @@ def time_spoken(prose: str, amount: int, unit: str) -> bool:
 def covers(prose: str, clause: str) -> bool:
     """A draft clause counts as carried when at least half of its 2-char pieces
     appear, and every proper name in it appears."""
-    time = re.match(r"时间过去(\d+)(秒|分钟|小时|天|个月|年)。", clause)
+    time = re.match(r"时间过去了?约?(\d+)(秒|分钟|小时|天|个月|年)", clause)
     if time:
         return time_spoken(prose, int(time.group(1)), time.group(2))
+    if clause.endswith("没有出声。") or clause.endswith("没有出声"):
+        # The page writes this when a nearby character has no appearance text;
+        # it carries no fact, so silence in the prose is not a miss.
+        return True
+    if re.match(r"^.+?里，", clause):
+        # Scenery is optional detail: the page's own rule says the environment
+        # keeps only one or two touches tied to the action, so a missing scenery
+        # clause is not a fact miss. Recorded as a warning by the caller.
+        return True
     names = re.findall(r"[\u4e00-\u9fff]{2,3}(?=从|完成了|多了一条|的精神值)", clause)
     for name in names:
         if name and name not in prose:
@@ -142,6 +151,7 @@ def main() -> int:
             issues.append("invented_number:" + ",".join(invented[:2]))
         if filler:
             issues.append("filler:" + ",".join(filler[:2]))
+        dialogue = bool(re.search(r"[「“『]", prose)) and not re.search(r"[「“『]", row["draft"])
         if len(prose) > 220:
             issues.append("too_long")
         if "\n\n" in prose:
@@ -149,7 +159,8 @@ def main() -> int:
         ok = not issues
         passed += 1 if ok else 0
         graded.append({"id": row["id"], "draft": row["draft"], "prose": prose,
-                       "missingClauses": missing, "issues": issues, "ok": ok})
+                       "missingClauses": missing, "issues": issues, "ok": ok,
+                       "dialogueAdded": dialogue})
     summary = {
         "gguf": args.gguf,
         "split": args.split,
