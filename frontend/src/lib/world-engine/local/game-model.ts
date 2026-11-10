@@ -246,8 +246,14 @@ export class LocalGameModel implements WorldModelPort {
       const body = prose.join('').replace(new RegExp(`^${name}[：:，,]?`, 'u'), '');
       return body ? `${name}：${body}` : '';
     }).filter(Boolean);
-    this.lastResultsText = /完成了刚才的动作|行动发生了，但没有产生新的结果/u.test(lines.join('；')) ? '' : lines.join('；');
-    for (const line of lines) this.recentEvents.push(line);
+    // Settlement-internal wording is not story material. Lane 04's results
+    // step falls back to "本组结算未能确认新的结果。" and the action lane uses
+    // "无判定"; both used to leak into the program prose as if a character said
+    // them. They stay out of the narration brief and the recent events.
+    const internal = /本组结算未能确认|未能确认新的结果|无判定|没有产生新的结果|完成了刚才的动作/u;
+    const story = lines.filter((line) => !internal.test(line));
+    this.lastResultsText = internal.test(lines.join('；')) ? '' : story.join('；');
+    for (const line of story) this.recentEvents.push(line);
     if (this.recentEvents.length > 4) this.recentEvents = this.recentEvents.slice(-4);
     return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
   }

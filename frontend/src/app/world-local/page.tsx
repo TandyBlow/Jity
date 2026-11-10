@@ -87,6 +87,9 @@ interface TurnEntry {
   programMs: number | null;
   mixedMs?: number | null;
   cancelled?: boolean;
+  failed?: boolean;
+  /** True for a turn rebuilt from the saved snapshot after a reload. */
+  restored?: boolean;
 }
 
 interface ViewState {
@@ -251,6 +254,34 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       throw new Error(`${label} engine could not be reloaded`);
     },
   };
+}
+
+/** Rebuild the player-visible history from the committed snapshot.
+ *
+ * The entries are not a second source of truth: each one pairs a stored player
+ * command with the narration text the transport committed for that point. A
+ * point whose narration never became ready is shown as an unfinished turn, not
+ * as an empty or fabricated paragraph. */
+function restoredEntries(snapshot: LocalGameSnapshot): TurnEntry[] {
+  const record = snapshot.transport as unknown as {
+    points?: Record<string, { id: string; sequence: number; trigger: string }>;
+    narrations?: Record<string, { status: string; text: string | null }>;
+  };
+  const points = Object.values(record.points ?? {})
+    .filter((point) => point.trigger === 'player')
+    .sort((a, b) => a.sequence - b.sequence);
+  return points.map((point, index) => {
+    const narration = record.narrations?.[point.id];
+    const ready = narration?.status === 'ready' && Boolean(narration.text);
+    return {
+      key: -1 - point.sequence,
+      input: snapshot.commands[index] ?? '',
+      text: ready ? (narration?.text ?? '') : '',
+      note: ready ? null : '这一回合的正文没有保存成功，刷新后无法显示原文。',
+      ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null,
+      restored: true,
+    };
+  });
 }
 
 export default function WorldLocalPage() {
@@ -518,6 +549,11 @@ export default function WorldLocalPage() {
           await session.start();
         }
         sessionRef.current = session;
+        if (restored) {
+          const history = restoredEntries(session.snapshot);
+          setEntries(history);
+          if (history.length > 0) console.info('[world-local] restored entries', history.length);
+        }
         await refresh();
         if (!alive) return;
         setPhase('ready');
@@ -587,10 +623,20 @@ export default function WorldLocalPage() {
     // ran, model calls, milliseconds). It is evidence, not page text.
     modelRef.current?.beginSubmission(text);
     save(session.snapshot);
+    const commandsAtStart = session.commandsPlayed;
     try {
       const status = await session.submit(text);
       console.info('[world-local] turn status', status);
       await refresh();
+      if (status.kind === 'stop' && status.reason === 'turn_in_progress') {
+        // The previous turn is still settling; this input was not consumed.
+        // Drop its placeholder and hand the text back instead of leaving an
+        // empty "…" turn in the history.
+        setEntries((list) => list.filter((entry) => entry.key !== key));
+        setInput(text);
+        setMessage('上一回合还在结算，等它结束再提交这一句。');
+        return;
+      }
       if (status.kind === 'stop' && status.reason === 'progress_conflict') {
         // The stored record was written by another writer/session. Play cannot
         // continue on a record whose revision the session does not own; the
@@ -601,8 +647,22 @@ export default function WorldLocalPage() {
       setMessage(status.kind === 'stop' && status.reason === 'world_complete' ? '本轮已交还，继续输入下一步行动。' : status.kind === 'stop' ? `本轮停止：${status.reason}` : '本轮完成。');
     } catch (e) {
       console.error(e);
-      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+      const raw = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+      // Settlement failures are typed (`settlement_failed:<task>:<reason>`) and
+      // mean the point was not committed; show a recoverable sentence instead
+      // of a raw Error while keeping the technical detail in the console.
+      const message = /settlement_failed/u.test(raw)
+        ? '这一回合的结算没有完成，之前的历史和已结算状态都保留着。可以再试一次或换一句行动。'
+        : raw;
+      setError(message);
       setPhase('error');
+      // A failed turn is not a paragraph. Label the entry, never show "…" as
+      // story text; if nothing was committed, give the sentence back so the
+      // player can decide whether to retry.
+      setEntries((list) => updateLast(list, (entry) => entry.acceptedMs == null
+        ? { ...entry, text: '', failed: true, note: `本回合没有完成：${message}` }
+        : entry));
+      if (session.commandsPlayed === commandsAtStart) setInput(text);
     } finally {
       const live = turnRecordRef.current;
       if (live) {
@@ -721,6 +781,7 @@ export default function WorldLocalPage() {
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
                   <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>
+                  {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
                   {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
                   {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
                 </article>
