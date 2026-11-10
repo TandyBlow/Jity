@@ -146,6 +146,25 @@ checkpoint 的快照上传后读回，`toEqual` 完全一致。
 这个提交后，页面保存路径不用改代码；仍要补的是 `storage: window.localStorage`
 （离线队列和已知 head）以及 `restore()`/冲突选择。
 
+### 用 06 自己的 session + store 走一遍“一回合 → 页面保存 → 刷新”（2026-11-10）
+
+`frontend/scripts/parallel-sync/session-history-check.ts` 不经过页面，直接用 06 的
+`LocalGameSession`、真实 `persistence/store.ts` 和一个按脚本回答每个任务的模型（和
+06 自己的恢复测试同形），跑一回合后调用页面同样的 `sync.save(session.snapshot)`：
+
+```
+LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/session-history-check.ts
+```
+
+实测（离线、无真实服务）：
+
+- 提交后 revision 22；页面式 `save()` 之后仍是 22，`localSaved=false`，上传进入队列；
+- 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
+  1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
+
+这证明“存储/同步覆盖正文历史”在修好双写后不会发生；页面若仍少条目，问题在渲染或
+恢复字段，不在同步。不是产品质量结论。
+
 `__worldRestore` 的四个字段按什么算才算“真恢复”（06 当前实现里 `stateRestored`
 只表示“打开了一条记录”，`entriesTotal` 用的是 `commands.length`，两处都容易把失败
 显示成成功或反过来）：
