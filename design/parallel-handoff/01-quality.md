@@ -216,3 +216,4 @@
 - 3-turn a178 第 2 回合（问诺诺红蓝/中立）：**program** 113 字/128.2 s；问题未答、无对白，状态面板+清单。
 - 3-turn a178 第 3 回合：**program** 132 字/163 s；护目镜三次当主语、引路无回答；run 22:51:34Z **FAILED**，3 回合全 program。
 - a178 候选：两次 `echo_prior+unlicensed_sense` 拒绝，第三次 95 字 accepted 仍含「阳光下微光」（同类未拦住）；continuation `abstract_task_goal` 后 settlement_failed/policy_stop。
+- 02 `ea30ada8`（source，未进 06 build）：hair owner/state、worn goggles、`time_duplicate`、scene `inventory` 校验，测试用 route 原句；覆盖四类，风/声/新物件/规则牌移位/物品当行动者/停水仍除外。源修复，非通过。
