@@ -345,3 +345,29 @@ describe('product regressions: no state checklist in prose', () => {
     expect(result.text).not.toContain('完成了任务');
   });
 });
+
+describe('product regressions: nobody-seen filler', () => {
+  // 09 e9a5/95dc and the dense point all pad with «他没看到任何人，也没听见任何声音».
+  test('saying nobody was seen while someone is present is a contradiction', async () => {
+    const text = '路明非站在西侧服务巷。他没看到任何人，也没听见任何声音。一分钟过去，他没有动。';
+    const { kinds } = await issuesOf(text);
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the same sentence is only a note in an empty courtyard', async () => {
+    const text = '路明非站在中央庭院。他没看到任何人，也没听见任何声音。两分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet,
+      inputText: quietInput.replace('演习规则牌（墙上）', '演习规则牌'),
+      priorText: null,
+      policy: {
+        ...quietPolicy, targetChars: 40, minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+        scene: { ...quietPolicy.scene!, present: [], location: '中央庭院' },
+      },
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard'));
+    expect(hard.map((issue) => issue.kind)).not.toContain('self_contradiction');
+  });
+});

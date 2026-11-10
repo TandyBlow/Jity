@@ -399,6 +399,22 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // passage puts one in a hand and the input never says it is held, that is a
   // new fact. 09 batch-5 wrote «演习规则牌在他手中，牌面写着…». Judged in
   // index.ts where the input text is available.
+  // «他没看到任何人，也没听见任何声音» is the checklist form of a quiet turn,
+  // and with someone in the scene it is also false. 09's accepted turns use it
+  // as filler (95dc, dense point).
+  {
+    const ABSENT = /(没(?:有)?(?:看到|看见|见到)|空无一人|没有一个人|不见人影)/u;
+    const present = (policy.scene?.present ?? []).map((person) => person.name).filter(Boolean);
+    for (const sentence of sentences) {
+      if (!ABSENT.test(sentence)) continue;
+      const named = present.filter((name) => sentence.includes(name));
+      if (present.length && !named.length) {
+        issues.push(hard('self_contradiction', attempt,
+          `text says nobody was seen while ${present.join('、')} is in the scene`, sentence));
+      }
+    }
+  }
+
   const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < Math.round(minChars * 0.67)) {
     issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));
