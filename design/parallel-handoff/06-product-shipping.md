@@ -108,7 +108,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
 | 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
-| 开局 + 第一轮 | C + 07 composer（补丁 `1efc716`） | 合成器逐段成文，20 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
+| 开局 + 第一轮 | 补丁 `1efc716`，默认 `auto`（真实主树快照） | 开局与回合的单发写作都被自己的校验拒绝，补丁各写一次程序正文 | 两段都显示 04+07 程序正文，带结算结果句 `路明非：无判定。`，标注“程序按已结算事实成文” | 就绪 137.3 s；整轮 163.0 s（其中回合写作 113.6 s） |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 
@@ -160,13 +160,15 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 - `results/06-recovery/real-candidate-instruct15.json`：B + instruct 1.5B，104 字接受，434.6 s，含模型自加道具动作。
 - `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B（160 token/段），223 字，模型段与程序段混合，含编造动作。
 - `results/06-recovery/real-candidate-constrained-model-narr-short.json`、`…-instruct-short.json`：把每段压到 60–80 token 后，模型段全部被 C 的逐段校验打回，整篇变成程序文本（composers 全为 `program+model-failed`）。
-- `results/06-recovery/product-turn*.json`：真实页面整轮（B 选择、C v1.1、C v1.2、C v1.3），含内部日志、页面正文、降级标注、快照字节数。
+- `results/06-recovery/product-turn-auto-main.json`：**默认 `auto` 的真实页面整轮**（补丁打在带主树未提交结算改动的快照上）：开局 70.4 s 被拒后显示程序正文，回合 113.6 s 被拒后显示含 `路明非：无判定。` 的程序正文，页面标注“程序按已结算事实成文”；就绪 137.3 s、整轮 163.0 s。
+- `results/06-recovery/product-turn*.json`：其余真实页面整轮（B 选择、C v1.1、C v1.2、C v1.3），含内部日志、页面正文、降级标注、快照字节数。
 - `results/06-recovery/wiring-check.json`：20 项接线检查（本线合并树）。
 - `results/06-recovery/wiring-check-main.json`：把补丁应用到干净的主树快照 `77be4c0a` 后，`tsc` 通过、20 项接线检查全过；证明补丁不依赖 02/04/07 的合入。
 
 ## 6. 已知限制
 
-- **没有合格叙事候选**：B 在页面模型上不被接受；C 程序版是流水账降级；C 模型版夹带编造动作。产品默认保持原位单发写作，等 02/10/03/04 交出让候选自己接受、且事实与文风都合格的正文。
+- **没有合格叙事候选**：B 在页面模型上不被接受；C 程序版是流水账降级；C 模型版夹带编造动作。默认路径现在是“模型先写、失败则程序降级”，因此真实页面上看到的仍是程序文本加降级标注；等 02/10/03/04 交出让候选自己接受、且事实与文风都合格的正文。
+- 模型优先的代价：回合要先等被拒绝的模型尝试（本次 113.6 s），之后程序正文瞬时出现。若把程序降级提前会更快，但会放弃模型正文被接受的机会。
 - 07 的 composer 仍会补“没有停/盒子也没有动”这类动作/状态句；它是程序文本，只是比 04 的 realizer 更像段落。
 - B 的 scene 模式能写长文但漏掉已结算移动与时间；加上约束后移动写了、时间仍漏，并开始编造动作。beats 模式在页面模型上逐段超长/加事件。
 - C model 模式在 instruct 1.5B 上 121 s，且部分段回退程序；页面当前加载的是叙述 LoRA，不是 instruct 模型。
