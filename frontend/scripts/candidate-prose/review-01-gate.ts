@@ -69,7 +69,7 @@ interface ReviewReport {
   counts?: Record<string, number>;
   mandatory?: Array<{ id: string; narrated: boolean; label?: string }>;
 }
-interface GateResult { verdict: string; reasons?: string[] }
+interface GateResult { decision: 'accept_as_model_prose' | 'hold_for_review' | 'regenerate'; reasons?: string[] }
 
 const world = JSON.parse(readFileSync(
   join(process.cwd(), '..', 'data', 'worlds', 'dragon-raja-free-day.world.json'),

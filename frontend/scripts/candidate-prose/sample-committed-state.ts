@@ -73,7 +73,7 @@ const result = generateCandidate({
   delta: { timeAdvance: point.timeAdvance },
   priorText: null,
   signal: new AbortController().signal,
-  onProgress: (event) => progress.push(event.status),
+  onProgress: (event: { status: string }) => progress.push(event.status),
   policy: { minChars: 60 },
 } as never);
 const elapsed = performance.now() - started;
