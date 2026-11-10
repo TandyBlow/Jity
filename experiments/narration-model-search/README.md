@@ -54,7 +54,7 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-09 的真实回合有 `results` 未声明 target、`updates` 字面量 `id`、任务覆盖 12/73、`continuation` 用显示名四类错误。11 增加了独立的语义校验器和 pack 格式（`semantic-probes/README.md`），但**没有**用旧的 73 行 echo 提示词冻结探针：04 已改成每个有任务的人物一条决定并解析唯一全名，真实案例要等 03/04 的修正版契约；`prepare_semantic_prompts.py` 只在 pack 每例声明 `correctedContract:true` + `contractCommit` 时才会冻结，防止把旧的 73 行 echo 提示词带上 HPC。合成自检覆盖四类错误的正/负例；`semantic-probes/fixtures/free-day-73-tasks.json` 是从 06 当前世界文件导出的 **14 人物/73 任务** 紧凑夹具（记录 source sha256），自检验证 14 人物全覆盖通过、12/14 覆盖被拒。没有候选语义结果。
+09 的真实回合有 `results` 未声明 target、`updates` 字面量 `id`、任务覆盖 12/73、`continuation` 用显示名四类错误。11 增加了独立的语义校验器和 pack 格式（`semantic-probes/README.md`），但**没有**用旧的 73 行 echo 提示词冻结探针：04 已改成每个有任务的人物一条决定并解析唯一全名，真实案例要等 03/04 的修正版契约；`prepare_semantic_prompts.py` 只在 pack 每例声明 `correctedContract:true` + `contractCommit` 时才会冻结，防止把旧的 73 行 echo 提示词带上 HPC。合成自检覆盖四类错误的正/负例；`semantic-probes/fixtures/free-day-73-tasks.json` 是从 06 当前世界文件导出的 **14 人物/73 任务** 紧凑夹具（记录 source sha256），自检验证 14 人物全覆盖通过、12/14 覆盖被拒。另从 06 真实 turn-15 状态生成了 `evidence/semantic-cases/tasks-free-day-real-73-no-change.json`：提示词 **6109 字符**（按 09 观测的 0.51–0.65 token/字符估算约 3.1–4.0k token，页面语义上下文 12,288），14 人物/73 任务；提议 expected 是 14 条空决定（结算结果只是移动）。自检验证 14/14 通过、12/14 被拒。该案例仍是草稿，03/04 未确认，不能冻结。没有候选语义结果。
 
 ## 验证（实际跑过）
 

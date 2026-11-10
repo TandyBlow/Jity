@@ -64,7 +64,7 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接；11 的职责是排除引用/协议/覆盖组织缺陷后，再用修正版契约测候选的结构化能力。当前已交付 `src/semantic_validate.py` 和 pack 格式（`semantic-probes/README.md`），真实 pack 待 03/04 提供；`prepare_semantic_prompts.py` 要求每例 `correctedContract:true` + `contractCommit` 才能 `--frozen`（`results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）；真实尺度夹具 `semantic-probes/fixtures/free-day-73-tasks.json` 验证 14 人物全覆盖通过、12/14 被拒；没有候选语义结果。
+真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接；11 的职责是排除引用/协议/覆盖组织缺陷后，再用修正版契约测候选的结构化能力。当前已交付 `src/semantic_validate.py` 和 pack 格式（`semantic-probes/README.md`），真实 pack 待 03/04 提供；`prepare_semantic_prompts.py` 要求每例 `correctedContract:true` + `contractCommit` 才能 `--frozen`（`results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）；真实尺度夹具 `semantic-probes/fixtures/free-day-73-tasks.json` 验证 14 人物全覆盖通过、12/14 被拒；真实 turn-15 草稿 `evidence/semantic-cases/tasks-free-day-real-73-no-change.json`（6109 字符、14 人物/73 任务、约 3.1–4.0k token）也通过 14/14、拒绝 12/14，但仍是待 03/04 确认的草稿。没有候选语义结果。
 
 ## 限制与未验证
 
