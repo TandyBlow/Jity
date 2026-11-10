@@ -106,7 +106,16 @@ acceptance.
    05 did not edit `schedule.ts`; 06 confirms, then 04 promotes its
    `it.fails` test.
 
-7. **Fixed handback was observed earlier and is addressed in 06's current
+7. **Same-tick page double-submit can still duplicate the visible input.**
+   The page's guard is the asynchronous React `busy` state; two submit calls in
+   the same tick both pass, append two entries, and the second is then refused
+   by `session.submit` as `turn_in_progress`. State is consumed once, but the
+   player sees a duplicate entry/error. Patch:
+   `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
+   (synchronous `submitLockRef`). This is static reading, not a real-page
+   reproduction; 09 should double-submit.
+
+8. **Fixed handback was observed earlier and is addressed in 06's current
    tree.** The page no longer sets `maxAutoContinuations: 0`; `game-model.ts`
    delegates `continuation` to 04's settlement port and its comment says a
    policy stop is explicit, not a fabricated handback. 09 must still verify the
@@ -123,6 +132,9 @@ Both patches are checked with `git apply --check` in a read-only 06 worktree:
   - calls `pointContinuityIssues(record.state, point)` before `applyPoint` in
     `handleCommitPoint` and refuses with `request_malformed`.
   - **Dependency:** merge `local/state-invariants/index.ts` first.
+- `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
+  - closes the same-tick page submit gap with a synchronous ref; checked
+    against the observed current page.
 - `results/product/evidence/05-kernel/patches/06-schedule-location-appearance.patch`
   - `inputIds` also registers `state.locations[*].appearanceChanges` ids and
     their `supersedes` ids. Checked against both 06 and 04 trees.
