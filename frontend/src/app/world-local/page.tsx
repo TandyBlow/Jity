@@ -418,20 +418,16 @@ export default function WorldLocalPage() {
         const arm = narrationArm.current;
         const narrationKey: NarrationModelKey = arm.model ?? DEFAULT_NARRATION_MODEL;
         const narrationSpec = NARRATION_MODELS[narrationKey];
-        setMessage('正在加载语义模型（Qwen3-0.6B）…');
+        // The engines are constructed first but NOT loaded yet: the local save
+        // must restore and paint before a ~100 s cold load, otherwise a reload
+        // shows an empty history while the models load.
+        setMessage('正在读取本地存档…');
         // 12288 covers the settlement's measured prompt (7877 chars) plus the
         // repair feedback; 8192 left a retry on the edge of the context.
         const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
-        // The stop button must reach a cold load. The ref is set before the
-        // await so cancelTurn is never blind during the first 30-60 s.
         semanticRef.current = semantic;
-        await semantic.load();
-        if (!alive) { await semantic.dispose(); return; }
-        setMessage(`正在加载叙事模型（${narrationKey}）…`);
         const narration = resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
         narrationRef.current = narration;
-        await narration.load();
-        if (!alive) { await narration.dispose(); return; }
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
         // the exact narration file and its hash so no run can silently swap weights.
@@ -591,6 +587,15 @@ export default function WorldLocalPage() {
           headPointId: session.snapshot.transport.headPointId,
           sanity: hydrated.characters[hydrated.protagonistId]?.sanity ?? null,
         };
+        // State and history are on screen now. The cold load is the only thing
+        // still pending, so the page can be read while it runs and the stop
+        // button can cancel it.
+        setMessage('正在加载语义模型（Qwen3-0.6B）…');
+        await semantic.load();
+        if (!alive) { await semantic.dispose(); return; }
+        setMessage(`正在加载叙事模型（${narrationKey}）…`);
+        await narration.load();
+        if (!alive) { await narration.dispose(); return; }
         await refresh();
         if (!alive) return;
         setPhase('ready');
