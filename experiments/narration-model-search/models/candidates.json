@@ -701,7 +701,9 @@
     "chatTemplateChars": 7816,
     "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen35-2b.template.txt",
     "contextLength": 262144,
-    "estimatedParameters": 1881825088
+    "estimatedParameters": 1881825088,
+    "visionLikeTensorNames": [],
+    "textOnlyGguf": true
    },
    "chatTemplateKwargs": {
     "enable_thinking": false

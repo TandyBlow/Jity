@@ -260,6 +260,9 @@ def main() -> int:
                 "contextLength": head["gguf"]["contextLength"],
                 "estimatedParameters": head["gguf"]["estimatedParameters"],
             })
+            if "visionLikeTensorNames" in head:
+                entry["operatorEvidence"]["visionLikeTensorNames"] = head["visionLikeTensorNames"]
+                entry["operatorEvidence"]["textOnlyGguf"] = not head["visionLikeTensorNames"]
             entry["chatTemplate"] = {
                 "source": "GGUF metadata (authoritative for the runtime)",
                 "chars": head["gguf"]["chatTemplateChars"],

@@ -124,6 +124,10 @@ def main() -> int:
                 "chatTemplateFile": str(OUT / f"{args.model_id}.template.txt")
                     if isinstance(template, str) else None,
                 "tensorTypeCount": summary["tensorTypes"],
+                "tensorNames": [tensor["name"] for tensor in report["tensors"]],
+                "visionLikeTensorNames": [tensor["name"] for tensor in report["tensors"]
+                                          if any(marker in tensor["name"].lower()
+                                                 for marker in ("vision", "mmproj", "v_"))],
                 "createdAtSource": "range request against the pinned Hugging Face revision",
             }
             out = OUT / f"{args.model_id}.json"

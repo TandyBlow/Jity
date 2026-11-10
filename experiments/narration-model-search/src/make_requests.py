@@ -61,6 +61,7 @@ def model_entry(candidate: dict) -> dict:
             "actualArchitecture": candidate["operatorEvidence"].get("expectedArchitecture"),
             "actualQuantization": candidate["operatorEvidence"].get("actualQuantization"),
             "chatTemplateSha256": candidate["operatorEvidence"].get("chatTemplateSha256"),
+            "textOnlyGguf": candidate["operatorEvidence"].get("textOnlyGguf"),
             "source": candidate["operatorEvidence"].get("source"),
         },
         "note": "GGUF architecture/quant/template come from a bounded HTTP range read of the "
