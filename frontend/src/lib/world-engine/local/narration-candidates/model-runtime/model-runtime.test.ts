@@ -315,6 +315,50 @@ describe('generateCandidate', () => {
     expect(result.accepted).toBe(true);
   });
 
+  test('an engine deadline is terminal: no second call into a stopped worker', async () => {
+    const { IncompleteGenerationError } = await import('../../../runtime/engine');
+    let calls = 0;
+    const engine: ChatCapableEngine = {
+      info: { backend: 'fake', modelId: 'fake' },
+      load: async () => undefined,
+      dispose: async () => undefined,
+      complete: async () => { throw new Error('unused'); },
+      chat: async (_messages, options) => {
+        calls += 1;
+        options?.onProgress?.({ raw: '两分钟里，林川从走廊', elapsedMs: 1 });
+        throw new IncompleteGenerationError({
+          raw: '两分钟里，林川从走廊', finishReason: 'timeout', firstTokenMs: 5, wallMs: 10,
+        });
+      },
+    };
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(calls).toBe(1);
+    expect(result.status).toBe('timeout');
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts[0]!.issueKinds).toContain('timeout');
+    expect(result.text).toContain('林川从走廊');
+    expect(result.timings.calls).toBe(1);
+  });
+
+  test('a dead engine returns an error result instead of throwing the point away', async () => {
+    let calls = 0;
+    const engine: ChatCapableEngine = {
+      info: { backend: 'fake', modelId: 'fake' },
+      load: async () => undefined,
+      dispose: async () => undefined,
+      complete: async () => { throw new Error('unused'); },
+      chat: async () => { calls += 1; throw new Error('wllama engine is not loaded'); },
+    };
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(calls).toBe(1);
+    expect(result.status).toBe('error');
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts).toHaveLength(1);
+    expect(result.rawAttempts[0]!.issueKinds).toContain('generation_failed');
+    expect(result.issues.some((issue) => issue.kind === 'generation_failed')).toBe(true);
+    expect(result.text).toBe('');
+  });
+
   test('a model that aborts does not get turned into an accepted scene', async () => {
     const controller = new AbortController();
     const { engine } = fakeEngine([VERIFIED_TEXT]);

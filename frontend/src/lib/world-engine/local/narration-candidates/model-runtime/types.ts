@@ -180,6 +180,9 @@ export interface CandidateArgs {
 export interface CandidateResult {
   text: string;
   accepted: boolean;
+  /** Why this text is (not) accepted. `timeout`/`error` are terminal: the
+   * candidate never retries a dead engine with the same prompt. */
+  status: 'accepted' | 'rejected' | 'cancelled' | 'timeout' | 'error';
   rawAttempts: CandidateAttempt[];
   issues: CandidateIssue[];
   timings: CandidateTimings;

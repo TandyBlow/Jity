@@ -110,6 +110,7 @@ function repairNote(issues: CandidateIssue[]): string {
       state_claim_without_fact: '写了没有提交的状态', wrong_time: '时间写错了', added_event: '加了没有提交的事件',
       omitted_fact: '漏了必须写到的事实', time_not_narrated: '没有写经过的时间', too_short: '正文太短',
       empty_narration: '正文为空', truncated: '上一版在上限处被截断，请写得更短并收束',
+      timeout: '生成超时', generation_failed: '生成失败',
     };
     lines.push(`- ${label[issue.kind] ?? issue.kind}：${issue.detail}`);
   }
@@ -121,6 +122,11 @@ interface ModelCall {
   completion: CompletionEvidence | null;
   /** The model stopped at maxTokens; the text is real but cut off. */
   truncated: boolean;
+  /** The engine's own deadline fired. Terminal: the adapter may have stopped
+   * the worker, so another call would only fail with "engine is not loaded". */
+  timedOut: boolean;
+  /** Transport/engine failure that a second call cannot fix by prompting. */
+  failed: boolean;
 }
 
 async function callModel(
@@ -131,7 +137,9 @@ async function callModel(
   temperature: number,
   onChunk: (text: string) => void,
 ): Promise<ModelCall> {
-  let completion: CompletionEvidence | null = null;
+  // A holder, not a local: the engine assigns it from a callback and TS's
+  // control-flow analysis would otherwise narrow a local to null at return.
+  const holder: { completion: CompletionEvidence | null } = { completion: null };
   const options = {
     maxTokens: maxTokensFor(policy),
     temperature,
@@ -140,7 +148,7 @@ async function callModel(
     stop: spec?.template.stop,
     cachePrompt: true,
     onProgress: (progress: { raw: string; elapsedMs: number }) => onChunk(progress.raw),
-    onCompletion: (evidence: CompletionEvidence) => { completion = evidence; },
+    onCompletion: (evidence: CompletionEvidence) => { holder.completion = evidence; },
   };
   const invoke = async (): Promise<string> => {
     if (engine.chat && spec && !spec.rawCompletion) return engine.chat(buildMessages(spec, userText), options);
@@ -148,16 +156,26 @@ async function callModel(
     return engine.complete(prompt, options);
   };
   try {
-    return { text: await invoke(), completion, truncated: false };
+    return { text: await invoke(), completion: holder.completion, truncated: false, timedOut: false, failed: false };
   } catch (error) {
+    if ((error as { name?: string })?.name === 'AbortError') throw error;
     // A length-capped answer is real text the player paid for. Keep it as a
     // non-accepted draft (the caller sees `truncated` and may show/replace it)
     // instead of losing the whole point; the next attempt asks for less.
     if (error instanceof IncompleteGenerationError || (error as { name?: string })?.name === 'IncompleteGenerationError') {
-      const evidence = (error as IncompleteGenerationError).completion ?? completion;
-      return { text: evidence?.raw ?? '', completion: evidence ?? completion, truncated: true };
+      const evidence = (error as IncompleteGenerationError).completion ?? holder.completion;
+      return {
+        text: evidence?.raw ?? '',
+        completion: evidence ?? holder.completion,
+        truncated: evidence?.finishReason !== 'timeout',
+        timedOut: evidence?.finishReason === 'timeout',
+        failed: false,
+      };
     }
-    throw error;
+    // The engine is gone or rejected the call. Returning a result the page can
+    // show beats throwing away the fact that the point produced nothing; 09's
+    // shared driver records a thrown error as a contract failure with no text.
+    return { text: holder.completion?.raw ?? '', completion: holder.completion, truncated: false, timedOut: false, failed: true };
   }
 }
 
@@ -176,6 +194,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
   let firstReadableMs: number | null = null;
   let lastVerification: CandidateVerification | null = null;
   let best: { text: string; verification: CandidateVerification | null; issues: CandidateIssue[] } | null = null;
+  let status: CandidateResult['status'] = 'rejected';
+  let terminalError: string | null = null;
 
   const baseUser = policy.prompt?.trim()
     ? policy.prompt
@@ -199,6 +219,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     let text = '';
     let completion: CompletionEvidence | null = null;
     let truncated = false;
+    let failed = false;
+    let timedOut = false;
     try {
       const result = await callModel(args.engine, spec, userText, policy, index === 0 ? temperature : REPAIR_TEMPERATURE, onChunk);
       const tail = filter.flush();
@@ -208,18 +230,20 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       text = cleanNarration(result.text || filter.text);
       completion = result.completion;
       truncated = result.truncated;
+      failed = result.failed;
+      timedOut = result.timedOut;
     } catch (error) {
-      if (args.signal?.aborted) throw error;
-      perAttemptMs.push(performance.now() - attemptStarted);
-      attempts.push({
-        index, prompt: userText, promptChars: userText.length, text: '',
-        completion: null, verification: null, accepted: false,
-        issueKinds: ['generation_failed'], temperature: index === 0 ? temperature : REPAIR_TEMPERATURE,
-      });
-      throw error;
+      // Abort is the caller's decision, not a point failure: keep throwing so
+      // the page can distinguish "player stopped" from "model failed".
+      if (args.signal?.aborted || (error as { name?: string })?.name === 'AbortError') throw error;
+      failed = true;
+      terminalError = error instanceof Error ? error.message : String(error);
+      text = cleanNarration(filter.text);
     }
     const verification = verifiedResult(args.committed, text, policy);
     const issues = issuesOf(verification, text, policy, truncated);
+    if (timedOut) issues.unshift({ kind: 'timeout', detail: 'the engine deadline fired before the model finished', severity: 'hard' });
+    if (failed) issues.unshift({ kind: 'generation_failed', detail: terminalError ?? 'the engine rejected the call', severity: 'hard' });
     const accepted = verification.ok && !issues.some((issue) => issue.severity === 'hard');
     const attemptMs = performance.now() - attemptStarted;
     perAttemptMs.push(attemptMs);
@@ -234,16 +258,21 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     }
     if (accepted) {
       best = { text, verification, issues };
+      status = 'accepted';
       break;
     }
+    if (timedOut) { status = 'timeout'; break; }
+    if (failed) { status = 'error'; break; }
     args.onProgress?.({ text, status: 'retry', verified: false, elapsedMs: performance.now() - started });
   }
 
   const issues = best?.issues ?? [];
   const accepted = Boolean(best && best.verification?.ok && !issues.some((issue) => issue.severity === 'hard'));
+  if (status !== 'accepted' && status !== 'timeout' && status !== 'error') status = 'rejected';
   const result: CandidateResult = {
     text: best?.text ?? '',
     accepted,
+    status,
     rawAttempts: attempts,
     issues,
     timings: {
