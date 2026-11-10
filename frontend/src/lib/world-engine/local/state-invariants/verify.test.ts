@@ -393,6 +393,23 @@ describe('visible acceptance summary', () => {
     expect(report.errors.some((item) => item.detail.includes('first accepted text'))).toBe(true);
   });
 
+  it('rejects a turn whose later automatic point is a draft even when the first point is model text', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '路明非走进服务巷。诺诺确认任务完成。',
+      textSource: 'model',
+      historyDelta: 1,
+      product: { source: 'model', acceptedMs: 42_000 },
+      snapshotAfterTurn: { narrationSources: {
+        p1: { source: 'model' }, p2: { source: 'draft' },
+      } },
+      timings: { doneMs: 90_000, firstReadableMs: 10_000 },
+      submission: { inputText: '我沿着服务巷往里走。' },
+    }]);
+    expect(report.ok).toBe(false);
+    expect(report.errors.some((item) => item.detail.includes('draft point p2'))).toBe(true);
+  });
+
   it('accepts a committed turn with accepted text and a history delta', () => {
     const report = verifyDisplayedCommit([{
       turn: 1,

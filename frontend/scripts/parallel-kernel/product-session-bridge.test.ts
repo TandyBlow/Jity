@@ -179,6 +179,28 @@ describe('real recovery session continuity', () => {
     expect(report.ok, JSON.stringify(report.errors)).toBe(true);
   });
 
+  it('labels the e9a5 turn as a draft from its saved per-point sources', () => {
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
+    const entries = restoredEntries(evidence.turns[0].snapshotAfterTurn);
+    expect(entries).toHaveLength(1);
+    expect(entries[0].points?.map((point: { pointId: string }) => point.pointId)).toEqual([
+      'point_round_3_1', 'point_round_auto_mwb4vrek_1_1', 'point_round_auto_mwb4xjvx_2_1',
+    ]);
+    expect(entries[0].source).toBe('draft');
+    expect(entries[0].note).toContain('草稿');
+  });
+
+  it('keeps saved narration sources when a fresh page restores the session', async () => {
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
+    const saved = evidence.turns[0].snapshotAfterTurn;
+    expect(saved.narrationSources.point_round_auto_mwb4xjvx_2_1.source).toBe('draft');
+    const restored = await LocalGameSession.restore(saved, scriptedModel([]), { leaseHeartbeat: false });
+    expect(restored.snapshot.narrationSources?.point_round_auto_mwb4xjvx_2_1?.source).toBe('draft');
+    expect(restored.snapshot.narrationSources?.point_round_3_1?.source).toBe('model');
+  });
+
   it('rebuilds the b7cd turn from all three committed points, player first', () => {
     // Read-only comparison requested by 06: use its current restoredEntries
     // implementation on the real post-reload snapshot. b7cd predates 679f979c,

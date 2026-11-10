@@ -1090,6 +1090,21 @@ export function verifyDisplayedCommit(entries: unknown[]): {
     if (source === 'program' || problems.includes('program_fallback_labelled') || problems.includes('program_only_not_model_text')) {
       add(errors, 'evidence_shape', `${label}: displayed text is a program fallback, not model prose`);
     }
+    // A turn can contain several points. The first point may be model prose,
+    // while a later automatic point is a draft/program fallback that the page
+    // joins into the same visible entry. Reject that turn even when the
+    // turn-level source still points at the first (model) point.
+    const snapshot = asRecord(turn.snapshotAfterTurn);
+    const sourceEntries = snapshot && isRecord(snapshot.narrationSources)
+      ? Object.entries(snapshot.narrationSources) : [];
+    const badPoint = sourceEntries.find(([, value]) => {
+      const note = asRecord(value);
+      return note != null && (note.source === 'draft' || note.source === 'program');
+    });
+    if (badPoint) {
+      const note = asRecord(badPoint[1]);
+      add(errors, 'evidence_shape', `${label}: displayed turn includes a ${String(note?.source)} point ${badPoint[0]}`);
+    }
     if (acceptedMs == null) {
       add(errors, 'history_text_missing', `${label}: displayed text has no accepted model text (source ${source || 'unknown'})`);
     } else if (acceptedMs > 60_000) {
