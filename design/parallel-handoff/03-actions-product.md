@@ -100,12 +100,14 @@ const model = createActionExecutionModel(base, semantic, {
   onTask: baseOptions.onTask,          // same reporter the page already has
   attempts: 2,                          // one repair, then explicit fallback
   offscreenPolicy: 'skip',              // see the trade-off below
-  recentEvents: () => (base as { lastResultsText?: string }).lastResultsText
-    ? [String((base as { lastResultsText?: string }).lastResultsText)]
-    : [],
 });
 // use `model` for LocalGameSession.create/restore and modelRef
 ```
+
+`recentEvents` is optional and left unset here: `LocalGameModel.lastResultsText`
+is private, so wiring it would need a public getter on 06's file. The action
+prompt already carries the scene, the actor's tasks and the same-room people;
+recent events are a quality extra, not a requirement of the task contract.
 
 Keep `base` for every other task. The page's existing `onTask` labels the stage
 and marks narration fallbacks; action-family reports now also arrive there with
