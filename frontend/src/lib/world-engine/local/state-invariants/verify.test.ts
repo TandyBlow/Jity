@@ -60,6 +60,14 @@ async function recordOf(initial: InitialState, points: TimelinePoint[]): Promise
 }
 
 describe('record replay and restore gate', () => {
+  it('accepts the root record of the real 14-character world', async () => {
+    const world = JSON.parse(readFileSync(resolve('public/worlds/dragon-raja-free-day.world.json'), 'utf8'));
+    const transport = await LocalWorldTransport.create(world.initial as InitialState, { worldId: world.initial.worldId, roll: () => 13 });
+    const report = await verifyWorldRecord(transport.snapshot());
+    expect(report.errors, JSON.stringify(report.errors)).toEqual([]);
+    expect(report.ok).toBe(true);
+  });
+
   it('accepts a record whose stored state, point projections and digest all replay exactly', async () => {
     const s0 = buildInitialState(structuredClone(fixture.normal.initial) as InitialState);
     const p1 = fixture.normal.point as TimelinePoint;
