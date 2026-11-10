@@ -95,7 +95,7 @@ is the committed S₀ value. No other line changes.
 `handleConclude`, `kind === 'continue'`:
 
 ```ts
-import { orderSubset } from '../action-execution/order';
+import { orderSubset } from './action-execution/order';
 
 record.round = {
   roundId: conclusion.nextRoundId, trigger: 'automatic',
@@ -224,7 +224,7 @@ with `import { roundOrder } from './action-execution/order';` at the top.
 +    record.round = { roundId: conclusion.nextRoundId, trigger: 'automatic', order: orderSubset(record.state, candidates), cursor: 0, actedIds: [], visitedIds: [], conclusion: null };
 ```
 
-with `import { orderSubset } from '../action-execution/order';`.
+with `import { orderSubset } from './action-execution/order';`.
 
 **c. `local/semantics/actions/index.ts` + `types.ts` + tests**: cherry-pick
 `33697da8` (a consumed protagonist opportunity is a program skip). 04's
