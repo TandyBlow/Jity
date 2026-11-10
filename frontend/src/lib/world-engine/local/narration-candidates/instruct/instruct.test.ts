@@ -275,6 +275,15 @@ describe('generateCandidate', () => {
     expect(echo.rawAttempts[0].issues.map((issue) => issue.kind)).toContain('echo_prior');
   });
 
+  it('rejects a registered item that is not visible from the viewpoint', async () => {
+    const draft = GOOD_MOVE + '他摸了摸口袋里的仓库钥匙。';
+    const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
+    const result = await generateCandidate(baseArgs(new ScriptedEngine([draft]), point));
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'unlicensed_entity', severity: 'hard', detail: expect.stringContaining('仓库钥匙') }),
+    ]));
+  });
+
   it('refuses to accept a draft without a committed packet', async () => {
     const point = settle(initial());
     const result = await generateCandidate(baseArgs(new ScriptedEngine([GOOD_MOVE]), point, { committed: null }));

@@ -220,6 +220,9 @@ export interface SceneProjection {
   licensing: {
     roster: string[];
     locations: string[];
+    /** Every registered item name; not printed, used to reject an off-scene
+     * prop the model pulls from pretraining or from another room. */
+    items: string[];
     knownPositions: { name: string; location: string }[];
     visibleEntities: string[];
     licensedEvents: string[];

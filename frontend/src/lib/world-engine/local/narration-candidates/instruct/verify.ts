@@ -90,12 +90,21 @@ export function verifyDraft(inputs: VerifyInputs): VerifyResult {
     ...projection.characters.map((entry) => entry.name),
     ...(policy.visibleEntities ?? []),
     ...projection.items.map((item) => item.name),
+    projection.place.name,
+    ...projection.positions.map((entry) => entry.location),
+    // A movement fact legitimately names its origin and destination.
+    ...projection.facts.flatMap((fact) => [fact.from, fact.to]).filter((name): name is string => Boolean(name)),
   ]);
   const licensedText = inputs.licensedText.join('\n');
   for (const name of projection.licensing.roster) {
     if (!name || name.length < 2 || licensedNames.has(name)) continue;
     if (licensedText.includes(name)) continue;
     if (text.includes(name)) issues.push(issue('unlicensed_entity', 'hard', `${name} is not in this scene`, name));
+  }
+  for (const name of [...projection.licensing.items, ...projection.licensing.locations]) {
+    if (!name || name.length < 2 || licensedNames.has(name)) continue;
+    if (licensedText.includes(name)) continue;
+    if (text.includes(name)) issues.push(issue('unlicensed_entity', 'hard', `${name} is not visible in this scene`, name));
   }
   for (const secret of projection.licensing.forbiddenKnowledge) {
     if (secret && text.includes(secret)) issues.push(issue('unlicensed_entity', 'hard', 'forbidden knowledge leaked', secret));
@@ -106,7 +115,7 @@ export function verifyDraft(inputs: VerifyInputs): VerifyResult {
   // names anyone is a first-person narrator.
   const narration = unquoted(text);
   const firstPerson = (narration.match(/我/g) ?? []).length;
-  const namesAnyone = [...licensedNames].some((name) => name.length >= 2 && text.includes(name));
+  const namesAnyone = projection.characters.some((entry) => entry.name.length >= 2 && text.includes(entry.name));
   if (firstPerson > 0 && (!namesAnyone || (/^\s*我/.test(text) && firstPerson >= 2))) {
     issues.push(issue('first_person_narrator', 'hard', `first person outside dialogue (${firstPerson})`));
   }

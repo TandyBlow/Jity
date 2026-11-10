@@ -245,6 +245,7 @@ function fromState(inputs: ProjectionInputs, state: WorldState): SceneProjection
     licensing: {
       roster: policy?.roster ?? Object.values(state.initial.characters).map((entity) => entity.name),
       locations: policy?.locations ?? Object.values(state.initial.locations).map((entity) => entity.name),
+      items: Object.values(state.initial.items).map((entity) => entity.name),
       // Only positions the viewpoint can actually see. A caller's list may
       // include the whole roster (lane 09 passes it mechanically); printing or
       // licensing an off-screen true position is still a viewpoint leak.
@@ -318,6 +319,7 @@ function fromSerializedText(inputs: ProjectionInputs): SceneProjection {
     licensing: {
       roster: inputs.policy?.roster ?? [],
       locations: inputs.policy?.locations ?? [],
+      items: [],
       knownPositions: inputs.policy?.knownPositions ?? [],
       visibleEntities: inputs.policy?.visibleEntities ?? items.map((item) => item.name),
       licensedEvents: inputs.policy?.licensedEvents ?? [],
