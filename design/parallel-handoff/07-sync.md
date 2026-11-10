@@ -380,6 +380,22 @@ const sync = createProductSync<LocalGameSnapshot>({
    自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
    `diverged` 时提示选择，不要自动覆盖。
 
+### 刷新后卡死的补丁（已验证，交 06 采用）
+
+`design/parallel-handoff/07-fix-checkpoint-for-06.patch`，改 06 的三个地方：
+
+1. `resume.ts planUsable()`：没有未结算 work 时，拒绝“已消耗完”的 checkpoint（
+   `planIndex >= plan.length`）；
+2. `resume.ts rebuildSessionMemory()`：round 已经 concluded 时，不恢复也不合成 plan，
+   留给下一次命令让模型重新规划；
+3. `session.ts currentCheckpoint()`：不持久化已经用完的 plan；
+4. 加一条 `session-recovery.test.ts` 回归测试：模拟旧存档里的已消耗 checkpoint，刷新后
+   下一条命令必须真正提交（没有修复时只提交 1 个点，测试失败）。
+
+在 06 `3073e2f3` 的干净克隆上验证：补丁干净应用、`tsc` 0 错误、session/controller
+59 passed；再把同步补丁一起打上 102 passed；`refresh-next-turn-repro.ts` 用
+`EXPECT_OK=1` 跑出 NO STALL。这是 06/05 的代码，补丁只是提议，06 仍是 owner。
+
 ### 合并到 06 的树：在临时克隆里验证过（2026-11-10）
 
 在 `.tmp/06-merge-check` 里 `git clone --shared` 了 06 的 `cef95c7e`，打上
