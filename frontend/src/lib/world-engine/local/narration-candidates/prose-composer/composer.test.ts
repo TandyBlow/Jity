@@ -167,6 +167,47 @@ describe('validateScene and generateCandidate', () => {
     expect(progress[0].text).toBe(result.text);
   });
 
+  it('fills scene material from a settled state read without inventing facts', () => {
+    const state = {
+      worldId: 'w', protagonistId: 'a',
+      initial: {
+        locations: {
+          room: { id: 'room', name: '值班室', parentLocationId: null, initialAppearance: '桌上摊着登记簿。' },
+          yard: { id: 'yard', name: '后院', parentLocationId: 'room', initialAppearance: '院墙下堆着两只空木箱。' },
+        },
+        characters: {
+          a: { id: 'a', name: '林川', initialAppearance: '外套搭在椅背上。' },
+          b: { id: 'b', name: '陈默', initialAppearance: '袖口卷到手肘。' },
+        },
+        items: { mug: { id: 'mug', name: '白瓷杯', initialAppearance: '杯口有一圈干掉的茶渍。' } },
+      },
+      characters: {
+        a: { id: 'a', position: { containerId: 'yard' }, appearanceChanges: [{ id: 'c1', text: '鞋边沾了泥。', supersedes: [], active: true }] },
+        b: { id: 'b', position: { containerId: 'yard' }, appearanceChanges: [] },
+      },
+      items: { mug: { id: 'mug', position: { containerId: 'yard' }, appearanceChanges: [] } },
+    };
+    const result = generateCandidate({
+      committed: {
+        anchor: { worldId: 'w', pointId: 'p' },
+        facts: [
+          { id: 'm', actorId: 'a', name: '林川', kind: 'moved', from: '值班室', to: '后院' },
+          { id: 't', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '翻到最后一页' },
+        ],
+      },
+      state: state as never,
+      policy: { minChars: 40 },
+    });
+    expect(result.sparse).toBe(false);
+    expect(result.text).toContain('后院');
+    expect(result.text).toContain('院墙下堆着两只空木箱');
+    expect(result.text).toContain('陈默');
+    expect(result.text).toContain('白瓷杯');
+    expect(result.text).toContain('林川从值班室');
+    expect(result.text).toContain('翻到最后一页');
+    expect(result.text).not.toContain('桌子');
+  });
+
   it('builds a sparse but truthful scene from committed facts', () => {
     const result = generateCandidate({
       committed: {

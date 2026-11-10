@@ -41,7 +41,7 @@ function request(kind: string, factIds: string[], details: string[] = []): Compo
 describe('04 beat adapter', () => {
   it('opens at the origin before the viewpoint move, not at the destination', () => {
     const result = composeConstrainedBeat(request('open', ['t1']));
-    expect(result.text).toContain('过了六分钟');
+    expect(result.text).toMatch(/(?:过了六分钟|六分钟过去|六分钟之后)/u);
     expect(result.text).toContain('路明非还在西侧服务巷');
     expect(result.text).not.toContain('器材棚');
   });

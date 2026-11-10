@@ -588,9 +588,13 @@ export function composeProse(scene: ProseScene): ComposedProse {
         break;
       }
       case 'time': {
-        const exact = beat.text ?? (policy.requireTime && beat.amount
-          ? `过了${numberToChinese(beat.amount)}${unitName(beat.unit ?? 'minute')}。`
-          : null);
+        let exact = beat.text ?? null;
+        if (!exact && policy.requireTime && beat.amount) {
+          const amount = numberToChinese(beat.amount);
+          const unit = unitName(beat.unit ?? 'minute');
+          const forms = [`过了${amount}${unit}。`, `${amount}${unit}过去。`, `${amount}${unit}之后。`];
+          exact = forms[hash32(`${scene.seed ?? 0}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
+        }
         pushBeat(exact ?? '过了一会儿。', beat);
         break;
       }

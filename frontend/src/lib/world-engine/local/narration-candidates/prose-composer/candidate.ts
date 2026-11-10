@@ -38,8 +38,14 @@ export interface CandidatePolicy {
 export interface GenerateCandidateArgs {
   /** Accepted for signature compatibility; the composer needs no model. */
   engine?: unknown;
-  /** Lane 02's fact packet, used only when `policy.scene` is absent. */
+  /** Lane 02's fact packet, used only when `policy.scene` is absent. May carry
+   * the settled `state`/`beforeState` reads the shared driver attaches. */
   committed?: CommittedLike;
+  /** The same settled read, offered at the top level by the shared driver. */
+  state?: CommittedLike['state'];
+  beforeState?: CommittedLike['beforeState'];
+  /** The driver also offers the settled delta separately. */
+  delta?: { timeAdvance?: CommittedLike['timeAdvance'] } | null;
   inputText?: string;
   priorText?: string | null;
   signal?: AbortSignal;
@@ -157,14 +163,19 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
       priorText: args.priorText ?? null,
       seed: policy.seed,
       minChars: policy.minChars,
+      state: args.state ?? args.committed.state ?? null,
+      timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
+      delta: args.delta ?? null,
     });
     scene = adapted.scene;
     sparse = adapted.sparse;
-    issues.push({
-      kind: 'sparse_skeleton',
-      severity: 'soft',
-      detail: 'no scene skeleton was supplied; location appearance and dialogue are unavailable',
-    });
+    if (sparse) {
+      issues.push({
+        kind: 'sparse_skeleton',
+        severity: 'soft',
+        detail: 'no scene skeleton was supplied; location appearance and dialogue are unavailable',
+      });
+    }
   }
 
   if (!scene) {
