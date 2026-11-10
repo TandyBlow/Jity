@@ -196,7 +196,14 @@ a different engine.
    engines `loaded` (the submit button is disabled while loading). A
    `complete`/`chat` before load must reject immediately; it must never wait
    for the 120 s load deadline (the `complete-before-ready` check proves this).
-8. Fresh-run isolation: clearing only `localStorage` is not a fresh run. The
+8. Server readiness: Next dev returns **500 Internal Server Error on every
+   route while it is still starting/compiling** after a clean `.next` (observed
+   13:02–13:17, then 200 after `Ready in 7.7 s` and `Compiled / in 55.3 s`).
+   Wait for `GET /world-local` to return 200 and a textarea to render before
+   launching the browser; a run against the 500 is an invalid startup record,
+   not a product result. A `next build` sharing `.next` with the live dev
+   server can also corrupt it; stop/clean/restart after a build.
+9. Fresh-run isolation: clearing only `localStorage` is not a fresh run. The
    page persists through IndexedDB (and may use Cache Storage/OPFS); a stale
    record makes the first save stop with `progress_conflict`. The runner must
    delete every IndexedDB database plus Cache Storage/OPFS and assert they are
