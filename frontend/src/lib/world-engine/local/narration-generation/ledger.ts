@@ -19,6 +19,12 @@ const MANDATORY_KINDS: ReadonlySet<NarrationFact['kind']> = new Set<NarrationFac
 
 const unique = (values: readonly string[]): string[] => [...new Set(values.filter((value) => value.length > 0))];
 
+/** Continuity checks need a source: a promise or a past reference is licensed
+ * when the same marker is already in the serialized input, the previous
+ * accepted prose, or the caller's explicit event license. */
+export const PROMISE_VERBS = ['答应', '承诺', '保证', '发誓', '许诺', '约好', '说好'];
+export const PAST_MARKERS = ['小时候', '童年', '儿时', '当年', '十年前', '从前', '曾经', '很久以前', '那一年'];
+
 export function buildLedger(
   committed: CommittedNarration,
   inputText: string,
@@ -51,6 +57,9 @@ export function buildLedger(
     if (name.length < 2) continue;
     if (inputText.includes(name) || (priorText ? priorText.includes(name) : false)) licensed.add(name);
   }
+  const sourceText = `${inputText}\n${priorText ?? ''}`;
+  const licensedPromises = PROMISE_VERBS.filter((verb) => sourceText.includes(verb) || (policy.licensedEvents ?? []).includes(verb));
+  const licensedPastMarkers = PAST_MARKERS.filter((marker) => sourceText.includes(marker));
   const time = policy.time ?? null;
   const requireTime = policy.requireTime
     ?? (time !== null && time.boundary === 'elapsed' && time.duration.amount > 0);
@@ -62,6 +71,8 @@ export function buildLedger(
     locationNames,
     licensedEntities: [...licensed],
     allowedEvents: unique(policy.licensedEvents ?? []),
+    licensedPromises,
+    licensedPastMarkers,
     time,
     requireTime,
     forbiddenKnowledge: unique(policy.forbiddenKnowledge ?? []),

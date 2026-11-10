@@ -44,6 +44,8 @@ export function buildRevisionGuidance(
     lines.push(`只写${ledger.viewpoint?.name ?? '主角'}能看到、能知道的内容，不要写其他人物的内心。`);
   }
   if (kinds.has('knowledge_leak')) lines.push('不要写输入里没有的信息。');
+  if (kinds.has('promise_without_fact')) lines.push('不要新增输入里没有的承诺。');
+  if (kinds.has('past_without_fact')) lines.push('不要补写输入里没有的往事。');
   if (kinds.has('unlicensed_entity')) lines.push('只使用输入里出现的人名、地点和物品。');
   if (kinds.has('echo_prior') || kinds.has('loop_repeated_sentence') || kinds.has('loop_repeated_clause')) {
     lines.push('不要重复上一段或本段已经出现的句子，用新的写法。');

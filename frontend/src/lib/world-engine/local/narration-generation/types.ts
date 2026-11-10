@@ -12,7 +12,7 @@ import type { CompletionEvidence, InferenceEngine } from '../../runtime/engine';
 import type { AlignmentResult } from '../../runtime/narration-alignment';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 
-export const NARRATION_STRATEGY_VERSION = 'committed-narration-strategy-v1';
+export const NARRATION_STRATEGY_VERSION = 'committed-narration-strategy-v2';
 
 export type NarrationIssueKind =
   /** Contradictions reported by the fact-alignment grader. */
@@ -21,6 +21,9 @@ export type NarrationIssueKind =
   /** A settled change that the prose never expresses. */
   | 'fact_omitted'
   | 'time_missing'
+  /** Fabricated continuity: a promise or a past event with no committed or
+   * previously accepted source. */
+  | 'promise_without_fact' | 'past_without_fact'
   /** Shape and length problems. */
   | 'empty_narration' | 'too_short' | 'truncated' | 'premature_closure'
   /** Repetition across turns or inside one draft. */
@@ -118,6 +121,12 @@ export interface NarrationLedger {
   locationNames: string[];
   licensedEntities: string[];
   allowedEvents: string[];
+  /** Promise verbs already present in the serialized input, previous accepted
+   * prose, or explicitly licensed by the caller. */
+  licensedPromises: string[];
+  /** Strong past-time markers already present in the serialized input or
+   * previous accepted prose. */
+  licensedPastMarkers: string[];
   time: TimeAdvance | null;
   requireTime: boolean;
   forbiddenKnowledge: string[];

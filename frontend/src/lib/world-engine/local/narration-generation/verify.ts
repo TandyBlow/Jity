@@ -17,6 +17,7 @@ import type { CommittedNarration, NarrationFact } from '../../runtime/committed-
 import { factPhrases } from '../../runtime/committed-narration';
 import { alignNarration, numbersIn, type AlignmentResult } from '../../runtime/narration-alignment';
 import type { NarrationIssue, NarrationIssueKind, NarrationLedger, NarrationMetrics, NarrationPolicy } from './types';
+import { PAST_MARKERS, PROMISE_VERBS } from './ledger';
 
 const ALIGNMENT_KINDS: Record<string, NarrationIssueKind> = {
   actor_swap: 'fact_actor_swap',
@@ -154,6 +155,21 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
 
   if (ledger.requireTime && duration && (alignment === null || alignment.timeExpressed === false)) {
     issues.push(hard('time_missing', attempt, `required ${duration.amount} ${duration.unit}`));
+  }
+
+  // Fabricated continuity: a promise or a strong past reference that is not
+  // present in the serialized input, the previous accepted prose, or the
+  // caller's explicit license. This is the class of failure the baseline
+  // showed ("小时候从树上掉下来", a promise the input never made).
+  for (const sentence of sentences) {
+    const promise = PROMISE_VERBS.find((verb) => sentence.includes(verb) && !ledger.licensedPromises.includes(verb));
+    if (promise) {
+      issues.push(hard('promise_without_fact', attempt, `promise verb ${promise} has no committed or prior source`, sentence));
+    }
+    const past = PAST_MARKERS.find((marker) => sentence.includes(marker) && !ledger.licensedPastMarkers.includes(marker));
+    if (past) {
+      issues.push(hard('past_without_fact', attempt, `past marker ${past} has no committed or prior source`, sentence));
+    }
   }
 
   const minChars = policy.minChars ?? 120;

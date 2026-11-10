@@ -9,7 +9,7 @@
 
 - 已实现可执行策略 `generateCommittedNarration(...)`，接入现有
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
-- CPU 小测试 27 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/narration-generation.test.ts --maxWorkers=1`），
+- CPU 小测试 29 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/narration-generation.test.ts --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
 - 真实浏览器模型（Edge headless + wllama）：两个叙事检查点各 3 个代表性点，共 12 次真实生成全部被拒（legacy 0/3，instruct 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
@@ -77,6 +77,10 @@
 - 非视角人物的“心想/心里/觉得/知道/记得……” → `perspective_leak`；对每个非视角人物
   只扫到他/她之后、下一个已知人名之前，避免把下一句别人的心理算到前一个人物头上。
 - `forbiddenKnowledge` 子串命中 → `knowledge_leak`；模型复述写作要求 → `prompt_echo`。
+- 输入/前文里没有的明确承诺（答应/承诺/保证/发誓/许诺/约好/说好）→ `promise_without_fact`；
+  输入/前文里没有的强往事标记（小时候/童年/当年/十年前/从前/曾经/很久以前/那一年）→
+  `past_without_fact`。调用方可以用 `licensedEvents` 追加玩家动作里出现的承诺词，
+  或让上一段已接受正文携带该往事；隐藏秘密不会进入修复提示。
 - 无事实绑定、也不矛盾的句子记 `unverified_sentence`（软提示，不影响 `accepted`）。
   这是上游判分器的既有口径：词表外表达是人工复核线索，不是捏造定罪。
 
@@ -222,12 +226,12 @@ npx tsc -p tsconfig.world-contract.json
 npx eslint src/lib/world-engine/local/narration-generation
 ```
 
-27 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
+29 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
 整段拒绝返回最佳稿和全部问题；非视角心理泄露；POV 心理合法；隐藏知识；未许可实体；
 句内循环；跨回合回声；提前收尾；截断后提高 token 预算；elapsed 时间必述；玩家
 动作许可事件；复述指令；revise/regenerate 两种修复；外取消（无输出/带部分流式）；
 预取消；端到端超时；引擎错误重试；证据链完整性；真实 projector + `legacyNarrationInput`
-的接线形状。
+的接线形状；新增承诺/往事只有在输入或前文有来源时才放行。
 
 这些只证明策略逻辑和证据链，不证明真实文风。
 
@@ -259,6 +263,9 @@ temperature 0.7 / 重试 0.55，seed 42，最多 2 次尝试。模型是用户�
 | instruct | elapsed 2 分钟 | 拒 | 510 | 新增事件＋未写时间＋句内重复；新增事件＋移动声明＋未写时间 | 49.5 s |
 
 两次运行的模型加载分别为 31.8 s / 10.3 s，已计入证据；单次生成平均约 29 s。
+这两次真实运行记录的是 `committed-narration-strategy-v1`；之后补了承诺/往事硬检查并升到
+`v2`。真实输出本来就因其他硬问题被拒，v2 的结论不会改变，但没有用 v2 重跑真实模型。
+
 逐次完整 prompt、raw 文本、清洗文本、finishReason、问题、对齐 coverage/violations/
 unverified/repetition 都在上面两个 JSON 里。原始输出确实通顺（不是乱码、不是空串），
 问题在于内容不服从已结算事实：例如 root 场景编出“旧报纸/字条”，move 场景没有写

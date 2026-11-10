@@ -249,6 +249,47 @@ describe('committed narration strategy: viewpoint, knowledge and names', () => {
     expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(false);
   });
 
+  test('a new promise is rejected unless the input or caller licenses it', async () => {
+    const text = '林川说：「我答应你，明天把盒子带来。」林川从走廊走到门厅。周宁留在走廊。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text: ACCEPTED }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'promise_without_fact')).toBe(true);
+    expect(engine.calls[1].prompt).toContain('不要新增输入里没有的承诺');
+
+    const licensed = new ScriptedEngine([{ kind: 'text', text }]);
+    const allowed = await generateCommittedNarration({
+      engine: licensed, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, minChars: 10, licensedEvents: ['答应'] },
+    });
+    expect(allowed.accepted).toBe(true);
+    expect(allowed.rawAttempts[0].issues.some((issue) => issue.kind === 'promise_without_fact')).toBe(false);
+  });
+
+  test('a fabricated past reference is rejected unless it already exists in prior prose', async () => {
+    const text = '林川小时候摔过一跤。林川从走廊走到门厅。周宁留在走廊。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text: ACCEPTED }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'past_without_fact')).toBe(true);
+    expect(engine.calls[1].prompt).toContain('不要补写输入里没有的往事');
+
+    const licensed = new ScriptedEngine([{ kind: 'text', text }]);
+    const allowed = await generateCommittedNarration({
+      engine: licensed, committed: packet(moved, povAt), inputText: '【正文】',
+      priorText: '他小时候摔过一次，谁也没再提。',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(allowed.accepted).toBe(true);
+    expect(allowed.rawAttempts[0].issues.some((issue) => issue.kind === 'past_without_fact')).toBe(false);
+  });
+
   test('a known name absent from the serialized input and facts is unlicensed', async () => {
     const engine = new ScriptedEngine([
       { kind: 'text', text: '陆明站在门厅。林川从走廊走到门厅。周宁留在走廊。' },
