@@ -171,6 +171,13 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     // 他伸手去拿»). Naming what the turn does NOT contain is a task statement,
     // not another word ban.
     lines.push('这一小段里也没有新回忆：不要写「他记得」「他想起」「以前」「常坐的」这类往事，也不要移动或拿起任何东西。只写此刻的姿势、呼吸、视线和眼前环境的变化。');
+    // The page's accepted 185-character turn on exactly this kind of input
+    // (no deltas, one minute) catalogued props: goggles in his hand, a mark
+    // flickering, a smell of dirt and metal, a sign announcing the time, and
+    // then «手中没有拿任何东西». Naming what to write is what stopped the
+    // catalogue in other runs; the ban list alone did not.
+    lines.push('只写这一刻的一两件事：时间怎么过去，视角人物此刻在做什么（站着、等着、看着某处），'
+      + '以及眼前一两样东西现在的样子。不要清点身边的物件，不要替在场的人拿东西、走动、说话或报时。');
   }
   const time = policy.time ?? null;
   if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
