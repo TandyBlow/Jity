@@ -98,6 +98,11 @@ function continuationInput(roundChanges: Json[], roundId = 'r1', headPointId = '
     head: { pointId: headPointId },
     workingState: world(),
     roundChanges,
+    // The handler no longer infers progress from filled fields; this fixture
+    // provides the actual before/after evidence the port would compute.
+    roundProgress: roundChanges.length
+      ? progressEvidence(true, 'state_changed')
+      : progressEvidence(false, 'no_change'),
   } as unknown as Json;
 }
 
@@ -479,6 +484,29 @@ describe('continuation', () => {
     // The proposal was the only model call: no judgment was spent proving a
     // task goal is executable.
     expect(engine.prompts).toHaveLength(1);
+  });
+
+  it('does not treat a filled positionSet without actual round evidence as progress', async () => {
+    const engine = new ScriptedEngine([
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
+      continueProposal('乙停下来听。'), continueJudgment('乙停下来听。'),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const withPosition = (roundId: string): Json => {
+      const input = continuationInput([{
+        pointId: 'p1',
+        entityDeltas: { b: { positionSet: { containerId: 'far', slotId: null, relativeTo: null } } },
+      }], roundId) as Record<string, unknown>;
+      // The position field is filled, but the handler has no before/after
+      // evidence. The old field check would call this progress; it must not.
+      delete input.roundProgress;
+      return input as unknown as Json;
+    };
+    const first = await handlers.continuation('r1', withPosition('r1'));
+    expect((first.value as { kind: string }).kind).toBe('continue');
+    const second = await handlers.continuation('r2', withPosition('r2'));
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_no_progress');
   });
 
   it('counts a real new action/fact but not a repeated position assignment', () => {
