@@ -1081,7 +1081,8 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
       const answer = await input.engine.complete([
         `这一回合${task.name}已经把「${task.goal}」这件事办完了，但正文没有写出来。`,
         '',
-        '只写一句话，让读者看出这件事办完了。可以用「比对完了」「对上了」「办完了」这类说法，'
+        '只写一句完整的话，让读者看出这件事办完了。句子里要有人名和这件事的对象，'
+          + '例如「路明非比对完了登记簿」；不要只写「比对完了」三个字，'
           + '不要写结果或答案，不要写下一件事，不要写风景，不要解释。只输出这一句。',
       ].join(String.fromCharCode(10)), {
         maxTokens: 60,
