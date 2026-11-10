@@ -201,46 +201,24 @@ def build_row(world: dict[str, Any], scene: dict[str, Any], world_meta: dict[str
         else:
             raise ValueError(f"{scene['id']}: delta target not in before state: {name}")
 
-    after: dict[str, Any] = {
-        "地点": {},
-        "人物": {},
-        "物品": {},
-    }
+    after: dict[str, Any] = {}
     for name, delta in scene.get("delta", {}).items():
-        if name in after_state["地点"]:
-            changed: dict[str, Any] = {}
-            if "新增外貌" in delta or "解除外貌" in delta:
-                changed["外貌"] = after_state["地点"][name]["外貌"]
-            if changed:
-                after["地点"][name] = changed
-        elif name in after_state["人物"]:
-            changed = {}
-            if "位置" in delta:
-                changed["位置"] = after_state["人物"][name]["位置"]
-            if "精神值" in delta:
-                changed["精神值"] = after_state["人物"][name]["精神值"]
-            if "新增外貌" in delta or "解除外貌" in delta:
-                changed["外貌"] = after_state["人物"][name]["外貌"]
-            if "新增个性" in delta:
-                changed["个性"] = after_state["人物"][name]["个性"]
-            if "完成任务" in delta or "新增小任务" in delta:
-                changed["任务"] = after_state["人物"][name]["任务"]
-            if changed:
-                after["人物"][name] = changed
-        elif name in after_state["物品"]:
-            changed = {}
-            if "位置" in delta:
-                changed["位置"] = after_state["物品"][name]["位置"]
-            if "新增外貌" in delta or "解除外貌" in delta:
-                changed["外貌"] = after_state["物品"][name]["外貌"]
-            if changed:
-                after["物品"][name] = changed
+        changed: dict[str, Any] = {}
+        if "位置" in delta:
+            changed["位置"] = after_state["人物"].get(name, after_state["物品"].get(name))["位置"]
+        if "精神值" in delta:
+            changed["精神值"] = after_state["人物"][name]["精神值"]
+        if "新增外貌" in delta or "解除外貌" in delta:
+            holder = after_state["人物"].get(name) or after_state["物品"].get(name) or after_state["地点"][name]
+            changed["外貌"] = holder["外貌"]
+        if "新增个性" in delta:
+            changed["个性"] = after_state["人物"][name]["个性"]
+        if "完成任务" in delta or "新增小任务" in delta:
+            changed["任务"] = after_state["人物"][name]["任务"]
+        if changed:
+            after[name] = changed
     for name, override in scene.get("afterOverride", {}).items():
-        if name in after_state["人物"]:
-            after["人物"][name] = copy.deepcopy(override)
-        elif name in after_state["物品"]:
-            after["物品"][name] = copy.deepcopy(override)
-    after = {key: value for key, value in after.items() if value}
+        after[name] = copy.deepcopy(override)
 
     viewpoint = world["initial"]["characters"][scene["viewpointId"]]["name"]
     input_obj = {

@@ -36,6 +36,10 @@ CHINESE_DIGITS = "零一二三四五六七八九"
 POSTURE_PATTERN = re.compile(
     r"(站在|站着|坐着|蹲在|蹲下|蹲着|躺在|躺着|跪着|靠在|靠着|坐下|站起|起身)"
 )
+EVENT_VERBS = ("推开", "踢开", "踹开", "冲进", "冲出", "奔跑", "跑向", "攻击", "开枪", "拔出",
+               "举起", "捡起", "拾起", "递给", "塞进", "敲门", "打开", "关上", "锁上", "躲到",
+               "藏在", "翻过", "爬上", "跳下", "喊住", "大叫", "大喊", "呼喊", "点燃", "砸碎", "撕开")
+FROZEN_QUOTE = re.compile(r"「[^」]*」")
 KNOWN_CATEGORIES = {
     "no_change",
     "movement",
@@ -94,6 +98,38 @@ def load_world_names(world_path: pathlib.Path) -> set[str]:
     return names
 
 
+def check_required_facts(errors: list[str], label: str, record: dict[str, object]) -> None:
+    text = record["targetText"]
+    for fact in record["requiredFacts"]:
+        kind = fact.get("kind")
+        goals = []
+        if kind == "task_completed":
+            goals = [fact.get("task")]
+        elif kind == "task_complete":
+            goals = [fact.get("goal")]
+        for goal in goals:
+            if goal and goal not in text:
+                fail(errors, f"{label}: task fact is not stated in targetText: {goal}")
+        if kind == "personality_added" and fact.get("text") and fact["text"] not in text:
+            fail(errors, f"{label}: personality fact is not stated in targetText: {fact['text']}")
+        if kind == "personality_change":
+            adds = fact.get("add")
+            for added in ([adds] if isinstance(adds, str) else (adds or [])):
+                if added and added not in text:
+                    fail(errors, f"{label}: personality change is not stated in targetText: {added}")
+        if kind == "sanity" and "from" in fact:
+            if str(fact["from"]) not in text or str(fact["to"]) not in text:
+                fail(errors, f"{label}: sanity change must state both numbers: {fact['from']} -> {fact['to']}")
+
+
+def check_no_added_event(errors: list[str], label: str, record: dict[str, object]) -> None:
+    plain = FROZEN_QUOTE.sub("", record["targetText"])
+    for verb in EVENT_VERBS:
+        if verb in plain:
+            fail(errors, f"{label}: targetText claims an event verb {verb!r} outside a frozen quote")
+            return
+
+
 def check_no_posture(errors: list[str], label: str, record: dict[str, object]) -> None:
     licensed = json.dumps(record["input"], ensure_ascii=False)
     for match in POSTURE_PATTERN.finditer(record["targetText"]):
@@ -128,58 +164,40 @@ def check_authored_state(errors: list[str], label: str, record: dict[str, object
     state = record["input"]["本回合状态"]
     delta = record["input"]["本回合变化"].get("变化", {})
     for name, change in delta.items():
-        if "人物" in state and name in state["人物"]:
-            after = state["人物"][name]
-            if "位置" in change and after.get("位置") != change["位置"]:
-                fail(errors, f"{label}: 人物 {name} 的位置结果不匹配")
-            if "精神值" in change and after.get("精神值") != change["精神值"]:
-                fail(errors, f"{label}: 人物 {name} 的精神值结果不匹配")
-            if "新增外貌" in change or "解除外貌" in change:
-                for item in change.get("新增外貌", []):
-                    if item not in after.get("外貌", []):
-                        fail(errors, f"{label}: 人物 {name} 缺少新增外貌 {item!r}")
-                for item in change.get("解除外貌", []):
-                    if item in after.get("外貌", []):
-                        fail(errors, f"{label}: 人物 {name} 仍保留解除外貌 {item!r}")
-            if "新增个性" in change:
-                for item in change["新增个性"]:
-                    if item not in after.get("个性", []):
-                        fail(errors, f"{label}: 人物 {name} 缺少新增个性 {item!r}")
-            if "完成任务" in change or "新增小任务" in change:
-                tasks = after.get("任务", {})
-                for goal in change.get("完成任务", []):
-                    task = task_by_goal(tasks, goal)
-                    if task is None or task.get("状态") != "已完成":
-                        fail(errors, f"{label}: 人物 {name} 完成任务未在结果状态中完成: {goal}")
-                for new_task in change.get("新增小任务", []):
-                    task = task_by_goal(tasks, new_task["目标"])
-                    if task is None or task.get("状态") != new_task.get("状态", "未完成"):
-                        fail(errors, f"{label}: 人物 {name} 新增任务未在结果状态中匹配: {new_task['目标']}")
-        elif "物品" in state and name in state["物品"]:
-            after = state["物品"][name]
-            if "位置" in change and after.get("位置") != change["位置"]:
-                fail(errors, f"{label}: 物品 {name} 的位置结果不匹配")
-            if "新增外貌" in change or "解除外貌" in change:
-                for item in change.get("新增外貌", []):
-                    if item not in after.get("外貌", []):
-                        fail(errors, f"{label}: 物品 {name} 缺少新增外貌 {item!r}")
-                for item in change.get("解除外貌", []):
-                    if item in after.get("外貌", []):
-                        fail(errors, f"{label}: 物品 {name} 仍保留解除外貌 {item!r}")
-        elif "地点" in state and name in state["地点"]:
-            after = state["地点"][name]
+        after = state.get(name)
+        if not isinstance(after, dict):
+            fail(errors, f"{label}: 变化目标 {name} 不在本回合状态中")
+            continue
+        if "位置" in change and after.get("位置") != change["位置"]:
+            fail(errors, f"{label}: {name} 的位置结果不匹配")
+        if "精神值" in change and after.get("精神值") != change["精神值"]:
+            fail(errors, f"{label}: {name} 的精神值结果不匹配")
+        if "新增外貌" in change or "解除外貌" in change:
             for item in change.get("新增外貌", []):
                 if item not in after.get("外貌", []):
-                    fail(errors, f"{label}: 地点 {name} 缺少新增外貌 {item!r}")
+                    fail(errors, f"{label}: {name} 缺少新增外貌 {item!r}")
             for item in change.get("解除外貌", []):
                 if item in after.get("外貌", []):
-                    fail(errors, f"{label}: 地点 {name} 仍保留解除外貌 {item!r}")
-        else:
-            fail(errors, f"{label}: 变化目标 {name} 不在本回合状态中")
+                    fail(errors, f"{label}: {name} 仍保留解除外貌 {item!r}")
+        if "新增个性" in change:
+            for item in change["新增个性"]:
+                if item not in after.get("个性", []):
+                    fail(errors, f"{label}: {name} 缺少新增个性 {item!r}")
+        if "完成任务" in change or "新增小任务" in change:
+            tasks = after.get("任务", {})
+            for goal in change.get("完成任务", []):
+                task = task_by_goal(tasks, goal)
+                if task is None or task.get("状态") != "已完成":
+                    fail(errors, f"{label}: {name} 完成任务未在结果状态中完成: {goal}")
+            for new_task in change.get("新增小任务", []):
+                task = task_by_goal(tasks, new_task["目标"])
+                if task is None or task.get("状态") != new_task.get("状态", "未完成"):
+                    fail(errors, f"{label}: {name} 新增任务未在结果状态中匹配: {new_task['目标']}")
     if record.get("variant") == "sanity-literal":
         text = record["targetText"]
         if "43" not in text or "35" not in text:
             fail(errors, f"{label}: sanity-literal target must contain both 43 and 35")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -352,6 +370,8 @@ def main() -> int:
             fail(errors, f"{label}: forbiddenInventions is empty")
 
         check_no_posture(errors, label, record)
+        check_no_added_event(errors, label, record)
+        check_required_facts(errors, label, record)
         check_time_stated(errors, label, record)
 
         cats = set(record["categories"])

@@ -1,15 +1,15 @@
 {
-  "batch": 6,
-  "createdAt": "2026-11-10T08:50:00Z",
-  "status": "batch-6-ready",
+  "batch": 7,
+  "createdAt": "2026-11-10T09:55:00Z",
+  "status": "batch-7-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 71,
+  "rowCount": 70,
   "rowKinds": {
     "frozen-input": 21,
     "derived-time-contrast": 1,
     "frozen-input-long-target": 4,
     "frozen-input-second-short": 25,
-    "authored-product-world": 20
+    "authored-product-world": 19
   },
   "source": {
     "frozenDataset": "narration-dataset-v1",
@@ -29,7 +29,7 @@
     "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
     "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
     "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
-    "authoredRows": 20,
+    "authoredRows": 19,
     "premise": "initial snapshot; each row is one authored turn, not a browser session"
   },
   "consumableFields": [
@@ -52,7 +52,7 @@
     "variant"
   ],
   "worldFamilies": {
-    "dragon-raja-free-day": 20,
+    "dragon-raja-free-day": 19,
     "library-basement": 6,
     "library-courtyard": 7,
     "library-lending": 7,
@@ -67,7 +67,7 @@
     "movement": 16,
     "no_change": 3,
     "personality_change": 11,
-    "sanity_change": 19,
+    "sanity_change": 18,
     "secret_reveal": 2,
     "separation": 8,
     "task_added": 8,
@@ -75,20 +75,22 @@
   },
   "targetLength": {
     "min": 61,
-    "max": 157,
-    "mean": 93.4,
+    "max": 152,
+    "mean": 95.2,
     "buckets": {
-      "120-160": 8,
-      "60-79": 18,
-      "80-119": 45
+      "120-160": 7,
+      "60-79": 14,
+      "80-119": 49
     }
   },
   "qualityGates": {
-    "posture": "targetText may not claim a posture that is absent from the input; licensed postures such as 沈澄 sitting are allowed",
+    "posture": "targetText may not claim a posture that is absent from the input; licensed postures are allowed",
+    "eventVerbs": "targetText may not use an event verb outside a frozen 「」 quote unless the input licenses it",
     "licensedEntities": "authored rows may not use a world entity name that is absent from the row input",
     "inputHash": "frozen rows must match the source x byte for byte; the derived row may differ only in time advance",
     "stateConsistency": "authored delta must be reflected in the row after-state",
-    "time": "targetText must state the Chinese form of the time advance"
+    "time": "targetText must state the Chinese form of the time advance",
+    "requiredFacts": "task goals, added personality text and sanity from/to numbers in requiredFacts must appear in targetText"
   },
   "failureDrivenRows": [
     {
@@ -154,8 +156,7 @@
       "categories": [
         "no_change"
       ],
-      "targetChars": 87,
-      "variant": null
+      "targetChars": 87
     },
     {
       "id": "short-0050-backdoor-lock",
@@ -166,8 +167,7 @@
         "item_change",
         "task_complete"
       ],
-      "targetChars": 84,
-      "variant": null
+      "targetChars": 89
     },
     {
       "id": "short-0055-reading-room-reveal",
@@ -178,8 +178,7 @@
         "personality_change",
         "secret_reveal"
       ],
-      "targetChars": 103,
-      "variant": null
+      "targetChars": 97
     },
     {
       "id": "short-0063-stack-room-rope",
@@ -190,8 +189,7 @@
         "location_change",
         "item_change"
       ],
-      "targetChars": 81,
-      "variant": null
+      "targetChars": 81
     },
     {
       "id": "short-0060-corridor-glasses",
@@ -202,8 +200,7 @@
         "appearance_change",
         "sanity_change"
       ],
-      "targetChars": 79,
-      "variant": null
+      "targetChars": 97
     },
     {
       "id": "short-0078-courtyard-drop",
@@ -213,8 +210,7 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 89,
-      "variant": null
+      "targetChars": 88
     },
     {
       "id": "short-0098-newsroom-cup",
@@ -225,8 +221,7 @@
         "item_change",
         "location_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 98
     },
     {
       "id": "short-0100-desk-swap",
@@ -237,8 +232,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 78,
-      "variant": null
+      "targetChars": 83
     },
     {
       "id": "short-0101-power-room-doubt",
@@ -248,8 +242,7 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 81,
-      "variant": null
+      "targetChars": 101
     },
     {
       "id": "short-0121-newspaper-clip",
@@ -259,8 +252,7 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 100,
-      "variant": null
+      "targetChars": 100
     },
     {
       "id": "short-0152-archive-two-tasks",
@@ -271,8 +263,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 82,
-      "variant": null
+      "targetChars": 94
     },
     {
       "id": "short-0169-archive-fire-answer",
@@ -282,8 +273,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 104,
-      "variant": null
+      "targetChars": 98
     },
     {
       "id": "short-0182-corridor-separation",
@@ -295,8 +285,7 @@
         "separation",
         "sanity_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 103
     },
     {
       "id": "short-0188-archive-two-cover-tasks",
@@ -307,8 +296,7 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 106,
-      "variant": null
+      "targetChars": 113
     },
     {
       "id": "short-0194-power-room-fear",
@@ -318,8 +306,7 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 89,
-      "variant": null
+      "targetChars": 107
     },
     {
       "id": "short-0197-basement-dehumidifier",
@@ -329,8 +316,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 93,
-      "variant": null
+      "targetChars": 93
     },
     {
       "id": "short-0199-rooftop-third-name",
@@ -342,8 +328,7 @@
         "separation",
         "task_added"
       ],
-      "targetChars": 101,
-      "variant": null
+      "targetChars": 95
     },
     {
       "id": "short-0138-empty-slots",
@@ -353,8 +338,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 63,
-      "variant": null
+      "targetChars": 63
     },
     {
       "id": "short-0161-damp-plant",
@@ -364,8 +348,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 74,
-      "variant": null
+      "targetChars": 74
     },
     {
       "id": "short-0175-window-rustle",
@@ -375,8 +358,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 61,
-      "variant": null
+      "targetChars": 61
     },
     {
       "id": "short-0178-dirty-hands",
@@ -386,8 +368,7 @@
       "categories": [
         "appearance_change"
       ],
-      "targetChars": 63,
-      "variant": null
+      "targetChars": 63
     },
     {
       "id": "short-0008-two-minute-no-change",
@@ -397,8 +378,7 @@
       "categories": [
         "no_change"
       ],
-      "targetChars": 66,
-      "variant": null
+      "targetChars": 66
     },
     {
       "id": "short-long-0117-two-tasks-and-relief",
@@ -410,8 +390,7 @@
         "task_added",
         "sanity_change"
       ],
-      "targetChars": 140,
-      "variant": null
+      "targetChars": 136
     },
     {
       "id": "short-long-0132-cover-row-and-dust",
@@ -423,8 +402,7 @@
         "item_change",
         "appearance_change"
       ],
-      "targetChars": 127,
-      "variant": null
+      "targetChars": 116
     },
     {
       "id": "short-long-0183-page-count-and-new-trait",
@@ -435,8 +413,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 116,
-      "variant": null
+      "targetChars": 109
     },
     {
       "id": "short-long-0137-pipe-and-note",
@@ -449,8 +426,7 @@
         "appearance_change",
         "personality_change"
       ],
-      "targetChars": 157,
-      "variant": null
+      "targetChars": 135
     },
     {
       "id": "short2-0031-binding-glue-and-tape",
@@ -461,8 +437,7 @@
         "appearance_change",
         "location_change"
       ],
-      "targetChars": 72,
-      "variant": null
+      "targetChars": 72
     },
     {
       "id": "short2-0065-sink-cloth-and-wrench",
@@ -473,8 +448,7 @@
         "appearance_change",
         "item_change"
       ],
-      "targetChars": 66,
-      "variant": null
+      "targetChars": 66
     },
     {
       "id": "short2-0129-film-version-and-fear",
@@ -485,8 +459,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 95,
-      "variant": null
+      "targetChars": 90
     },
     {
       "id": "short2-0056-duty-name-and-copy",
@@ -497,8 +470,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 98
     },
     {
       "id": "short2-0074-locked-from-outside",
@@ -508,8 +480,7 @@
       "categories": [
         "personality_change"
       ],
-      "targetChars": 83,
-      "variant": null
+      "targetChars": 68
     },
     {
       "id": "short2-0091-seventh-copy-missing",
@@ -520,8 +491,7 @@
         "task_added",
         "sanity_change"
       ],
-      "targetChars": 107,
-      "variant": null
+      "targetChars": 113
     },
     {
       "id": "short2-0102-three-copies-collated",
@@ -531,8 +501,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 109,
-      "variant": null
+      "targetChars": 95
     },
     {
       "id": "short2-0111-desk-book-and-ink",
@@ -544,8 +513,7 @@
         "appearance_change",
         "location_change"
       ],
-      "targetChars": 104,
-      "variant": null
+      "targetChars": 98
     },
     {
       "id": "short2-0119-guard-records-and-shelves",
@@ -557,8 +525,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 90,
-      "variant": null
+      "targetChars": 87
     },
     {
       "id": "short2-0145-cover-layers",
@@ -569,8 +536,7 @@
         "item_change",
         "task_complete"
       ],
-      "targetChars": 92,
-      "variant": null
+      "targetChars": 108
     },
     {
       "id": "short2-0180-wax-seal-half",
@@ -582,8 +548,7 @@
         "task_complete",
         "secret_reveal"
       ],
-      "targetChars": 99,
-      "variant": null
+      "targetChars": 98
     },
     {
       "id": "short2-0187-left-handed-knot",
@@ -593,8 +558,7 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 90,
-      "variant": null
+      "targetChars": 90
     },
     {
       "id": "short2-0191-three-labels",
@@ -604,8 +568,7 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 103,
-      "variant": null
+      "targetChars": 103
     },
     {
       "id": "short2-0189-two-investigations-finished",
@@ -615,8 +578,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 105,
-      "variant": null
+      "targetChars": 110
     },
     {
       "id": "short2-0172-march-name-and-two-questions",
@@ -627,8 +589,7 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 113,
-      "variant": null
+      "targetChars": 113
     },
     {
       "id": "short2-0177-fire-and-notices",
@@ -639,8 +600,7 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 110,
-      "variant": null
+      "targetChars": 116
     },
     {
       "id": "short2-0020-clock-and-torn-page",
@@ -652,8 +612,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 100,
-      "variant": null
+      "targetChars": 92
     },
     {
       "id": "short2-0090-locked-door-and-watched-table",
@@ -665,8 +624,7 @@
         "personality_change",
         "task_added"
       ],
-      "targetChars": 107,
-      "variant": null
+      "targetChars": 107
     },
     {
       "id": "short2-0125-proof-and-empty-slot",
@@ -678,8 +636,7 @@
         "item_change",
         "location_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 102
     },
     {
       "id": "short2-0136-lamp-and-forty-year-book",
@@ -692,8 +649,7 @@
         "movement",
         "location_change"
       ],
-      "targetChars": 110,
-      "variant": null
+      "targetChars": 88
     },
     {
       "id": "short2-0039-three-people-and-a-confession",
@@ -704,8 +660,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 87,
-      "variant": null
+      "targetChars": 99
     },
     {
       "id": "short2-0058-light-and-tea-stain",
@@ -716,8 +671,7 @@
         "sanity_change",
         "location_change"
       ],
-      "targetChars": 79,
-      "variant": null
+      "targetChars": 87
     },
     {
       "id": "short2-0034-carved-line-worn",
@@ -729,8 +683,7 @@
         "location_change",
         "sanity_change"
       ],
-      "targetChars": 86,
-      "variant": null
+      "targetChars": 88
     },
     {
       "id": "short2-0042-mailbox-and-relief",
@@ -742,8 +695,7 @@
         "item_change",
         "sanity_change"
       ],
-      "targetChars": 91,
-      "variant": null
+      "targetChars": 91
     },
     {
       "id": "short2-0061-key-handed-over",
@@ -754,8 +706,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 97
     },
     {
       "id": "dr-0001-no-change-lane",
@@ -765,8 +716,7 @@
       "categories": [
         "no_change"
       ],
-      "targetChars": 62,
-      "variant": null
+      "targetChars": 62
     },
     {
       "id": "dr-0002-move-nono-to-shed",
@@ -777,8 +727,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 75,
-      "variant": null
+      "targetChars": 75
     },
     {
       "id": "dr-0003-task-goggles",
@@ -790,8 +739,7 @@
         "item_change",
         "appearance_change"
       ],
-      "targetChars": 68,
-      "variant": null
+      "targetChars": 79
     },
     {
       "id": "dr-0004-appearance-fingel",
@@ -801,8 +749,7 @@
       "categories": [
         "appearance_change"
       ],
-      "targetChars": 70,
-      "variant": null
+      "targetChars": 70
     },
     {
       "id": "dr-0005-personality-nono",
@@ -812,8 +759,7 @@
       "categories": [
         "personality_change"
       ],
-      "targetChars": 64,
-      "variant": null
+      "targetChars": 75
     },
     {
       "id": "dr-0006-sanity-lu",
@@ -823,8 +769,7 @@
       "categories": [
         "sanity_change"
       ],
-      "targetChars": 64,
-      "variant": null
+      "targetChars": 80
     },
     {
       "id": "dr-0007-separation-lu-shed",
@@ -835,8 +780,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 69,
-      "variant": null
+      "targetChars": 69
     },
     {
       "id": "dr-0008-task-added-lu",
@@ -846,19 +790,7 @@
       "categories": [
         "task_added"
       ],
-      "targetChars": 81,
-      "variant": null
-    },
-    {
-      "id": "dr-0009-sanity-literal",
-      "sourceRowId": "authored:dragon-raja-free-day#sanity-literal",
-      "kind": "authored-product-world",
-      "worldFamily": "dragon-raja-free-day",
-      "categories": [
-        "sanity_change"
-      ],
-      "targetChars": 63,
-      "variant": "sanity-literal"
+      "targetChars": 81
     },
     {
       "id": "dr-0010-cage-stretcher",
@@ -869,8 +801,7 @@
         "item_change",
         "movement"
       ],
-      "targetChars": 128,
-      "variant": null
+      "targetChars": 128
     },
     {
       "id": "dr-0011-su-report-bridge",
@@ -881,8 +812,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 122,
-      "variant": null
+      "targetChars": 124
     },
     {
       "id": "dr-0012-doctor-bed-ready",
@@ -893,8 +823,7 @@
         "task_complete",
         "item_change"
       ],
-      "targetChars": 123,
-      "variant": null
+      "targetChars": 123
     },
     {
       "id": "dr-0013-tang-reload",
@@ -905,8 +834,7 @@
         "task_complete",
         "item_change"
       ],
-      "targetChars": 108,
-      "variant": null
+      "targetChars": 110
     },
     {
       "id": "dr-0014-caesar-to-yard",
@@ -917,8 +845,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 100,
-      "variant": null
+      "targetChars": 103
     },
     {
       "id": "dr-0015-move-without-posture",
@@ -929,8 +856,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 80,
-      "variant": null
+      "targetChars": 80
     },
     {
       "id": "dr-0016-two-people-clear-subjects",
@@ -941,8 +867,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 107
     },
     {
       "id": "dr-0017-chu-checks-hatch",
@@ -953,8 +878,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 91,
-      "variant": null
+      "targetChars": 101
     },
     {
       "id": "dr-0018-fingel-tells-hatch",
@@ -965,8 +889,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 127,
-      "variant": null
+      "targetChars": 121
     },
     {
       "id": "dr-0019-tomiyama-shen-symptom",
@@ -977,8 +900,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 125,
-      "variant": null
+      "targetChars": 152
     },
     {
       "id": "dr-0020-su-checks-magazine",
@@ -988,8 +910,16 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 98,
-      "variant": null
+      "targetChars": 104
     }
-  ]
+  ],
+  "factBinding": {
+    "binder": "lane-10 narration-rules build_facts/binds (read-only import)",
+    "mandatoryFacts": 84,
+    "boundFacts": 84,
+    "rowsFullyBound": 70,
+    "serializer": "lane-10 projection_v2 + v2_render",
+    "serializedRows": 70,
+    "onlyDifference": "short-0008-two-minute-no-change differs from row-0008 xProse only in the time advance"
+  }
 }
