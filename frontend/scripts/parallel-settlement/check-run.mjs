@@ -89,6 +89,10 @@ export function checkRun(input, options = {}) {
         if (coverage.personality > 0 && coverage.personality < cast) {
           hard.push(`${where} updates/${call.key}: personality coverage ${coverage.personality} < cast ${cast}`);
         }
+        if (coverage.taskRows != null && coverage.taskRows < coverage.tasks) {
+          hard.push(`${where} updates/${call.key}: task rows ${coverage.taskRows} < characters ${coverage.tasks}`);
+        }
+        if (coverage.taskRows == null) soft.push(`${where} updates/${call.key}: taskRows not recorded (pre-04-15ac9d93 evidence)`);
       }
       if (call.fallback) soft.push(`${where} updates/${call.key}: fell back (${call.error ?? 'no error text'})`);
       if (call.error) soft.push(`${where} updates/${call.key}: error ${call.error}`);
@@ -98,6 +102,7 @@ export function checkRun(input, options = {}) {
     }
     const decision = sub.continuationDecision ?? 'handback';
     if (decision === 'continue' && !continuation.length) hard.push(`${where}: decision is continue but no continuation call ran`);
+    if (decision === 'failed' && continuation.length) soft.push(`${where}: continuation failed (no candidate; not a normal handback)`);
     const stops = Array.isArray(sub.stops) ? sub.stops : [];
     const policyStops = stops.filter((stop) => String(stop).includes('continuation_policy_'));
     if (policyStops.length) {
