@@ -9,6 +9,7 @@ import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine'
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
+import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -139,9 +140,15 @@ export default function WorldLocalPage() {
   const semanticRef = useRef<ProductEnginePort | null>(null);
   const narrationRef = useRef<ProductEnginePort | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
+  const storeRef = useRef<LocalProgressStore | null>(null);
+  const [durable, setDurable] = useState<boolean | null>(null);
 
+  /** Fallback only: when the platform has no IndexedDB the session runs in
+   * memory and the page keeps a best-effort localStorage copy so a refresh is
+   * not a guaranteed loss. Durable sessions save through the store instead. */
   const save = useCallback((snapshot: LocalGameSnapshot) => {
     if (snapshot.transport.work) return; // never persist a half-settled point
+    if (storeRef.current?.durable) return;
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot)); } catch (e) { console.warn('[world-local] save failed', e); }
   }, []);
 
@@ -162,6 +169,7 @@ export default function WorldLocalPage() {
     setView(viewOf(state));
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
+    await session.flushPersistence();
     save(session.snapshot);
     setPhase((current) => current === 'streaming' ? 'ready' : current);
     return context;
@@ -193,8 +201,6 @@ export default function WorldLocalPage() {
           narrationMode: 'instruct',
           narrationMaxTokens: 200,
           narrationTemperature: 0.45,
-          maxAutoContinuations: 0,
-          maxAutonomousActors: 0,
           onTask: (task, key, detail) => {
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
             setStage(STAGE_LABEL[task] ?? task);
@@ -215,21 +221,49 @@ export default function WorldLocalPage() {
           },
         });
         modelRef.current = model;
-        const saved = localStorage.getItem(SAVE_KEY);
+        // Durable progress lives in IndexedDB with a writer lease; the old
+        // single-slot localStorage snapshot is migrated non-destructively.
+        const store = await openLocalProgressStore();
+        storeRef.current = store;
+        setDurable(store.durable);
+        if (!store.durable) {
+          setWarning('浏览器没有提供 IndexedDB：本局进度只保存在内存里，刷新会丢失。');
+        }
+        const migration = await migrateLegacySnapshot(store, { removeSource: true });
+        if (migration.status === 'migrated') console.info('[world-local] migrated legacy snapshot', migration.revision);
+        if (migration.status !== 'absent' && migration.status !== 'migrated') {
+          console.warn('[world-local] legacy migration', migration.status, migration.backupKey ?? '');
+        }
         let session: LocalGameSession;
         let restored = false;
-        if (saved) {
-          try {
-            session = await LocalGameSession.restore(JSON.parse(saved) as LocalGameSnapshot, model);
-            restored = true;
-          } catch (restoreError) {
-            console.warn('[world-local] restore failed; starting new world', restoreError);
-            localStorage.removeItem(SAVE_KEY);
-            session = await LocalGameSession.create(world.template, model, { worldId: world.worldId });
-            await session.start();
+        try {
+          const opened = await LocalGameSession.open(store, { worldId: world.worldId, initial: world.template }, model);
+          session = opened.session;
+          restored = !opened.created;
+          if (opened.created) await session.start();
+        } catch (openError) {
+          // Never delete the only save. Archive the readable record first, tell
+          // the player, then start a new world.
+          console.error('[world-local] saved progress could not be opened', openError);
+          const record = await store.load(world.worldId).catch(() => null);
+          let archived = false;
+          if (record) {
+            try {
+              await store.backupLegacy({
+                key: `corrupt:${world.worldId}:${Date.now()}`,
+                sourceKey: `progress:${world.worldId}`,
+                raw: JSON.stringify(record.snapshot),
+                capturedAtEpochMilli: Date.now(),
+              });
+              archived = true;
+            } catch (archiveError) {
+              console.error('[world-local] failed to archive the corrupt save', archiveError);
+            }
           }
-        } else {
-          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId });
+          if (!archived) throw openError;
+          await store.delete(world.worldId, { force: true });
+          setWarning('旧存档无法恢复，已保留原始副本并开始新的一局。');
+          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store });
           await session.start();
         }
         sessionRef.current = session;
@@ -246,6 +280,15 @@ export default function WorldLocalPage() {
     return () => { alive = false; };
   }, [refresh]);
 
+  // Flush the queued save when the tab is hidden or closed, so a refresh after
+  // the last write does not lose a settled point.
+  useEffect(() => {
+    const flush = () => { void sessionRef.current?.flushPersistence().catch(() => undefined); };
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+    return () => { window.removeEventListener('pagehide', flush); };
+  }, []);
+
   const submit = useCallback(async () => {
     const session = sessionRef.current;
     const text = input.trim();
@@ -256,7 +299,9 @@ export default function WorldLocalPage() {
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
     modelRef.current?.beginTurn();
-    modelRef.current?.resetAutoContinuations();
+    // The settlement side keeps its own per-submission ledger (which stages
+    // ran, model calls, milliseconds). It is evidence, not page text.
+    modelRef.current?.beginSubmission(text);
     save(session.snapshot);
     try {
       const status = await session.submit(text);
@@ -268,6 +313,19 @@ export default function WorldLocalPage() {
       setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
       setPhase('error');
     } finally {
+      const submission = modelRef.current?.endSubmission() ?? null;
+      if (submission) {
+        console.info('[world-local submission]', JSON.stringify({
+          input: submission.inputText,
+          ms: Math.round((submission.endedAtMs ?? 0) - submission.startedAtMs),
+          resultsCalls: submission.resultsCalls,
+          updatesCalls: submission.updatesCalls,
+          continuationCalls: submission.continuationCalls,
+          decision: submission.continuationDecision,
+          stops: submission.stops,
+        }));
+        (window as unknown as { __worldSubmission?: unknown }).__worldSubmission = submission;
+      }
       setBusy(false);
     }
   }, [busy, input, refresh, save]);
@@ -300,7 +358,15 @@ export default function WorldLocalPage() {
 
   const reset = useCallback(async () => {
     if (!confirm('清除本地存档并重新开始？')) return;
-    localStorage.removeItem(SAVE_KEY);
+    const session = sessionRef.current;
+    const store = storeRef.current;
+    try {
+      await session?.flushPersistence();
+      if (store) await store.delete(session?.worldId ?? '', { force: true, sessionId: session?.sessionIdUsed });
+    } catch (e) {
+      console.warn('[world-local] could not delete the stored progress', e);
+    }
+    try { localStorage.removeItem(SAVE_KEY); } catch { /* ignored */ }
     window.location.reload();
   }, []);
 

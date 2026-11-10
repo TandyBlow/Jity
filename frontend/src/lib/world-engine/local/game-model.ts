@@ -16,7 +16,8 @@ import type { CommittedNarration, NarrationFact } from '../runtime/committed-nar
 import { taskOutputSchema } from '../runtime/output-schema';
 import { createActionHandlers, type HandlerResult } from './semantics/actions';
 import { createNarrationRunner, type NarrationRunner } from './narration-candidates/selection';
-import { createSettlementHandlers, requireSettlementValue, continuationPolicy } from './semantics/settlement';
+import { requireSettlementValue } from './semantics/settlement';
+import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
 export interface GameModelOptions {
@@ -31,11 +32,6 @@ export interface GameModelOptions {
   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
    * 'instruct' states the task for an instruction-tuned narration model. */
   narrationMode?: 'legacy' | 'instruct';
-  /** Automatic rounds after one player action. Default 0: one action = one round. */
-  maxAutoContinuations?: number;
-  /** How many non-protagonist actors may open their own frozen group in one
-   * round. Reactions to admitted threats are separate and always run. */
-  maxAutonomousActors?: number;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -67,13 +63,12 @@ export class LocalGameModel implements WorldModelPort {
   private roundCounter = 0;
   private lastPlayerInput = '';
   private lastResultsText = '';
-  private autoContinuations = 0;
   private recentEvents: string[] = [];
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
    * continuation context; program/ledger paragraphs never are. */
   private lastAcceptedNarration: string | null = null;
-  private readonly settlement;
+  private readonly settlement: SettlementModelPort;
   private readonly actionHandlers;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
@@ -94,14 +89,16 @@ export class LocalGameModel implements WorldModelPort {
     this.engine = semanticEngine;
     this.narrationEngine = narrationPort;
     this.options = options;
-    this.settlement = createSettlementHandlers({ engine: semanticEngine, options: {
+    // Lane 04's settlement port owns results/updates (six stages) and the
+    // continuation judgement. A policy stop is a visible stop; there is no
+    // product-side "one action per round" switch and no fabricated handback.
+    this.settlement = createSettlementModelPort(semanticEngine, {
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
       maxPromptChars: 11_000,
       sceneScope: true,
       mergedStages: true,
-      continuation: this.options.maxAutoContinuations == null ? continuationPolicy : { ...continuationPolicy, maxAutoContinuations: this.options.maxAutoContinuations },
-    } });
+    });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null
       : createNarrationRunner({
@@ -134,7 +131,12 @@ export class LocalGameModel implements WorldModelPort {
    * after the cancel; `beginTurn()` opens the next scope. */
   abortTurn(): void { this.turnAbort?.abort(); }
 
-  resetAutoContinuations(): void { this.autoContinuations = 0; this.settlement.resetContinuation(); }
+  /** Player-submission account for the settlement side: which calls ran, per
+   * stage, with the real milliseconds. Internal evidence, not page text. */
+  beginSubmission(inputText: string): void { this.settlement.beginSubmission(inputText); }
+  endSubmission(): PortSubmission | null { return this.settlement.endSubmission(); }
+  settlementSummary(): SettlementPortSummary { return this.settlement.summary(); }
+  resetSettlement(): void { this.settlement.reset(); }
 
   async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
     const generated = await this.run(task, key, input);
@@ -174,20 +176,9 @@ export class LocalGameModel implements WorldModelPort {
       const text = data.advance?.inputText?.trim();
       if (text) this.lastPlayerInput = text;
     }
-    // Scene budget: an unnamed same-room NPC still acts autonomously only
-    // when the player's sentence puts them in play. Without this budget every
-    // present actor becomes another frozen group and a single turn grows past
-    // the readable-text wait; reactions still cover every admitted threat.
-    if (data.workingState && data.actor && data.actor !== data.workingState.protagonistId) {
-      if ((this.options.maxAutonomousActors ?? 1) <= 0) {
-        return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false, error: 'autonomous_actor_budget' };
-      }
-      const name = data.workingState.initial.characters[data.actor]?.name ?? data.actor;
-      const advanceText = data.advance?.inputText?.trim() || this.lastPlayerInput;
-      if (!advanceText.includes(name)) {
-        return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false, error: 'scene_budget_unnamed' };
-      }
-    }
+    // Every actor the controller freezes is judged; the old "unnamed NPC is
+    // skipped" budget was a product shortcut, not a model decision. Scene scope
+    // for those judgements is owned by the settlement port, not this gate.
     return this.reportAction(await this.actionHandlers.action(key, input));
   }
 
@@ -211,8 +202,9 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async results(key: Id, input: Json): Promise<Generated> {
-    const outcome = await this.settlement.results(key, input);
-    const value = requireSettlementValue(outcome);
+    const started = performance.now();
+    const value = await this.settlement.generate('results', key, input) as Record<Id, string>;
+    const outcome = { raw: '', ms: performance.now() - started, fallback: false, error: undefined as string | undefined };
     const state = (input as { workingState?: WorldState }).workingState;
     const lines = Object.entries(value).map(([id, text]) => {
       const name = state?.initial.characters[id]?.name ?? id;
@@ -231,13 +223,13 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async updates(key: Id, input: Json): Promise<Generated> {
-    const outcome = await this.settlement.updates(key, input);
-    const value = requireSettlementValue(outcome);
+    const started = performance.now();
+    const value = await this.settlement.generate('updates', key, input);
     const state = (input as { workingState?: WorldState }).workingState;
     const results = (input as { results?: Record<Id, string> }).results ?? {};
     const stage = (input as { stage?: string }).stage;
     const merged = await this.injectMovement(state, value, results, stage);
-    return { value: merged as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
+    return { value: merged as unknown as Json, raw: '', ms: performance.now() - started, fallback: false };
   }
 
   /** A player sentence that walks to a named room is a movement the state must
@@ -311,16 +303,11 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async continuation(key: Id, input: Json): Promise<Generated> {
-    // A one-action-per-round product setting is not a model judgement: with
-    // automatic continuation switched off there is nothing to propose, so the
-    // round is handed back without spending a model call (and without turning
-    // a model hiccup into a failed round).
-    if ((this.options.maxAutoContinuations ?? 0) <= 0) {
-      return { value: { kind: 'handback', closedBy: 'model', cancelReason: null } as unknown as Json, raw: '', ms: 0, fallback: false, error: 'continuation_disabled' };
-    }
-    const outcome = await this.settlement.continuation(key, input);
-    const value = requireSettlementValue(outcome);
-    return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
+    // The continuation judgement is lane 04's port. A policy stop comes back as
+    // an explicit stop conclusion, never as a fabricated handback.
+    const started = performance.now();
+    const value = await this.settlement.generate('continuation', key, input);
+    return { value, raw: '', ms: performance.now() - started, fallback: false };
   }
 
   private async narration(key: Id, input: Json): Promise<Generated> {
