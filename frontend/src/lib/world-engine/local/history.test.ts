@@ -57,8 +57,10 @@ describe('restoredEntries', () => {
     expect(entries.length).toBe(1);
     expect(entries[0].text).toBe('巷口的绳已经放下。\n\n诺诺没有动，只把手套收紧。');
     expect(entries[0].points?.map((part) => part.pointId)).toEqual(['p1', 'auto']);
-    // A draft anywhere in the turn keeps the whole entry labelled as a draft.
-    expect(entries[0].source).toBe('draft');
+    // The player point's accepted text keeps its own source; the later draft
+    // is labelled per point and in the note, not by relabelling the entry.
+    expect(entries[0].source).toBe('model');
+    expect(entries[0].points?.map((part) => part.source)).toEqual(['model', 'draft']);
     expect(entries[0].note).toContain('草稿');
   });
 

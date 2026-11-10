@@ -52,19 +52,17 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
     }).filter((part) => part.text);
     const text = parts.map((part) => part.text.trim()).filter(Boolean).join('\n\n');
     const sources = parts.map((part) => part.source).filter(Boolean);
-    const source = sources.includes('draft')
-      ? 'draft'
-      : sources.includes('program') && sources.includes('model') ? 'mixed'
-        : sources.includes('program') ? 'program'
-          : sources.includes('mixed') ? 'mixed'
-            : sources.includes('model') ? 'model' : undefined;
+    // The entry's own source is the player point's (the first paragraph).
+    // Later automatic points are labelled individually in `points`; a draft
+    // among them does not relabel the player's accepted prose as a draft.
+    const source = parts[0]?.source;
     const note = parts.length === 0
       ? '这一回合的正文没有保存成功，刷新后无法显示原文。'
-      : source === 'draft'
-        ? '这一回合的正文没有通过事实自检，保存下来的只是按已结算事实列出的草稿。'
-        : source === 'program'
-          ? '这一回合的正文由程序按已结算事实成文（降级，不是模型正文）。'
-          : source === 'mixed'
+      : sources.includes('draft')
+        ? '这一回合里有段落没有通过事实自检（只是草稿），不是成文正文。'
+        : sources.includes('program')
+          ? '这一回合里有程序按已结算事实成文的段落（降级，不是模型正文）。'
+          : sources.includes('mixed')
             ? '这一回合的正文混有程序按已结算事实写出的句子。'
             : null;
     return {
