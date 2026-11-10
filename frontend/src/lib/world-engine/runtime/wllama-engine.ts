@@ -290,6 +290,13 @@ export class WllamaInferenceEngine implements InferenceEngine {
     const started = performance.now();
     const identity = modelUrls.join('|');
     this.lastModelUrls = modelUrls;
+    // Only one model's bytes may stay cached: switching weights must release the
+    // old Blob before the new fetch, or the two allocations hit the same ~2 GB
+    // Blob-store cap that a hard-stop refetch hit.
+    if (this.cachedIdentity !== null && this.cachedIdentity !== identity) {
+      this.cachedBlobs = null;
+      this.cachedIdentity = null;
+    }
     const controller = new AbortController();
     this.loadAbort = controller;
     const loadTimeoutMs = this.options.loadTimeoutMs ?? 120_000;
