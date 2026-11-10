@@ -733,7 +733,7 @@ function staticNamesOf(policy: NarrationPolicy | undefined): string[] {
 
 /** The sentence that denies what an earlier sentence in the same passage said
  * about the subject's hands. */
-function contradictionTarget(text: string): { sentence: string; lines: string[] } | null {
+export function contradictionTarget(text: string): { sentence: string; lines: string[] } | null {
   const sentences = text.split(/(?<=[。！？!?])/u).map((entry) => entry.trim()).filter(Boolean);
   const HAND = /(手中|手里|手上)/u;
   const EMPTY = /(没有|没|空着|空空|什么也没有|什么也没拿)/u;
@@ -751,6 +751,22 @@ function contradictionTarget(text: string): { sentence: string; lines: string[] 
       ] };
     }
     if (!EMPTY.test(sentence)) held = sentence;
+  }
+  // A passage that hears a sound and then says it heard nothing at all: the
+  // later sentence is the one to rewrite. 09's dense point wrote
+  // «听着远处传来轻微的水声» and «也没有听到任何声音» in one paragraph.
+  const HEARD = /(听见|听到|听着|传来|响起|响了一声|发出一声)/u;
+  const NO_SOUND = /((?:没有|没)(?:听到|听见|听不到)|没有任何|没有一点)[^。！？]{0,6}(声音|动静)/u;
+  const silent = sentences.find((sentence) => NO_SOUND.test(sentence));
+  if (silent && sentences.some((sentence) => sentence !== silent && HEARD.test(sentence))) {
+    return { sentence: silent, lines: [
+      '这一段前面写过听见了声音：',
+      `前句：${sentences.find((sentence) => sentence !== silent && HEARD.test(sentence))}`,
+      `这句又说：${silent}`,
+      '',
+      '只重写后一句：去掉「没有听到任何声音」这层意思，保留这句里其它已经发生的事，不要新增动作、人物或物品。',
+      '只输出重写后的这一句，不要解释。',
+    ] };
   }
   return null;
 }
@@ -771,7 +787,11 @@ async function repairSentences(args: {
     const marks = senses.length ? [] : appearanceViolations(text, args.inputText);
     const acts = senses.length || marks.length ? [] : actionViolations(text, args.inputText);
     const echo = senses.length || marks.length || acts.length ? null : repeatTarget(text);
-    const contradiction = senses.length || marks.length || acts.length || echo ? null : contradictionTarget(text);
+    // A self-contradiction is repaired first even when the same passage also
+    // invents a sense: two clauses of the draft cannot both be true, while the
+    // sense may be an ambient detail. The order is the one the outer loop
+    // documents (contradiction > marks > senses > acts > echo).
+    const contradiction = contradictionTarget(text);
     const timePhrase = (() => {
       if (!args.ledger.requireTime || !args.ledger.time) return null;
       const duration = args.ledger.time.duration;
@@ -966,6 +986,25 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
           kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
           detail: `${borrowed.noun} belongs to another character (${borrowed.sentence})`, sentence: borrowed.sentence,
         });
+      }
+      // Reading a scene object's note out loud («上面画着庭院、东西回廊、跨溪
+      //小桥») is grounded but reads like a data field. Soft note only.
+      for (const object of input.policy?.scene?.objects ?? []) {
+        const note = String(object.note ?? '');
+        if (note.length < 12) continue;
+        for (const sentence of result.attempt.cleaned.split(/[。！？!?]/u)) {
+          let hit = '';
+          for (let start = 0; start + 12 <= note.length; start += 1) {
+            const window = note.slice(start, start + 12);
+            if (sentence.includes(window)) { hit = window; break; }
+          }
+          if (!hit) continue;
+          result.attempt.issues.push({
+            kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+            detail: `reads out the note of ${object.name}`, sentence: sentence.trim(),
+          });
+          break;
+        }
       }
       // A wall prop in a hand is a new fact. 09 batch-5 wrote «演习规则牌在他
       // 手中，牌面写着…»; the fixture's input puts the board on the wall.

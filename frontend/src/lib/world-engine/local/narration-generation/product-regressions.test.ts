@@ -19,7 +19,7 @@
 import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
-import { generateCommittedNarration } from './index';
+import { contradictionTarget, generateCommittedNarration } from './index';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -343,5 +343,68 @@ describe('product regressions: no state checklist in prose', () => {
     });
     expect(result.accepted).toBe(false);
     expect(result.text).not.toContain('完成了任务');
+  });
+});
+
+describe('product regressions: nobody-seen filler', () => {
+  // 09 e9a5/95dc and the dense point all pad with «他没看到任何人，也没听见任何声音».
+  test('saying nobody was seen while someone is present is a contradiction', async () => {
+    const text = '路明非站在西侧服务巷。他没看到任何人，也没听见任何声音。一分钟过去，他没有动。';
+    const { kinds } = await issuesOf(text);
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the same sentence is only a note in an empty courtyard', async () => {
+    const text = '路明非站在中央庭院。他没看到任何人，也没听见任何声音。两分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet,
+      inputText: quietInput.replace('演习规则牌（墙上）', '演习规则牌'),
+      priorText: null,
+      policy: {
+        ...quietPolicy, targetChars: 40, minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+        scene: { ...quietPolicy.scene!, present: [], location: '中央庭院' },
+      },
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard'));
+    expect(hard.map((issue) => issue.kind)).not.toContain('self_contradiction');
+  });
+});
+
+describe('product regressions: a scene note read out loud', () => {
+  // quiet-minute-5: «上面画着庭院、东西回廊、跨溪小桥» is the map note verbatim.
+  test('copying a scene object note is a soft note', async () => {
+    const text = '路明非站在西侧服务巷，看了一眼墙上的演习规则牌。牌面写明：使用弗里嘉演习弹。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => /reads out the note of/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
+
+describe('product regressions: heard water, heard nothing', () => {
+  // The exact accepted text of results/02-narration/real-qwen3-dense-point-4.json
+  // (dense fixture: move + finished task + two minutes). «听着远处传来轻微的水声»
+  // and «也没有听到任何声音» are in the same paragraph.
+  const DENSE_ACCEPTED = '路明非站在中央庭院的石阶上，护目镜挂在胸前，镜片映出他紧绷的神情。'
+    + '西侧服务巷的风穿过他肩头，带着一丝潮湿的凉意。他低头看了看手中的登记簿，指尖轻轻摩挲着纸页边缘。'
+    + '两分钟过去，他没有移动，只是静静站在原地，听着远处传来轻微的水声。'
+    + '他没有看到任何人，也没有听到任何声音，只是静静地注视着脚下那块被雨水打湿的青石。'
+    + '路明非比对完了登记簿。';
+
+  test('the accepted dense text is rejected for the hearing contradiction', async () => {
+    const { kinds } = await issuesOf(DENSE_ACCEPTED);
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the repair targets the silent sentence, not the heard water', () => {
+    const target = contradictionTarget(DENSE_ACCEPTED);
+    expect(target).not.toBeNull();
+    expect(target!.sentence).toContain('没有听到任何声音');
+    expect(target!.lines.join(String.fromCharCode(10))).toContain('去掉「没有听到任何声音」');
+    expect(target!.lines.join(String.fromCharCode(10))).toContain('听着远处传来轻微的水声');
   });
 });
