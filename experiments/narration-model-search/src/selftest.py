@@ -256,6 +256,47 @@ def main() -> int:
             detail = f"passed={report['passed']}/{report['cases']}"
         check("semantic_validate catches placeholder/coverage/declared-target/continuation errors", ok, detail)
 
+    fixture_path = ROOT / "semantic-probes/fixtures/free-day-73-tasks.json"
+    if fixture_path.exists():
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        owners = sorted({task["ownerId"] for task in fixture["tasks"]})
+        allowed_by_character = {owner: sorted(task["id"] for task in fixture["tasks"]
+                                              if task["ownerId"] == owner) for owner in owners}
+        pack_case = {
+            "caseId": "free-day-tasks-73", "kind": "tasks",
+            "allowedIds": [item["id"] for item in fixture["characters"]] + [task["id"] for task in fixture["tasks"]],
+            "requiredCharacterIds": owners,
+            "allowedTaskIdsByCharacter": allowed_by_character,
+        }
+        valid = {"decisions": [{"characterId": owner, "achieved": []} for owner in owners]}
+        short = {"decisions": [{"characterId": owner, "achieved": []} for owner in owners[:-2]]}
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = pathlib.Path(tmp)
+            pack_cases = [dict(pack_case, caseId="valid"), dict(pack_case, caseId="short")]
+            (tmp_path / "pack.jsonl").write_text(
+                "\n".join(json.dumps(item, ensure_ascii=False) for item in pack_cases) + "\n",
+                encoding="utf-8")
+            run_dir = tmp_path / "run"
+            run_dir.mkdir()
+            for case_id, value in (("valid", valid), ("short", short)):
+                (run_dir / f"{case_id}.json").write_text(json.dumps(
+                    {"caseId": case_id, "text": json.dumps(value, ensure_ascii=False)}, ensure_ascii=False),
+                    encoding="utf-8")
+            proc = run(["src/semantic_validate.py", "--pack", str(tmp_path / "pack.jsonl"),
+                        "--run-dir", str(run_dir), "--out", str(tmp_path / "report.json")])
+            ok = proc.returncode == 2
+            detail = f"exit={proc.returncode}"
+            if ok:
+                report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+                by_id = {entry["caseId"]: entry for entry in report["reports"]}
+                ok = (by_id["valid"]["ok"] and not by_id["short"]["ok"]
+                      and any("coverage 12/14" in error for error in by_id["short"]["errors"]))
+                detail = f"valid={by_id['valid']['ok']} short={by_id['short']['ok']}"
+            check("semantic_validate handles the real 73-task/14-character coverage scale", ok, detail)
+    else:
+        check("semantic_validate handles the real 73-task/14-character coverage scale", False,
+              "missing fixture")
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])

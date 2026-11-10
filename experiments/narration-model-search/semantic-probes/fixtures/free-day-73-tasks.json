@@ -1,0 +1,509 @@
+{
+ "source": "worktrees/06-recovery/data/worlds/dragon-raja-free-day.world.json",
+ "sourceSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+ "worldId": "world_dragon_raja_free_day",
+ "protagonistId": "lu",
+ "time": {
+  "calendar": "gregorian",
+  "dateTime": "2009-10-17T15:20:00",
+  "instantOrdinal": 0
+ },
+ "characters": [
+  {
+   "id": "lu",
+   "name": "路明非"
+  },
+  {
+   "id": "nono",
+   "name": "诺诺"
+  },
+  {
+   "id": "fingel",
+   "name": "芬格尔"
+  },
+  {
+   "id": "chu",
+   "name": "楚子航"
+  },
+  {
+   "id": "caesar",
+   "name": "凯撒"
+  },
+  {
+   "id": "su",
+   "name": "苏茜"
+  },
+  {
+   "id": "lin",
+   "name": "林亦舟"
+  },
+  {
+   "id": "tang",
+   "name": "唐骁"
+  },
+  {
+   "id": "zhou",
+   "name": "周映"
+  },
+  {
+   "id": "qin",
+   "name": "秦越"
+  },
+  {
+   "id": "doctor",
+   "name": "顾岚"
+  },
+  {
+   "id": "shen",
+   "name": "沈澄"
+  },
+  {
+   "id": "tomiyama",
+   "name": "富山雅史"
+  },
+  {
+   "id": "manstein",
+   "name": "曼施坦因"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "task_lu_match",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场"
+  },
+  {
+   "id": "task_lu_choice",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立"
+  },
+  {
+   "id": "task_lu_kit",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "在进入交火区前拿到可用的护目镜与演习装备"
+  },
+  {
+   "id": "task_lu_goggles",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "把胸前护目镜戴好并确认镜片没有裂纹"
+  },
+  {
+   "id": "task_lu_route",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线"
+  },
+  {
+   "id": "task_lu_ally",
+   "ownerId": "lu",
+   "status": "pending",
+   "goal": "得到至少一名在场者明确同意的协作，不替他人擅自承诺"
+  },
+  {
+   "id": "task_lu_rules",
+   "ownerId": "lu",
+   "status": "achieved",
+   "goal": "读过服务巷规则牌，知道医护白线内禁止交火"
+  },
+  {
+   "id": "task_nono_squad",
+   "ownerId": "nono",
+   "status": "pending",
+   "goal": "让红方的旗台行动有可执行的掩护，而不把路明非当诱饵"
+  },
+  {
+   "id": "task_nono_lu",
+   "ownerId": "nono",
+   "status": "pending",
+   "goal": "问清路明非的参赛意愿并说明三条接近钟楼的路线"
+  },
+  {
+   "id": "task_nono_battery",
+   "ownerId": "nono",
+   "status": "pending",
+   "goal": "把故障短讯机恢复到能与凯撒联络的状态"
+  },
+  {
+   "id": "task_nono_wounded",
+   "ownerId": "nono",
+   "status": "pending",
+   "goal": "确认西回廊的蓝方伤员是否需要真正的医护帮助"
+  },
+  {
+   "id": "task_nono_signal",
+   "ownerId": "nono",
+   "status": "pending",
+   "goal": "与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷"
+  },
+  {
+   "id": "task_fingel_deal",
+   "ownerId": "fingel",
+   "status": "pending",
+   "goal": "在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会"
+  },
+  {
+   "id": "task_fingel_map",
+   "ownerId": "fingel",
+   "status": "pending",
+   "goal": "把检修门从里面插闩这件事告诉准备走地下路线的人"
+  },
+  {
+   "id": "task_fingel_camera",
+   "ownerId": "fingel",
+   "status": "pending",
+   "goal": "换上相机备用电池，拍到有辨识度的争旗场面"
+  },
+  {
+   "id": "task_fingel_help",
+   "ownerId": "fingel",
+   "status": "pending",
+   "goal": "若路明非求助，给出可验证的器材或路线帮助，而不是空口保证安全"
+  },
+  {
+   "id": "task_fingel_soup",
+   "ownerId": "fingel",
+   "status": "pending",
+   "goal": "保住自己腰包里的饭票，不拿别人的补给抵债"
+  },
+  {
+   "id": "task_chu_hold",
+   "ownerId": "chu",
+   "status": "pending",
+   "goal": "守住钟楼旗台，同时让蓝方真正受伤的人安全撤离"
+  },
+  {
+   "id": "task_chu_lin",
+   "ownerId": "chu",
+   "status": "pending",
+   "goal": "查明林亦舟的扭伤是否妨碍行走，并决定是否派人接应"
+  },
+  {
+   "id": "task_chu_su",
+   "ownerId": "chu",
+   "status": "pending",
+   "goal": "与苏茜确认东回廊的射界，避免两人同时离开防线"
+  },
+  {
+   "id": "task_chu_hatch",
+   "ownerId": "chu",
+   "status": "pending",
+   "goal": "检查钟楼地下检修门的门闩，不能把地下路线当成不存在"
+  },
+  {
+   "id": "task_chu_flag",
+   "ownerId": "chu",
+   "status": "pending",
+   "goal": "在红方进入顶层前安排旗台的持守与撤退信号"
+  },
+  {
+   "id": "task_chu_line",
+   "ownerId": "chu",
+   "status": "achieved",
+   "goal": "约定蓝方听见安全暂停广播就停止射击"
+  },
+  {
+   "id": "task_caesar_win",
+   "ownerId": "caesar",
+   "status": "pending",
+   "goal": "在15:45停赛前让红方取得可确认的旗台控制权"
+  },
+  {
+   "id": "task_caesar_contact",
+   "ownerId": "caesar",
+   "status": "pending",
+   "goal": "恢复与诺诺的联络，确认她是否愿意负责服务巷方向"
+  },
+  {
+   "id": "task_caesar_bridge",
+   "ownerId": "caesar",
+   "status": "pending",
+   "goal": "查明跨溪小桥是否仍能通行，不让小队在松动护栏处挤作一团"
+  },
+  {
+   "id": "task_caesar_tang",
+   "ownerId": "caesar",
+   "status": "pending",
+   "goal": "让唐骁报告庭院火力位置，再决定正面吸引还是撤换路线"
+  },
+  {
+   "id": "task_caesar_flag",
+   "ownerId": "caesar",
+   "status": "pending",
+   "goal": "安排登旗台的人携带可识别的红方旗，不以口头宣布代替实际占领"
+  },
+  {
+   "id": "task_su_watch",
+   "ownerId": "su",
+   "status": "pending",
+   "goal": "守住东回廊对钟楼的接近线，并保持蓝方信息可信"
+  },
+  {
+   "id": "task_su_report",
+   "ownerId": "su",
+   "status": "pending",
+   "goal": "向楚子航报告跨溪小桥的实际人员和松动护栏"
+  },
+  {
+   "id": "task_su_reload",
+   "ownerId": "su",
+   "status": "pending",
+   "goal": "在当前弹匣打空前确认身后的备用弹匣属于自己"
+  },
+  {
+   "id": "task_su_lin",
+   "ownerId": "su",
+   "status": "pending",
+   "goal": "核实西回廊求助是否为真实伤情，在必要时配合停火"
+  },
+  {
+   "id": "task_su_exit",
+   "ownerId": "su",
+   "status": "pending",
+   "goal": "保留从低窗退到北廊口的路线，不把长枪留在窗外"
+  },
+  {
+   "id": "task_lin_leave",
+   "ownerId": "lin",
+   "status": "pending",
+   "goal": "在不加重脚踝伤势的情况下到达演习医护处置室"
+  },
+  {
+   "id": "task_lin_call",
+   "ownerId": "lin",
+   "status": "pending",
+   "goal": "向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能"
+  },
+  {
+   "id": "task_lin_safe",
+   "ownerId": "lin",
+   "status": "pending",
+   "goal": "把自己的演习枪交给可信的人或移出医护搬运路线"
+  },
+  {
+   "id": "task_lin_carry",
+   "ownerId": "lin",
+   "status": "pending",
+   "goal": "得到明确愿意帮忙的搬运者，并沿白线撤离"
+  },
+  {
+   "id": "task_lin_sent",
+   "ownerId": "lin",
+   "status": "achieved",
+   "goal": "用蓝方短讯机发出自己位于第三根廊柱的求助"
+  },
+  {
+   "id": "task_tang_push",
+   "ownerId": "tang",
+   "status": "pending",
+   "goal": "为红方接近钟楼正门提供真实有效的掩护"
+  },
+  {
+   "id": "task_tang_ammo",
+   "ownerId": "tang",
+   "status": "pending",
+   "goal": "在再次探身前更换空弹匣，不把空枪当成掩护火力"
+  },
+  {
+   "id": "task_tang_report",
+   "ownerId": "tang",
+   "status": "pending",
+   "goal": "向凯撒报告自己能确认的窗口位置，不能把猜测报成已压制"
+  },
+  {
+   "id": "task_tang_pause",
+   "ownerId": "tang",
+   "status": "pending",
+   "goal": "遇见真实伤员撤离时停火，并把停火原因通知同队"
+  },
+  {
+   "id": "task_tang_fallback",
+   "ownerId": "tang",
+   "status": "pending",
+   "goal": "被两处射界夹住时保留退到南端花槽的机会"
+  },
+  {
+   "id": "task_zhou_guard",
+   "ownerId": "zhou",
+   "status": "pending",
+   "goal": "守住旗台，并在需要时安全操作信号旗"
+  },
+  {
+   "id": "task_zhou_rope",
+   "ownerId": "zhou",
+   "status": "pending",
+   "goal": "在靠近外廊边缘前把安全绳扣好并确认另一端固定"
+  },
+  {
+   "id": "task_zhou_latch",
+   "ownerId": "zhou",
+   "status": "pending",
+   "goal": "弄清白旗锁扣的释放方向，不强拽旗杆"
+  },
+  {
+   "id": "task_zhou_warn",
+   "ownerId": "zhou",
+   "status": "pending",
+   "goal": "将锁扣卡滞和未固定安全绳的情况告知楚子航"
+  },
+  {
+   "id": "task_zhou_retreat",
+   "ownerId": "zhou",
+   "status": "pending",
+   "goal": "若守不住外廊，从玻璃门退回顶层而不是翻护栏"
+  },
+  {
+   "id": "task_qin_gear",
+   "ownerId": "qin",
+   "status": "pending",
+   "goal": "让演习器材可追溯地发放，并优先保证伤员搬运"
+  },
+  {
+   "id": "task_qin_stretcher",
+   "ownerId": "qin",
+   "status": "pending",
+   "goal": "在接到真实扭伤报告后开笼放行担架并登记搬运者"
+  },
+  {
+   "id": "task_qin_ladder",
+   "ownerId": "qin",
+   "status": "pending",
+   "goal": "问清折叠梯用途，不放行把梯子架到禁入护栏外的方案"
+  },
+  {
+   "id": "task_qin_battery",
+   "ownerId": "qin",
+   "status": "pending",
+   "goal": "确认短讯机电池与相机电池型号不同，避免拿错"
+  },
+  {
+   "id": "task_qin_return",
+   "ownerId": "qin",
+   "status": "pending",
+   "goal": "在停赛后核回安全绳、担架与领用牌"
+  },
+  {
+   "id": "task_doctor_treat",
+   "ownerId": "doctor",
+   "status": "pending",
+   "goal": "完成实际受伤人员的接诊并让医护区保持中立"
+  },
+  {
+   "id": "task_doctor_prepare",
+   "ownerId": "doctor",
+   "status": "pending",
+   "goal": "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+  },
+  {
+   "id": "task_doctor_triage",
+   "ownerId": "doctor",
+   "status": "pending",
+   "goal": "询问并核实伤者能否负重，避免把真实伤势误作演习淘汰"
+  },
+  {
+   "id": "task_doctor_signal",
+   "ownerId": "doctor",
+   "status": "pending",
+   "goal": "需要时请求演习观察席安排白线通道停火"
+  },
+  {
+   "id": "task_doctor_rest",
+   "ownerId": "doctor",
+   "status": "pending",
+   "goal": "核对医护休息区已退出者，不允许他们带枪重新回场"
+  },
+  {
+   "id": "task_shen_recover",
+   "ownerId": "shen",
+   "status": "pending",
+   "goal": "在医护休息区恢复并提供不违反退出规则的帮助"
+  },
+  {
+   "id": "task_shen_symptom",
+   "ownerId": "shen",
+   "status": "pending",
+   "goal": "向顾岚说明手指麻感是否减轻"
+  },
+  {
+   "id": "task_shen_account",
+   "ownerId": "shen",
+   "status": "pending",
+   "goal": "若被询问，只说明退出前亲眼看见的庭院路线"
+  },
+  {
+   "id": "task_shen_stay",
+   "ownerId": "shen",
+   "status": "pending",
+   "goal": "在获准离开医护区前不重新加入争旗"
+  },
+  {
+   "id": "task_shen_checked",
+   "ownerId": "shen",
+   "status": "achieved",
+   "goal": "放下演习枪并按要求拆下红色识别带"
+  },
+  {
+   "id": "task_tomiyama_support",
+   "ownerId": "tomiyama",
+   "status": "pending",
+   "goal": "让退出演习的学生稳定下来，并把实际伤情及时交给顾岚"
+  },
+  {
+   "id": "task_tomiyama_shen",
+   "ownerId": "tomiyama",
+   "status": "pending",
+   "goal": "询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友"
+  },
+  {
+   "id": "task_tomiyama_refer",
+   "ownerId": "tomiyama",
+   "status": "pending",
+   "goal": "若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事"
+  },
+  {
+   "id": "task_tomiyama_boundary",
+   "ownerId": "tomiyama",
+   "status": "pending",
+   "goal": "说明退出不等于失去价值，同时守住不能回场参战的边界"
+  },
+  {
+   "id": "task_tomiyama_help",
+   "ownerId": "tomiyama",
+   "status": "pending",
+   "goal": "有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+  },
+  {
+   "id": "task_manstein_order",
+   "ownerId": "manstein",
+   "status": "pending",
+   "goal": "让自由一日按中立规则结束，真实伤情得到处置"
+  },
+  {
+   "id": "task_manstein_clock",
+   "ownerId": "manstein",
+   "status": "pending",
+   "goal": "在15:45发布停赛通知并核对旗台最终状态"
+  },
+  {
+   "id": "task_manstein_injury",
+   "ownerId": "manstein",
+   "status": "pending",
+   "goal": "核实西回廊伤情，必要时广播局部停火而不是偏袒某队"
+  },
+  {
+   "id": "task_manstein_radio",
+   "ownerId": "manstein",
+   "status": "pending",
+   "goal": "让短讯机故障用可核对的方式报修，不能私改计分"
+  },
+  {
+   "id": "task_manstein_log",
+   "ownerId": "manstein",
+   "status": "pending",
+   "goal": "把实际安全违规与普通战术失败分开记录"
+  }
+ ]
+}

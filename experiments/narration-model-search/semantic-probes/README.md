@@ -18,6 +18,7 @@
 - `../src/semantic_validate.py`：读取 `pack.jsonl` 和 `run-dir/<caseId>.json`，校验 JSON 引用和覆盖；输出逐例 `ok/errors/warnings`，退出码 0（全过）或 2。
 - 真实 pack：待 03/04 提供（见 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）。
 - 合成自检：在 `src/selftest.py` 里，覆盖四类错误的正/负例；它不是候选结果。
+- `fixtures/free-day-73-tasks.json`：从 06 当前 `dragon-raja-free-day.world.json` 的 initial 状态导出的紧凑夹具（14 人物、73 任务、source sha256 在文件内）；自检用 14 人物全覆盖和 12/14 两种输出验证覆盖尺度。
 
 ## pack 格式（JSONL，每行一例）
 
