@@ -78,6 +78,15 @@ describe('browser candidate queue mechanics', () => {
     expect(run.result.paragraphs).toEqual([]);
   });
 
+  it('never reports accepted=true for an empty result', async () => {
+    attachEngine('/models/fixture.gguf', fakeEngine());
+    await prepare({ set: 'short', include: ['short-root'], candidates: [spec({ exportName: 'generateEmptyAccepted' })] });
+    const run = await runOne({ candidateId: fixtureId, scenarioId: 'short-root', hardTimeoutMs: 10_000 });
+    expect(run.result.accepted).toBe(false);
+    expect(run.contract.ok).toBe(false);
+    expect(run.contract.notes).toContain('accepted_with_empty_text');
+  });
+
   it('records a thrown candidate as an error with no fabricated text', async () => {
     attachEngine('/models/fixture.gguf', fakeEngine());
     await prepare({ set: 'short', include: ['short-root'], candidates: [spec({ exportName: 'generateThrows' })] });

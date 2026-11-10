@@ -45,3 +45,11 @@ export async function generateBroken() {
 export async function generateThrows(): Promise<never> {
   throw new Error('fixture_failure');
 }
+
+/** Claims success with no prose; the queue must not treat that as accepted. */
+export async function generateEmptyAccepted() {
+  return {
+    text: '', accepted: true, rawAttempts: [], issues: [],
+    timings: { totalMs: 0 }, strategyVersion: 'fixture-empty',
+  };
+}

@@ -471,7 +471,9 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   const result = contract.result;
   const text = typeof result?.text === 'string' ? result.text : '';
   const paragraphs = splitParagraphs(text);
-  if (result?.accepted && text.trim()) store.accepted.set(`${candidate.id}::${scenario.id}`, text);
+  const accepted = result?.accepted === true && text.trim().length > 0;
+  const acceptedButEmpty = result?.accepted === true && text.trim().length === 0;
+  if (accepted) store.accepted.set(`${candidate.id}::${scenario.id}`, text);
   const attempts = Array.isArray(result?.rawAttempts) ? normalizeAttempts(result.rawAttempts) : [];
   const timings = isRecord(result?.timings) ? result.timings as RunEvidence['result']['timings'] : null;
   const extras = result ? Object.keys(result).filter((key) => !['text', 'accepted', 'rawAttempts', 'issues', 'timings', 'strategyVersion'].includes(key)) : [];
@@ -503,7 +505,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       paragraphs,
       firstParagraph: paragraphs[0] ?? '',
       lastParagraph: paragraphs.at(-1) ?? '',
-      accepted: result?.accepted === true,
+      accepted,
       status: typeof result?.status === 'string' ? result.status : null,
       strategyVersion: typeof result?.strategyVersion === 'string' ? result.strategyVersion : null,
       timings,
@@ -520,10 +522,14 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
     },
     engineAfter: { alive: engineAlive, modelId: slot.engine.info.modelId },
     contract: {
-      ok: contract.ok && error === null,
+      // A candidate must never turn an empty accepted result into evidence of
+      // success. Keep the raw accepted flag out of the verdict and fail the
+      // contract, so the queue records a failure for the owner.
+      ok: contract.ok && error === null && !acceptedButEmpty,
       missing: contract.missing,
       notes: [
         ...contract.notes,
+        ...(acceptedButEmpty && !contract.notes.includes('accepted_with_empty_text') ? ['accepted_with_empty_text'] : []),
         ...(continuationKey && !priorText ? ['continuation_source_missing'] : []),
         ...(error ? [`error:${error}`] : []),
       ],
