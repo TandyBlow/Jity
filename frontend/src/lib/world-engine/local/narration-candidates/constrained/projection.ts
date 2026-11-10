@@ -71,10 +71,25 @@ export function firstClause(text: string, max = 32): string {
   return picked.replace(/[，,、]+$/u, '');
 }
 
+/** A settled description kept as a complete sentence. Cutting a rule list at
+ * a semicolon would read as if the rest of the rule did not exist, so a too
+ * long sentence is shortened at a comma and marked with an ellipsis. */
+export function noteClause(text: string, max = 48): string {
+  const clean = text.replace(/\s+/gu, ' ').trim();
+  if (!clean) return '';
+  const end = clean.search(/[。！？!?]/u);
+  const sentence = end >= 0 ? clean.slice(0, end) : clean;
+  if ([...sentence].length <= max) return sentence.replace(/[，,、；;\s]+$/u, '');
+  const cut = [...sentence].slice(0, max).join('');
+  const comma = Math.max(cut.lastIndexOf('，'), cut.lastIndexOf('、'), cut.lastIndexOf('；'));
+  const kept = (comma > max * 0.4 ? cut.slice(0, comma) : cut).replace(/[，、；]+$/u, '');
+  return `${kept}……`;
+}
+
 function joinNote(initial: string, changes: StoredChange[], max = 48): string {
   const parts = [initial, ...activeText(changes)].filter((text) => text && text.trim());
   const joined = parts.join('；');
-  return joined.length > max ? firstClause(joined, max) : joined;
+  return joined.length > max ? noteClause(joined, max) : joined;
 }
 
 function characterNote(state: WorldState, id: Id): string {

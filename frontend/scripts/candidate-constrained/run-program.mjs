@@ -231,6 +231,22 @@ try {
 
   const runs = [];
   let shortPrior = null;
+
+  // The same root point team 09 ran in the real browser (browser-09.json,
+  // 04-settlement::free-day-open): no settled change, only the opening scene.
+  const rootPacket = {
+    anchor: { worldId: world.worldId, pointId: 'root_free_day', version: 0, stateDigest: await stateDigest(buildInitialState(world.initial)), previousPointId: null },
+    state: buildInitialState(world.initial), beforeState: null, timeAdvance: null, entityDeltas: {}, facts: [],
+  };
+  const freeDayRoot = await generateCandidate({
+    engine: noopEngine,
+    committed: rootPacket,
+    inputText: '我先看清服务巷里有什么，再看看诺诺在做什么。',
+    priorText: null,
+    policy: { mode: 'program', composer },
+  });
+  runs.push({ id: 'free-day-root', input: '我先看清服务巷里有什么，再看看诺诺在做什么。', prior: null, result: freeDayRoot });
+  if (!freeDayRoot.accepted) exitCode = 1;
   for (const entry of shortPackets) {
     const result = await generateCandidate({
       engine: noopEngine,
