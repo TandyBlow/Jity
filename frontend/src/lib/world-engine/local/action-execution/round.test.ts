@@ -163,10 +163,12 @@ describe('real round through the controller with the action-execution port', () 
 
     const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
     const captured: Captured[] = [];
+    const prompts: string[] = [];
     const engine = {
       info: { backend: 'fake', modelId: 'fake-joint' },
       async load() {}, async dispose() {},
       async complete(prompt: string): Promise<string> {
+        prompts.push(prompt);
         if (prompt.includes('角色行动判断器')) {
           return JSON.stringify({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
         }
@@ -225,5 +227,15 @@ describe('real round through the controller with the action-execution port', () 
     };
     const heroMember = heroResults.members.find((member) => member.memberId === 'hero');
     expect(heroMember?.rollRefs).toEqual([expect.objectContaining({ targetId: 'rival', admitted: true })]);
+
+    // The joint-group inputs carry the frozen action, the declared target and
+    // the source action the reaction must answer; no prompt is a bare id.
+    const targetsPrompt = prompts.find((prompt) => prompt.includes('牵连判断器')) ?? '';
+    expect(targetsPrompt).toContain(playerText);
+    expect(targetsPrompt).toContain('老周');
+    const reactionPrompt = prompts.find((prompt) => prompt.includes('反应生成器')) ?? '';
+    expect(reactionPrompt).toContain(playerText);
+    expect(reactionPrompt).toContain('老周');
+    expect(reactionPrompt).toContain('路明非');
   });
 });
