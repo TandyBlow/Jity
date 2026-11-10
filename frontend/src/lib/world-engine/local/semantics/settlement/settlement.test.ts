@@ -221,6 +221,8 @@ describe('six-stage updates', () => {
     // The tasks stage reads the post-position working state.
     const tasksPrompt = engine.prompts.find((prompt) => prompt.includes('任务判定器'))!;
     expect(tasksPrompt).toContain('甲（id=a）位置=远处');
+    const personalityPrompt = engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))!;
+    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`{\"entityId\":\"${id}\",\"op\":\"keep\"`);
   });
 
   it('does not re-achieve an already achieved task', async () => {
