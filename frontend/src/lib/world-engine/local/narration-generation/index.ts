@@ -1094,9 +1094,12 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     } catch {
       sentence = '';
     }
-    if (!sentence || !/[。！？!?]$/u.test(sentence)) {
-      sentence = `${factPhrases(task)[0]}。`;
-    }
+    // No program sentence here. «路明非完成了任务「比对三份互相矛盾的登记簿」。»
+    // is a state row, not prose, and the product must not turn the turn into a
+    // checklist. If the model cannot say the outcome in its own words, the
+    // draft stays rejected and the caller decides what to show.
+    if (!sentence) continue;
+    if (!/[。！？!?]$/u.test(sentence)) sentence = `${sentence}。`;
     const appended = `${attempt.cleaned}${sentence}`;
     const check = verifyNarration({
       text: appended, finishReason: 'stop', committed: input.committed, ledger, policy,

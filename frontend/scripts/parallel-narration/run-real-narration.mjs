@@ -13,6 +13,7 @@
 //     [--model /models/qwen25-0.5b-narration-Q4_K_M.gguf] \
 //     [--mode beats] [--set dev|unseen|continuation|all] \
 //     [--out ../../../results/02-narration/real-model-evidence.json]
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createReadStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { cpus } from 'node:os';
@@ -161,6 +162,64 @@ function assetMiddleware(vite) {
     }
     next();
   });
+}
+
+// Local inference is one GPU. Checking that the lease looks free is not the
+// same as owning it: two probes can both read «free» and both start. Every run
+// that will touch the model therefore takes the exclusive lease first
+// (open(...,'x') in resource_lease.py is the atomic step) and releases it on
+// every exit path, including a crash or Ctrl-C. 09 owns the shared lease tool;
+// this is the probe-side integration of the same protocol.
+const leaseRoot = (() => {
+  let dir = frontend;
+  for (let i = 0; i < 6; i += 1) {
+    if (existsSync(resolve(dir, 'resource_lease.py'))) return dir;
+    dir = dirname(dir);
+  }
+  return null;
+})();
+const leaseLane = option('--lease-lane', process.env.JITY_PI_LANE ?? '02-narration');
+const leasePurpose = option('--lease-purpose', `${basename(config.out)} local inference`);
+let leaseHeld = false;
+const python = process.platform === 'win32' ? 'python' : 'python3';
+const runLease = (action) => {
+  if (!leaseRoot) throw new Error('resource_lease.py not found above the frontend directory');
+  const result = spawnSync(python, ['resource_lease.py', action, '--lane', leaseLane, '--purpose', leasePurpose], {
+    cwd: leaseRoot, encoding: 'utf8',
+  });
+  return { code: result.status, out: `${result.stdout ?? ''}${result.stderr ?? ''}`.trim() };
+};
+const releaseLease = () => {
+  if (!leaseHeld) return;
+  leaseHeld = false;
+  const result = runLease('release');
+  if (result.code !== 0) console.error(`[lease] release failed: ${result.out}`);
+  else console.log(`[lease] released ${leaseLane}`);
+};
+process.on('exit', releaseLease);
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => { releaseLease(); process.exit(130); });
+}
+if (!process.argv.includes('--check-scenario')) {
+  // 09 schedules the queue; a run for another lane's item is not mine to take.
+  const queuePath = leaseRoot ? resolve(leaseRoot, 'results/product/browser-queue.json') : null;
+  if (queuePath && existsSync(queuePath)) {
+    const queue = JSON.parse(readFileSync(queuePath, 'utf8'));
+    const running = (queue.items ?? []).filter((item) => item.status === 'running'
+      && !String(item.itemId ?? '').startsWith(`${leaseLane}:`));
+    if (running.length) {
+      console.error(`[lease] another lane's item is running: ${running.map((item) => item.itemId).join(', ')}`);
+      process.exit(2);
+    }
+  }
+  const acquired = runLease('acquire');
+  if (acquired.code !== 0) {
+    console.error(`[lease] not acquired (${leaseLane}): ${acquired.out}`);
+    console.error('[lease] a run needs the exclusive lease; nothing was started');
+    process.exit(2);
+  }
+  leaseHeld = true;
+  console.log(`[lease] acquired ${leaseLane}: ${leasePurpose}`);
 }
 
 const server = await createServer({
@@ -745,4 +804,5 @@ try {
 } finally {
   await browser?.close();
   await server.close();
+  releaseLease();
 }
