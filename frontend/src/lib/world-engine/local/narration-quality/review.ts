@@ -1589,7 +1589,7 @@ export function reviewNarration(args: {
           // Taking them off the chest is a transfer; a bare 「摘下」 still
           // implies they were worn, which the settled look contradicts.
           if (/(?:从|把)(?:胸前|身上|颈上|脖子上|怀里)[^。]{0,6}(?:摘下|取下|摘掉)/u.test(narration)) continue;
-          if (/(未|没|不|尚未|没有)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
+          if (/(未|没|不|尚未|没有|而非|而不是)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
             [looks.slice(0, 40)], []));
@@ -1713,7 +1713,7 @@ export function reviewNarration(args: {
     {
       const band = /(识别带|袖标|臂章)[^。]{0,8}(左臂|右臂|手臂|肩)/u.exec(projection.sourceText);
       if (band && narration.includes(band[1])) {
-        const elsewhere = new RegExp(`${band[1]}[^。]{0,8}(发|头|腰|腿)|发圈[^。]{0,6}${band[1]}`, 'u');
+        const elsewhere = new RegExp(`${band[1]}[^。]{0,8}(发|头|腰|腿)`, 'u');
         if (elsewhere.test(narration)) {
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `the ${band[1]} is settled on the ${band[2]}; the prose moves it elsewhere`, [`${band[1]} on ${band[2]}`], []));

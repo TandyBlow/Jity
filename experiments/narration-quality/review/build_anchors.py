@@ -1538,6 +1538,29 @@ for case_id in route_keep:
         "expect": {"fact": route_facts[case_id], "style": [], "review": [], "notes": route_notes[case_id]},
     })
 
+
+# The first constrained-beats model text (448e): 485 chars, a state recital
+# that never walks in or reads the board and repeats settled lines.
+run448 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-448e.json", encoding="utf-8"))
+t448 = run448["turns"][0]
+fixture448 = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/fixtures/free-day-root-scenario-160.json", encoding="utf-8"))
+scene448 = fixture448["scene"]
+people448 = {person["name"]: {"位置": scene448["location"], "精神值": 0, "外貌": [person["note"]], "个性": [], "任务": {"小任务": []}} for person in scene448["present"]}
+items448 = {item["name"]: {"位置": scene448["location"], "外貌": [item["note"]]} for item in list(scene448.get("objects") or []) + list(scene448.get("inventory") or [])}
+anchors.append({
+    "id": "neg/route/448e-recital",
+    "source": "09 constrained-beats 2026-11-10T2341-711c (head 448e1dd0): the first model text is a 485-char state recital",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t448["text"],
+    "options": {"minChars": 1, "action": t448["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+               "notes": "The model recites settled lines (goggles, vest, hair, band, gun, radio) and never walks in or reads the 规则牌; the walk/read is the declared action."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
