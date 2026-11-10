@@ -232,6 +232,14 @@ python hpc/export_candidate.py --adapter <adapter-best.pt>   --base D:/others/Ji
 权重不进 Git。候选登记在 `results/quality/candidates-10.json`，路径、SHA-256、输入样例、
 完整模板、分词器哈希都在里面；训练状态与数据缺口在 `results/quality/training.json`。
 
+### 8.4.1 产品世界的 78 条手工短目标
+
+199 行冻结数据是“图书馆世界”，老师数据也常写成套话；而页面实际叙述的是《龙族·自由一日》
+世界，此前**一条人工短目标都没有**。`src/build_world_targets.py` 为该世界的 78 个拍逐条写了
+20–70 字的目标（移动 15 / 任务 28 / 个性 14 / 精神 14 / 纯时间 7），`authoredBy="lane-10"`，
+用同一套逐拍检查跑过，0 条失败。目标文件：`data/world-targets-v1.jsonl` SHA-256
+`837f60b1…`。它们是我写的监督，不是 01/05 的手写正文。
+
 ### 8.5 已登记候选与已知失败
 
 - `qwen05b-scene-v1`（HPC 251222，3 epoch）：只在 199 条长场景上训练，本地探针能写出通顺段落，
@@ -239,7 +247,10 @@ python hpc/export_candidate.py --adapter <adapter-best.pt>   --base D:/others/Ji
   `qualityStatus=not_met`。它是可加载基线，不是质量候选。
 - `qwen05b-mix-v1`（HPC 251232，3 epoch，199 长场景 + 21 手写短场景×6）：短模式输出已经接近
   “两句 + 时间”，但仍会凭空写出“手机”“手电”等物；长场景模式照样编对白。
-- 拍数据（8.3）正在生成、筛选；通过筛选的句子会与 21 条手写短场景一起训练下一版。
+- 拍数据（8.3）已生成并筛选；通过筛选的 98 条与 21 条手写短场景一起训练了
+  `qwen15b-beat-v2`（HPC 251254）。本地 20 个 dev 拍探针在 temp 0.4 下 10/20 通过严格事实
+  检查，任务拍常只写动作、不写任务本身；仍是失败，不是达标。
+- `qwen15b-beat-v3`（HPC 251274）加入 8.4.1 的 78 条产品世界目标，正在排队。
 
 ### 8.6 02 接线（拍路线）
 
