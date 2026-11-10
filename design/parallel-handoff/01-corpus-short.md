@@ -1,6 +1,6 @@
 # 01 线：短场景事实监督（第七批）
 
-状态：**batch 7 ready**。70 行人手写的 61–152 字短场景，已提交到本线分支，可直接消费。材料提交：`66f681a49cd99e99807005e830c3797d40a4ab07`。
+状态：**batch 8 ready**。71 行人手写的 61–152 字短场景，已提交到本线分支，可直接消费。材料提交：`66f681a49cd99e99807005e830c3797d40a4ab07`。
 
 这不是模型、不是候选权重、不是自动评测报告，也不替代训练脚本或最终验收。它是给叙事训练/浏览器路线用的**正文监督**：输入是已经结算的世界变化，正文要像小说，但关键事实一个不漏、输入没有的东西一个不加。
 
@@ -8,14 +8,14 @@
 
 | 路径 | 内容 |
 |---|---|
-| `experiments/narration-quality/corpus-short/rows.jsonl` | 70 行主材料：完整 `input`、`targetText`、检查元数据 |
-| `experiments/narration-quality/corpus-short/rows-authored.jsonl` | 19 行产品世界行，单独一份便于核对 |
+| `experiments/narration-quality/corpus-short/rows.jsonl` | 71 行主材料：完整 `input`、`targetText`、检查元数据 |
+| `experiments/narration-quality/corpus-short/rows-authored.jsonl` | 20 行产品世界行，单独一份便于核对 |
 | `experiments/narration-quality/corpus-short/first/` | 首批 22 行短正文的定义与写回脚本（含 2 分钟派生对照） |
-| `experiments/narration-quality/corpus-short/authored/` | 产品世界的 19 个场景定义与生成脚本（世界文件初始快照 + 一个 authored 变化） |
+| `experiments/narration-quality/corpus-short/authored/` | 产品世界的 20 个场景定义与生成脚本（世界文件初始快照 + 一个 authored 变化） |
 | `experiments/narration-quality/corpus-short/long/` | 4 行 109–136 字长正文的定义与写回脚本（冻结 `x` 原样） |
 | `experiments/narration-quality/corpus-short/short/` | 25 行另外选行短正文的定义与写回脚本（`short2-*`，冻结 `x` 原样） |
 | `experiments/narration-quality/corpus-short/index.json` | 批次索引、来源、行类型、世界族/类别/长度统计、失败对应 |
-| `experiments/narration-quality/corpus-short/review.md` | 70 行逐行人工阅读记录（变化落实、边界、字数） |
+| `experiments/narration-quality/corpus-short/review.md` | 71 行逐行人工阅读记录（变化落实、边界、字数） |
 | `experiments/narration-quality/corpus-short/check_corpus.py` | 结构检查：冻结输入原样、authored 来源/SHA、authored 变化与结果状态一致、train-only、长度/字段、姿势/事件动词/授权实体/时间/requiredFacts |
 | `results/quality/team-01-input.json` | 共享交接：指向实际 jsonl，含正文、可消费字段、限制 |
 
@@ -24,7 +24,7 @@
 - 51 行旧材料来自 `narration-dataset-v1` 的 `rows-xy.jsonl`，源提交 `1ab6ca791f97529a7bffed1f4837bf81a28badcb`：22 行首批短场景（其中 1 行是 2 分钟派生对照）+ 4 行另外选行（`row-0117`/`0132`/`0137`/`0183`）的长正文 + 25 行另外选行的短正文。
 - 只用 **train**。没有用 dev/test；旧 199 行和 `splits/v1.json` 未修改。`sourceSplit` 全部为 `train`，检查脚本会对照 `splits/v1.json` 重算。
 - `input` 是旧行 `x` 的原样拷贝；每行有 `sourceInputSha256`，检查脚本会重算。4 行长正文只是给另外四行冻结 `x` 写更长的目标，25 行 `short2-*` 是另外 25 行冻结 `x` 的短正文，输入都没有改。
-- 19 行产品材料来自 `frontend/public/worlds/dragon-raja-free-day.world.json` 的初始快照，源提交 `865ae64e0901a70c3db4f1d0eb2af60268943c53`，世界文件 SHA-256 `0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a`。每行只落一个 authored 的本回合变化；不是浏览器会话，不声称前几回合发生过。人物、地点、物品、任务全部来自该世界文件，检查脚本会验证正文里出现的世界实体名都在本行输入里。
+- 20 行产品材料来自 `frontend/public/worlds/dragon-raja-free-day.world.json` 的初始快照，源提交 `865ae64e0901a70c3db4f1d0eb2af60268943c53`，世界文件 SHA-256 `0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a`。每行只落一个 authored 的本回合变化；不是浏览器会话，不声称前几回合发生过。人物、地点、物品、任务全部来自该世界文件，检查脚本会验证正文里出现的世界实体名都在本行输入里。
 - 旧长 `y` 只做文风参考，不做事实来源。已发现长 `y` 与 `本回合变化` 不一致的行（`row-0182`、`row-0199`），正文按变化写，不按长 `y` 搬事件。
 - **1 行派生对照**：`short-0008-two-minute-no-change` 以 `row-0008` 为底，只把 `本回合变化.时间推进` 从 20 分钟改成 2 分钟，其余输入和状态不变；`sourceRowId=derived:row-0008`、`sourceEvidence.derived=true`、`baseRowId=row-0008`，并写明 derivation。它的 `sourceRowId` 故意不写成 `row-0008`，这样 10 线按 `sourceRowId` join `rows-v2` 时会自然跳过它，不需要额外分支。它只训练“两分钟过去、没有新事件”，不是旧 199 行中的冻结行；检查脚本会验证相对底行只改了时间。
 
@@ -61,9 +61,9 @@
 
 ## 覆盖
 
-70 行，正文 61–152 字（14 行 60–79、49 行 80–119、7 行 120–160，均值 95.2）。其中 4 行（`row-0138`/`row-0161`/`row-0175`/`row-0178`）是只写已结算地点/外貌、不写事件的 strict 场景，对应 02 `req-02-02` 的“只实现已结算变化加至多一个许可外貌细节”；1 行 2 分钟无变化对照，来自 09 真实运行里 `elapsed-two-minutes` 仍让模型开盒子的失败。
+71 行，正文 61–152 字（15 行 60–79、49 行 80–119、7 行 120–160，均值 95.0）。其中 4 行（`row-0138`/`row-0161`/`row-0175`/`row-0178`）是只写已结算地点/外貌、不写事件的 strict 场景，对应 02 `req-02-02` 的“只实现已结算变化加至多一个许可外貌细节”；1 行 2 分钟无变化对照，来自 09 真实运行里 `elapsed-two-minutes` 仍让模型开盒子的失败。
 
-一行可能覆盖多类，所以下表行数合计大于 70。
+一行可能覆盖多类，所以下表行数合计大于 71。
 
 | 类型 | 行数 | 具体 |
 |---|---:|---|
@@ -81,17 +81,17 @@
 ## 给 10：怎么直接消费
 
 - 把 `input` + `targetText` 作为 **`yShort`** 样本；正文是 61–152 字，不是 20–60 字的单事实 beat。
-- 产品 19 行（`dr-*`）是卡塞尔学院自由一日世界，可直接补产品实体；不要再只学旧图书馆的映射。
+- 产品 20 行（`dr-*`）是卡塞尔学院自由一日世界，可直接补产品实体；不要再只学旧图书馆的映射。
 - 7 行 120–160 字可直接用于“更长但仍只含 2–3 个事实”的目标；不要用它们去凑密集多事实。
 - 本批的正文已经按 10 线参考 binder 逐条对齐：
-  - 按 `narration_rules.build_facts`/`binds` 只读重算，70 行的 84 条强制事实（moved / task_achieved / personality_changed / sanity_changed）全部能绑定到正文句子。
-  - 按 `projection_v2.normalize_projection` + `v2_render.serialize` 重算，70 行都能序列化；只有 `short-0008-two-minute-no-change` 与 `row-0008` 的 `xProse` 不同，且只差“20 分钟 → 2 分钟”。
+  - 按 `narration_rules.build_facts`/`binds` 只读重算，71 行的 84 条强制事实（moved / task_achieved / personality_changed / sanity_changed）全部能绑定到正文句子。
+  - 按 `projection_v2.normalize_projection` + `v2_render.serialize` 重算，71 行都能序列化；只有 `short-0008-two-minute-no-change` 与 `row-0008` 的 `xProse` 不同，且只差“20 分钟 → 2 分钟”。
   - 任务完成的事实要求目标文本原样出现，并配“办完/做完”这类完成语，所以正文里会出现 `「查清…」` 的引述；精神值变化要求同时出现 from/to 两个数字。这两条是当前对齐器的硬要求，不是文风偏好；如果 10 的下一版对齐器放宽，可以再改写出更自然的版本。
 - 如果 `qwen25-beat-v1` 需要 beat：从 `requiredFacts` 拆，但 beat 文本要另写；不要机械切 `targetText`。本批现在能按事实绑定，已经具备切 beat 的条件。
 - `styleReferenceIds` 指向旧长文；只借节奏、对白密度、人物反应，不搬事件。
 - 本批没有连续回合；`sequenceId`/`turnIndex` 为 `null`，不要当连续序列。
 - 导入时注意三类来源：① 22 行首批 + 4 行 `short-long-*` + 25 行 `short2-*` 都是冻结 `x`，可与 `rows-v2` 的 `xProse` 逐字节对照（`short-0008-two-minute-no-change` 的 `sourceRowId` 是 `derived:row-0008`，按 id 查不到，正好跳过；不要把它当成缺失）；② `dr-*` 产品行没有对应的 `rows-v2` 源，不能做“等于冻结 `xProse`”的断言，需要按世界文件 SHA 单独登记；③ 产品行不能按 `sourceRowId` join `rows_v2`，导入脚本要显式跳过或按 `id` 单独处理。
-- 70 行里有 7 行 120–152 字；如果 `yShort` 只想要 60–120，按 `targetChars` 过滤即可，不要机械截断。
+- 71 行里有 7 行 120–152 字；如果 `yShort` 只想要 60–120，按 `targetChars` 过滤即可，不要机械截断。
 
 ## 给 02：怎么当参照
 
@@ -117,7 +117,7 @@
 
 ## 人工检查证据
 
-70 行都完整读过 `input`（视角、上回合状态、本回合变化、本回合状态）和正文，`review.md` 留了逐行记录。重点检查：
+71 行都完整读过 `input`（视角、上回合状态、本回合变化、本回合状态）和正文，`review.md` 留了逐行记录。重点检查：
 
 1. 关键动作/结果是否漏（移动的起终点、任务完成、物品新状态、精神值方向）。
 2. 是否新增命名角色、物品、线索、往事、承诺。
@@ -131,15 +131,15 @@
 python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 ```
 
-当前输出：70 行；长度 61–152（14 行 60–79、49 行 80–119、7 行 120–160）；51 行旧材料（22 行首批 + 4 行同冻结输入的长正文 + 25 行同冻结输入的短正文，含 1 行派生对照只改时间）+ 19 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性、姿势词（输入有依据除外）、未授权实体、事件动词、时间推进和 `requiredFacts` 检查通过。语义检查是人工的，脚本不替代。
+当前输出：71 行；长度 61–152（15 行 60–79、49 行 80–119、7 行 120–160）；51 行旧材料（22 行首批 + 4 行同冻结输入的长正文 + 25 行同冻结输入的短正文，含 1 行派生对照只改时间）+ 20 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性、姿势词（输入有依据除外）、未授权实体、事件动词、时间推进和 `requiredFacts` 检查通过。语义检查是人工的，脚本不替代。
 
-10 线 `import_short_corpus.py` 的只读副本（`/tmp`，不改 10 线工作树）已经跑过本批：70 行、84 条 beat、84 条强制事实、`problems: []`；其中 18 行本来就没有强制事实（无变化/纯外貌/纯物品），所以 `beatCount=0`，其余 52 行每条事实都切出了 beat。语料文件的 SHA-256 是 `b6709d8ce74492220499e29f929bcc1923171c2d3317bb87642275087207bc22`。
+10 线 `import_short_corpus.py` 的只读副本（`/tmp`，不改 10 线工作树）已经跑过本批：71 行、84 条 beat、84 条强制事实、`problems: []`；其中 19 行本来就没有强制事实（无变化/纯外貌/纯物品/仅地点），所以 `beatCount=0`，其余 52 行每条事实都切出了 beat。
 
 ## 已知限制
 
 - 没有 GPU 生成/训练；正文是人手写的监督材料。
 - 没有自动语义评分；`requiredFacts` 是清单，不是完整逻辑。
-- 70 行，旧馆 51 行 + 产品世界 19 行；产品行只来自一个初始快照，不是全人物、全地点、全类别平衡采样。
+- 71 行，旧馆 51 行 + 产品世界 20 行；产品行只来自一个初始快照，不是全人物、全地点、全类别平衡采样。
 - 长度 61–152，140 字以上只有 1 行，且长场景都是两三个事实，不是密集多事实。
 - 任务目标原样引述、精神值数字会让部分句子偏“任务播报”；这是当前对齐器的硬要求，等对齐器接受行为层面落实后再补自然版对照。
 - 少量空间具体化（杯口朝向、门虚掩、风）是有依据的细微细节，不是已结算事实；如果训练侧要求更严，可逐行删。
@@ -156,6 +156,6 @@ python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 2. 140–152 字、仍只含 2–3 个事实的场景；
 3. 同一世界族的连续两回合（01 只做短场景，完整场景/连续回合仍归 05）；
 4. 真实模型最容易错的“两人分开/任务完成但不说答案/秘密只说出一层”；
-5. 10 明确要的 120 行目标：本批 70 行，剩余按真实失败补，不虚报数量。
+5. 10 明确要的 120 行目标：本批 71 行，剩余按真实失败补，不虚报数量。
 
 继续只用 train 或另立有来源的开发世界材料；不碰 dev/test，不改旧 199 行。

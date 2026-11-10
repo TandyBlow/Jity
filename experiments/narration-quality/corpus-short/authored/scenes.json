@@ -1599,6 +1599,69 @@
       ],
       "notes": "任务完成；只确认备用弹匣属于自己，不写换弹或开火。",
       "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0021-no-change-three-people",
+      "slug": "no-change-three-people",
+      "sourceRowId": "authored:dragon-raja-free-day#no-change-three-people",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono",
+        "fingel"
+      ],
+      "items": [
+        "map"
+      ],
+      "time": "2 分钟",
+      "delta": {},
+      "targetText": "服务巷里只有黄黑绳碰墙的声音。两分钟过去，路明非没有动，诺诺还在巷口，器材棚的门开着，芬格尔没有出来；三个人谁也没有往庭院走，墙角的演习弹红痕还是原样。",
+      "categories": [
+        "no_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        },
+        {
+          "kind": "no_change",
+          "scope": "世界状态",
+          "note": "本回合变化为空；三个人都没有移动，也没有新事件"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷的黄黑绳、器材棚敞开的推拉门、墙角的演习弹红痕（地点/物品外貌）",
+        "路明非、诺诺、芬格尔都没有移动（无变化的具体化）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "服务巷里看得见的地面和墙面",
+          "自己、诺诺和器材棚门口都没有动",
+          "远处没有新的脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺或芬格尔此刻的想法",
+          "任何未结算的事件、线索或任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得新增人物、物品、对话、枪声或事件",
+        "不得写任何人走到庭院、进入器材棚或改变站位"
+      ],
+      "styleReferenceIds": [
+        "row-0008"
+      ],
+      "notes": "无变化场景；三个人都在输入原位，没有移动、没有姿势、没有事件。针对 04 realizer 在同一 root 点给三个人各编一次移动/站位。",
+      "reviewState": "manually-read-input-and-target"
     }
   ]
 }

@@ -1,15 +1,15 @@
 {
-  "batch": 7,
+  "batch": 8,
   "createdAt": "2026-11-10T09:55:00Z",
-  "status": "batch-7-ready",
+  "status": "batch-8-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 70,
+  "rowCount": 71,
   "rowKinds": {
-    "frozen-input": 21,
+    "authored-product-world": 20,
     "derived-time-contrast": 1,
+    "frozen-input": 21,
     "frozen-input-long-target": 4,
-    "frozen-input-second-short": 25,
-    "authored-product-world": 19
+    "frozen-input-second-short": 25
   },
   "source": {
     "frozenDataset": "narration-dataset-v1",
@@ -29,7 +29,7 @@
     "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
     "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
     "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
-    "authoredRows": 19,
+    "authoredRows": 20,
     "premise": "initial snapshot; each row is one authored turn, not a browser session"
   },
   "consumableFields": [
@@ -52,7 +52,7 @@
     "variant"
   ],
   "worldFamilies": {
-    "dragon-raja-free-day": 19,
+    "dragon-raja-free-day": 20,
     "library-basement": 6,
     "library-courtyard": 7,
     "library-lending": 7,
@@ -65,7 +65,7 @@
     "item_change": 19,
     "location_change": 12,
     "movement": 16,
-    "no_change": 3,
+    "no_change": 4,
     "personality_change": 11,
     "sanity_change": 18,
     "secret_reveal": 2,
@@ -76,10 +76,10 @@
   "targetLength": {
     "min": 61,
     "max": 152,
-    "mean": 95.2,
+    "mean": 95.0,
     "buckets": {
       "120-160": 7,
-      "60-79": 14,
+      "60-79": 15,
       "80-119": 49
     }
   },
@@ -911,6 +911,16 @@
         "task_complete"
       ],
       "targetChars": 104
+    },
+    {
+      "id": "dr-0021-no-change-three-people",
+      "sourceRowId": "authored:dragon-raja-free-day#no-change-three-people",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "no_change"
+      ],
+      "targetChars": 76
     }
   ],
   "factBinding": {
@@ -923,12 +933,12 @@
     "onlyDifference": "short-0008-two-minute-no-change differs from row-0008 xProse only in the time advance",
     "lane10Importer": {
       "script": "10-training experiments/narration-runtime-v2/src/import_short_corpus.py (read-only /tmp copy)",
-      "rows": 70,
+      "rows": 71,
       "beats": 84,
       "facts": 84,
       "problems": [],
-      "corpusSha256": "b6709d8ce74492220499e29f929bcc1923171c2d3317bb87642275087207bc22",
-      "note": "18 rows have no mandatory fact, so beatCount 0 is expected; the other 52 rows bound every fact."
+      "corpusSha256": "7689218665fca9ff1c7935a4810d5839d870cd5179be89e250b08783a7683862",
+      "note": "19 rows have no mandatory fact, so beatCount 0 is expected; the other 52 rows bound every fact."
     }
   }
 }
