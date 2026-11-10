@@ -107,7 +107,9 @@ export const MODEL_CATALOG: readonly ModelSpec[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = 'qwen2.5-1.5b-instruct-q4km';
+// Chosen from the real runs: 1.7B produced fact-aligned 137-145 char scenes on
+// three consecutive points; 1.5B invented dialogue/items at a 220-char target.
+export const DEFAULT_MODEL_ID = 'qwen3-1.7b-q4km';
 
 export function modelSpec(id: string): ModelSpec {
   const spec = MODEL_CATALOG.find((entry) => entry.id === id);

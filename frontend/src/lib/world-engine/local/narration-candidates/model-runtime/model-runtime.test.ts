@@ -144,7 +144,7 @@ describe('model catalog', () => {
       expect(spec.template.id.length).toBeGreaterThan(3);
       expect(spec.recommended.contextSize).toBeGreaterThanOrEqual(2048);
     }
-    expect(DEFAULT_MODEL_ID).toBe('qwen2.5-1.5b-instruct-q4km');
+    expect(DEFAULT_MODEL_ID).toBe('qwen3-1.7b-q4km');
     expect(modelSpec('qwen3-1.7b-q4km').thinking).toBe('hybrid');
     expect(modelSpec('qwen3-4b-instruct-2507-q4km').thinking).toBe('none');
     expect(modelSpecByFile('D:/models/Qwen3-1.7B-Q4_K_M.gguf').id).toBe('qwen3-1.7b-q4km');
