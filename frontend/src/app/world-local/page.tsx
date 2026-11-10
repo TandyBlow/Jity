@@ -987,6 +987,18 @@ export default function WorldLocalPage() {
       // history count and entries are what the snapshot actually holds instead
       // of the pre-commit state the submit closure saw.
       try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after failure failed', refreshError); }
+      // A failed continuation can leave the advance open. Without this the
+      // next submit is refused as turn_in_progress and the player waits with no
+      // entry (3-turn d101 turn 2). Cancel it, then read the record again.
+      if (session.snapshot.transport.advance) {
+        try {
+          await Promise.race([
+            session.cancel('turn_failed'),
+            new Promise((resolve) => setTimeout(resolve, 15_000)),
+          ]);
+        } catch (cancelError) { console.warn('[world-local] cancel after failure failed', cancelError); }
+        try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after cancel failed', refreshError); }
+      }
       setEntries((list) => {
         const rebuilt = restoredEntries(session.snapshot);
         return rebuilt.length > list.length ? rebuilt : list;
