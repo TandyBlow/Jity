@@ -547,7 +547,7 @@ try {
       if (scenarios[index].continuation) priorFor.set(scenarios[index].id, previous.text ?? null);
     }
     for (const scenario of scenarios) {
-      const priorText = priorFor.get(scenario.id) ?? null;
+      const priorText = priorFor.get(scenario.id) ?? scenario.priorText ?? null;
       const committed = scenario.committed
         ?? projectCommittedNarration(scenario.after, scenario.before ?? null);
       const view = scenario.view ?? scenario.after.state.protagonistId;

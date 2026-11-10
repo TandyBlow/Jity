@@ -747,6 +747,22 @@ async function repairSentences(args: {
     const rest = hasMark ? after.slice(1) : after;
     text = text.slice(0, at) + body + punct + rest;
   }
+  // A draft may keep re-inventing the same sound. Deleting the one false
+  // sentence is better than shipping it, and it is bounded: at most two
+  // sentences, and the caller's length check still runs on the result.
+  let removed = 0;
+  for (;;) {
+    const movedNames = args.ledger.mandatory.filter((fact) => fact.kind === 'moved').map((fact) => fact.name);
+    const senses = senseViolations(text, args.inputText, { movedNames });
+    if (!senses.length || removed >= 2) break;
+    const sentence = senses[0].sentence;
+    const at = text.indexOf(sentence);
+    if (at < 0) break;
+    const after = text.slice(at + sentence.length);
+    const drop = /^[。！？!?]/u.test(after) ? 1 : 0;
+    text = (text.slice(0, at) + after.slice(drop)).replace(/\s+/gu, ' ').trim();
+    removed += 1;
+  }
   return text;
 }
 

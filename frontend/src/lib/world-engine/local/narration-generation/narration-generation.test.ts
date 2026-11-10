@@ -1383,7 +1383,8 @@ describe('cross-turn echo: the previous opening is as reusable as its ending', (
       priorOpen: '走廊的灯还亮着', priorTail: '他没有再说话',
     });
     expect(text).toContain('上一回合的开头是「走廊的灯还亮着…」');
-    expect(text).toContain('上一回合的结尾是「…他没有再说话」');
+    expect(text).toContain('上一回合的最后一句是「…他没有再说话」');
+    expect(text).toContain('接着这个时刻往下写');
   });
 
   test('a scene-mode retry keeps both lines', async () => {
@@ -1630,5 +1631,28 @@ describe('an invented posture is repairable sentence by sentence', () => {
     expect(engine.calls[2].prompt).toContain('躺在地上');
     expect(result.accepted).toBe(true);
     expect(result.text).not.toContain('躺在地上');
+  });
+});
+
+describe('a sound the model will not stop inventing is deleted, not shipped', () => {
+  test('two failed sentence rewrites drop the false sentence and keep the rest', async () => {
+    // No committed move, so the footsteps have no source (a move would license
+    // them: the person walking makes them).
+    const dirty = '门厅的灯还亮着。他听见远处传来脚步声。周宁留在走廊。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: '他听见远处传来脚步声。' },
+      { kind: 'text', text: '远处有脚步声。' },
+      { kind: 'text', text: '脚步声近了。' },
+      { kind: 'text', text: '还有脚步声。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, maxAttempts: 2, minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).not.toContain('脚步');
+    expect(result.text).toContain('门厅的灯还亮着');
   });
 });
