@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-11-10T09:59:21.061Z",
+  "updatedAt": "2026-11-10T10:17:18.471Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-51885288f10c-1efc716cd9eb.patch",
-      "patchSha256": "1efc716cd9eb40c2d49a2d21bbcdce18716904e0e37dc7b7e30315082d6d1471",
-      "patchBytes": 408406,
-      "generatedAt": "2026-11-10T09:59:21.059Z",
+      "patch": "patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch",
+      "patchSha256": "3e73bdf530d177718075c1aa16ef57d39b47d13393db4be9ba923092448eef76",
+      "patchBytes": 409252,
+      "generatedAt": "2026-11-10T10:17:18.463Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
           "path": "frontend/src/lib/world-engine/local/game-model.ts",
-          "sha256": "51885288f10cd32644260cacfc98c6e93b921fafe37ba3ec91b73dfc95e0f01f"
+          "sha256": "2c25891317b83723f113d8d30a22683e6de8334b4e3ede36350e13caa6824cc7"
         }
       ],
       "transforms": [
@@ -30,7 +30,7 @@
       "additions": [
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts",
-          "sha256": "d4cdd7e2ea42f37c149fb09a08b12933c71fdf1c3754c5cf2fe20951b297b6c7"
+          "sha256": "7e69994bd1559d9a160f54ee3a056001c3a9beecd7990c0f08bef8aca216be98"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts",
@@ -456,6 +456,18 @@
         }
       ],
       "retiredAt": "2026-11-10T09:59:21.061Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-51885288f10c-1efc716cd9eb.patch",
+      "patchSha256": "1efc716cd9eb40c2d49a2d21bbcdce18716904e0e37dc7b7e30315082d6d1471",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "51885288f10cd32644260cacfc98c6e93b921fafe37ba3ec91b73dfc95e0f01f"
+        }
+      ],
+      "retiredAt": "2026-11-10T10:17:18.471Z",
       "reason": "stale_input"
     }
   ]

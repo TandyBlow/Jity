@@ -180,6 +180,7 @@ const TRANSFORMS = [
       '        priorText: this.lastAcceptedNarration,',
       '        recentEvents: this.recentEvents,',
       '      });',
+      "      console.info('[narration] in-model rejected', reason, program ? '-> program fallback' : '-> factual draft');",
       '      if (program) { finalText = program.text; programFallback = true; }',
       '    }',
       "    const finalReason = programFallback ? '程序按已结算事实成文' : reason;",

@@ -53,18 +53,18 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-51885288f10c-1efc716cd9eb.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
 补丁新增 29 个运行时文件：选择层 + 02 的 beats 模块（内嵌在 `narration-candidates/trained-generation`，主树自己的 `narration-generation` 不动）+ 04 的 constrained 骨架 + 07 的 composer。因此它不依赖主树先合入 02/04/07 的分支，直接对当前 `game-model.ts` 快照生效；这三个目录仍由各自 lane 拥有，补丁里的副本只用于装配。
 
-`manifest.json` 记录输入 `game-model.ts` 的 sha256（当前主树 `51885288f10c…`，含主树未提交的结算改动；旧快照 `ff1574dd9ccb…` 的补丁已标记过期并移入 history）、补丁 sha256/字节数、转换步骤、新增文件与各自 sha256、内嵌来源提交、`git apply --check` 结果、是否过期，以及被取代补丁的历史（`--prune` 只把旧文件移入 `history`）。
+`manifest.json` 记录输入 `game-model.ts` 的 sha256（当前主树 `2c25891317b8…`；主树正在被持续编辑，应用前必须按 manifest 核对哈希，变了就用 `node scripts/candidate-shipping/build-patch.mjs --prune` 重新生成。旧输入快照的补丁都标记为过期并移入 history）、补丁 sha256/字节数、转换步骤、新增文件与各自 sha256、内嵌来源提交、`git apply --check` 结果、是否过期，以及被取代补丁的历史（`--prune` 只把旧文件移入 `history`）。
 
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-51885288f10c-1efc716cd9eb.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -108,7 +108,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
 | 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
-| 开局 + 第一轮 | 补丁 `1efc716`，默认 `auto`（真实主树快照） | 开局与回合的单发写作都被自己的校验拒绝，补丁各写一次程序正文 | 两段都显示 04+07 程序正文，带结算结果句 `路明非：无判定。`，标注“程序按已结算事实成文” | 就绪 137.3 s；整轮 163.0 s（其中回合写作 113.6 s） |
+| 开局 + 第一轮 | 补丁 `3e73bdf`，默认 `auto`（真实主树快照） | 开局与回合的单发写作都被自己的校验拒绝，补丁各写一次程序正文 | 两段都显示 04+07 程序正文，带结算结果句 `路明非：无判定。`，标注“程序按已结算事实成文” | 就绪 137.3 s；整轮 163.0 s（其中回合写作 113.6 s） |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 
@@ -152,6 +152,7 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 
 - `results/06-recovery/real-candidate-composer-program.json`：04 骨架 + 07 composer，真实点位 125 字、28 ms、未调用模型。
 - `results/06-recovery/real-candidate-composer-program-v2.json`：同一真实点位带结算结果句，132 字；07 composer 写场景/移动/收束，04 realizer 写 `路明非：无判定。`，结果事实覆盖率 100%。
+- 降级时会向内部 console 打一行 `[narration] in-model rejected <原因> -> program fallback`，便于主集成者看到模型为什么没被接受，不影响页面文字。
 - 默认 `auto` 的降级路径也接上了这套合成器：模型正文被自己的校验拒绝时，补丁调用 `runner.generateProgram()` 用已结算事实写一段程序正文并标注降级；模型正文被接受时不会替换。接线检查里这条路径输出 60+ 字、`fallback: true`、`error: 程序按已结算事实成文`、无引擎调用。
 - `results/06-recovery/real-candidate-constrained-program-v13.json`：C v1.3（04 realizer）真实点位，171 字、23 ms。
 - `results/06-recovery/real-candidate-trained-scene.json`：B scene 模式，226 字但 `fact_omitted+time_missing` 拒绝。
