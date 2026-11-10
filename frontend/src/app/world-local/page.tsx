@@ -702,6 +702,10 @@ export default function WorldLocalPage() {
         }));
         (window as unknown as { __worldSubmission?: unknown }).__worldSubmission = submission;
       }
+      // Every exit from a submission clears the turn state, including an early
+      // return for turn_in_progress; otherwise the page keeps painting a stage
+      // that no longer exists while the harness waits for done.
+      setStage('');
       setBusy(false);
     }
   }, [busy, input, refresh, save]);
