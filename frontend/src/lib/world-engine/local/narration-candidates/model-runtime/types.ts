@@ -107,6 +107,9 @@ export interface CandidatePolicy {
    * default: instruction models copy field labels from it instead of writing
    * prose. Kept for debugging and for candidates that expect it. */
   includeInputText?: boolean;
+  /** Quote the previous passage's tail in the prompt. Off by default:
+   * Qwen3-1.7B copies it. `priorText` is still used for the repetition check. */
+  includePriorText?: boolean;
   /** Prior accepted prose, for continuity turns. */
   priorText?: string | null;
   /** Additive runtime controls. */
@@ -145,6 +148,8 @@ export interface CandidateVerification {
   unverified: string[];
   timeExpressed: boolean | null;
   coverage: { id: string; kind: string; expressed: boolean }[];
+  /** Character-bigram overlap with the previous accepted passage (0-1). */
+  repetition: number | null;
 }
 
 export interface CandidateTimings {

@@ -32,6 +32,12 @@ export function renderNarrationUser(
   if (facts.length > 0) {
     lines.push('这一小段时间里发生的事（必须写进正文，不能添加别的事件）：');
     for (const fact of facts) lines.push(`- ${fact}`);
+    // The model kept writing “罗青停在她面前” and “走过来”, which is true in the
+    // fiction but does not state the committed from→to pair. Ask for one
+    // explicit sentence per fact instead of a pronoun-only paraphrase.
+    if (projected.packet.facts.some((fact) => fact.kind === 'moved')) {
+      lines.push('每条移动事实都要用一句明确写出人名和两个地点，不要只用「他走过来」代替。');
+    }
   } else {
     lines.push('这一小段时间里没有实体变化。不要写任何移动、任务达成或新的动作。');
   }
@@ -39,28 +45,58 @@ export function renderNarrationUser(
   if (time) {
     lines.push(`本回合经过的时间：${time.amount}${timeUnitWord(time.unit)}。正文里要明确写出「${time.amount}${timeUnitWord(time.unit)}」。`);
   }
-  const positions = mergePositions(policy.knownPositions, projected.positions);
+  const allPositions = mergePositions(policy.knownPositions, projected.positions);
+  const presentNames = new Set((scene?.present ?? []).map((entry) => entry.name));
+  const hasMove = projected.packet.facts.some((fact) => fact.kind === 'moved');
+  // 09's driver offers every character's position, and a 1.5B model recited the
+  // whole roster (“芬格尔在器材棚，楚子航在钟楼…”) instead of writing a scene.
+  // For an opening (no movement) the scene block already names who is here, so
+  // the position list is omitted; for a move only the people in this scene are
+  // listed, to say who stayed.
+  const positions = hasMove
+    ? allPositions.filter((entry) => presentNames.size === 0 || presentNames.has(entry.name))
+    : [];
   if (positions.length > 0) {
     lines.push('此刻的站位（已经如此，不必逐条复述）：');
     for (const entry of positions) lines.push(`- ${entry.name}在${entry.location}。`);
   }
-  if (projected.hints.length > 0) {
-    lines.push('只能用神态或动作暗示，不要写出数字，也不要照抄原句：');
-    for (const hint of projected.hints) lines.push(`- ${hint}`);
+  // Both models invented extra movement for the viewpoint character right
+  // next to the required move. Naming who stayed is cheap; do NOT enumerate
+  // forbidden verbs (the model then writes “她没有打开它”, which the shared
+  // grader flags as an item event because it does not read negation).
+  const moved = new Set(projected.packet.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name));
+  const still = hasMove
+    ? [...new Set([
+      ...(policy.roster ?? []),
+      ...(scene?.present ?? []).map((entry) => entry.name),
+      ...positions.map((entry) => entry.name),
+    ])].filter((name) => !moved.has(name) && (presentNames.size === 0 || presentNames.has(name)))
+    : [];
+  if (still.length > 0) {
+    lines.push(`本回合没有移动的人：${still.join('、')}。他们留在原地。`);
   }
-  if (policy.priorText) lines.push(`上一点已写正文（延续语气与位置，不要重复其事件）：\n${trim(policy.priorText, 400)}`);
+  lines.push('除了上面列出的，这一小段时间里没有别的事件：人物位置和物品都保持原样。');
   // The raw serializer string is evidence for the caller, not material for the
   // prose: feeding 【状态】/【变化】 labels to an instruction model invites it to
-  // copy the state format instead of writing a scene. Only include it on request.
+  // copy the state format instead of writing a scene. Opt-in only.
   if (policy.includeInputText && inputText.trim()) {
-    lines.push(`本点输入资料（只作依据，不要逐项复述，不要照抄字段名）：\n${trim(inputText, 1200)}`);
+    lines.push(`本点输入资料（只作依据，不要逐项复述，不要照抄字段名）：
+${trim(inputText, 1200)}`);
+  }
+  if (policy.includePriorText && policy.priorText) {
+    // Off by default: Qwen3-1.7B shown even the tail copied it (63% bigram
+    // overlap) and re-stated stale positions. `priorText` is still used by the
+    // repetition check; the prompt only gets it when a caller asks for it.
+    lines.push(`上一段的结尾（只用来衔接语气，不要照抄）：
+…${tail(policy.priorText, 90)}`);
   }
   const target = policy.targetChars;
   const paragraphs = policy.paragraphs ?? 3;
   const length = target
     ? `写成 ${paragraphs} 段，合计 ${Math.max(policy.minChars ?? Math.round(target * 0.75), 1)}～${target} 字。`
     : `写成 ${paragraphs} 段，合计约 180～260 字。`;
-  lines.push(`要求：${length}段与段之间空一行，直接给正文，不要小标题，不要解释。`);
+  const timeHint = time ? `；正文里必须出现「${time.amount}${timeUnitWord(time.unit)}」` : '';
+  lines.push(`要求：${length}段与段之间空一行，直接给正文，不要小标题，不要解释${timeHint}。`);
   // Length is the failure the first real run actually showed: a 1.7B model
   // stops after two sentences because it thinks the scene is over.
   if (target) lines.push(`写满目标字数再把这一段场景收住，中途不要概括、不要跳跃。`);
@@ -68,7 +104,6 @@ export function renderNarrationUser(
   // The same run invented an unlisted box opening. Banning unlisted
   // interaction is cheaper than one repair call and keeps the fact grader
   // meaningful.
-  lines.push('不要新增没有列出的动作：不开箱、不拿取、不使用物品、不写新的对话内容；没有列出的移动也不得发生。');
   lines.push('没有变化的人物可以保持不动，只写视角人物看到、听到、想到的东西。');
   if (policy.instruction) lines.push(`补充要求：${policy.instruction}`);
   if (policy.knownEntities?.length) {
@@ -109,6 +144,11 @@ export function normalizeTime(
 function trim(text: string, max: number): string {
   const chars = [...text.trim()];
   return chars.length <= max ? chars.join('') : `${chars.slice(0, max).join('')}…`;
+}
+
+function tail(text: string, max: number): string {
+  const chars = [...text.trim()];
+  return chars.length <= max ? chars.join('') : `…${chars.slice(-max).join('')}`;
 }
 
 /** The exact message list for a chat checkpoint. */

@@ -73,6 +73,7 @@ function verifiedResult(
     unverified: alignment.unverified,
     timeExpressed: alignment.timeExpressed,
     coverage: alignment.coverage,
+    repetition: alignment.repetition,
   };
 }
 
@@ -88,6 +89,17 @@ function issuesOf(verification: CandidateVerification | null, text: string, poli
   }
   if (verification.timeExpressed === false) {
     issues.push({ kind: 'time_not_narrated', detail: 'the passage must state the elapsed time', severity: 'hard' });
+  }
+  // The 1.7B model, shown the previous paragraph, copied it verbatim and then
+  // appended the new event. The result is both a repetition and a standing
+  // claim from the previous point; treat a large overlap as a hard failure so
+  // the repair actually rewrites instead of pasting.
+  if (verification.repetition !== null && verification.repetition >= 0.6) {
+    issues.push({
+      kind: 'repeats_previous',
+      detail: `${Math.round(verification.repetition * 100)}% of the previous passage is repeated`,
+      severity: 'hard',
+    });
   }
   for (const sentence of verification.unverified) {
     issues.push({ kind: 'unverified_sentence', detail: sentence, severity: 'soft' });
@@ -113,6 +125,7 @@ function repairNote(issues: CandidateIssue[], previousText: string): string {
       state_claim_without_fact: '写了没有提交的状态', wrong_time: '时间写错了', added_event: '加了没有提交的事件',
       omitted_fact: '漏了必须写到的事实', time_not_narrated: '没有写经过的时间', too_short: '正文太短',
       empty_narration: '正文为空', truncated: '上一版在上限处被截断，请写得更短并收束',
+      repeats_previous: '重复了上一段的原文，请只写这一点新发生的事',
       timeout: '生成超时', generation_failed: '生成失败',
     };
     lines.push(`- ${label[issue.kind] ?? issue.kind}：${issue.detail}`);
@@ -193,7 +206,11 @@ async function callModel(
 }
 
 export async function generateCandidate(args: CandidateArgs, options: GenerateCandidateOptions = {}): Promise<CandidateResult> {
-  const policy = args.policy ?? {};
+  const policy: CandidatePolicy = { ...(args.policy ?? {}) };
+  // 09 passes the continuation text as `priorText`, outside `policy`. The
+  // prompt AND the verification must see the same value: without it the
+  // repetition check silently does nothing for the shared driver.
+  if (args.priorText !== undefined) policy.priorText = args.priorText;
   // A shared driver (09) loads the engine itself and calls with no spec; the
   // catalog still identifies the checkpoint from info.modelId, so the model's
   // real template is used instead of a fused fallback prompt.
@@ -212,7 +229,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
 
   const baseUser = policy.prompt?.trim()
     ? policy.prompt
-    : renderNarrationUser(args.committed, args.inputText, { ...policy, priorText: args.priorText ?? policy.priorText ?? null });
+    : renderNarrationUser(args.committed, args.inputText, policy);
 
   for (let index = 0; index < maxAttempts; index += 1) {
     if (args.signal?.aborted) throw new Error('aborted');

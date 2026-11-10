@@ -25,6 +25,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import { chromium } from '@playwright/test';
+import { sendGguf } from './gguf-server.mjs';
 
 const frontend = fileURLToPath(new URL('../../', import.meta.url));
 const repoRoot = resolve(frontend, '..');
@@ -200,10 +201,7 @@ const server = await createServer({
       if (url.startsWith('/models/')) {
         const file = findModelFile(url);
         if (!file) { response.statusCode = 404; response.end('missing model'); return; }
-        response.setHeader('Content-Type', 'application/octet-stream');
-        response.setHeader('Content-Length', statSync(file).size);
-        response.setHeader('Cache-Control', 'no-store');
-        createReadStream(file).pipe(response);
+        sendGguf(request, response, file);
         return;
       }
       next();

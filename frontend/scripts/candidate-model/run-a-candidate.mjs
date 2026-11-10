@@ -24,6 +24,7 @@ import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import { chromium } from '@playwright/test';
+import { sendGguf } from './gguf-server.mjs';
 
 const frontend = fileURLToPath(new URL('../../', import.meta.url));
 const repoRoot = resolve(frontend, '..');
@@ -132,10 +133,7 @@ const server = await createServer({
         const name = basename(decodeURIComponent(url));
         const file = config.modelsDirs.map((dir) => resolve(dir, name)).find((candidate) => existsSync(candidate));
         if (!file) { response.statusCode = 404; response.end('missing model'); return; }
-        response.setHeader('Content-Type', 'application/octet-stream');
-        response.setHeader('Content-Length', statSync(file).size);
-        response.setHeader('Cache-Control', 'no-store');
-        createReadStream(file).pipe(response);
+        sendGguf(request, response, file);
         return;
       }
       next();
@@ -294,8 +292,13 @@ try {
     }
 
     const results = [];
-    let priorText = null;
+    // Prior text is only for a real continuation of the same world. Reusing the
+    // root passage for an independent point (or another world) made the model
+    // paste stale positions; the shared driver only does this via continuesFrom.
+    const acceptedByWorld = new Map();
     for (const scenario of scenarios) {
+      const worldId = scenario.after.state.worldId;
+      const priorText = scenario.continuation ? acceptedByWorld.get(worldId) ?? null : null;
       const view = scenario.after.state.protagonistId;
       const committed = projectCommittedNarration(scenario.after, scenario.before ?? null);
       const inputText = legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
@@ -318,7 +321,7 @@ try {
         continue;
       }
       const wallMs = performance.now() - started;
-      if (result.accepted) priorText = result.text;
+      if (result.accepted) acceptedByWorld.set(worldId, result.text);
       results.push({
         id: scenario.id,
         time: scenario.time,

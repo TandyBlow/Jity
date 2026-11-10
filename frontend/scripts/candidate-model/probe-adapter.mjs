@@ -10,6 +10,7 @@
 //   node scripts/candidate-model/probe-adapter.mjs --out ../.local/candidate-model/adapter.json
 //   python ../../.local/parallel-local-game/resource_lease.py release --lane 08-runtime
 import { mkdirSync, renameSync, writeFileSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { cpus } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,6 +21,17 @@ const option = (flag, fallback) => (process.argv.includes(flag) ? process.argv[p
 const out = resolve(frontend, option('--out', '../.local/candidate-model/adapter.json'));
 const channel = option('--channel', 'msedge');
 const headed = process.argv.includes('--headed');
+
+// WebGPU needs a secure context. `about:blank` is not one, so requestAdapter()
+// returns null there even when WebGPU works; serve one tiny page on localhost.
+const server = createServer((request, response) => {
+  response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  response.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  response.setHeader('Content-Type', 'text/html; charset=utf-8');
+  response.end('<!doctype html><meta charset="utf-8"><title>adapter probe</title>');
+});
+await new Promise((done) => server.listen(0, '127.0.0.1', done));
+const origin = `http://127.0.0.1:${server.address().port}/`;
 
 const report = {
   status: 'IN_PROGRESS',
@@ -76,6 +88,7 @@ for (const [mode, args] of [
   try {
     browser = await chromium.launch({ headless: !headed, channel, args: ['--enable-unsafe-webgpu', ...args] });
     const page = await browser.newPage();
+    await page.goto(origin);
     const blank = await page.evaluate(() => 'ok');
     const probe = await describe(page);
     report.probes.push({ mode, args, browser: browser.version(), blank, ...probe });
@@ -92,4 +105,5 @@ for (const [mode, args] of [
 report.status = 'COMPLETED';
 report.finishedAt = new Date().toISOString();
 save();
+await new Promise((done) => server.close(done));
 console.log(`[adapter] wrote ${out}`);

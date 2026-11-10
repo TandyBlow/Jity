@@ -100,7 +100,7 @@ describe('prose projection', () => {
     expect(text).not.toContain('精神值');
     expect(text).not.toMatch(/精神.{0,6}\d/);
     expect(text).toContain('周宁在走廊');
-    expect(text).toContain('不许新增没有列出的动作' .replace('不许', '不要'));
+    expect(text).toContain('人物位置和物品都保持原样');
     expect(text).toContain('写成 3 段');
   });
 
@@ -109,6 +109,17 @@ describe('prose projection', () => {
       .toEqual([{ name: '周宁', location: '门厅' }, { name: '林川', location: '门厅' }]);
   });
 });
+
+  test('a long previous passage is cut to its tail, not quoted whole', () => {
+    // Unique head characters: a repeated filler would legally reappear inside
+    // the 90-character tail and make the assertion meaningless.
+    const head = Array.from({ length: 120 }, (_, index) => String.fromCharCode(0x4e00 + index)).join('');
+    const prior = `${head}周宁把盒子按在怀里，听着门厅那边有没有脚步。`;
+    const text = renderNarrationUser(movePacket(), '', { priorText: prior, includePriorText: true });
+    expect(text).not.toContain(head.slice(0, 22));
+    expect(text).toContain('周宁把盒子按在怀里');
+    expect(text).toContain('…');
+  });
 
 describe('model catalog', () => {
   test('every entry carries identity, a template and a real hash', () => {
@@ -132,7 +143,7 @@ describe('prompt rendering', () => {
   test('the user turn carries the committed fact, elapsed time and scene without copying raw state', () => {
     const text = renderNarrationUser(movePacket(), '【状态】原始投影串', {
       viewpoint: { id: 'char_zhou', name: '周宁' },
-      scene: { location: '门厅', placeNotes: ['地砖很亮。'], present: [{ name: '林川', note: '穿灰衣' }], objects: [{ name: '盒子' }] },
+      scene: { location: '门厅', placeNotes: ['地砖很亮。'], present: [{ name: '林川', note: '穿灰衣' }, { name: '周宁', note: '穿蓝衣' }], objects: [{ name: '盒子' }] },
       time: { amount: 2, unit: 'minute' },
       knownPositions: [{ name: '周宁', location: '走廊' }],
       knownEntities: ['林川', '周宁', '门厅'],
@@ -316,6 +327,31 @@ describe('generateCandidate', () => {
     expect(result.accepted).toBe(true);
   });
 
+  test('copying the previous passage verbatim is rejected even when priorText is an argument', async () => {
+    const prior = '周宁站在走廊尽头，蓝衣在灯光下泛着冷光。盒子紧贴在身侧，盒盖仍关着。她看着门厅的方向，等着林川回来。';
+    const copied = `${prior}两分钟过去，走廊依旧安静。`;
+    const { engine, calls } = fakeEngine([[copied], [VERIFIED_TEXT]]);
+    const result = await generateCandidate(args({ engine, priorText: prior }), { spec: SPEC });
+    expect(result.rawAttempts[0]!.issueKinds).toContain('repeats_previous');
+    expect(result.rawAttempts[1]!.prompt).toContain('重复了上一段的原文');
+    expect(result.accepted).toBe(true);
+    // By default the previous passage is not quoted at all: Qwen3-1.7B copied
+    // even the tail. It still drives the repetition check via args.priorText.
+    expect(calls[0]!.messages?.[1]!.content).not.toContain('上一段的结尾');
+    expect(calls[0]!.messages?.[1]!.content).not.toContain('蓝衣在灯光下泛着冷光');
+  });
+
+  test('the fact contract is positive: no forbidden-verb list for the model to echo', async () => {
+    const { engine, calls } = fakeEngine([VERIFIED_TEXT]);
+    await generateCandidate(args({ engine }), { spec: SPEC });
+    const prompt = calls[0]!.messages?.[1]!.content;
+    expect(prompt).toContain('人物位置和物品都保持原样');
+    expect(prompt).toContain('本回合没有移动的人');
+    // Negated actions ("她没有打开它") were flagged as item events by the
+    // shared grader, so the prompt must not teach the model those verbs.
+    expect(prompt).not.toContain('打开、翻看');
+  });
+
   test('an opening point (no change yet) asks for a scene, not a fact recital', async () => {
     const opening: CommittedNarration = {
       anchor: ANCHOR,
@@ -326,12 +362,17 @@ describe('generateCandidate', () => {
       ],
     };
     const { engine, calls } = fakeEngine(['走廊尽头的灯闪了一下，周宁把盒盖按紧。']);
-    const result = await generateCandidate(args({ engine, committed: opening, policy: { ...args().policy, time: null, minChars: 5 } }), { spec: SPEC });
+    const scene = { location: '走廊', placeNotes: ['灯在尽头。'], present: [{ name: '周宁', note: '穿蓝衣' }, { name: '林川', note: '穿灰衣' }], objects: [{ name: '盒子' }] };
+    const result = await generateCandidate(args({ engine, committed: opening, policy: { ...args().policy, scene, time: null, minChars: 5 } }), { spec: SPEC });
     const prompt = calls[0]!.messages?.[1]!.content ?? '';
     expect(prompt).toContain('这一小段时间里没有实体变化');
     expect(prompt).not.toContain('本回合已发生');
     expect(prompt).not.toContain('精神值');
-    expect(prompt).toContain('周宁在走廊');
+    // The scene block names who is here; the point has no movement, so there is
+    // no roster of every character's position to recite.
+    expect(prompt).toContain('在场人物：周宁');
+    expect(prompt).not.toContain('此刻的站位');
+    expect(prompt).not.toContain('- 周宁在走廊');
     expect(result.accepted).toBe(true);
   });
 
