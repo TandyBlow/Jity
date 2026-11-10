@@ -663,6 +663,10 @@ try {
       entry.shownChars = (entry.text ?? '').length;
       // Full per-call evidence (semantic + narration) before any reload can
       // clear the page globals.
+      entry.live = await page.evaluate(() => {
+        const live = globalThis.__worldLive;
+        return live && typeof live === 'object' ? live : null;
+      }).catch(() => null);
       entry.generations = await page.evaluate(() => {
         const generations = globalThis.__worldGenerations;
         return Array.isArray(generations) ? generations.slice(-200) : null;

@@ -36,6 +36,7 @@ const modelDir = resolve(flag('--model-dir', 'D:/others/Jity/.local/parallel-loc
 const mainModelDir = 'D:/others/Jity/.local/world-narration-worktree/frontend/public/models';
 const outPath = resolve(flag('--out', resolve(here, '../../../results/product/evidence/09-runtime-08.json')));
 const gpu = has('--gpu') || !has('--cpu');
+const onlyHardStop = has('--only-hard-stop');
 
 const evidence = {
   kind: '09-runtime-checks-08',
@@ -172,6 +173,7 @@ try {
   const engineUrl = `/@fs/${engineFile.replace(/\\/g, '/')}`;
   const cfg = { gpu, modelDir, mainModelDir };
 
+  if (!onlyHardStop) {
   const preload = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
     const engine = new module.WllamaInferenceEngine({
@@ -187,8 +189,10 @@ try {
     await engine.dispose().catch(() => undefined);
     return { error, ms, runtime };
   }, { engineUrl, cfg });
-  check('complete-before-ready', 'complete() before load rejects immediately instead of waiting', /not loaded|not ready|load/i.test(preload.error ?? '') && preload.ms < 500 ? 'pass' : 'fail', { error: preload.error, ms: preload.ms, runtime: { loaded: preload.runtime.loaded, workersCreated: preload.runtime.workersCreated } });
+  check('complete-before-ready', 'complete() before load rejects immediately instead of waiting', /not loaded|not ready|load/i.test(preload.error ?? '') && preload.ms < 500 ? 'pass' : 'fail', { error: preload.error, ms: preload.ms, runtime: { loaded: preload.runtime.loaded, workersCreated: preload.runtime.workersCreated } });  }
 
+
+  if (!onlyHardStop) {
   const phaseA = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
     const WllamaInferenceEngine = module.WllamaInferenceEngine;
@@ -250,10 +254,12 @@ try {
     loadCount: a.runtimeAfterRuns?.loadCount, generations: a.runtimeAfterRuns?.generations,
     workersCreated: a.runtimeAfterRuns?.workersCreated, workersExited: a.runtimeAfterRuns?.workersExited,
   });
-  save();
+  save();  }
+
 
   // Same engine continues: cancel mid-generation, then a timeout that
   // hard-stops the worker, then ensureLoaded() on the same weights.
+  if (!onlyHardStop) {
   const phaseC = await page.evaluate(async ({ engineUrl, cfg }) => {
     const engine = globalThis.__e08;
     if (!engine) return { error: 'engine_missing' };
@@ -312,7 +318,8 @@ try {
       ? 'timeout aborted the call in ~132 ms and the worker stayed alive (hardStopped=false, needsReload=false); ensureLoaded() was a no-op, so the requested "worker terminated -> reload same weights" path was not exercised. The prompt no longer waits: the next generation reused the live worker.'
       : 'worker was terminated; ensureLoaded reloaded the same URL and loadCount incremented by one.',
   });
-  save();
+  save();  }
+
 
   // Hard-stop branch (08's followUp): abortGraceMs 0 so the timeout terminates
   // the worker immediately; ensureLoaded then has to reload the same weights.
@@ -322,9 +329,12 @@ try {
     const engine = new module.WllamaInferenceEngine({
       modelUrl: '/models/Qwen3-1.7B-Q4_K_M.gguf', contextSize: 4096, numThreads: 6,
       nGpuLayers: cfg.gpu ? 99999 : 0, abortGraceMs: 0, useCache: false, directBlob: true,
-      onEvidence: (record) => { if (record.kind === 'generation') result.generation = record; },
+      onEvidence: (record) => {
+        if (record.kind === 'generation' && !result.generation) result.generation = record;
+        if (record.kind === 'load') result.loads.push(record);
+      },
     });
-    const result = { generation: null, error: null, before: null, afterTimeout: null, reload: { ms: null, error: null }, afterReload: null, next: { text: null, error: null } };
+    const result = { generation: null, loads: [], error: null, before: null, afterTimeout: null, reload: { ms: null, error: null }, afterReload: null, next: { text: null, error: null } };
     await engine.load();
     result.before = engine.runtime;
     try {
@@ -352,9 +362,11 @@ try {
     reloadMs: hardStop.reload?.ms, reloadError: hardStop.reload?.error,
     nextChars: hardStop.next?.text?.length ?? 0, nextError: hardStop.next?.error,
     sameUrl: hardStop.afterReload?.lastModelUrl,
+    loads: hardStop.loads ?? null,
   });
   save();
 
+  if (!onlyHardStop) {
   // Fresh page: cancel a cold load, then load for real in the same tab.
   await page.goto(`http://127.0.0.1:${port}/__runtime`);
   const phaseE = await page.evaluate(async ({ engineUrl, cfg }) => {
@@ -388,9 +400,10 @@ try {
     retry: phaseE.retry, afterRetry: { loadCount: phaseE.afterRetry.loadCount, workersCreated: phaseE.afterRetry.workersCreated },
     nextChars: phaseE.next.text?.length ?? 0, nextError: phaseE.next.error,
   });
-  save();
+  save();  }
 
-  if (has('--split') && !has('--skip-split')) {
+
+  if (has('--split') && !has('--skip-split') && !onlyHardStop) {
     const shard1 = 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00001-of-00002.gguf';
     const shard2 = 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00002-of-00002.gguf';
 
