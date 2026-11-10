@@ -478,9 +478,22 @@ try {
           entry.stages.push({ atMs: Date.now() - submitAt, label: sample.stage });
           if (entry.timings.firstStageMs === null) entry.timings.firstStageMs = Date.now() - submitAt;
         }
-        if (sample.text && firstReadableAt === null) {
+        // "Readable" means prose a player could read, not the first UI stage
+        // label. A pre-wrap node can exist while the point is still settling
+        // (stage notes / error text), so require a sentence-sized, non-status
+        // sample and keep the raw early sample for audit.
+        const earlyText = sample.text.trim();
+        if (earlyText && entry.timings.firstTextMs === null) {
+          entry.timings.firstTextMs = Date.now() - submitAt;
+          entry.firstTextSample = earlyText.slice(0, 120);
+        }
+        const looksLikeProse = earlyText.length >= 8
+          && !/^(结算中|正在写正文|判断|牵连|本组|未能|无法|Error)/.test(earlyText)
+          && !/结算|判断牵连|模型|回退/.test(earlyText.slice(0, 24));
+        if (looksLikeProse && firstReadableAt === null) {
           firstReadableAt = Date.now() - submitAt;
           entry.timings.firstReadableMs = firstReadableAt;
+          entry.firstReadableSample = earlyText.slice(0, 120);
         }
         if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
         // A submit can be refused synchronously (e.g. progress_conflict): the
@@ -517,6 +530,11 @@ try {
         };
       }, beforeCount);
       entry.text = afterInfo.text || null;
+      // No visible prose means there is no first-readable time at all.
+      if (!entry.text || entry.text.trim().length < 8) {
+        entry.timings.firstReadableMs = null;
+        entry.problems.push('no_readable_prose');
+      }
       entry.inputLine = afterInfo.input || null;
       entry.note = afterInfo.note;
       entry.message = afterInfo.message;
