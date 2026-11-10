@@ -393,6 +393,26 @@ describe('visible acceptance summary', () => {
     expect(report.errors.some((item) => item.detail.includes('first accepted text'))).toBe(true);
   });
 
+  it('does not call a model turn a program fallback just because the page added a settlement note', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '路明非走进服务巷，看清演习规则牌。',
+      textSource: 'model',
+      historyDelta: 1,
+      note: '这一回合已结算并写入正文；随后系统自动推进的回合没有完成。',
+      product: { source: 'model', acceptedMs: 137_786, draftMs: 103_457 },
+      snapshotAfterTurn: { narrationSources: {
+        p1: { source: 'model' }, p2: { source: 'model' },
+      } },
+      timings: { doneMs: 144_144, firstReadableMs: null },
+      problems: ['program_fallback_labelled', 'accepted_over_60s'],
+      submission: { inputText: '我沿着服务巷往里走。' },
+    }]);
+    expect(report.ok).toBe(false);
+    expect(report.errors.some((item) => item.detail.includes('program fallback'))).toBe(false);
+    expect(report.errors.some((item) => item.detail.includes('first accepted text'))).toBe(true);
+  });
+
   it('rejects a turn whose later automatic point is a draft even when the first point is model text', () => {
     const report = verifyDisplayedCommit([{
       turn: 1,

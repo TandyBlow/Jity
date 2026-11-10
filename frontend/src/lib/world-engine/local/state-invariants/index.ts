@@ -1087,7 +1087,7 @@ export function verifyDisplayedCommit(entries: unknown[]): {
     if (source === 'draft' || problems.includes('draft_only_not_accepted')) {
       add(errors, 'evidence_shape', `${label}: displayed text is a draft, not a committed turn`);
     }
-    if (source === 'program' || problems.includes('program_fallback_labelled') || problems.includes('program_only_not_model_text')) {
+    if (source === 'program' || problems.includes('program_only_not_model_text')) {
       add(errors, 'evidence_shape', `${label}: displayed text is a program fallback, not model prose`);
     }
     // A turn can contain several points. The first point may be model prose,
