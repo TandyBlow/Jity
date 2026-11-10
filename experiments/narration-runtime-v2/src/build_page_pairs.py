@@ -74,6 +74,15 @@ def pick_clauses(text: str, count: int = 2) -> str:
     return "，".join(parts[:count])
 
 
+VIEWPOINT_RE = re.compile(r"改写成\s*(\S+?)\s*视角")
+
+
+def viewpoint_name(prompt: str) -> str:
+    """The viewpoint the page prompt already names, read back out of it."""
+    hit = VIEWPOINT_RE.search(prompt)
+    return hit.group(1) if hit else "主角"
+
+
 def viewpoint_of(x: Dict[str, Any]) -> str:
     view = str(x.get("视角") or "")
     return view.split("（")[-1].split("）")[0] if "（" in view else view
@@ -219,6 +228,9 @@ def main() -> int:
     parser.add_argument("--rows05", default=os.path.join(
         REPO, "..", "05-kernel", "experiments", "narration-quality",
         "corpus-scenes", "generated", "rows.jsonl"))
+    parser.add_argument("--prompt-mode", default="scene", choices=("scene", "repair", "both"),
+                        help="the page's first attempt uses the repair head (140-220 chars); "
+                             "scene is only the second attempt. 'both' emits one row per mode")
     parser.add_argument("--new-rows", default="",
                         help="JSONL of new hand-written rows: id, viewpoint, draft, target, "
                              "optional worldFamily/lineage/sourceWorld; draft is used verbatim")
@@ -310,6 +322,28 @@ def main() -> int:
             out.append({"id": row["id"], "split": split, "mode": "scene", "draft": draft,
                         "user": page_prompt(viewpoint, draft), "target": target,
                         "weight": args.short_weight, "source": "new-rows"})
+
+    if args.prompt_mode != "scene":
+        # The page's first attempt is the repair head (140-220 chars); the free
+        # scene head is only the second attempt. Training on scene alone left the
+        # arm unable to write the prompt the page actually sends first.
+        if args.prompt_mode == "repair":
+            for row in out:
+                row["user"] = page_prompt(viewpoint_name(row["user"]), row["draft"], "repair")
+                row["promptMode"] = "repair"
+        else:
+            expanded = []
+            for row in out:
+                name = viewpoint_name(row["user"])
+                repair = dict(row)
+                repair["id"] = row["id"] + "-repair"
+                repair["user"] = page_prompt(name, row["draft"], "repair")
+                repair["promptMode"] = "repair"
+                scene = dict(row)
+                scene["id"] = row["id"] + "-scene"
+                scene["promptMode"] = "scene"
+                expanded.extend([repair, scene])
+            out = expanded
 
     with io.open(args.split_manifest, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps({"version": "page-splits-v1",
