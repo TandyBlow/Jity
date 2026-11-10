@@ -1327,6 +1327,26 @@ anchors.append(
     },
 )
 
+
+# d101 active run: the trained candidate was rejected on echo_prior and the
+# legacy route produced a 127-char model text with an invented dice/table/wind.
+d101 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-d101.json", encoding="utf-8"))
+d101_text = d101["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+d101_key = next(k for k in d101_text if k.startswith("point_round_3_1"))
+d101_point = d101_text[d101_key]["text"]
+d101_review = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/d101-review-run.json", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/d101-legacy-dice",
+        "source": "09 run 2026-11-10T2129-cad9 (active d101): trained rejected echo_prior; legacy route accepted a dice/table/wind text",
+        "input": d101_review["point"]["input"],
+        "text": d101_point,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.time_missing", "fact.object_added", "fact.sound_added"], "style": [], "review": [],
+                   "notes": "State 物品 {}; the text handles 骰子 on a 桌上 and adds 一阵风; no minute."},
+    },
+)
+
 run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
 e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
 e9 = {}

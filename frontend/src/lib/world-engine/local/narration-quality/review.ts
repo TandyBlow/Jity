@@ -1422,6 +1422,22 @@ export function reviewNarration(args: {
         break;
       }
     }
+    // A person handling an object the settled state does not contain is a new
+    // item (d101 legacy route: «抓起桌上的骰子», «骰子在掌心…», «骰子落地»;
+    // the state has 物品: {} and no table either).
+    {
+      const handled = /(抓起|拿起|捡起|握住|捏住|攥住|托起|提起|拎起|端起|捧着|抱着|握着|拿着|捏着|攥着|托着|提着|拎着|端着|把玩|拨弄|抛起|接住|扔出|丢下|放下|放到|放在)(?:了|着)?[^。；，]{0,4}([一-龥]{2,4})(?=[。；，！？]|$)/u.exec(narration);
+      const obj = handled?.[2];
+      const generic = new Set(['物品', '东西', '物件', '什么', '一切', '它', '它们', '其', '此', '这些', '那些', '自己', '身上', '手里']);
+      const relation = /^(旁边|台边|边上|一边|前面|后面|上面|下面|里面|外面|这里|那里|手中|手里|身上|地上|桌上|空中|远处|近处|眼前|面前|身后|身边|一些|一下|起来|出来|进去|过去|回来|回去|下来|上来|开来|松|紧|住|开|下|上|起|松了一些|紧了一些)$/u;
+      const mention = (name: string): boolean => stateLicensed(name)
+        || (name.length >= 2 && name.endsWith('子') && stateLicensed(name.slice(0, -1)))
+        || (name.length >= 3 && stateLicensed(name.slice(1)));
+      if (obj && !generic.has(obj) && !relation.test(obj) && !mention(obj) && !projection.items[obj] && !findings.some((f) => f.kind === 'fact.object_added' && f.detail.includes(`«${obj}»`))) {
+        findings.push(finding(ctx, 'fact.object_added', sentences[0]?.text ?? text,
+          `«${obj}» is handled in the prose but not in the settled state`, [handled[0]], []));
+      }
+    }
     // A paragraph cannot both hear a sound and deny hearing any sound (02
     // dense-point-4: «听着远处传来轻微的水声» then «也没有听到任何声音»).
     {
