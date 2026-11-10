@@ -71,7 +71,8 @@ export type NarrationBinding = { mode: 'head'; leaseToken: Id; fenceEpoch: numbe
 export interface RollSpec { advanceId: Id; roundId: Id; groupId: Id; sourceId: Id; targetId: Id; triggerKey: Id; ruleVersion: 'reaction-fixture-v1' | 'reaction-d20-v1'; target: number }
 export interface RollOutcome extends Omit<RollSpec, 'advanceId' | 'roundId'> { rollId: Id; result: number; eligibilityBaselineDigest: Digest; eligible: boolean; admitted: boolean }
 export interface ClaimSummary { pointId: Id; mode: 'head' | 'history'; generation: number; fenceEpoch: number | null; issuedAtEpochMilli: number; expiresAtEpochMilli: number }
-export interface PreviewRequest { protocolVersion: 2; worldId: Id; advanceId: Id; roundId: Id; pointId: Id; expectedPointId: Id; expectedVersion: number; expectedCheckpointRevision: number; timeAdvance: TimeAdvance; settlementGroups: SettlementGroup[] }
+export type U5PreviewGroup = SettlementGroup & { previewStage: 'U5' };
+export interface PreviewRequest { protocolVersion: 2; worldId: Id; advanceId: Id; roundId: Id; pointId: Id; expectedPointId: Id; expectedVersion: number; expectedCheckpointRevision: number; timeAdvance: TimeAdvance; settlementGroups: (SettlementGroup | U5PreviewGroup)[] }
 export interface RequestMap {
   create_world: { protocolVersion: 2; requestId: Id; initial: InitialTemplate };
   get_context: { includeRecovery?: boolean; leaseToken?: Id | null; fenceEpoch?: number | null };

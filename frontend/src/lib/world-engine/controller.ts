@@ -498,6 +498,9 @@ export class ControllerDriver {
         inProgressGroup = fold(validDeltas);
       }
     }
+    const u5Intermediate = inProgressGroup != null
+      && this.memory.updatesCalls.at(-1)?.stage === 'personality'
+      && Object.keys(inProgressGroup.personalities).length > 0;
     const request: RequestMap['preview_point'] = {
       protocolVersion: 2, worldId: world.worldId,
       advanceId: world.advance.advanceId!, roundId: world.activeRoundId ?? world.round?.roundId ?? '',
@@ -509,7 +512,7 @@ export class ControllerDriver {
       settlementGroups: [
         ...this.memory.staged.map((s) => s.candidates),
         ...(this.memory.stagedTimeScan ? [this.memory.stagedTimeScan] : []),
-        ...(inProgressGroup ? [inProgressGroup] : []),
+        ...(inProgressGroup ? [u5Intermediate ? { ...inProgressGroup, previewStage: 'U5' as const } : inProgressGroup] : []),
       ],
     };
     let outcome: CallOutcome;
@@ -553,7 +556,8 @@ export class ControllerDriver {
     this.adoptState(outcome.response);
     const data = (outcome.response as unknown as { data: { workingState: unknown; pointProjection: unknown } }).data;
     this.memory.workingState = { key: workingStateKey(this.state.work!), state: structuredClone(data.workingState) as never };
-    this.memory.commitPayload = { point: structuredClone(data.pointProjection) as never, settlementGroups: this.memory.staged.map((s) => s.candidates) };
+    // An intermediate projection is useful to U6, never a commit candidate.
+    this.memory.commitPayload = u5Intermediate ? null : { point: structuredClone(data.pointProjection) as never, settlementGroups: this.memory.staged.map((s) => s.candidates) };
     this.memory.updatesApplied = this.memory.updatesCalls.length;
     this.memory.lastModel = null;
     this.nextRequestId();

@@ -1537,3 +1537,68 @@ describe('D merged settlement repair boundary', () => {
     expect(transport.ops).toEqual(['preview_point']);
   });
 });
+
+
+describe('U5 intermediate / U6 recovery', () => {
+  test.each([true, false])('U6 repair retains actual U5 preview and rolls (repair succeeds=%s)', async succeeds => {
+    const world = mkWorld({ head: { pointId:'root', version:0, stateDigest:'d0', narrationStatus:'ready' }, activePointId:'p1', activeRoundId:'r1', advance:{ advanceId:'adv1', inputId:'in1', intentStatus:'consumed', inputAvailable:false } });
+    const control = mkControl();
+    const work = mkWork({ phase:'settle_group', pendingGroup:{ groupId:'g1', sourceId:'person_a', memberIds:['person_a'], targetIds:[], frontierIds:[], closed:true } });
+    const before = workingState();
+    const temporary = structuredClone(before);
+    Object.assign(temporary.characters.person_a, { personalityChanges:[{ id:'change_u5',text:'更谨慎',supersedes:[],active:true,sourcePointId:'p1',sourceSequence:1 }] });
+    const prefix: UpdatesCall[] = [
+      {stage:'position',changes:{}},{stage:'appearance',changes:{}},
+      {stage:'tasks',changes:{person_a:{entityId:'person_a',tasksAchieved:['task_a']}}},
+      {stage:'subtasks',changes:{}},
+      {stage:'personality',changes:{person_a:{entityId:'person_a',personalityChanges:[{id:'change_u5',text:'更谨慎',supersedes:[]}]}}},
+    ];
+    Object.assign(before.characters.person_a.tasks, { task_a:{id:'task_a',ownerId:'person_a',parentTaskId:null,goal:'目标',status:'pending'} });
+    Object.assign(temporary.characters.person_a.tasks, structuredClone(before.characters.person_a.tasks));
+    const memory = memoryWithAdvanceStart({ localTargets:true, updatesStages:['position','appearance','tasks','subtasks','personality','sanity'],
+      workingState:{key:workingStateKey(work),state:before},updatesCalls:structuredClone(prefix),updatesApplied:4,
+      lastResults:{person_a:'任务完成'},groupActions:[{memberId:'person_a',actionText:'尝试',rolls:[{targetId:'person_b',rollId:'saved-roll',result:12,eligible:true,admitted:false}]}] });
+    const frozen = structuredClone(memory.groupActions);
+    const projected = (state: unknown) => ({world,control,work,data:{workingState:state,pointProjection:{}}});
+    let attempts=0, repairs=0;
+    const model: WorldModelPort = {
+      async generate(task, _key, input) {
+        expect(task).toBe('updates'); expect((input as {stage:string}).stage).toBe('sanity');
+        expect((input as {workingState:unknown}).workingState).toEqual(temporary);
+        attempts++;
+        return {stage:'sanity',changes:{person_a:{entityId:'person_a',sanitySet:45}}};
+      },
+      async repairUpdates(_key, accepted, state) {
+        repairs++; expect(accepted).toEqual(prefix);expect(state).toEqual(temporary);
+        return succeeds && repairs === 1;
+      },
+    };
+    const transport = new ScriptedTransport([
+      {op:'preview_point',respond:r=>{
+        expect((r as {settlementGroups:{previewStage?:string}[]}).settlementGroups.at(-1)?.previewStage).toBe('U5');
+        return projected(temporary);
+      }},
+      {op:'preview_point',respond:r=>{
+        expect((r as {settlementGroups:{previewStage?:string}[]}).settlementGroups.at(-1)?.previewStage).toBeUndefined();
+        return apiError('request_malformed','req');
+      }},
+      {op:'preview_point',respond:()=>projected({...temporary,characters:{person_a:{...temporary.characters.person_a,sanity:45}}})},
+    ]);
+    const driver = new ControllerDriver({transport,model},memory,{world,control,work});
+    await driver.step(); // U5 real returned snapshot retained
+    expect(driver.getMemory().workingState?.state).toEqual(temporary);
+    expect(driver.getMemory().commitPayload).toBeNull();
+    await driver.step(); // U6 candidate
+    const status = await driver.step(); // U6 preview refuses
+    expect(driver.getMemory().groupActions).toEqual(frozen);
+    if (succeeds) {
+      expect(status).toBeUndefined();expect(driver.getMemory().updatesCalls).toEqual(prefix);
+      await driver.step(); await driver.step(); // repair only U6, then full preview
+      expect(driver.getMemory().updatesApplied).toBe(6);expect(attempts).toBe(2);
+    } else {
+      expect(status?.kind).toBe('stop');expect(attempts).toBe(1);
+    }
+    expect(transport.ops.every(op=>op==='preview_point')).toBe(true); // no roll/stage/commit
+    expect(driver.getMemory().groupActions).toEqual(frozen);
+  });
+});

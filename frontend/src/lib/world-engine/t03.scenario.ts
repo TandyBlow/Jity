@@ -285,7 +285,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
       workingState: atStageTime(boundaryBodies[i + 1]),
       pointProjection: { ...(requestOf.get(commitByPoint[pointAt(stageIndex)].id)! as { point: Record<string, Json> }).point, entityDeltas: {} },
       mergedEntityDeltas: {},
-      settlementGroups: [structuredClone(group) as unknown as Json],
+      settlementGroups: [{ ...structuredClone(group), ...(stageCalls[i]?.stage === 'personality' && Object.keys(group.personalities).length > 0 ? { previewStage: 'U5' } : {}) } as unknown as Json],
     }),
   }));
 

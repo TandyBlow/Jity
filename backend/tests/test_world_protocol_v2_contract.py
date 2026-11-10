@@ -561,7 +561,7 @@ def test_discover_group_freezes_time_with_complete_target_set():
 @pytest.mark.parametrize("limit", ["request", "response"])
 def test_preview_budget_details_limit_is_typed(limit):
     value = {
-        "protocolVersion": 2, "engineVersion": "world-engine-v1", "schemaVersion": 1,
+        "protocolVersion": 2, "engineVersion": "world-engine-v1", "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1", "serverTimeEpochMilli": 1792617600000,
         "replayed": False, "operation": "preview_point", "requestId": None, "worldId": "world_school",
         "error": {"code": "preview_budget_exceeded", "httpStatus": 413, "retryable": False,

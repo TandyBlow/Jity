@@ -86,3 +86,30 @@ python -m unittest discover -s scripts/hybrid -p 'test_*.py' -v
 测试覆盖调用预算、skip/incomplete、本地失败、单反应、完整六阶段、非法字段、后缀修复、
 纯时间扫描、输入变化拒绝、D01 身份、D07 双条件与程序分配，以及既有调度/冻结/提交机制。
 受控替身验证编排，不能代替真实 A 服务、付费 API、完整 MacBERT 或浏览器整链验收。
+
+## U5 中间预览与最终保存（2026-11-10 修订）
+
+`preview_point.settlementGroups` 的最后一个单元可以使用独立类型 `U5PreviewGroup`，
+必须带 `previewStage: "U5"`，包含非空个性变化，且 `sanities` 为空；其他单元仍必须完整配对。
+仅这个显式类型获得例外。U6 完整预览不再带此标记。
+
+`SettlementGroup` 的最终配对校验保留。`stage_unit`、`stage_time_scan`、`commit_point`、
+恢复保存的候选都不接受 U5 类型；提交的 point.entityDeltas 也独立要求个性与理智成对，
+避免复制临时投影并清空结算组绕过校验。位置、任务前置条件等共同检查仍执行。
+
+控制器保留 U5 实际预览后的工作状态，清除该临时投影的 commitPayload。
+U6 失败时将 U1–U5 原样传给定向修复，使用 U5 的实际状态，不重掷骰点、不重新生成行动。
+成功后执行完整预览；预算耗尽明确停止。U5 临时状态不会作为存档提交。
+
+真实验证包含：Python Pydantic 请求模型、A 的纯状态投影内核、前端 AJV/语义请求校验，
+以及控制器失败/恢复测试。未声称已部署在线 A HTTP 服务或进行了真实付费 API 游戏。
+
+### 复用来源及协议一致性
+
+`backend/app/services/world/{apply,merge,state,timing,violations}.py` 来自
+`world-server@fc60a603c7e0b57805fffea0458192bcfebf6ffc`，预览模块在该版本上增加显式 U5 请求验证；
+没有合并整个分支或迁入其数据库/运行环境。
+
+为保持重新导出的协议与既有接口一致，同步了该 A 版本已有的冻结骰点/DFS恢复模型和
+get_context 错误登记，并修正 D 原源码中的版本混用：v2 响应信封为2，初始世界/WorldState与轨迹格式仍为1。
+轨迹文件仅更新 contractDigest 绑定，不改业务步骤或预期答案。最终候选配对约束没有放宽。

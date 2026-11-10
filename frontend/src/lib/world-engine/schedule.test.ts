@@ -414,7 +414,7 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     m.groupActors = [...ORDER];
     m.workingState = { key: workingStateKey(wk), state: workingState() };
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'time_scan:p1', input: { mode: 'time_scan' } });
-    m.lastModel = { task: 'updates', key: 'time_scan:p1', output: [{ stage: 'sanity', changes: { person_a: { sanitySet: 40 } } }] as unknown as Json };
+    m.lastModel = { task: 'updates', key: 'time_scan:p1', output: [{ stage: 'tasks', changes: {} }] as unknown as Json };
     expectTransport(next(w, c, wk, m), 'checkpoint_stage_time_scan');
   });
   test('previews before sealing, then seals', () => {
@@ -474,7 +474,7 @@ describe('updates split (1–6 per-stage calls)', () => {
     }),
   });
   test('emits keyed per-stage calls; later stages read only after the between-stage preview', () => {
-    const { w, c, wk, m } = settling();
+    const { w, c, wk, m } = settling(['tasks', 'personality', 'sanity']);
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#tasks',
       input: { stage: 'tasks' },
@@ -486,6 +486,10 @@ describe('updates split (1–6 per-stage calls)', () => {
     expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
     m.updatesApplied = 1;
     m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1#personality' });
+    m.updatesCalls.push({ stage: 'personality', changes: { person_a: { personalityChanges: [{ id:'pc1', text:'更谨慎', supersedes:[] }] } } });
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.updatesApplied = 2;
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#sanity',
       input: { stage: 'sanity' },

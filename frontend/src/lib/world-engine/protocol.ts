@@ -27,6 +27,26 @@ export function validateRequest<K extends WorldOperation>(operation: K, request:
   if (!spec) throw new ProtocolError(`Unknown operation: ${operation}`);
   if (spec.requestSchema) validateSchema(spec.requestSchema, request);
   else if (JSON.stringify(request) !== '{}') throw new ProtocolError('Bodyless operation accepts no request fields');
+  // JSON Schema cannot compare arbitrary object key sets. Mirror the
+  // server's final pairing invariant at the actual transport boundary.
+  const body = request as { settlementGroups?: unknown[]; candidates?: unknown };
+  const groups = body.settlementGroups ?? (body.candidates ? [body.candidates] : []);
+  groups.forEach((raw, index) => {
+    const group = raw as { previewStage?: string; personalities?: Record<string, unknown>; sanities?: Record<string, unknown> };
+    if (!group.personalities || !group.sanities) return;
+    if (group.previewStage !== undefined) {
+      if (operation !== 'preview_point' || group.previewStage !== 'U5' || index !== groups.length - 1
+        || Object.keys(group.sanities).length || !Object.keys(group.personalities).length) throw new ProtocolError('Invalid U5 intermediate preview');
+    } else if (Object.keys(group.personalities).sort().join() !== Object.keys(group.sanities).sort().join()) {
+      throw new ProtocolError('personality changes and sanity recalculation must pair');
+    }
+  });
+  if (operation === 'commit_point') {
+    const point = (request as { point: { entityDeltas: Record<string, { personalityChanges?: unknown[]; sanitySet?: number | null }> } }).point;
+    for (const delta of Object.values(point.entityDeltas)) {
+      if (Boolean(delta.personalityChanges?.length) !== (delta.sanitySet != null)) throw new ProtocolError('committed point personality and sanity must pair');
+    }
+  }
   return request as RequestMap[K];
 }
 function validateVersions(value: unknown): asserts value is Record<string, unknown> {

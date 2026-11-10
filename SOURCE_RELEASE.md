@@ -36,3 +36,12 @@
 - Added a token-protected loopback Python API/MacBERT bridge. No model weights, API keys or environment files are included. Old run.py remains a historical shadow comparison tool.
 - Validation: world TypeScript check passed; 555 world-engine tests passed (28 files); 7 Python hybrid/bridge tests passed. Targeted lint: no errors, seven existing unused-variable warnings. Added a controlled end-to-end D composition with an admitted reaction, six previews, stage, commit and post-commit narration; not a live-model or live-A-service acceptance.
 - No paid API invocation, full model training, model publication, or browser deployment was performed. MacBERT quality/support limitations remain unchanged. Match A/B protocol and supply the documented transport/identity/C adapters before live integration.
+
+## Explicit U5 intermediate preview fix (2026-11-10)
+
+- Only the final preview group may use `U5PreviewGroup` with `previewStage: U5`; it must have personality changes and no sanity values. All final candidate types retain strict personality/sanity pairing. Commit point deltas independently enforce the same pair, including when groups are omitted.
+- Controller retains A's actual U5 projection for U6 checks/repair, never caches it as a commit payload; U6 repair preserves U1–U5 and frozen rolls. Exhaustion stops before stage/commit.
+- Reused A's stateless projection primitives from `fc60a603c7e0b57805fffea0458192bcfebf6ffc`, without merging its server/store/routes. Tests exercise actual Python model validation and actual state projection, plus frontend wire validation and controller recovery.
+- Fixed inherited source/export drift in envelope version and recovery/dice definitions before regenerating the protocol. Existing trace business bodies are unchanged; only contract digest bindings were advanced.
+- Local validation on Python 3.12 / repository-pinned Pydantic 2.13.4: 325 protocol/kernel tests passed. Type check and 562 world frontend tests passed; targeted lint has no errors. Protocol `--check` passes. Added Windows/Linux CI coverage; remote results are separate from these local results.
+- No paid API calls, new model training or production deployment. Existing D03 model quality limitations remain.

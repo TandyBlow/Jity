@@ -29,3 +29,41 @@ jobs:
         run: python -X utf8 -m unittest discover -s experiments/d03-macbert -p "test_*.py" -v
       - name: API orchestration tests without network calls
         run: python -X utf8 -m unittest discover -s scripts/hybrid -p "test_*.py" -v
+  d-protocol:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: '1'
+      PYTHONIOENCODING: utf-8
+      PYTHONPATH: backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install protocol test dependencies (runtime Pydantic pin)
+        run: python -m pip install pydantic==2.13.4 pytest jsonschema
+      - name: Check exported wire protocol
+        run: python backend/scripts/export_world_protocol.py --version v2 --check
+      - name: Real protocol and U5 projection tests
+        shell: bash
+        run: python -m pytest --noconftest backend/tests/test_world_u5_preview.py backend/tests/test_world_protocol_v2*.py -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend test dependencies
+        working-directory: frontend
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Type check D and world controller
+        working-directory: frontend
+        run: npm run typecheck:world
+      - name: World controller and real wire tests
+        working-directory: frontend
+        run: npm test -- src/lib/world-engine

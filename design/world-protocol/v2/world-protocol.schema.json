@@ -8598,7 +8598,14 @@
         },
         "settlementGroups": {
           "items": {
-            "$ref": "#/$defs/SettlementGroup"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SettlementGroup"
+              },
+              {
+                "$ref": "#/$defs/U5PreviewGroup"
+              }
+            ]
           },
           "maxItems": 32,
           "title": "Settlementgroups",
@@ -11339,7 +11346,7 @@
           }
         }
       ],
-      "description": "One ordered settlement unit.\n\ngroupId=None marks the pure time-scan unit of an action-less point: it may\nnot invent movement, appearance or actors. A named group is an action unit\nand requires actors. Outer order in commit requests is significant; member\nordering inside sets is not.",
+      "description": "Final candidate: stage/save/commit always require the complete U5/U6 pair.",
       "properties": {
         "groupId": {
           "anyOf": [
@@ -12539,6 +12546,187 @@
         "entityDeltas"
       ],
       "title": "TimelinePoint",
+      "type": "object"
+    },
+    "U5PreviewGroup": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "groupId": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "actorIds": {
+                "maxItems": 0
+              },
+              "positions": {
+                "maxProperties": 0
+              },
+              "appearances": {
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "groupId": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "actorIds": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ],
+      "description": "Non-persistable U5 prefix; only PreviewPointRequest accepts this type.",
+      "properties": {
+        "groupId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Groupid"
+        },
+        "actorIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Actorids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "positions": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "title": "Positions",
+          "type": "object"
+        },
+        "appearances": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/DescriptionChange"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Appearances",
+          "type": "object"
+        },
+        "tasksAchieved": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "title": "Tasksachieved",
+          "type": "object"
+        },
+        "subtasksAdded": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/PendingTask"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Subtasksadded",
+          "type": "object"
+        },
+        "personalities": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/DescriptionChange"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Personalities",
+          "type": "object"
+        },
+        "sanities": {
+          "maxProperties": 0,
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "title": "Sanities",
+          "type": "object"
+        },
+        "taskCoverageIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Taskcoverageids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "personalityCoverageIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Personalitycoverageids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "previewStage": {
+          "const": "U5",
+          "title": "Previewstage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId",
+        "actorIds",
+        "positions",
+        "appearances",
+        "tasksAchieved",
+        "subtasksAdded",
+        "personalities",
+        "sanities",
+        "taskCoverageIds",
+        "personalityCoverageIds",
+        "previewStage"
+      ],
+      "title": "U5PreviewGroup",
       "type": "object"
     },
     "WorkManifestItem": {

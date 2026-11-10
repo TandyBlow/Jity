@@ -18,8 +18,9 @@ from app.schemas.world.contracts import (
     EntityDelta, WorldTime, InitialLocation, InitialItem, InitialCharacter,
 )
 
-from .base import EpochMilli, Hex64, ProtocolVersion, SchemaVersion
-from .work import SettlementGroup, TargetSpec, RollRef, WorkManifestItem, GroupWorkSource
+from .base import EpochMilli, Hex64, ProtocolVersion, StateSchemaVersion
+from .judgments import RollOutcome
+from .work import U5PreviewGroup, SettlementGroup, TargetSpec, RollRef, WorkManifestItem, GroupWorkSource
 from .contexts import (
     SuccessorSummary, WorkingProgress, NarrationStatus,
 )
@@ -80,7 +81,7 @@ class WorldInitialTemplate(Contract):
     """
 
     engineVersion: Literal["world-engine-v1"]
-    schemaVersion: SchemaVersion
+    schemaVersion: StateSchemaVersion
     protagonistId: Id
     initialTime: WorldTime
     locations: dict[Id, InitialLocation]
@@ -307,7 +308,15 @@ class PreviewPointRequest(Contract):
     expectedVersion: Count
     expectedCheckpointRevision: Count
     timeAdvance: TimeAdvance
-    settlementGroups: list[SettlementGroup] = Field(max_length=32)
+    settlementGroups: list[SettlementGroup | U5PreviewGroup] = Field(max_length=32)
+
+
+    @model_validator(mode="after")
+    def intermediate_is_last(self):
+        for index, group in enumerate(self.settlementGroups):
+            if isinstance(group, U5PreviewGroup) and index != len(self.settlementGroups) - 1:
+                raise ValueError("U5 intermediate must be the last and only partial group")
+        return self
 
 
 class RollSpec(Contract):
@@ -361,6 +370,11 @@ class CommitPointRequest(WriteRequest):
             self.worldId, self.roundId, self.advanceId, self.expectedPointId
         ):
             raise ValueError("point binding differs from request")
+        # The preview projection itself must not bypass the group boundary
+        # by being copied into a commit with an empty settlementGroups list.
+        for delta in self.point.entityDeltas.values():
+            if bool(delta.personalityChanges) != (delta.sanitySet is not None):
+                raise ValueError("committed point personality and sanity must pair")
         group_ids = [unit.groupId for unit in self.settlementGroups]
         if any(group is None for group in group_ids):
             raise ValueError("committed settlement groups must be named action groups")
@@ -597,26 +611,6 @@ class PreviewData(Contract):
             raise ValueError("preview projection names another point")
         if self.mergedEntityDeltas != (self.pointProjection.entityDeltas or {}):
             raise ValueError("merged deltas differ from point projection")
-        return self
-
-
-class RollOutcome(Contract):
-    rollId: Id
-    groupId: Id
-    sourceId: Id
-    targetId: Id
-    triggerKey: Id
-    ruleVersion: Literal["reaction-fixture-v1", "reaction-d20-v1"]
-    target: Annotated[SafeInt, Field(ge=1, le=20)]
-    result: Annotated[SafeInt, Field(ge=1, le=20)]
-    eligibilityBaselineDigest: Hex64
-    eligible: bool
-    admitted: bool
-
-    @model_validator(mode="after")
-    def final_admission(self):
-        if self.admitted != (self.eligible and self.result >= self.target):
-            raise ValueError("admission differs from fixed roll and eligibility")
         return self
 
 
