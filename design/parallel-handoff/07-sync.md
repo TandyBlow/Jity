@@ -190,6 +190,22 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 - 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
   1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
 
+### 第三个 06 侧问题：失败回合之后的刷新会张冠李戴（2026-11-10）
+
+`frontend/scripts/parallel-sync/failed-turn-history-mapping-repro.ts`，06 head `cef95c7e`：
+第 1 回合成功、第 2 回合结算抛错后取消（该轮不产生点位）、第 3 回合成功。这时
+
+- `commands` 有 3 条，已提交的 player 点位只有 2 个；
+- 刷新后 `restoredEntries()` 按列表下标配对，得到：
+  - 第一句 ↔ 第 1 回合正文（对）；
+  - 第二句会失败 ↔ 第 3 回合正文（错，正文挪到了失败那句下面）；
+  - 第三句 →  unfinished / 空（错，它其实提交了）。
+
+页面内存里的列表是对的，只有刷新恢复错。原因是点位只带 `advanceId`，没有“哪条命令”
+的标识，而 `commands` 又把没产出点位的命令也算进去。这会直接让 01 的 D1
+（刷新前后每条输入和正文一致）失败，而且错得不容易看出来。已告诉 06：把命令标识
+存到 advance/round/point 上，或者在无法配对时标成 undetermined，不要猜。
+
 ### 第二个会让页面卡住的 06 侧问题：失败的回合不会被收尾（2026-11-10）
 
 `frontend/scripts/parallel-sync/failed-turn-advance-repro.ts`，06 head `c1027684`：
