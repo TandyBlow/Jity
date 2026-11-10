@@ -322,3 +322,15 @@ decision evidence (`f97c90bc`) but its page still lacks the detached snapshot
 hook; 05's rebased page patch (apply-check clean at `f9297864`) and the
 count-safe history patch remain unapplied. 09 must not run the 10/20-turn
 acceptance until a page with the hook and stable server is confirmed.
+
+## Real one-turn after 04 full-cast skeleton (2026-11-11T00:53Z)
+
+The current 09 file (product `81d5507a`, page `f861ace9`) showed a real turn:
+results 14.8 s; first `updates` `tasks` passed with
+`coverage.tasks=14`, `taskRows=73`, `assertedUnchanged=73`; continuation
+returned continue. The following automatic **time_scan** update failed after
+three attempts because the model returned fabricated `task_<character>_flag`
+ids (e.g. `task_doctor_flag` does not exist) and 04 rejected them; it stopped
+after `waitMs=323418`, committed no point, and wrote no prose. This is a
+model-output reference failure in the time-scan task call, not a state-kernel
+failure; the first call is evidence that the full-cast skeleton can work.
