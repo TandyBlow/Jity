@@ -128,6 +128,11 @@ function selfTest() {
       call.task === 'updates' ? { ...call, stages: ['appearance', 'position', 'tasks', 'subtasks', 'personality', 'sanity'] } : call
     )) }, false],
     ['policy stop as handback', { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_no_progress'], closedBy: 'model' }, false],
+    ['time scan round', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates'
+        ? { ...call, stages: ['tasks', 'subtasks'], coverage: { tasks: 14, personality: 0 } }
+        : call
+    )) }, true],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {
