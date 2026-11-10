@@ -54,6 +54,7 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 - `--dry`：只打印场景身份，不加载模型。
 - `--status`：不启动浏览器，只打印证据文件里每个候选最近一次运行、失败与通知。
 - `--no-engine`：程序成文/规则候选专用；不加载模型、不占锁，给候选一个调用即抛 `engine_unavailable:stub_engine` 的 stub。模型候选用了它会被记成失败，而不是假装跑过。
+- `--continuation accepted|displayed`：链式场景（short-root→move→elapsed、free-day-open→move→task）里，下一回合的 `priorText` 取哪一种上一轮正文。`accepted`（默认）只接已通过候选校验的正文；`displayed` 接页面实际会显示的正文（含程序回退），证据 `input.priorSource` 写明是 `accepted` 还是 `displayed_fallback`。产品页在上一轮回退时玩家仍看到回退正文，所以连续回合测试应至少跑一次 `displayed`。
 - `--probe`：不导入候选，用纯文本 prompt 测浏览器/wllama 栈；用于区分“栈坏了”和“候选 prompt 不好”。
 - `--lease-wait-seconds 1200`：锁被其他线持有时轮询等待；超时记 `lease_busy`，不假装跑过。
 - `--gpu`：请求 WebGPU 层；证据同时记录 `webgpuAvailable`、`gpuRequested`、候选加载器报告的 `backend`（08 加载器）和 `backendNote`。请求不等于生效；只有 `backend=webgpu` 才写 WebGPU。

@@ -104,3 +104,25 @@ describe('browser candidate queue mechanics', () => {
       .rejects.toThrow(/scenario_not_prepared:nope/);
   });
 });
+
+describe('continuation source', () => {
+  it('reports accepted versus displayed fallback explicitly', async () => {
+    attachEngine('/models/fixture.gguf', fakeEngine());
+    await prepare({ set: 'short', include: ['short-root', 'short-move'], candidates: [spec()] });
+    const root = await runOne({ candidateId: fixtureId, scenarioId: 'short-root', hardTimeoutMs: 10_000 });
+    expect(root.input.priorSource).toBeNull();
+    const moveAccepted = await runOne({ candidateId: fixtureId, scenarioId: 'short-move', hardTimeoutMs: 10_000 });
+    expect(moveAccepted.input.priorSource).toBe('accepted');
+  });
+
+  it('can continue from displayed fallback and says so', async () => {
+    attachEngine('/models/fixture.gguf', fakeEngine());
+    await prepare({ set: 'short', include: ['short-root', 'short-move'], candidates: [spec()] });
+    await runOne({ candidateId: fixtureId, scenarioId: 'short-root', hardTimeoutMs: 10_000 });
+    const move = await runOne({
+      candidateId: fixtureId, scenarioId: 'short-move', hardTimeoutMs: 10_000, continuation: 'displayed',
+    });
+    expect(move.input.priorText).toBeTruthy();
+    expect(['accepted', 'displayed_fallback']).toContain(move.input.priorSource ?? '');
+  });
+});

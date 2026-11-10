@@ -174,6 +174,9 @@ export interface RunEvidence {
     scene: SceneGrounding;
     policy: Record<string, unknown>;
     priorText: string | null;
+    /** Where `priorText` came from: an accepted prior turn, prose the page
+     * actually displayed (fallback), or none. */
+    priorSource?: 'accepted' | 'displayed_fallback' | 'none' | null;
     /** Extra read-only fields attached to `committed` for state-projecting
      * candidates; the fact packet itself is unchanged. */
     committedExtras: string[];

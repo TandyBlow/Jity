@@ -80,6 +80,7 @@ const config = {
   probe: flag('--probe'),
   status: flag('--status'),
   noEngine: flag('--no-engine'),
+  continuation: value('--continuation', 'accepted'),
   quiet: flag('--quiet'),
   aliasSrc: resolve(value('--alias-src', resolve(frontend, 'src'))),
   allowDirs: values('--allow-dir'),
@@ -183,6 +184,7 @@ if ((!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) 
   fail('at least one --candidate <id>=<module path> is required (or use --probe/--status)');
 }
 if (!['short', 'free-day', 'all'].includes(config.set)) fail(`--set must be short|free-day|all, got ${config.set}`);
+if (!['accepted', 'displayed'].includes(config.continuation)) fail(`--continuation must be accepted|displayed, got ${config.continuation}`);
 if (!existsSync(config.world)) fail(`world asset missing: ${config.world}`);
 
 const candidates = Object.entries(config.candidateSpecs).map(([id, modulePath]) => {
@@ -677,6 +679,7 @@ try {
               scenarioId: scenario.id,
               hardTimeoutMs: config.hardTimeoutMs,
               stubEngine: config.noEngine,
+              continuation: config.continuation,
               maxTokens: config.maxTokens,
               temperature: config.temperature,
               policyOverride: candidatePolicies[candidate.id] ?? null,

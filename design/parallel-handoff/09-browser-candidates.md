@@ -208,6 +208,15 @@ generateCandidate({
 
 注意：`accepted` 是候选自己的校验结果；09 只把 `accepted=true` 且正文为空的结果强制改判 `accepted=false` + `contract.ok=false`（`runs[].queueCorrection` 保留原值）。不要用 `accepted` 当页面“高质量”标志。
 
+## 5.9 连续回合（2026-11-10 10:36–10:42 UTC）
+
+同一进程按 `free-day-open → move → task` 顺序跑 08 的 Qwen3-1.7B（引擎只冷启动一次 43.6 s）：
+
+- open：accepted 204 字，44.2 s，首可读 26.4 s，1 次调用，4 条 soft。
+- move：rejected 246 字，104.0 s，首可读 31.8 s，2 次调用；hard `actor_swap`——必写的「路明非从西侧服务巷到西回廊」被写成诺诺的移动，路明非只是「蹲在西回廊的石栏边」。
+- task：rejected 156 字，66.3 s，首可读 22.0 s，2 次调用；hard `omitted_fact`，任务达成/个性/精神值三条一条没写。
+- 注意：task 的 `priorText` 是 null，因为 move 被拒、`accepted` 映射里没有它。队列新增 `--continuation displayed`：接页面实际显示的正文（含回退），并在 `input.priorSource` 记录 `accepted` / `displayed_fallback`；连续回合的产品行为要用它测，否则中间一轮被拒就会让下一轮失去上文。
+
 ## 6. 待办与判断
 
 - A：03 的 1.5B 真机首段 18.3 s，但第一人称 3 处、重复衣着段；需要候选侧改成第三人称并补必写事实。08 自己的 1.5B dev 3 点也全 rejected（root 幻觉、move 截断/新增事件、continuation 无事实移动）。A 仍无 accepted 正文。

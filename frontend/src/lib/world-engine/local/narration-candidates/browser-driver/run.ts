@@ -34,6 +34,10 @@ interface DriverState {
   scenarios: Map<string, CandidateScenario>;
   /** Last accepted text per `candidateId::scenarioId`, used for continuations. */
   accepted: Map<string, string>;
+  /** Last non-empty text shown for a scenario (accepted or fallback). A page
+   * displays fallback prose too, so a later turn may legitimately continue
+   * from it; the evidence says which source was used. */
+  displayed: Map<string, string>;
   /** Module import cache so repeated runs do not re-import the candidate. */
   modules: Map<string, Record<string, unknown>>;
 }
@@ -44,7 +48,7 @@ const globalStore = globalThis as unknown as Record<string, DriverState | undefi
 function state(): DriverState {
   let existing = globalStore[GLOBAL_KEY];
   if (!existing) {
-    existing = { engines: new Map(), candidates: new Map(), scenarios: new Map(), accepted: new Map(), modules: new Map() };
+    existing = { engines: new Map(), candidates: new Map(), scenarios: new Map(), accepted: new Map(), displayed: new Map(), modules: new Map() };
     globalStore[GLOBAL_KEY] = existing;
   }
   return existing;
@@ -253,6 +257,10 @@ export interface RunOneConfig {
   /** Program-only run: supply an engine that throws if the candidate asks for
    * inference, so a composer/realizer path can run without loading weights. */
   stubEngine?: boolean;
+  /** Which earlier text a chained scenario continues from. `accepted` (default)
+   * only carries verified prose; `displayed` carries whatever the page would
+   * have shown, including fallback, and records that in `priorSource`. */
+  continuation?: 'accepted' | 'displayed';
 }
 
 function createStubEngine(): InferenceEngine {
@@ -406,7 +414,13 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   const { fn, usedName } = resolveGenerator(mod, candidate.exportName);
 
   const continuationKey = scenario.continuesFrom ? `${candidate.id}::${scenario.continuesFrom}` : null;
-  const priorText = continuationKey ? store.accepted.get(continuationKey) ?? null : null;
+  const continuationMode = config.continuation ?? 'accepted';
+  const priorAccepted = continuationKey ? store.accepted.get(continuationKey) ?? null : null;
+  const priorDisplayed = continuationKey ? store.displayed.get(continuationKey) ?? null : null;
+  const priorText = continuationMode === 'displayed' ? priorDisplayed : priorAccepted;
+  const priorSource = !continuationKey ? null
+    : priorText === null ? 'none'
+      : priorText === priorAccepted ? 'accepted' : 'displayed_fallback';
   // Candidates that project from state (C's constrained entry) receive the
   // settled before/after alongside the fact packet. The packet stays the
   // authority; these are the same reads it was derived from.
@@ -474,6 +488,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   const accepted = result?.accepted === true && text.trim().length > 0;
   const acceptedButEmpty = result?.accepted === true && text.trim().length === 0;
   if (accepted) store.accepted.set(`${candidate.id}::${scenario.id}`, text);
+  if (text.trim()) store.displayed.set(`${candidate.id}::${scenario.id}`, text);
   const attempts = Array.isArray(result?.rawAttempts) ? normalizeAttempts(result.rawAttempts) : [];
   const timings = isRecord(result?.timings) ? result.timings as RunEvidence['result']['timings'] : null;
   const extras = result ? Object.keys(result).filter((key) => !['text', 'accepted', 'rawAttempts', 'issues', 'timings', 'strategyVersion'].includes(key)) : [];
@@ -497,6 +512,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       scene: scenario.scene,
       policy: effectivePolicy,
       priorText,
+      priorSource,
       committedExtras: ['state', 'beforeState', 'timeAdvance', 'entityDeltas'],
     },
     result: {
