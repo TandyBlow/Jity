@@ -157,10 +157,33 @@ generateCandidate({
 03/04 用 1.5B instruct + 08 的 `loadCandidateModel`，02/10 用 0.5B narration；`--gpu`。命令与候选路径由 `--status` 可查；证据会写 `backend=webgpu`（08 加载器）或 `gpuRequested=true, backendNote=...`（直连引擎，未独立验证）。
 `--no-engine` 只给程序成文候选（04 program / 07），不加载权重、不占锁；模型候选在 `--no-engine` 下会得到抛错的 stub engine，不会被误当成跑过。
 
+## 5.8 给 06 的接线入口（不需要你重建浏览器）
+
+06 只需两步，不需要审批、不需要等 09 的人在线：
+
+1. **在自己的候选选择层加一个可导入的实现**：`generateCandidate(args)` 或你现有的 `generateCommittedNarration(args)`（09 两种都接受，非标准导出名会记进 `evidence.exportName`）。参数就 `engine / committed / inputText / priorText / onProgress / policy`；`committed` 额外带 `state / beforeState / timeAdvance / entityDeltas`，都是同一份已结算读出的同源数据。
+2. **自己跑一次真实页面验证**（持有锁时）：
+   ```bash
+   cd frontend
+   node scripts/quality-candidates/run-browser-candidates.mjs      --candidate selection=D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts      --candidate-model selection=/models/qwen25-0.5b-narration-Q4_K_M.gguf      --model-dir D:/others/Jity/.local/world-narration-worktree/frontend/public/models      --gpu --set free-day --only free-day-move      --lease-wait-seconds 600 --purpose "06 selection on free-day move"      --out D:/others/Jity/.local/parallel-local-game/results/quality/browser-09.json
+   ```
+   或看已有结果不占锁：`--status`。
+
+可加载路径（本机现成、已用真实浏览器加载过）：
+
+- 02 策略：`worktrees/02-narration/frontend/src/lib/world-engine/local/narration-generation/index.ts`（导出 `generateCommittedNarration` 与 `generateCandidate`）
+- 04 骨架：`worktrees/04-settlement/frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts`
+- 07 成文：`worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts`（程序，无模型）
+- 10 分拍：`worktrees/10-training/experiments/narration-runtime-v2/browser/candidate.ts`
+- 03 instruct：`worktrees/03-actions/frontend/src/lib/world-engine/local/narration-candidates/instruct/index.ts`
+
+注意：`accepted` 是候选自己的校验结果；09 只把 `accepted=true` 且正文为空的结果强制改判 `accepted=false` + `contract.ok=false`（`runs[].queueCorrection` 保留原值）。不要用 `accepted` 当页面“高质量”标志。
+
 ## 6. 待办与判断
 
 - A：03 的 1.5B 真机首段 18.3 s，但第一人称 3 处、重复衣着段；需要候选侧改成第三人称并补必写事实。08 自己的 1.5B dev 3 点也全 rejected（root 幻觉、move 截断/新增事件、continuation 无事实移动）。A 仍无 accepted 正文。
 - B：02 的真实 raw 有内容但 beat 截断/actor swap；10 的 move 有 195 字 but meta/added_event。B 仍未达到产品正文；02/10 已收到具体坏句。
 - C：04 的 move 已被真实模型写出 345 字，但 verifier 漏掉跨人物换位；task 仍是任务目标原句 + 告诉。C 的可读性比程序层好，但需要修 verifier 和 task 写法。
 - 本线不判断正文质量；谁先有可读正文由各负责人读 `runs[].result.paragraphs`。
+- 公开短场景补跑（真机 WebGPU）：02 short-root 33 字/1 次、short-move 11 字/4 次都因 `too_short` 被自己的下限打回；10 short-move accepted 60 字但编出「楼梯口」「盒子打开/旧日记」；10 short-root 又是 `beats=[]` 空正文；03 short-root 编出「门厅现代房间/巨幅画作」并漏 fact。已逐条写进 `notices[]`。
 - 锁：06 自 05:59 手工 acquire 后一直持到 08:35 才释放（product-turn 07:08 已写完）；08 在 08:37 接过锁跑 4B 失败、1.5B dev 3 点全 rejected；10 在 09:20 跑过一轮。09 的队列只在启动浏览器前 acquire、finally release；等待期间不启动第二个浏览器，并把占用原样写进 `notices[]`/`failures[]`。

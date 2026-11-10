@@ -349,7 +349,35 @@ function mergeEvidence(base, incoming) {
     probes.set(`${probe.at}|${probe.model}`, probe);
   }
   merged.probes = [...probes.values()];
+  merged.summary = rebuildSummary(merged);
   return merged;
+}
+
+/** Latest run per candidate+scenario in one flat table. Owners read this to
+ * find their own text without walking `runs[]`; it is a pointer, never a
+ * quality verdict. */
+function rebuildSummary(snapshot) {
+  const latest = new Map();
+  for (const run of snapshot.runs ?? []) {
+    const key = `${run.candidateId}::${run.scenarioId}`;
+    const old = latest.get(key);
+    if (!old || String(run.startedAt) >= String(old.startedAt)) latest.set(key, run);
+  }
+  return [...latest.values()].map((run) => ({
+    candidateId: run.candidateId,
+    scenarioId: run.scenarioId,
+    runId: run.runId,
+    startedAt: run.startedAt,
+    accepted: run.result?.accepted ?? null,
+    chars: run.result?.chars ?? null,
+    wallMs: Math.round(run.wallMs ?? 0),
+    firstReadableAtMs: run.progress?.firstReadableAtMs ?? null,
+    backend: run.engine?.loader?.backend ?? null,
+    gpuRequested: run.engine?.gpuRequested ?? null,
+    issues: (run.result?.issues ?? []).slice(0, 6).map((issue) => `${issue.severity ?? ''}:${issue.kind ?? issue}`),
+    textPreview: (run.result?.text ?? '').slice(0, 80),
+    textLocation: `${config.out}#runs[${run.runId}]`,
+  })).sort((a, b) => `${a.candidateId}${a.scenarioId}`.localeCompare(`${b.candidateId}${b.scenarioId}`));
 }
 
 function sleepSync(ms) {
