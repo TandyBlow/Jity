@@ -758,6 +758,18 @@ export default function WorldLocalPage() {
         try {
           session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
+          // A save can carry an advance left open by a failed turn. The next
+          // submit would be refused as turn_in_progress (2603 run: ready, then
+          // submit_refused). Cancel it once at load and keep everything that
+          // was already committed.
+          if (session.snapshot.transport.advance) {
+            try {
+              await Promise.race([
+                session.cancel('restored_unfinished'),
+                new Promise((resolve) => setTimeout(resolve, 15_000)),
+              ]);
+            } catch (cancelError) { console.warn('[world-local] cancel of a restored unfinished turn failed', cancelError); }
+          }
           restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
         } catch (openError) {
           if (openError instanceof SessionLeaseHeldError) {
