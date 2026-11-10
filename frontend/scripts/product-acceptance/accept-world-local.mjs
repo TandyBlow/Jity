@@ -737,17 +737,25 @@ try {
   // page and check the entries survive from the browser's own save.
   const entriesBeforeReload = await entryCount();
   const stateBeforeReload = await snapshot();
+  evidence.reload = { startedAt: new Date().toISOString(), status: 'reloading' };
+  save();
   await page.reload({ waitUntil: 'domcontentloaded' });
   const reloadStarted = Date.now();
+  const reloadTimeoutMs = Math.min(readyTimeoutMs, 240000);
   try {
     await page.waitForFunction(
-      () => /本地世界已就绪|已恢复本地存档|加载失败|Error/.test(document.body.innerText),
+      () => /本地世界已就绪|已恢复本地存档|世界已就绪|加载失败|Error/.test(document.body.innerText),
       null,
-      { timeout: readyTimeoutMs },
+      { timeout: reloadTimeoutMs },
     );
+    evidence.reload.status = 'ready';
   } catch (error) {
-    noteFailure('reload', `page did not become ready after reload in ${readyTimeoutMs} ms`, String(error).slice(0, 300));
+    evidence.reload.status = 'timeout';
+    evidence.reload.bodyTail = await page.evaluate(() => document.body.innerText.slice(-600)).catch(() => null);
+    noteFailure('reload', `page did not become ready after reload in ${reloadTimeoutMs} ms`, String(error).slice(0, 300));
   }
+  evidence.reload.readyMs = Date.now() - reloadStarted;
+  save();
   const entriesAfterReload = await entryCount();
   const stateAfterReload = await snapshot();
   const restoredText2 = await page.evaluate(() => document.body.innerText);
