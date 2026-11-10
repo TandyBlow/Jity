@@ -218,3 +218,16 @@ describe('product regressions: what counts as a repeated ending', () => {
     expect(kinds).toContain('echo_prior');
   });
 });
+
+describe('product regressions: an object cannot be in a hand and hanging on the body', () => {
+  // 09 e9a5 (page bdac63ec) wrote «她手中的短枪还挂在腰间» inside one sentence.
+  test('a gun in the hand and at the waist in one sentence is a contradiction', async () => {
+    const text = '诺诺站在不远处，她手中的短枪还挂在腰间，黄色的演习标记在阳光下闪烁。一分钟过去，路明非还站在原地。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind));
+    expect(hard).toContain('self_contradiction');
+  });
+});

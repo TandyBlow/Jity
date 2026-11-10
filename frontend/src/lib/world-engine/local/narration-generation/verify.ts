@@ -380,6 +380,19 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
       const clause = sentence.split(/[，,；;]/u).find((part) => HAND.test(part)) ?? sentence;
       held = clause.slice(0, 24);
     }
+    // The same object cannot be in a hand and hanging at the waist. 09's e9a5
+    // turn wrote «她手中的短枪还挂在腰间» in one sentence.
+    const WEAR = /(挂在|系在|插在|别在|放在|贴在)(腰间|腰上|背上|肩上|墙上|桌上|地上)/u;
+    for (const sentence of sentences) {
+      const inHand = /(?:手中|手里|手上)的?([一-龥]{2,4}?)(?=[还正已就，。；、]|$)/u.exec(sentence);
+      if (!inHand) continue;
+      const wear = WEAR.exec(sentence);
+      if (!wear || wear.index < inHand.index) continue;
+      const noun = inHand[1];
+      if (sentence.lastIndexOf(noun, wear.index) < 0) continue;
+      issues.push(hard('self_contradiction', attempt,
+        `text says ${noun} is in the hand and also ${wear[1]}${wear[2]}`, sentence));
+    }
   }
 
   const minChars = policy.minChars ?? 60;
