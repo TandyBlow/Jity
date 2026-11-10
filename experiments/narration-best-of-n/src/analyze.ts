@@ -124,15 +124,33 @@ function configFor(batch: string): { caseIds: string[]; seeds: number[]; sharedP
   return loadJson(join(EXP, 'configs', `${batch}.json`));
 }
 
-function preregGuard(): Record<string, unknown> {
-  const preregPath = join(EXP, 'preregistration.json');
+const PREREG_FILES: Record<string, { file: string; shaFile: string }> = {
+  b01: { file: 'preregistration.json', shaFile: 'preregistration.sha256' },
+  'b01-template-v2': { file: 'preregistration.v2.json', shaFile: 'preregistration.v2.sha256' },
+  'b02-generalization-v2': { file: 'preregistration.v3.json', shaFile: 'preregistration.v3.sha256' },
+};
+
+interface PreregDoc {
+  file: string;
+  sha256: string;
+  data: Record<string, unknown>;
+}
+
+function preregGuard(batch: string): PreregDoc {
+  const names = PREREG_FILES[batch];
+  if (!names) throw new Error(`no preregistration mapping for batch:${batch}`);
+  const preregPath = join(EXP, names.file);
   const preregBytes = readFileSync(preregPath);
-  const expectedPath = join(EXP, 'preregistration.sha256');
-  if (!existsSync(expectedPath)) throw new Error('preregistration.sha256 missing; freeze the prereg before analysis');
+  const expectedPath = join(EXP, names.shaFile);
+  if (!existsSync(expectedPath)) throw new Error(`${names.shaFile} missing; freeze the prereg before analysis`);
   const expected = readFileSync(expectedPath, 'utf8').trim().split(/\s+/)[0];
   const actual = sha256(preregBytes);
-  if (actual !== expected) throw new Error(`preregistration_sha256_mismatch:${actual}!=${expected}`);
-  return JSON.parse(preregBytes.toString('utf8')) as Record<string, unknown>;
+  if (actual !== expected) throw new Error(`${names.file}_sha256_mismatch:${actual}!=${expected}`);
+  return {
+    file: names.file,
+    sha256: actual,
+    data: JSON.parse(preregBytes.toString('utf8')) as Record<string, unknown>,
+  };
 }
 
 function classify(seed: number, report: CheckerReport, text: string): {
@@ -230,7 +248,14 @@ interface CaseAnalysis {
 async function main(): Promise<void> {
   const batches = argValues('--batch');
   if (batches.length === 0) throw new Error('missing_argument:--batch');
-  const prereg = preregGuard();
+  const preregDocs = batches.map((batch) => preregGuard(batch));
+  const prereg = preregDocs[0];
+  const sharedPackKey = JSON.stringify(prereg.data.sharedInputPackage);
+  for (const doc of preregDocs.slice(1)) {
+    if (JSON.stringify(doc.data.sharedInputPackage) !== sharedPackKey) {
+      throw new Error(`shared input package differs across batches:${prereg.file},${doc.file}`);
+    }
+  }
   const checker = await import(CHECKER_ENTRY) as unknown as CheckerModule;
   const checkerIdentity = checkerHashes();
   const moduleHashes = {
@@ -269,6 +294,8 @@ async function main(): Promise<void> {
         : null;
     evidence.push({
       batch,
+      preregistrationFile: preregDocs[batches.indexOf(batch)].file,
+      preregistrationSha256: preregDocs[batches.indexOf(batch)].sha256,
       rawPath,
       rawSha256: sha256(readFileSync(rawPath)),
       envSha256: existsSync(envPath) ? sha256(readFileSync(envPath)) : null,
@@ -467,7 +494,7 @@ async function main(): Promise<void> {
     rubric: {
       owner: '01-input',
       version: 'RUBRIC.md',
-      sha256: (prereg.sharedInputPackage as Record<string, string>).rubricSha256,
+      sha256: (prereg.data.sharedInputPackage as Record<string, string>).rubricSha256,
     },
     reviewerRule: '01 default; 05/03 only after per-sample non-participation; 12 cannot sign its own experiment',
     humanReview: { status: 'pending', reason: 'no real human reading has happened yet' },
@@ -523,9 +550,13 @@ async function main(): Promise<void> {
     createdAt: nowIso(),
     batches,
     preregistration: {
-      version: prereg.version,
-      sha256: sha256(readFileSync(join(EXP, 'preregistration.json'))),
+      file: prereg.file,
+      version: prereg.data.version,
+      sha256: prereg.sha256,
     },
+    batchPreregistrations: Object.fromEntries(preregDocs.map((doc) => [batches[preregDocs.indexOf(doc)], {
+      file: doc.file, sha256: doc.sha256,
+    }])),
     checker: {
       module: 'worktrees/01-input/frontend/src/lib/world-engine/local/narration-quality',
       files: checkerIdentity.files,

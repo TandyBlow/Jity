@@ -1,12 +1,19 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T12:29:57.478Z",
+  "createdAt": "2026-11-10T12:33:46.023Z",
   "batches": [
     "b01"
   ],
   "preregistration": {
+    "file": "preregistration.json",
     "version": "narration-best-of-n-prereg-v1",
     "sha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3"
+  },
+  "batchPreregistrations": {
+    "b01": {
+      "file": "preregistration.json",
+      "sha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3"
+    }
   },
   "checker": {
     "module": "worktrees/01-input/frontend/src/lib/world-engine/local/narration-quality",
@@ -16,17 +23,19 @@
       "fallback.test.ts": "88694175a3823266b580c436bd8871a20018d48e2af3adc9a3bfe78dbb8a3bc4",
       "gate.test.ts": "653ab580f3002d9e44553a60135b074350d683bcfd36a87bead691dda5d75bad",
       "gate.ts": "d2d7fe40ea0b3660f4ef1156f4277c9b86d61e3223ffe15bde0db89a26b1032e",
+      "genders.test.ts": "37cbed31af88c333df0d4b6e5e50a5d72de9a450963e549a4bfe3bb63aeb75eb",
+      "genders.ts": "090e33bfaeeb4a270174047ece8831c233c09b3471b908dda08f0fa78481744a",
       "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
       "lexicon.ts": "2116666ea7374f132bc34d24b8d96c2ac31ff8e5acc11306b855a472d13d75b9",
       "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
-      "review.ts": "9ac660218af801df708f732cae6f0ab0893970eb04a9261a973a50a98c9de496",
+      "review.ts": "cd8957afc8e5293bf526b1d35219e9420c3d833a22723b72560a501d6a72ffa3",
       "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
       "sequence-batch.test.ts": "f2181ccd31a157df2e34b39602e58181ba705b7fd4b53ec219c7b5fdab0f6cdd",
       "sequence.test.ts": "e8b6220e042d266c0e2486adfb043a355d8b57d2861c60400c98959df4167828",
       "sequence.ts": "3b3a01bf1a62dee45d5ba6c3dff10e7f06f6b259816f0c7536849dd0d4a0fff1",
       "types.ts": "318476e88645252ee0db5c4bf162a3f8428b2c763712c15489b200a74b5d8a78"
     },
-    "combinedSha256": "e592ad49a18198aa7d93be9053515a5c72dc29da81e934d527ffe6048bfc27fa",
+    "combinedSha256": "92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f",
     "reviewKind": "mechanical_checker",
     "independent": false,
     "note": "mechanical fact/style/review screen; not a human and not an independent sign-off"
@@ -34,7 +43,7 @@
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
     "select": "88014ef747c5bbdb87a6dd4a535260650a821343b4d5f30d14b3ce84e556a69c",
-    "analyzer": "8aaffbfe260cad837fe47885d38fc02c20da2569a3e7cd632d631db9f3f76045"
+    "analyzer": "fc44d5d65368c3101fc7cb78d81b22ed9c702c01d5fa84ab1100afa7db54caaf"
   },
   "analysisPlan": {
     "path": "analysis-addendum-arms.md",
@@ -62,6 +71,8 @@
   "evidence": [
     {
       "batch": "b01",
+      "preregistrationFile": "preregistration.json",
+      "preregistrationSha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3",
       "rawPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\raw.jsonl",
       "rawSha256": "b2324fa56b90bd3371c140b4ecfeb687927beafcdb36d46dc0c9ff7e084c182c",
       "envSha256": "eec9685ca3b6a5d23084ebdfd04523486c764ebe1c9ffd4111007bd51acefe54",
@@ -294,7 +305,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 6.3899000000000115
+            "elapsedMs": 8.215800000000058
           },
           "metrics": {
             "chars": 52,
@@ -393,7 +404,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.591700000000003
+            "elapsedMs": 0.7852000000000317
           },
           "metrics": {
             "chars": 20,
@@ -500,7 +511,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.8628999999999678
+            "elapsedMs": 1.276200000000017
           },
           "metrics": {
             "chars": 62,
@@ -610,7 +621,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.609800000000007
+            "elapsedMs": 0.9092000000000553
           },
           "metrics": {
             "chars": 94,
@@ -709,7 +720,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.3013000000000261
+            "elapsedMs": 0.4895000000000209
           },
           "metrics": {
             "chars": 50,
@@ -821,7 +832,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.1383999999999901
+            "elapsedMs": 0.18809999999996307
           },
           "metrics": {
             "chars": 22,
