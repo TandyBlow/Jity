@@ -164,25 +164,27 @@ Real browser (leased `08-runtime`; Edge headless, WebGPU, COOP/COEP):
 
 ```bash
 cd frontend
-node scripts/parallel-runtime/measure-wllama.mjs --out ../.local/parallel-runtime/measure.json
+node scripts/parallel-runtime/measure-wllama.mjs --out ../.local/parallel-runtime/measure-final.json
 ```
 
-Final run (Edge 157.0.4341.42, Qwen3-0.6B-Q4_K_M, context 2048, 4 threads,
-WebGPU, crossOriginIsolated): load 43.2 s = 33.3 s fetch + 9.9 s compile
-(`Cache-Control: no-store`, first network acquisition; the first run measured
-8.0 s + 6.3 s — localhost transfer varies); duplicate `load()` 0.04 ms;
-first readable p50 657 ms (296–1122 ms over 6 streaming calls); whole output
-p50 1.67 s (0.76–2.59 s); worst stream gap 182 ms; 7 generations = 5 completed,
-1 aborted, 1 timeout, 0 errors. Warmed call reused 40 cached prompt tokens
-(prompt_n 1), first readable 1122 ms → 296 ms. Caller abort settled in 15.5 ms
-(evidence `stoppedMs` 2.2 ms), partial text kept, next generation succeeded,
-no hard stop. 250 ms deadline stopped after 496 ms (`stoppedMs`), model stayed
-loaded. Dispose 0.13 ms / second call 0 ms / terminal. Queue: 0.4 ms wait,
-1.67 s run.
+Final run bound to commit `91136ede` (Edge 157.0.4341.42, Qwen3-0.6B-Q4_K_M,
+context 2048, 4 threads, WebGPU, crossOriginIsolated): load 20.3 s = 9.2 s
+fetch + 11.1 s compile (`Cache-Control: no-store`, first network acquisition;
+three runs measured 14.3 s, 43.2 s and 20.3 s total — localhost transfer and
+compile vary, so treat the split, not one total, as the finding); duplicate
+`load()` 0.085 ms; first readable p50 732 ms (380–1292 ms over 6 streaming
+calls); whole output p50 1.81 s (0.77–3.13 s); worst stream gap 225 ms;
+7 generations = 5 completed, 1 aborted, 1 timeout, 0 errors. Warmed call
+reused 40 cached prompt tokens (prompt_n 1), first readable 1292 ms → 380 ms.
+Caller abort settled in 5 ms (evidence `stoppedMs` 4.6 ms), partial text kept,
+next generation succeeded, no hard stop. 250 ms deadline stopped after 517 ms
+(`stoppedMs`), model stayed loaded. Dispose 0.49 ms / second call 0.02 ms /
+terminal. Queue: 0.2 ms wait, 2.6 s run.
 
-Raw report: `D:/others/Jity/.local/parallel-local-game/worktrees/08-runtime/.local/parallel-runtime/measure.json`
-(first run kept as `measure-run1.json`). The report binds source digests,
-model/bundle/wasm hashes and the git status.
+Raw report: `D:/others/Jity/.local/parallel-local-game/worktrees/08-runtime/.local/parallel-runtime/measure-final.json`
+(earlier runs kept as `measure-run1.json` and `measure.json`). The report binds
+source digests, model/bundle/wasm hashes and the git status; `source.head` is
+`91136ede` and only the untracked private goal doc appears in `git status`.
 
 ## Limitations / follow-ups
 
