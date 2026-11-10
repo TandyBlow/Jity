@@ -29,6 +29,8 @@ interface Brain {
   placement: Record<string, string>;
   /** what the results answer says per scenario */
   taskAchieved?: boolean;
+  /** appearance stage answers: room id -> op (may read the current record ids) */
+  appearanceOps?: (prompt: string) => { entityId: string; op: string; recordIds: string[]; text: string | null }[];
   /** continuation answers, consumed in order */
   continuations: ({ candidates: { characterId: string; text: string }[]; judgments?: { likely: boolean; related: boolean }[] })[];
   /** every action call: the text and the advance's consumption state */
@@ -64,7 +66,9 @@ function scriptedEngine(brain: Brain): InferenceEngine {
         });
       }
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });
-      if (prompt.includes('外貌结算器')) return JSON.stringify({ operations: [] });
+      if (prompt.includes('外貌结算器')) {
+        return JSON.stringify({ operations: brain.appearanceOps ? brain.appearanceOps(prompt) : [] });
+      }
       if (prompt.includes('任务判定器')) {
         // Every task must be decided, including the off-screen owner's task.
         return JSON.stringify({ decisions: [{ characterId: 'person_a', taskId: 'task_watch', label: brain.taskAchieved ? 'achieved' : 'pending' }] });
@@ -237,6 +241,54 @@ describe('turn execution through the real kernel', () => {
     const consumed = brain.seenInputs.filter((call) => call.intentStatus === 'consumed');
     expect(consumed.length).toBeGreaterThan(0);
     expect(consumed.every((call) => call.actor === 'person_c' || call.text === '我打开盒盖。')).toBe(true);
+  });
+
+  // KNOWN SHARED BUG (scheduled.ts `inputIds`, owned by 05/06): the working
+  // state's location appearanceChanges are not registered as known change ids,
+  // so a second change to the same room is stopped as a dangling reference.
+  // This test is expected to fail until that shared fix lands; it then fails as
+  // "expected to fail but passed", which is the prompt to promote it back.
+  it.fails('replaces the same room appearance on a second turn and keeps the old record', async () => {
+    // Turn 1 adds the room's first change; turn 2 replaces that change with a
+    // new id, which references a record the working state already has.
+    let turn = 0;
+    const brain = brainState({
+      placement: { person_c: 'corridor', person_a: 'hall' },
+      taskAchieved: false,
+      continuations: [{ candidates: [] }, { candidates: [] }],
+      appearanceOps: (prompt) => {
+        turn += 1;
+        const line = prompt.split(String.fromCharCode(10)).find((row) => row.includes('id=corridor'));
+        const recordIds = /记录=\[([^\]]*)\]/u.exec(line ?? '')?.[1].split(',').filter(Boolean) ?? [];
+        if (turn === 1) return [{ entityId: 'corridor', op: 'add', recordIds: [], text: '地板上多了一道新划痕。' }];
+        return [{ entityId: 'corridor', op: 'replace', recordIds, text: '地板上的划痕被拖把抹开成一片。' }];
+      },
+    });
+    const initial = initialState(brain);
+    const order = Object.keys(initial.characters).sort();
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const { model } = driverFor(initial, brain);
+    const memory = initialMemory('test_room', 'holder_room');
+    memory.initialTemplate = initial;
+    const slots = [
+      { slotKey: 'advance', kind: 'advance' as const }, { slotKey: 'input', kind: 'input' as const },
+      { slotKey: 'round', kind: 'round' as const }, { slotKey: 'point', kind: 'point' as const },
+      ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+    ];
+    memory.playerInput = { text: '我擦掉地板上的划痕。', order };
+    memory.allocPlan = { allocationKey: 'turn_1', slots };
+    const driver = new ControllerDriver({ transport, model }, memory);
+    const first = await driver.run();
+    expect(first.kind).not.toBe('error');
+    const firstState = transport.snapshot();
+    const added = firstState.state.locations.corridor.appearanceChanges;
+    expect(added.some((change) => change.active && change.text === '地板上多了一道新划痕。')).toBe(true);
+    const secondText = '我把地板擦干净。';
+    driver.preparePlayerInput(secondText, order, { allocationKey: 'turn_2', slots }, Object.keys(driver.getMemory().ids));
+    const second = await driver.run();
+    expect(second.kind).not.toBe('error');
+    const changes = transport.snapshot().state.locations.corridor.appearanceChanges;
+    expect(changes.some((change) => change.active && change.text === '地板上的划痕被拖把抹开成一片。')).toBe(true);
   });
 
   it('surfaces a policy stop as a visible failure instead of a fake model handback', async () => {

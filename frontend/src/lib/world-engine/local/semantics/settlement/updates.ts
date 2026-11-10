@@ -760,7 +760,7 @@ function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, 
   // The appearance scan covers every entity, so the per-line prose budget is
   // derived from the cast size: a bigger world gets shorter tails, the line
   // set itself is never cut. Rules + settled results take roughly 3.5k chars.
-  const tail = kind === 'appearance' ? Math.max(20, Math.min(88, Math.floor(4200 / Math.max(1, ids.length)))) : 0;
+  const tail = kind === 'appearance' ? Math.max(20, Math.min(88, Math.floor(3400 / Math.max(1, ids.length)))) : 0;
   const lines = ids.map((id) => (kind === 'appearance'
     ? appearanceLine(state, id, { compactTail: tail })
     : `- ${personalityLine(state, id)}`));

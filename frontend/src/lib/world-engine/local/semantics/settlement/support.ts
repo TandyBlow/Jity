@@ -152,7 +152,8 @@ export function appearanceLine(state: WorldState, entityId: Id, options: { compa
     const current = [...(initial ? [initial] : []), ...records.map((row) => row.split('=').slice(1).join('='))];
     const tail = current.length ? current[current.length - 1] : '';
     const cut = [...tail].slice(-options.compactTail).join('');
-    return `- ${name}（id=${entityId}，${kind}）当前外貌=${cut || '（未记录）'}`;
+    const ids = records.map((row) => row.split('=')[0]).join(',');
+    return `- ${name}（id=${entityId}，${kind}）当前外貌=${cut || '（未记录）'}；记录=[${ids}]`;
   }
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
