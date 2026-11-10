@@ -12,8 +12,8 @@
  * least one accepted narration; the selection layer never promotes a candidate
  * on unit-test evidence alone.
  */
-import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
-import type { NarrationIssue } from '../../narration-generation/types';
+import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../trained-generation';
+import type { NarrationIssue } from '../trained-generation/types';
 import type { CandidateNarrationResult, NarrationCandidate } from './types';
 
 const hardKinds = (issues: NarrationIssue[]): string[] =>
@@ -25,7 +25,7 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
   version: `trained-beats:${NARRATION_STRATEGY_VERSION}`,
   label: '02-narration · committed-fact beats',
   requires: {
-    modules: ['local/narration-generation', 'local/narration-input'],
+    modules: ['local/narration-candidates/trained-generation', 'local/narration-input'],
     template: 'engine chat template (no manual ChatML wrap)',
   },
   productDefault: false,

@@ -14,7 +14,7 @@
 import type { EntityDelta, Id, TimeAdvance, WorldState } from '../../../types';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { CompletionEvidence, InferenceEngine } from '../../../runtime/engine';
-import type { BeatSceneContext, NarrationIssue, NarrationPolicy } from '../../narration-generation/types';
+import type { BeatSceneContext, NarrationIssue, NarrationPolicy } from '../trained-generation/types';
 
 /** The settled point the controller already hands to `narration()`.
  *

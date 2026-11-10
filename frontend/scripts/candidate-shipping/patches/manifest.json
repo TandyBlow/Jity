@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-10T09:05:16.183Z",
+  "updatedAt": "2026-11-10T09:13:19.351Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-ff1574dd9ccb-c073fadf2943.patch",
-      "patchSha256": "c073fadf29437ba51708ca3a14855bcf81a309061e2bb6e1c07e1f8df8d69869",
-      "patchBytes": 168588,
-      "generatedAt": "2026-11-10T09:05:16.181Z",
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-7594417a9826.patch",
+      "patchSha256": "7594417a9826d04a089db3c1b383466e249fba7225c943552f39f375e8f08101",
+      "patchBytes": 408369,
+      "generatedAt": "2026-11-10T09:13:19.349Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
@@ -38,7 +38,7 @@
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts",
-          "sha256": "233f94b5a0da2b09422652e982973277792dea049a78bc481b9739f24e86104f"
+          "sha256": "0f3f0dedb5a180e138fa90ca34e0987e418e6f282bf284c97b9ce06e88de02e4"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts",
@@ -46,11 +46,11 @@
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts",
-          "sha256": "a90d1493a347d082c6382c39f71210d44c26b6e75cd430deddd7f78e70b5a516"
+          "sha256": "48dcf8dfc687c2381a6f808cb36b30cfb080188147e41daa7b2689d46f4ed23e"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts",
-          "sha256": "37782f1bb508945ed985cce35c737d28f08ee77f0b441618d361a385197ab109"
+          "sha256": "fd0776850748824d3157dbb0584023d4f70ade7ae2c675ea8fafcdec285fcb34"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts",
@@ -83,6 +83,66 @@
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts",
           "sha256": "5dfdf4d6f2719d5dc125b4f626aa63bb475f8d58f622f6e9fed978357a6ddcc9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/beats.ts",
+          "sha256": "c69d3f5d4b3faf90a0c4afaa3014258cd9b07b8c9912991e8c3dd71d99983634"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/compose.ts",
+          "sha256": "fb6e3294020dfaacb38f91a3d99b7599fe94ef647081df09897e71c74e80806d"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts",
+          "sha256": "47b024b9aed1c2e60152b142547b3fe791250a933a6d3e096f1e67f129382477"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/projection.ts",
+          "sha256": "c5a2d0db7cd3403b6f8f80ee5da7d8628086827cd466b52cb3c0b54ae158c817"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/realize.ts",
+          "sha256": "af8fabbc9aebe44e52bd0c934bb1cc96503c00ce3bce201fecd9fa41db17bbf3"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/types.ts",
+          "sha256": "b94fd938cd0bed19012dc31989ff21ecaa7aea4d55055f0ebc0a0822556b32c2"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/verify.ts",
+          "sha256": "e52301f754f3f5028e5510b2e174141262d24ede2530083a023a695d276ac789"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/beats.ts",
+          "sha256": "5765bebd90961ebccad5af274b9241e15d2adccb9cf25c4a5ecd5b29fa32dca7"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/guidance.ts",
+          "sha256": "ce38de7e81c529881a3705c691c1b25eab22b45d24bd8794b7cbf657ab728a74"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/index.ts",
+          "sha256": "25a8e6ed84a8f850d24229cd683072fc04ee5fe31addb382e9046be1a45cc3b9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/ledger.ts",
+          "sha256": "33a078a9419d57bcf88a49692ffc2fed6b230439d3fdcfe3861e63edfec05918"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/prompt.ts",
+          "sha256": "3640cdb472ea340606f4a5b27a05a03269a18b37a6fa09c779777f82c1be831d"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/trained-input.ts",
+          "sha256": "896b3b497501e268dd5464a759f587f7e87147104c82a490b1e6f1112e732889"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/types.ts",
+          "sha256": "c656692b1c6bfbe2e768376063eaaadd28430c9ffdba5d12a1eecd2be94f4fff"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/verify.ts",
+          "sha256": "16350bc3e99d985d3d1a022b9b6e37f795aabcfa925223ef8692f6e4fead5d07"
         }
       ],
       "vendored": {
@@ -98,6 +158,33 @@
             "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
             "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts",
             "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts"
+          ]
+        },
+        "trainedGeneration": {
+          "source": "goal/local-02-narration @ 92c2d95e",
+          "note": "runtime files only (no tests); imported by selection/trained.ts and the BeatSceneContext type",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/beats.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/guidance.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/ledger.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/prompt.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/trained-input.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/types.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/verify.ts"
+          ]
+        },
+        "constrained": {
+          "source": "goal/local-04-settlement @ 11e7433b",
+          "note": "runtime files only (no tests); the selection adapter calls generateCandidate and passes the facts-only packet, scene hints, result line and composer",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/beats.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/compose.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/projection.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/realize.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/types.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/verify.ts"
           ]
         }
       },
@@ -321,6 +408,42 @@
         }
       ],
       "retiredAt": "2026-11-10T09:05:16.183Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-c073fadf2943.patch",
+      "patchSha256": "c073fadf29437ba51708ca3a14855bcf81a309061e2bb6e1c07e1f8df8d69869",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:09:46.456Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-4878c5c4959b.patch",
+      "patchSha256": "4878c5c4959bcbbdf3639407e69c5816104fbea638f13b2cf30221f8c4c301f0",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:12:33.594Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-66ec906d6fcf.patch",
+      "patchSha256": "66ec906d6fcf58fc0053d2cbbcf695999958eb25c9a5f271d8074ea9ba0340a5",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:13:19.351Z",
       "reason": "superseded"
     }
   ]

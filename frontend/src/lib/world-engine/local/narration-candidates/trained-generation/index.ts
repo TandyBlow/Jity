@@ -1,0 +1,693 @@
+/** Committed-narration strategy v1.
+ *
+ * Pipeline: fact license ledger → caller-serialized prompt (+ grounded repair
+ * guidance on retry) → real engine call with real streaming → sentence-scoped
+ * fact alignment + viewpoint/loop/length checks → bounded retry → truthful
+ * display state and full evidence.
+ *
+ * What this module does NOT do: it does not serialize world state, does not
+ * write state, does not replace a failed draft with a fixed answer, and does
+ * not claim a retry repaired itself. `accepted: false` is a first-class result
+ * with the rejected text and every issue attached.
+ */
+import {
+  IncompleteGenerationError,
+  type CompletionEvidence, type InferenceEngine,
+} from '../../../runtime/engine';
+import { factPhrases, type CommittedNarration } from '../../../runtime/committed-narration';
+import { buildLedger } from './ledger';
+import { buildRevisionGuidance } from './guidance';
+import { composeNarrationPrompt } from './prompt';
+import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
+import { verifyNarration } from './verify';
+import {
+  NARRATION_STRATEGY_VERSION,
+  type GeneratedNarration, type GenerateCommittedNarrationInput, type NarrationAttempt,
+  type NarrationAssembly, type NarrationBeatEvidence, type NarrationDisplayState, type NarrationIssue,
+  type NarrationLedger, type NarrationPolicy,
+} from './types';
+
+export * from './types';
+export { buildLedger } from './ledger';
+export { buildRevisionGuidance } from './guidance';
+export { composeNarrationPrompt, insertBeforeBody } from './prompt';
+export { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
+export { verifyNarration } from './verify';
+export {
+  renderTrainedInstructUser, renderTrainedRawPrompt, trainedSceneView, wrapChatml,
+  type TrainedSceneInput, type TrainedSceneView,
+} from './trained-input';
+
+const nowMs = (): number => performance.now();
+const charsOf = (text: string): number => [...text].length;
+const clampInt = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, Math.round(Number.isFinite(value) ? value : min)));
+const hardCount = (issues: readonly NarrationIssue[]): number => issues.filter((issue) => issue.severity === 'hard').length;
+
+/** DOMException is not an `Error` subclass in every browser, so name matching
+ * is the portable cancellation check. The wllama adapter rejects with a
+ * DOMException named AbortError. */
+function isAbortLike(error: unknown): boolean {
+  return typeof error === 'object' && error !== null
+    && (error as { name?: unknown }).name === 'AbortError';
+}
+
+/** Remove wrappers a small model likes to add. This is text cleanup, not a
+ * state serializer: every fact still comes from the model's own prose and is
+ * verified afterwards. */
+export function sanitizeNarration(raw: string): string {
+  const body = raw.includes('【正文】') ? raw.split('【正文】').pop() ?? raw : raw;
+  return body
+    .replace(/```[\s\S]*?```/gu, '')
+    .replace(/```/gu, '')
+    .replace(/^\s*(正文|叙事|输出)[:：]\s*/u, '')
+    .replace(/【[^】]{1,12}】/gu, '')
+    .replace(/\*\*/gu, '')
+    .replace(/^#{1,6}\s*/gmu, '')
+    .replace(/※/gu, '\n\n')
+    .replace(/\n{3,}/gu, '\n\n')
+    .trim();
+}
+
+interface RunAttemptArgs {
+  engine: InferenceEngine;
+  prompt: string;
+  attempt: number;
+  committed: CommittedNarration;
+  ledger: NarrationLedger;
+  policy: NarrationPolicy;
+  priorText: string | null;
+  maxTokens: number;
+  temperature: number;
+  remainingMs: number;
+  guidance: string;
+  signal?: AbortSignal;
+  onProgress?: (state: NarrationDisplayState) => void;
+  /** Beat mode builds one small prompt per beat instead of the scene prompt. */
+  buildPrompt?: (attempt: number, guidance: string) => string;
+  /** Instruction fragments that must not appear in the prose. */
+  echoMarkers?: string[];
+}
+
+interface RunAttemptResult {
+  attempt: NarrationAttempt;
+  display: NarrationDisplayState;
+  /** Our own end-to-end timer fired during this attempt. */
+  deadlineHit: boolean;
+}
+
+async function runAttempt(args: RunAttemptArgs): Promise<RunAttemptResult> {
+  const started = nowMs();
+  const controller = new AbortController();
+  const external = args.signal;
+  const forwardAbort = () => controller.abort();
+  if (external?.aborted) controller.abort();
+  else external?.addEventListener('abort', forwardAbort, { once: true });
+  let deadlineHit = false;
+  const remainingBudget = Math.max(1, Math.floor(args.remainingMs));
+  // The engine gets its own per-call budget, capped by what is left of the
+  // end-to-end deadline. Our timer below always covers the whole remainder, so
+  // the two timers cannot outlive the reported total time.
+  const callBudget = Math.max(1, Math.min(args.policy.timeoutMs ?? 150_000, remainingBudget));
+  const timer = setTimeout(() => { deadlineHit = true; controller.abort(); }, remainingBudget);
+
+  let raw = '';
+  let finishReason: string | null = null;
+  let firstTokenMs: number | null = null;
+  let completion: CompletionEvidence | null = null;
+  let error: string | null = null;
+  let cancelled = false;
+  let timedOut = false;
+  let progressEvents = 0;
+
+  try {
+    const returned = await args.engine.complete(args.prompt, {
+      maxTokens: args.maxTokens,
+      temperature: args.temperature,
+      ...(args.policy.seed !== undefined ? { seed: args.policy.seed } : {}),
+      ...(args.policy.stop !== undefined ? { stop: args.policy.stop } : {}),
+      signal: controller.signal,
+      timeoutMs: callBudget,
+      onProgress: (progress) => {
+        progressEvents += 1;
+        raw = progress.raw;
+        args.onProgress?.({
+          status: 'streaming', attempt: args.attempt, text: raw, verified: false,
+          elapsedMs: nowMs() - started,
+        });
+      },
+      onCompletion: (evidence) => {
+        completion = evidence;
+        if (evidence.raw) raw = evidence.raw;
+        finishReason = evidence.finishReason;
+        firstTokenMs = evidence.firstTokenMs;
+      },
+    });
+    if (returned) raw = returned;
+    if (finishReason === null) finishReason = 'stop';
+  } catch (caught) {
+    if (caught instanceof IncompleteGenerationError) {
+      completion = caught.completion;
+      if (caught.completion.raw) raw = caught.completion.raw;
+      finishReason = caught.completion.finishReason;
+      firstTokenMs = caught.completion.firstTokenMs;
+      if (finishReason === 'timeout') timedOut = true;
+      else error = caught.message;
+    } else if (isAbortLike(caught)) {
+      error = 'aborted';
+      if (external?.aborted) cancelled = true;
+      else if (deadlineHit) timedOut = true;
+      else cancelled = true;
+    } else {
+      error = caught instanceof Error ? `${caught.name}: ${caught.message}` : String(caught);
+    }
+  } finally {
+    clearTimeout(timer);
+    external?.removeEventListener('abort', forwardAbort);
+  }
+
+  const cleaned = sanitizeNarration(raw);
+  const issueList: NarrationIssue[] = [];
+  if (cancelled) issueList.push({ kind: 'cancelled', severity: 'hard', attempt: args.attempt, detail: error ?? 'aborted' });
+  if (timedOut) issueList.push({ kind: 'timeout', severity: 'hard', attempt: args.attempt, detail: 'generation deadline exceeded' });
+  const verified = verifyNarration({
+    text: cleaned, finishReason, committed: args.committed, ledger: args.ledger,
+    policy: args.policy, priorText: args.priorText, attempt: args.attempt,
+    promptEchoMarkers: args.echoMarkers ?? promptEchoMarkers(args.prompt, args.policy, args.guidance),
+  });
+  issueList.push(...verified.issues);
+  if (error && !completion && !cancelled && !timedOut) {
+    issueList.push({ kind: 'engine_error', severity: 'hard', attempt: args.attempt, detail: error });
+  }
+  const accepted = !cancelled && !timedOut && !error && issueList.every((issue) => issue.severity !== 'hard');
+  const durationMs = nowMs() - started;
+  const attempt: NarrationAttempt = {
+    attempt: args.attempt,
+    prompt: args.prompt,
+    promptChars: args.prompt.length,
+    raw,
+    cleaned,
+    finishReason,
+    error,
+    durationMs,
+    firstTokenMs,
+    completion,
+    alignment: verified.alignment,
+    issues: issueList,
+    metrics: verified.metrics,
+    accepted,
+    cancelled,
+    timedOut,
+    progressEvents,
+  };
+  const display: NarrationDisplayState = accepted
+    ? { status: 'accepted', attempt: args.attempt, text: cleaned, verified: true, elapsedMs: durationMs }
+    : cancelled
+      ? { status: 'cancelled', attempt: args.attempt, text: cleaned, verified: false, elapsedMs: durationMs }
+      : timedOut || (error !== null && !cleaned)
+        ? { status: 'failed', attempt: args.attempt, text: cleaned, verified: false, elapsedMs: durationMs, issues: issueList }
+        : { status: 'rejected', attempt: args.attempt, text: cleaned, verified: false, elapsedMs: durationMs, issues: issueList };
+  args.onProgress?.(display);
+  return { attempt, display, deadlineHit };
+}
+
+/** Instruction fragments that must never end up in the prose. The guidance
+ * header and draft header are fixed; guidance content lines and the task
+ * instruction's opening words are checked because a small instruct model
+ * sometimes copies the task line instead of writing the scene. */
+function promptEchoMarkers(prompt: string, policy: NarrationPolicy, guidance: string): string[] {
+  const markers = ['【本次写作要求】', '【上一稿】', '【修订要求】'];
+  for (const line of guidance.split('\n').slice(1)) {
+    const trimmed = line.trim();
+    if (trimmed.length >= 8) markers.push(trimmed.slice(0, 12));
+  }
+  const instruction = policy.instruction?.trim();
+  if (instruction && prompt.includes(instruction)) markers.push(instruction.slice(0, 16));
+  return markers;
+}
+
+function pickBest(attempts: readonly NarrationAttempt[]): NarrationAttempt | null {
+  return attempts.reduce<NarrationAttempt | null>((best, candidate) => {
+    if (!best) return candidate;
+    const bestHard = hardCount(best.issues);
+    const candidateHard = hardCount(candidate.issues);
+    if (candidateHard !== bestHard) return candidateHard < bestHard ? candidate : best;
+    return charsOf(candidate.cleaned) >= charsOf(best.cleaned) ? candidate : best;
+  }, null);
+}
+
+
+const SENTENCE_SPLIT = /(?<=[。！？])/u;
+const normalizeSentence = (text: string): string => text.replace(/[\s，。！？；：、「」『』“”"'…—\-·]/gu, '');
+
+/** Drop duplicated sentences from an assembled scene, keeping the first
+ * occurrence and the paragraph order. This is assembly, not rewriting: every
+ * sentence that survives is one the model wrote or a committed fact sentence. */
+export function dropDuplicateSentences(text: string): { text: string; dropped: string[] } {
+  const dropped: string[] = [];
+  const seen = new Set<string>();
+  const paragraphs = text.split(/\n\s*\n/u).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const kept = paragraphs.map((paragraph) => paragraph.split(SENTENCE_SPLIT)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .filter((sentence) => {
+      const key = normalizeSentence(sentence);
+      if (key.length < 4) return true;
+      if (seen.has(key)) { dropped.push(sentence); return false; }
+      seen.add(key);
+      return true;
+    })
+    .join(''));
+  return { text: kept.filter(Boolean).join('\n\n'), dropped };
+}
+
+/** Issues for a scene that produced no text at all. */
+function emptySceneIssues(cancelled: boolean, timedOut: boolean): NarrationIssue[] {
+  if (cancelled) return [{ kind: 'cancelled', severity: 'hard', attempt: 0, detail: 'cancelled before any beat' }];
+  if (timedOut) return [{ kind: 'timeout', severity: 'hard', attempt: 0, detail: 'deadline exceeded before any beat' }];
+  return [{ kind: 'empty_narration', severity: 'hard', attempt: 0, detail: 'no beat produced text' }];
+}
+
+interface BeatRunResult {
+  evidence: NarrationBeatEvidence;
+  text: string;
+  source: NarrationBeatEvidence['source'];
+}
+
+interface BeatArgs {
+  input: GenerateCommittedNarrationInput;
+  committed: CommittedNarration;
+  ledger: NarrationLedger;
+  policy: NarrationPolicy;
+  startedAt: number;
+  deadlineMs: number;
+  onAttempt: (attempt: NarrationAttempt) => void;
+  onStream: (beatText: string) => void;
+}
+
+/** Writes one beat with bounded repair, then falls back to the committed fact
+ * sentence only when the beat carries a settled fact. A scene/atmosphere beat
+ * that fails is skipped: inventing scenery is worse than a shorter scene. */
+async function writeBeat(
+  args: BeatArgs,
+  beat: ReturnType<typeof planBeats>[number],
+  written: readonly string[],
+): Promise<BeatRunResult> {
+  const { input, committed, ledger, policy, startedAt, deadlineMs } = args;
+  const attemptBudget = clampInt(policy.beatAttempts ?? 2, 1, 3);
+  const scopedPolicy: NarrationPolicy = {
+    ...policy,
+    mode: 'scene',
+    minChars: 1,
+    targetChars: 1,
+    maxAttempts: 1,
+    beatMaxChars: policy.beatMaxChars ?? 170,
+  };
+  const scopedLedger: NarrationLedger = {
+    ...ledger,
+    mandatory: beat.fact ? [beat.fact] : [],
+    requireTime: beat.kind === 'time',
+  };
+  const prompts: string[] = [];
+  const raws: string[] = [];
+  const issues: NarrationIssue[] = [];
+  let guidance = '';
+  let attemptNumber = 0;
+  const started = nowMs();
+  for (let attempt = 0; attempt < attemptBudget; attempt += 1) {
+    const remaining = deadlineMs - (nowMs() - startedAt);
+    if (remaining <= 0 || input.signal?.aborted) break;
+    const base = buildBeatPrompt({
+      beat, ledger, policy, scene: policy.scene ?? null, written,
+      priorTail: input.priorText ?? null,
+    });
+    const prompt = guidance
+      ? `${base.replace(/正文：$/u, '')}\n【改写要求】${guidance}\n正文：`
+      : base;
+    prompts.push(prompt);
+    // A scene/atmosphere beat is optional and must not eat the whole budget:
+    // it is capped to a short paragraph and a short call, so a slow model
+    // reaches the fact beats instead of stalling the point. Fact/time beats
+    // keep the caller's full budget.
+    const isSceneBeat = beat.kind === 'scene';
+    const beatTokens = isSceneBeat
+      ? Math.min(policy.maxTokens ?? 160, 90)
+      : beat.kind === 'time' ? Math.min(policy.maxTokens ?? 160, 48) : (policy.maxTokens ?? 160);
+    const beatRemaining = isSceneBeat ? Math.min(remaining, 45_000) : remaining;
+    const result = await runAttempt({
+      engine: input.engine,
+      prompt,
+      attempt: attemptNumber,
+      committed,
+      ledger: scopedLedger,
+      policy: scopedPolicy,
+      priorText: written.at(-1) ?? input.priorText ?? null,
+      maxTokens: beatTokens,
+      temperature: attempt === 0 ? (policy.temperature ?? 0.7) : (policy.retryTemperature ?? 0.5),
+      remainingMs: beatRemaining,
+      guidance,
+      signal: input.signal,
+      onProgress: (state) => {
+        if (state.status === 'streaming') args.onStream(state.text);
+      },
+      echoMarkers: [
+        '【要求】', '【这一件】', '你是中文小说作者',
+        ...(beat.directive.length >= 12 ? [beat.directive.slice(0, 14)] : []),
+      ],
+    });
+    args.onAttempt({ ...result.attempt, attempt: attemptNumber });
+    attemptNumber += 1;
+    raws.push(result.attempt.raw);
+    issues.push(...result.attempt.issues.filter((issue) => issue.severity === 'hard'));
+    const evidenceBase = {
+      beatId: beat.id, kind: beat.kind, directive: beat.directive,
+      attempts: attempt + 1, durationMs: nowMs() - started, prompts, raws,
+    };
+    if (result.attempt.accepted && result.attempt.cleaned) {
+      return {
+        evidence: { ...evidenceBase, text: result.attempt.cleaned, source: 'model', issues: [...issues] },
+        text: result.attempt.cleaned,
+        source: 'model',
+      };
+    }
+    if (result.attempt.cancelled || result.attempt.timedOut) {
+      return {
+        evidence: { ...evidenceBase, text: '', source: 'skipped', issues: result.attempt.issues },
+        text: '',
+        source: 'skipped',
+      };
+    }
+    guidance = buildRevisionGuidance(
+      result.attempt.issues.filter((issue) => issue.severity === 'hard'), scopedLedger, scopedPolicy,
+    );
+  }
+  if (beat.kind === 'fact' && beat.fact) {
+    const text = beatFallbackSentence(beat);
+    return {
+      evidence: {
+        beatId: beat.id, kind: beat.kind, directive: beat.directive, text,
+        source: 'fallback', attempts: attemptNumber, durationMs: nowMs() - started, issues, prompts, raws,
+      },
+      text,
+      source: 'fallback',
+    };
+  }
+  if (beat.kind === 'time' && ledger.time) {
+    const text = timeFallbackSentence(ledger.time.duration, input.priorText ?? null);
+    return {
+      evidence: {
+        beatId: beat.id, kind: beat.kind, directive: beat.directive, text,
+        source: 'fallback', attempts: attemptNumber, durationMs: nowMs() - started, issues, prompts, raws,
+      },
+      text,
+      source: 'fallback',
+    };
+  }
+  return {
+    evidence: {
+      beatId: beat.id, kind: beat.kind, directive: beat.directive, text: '',
+      source: 'skipped', attempts: attemptNumber, durationMs: nowMs() - started, issues, prompts, raws,
+    },
+    text: '',
+    source: 'skipped',
+  };
+}
+
+/** Beat-mode entry: plan → write each beat (streaming after every beat and
+ * inside every beat) → assemble → final scene check with program-side dedupe
+ * and fact-sentence completion. */
+async function generateBeatNarration(
+  input: GenerateCommittedNarrationInput,
+  ledger: NarrationLedger,
+  policy: NarrationPolicy,
+  startedAt: number,
+  deadlineMs: number,
+  priorText: string | null,
+): Promise<GeneratedNarration> {
+  const beats = planBeats({ committed: input.committed, ledger, policy, scene: policy.scene ?? null });
+  const attempts: NarrationAttempt[] = [];
+  const evidence: NarrationBeatEvidence[] = [];
+  const written: string[] = [];
+  let deadlineExceeded = false;
+  let cancelled = false;
+  let attemptCount = 0;
+  let lastDisplay: NarrationDisplayState | null = null;
+  const assembly: NarrationAssembly = { droppedSentences: [], appendedSentences: [] };
+
+  const emit = (current: string, status: NarrationDisplayState['status'] = 'streaming', issues?: NarrationIssue[]): void => {
+    const text = [...written, current].filter(Boolean).join('\n\n').trim();
+    const elapsedMs = nowMs() - startedAt;
+    const state: NarrationDisplayState = status === 'accepted'
+      ? { status, attempt: attemptCount, text, verified: true, elapsedMs }
+      : status === 'rejected' || status === 'failed'
+        ? { status, attempt: attemptCount, text, verified: false, elapsedMs, issues: issues ?? [] }
+        : status === 'cancelled'
+          ? { status, attempt: attemptCount, text, verified: false, elapsedMs }
+          : { status: 'streaming', attempt: attemptCount, text, verified: false, elapsedMs };
+    lastDisplay = state;
+    input.onProgress?.(state);
+  };
+
+  for (const beat of beats) {
+    if (input.signal?.aborted) { cancelled = true; break; }
+    if (nowMs() - startedAt >= deadlineMs) { deadlineExceeded = true; break; }
+    const result = await writeBeat({
+      input, committed: input.committed, ledger, policy, startedAt, deadlineMs,
+      onAttempt: (attempt) => { attempts.push(attempt); attemptCount += 1; },
+      onStream: (beatText) => emit(beatText),
+    }, beat, written);
+    evidence.push(result.evidence);
+    if (result.text) written.push(result.text);
+    emit('');
+    if (input.signal?.aborted) { cancelled = true; break; }
+  }
+
+  let assembled = written.join('\n\n').trim();
+  const deduped = dropDuplicateSentences(assembled);
+  if (deduped.dropped.length) {
+    assembly.droppedSentences.push(...deduped.dropped);
+    assembled = deduped.text;
+  }
+
+  const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 60 };
+  const runFinalVerify = (text: string) => verifyNarration({
+    text, finishReason: 'stop', committed: input.committed, ledger, policy: finalPolicy,
+    priorText, attempt: Math.max(0, attemptCount - 1), promptEchoMarkers: [],
+  });
+  let final = assembled ? runFinalVerify(assembled) : null;
+
+  // A missing required time or a settled fact that no beat expressed is
+  // completed with the committed sentence instead of hiding the gap.
+  if (final) {
+    const append: string[] = [];
+    for (const issue of final.issues) {
+      if (issue.severity !== 'hard') continue;
+      if (issue.kind === 'time_missing' && ledger.time) {
+        append.push(timeFallbackSentence(ledger.time.duration, priorText));
+      }
+      if (issue.kind === 'fact_omitted') {
+        const fact = ledger.mandatory.find((entry) => !issue.detail || issue.detail.includes(factPhrases(entry)[0]));
+        if (fact) {
+          append.push(beatFallbackSentence({
+            id: 'repair', kind: 'fact', fact, directive: '', anchors: [], licensed: [],
+            fallback: 'fact-sentence', mandatory: true,
+          }));
+        }
+      }
+    }
+    if (append.length) {
+      assembly.appendedSentences.push(...append);
+      assembled = `${assembled}\n\n${append.join('')}`.trim();
+      final = runFinalVerify(assembled);
+    }
+  }
+
+  const sceneIssues = final?.issues ?? emptySceneIssues(input.signal?.aborted === true, deadlineExceeded);
+  const hardIssues = sceneIssues.filter((issue) => issue.severity === 'hard');
+  const allFellBack = !cancelled && !deadlineExceeded && evidence.length > 0
+    && evidence.every((entry) => entry.source !== 'model');
+  if (allFellBack) {
+    hardIssues.push({
+      kind: 'all_beats_fell_back', severity: 'hard', attempt: Math.max(0, attemptCount - 1),
+      detail: 'every beat used the committed fact sentence; no generated prose',
+    });
+    sceneIssues.push(hardIssues[hardIssues.length - 1]);
+  }
+  const accepted = !cancelled && !deadlineExceeded && hardIssues.length === 0 && assembled.length > 0;
+  const status: GeneratedNarration['status'] = accepted ? 'accepted'
+    : cancelled ? 'cancelled' : deadlineExceeded ? 'timeout' : 'rejected';
+  const totalMs = nowMs() - startedAt;
+  const displayStatus: NarrationDisplayState['status'] = accepted ? 'accepted'
+    : status === 'cancelled' ? 'cancelled' : status === 'timeout' ? 'failed' : 'rejected';
+  emit('', displayStatus, final?.issues ?? hardIssues);
+
+  const attemptMs = attempts.map((attempt) => attempt.durationMs);
+  return {
+    text: assembled,
+    rawAttempts: attempts,
+    accepted,
+    issues: sceneIssues,
+    timings: {
+      totalMs,
+      attemptMs,
+      attemptsMs: attemptMs.reduce((sum, value) => sum + value, 0),
+      firstTokenMs: attempts.map((attempt) => attempt.firstTokenMs).filter((value): value is number => value !== null)
+        .sort((a, b) => a - b)[0] ?? null,
+      deadlineExceeded,
+    },
+    strategyVersion: NARRATION_STRATEGY_VERSION,
+    status,
+    ledger,
+    metrics: final?.metrics ?? null,
+    attemptIndex: attempts.length ? Math.max(0, attemptCount - 1) : null,
+    beats: evidence,
+    assembly,
+    display: lastDisplay ?? {
+      status: displayStatus,
+      attempt: Math.max(0, attemptCount - 1),
+      text: assembled,
+      verified: accepted,
+      elapsedMs: totalMs,
+      ...(displayStatus === 'rejected' || displayStatus === 'failed' ? { issues: final?.issues ?? hardIssues } : {}),
+    } as NarrationDisplayState,
+  };
+}
+
+/** Compatible entry named by QUALITY-TEAMS.md: same arguments, same return
+ * shape as `generateCommittedNarration`. Kept as a thin alias so integrators
+ * and candidate runners can use one name without a second implementation. */
+export const generateCandidate = (
+  input: GenerateCommittedNarrationInput,
+): Promise<GeneratedNarration> => generateCommittedNarration(input);
+
+export async function generateCommittedNarration(input: GenerateCommittedNarrationInput): Promise<GeneratedNarration> {
+  if (!input.inputText.trim()) throw new Error('narration_input_empty: caller serialization produced no model input');
+  const policy = input.policy ?? {};
+  const callStarted = nowMs();
+  const priorText = input.priorText ?? null;
+  const ledger = buildLedger(input.committed, input.inputText, priorText, policy);
+  const mode = policy.mode ?? (policy.scene ? 'beats' : 'scene');
+  const deadlineBudget = Math.max(1, policy.deadlineMs ?? 300_000);
+  if (mode === 'beats') {
+    return generateBeatNarration(input, ledger, policy, callStarted, deadlineBudget, priorText);
+  }
+  const maxAttempts = clampInt(policy.maxAttempts ?? 2, 1, 4);
+  const startTokens = clampInt(policy.maxTokens ?? 420, 64, 4096);
+  const ceiling = clampInt(policy.maxTokensCeiling ?? 1200, startTokens, 8192);
+  const deadlineMs = Math.max(1, policy.deadlineMs ?? 300_000);
+
+  const attempts: NarrationAttempt[] = [];
+  let guidance = '';
+  let previousDraft: string | null = null;
+  let maxTokens = startTokens;
+  // A holder keeps TypeScript from assuming the closure assignment never ran.
+  const progress: { last: NarrationDisplayState | null } = { last: null };
+  let deadlineExceeded = false;
+
+  const emit = (state: NarrationDisplayState): void => {
+    progress.last = state;
+    input.onProgress?.(state);
+  };
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    if (input.signal?.aborted) break;
+    const remaining = deadlineMs - (nowMs() - callStarted);
+    if (remaining <= 0) { deadlineExceeded = true; break; }
+    const prompt = composeNarrationPrompt({
+      inputText: input.inputText,
+      attempt,
+      guidance,
+      previousDraft,
+      instruction: policy.instruction ?? null,
+    }, policy);
+    const result = await runAttempt({
+      engine: input.engine,
+      prompt,
+      attempt,
+      committed: input.committed,
+      ledger,
+      policy,
+      priorText,
+      maxTokens,
+      temperature: attempt === 0 ? (policy.temperature ?? 0.7) : (policy.retryTemperature ?? 0.55),
+      remainingMs: remaining,
+      guidance,
+      signal: input.signal,
+      onProgress: emit,
+    });
+    attempts.push(result.attempt);
+    if (result.deadlineHit || result.attempt.timedOut) deadlineExceeded = true;
+    if (result.attempt.accepted || result.attempt.cancelled || result.attempt.timedOut) break;
+    const hardIssues = result.attempt.issues.filter((issue) => issue.severity === 'hard');
+    guidance = buildRevisionGuidance(hardIssues, ledger, policy);
+    if (policy.revisionMode === 'revise' && result.attempt.cleaned) previousDraft = result.attempt.cleaned;
+    if (hardIssues.some((issue) => issue.kind === 'truncated')) {
+      maxTokens = Math.min(ceiling, Math.max(maxTokens + 160, Math.round(maxTokens * 1.5)));
+    }
+    if (nowMs() - callStarted >= deadlineMs) { deadlineExceeded = true; break; }
+  }
+
+  const acceptedAttempt = attempts.find((attempt) => attempt.accepted) ?? null;
+  const completed = attempts.filter((attempt) => !attempt.cancelled && !attempt.timedOut);
+  const best = acceptedAttempt ?? pickBest(completed);
+  const cancelledAttempt = attempts.find((attempt) => attempt.cancelled) ?? null;
+  const timeoutAttempt = attempts.find((attempt) => attempt.timedOut) ?? null;
+
+  let status: GeneratedNarration['status'];
+  if (acceptedAttempt) status = 'accepted';
+  else if (cancelledAttempt || input.signal?.aborted) status = 'cancelled';
+  else if (timeoutAttempt || deadlineExceeded) status = 'timeout';
+  else if (!attempts.length) status = 'cancelled';
+  else if (attempts.every((attempt) => attempt.error !== null && !attempt.cleaned)) status = 'error';
+  else status = 'rejected';
+
+  const selected = status === 'cancelled' ? cancelledAttempt : status === 'timeout' ? timeoutAttempt : best;
+  const issues = selected?.issues ?? (status === 'cancelled'
+    ? [{ kind: 'cancelled', severity: 'hard', attempt: 0, detail: 'cancelled before any attempt' } as NarrationIssue]
+    : status === 'timeout'
+      ? [{ kind: 'timeout', severity: 'hard', attempt: 0, detail: 'deadline exceeded before any attempt' } as NarrationIssue]
+      : []);
+  const text = selected?.cleaned ?? '';
+  const metrics = selected?.metrics ?? null;
+  const attemptIndex = selected ? attempts.indexOf(selected) : null;
+  const totalMs = nowMs() - callStarted;
+  const displayStatus: NarrationDisplayState['status'] = status === 'accepted' ? 'accepted'
+    : status === 'cancelled' ? 'cancelled'
+      : status === 'rejected' ? 'rejected' : 'failed';
+
+  // The final display must match the returned text. Attempt-end displays are
+  // already emitted; re-emit only when the chosen draft/status changed.
+  if (!progress.last || progress.last.status !== displayStatus || progress.last.text !== text) {
+    emit(displayStatus === 'accepted'
+      ? { status: 'accepted', attempt: attemptIndex ?? 0, text, verified: true, elapsedMs: totalMs }
+      : displayStatus === 'cancelled'
+        ? { status: 'cancelled', attempt: attemptIndex ?? 0, text, verified: false, elapsedMs: totalMs }
+        : displayStatus === 'rejected'
+          ? { status: 'rejected', attempt: attemptIndex ?? 0, text, verified: false, elapsedMs: totalMs, issues }
+          : { status: 'failed', attempt: attemptIndex ?? 0, text, verified: false, elapsedMs: totalMs, issues });
+  }
+
+  const attemptMs = attempts.map((attempt) => attempt.durationMs);
+  return {
+    text,
+    rawAttempts: attempts,
+    accepted: status === 'accepted',
+    issues,
+    timings: {
+      totalMs,
+      attemptMs,
+      attemptsMs: attemptMs.reduce((sum, value) => sum + value, 0),
+      firstTokenMs: attempts.map((attempt) => attempt.firstTokenMs).filter((value): value is number => value !== null)
+        .sort((a, b) => a - b)[0] ?? null,
+      deadlineExceeded,
+    },
+    strategyVersion: NARRATION_STRATEGY_VERSION,
+    status,
+    ledger,
+    metrics,
+    attemptIndex,
+    beats: [],
+    assembly: { droppedSentences: [], appendedSentences: [] },
+    display: progress.last as NarrationDisplayState,
+  };
+}

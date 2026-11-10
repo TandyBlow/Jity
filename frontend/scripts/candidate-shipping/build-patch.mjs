@@ -36,10 +36,19 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const GAME_MODEL = 'frontend/src/lib/world-engine/local/game-model.ts';
 const SELECTION_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/selection';
 const COMPOSER_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/prose-composer';
+const CONSTRAINED_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/constrained';
+const TRAINED_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/trained-generation';
 /** Lane 07's composer is vendored into this patch at a pinned commit so the
  * target tree does not need the (large, divergent) 07 branch. Runtime files
  * only; 07 still owns the code. */
 const COMPOSER_SOURCE = 'goal/local-07-sync @ 69915b49';
+/** Lane 04's constrained candidate is not in the main tree yet. The patch
+ * adds its runtime files so selection/constrained.ts resolves on the target
+ * snapshot; 04 still owns the code. */
+const CONSTRAINED_SOURCE = 'goal/local-04-settlement @ 11e7433b';
+/** Lane 02's beats module is vendored under trained-generation so the target
+ * tree keeps its existing in-model narration-generation v2 untouched. */
+const TRAINED_SOURCE = 'goal/local-02-narration @ 92c2d95e';
 
 /** Exact-text insertions. Each anchor must occur exactly once in the live
  * file; a missing/ambiguous anchor stops the build instead of guessing. */
@@ -258,7 +267,7 @@ function addedDiff(relativePath, text) {
 
 function collectAdditions() {
   const files = [];
-  for (const dir of [SELECTION_DIR, COMPOSER_DIR]) {
+  for (const dir of [SELECTION_DIR, COMPOSER_DIR, CONSTRAINED_DIR, TRAINED_DIR]) {
     const root = join(source, dir);
     if (!existsSync(root)) throw new Error(`candidate module missing in source tree: ${root}`);
     // Runtime files only: a lane-owned test file stays in the lane and is not
@@ -350,6 +359,16 @@ const entry = {
       source: COMPOSER_SOURCE,
       note: 'runtime files only (no tests); the constrained adapter injects createBeatComposer() for the program route',
       files: additions.filter((addition) => addition.relativePath.startsWith(COMPOSER_DIR)).map((addition) => addition.relativePath),
+    },
+    trainedGeneration: {
+      source: TRAINED_SOURCE,
+      note: 'runtime files only (no tests); imported by selection/trained.ts and the BeatSceneContext type',
+      files: additions.filter((addition) => addition.relativePath.startsWith(TRAINED_DIR)).map((addition) => addition.relativePath),
+    },
+    constrained: {
+      source: CONSTRAINED_SOURCE,
+      note: 'runtime files only (no tests); the selection adapter calls generateCandidate and passes the facts-only packet, scene hints, result line and composer',
+      files: additions.filter((addition) => addition.relativePath.startsWith(CONSTRAINED_DIR)).map((addition) => addition.relativePath),
     },
   },
   edits: [GAME_MODEL],

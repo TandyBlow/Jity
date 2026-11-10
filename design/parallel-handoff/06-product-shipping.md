@@ -53,16 +53,18 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-c073fadf2943.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-7594417a9826.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
-`manifest.json` 记录输入 `game-model.ts` 的 sha256（`ff1574dd9ccb…`）、补丁 sha256/字节数、转换步骤、新增文件与各自 sha256、`git apply --check` 结果、前提提交、是否过期，以及被取代补丁的历史（`--prune` 只把旧文件移入 `history`）。
+补丁新增 29 个运行时文件：选择层 + 02 的 beats 模块（内嵌在 `narration-candidates/trained-generation`，主树自己的 `narration-generation` 不动）+ 04 的 constrained 骨架 + 07 的 composer。因此它不依赖主树先合入 02/04/07 的分支，直接对当前 `game-model.ts` 快照生效；这三个目录仍由各自 lane 拥有，补丁里的副本只用于装配。
+
+`manifest.json` 记录输入 `game-model.ts` 的 sha256（`ff1574dd9ccb…`）、补丁 sha256/字节数、转换步骤、新增文件与各自 sha256、内嵌来源提交、`git apply --check` 结果、是否过期，以及被取代补丁的历史（`--prune` 只把旧文件移入 `history`）。
 
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-c073fadf2943.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-7594417a9826.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -94,7 +96,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 ### 取消 / 刷新 / 继续回合
 
 - **取消**：补丁不新增取消路径。页面取消仍走 session 的 `round_conclusion_cancel`；程序候选瞬时完成，没有取消窗口。B 的多段生成要等当前引擎调用返回，引擎级中断属 runtime 线。
-- **刷新**：本补丁不改页面的 localStorage 单槽。要在“写正文中途刷新”后保住候选进度，按 `design/parallel-handoff/06-recovery.md` §6 把 `LocalGameSession.open(openLocalProgressStore(), …)` 接进页面；候选选择与该改动互不影响（选择层只读状态）。
+- **刷新**：本补丁不改页面存储。要在“写正文中途刷新”后保住候选进度，按 `design/parallel-handoff/06-recovery.md` §6 把 `LocalGameSession.open(openLocalProgressStore(), …)` 接进页面；候选选择与该改动互不影响（选择层只读状态）。
 - **继续回合**：只有被接受的正文进入 `priorText`（wiring check 已覆盖“被取消/拒绝的草稿不会成为下一轮 priorText”）。
 
 ## 4. 真实页面跑出来的结果
@@ -106,7 +108,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
 | 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
-| 开局 + 第一轮 | C + 07 composer（补丁 `c073fad`） | 合成器逐段成文，20 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
+| 开局 + 第一轮 | C + 07 composer（补丁 `7594417`） | 合成器逐段成文，20 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 

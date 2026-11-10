@@ -20,7 +20,7 @@
 import type { EntityDelta, Id, Position, TimeAdvance, WorldState } from '../../../types';
 import type { CommittedNarration, NarrationFact } from '../../../runtime/committed-narration';
 import { EVENT_VERBS } from '../../../runtime/narration-alignment';
-import type { BeatSceneContext, NarrationPolicy } from '../../narration-generation/types';
+import type { BeatSceneContext, NarrationPolicy } from '../trained-generation/types';
 import { projectNarrationInput } from '../../narration-input';
 import { renderResultInput } from '../../narration-input';
 import type { NarrationPoint, PreparedNarration } from './types';
