@@ -360,9 +360,12 @@ export function normalizeEntityDelta(value: unknown, expectedEntityId?: Id): Ent
  * candidate maps are refused because the wire requires at least one entry. */
 export function normalizeSettlementGroup(value: unknown): SettlementGroup {
   const group = recordOf(value, 'settlementGroup');
-  keysOf(group, ['groupId', 'actorIds', 'positions', 'appearances', 'tasksAchieved',
-    'subtasksAdded', 'personalities', 'sanities', 'taskCoverageIds', 'personalityCoverageIds'],
-  'settlementGroup');
+  const groupFields = ['groupId', 'actorIds', 'positions', 'appearances', 'tasksAchieved',
+    'subtasksAdded', 'personalities', 'sanities', 'taskCoverageIds', 'personalityCoverageIds'] as const;
+  keysOf(group, groupFields, 'settlementGroup');
+  for (const field of groupFields) {
+    if (!(field in group)) refuse('semantic_invalid', `settlementGroup.${field} is required`);
+  }
   const groupId = group.groupId == null ? null : idOf(group.groupId, 'settlementGroup.groupId');
   const actorIds = idListOf(group.actorIds ?? [], 'settlementGroup.actorIds');
   const positions = Object.fromEntries(Object.entries(recordOf(group.positions ?? {}, 'settlementGroup.positions'))

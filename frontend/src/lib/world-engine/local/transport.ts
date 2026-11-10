@@ -637,7 +637,7 @@ async function handlePreview(record: PersistedRecord, request: RequestMap['previ
     worldId: record.worldId, id: request.pointId, sequence: work.baseline.version + 1, kind: work.kind,
     previousPointId: work.baseline.headPointId, roundId: request.roundId, advanceId: request.advanceId,
     trigger: record.round.trigger, linkedFromPointId: work.kind === 'normal' ? null : work.baseline.headPointId,
-    timeAdvance: clone(request.timeAdvance), entityDeltas: {},
+    timeAdvance: clone(work.timeAdvance), entityDeltas: {},
   });
   const merged = pointEntityDeltas(request.settlementGroups.map(normalizeSettlementGroup), null);
   const projection = { ...point, entityDeltas: clone(merged) };
