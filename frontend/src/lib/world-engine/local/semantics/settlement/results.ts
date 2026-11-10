@@ -263,6 +263,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
+    '- facts 只写这次行动的直接结果，不判断任务是否完成，不写“任务要求/任务达成/奖励”这类任务结论。',
     `本组：${groupId}`,
     '成员：',
     ...memberLines,
