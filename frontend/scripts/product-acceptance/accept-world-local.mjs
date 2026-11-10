@@ -785,9 +785,13 @@ try {
   const reportedEntries = restoreReport && typeof restoreReport.entriesRestored === 'number'
     ? restoreReport.entriesRestored >= (restoreReport.entriesTotal ?? 0) && restoreReport.entriesRestored >= entriesBeforeReload
     : null;
-  const stateRestored = restoreReport
-    ? Boolean(restoreReport.stateRestored)
-    : stateBeforeReload.place === stateAfterReload.place && stateBeforeReload.sanity === stateAfterReload.sanity;
+  // A restore that also changes what was committed is not a clean restore:
+  // compare the on-screen history, not only the product's boolean.
+  const historyStable = stateBeforeReload.historyCount === stateAfterReload.historyCount;
+  const stateRestored = (restoreReport ? Boolean(restoreReport.stateRestored) : true)
+    && stateBeforeReload.place === stateAfterReload.place
+    && stateBeforeReload.sanity === stateAfterReload.sanity
+    && historyStable;
   const historyRestored = restoreReport
     ? Boolean(restoreReport.inputConsumptionRestored)
     : stateBeforeReload.historyCount === stateAfterReload.historyCount;
@@ -805,6 +809,10 @@ try {
     entriesBefore: entriesBeforeReload,
     entriesAfter: entriesAfterReload,
     entriesNow: entriesContract,
+    historyCountBefore: stateBeforeReload.historyCount,
+    historyCountAfter: stateAfterReload.historyCount,
+    historyStable,
+    committedBefore: entriesContract.inputs.length ? entriesContract.inputs.slice(0, 5) : null,
     stateBefore: stateBeforeReload,
     stateAfter: stateAfterReload,
     stateRestored,
