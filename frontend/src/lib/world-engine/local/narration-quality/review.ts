@@ -682,7 +682,7 @@ export function reviewNarration(args: {
   // «诺诺：确认任务完成…成功执行行动» with every task still pending).
   if (!projection.taskCompleted.length) {
     for (const sentence of sentences) {
-      if (!/(完成任务|任务完成|成功执行行动|完成了「|已经完成)/u.test(sentence.narration)) continue;
+      if (!/(完成任务|任务完成|成功执行行动|行动成功完成|成功完成行动|行动完成|完成了「|已经完成)/u.test(sentence.narration)) continue;
       if (/(未|没有|没|尚未|不)(完成|成功)/u.test(sentence.narration)) continue;
       findings.push(finding(ctx, 'fact.task_asserted', sentence.text,
         'a completion is asserted but the settled state has no completed task', [], []));
@@ -1644,6 +1644,12 @@ export function reviewNarration(args: {
           looks, []));
       }
     }
+    // A program/result line «诺诺：未成功触发…» is a field sentence, not prose.
+    if (/^[一-龥]{2,4}：(?!.*[「『“"])/u.test(sentence.text.trim())
+      && /(确认|未成功|成功|触发|完成|行动|结果)/u.test(sentence.text)) {
+      findings.push(finding(ctx, 'style.status_panel', sentence.text,
+        'a speaker-name colon line carries an internal result', []));
+    }
     const field = FIELD_WORDS.find((word) => sentence.narration.includes(word));
     if (field && /(精神|理智|任务|个性|外貌|状态)/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.field_sentence', sentence.text,
@@ -1658,6 +1664,32 @@ export function reviewNarration(args: {
     }
     if (/【[^】]{0,6}事实】|本拍|这一回合|本回合|回合结算|本组结算|结算未能确认|未能确认新的结果|系统|状态已|按已结算|程序成文|降级成文/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.meta', sentence.text, 'meta/game-system wording inside prose', []));
+    }
+  }
+  // The narration never names the viewpoint and follows another person
+  // (21c3/b7cd program fallback: «凯撒还在红方集结点…凯撒没有马上再动» with
+  // the player at 西侧服务巷).
+  if (projection.viewpoint && !text.includes(projection.viewpoint)) {
+    const allHits = sentences
+      .flatMap((sentence) => nameHits(sentence.narration, names, Object.keys(projection.people)))
+      .map((hit) => ({ ...hit, at: text.indexOf(hit.name) }))
+      .filter((hit) => hit.at >= 0)
+      .sort((a, b) => a.at - b.at);
+    const firstActor = allHits[0]?.name ?? null;
+    const pronoun = sentences.some((sentence, index) => pronounPerson(sentence.narration, index) === projection.viewpoint);
+    if (firstActor && firstActor !== projection.viewpoint && !pronoun && !/我/u.test(text)) {
+      const vp = projection.people[projection.viewpoint];
+      const vpPlace = basePlace(vp?.positionAfter ?? vp?.positionBefore ?? null);
+      const actor = projection.people[firstActor];
+      const actorBefore = basePlace(actor?.positionBefore ?? null);
+      const actorAfter = basePlace(actor?.positionAfter ?? null);
+      const actorSentence = sentences.find((sentence) => sentence.narration.includes(firstActor))?.narration ?? '';
+      const inViewpointPlace = (vpPlace != null && actorBefore === vpPlace && actorAfter === vpPlace)
+        || (vpPlace != null && actorSentence.includes(vpPlace));
+      if (!inViewpointPlace) {
+        findings.push(finding(ctx, 'fact.wrong_viewpoint', sentences[0]?.text ?? text,
+          `the narration follows ${firstActor}, not the viewpoint ${projection.viewpoint}`, [], []));
+      }
     }
   }
   if (firstPersonSentence !== null) {

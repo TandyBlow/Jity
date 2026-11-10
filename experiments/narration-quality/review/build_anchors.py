@@ -1211,6 +1211,44 @@ anchors.append(
 )
 
 
+run_b7 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-b7cd.json", encoding="utf-8"))
+b7_turn = run_b7["turns"][0]
+b7_rows = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-b7cd.jsonl", encoding="utf-8"))}
+b7_root = b7_rows["b7cd-point_root_world_dragon_raja_free_day"]["input"]
+anchors.append(
+    {
+        "id": "neg/b7cd-point-status",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the player-point program fallback prints «诺诺：未成功触发…»",
+        "input": b7_rows["b7cd-point_round_3_1"]["input"],
+        "text": b7_rows["b7cd-point_round_3_1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": ["style.status_panel"], "review": [],
+                   "notes": "The first two sentences are settled; the colon line is an internal result."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/b7cd-auto-task",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the shown auto-round fallback says «行动成功完成» although no task moved",
+        "input": b7_rows["b7cd-point_round_auto_mwb4avcm_2_1"]["input"],
+        "text": b7_rows["b7cd-point_round_auto_mwb4avcm_2_1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": ["style.status_panel"], "review": [],
+                   "notes": "All 73 task rows stay pending in the updates; the results judgment is not a task transition."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/b7cd-auto-echo",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the auto-1 model text repeats the opening sentence",
+        "input": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["input"],
+        "text": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["text"],
+        "options": {"minChars": 1, "priorTexts": [b7_rows["b7cd-point_root_world_dragon_raja_free_day"]["text"]]},
+        "expect": {"fact": [], "style": ["style.repeated_opening"], "review": [],
+                   "notes": "The first sentence is verbatim the root opening; the page accepted it (fallback=false)."},
+    },
+)
+
 run21 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-21c3.json", encoding="utf-8"))
 run21_turn = run21["turns"][0]
 run21_root = ((run21_turn.get("snapshotAfterTurn") or {}).get("transport") or {}).get("narrations", {}).get("point_root_world_dragon_raja_free_day", {}).get("text")

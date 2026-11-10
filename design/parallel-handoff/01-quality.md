@@ -155,3 +155,5 @@
 **`3f54eac0` 复核（2026-11-11）**：06 的 binding 修复只保护了 `record.narrations`/`record.source/acceptedMs`，`onNarrationProgress`（page.tsx:640-643）和 `onNarrationComplete`（681-699）仍对任何 point 执行 `updateLast` 改 entry 文本；f15d/21c3 的"自动轮覆盖玩家点"没有修好。已在 `requests-01-to-06-narration-binding.md` 追加最小修法（entry 加 pointId，只允许玩家点更新）。下一条页面 run 前必须补上，否则显示仍是自动轮。
 
 **06 vendor 落后（2026-11-11）**：06 树的 `narration-generation` 还没有 02 的 `1c826929`（时间补句）、`28f30c7e`（远处地标）、`eede2b23`（2x echo 不算 loop）、`16554f55`（filled-hand 句子定位）。21c3 的 `loop_repeated_clause+loop_repeated_clause` 正是 2x echo，旧副本仍 hard 拒。已在 06 request 里列出四个 commit；下一个 build 必须 vendor 到 02 最新。
+
+**b7cd 独立复核（2026-11-11）**：`results/quality/findings-b7cd.md`。页面显示的是 auto-2 程序回退 134 字：凯撒在红方集结点、诺诺"在身边"（假邻近）、"行动成功完成"（4 次 updates `achieved: []`、73 行 pending）；玩家点 110 字（路明非/西侧服务巷，含"诺诺：未成功触发"字段句）被覆盖。snapshot 现在正确（head auto_2、15:23、4 条 narration）、historyDelta 1，`3f54eac0` 的 refresh 生效但 entry 文本仍按任意 point 更新。模型开场 134（"黄黑绳被放下"）和 auto-1 92（逐字重复开场第一句、fallback=false）未被显示。L0 新增 `style.status_panel`（说话人名+冒号结果句）、`task_asserted` 扩展（行动成功完成）、`style.repeated_opening` 锚点；71 锚点、31/4；human-71/final-v1 仍 0。

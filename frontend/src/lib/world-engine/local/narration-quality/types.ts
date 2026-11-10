@@ -44,6 +44,7 @@ export type FindingKind =
   | 'fact.promise_added'
   | 'fact.knowledge_leak'
   | 'fact.viewpoint_interiority'
+  | 'fact.wrong_viewpoint'
   // Facts: omissions of settled, player-visible changes.
   | 'fact.time_missing'
   | 'fact.move_omitted'
