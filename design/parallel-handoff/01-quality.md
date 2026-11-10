@@ -127,3 +127,5 @@
 **02 accepted 的 unseen 189 字含未结算裁纸刀（2026-11-11）**：`results/quality/findings-02-unseen-01.md`。02 标 accepted 的稿子里"黎含章的裁纸刀在桌角…"不在结算输入（只有三本登记簿、算盘），是 `fact.object_added`；同一稿"三分钟过去"重复两次（`style.punctuation`）。检查器工具规则已扩展到"出现且未结算即判"，锚点 60（`neg/unseen-accepted-knife`）；human-71/final-v1 仍 0 事实。
 
 **状态（2026-11-11 02:28Z）**：06 冻结 `2324cde1`（page `7bfcdb99`），新增完整 committed snapshot + narration sources 供状态复核；尚未包含 resultsText/开场第三人称的正文修复。09 在 2cc873e4 上试的 joint-group（`09-joint-group-cf3d-invalid.json`）因页面 sha 不匹配 + Qwen3-0.6B 分片 fetch 失败判 INVALID，不是产品正文证据。等 09 在 2324cde1 上的合法回合；本轮检查器已到 60 锚点，human-71/final-v1 仍 0 事实。
+
+**新链入口（2026-11-11）**：06 页面 `2324cde1` 已支持 `?narrationModel=qwen3-1.7b&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`，并记录 `__worldArm`（含模型文件 sha256）。但 09 驱动 `accept-world-local.mjs:210` 是 `goto(${base}/)`：把 query 放进 `--base` 会被追加 `/` 弄坏最后一个参数，传纯 base 则 candidate=auto（02 报告 auto 选不到 productDefault → 不调模型）。已发 `results/product/browser-requests/01-input-arm-url-needs-driver-query.json`：09 需要 --query/--url，06 需确认入口或设默认；否则唯一优先链跑不起来。按用户 02:30 指示，140 字硬门槛不再作为拒绝理由，06 修订契约。
