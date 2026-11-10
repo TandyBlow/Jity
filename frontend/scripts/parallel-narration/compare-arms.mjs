@@ -59,10 +59,37 @@ const line = (cells) => cells.map((cell, index) => pad(cell, widths[index])).joi
 console.log(line(header));
 for (const cells of table) console.log(line(cells));
 console.log('');
-for (const row of rows) {
-  console.log(`--- ${row.scenario} [${row.arm}] status=${row.status} display=${row.displayStatus} `
-    + `beats=${row.beats.join(',') || '-'} dropped=${row.droppedSentences} appended=${row.appendedSentences}`);
-  console.log(row.text ?? '(no text)');
+// Three sources must stay separate when judging an arm: the model's raw output,
+// what the module accepted, and any sentence the program supplied. Reading the
+// displayed page text as if it were model output was a real attribution error:
+// game-model.factualNarration() writes time + room + visible people itself.
+for (const run of runs) {
+  const scenario = scenarioOf(run); const arm = modeOf(run);
+  const segments = run.segments ?? [];
+  const programSentences = [
+    ...(run.assembly?.appendedSentences ?? []),
+    ...segments.filter((segment) => segment.source !== 'model').map((segment) => segment.text),
+  ].filter(Boolean);
+  console.log(`=== ${scenario} [${arm}] status=${run.status} display=${run.displayStatus} accepted=${run.accepted}`);
+  console.log(`    attempt ${run.attempts?.[0]?.promptChars ?? '?'} prompt chars; firstTextMs=${round(run.firstTextMs) ?? '-'}; wallMs=${round(run.wallMs) ?? '-'}`);
+  for (const attempt of run.attempts ?? []) {
+    console.log(`-- RAW model output, attempt ${attempt.attempt} (${attempt.finishReason ?? '?'}, ${round(attempt.durationMs) ?? '-'} ms)`);
+    console.log(attempt.raw ? attempt.raw.trim() : '(empty)');
+    const issues = (attempt.issues ?? []).map((issue) => `${issue.severity}:${issue.kind}`);
+    if (issues.length) console.log(`   issues: ${issues.join(', ')}`);
+  }
+  console.log('-- ACCEPTED/DRAFT text returned by the module' + (run.accepted ? '' : ' (REJECTED, do not present as narration)'));
+  console.log(run.text ?? '(no text)');
+  if (run.beats?.length) {
+    console.log(`-- BEAT SOURCES ${run.beats.map((beat) => `${beat.beatId}:${beat.source}`).join(', ')}`);
+    for (const beat of run.beats.filter((value) => value.source !== 'model')) {
+      console.log(`   [${beat.source}] ${beat.text}`);
+    }
+  }
+  if (programSentences.length) {
+    console.log('-- PROGRAM sentences inside the returned text');
+    for (const sentence of programSentences) console.log(`   ${sentence}`);
+  }
   console.log('');
 }
 
