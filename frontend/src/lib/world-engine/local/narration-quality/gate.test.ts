@@ -59,6 +59,11 @@ describe('gateNarration', () => {
     const report = reviewNarration({ id: 'd', input, text: clean });
     expect(gateNarration(report, { textSource: 'program_fallback' }).decision).toBe('regenerate');
     expect(gateNarration(report, { textSource: 'mixed' }).decision).toBe('regenerate');
+    // 06's provenance labels: a committed draft and a program scene are not
+    // accepted prose either, and an unknown source must not be assumed clean.
+    expect(gateNarration(report, { textSource: 'draft' }).decision).toBe('regenerate');
+    expect(gateNarration(report, { textSource: 'program' }).decision).toBe('regenerate');
+    expect(gateNarration(report, { textSource: 'unknown' }).decision).toBe('regenerate');
   });
 
   it('regenerates when the settled time is missing', () => {

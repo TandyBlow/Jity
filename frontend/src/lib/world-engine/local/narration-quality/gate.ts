@@ -21,8 +21,10 @@ import type { ReviewReport } from './types';
 export type GateDecision = 'accept_as_model_prose' | 'hold_for_review' | 'regenerate';
 
 export interface GatePolicy {
-  /** Per-segment source of the text, when the pipeline knows it. */
-  textSource?: 'model' | 'program_fallback' | 'mixed';
+  /** Per-segment source of the text, when the pipeline knows it.
+   * `draft`/`program` are 06's provenance labels; `program_fallback` is the
+   * earlier name for the same state. None of them may pass as model prose. */
+  textSource?: 'model' | 'program_fallback' | 'program' | 'mixed' | 'draft' | 'unknown';
   /** Minimum characters for a whole-scene text. */
   minChars?: number;
   /** A hard ceiling for a single beat. */
@@ -62,11 +64,16 @@ export function gateNarration(report: ReviewReport, policy: GatePolicy = {}): Ga
   if (fallbackSuspected && policy.textSource === 'program_fallback') reasons.push('program_fallback_cannot_be_model_prose');
   if (fallbackSuspected && policy.textSource === 'model') reasons.push('fallback_suspected_but_labelled_model');
   if (policy.textSource === 'mixed') reasons.push('mixed_source_cannot_be_whole_model_prose');
+  if (policy.textSource === 'draft') reasons.push('draft_source_cannot_be_accepted_prose');
+  if (policy.textSource === 'program') reasons.push('program_fallback_cannot_be_model_prose');
+  if (policy.textSource === 'unknown') reasons.push('source_unknown_cannot_be_model_prose');
 
   let decision: GateDecision = 'accept_as_model_prose';
   if (factFindings > 0 || blockingStyles.length || reasons.includes('time_not_expressed')
     || reasons.some((reason) => reason.startsWith('too_short') || reason.startsWith('too_long'))
     || policy.textSource === 'mixed' || policy.textSource === 'program_fallback'
+    || policy.textSource === 'program' || policy.textSource === 'draft'
+    || policy.textSource === 'unknown'
     || reasons.includes('fallback_suspected_but_labelled_model')) {
     decision = 'regenerate';
   } else if (fallbackSuspected || reviewItems > 0) {
