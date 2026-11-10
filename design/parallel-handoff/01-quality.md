@@ -212,3 +212,4 @@
 - 102f（run 2026-11-10T2230-7ddd，head 102fdf1a，build 9B4it4o6pdxfJIWYX5UiH）**FAILED**：page `0d72d63d` ≠ frozen `07690eb4`；0.6B shard fetch 失败（4-12 ms）；0 字/749 ms，未进正文。03ec 同类 setup 失败；06/09 修页面冻结与 0.6B shard，不当作正文样本。
 - a178（run 2026-11-10T2236-fb80，head a178ef78，build dT9HKlAA54xSfOhfsk1nS）第 1 回合：95 字 model、129.3 s；首次把走/看规则牌写进正文，绳保持已放下；但时间缺失、加阳光、袖口负细节、墙面/弹痕位置泛化。不是质量通过。
 - a178 结束 **COMPLETED**（22:41:10Z）但仅 1 回合；1 回合完成不等于 3/10/20 验收或产品通过。
+- 3-turn a178（run 2026-11-10T2241-5ac2，head a178ef78）第 1 回合：**program** 128 字/140.5 s，无模型正文；状态面板、护目镜当行动者、输入走/看被写成未看到。不是模型正文通过。
