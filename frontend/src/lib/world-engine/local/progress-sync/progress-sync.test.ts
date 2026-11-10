@@ -746,17 +746,57 @@ describe('createProductSync', () => {
     }
   }
 
-  it('plays and saves locally with no service configured', async () => {
+  it('plays and saves locally with no service configured (explicit local writer)', async () => {
     const store = new ProductStore();
-    const sync = createProductSync<unknown>({ store, worldId: 'w1' });
+    const sync = createProductSync<unknown>({ store, worldId: 'w1', writeLocal: true });
     const saved = await sync.save(snapshot(1));
     expect(saved.localSaved).toBe(true);
-    expect(saved.note).toContain('saved locally only');
+    expect(saved.note).toContain('nothing to upload');
     const restored = await sync.restore();
     expect(restored.source).toBe('local');
     expect(restored.snapshot).toEqual(snapshot(1));
     expect(await sync.pending()).toBe(0);
     expect(await sync.flush()).toMatchObject({ uploaded: 0, remaining: 0 });
+  });
+
+  it('by default never writes the store the product session owns', async () => {
+    // 06's store checks a revision. A second writer moves the revision behind
+    // the session, and the session's next save fails as a conflict before any
+    // model call. The adapter must upload only.
+    const values = new Map<string, { snapshot: unknown; revision: number }>();
+    const revisionChecked = {
+      values,
+      async load(worldId: string) {
+        return values.get(worldId) ?? null;
+      },
+      async save(worldId: string, payload: unknown, options?: { expectedRevision?: number }) {
+        const current = values.get(worldId);
+        const expected = options?.expectedRevision;
+        if (expected !== undefined && current && current.revision !== expected) {
+          throw new Error('revision_conflict');
+        }
+        const next = { snapshot: structuredClone(payload), revision: (current?.revision ?? 0) + 1 };
+        values.set(worldId, next);
+        return { revision: next.revision };
+      },
+    };
+    const server = new FakeProgressServer();
+    const sync = createProductSync<unknown>({
+      store: revisionChecked,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+    });
+    // The session saves first, as 06's does.
+    await revisionChecked.save('w1', snapshot(1), { expectedRevision: 0 });
+    const saved = await sync.save(snapshot(1), { requestId: 'session-owned' });
+    expect(saved.localSaved).toBe(false);
+    expect(saved.outcome?.status).toBe('synced');
+    expect(values.get('w1')?.revision).toBe(1);
+    // The session's next save still checks against the revision it owns.
+    await expect(revisionChecked.save('w1', snapshot(2), { expectedRevision: 1 })).resolves.toBeTruthy();
   });
 
   it('wires the product store and browser storage into the real client', async () => {
@@ -774,9 +814,12 @@ describe('createProductSync', () => {
       now: () => 1_700_000_000_000,
     });
 
-    const first = await sync.save(snapshot(1), { requestId: 'product-1' });
-    expect(first.localSaved).toBe(true);
+    // 06's page saves through its own store, then asks sync to upload.
+    await store.save('w1', snapshot(1));
+    const first = await sync.push(snapshot(1), { requestId: 'product-1' });
+    expect(first.localSaved).toBe(false);
     expect(first.outcome?.status).toBe('synced');
+    expect(store.saves).toBe(1);
     expect(store.values.get('w1')?.snapshot).toEqual(snapshot(1));
     expect(storage.getItem('jity.progress-sync.heads.v1')).toContain('headSnapshotId');
 
@@ -796,8 +839,9 @@ describe('createProductSync', () => {
     expect(restored.source).toBe('local');
     expect(restored.snapshot).toEqual(snapshot(1));
 
+    await store.save('w1', snapshot(2));
     server.offline = true;
-    const offline = await reloaded.save(snapshot(2), { requestId: 'product-2' });
+    const offline = await reloaded.push(snapshot(2), { requestId: 'product-2' });
     expect(offline.outcome?.status).toBe('queued');
     expect(await reloaded.pending()).toBe(1);
     expect(storage.getItem('jity.progress-sync.queue.v1')).toContain('product-2');
@@ -904,13 +948,15 @@ describe('createProductSync', () => {
 
     const a = make(storeA, storageA);
     expect((await a.status()).relation).toBe('unknown');
-    await a.save(snapshot(1), { requestId: 'st-1' });
+    await storeA.save('w1', snapshot(1));
+    await a.push(snapshot(1), { requestId: 'st-1' });
     expect((await a.status()).relation).toBe('in-sync');
 
     // Another device advances the remote.
-    const b = make(new ProductStore(), new MemoryStorage());
+    const storeB = new ProductStore();
+    const b = make(storeB, new MemoryStorage());
     expect((await b.restore()).source).toBe('remote');
-    await b.save(snapshot(2), { requestId: 'st-2' });
+    await b.push(snapshot(2), { requestId: 'st-2' });
     expect((await a.status()).relation).toBe('remote-ahead');
 
     // A third device forks from the root while A is still on revision 1.
@@ -927,8 +973,10 @@ describe('createProductSync', () => {
 
     // A local save made while B moved on, then restored from an old base,
     // reports diverged instead of silently overwriting.
-    const c = make(new ProductStore(), new MemoryStorage());
-    await c.save(snapshot(5, 'C的副本'), { requestId: 'st-c' });
+    const storeC = new ProductStore();
+    const c = make(storeC, new MemoryStorage());
+    await storeC.save('w1', snapshot(5, 'C的副本'));
+    await c.push(snapshot(5, 'C的副本'), { requestId: 'st-c' });
     const cStatus = await c.status();
     expect(cStatus.relation).toBe('diverged');
     // Nothing is written by status(); the page only learns it must ask.
