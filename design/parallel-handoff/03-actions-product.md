@@ -45,17 +45,34 @@ change.
 
 ## Merge
 
+06's tree (`e83af87a`) already imports `createActionHandlers` and routes
+`action`/`targets`/`reaction` through it, so the semantic handlers are wired.
+What is still missing is the new module and the latest handler rule:
+
 ```bash
 cd D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery
-git cherry-pick c217b007
+git cherry-pick c217b007 2ec616ab 3a9ad607 33697da8
 ```
 
-Dependency: `local/semantics/actions/**` already exists in 06's tree (identical
-`index/checks/prompts/types/text`; only `fixtures.ts` differs with slot support),
-so no other port of this module is needed. `frontend` typecheck and
+- `c217b007` adds `local/action-execution/**` (order + port + tests).
+- `2ec616ab` adds the shipped-free-day-world test.
+- `3a9ad607` is a handoff edit (no code).
+- `33697da8` changes `semantics/actions/index.ts` + `types.ts` + tests: a
+  consumed protagonist opportunity is a program skip, never a model
+  continuation.
+
+Dependency: 06's `local/semantics/actions/**` is byte-identical to the
+pre-`33697da8` copy (only `fixtures.ts` differs with slot support), so the
+cherry-pick is conflict-free. Run `npx tsc --noEmit -p tsconfig.json`,
 `npx vitest run src/lib/world-engine/local/action-execution --no-file-parallelism`
-must be run after the cherry-pick; the round test uses the current
+and the action suite after it; the round test uses the current
 `LocalWorldTransport` snapshot shapes (`state`, `rolls`, `points`).
+
+> **Blocking review finding**: 06's `game-model.ts:171-189` still skips an NPC
+> when the player's sentence does not contain their name
+> (`scene_budget_unnamed`). That runs *before* the handlers and defeats R06.
+> Evidence, cost check and the exact deletion are in
+> `results/product/reviews/03-actions-game-model-name-gate.md`.
 
 ## Wiring (06-owned files)
 
@@ -90,18 +107,22 @@ orders them by current sanity (design §5.1: continue 在同一事务里按 Sₜ
 下一 round 顺序). Linked points never call either helper — they keep the stored
 `round.order`.
 
-### 3. `app/world-local/page.tsx` — delegate the three tasks
+### 3. `local/game-model.ts` — remove the name gate, not add another layer
+
+06 already delegates the three tasks to `createActionHandlers` (line ~191).
+No port composition is needed there. Delete the `scene_budget_unnamed` block
+instead; the handlers already scope to the protagonist's room and never write
+the player's character. If a crowd bound is ever needed, make it a
+deterministic same-room budget, not a name test.
+
+### 3b. Optional: `createActionExecutionModel` for other callers
+
+The port remains available for tests, probes or a caller that does not already
+have `LocalGameModel`:
 
 ```ts
 import { createActionExecutionModel } from '@/lib/world-engine/local/action-execution';
-
-const base = new LocalGameModel(semantic, { /* existing options */ });
-const model = createActionExecutionModel(base, semantic, {
-  onTask: baseOptions.onTask,          // same reporter the page already has
-  attempts: 2,                          // one repair, then explicit fallback
-  offscreenPolicy: 'skip',              // see the trade-off below
-});
-// use `model` for LocalGameSession.create/restore and modelRef
+const model = createActionExecutionModel(base, semantic, { attempts: 2, offscreenPolicy: 'skip' });
 ```
 
 `recentEvents` is optional and left unset here: `LocalGameModel.lastResultsText`
