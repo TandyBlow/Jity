@@ -4,7 +4,7 @@
 
 Role: `state-kernel-long-continuity`. Task:
 `D:\others\Jity\.local\parallel-local-game\tasks\product-05-state.md`
-(sha256 `82adb3aeed69f3348f563983a10d3af10d033e576bc175148a90310185ee8bcb`).
+(sha256 `d91f6f69dfc436532e11f45f2894a3fdc8feba2a6655dde17aa50aec4ac25e7c`).
 
 This lane keeps the existing kernel and does **not** create a second world
 protocol. It owns the read-only verifier under
@@ -46,12 +46,11 @@ read-only here. No product acceptance is claimed.
 
 ```text
 npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
-→ 1 file passed, 1 skipped; 7 tests passed, 1 skipped
+→ 2 files passed, 1 skipped; 28 tests passed, 1 skipped
+npx vitest run src/lib/world-engine/local --maxWorkers=1
+→ 6 files passed, 1 skipped; 111 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 5 bridge tests passed (requires the sibling 06 worktree)
-
-npx vitest run src/lib/world-engine/local/state.test.ts src/lib/world-engine/local/canonical.test.ts src/lib/world-engine/local/world-loader.test.ts src/lib/world-engine/local/local-transport.test.ts --maxWorkers=1
-→ 4 files, 83 tests passed
+→ 1 file, 7 bridge tests passed (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -125,6 +124,40 @@ acceptance.
    `next.config.ts` sends the headers for `/world-local` and
    `/world-local/:path*`; the old 05 patch is under `patches/merged/`.
 
+## 21c3 refresh/restore: stale observation vs lost save
+
+`results/product/evidence/09-one-legal-turn-21c3.json` (run
+`2026-11-10T1943-5f25`, product `21c34d67`, page `3b33fccb`) has both a
+per-turn root sample and a post-reload sample. The end-of-turn sample is
+version 0 with no commands/points and history 0; the reload sample is version 3
+with one command, three points (`point_round_3_1`, then two automatic points),
+all four narrations ready, and history 1.
+
+The player point committed, then the automatic continuation threw
+`settlement_failed:continuation:continuation_policy_repeated_candidate`. The
+21c3 page catch did not refresh; 09 read `__worldSnapshot` as a property before
+the submit promise settled. The save was not lost. `__worldRestore` reported
+`stateRestored: true`, `entriesRestored: 1/1` and
+`inputConsumptionRestored: true`; the driver's `overallRestored: false` comes
+only from comparing history 0 with 1.
+
+The protagonist task statuses are identical in both samples; `task_lu_match`
+is still pending. This is not the 1737 false root achievement. The run still
+fails narration predicates (draft source, accepted 167474 ms, draft 81812 ms).
+
+06 `3f54eac0` is an ancestor of current HEAD and refreshes after the catch;
+the page hook is still a direct object. 09 must call a function getter and wait
+for `__worldTurns[last].submission`; patch:
+`results/product/evidence/05-kernel/patches/09-call-live-snapshot.patch`
+(sha256 `c6da6119...`). 05's review is
+`verification-09-21c3-stale-observation.json` and the CPU regression is
+`verify-21c3.test.ts`.
+
+The verifier now accepts the S0/root previous head (stored in `pointStates`, not
+`points`) and validates 04's `affected_projection` ledger only when the
+affected/unaffected task lists partition all 73 rows and the character counts
+cover 14. A missing non-root head or a shrunken task partition still fails.
+
 ## Real 09 run found a sync-ownership conflict
 
 The first real 10-turn page run (`results/product/evidence/09-product-10turn.json`,
@@ -144,6 +177,11 @@ state/persistence failure, not a narration-quality finding.
 
 - `/world-local` on 06 returned HTTP 500 at 21:15 local; 09's queue is blocked
   on 200 + textarea. 06 must restart/fix the dev server before the rerun.
+- `09-call-live-snapshot.patch` (sha256 `c6da6119…`) is the active 09 driver
+  patch: call a function `__worldSnapshot`, wait for the submission ledger, and
+  record `snapshotSettled`.
+- `06-page-detached-snapshot.patch` (sha256 `a4523949…`) makes the hook return
+  a detached clone instead of a stale object.
 - `06-transport-invariants.patch` (sha256 `3cfb90b5…`) regenerated for 06's
   LF transport; apply-check ok. It guards `commit` with continuity checks and
   `restore` with the full record verifier.
