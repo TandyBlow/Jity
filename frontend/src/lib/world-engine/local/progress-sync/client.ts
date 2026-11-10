@@ -144,6 +144,13 @@ export class ProgressSyncClient<P = unknown> {
     return this.queueError;
   }
 
+  /** The snapshot this device last uploaded/read, best-effort (memory then
+   * whatever the product persisted). Used by the page to decide whether the
+   * remote moved ahead. */
+  async lastKnownHead(worldId: WorldId): Promise<HeadState | null> {
+    return this.knownHead(worldId);
+  }
+
   /** Last known head-persistence failure, if any. Sync still works this page. */
   get headPersistenceError(): unknown {
     return this.headError;
@@ -155,6 +162,16 @@ export class ProgressSyncClient<P = unknown> {
     });
     this.remember(head);
     return head;
+  }
+
+  /** Read the remote head without teaching this client that it is in sync.
+   * Status checks must not clear the "we may be behind" knowledge. */
+  async peekHead(worldId: WorldId): Promise<HeadState> {
+    return this.request<HeadState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/head`));
+  }
+
+  async peekGraph(worldId: WorldId): Promise<GraphState> {
+    return this.request<GraphState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/graph`));
   }
 
   async graph(worldId: WorldId): Promise<GraphState> {

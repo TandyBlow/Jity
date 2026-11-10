@@ -14,7 +14,7 @@
  * reads or reinterprets world state, and no game fact is computed on a server.
  */
 
-import { createWebStorageQueueStore, ProgressSyncClient, type StorageLike } from './client';
+import { compareLineage, createWebStorageQueueStore, ProgressSyncClient, type StorageLike } from './client';
 import type {
   HeadState,
   HeadStateStore,
@@ -111,6 +111,29 @@ export interface ProductRestoreResult<P> {
   note?: string;
 }
 
+/** Whether the local save is behind, ahead of, or diverged from the remote. */
+export type SyncRelation = 'local-only' | 'in-sync' | 'remote-ahead' | 'local-ahead' | 'diverged' | 'unknown';
+
+export interface ProductSyncStatus {
+  relation: SyncRelation;
+  localRevision: number | null;
+  /** Snapshot the local save descends from (last upload the page knows of). */
+  baseSnapshotId: string | null;
+  remote: { headSnapshotId: string | null; revision: number } | null;
+  /** Filled when diverged: both leaves stay readable until the player chooses. */
+  branches?: string[];
+  note?: string;
+}
+
+export interface ProductFlushResult<P = unknown> {
+  uploaded: number;
+  conflicts: number;
+  remaining: number;
+  offline: boolean;
+  /** The actual conflicts, so the page can show both copies and ask. */
+  conflictList: Array<ProgressConflictError<P>>;
+}
+
 export interface ProductSync<P> {
   readonly client: ProgressSyncClient<P>;
   readonly worldId: string;
@@ -122,7 +145,9 @@ export interface ProductSync<P> {
   /** Local save if present, else the remote head. A conflict is returned, not merged. */
   restore(): Promise<ProductRestoreResult<P>>;
   /** Retry queued uploads. Safe to call on every reconnect and page load. */
-  flush(): Promise<{ uploaded: number; conflicts: number; remaining: number; offline: boolean }>;
+  flush(): Promise<ProductFlushResult<P>>;
+  /** Compare the local save with the remote head without writing anything. */
+  status(): Promise<ProductSyncStatus>;
   /** The player's explicit choice after a visible conflict. */
   choose(choice: 'keep-remote' | 'keep-local-fork', conflict: ProgressConflictError<P>): Promise<ResolveResult<P>>;
   pending(): Promise<number>;
@@ -208,14 +233,87 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       }
     },
     async flush() {
-      if (!baseUrl) return { uploaded: 0, conflicts: 0, remaining: 0, offline: false };
+      if (!baseUrl) {
+        return { uploaded: 0, conflicts: 0, remaining: 0, offline: false, conflictList: [] };
+      }
       const result = await client.flush();
       return {
         uploaded: result.uploaded.length,
         conflicts: result.conflicts.length,
         remaining: result.remaining,
         offline: result.offline,
+        conflictList: result.conflicts.map((entry) => entry.conflict),
       };
+    },
+    async status() {
+      const local = await client.loadLocal(worldId);
+      const base = (await client.lastKnownHead(worldId))?.headSnapshotId ?? null;
+      if (!baseUrl) {
+        return {
+          relation: local ? 'local-only' : 'unknown',
+          localRevision: null,
+          baseSnapshotId: base,
+          remote: null,
+          note: 'progress service is not configured',
+        };
+      }
+      let head;
+      try {
+        head = await client.peekHead(worldId);
+      } catch (error) {
+        return {
+          relation: local ? 'local-only' : 'unknown',
+          localRevision: null,
+          baseSnapshotId: base,
+          remote: null,
+          note: error instanceof Error ? error.message : String(error),
+        };
+      }
+      const remote = { headSnapshotId: head.headSnapshotId, revision: head.revision };
+      if (!local) return { relation: remote.headSnapshotId ? 'remote-ahead' : 'unknown', localRevision: null, baseSnapshotId: base, remote };
+      if (!base) {
+        if (!remote.headSnapshotId) {
+          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: null, remote };
+        }
+        try {
+          const graph = await client.peekGraph(worldId);
+          return {
+            relation: 'diverged',
+            localRevision: null,
+            baseSnapshotId: null,
+            remote,
+            branches: graph.branches,
+            note: 'the local save has no recorded remote base; both copies stay stored',
+          };
+        } catch {
+          return { relation: 'diverged', localRevision: null, baseSnapshotId: null, remote };
+        }
+      }
+      if (remote.headSnapshotId === base) return { relation: 'in-sync', localRevision: null, baseSnapshotId: base, remote };
+      try {
+        const graph = await client.peekGraph(worldId);
+        if (!remote.headSnapshotId) {
+          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+        }
+        const comparison = compareLineage(base, remote.headSnapshotId, graph.nodes);
+        if (comparison.leftIsAncestorOfRight) {
+          return { relation: 'remote-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+        }
+        if (comparison.rightIsAncestorOfLeft) {
+          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+        }
+        return { relation: 'diverged', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+      } catch (error) {
+        // The base may be a snapshot this device never uploaded (e.g. storage
+        // cleared elsewhere); the relation is genuinely unknown, not a guess.
+        return {
+          relation: 'unknown',
+          localRevision: null,
+          baseSnapshotId: base,
+          remote,
+          note: error instanceof Error ? error.message : String(error),
+        };
+      }
     },
     choose(choice, conflict) {
       return client.resolveConflict(conflict, choice);

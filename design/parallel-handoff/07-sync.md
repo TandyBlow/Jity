@@ -133,7 +133,13 @@ const sync = createProductSync<LocalGameSnapshot>({
    两个副本都留在服务端，之后仍可用 `sync.read(snapshotId)` 读回。
 4. **重连/页面回到前台**：`await sync.flush()`。同一次离线期间的多次保存会按
    顺序作为**后代链**上传（父节点指向前一条上传），不会并发拿同一个旧 head。
-   第二次 flush 幂等，不新增快照。
+   第二次 flush 幂等，不新增快照。`flush().conflictList` 里是真正的冲突对象，
+   页面要拿它让玩家选择，不能只看 `conflicts` 计数。
+5. **判断要不要提示玩家**：`await sync.status()` 只读，返回
+   `in-sync | remote-ahead | local-ahead | diverged | local-only | unknown`，
+   另带 `remote`、`baseSnapshotId`、`branches`。它不会因为读了一次 head 就把
+   自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
+   `diverged` 时提示选择，不要自动覆盖。
 
 服务端两种跑法，二选一：
 
@@ -183,11 +189,11 @@ python -X utf8 -m pytest -q tests/test_local_progress_sync.py
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 25 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
+# 27 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
 # 保存链、丢响应幂等、分叉/选择、双设备、队列冲突两种显式选择及依赖 rebase、
 # web storage 队列、lineage 比较、product 适配器、push 不重复写本地、head 恢复。
 PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret   ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 28 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
+# 30 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
 # 以及离线两次保存→重连只上传后代链→第二次 flush 幂等→另一设备取回。
 
 ./node_modules/.bin/eslint src/lib/world-engine/local/progress-sync scripts/parallel-sync
@@ -217,7 +223,10 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 - 未修改页面、`session.ts`、`app/main.py` 或共享数据库；页面接入需要按上面
   的接线步骤完成，06 负责。本线没有在真实 `/world-local` 页面上跑过同步，
-  双设备/断网/刷新的真实页面证据要由 09 在 06 接线后采集。
+  双设备/断网/刷新的真实页面证据要由 09 在 06 接线后采集；请求已放在
+  `results/product/browser-requests/07-sync-double-device-01.json`。
+- `status()` 的 `localRevision` 目前恒为 null：远程 revision 与 06 本地记录
+  revision 是两套编号，不混用；页面要显示本地版本时读 06 自己的 metadata。
 - 未做真实模型/GPU 运行；本线不涉及推理，相关能力未验证。页面用 stub loader
   跑的成文证据只是程序路径，不能当作模型正文或产品质量通过。
 - token 是全局 Bearer，不是每用户授权；世界 ID 由调用方生成。

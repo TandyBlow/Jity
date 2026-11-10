@@ -887,6 +887,101 @@ describe('createProductSync', () => {
     expect(server.worlds.get('w1')!.revision).toBe(1);
   });
 
+  it('reports in-sync, remote-ahead, local-ahead and diverged before writing anything', async () => {
+    const server = new FakeProgressServer();
+    const storeA = new ProductStore();
+    const storageA = new MemoryStorage();
+    const make = (store: ProductStore, storage: MemoryStorage) => createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+
+    const a = make(storeA, storageA);
+    expect((await a.status()).relation).toBe('unknown');
+    await a.save(snapshot(1), { requestId: 'st-1' });
+    expect((await a.status()).relation).toBe('in-sync');
+
+    // Another device advances the remote.
+    const b = make(new ProductStore(), new MemoryStorage());
+    expect((await b.restore()).source).toBe('remote');
+    await b.save(snapshot(2), { requestId: 'st-2' });
+    expect((await a.status()).relation).toBe('remote-ahead');
+
+    // A third device forks from the root while A is still on revision 1.
+    const forked = await b.client.fork('w1', snapshot(9, '分叉'), {
+      baseSnapshotId: server.worlds.get('w1')!.headSnapshotId!,
+      expectedHead: server.worlds.get('w1')!.headSnapshotId!,
+      expectedRevision: server.worlds.get('w1')!.revision,
+      requestId: 'st-fork',
+    });
+    expect(forked.snapshotId).toBeTruthy();
+    // B is now ahead of the active head, which is still A's base + 1: A is
+    // behind but the graph has two leaves.
+    expect((await a.status()).relation).toBe('remote-ahead');
+
+    // A local save made while B moved on, then restored from an old base,
+    // reports diverged instead of silently overwriting.
+    const c = make(new ProductStore(), new MemoryStorage());
+    await c.save(snapshot(5, 'C的副本'), { requestId: 'st-c' });
+    const cStatus = await c.status();
+    expect(cStatus.relation).toBe('diverged');
+    // Nothing is written by status(); the page only learns it must ask.
+    expect(Array.isArray(cStatus.branches)).toBe(true);
+  });
+
+  it('flush returns the conflicts themselves so the page can ask the player', async () => {
+    const server = new FakeProgressServer();
+    const a = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    await a.save(snapshot(1), { requestId: 'fl-1' });
+    // Another device moves the head while A is offline with a queued save.
+    server.offline = true;
+    const queued = await a.save(snapshot(2, 'A离线'), { requestId: 'fl-2' });
+    expect(queued.outcome?.status).toBe('queued');
+    const b = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    server.offline = false;
+    // B pulls A's first save? No: B must build on the same head A saw.
+    expect((await b.restore()).snapshot).toEqual(snapshot(1));
+    await b.save(snapshot(3, 'B在线'), { requestId: 'fl-b' });
+
+    const flushed = await a.flush();
+    expect(flushed.uploaded).toBe(0);
+    expect(flushed.conflicts).toBe(1);
+    expect(flushed.conflictList).toHaveLength(1);
+    const conflict = flushed.conflictList[0];
+    expect(conflict.code).toBeTruthy();
+    expect(conflict.remote.headSnapshotId).toBeTruthy();
+    // Both copies are preserved until the player chooses.
+    const kept = await a.choose('keep-local-fork', conflict);
+    expect(kept.status).toBe('local-fork');
+    const graph = await a.client.graph('w1');
+    expect((await a.read(kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'A离线'));
+    expect(graph.branches.length).toBe(2);
+  });
+
   it('a head store survives malformed storage without breaking saves', async () => {
     const storage = new MemoryStorage();
     storage.setItem('jity.progress-sync.heads.v1', '{not json');
