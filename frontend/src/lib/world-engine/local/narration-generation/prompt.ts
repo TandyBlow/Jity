@@ -51,6 +51,8 @@ export function insertBeforeBody(inputText: string, block: string): string {
  * rarely states one, so a 1.7B instruct model guessed wrong («她» for 路明非)
  * in accepted product prose. Writing names or dropping the subject is correct
  * Chinese and cannot be wrong about gender. */
+const CN_DIGITS = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
+
 export function writingContract(policy: NarrationPolicy): string {
   const view = policy.viewpoint?.name;
   const target = clampInt(policy.targetChars ?? 240, 60, 600);
@@ -65,7 +67,18 @@ export function writingContract(policy: NarrationPolicy): string {
     '不要把状态清单念一遍：不写“精神值”“未完成”“任务”“视角”这些字样，用动作、环境和对话表现。',
     '不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。',
     ...BACKGROUND_RULES,
-    '时间推进要落在一句话里（例如“十分钟过去”），不要写日期，不要写别的时长。',
+    (() => {
+      // The whole-scene arm dropped the elapsed time in the first real run and
+      // was rejected for it. When the duration is settled, name it: 'write the
+      // time' alone let the model describe atmosphere and skip the duration.
+      const time = policy.time?.duration;
+      const UNIT: Record<string, string> = { second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' };
+      const unit = time ? UNIT[time.unit] ?? time.unit : null;
+      const amount = time && Number.isInteger(time.amount) ? CN_DIGITS[time.amount] ?? String(time.amount) : null;
+      return time && unit && amount
+        ? `时间推进要写在一句话里：正文必须出现「${amount}${unit}」这个时长（例如「${amount}${unit}过去」），不要写日期，不要写别的时长。`
+        : '时间推进要落在一句话里（例如“十分钟过去”），不要写日期，不要写别的时长。';
+    })(),
     '结尾停在这一刻，不要总结、不要“这一天就这样过去”这类收束，最后一句要与上一回合的结尾不同。',
     '不写标题，不解释写法，直接写正文。',
   ].join('\n');

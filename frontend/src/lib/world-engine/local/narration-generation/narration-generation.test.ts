@@ -1434,3 +1434,18 @@ describe('personality change is required, and required as behaviour', () => {
     expect(result.issues.some((issue) => issue.kind === 'fact_omitted' && issue.severity === 'hard')).toBe(true);
   });
 });
+
+describe('serialized scene: the settled duration is named in the contract', () => {
+  test('a point with two elapsed minutes says so explicitly', () => {
+    const prompt = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, {
+      ...basePolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+    });
+    expect(prompt).toContain('正文必须出现「两分钟」这个时长');
+  });
+
+  test('a point with no elapsed time keeps the general line', () => {
+    const prompt = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, basePolicy);
+    expect(prompt).not.toContain('正文必须出现');
+    expect(prompt).toContain('时间推进要落在一句话里');
+  });
+});
