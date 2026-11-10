@@ -395,6 +395,10 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
+  // A scene prop (the wall board, the route map) is not carried. When the
+  // passage puts one in a hand and the input never says it is held, that is a
+  // new fact. 09 batch-5 wrote «演习规则牌在他手中，牌面写着…». Judged in
+  // index.ts where the input text is available.
   const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < Math.round(minChars * 0.67)) {
     issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));

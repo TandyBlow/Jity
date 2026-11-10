@@ -41,15 +41,61 @@ export const APPEARANCE_MARK_NOUNS = [
  * quiet turn wrote «她耳后有淡淡的粉»; an earlier one wrote «她身上的红痕».
  * In the 71 reference scenes every mark that appears («演习弹红痕») is also in
  * the input, so requiring the input gives 0 false positives there. */
-export function appearanceViolations(text: string, inputText: string): SenseViolation[] {
-  const found: SenseViolation[] = [];
+export interface AppearanceViolation extends SenseViolation {
+  /** The mark exists in the input but next to another person's name. */
+  borrowed?: boolean;
+}
+
+/** The name closest to any occurrence of `noun`, with its distance. */
+function nearestName(value: string, noun: string, names: readonly string[]): { name: string; distance: number } | null {
+  let best: { name: string; distance: number } | null = null;
+  for (const name of names) {
+    if (name.length < 2) continue;
+    let from = 0;
+    for (;;) {
+      const at = value.indexOf(noun, from);
+      if (at < 0) break;
+      const nameAt = value.lastIndexOf(name, at);
+      const after = value.indexOf(name, at + noun.length);
+      const distance = Math.min(
+        nameAt < 0 ? Number.POSITIVE_INFINITY : at - nameAt,
+        after < 0 ? Number.POSITIVE_INFINITY : after - at,
+      );
+      if (distance < (best?.distance ?? Number.POSITIVE_INFINITY)) best = { name, distance };
+      from = at + noun.length;
+    }
+  }
+  return best && best.distance <= 24 ? best : null;
+}
+
+/** A visible mark on a person that the input never states. The page's accepted
+ * quiet turn wrote «她耳后有淡淡的粉»; an earlier one wrote «她身上的红痕».
+ * In the 71 reference scenes every mark that appears («演习弹红痕») is also in
+ * the input, so requiring the input gives 0 false positives there.
+ *
+ * 09 95dc then showed the second form: 诺诺's state carries «右袖的红痕», the
+ * passage moved the mark onto the viewpoint («他伸手拂去袖口的红痕»). An
+ * input-level check cannot see that, so `names` lets the caller pass the
+ * roster: a mark stated only next to another name is `borrowed`, which the
+ * caller treats as a soft note rather than a rejection. */
+export function appearanceViolations(text: string, inputText: string, names: readonly string[] = []): AppearanceViolation[] {
+  const found: AppearanceViolation[] = [];
   for (const sentence of sentencesOf(text)) {
     for (const noun of APPEARANCE_MARK_NOUNS) {
-      if (!sentence.includes(noun) || inputText.includes(noun)) continue;
+      if (!sentence.includes(noun)) continue;
       // «粉» is also a colour word and a common noun (粉笔灰, 花粉); only the
       // applied-to-a-person sense is a mark.
       if (noun === '粉' && !/(耳后|脸上|颊|腮|唇|眉|妆)/u.test(sentence)) continue;
-      found.push({ sentence, noun });
+      if (!inputText.includes(noun)) {
+        found.push({ sentence, noun });
+        continue;
+      }
+      if (!names.length) continue;
+      const here = nearestName(sentence, noun, names);
+      const there = nearestName(inputText, noun, names);
+      if (here && there && here.name !== there.name) {
+        found.push({ sentence, noun, borrowed: true });
+      }
     }
   }
   return found;

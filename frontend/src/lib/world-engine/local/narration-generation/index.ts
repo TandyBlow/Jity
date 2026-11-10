@@ -890,6 +890,9 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
   const deadlineMs = Math.max(1, policy.deadlineMs ?? 300_000);
 
   const attempts: NarrationAttempt[] = [];
+  // Sentences appended by the targeted repairs; the assembly records them so a
+  // reader can tell them from model prose.
+  const sceneAppends: string[] = [];
   let guidance = '';
   let previousDraft: string | null = null;
   let maxTokens = startTokens;
@@ -950,12 +953,36 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // The check is independent of the other rules: a draft that is also too
     // short can still assert an invented sound, and the evidence must say so.
     if (result.attempt.cleaned) {
-      const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText);
+      const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText, input.policy?.roster ?? []);
       const invented = senseViolations(result.attempt.cleaned, input.inputText, {
         staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
-      if (markIssues.length) {
+      // A mark that belongs to someone else in the state is a soft note: the
+      // passage is not inventing it, it is moving it. 09 95dc put 诺诺's
+      // «右袖的红痕» on the viewpoint.
+      for (const borrowed of markIssues.filter((issue) => issue.borrowed)) {
+        result.attempt.issues.push({
+          kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+          detail: `${borrowed.noun} belongs to another character (${borrowed.sentence})`, sentence: borrowed.sentence,
+        });
+      }
+      // A wall prop in a hand is a new fact. 09 batch-5 wrote «演习规则牌在他
+      // 手中，牌面写着…»; the fixture's input puts the board on the wall.
+      for (const object of input.policy?.scene?.objects ?? []) {
+        const name = object.name;
+        if (!name || !result.attempt.cleaned.includes(name)) continue;
+        if (input.inputText.includes(`${name}在`) || input.inputText.includes(`（${name}`)) continue;
+        const at = result.attempt.cleaned.indexOf(name);
+        const around = result.attempt.cleaned.slice(Math.max(0, at - 8), at + name.length + 8);
+        if (!/(手中|手里|手上)/u.test(around)) continue;
+        result.attempt.issues.push({
+          kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+          detail: `scene prop ${name} appears in a hand`, sentence: result.attempt.cleaned.slice(Math.max(0, at - 12), at + name.length),
+        });
+      }
+      const ownedMarks = markIssues.filter((issue) => !issue.borrowed);
+      if (ownedMarks.length) {
         result.attempt.accepted = false;
         if (!result.attempt.issues.some((issue) => issue.kind === 'unlicensed_appearance')) result.attempt.issues.push({
           kind: 'unlicensed_appearance', severity: 'hard', attempt: result.attempt.attempt,
@@ -1038,6 +1065,52 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     break;
   }
 
+  // A draft that wrote the move and the time but never said the task was done
+  // is the «omitted outcome» class. Asking for the whole scene again reproduces
+  // the scenery, so ask for that one sentence and append it, exactly like the
+  // elapsed-time repair. If the model cannot say it, the committed phrase from
+  // the projector is appended instead; it is flagged in appendedSentences.
+  for (const attempt of attempts) {
+    if (attempt.accepted || attempt.cancelled || attempt.timedOut || !attempt.cleaned) continue;
+    const hard = (attempt.issues ?? []).filter((issue) => issue.severity === 'hard');
+    if (!hard.length || !hard.every((issue) => issue.kind === 'fact_omitted')) continue;
+    const task = ledger.mandatory.find((fact) => fact.kind === 'task_achieved');
+    if (!task || task.kind !== 'task_achieved') continue;
+    let sentence = '';
+    try {
+      const answer = await input.engine.complete([
+        `这一回合${task.name}已经把「${task.goal}」这件事办完了，但正文没有写出来。`,
+        '',
+        '只写一句话，让读者看出这件事办完了。可以用「比对完了」「对上了」「办完了」这类说法，'
+          + '不要写结果或答案，不要写下一件事，不要写风景，不要解释。只输出这一句。',
+      ].join(String.fromCharCode(10)), {
+        maxTokens: 60,
+        temperature: 0.3,
+        ...(policy.seed !== undefined ? { seed: policy.seed } : {}),
+        ...(input.signal ? { signal: input.signal } : {}),
+        timeoutMs: 30_000,
+      });
+      sentence = (answer ?? '').trim().split(/\n+/u).filter(Boolean)[0] ?? '';
+    } catch {
+      sentence = '';
+    }
+    if (!sentence || !/[。！？!?]$/u.test(sentence)) {
+      sentence = `${factPhrases(task)[0]}。`;
+    }
+    const appended = `${attempt.cleaned}${sentence}`;
+    const check = verifyNarration({
+      text: appended, finishReason: 'stop', committed: input.committed, ledger, policy,
+      priorText, attempt: attempt.attempt, promptEchoMarkers: [],
+    });
+    if (check.issues.some((issue) => issue.severity === 'hard')) continue;
+    attempt.repairedIssues = [...(attempt.issues ?? [])];
+    attempt.cleaned = appended;
+    attempt.accepted = true;
+    attempt.issues = [...check.issues];
+    sceneAppends.push(sentence);
+    break;
+  }
+
   const acceptedAttempt = attempts.find((attempt) => attempt.accepted) ?? null;
   const completed = attempts.filter((attempt) => !attempt.cancelled && !attempt.timedOut);
   const best = acceptedAttempt ?? pickBest(completed);
@@ -1062,7 +1135,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
   // removed here. It is only applied when the trimmed text still passes the
   // same verification; otherwise the model's text is kept as written.
   let text = selected?.cleaned ?? '';
-  const sceneAssembly: NarrationAssembly = { droppedSentences: [], appendedSentences: [] };
+  const sceneAssembly: NarrationAssembly = { droppedSentences: [], appendedSentences: [...sceneAppends] };
   if (acceptedAttempt && text && priorText) {
     const trimmed = trimEchoedEnding(text, priorText, {
       protect: protectedStrings(input.committed),

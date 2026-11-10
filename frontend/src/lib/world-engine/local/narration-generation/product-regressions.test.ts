@@ -231,3 +231,85 @@ describe('product regressions: an object cannot be in a hand and hanging on the 
     expect(hard).toContain('self_contradiction');
   });
 });
+
+describe('product regressions: the batch-3 quiet passage', () => {
+  // 09 ran the quiet fixture at 6d4236be and accepted a passage with
+  // «她耳后有一道细小的红痕» although the fixture input has no 红痕. Locally the
+  // same input and text are rejected, so this pins the local behaviour until
+  // the difference in the run is explained.
+  test('a mark the fixture input never states is rejected', async () => {
+    const text = '路明非站在西侧服务巷，看着诺诺发髻间飘动的红发。她低头整理发圈，手指在发丝间轻轻滑动，仿佛在梳理某种情绪。'
+      + '他注意到她耳后有一道细小的红痕，像是被什么轻敲过。诺诺转身时，路明非看见她裙摆扫过地面，带起一阵微凉的风。'
+      + '他没说话，只是静静地看着她，心里浮起一丝疑惑。一分钟过去，他依旧站在原处，目光落在那张路线图上，眼神却落在诺诺身上，仿佛在等待什么。';
+    const { kinds } = await issuesOf(text);
+    expect(kinds).toContain('hard:unlicensed_appearance');
+  });
+});
+
+describe('product regressions: a mark that belongs to another character', () => {
+  // 09 95dc auto point: 诺诺's «右袖的红痕» was on the viewpoint's sleeve.
+  test('a borrowed mark is a soft note, not a rejection', async () => {
+    const policy: NarrationPolicy = {
+      ...quietPolicy,
+      knownEntities: [...(quietPolicy.knownEntities ?? []), '红痕'],
+    };
+    const input = `${quietInput}\n诺诺：右袖的红痕是扶过石墙时蹭上的。`;
+    const text = '路明非站在西侧服务巷，低头看见袖口的红痕。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: input, priorText: null, policy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => issue.kind === 'unlicensed_appearance' && issue.severity === 'hard')).toBe(false);
+    expect(issues.some((issue) => issue.severity === 'soft' && /belongs to another character/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
+
+describe('product regressions: a wall prop in a hand', () => {
+  // 09 batch-5 move scene: «演习规则牌在他手中，牌面写着…» while the fixture puts
+  // the board on the wall.
+  test('a scene prop in a hand is a soft note', async () => {
+    const text = '路明非站在中央庭院，看着巷口的黄黑绳。他镜片无裂纹，确认它还在。演习规则牌在他手中，牌面写着「使用弗里嘉演习弹」。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    // The move fixture's input names the board without a place, like the page.
+    const input = quietInput.replace('演习规则牌（墙上）', '演习规则牌');
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: input, priorText: null, policy: quietPolicy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => /scene prop 演习规则牌 appears in a hand/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
+
+describe('product regressions: a settled task the draft never says', () => {
+  // 09 dense point: move and two minutes written, the finished task omitted in
+  // both attempts, so the whole turn fell back to program text.
+  test('one sentence about the outcome is appended instead of failing', async () => {
+    const taskFact: NarrationFact = {
+      id: 'lu:task', actorId: 'lu', name: '路明非', kind: 'task_achieved',
+      taskId: 'task_books', goal: '把三份互相矛盾的登记簿比对完',
+    };
+    const movedFact: NarrationFact = {
+      id: 'lu:position', actorId: 'lu', name: '路明非', kind: 'moved',
+      fromId: 'lane', from: '西侧服务巷', toId: 'courtyard', to: '中央庭院',
+    };
+    const body = '路明非从西侧服务巷走到中央庭院。两分钟过去，他站在石阶上。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: body },
+      { kind: 'text', text: body },
+      { kind: 'text', text: '登记簿比对完了。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: quiet.anchor, facts: [movedFact, taskFact] },
+      inputText: quietInput.replace('演习规则牌（墙上）', '演习规则牌'),
+      priorText: null,
+      policy: {
+        ...quietPolicy, targetChars: 40, minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('登记簿比对完了');
+    expect(result.assembly.appendedSentences).toContain('登记簿比对完了。');
+  });
+});
