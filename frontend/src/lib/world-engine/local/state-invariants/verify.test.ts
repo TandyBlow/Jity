@@ -8,8 +8,8 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyVisibleAcceptance, verifySnapshotSequence,
-  verifyWorldRecord, type WorldRecordLike,
+  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyVisibleAcceptance,
+  verifySnapshotSequence, verifyWorldRecord, type WorldRecordLike,
 } from './index';
 import { restoreVerified, verifyBeforeRestore } from './guarded-restore';
 
@@ -274,6 +274,16 @@ describe('visible acceptance summary', () => {
     expect(forward.errors).toEqual([]);
     const backward = await verifySnapshotSequence([{ transport: second }, { transport: first }]);
     expect(backward.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['version_regressed', 'points_regressed']));
+  });
+
+  it('reports a command list shorter than the committed player history', async () => {
+    const initial = fixture.normal.initial as InitialState;
+    const s0 = buildInitialState(structuredClone(initial));
+    const record = await recordOf(initial, [point(s0, 1, {})]);
+    const report = verifyDisplayHistory({ transport: record, commands: [] });
+    expect(report.total).toBe(1);
+    expect(report.errors.map((item) => item.code)).toContain('history_missing_command');
+    expect(report.warnings.map((item) => item.code)).toContain('history_text_missing');
   });
 
   it('warns, rather than failing, when the visible history delta is unusual', () => {

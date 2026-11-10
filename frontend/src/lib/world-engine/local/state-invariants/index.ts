@@ -54,6 +54,8 @@ export type InvariantCode =
   | 'evidence_shape'
   | 'history_regressed'
   | 'history_delta'
+  | 'history_missing_command'
+  | 'history_text_missing'
   | 'refresh_not_restored';
 
 
@@ -88,6 +90,7 @@ export interface WorldRecordLike {
   headPointId?: unknown;
   points?: unknown;
   pointStates?: unknown;
+  narrations?: unknown;
   advance?: unknown;
   round?: unknown;
   work?: unknown;
@@ -631,6 +634,8 @@ export async function verifySnapshotSequence(values: unknown[]): Promise<Invaria
     if (!record) continue;
     snapshots.push(record);
     reports.push(await verifySessionSnapshot(value));
+    const display = verifyDisplayHistory(value);
+    for (const warning of display.warnings) reports[reports.length - 1].warnings.push(warning);
   }
   if (reports.length === 0) return emptyReport('snapshot sequence has no full snapshot');
   const merged: InvariantReport = {
@@ -684,6 +689,57 @@ function emptyReport(detail: string): InvariantReport {
     rootDigest: null, headDigest: null, replayDigest: null,
     errors: [issue('evidence_shape', detail)], warnings: [],
   };
+}
+
+/** Read-only check of the player-visible history inside a full snapshot.
+ * This does not replay state; it compares committed player points with the
+ * command list and with the narration the page will render. */
+export interface DisplayHistoryReport {
+  ok: boolean;
+  total: number;
+  ready: number;
+  errors: InvariantIssue[];
+  warnings: InvariantIssue[];
+}
+
+export function verifyDisplayHistory(value: unknown): DisplayHistoryReport {
+  const report: DisplayHistoryReport = { ok: false, total: 0, ready: 0, errors: [], warnings: [] };
+  if (!isRecord(value)) {
+    report.errors.push(issue('evidence_shape', 'display history is not a snapshot object'));
+    return report;
+  }
+  const snapshot = value as SessionSnapshotLike;
+  const record = transportOfSnapshot(value);
+  if (!record) {
+    report.errors.push(issue('evidence_shape', 'display history has no transport record'));
+    return report;
+  }
+  const points = isRecord(record.points) ? Object.values(record.points) : [];
+  const playerPoints = points.filter((point) => isRecord(point) && point.trigger === 'player') as Array<Record<string, unknown>>;
+  report.total = playerPoints.length;
+  const commands = snapshot.commands;
+  if (commands !== undefined && (!isStringArray(commands) || commands.some((command) => !command.trim()))) {
+    report.errors.push(issue('commands_invalid', 'commands must be a list of non-blank strings'));
+  }
+  const commandCount = isStringArray(commands) ? commands.length : 0;
+  if (commandCount < playerPoints.length) {
+    report.errors.push(issue('history_missing_command', `snapshot has ${playerPoints.length} player points but only ${commandCount} commands`));
+  } else if (commandCount > playerPoints.length) {
+    report.warnings.push(issue('history_missing_command', `snapshot has ${commandCount} commands for ${playerPoints.length} committed player points; failed/cancelled inputs may be retained for resume`));
+  }
+  const narrations = isRecord(record.narrations) ? record.narrations : null;
+  for (const point of playerPoints) {
+    const pointId = typeof point.id === 'string' ? point.id : null;
+    if (!pointId) continue;
+    const narration = narrations?.[pointId];
+    if (!isRecord(narration) || narration.status !== 'ready' || typeof narration.text !== 'string' || !narration.text.trim()) {
+      report.warnings.push(issue('history_text_missing', `committed point ${pointId} has no ready narration text`, pointId));
+    } else {
+      report.ready += 1;
+    }
+  }
+  report.ok = report.errors.length === 0;
+  return report;
 }
 
 /** A turn log entry from 09 can carry a full snapshot, or a before/point/after
