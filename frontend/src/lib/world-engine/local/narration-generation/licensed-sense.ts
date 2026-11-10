@@ -20,8 +20,11 @@
  * not have: a gunshot, footsteps, a bell, blood, cordite. Those are the ones
  * this list keeps. */
 export const EVENT_SENSE_NOUNS = [
-  '枪声', '脚步声', '心跳声', '回声', '铃声', '钟声', '水滴声', '摩擦声', '响声', '声响',
-  '硝烟', '血腥味',
+  // Only what implies a bodily event that did not happen: a shot, someone
+  // moving, cordite, blood. Bell, echo, drip and generic friction are ambient
+  // sound, like wind; two real drafts were failed for a distant bell, which
+  // changes no world fact.
+  '枪声', '脚步声', '硝烟', '血腥味',
 ] as const;
 
 /** Ambient senses: allowed as style, reported only as a soft observation. */
