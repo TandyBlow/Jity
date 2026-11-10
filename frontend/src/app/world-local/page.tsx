@@ -388,6 +388,10 @@ async function openWithLease(
     } catch (error) {
       lastError = error;
       if (!(error instanceof SessionLeaseHeldError)) throw error;
+      (window as unknown as { __worldLease?: unknown }).__worldLease = {
+        blocked: true, holderId: error.holderId, expiresAtEpochMilli: error.expiresAtEpochMilli,
+        attempt: attempt + 1, retriedMs: (attempt + 1) * delayMs, at: Date.now(),
+      };
       await new Promise<void>((resolve) => { setTimeout(resolve, delayMs); });
     }
   }
@@ -694,9 +698,13 @@ export default function WorldLocalPage() {
         let restored = false;
         try {
           session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current);
+          (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
         } catch (openError) {
           if (openError instanceof SessionLeaseHeldError) {
+            // __worldLease already carries holder/expiry/attempts (set by the
+            // helper on each retry). The save is not corrupt; a page from a
+            // previous run may still be alive and renewing the lease.
             // The save is fine and another writer owns the lease (a second tab,
             // or the page that was just reloaded and has not released yet).
             // Offer a retry/takeover; never touch the record.
