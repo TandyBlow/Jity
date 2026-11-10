@@ -17,6 +17,8 @@ interface Row {
   input: DatasetInput;
   text: string;
   genders?: Record<string, 'male' | 'female'>;
+  /** Provenance of the text. Program fallback is never model prose. */
+  textSource?: 'model' | 'program_fallback' | 'mixed' | 'unknown';
 }
 
 const rowsPath = process.env.NARRATION_QUALITY_ROWS;
@@ -31,12 +33,15 @@ describe.skipIf(!rowsPath)('corpus review batch', () => {
   test('review every row and report', () => {
     const rows = readFileSync(rowsPath as string, 'utf8').split(/\r?\n/u).filter(Boolean)
       .map((line) => JSON.parse(line) as Row);
-    const reports = rows.map((row) => reviewNarration({
-      id: row.id,
-      input: row.input,
-      text: row.text,
-      options: { genders: row.genders ?? {} },
-    }));
+    const reports = rows.map((row) => {
+      const report = reviewNarration({
+        id: row.id,
+        input: row.input,
+        text: row.text,
+        options: { genders: row.genders ?? {} },
+      });
+      return { ...report, textSource: row.textSource ?? null };
+    });
     mkdirSync(dirname(reportPath), { recursive: true });
     writeFileSync(reportPath, `${JSON.stringify({
       reviewer: 'ai-independent-checker-v1',
