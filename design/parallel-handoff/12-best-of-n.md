@@ -22,7 +22,7 @@ HPC 作业 251512（V100-SXM2-32GB，fp16，hpcgpu01）完成了 6 次真实生�
 
 原因分析见 `experiments/narration-best-of-n/cause-analysis-b01.md`：最可能的 H1 是状态视图提示词从未要求写正文，模型把输入当摘要任务。已冻结 `preregistration.v2`（SHA-256 `ea077908…`），只加一段固定写作指令，同 case/模型/种子/采样/上限/rubric；请求在 `results/product/hpc-requests/12-best-of-n-b01-v2.json`，尚无 v2 输出。
 
-## 2. 已交付（当前 HEAD `38606b1b`；模块与 v1 预注册在 `adb54647`，b01 结果与 v2 预注册在 `1c8a8e59`，b02-v2 条件预注册在 `2d121a87`）
+## 2. 已交付（当前 HEAD `57a0ca93`；模块与 v1 预注册在 `adb54647`，b01 结果与 v2 预注册在 `1c8a8e59`，b02-v2 条件预注册在 `2d121a87`）
 
 ### 2.1 产品候选模块（新目录，未接页面）
 
