@@ -23,6 +23,7 @@ ROOT = HERE.parent
 CAPTURE = ROOT / "sources/hf/capture.json"
 INVENTORY = ROOT / "models/local-inventory.json"
 SUPPORT = ROOT / "models/wllama-support.json"
+WLLAMA_FEATURES = ROOT / "models/wllama-features.json"
 OUT = ROOT / "models/candidates.json"
 
 SIZE_GATE = 1_500_000_000
@@ -263,6 +264,28 @@ def main() -> int:
             if "visionLikeTensorNames" in head:
                 entry["operatorEvidence"]["visionLikeTensorNames"] = head["visionLikeTensorNames"]
                 entry["operatorEvidence"]["textOnlyGguf"] = not head["visionLikeTensorNames"]
+            if WLLAMA_FEATURES.exists() and head.get("tensorNames"):
+                features = json.loads(WLLAMA_FEATURES.read_text(encoding="utf-8"))
+                wanted = (features.get("wanted") or {}).get(actual_arch) or {}
+                bases = set()
+                for tensor_name in head["tensorNames"]:
+                    parts = tensor_name.split(".")
+                    rest = parts[2:] if parts[0] == "blk" and len(parts) >= 3 else parts[1:]
+                    while rest and rest[-1] in ("weight", "bias"):
+                        rest = rest[:-1]
+                    if rest:
+                        bases.add(".".join(rest))
+                known = set(features.get("tensorNames") or [])
+                entry["operatorEvidence"]["wasmSupport"] = {
+                    "archSymbolPresent": wanted.get("archSymbolPresent"),
+                    "exactModelSource": wanted.get("modelSourcePresent"),
+                    "relatedModelSources": wanted.get("relatedModelSources"),
+                    "ggufTensorBases": sorted(bases),
+                    "matchedTensorBases": sorted(bases & known),
+                    "unmatchedTensorBases": sorted(bases - known),
+                    "note": "informational: names found in the shipped wasm strings; the real "
+                            "load/generation test is the HPC preflight and lane 09",
+                }
             entry["chatTemplate"] = {
                 "source": "GGUF metadata (authoritative for the runtime)",
                 "chars": head["gguf"]["chatTemplateChars"],

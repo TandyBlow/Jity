@@ -204,7 +204,42 @@
     "chatTemplateChars": 2509,
     "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen25-1.5b-instruct.template.txt",
     "contextLength": 32768,
-    "estimatedParameters": 1777088000
+    "estimatedParameters": 1777088000,
+    "visionLikeTensorNames": [],
+    "textOnlyGguf": true,
+    "wasmSupport": {
+     "archSymbolPresent": true,
+     "exactModelSource": true,
+     "relatedModelSources": [
+      "qwen2",
+      "qwen2moe",
+      "qwen2vl"
+     ],
+     "ggufTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "matchedTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "unmatchedTensorBases": [],
+     "note": "informational: names found in the shipped wasm strings; the real load/generation test is the HPC preflight and lane 09"
+    }
    },
    "chatTemplateKwargs": {},
    "preInferenceGate": {
@@ -310,7 +345,40 @@
     "chatTemplateChars": 211,
     "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\internlm2_5-1.8b-chat.template.txt",
     "contextLength": 32768,
-    "estimatedParameters": 1889110016
+    "estimatedParameters": 1889110016,
+    "visionLikeTensorNames": [],
+    "textOnlyGguf": true,
+    "wasmSupport": {
+     "archSymbolPresent": true,
+     "exactModelSource": true,
+     "relatedModelSources": [
+      "internlm2"
+     ],
+     "ggufTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "matchedTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "unmatchedTensorBases": [],
+     "note": "informational: names found in the shipped wasm strings; the real load/generation test is the HPC preflight and lane 09"
+    }
    },
    "chatTemplateKwargs": {},
    "preInferenceGate": {
@@ -416,7 +484,38 @@
     "chatTemplateChars": 305,
     "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\glm-edge-1.5b-chat.template.txt",
     "contextLength": 2048,
-    "estimatedParameters": 1593427968
+    "estimatedParameters": 1593427968,
+    "visionLikeTensorNames": [],
+    "textOnlyGguf": true,
+    "wasmSupport": {
+     "archSymbolPresent": true,
+     "exactModelSource": true,
+     "relatedModelSources": [
+      "chatglm"
+     ],
+     "ggufTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "matchedTensorBases": [
+      "attn_k",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_v",
+      "ffn_down",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "unmatchedTensorBases": [],
+     "note": "informational: names found in the shipped wasm strings; the real load/generation test is the HPC preflight and lane 09"
+    }
    },
    "chatTemplateKwargs": {},
    "preInferenceGate": {
@@ -598,7 +697,45 @@
     "chatTemplateChars": 4782,
     "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\hunyuan-1.8b-instruct.template.txt",
     "contextLength": 262144,
-    "estimatedParameters": 1791080448
+    "estimatedParameters": 1791080448,
+    "visionLikeTensorNames": [],
+    "textOnlyGguf": true,
+    "wasmSupport": {
+     "archSymbolPresent": true,
+     "exactModelSource": false,
+     "relatedModelSources": [
+      "hunyuan-moe",
+      "hunyuan-vl"
+     ],
+     "ggufTensorBases": [
+      "attn_k",
+      "attn_k_norm",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_q_norm",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "matchedTensorBases": [
+      "attn_k",
+      "attn_k_norm",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_q_norm",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_norm",
+      "ffn_up"
+     ],
+     "unmatchedTensorBases": [],
+     "note": "informational: names found in the shipped wasm strings; the real load/generation test is the HPC preflight and lane 09"
+    }
    },
    "chatTemplateKwargs": {
     "enable_thinking": false
@@ -703,7 +840,61 @@
     "contextLength": 262144,
     "estimatedParameters": 1881825088,
     "visionLikeTensorNames": [],
-    "textOnlyGguf": true
+    "textOnlyGguf": true,
+    "wasmSupport": {
+     "archSymbolPresent": true,
+     "exactModelSource": true,
+     "relatedModelSources": [
+      "qwen35",
+      "qwen35moe"
+     ],
+     "ggufTensorBases": [
+      "attn_gate",
+      "attn_k",
+      "attn_k_norm",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_q_norm",
+      "attn_qkv",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_up",
+      "post_attention_norm",
+      "ssm_a",
+      "ssm_alpha",
+      "ssm_beta",
+      "ssm_conv1d",
+      "ssm_dt",
+      "ssm_norm",
+      "ssm_out"
+     ],
+     "matchedTensorBases": [
+      "attn_gate",
+      "attn_k",
+      "attn_k_norm",
+      "attn_norm",
+      "attn_output",
+      "attn_q",
+      "attn_q_norm",
+      "attn_qkv",
+      "attn_v",
+      "ffn_down",
+      "ffn_gate",
+      "ffn_up",
+      "post_attention_norm",
+      "ssm_a",
+      "ssm_alpha",
+      "ssm_beta",
+      "ssm_conv1d",
+      "ssm_dt",
+      "ssm_norm",
+      "ssm_out"
+     ],
+     "unmatchedTensorBases": [],
+     "note": "informational: names found in the shipped wasm strings; the real load/generation test is the HPC preflight and lane 09"
+    }
    },
    "chatTemplateKwargs": {
     "enable_thinking": false

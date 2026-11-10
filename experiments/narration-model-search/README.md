@@ -28,6 +28,7 @@
 | `src/verify_preflight.py` | 模型文件 + 期望 hash/架构 + 可选 smoke JSON | 通过/拒绝的 JSON（大小、sha256、GGUF 架构、模板哈希） | 10/11 |
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
+| `src/wllama_features.py` | 无 | `models/wllama-features.json`（wasm 里的模型源码路径 + tensor 名） | 11/08 |
 | `src/selftest.py` | 无 | 11 项 PASS/FAIL | 11/06 复核 |
 
 示例：
