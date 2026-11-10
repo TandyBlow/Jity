@@ -181,18 +181,23 @@ const leaseRoot = (() => {
 const leaseLane = option('--lease-lane', process.env.JITY_PI_LANE ?? '02-narration');
 const leasePurpose = option('--lease-purpose', `${basename(config.out)} local inference`);
 let leaseHeld = false;
+// 09's tool records the holder pid and an owner token: a crashed probe's lock
+// can then be recognised as stale, and a release cannot free a lock some other
+// process took over in the meantime.
+let leaseToken = null;
 const python = process.platform === 'win32' ? 'python' : 'python3';
-const runLease = (action) => {
+const runLease = (action, extra = []) => {
   if (!leaseRoot) throw new Error('resource_lease.py not found above the frontend directory');
-  const result = spawnSync(python, ['resource_lease.py', action, '--lane', leaseLane, '--purpose', leasePurpose], {
-    cwd: leaseRoot, encoding: 'utf8',
-  });
+  const args = ['resource_lease.py', action, '--lane', leaseLane];
+  if (action === 'acquire') args.push('--purpose', leasePurpose, '--holder-pid', String(process.pid));
+  if (extra.length) args.push(...extra);
+  const result = spawnSync(python, args, { cwd: leaseRoot, encoding: 'utf8' });
   return { code: result.status, out: `${result.stdout ?? ''}${result.stderr ?? ''}`.trim() };
 };
 const releaseLease = () => {
   if (!leaseHeld) return;
   leaseHeld = false;
-  const result = runLease('release');
+  const result = runLease('release', leaseToken ? ['--token', leaseToken] : []);
   if (result.code !== 0) console.error(`[lease] release failed: ${result.out}`);
   else console.log(`[lease] released ${leaseLane}`);
 };
@@ -213,6 +218,9 @@ if (!process.argv.includes('--check-scenario')) {
     }
   }
   const acquired = runLease('acquire');
+  if (acquired.code === 0) {
+    try { leaseToken = JSON.parse(acquired.out.split(String.fromCharCode(10)).pop()).token ?? null; } catch { leaseToken = null; }
+  }
   if (acquired.code !== 0) {
     console.error(`[lease] not acquired (${leaseLane}): ${acquired.out}`);
     console.error('[lease] a run needs the exclusive lease; nothing was started');
