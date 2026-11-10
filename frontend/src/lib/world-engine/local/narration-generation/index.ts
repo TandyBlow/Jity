@@ -452,6 +452,15 @@ async function writeBeat(
       const invented = senseViolations(body, input.inputText, {
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
+      const acted = actionViolations(body, input.inputText);
+      if (acted.length && !invented.length) {
+        const detail = acted.map((item) => `${item.word}${item.object ? `·${item.object}` : ''}（${item.sentence}）`).join('；');
+        return {
+          evidence: { ...evidenceBase, text: body, source: 'skipped', issues: [...issues, { kind: 'unlicensed_action', severity: 'hard', attempt: attempt + 1, detail, sentence: acted[0].sentence }] },
+          text: '',
+          source: 'skipped',
+        };
+      }
       if (invented.length) {
         // Same narrow rule as the whole-scene path: an invented sound or smell
         // fails the beat instead of reaching the page as narration.
