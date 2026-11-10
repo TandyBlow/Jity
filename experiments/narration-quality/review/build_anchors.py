@@ -970,6 +970,19 @@ anchors += [
     },
 ]
 
+
+anchors += [
+    {
+        "id": "neg/slot-substitution",
+        "source": "constructed from frozen-row-0012: 温执's cuff is settled with ink",
+        "input": b01_input,
+        "text": "温执站在还书处，袖口沾着泥。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "袖口 is settled with 墨; 泥 changes the same slot."},
+    },
+]
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

@@ -16,6 +16,7 @@ import {
   SOUND_WORDS, TERMINAL_PUNCTUATION,
 } from './lexicon';
 import type { Finding, FindingKind, MandatoryReview, ReviewOptions, ReviewReport, SentenceReview } from './types';
+import { genderOptions } from './genders';
 
 /** Style findings that make a text unusable for a player even when the facts
  * are right. Register/field wording is reported separately. */
@@ -702,8 +703,23 @@ export function reviewNarration(args: {
       if (hits.length) lastPerson = hits[hits.length - 1].name;
     });
   }
+  const genderTable = options.genders ?? genderOptions();
+  /** Who a bare 他/她 can mean: a single candidate, else the last named person
+   * of that gender, else the viewpoint when it is the only match. */
+  const pronounPerson = (sentenceText: string, index: number): string | null => {
+    const pronoun = /(他|她)/u.exec(sentenceText);
+    if (!pronoun) return null;
+    const want = pronoun[1] === '他' ? 'male' : 'female';
+    const candidates = Object.keys(projection.people).filter((name) => genderTable[name] === want);
+    if (candidates.length === 1) return candidates[0];
+    const last = lastPersonBefore.get(index) ?? null;
+    if (last && genderTable[last] === want) return last;
+    if (projection.viewpoint && genderTable[projection.viewpoint] === want) return projection.viewpoint;
+    return null;
+  };
   const refersTo = (sentenceText: string, index: number, personName: string, strict = false): boolean => {
     if (sentenceText.includes(personName)) return true;
+    if (pronounPerson(sentenceText, index) === personName) return true;
     if (!strict && projection.viewpoint === personName && !nameHits(sentenceText, names, Object.keys(projection.people)).length) return true;
     return /(他|她)/u.test(sentenceText) && lastPersonBefore.get(index) === personName;
   };
@@ -1203,6 +1219,26 @@ export function reviewNarration(args: {
               `${phrase} belongs to ${owner}, but the sentence names ${named.join('/')} only`,
               [phrase], [`accessory:${owner}:${phrase}`]));
           }
+        }
+      }
+    }
+    // The same clothing/body slot cannot carry a different substance than the
+    // one settled: 袖口沾了墨 cannot become 袖口沾着泥.
+    {
+      const SLOT = /(袖口|领口|衣角|鞋面|鞋帮|手背|手心|脸颊|额头|膝盖|裤腿|背心|镜片|镜带)(沾了|沾着|蹭上|蹭着|留着|带着|有)([^，。；、]{1,4})/u;
+      for (const [personName, person] of Object.entries(projection.people)) {
+        if (!refersTo(sentence.text, sentences.indexOf(sentence), personName)) continue;
+        const prose = SLOT.exec(narration);
+        if (!prose) continue;
+        const settled = [...person.appearanceAfter, ...person.appearanceBefore];
+        for (const look of settled) {
+          const base = SLOT.exec(look);
+          if (!base || base[1] !== prose[1]) continue;
+          if (look.includes(prose[3]) || prose[3].includes(base[3])) continue;
+          findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+            `${personName}: ${prose[1]} is settled with ${base[3]}, not ${prose[3]}`,
+            [look], []));
+          break;
         }
       }
     }
