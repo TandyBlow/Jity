@@ -153,6 +153,15 @@ M2 的 `attempt` 标签不能证明工具可用、行动合理或需求已覆盖
 - **封存污染**：20 条 `sealed` 试点样本已被 API 代理检查打开，不能再作为最终封存测试；最终验收必须新建封存集。
 - **人审入口**：`artifacts/world-components-logic/d02-checkers/pilot-review.html`。页面不联网，先读原文再展开草稿，分别记录 M1／M2 的认可／需修改／不确定；导出 JSON 带批次哈希。操作与裁决流程见 [人审标注操作说明](../../../experiments/world-components-logic/data/d02-checkers/pilot-v1/HUMAN_REVIEW.md)，回收用 `python3 d02_review.py reconcile <导出文件>`。当前 `humanReview.status=pending`，助手复核不能替代人审。
 
+### 7.1 首批扩样 scale-v2
+
+- 40 个场景组、400 条针对性样本，训练／开发／校准／封存为 240/40/40/80（60%/10%/10%/20%）。
+- 每组 10 条：5 条原有变体＋multi／condition／quote／result2／actor-pronoun，共 400 条；全部为助手草稿，人审 0。
+- 当前分布：预期接受 197 条、升级 203 条；主体错位 40、未结算结果 80、代词 47。
+- 未知实体 5、歧义 4、别名 5、诊断角色 10、类型错误 5、非行动 2，**尚未达到每类 ≥30 的验收分母**；后续需要定向补充，不能拿 400 条总数掩盖类别不足。
+- `sealed` 80 条尚未被 API 检查打开，保持未读；在规则冻结前不得查看或调参。
+- 扩样审阅页：`artifacts/world-components-logic/d02-checkers/scale-v2-review.html`；生成命令 `python3 d02_review.py build --batch scale-v2`。
+
 ## 8. API 代理实验
 
 配置只读取现有 `backend/.env` 的 `DEEPSEEK_API_KEY`、`LLM_BASE_URL`、`LLM_MODEL`；密钥不打印、不写日志、不进 Git。最小请求验证通过后，使用 `deepseek-flash` 非思考模式、JSON 输出做两件事：

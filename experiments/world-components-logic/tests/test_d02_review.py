@@ -36,6 +36,17 @@ class ReviewPacketTests(unittest.TestCase):
         self.assertIn('120 条 · 20 组', html)
         self.assertNotIn('__PACKET__', html)
 
+    def test_scale_batch_has_400_samples_and_40_groups(self):
+        packet = review.packet('scale-v2')
+        self.assertEqual(packet['batchName'], 'scale-v2')
+        self.assertEqual(packet['batch']['sampleCount'], 400)
+        self.assertEqual(packet['batch']['groupCount'], 40)
+        self.assertTrue(all('expected' not in sample for sample in packet['samples']))
+        review.build('scale-v2')
+        html = (review.OUT / 'scale-v2-review.html').read_text()
+        self.assertIn('400 条 · 40 组', html)
+        self.assertNotIn('__PACKET__', html)
+
 
 if __name__ == '__main__':
     unittest.main()

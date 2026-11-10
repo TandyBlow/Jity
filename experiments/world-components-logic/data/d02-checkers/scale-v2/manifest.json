@@ -1,0 +1,85 @@
+{
+  "schema": "jity-d02-checker-scale-manifest-v1",
+  "batch": "scale-v2",
+  "annotationStatus": "assistant_draft_pending_human",
+  "humanReview": {
+    "status": "pending",
+    "reviewedSamples": 0
+  },
+  "trainingAuthorized": false,
+  "sealedUse": "unopened_pending_final_freeze",
+  "groupCount": 40,
+  "sampleCount": 400,
+  "sourceCounts": {
+    "assistant_authored_scale_v2": 400
+  },
+  "splitCounts": {
+    "train": 240,
+    "development": 40,
+    "calibration": 40,
+    "sealed": 80
+  },
+  "splits": {
+    "train": [
+      "archive-badge",
+      "archive-card",
+      "archive-quote",
+      "archive-shelf",
+      "archive-wax",
+      "harbor-crate",
+      "harbor-dock",
+      "harbor-gate",
+      "harbor-key",
+      "harbor-lamp",
+      "harbor-lamp-oil",
+      "harbor-rope",
+      "harbor-wait",
+      "signal-antenna",
+      "signal-battery",
+      "signal-cable",
+      "signal-log",
+      "signal-radio",
+      "workshop-bowl",
+      "workshop-cloth",
+      "workshop-cut",
+      "workshop-dye",
+      "workshop-glue",
+      "workshop-rod"
+    ],
+    "development": [
+      "archive-cabinet",
+      "archive-ledger",
+      "harbor-net",
+      "signal-lamp"
+    ],
+    "calibration": [
+      "archive-ambig",
+      "harbor-boat",
+      "signal-gate",
+      "signal-wrench"
+    ],
+    "sealed": [
+      "archive-cart",
+      "archive-return",
+      "signal-background",
+      "signal-hope",
+      "workshop-bench",
+      "workshop-hang",
+      "workshop-measure",
+      "workshop-newentity"
+    ]
+  },
+  "basePilot": {
+    "path": "pilot-v1/manifest.json",
+    "sha256": "12b2ef17aaea3b2abcb8f49d22759b66b81150249de91e05a1cd29b1b8c6bc23"
+  },
+  "ruleSource": {
+    "path": "pilot-v1/ANNOTATION.md",
+    "sha256": "9053ec1ba347f4c00e2113d8327486d97413c9e8d3dc5f0478a8220b13bb0d71"
+  },
+  "sha256": {
+    "worlds.json": "22a5f44a6328140034909b7bfc5dc4433f5026d07bda3fb4beb9a0d809cf3f1f",
+    "scenarios.json": "92a449d3f61ef7d87fe1bc10c77cb5daeaef5e49c52cf9b03ef7814cfdb7ad0e",
+    "samples.jsonl": "7a8e06c74499c55c0d8ee9de5a3f03bee3c636f37143bf82f544bbb82f0e0864"
+  }
+}

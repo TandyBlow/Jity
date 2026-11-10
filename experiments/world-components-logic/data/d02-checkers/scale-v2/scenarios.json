@@ -1,0 +1,282 @@
+[
+  {
+    "scenarioGroup": "harbor-gate",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈想打开仓库旁的铁门，取出里面受潮的提灯。"
+  },
+  {
+    "scenarioGroup": "harbor-crate",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈和周岚要把受潮的木箱搬到码头。"
+  },
+  {
+    "scenarioGroup": "harbor-lamp",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要先把提灯的裂缝用胶带缠好。"
+  },
+  {
+    "scenarioGroup": "harbor-wait",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈需要在仓库里等搬运的人回来。"
+  },
+  {
+    "scenarioGroup": "harbor-key",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要把铜钥匙交给周岚，再取回提灯。"
+  },
+  {
+    "scenarioGroup": "archive-badge",
+    "split": "train",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要把借阅牌递给郑栖登记。"
+  },
+  {
+    "scenarioGroup": "archive-ledger",
+    "split": "development",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要用印章在登记簿上留下借阅记录。"
+  },
+  {
+    "scenarioGroup": "archive-cabinet",
+    "split": "development",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要把登记簿收进档案柜。"
+  },
+  {
+    "scenarioGroup": "archive-quote",
+    "split": "train",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞把借阅牌装进信封，并隔门向郑栖喊话。"
+  },
+  {
+    "scenarioGroup": "archive-ambig",
+    "split": "calibration",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要把印章放回阅览桌。"
+  },
+  {
+    "scenarioGroup": "workshop-bowl",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁要把染料碗端到晾架。"
+  },
+  {
+    "scenarioGroup": "workshop-rod",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁要先用搅拌棒把染料搅匀。"
+  },
+  {
+    "scenarioGroup": "workshop-cloth",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁要用吸水纸把样布上的水吸掉。"
+  },
+  {
+    "scenarioGroup": "workshop-newentity",
+    "split": "sealed",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁发现搅拌棒松了，想找东西修好它。"
+  },
+  {
+    "scenarioGroup": "workshop-bench",
+    "split": "sealed",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁要把染料碗稳稳放到配色台上。"
+  },
+  {
+    "scenarioGroup": "signal-radio",
+    "split": "train",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇要用信号机向谢迟发出封路通知。"
+  },
+  {
+    "scenarioGroup": "signal-cable",
+    "split": "train",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇要把备用线插进信号机。"
+  },
+  {
+    "scenarioGroup": "signal-gate",
+    "split": "calibration",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇要用锁紧销把道口闸门固定住。"
+  },
+  {
+    "scenarioGroup": "signal-background",
+    "split": "sealed",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "信号机此前已经修好，周苇现在检查备用线。"
+  },
+  {
+    "scenarioGroup": "signal-hope",
+    "split": "sealed",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇希望信号机自己恢复，但还没有决定怎么做。"
+  },
+  {
+    "scenarioGroup": "harbor-dock",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要把木箱搬到码头。"
+  },
+  {
+    "scenarioGroup": "harbor-rope",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要用麻绳把木箱捆紧。"
+  },
+  {
+    "scenarioGroup": "harbor-lamp-oil",
+    "split": "train",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要给提灯加灯油。"
+  },
+  {
+    "scenarioGroup": "harbor-net",
+    "split": "development",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要用细绳补好渔网。"
+  },
+  {
+    "scenarioGroup": "harbor-boat",
+    "split": "calibration",
+    "worldId": "harbor-v1",
+    "actorId": "lin",
+    "prompt": "林澈要把小艇推到水面。"
+  },
+  {
+    "scenarioGroup": "archive-shelf",
+    "split": "train",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞把登记簿放到书架。"
+  },
+  {
+    "scenarioGroup": "archive-wax",
+    "split": "train",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要用封蜡封信封。"
+  },
+  {
+    "scenarioGroup": "archive-card",
+    "split": "train",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞要用钢笔写索引卡。"
+  },
+  {
+    "scenarioGroup": "archive-cart",
+    "split": "sealed",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞把推车推到阅览室。"
+  },
+  {
+    "scenarioGroup": "archive-return",
+    "split": "sealed",
+    "worldId": "archive-v1",
+    "actorId": "yu",
+    "prompt": "余荞把借阅牌放回档案柜。"
+  },
+  {
+    "scenarioGroup": "workshop-dye",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁用搅拌棒把染料调开。"
+  },
+  {
+    "scenarioGroup": "workshop-cut",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁用剪刀剪开样布。"
+  },
+  {
+    "scenarioGroup": "workshop-glue",
+    "split": "train",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁用刷子把胶水涂匀。"
+  },
+  {
+    "scenarioGroup": "workshop-measure",
+    "split": "sealed",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁用直尺量样布。"
+  },
+  {
+    "scenarioGroup": "workshop-hang",
+    "split": "sealed",
+    "worldId": "workshop-v1",
+    "actorId": "tang",
+    "prompt": "唐霁把样布挂到晾架。"
+  },
+  {
+    "scenarioGroup": "signal-battery",
+    "split": "train",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇把电池装进信号机。"
+  },
+  {
+    "scenarioGroup": "signal-antenna",
+    "split": "train",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇用扳手调天线。"
+  },
+  {
+    "scenarioGroup": "signal-log",
+    "split": "train",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇用钢笔写值班记录。"
+  },
+  {
+    "scenarioGroup": "signal-lamp",
+    "split": "development",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇用信号灯向谢迟发信号。"
+  },
+  {
+    "scenarioGroup": "signal-wrench",
+    "split": "calibration",
+    "worldId": "signal-v1",
+    "actorId": "wei",
+    "prompt": "周苇用扳手拧紧螺栓。"
+  }
+]

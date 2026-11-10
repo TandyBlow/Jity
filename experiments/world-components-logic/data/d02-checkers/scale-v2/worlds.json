@@ -1,0 +1,329 @@
+{
+  "archive-v1": {
+    "entities": {
+      "badge": {
+        "aliases": [],
+        "name": "借阅牌",
+        "type": "item"
+      },
+      "cabinet": {
+        "aliases": [],
+        "name": "档案柜",
+        "type": "item"
+      },
+      "card": {
+        "aliases": [],
+        "name": "索引卡",
+        "type": "item"
+      },
+      "cart": {
+        "aliases": [],
+        "name": "推车",
+        "type": "item"
+      },
+      "desk": {
+        "aliases": [],
+        "name": "阅览桌",
+        "type": "item"
+      },
+      "envelope": {
+        "aliases": [],
+        "name": "信封",
+        "type": "item"
+      },
+      "ledger": {
+        "aliases": [],
+        "name": "登记簿",
+        "type": "item"
+      },
+      "pen": {
+        "aliases": [],
+        "name": "钢笔",
+        "type": "item"
+      },
+      "room": {
+        "aliases": [],
+        "name": "阅览室",
+        "type": "location"
+      },
+      "shelf": {
+        "aliases": [],
+        "name": "书架",
+        "type": "location"
+      },
+      "stamp": {
+        "aliases": [],
+        "name": "印章",
+        "type": "item"
+      },
+      "stamp_old": {
+        "aliases": [
+          "旧印"
+        ],
+        "name": "旧印章",
+        "type": "item"
+      },
+      "wax": {
+        "aliases": [
+          "蜡"
+        ],
+        "name": "封蜡",
+        "type": "item"
+      },
+      "yu": {
+        "aliases": [],
+        "name": "余荞",
+        "type": "character"
+      },
+      "zheng": {
+        "aliases": [],
+        "name": "郑栖",
+        "type": "character"
+      }
+    }
+  },
+  "harbor-v1": {
+    "entities": {
+      "boat": {
+        "aliases": [],
+        "name": "小艇",
+        "type": "item"
+      },
+      "crate": {
+        "aliases": [],
+        "name": "木箱",
+        "type": "item"
+      },
+      "dock": {
+        "aliases": [],
+        "name": "码头",
+        "type": "location"
+      },
+      "door": {
+        "aliases": [],
+        "name": "铁门",
+        "type": "item"
+      },
+      "key": {
+        "aliases": [
+          "钥匙"
+        ],
+        "name": "铜钥匙",
+        "type": "item"
+      },
+      "lamp": {
+        "aliases": [],
+        "name": "提灯",
+        "type": "item"
+      },
+      "lin": {
+        "aliases": [
+          "小澈"
+        ],
+        "name": "林澈",
+        "type": "character"
+      },
+      "net": {
+        "aliases": [],
+        "name": "渔网",
+        "type": "item"
+      },
+      "oil": {
+        "aliases": [],
+        "name": "灯油",
+        "type": "item"
+      },
+      "rope": {
+        "aliases": [
+          "绳子"
+        ],
+        "name": "麻绳",
+        "type": "item"
+      },
+      "tape": {
+        "aliases": [],
+        "name": "胶带",
+        "type": "item"
+      },
+      "twine": {
+        "aliases": [],
+        "name": "细绳",
+        "type": "item"
+      },
+      "warehouse": {
+        "aliases": [],
+        "name": "仓库",
+        "type": "location"
+      },
+      "water": {
+        "aliases": [],
+        "name": "水面",
+        "type": "location"
+      },
+      "xin": {
+        "aliases": [],
+        "name": "辛序",
+        "type": "character"
+      },
+      "zhou": {
+        "aliases": [],
+        "name": "周岚",
+        "type": "character"
+      }
+    }
+  },
+  "signal-v1": {
+    "entities": {
+      "antenna": {
+        "aliases": [],
+        "name": "天线",
+        "type": "item"
+      },
+      "battery": {
+        "aliases": [],
+        "name": "电池",
+        "type": "item"
+      },
+      "bolt": {
+        "aliases": [],
+        "name": "螺栓",
+        "type": "item"
+      },
+      "cable": {
+        "aliases": [],
+        "name": "备用线",
+        "type": "item"
+      },
+      "gate": {
+        "aliases": [
+          "闸门"
+        ],
+        "name": "道口闸门",
+        "type": "item"
+      },
+      "lamp": {
+        "aliases": [],
+        "name": "信号灯",
+        "type": "item"
+      },
+      "log": {
+        "aliases": [],
+        "name": "值班记录",
+        "type": "item"
+      },
+      "pen": {
+        "aliases": [
+          "笔"
+        ],
+        "name": "钢笔",
+        "type": "item"
+      },
+      "pin": {
+        "aliases": [],
+        "name": "锁紧销",
+        "type": "item"
+      },
+      "radio": {
+        "aliases": [],
+        "name": "信号机",
+        "type": "item"
+      },
+      "room": {
+        "aliases": [],
+        "name": "值守室",
+        "type": "location"
+      },
+      "tower": {
+        "aliases": [],
+        "name": "信号塔",
+        "type": "location"
+      },
+      "wei": {
+        "aliases": [],
+        "name": "周苇",
+        "type": "character"
+      },
+      "wrench": {
+        "aliases": [],
+        "name": "扳手",
+        "type": "item"
+      },
+      "xie": {
+        "aliases": [],
+        "name": "谢迟",
+        "type": "character"
+      }
+    }
+  },
+  "workshop-v1": {
+    "entities": {
+      "bench": {
+        "aliases": [],
+        "name": "配色台",
+        "type": "location"
+      },
+      "bowl": {
+        "aliases": [],
+        "name": "染料碗",
+        "type": "item"
+      },
+      "brush": {
+        "aliases": [
+          "毛刷"
+        ],
+        "name": "刷子",
+        "type": "item"
+      },
+      "cloth": {
+        "aliases": [],
+        "name": "样布",
+        "type": "item"
+      },
+      "dye": {
+        "aliases": [],
+        "name": "染料",
+        "type": "item"
+      },
+      "glue": {
+        "aliases": [],
+        "name": "胶水",
+        "type": "item"
+      },
+      "lian": {
+        "aliases": [],
+        "name": "连笙",
+        "type": "character"
+      },
+      "paper": {
+        "aliases": [],
+        "name": "吸水纸",
+        "type": "item"
+      },
+      "rack": {
+        "aliases": [],
+        "name": "晾架",
+        "type": "location"
+      },
+      "rod": {
+        "aliases": [],
+        "name": "搅拌棒",
+        "type": "item"
+      },
+      "ruler": {
+        "aliases": [],
+        "name": "直尺",
+        "type": "item"
+      },
+      "scissors": {
+        "aliases": [],
+        "name": "剪刀",
+        "type": "item"
+      },
+      "tang": {
+        "aliases": [],
+        "name": "唐霁",
+        "type": "character"
+      }
+    }
+  }
+}

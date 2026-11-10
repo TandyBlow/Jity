@@ -1,11 +1,13 @@
 {
   "schema": "jity-d02-human-review-packet-v1",
-  "createdAt": "2026-11-10T04:32:11.801902+00:00",
+  "createdAt": "2026-11-10T05:04:50.312409+00:00",
+  "batchName": "pilot-v1",
   "batch": {
     "samplesSha256": "b9df65bb350d6135da7a40bdc84e763db9f290765572a32d5a4ef7443d58eb48",
     "manifestSha256": "12b2ef17aaea3b2abcb8f49d22759b66b81150249de91e05a1cd29b1b8c6bc23",
     "worldsSha256": "4cdf23ba202157e977ab627b28c53b54fdb50e9a63eb9267eab1a434469b91f2",
-    "sampleCount": 120
+    "sampleCount": 120,
+    "groupCount": 20
   },
   "instructions": "先独立判断 M1/M2，再展开 AI 草稿对照；逐题记录认可/需修改/不确定。",
   "samples": [

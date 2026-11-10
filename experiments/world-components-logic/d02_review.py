@@ -16,7 +16,10 @@ from pathlib import Path
 import sys
 
 HERE = Path(__file__).resolve().parent
-DATA = HERE / 'data' / 'd02-checkers' / 'pilot-v1'
+PILOT = HERE / 'data' / 'd02-checkers' / 'pilot-v1'
+SCALE = HERE / 'data' / 'd02-checkers' / 'scale-v2'
+BATCHES = {'pilot-v1': PILOT, 'scale-v2': SCALE}
+DATA = PILOT
 OUT = HERE.parents[1] / 'artifacts' / 'world-components-logic' / 'd02-checkers'
 SCHEMA = 'jity-d02-human-review-claims-v1'
 
@@ -32,8 +35,11 @@ def load():
     return samples, worlds, manifest
 
 
-def packet():
-    samples, worlds, manifest = load()
+def packet(batch='pilot-v1'):
+    data = BATCHES[batch]
+    samples = [json.loads(line) for line in (data / 'samples.jsonl').read_text().splitlines()]
+    worlds = json.loads((data / 'worlds.json').read_text())
+    manifest = json.loads((data / 'manifest.json').read_text())
     rows = []
     for sample in samples:
         rows.append({
@@ -50,11 +56,13 @@ def packet():
     return {
         'schema': 'jity-d02-human-review-packet-v1',
         'createdAt': dt.datetime.now(dt.timezone.utc).isoformat(),
+        'batchName': batch,
         'batch': {
-            'samplesSha256': sha(DATA / 'samples.jsonl'),
-            'manifestSha256': sha(DATA / 'manifest.json'),
-            'worldsSha256': sha(DATA / 'worlds.json'),
+            'samplesSha256': sha(data / 'samples.jsonl'),
+            'manifestSha256': sha(data / 'manifest.json'),
+            'worldsSha256': sha(data / 'worlds.json'),
             'sampleCount': len(rows),
+            'groupCount': manifest.get('groupCount'),
         },
         'instructions': '先独立判断 M1/M2，再展开 AI 草稿对照；逐题记录认可/需修改/不确定。',
         'samples': rows,
@@ -69,7 +77,7 @@ HTML = r'''<!doctype html>
 *{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#202735;font:15px/1.65 system-ui,-apple-system,sans-serif}header{background:#162a35;color:#fff;padding:24px max(20px,4vw)}h1{font-size:25px;margin:0 0 8px}header p{max-width:1000px;color:#d1e0e5;margin:5px 0}.bar{position:sticky;top:0;z-index:2;padding:12px max(20px,4vw);display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;border-bottom:1px solid #dce1e8}.pill{padding:3px 11px;border-radius:13px;background:#e5edf1;color:#254957;font-size:13px}button,select,input,textarea{font:inherit}button{padding:7px 12px;border-radius:7px;border:1px solid #bac9d0;background:#fff;color:#254957;cursor:pointer}button:hover{background:#e9f2f4}button.active{background:#245b65;color:#fff;border-color:#245b65}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #de9f35;outline-offset:2px}main{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;max-width:1450px;margin:20px auto;padding:0 20px}.sidebar{max-height:calc(100vh - 250px);overflow:auto;position:sticky;top:88px;align-self:start}.case{display:block;width:100%;text-align:left;margin-bottom:6px;padding:8px 10px;font-size:13px}.case small{display:block;color:#687586;font-size:11px}.case.active small{color:#d4e8ed}.card{background:#fff;border:1px solid #e0e5eb;border-radius:11px;padding:20px;margin-bottom:16px;overflow:hidden}h2{font-size:20px;margin:0 0 8px}h3{font-size:16px;margin:16px 0 6px}.muted{color:#697686;font-size:13px}.warning{padding:10px 14px;background:#fff4d9;border-radius:8px;color:#7b5011;margin:10px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f8fa;padding:12px;font-size:13px;line-height:1.7;border-radius:6px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px 8px;border-bottom:1px solid #e6ebee;text-align:left;vertical-align:top}th{color:#5c6b7a;background:#f7f9fa}.table{overflow:auto}textarea{width:100%;min-height:90px;padding:9px;border:1px solid #bec9d1;border-radius:6px;margin:8px 0}input{max-width:260px;padding:7px;border:1px solid #bac9d0;border-radius:6px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.verdict button{padding:6px 10px}.verdict button.sel-agree{background:#245b65;color:#fff}.verdict button.sel-revise{background:#a14b25;color:#fff}.verdict button.sel-uncertain{background:#8a6a1f;color:#fff}.footer{font-size:12px;color:#7b8796;margin:10px 0 30px;overflow-wrap:anywhere}details{margin:8px 0}summary{cursor:pointer;color:#245b65;font-weight:600}@media(max-width:850px){main{grid-template-columns:1fr;padding:0 10px}.sidebar{position:static;max-height:180px}.card{padding:15px}header{padding:18px}}
 </style>
 <header><h1>D02 角色／实体与表达类型：人审标注</h1>
-<p>这是 120 条助手草稿的审阅页，不是模型成绩。请先读行动原文并独立判断，再展开 AI 草稿对照；不要默认草稿正确。</p>
+<p>这是 __COUNT__ 条助手草稿的审阅页，不是模型成绩。请先读行动原文并独立判断，再展开 AI 草稿对照；不要默认草稿正确。</p>
 <p>每题分别记录 M1（跨度／角色／实体）和 M2（表达类型／问题跨度）。修改和不确定必须写原因；导出文件只是待核对的人审声明，不是自动批准。</p></header>
 <div class="bar"><span class="pill" id="batch"></span><span class="pill" id="progress"></span>
 <label for="filter">筛选</label><select id="filter"><option value="all">全部</option><option value="train">train</option><option value="development">development</option><option value="calibration">calibration</option><option value="sealed">sealed</option><option value="api_first_output">API 自然首输出</option></select>
@@ -114,27 +122,31 @@ function list(){const target=document.getElementById('list');target.replaceChild
 document.getElementById('filter').onchange=()=>{const f=document.getElementById('filter').value,s=packet.samples.find(x=>f==='all'||(f==='api_first_output'?x.source===f:x.split===f));if(s){active=s.sampleId;draw();list()}};
 document.getElementById('reviewer').value=saved.reviewer||'';document.getElementById('reviewer').oninput=e=>{saved.reviewer=e.target.value;persist()};
 document.getElementById('export').onclick=()=>{if(!saved.reviewer.trim()){alert('请先填写审阅人称呼。');return}const ds=Object.values(saved.decisions);if(!ds.length){alert('请至少审阅一题。');return}const bad=ds.filter(d=>!valid(d.sampleId,d));if(bad.length){alert('有未完成的记录：请为每题选择 M1/M2 结论并补齐原因。');return}const out={schema:'jity-d02-human-review-claims-v1',reviewer:saved.reviewer.trim(),exportedAt:new Date().toISOString(),batch:packet.batch,decisions:ds.map(d=>({sampleId:d.sampleId,m1:d.m1,m2:d.m2,categories:d.categories,note:d.note,recordedAt:d.recordedAt})),verificationStatus:'unverified_export_pending_reconciliation',humanSemanticApproval:false};const a=el('a');const url=URL.createObjectURL(new Blob([JSON.stringify(out,null,2)+'\n'],{type:'application/json'}));a.href=url;a.download='d02-human-review-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('storage').textContent='已发起导出；请检查下载文件。'};
-document.getElementById('batch').textContent='120 条 · 20 组 · 批次 '+packet.batch.samplesSha256.slice(0,10);
+document.getElementById('batch').textContent='__COUNT__ 条 · __GROUPS__ 组 · 批次 '+packet.batch.samplesSha256.slice(0,10);
 document.getElementById('reviewer').value=saved.reviewer||'';refresh();draw();list();
 </script></html>'''
 
 
-def build():
-    value = packet()
+def build(batch='pilot-v1'):
+    value = packet(batch)
     OUT.mkdir(parents=True, exist_ok=True)
     embedded = json.dumps(value, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
-    path = OUT / 'pilot-review.html'
-    path.write_text(HTML.replace('__PACKET__', embedded), encoding='utf-8')
-    (OUT / 'pilot-review-packet.json').write_text(
+    name = 'pilot-review' if batch == 'pilot-v1' else batch + '-review'
+    path = OUT / (name + '.html')
+    html = HTML.replace('__PACKET__', embedded)
+    html = html.replace('__COUNT__', str(value['batch']['sampleCount']))
+    html = html.replace('__GROUPS__', str(value['batch']['groupCount']))
+    path.write_text(html, encoding='utf-8')
+    (OUT / (name + '-packet.json')).write_text(
         json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    print(json.dumps({'html': str(path), 'packet': str(OUT / 'pilot-review-packet.json'),
+    print(json.dumps({'html': str(path), 'packet': str(OUT / (name + '-packet.json')),
                       'samples': value['batch']['sampleCount'],
                       'samplesSha256': value['batch']['samplesSha256']}, ensure_ascii=False))
 
 
-def reconcile(path):
+def reconcile(path, batch='pilot-v1'):
     claims = json.loads(Path(path).read_text(encoding='utf-8'))
-    current = packet()
+    current = packet(batch)
     if claims.get('schema') != SCHEMA:
         raise SystemExit('不是 D02 人审导出格式')
     if not isinstance(claims.get('reviewer'), str) or not claims['reviewer'].strip():
@@ -179,7 +191,7 @@ def reconcile(path):
         'humanSemanticApproval': False, 'labelMutation': 'none',
         'note': '只核对导出与批次身份并汇总意见；不改标签、不训练、不声称人审通过。',
     }
-    out = OUT / ('review-reconciliation-%s.json' % dt.datetime.now().strftime('%Y%m%dT%H%M%S'))
+    out = OUT / ('review-reconciliation-%s-%s.json' % (batch, dt.datetime.now().strftime('%Y%m%dT%H%M%S')))
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({k: report[k] for k in ('reviewed', 'missing', 'counts')}, ensure_ascii=False))
     print('wrote', out)
@@ -188,14 +200,16 @@ def reconcile(path):
 def main():
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest='command', required=True)
-    sub.add_parser('build')
+    build_cmd = sub.add_parser('build')
+    build_cmd.add_argument('--batch', choices=tuple(BATCHES), default='pilot-v1')
     rec = sub.add_parser('reconcile')
     rec.add_argument('file', type=Path)
+    rec.add_argument('--batch', choices=tuple(BATCHES), default='pilot-v1')
     args = parser.parse_args()
     if args.command == 'build':
-        build()
+        build(args.batch)
     else:
-        reconcile(args.file)
+        reconcile(args.file, args.batch)
 
 
 if __name__ == '__main__':

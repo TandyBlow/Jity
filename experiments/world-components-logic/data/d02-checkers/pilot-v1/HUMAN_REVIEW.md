@@ -1,6 +1,6 @@
 # 人审标注操作说明
 
-本批 120 条是助手草稿，人审为 0。本文件说明如何把“助手草稿”变成“有人审记录的数据”；它不是模型验收，也不授权训练。
+本说明同时适用于 pilot-v1（120 条）和 scale-v2（400 条）；两批都是助手草稿，人审为 0。本文件说明如何把“助手草稿”变成“有人审记录的数据”；它不是模型验收，也不授权训练。
 
 ## 1. 先冻结批次
 
@@ -91,9 +91,9 @@ python3 d02_review.py reconcile /path/to/d02-human-review-*.json
 
 | 指标 | 分母 |
 |---|---|
-| 已审样本数 / 缺失数 | 120 |
-| M1 认可 / 需修改 / 不确定 | 120 |
-| M2 认可 / 需修改 / 不确定 | 120 |
+| 已审样本数 / 缺失数 | 120（pilot）/ 400（scale-v2） |
+| M1 认可 / 需修改 / 不确定 | 120 或 400 |
+| M2 认可 / 需修改 / 不确定 | 120 或 400 |
 | 双人复核一致率、Cohen's κ（若适用） | 双人复核子集 |
 | 按 split、来源、标签类别的修改率 | 各分层 |
 | 关键类别覆盖数（主体错位、来源→接收人、静态场所→目的地、结果断言、条件/引用/背景） | 各至少 30 才谈统计 |
@@ -119,4 +119,19 @@ python3 d02_review.py reconcile /path/to/d02-human-review-*.json
 - 把导出的 `humanSemanticApproval:false` 改成 true；
 - 把审阅意见直接当训练金标准。
 
-当前 20 条 `sealed` 已被 API 代理检查打开，不能作为最终封存集；人审完成后应另建封存集。
+## 10. scale-v2 扩样批
+
+```bash
+cd experiments/world-components-logic
+python3 d02_review.py build --batch scale-v2
+```
+
+打开 `artifacts/world-components-logic/d02-checkers/scale-v2-review.html`；回收：
+
+```bash
+python3 d02_review.py reconcile ~/Downloads/d02-human-review-*.json --batch scale-v2
+```
+
+scale-v2 为 40 组、400 条，训练／开发／校准／封存为 240/40/40/80。当前 `sealed` 80 条尚未打开，规则冻结前不得查看或调参；它的审阅页只应在封存冻结后使用。
+
+当前 pilot-v1 的 20 条 `sealed` 已被 API 代理检查打开，不能作为最终封存集；最终验收应使用新建封存集。
