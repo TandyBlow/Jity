@@ -330,13 +330,14 @@ beat realizer），得到 283 字、`sparse=false`、`issues=[]`：
 
 ### 用 01 的独立审查器复核（2026-11-10）
 
-`frontend/scripts/candidate-prose/review-01-gate.ts` 把十回合链的每个点转成 01 的
-dataset 行（视角/上回合状态/本回合变化/本回合状态），用 01 的 `reviewNarration` +
+`frontend/scripts/candidate-prose/review-01-gate.ts` 把二十回合链（与
+`chain-10.ts` 共用 `chain-turns.ts` 的同一份历史）的每个点转成 01 的 dataset 行
+（视角/上回合状态/本回合变化/本回合状态），用 01 的 `reviewNarration` +
 `gateNarration` 读本模块自己的输出。结果：
 
-- 10/10 由本模块 accepted；01 的审查器 **0 条事实发现**（没有编造动作/声音/物品/往事，
+- 20/20 由本模块 accepted；01 的审查器 **0 条事实发现**（没有编造动作/声音/物品/往事，
   没有漏移动/时间/任务/个性/精神，没有方向反转）；
-- 门槛判定是 `hold_for_review` 而不是 `regenerate`：程序正文会复述已结算事实，01 的
+- 20 回合 **0/20 regenerate**；多数回合的门槛判定是 `hold_for_review` 而不是 `regenerate`：程序正文会复述已结算事实，01 的
   `fallbackSuspicion` 会因此要求人工确认来源，这是对的——它本来就不该被当模型正文；
 - “只有个性变化”和“只有任务达成”两类回合都会被判 `style.status_panel`。第一次只加
   地点名不够：01 会把地点名一起当名字剥掉；改成“时间 + 一句有主谓的地点细节 +

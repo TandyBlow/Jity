@@ -16,6 +16,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { generateCandidate } from '../../src/lib/world-engine/local/narration-candidates/prose-composer/index';
+import { CHAIN_TURNS } from './chain-turns';
 
 const lane04 = process.env.LANE04_ROOT
   ?? 'D:/others/Jity/.local/parallel-local-game/worktrees/04-settlement';
@@ -192,18 +193,9 @@ function worldProtagonist(state: WorldState): string {
   return (state as unknown as { protagonistId: string }).protagonistId;
 }
 
-const turns: Array<{ text: string; minutes: number; deltas: Record<string, Record<string, unknown>> }> = [
-  { text: '走到器材棚', minutes: 2, deltas: { lu: { entityId: 'lu', positionSet: { containerId: 'shed', slotId: 'slot_counter', relativeTo: null } } } },
-  { text: '戴好护目镜', minutes: 3, deltas: { lu: { entityId: 'lu', tasksAchieved: ['task_lu_goggles'] } } },
-  { text: '芬格尔跟进来', minutes: 1, deltas: { fingel: { entityId: 'fingel', positionSet: { containerId: 'shed', slotId: null, relativeTo: null } } } },
-  { text: '个性与精神变化', minutes: 2, deltas: { lu: { entityId: 'lu', personalityChanges: [{ id: 'gate_p1', text: '不再把选择留给别人。', supersedes: [] }], sanitySet: 44 } } },
-  { text: '原地过一分钟', minutes: 1, deltas: {} },
-  { text: '走到中央庭院', minutes: 4, deltas: { lu: { entityId: 'lu', positionSet: { containerId: 'yard', slotId: null, relativeTo: null } } } },
-  { text: '诺诺也到庭院', minutes: 1, deltas: { nono: { entityId: 'nono', positionSet: { containerId: 'yard', slotId: null, relativeTo: null } } } },
-  { text: '外貌变化', minutes: 2, deltas: { lu: { entityId: 'lu', appearanceChanges: [{ id: 'gate_a1', text: '袖口沾了喷泉边的水。', supersedes: [] }] } } },
-  { text: '精神回升', minutes: 2, deltas: { lu: { entityId: 'lu', personalityChanges: [{ id: 'gate_p2', text: '愿意先听完再回答。', supersedes: [] }], sanitySet: 58 } } },
-  { text: '回到服务巷', minutes: 3, deltas: { lu: { entityId: 'lu', positionSet: { containerId: 'lane', slotId: null, relativeTo: null } } } },
-];
+const turns = CHAIN_TURNS.map((turn) => ({
+  text: turn.text, minutes: turn.time.amount, deltas: turn.deltas,
+}));
 
 let state = buildInitialState(world.initial);
 let beforeRead = {
