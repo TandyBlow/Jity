@@ -653,6 +653,11 @@ try {
           raws: beat.raws,
         })),
         assembly: generated.assembly,
+        // Same per-paragraph provenance lane 04's constrained candidate reports,
+        // so one adapter can treat both candidates the same way.
+        segments: generated.segments,
+        beatCounts: generated.beatCounts,
+        mixed: generated.mixed,
         displayStatus: generated.display.status,
         progressEvents, streamedTail: streamed.slice(-6),
         attempts: generated.rawAttempts.map((attempt) => ({
