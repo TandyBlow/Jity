@@ -202,7 +202,7 @@ chain still passes.
 after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
 `restoredSources` in the public getter; the 05 bridge restores the live
 snapshot; 06 415ccbe0 keeps the player entry source `model` and labels the later
-auto point `draft` per point (12 bridge tests pass + 1 expected fail). `snapshotForPersist`
+auto point `draft` per point (13 bridge tests pass + 1 expected fail). `snapshotForPersist`
 still reads only the live ref; 05 sent a one-line merge patch
 `patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
 after restore can otherwise drop older labels.
