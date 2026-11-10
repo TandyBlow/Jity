@@ -1,0 +1,239 @@
+{
+  "note": "Handwritten short targets for more frozen train rows. The input stays byte-identical to the frozen x; only targetText and audit metadata are new. This batch covers item appearance swaps, item appearance additions, a pure task completion with three people, a movement plus appearance, a movement plus task completion, a task completion plus personality swap, a personality swap alone, a new small task plus a sanity rise, and two strict single-fact scenes.",
+  "rows": [
+    {
+      "id": "short2-0031-binding-glue-and-tape",
+      "sourceRowId": "row-0031",
+      "worldFamily": "library-basement",
+      "categories": ["appearance_change", "location_change"],
+      "targetText": "二十二分钟过去，胶锅里的浆糊熬开了，锅边糊了一圈，气味压过纸屑。叶暮把火关小，指节上贴了一块胶布，贴得不太服帖。装订间里只有裁纸刀和胶锅还在原处，碎纸屑没有扫。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "22 分钟"},
+        {"kind": "appearance_change", "entity": "叶暮", "add": "指节上贴了一块胶布"},
+        {"kind": "appearance_change", "entity": "装订间", "add": "胶锅里的浆糊熬开了，锅边糊了一圈"}
+      ],
+      "licensedDetails": ["裁纸刀、胶锅、碎纸屑（装订间外貌）", "把火关小（照看胶锅的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "叶暮", "canKnow": ["自己指节上的胶布", "胶锅熬开和锅边的糊圈", "装订间里原有的器物"], "mustNotReveal": ["医书典当的往事", "装订间以外的动静"]},
+      "forbiddenInventions": ["不得写火被扑灭或胶锅损坏", "不得新增人物、物品、线索或事件"],
+      "styleReferenceIds": ["row-0008", "row-0063"],
+      "notes": "两处外貌新增：人物胶布和胶锅糊边；只写熬开，不写成事故。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0065-sink-cloth-and-wrench",
+      "sourceRowId": "row-0065",
+      "worldFamily": "library-utilities",
+      "categories": ["appearance_change", "item_change"],
+      "targetText": "六分钟过去，苏既白把水槽底下的抹布叠成两层，又压上一只扳手。他的袖口湿了半截，手背上还挂着水；水槽的下水口仍旧堵着，水下得很慢，没有漫出来。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "6 分钟"},
+        {"kind": "appearance_change", "entity": "苏既白", "add": "袖口湿了半截"},
+        {"kind": "appearance_change", "entity": "水槽前", "add": "水槽底下的抹布叠成了两层，压着一只扳手"}
+      ],
+      "licensedDetails": ["下水口常堵、水下得慢（水槽前外貌）", "把抹布叠两层、压扳手（整理水槽的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "苏既白", "canKnow": ["自己的袖口和手背", "水槽下的抹布和扳手", "下水仍旧慢"], "mustNotReveal": ["谁堵了下水口", "医书典当的往事"]},
+      "forbiddenInventions": ["不得写水管修好或水漫出来", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0137", "row-0178"],
+      "notes": "两处外貌新增：袖口湿、抹布压扳手；没有写修好，水仍然慢。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0129-film-version-and-fear",
+      "sourceRowId": "row-0129",
+      "worldFamily": "library-news",
+      "categories": ["task_complete", "sanity_change"],
+      "targetText": "十七分钟过去，温暮把重排那一版的字号和行距对完，确认是谁做的，把这件事记下。叶既明那边的呼吸变短了，翻胶片盒的手停了一下，指节压得发白；他没有说话，也没有把盒子放回去。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "17 分钟"},
+        {"kind": "task_complete", "owner": "温暮", "goal": "查清重排的那一版是谁做的"},
+        {"kind": "sanity_change", "owner": "叶既明", "from": 48, "to": 41}
+      ],
+      "licensedDetails": ["防尘布、按卷号排列的胶片盒（缩微胶片室外貌）", "对字号和行距（任务要求的核对动作）", "呼吸变短、手停住、指节发白（精神下降的可观察表现）"],
+      "knowledgeBoundary": {"viewpoint": "温暮", "canKnow": ["自己对出的重排版信息", "叶既明的呼吸和手上动作", "胶片盒还在原处"], "mustNotReveal": ["重排版是谁做的这一答案以外的推断", "叶既明的内心", "火灾答案"]},
+      "forbiddenInventions": ["不得写出重排版制作者的名字", "不得写叶既明说出秘密或离开", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0194", "row-0169"],
+      "notes": "任务完成 + 另一人精神下降；任务只写“确认是谁做的”，不给名字。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0056-duty-name-and-copy",
+      "sourceRowId": "row-0056",
+      "worldFamily": "library-news",
+      "categories": ["task_complete", "personality_change"],
+      "targetText": "十五分钟过去，周含章把九八年十月十七日那晚的值班人名字查了出来。她把名字写在自己那页上，手却没有再往下动：查到了名字，反而不知道该做什么。柏含章在铁柜边，说陪她把那本簿子送去复印。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "15 分钟"},
+        {"kind": "task_complete", "owner": "周含章", "goal": "查出九八年十月十七日那晚的值班人名字"},
+        {"kind": "personality_change", "owner": "周含章", "remove": ["执着"], "add": "查到了名字，反而不知道该做什么"},
+        {"kind": "personality_change", "owner": "柏含章", "add": "答应陪周含章把那本簿子送去复印"}
+      ],
+      "licensedDetails": ["铁柜和抽屉（报刊库外貌）", "写下名字、手停住（任务完成后的合理动作）", "柏含章在铁柜边的可见位置"],
+      "knowledgeBoundary": {"viewpoint": "周含章", "canKnow": ["自己查到的值班人名字", "自己的犹豫", "柏含章答应陪她去复印"], "mustNotReveal": ["值班人名字本身", "火灾答案", "柏含章父亲的往事细节"]},
+      "forbiddenInventions": ["不得写出值班人的名字", "不得写复印已经完成", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0183", "row-0188"],
+      "notes": "任务完成 + 两人个性变化；名字不写出，复印只是答应，没有写成已完成。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0074-locked-from-outside",
+      "sourceRowId": "row-0074",
+      "worldFamily": "library-courtyard",
+      "categories": ["personality_change"],
+      "targetText": "八分钟过去，叶暮把围巾往下拉了拉，说他不再以为是自己记错：那晚他在装订间，门是从外面锁的，这一点他确定了。方既白没有追问是谁锁的，只把这句话记住。天台上的灯架还堆在角落，防水卷材被风吹得响了一下。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "8 分钟"},
+        {"kind": "personality_change", "owner": "叶暮", "remove": ["一直以为是自己记错"], "add": "确定那晚门是从外面锁的"}
+      ],
+      "licensedDetails": ["天台的防水卷材、废弃灯架（地点外貌）", "拉围巾、方既白不追问（人物原有细节与反应）"],
+      "knowledgeBoundary": {"viewpoint": "方既白", "canKnow": ["叶暮说出口的话", "天台上的灯架和卷材", "自己没有追问"], "mustNotReveal": ["谁锁的门", "叶暮没有说出口的推断", "方既白兄长的下落"]},
+      "forbiddenInventions": ["不得写出锁门的人", "不得写两人达成计划", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0182", "row-0055"],
+      "notes": "个性替换：不再以为记错，改成确定门从外面锁；只到“确定”，不指认谁锁的。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0091-seventh-copy-missing",
+      "sourceRowId": "row-0091",
+      "worldFamily": "library-news",
+      "categories": ["task_added", "sanity_change"],
+      "targetText": "十二分钟过去，柏望舒把书脊上的号又对了一遍，到第七本时停住：那个位置空着，索书号标签翘着一角。他把这条记成一件要查的事——第七本被谁拿走了。江既白翻着手里那沓抄下来的纸，呼吸渐渐匀了，肩膀也不那么绷。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "12 分钟"},
+        {"kind": "task_added", "owner": "柏望舒", "goal": "查清第七本被谁拿走了"},
+        {"kind": "sanity_change", "owner": "江既白", "from": 53, "to": 57}
+      ],
+      "licensedDetails": ["高到天花板的书架、翘边的索书号标签（地点外貌）", "逐本对书脊号（人物原有动作）", "呼吸变匀、肩膀放松（精神上升的可观察表现）"],
+      "knowledgeBoundary": {"viewpoint": "柏望舒", "canKnow": ["自己对到的第七本空位", "自己没有填这个空位", "江既白在旁边的可见反应"], "mustNotReveal": ["第七本被谁拿走", "族谱被谁抄走", "江既白抄的纸上写了什么"]},
+      "forbiddenInventions": ["不得写第七本已经找到或有人承认拿走", "不得写空位是新的", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0199", "row-0138"],
+      "notes": "新增任务 + 另一人精神上升；空位只作为任务起点，不给答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0102-three-copies-collated",
+      "sourceRowId": "row-0102",
+      "worldFamily": "library-news",
+      "categories": ["task_complete"],
+      "targetText": "二十三分过去，三本缺页的书摊开着。韩照把自己那本缺的字补上，周书言念出她那本的第十一页，一个字不差；温照把他那本连着不通的半句补在边上。三个人的那一项都做完了：把三本缺页的书对照补字。双层库门还关着，谁也没有先收书。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "23 分钟"},
+        {"kind": "task_complete", "owner": "韩照", "goal": "把三本缺页的书对照补字"},
+        {"kind": "task_complete", "owner": "周书言", "goal": "把三本缺页的书对照补字"},
+        {"kind": "task_complete", "owner": "温照", "goal": "把三本缺页的书对照补字"}
+      ],
+      "licensedDetails": ["双层库门、内层铁皮（古籍库外貌）", "念第十一页、补字、补半句（完成任务的动作）"],
+      "knowledgeBoundary": {"viewpoint": "韩照", "canKnow": ["三个人各自补的字", "周书言念出的第十一页", "库门关着"], "mustNotReveal": ["缺页背后是谁做的", "火灾答案", "三本书的来历"]},
+      "forbiddenInventions": ["不得写补出的具体内容", "不得写谁拿走缺页", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0188", "row-0152"],
+      "notes": "同一目标三人同时完成；每句用名字开头，避免指代混淆。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0111-desk-book-and-ink",
+      "sourceRowId": "row-0111",
+      "worldFamily": "library-lending",
+      "categories": ["movement", "appearance_change", "location_change"],
+      "targetText": "十分钟过去，秦照离开借阅台，上了二层，进报刊阅览室。借阅台最里边压着一本四十年前借出的书，书角露在台面外；温砚的袖口上沾了一点印泥，他自己还没有发觉。叶含章把书往里边推了推，没有先翻开。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "10 分钟"},
+        {"kind": "movement", "actor": "秦照", "from": "借阅台", "to": "报刊阅览室"},
+        {"kind": "appearance_change", "entity": "温砚", "add": "袖口上沾了一点印泥"},
+        {"kind": "appearance_change", "entity": "借阅台", "add": "台面最里边压着一本四十年前借出的书"}
+      ],
+      "licensedDetails": ["硬木台面、包铜边角、上锁抽屉（借阅台外貌）", "把书往里推（保护旧书的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "叶含章", "canKnow": ["秦照离开借阅台上二层", "台面里边的旧书", "温砚袖口的印泥"], "mustNotReveal": ["谁还回这本书", "印泥从哪里沾上", "秦照去阅览室做什么"]},
+      "forbiddenInventions": ["不得写旧书被翻开或借出", "不得写温砚发现印泥", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0100", "row-0121"],
+      "notes": "移动 + 两处外貌新增（人物印泥、台面旧书）；旧书只写压着，不写内容。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0119-guard-records-and-shelves",
+      "sourceRowId": "row-0119",
+      "worldFamily": "library-news",
+      "categories": ["task_complete", "movement", "separation"],
+      "targetText": "十三分钟过去，周含章把那半年四次换门卫的交接记录对完了：四份签字按日子排开，每一次交接都对得上。柏含章已经不在长桌区，他往报刊库去了；长条桌上的茶渍还在，三张桌子并排摆着。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "13 分钟"},
+        {"kind": "task_complete", "owner": "周含章", "goal": "查清那半年四次换门卫的交接记录"},
+        {"kind": "movement", "actor": "柏含章", "from": "长桌区", "to": "报刊库"}
+      ],
+      "licensedDetails": ["长条桌和三张并排的桌子、茶渍（地点外貌）", "按日子排开四份签字（核对记录的动作）"],
+      "knowledgeBoundary": {"viewpoint": "周含章", "canKnow": ["自己对上的四次交接", "柏含章已经离开长桌区", "桌上原有的茶渍"], "mustNotReveal": ["交接记录里的具体名字", "柏含章去报刊库找什么", "火灾答案"]},
+      "forbiddenInventions": ["不得写出换门卫的原因或名字", "不得写柏含章返回", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0182", "row-0169"],
+      "notes": "任务完成 + 另一人移动；两个位置都写出，不写他去做什么。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0145-cover-layers",
+      "sourceRowId": "row-0145",
+      "worldFamily": "library-news",
+      "categories": ["item_change", "task_complete"],
+      "targetText": "十七分钟过去，柏书言把那本封面还亮着胶的合订本翻过来，从夹层里抽出两张旧封面的残页。书脊上原来的书名被磨掉了，只剩一道浅痕。他把残页按顺序摆开，说那一批封面是从哪本书上撕的，他查清了。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "17 分钟"},
+        {"kind": "item_state", "item": "合订本", "add": ["封面夹层里塞着两张旧封面的残页", "书脊上原来的书名被磨掉了"]},
+        {"kind": "task_complete", "owner": "柏书言", "goal": "查清那一批封面是从哪本书上撕的"}
+      ],
+      "licensedDetails": ["新封面、亮着的胶（物品外貌）", "翻过合订本、抽出残页、按顺序摆开（完成任务的动作）"],
+      "knowledgeBoundary": {"viewpoint": "柏书言", "canKnow": ["合订本夹层里的残页", "书脊上磨掉的书名", "自己查清了封面来源"], "mustNotReveal": ["被撕的是哪本书", "谁撕的封面", "火灾答案"]},
+      "forbiddenInventions": ["不得写出被撕书名或撕封面的人", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0121", "row-0132"],
+      "notes": "物品两处外貌新增 + 任务完成；只说查清来源，不给书名。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0180-wax-seal-half",
+      "sourceRowId": "row-0180",
+      "worldFamily": "library-news",
+      "categories": ["item_change", "task_complete", "secret_reveal"],
+      "targetText": "二十三分过去，叶望舒把柜门内侧那张封条揭下来，凑近看。蜡印缺了一小块，缺口是新的，断口还没有沾灰；压着的篆字她认出来了，是哪一半，她终于对了上去。顾既白在旁边看着，她把封条翻过来，没有说出那个字。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "23 分钟"},
+        {"kind": "item_state", "item": "封条", "remove": ["蜡印完整，压着一个篆字"], "add": ["蜡印缺了一小块，缺口是新的"]},
+        {"kind": "task_complete", "owner": "叶望舒", "goal": "认出封蜡上那个篆字是哪一半"}
+      ],
+      "licensedDetails": ["双层库门、内层铁皮（古籍库外貌）", "揭下封条、凑近看、翻过来（检查封条的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "叶望舒", "canKnow": ["封条上的缺口和篆字", "自己认出了是哪一半", "顾既白在旁边"], "mustNotReveal": ["那个篆字本身", "母亲改名换姓的答案", "顾既白是否看懂"]},
+      "forbiddenInventions": ["不得写出篆字内容", "不得写顾既白追问或看懂", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0055", "row-0169"],
+      "notes": "封条外貌替换 + 任务完成；认出来了但不说出那个字，保住“秘密只说出一层”。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0187-left-handed-knot",
+      "sourceRowId": "row-0187",
+      "worldFamily": "library-basement",
+      "categories": ["item_change"],
+      "targetText": "二十分钟过去，韩照把最上面那捆旧报转了个方向。麻绳勒出的印子还在，绳结却换了：是左撇子打的，绳头压在下面绕了两圈。他没有去解，只把绳结的样子记下来，又把报捆照原样放回垛上。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "20 分钟"},
+        {"kind": "item_state", "item": "报捆", "remove": ["绳结是右撇子打的"], "add": ["绳结是左撇子打的，绳头压在下面绕了两圈"]}
+      ],
+      "licensedDetails": ["旧报垛、麻绳勒痕（地点/物品外貌）", "转动报捆、记下绳结、放回垛上（检查物品的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "韩照", "canKnow": ["绳结的打法变了", "自己没有解绳", "报捆放回原位"], "mustNotReveal": ["谁重新打过绳结", "火灾答案", "报捆里有什么"]},
+      "forbiddenInventions": ["不得写有人来换过绳", "不得解开报捆或翻出内容", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0063", "row-0121"],
+      "notes": "只写绳结从右撇子变左撇子；不指认换绳的人，也不解捆。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short2-0191-three-labels",
+      "sourceRowId": "row-0191",
+      "worldFamily": "library-news",
+      "categories": ["item_change"],
+      "targetText": "二十五分钟过去，温暮在铁架前把三零九号胶片盒的盒盖转过来。最上面那层标签被她揭开，下面还有一层；再揭，第三层的边角也翘起来，旧的压着更旧的。她把盒盖合回去，没有去撕最下面那一层。",
+      "requiredFacts": [
+        {"kind": "time_advance", "text": "25 分钟"},
+        {"kind": "item_state", "item": "胶片盒", "remove": ["盒盖贴着一张新标签", "标签下面是另一张旧标签"], "add": ["盒盖上三层标签都被揭开，边角翘着"]}
+      ],
+      "licensedDetails": ["按卷号排列的胶片盒、蒙着防尘布的机器（地点外貌）", "转盒盖、揭开标签、合回去（检查标签的合理动作）"],
+      "knowledgeBoundary": {"viewpoint": "温暮", "canKnow": ["盒盖上三层标签和翘边", "自己没有撕最下面一层", "卷号是三零九"], "mustNotReveal": ["标签下面写的是谁", "换标签的原因", "母亲改名换姓的答案"]},
+      "forbiddenInventions": ["不得写出标签内容或换标签的人", "不得撕掉最下面一层", "不得新增人物、物品或事件"],
+      "styleReferenceIds": ["row-0121", "row-0138"],
+      "notes": "标签从三层变成都被揭开；只写看见三层，不写内容。",
+      "reviewState": "manually-read-input-and-target"
+    }
+  ]
+}
