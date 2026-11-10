@@ -203,3 +203,4 @@
 - 06 `101bb3d2` 修失败命令历史槽位（`commandPointIds`，对应 3-turn 第 2 回合显示第 1 回合正文的类），`26035d97` 取消失败后的残留 advance；待下一次 09 验证。
 - 2603（run 2026-11-10T2155-228b，head 26035d97）：第 1 回合 0 字、`submit_refused`/`settlement_failed_recoverable`；results 1 次调用被 04 `ab242e32` 的「fact only asserted completion」中止。拒绝假完成任务是对的，但整回合中止太大；04 应丢事实/重试，06 应区分结算失败与无正文回合。见 `findings-09-2603.md`。
 - 02 `6bc2a3e6`+`c0d0ad7d`/`eff602f2`：已完成的绳再演一遍记 unlicensed_action（测试是 `缓缓放下`）；场景提示带玩家声明的行动，漏写记 note。04 `1f65b0b2` 去掉 results 提示里的 pending task goals。均未进 06 构建；3-turn 原文 `望着…被放下` 需在下个构建复核。
+- 校准：`allowedEvents` 是策略（`licensedEvents`），`[]` 不是禁单；已存在的发圈整理/绳子垂着晃动是 review，只有明确的「被放下」再演是硬矛盾。01 修正 spine：`演习规则牌` 在 `可用名字`/`licensedEntities`，问题是位置（review）；`银质手链` 才是新物件。prompt 冲突（细微动作 vs 禁蹲下/坐/靠/站；2 段 vs 1 段；代词规则重复）已交 02 做 composer 定点修正。
