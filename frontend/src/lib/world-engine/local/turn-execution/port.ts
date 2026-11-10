@@ -59,6 +59,7 @@ export interface PortCallRecord {
     achievedByCharacter?: { characterId: string; taskIds: string[] }[];
     assertedUnchanged?: number;
     rejectedTaskIds?: { characterId: string; taskId: string; reason: string }[];
+    supports?: { characterId: string; taskId: string; basis: string }[];
   };
   /** Model time per updates stage, for finding which stage made a turn slow. */
   stageMs?: Record<string, number>;
@@ -113,7 +114,8 @@ export function createSettlementModelPort(
   options: SettlementPortOptions = {},
 ): SettlementModelPort {
   const now = options.now ?? (() => (typeof performance === 'undefined' ? Date.now() : performance.now()));
-  const updates: UpdatesRunner = createUpdatesRunner(engine, options);
+  const portOptions: SettlementPortOptions = { ...options, requireTaskSupport: true };
+  const updates: UpdatesRunner = createUpdatesRunner(engine, portOptions);
   const continuation = new ContinuationRunner(engine, options);
   const calls: PortCallRecord[] = [];
   let submission: PortSubmission | null = null;
@@ -146,7 +148,7 @@ export function createSettlementModelPort(
       if (Object.keys(stageMs).length) record.stageMs = stageMs;
     }
     const scope = (outcome.evidence.detail as { taskScope?: {
-      taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown; rejectedTaskIds?: unknown;
+      taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown; rejectedTaskIds?: unknown; supports?: unknown;
     } } | null)?.taskScope;
     if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds) || scope) {
       record.coverage = {
@@ -160,6 +162,9 @@ export function createSettlementModelPort(
         ...(Number.isFinite(Number(scope?.assertedUnchanged)) ? { assertedUnchanged: Number(scope?.assertedUnchanged) } : {}),
         ...(Array.isArray(scope?.rejectedTaskIds)
           ? { rejectedTaskIds: scope.rejectedTaskIds as { characterId: string; taskId: string; reason: string }[] }
+          : {}),
+        ...(Array.isArray(scope?.supports)
+          ? { supports: scope.supports as { characterId: string; taskId: string; basis: string }[] }
           : {}),
       };
     }

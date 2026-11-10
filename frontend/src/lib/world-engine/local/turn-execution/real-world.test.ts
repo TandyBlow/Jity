@@ -47,15 +47,13 @@ function engineFor(state: WorldState, seen: string[]): InferenceEngine {
       if (prompt.includes('外貌结算器')) return JSON.stringify({ operations: [] });
       if (prompt.includes('任务判定器')) {
         // One decision per character; achieved lists only newly achieved tasks.
-        const decisions = Object.entries(state.characters)
+        const owners = Object.entries(state.characters)
           .filter(([, character]) => Object.keys(character.tasks).length > 0)
-          .map(([ownerId, character]) => ({
-            characterId: ownerId,
-            achieved: Object.values(character.tasks)
-              .filter((task) => ownerId === OFFSCREEN && task.id === OFFSCREEN_TASK && task.status !== 'achieved')
-              .map((task) => task.id),
-          }));
-        return JSON.stringify({ decisions });
+          .map(([ownerId]) => ownerId);
+        return JSON.stringify({
+          unchanged: owners.filter((ownerId) => ownerId !== OFFSCREEN),
+          achieved: [{ characterId: OFFSCREEN, tasks: [{ taskId: OFFSCREEN_TASK, basis: 'f1' }] }],
+        });
       }
       if (prompt.includes('新增小任务判断器')) return JSON.stringify({ subtasks: [] });
       if (prompt.includes('个性变化判断器')) {

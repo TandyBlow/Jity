@@ -747,3 +747,48 @@ describe('compact subtask parent keys', () => {
   });
 });
 
+
+describe('grounded task transitions', () => {
+  it('does not accept the 17:37 all-cast answer when no settled fact is cited', async () => {
+    // The real run's program draft listed every character as having completed
+    // a root task; the task answer named known ids but no fact. Strict product
+    // mode must reject those transitions, not commit them on coverage alone.
+    const allCast = JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['a1', 'a2'] },
+      { characterId: 'b', achieved: ['b1'] },
+      { characterId: 'off', achieved: ['off1'] },
+    ] });
+    const engine = new ScriptedEngine([allCast, allCast]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('task_support_incomplete');
+    expect(outcome.error).toContain('a1:missing_support');
+    expect(outcome.error).toContain('b1:missing_support');
+    expect(outcome.error).toContain('off1:missing_support');
+    // A repair retry is spent; the point is not committed on coverage alone.
+    expect(engine.prompts).toHaveLength(2);
+  });
+
+  it('accepts an achievement that cites a settled fact', async () => {
+    const grounded = JSON.stringify({ unchanged: ['b'], achieved: [
+      { characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] },
+      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f1' }] },
+    ] });
+    const engine = new ScriptedEngine([grounded]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+    expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
+    const scope = (outcome.evidence.detail as { taskScope: {
+      supports: { characterId: string; taskId: string; basis: string }[];
+      rejectedTaskIds: unknown[];
+    } }).taskScope;
+    expect(scope.supports).toEqual([
+      { characterId: 'a', taskId: 'a1', basis: 'f1' },
+      { characterId: 'off', taskId: 'off1', basis: 'f1' },
+    ]);
+    expect(scope.rejectedTaskIds).toEqual([]);
+  });
+});

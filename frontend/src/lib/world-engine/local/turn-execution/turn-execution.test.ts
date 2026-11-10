@@ -85,7 +85,9 @@ function scriptedEngine(brain: Brain): InferenceEngine {
       if (prompt.includes('任务判定器')) {
         // One decision per character with tasks; the off-screen owner must be
         // decided too, and the decision covers all of that character's tasks.
-        return JSON.stringify({ decisions: [{ characterId: 'person_a', achieved: brain.taskAchieved ? ['task_watch'] : [] }] });
+        return JSON.stringify(brain.taskAchieved
+          ? { unchanged: [], achieved: [{ characterId: 'person_a', tasks: [{ taskId: 'task_watch', basis: 'f1' }] }] }
+          : { unchanged: ['person_a'], achieved: [] });
       }
       if (prompt.includes('新增小任务判断器')) return JSON.stringify({ subtasks: [] });
       if (prompt.includes('个性变化判断器')) {
