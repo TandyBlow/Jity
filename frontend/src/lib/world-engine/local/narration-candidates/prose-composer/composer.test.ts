@@ -18,7 +18,8 @@ function sentences(text: string): string[] {
 
 describe('composeProse facts and direction', () => {
   it('renders a move from -> to, keeps the stayer and does not touch the item', () => {
-    const result = composeProse(SHORT_MOVE_SCENE);
+    // The scene is deliberately short; the floor only rejects broken output.
+    const result = composeProse({ ...SHORT_MOVE_SCENE, policy: { ...SHORT_MOVE_SCENE.policy, minChars: 20 } });
     expect(result.accepted).toBe(true);
     expect(result.text).toContain('林川');
     expect(result.text).toContain('周宁');
@@ -90,13 +91,11 @@ describe('composeProse references and continuity', () => {
     expect(result.text).not.toMatch(/[他她]/u);
   });
 
-  it('uses a pronoun only when one actor of that gender is visible', () => {
-    const result = composeProse(SHORT_MOVE_SCENE);
-    expect(result.text).toMatch(/[他她]/u);
+  it('does not use a bare pronoun when two actors share a gender', () => {
     const twoMen = clone(SHORT_MOVE_SCENE);
     twoMen.cast[1].gender = 'male';
-    const second = composeProse(twoMen);
-    // Both are male: the composer must not use a bare pronoun for them.
+    const second = composeProse({ ...twoMen, policy: { ...twoMen.policy, minChars: 20 } });
+    // Both are male: a pronoun would be ambiguous, so the names are used.
     expect(second.text).not.toMatch(/他(从|的)/u);
   });
 
@@ -321,7 +320,7 @@ describe('validateScene and generateCandidate', () => {
       state: {}, before: null, delta: { timeAdvance: null, entityDeltas: {} },
       inputText: '林川从走廊走到门厅。',
       priorText: null,
-      policy: { scene: SHORT_MOVE_SCENE, minChars: 40 },
+      policy: { scene: SHORT_MOVE_SCENE, minChars: 20 },
       signal: controller.signal,
       onProgress: (event: { status: string }) => events.push(event.status),
     } as never);

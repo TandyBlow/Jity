@@ -82,10 +82,11 @@ for (const [index, turn] of turns.entries()) {
   } as never);
 
   const paragraphs = result.text.split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);
-  const tail = paragraphs.at(-1) ?? '';
-  for (const sentence of result.text.split(/(?<=[。！？」])/u).map((part) => part.trim()).filter(Boolean)) {
-    sentences.push(sentence);
-  }
+  const closeSentences = result.text.split(/(?<=[。！？」])/u).map((part) => part.trim()).filter(Boolean);
+  for (const sentence of closeSentences) sentences.push(sentence);
+  // A short turn is one paragraph now, so the closer is the last sentence, not
+  // the last paragraph (which would be the whole turn).
+  const tail = closeSentences.at(-1) ?? paragraphs.at(-1) ?? '';
   if (tail) closers.push(tail);
   accepted.push(result.accepted ? 'ok' : 'REJECTED');
   console.log(`\n===== turn ${index + 1}: ${turn.text}`);

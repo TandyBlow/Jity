@@ -438,10 +438,6 @@ export function composeProse(scene: ProseScene): ComposedProse {
         let sentence = templates.pick('move', variants);
         if (beat.factText) sentence = ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId));
         pushBeat(sentence, beat);
-        const next = body[index + 1];
-        if (!beatOnly && actor && beat.to !== scene.location.name && next?.kind !== 'line') {
-          push(`${refs.subject(beat.actorId)}的脚步声往${beat.to}那边去了。`, []);
-        }
         break;
       }
       case 'stay': {
@@ -470,7 +466,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
           : templates.pick('leave-alone', [
             `${subject}离开了${scene.location.name}。`,
             `${subject}出了${scene.location.name}。`,
-            `${subject}的脚步声很快听不见了。`,
+            `${subject}走出了${scene.location.name}。`,
           ]);
         pushBeat(beat.factText ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)) : sentence, beat);
         break;
@@ -481,7 +477,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
         const subject = refs.subject(actor.id);
         const location = beat.location ?? scene.location.name;
         const sentence = templates.pick('arrive', [
-          `${subject}进来的时候，${location}里没有别的声音。`,
+          `${subject}进了${location}。`,
           `${subject}从外面进来，停在${location}边上。`,
           `${subject}出现在${location}。`,
         ]);
@@ -840,7 +836,14 @@ export function composeProse(scene: ProseScene): ComposedProse {
 
   const varied = beatOnly ? paragraphs : varyRepeatedSubjects(paragraphs, scene, refs);
   const merged = beatOnly ? varied : mergeShortNarration(varied, scene);
-  const text = merged.join('\n\n');
+  // The reviewed corpus is one 61-158 character paragraph per short turn; a
+  // quiet turn split into one sentence per paragraph reads as a template. Only
+  // unambiguous narration joins (no dialogue, whose turns stay separate).
+  const joined = merged.join('');
+  const single = !beatOnly && charCount(joined) <= 158 && !joined.includes('「')
+    ? [joined]
+    : merged;
+  const text = single.join('\n\n');
   const verifyMs = nowMs();
   const factIssues = verifyBeats(scene, body, rendered);
   issues.push(...factIssues);

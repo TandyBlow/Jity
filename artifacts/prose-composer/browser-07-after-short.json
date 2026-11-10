@@ -1,7 +1,7 @@
 {
   "lane": "07-prose",
   "kind": "browser-candidate-runs",
-  "updatedAt": "2026-11-10T16:50:37.980Z",
+  "updatedAt": "2026-11-10T17:27:57.820Z",
   "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
   "runner": {
     "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
@@ -43,7 +43,7 @@
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
       "source": {
-        "commit": "32a87bc66a209608c6f1012c315b051fd917cb0e",
+        "commit": "95e54df76ef2c9e49f94238b6bdab37e447f8511",
         "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
         "dirty": true
       },
@@ -88,38 +88,38 @@
           "mtime": "2026-11-10T07:00:23.567Z"
         }
       },
-      "queuedAt": "2026-11-10T16:50:37.359Z",
+      "queuedAt": "2026-11-10T17:27:56.828Z",
       "latest": {
         "short-root": {
-          "runId": "07-prose::short-root::mwaxf2ui",
-          "at": "2026-11-10T16:50:37.478Z",
+          "runId": "07-prose::short-root::mwayr2u5",
+          "at": "2026-11-10T17:27:56.953Z",
           "accepted": true,
-          "chars": 38,
-          "wallMs": 4,
-          "firstParagraph": "明亮的走廊，通往门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaxf2ui]",
+          "chars": 34,
+          "wallMs": 3,
+          "firstParagraph": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwayr2u5]",
           "contractOk": true,
           "error": null
         },
         "short-move": {
-          "runId": "07-prose::short-move::mwaxf2uw",
-          "at": "2026-11-10T16:50:37.495Z",
+          "runId": "07-prose::short-move::mwayr2ui",
+          "at": "2026-11-10T17:27:56.969Z",
           "accepted": true,
-          "chars": 37,
+          "chars": 20,
           "wallMs": 1,
-          "firstParagraph": "林川从走廊走进门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaxf2uw]",
+          "firstParagraph": "林川从走廊走进门厅。周宁一个人留在原地。",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwayr2ui]",
           "contractOk": true,
           "error": null
         },
         "short-elapsed": {
-          "runId": "07-prose::short-elapsed::mwaxf2v8",
-          "at": "2026-11-10T16:50:37.508Z",
+          "runId": "07-prose::short-elapsed::mwayr2uu",
+          "at": "2026-11-10T17:27:56.981Z",
           "accepted": true,
-          "chars": 31,
+          "chars": 29,
           "wallMs": 1,
-          "firstParagraph": "明亮的走廊，通往门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaxf2v8]",
+          "firstParagraph": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwayr2uu]",
           "contractOk": true,
           "error": null
         }
@@ -2505,6 +2505,1584 @@
         }
       },
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-root::mwaypkzd",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-root",
+      "startedAt": "2026-11-10T17:26:47.156Z",
+      "wallMs": 3.4099998474121094,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "root_short",
+        "version": 0,
+        "stateDigest": "846a98e2eed7e91a80f5db6bb1629628a880cb56a97c83eadc7ced87169d3e23",
+        "previousPointId": null,
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [],
+        "timeAdvance": null
+      },
+      "input": {
+        "textChars": 148,
+        "text": "【视角】主角视角（周宁）【地点】走廊：明亮的走廊，通往门厅。【人物】林川：在走廊，精神值10，外貌穿灰衣，个性谨慎，恪守职责，任务留在走廊守门，不碰盒子（未完成）。周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】这一回合没有结算出变化。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "note": "穿灰衣。"
+            },
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "走廊"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": null,
+          "requireTime": false,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_a",
+                "name": "林川",
+                "note": "穿灰衣。"
+              },
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": null,
+        "priorSource": null,
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "chars": 34,
+        "paragraphs": [
+          "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。"
+        ],
+        "firstParagraph": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "lastParagraph": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.5850000381469727,
+          "composeMs": 0.6450004577636719,
+          "verifyMs": 0.2199993133544922,
+          "totalMs": 356.289999961853,
+          "attemptMs": [
+            3.0550003051757812
+          ],
+          "attemptsMs": 3.0550003051757812,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "cleaned": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 3.0550003051757812,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+              "cleaned": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 3.0550003051757812,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 3,
+        "lastAtMs": 3,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 3.0550003051757812
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-root",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-move::mwaypkzq",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-move",
+      "startedAt": "2026-11-10T17:26:47.173Z",
+      "wallMs": 1.1399993896484375,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "point_short_move",
+        "version": 1,
+        "stateDigest": "b7f397bea4bb3606fe1e7c46ee266ea01e130dc9822f2d26db6d5df2b356c73e",
+        "previousPointId": "root_short",
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [
+          "position"
+        ],
+        "timeAdvance": {
+          "boundary": "instant",
+          "duration": {
+            "amount": 0,
+            "unit": "second"
+          }
+        }
+      },
+      "input": {
+        "textChars": 171,
+        "text": "【视角】主角视角（周宁）【地点】门厅：安静的门厅。走廊：明亮的走廊，通往门厅。【人物】林川：在门厅，精神值10，外貌穿灰衣，个性谨慎，恪守职责，任务留在走廊守门，不碰盒子（未完成）。周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】时间推进0 second。林川（人物）：移动到门厅。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "门厅"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "requireTime": false,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+        "chars": 35,
+        "paragraphs": [
+          "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。"
+        ],
+        "firstParagraph": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+        "lastParagraph": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.12000083923339844,
+          "composeMs": 0.6649999618530273,
+          "verifyMs": 0.029999732971191406,
+          "totalMs": 370.7700004577637,
+          "attemptMs": [
+            1.010000228881836
+          ],
+          "attemptsMs": 1.010000228881836,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+            "cleaned": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 1.010000228881836,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+              "cleaned": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 1.010000228881836,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 1,
+        "lastAtMs": 1,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 1.010000228881836
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-move",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-elapsed::mwaypl05",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-elapsed",
+      "startedAt": "2026-11-10T17:26:47.188Z",
+      "wallMs": 1.0450000762939453,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "point_short_elapsed",
+        "version": 2,
+        "stateDigest": "5a9a370faeb3809c06faded2ea9801156d92cda28d8b7b5c4ea9f28adba4b00d",
+        "previousPointId": "point_short_move",
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [],
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 2,
+            "unit": "minute"
+          }
+        }
+      },
+      "input": {
+        "textChars": 113,
+        "text": "【视角】主角视角（周宁）【地点】走廊：明亮的走廊，通往门厅。【人物】周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】时间推进2 minute。这一回合没有结算出变化。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "门厅"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "minute"
+            }
+          },
+          "requireTime": true,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "林川从走廊走进门厅。林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "chars": 29,
+        "paragraphs": [
+          "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。"
+        ],
+        "firstParagraph": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "lastParagraph": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.26999950408935547,
+          "composeMs": 0.3600006103515625,
+          "verifyMs": 0.029999732971191406,
+          "totalMs": 385.6850004196167,
+          "attemptMs": [
+            0.8549995422363281
+          ],
+          "attemptsMs": 0.8549995422363281,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "cleaned": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 0.8549995422363281,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+              "cleaned": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 0.8549995422363281,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 1,
+        "lastAtMs": 1,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 0.8549995422363281
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-elapsed",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-root::mwayr2u5",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-root",
+      "startedAt": "2026-11-10T17:27:56.953Z",
+      "wallMs": 3.15000057220459,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "root_short",
+        "version": 0,
+        "stateDigest": "846a98e2eed7e91a80f5db6bb1629628a880cb56a97c83eadc7ced87169d3e23",
+        "previousPointId": null,
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [],
+        "timeAdvance": null
+      },
+      "input": {
+        "textChars": 148,
+        "text": "【视角】主角视角（周宁）【地点】走廊：明亮的走廊，通往门厅。【人物】林川：在走廊，精神值10，外貌穿灰衣，个性谨慎，恪守职责，任务留在走廊守门，不碰盒子（未完成）。周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】这一回合没有结算出变化。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "note": "穿灰衣。"
+            },
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "走廊"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": null,
+          "requireTime": false,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_a",
+                "name": "林川",
+                "note": "穿灰衣。"
+              },
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": null,
+        "priorSource": null,
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "chars": 34,
+        "paragraphs": [
+          "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。"
+        ],
+        "firstParagraph": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "lastParagraph": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.5850000381469727,
+          "composeMs": 0.6050004959106445,
+          "verifyMs": 0.18999958038330078,
+          "totalMs": 377.67499923706055,
+          "attemptMs": [
+            2.8000001907348633
+          ],
+          "attemptsMs": 2.8000001907348633,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "cleaned": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 2.8000001907348633,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+              "cleaned": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 2.8000001907348633,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 3,
+        "lastAtMs": 3,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 2.8000001907348633
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-root",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-move::mwayr2ui",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-move",
+      "startedAt": "2026-11-10T17:27:56.969Z",
+      "wallMs": 0.9149999618530273,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "point_short_move",
+        "version": 1,
+        "stateDigest": "b7f397bea4bb3606fe1e7c46ee266ea01e130dc9822f2d26db6d5df2b356c73e",
+        "previousPointId": "root_short",
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [
+          "position"
+        ],
+        "timeAdvance": {
+          "boundary": "instant",
+          "duration": {
+            "amount": 0,
+            "unit": "second"
+          }
+        }
+      },
+      "input": {
+        "textChars": 171,
+        "text": "【视角】主角视角（周宁）【地点】门厅：安静的门厅。走廊：明亮的走廊，通往门厅。【人物】林川：在门厅，精神值10，外貌穿灰衣，个性谨慎，恪守职责，任务留在走廊守门，不碰盒子（未完成）。周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】时间推进0 second。林川（人物）：移动到门厅。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "门厅"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": {
+            "boundary": "instant",
+            "duration": {
+              "amount": 0,
+              "unit": "second"
+            }
+          },
+          "requireTime": false,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "林川从走廊走进门厅。周宁一个人留在原地。",
+        "chars": 20,
+        "paragraphs": [
+          "林川从走廊走进门厅。周宁一个人留在原地。"
+        ],
+        "firstParagraph": "林川从走廊走进门厅。周宁一个人留在原地。",
+        "lastParagraph": "林川从走廊走进门厅。周宁一个人留在原地。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.11999988555908203,
+          "composeMs": 0.4650001525878906,
+          "verifyMs": 0.034999847412109375,
+          "totalMs": 390.89499950408936,
+          "attemptMs": [
+            0.7799997329711914
+          ],
+          "attemptsMs": 0.7799997329711914,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "林川从走廊走进门厅。周宁一个人留在原地。",
+            "cleaned": "林川从走廊走进门厅。周宁一个人留在原地。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 0.7799997329711914,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "林川从走廊走进门厅。周宁一个人留在原地。",
+              "cleaned": "林川从走廊走进门厅。周宁一个人留在原地。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 0.7799997329711914,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 1,
+        "lastAtMs": 1,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "林川从走廊走进门厅。周宁一个人留在原地。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 0.7799997329711914
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-move",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+    },
+    {
+      "runId": "07-prose::short-elapsed::mwayr2uu",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "short-elapsed",
+      "startedAt": "2026-11-10T17:27:56.981Z",
+      "wallMs": 0.7849998474121094,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_short",
+        "pointId": "point_short_elapsed",
+        "version": 2,
+        "stateDigest": "5a9a370faeb3809c06faded2ea9801156d92cda28d8b7b5c4ea9f28adba4b00d",
+        "previousPointId": "point_short_move",
+        "viewpointId": "person_c",
+        "viewpointName": "周宁",
+        "changeKinds": [],
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 2,
+            "unit": "minute"
+          }
+        }
+      },
+      "input": {
+        "textChars": 113,
+        "text": "【视角】主角视角（周宁）【地点】走廊：明亮的走廊，通往门厅。【人物】周宁：在走廊，精神值10，外貌穿蓝衣，个性好奇，任务无。【物品】盒子（在走廊里）：盒盖关闭。【变化】时间推进2 minute。这一回合没有结算出变化。【正文】",
+        "scene": {
+          "location": "走廊",
+          "placeNotes": [
+            "明亮的走廊，通往门厅。"
+          ],
+          "present": [
+            {
+              "id": "person_c",
+              "name": "周宁",
+              "note": "穿蓝衣。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "box",
+              "name": "盒子",
+              "note": "盒盖关闭。"
+            }
+          ],
+          "inventory": [],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "person_c",
+            "name": "周宁"
+          },
+          "viewpointId": "person_c",
+          "roster": [
+            "林川",
+            "周宁"
+          ],
+          "locations": [
+            "走廊",
+            "门厅"
+          ],
+          "knownPositions": [
+            {
+              "id": "person_a",
+              "name": "林川",
+              "location": "门厅"
+            }
+          ],
+          "knownEntities": [
+            "林川",
+            "周宁",
+            "盒子",
+            "走廊",
+            "门厅"
+          ],
+          "time": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "minute"
+            }
+          },
+          "requireTime": true,
+          "scene": {
+            "location": "走廊",
+            "placeNotes": [
+              "明亮的走廊，通往门厅。"
+            ],
+            "present": [
+              {
+                "id": "person_c",
+                "name": "周宁",
+                "note": "穿蓝衣。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "box",
+                "name": "盒子",
+                "note": "盒盖关闭。"
+              }
+            ],
+            "inventory": [],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "林川从走廊走进门厅。周宁一个人留在原地。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "chars": 29,
+        "paragraphs": [
+          "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。"
+        ],
+        "firstParagraph": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "lastParagraph": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.19999980926513672,
+          "composeMs": 0.2950000762939453,
+          "verifyMs": 0.020000457763671875,
+          "totalMs": 403.539999961853,
+          "attemptMs": [
+            0.6649999618530273
+          ],
+          "attemptsMs": 0.6649999618530273,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "cleaned": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 0.6649999618530273,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+              "cleaned": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 0.6649999618530273,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 1,
+        "lastAtMs": 1,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 0.6649999618530273
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "short",
+        "only": "short-elapsed",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
     }
   ],
   "failures": [],
@@ -2514,47 +4092,47 @@
     {
       "candidateId": "07-prose",
       "scenarioId": "short-elapsed",
-      "runId": "07-prose::short-elapsed::mwaxf2v8",
-      "startedAt": "2026-11-10T16:50:37.508Z",
+      "runId": "07-prose::short-elapsed::mwayr2uu",
+      "startedAt": "2026-11-10T17:27:56.981Z",
       "accepted": true,
-      "chars": 31,
+      "chars": 29,
       "wallMs": 1,
-      "firstReadableAtMs": 1,
+      "firstReadableAtMs": null,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
-      "textPreview": "明亮的走廊，通往门厅。\n\n两分钟之后，盒子还在走廊。盒盖关闭。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaxf2v8]"
+      "textPreview": "明亮的走廊，通往门厅。两分钟之后，盒子还在走廊。盒盖关闭。",
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwayr2uu]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "short-move",
-      "runId": "07-prose::short-move::mwaxf2uw",
-      "startedAt": "2026-11-10T16:50:37.495Z",
+      "runId": "07-prose::short-move::mwayr2ui",
+      "startedAt": "2026-11-10T17:27:56.969Z",
       "accepted": true,
-      "chars": 37,
+      "chars": 20,
       "wallMs": 1,
-      "firstReadableAtMs": 1,
+      "firstReadableAtMs": null,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
-      "textPreview": "林川从走廊走进门厅。\n\n林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaxf2uw]"
+      "textPreview": "林川从走廊走进门厅。周宁一个人留在原地。",
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwayr2ui]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "short-root",
-      "runId": "07-prose::short-root::mwaxf2ui",
-      "startedAt": "2026-11-10T16:50:37.478Z",
+      "runId": "07-prose::short-root::mwayr2u5",
+      "startedAt": "2026-11-10T17:27:56.953Z",
       "accepted": true,
-      "chars": 38,
-      "wallMs": 4,
-      "firstReadableAtMs": 3,
+      "chars": 34,
+      "wallMs": 3,
+      "firstReadableAtMs": null,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
-      "textPreview": "明亮的走廊，通往门厅。\n\n不远处是林川，穿灰衣。\n\n盒子还在走廊。盒盖关闭。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaxf2ui]"
+      "textPreview": "明亮的走廊，通往门厅。不远处是林川，穿灰衣。盒子还在走廊。盒盖关闭。",
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwayr2u5]"
     }
   ]
 }
