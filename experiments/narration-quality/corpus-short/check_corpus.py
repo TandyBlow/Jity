@@ -2,10 +2,11 @@
 """Structural checks for the short-scene corpus.
 
 This script does not judge prose quality or semantic fact coverage. It checks
-that every base row keeps the frozen input intact, that derived rows differ
-only in a documented time advance, that all material comes from the train split,
-and that every row carries the metadata a consumer needs. Fact coverage is
-checked by hand in review.md.
+that every frozen row keeps its input intact, that derived rows differ only in a
+documented time advance, that authored product-world rows carry the world-file
+identity and a state result matching their delta, that all material is marked as
+training material, and that every row carries the metadata a consumer needs.
+Fact coverage is checked by hand in review.md.
 """
 
 from __future__ import annotations
@@ -23,6 +24,11 @@ DEFAULT_SOURCE_ROOT = pathlib.Path(
     "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1"
 )
 SOURCE_COMMIT = "1ab6ca791f97529a7bffed1f4837bf81a28badcb"
+AUTHORED_DATASET = "dragon-raja-free-day"
+AUTHORED_COMMIT = "865ae64e0901a70c3db4f1d0eb2af60268943c53"
+AUTHORED_FILE = "frontend/public/worlds/dragon-raja-free-day.world.json"
+AUTHORED_WORLD_SHA256 = "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a"
+WORKTREE_ROOT = pathlib.Path(__file__).resolve().parent.parents[2]
 MIN_CHARS = 60
 MAX_CHARS = 160
 KNOWN_CATEGORIES = {
@@ -48,6 +54,73 @@ def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
 
+
+def task_by_goal(tasks: dict[str, object], goal: str) -> dict[str, object] | None:
+    if tasks.get("大任务", {}).get("目标") == goal:
+        return tasks["大任务"]
+    for child in tasks.get("小任务", []):
+        if child.get("目标") == goal:
+            return child
+    return None
+
+
+def check_authored_state(errors: list[str], label: str, record: dict[str, object]) -> None:
+    state = record["input"]["本回合状态"]
+    delta = record["input"]["本回合变化"].get("变化", {})
+    for name, change in delta.items():
+        if "人物" in state and name in state["人物"]:
+            after = state["人物"][name]
+            if "位置" in change and after.get("位置") != change["位置"]:
+                fail(errors, f"{label}: 人物 {name} 的位置结果不匹配")
+            if "精神值" in change and after.get("精神值") != change["精神值"]:
+                fail(errors, f"{label}: 人物 {name} 的精神值结果不匹配")
+            if "新增外貌" in change or "解除外貌" in change:
+                for item in change.get("新增外貌", []):
+                    if item not in after.get("外貌", []):
+                        fail(errors, f"{label}: 人物 {name} 缺少新增外貌 {item!r}")
+                for item in change.get("解除外貌", []):
+                    if item in after.get("外貌", []):
+                        fail(errors, f"{label}: 人物 {name} 仍保留解除外貌 {item!r}")
+            if "新增个性" in change:
+                for item in change["新增个性"]:
+                    if item not in after.get("个性", []):
+                        fail(errors, f"{label}: 人物 {name} 缺少新增个性 {item!r}")
+            if "完成任务" in change or "新增小任务" in change:
+                tasks = after.get("任务", {})
+                for goal in change.get("完成任务", []):
+                    task = task_by_goal(tasks, goal)
+                    if task is None or task.get("状态") != "已完成":
+                        fail(errors, f"{label}: 人物 {name} 完成任务未在结果状态中完成: {goal}")
+                for new_task in change.get("新增小任务", []):
+                    task = task_by_goal(tasks, new_task["目标"])
+                    if task is None or task.get("状态") != new_task.get("状态", "未完成"):
+                        fail(errors, f"{label}: 人物 {name} 新增任务未在结果状态中匹配: {new_task['目标']}")
+        elif "物品" in state and name in state["物品"]:
+            after = state["物品"][name]
+            if "位置" in change and after.get("位置") != change["位置"]:
+                fail(errors, f"{label}: 物品 {name} 的位置结果不匹配")
+            if "新增外貌" in change or "解除外貌" in change:
+                for item in change.get("新增外貌", []):
+                    if item not in after.get("外貌", []):
+                        fail(errors, f"{label}: 物品 {name} 缺少新增外貌 {item!r}")
+                for item in change.get("解除外貌", []):
+                    if item in after.get("外貌", []):
+                        fail(errors, f"{label}: 物品 {name} 仍保留解除外貌 {item!r}")
+        elif "地点" in state and name in state["地点"]:
+            after = state["地点"][name]
+            for item in change.get("新增外貌", []):
+                if item not in after.get("外貌", []):
+                    fail(errors, f"{label}: 地点 {name} 缺少新增外貌 {item!r}")
+            for item in change.get("解除外貌", []):
+                if item in after.get("外貌", []):
+                    fail(errors, f"{label}: 地点 {name} 仍保留解除外貌 {item!r}")
+        else:
+            fail(errors, f"{label}: 变化目标 {name} 不在本回合状态中")
+    if record.get("variant") == "sanity-literal":
+        text = record["targetText"]
+        if "43" not in text or "35" not in text:
+            fail(errors, f"{label}: sanity-literal target must contain both 43 and 35")
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--rows", default=str(pathlib.Path(__file__).with_name("rows.jsonl")))
@@ -58,11 +131,16 @@ def main() -> int:
     source_root = pathlib.Path(args.source_root)
     source_rows_path = source_root / "rows-xy.jsonl"
     splits_path = source_root / "splits" / "v1.json"
+    world_path = WORKTREE_ROOT / AUTHORED_FILE
 
-    for path in (rows_path, source_rows_path, splits_path):
+    for path in (rows_path, source_rows_path, splits_path, world_path):
         if not path.exists():
             print(f"missing required file: {path}", file=sys.stderr)
             return 2
+    world_sha = hashlib.sha256(world_path.read_bytes()).hexdigest()
+    if world_sha != AUTHORED_WORLD_SHA256:
+        print(f"authored world SHA mismatch: {world_sha}", file=sys.stderr)
+        return 2
 
     raw = rows_path.read_text(encoding="utf-8")
     if "\r" in raw:
@@ -84,6 +162,8 @@ def main() -> int:
     family_counts: Counter[str] = Counter()
     category_counts: Counter[str] = Counter()
     lengths: list[int] = []
+    authored_count = 0
+    frozen_count = 0
 
     required_fields = {
         "id",
@@ -125,36 +205,62 @@ def main() -> int:
         if is_derived:
             derived_sources.add(source_id)
 
-        if source_id not in source_rows:
-            fail(errors, f"{label}: sourceRowId {source_id} not in frozen rows")
-            continue
-        if split_of.get(source_id) != "train" or record["sourceSplit"] != "train":
-            fail(errors, f"{label}: split must be train, got {split_of.get(source_id)!r}/{record['sourceSplit']!r}")
-
         evidence = record["sourceEvidence"]
-        if evidence.get("rowId") != source_id:
-            fail(errors, f"{label}: sourceEvidence.rowId != sourceRowId")
-        if evidence.get("split") != "train":
-            fail(errors, f"{label}: sourceEvidence.split must be train")
-        if evidence.get("sourceCommit") != SOURCE_COMMIT:
-            fail(errors, f"{label}: sourceEvidence.sourceCommit mismatch")
-
-        source_input = source_rows[source_id]["x"]
-        derived = evidence.get("derived") is True
-        if derived:
-            if evidence.get("baseRowId") != source_id:
-                fail(errors, f"{label}: derived row baseRowId must equal sourceRowId")
-            if not evidence.get("derivation"):
-                fail(errors, f"{label}: derived row needs a derivation note")
-            expected_input = copy.deepcopy(source_input)
-            expected_input["本回合变化"]["时间推进"] = record["input"]["本回合变化"]["时间推进"]
-            if record["input"] != expected_input:
-                fail(errors, f"{label}: derived input must differ from the base only in time advance")
+        is_authored = source_id.startswith("authored:")
+        if is_authored:
+            authored_count += 1
+            if not source_id.startswith("authored:dragon-raja-free-day#"):
+                fail(errors, f"{label}: authored sourceRowId has an unexpected namespace")
+            if record["sourceSplit"] != "train":
+                fail(errors, f"{label}: authored split must be train")
+            if evidence.get("authored") is not True:
+                fail(errors, f"{label}: authored evidence needs authored=true")
+            if evidence.get("dataset") != AUTHORED_DATASET:
+                fail(errors, f"{label}: authored dataset mismatch")
+            if evidence.get("sourceFile") != AUTHORED_FILE:
+                fail(errors, f"{label}: authored sourceFile mismatch")
+            if evidence.get("sourceCommit") != AUTHORED_COMMIT:
+                fail(errors, f"{label}: authored sourceCommit mismatch")
+            if evidence.get("worldSha256") != AUTHORED_WORLD_SHA256:
+                fail(errors, f"{label}: authored worldSha256 mismatch")
+            if not evidence.get("premise"):
+                fail(errors, f"{label}: authored evidence needs a premise")
+            if evidence.get("split") != "train":
+                fail(errors, f"{label}: authored sourceEvidence.split must be train")
             expected_hash = hashlib.sha256(canonical(record["input"]).encode("utf-8")).hexdigest()
+            if "variant" in record and record["variant"] not in ("sanity-literal",):
+                fail(errors, f"{label}: unknown authored variant {record['variant']!r}")
+            check_authored_state(errors, label, record)
         else:
-            if record["input"] != source_input:
-                fail(errors, f"{label}: input differs from frozen x")
-            expected_hash = hashlib.sha256(canonical(source_input).encode("utf-8")).hexdigest()
+            frozen_count += 1
+            if source_id not in source_rows:
+                fail(errors, f"{label}: sourceRowId {source_id} not in frozen rows")
+                continue
+            if split_of.get(source_id) != "train" or record["sourceSplit"] != "train":
+                fail(errors, f"{label}: split must be train, got {split_of.get(source_id)!r}/{record['sourceSplit']!r}")
+            if evidence.get("rowId") != source_id:
+                fail(errors, f"{label}: sourceEvidence.rowId != sourceRowId")
+            if evidence.get("split") != "train":
+                fail(errors, f"{label}: sourceEvidence.split must be train")
+            if evidence.get("sourceCommit") != SOURCE_COMMIT:
+                fail(errors, f"{label}: sourceEvidence.sourceCommit mismatch")
+
+            source_input = source_rows[source_id]["x"]
+            derived = evidence.get("derived") is True
+            if derived:
+                if evidence.get("baseRowId") != source_id:
+                    fail(errors, f"{label}: derived row baseRowId must equal sourceRowId")
+                if not evidence.get("derivation"):
+                    fail(errors, f"{label}: derived row needs a derivation note")
+                expected_input = copy.deepcopy(source_input)
+                expected_input["本回合变化"]["时间推进"] = record["input"]["本回合变化"]["时间推进"]
+                if record["input"] != expected_input:
+                    fail(errors, f"{label}: derived input must differ from the base only in time advance")
+                expected_hash = hashlib.sha256(canonical(record["input"]).encode("utf-8")).hexdigest()
+            else:
+                if record["input"] != source_input:
+                    fail(errors, f"{label}: input differs from frozen x")
+                expected_hash = hashlib.sha256(canonical(source_input).encode("utf-8")).hexdigest()
         if record["sourceInputSha256"] != expected_hash:
             fail(errors, f"{label}: sourceInputSha256 mismatch")
 
@@ -199,6 +305,7 @@ def main() -> int:
                 fail(errors, f"{label}: styleReferenceId {ref} not in frozen rows")
 
     print(f"rows: {len(records)}")
+    print(f"frozen rows: {frozen_count}; authored rows: {authored_count}")
     derived_count = sum(1 for r in records if r.get("sourceEvidence", {}).get("derived") is True)
     print(f"derived rows: {derived_count}")
     print(f"length: min={min(lengths) if lengths else 0} max={max(lengths) if lengths else 0}")
@@ -209,7 +316,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print("OK: structure, frozen input, train-only split and length bounds pass")
+    print("OK: structure, frozen/authored provenance, train-only split and length bounds pass")
     return 0
 
 

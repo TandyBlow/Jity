@@ -1,13 +1,14 @@
 {
-  "batch": 1,
-  "createdAt": "2026-11-10T06:00:00Z",
-  "status": "first-batch-ready",
+  "batch": 2,
+  "createdAt": "2026-11-10T06:30:00Z",
+  "status": "second-batch-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 22,
+  "rowCount": 31,
   "source": {
-    "dataset": "narration-dataset-v1",
-    "sourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
-    "sourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+    "frozenDataset": "narration-dataset-v1",
+    "frozenSourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
+    "frozenSourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+    "frozenRows": 22,
     "splitsUsed": [
       "train"
     ],
@@ -16,6 +17,14 @@
     "derivedRows": [
       "short-0008-two-minute-no-change"
     ]
+  },
+  "authoredSource": {
+    "dataset": "dragon-raja-free-day",
+    "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
+    "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
+    "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+    "authoredRows": 9,
+    "premise": "initial snapshot; each row is one authored turn, not a browser session"
   },
   "consumableFields": [
     "input",
@@ -33,9 +42,11 @@
     "forbiddenInventions",
     "styleReferenceIds",
     "notes",
-    "reviewState"
+    "reviewState",
+    "variant"
   ],
   "worldFamilies": {
+    "dragon-raja-free-day": 9,
     "library-basement": 4,
     "library-courtyard": 2,
     "library-lending": 2,
@@ -44,22 +55,22 @@
     "library-utilities": 3
   },
   "categories": {
-    "appearance_change": 2,
-    "item_change": 4,
+    "appearance_change": 4,
+    "item_change": 5,
     "location_change": 6,
-    "movement": 3,
-    "no_change": 2,
-    "personality_change": 1,
-    "sanity_change": 6,
+    "movement": 5,
+    "no_change": 3,
+    "personality_change": 2,
+    "sanity_change": 8,
     "secret_reveal": 1,
-    "separation": 3,
-    "task_added": 2,
-    "task_complete": 4
+    "separation": 5,
+    "task_added": 3,
+    "task_complete": 5
   },
   "targetLength": {
-    "min": 62,
+    "min": 60,
     "max": 106,
-    "mean": 86.0
+    "mean": 79.9
   },
   "rows": [
     {
@@ -70,6 +81,7 @@
         "no_change"
       ],
       "targetChars": 87,
+      "authored": false,
       "derived": false
     },
     {
@@ -81,6 +93,7 @@
         "task_complete"
       ],
       "targetChars": 84,
+      "authored": false,
       "derived": false
     },
     {
@@ -92,6 +105,7 @@
         "secret_reveal"
       ],
       "targetChars": 103,
+      "authored": false,
       "derived": false
     },
     {
@@ -103,6 +117,7 @@
         "item_change"
       ],
       "targetChars": 80,
+      "authored": false,
       "derived": false
     },
     {
@@ -114,6 +129,7 @@
         "sanity_change"
       ],
       "targetChars": 80,
+      "authored": false,
       "derived": false
     },
     {
@@ -124,6 +140,7 @@
         "sanity_change"
       ],
       "targetChars": 89,
+      "authored": false,
       "derived": false
     },
     {
@@ -135,6 +152,7 @@
         "location_change"
       ],
       "targetChars": 98,
+      "authored": false,
       "derived": false
     },
     {
@@ -146,6 +164,7 @@
         "separation"
       ],
       "targetChars": 78,
+      "authored": false,
       "derived": false
     },
     {
@@ -156,6 +175,7 @@
         "sanity_change"
       ],
       "targetChars": 81,
+      "authored": false,
       "derived": false
     },
     {
@@ -166,6 +186,7 @@
         "item_change"
       ],
       "targetChars": 100,
+      "authored": false,
       "derived": false
     },
     {
@@ -177,6 +198,7 @@
         "sanity_change"
       ],
       "targetChars": 88,
+      "authored": false,
       "derived": false
     },
     {
@@ -187,6 +209,7 @@
         "task_complete"
       ],
       "targetChars": 104,
+      "authored": false,
       "derived": false
     },
     {
@@ -199,6 +222,7 @@
         "sanity_change"
       ],
       "targetChars": 98,
+      "authored": false,
       "derived": false
     },
     {
@@ -210,6 +234,7 @@
         "task_added"
       ],
       "targetChars": 106,
+      "authored": false,
       "derived": false
     },
     {
@@ -220,6 +245,7 @@
         "sanity_change"
       ],
       "targetChars": 89,
+      "authored": false,
       "derived": false
     },
     {
@@ -230,6 +256,7 @@
         "location_change"
       ],
       "targetChars": 96,
+      "authored": false,
       "derived": false
     },
     {
@@ -242,6 +269,7 @@
         "task_added"
       ],
       "targetChars": 102,
+      "authored": false,
       "derived": false
     },
     {
@@ -252,6 +280,7 @@
         "location_change"
       ],
       "targetChars": 64,
+      "authored": false,
       "derived": false
     },
     {
@@ -262,6 +291,7 @@
         "location_change"
       ],
       "targetChars": 75,
+      "authored": false,
       "derived": false
     },
     {
@@ -272,6 +302,7 @@
         "location_change"
       ],
       "targetChars": 62,
+      "authored": false,
       "derived": false
     },
     {
@@ -282,6 +313,7 @@
         "appearance_change"
       ],
       "targetChars": 63,
+      "authored": false,
       "derived": false
     },
     {
@@ -292,7 +324,112 @@
         "no_change"
       ],
       "targetChars": 66,
+      "authored": false,
       "derived": true
+    },
+    {
+      "id": "dr-0001-no-change-lane",
+      "sourceRowId": "authored:dragon-raja-free-day#no-change-lane",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "no_change"
+      ],
+      "targetChars": 62,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0002-move-nono-to-shed",
+      "sourceRowId": "authored:dragon-raja-free-day#move-nono-to-shed",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "targetChars": 65,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0003-task-goggles",
+      "sourceRowId": "authored:dragon-raja-free-day#task-goggles",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "task_complete",
+        "item_change",
+        "appearance_change"
+      ],
+      "targetChars": 60,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0004-appearance-fingel",
+      "sourceRowId": "authored:dragon-raja-free-day#appearance-fingel",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "appearance_change"
+      ],
+      "targetChars": 69,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0005-personality-nono",
+      "sourceRowId": "authored:dragon-raja-free-day#personality-nono",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "personality_change"
+      ],
+      "targetChars": 64,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0006-sanity-lu",
+      "sourceRowId": "authored:dragon-raja-free-day#sanity-lu",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "sanity_change"
+      ],
+      "targetChars": 64,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0007-separation-lu-shed",
+      "sourceRowId": "authored:dragon-raja-free-day#separation-lu-shed",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "targetChars": 71,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0008-task-added-lu",
+      "sourceRowId": "authored:dragon-raja-free-day#task-added-lu",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "task_added"
+      ],
+      "targetChars": 66,
+      "authored": true,
+      "derived": false
+    },
+    {
+      "id": "dr-0009-sanity-literal",
+      "sourceRowId": "authored:dragon-raja-free-day#sanity-literal",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "sanity_change"
+      ],
+      "targetChars": 63,
+      "authored": true,
+      "derived": false,
+      "variant": "sanity-literal"
     }
   ]
 }
