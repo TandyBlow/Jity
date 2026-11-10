@@ -173,14 +173,16 @@ export class ContinuationRunner {
         timeoutMs: 60_000,
         maxPromptChars: 8000,
         jsonSchema: CANDIDATES_SCHEMA,
-        validate: (value) => readCandidates(value, workingState, this.policy.maxCandidates),
+        validate: (value) => { readCandidates(value, workingState, this.policy.maxCandidates); },
       });
       calls = proposal.calls;
-      const candidates = readCandidates(proposal.value, workingState, this.policy.maxCandidates);
+      const read = readCandidates(proposal.value, workingState, this.policy.maxCandidates);
+      const { candidates } = read;
       if (!candidates.length) {
         return this.handback(key, calls, started, {
-          reason: 'model_no_candidate',
+          reason: read.rejected.length ? 'no_eligible_candidate' : 'model_no_candidate',
           candidates: [],
+          rejectedCandidates: read.rejected,
           accepted: [],
           proposalPromptChars: proposalPrompt.length,
         });
@@ -220,6 +222,7 @@ export class ContinuationRunner {
           candidates,
           accepted,
           judgments,
+          rejectedCandidates: read.rejected,
           proposalPromptChars: proposalPrompt.length,
           judgmentPromptChars: judgmentPrompt.length,
         });
@@ -242,6 +245,7 @@ export class ContinuationRunner {
         candidates,
         accepted,
         judgments,
+        rejectedCandidates: read.rejected,
         nextRoundId,
         proposalPromptChars: proposalPrompt.length,
         judgmentPromptChars: judgmentPrompt.length,
@@ -391,23 +395,39 @@ function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): 
     '根据主角、当前世界和本轮状态变化，列出可能紧接着发生的、与主角相关的后续行动。',
     '规则：',
     '- 只列大概率真的会发生、并且和主角当前处境或目标直接相关的行动。',
-    '- 可以是主角自己的下一步，也可以是同场景人物的直接反应；普通闲聊、等待、场景切换、需要玩家决定的事都不要列。',
+    '- 只列主角同场景的其他人物；主角自己的下一步由玩家决定，不能列为自动推进。',
+    '- 普通闲聊、等待、场景切换、需要玩家决定的事都不要列。',
     '- 不要重复玩家输入，不要把候选当成已经发生；不要新增人物、地点、物品或往事。',
     '- 没有值得自动推进的行动就返回空数组。',
     `主角：${describeCharacter(state, protagonist)}`,
     `同地点人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
     `本轮状态变化：\n${changes}`,
     `当前时间：${state.time.dateTime}`,
-    `输出 {"candidates":[{"characterId":"人物id","text":"一句话行动"}]}，最多 ${maxCandidates} 条。`,
+    `输出 {"candidates":[{"characterId":"人物id","text":"一句话行动"}]}，最多 ${maxCandidates} 条；没有合适的人就返回空数组。`,
   ].join('\n');
 }
 
-function readCandidates(value: unknown, state: WorldState, maxCandidates: number): Candidate[] {
+interface CandidateRead {
+  candidates: Candidate[];
+  rejected: { characterId: string; text: string; reason: string }[];
+}
+
+/** Automatic rounds may only carry characters the action lane will actually
+ * judge. The protagonist's next action belongs to the player (the action lane
+ * refuses to let a model write it, and a consumed player command is never
+ * replayed), and a character outside the protagonist's room is skipped by that
+ * lane. Proposing either would create an empty automatic round. Such
+ * candidates are dropped with a recorded reason instead of silently becoming a
+ * "no follow-up" handback. */
+function readCandidates(value: unknown, state: WorldState, maxCandidates: number): CandidateRead {
   const rows = asRecord(value).candidates;
   if (!Array.isArray(rows)) throw new Error('candidates must be an array');
   if (rows.length > maxCandidates) throw new Error(`candidate_budget_exceeded:${rows.length}>${maxCandidates}`);
   const seen = new Set<string>();
   const candidates: Candidate[] = [];
+  const rejected: CandidateRead['rejected'] = [];
+  const protagonistRoom = visibleCharacters(state, state.protagonistId);
+  const inScene = new Set(protagonistRoom);
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('candidate must be an object');
     const characterId = asString(raw.characterId);
@@ -417,9 +437,17 @@ function readCandidates(value: unknown, state: WorldState, maxCandidates: number
     const key = `${characterId}:${normalizeChangeText(text)}`;
     if (seen.has(key)) throw new Error(`duplicate continuation candidate ${characterId}`);
     seen.add(key);
+    if (characterId === state.protagonistId) {
+      rejected.push({ characterId, text, reason: 'protagonist_action_belongs_to_player' });
+      continue;
+    }
+    if (!inScene.has(characterId)) {
+      rejected.push({ characterId, text, reason: 'character_outside_protagonist_scene' });
+      continue;
+    }
     candidates.push({ characterId, text });
   }
-  return candidates;
+  return { candidates, rejected };
 }
 
 function buildJudgmentPrompt(input: ContinuationInput, candidates: Candidate[]): string {

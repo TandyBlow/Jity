@@ -58,11 +58,24 @@ function scriptedEngine(brain: Brain): InferenceEngine {
     async dispose() {},
     async complete(prompt: string): Promise<string> {
       if (prompt.includes('共同结算器')) {
+        // One judgment + one fact for every frozen member of this group. The
+        // member list comes from the prompt, so the same fixture serves a
+        // player round (protagonist) and an automatic round (the NPC).
+        const members = [...prompt.matchAll(/（id=([a-z_]+)）行动/gu)].map((match) => match[1]);
+        const unique = [...new Set(members)];
         return JSON.stringify({
-          judgments: [
-            { memberId: 'person_c', label: brain.taskAchieved ? 'achieved' : 'partial', reason: '周宁向盒盖伸了手。', effects: [] },
-          ],
-          facts: [{ text: brain.taskAchieved ? '周宁把盒盖打开了。' : '周宁向盒盖伸了手，但没有打开。', memberIds: ['person_c'] }],
+          judgments: unique.map((memberId) => ({
+            memberId,
+            label: memberId === 'person_c' && brain.taskAchieved ? 'achieved' : 'partial',
+            reason: '这一组行动有明确结果。',
+            effects: [],
+          })),
+          facts: unique.map((memberId) => ({
+            text: memberId === 'person_c'
+              ? (brain.taskAchieved ? '周宁把盒盖打开了。' : '周宁向盒盖伸了手，但没有打开。')
+              : '林川朝门口走了一步，又停下来听。',
+            memberIds: [memberId],
+          })),
         });
       }
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });
@@ -127,8 +140,8 @@ function actionPort(state: () => InitialTemplate, brain: Brain): WorldModelPort 
         if (data.actor === data.workingState.protagonistId && data.advance?.intentStatus === 'pending' && data.advance.inputText) {
           return { kind: 'act', text: data.advance.inputText };
         }
-        return data.actor === data.workingState.protagonistId
-          ? { kind: 'act', text: '周宁把盒盖掀开一条缝。' }
+        return data.actor === 'person_a'
+          ? { kind: 'act', text: '林川朝盒盖那边走了一步。' }
           : { kind: 'skip' };
       }
       if (task === 'targets') return { targets: [] };
@@ -210,25 +223,33 @@ describe('turn execution through the real kernel', () => {
     // The player submission account covers the settlement work of the turn:
     // one joint results task, one merged six-stage updates task (six model
     // calls inside it) and one continuation assessment.
-    expect(submission?.resultsCalls).toBe(1);
+    // One results call and one merged six-stage updates task per frozen group;
+    // this round has two frozen groups (the protagonist and the off-screen
+    // owner), so both tasks run once per group.
+    expect(submission?.resultsCalls).toBeGreaterThanOrEqual(1);
     const updates = submission?.calls.filter((call: PortCallRecord) => call.task === 'updates') ?? [];
-    expect(updates).toHaveLength(1);
-    expect(updates[0].calls).toBeGreaterThanOrEqual(6);
+    expect(updates).toHaveLength(submission?.resultsCalls ?? 0);
+    // Every group runs the fixed stage order; stages with no trigger are
+    // skipped by design (personality needs a new achievement, sanity needs a
+    // personality change), so the achieved group's list is the full six.
+    for (const task of updates) expect(task.stages?.slice(0, 4)).toEqual(['position', 'appearance', 'tasks', 'subtasks']);
+    const full = updates.find((task) => task.stages?.length === 6);
+    expect(full?.stages).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
     expect(submission?.continuationCalls).toBe(1);
   });
 
   it('continues into an automatic round from model candidates without re-reading the player text', async () => {
     const brain = brainState({
-      placement: { person_c: 'corridor', person_a: 'hall' },
+      placement: { person_c: 'corridor', person_a: 'corridor' },
       taskAchieved: true,
       continuations: [
-        { candidates: [{ characterId: 'person_c', text: '周宁把盒盖完全掀开。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川朝盒盖那边走了一步。' }] },
         { candidates: [] },
       ],
     });
     const initial = initialState(brain);
     const { status, transport, submission } = await runPlayerTurn(initial, brain, '我打开盒盖。');
-    expect(status.kind).not.toBe('error');
+    expect(status).not.toMatchObject({ kind: 'error' });
     const snapshot = transport.snapshot();
     // Two points: the player's round and the model-proposed follow-up round.
     expect(snapshot.version).toBe(2);
@@ -253,7 +274,7 @@ describe('turn execution through the real kernel', () => {
     // new id, which references a record the working state already has.
     let turn = 0;
     const brain = brainState({
-      placement: { person_c: 'corridor', person_a: 'hall' },
+      placement: { person_c: 'corridor', person_a: 'corridor' },
       taskAchieved: false,
       continuations: [{ candidates: [] }, { candidates: [] }],
       appearanceOps: (prompt) => {
@@ -293,11 +314,11 @@ describe('turn execution through the real kernel', () => {
 
   it('surfaces a policy stop as a visible failure instead of a fake model handback', async () => {
     const brain = brainState({
-      placement: { person_c: 'corridor', person_a: 'hall' },
+      placement: { person_c: 'corridor', person_a: 'corridor' },
       taskAchieved: false,
       continuations: [
-        { candidates: [{ characterId: 'person_c', text: '周宁把盒盖完全掀开。' }] },
-        { candidates: [{ characterId: 'person_c', text: '周宁把盒盖完全掀开。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川朝盒盖那边走了一步。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川朝盒盖那边走了一步。' }] },
       ],
     });
     const initial = initialState(brain);
