@@ -9,7 +9,7 @@
 
 - 已实现可执行策略 `generateCommittedNarration(...)`，接入现有
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
-- CPU 小测试 50 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
+- CPU 小测试 57 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
 - 真实浏览器模型（Edge headless + wllama）：三个叙事检查点各 3 个代表性点，共 18 次真实生成全部被拒（legacy v2 0/3，instruct v1 0/3，1.5B v2 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
@@ -123,6 +123,39 @@
 
 这样不会因为“没逐字写出精神值/没复述个性原句”把忠实的短场景误拒；但软提示不是
 质量通过，最终仍需用户读评。
+
+### 3.7 对 01 短场景语料的兼容检查（70/71）
+
+新增手工测试 `corpus-compat.test.ts`（默认跳过）：
+
+```bash
+cd frontend
+NARRATION_CORPUS=D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/corpus-short/rows.jsonl NARRATION_CORPUS_REPORT=D:/others/Jity/.local/parallel-local-game/results/quality/corpus-compat-02.json npx vitest run src/lib/world-engine/local/narration-generation/corpus-compat.test.ts
+```
+
+它把 01 的 71 条手工短场景的目标正文送进同一套 `verifyNarration`，用每行的
+`requiredFacts` 组事实包。当前 70/71 通过，唯一失败是 **真实语料错误**：
+`short2-0034-carved-line-worn` 的上回合状态把方既白放在天台楼梯间，目标却写
+「方既白还在天台」。已写入 `requests-02.json` 的 `req-02-06`。
+
+为了不把人类金标准误杀，本轮修了以下**表达形式**误判（不放松事实内容）：
+
+- 时间：上游把「二十分钟」里的「十分钟」、把「九八年」的年份当错误时长；
+  当**要求的**时长本身已写出时，不再保留 `wrong_time`。真正写错时长仍由
+  `time_missing`/`wrong_time` 拒绝。
+- 静态 `at` 事实：不再送进对齐器当断言，改由 `knownPositions` 授权站位。否则
+  句子开头的「旧刊堆放区」会被当成 actor，产生假 actor_swap / 假移动。
+- 分号：对齐前把 `；` 归一成句号，两个人物各占一句时不再互相借动作。
+- 多人物/代词：任务目标或个性原文逐字出现时，允许代词主语并返回软提示；
+  多人物并列主语（`A、B和C都办完了「…」`）不再报 actor_swap。
+- 地点前缀：`天台` 是 `天台楼梯间` 的前缀；移动事实到后者时，不再报「移动到
+  天台无事实」。
+- 物品：`打开/开启/拿出/取出/…` 仍是硬事件；`合上/拿起/放下/推开/翻开` 等
+  具体小动作不再当凭空事件（用户要求允许细微动作）。
+- 跨人物数字：同一句里 A 的精神值数字属于 B 时，不再把 B 的数字算到 A 头上。
+- 理智/个性：见 §3.6，反应式表达返回软提示。
+
+这些修复都有单元测试（57 项）；语料兼容测试本身是手工入口，不进入默认 CI。
 
 ### 4. 有界重试
 
@@ -330,7 +363,7 @@ npx tsc -p tsconfig.world-contract.json
 npx eslint src/lib/world-engine/local/narration-generation
 ```
 
-50 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
+57 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
 整段拒绝返回最佳稿和全部问题；非视角心理泄露；POV 心理合法；隐藏知识；未许可实体；
 句内循环；跨回合回声；提前收尾；截断后提高 token 预算；elapsed 时间必述；玩家
 动作许可事件；复述指令；revise/regenerate 两种修复；外取消（无输出/带部分流式）；

@@ -115,13 +115,29 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   const chars = charsOf(text);
   const sentences = sentencesOf(text);
   const duration = ledger.time?.duration ?? null;
+  // Static `at` facts are scene context, not assertions: the upstream actor
+  // attribution treats a leading location name as the actor and reports a
+  // false actor swap, and its at-fact movement guard reads a location's
+  // weather clause as the character moving. Positions still license standing
+  // claims through knownPositions.
+  const atFacts = input.committed.facts.filter((fact) => fact.kind === 'at');
+  const alignmentPacket = { ...input.committed, facts: input.committed.facts.filter((fact) => fact.kind !== 'at') };
+  const alignmentPositions = [
+    ...(policy.knownPositions ?? []),
+    ...atFacts.map((fact) => ({ name: fact.name, location: fact.location })),
+  ];
+  // The upstream grader treats only 。！？ as sentence boundaries. A semicolon
+  // is a clause boundary in the short-scene corpus (two actors, two commits);
+  // normalizing it prevents the second clause's name from being read as an
+  // actor swap in the first. Display/evidence keep the original text.
+  const alignmentText = text.replace(/[；;]/gu, '。');
   const alignment = chars > 0
-    ? alignNarration(input.committed, text, {
+    ? alignNarration(alignmentPacket, alignmentText, {
       time: duration,
       previousText: priorText,
       roster: policy.roster ?? ledger.actorNames,
       locations: policy.locations,
-      knownPositions: policy.knownPositions,
+      knownPositions: alignmentPositions,
       // Time coverage is reported by `alignment.timeExpressed` and judged
       // below with the ledger's explicit rule; `alignment.ok` is not used.
       requireTime: false,
@@ -138,6 +154,47 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // event/state rules fire.
   const recheckSentences: string[] = [];
   for (const violation of alignment?.violations ?? []) {
+    // The base grader's duration scanner finds 10 inside 二十 and finds a
+    // year in 九八年; when the required elapsed duration itself is present,
+    // those are not contradictions. A missing/wrong duration still fails via
+    // time_missing below.
+    if (violation.kind === 'wrong_time' && alignment?.timeExpressed === true) continue;
+    // 天台 is a prefix of 天台楼梯间. The upstream's location-proximity check
+    // reports the shorter name even when the committed move ends at the longer
+    // one; the moved fact licenses that sentence.
+    if (violation.kind === 'movement_without_fact') {
+      const claim = /^claims movement involving (.+)$/u.exec(violation.detail)?.[1];
+      const moved = claim ? input.committed.facts.find((fact) => fact.kind === 'moved'
+        && (fact.to === claim || fact.to.startsWith(claim) || fact.from === claim)
+        && violation.sentence.includes(fact.name) && violation.sentence.includes(fact.to)) : undefined;
+      if (moved) continue;
+    }
+    // A sentence can carry two characters: «A办完了…；B的精神值从41升到46».
+    // The upstream sanity check sees A + 41 and charges A with the wrong
+    // number. If another sanity fact in the same sentence licenses 41, the
+    // number belongs to that character.
+    if (violation.kind === 'wrong_number') {
+      const match = /^(\S+): ([0-9]+) not in/u.exec(violation.detail);
+      if (match) {
+        const number = Number(match[2]);
+        const other = input.committed.facts.find((fact) => (fact.kind === 'sanity' || fact.kind === 'sanity_changed')
+          && fact.name !== match[1] && violation.sentence.includes(fact.name)
+          && (fact.kind === 'sanity' ? fact.value === number : [fact.from, fact.to].includes(number)));
+        if (other) continue;
+      }
+    }
+    // A committed personality sentence can contain another character's name
+    // («答应陪周含章...»). The name inside the frozen text is not actor swap.
+    if (violation.kind === 'actor_swap') {
+      const id = /payload of (\S+) attributed to/u.exec(violation.detail)?.[1];
+      const fact = id ? input.committed.facts.find((entry) => entry.id === id) : undefined;
+      if (fact?.kind === 'personality_changed' && text.includes(fact.text)) continue;
+      if (fact?.kind === 'task_achieved') {
+        const beforeCompletion = violation.sentence.split(/(?:办完|完成|做完|搞定|达成|结束|办妥|了结)/u)[0] ?? '';
+        const jointSubject = /(?:、|和|与|跟)/u.test(beforeCompletion) && beforeCompletion.includes(fact.name);
+        if (jointSubject && violation.sentence.includes(fact.goal)) continue;
+      }
+    }
     // The base grader has no "player action licensed this verb" option. A
     // committed action like 推开 the door licenses exactly that verb for this
     // point; the detail carries the verb, so no second verb list is created.
@@ -204,6 +261,35 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   const expressed = new Set((alignment?.coverage ?? []).filter((entry) => entry.expressed).map((entry) => entry.id));
   for (const fact of ledger.mandatory) {
     if (expressed.has(fact.id)) continue;
+    // A pronoun / comma-spanning move («A离开天台，走进天台楼梯间») can defeat
+    // the sentence-scoped arrival regex. Both endpoints and the actor name in
+    // the text keep the content; direction_reversed still rejects a reversed
+    // move, and this is a soft actor-binding review, not a keyword pass.
+    if (fact.kind === 'moved' && text.includes(fact.name) && text.includes(fact.from) && text.includes(fact.to)
+      && /(从|离开|自|走到|走向|走进|来到|进|到|去)/u.test(text)) {
+      expressed.add(fact.id);
+      issues.push(soft('unverified_sentence', attempt,
+        `movement endpoints quoted; actor binding needs review`, undefined));
+      continue;
+    }
+    // A pronoun subject («她...») can hide the actor from sentence-scoped
+    // coverage. The frozen goal/personality text itself is the fact content:
+    // when it appears verbatim and the actor's name is in the scene, keep the
+    // content but flag the actor binding for review. Moved/task time still
+    // need the alignment; this is not a keyword-only pass.
+    if (fact.kind === 'task_achieved' && text.includes(fact.goal) && text.includes(fact.name)
+      && /(办完|完成|做完|搞定|达成|结束|办妥|了结)/u.test(text)) {
+      expressed.add(fact.id);
+      issues.push(soft('unverified_sentence', attempt,
+        `task goal quoted; actor binding needs review`, undefined));
+      continue;
+    }
+    if (fact.kind === 'personality_changed' && text.includes(fact.text) && text.includes(fact.name)) {
+      expressed.add(fact.id);
+      issues.push(soft('unverified_sentence', attempt,
+        `personality text quoted; actor binding needs review`, undefined));
+      continue;
+    }
     const natural = naturalFactExpression(fact, sentences);
     if (natural?.direction === 'wrong') {
       issues.push(hard('fact_wrong_number', attempt,
@@ -292,13 +378,21 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     ...(policy.visibleEntities ?? []),
   ])].filter((name) => name.length >= 2);
   if (itemNames.length) {
-    const ITEM_STATE = /(打开|开启|掀开|揭开|翻开|合上|盖上|锁上|拿出|取出|抽出|放进|塞进|递给|接过|放下|拿起|端起|推到|拉到|摔碎|撕开|点燃|熄灭)/u;
+    // Plot-changing item verbs. Micro-actions on a visible prop (合上/拿起/
+    // 放下/推到/翻开) are allowed: the corpus uses them to make a scene
+    // concrete. The upstream added_event check still catches an unlicensed
+    // 递给; this local guard is for opening/consuming/creating an item.
+    const ITEM_STATE = /(打开|开启|掀开|揭开|锁上|拿出|取出|抽出|放进|塞进|摔碎|撕开|点燃|熄灭|吃掉|喝掉)/u;
+    const CLAUSE = CLAUSE_SPLIT;
     for (const sentence of sentences) {
-      const verb = ITEM_STATE.exec(sentence)?.[1];
-      if (!verb || ledger.allowedEvents.includes(verb)) continue;
-      const item = itemNames.find((name) => sentence.includes(name));
-      if (item) {
-        issues.push(hard('fact_event_added', attempt, `item ${item} changes state (${verb}) with no committed fact`, sentence));
+      for (const clause of sentence.split(CLAUSE)) {
+        const verb = ITEM_STATE.exec(clause)?.[1];
+        if (!verb || ledger.allowedEvents.includes(verb)) continue;
+        const item = itemNames.find((name) => clause.includes(name));
+        if (item) {
+          issues.push(hard('fact_event_added', attempt, `item ${item} changes state (${verb}) with no committed fact`, sentence));
+          break;
+        }
       }
     }
   }
