@@ -575,7 +575,7 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 ### 补丁交接口（2026-11-11）
 
-四个补丁同时放在 06 的公共收件箱 results/product/patches/：
+五个补丁同时放在 06 的公共收件箱 results/product/patches/：
 
 - `07-progress-sync.patch`
 - `07-checkpoint.patch`
