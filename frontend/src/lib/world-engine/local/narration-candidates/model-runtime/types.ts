@@ -96,6 +96,8 @@ export interface CandidatePolicy {
   time?: { amount: number; unit: TimeAdvance['duration']['unit'] } | { duration: { amount: number; unit: TimeAdvance['duration']['unit'] } } | null;
   /** Require the passage to state the elapsed time even without a TimeAdvance. */
   requireTime?: boolean;
+  /** How many paragraphs to ask for; default 3. */
+  paragraphs?: number;
   minChars?: number;
   targetChars?: number;
   temperature?: number;

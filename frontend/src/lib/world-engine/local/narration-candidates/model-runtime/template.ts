@@ -56,11 +56,20 @@ export function renderNarrationUser(
     lines.push(`本点输入资料（只作依据，不要逐项复述，不要照抄字段名）：\n${trim(inputText, 1200)}`);
   }
   const target = policy.targetChars;
+  const paragraphs = policy.paragraphs ?? 3;
   const length = target
-    ? `写 ${Math.max(policy.minChars ?? Math.round(target * 0.6), 1)}～${target} 字，不要提前收尾。`
-    : '写两到四句，约 80～200 字。';
-  lines.push(`要求：${length}直接给正文，不要小标题，不要解释，不要重复已知位置清单。`);
-  lines.push('用具体的动作、声音和细节推进，不要把「本回合已发生」逐条翻译成句子。');
+    ? `写成 ${paragraphs} 段，合计 ${Math.max(policy.minChars ?? Math.round(target * 0.75), 1)}～${target} 字。`
+    : `写成 ${paragraphs} 段，合计约 180～260 字。`;
+  lines.push(`要求：${length}段与段之间空一行，直接给正文，不要小标题，不要解释。`);
+  // Length is the failure the first real run actually showed: a 1.7B model
+  // stops after two sentences because it thinks the scene is over.
+  if (target) lines.push(`写满目标字数再把这一段场景收住，中途不要概括、不要跳跃。`);
+  lines.push('用具体的动作、声音和细节推进，不要把「这一小段时间里发生的事」逐条翻译成句子。');
+  // The same run invented an unlisted box opening. Banning unlisted
+  // interaction is cheaper than one repair call and keeps the fact grader
+  // meaningful.
+  lines.push('不要新增没有列出的动作：不开箱、不拿取、不使用物品、不写新的对话内容；没有列出的移动也不得发生。');
+  lines.push('没有变化的人物可以保持不动，只写视角人物看到、听到、想到的东西。');
   if (policy.instruction) lines.push(`补充要求：${policy.instruction}`);
   if (policy.knownEntities?.length) {
     lines.push(`可用专名：${policy.knownEntities.join('、')}。不得出现名单外的专名。`);

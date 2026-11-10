@@ -55,6 +55,15 @@ const sha256File = (file) => new Promise((done, fail) => {
   const hash = createHash('sha256');
   createReadStream(file).on('data', (chunk) => hash.update(chunk)).on('end', () => done(hash.digest('hex'))).on('error', fail);
 });
+const nvidiaMemory = () => {
+  try {
+    const query = '--query-gpu=memory.used,utilization.gpu';
+    const output = execFileSync('nvidia-smi', [query, '--format=csv,noheader,nounits'], { encoding: 'utf8' }).trim();
+    const raw = output.split(String.fromCharCode(10))[0];
+    const [usedMiB, utilization] = raw.split(',').map((value) => Number(value.trim()));
+    return { usedMiB, utilization };
+  } catch { return null; }
+};
 const git = (...args) => {
   try { return execFileSync('git', ['-c', `safe.directory=${repoRoot.replaceAll('\\', '/')}`, '-C', repoRoot, ...args], { encoding: 'utf8' }).trim(); }
   catch { return ''; }
@@ -90,7 +99,8 @@ const report = {
   config: { set: config.set, entry: config.entry || 'model-runtime reference candidate', exportName: config.exportName,
     targetChars: config.targetChars, minChars: config.minChars, attempts: config.attempts, maxTokens: config.maxTokens,
     temperature: config.temperature, seed: config.seed, threads: config.threads || 'catalog default', context: config.context || 'catalog default', forceCpu: config.forceCpu },
-  device: { cpu: cpus()[0]?.model, logicalCpus: cpus().length, platform: process.platform },
+  device: { cpu: cpus()[0]?.model, logicalCpus: cpus().length, platform: process.platform,
+    gpuAtStart: nvidiaMemory() },
   points: [],
 };
 const save = () => {
@@ -140,6 +150,12 @@ try {
   report.browser = browser.version();
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
+  const consoleLines = [];
+  page.on('console', (message) => {
+    const text = message.text();
+    if (/webgpu|ggml|backend|vulkan|cuda|adapter|offload/i.test(text)) consoleLines.push(`${message.type()}: ${text.slice(0, 400)}`);
+    if (message.type() === 'error') console.error('[console.error]', text.slice(0, 300));
+  });
   await page.goto(`http://127.0.0.1:${report.serverPort}/__candidate-run`);
   const loaded = await page.evaluate(async (config) => {
     if (!crossOriginIsolated) throw new Error('the candidate run requires cross-origin isolation');
@@ -147,6 +163,10 @@ try {
     const { loadCandidateModel, webgpuAvailable } = await import('/src/lib/world-engine/local/narration-candidates/model-runtime/backend.ts');
     const spec = modelSpec(config.model);
     const started = performance.now();
+    const adapter = navigator.gpu ? await navigator.gpu.requestAdapter() : null;
+    const adapterInfo = adapter?.info
+      ? { vendor: adapter.info.vendor, architecture: adapter.info.architecture, device: adapter.info.device, description: adapter.info.description }
+      : null;
     const result = await loadCandidateModel(spec, {
       preferGpu: !config.forceCpu,
       ...(config.threads ? { numThreads: config.threads } : {}),
@@ -154,9 +174,10 @@ try {
     });
     window.__candidateRun = { engine: result.engine, spec };
     return { backend: result.backend, fallback: result.fallback, attempts: result.attempts, loadMs: performance.now() - started,
-      webgpuAvailable: webgpuAvailable(), runtime: result.engine.runtime };
+      webgpuAvailable: webgpuAvailable(), adapterInfo, runtime: result.engine.runtime };
   }, config);
   report.load = loaded;
+  report.adapterInfo = loaded.adapterInfo ?? null;
   save();
   console.log(`[run] ${config.model} backend=${loaded.backend} load=${Math.round(loaded.loadMs)}ms`);
 
@@ -320,6 +341,8 @@ try {
     return results;
   }, config);
   report.points = points;
+  report.consoleBackendLines = [...new Set(consoleLines)].slice(0, 60);
+  report.gpu = { before: report.device.gpuAtStart, after: nvidiaMemory(), note: 'host-side only; the WebGPU adapter name is in adapterInfo/consoleBackendLines' };
   await page.evaluate(async () => {
     await window.__candidateRun.engine.dispose();
     delete window.__candidateRun;
