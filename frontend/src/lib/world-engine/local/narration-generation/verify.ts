@@ -377,7 +377,8 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
         }
         continue;
       }
-      held = sentence.slice(0, 40);
+      const clause = sentence.split(/[，,；;]/u).find((part) => HAND.test(part)) ?? sentence;
+      held = clause.slice(0, 24);
     }
   }
 
