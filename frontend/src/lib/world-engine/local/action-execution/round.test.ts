@@ -151,4 +151,79 @@ describe('real round through the controller with the action-execution port', () 
     expect(commits[0].settlementGroups.map((group) => group.actorIds)).toEqual([['ally'], ['hero']]);
     expect(commits[0].settlementGroups[0].groupId).not.toBe(commits[0].settlementGroups[1].groupId);
   });
+
+  it('admits a later-acting target into the player group, rolls once and settles both with a reaction', async () => {
+    // 老周 is moved into the hall and has sanity 70, so 路明非 (60) acts
+    // before him: the player's action can admit him as a target instead of
+    // finding him "already acted".
+    const initial = template();
+    initial.characters.rival.initialPosition = { containerId: 'hall', slotId: null, relativeTo: null };
+    const order = roundOrder(buildTestWorld());
+    expect(order).toEqual(['servant', 'ally', 'hero', 'rival']);
+
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const captured: Captured[] = [];
+    const engine = {
+      info: { backend: 'fake', modelId: 'fake-joint' },
+      async load() {}, async dispose() {},
+      async complete(prompt: string): Promise<string> {
+        if (prompt.includes('角色行动判断器')) {
+          return JSON.stringify({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
+        }
+        if (prompt.includes('牵连判断器')) {
+          return JSON.stringify({ targets: prompt.includes('抛给老周') ? [{ targetId: 'rival' }] : [] });
+        }
+        if (prompt.includes('反应生成器')) {
+          return '老周侧身接住短刀，掂了掂，退到墙边。';
+        }
+        throw new Error(`unexpected prompt: ${prompt.slice(0, 40)}`);
+      },
+    };
+    const port = createActionExecutionModel(settlementModel(captured), engine, { attempts: 1 });
+
+    const playerText = '我把短刀抛给老周，喊他接住。';
+    const memory = initialMemory('test_joint', 'holder_joint');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: playerText, order };
+    memory.allocPlan = {
+      allocationKey: 'test_joint_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const commits: RequestMap['commit_point'][] = [];
+    const observed = {
+      execute: async (operation: Parameters<typeof transport.execute>[0], request: never, scope: never) => {
+        if (operation === 'commit_point') commits.push(request as unknown as RequestMap['commit_point']);
+        return transport.execute(operation, request, scope);
+      },
+    } as unknown as typeof transport;
+    const driver = new ControllerDriver({ transport: observed, model: port }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+
+    const snapshot = transport.snapshot();
+    // The admitted target's own slot is consumed by the group: no separate
+    // action judgement for 老周.
+    expect(port.evidence.filter((entry) => entry.task === 'action').map((entry) => entry.key)).not.toContain('rival');
+    // One roll, admitted, for the player's target.
+    const roll = Object.values(snapshot.rolls ?? {}).find((entry) => entry.targetId === 'rival');
+    expect(roll).toMatchObject({ sourceId: 'hero', targetId: 'rival', eligible: true, admitted: true });
+    // The reaction is generated for that member.
+    const reaction = port.evidence.find((entry) => entry.task === 'reaction');
+    expect(reaction?.key).toBe('hero');
+    expect(reaction?.value).toBe('老周侧身接住短刀，掂了掂，退到墙边。');
+    // The joint group settles as one unit with both actors.
+    expect(commits).toHaveLength(1);
+    const joint = commits[0].settlementGroups.find((group) => group.actorIds.includes('hero'));
+    expect(joint?.actorIds.sort()).toEqual(['hero', 'rival']);
+    // The results input carries the declared roll for the source member.
+    const heroResults = captured.filter((entry) => entry.task === 'results').at(-1)!.input as {
+      members: { memberId: string; rollRefs: { targetId: string; admitted: boolean }[] }[];
+    };
+    const heroMember = heroResults.members.find((member) => member.memberId === 'hero');
+    expect(heroMember?.rollRefs).toEqual([expect.objectContaining({ targetId: 'rival', admitted: true })]);
+  });
 });
