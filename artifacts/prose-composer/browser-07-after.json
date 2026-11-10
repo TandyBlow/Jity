@@ -1,12 +1,12 @@
 {
   "lane": "07-prose",
   "kind": "browser-candidate-runs",
-  "updatedAt": "2026-11-10T12:35:23.499Z",
+  "updatedAt": "2026-11-10T15:31:54.118Z",
   "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
   "runner": {
     "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
     "driver": "frontend/src/lib/world-engine/local/narration-candidates/browser-driver/index.ts",
-    "command": "C:\\nvm4w\\nodejs\\node.exe D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\scripts\\quality-candidates\\run-browser-candidates.mjs --lane 07-prose --purpose prose alternative, 20-turn fixes; stub engine, no model --candidate 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts --candidate-loader 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel --candidate-model-id 07-prose=none --set free-day --max-runs 3 --model D:/software/Git/models/stub.gguf --model-dir D:/others/Jity/.local/parallel-local-game/.tmp/stub-model --no-lease --hard-timeout-ms 120000 --out D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/artifacts/prose-composer/browser-07-after.json",
+    "command": "C:\\nvm4w\\nodejs\\node.exe D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\scripts\\quality-candidates\\run-browser-candidates.mjs --lane 07-prose --purpose prose fallback, mental-turn weave; stub engine, no model --candidate 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts --candidate-loader 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel --candidate-model-id 07-prose=none --set free-day --max-runs 3 --model D:/software/Git/models/stub.gguf --model-dir D:/others/Jity/.local/parallel-local-game/.tmp/stub-model --no-lease --hard-timeout-ms 120000 --out D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/artifacts/prose-composer/browser-07-after.json",
     "lane": "07-prose",
     "aliasSrc": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\src"
   },
@@ -43,7 +43,7 @@
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
       "source": {
-        "commit": "dfdc5c637df57198575870233f70cb18b3df134d",
+        "commit": "8d4caeebc3a2c8e02607646a9bfaace2d6f4b599",
         "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
         "dirty": false
       },
@@ -57,7 +57,7 @@
         "file": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts"
       },
       "notes": null,
-      "firstSeenAt": "2026-11-10T12:33:09.660Z",
+      "firstSeenAt": "2026-11-10T15:30:59.707Z",
       "engine": {
         "modelUrl": "/models/stub.gguf",
         "loadMs": 0,
@@ -88,38 +88,38 @@
           "mtime": "2026-11-10T07:00:23.567Z"
         }
       },
-      "queuedAt": "2026-11-10T12:33:09.584Z",
+      "queuedAt": "2026-11-10T15:30:59.556Z",
       "latest": {
         "free-day-open": {
-          "runId": "07-prose::free-day-open::mwao7z9m",
-          "at": "2026-11-10T12:33:09.698Z",
+          "runId": "07-prose::free-day-open::mwaukoci",
+          "at": "2026-11-10T15:30:59.767Z",
           "accepted": true,
           "chars": 78,
-          "wallMs": 7,
+          "wallMs": 8,
           "firstParagraph": "巷口的黄黑绳已放下，进入即算踏入演习区。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwao7z9m]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwaukoci]",
           "contractOk": true,
           "error": null
         },
         "free-day-move": {
-          "runId": "07-prose::free-day-move::mwao7zaq",
-          "at": "2026-11-10T12:33:09.743Z",
+          "runId": "07-prose::free-day-move::mwaukodp",
+          "at": "2026-11-10T15:30:59.817Z",
           "accepted": true,
           "chars": 92,
           "wallMs": 3,
           "firstParagraph": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwao7zaq]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwaukodp]",
           "contractOk": true,
           "error": null
         },
         "free-day-task": {
-          "runId": "07-prose::free-day-task::mwao7zi5",
-          "at": "2026-11-10T12:33:10.011Z",
+          "runId": "07-prose::free-day-task::mwaukofu",
+          "at": "2026-11-10T15:30:59.895Z",
           "accepted": true,
           "chars": 63,
-          "wallMs": 2,
+          "wallMs": 3,
           "firstParagraph": "三分钟过去，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwao7zi5]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwaukofu]",
           "contractOk": true,
           "error": null
         }
@@ -128,15 +128,15 @@
   },
   "runs": [
     {
-      "runId": "07-prose::free-day-open::mwao7z9m",
+      "runId": "07-prose::free-day-open::mwaukoci",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-open",
-      "startedAt": "2026-11-10T12:33:09.698Z",
-      "wallMs": 6.52500057220459,
+      "startedAt": "2026-11-10T15:30:59.767Z",
+      "wallMs": 8.104999542236328,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -499,14 +499,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 1.380000114440918,
-          "composeMs": 1.1599998474121094,
-          "verifyMs": 0.4549999237060547,
-          "totalMs": 542.9399995803833,
+          "planMs": 2.1750001907348633,
+          "composeMs": 1.5249996185302734,
+          "verifyMs": 0.24499988555908203,
+          "totalMs": 1146.5100002288818,
           "attemptMs": [
-            5.444999694824219
+            6.835000038146973
           ],
-          "attemptsMs": 5.444999694824219,
+          "attemptsMs": 6.835000038146973,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -520,7 +520,7 @@
             "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 5.444999694824219,
+            "durationMs": 6.835000038146973,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -532,7 +532,7 @@
               "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 5.444999694824219,
+              "durationMs": 6.835000038146973,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -555,15 +555,15 @@
       },
       "progress": {
         "count": 1,
-        "firstAtMs": 6,
-        "lastAtMs": 6,
-        "firstReadableAtMs": 6,
+        "firstAtMs": 8,
+        "lastAtMs": 8,
+        "firstReadableAtMs": 8,
         "tail": [
           {
             "text": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 5.444999694824219
+            "elapsedMs": 6.835000038146973
           }
         ]
       },
@@ -628,15 +628,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
     },
     {
-      "runId": "07-prose::free-day-move::mwao7zaq",
+      "runId": "07-prose::free-day-move::mwaukodp",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-move",
-      "startedAt": "2026-11-10T12:33:09.743Z",
-      "wallMs": 2.6800003051757812,
+      "startedAt": "2026-11-10T15:30:59.817Z",
+      "wallMs": 3.0299997329711914,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -1024,14 +1024,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 0.6149997711181641,
-          "composeMs": 0.6850004196166992,
-          "verifyMs": 0.05000019073486328,
-          "totalMs": 582.5050001144409,
+          "planMs": 0.6049995422363281,
+          "composeMs": 1.015000343322754,
+          "verifyMs": 0.034999847412109375,
+          "totalMs": 1189.545000076294,
           "attemptMs": [
-            1.7700004577636719
+            2.0349998474121094
           ],
-          "attemptsMs": 1.7700004577636719,
+          "attemptsMs": 2.0349998474121094,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -1045,7 +1045,7 @@
             "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n又过了一分钟，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 1.7700004577636719,
+            "durationMs": 2.0349998474121094,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -1057,7 +1057,7 @@
               "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n又过了一分钟，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 1.7700004577636719,
+              "durationMs": 2.0349998474121094,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -1088,7 +1088,7 @@
             "text": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n又过了一分钟，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 1.7700004577636719
+            "elapsedMs": 2.0349998474121094
           }
         ]
       },
@@ -1153,15 +1153,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
     },
     {
-      "runId": "07-prose::free-day-task::mwao7zi5",
+      "runId": "07-prose::free-day-task::mwaukofu",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-task",
-      "startedAt": "2026-11-10T12:33:10.011Z",
-      "wallMs": 2.1800003051757812,
+      "startedAt": "2026-11-10T15:30:59.895Z",
+      "wallMs": 2.609999656677246,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -1549,14 +1549,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 0.1100006103515625,
-          "composeMs": 0.8350000381469727,
-          "verifyMs": 0.034999847412109375,
-          "totalMs": 849.6999998092651,
+          "planMs": 0.13000011444091797,
+          "composeMs": 1.239999771118164,
+          "verifyMs": 0.054999351501464844,
+          "totalMs": 1267.159999847412,
           "attemptMs": [
-            1.130000114440918
+            1.5799999237060547
           ],
-          "attemptsMs": 1.130000114440918,
+          "attemptsMs": 1.5799999237060547,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -1570,7 +1570,7 @@
             "cleaned": "三分钟过去，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 1.130000114440918,
+            "durationMs": 1.5799999237060547,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -1582,7 +1582,7 @@
               "cleaned": "三分钟过去，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 1.130000114440918,
+              "durationMs": 1.5799999237060547,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -1605,15 +1605,15 @@
       },
       "progress": {
         "count": 1,
-        "firstAtMs": 2,
-        "lastAtMs": 2,
-        "firstReadableAtMs": 2,
+        "firstAtMs": 3,
+        "lastAtMs": 3,
+        "firstReadableAtMs": 3,
         "tail": [
           {
             "text": "三分钟过去，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 1.130000114440918
+            "elapsedMs": 1.5799999237060547
           }
         ]
       },
@@ -1685,8 +1685,8 @@
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-move",
-      "runId": "07-prose::free-day-move::mwao7zaq",
-      "startedAt": "2026-11-10T12:33:09.743Z",
+      "runId": "07-prose::free-day-move::mwaukodp",
+      "startedAt": "2026-11-10T15:30:59.817Z",
       "accepted": true,
       "chars": 92,
       "wallMs": 3,
@@ -1695,37 +1695,37 @@
       "gpuRequested": false,
       "issues": [],
       "textPreview": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n又过了一分钟，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n不远处是林亦舟，蓝色识别带沾着灰",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwao7zaq]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwaukodp]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-open",
-      "runId": "07-prose::free-day-open::mwao7z9m",
-      "startedAt": "2026-11-10T12:33:09.698Z",
+      "runId": "07-prose::free-day-open::mwaukoci",
+      "startedAt": "2026-11-10T15:30:59.767Z",
       "accepted": true,
       "chars": 78,
-      "wallMs": 7,
-      "firstReadableAtMs": 6,
+      "wallMs": 8,
+      "firstReadableAtMs": 8,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
       "textPreview": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwao7z9m]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwaukoci]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-task",
-      "runId": "07-prose::free-day-task::mwao7zi5",
-      "startedAt": "2026-11-10T12:33:10.011Z",
+      "runId": "07-prose::free-day-task::mwaukofu",
+      "startedAt": "2026-11-10T15:30:59.895Z",
       "accepted": true,
       "chars": 63,
-      "wallMs": 2,
-      "firstReadableAtMs": 2,
+      "wallMs": 3,
+      "firstReadableAtMs": 3,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
       "textPreview": "三分钟过去，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwao7zi5]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwaukofu]"
     }
   ]
 }

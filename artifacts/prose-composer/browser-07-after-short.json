@@ -1,12 +1,12 @@
 {
   "lane": "07-prose",
   "kind": "browser-candidate-runs",
-  "updatedAt": "2026-11-10T12:35:42.173Z",
+  "updatedAt": "2026-11-10T15:32:20.031Z",
   "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
   "runner": {
     "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
     "driver": "frontend/src/lib/world-engine/local/narration-candidates/browser-driver/index.ts",
-    "command": "C:\\nvm4w\\nodejs\\node.exe D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\scripts\\quality-candidates\\run-browser-candidates.mjs --lane 07-prose --purpose prose alternative, 20-turn fixes; stub engine, no model --candidate 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts --candidate-loader 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel --candidate-model-id 07-prose=none --set short --max-runs 3 --model D:/software/Git/models/stub.gguf --model-dir D:/others/Jity/.local/parallel-local-game/.tmp/stub-model --no-lease --hard-timeout-ms 120000 --out D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/artifacts/prose-composer/browser-07-after-short.json",
+    "command": "C:\\nvm4w\\nodejs\\node.exe D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\scripts\\quality-candidates\\run-browser-candidates.mjs --lane 07-prose --purpose prose fallback, mental-turn weave; stub engine, no model --candidate 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts --candidate-loader 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel --candidate-model-id 07-prose=none --set short --max-runs 3 --model D:/software/Git/models/stub.gguf --model-dir D:/others/Jity/.local/parallel-local-game/.tmp/stub-model --no-lease --hard-timeout-ms 120000 --out D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/artifacts/prose-composer/browser-07-after-short.json",
     "lane": "07-prose",
     "aliasSrc": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\src"
   },
@@ -43,7 +43,7 @@
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
       "source": {
-        "commit": "dfdc5c637df57198575870233f70cb18b3df134d",
+        "commit": "8d4caeebc3a2c8e02607646a9bfaace2d6f4b599",
         "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
         "dirty": false
       },
@@ -57,7 +57,7 @@
         "file": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts"
       },
       "notes": null,
-      "firstSeenAt": "2026-11-10T12:35:26.781Z",
+      "firstSeenAt": "2026-11-10T15:31:57.569Z",
       "engine": {
         "modelUrl": "/models/stub.gguf",
         "loadMs": 0,
@@ -88,38 +88,38 @@
           "mtime": "2026-11-10T07:00:23.567Z"
         }
       },
-      "queuedAt": "2026-11-10T12:35:26.649Z",
+      "queuedAt": "2026-11-10T15:31:57.352Z",
       "latest": {
         "short-root": {
-          "runId": "07-prose::short-root::mwaoax3q",
-          "at": "2026-11-10T12:35:26.861Z",
+          "runId": "07-prose::short-root::mwaulwzj",
+          "at": "2026-11-10T15:31:57.622Z",
           "accepted": true,
           "chars": 38,
           "wallMs": 7,
           "firstParagraph": "明亮的走廊，通往门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaoax3q]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaulwzj]",
           "contractOk": true,
           "error": null
         },
         "short-move": {
-          "runId": "07-prose::short-move::mwaoax46",
-          "at": "2026-11-10T12:35:26.884Z",
+          "runId": "07-prose::short-move::mwaulx02",
+          "at": "2026-11-10T15:31:57.648Z",
           "accepted": true,
           "chars": 37,
-          "wallMs": 2,
+          "wallMs": 3,
           "firstParagraph": "林川从走廊走进门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaoax46]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaulx02]",
           "contractOk": true,
           "error": null
         },
         "short-elapsed": {
-          "runId": "07-prose::short-elapsed::mwaoax4m",
-          "at": "2026-11-10T12:35:26.901Z",
+          "runId": "07-prose::short-elapsed::mwaulx0y",
+          "at": "2026-11-10T15:31:57.681Z",
           "accepted": true,
           "chars": 31,
           "wallMs": 1,
           "firstParagraph": "明亮的走廊，通往门厅。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaoax4m]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaulx0y]",
           "contractOk": true,
           "error": null
         }
@@ -128,15 +128,15 @@
   },
   "runs": [
     {
-      "runId": "07-prose::short-root::mwaoax3q",
+      "runId": "07-prose::short-root::mwaulwzj",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "short-root",
-      "startedAt": "2026-11-10T12:35:26.861Z",
-      "wallMs": 6.6349992752075195,
+      "startedAt": "2026-11-10T15:31:57.622Z",
+      "wallMs": 6.640000343322754,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -262,14 +262,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 1.6649999618530273,
-          "composeMs": 1.1649999618530273,
-          "verifyMs": 0.3400001525878906,
-          "totalMs": 783.2600002288818,
+          "planMs": 1.1950006484985352,
+          "composeMs": 1.625,
+          "verifyMs": 0.38000011444091797,
+          "totalMs": 703.539999961853,
           "attemptMs": [
-            5.924999237060547
+            5.920000076293945
           ],
-          "attemptsMs": 5.924999237060547,
+          "attemptsMs": 5.920000076293945,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -283,7 +283,7 @@
             "cleaned": "明亮的走廊，通往门厅。\n\n不远处是林川，穿灰衣。\n\n盒子还在走廊。盒盖关闭。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 5.924999237060547,
+            "durationMs": 5.920000076293945,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -295,7 +295,7 @@
               "cleaned": "明亮的走廊，通往门厅。\n\n不远处是林川，穿灰衣。\n\n盒子还在走廊。盒盖关闭。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 5.924999237060547,
+              "durationMs": 5.920000076293945,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -326,7 +326,7 @@
             "text": "明亮的走廊，通往门厅。\n\n不远处是林川，穿灰衣。\n\n盒子还在走廊。盒盖关闭。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 5.924999237060547
+            "elapsedMs": 5.920000076293945
           }
         ]
       },
@@ -391,15 +391,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
     },
     {
-      "runId": "07-prose::short-move::mwaoax46",
+      "runId": "07-prose::short-move::mwaulx02",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "short-move",
-      "startedAt": "2026-11-10T12:35:26.884Z",
-      "wallMs": 1.7149991989135742,
+      "startedAt": "2026-11-10T15:31:57.648Z",
+      "wallMs": 2.760000228881836,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -528,14 +528,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 0.13000011444091797,
-          "composeMs": 1.2149991989135742,
-          "verifyMs": 0.04500007629394531,
-          "totalMs": 799.0749998092651,
+          "planMs": 0.6600008010864258,
+          "composeMs": 1.6399993896484375,
+          "verifyMs": 0.05500030517578125,
+          "totalMs": 723.2799997329712,
           "attemptMs": [
-            1.5900001525878906
+            2.5799999237060547
           ],
-          "attemptsMs": 1.5900001525878906,
+          "attemptsMs": 2.5799999237060547,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -549,7 +549,7 @@
             "cleaned": "林川从走廊走进门厅。\n\n林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 1.5900001525878906,
+            "durationMs": 2.5799999237060547,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -561,7 +561,7 @@
               "cleaned": "林川从走廊走进门厅。\n\n林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 1.5900001525878906,
+              "durationMs": 2.5799999237060547,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -584,15 +584,15 @@
       },
       "progress": {
         "count": 1,
-        "firstAtMs": 2,
-        "lastAtMs": 2,
-        "firstReadableAtMs": 2,
+        "firstAtMs": 3,
+        "lastAtMs": 3,
+        "firstReadableAtMs": 3,
         "tail": [
           {
             "text": "林川从走廊走进门厅。\n\n林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 1.5900001525878906
+            "elapsedMs": 2.5799999237060547
           }
         ]
       },
@@ -657,15 +657,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json"
     },
     {
-      "runId": "07-prose::short-elapsed::mwaoax4m",
+      "runId": "07-prose::short-elapsed::mwaulx0y",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "short-elapsed",
-      "startedAt": "2026-11-10T12:35:26.901Z",
-      "wallMs": 1.2800006866455078,
+      "startedAt": "2026-11-10T15:31:57.681Z",
+      "wallMs": 1.0550003051757812,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -792,14 +792,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 0.26000022888183594,
-          "composeMs": 0.7049999237060547,
+          "planMs": 0.1849994659423828,
+          "composeMs": 0.6100006103515625,
           "verifyMs": 0.024999618530273438,
-          "totalMs": 815.25,
+          "totalMs": 754.9849996566772,
           "attemptMs": [
-            1.1500005722045898
+            0.9449996948242188
           ],
-          "attemptsMs": 1.1500005722045898,
+          "attemptsMs": 0.9449996948242188,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -813,7 +813,7 @@
             "cleaned": "明亮的走廊，通往门厅。\n\n两分钟之后，盒子还在走廊。盒盖关闭。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 1.1500005722045898,
+            "durationMs": 0.9449996948242188,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -825,7 +825,7 @@
               "cleaned": "明亮的走廊，通往门厅。\n\n两分钟之后，盒子还在走廊。盒盖关闭。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 1.1500005722045898,
+              "durationMs": 0.9449996948242188,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -856,7 +856,7 @@
             "text": "明亮的走廊，通往门厅。\n\n两分钟之后，盒子还在走廊。盒盖关闭。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 1.1500005722045898
+            "elapsedMs": 0.9449996948242188
           }
         ]
       },
@@ -928,8 +928,8 @@
     {
       "candidateId": "07-prose",
       "scenarioId": "short-elapsed",
-      "runId": "07-prose::short-elapsed::mwaoax4m",
-      "startedAt": "2026-11-10T12:35:26.901Z",
+      "runId": "07-prose::short-elapsed::mwaulx0y",
+      "startedAt": "2026-11-10T15:31:57.681Z",
       "accepted": true,
       "chars": 31,
       "wallMs": 1,
@@ -938,28 +938,28 @@
       "gpuRequested": false,
       "issues": [],
       "textPreview": "明亮的走廊，通往门厅。\n\n两分钟之后，盒子还在走廊。盒盖关闭。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaoax4m]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-elapsed::mwaulx0y]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "short-move",
-      "runId": "07-prose::short-move::mwaoax46",
-      "startedAt": "2026-11-10T12:35:26.884Z",
+      "runId": "07-prose::short-move::mwaulx02",
+      "startedAt": "2026-11-10T15:31:57.648Z",
       "accepted": true,
       "chars": 37,
-      "wallMs": 2,
-      "firstReadableAtMs": 2,
+      "wallMs": 3,
+      "firstReadableAtMs": 3,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
       "textPreview": "林川从走廊走进门厅。\n\n林川的脚步声往门厅那边去了。走廊里只剩周宁一个人。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaoax46]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-move::mwaulx02]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "short-root",
-      "runId": "07-prose::short-root::mwaoax3q",
-      "startedAt": "2026-11-10T12:35:26.861Z",
+      "runId": "07-prose::short-root::mwaulwzj",
+      "startedAt": "2026-11-10T15:31:57.622Z",
       "accepted": true,
       "chars": 38,
       "wallMs": 7,
@@ -968,7 +968,7 @@
       "gpuRequested": false,
       "issues": [],
       "textPreview": "明亮的走廊，通往门厅。\n\n不远处是林川，穿灰衣。\n\n盒子还在走廊。盒盖关闭。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaoax3q]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after-short.json#runs[07-prose::short-root::mwaulwzj]"
     }
   ]
 }
