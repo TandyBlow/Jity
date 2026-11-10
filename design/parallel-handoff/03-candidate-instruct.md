@@ -100,7 +100,9 @@ MSYS_NO_PATHCONV=1 node scripts/candidate-instruct/run-instruct-candidate.mjs   
 python D:/others/Jity/.local/parallel-local-game/resource_lease.py release --lane 03-actions
 ```
 
-若首轮出现 `too_short`/漏时间，再用 `--max-attempts 2` 复跑同案；每次真实运行都归档 prompt/raw/verdict。
+`--loader` 让本轮直接用 08 的加载器，走**真实 system+user ChatML**（页面同一条路径），而不是脚本自拼的 raw prompt；`--gpu` 可选。dry 已验证 `/@fs/` 能读到 08 的目录与 `modelSpecByFile`，不会因为跨工作树被 Vite 拦。若首轮出现 `too_short`/漏时间，再用 `--max-attempts 2` 复跑同案；每次真实运行都归档 prompt/raw/verdict。
+
+另：09 把 03 的模块和 08 的引擎同时加载时，两边的 `IncompleteGenerationError` 是不同模块实例；已改为按 `name` + `completion` 形状识别，避免把截断的付费正文误判成引擎错误（测试 `foreign IncompleteGenerationError copy`）。
 
 ## 5. 风格示例（可选）
 

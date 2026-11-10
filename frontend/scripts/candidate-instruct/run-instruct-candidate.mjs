@@ -48,6 +48,8 @@ const config = {
   targetChars: Number(option('--target-chars', '220')),
   styleSample: option('--style-sample', ''),
   variant: option('--variant', 'plain'),
+  loader: option('--loader', ''),
+  gpu: hasFlag('--gpu'),
   dry: hasFlag('--dry'),
   only: option('--cases', '') ? option('--cases', '').split(',') : null,
 };
@@ -250,7 +252,7 @@ let browser;
 let server;
 try {
   server = await createServer({ root: frontend, configFile: false, logLevel: 'warn',
-    cacheDir: '../.local/candidate-instruct-vite', server: { host: '127.0.0.1', port: 0, hmr: false },
+    cacheDir: '../.local/candidate-instruct-vite', server: { host: '127.0.0.1', port: 0, hmr: false, fs: { allow: [frontend, resolve(frontend, '../..')] } },
     plugins: [{ name: 'candidate-instruct', configureServer: assetMiddleware }] });
   await server.listen();
   const port = server.httpServer.address().port;
@@ -282,21 +284,50 @@ try {
       console.log(`[candidate] dry ${entry.id}: ${preview.promptChars} chars, ${preview.projection.facts.length} facts`);
     }
     report.dryRuns = rows;
+    if (config.loader) {
+      report.loaderCheck = await page.evaluate(async (config) => {
+        const url = '/@fs/' + config.loader.replaceAll(String.fromCharCode(92), '/');
+        const loader = await import(/* @vite-ignore */ url);
+        const file = config.model.split('/').pop() ?? '';
+        const spec = loader.modelSpecByFile(file);
+        return { exports: Object.keys(loader).sort(), spec: spec.id, file: spec.gguf };
+      }, config);
+      console.log(`[candidate] loader check: ${report.loaderCheck.spec} (${report.loaderCheck.file})`);
+    }
     report.status = 'DRY';
     save();
   } else {
     const loaded = await page.evaluate(async (config) => {
       if (!crossOriginIsolated) throw new Error('candidate run requires cross-origin isolation');
+      if (config.loader) {
+        // Product parity: 08's loader builds the engine with the checkpoint's
+        // real chat template and exposes chat(messages). Read-only import.
+        const url = '/@fs/' + config.loader.replaceAll(String.fromCharCode(92), '/');
+        const loader = await import(/* @vite-ignore */ url);
+        const file = config.model.split('/').pop() ?? '';
+        const spec = loader.modelSpecByFile(file);
+        const loaded = await loader.loadCandidateModel(spec, {
+          modelRoot: '/models', preferGpu: config.gpu, forceCpu: !config.gpu,
+          contextSize: config.contextSize, numThreads: config.numThreads,
+        });
+        window.__candidate = { engine: loaded.engine };
+        return {
+          loadMs: Math.round(loaded.loadMs), topology: null, info: loaded.engine.info,
+          loader: { backend: loaded.backend, fallback: loaded.fallback, spec: spec.id,
+            attempts: loaded.attempts?.map((entry) => ({ backend: entry.backend, ok: entry.ok, loadMs: Math.round(entry.loadMs ?? 0), error: entry.error ?? null })) },
+        };
+      }
       const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
       const engine = new WllamaInferenceEngine({ modelUrl: config.model, contextSize: config.contextSize, numThreads: config.numThreads, directBlob: true });
       const started = performance.now();
       await engine.load();
       window.__candidate = { engine };
-      return { loadMs: Math.round(performance.now() - started), topology: engine.diagnostics, info: engine.info };
+      return { loadMs: Math.round(performance.now() - started), topology: engine.diagnostics, info: engine.info, loader: null };
     }, config);
     report.loadMs = loaded.loadMs;
     report.topology = loaded.topology;
     report.engineInfo = loaded.info;
+    report.loader = loaded.loader;
     save();
     console.log(`[candidate] model loaded in ${loaded.loadMs}ms (${JSON.stringify(loaded.topology)})`);
 
