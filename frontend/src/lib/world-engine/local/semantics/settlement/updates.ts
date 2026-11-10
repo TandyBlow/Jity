@@ -118,9 +118,13 @@ const OPERATIONS_SCHEMA = {
 const TASKS_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['decisions'],
+  required: ['unchanged', 'achieved'],
   properties: {
-    decisions: {
+    // Every character with tasks is named exactly once: in `unchanged` when no
+    // task of theirs changed, or in `achieved` when at least one did. This is
+    // the same per-character decision as before, with less repeated JSON.
+    unchanged: { type: 'array', items: { type: 'string' } },
+    achieved: {
       type: 'array',
       items: {
         type: 'object',
@@ -129,6 +133,31 @@ const TASKS_SCHEMA = {
         properties: {
           characterId: { type: 'string' },
           achieved: { type: 'array', items: { type: 'string' } },
+        },
+      },
+    },
+  },
+};
+
+const PERSONALITY_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['scanned', 'changes'],
+  properties: {
+    // `scanned` proves every character was considered; only actual changes
+    // need an operation row. The program supplies keep rows and record ids.
+    scanned: { type: 'array', items: { type: 'string' } },
+    changes: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['entityId', 'op', 'recordIds', 'text'],
+        properties: {
+          entityId: { type: 'string' },
+          op: { enum: [...OPS] },
+          recordIds: { type: 'array', items: { type: 'string' } },
+          text: { type: ['string', 'null'] },
         },
       },
     },
@@ -678,7 +707,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       temperature: ctx.options.temperature ?? 0,
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
-      jsonSchema: OPERATIONS_SCHEMA,
+      jsonSchema: PERSONALITY_SCHEMA,
       validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true),
     });
     const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true);
@@ -920,8 +949,29 @@ function readDescriptionOperations(
   allocator: LocalIdAllocator,
   requireEveryEntity: boolean,
 ): Record<Id, Partial<EntityDelta>> {
-  const rows = asRecord(value).operations;
-  if (!Array.isArray(rows)) throw new Error('operations must be an array');
+  const payload = asRecord(value);
+  let rows = payload.operations;
+  if (!Array.isArray(rows) && kind === 'personality' && Array.isArray(payload.scanned)) {
+    const scannedRaw = payload.scanned.map(asString);
+    const changesRaw = Array.isArray(payload.changes) ? payload.changes : [];
+    const changed = new Set<Id>();
+    for (const raw of changesRaw) {
+      if (!isRecord(raw)) throw new Error('changes entries must be objects');
+      const entityId = resolveCharacterId(state, asString(raw.entityId));
+      if (!entityId) throw new Error(referenceError(state, asString(raw.entityId), 'character', roster(state)[0]));
+      changed.add(entityId);
+    }
+    const keep: Record<string, unknown>[] = [];
+    for (const raw of scannedRaw) {
+      const entityId = resolveCharacterId(state, raw);
+      if (!entityId) throw new Error(referenceError(state, raw, 'character', roster(state)[0]));
+      if (changed.has(entityId)) continue;
+      const recordIds = activeRecords(state, 'personality', entityId).filter((record) => record.active).map((record) => record.id);
+      keep.push({ entityId: raw, op: 'keep', recordIds, text: null });
+    }
+    rows = [...keep, ...changesRaw];
+  }
+  if (!Array.isArray(rows)) throw new Error('operations or scanned/changes must be an array');
   const targets = kind === 'appearance' ? new Set(allEntityIds(state)) : new Set(roster(state));
   const byEntity = new Map<Id, OperationRow[]>();
   for (const raw of rows) {
@@ -1010,14 +1060,13 @@ function buildTasksPrompt(ctx: StageContext): string {
   // A 0.6B copies the example verbatim; a one-row example made it answer for a
   // single character. The skeleton names every required character, so copying
   // it still produces full coverage.
-  const skeleton = required.map((id) => `{"characterId":"${id}","achieved":[]}`).join(',');
-  const exampleId = required[0] ?? '人物id';
+  const unchanged = required.map((id) => `"${id}"`).join(',');
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
     '规则：',
-    '- decisions 必须为每个有任务的人物各写一条，characterId 用括号里的 id 或人物全名；不能只写在场人物。',
+    '- 每个有任务的人物必须出现一次：没有变化的放进 unchanged（人物 id 或全名），有变化的放进 achieved；不能只写在场人物，也不能两边都写。',
     '- achieved 只列本轮新达成的任务编号（每行开头的 t1、t2…）；该人物其余任务保持原状，不要逐条输出 pending。',
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
@@ -1028,7 +1077,7 @@ function buildTasksPrompt(ctx: StageContext): string {
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
-    `输出 {"decisions":[${skeleton}]}（每个人物一条，achieved 只填本轮新达成的任务 id；没有就保留空数组）。示例 id 用 ${exampleId}。`,
+    `输出 {"unchanged":[${unchanged}],"achieved":[]}（unchanged 列出所有没有变化的人物；achieved 只写有变化的人物，行内 achieved 填本轮新达成的任务编号；每个有任务的人物必须出现一次）。`,
   ].join('\n');
 }
 
@@ -1047,8 +1096,30 @@ interface TaskDecisionRead {
  * in evidence: it cannot become state, but it must not erase the other valid
  * decisions or turn a typo into an aborted point. */
 function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead {
-  const decisions = asRecord(value).decisions;
-  if (!Array.isArray(decisions)) throw new Error('decisions must be an array');
+  const payload = asRecord(value);
+  let decisions: unknown[] | undefined = Array.isArray(payload.decisions) ? payload.decisions : undefined;
+  if (!decisions && (Array.isArray(payload.unchanged) || Array.isArray(payload.achieved))) {
+    const unchanged = Array.isArray(payload.unchanged) ? payload.unchanged.map(asString) : [];
+    const achievedRows = Array.isArray(payload.achieved) ? payload.achieved : [];
+    const named = new Set<string>();
+    decisions = [];
+    for (const raw of unchanged) {
+      const characterId = asString(raw);
+      if (!characterId) throw new Error('unchanged must contain character ids or full names');
+      if (named.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
+      named.add(characterId);
+      decisions.push({ characterId, achieved: [] });
+    }
+    for (const row of achievedRows as unknown[]) {
+      if (!isRecord(row)) throw new Error('achieved entries must be objects');
+      const characterId = asString(row.characterId);
+      if (!characterId) throw new Error('achieved entry needs characterId');
+      if (named.has(characterId)) throw new Error(`character ${characterId} appears in both unchanged and achieved`);
+      named.add(characterId);
+      decisions.push({ characterId, achieved: Array.isArray(row.achieved) ? row.achieved : [] });
+    }
+  }
+  if (!decisions) throw new Error('decisions or unchanged/achieved must be an array');
   const rows = allTasks(state);
   const byTask = new Map(rows.map((row) => [row.task.id, row]));
   const keys = taskKeyIndex(state);
@@ -1177,18 +1248,15 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     const row = index.get(taskId);
     return row ? `- ${row.ownerId}：${row.task.id} ${row.task.goal}` : `- ${taskId}`;
   });
-  const skeleton = roster(ctx.state).map((id) => {
-    const records = activeRecords(ctx.state, 'personality', id).filter((record) => record.active).map((record) => `"${record.id}"`).join(',');
-    return `{"entityId":"${id}","op":"keep","recordIds":[${records}],"text":null}`;
-  }).join(',');
+  const scanned = roster(ctx.state).map((id) => `"${id}"`).join(',');
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物个性变化判断器。只输出 JSON，不要解释。',
     '本轮有新任务达成。请扫描所有人物（包括不在场人物），判断他们的个性是否因这些达成或当前处境发生变化。',
     '规则：',
     '- 只能新增、解除或替换已有有效个性变化；不能改初始个性；remove/replace 必须用 recordIds 引用该人物已有的有效变化 id。',
-    '- 必须为每一个人物输出至少一个操作；没有变化就输出 keep，并列出该人物全部有效记录（没有记录则 recordIds 为空）。',
-    '- 每个有效记录必须被 keep/remove/replace 覆盖一次；不能重复。',
+    '- scanned 必须列出所有人物（包括没有变化的）；程序会为 scanned 里没有出现在 changes 的人物补 keep 并带上其全部有效记录。',
+    '- changes 只写真的有变化的人物操作；每个有效记录必须被 remove/replace 覆盖一次，不能重复。',
     '- 新个性文本必须与旧文本有实际差异；没有实际变化就 keep。',
     '- 个性变化只由新达成任务触发；不要因为普通动作直接改个性。',
     recovered ? '- 本次是恢复后的补判定：只考虑本轮结算结果能够支持的新达成任务，不要把以前达成的任务当成新触发。' : '',
@@ -1196,7 +1264,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"operations":[${skeleton}]}（每个人物一条；默认 keep 并带上该人物全部有效记录 id；只有本轮真的变化才改 op/text；entityId 用真实 id 或人物全名）。`,
+    `输出 {"scanned":[${scanned}],"changes":[]}（scanned 必须列出所有人物；没有变化就不要放进 changes；changes 里的 entityId 用真实 id 或人物全名，op 为 add/remove/replace）。`,
   ].filter(Boolean).join('\n');
 }
 

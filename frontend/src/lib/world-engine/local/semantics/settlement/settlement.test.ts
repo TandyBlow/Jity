@@ -186,16 +186,13 @@ describe('six-stage updates', () => {
         { entityId: 'tool', containerId: 'box', slotId: null, relativeTo: null },
       ] }),
       JSON.stringify({ operations: [{ entityId: 'tool', op: 'add', recordIds: [], text: '表面沾了灰' }] }),
-      JSON.stringify({ decisions: [
+      JSON.stringify({ unchanged: ['b'], achieved: [
         { characterId: 'a', achieved: ['a1'] },
-        { characterId: 'b', achieved: [] },
         { characterId: 'off', achieved: ['off1'] },
       ] }),
       JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '把工具从盒子里取回' }] }),
-      JSON.stringify({ operations: [
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [
         { entityId: 'a', op: 'add', recordIds: [], text: '更愿意相信同伴' },
-        { entityId: 'b', op: 'keep', recordIds: [], text: null },
-        { entityId: 'c', op: 'keep', recordIds: [], text: null },
         { entityId: 'off', op: 'add', recordIds: [], text: '开始留意远处的动静' },
       ] }),
       JSON.stringify({ sanity: [{ characterId: 'a', value: 52 }, { characterId: 'off', value: 48 }] }),
@@ -222,7 +219,7 @@ describe('six-stage updates', () => {
     const tasksPrompt = engine.prompts.find((prompt) => prompt.includes('任务判定器'))!;
     expect(tasksPrompt).toContain('甲（id=a）位置=远处');
     const personalityPrompt = engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))!;
-    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`{\"entityId\":\"${id}\",\"op\":\"keep\"`);
+    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`\"${id}\"`);
   });
 
   it('does not re-achieve an already achieved task', async () => {
@@ -500,10 +497,10 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
     expect(engine.prompts).toHaveLength(2);
     expect(engine.prompts[1]).toContain('task character coverage incomplete: 2/3; missing off');
-    expect(engine.prompts[1]).toContain('必须为每个有任务的人物各写一条');
+    expect(engine.prompts[1]).toContain('每个有任务的人物必须出现一次');
     // The first prompt already carries a copyable row for every required
     // character, so a format-copying model still answers all of them.
-    for (const id of ['a', 'b', 'off']) expect(engine.prompts[0]).toContain(`{\"characterId\":\"${id}\",\"achieved\":[]}`);
+    for (const id of ['a', 'b', 'off']) expect(engine.prompts[0]).toContain(`\"${id}\"`);
     const detail = outcome.evidence.detail as { taskScope: { mode: string; characters: number; taskRows: number; assertedUnchanged: number } };
     expect(detail.taskScope).toMatchObject({
       mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [], emptyCharacters: 1,
