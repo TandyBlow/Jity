@@ -574,11 +574,19 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     });
     const changes = readTaskDecisions(answer.value, ctx.state);
     const newlyAchieved = [...achievedFromChanges(changes)];
+    const achievedByCharacter = Object.entries(changes)
+      .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
+      .filter((row) => row.taskIds.length > 0);
     return {
       changes,
       detail: {
         taskCoverageIds: characters,
-        taskScope: { ...taskScope, assertedUnchanged: rows.length - newlyAchieved.length },
+        taskScope: {
+          ...taskScope,
+          assertedUnchanged: rows.length - newlyAchieved.length,
+          achievedByCharacter,
+          emptyCharacters: taskScope.characters - achievedByCharacter.length,
+        },
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
         newlyAchievedTaskIds: newlyAchieved.sort(),
       },
@@ -594,13 +602,17 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
  * it records. Every character with tasks appears in the prompt and must make
  * one decision; that decision covers all of the character's tasks, so silence
  * is an explicit "no task of mine changed", not a program-filled pending row. */
-function taskScopeFor(state: WorldState): { mode: string; characters: number; taskRows: number; excluded: string[] } {
+function taskScopeFor(state: WorldState): {
+  mode: string; characters: number; taskRows: number; excluded: string[];
+  achievedByCharacter: { characterId: Id; taskIds: Id[] }[];
+} {
   const rows = allTasks(state);
   return {
     mode: 'per_character_decision',
     characters: new Set(rows.map((row) => row.ownerId)).size,
     taskRows: rows.length,
     excluded: [],
+    achievedByCharacter: [],
   };
 }
 

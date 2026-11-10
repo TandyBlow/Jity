@@ -505,7 +505,10 @@ describe('real failed-output shapes (09 product run)', () => {
     // character, so a format-copying model still answers all of them.
     for (const id of ['a', 'b', 'off']) expect(engine.prompts[0]).toContain(`{\"characterId\":\"${id}\",\"achieved\":[]}`);
     const detail = outcome.evidence.detail as { taskScope: { mode: string; characters: number; taskRows: number; assertedUnchanged: number } };
-    expect(detail.taskScope).toEqual({ mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [] });
+    expect(detail.taskScope).toMatchObject({
+      mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [], emptyCharacters: 1,
+      achievedByCharacter: [{ characterId: 'a', taskIds: ['a1'] }, { characterId: 'off', taskIds: ['off1'] }],
+    });
   });
 
   it('accepts a unique full character name for a task decision', async () => {

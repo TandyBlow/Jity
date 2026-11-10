@@ -51,7 +51,14 @@ export interface PortCallRecord {
   /** How many characters the stage answers covered. The full cast is a product
    * requirement, and this is the lightweight proof 09 can read from the page.
    * `taskRows` is the full-world task-row count, never a scene-only subset. */
-  coverage?: { tasks: number; personality: number; taskRows?: number; mode?: string };
+  coverage?: {
+    tasks: number; personality: number; taskRows?: number; mode?: string;
+    /** Actual per-character task decisions; empty rows are counted, not
+     * committed. An all-empty set is visible here, so coverage cannot be
+     * mistaken for semantic agreement. */
+    achievedByCharacter?: { characterId: string; taskIds: string[] }[];
+    assertedUnchanged?: number;
+  };
   /** Model time per updates stage, for finding which stage made a turn slow. */
   stageMs?: Record<string, number>;
   /** Failed calls keep the raw model output (bounded) and each attempt's time
@@ -137,13 +144,19 @@ export function createSettlementModelPort(
       }
       if (Object.keys(stageMs).length) record.stageMs = stageMs;
     }
-    const scope = (outcome.evidence.detail as { taskScope?: { taskRows?: unknown; mode?: unknown } } | null)?.taskScope;
+    const scope = (outcome.evidence.detail as { taskScope?: {
+      taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown;
+    } } | null)?.taskScope;
     if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds) || scope) {
       record.coverage = {
         tasks: detail?.taskCoverageIds?.length ?? 0,
         personality: detail?.personalityCoverageIds?.length ?? 0,
         ...(Number.isFinite(Number(scope?.taskRows)) ? { taskRows: Number(scope?.taskRows) } : {}),
         ...(typeof scope?.mode === 'string' ? { mode: scope.mode } : {}),
+        ...(Array.isArray(scope?.achievedByCharacter)
+          ? { achievedByCharacter: scope.achievedByCharacter as { characterId: string; taskIds: string[] }[] }
+          : {}),
+        ...(Number.isFinite(Number(scope?.assertedUnchanged)) ? { assertedUnchanged: Number(scope?.assertedUnchanged) } : {}),
       };
     }
     if (outcome.error) {
