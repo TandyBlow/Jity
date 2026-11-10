@@ -819,6 +819,7 @@ export default function WorldLocalPage() {
     modelRef.current?.beginSubmission(text);
     save(session.snapshot);
     const commandsAtStart = session.commandsPlayed;
+    const playerPointsAtStart = Object.values(session.snapshot.transport.points ?? {}).filter((point) => point.trigger === 'player').length;
     try {
       const status = await session.submit(text);
       console.info('[world-local] turn status', status);
@@ -844,9 +845,25 @@ export default function WorldLocalPage() {
     } catch (e) {
       console.error(e);
       const raw = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+      // A submit can fail after its point was already committed: the player's
+      // round settles and narrates, then an automatic follow-up round fails.
+      // That committed prose must stay visible; wiping it and calling the whole
+      // turn failed would hide a real state change.
+      const committedPoints = Object.values(session.snapshot.transport.points ?? {}).filter((point) => point.trigger === 'player').length;
+      const committed = committedPoints > playerPointsAtStart;
+      if (committed) {
+        setMessage('本轮已完成；后续自动回合没有结算，可以继续输入下一步行动。');
+        setEntries((list) => updateLast(list, (entry) => ({
+          ...entry,
+          note: entry.note ?? '这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。',
+        })));
+        setPhase('ready');
+        setError(null);
+        return;
+      }
       // Settlement failures are typed (`settlement_failed:<task>:<reason>`) and
-      // mean the point was not committed; show a recoverable sentence instead
-      // of a raw Error while keeping the technical detail in the console.
+      // mean no point was committed; show a recoverable sentence instead of a
+      // raw Error while keeping the technical detail in the console.
       const message = /settlement_failed/u.test(raw)
         ? '这一回合的结算没有完成，之前的历史和已结算状态都保留着。可以再试一次或换一句行动。'
         : raw;
