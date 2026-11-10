@@ -35,7 +35,12 @@ interface BatchConfig {
     rubricSha256: string;
   };
   model: Record<string, unknown>;
-  template: { kind: string; system: string; userRenderer: string; addGenerationPrompt: boolean };
+  template: {
+    kind: string; system: string; userRenderer: string; addGenerationPrompt: boolean;
+    /** Optional fixed instruction prefixed to the user turn. It is part of the
+     * prompt bytes, so it is covered by userPromptSha256. */
+    instruction?: string;
+  };
   sampling: Record<string, unknown>;
   outputs: Record<string, string>;
 }
@@ -119,8 +124,14 @@ function main(): void {
   const requests: Array<Record<string, unknown>> = [];
   const expected: Array<Record<string, unknown>> = [];
   const planCases: Array<Record<string, unknown>> = [];
+  const instruction = typeof config.template.instruction === 'string'
+    ? config.template.instruction.trim()
+    : '';
   for (const row of cases) {
-    const userPrompt = renderTrainedInstructUser(row.input);
+    const viewPrompt = renderTrainedInstructUser(row.input);
+    const userPrompt = instruction ? `${instruction}
+
+${viewPrompt}` : viewPrompt;
     const userPromptSha256 = sha256(userPrompt);
     const manifestRow = manifestById.get(row.caseId);
     expected.push({
@@ -142,6 +153,7 @@ function main(): void {
       inputSha256: manifestRow?.inputSha256,
       userPromptSha256,
       userPromptChars: [...userPrompt].length,
+      instructionSha256: instruction ? sha256(instruction) : null,
     });
     for (const seed of config.seeds) {
       requests.push({
@@ -154,6 +166,7 @@ function main(): void {
         userPromptSha256,
         template: config.template.kind,
         sampling: config.sampling,
+        ...(instruction ? { instruction, instructionSha256: sha256(instruction) } : {}),
       });
     }
   }
@@ -180,6 +193,8 @@ function main(): void {
     seeds: config.seeds,
     model: config.model,
     template: config.template,
+    instruction: instruction || null,
+    instructionSha256: instruction ? sha256(instruction) : null,
     sampling: config.sampling,
     calls: requests.length,
     cases: planCases,

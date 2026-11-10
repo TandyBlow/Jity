@@ -1,6 +1,6 @@
 {
   "batchId": "b01",
-  "preparedAt": "2026-11-10T11:58:55.448Z",
+  "preparedAt": "2026-11-10T12:18:10.762Z",
   "pack": {
     "package": "narration-dev-package-v1",
     "caseCount": 15,
@@ -30,6 +30,8 @@
     "addGenerationPrompt": true,
     "note": "The shared pack input already is the 视角/上回合状态/本回合变化/本回合状态 view; the user turn is the trained instruct shape. requiredFacts/notes/reference are never in the prompt."
   },
+  "instruction": null,
+  "instructionSha256": null,
   "sampling": {
     "doSample": true,
     "temperature": 0.45,
@@ -49,7 +51,8 @@
       "category": "long_text",
       "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
       "userPromptSha256": "067918ae71b8cb306574e8cf63f3aa6c76eed5a1c1438b59745dc98303581000",
-      "userPromptChars": 896
+      "userPromptChars": 896,
+      "instructionSha256": null
     }
   ],
   "requestsSha256": "77251fb07437e02abf2a084057782b363807d4228f52aada293a583625ff6c7d",

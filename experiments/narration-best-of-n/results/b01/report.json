@@ -1,0 +1,1227 @@
+{
+  "version": "best-of-n-analysis-v1",
+  "createdAt": "2026-11-10T12:15:55.086Z",
+  "batches": [
+    "b01"
+  ],
+  "preregistration": {
+    "version": "narration-best-of-n-prereg-v1",
+    "sha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3"
+  },
+  "checker": {
+    "module": "worktrees/01-input/frontend/src/lib/world-engine/local/narration-quality",
+    "files": {
+      "anchors.test.ts": "79d97dad2248dd69d71dc6f844d82b2d025db3ba2c2775e3daa450c47184352b",
+      "batch.test.ts": "bb2c731fc5515a5c4068b31a63b9a393361518fc0e941a039aeaba7e64352482",
+      "fallback.test.ts": "88694175a3823266b580c436bd8871a20018d48e2af3adc9a3bfe78dbb8a3bc4",
+      "gate.test.ts": "653ab580f3002d9e44553a60135b074350d683bcfd36a87bead691dda5d75bad",
+      "gate.ts": "d2d7fe40ea0b3660f4ef1156f4277c9b86d61e3223ffe15bde0db89a26b1032e",
+      "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
+      "lexicon.ts": "f016ec721783438dd4e48036bd29bbd1a4575841a84553aed041652ddc79b01e",
+      "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
+      "review.ts": "a3f08eb5006048d7d4c2528510677a59bbaa2a1a4d28a59d7704a132a81d59e6",
+      "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
+      "sequence.test.ts": "78a1ce9c94e5c28f4d4d0aeceb96423f544b059b7bf4d25e7fd31af42106f393",
+      "sequence.ts": "aa28181dd7cec65a85344912693bf422d421d7f3aa2fb148294d73a0505a19b0",
+      "types.ts": "05021b2105fbddc251dfc3cfe8f45d31cb7c032b539303e0e43f5890904ea242"
+    },
+    "combinedSha256": "c363360ee1ce6fbb460be91bb461f700d9f81226253807ec2027b998744e4873",
+    "reviewKind": "mechanical_checker",
+    "independent": false,
+    "note": "mechanical fact/style/review screen; not a human and not an independent sign-off"
+  },
+  "modules": {
+    "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
+    "select": "88014ef747c5bbdb87a6dd4a535260650a821343b4d5f30d14b3ce84e556a69c",
+    "analyzer": "a665d4453e6fc34a95eef786ae99619a7cd92aef27bfc97e16f2b0e8649fe104"
+  },
+  "rawInventory": [
+    {
+      "batch": "b01",
+      "caseId": "frozen-row-0012",
+      "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+      "rawRows": 6,
+      "seeds": [
+        17,
+        29,
+        43,
+        61,
+        79,
+        97
+      ]
+    }
+  ],
+  "findingTotals": {
+    "fact.time_missing": 6,
+    "fact.personality_omitted": 6,
+    "review.micro_action": 6,
+    "review.tone": 1,
+    "review.pronoun": 1,
+    "fact.move_omitted": 1
+  },
+  "env": {
+    "b01": {
+      "host": "hpcgpu01",
+      "platform": "Linux-4.18.0-425.3.1.el8.x86_64-x86_64-with-glibc2.28",
+      "python": "3.11.17",
+      "torch": "2.5.1+cu124",
+      "transformers": "4.51.3",
+      "device": "cuda",
+      "dtype": "float16",
+      "cuda": "Tesla V100-SXM2-32GB",
+      "cudaCapability": [
+        7,
+        0
+      ],
+      "gpuBefore": [
+        "Tesla V100-SXM2-32GB, 32768 MiB, 4 MiB, 0 %, 580.126.09"
+      ],
+      "loadMs": 2881.462909281254,
+      "model": {
+        "path": "/home/student/t330034047/qwen15b",
+        "config": {
+          "model_type": "qwen2",
+          "architectures": [
+            "Qwen2ForCausalLM"
+          ],
+          "hidden_size": 1536,
+          "num_hidden_layers": 28,
+          "vocab_size": 151936,
+          "max_position_embeddings": 32768,
+          "_name_or_path": "/home/student/t330034047/qwen15b"
+        },
+        "files": {
+          "config.json": "98d2ff8cc47488d08a2b0b3acf4eb99ef210779b42bd48605f6b8e36acdbf670",
+          "generation_config.json": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6",
+          "merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+          "model.safetensors": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee",
+          "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+          "tokenizer_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+          "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      },
+      "git": {
+        "head": "unknown",
+        "branch": "unknown",
+        "status": "unknown"
+      },
+      "preregistrationSha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3",
+      "configSha256": "6e23223f6b5c6489c777bb517fc1e935eeac8ab14dea94c0116dbc3994736a63",
+      "requestsSha256": "77251fb07437e02abf2a084057782b363807d4228f52aada293a583625ff6c7d",
+      "partial": false,
+      "gpuAfter": [
+        "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 46 %, 580.126.09"
+      ],
+      "finishedAt": "2026-11-10T20:12:19+0800",
+      "calls": 6
+    }
+  },
+  "plans": {
+    "b01": {
+      "batchId": "b01",
+      "preparedAt": "2026-11-10T11:58:55.448Z",
+      "pack": {
+        "package": "narration-dev-package-v1",
+        "caseCount": 15,
+        "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+        "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+        "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+      },
+      "seeds": [
+        17,
+        29,
+        43,
+        61,
+        79,
+        97
+      ],
+      "model": {
+        "hpcPath": "~/qwen15b",
+        "family": "Qwen2.5 instruct base (lane-10 training docstring); the runner records the actual config and weight hashes, which are authoritative",
+        "quantization": "none (transformers safetensors, bfloat16 if the node supports it, float16 otherwise)",
+        "why": "Already on HPC (lane-10 base for the qwen15b training arms), no new download and no local 4060 use.",
+        "notTheProductWeights": "This is NOT the current browser product checkpoint. This batch studies base-model sampling diversity; any product claim requires a same-condition re-run on the actual browser weights."
+      },
+      "template": {
+        "kind": "qwen2-chatml",
+        "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+        "userRenderer": "renderTrainedInstructUser(input) from frontend/src/lib/world-engine/local/narration-generation/trained-input.ts",
+        "addGenerationPrompt": true,
+        "note": "The shared pack input already is the 视角/上回合状态/本回合变化/本回合状态 view; the user turn is the trained instruct shape. requiredFacts/notes/reference are never in the prompt."
+      },
+      "sampling": {
+        "doSample": true,
+        "temperature": 0.45,
+        "topP": 0.95,
+        "topK": 40,
+        "repetitionPenalty": 1,
+        "noRepeatNgramSize": 0,
+        "maxNewTokens": 240,
+        "numReturnSequences": 1,
+        "eosStop": true,
+        "note": "temperature/top-p/top-k and the token cap follow the product candidate defaults (06 passes temperature 0.45 and maxTokens 240); repetition_penalty/no_repeat_ngram stay neutral so the measurement is not padded."
+      },
+      "calls": 6,
+      "cases": [
+        {
+          "caseId": "frozen-row-0012",
+          "category": "long_text",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "userPromptSha256": "067918ae71b8cb306574e8cf63f3aa6c76eed5a1c1438b59745dc98303581000",
+          "userPromptChars": 896
+        }
+      ],
+      "requestsSha256": "77251fb07437e02abf2a084057782b363807d4228f52aada293a583625ff6c7d",
+      "expectedSha256": "b0c018a3a00a4e81fa32d3154b658af8d33a5e7e66b585535841c9429ecfa060",
+      "renderer": "frontend/src/lib/world-engine/local/narration-generation/trained-input.ts:renderTrainedInstructUser",
+      "referenceExcluded": true,
+      "frontendRoot": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\frontend"
+    }
+  },
+  "cases": [
+    {
+      "caseId": "frozen-row-0012",
+      "category": "long_text",
+      "samples": [
+        {
+          "id": "frozen-row-0012:s17",
+          "seed": 17,
+          "status": "ok",
+          "text": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。铁皮还书箱的箱底垫了一块木板，显得有些不平整。",
+          "textSha256": "73df7e315e925e9b04523ca55ef475d656a9849828238eeb654745c36d3b7f9a",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 2.995699644088745,
+            "firstTokenMs": 9727.352496236563,
+            "totalMs": 11983.140472322702,
+            "promptTokens": 558,
+            "newTokens": 50,
+            "tokensPerSecond": 4.172528905547283
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.micro_action"
+            ],
+            "counts": {
+              "fact": 2,
+              "style": 0,
+              "review": 1
+            },
+            "mandatoryCovered": 1,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": true,
+                "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。",
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 5.357000000000028
+          },
+          "metrics": {
+            "chars": 52,
+            "sentences": 2,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        },
+        {
+          "id": "frozen-row-0012:s29",
+          "seed": 29,
+          "status": "ok",
+          "text": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+          "textSha256": "c2ea4c8923192a81aec6b8dbf5c2d0c1e84882497616d51537d860be22214809",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 1.1518970131874084,
+            "firstTokenMs": 41.63921996951103,
+            "totalMs": 520.1882906258106,
+            "promptTokens": 558,
+            "newTokens": 22,
+            "tokensPerSecond": 42.29237834925692
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.micro_action"
+            ],
+            "counts": {
+              "fact": 2,
+              "style": 0,
+              "review": 1
+            },
+            "mandatoryCovered": 1,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": true,
+                "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 1.6060999999999694
+          },
+          "metrics": {
+            "chars": 20,
+            "sentences": 1,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        },
+        {
+          "id": "frozen-row-0012:s43",
+          "seed": 43,
+          "status": "ok",
+          "text": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。他戴着一副圆框眼镜，指节上还有旧伤，袖口沾了墨。他似乎在为十年前那场火灾的真相而努力。",
+          "textSha256": "0381870a9abd366f6ed98250bc59f11b49eed96773963ddb506b25cfbc4df644",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 1.1356174945831299,
+            "firstTokenMs": 41.62045568227768,
+            "totalMs": 1322.028174996376,
+            "promptTokens": 558,
+            "newTokens": 56,
+            "tokensPerSecond": 42.359157738944184
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.micro_action",
+              "review.tone"
+            ],
+            "counts": {
+              "fact": 2,
+              "style": 0,
+              "review": 2
+            },
+            "mandatoryCovered": 1,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              },
+              {
+                "kind": "review.tone",
+                "severity": "review",
+                "sentence": "他似乎在为十年前那场火灾的真相而努力。",
+                "detail": "no settled fact binds this sentence; it is atmosphere or inference",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": true,
+                "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。",
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 1.0264000000000237
+          },
+          "metrics": {
+            "chars": 62,
+            "sentences": 3,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        },
+        {
+          "id": "frozen-row-0012:s61",
+          "seed": 61,
+          "status": "ok",
+          "text": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。袖口沾了墨，这是他日常工作的痕迹。他注意到箱底垫了一块木板，这可能是为了防止箱子漏底。温执的个性是讲究次序，他知道哪只箱子漏底，认定十年前那场火灾不是意外。",
+          "textSha256": "145d0c38fdbe57956a3a370785b20bfbef2ddb39f6d5da5d7e7a4c0b7597436c",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 1.2158118188381195,
+            "firstTokenMs": 46.660467982292175,
+            "totalMs": 1790.6525880098343,
+            "promptTokens": 558,
+            "newTokens": 76,
+            "tokensPerSecond": 42.44262706730168
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.pronoun",
+              "review.micro_action"
+            ],
+            "counts": {
+              "fact": 2,
+              "style": 0,
+              "review": 2
+            },
+            "mandatoryCovered": 1,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.pronoun",
+                "severity": "review",
+                "sentence": "袖口沾了墨，这是他日常工作的痕迹。",
+                "detail": "他: the antecedent is ambiguous (candidates 温执); a human must decide",
+                "basis": [],
+                "factIds": [
+                  "person:温执"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": true,
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。",
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 0.6512000000000171
+          },
+          "metrics": {
+            "chars": 94,
+            "sentences": 4,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        },
+        {
+          "id": "frozen-row-0012:s79",
+          "seed": 79,
+          "status": "ok",
+          "text": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。铁皮还书箱的箱底垫了一块木板，看起来有些破旧。",
+          "textSha256": "d113c3b5fa59328eb81a0752c8b342787003cabbadda16cdb51355c4e80510e9",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 1.0533668100833893,
+            "firstTokenMs": 41.24122858047485,
+            "totalMs": 1124.5716698467731,
+            "promptTokens": 558,
+            "newTokens": 49,
+            "tokensPerSecond": 43.57214512319737
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.micro_action"
+            ],
+            "counts": {
+              "fact": 2,
+              "style": 0,
+              "review": 1
+            },
+            "mandatoryCovered": 1,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": true,
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。",
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 0.33080000000001064
+          },
+          "metrics": {
+            "chars": 50,
+            "sentences": 2,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        },
+        {
+          "id": "frozen-row-0012:s97",
+          "seed": 97,
+          "status": "ok",
+          "text": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+          "textSha256": "7dfca68bedccdf427cff4c8c8bf082d733955da40ba990eb223b674f49ca63e7",
+          "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+          "finishReason": "stop",
+          "timings": {
+            "promptMs": 1.0170824825763702,
+            "firstTokenMs": 41.25695675611496,
+            "totalMs": 530.2487052977085,
+            "promptTokens": 558,
+            "newTokens": 22,
+            "tokensPerSecond": 41.489964577373335
+          },
+          "checker": {
+            "decision": "fail",
+            "factQualified": false,
+            "factIssueKinds": [
+              "fact.time_missing",
+              "fact.move_omitted",
+              "fact.personality_omitted"
+            ],
+            "styleIssueKinds": [],
+            "reviewIssueKinds": [
+              "review.micro_action"
+            ],
+            "counts": {
+              "fact": 3,
+              "style": 0,
+              "review": 1
+            },
+            "mandatoryCovered": 0,
+            "mandatoryTotal": 3,
+            "findings": [
+              {
+                "kind": "fact.time_missing",
+                "severity": "fact",
+                "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+                "detail": "settled advance 4 分钟 is not stated",
+                "basis": [
+                  "4 分钟"
+                ]
+              },
+              {
+                "kind": "fact.move_omitted",
+                "severity": "fact",
+                "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+                "detail": "温执: 借阅台 → 还书处 is not narrated",
+                "basis": [
+                  "温执: 借阅台 → 还书处"
+                ],
+                "factIds": [
+                  "move:温执"
+                ]
+              },
+              {
+                "kind": "fact.personality_omitted",
+                "severity": "fact",
+                "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+                "detail": "黎知微: new personality 「答应替温执留一只没登记过的旧箱」 is not narrated",
+                "basis": [
+                  "答应替温执留一只没登记过的旧箱"
+                ],
+                "factIds": [
+                  "personality:黎知微:答应替温执留一只没登记过的旧箱"
+                ]
+              },
+              {
+                "kind": "review.micro_action",
+                "severity": "review",
+                "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+                "detail": "posture (站在) is not settled; allowed as a micro-action but not as state",
+                "basis": []
+              }
+            ],
+            "mandatory": [
+              {
+                "factId": "move:温执",
+                "summary": "温执 借阅台 → 还书处",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              },
+              {
+                "factId": "personality:黎知微:答应替温执留一只没登记过的旧箱",
+                "summary": "黎知微 新增个性：答应替温执留一只没登记过的旧箱",
+                "expressed": false,
+                "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+                "form": "missing"
+              },
+              {
+                "factId": "time",
+                "summary": "时间推进 4 分钟",
+                "expressed": false,
+                "sentence": null,
+                "form": "literal"
+              }
+            ],
+            "elapsedMs": 0.14370000000002392
+          },
+          "metrics": {
+            "chars": 22,
+            "sentences": 1,
+            "repeatedSentenceRatio": 0,
+            "repeatedClauseRatio": 0,
+            "emptySentenceRatio": 0,
+            "priorEcho": 0,
+            "dialogueRatio": 0
+          }
+        }
+      ],
+      "diversity": {
+        "clusters": [
+          {
+            "id": 0,
+            "members": [
+              "frozen-row-0012:s17",
+              "frozen-row-0012:s79"
+            ]
+          },
+          {
+            "id": 1,
+            "members": [
+              "frozen-row-0012:s29",
+              "frozen-row-0012:s43"
+            ]
+          },
+          {
+            "id": 2,
+            "members": [
+              "frozen-row-0012:s61"
+            ]
+          },
+          {
+            "id": 3,
+            "members": [
+              "frozen-row-0012:s97"
+            ]
+          }
+        ],
+        "effectiveRepetition": 0.33333333333333337,
+        "qualifiedCount": 0,
+        "qualifiedClusters": 0,
+        "qualifiedDistinctClusters": 0,
+        "ambiguousPairs": [
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s79",
+            "reasons": [
+              "same_skeleton:structure:1.00>=0.85,aligned:0.46>=0.42,surface:0.29>=0.2,detail:1.00>=0.75"
+            ]
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s43",
+            "reasons": [
+              "contained_rewrite:0.89>=0.8"
+            ]
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s61",
+            "reasons": []
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s79",
+            "reasons": []
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s97",
+            "reasons": []
+          },
+          {
+            "a": "frozen-row-0012:s43",
+            "b": "frozen-row-0012:s97",
+            "reasons": [
+              "contained_rewrite:0.80>=0.8"
+            ]
+          }
+        ],
+        "pairs": [
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s29",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.21428571428571427,
+            "containment": 0.6666666666666666,
+            "alignedJaccard": 0.24232887490165222,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.14634146341463414,
+            "closingJaccard": 0.1935483870967742,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s43",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.14583333333333334,
+            "containment": 0.28,
+            "alignedJaccard": 0.18353174603174605,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.1111111111111111,
+            "closingJaccard": 0,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s61",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.1111111111111111,
+            "containment": 0.28,
+            "alignedJaccard": 0.19345238095238096,
+            "structureJaccard": 0,
+            "detailJaccard": 0.3333333333333333,
+            "openingJaccard": 0.16279069767441862,
+            "closingJaccard": 0,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s79",
+            "homogeneous": true,
+            "reasons": [
+              "same_skeleton:structure:1.00>=0.85,aligned:0.46>=0.42,surface:0.29>=0.2,detail:1.00>=0.75"
+            ],
+            "surfaceJaccard": 0.2894736842105263,
+            "containment": 0.4583333333333333,
+            "alignedJaccard": 0.4597069597069597,
+            "structureJaccard": 1,
+            "detailJaccard": 1,
+            "openingJaccard": 0.21739130434782608,
+            "closingJaccard": 0.46153846153846156,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s17",
+            "b": "frozen-row-0012:s97",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.09375,
+            "containment": 0.3,
+            "alignedJaccard": 0.18686868686868685,
+            "structureJaccard": 0,
+            "detailJaccard": 0,
+            "openingJaccard": 0.06521739130434782,
+            "closingJaccard": 0.08333333333333333,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s43",
+            "homogeneous": true,
+            "reasons": [
+              "contained_rewrite:0.89>=0.8"
+            ],
+            "surfaceJaccard": 0.25806451612903225,
+            "containment": 0.8888888888888888,
+            "alignedJaccard": 0.39238095238095244,
+            "structureJaccard": 0,
+            "detailJaccard": 1,
+            "openingJaccard": 0.5,
+            "closingJaccard": 0,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s61",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.14893617021276595,
+            "containment": 0.7777777777777778,
+            "alignedJaccard": 0.16622097114707954,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.14705882352941177,
+            "closingJaccard": 0,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s79",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.2692307692307692,
+            "containment": 0.7777777777777778,
+            "alignedJaccard": 0.26721883173496075,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.21621621621621623,
+            "closingJaccard": 0.1935483870967742,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s29",
+            "b": "frozen-row-0012:s97",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.26666666666666666,
+            "containment": 0.4444444444444444,
+            "alignedJaccard": 0.39285714285714285,
+            "structureJaccard": 1,
+            "detailJaccard": 0,
+            "openingJaccard": 0.26666666666666666,
+            "closingJaccard": 0.26666666666666666,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s43",
+            "b": "frozen-row-0012:s61",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.30434782608695654,
+            "containment": 0.5833333333333334,
+            "alignedJaccard": 0.27708333333333335,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.13513513513513514,
+            "closingJaccard": 0.12195121951219512,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s43",
+            "b": "frozen-row-0012:s79",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.3333333333333333,
+            "containment": 0.5625,
+            "alignedJaccard": 0.35416666666666663,
+            "structureJaccard": 0,
+            "detailJaccard": 0.5,
+            "openingJaccard": 0.11627906976744186,
+            "closingJaccard": 0,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s43",
+            "b": "frozen-row-0012:s97",
+            "homogeneous": true,
+            "reasons": [
+              "contained_rewrite:0.80>=0.8"
+            ],
+            "surfaceJaccard": 0.25,
+            "containment": 0.8,
+            "alignedJaccard": 0.49702712746191,
+            "structureJaccard": 0,
+            "detailJaccard": 0,
+            "openingJaccard": 0.64,
+            "closingJaccard": 0,
+            "ambiguous": true
+          },
+          {
+            "a": "frozen-row-0012:s61",
+            "b": "frozen-row-0012:s79",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.26605504587155965,
+            "containment": 0.6041666666666666,
+            "alignedJaccard": 0.33822973381730187,
+            "structureJaccard": 0,
+            "detailJaccard": 0.3333333333333333,
+            "openingJaccard": 0.6,
+            "closingJaccard": 0,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s61",
+            "b": "frozen-row-0012:s97",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.057692307692307696,
+            "containment": 0.3,
+            "alignedJaccard": 0.11824324324324326,
+            "structureJaccard": 0,
+            "detailJaccard": 0,
+            "openingJaccard": 0.07894736842105263,
+            "closingJaccard": 0,
+            "ambiguous": false
+          },
+          {
+            "a": "frozen-row-0012:s79",
+            "b": "frozen-row-0012:s97",
+            "homogeneous": false,
+            "reasons": [],
+            "surfaceJaccard": 0.0967741935483871,
+            "containment": 0.3,
+            "alignedJaccard": 0.18816067653276958,
+            "structureJaccard": 0,
+            "detailJaccard": 0,
+            "openingJaccard": 0.06818181818181818,
+            "closingJaccard": 0.08333333333333333,
+            "ambiguous": false
+          }
+        ]
+      },
+      "diversityGate": false,
+      "findingCounts": {
+        "fact.time_missing": 6,
+        "fact.personality_omitted": 6,
+        "review.micro_action": 6,
+        "review.tone": 1,
+        "review.pronoun": 1,
+        "fact.move_omitted": 1
+      },
+      "arms": [],
+      "stopSignals": [
+        "zero_fact_qualified_candidates"
+      ]
+    }
+  ],
+  "armSummary": [
+    {
+      "arm": 1,
+      "trials": 0,
+      "selectedFactQualifiedRate": 0,
+      "selectedPassRate": 0,
+      "meanSelectedCoverage": 0,
+      "meanSelectedRepetition": 0,
+      "meanSelectedPriorEcho": 0,
+      "meanCallWallMs": 0,
+      "meanCheckerMs": 0,
+      "meanSelectionMs": 0,
+      "totalCalls": 0
+    },
+    {
+      "arm": 2,
+      "trials": 0,
+      "selectedFactQualifiedRate": 0,
+      "selectedPassRate": 0,
+      "meanSelectedCoverage": 0,
+      "meanSelectedRepetition": 0,
+      "meanSelectedPriorEcho": 0,
+      "meanCallWallMs": 0,
+      "meanCheckerMs": 0,
+      "meanSelectionMs": 0,
+      "totalCalls": 0
+    },
+    {
+      "arm": 4,
+      "trials": 0,
+      "selectedFactQualifiedRate": 0,
+      "selectedPassRate": 0,
+      "meanSelectedCoverage": 0,
+      "meanSelectedRepetition": 0,
+      "meanSelectedPriorEcho": 0,
+      "meanCallWallMs": 0,
+      "meanCheckerMs": 0,
+      "meanSelectionMs": 0,
+      "totalCalls": 0
+    }
+  ],
+  "benefit": {
+    "status": "not_evaluated",
+    "reasons": [
+      "arm_test_not_allowed:fewer_than_two_cases"
+    ],
+    "betterArms": [],
+    "armTestGate": {
+      "allowed": false,
+      "reason": "fewer_than_two_cases"
+    },
+    "cases": 1,
+    "casesWithDiversityGate": 0,
+    "zeroQualifiedCases": 1
+  },
+  "stop": {
+    "stopCurrentScheme": true,
+    "effectiveRepetitionAbove80": [],
+    "note": "preregistered stop also needs a second comparable experiment without improvement; one batch alone does not expand N"
+  },
+  "cost": {
+    "perArm": [
+      {
+        "arm": 1,
+        "trials": 0,
+        "selectedFactQualifiedRate": 0,
+        "selectedPassRate": 0,
+        "meanSelectedCoverage": 0,
+        "meanSelectedRepetition": 0,
+        "meanSelectedPriorEcho": 0,
+        "meanCallWallMs": 0,
+        "meanCheckerMs": 0,
+        "meanSelectionMs": 0,
+        "totalCalls": 0
+      },
+      {
+        "arm": 2,
+        "trials": 0,
+        "selectedFactQualifiedRate": 0,
+        "selectedPassRate": 0,
+        "meanSelectedCoverage": 0,
+        "meanSelectedRepetition": 0,
+        "meanSelectedPriorEcho": 0,
+        "meanCallWallMs": 0,
+        "meanCheckerMs": 0,
+        "meanSelectionMs": 0,
+        "totalCalls": 0
+      },
+      {
+        "arm": 4,
+        "trials": 0,
+        "selectedFactQualifiedRate": 0,
+        "selectedPassRate": 0,
+        "meanSelectedCoverage": 0,
+        "meanSelectedRepetition": 0,
+        "meanSelectedPriorEcho": 0,
+        "meanCallWallMs": 0,
+        "meanCheckerMs": 0,
+        "meanSelectionMs": 0,
+        "totalCalls": 0
+      }
+    ],
+    "browserAcceptance": "not measured here; 09 must measure submit-to-first-fact-checked-readable and whole-turn time, all calls/retries included"
+  },
+  "humanReview": {
+    "status": "pending",
+    "reviewer": null,
+    "reviewKind": null
+  }
+}

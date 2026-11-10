@@ -1,0 +1,47 @@
+== verify 2026-11-10T20:11:05+0800
+{
+  "status": "pass",
+  "batch": "b01",
+  "cases": [
+    "frozen-row-0012"
+  ],
+  "calls": 6,
+  "checks": [
+    [
+      "manifest",
+      "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7"
+    ],
+    [
+      "cases",
+      "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b"
+    ],
+    [
+      "rubric",
+      "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+    ],
+    [
+      "manifest.files.cases",
+      "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b"
+    ]
+  ],
+  "referenceLeakCheck": "no 16-char reference-only substring in any prompt"
+}
+== generate 2026-11-10T20:11:05+0800
+[2026-11-10T20:11:05+0800] start host=hpcgpu01 model=/home/student/t330034047/qwen15b dtype=float16
+[2026-11-10T20:11:05+0800] nvidia-smi: Tesla V100-SXM2-32GB, 32768 MiB, 4 MiB, 0 %, 580.126.09
+[2026-11-10T20:11:07+0800] torch=2.5.1+cu124 transformers=4.51.3
+[2026-11-10T20:11:10+0800] loaded 2881 ms
+[2026-11-10T20:11:18+0800] call 1/6 frozen-row-0012:s17
+[2026-11-10T20:11:30+0800]   ok newTokens=50 firstTokenMs=9727.352496236563 totalMs=11983
+[2026-11-10T20:11:30+0800] call 2/6 frozen-row-0012:s29
+[2026-11-10T20:11:30+0800]   ok newTokens=22 firstTokenMs=41.63921996951103 totalMs=520
+[2026-11-10T20:11:30+0800] call 3/6 frozen-row-0012:s43
+[2026-11-10T20:11:32+0800]   ok newTokens=56 firstTokenMs=41.62045568227768 totalMs=1322
+[2026-11-10T20:12:16+0800] call 4/6 frozen-row-0012:s61
+[2026-11-10T20:12:18+0800]   ok newTokens=76 firstTokenMs=46.660467982292175 totalMs=1791
+[2026-11-10T20:12:18+0800] call 5/6 frozen-row-0012:s79
+[2026-11-10T20:12:19+0800]   ok newTokens=49 firstTokenMs=41.24122858047485 totalMs=1125
+[2026-11-10T20:12:19+0800] call 6/6 frozen-row-0012:s97
+[2026-11-10T20:12:19+0800]   ok newTokens=22 firstTokenMs=41.25695675611496 totalMs=530
+[2026-11-10T20:12:19+0800] done 6 calls -> results/b01/raw.jsonl
+== done 2026-11-10T20:12:20+0800

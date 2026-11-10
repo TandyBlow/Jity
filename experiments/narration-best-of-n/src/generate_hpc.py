@@ -82,8 +82,10 @@ def nvidia_smi() -> List[str]:
     try:
         out = subprocess.check_output(
             ["nvidia-smi", "--query-gpu=name,memory.total,memory.used,utilization.gpu,driver_version",
-             "--format=csv,noheader"], text=True, stderr=subprocess.DEVNULL)
+             "--format=csv,noheader"], text=True, stderr=subprocess.DEVNULL, timeout=2)
         return [line.strip() for line in out.splitlines() if line.strip()]
+    except subprocess.TimeoutExpired:
+        return ["unknown:nvidia-smi-timeout"]
     except Exception:  # noqa: BLE001
         return []
 
@@ -296,8 +298,11 @@ def main() -> int:
     write_json_atomic(env_path, identity)
 
     rows: List[Dict[str, Any]] = []
+    run_start = time.perf_counter()
+    previous_end_ms = 0.0
     for index, entry in enumerate(requests, start=1):
         log(f"call {index}/{len(requests)} {entry['callId']}")
+        started_at_ms = (time.perf_counter() - run_start) * 1000
         row: Dict[str, Any] = {
             "callId": entry["callId"],
             "caseId": entry["caseId"],
@@ -310,6 +315,8 @@ def main() -> int:
             "sampling": entry["sampling"],
             "generatedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             "gpuDuring": nvidia_smi(),
+            "startedAtMs": started_at_ms,
+            "gapBeforeMs": max(0.0, started_at_ms - previous_end_ms),
         }
         try:
             prompt = build_prompt(tokenizer, entry["system"], entry["userPrompt"])
@@ -332,10 +339,13 @@ def main() -> int:
             log(f"  error {row['error']}")
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
+        row["endedAtMs"] = (time.perf_counter() - run_start) * 1000
+        previous_end_ms = row["endedAtMs"]
         rows.append(row)
         write_jsonl_atomic(raw_path, rows)
 
     identity["gpuAfter"] = nvidia_smi()
+    identity["runWallMs"] = (time.perf_counter() - run_start) * 1000
     identity["finishedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
     identity["calls"] = len(rows)
     write_json_atomic(env_path, identity)

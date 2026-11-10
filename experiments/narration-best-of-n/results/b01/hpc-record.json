@@ -1,0 +1,149 @@
+{
+ "requestId": "12-best-of-n-b01",
+ "executedBy": "10-training (sole HPC submit owner)",
+ "jobId": "251512",
+ "slurm": {
+  "submit": "2026-11-10T20:10:36",
+  "start": "2026-11-10T20:11:04",
+  "end": "2026-11-10T20:12:20",
+  "elapsed": "00:01:16",
+  "partition": "gpu",
+  "node": "hpcgpu01",
+  "allocCpus": 8,
+  "requestedTres": "billing=8,cpu=8,gres/gpu=1,mem=24G,node=1",
+  "maxRSS": "not reported by sacct (empty)"
+ },
+ "grantedGpu": {
+  "model": "Tesla V100-SXM2-32GB",
+  "memoryMiB": 32768,
+  "driver": "580.126.09",
+  "count": 1,
+  "note": "requested gpu:4090 first as job 251509; it stayed Priority-pending, so it was canceled and resubmitted on a V100 after the dtype check"
+ },
+ "gpuSamples": {
+  "before": [
+   "Tesla V100-SXM2-32GB, 32768 MiB, 4 MiB, 0 %, 580.126.09"
+  ],
+  "during": [
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3446 MiB, 0 %, 580.126.09"
+   ],
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 47 %, 580.126.09"
+   ],
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 46 %, 580.126.09"
+   ],
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 0 %, 580.126.09"
+   ],
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 46 %, 580.126.09"
+   ],
+   [
+    "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 47 %, 580.126.09"
+   ]
+  ],
+  "after": [
+   "Tesla V100-SXM2-32GB, 32768 MiB, 3574 MiB, 46 %, 580.126.09"
+  ],
+  "unknown": "continuous utilisation/VRAM sampling was not instrumented; only these per-call samples exist"
+ },
+ "dtype": {
+  "requested": "float16",
+  "used": "float16",
+  "why": "V100 sm_70; fp16 measured working by job 251508 (168 tok/s warm over 4 replicas)"
+ },
+ "model": {
+  "path": "/home/student/t330034047/qwen15b",
+  "family": "qwen2",
+  "loadMs": 2881.5
+ },
+ "calls": {
+  "completed": 6,
+  "expected": 6,
+  "perCall": [
+   {
+    "seed": 17,
+    "chars": 58,
+    "finishReason": "stop",
+    "firstTokenMs": 9727.4,
+    "totalMs": 11983.1,
+    "newTokens": 50
+   },
+   {
+    "seed": 29,
+    "chars": 23,
+    "finishReason": "stop",
+    "firstTokenMs": 41.6,
+    "totalMs": 520.2,
+    "newTokens": 22
+   },
+   {
+    "seed": 43,
+    "chars": 69,
+    "finishReason": "stop",
+    "firstTokenMs": 41.6,
+    "totalMs": 1322.0,
+    "newTokens": 56
+   },
+   {
+    "seed": 61,
+    "chars": 104,
+    "finishReason": "stop",
+    "firstTokenMs": 46.7,
+    "totalMs": 1790.7,
+    "newTokens": 76
+   },
+   {
+    "seed": 79,
+    "chars": 56,
+    "finishReason": "stop",
+    "firstTokenMs": 41.2,
+    "totalMs": 1124.6,
+    "newTokens": 49
+   },
+   {
+    "seed": 97,
+    "chars": 25,
+    "finishReason": "stop",
+    "firstTokenMs": 41.3,
+    "totalMs": 530.2,
+    "newTokens": 22
+   }
+  ],
+  "totalWallSeconds": 76
+ },
+ "throughput": {
+  "tokensPerSecond": null,
+  "why": "the runner records per-call token counts but this driver did not aggregate them; computing it from 6 short calls would misrepresent steady-state",
+  "measuredElsewhere": "job 251508 measured 168 tok/s warm over 4 simultaneous prompts on the same GPU"
+ },
+ "outputs": {
+  "fetchedDir": "results/product/hpc-results/12-best-of-n-b01",
+  "files": {
+   "env.json": "eec9685ca3b6a5d23084ebdfd04523486c764ebe1c9ffd4111007bd51acefe54",
+   "raw.jsonl": "b2324fa56b90bd3371c140b4ecfeb687927beafcdb36d46dc0c9ff7e084c182c",
+   "slurm-251512.err": "590a1a2479537a360e17d5d10c2ce9dcad90bd5fdb19e3f81dc24be6fe5a0736",
+   "slurm-251512.out": "87c951da454fc9ce3227d91d2327981ade6a1c48d3dba5d36f8ba899ed00297d"
+  }
+ },
+ "preregistrationVerified": {
+  "localBeforeUpload": true,
+  "remoteAfterUpload": true,
+  "sha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3"
+ },
+ "sharedPackVerified": {
+  "manifest": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+  "cases": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+  "rubric": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+ },
+ "observationsForLane12": [
+  "all six calls finished and none hit the 240-token cap; outputs are 17-104 chars, i.e. the model stops early",
+  "seed 97 produced first person ('我站在还书处') instead of the 温执 viewpoint, which is a viewpoint failure rather than a diversity win",
+  "seeds 29 and 97 share the same opening clause and seeds 17/43/61/79 all open with '温执站在还书处', so distinct-rendering analysis should compare clauses beyond the opening",
+  "44 s elapsed between call 3 finishing (20:11:32) and call 4 starting (20:12:16); the runner's own log shows no error, so the cause is inside the runner and should be read from its source before being reported as GPU idle time"
+ ],
+ "notQualityEvidence": "these are raw generations; diversity and quality are lane 12's and 01's calls",
+ "fetchedAt": "2026-11-10T12:15:22.193183+00:00"
+}

@@ -1,0 +1,112 @@
+{
+  "version": "narration-best-of-n-prereg-v2",
+  "owner": "12-best-of-n",
+  "createdAt": "2026-11-10T12:30:00Z",
+  "status": "frozen-before-any-v2-output",
+  "supersedes": null,
+  "relationshipToV1": {
+    "v1": {
+      "path": "preregistration.json",
+      "sha256": "b1079ca6ac39b68c220b2e23004131d84a90e6abc5a119518b5a7b93c56242b3",
+      "status": "completed; retained with its negative result",
+      "result": "6 real outputs, 4 realization clusters (1 - 4/6 = 0.333), 0 fact-qualified, no benefit, N not expanded"
+    },
+    "v2Scope": "Only the user-turn writing instruction changes. Case, shared pack, model, seeds, sampling, max tokens, stop conditions, duplicate rules, qualification rubric and analysis rules stay identical to v1. v2 raw outputs are never pooled with v1 samples.",
+    "whyV2": "b01's 6/6 fact failures were missing time and missing 黎知微's personality change; all six stopped before the 240-token cap and recited state fields. The state-view prompt never asked for prose, so H1 (missing writing task) is the first hypothesis to test before changing model or N."
+  },
+  "sharedInputPackage": {
+    "owner": "01-input",
+    "package": "narration-dev-package-v1",
+    "root": "D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/dev-package-v1",
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+    "referenceNeverInPrompt": true
+  },
+  "batch": {
+    "batchId": "b01-template-v2",
+    "caseIds": ["frozen-row-0012"],
+    "seeds": [17, 29, 43, 61, 79, 97],
+    "model": {
+      "hpcPath": "~/qwen15b",
+      "quantization": "none (safetensors)",
+      "identityRule": "runner records config, weight and tokenizer SHA-256; identity is not inferred from the directory name",
+      "productWeights": false
+    },
+    "template": {
+      "kind": "qwen2-chatml",
+      "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+      "user": "instruction + two newlines + renderTrainedInstructUser(input)",
+      "instruction": "请把下面的已结算状态写成一段中文小说正文，180 到 260 字。必须写出【本回合变化】里的移动、时间推进、物品变化和人物变化；可以写细微动作、对白和视角人物的感受，但不得新增人物、物品、地点、事件、往事或承诺；不要逐条复述状态，不要写标题或列表。",
+      "addGenerationPrompt": true
+    },
+    "sampling": {
+      "doSample": true,
+      "temperature": 0.45,
+      "topP": 0.95,
+      "topK": 40,
+      "repetitionPenalty": 1.0,
+      "noRepeatNgramSize": 0,
+      "maxNewTokens": 240,
+      "numReturnSequences": 1,
+      "eosStop": true,
+      "unchangedFromV1": true
+    }
+  },
+  "hypotheses": [
+    {
+      "id": "H1-template",
+      "statement": "The v1 state-view user turn did not ask for prose, so the base instruct model recited state and stopped.",
+      "test": "v2 adds only the fixed writing instruction above; same case/model/seeds/sampling/cap.",
+      "falsifiedBy": "v2 still has 0 fact-qualified candidates with no reduction in time/personality omissions."
+    },
+    {
+      "id": "H2-model",
+      "statement": "The base checkpoint lacks sufficient narration training for this task.",
+      "test": "If H1 is falsified, the next step is the existing lane-02 beats/product path or the product checkpoint, not a larger N.",
+      "falsifiedBy": "not tested in v2"
+    },
+    {
+      "id": "H3-sampling",
+      "statement": "Sampling/cap caused the omissions.",
+      "evidenceAgainst": "No v1 call reached the 240-token cap; outputs were 22-76 tokens; 4 realization clusters existed at temperature 0.45.",
+      "test": "v2 keeps sampling identical, so a v2 improvement cannot be attributed to sampling."
+    },
+    {
+      "id": "H4-checker",
+      "statement": "The rubric over-flags time/personality.",
+      "evidenceAgainst": "The missing time and personality sentences are absent from all six raw texts; this is not an empty-issues or keyword mismatch.",
+      "test": "No rubric or checker change; 01 remains the owner."
+    },
+    {
+      "id": "H5-timing",
+      "statement": "The 44 s gap between calls 3 and 4 was a runner/driver stall, not GPU work.",
+      "action": "Runner now caps nvidia-smi at 2 s and records startedAtMs/endedAtMs/gapBeforeMs plus runWallMs. v2 must report whole wall time including gaps."
+    }
+  ],
+  "duplicateAndQualificationRules": {
+    "inheritedFromV1": "Same normalization, fingerprints, four homogeneous rules, complete-link clustering, ambiguity band, effectiveRepetition = 1 - distinctRealizationClusters/6 and qualifiedDistinctClusters count.",
+    "factPerspective": "Same 01 RUBRIC.md and reviewNarration; factQualified = no fact finding; readableQualified = pass only; pending never passes.",
+    "v1SamplesNeverMixed": true
+  },
+  "decisionRules": {
+    "zeroQualified": "If v2 has 0 fact-qualified candidates, stop N expansion. Report v1/v2 side by side and hand the failure to 02/06 with the exact omitted facts. Do not relax the rubric.",
+    "qualifiedGate": "If v2 has >=2 fact-qualified non-homogeneous candidates, prepare b02 (five other categories) with the v2 template under a new preregistration, then run the paired N=1/2/4 arms.",
+    "noBenefitClaim": "v2 alone is one case and cannot establish a best-of-N benefit; it can only establish that qualified candidates and non-homogeneous realizations are possible under this template.",
+    "noNExpansion": "Do not increase N or add seeds to rescue v2."
+  },
+  "analysis": {
+    "checker": "01-input narration-quality reviewNarration, rubric sha pinned above; record checker file hashes",
+    "report": "Separate report under results/b01-template-v2/; side-by-side table with v1 (fact failures per sample, clusters, effective repetition, cost, whole-run wall).",
+    "referenceExcluded": true,
+    "humanReview": "pending; independent sentence review request goes to 01 with v2 samples after generation; AI review must be labelled independent_agent",
+    "timing": "report per-call startedAtMs/endedAtMs/gapBeforeMs, firstTokenMs, totalMs, loadMs, runWallMs; do not treat the gap as GPU compute"
+  },
+  "frozenArtifacts": {
+    "config": "configs/b01-template-v2.json",
+    "preregistration": "preregistration.v2.json",
+    "shaFile": "preregistration.v2.sha256",
+    "runner": "src/generate_hpc.py (timing instrumentation updated; generation logic unchanged)",
+    "prepare": "src/prepare.ts (optional instruction prefix; b01 request bytes unchanged)"
+  }
+}
