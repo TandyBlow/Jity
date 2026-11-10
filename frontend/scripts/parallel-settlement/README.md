@@ -17,6 +17,20 @@ node frontend/scripts/parallel-settlement/run-focused.mjs
 - 继续判断：likely+related 才继续；无候选交还；连续无状态进展或重复候选按策略交还；模型异常返回失败而不是交还；默认没有 0 次调用上限。
 - 接线：脚本化 engine 经 `createSettlementHandlers` 驱动真实 `ControllerDriver` + `LocalWorldTransport`，results/updates/continuation 的输出形状被 controller 接受并提交一个完整回合。
 
+## 提示词规模探针（L1，不跑模型）
+
+```bash
+cd frontend && node scripts/parallel-settlement/prompt-size.mjs
+```
+
+同一冻结世界、输入和代码版本下运行；root 已实跑约 1 秒，当前最大 4374 **字符**（不是 token），43 项聚焦测试 1.50 秒通过。脚本故意让每个模型调用失败以取出真实提示词，所以：
+
+- 报告的是 `chars`，不是 token；没有分词器，禁止用 chars 除以 tok/s 报真实耗时。
+- 失败会触发现有修复重试，`promptChars` 里包含这些**探针诱发的重试**；它不是成功产品的真实调用次数。
+- 只用于和同一 fixture/阶段/版本的前后对比；不能证明模型决策、叙述质量或 60 秒时延。
+
+探针取前 3 个排序角色和一条合成事实，prompt 只代表这个 fixture；真实页面仍以 09 的 L5 账本为准。
+
 真实浏览器/模型推理未在本目录运行，需由主集成方在真实页面上复测。
 
 ## 真实页面账本检查（09 证据只读复核）
