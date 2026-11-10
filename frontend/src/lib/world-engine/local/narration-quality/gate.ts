@@ -59,12 +59,14 @@ export function gateNarration(report: ReviewReport, policy: GatePolicy = {}): Ga
   if (!report.time.expressed) reasons.push('time_not_expressed');
   if (fallbackSuspected && !policy.textSource) reasons.push('fallback_suspected_source_unknown');
   if (fallbackSuspected && policy.textSource === 'program_fallback') reasons.push('program_fallback_cannot_be_model_prose');
+  if (fallbackSuspected && policy.textSource === 'model') reasons.push('fallback_suspected_but_labelled_model');
   if (policy.textSource === 'mixed') reasons.push('mixed_source_cannot_be_whole_model_prose');
 
   let decision: GateDecision = 'accept_as_model_prose';
   if (factFindings > 0 || blockingStyles.length || reasons.includes('time_not_expressed')
     || reasons.some((reason) => reason.startsWith('too_short') || reason.startsWith('too_long'))
-    || policy.textSource === 'mixed' || policy.textSource === 'program_fallback') {
+    || policy.textSource === 'mixed' || policy.textSource === 'program_fallback'
+    || reasons.includes('fallback_suspected_but_labelled_model')) {
     decision = 'regenerate';
   } else if (fallbackSuspected || reviewItems > 0) {
     decision = 'hold_for_review';

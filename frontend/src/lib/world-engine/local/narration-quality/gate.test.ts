@@ -33,6 +33,28 @@ describe('gateNarration', () => {
     expect(gate.blockingStyles.length).toBeGreaterThan(0);
   });
 
+  it('regenerates a program fallback even when it is labelled model', () => {
+    // A fallback that rewrites the facts instead of copying them still reads as
+    // a state report: place and appearance lines, a "Name：…" panel.
+    const fallbackInput = {
+      视角: '主角视角（甲）',
+      上回合状态: {
+        地点: { 院子: { 位于: null, 外貌: ['院子里的墙头很高，草叶贴着地面。'] } },
+        人物: {
+          甲: { 位置: '院子', 精神值: 50, 外貌: [] },
+          乙: { 位置: '院子', 精神值: 50, 外貌: ['袖子挽到肘上，手腕露在外面'] },
+        },
+        物品: {},
+      },
+      本回合变化: { 时间推进: '2 分钟', 变化: { 甲: { 精神值: 48 } } },
+      本回合状态: { 人物: {}, 物品: {} },
+    } as never;
+    const fallback = '两分钟过去，甲还在院子。' + String.fromCharCode(10,10) + '院子里的墙头很高，草叶贴着地面。' + String.fromCharCode(10,10) + '身边还有乙，袖子挽到肘上，手腕露在外面。' + String.fromCharCode(10,10) + '甲：本组结算未能确认新的结果。';
+    const report = reviewNarration({ id: 'e', input: fallbackInput, text: fallback });
+    expect(report.fallbackSuspicion.suspected).toBe(true);
+    expect(gateNarration(report, { textSource: 'model' }).decision).toBe('regenerate');
+  });
+
   it('refuses to accept program fallback or mixed segments as model prose', () => {
     const report = reviewNarration({ id: 'd', input, text: clean });
     expect(gateNarration(report, { textSource: 'program_fallback' }).decision).toBe('regenerate');

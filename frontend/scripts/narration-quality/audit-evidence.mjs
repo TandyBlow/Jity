@@ -67,6 +67,7 @@ function auditTurn(turn) {
     prunedButNotShown: mismatched,
     countersLookStale,
     shownText: layers.shown,
+    settledInput: turn.settled?.input ?? turn.settledInput ?? turn.inputState ?? null,
     note: missing.length
       ? `missing layers: ${missing.join(', ')}; the report cannot prove what was removed`
       : 'all four layers present',
@@ -93,11 +94,15 @@ function audit(file) {
   return { summary, out };
 }
 
-const files = process.argv.slice(2);
+const args = process.argv.slice(2);
+const batchFlag = args.indexOf('--batch');
+const batchOut = batchFlag >= 0 ? args[batchFlag + 1] : null;
+const files = args.filter((arg, index) => !(arg.startsWith('--')) && (batchFlag < 0 || index !== batchFlag + 1));
 if (!files.length) {
   console.error('usage: node frontend/scripts/narration-quality/audit-evidence.mjs <evidence.json> [...]');
   process.exit(2);
 }
+const batchRows = [];
 for (const file of files) {
   const { summary, out } = audit(file);
   console.log(`\n== ${file}`);
@@ -106,4 +111,15 @@ for (const file of files) {
     console.log(`  ${record.id ?? '?'} source=${record.sources.textSource} raw=${record.counts.raw} cleaned=${record.counts.cleaned} pruned=${record.counts.pruned} shown=${record.counts.shown} missing=[${record.missingLayers.join(',')}] pruned>shown=${record.prunedButNotShown} stale_counters=${record.countersLookStale}`);
   }
   console.log(`  wrote ${out}`);
+  for (const record of summary.records) {
+    const input = record.settledInput ?? (record.setled ? record.settled?.input : null);
+    if (!input || !record.shownText) continue;
+    batchRows.push({ id: record.id ?? `turn-${record.turn}`, input, text: record.shownText, textSource: record.sources.textSource });
+  }
+}
+if (batchOut) {
+  const body = batchRows.map((row) => JSON.stringify(row)).join(String.fromCharCode(10));
+  writeFileSync(batchOut, body + (batchRows.length ? String.fromCharCode(10) : ''), 'utf8');
+  console.log(`
+batch rows: ${batchRows.length} -> ${batchOut}${batchRows.length ? '' : ' (no turn carried its settled input; ask 09 to record it)'}`);
 }
