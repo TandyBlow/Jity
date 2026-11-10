@@ -152,11 +152,13 @@ product queue.
 
 **Hard constraints for 11 model search** (checked before any 09 request):
 GGUF readable by llama.cpp/wllama 3.8.1, a usable chat template (or an explicit
-known template id), a license compatible with the product, and either a single
-file under the browser's ~2 GiB whole-file fetch limit or a real
-`llama-gguf-split` split. 11's 1.5 GB single-file gate is stricter than the
-runtime cap; the measured 1.7B Q4 is 1.11 GB. The runtime does not accept
-safetensors, custom kernels, or a model that needs a different engine.
+known template id), a license compatible with the product, and **total model
+bytes ≲2 GB**, because the browser's Blob store fails when the aggregate held
+by wllama exceeds roughly 2 GB (measured: 1.3 GB blob OK, +1.2 GB fails; 2.5 GB
+single file fails). Splitting below 2 GiB per shard does **not** bypass the
+aggregate cap. 11's 1.5 GB gate is aligned; the measured 1.7B Q4 is 1.11 GB.
+The runtime does not accept safetensors, custom kernels, or a model that needs
+a different engine.
 
 **Queue/acceptance contract for 09** (one run, one request):
 1. Resolve the model path, file size and SHA-256; confirm the declared catalog
@@ -208,15 +210,22 @@ safetensors, custom kernels, or a model that needs a different engine.
     (per-call `modelUrl` or `modelUrls`), fetches every shard in the directBlob
     path, and unit tests cover two-blob load, auto-expansion, per-shard reload
     after a hard stop, and a clear error when the non-blob path sees a split.
-  - browser fetch proof (no model load, no inference): headless Edge 157
-    fetched each shard through the probe and materialized the full
-    `arrayBuffer` — 1,305,220,960 B and 1,192,060,352 B. So the earlier
-    `arrayBuffer()` failure was the 2.5 GB single file, not the transport.
-  - still open: a real Edge/RTX 4060 run (VRAM: ~2.5 GB weights plus KV), its
-    load time, first-readable time and decode rate. Requested from 09; the 4B
-    must not be reported as deployable until that run exists. The shard files
-    live in this worktree at `.local/models/qwen3-4b-split/` (untracked,
-    2.5 GB total) and 09 can serve that directory with `--model-dir`.
+  - **closed negative**: a fresh-page probe (`probe-two-shards.mjs`, blob
+    mode, Edge 157) fetched shard 1 into a 1.305 GB Blob successfully
+    (48.6 s), then shard 2 (HTTP 200, 1.192 GB) failed with
+    `TypeError: Failed to fetch` after 34.2 s. `navigator.storage.quota` was
+    10 GiB and the JS heap was ~1 MB, so the limit is the browser's Blob
+    store (~2 GB aggregate), not disk or heap. wllama holds every shard as a
+    Blob until loadModel finishes, so splitting does not make a 2.5 GB model
+    loadable. The same probe in `arraybuffer` mode held both (2.38 GB heap of
+    4.19 GB) but took 142.5 s + 140.3 s to fetch — already over the 300 s
+    point budget before compile. **Do not propose, quantize or run a >2 GB
+    total model on this Blob path.** A streaming/OPFS/FS-write loader is a
+    separate project with no implementation.
+  - 09's browser attempt matched this: shard 1 and shard 2 responses both 200,
+    shard 2's body failed, and the retry failed even on shard 1 (Blob pressure
+    persisted). The 4B split request is now closed; the shard files remain at
+    `.local/models/qwen3-4b-split/` only as evidence and may be deleted.
 
 `frontend/src/lib/world-engine/runtime/inference-queue.ts`
 
