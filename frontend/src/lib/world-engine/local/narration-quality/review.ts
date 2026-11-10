@@ -1421,6 +1421,30 @@ export function reviewNarration(args: {
         `settled appearance says ${look.slice(0, 24)}; the prose turns the muzzle up`, [look], []));
       break;
     }
+    // A settled capacity is not a settled content: 「胸袋能放一只弹匣」 does
+    // not mean a magazine is in the pocket.
+    {
+      const capacity = /(?:能放|可放|放得下)(一只|一把|一个|两|几)?([^，。；]{1,6})/u.exec(projection.sourceText);
+      if (capacity) {
+        const noun = capacity[2].replace(/[」』”]/gu, '');
+        const claim = new RegExp(`(?:里|中|内)(?:还有|有|装着|放着)${capacity[1] ?? ''}${escapeRegExp(noun)}`, 'u');
+        if (claim.test(narration)) {
+          findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+            `the state says the container can hold ${noun}, not that it contains one`, [], []));
+        }
+      }
+    }
+    // A settled identifying band stays where the state put it on the body.
+    {
+      const band = /(识别带|袖标|臂章)[^。]{0,8}(左臂|右臂|手臂|肩)/u.exec(projection.sourceText);
+      if (band && narration.includes(band[1])) {
+        const elsewhere = new RegExp(`${band[1]}[^。]{0,8}(发|头|腰|腿)|发圈[^。]{0,6}${band[1]}`, 'u');
+        if (elsewhere.test(narration)) {
+          findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+            `the ${band[1]} is settled on the ${band[2]}; the prose moves it elsewhere`, [`${band[1]} on ${band[2]}`], []));
+        }
+      }
+    }
     // A place the viewpoint cannot see (outside its own location) being looked at.
     if (options.strict !== false) {
       for (const place of Object.keys(projection.places)) {

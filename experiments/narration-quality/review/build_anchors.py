@@ -1161,6 +1161,20 @@ anchors.append(
     },
 )
 
+
+rows_opening = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-opening2324.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/page-opening-2324",
+        "source": "09 run 2026-11-10T1832-0d8b (06 page 2324cde1, new qwen3-1.7b scene/prose-facts chain): the first model-accepted opening (60.8 s, fallback=false)",
+        "input": rows_opening["opening-2324"]["input"],
+        "text": rows_opening["opening-2324"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "Red hair hangs loose though tied; the red mark is put on the left; the identifying band moves to the hair tie; the chest pocket is said to contain a magazine although the state only says it can hold one."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
