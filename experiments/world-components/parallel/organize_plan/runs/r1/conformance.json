@@ -1,0 +1,4893 @@
+{
+ "rows": [
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的指节发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的指节发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "4 sentences for 5 groups",
+     "sentences": 4,
+     "groups": 5
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "5 sentences for 4 groups",
+     "sentences": 5,
+     "groups": 4
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '林川'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的指节发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的指节发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋底沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的掌心出汗。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的掌心出汗。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "5 sentences for 4 groups",
+     "sentences": 5,
+     "groups": 4
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '林川'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的掌心出汗。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的掌心出汗。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "4 sentences for 5 groups",
+     "sentences": 4,
+     "groups": 5
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的钟绳磨出了毛边。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的袖口开了线。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口开了线。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "4 sentences for 5 groups",
+     "sentences": 4,
+     "groups": 5
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "5 sentences for 4 groups",
+     "sentences": 5,
+     "groups": 4
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '林川'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川被雨打湿半幅。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的袖口开了线。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川被雨打湿半幅。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的袖口开了线。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的指缝里塞着泥。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的脸色发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的脸色发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的肩头落着灰。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的肩头落着灰。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "5 sentences for 4 groups",
+     "sentences": 5,
+     "groups": 4
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '林川'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的脸色发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的脸色发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的肩头落着灰。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "4 sentences for 5 groups",
+     "sentences": 4,
+     "groups": 5
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的背上溅了泥点。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的肩头落着灰。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "4 sentences for 5 groups",
+     "sentences": 4,
+     "groups": 5
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "sentence-count-mismatch",
+     "detail": "5 sentences for 4 groups",
+     "sentences": 5,
+     "groups": 4
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '林川'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 5,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 4,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       3,
+       4
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "随后，陈默的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": true
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的掌心出汗。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的掌心出汗。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 1/2 share a sentence at f3/f4",
+     "pair": [
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '沈砚'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的掌心出汗。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的掌心出汗。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜，鬓发被雾打湿。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 2 ['f3', 'f4'] spans sentences [1, 2]",
+     "group": 2
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f4 is still written with '叶知微'",
+     "factId": "f4"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的衣角结了盐霜。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鬓发被雾打湿。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的灯罩蒙了灰，掌心出汗。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的衣角结了盐霜。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的鬓发被雾打湿。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的袖口开了线。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的袖口开了线。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 2 ['f3', 'f4'] spans sentences [1, 2]",
+     "group": 2
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f4 is still written with '叶知微'",
+     "factId": "f4"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅，袖口开了线。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的裤脚沾了铜油。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 1/2 share a sentence at f3/f4",
+     "pair": [
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '沈砚'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚被雨打湿半幅。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的袖口开了线。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚被雨打湿半幅。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的袖口开了线。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的鞋跟磨塌了，裤脚沾了铜油。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脸色发白。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的脸色发白。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 1/2 share a sentence at f3/f4",
+     "pair": [
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '沈砚'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脸色发白。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的脸色发白。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮，肩头落着灰。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 2 ['f3', 'f4'] spans sentences [1, 2]",
+     "group": 2
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f4 is still written with '叶知微'",
+     "factId": "f4"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的围巾松开一截，脸色发白。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "check": "self-P1",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的膝盖沾了泥。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "check": "self-P2",
+   "textPlanId": "P2",
+   "checkedPlanId": "P2",
+   "ok": true,
+   "violations": [],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脚踝肿了一块。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的脚踝肿了一块。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "check": "cross-P1-text-vs-P2",
+   "textPlanId": "P1",
+   "checkedPlanId": "P2",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 2 ['f3', 'f4'] spans sentences [1, 2]",
+     "group": 2
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 0/1 share a sentence at f0/f1",
+     "pair": [
+      "f0",
+      "f1"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f4 is still written with '叶知微'",
+     "factId": "f4"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f3",
+       "f4"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕，脚踝肿了一块。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧。"
+     },
+     {
+      "factId": "f4",
+      "ref": "omit",
+      "name": "叶知微",
+      "sentence": "叶知微的膝盖沾了泥。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "check": "cross-P2-text-vs-P1",
+   "textPlanId": "P2",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "group-split",
+     "detail": "group 0 ['f0', 'f1'] spans sentences [0, 1]",
+     "group": 0
+    },
+    {
+     "code": "groups-merged",
+     "detail": "groups 1/2 share a sentence at f3/f4",
+     "pair": [
+      "f3",
+      "f4"
+     ]
+    },
+    {
+     "code": "ref-not-omitted",
+     "detail": "f1 is still written with '沈砚'",
+     "factId": "f1"
+    }
+   ],
+   "checks": {
+    "sentenceCount": 3,
+    "groupCount": 3,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "沈砚的帽檐压出折痕。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脚踝肿了一块。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": false,
+      "sentences": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       2,
+       2
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "沈砚",
+      "sentence": "沈砚的帽檐压出折痕。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "沈砚",
+      "sentence": "沈砚的脚踝肿了一块。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "叶知微",
+      "sentence": "叶知微的指尖磨出茧，膝盖沾了泥。"
+     }
+    ],
+    "edges": [],
+    "factSupported": 4,
+    "factTotal": 4
+   }
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "check": "negative-missing-required-wording",
+   "textPlanId": "P1",
+   "checkedPlanId": "P1",
+   "ok": false,
+   "violations": [
+    {
+     "code": "edge-wording-missing",
+     "detail": "required edge f2->f3 has no 随后 in its target sentence",
+     "edge": [
+      "f2",
+      "f3"
+     ]
+    }
+   ],
+   "checks": {
+    "sentenceCount": 4,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f1": {
+      "supported": true,
+      "sentenceIndex": 0,
+      "score": 1.0,
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     "f2": {
+      "supported": true,
+      "sentenceIndex": 1,
+      "score": 1.0,
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     "f3": {
+      "supported": true,
+      "sentenceIndex": 2,
+      "score": 1.0,
+      "sentence": "陈默的鞋底沾了泥。"
+     },
+     "f4": {
+      "supported": true,
+      "sentenceIndex": 3,
+      "score": 1.0,
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": true,
+      "sentences": [
+       2,
+       3
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "林川的袖口沾了雨，指节发白。"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "周宁的斗篷下摆湿了一片。"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的鞋底沾了泥。"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "陈默的袖口湿到肘部。"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": true,
+      "targetHasWording": false
+     }
+    ],
+    "factSupported": 5,
+    "factTotal": 5
+   }
+  }
+ ]
+}

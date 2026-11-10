@@ -1,0 +1,112 @@
+{
+ "rows": [
+  {
+   "sourceId": "fixture-r1",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r1",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r2",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r2",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r3",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r3",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r4",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r4",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r5",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "fixture-r5",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r2",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r2",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r3",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r3",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "A",
+   "ok": true,
+   "errors": []
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "B",
+   "ok": true,
+   "errors": []
+  }
+ ]
+}

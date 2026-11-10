@@ -1,0 +1,647 @@
+{
+ "created": "2026-11-08T05:54:51.893633+00:00",
+ "arm": "frozen base control (never trained on plan blocks)",
+ "notTheMissingArm": "the old controllability checkpoint was not saved; this base arm is a harness control, not evidence about whether a plan-trained model can follow plans",
+ "model": {
+  "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "modelSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "base": "Randeng-T5-77M-MultiTask-Chinese",
+  "device": "cpu",
+  "dtype": "float32",
+  "decode": "greedy, num_beams=1, max_new_tokens=128"
+ },
+ "rows": [
+  {
+   "sourceId": "fixture-r1",
+   "planId": "P1",
+   "shape": "merge-left",
+   "promptSha256": "b19823e9161d9054e7c923d0349b799ba3b601eb0e55eed2cbf4e87315ce9e4f",
+   "output": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "newTokens": 63,
+   "stop": "eos",
+   "seconds": 8.587,
+   "conformanceOk": false,
+   "violations": [
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "sentence-count-mismatch",
+    "ref-name-missing",
+    "ref-missing-antecedent",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "edge-endpoints-share-sentence",
+    "edge-wording-missing"
+   ],
+   "checks": {
+    "sentenceCount": 1,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f1": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f2": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f3": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f4": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": false,
+      "targetHasWording": false
+     }
+    ],
+    "factSupported": 0,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r1",
+   "planId": "P2",
+   "shape": "split-all",
+   "promptSha256": "cf3627d22575f487193110792937ae668b894344c359917efec90a679b75eb43",
+   "output": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "newTokens": 63,
+   "stop": "eos",
+   "seconds": 11.655,
+   "conformanceOk": false,
+   "violations": [
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "sentence-count-mismatch",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "edge-endpoints-share-sentence",
+    "edge-wording-missing"
+   ],
+   "checks": {
+    "sentenceCount": 1,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f1": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f2": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f3": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f4": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": false,
+      "targetHasWording": false
+     }
+    ],
+    "factSupported": 0,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "planId": "P1",
+   "shape": "split-all",
+   "promptSha256": "aa17818488f31ca855e691e3241db8fd4ce6af090cb7b34b4ba71755f716cbab",
+   "output": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "newTokens": 63,
+   "stop": "eos",
+   "seconds": 7.943,
+   "conformanceOk": false,
+   "violations": [
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "sentence-count-mismatch",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "edge-endpoints-share-sentence",
+    "edge-wording-missing"
+   ],
+   "checks": {
+    "sentenceCount": 1,
+    "groupCount": 5,
+    "facts": {
+     "f0": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f1": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f2": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f3": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f4": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    },
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f1",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": false,
+      "targetHasWording": false
+     }
+    ],
+    "factSupported": 0,
+    "factTotal": 5
+   }
+  },
+  {
+   "sourceId": "fixture-r2",
+   "planId": "P2",
+   "shape": "merge-left",
+   "promptSha256": "6c7a5dc106a6e280b74cd7b771f91b9de6c4a6918e4988e3626f1b635e0fc0fd",
+   "output": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "newTokens": 63,
+   "stop": "eos",
+   "seconds": 6.695,
+   "conformanceOk": false,
+   "violations": [
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "fact-omitted",
+    "groups-merged",
+    "groups-merged",
+    "groups-merged",
+    "sentence-count-mismatch",
+    "ref-name-missing",
+    "ref-missing-antecedent",
+    "ref-name-missing",
+    "ref-name-missing",
+    "ref-name-missing",
+    "edge-endpoints-share-sentence",
+    "edge-wording-missing"
+   ],
+   "checks": {
+    "sentenceCount": 1,
+    "groupCount": 4,
+    "facts": {
+     "f0": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f1": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f2": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f3": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     "f4": {
+      "supported": false,
+      "sentenceIndex": 0,
+      "score": 0.0,
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    },
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "sameSentence": true,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "differentSentence": false,
+      "sentences": [
+       0,
+       0
+      ]
+     }
+    ],
+    "refs": [
+     {
+      "factId": "f0",
+      "ref": "name",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f1",
+      "ref": "omit",
+      "name": "林川",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f2",
+      "ref": "name",
+      "name": "周宁",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f3",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     },
+     {
+      "factId": "f4",
+      "ref": "name",
+      "name": "陈默",
+      "sentence": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略"
+     }
+    ],
+    "edges": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "mode": "required",
+      "differentSentence": false,
+      "targetHasWording": false
+     }
+    ],
+    "factSupported": 0,
+    "factTotal": 5
+   }
+  }
+ ]
+}

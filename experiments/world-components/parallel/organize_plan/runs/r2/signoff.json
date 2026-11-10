@@ -1,0 +1,113 @@
+{
+ "formVersion": "c3-signoff-v1",
+ "signed": true,
+ "signoffClass": "audit-only",
+ "satisfiesHumanSignoff": false,
+ "auditOnly": true,
+ "signer": "pi（AI 编码代理，本机 pi harness）",
+ "signerRole": "delegated-signer",
+ "signerKind": "ai",
+ "iReviewedEachRow": false,
+ "delegationNote": "项目负责人在 2026-11-08 的会话中明确指示由本代理完成本轮签认；签认人身份照实记为 AI 代理，不冒充人类复核者。AI 复核结论保留在 aiVerdict/aiNote，逐行人工结论写在 humanVerdict/humanNote。",
+ "date": "2026-11-08",
+ "reviewedCommit": "4dd9df4",
+ "pinnedInputs": {
+  "criteria": {
+   "file": "freeze/criteria-v2.json",
+   "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+   "checkerVersion": "c3-text-conformance-v2"
+  },
+  "checker": {
+   "file": "text_conformance.py",
+   "sha256": "a4444195f6ce6ee6c5ad9d30fd6536a3161510125fed036c1011e1e21cc76d90"
+  },
+  "tamperProbes": {
+   "file": "freeze/tamper-probes.json",
+   "sha256": "75cad427564f24bbd768ff05b66cdd9762fdfee1ad460ac373a5df2ceffe3b12"
+  },
+  "manualReview": {
+   "file": "runs/r2/manual-review.json",
+   "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
+  },
+  "acceptanceIdentity": "d3767818d78c89b4f2941c067ea6d0074a33e73531a2cfa73862492634f74a9c"
+ },
+ "driftAtSignoff": [],
+ "humanCounts": {
+  "paraphrase-ok": 0,
+  "new-content-fail": 8,
+  "unsure": 2
+ },
+ "rows": [
+  {
+   "queueId": "T03-add-unlicensed-object:拿走",
+   "code": "added-content-outside-vocabulary",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：末句断言陈默拿走了一把刀；五条选中事实只有外观变化，没有取物动作。可见清单里也没有刀。"
+  },
+  {
+   "queueId": "T03-add-unlicensed-object:刀",
+   "code": "added-content-outside-vocabulary",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：刀只出现在新增分句里；不是对“袖口湿到肘部”的同义改写。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:退",
+   "code": "added-content-outside-vocabulary",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：新增退场动作；该探针原本已被 sequence-wording-outside-scope 硬判失败，此结论不改变结果。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:出去",
+   "code": "added-content-outside-vocabulary",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：与“退”共同断言未经记录的移动；硬判失败仍在。"
+  },
+  {
+   "queueId": "T07-added-sentence:潮汐簿",
+   "code": "added-content-visible-only",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：物件在可见清单不等于可以断言它被合上；完整分句是事件描述。"
+  },
+  {
+   "queueId": "T07-added-sentence:合上",
+   "code": "added-content-outside-vocabulary",
+   "aiVerdict": "new-content-fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：没有记录合上的动作或状态变化；新增句已被 added-sentence 硬判。"
+  },
+  {
+   "queueId": "T09-props-only-addition:墨",
+   "code": "added-content-visible-only",
+   "aiVerdict": "unsure",
+   "humanVerdict": "unsure",
+   "humanNote": "同意原结论：墨在可见清单里，提到物品不等于编造事件；但“还在”断言的是持续状态，无法从选中事实确认。保留 unsure，本条不计通过。"
+  },
+  {
+   "queueId": "T09-props-only-addition:干纸",
+   "code": "added-content-visible-only",
+   "aiVerdict": "unsure",
+   "humanVerdict": "unsure",
+   "humanNote": "同上：干纸在可见清单；持续状态无法确认。保留 unsure，不计通过。"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P1",
+   "code": "archived-output-hard-fail",
+   "aiVerdict": "fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "归档基线输出复读了提示词里的要求行，属于事实外内容；该输出已被程序硬判失败，本行只作留档。"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P2",
+   "code": "archived-output-hard-fail",
+   "aiVerdict": "fail",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "同上。"
+  }
+ ],
+ "identitySha256": "70b2e772a8ae5e9be0c6abc6184c3c1a40fd52f2cec29a8de43e0daa5d276fbc"
+}

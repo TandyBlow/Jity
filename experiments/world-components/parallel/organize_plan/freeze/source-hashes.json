@@ -1,0 +1,40 @@
+{
+ "protocol": "c3-organize-plan-freeze-hashes-v1",
+ "created": "2026-11-08T05:49:43.268345+00:00",
+ "environment": {
+  "python": "3.12.3",
+  "platform": "win32"
+ },
+ "inputs": {
+  "sourceRoot": "D:\\others\\Jity",
+  "sourceHead": "005ea5be46e09b72f219defca047a8fb0d281045",
+  "committedFixtureHead": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+  "committedPairWorlds": {
+   "file": "artifacts/next-inputs/world-provenance/pairs/pair-worlds.json",
+   "sha256": "533142dfa010c39497b2e1975ac51cb6bcc0148d867d88b58039393bef5da454",
+   "tracked": true
+  },
+  "pairWorlds": {
+   "file": "artifacts/world-provenance/pairs/pair-worlds.json",
+   "sha256": "533142dfa010c39497b2e1975ac51cb6bcc0148d867d88b58039393bef5da454"
+  },
+  "fixtureDb": {
+   "file": "artifacts/world-provenance/pairs/fixture.db",
+   "sha256": "c8fc383cc0f772aaeda9576343aa6af21ab487ef1bd06adf038672adbb48ab5f"
+  },
+  "trainDb": {
+   "file": "artifacts/world-provenance/pairs/train.db",
+   "sha256": "d09666d1553f286a13c34ebae39b79cdb4ffd8df809fdb26dc953a88202ce6a8"
+  },
+  "controllabilityContexts": {
+   "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+   "sha256": "8c613633a0e0fa4fa332861346264cbb28eb87f9945cafc8eb6b908c54dcc8e7"
+  }
+ },
+ "outputs": {
+  "sources.json": "e1c58c2c67a2228d0729f9e155a5210f69615de449e801f44e028da1c99423dd",
+  "plans-v1.jsonl": "2d0876d174709ceda35de8cd074bba17f9010c3341bd30facf513a9501f023d7",
+  "negative-cases.json": "da8d754b2eb88e52cff048bda993764befbc6b712a0df63580d1e82570575702",
+  "contexts.json": "def4fe6789320734dfaa839acbdbb105477c3e7c78a635b418cb67c9d80431fd"
+ }
+}

@@ -1,0 +1,173 @@
+{
+ "rows": [
+  {
+   "probeId": "T01-reverse-sentences",
+   "mutation": "reverse the order of all four sentences",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "group-out-of-order"
+   ],
+   "actualHardCodes": [
+    "group-out-of-order"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T02-sequence-out-of-scope",
+   "mutation": "prefix the 周宁 sentence (not the edge target) with 随后",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "sequence-wording-outside-scope",
+    "sequence-wording-excess"
+   ],
+   "actualHardCodes": [
+    "sequence-wording-excess",
+    "sequence-wording-outside-scope"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T03-add-unlicensed-object",
+   "mutation": "append ，并拿走了一把刀 to the last sentence",
+   "expectedVerdict": "review",
+   "expectedCodes": [
+    "added-content-outside-vocabulary"
+   ],
+   "actualHardCodes": [],
+   "actualReviewRuns": [
+    "刀",
+    "拿走"
+   ],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T04-swap-two-groups",
+   "mutation": "swap sentence 0 and sentence 1 (group order broken, sentence count unchanged)",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "group-out-of-order"
+   ],
+   "actualHardCodes": [
+    "group-out-of-order"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T05-swap-clauses-in-group",
+   "mutation": "swap the two clauses inside group [f0,f1]",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "within-group-order"
+   ],
+   "actualHardCodes": [
+    "ref-not-omitted",
+    "within-group-order"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T06-second-sequence-word",
+   "mutation": "append ，随后，陈默退了出去 to the last sentence",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "sequence-wording-outside-scope",
+    "sequence-wording-excess"
+   ],
+   "actualHardCodes": [
+    "sequence-wording-excess",
+    "sequence-wording-outside-scope"
+   ],
+   "actualReviewRuns": [
+    "出去",
+    "退"
+   ],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T07-added-sentence",
+   "mutation": "insert an extra sentence 潮汐簿被合上了。 in the middle",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "added-sentence"
+   ],
+   "actualHardCodes": [
+    "added-sentence"
+   ],
+   "actualReviewRuns": [
+    "合上",
+    "潮汐簿"
+   ],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T08-drop-required-wording",
+   "mutation": "delete 随后， from the required-edge target sentence",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "sequence-wording-missing"
+   ],
+   "actualHardCodes": [
+    "sequence-wording-missing"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T09-props-only-addition",
+   "mutation": "append ，墨和干纸还在 to the last sentence (all characters come from the visible list)",
+   "expectedVerdict": "review",
+   "expectedCodes": [
+    "added-content-visible-only"
+   ],
+   "actualHardCodes": [],
+   "actualReviewRuns": [
+    "墨",
+    "干纸"
+   ],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T10-wrong-actor",
+   "mutation": "replace the first 林川 with 周宁",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "ref-name-missing"
+   ],
+   "actualHardCodes": [
+    "ref-missing-antecedent",
+    "ref-name-missing"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  },
+  {
+   "probeId": "T11-sequence-in-grouping-family",
+   "mutation": "append 随后 to the first sentence; this source carries no authorised edge at all",
+   "expectedVerdict": "fail",
+   "expectedCodes": [
+    "invented-sequence"
+   ],
+   "actualHardCodes": [
+    "invented-sequence",
+    "sequence-wording-excess"
+   ],
+   "actualReviewRuns": [],
+   "accepted": false,
+   "met": true
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "sources": 9,
+ "families": {
+  "edge": 5,
+  "grouping": 4
+ },
+ "plans": 18,
+ "legalPlans": 18,
+ "negativeCases": 20,
+ "negativePass": 20,
+ "legacyPlans": {
+  "rows": 18,
+  "legal": 18
+ },
+ "referenceTexts": 18,
+ "checkerVersion": "c3-text-conformance-v3",
+ "conformance": {
+  "selfPass": 18,
+  "selfTotal": 18,
+  "crossFail": 18,
+  "crossTotal": 18,
+  "missingRequiredWordingCaught": true
+ },
+ "tamperProbes": {
+  "total": 11,
+  "met": 11,
+  "hardFail": 9,
+  "manualReview": 2
+ },
+ "manualReviewQueue": 10,
+ "manualReviewPreservedVerdicts": 10,
+ "manualReviewOrphaned": 0,
+ "downstreamInputsIdenticalToR1": true,
+ "fixedStrategy": {
+  "rows": 36,
+  "legalRows": 36,
+  "pairedRows": 0
+ },
+ "modelArm": {
+  "capability": "not run: no plan-trained checkpoint locally; training is out of scope this round",
+  "baseSmoke": null
+ }
+}

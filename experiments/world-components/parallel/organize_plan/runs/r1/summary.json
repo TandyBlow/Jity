@@ -1,0 +1,38 @@
+{
+ "sources": 9,
+ "families": {
+  "edge": 5,
+  "grouping": 4
+ },
+ "plans": 18,
+ "legalPlans": 18,
+ "negativeCases": 20,
+ "negativePass": 20,
+ "legacyPlans": {
+  "rows": 18,
+  "legal": 18
+ },
+ "referenceTexts": 18,
+ "conformance": {
+  "selfPass": 18,
+  "selfTotal": 18,
+  "crossFail": 18,
+  "crossTotal": 18,
+  "missingRequiredWordingCaught": true
+ },
+ "fixedStrategy": {
+  "rows": 36,
+  "legalRows": 36,
+  "pairedRows": 0
+ },
+ "modelArm": {
+  "capability": "not run: no plan-trained checkpoint locally; training is out of scope this round",
+  "baseSmoke": {
+   "file": "runs/r1/model-smoke.json",
+   "arm": "frozen base control (never trained on plan blocks)",
+   "rows": 4,
+   "conformancePass": 0,
+   "note": "the old controllability checkpoint was not saved; this base arm is a harness control, not evidence about whether a plan-trained model can follow plans"
+  }
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "receiptId": "holdout-a-v1",
+ "receiptVersion": "r3c (digest moved out of the manifest)",
+ "package": "D:\\others\\Jity\\artifacts\\holdout-a-v1",
+ "receivedFrom": "A (world-server) — backend/scripts/build_holdout_v1.py",
+ "packageSha256": "9dc9615482fe2d796be3aa12ba983eb20852c46d65246d7cf2b36979087737eb",
+ "packageSha256Recomputed": "9dc9615482fe2d796be3aa12ba983eb20852c46d65246d7cf2b36979087737eb",
+ "digestMatch": true,
+ "packageFiles": {
+  "manifest.json": "ab240cf8e5af484946ae0a36baf095b2dfdb61bdeca5e94bb33108789bb1cc19",
+  "world.db": "9d7f26a8bf1028cdf0da3e43d849c02b4649a877cee3b24bd2c04b56b50a735e",
+  "semantic-review.json": "46939c1411613f31982beb39d81934d9f50895086d38a6122ffa94bc4574ebeb",
+  "semantic-review-signoff.template.json": "efb33468046344dd6c20e7ae20f64aa470fbb0060f8b2dfd619985f6dba96e53",
+  "semantic-review-evidence.json": "d3f0fff39268e523a43e6deb2b74881154f4f8b241e10d2ebcfa941b470e0eb2",
+  "pairs": {
+   "h01-authorized": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
+   "h02-authorized": "6d0c6fbfd233fb5f9f66143d7b7943a7681c2ec7a1a4576f3743f9db0d417afb",
+   "h03-authorized": "487e889ac700fc0670fe2607469958f0f2bcb6a1013de68505e78efb7465cae0",
+   "h04-authorized": "8e92d2dec6a9367c26bbe1e5a3ecdc1eaa6f5dc2148556f1e47b85dafe2c7872",
+   "h05-authorized": "220a0065977af840c954287b23c85e016a3705e1e9a51538fddb6b093399f008",
+   "h06-authorized": "f8174abd60e5f84b3fc2758e2cfe66cd520c912a8fade62dac3faf53e09de7c6",
+   "h07-authorized": "cd73d45a4816ec5a26e6b7f87af16e28a8ca0630daa2b9b40d4ffd8dae75ea97",
+   "h08-authorized": "c4f794d91a4e42e202e91db0e39d5f2da38b2b9c415a676aabbb2285a0bf87fb",
+   "h09-authorized": "65f63c4f4878316a2b1132ae98f995c6c7673304e0de3922c831d2f6337cf28a",
+   "h10-authorized": "087982bb2ce5096730bbbd93ac32c8b84a616ec0f5559b1da8ea8515e1b13102",
+   "h11-authorized": "5c8a0a9024281f604f0f310dc691bc4429cde6a8389d49fb668709486309a221",
+   "h12-authorized": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
+  }
+ },
+ "validatorExitCode": 1,
+ "validator": {
+  "status": "not-admissible",
+  "counts": {
+   "sources": 12,
+   "multiGroupSources": 12,
+   "edgeSources": 12
+  },
+  "errorsByFamily": {
+   "PKG": 13
+  },
+  "sampleErrors": [
+   {
+    "code": "PKG-no-semantic-signoff",
+    "detail": "semantic-review-signoff.json is missing; the AI draft (semantic-review.json) cannot close the semantic review"
+   },
+   {
+    "sourceId": "h01",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h01 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h02",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h02 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h03",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h03 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h04",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h04 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   },
+   {
+    "sourceId": "h05",
+    "code": "PKG-semantic-signoff-incomplete",
+    "detail": "h05 has no verdict in the human sign-off (('independent', 'semantic-duplicate', 'unsure'))"
+   }
+  ]
+ },
+ "gate": {
+  "admissible": false,
+  "frozen": false,
+  "blockedBy": [
+   "PKG-no-semantic-signoff",
+   "PKG-semantic-signoff-incomplete"
+  ]
+ },
+ "whatPassed": {
+  "schemaAndChain": "0 errors (P/C families)",
+  "evidenceAndAuthorization": "0 errors (E/A families); 12/12 verdict=pass, world-relation-validator/1",
+  "isolationScreen": "0 errors (I family); 60/60 facts below the 0.8 bigram line, 0 identical",
+  "plans": "0 errors (M family); two legal plans per source",
+  "counts": {
+   "sources": 12,
+   "multiGroupSources": 12,
+   "edgeSources": 12
+  }
+ },
+ "digestRule": "sha256 over sorted {relative path: sha256} of manifest.json and pairs/*.json; the digest lives only in the sign-off template, never inside the manifest",
+ "whatBlocks": {
+  "code": "PKG-no-semantic-signoff; PKG-semantic-signoff-incomplete",
+  "means": "the AI draft is never read for verdicts; c3 requires a separate human sign-off bound to the package digest, with identity, date, reviewed commit and per-source reasons",
+  "notAProblemWith": [
+   "the world records",
+   "the evidence chain",
+   "the relation authorization",
+   "the plans"
+  ]
+ },
+ "nextAction": "a human copies semantic-review-signoff.template.json to semantic-review-signoff.json, fills every verdict/reason plus identity/date/reviewed commit, then re-runs validate_holdout.py --package ... --freeze",
+ "noModelRun": true
+}

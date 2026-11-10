@@ -1,0 +1,28 @@
+{
+ "created": "2026-11-08T08:47:26.200087+00:00",
+ "runtimeHead": "8c9948296682a2d2882563da6b00db14f89bceb7",
+ "runtimeBranch": "exp/c-organize-plan",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/HANDOVER.md\n M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/check_round_ready.py\n M experiments/world-components/parallel/organize_plan/pins.py\n M experiments/world-components/parallel/organize_plan/test_regressions.py\n?? TASK.md",
+ "python": "3.12.3",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "code": {
+  "plan_contract.py": "2788e95559cdfa128afe67dfccb38251e71c1a8ff22e4bf43f2a1680b2360c46",
+  "build_freeze.py": "a0f7eb4d8f30b27e570c0d8759eb46284e503c82d4ff73da7f5616a174160620",
+  "build_tamper_probes.py": "bd54e88e8afb501f95541525730ac21181bb2550fb29320430e82490b32a4940",
+  "build_criteria.py": "2acb5eeb95c44d7c1457605816bad25f9635b34d4609a8a27d07d2fc111ac4e7",
+  "reference_compose.py": "9bd893bd727a2d97ef9c46ba661b1ffb38b5503bbf4ca26652961207135bef09",
+  "text_conformance.py": "714aeb46b05a8a410693f39be971e9778a22792927de6e50bf0513d418a1cca0",
+  "render_input.py": "143548e16df10c644d9e7638e6bb7d0ec74efd1579278330e225d67132363c05",
+  "run_experiment.py": "fad83013f40a4fbb87092a480edf327d92fbb4fa5608459adc7181f732802661",
+  "model_smoke.py": "de6769d40bbedc374162c81fe5272c4da16c65eb6eaf4e02176a51f073b48e80"
+ },
+ "freeze": {
+  "sources.json": "e1c58c2c67a2228d0729f9e155a5210f69615de449e801f44e028da1c99423dd",
+  "plans-v1.jsonl": "2d0876d174709ceda35de8cd074bba17f9010c3341bd30facf513a9501f023d7",
+  "negative-cases.json": "da8d754b2eb88e52cff048bda993764befbc6b712a0df63580d1e82570575702",
+  "contexts.json": "def4fe6789320734dfaa839acbdbb105477c3e7c78a635b418cb67c9d80431fd",
+  "tamper-probes.json": "75cad427564f24bbd768ff05b66cdd9762fdfee1ad460ac373a5df2ceffe3b12",
+  "criteria-v2.json": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+  "source-hashes.json": "d96abcd3d7394732eb6eda754884b6ff4eb95824da51dfff2b517d532c75dd3b"
+ }
+}
