@@ -1,0 +1,320 @@
+{
+  "protocol": "c4-human-review-candidates-v1",
+  "status": "pending-human-review",
+  "batchId": "c4-cf24-02",
+  "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+  "rows": [
+    {
+      "caseId": "c4-cf24-t18-f0",
+      "unitId": "t18:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "叶知微",
+        "entityGroup": "characters",
+        "from": "潮渡",
+        "to": "旧灯塔",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t18",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 58,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/17/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、抹布、擦铜油、灯芯、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜移动｜潮渡→旧灯塔\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "叶知微从潮渡上来,走进旧灯塔。",
+      "archivedReview": {
+        "unitId": "t18:f0",
+        "sourceId": "t18",
+        "kind": "moved",
+        "text": "叶知微从潮渡上来,走进旧灯塔。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {}
+      },
+      "proposedFindings": [
+        {
+          "category": "direction",
+          "status": "undetermined",
+          "subtype": "level-wording-risk",
+          "span": "上来",
+          "reason": "方向=平而写高低词；归档仍支持起终点，不将措辞风险改判方向事实矛盾。",
+          "origin": "c4-coverage-scan"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t21-f0",
+      "unitId": "t21:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "appearance_changed",
+        "name": "潮汐簿",
+        "entityGroup": "items",
+        "text": "缺页的边缘毛糙"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t21",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 70,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/text"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/20/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮汐档案馆\n地点可见=潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛、铜灯、潮汐簿、干纸\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n事实=潮汐簿｜外貌变化｜缺页的边缘毛糙\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "潮汐簿的缺页的边缘毛糙。",
+      "archivedReview": {
+        "unitId": "t21:f0",
+        "sourceId": "t21",
+        "kind": "appearance_changed",
+        "text": "潮汐簿的缺页的边缘毛糙。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {
+          "language": "双层“的”：潮汐簿的缺页的边缘"
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "language",
+          "status": "failed",
+          "subtype": "malformed-wording",
+          "span": "潮汐簿的缺页的边缘毛糙。",
+          "reason": "双层“的”：潮汐簿的缺页的边缘",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t22-f0",
+      "unitId": "t22:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "appearance_changed",
+        "name": "系泊绳",
+        "entityGroup": "items",
+        "text": "泥水结了一层白盐"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t22",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 74,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/text"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/21/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮渡>浅滩\n地点可见=系泊绳、渡船、缆绳、退潮后的泥滩、系泊绳、冷光、木桩、缆绳、船灯、水面、浅滩\n场景=退潮；雾；天光\n视角=沈砚；第三人称\n事实=系泊绳｜外貌变化｜泥水结了一层白盐\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "系泊绳的泥水结了一层白盐。",
+      "archivedReview": {
+        "unitId": "t22:f0",
+        "sourceId": "t22",
+        "kind": "appearance_changed",
+        "text": "系泊绳的泥水结了一层白盐。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {
+          "language": "所有格错位：系泊绳的泥水"
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "language",
+          "status": "failed",
+          "subtype": "malformed-wording",
+          "span": "系泊绳的泥水结了一层白盐。",
+          "reason": "所有格错位：系泊绳的泥水",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t23-f2",
+      "unitId": "t23:f2",
+      "fact": {
+        "factId": "f2",
+        "kind": "outcome",
+        "name": "叶知微",
+        "entityGroup": "characters",
+        "resultText": "把灯罩擦得透亮"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t23",
+        "factId": "f2",
+        "contract": {
+          "source": "contract",
+          "line": 80,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/resultText"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/22/facts/2"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=叶知微｜结果｜把灯罩擦得透亮\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+      "archivedReview": {
+        "unitId": "t23:f2",
+        "sourceId": "t23",
+        "kind": "outcome",
+        "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "repeated": "玻璃罩已经透亮"
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "repetition",
+          "status": "failed",
+          "subtype": "duplicate-proposition",
+          "span": "玻璃罩已经透亮",
+          "reason": "归档标为复述。",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t24-f1",
+      "unitId": "t24:f1",
+      "fact": {
+        "factId": "f1",
+        "kind": "appearance_changed",
+        "name": "排水沟",
+        "entityGroup": "items",
+        "text": "里面积了泥"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t24",
+        "factId": "f1",
+        "contract": {
+          "source": "contract",
+          "line": 83,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/text"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/23/facts/1"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=排水沟｜外貌变化｜里面积了泥\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "排水沟的里面积了泥。",
+      "archivedReview": {
+        "unitId": "t24:f1",
+        "sourceId": "t24",
+        "kind": "appearance_changed",
+        "text": "排水沟的里面积了泥。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {
+          "language": "“排水沟的里面”"
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "language",
+          "status": "failed",
+          "subtype": "malformed-wording",
+          "span": "排水沟的里面积了泥。",
+          "reason": "“排水沟的里面”",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    }
+  ]
+}

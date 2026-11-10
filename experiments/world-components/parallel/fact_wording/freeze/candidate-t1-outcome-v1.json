@@ -1,0 +1,50 @@
+{
+ "protocol": "c4-candidate-t1-outcome-v1",
+ "status": "failed: admission criteria not met",
+ "candidate": "freeze/candidate-t1-v2.json",
+ "candidateSha256": "d8c16de6c90bf8d433cdc86a65801f08bb3d6daf52eb9dfb64b4504b3a71228e",
+ "run": "diagnostic-r2-cand-t1/20261108T152314-d8c16de6",
+ "runRawSha256": "a77b10e5eeb71fd0e9de999648f8bce2beb174bbb9a3ff18b9245748fbef3b60",
+ "analysisSha256": "45f403c76f110f3d50b62d78cdf772cd83b44471ac3b1d7f0f27a9765bf98792",
+ "main": {
+  "r1": 70,
+  "r1Fail": 11,
+  "r1U": 4,
+  "T1": 66,
+  "T1Fail": 15,
+  "T1U": 4,
+  "paired": {
+   "unchanged-pass": 66,
+   "regressed": 4,
+   "unchanged-fail": 11,
+   "unchanged-U": 4
+  }
+ },
+ "criteria": {
+  "C1": {
+   "required": 3,
+   "validFixes": 0,
+   "passed": false
+  },
+  "C2": {
+   "violations": [
+    "t03:f0",
+    "t05:f0",
+    "t11:f2",
+    "t18:f1"
+   ],
+   "passed": false
+  },
+  "C3": {
+   "violations": [],
+   "passed": true
+  },
+  "C4": {
+   "violations": [],
+   "passed": true
+  }
+ },
+ "allPassed": false,
+ "next": "do not retune the prompt automatically; acceptance set stays unrun",
+ "judgedBy": "assistant blind judging (170 mixed items); not human review"
+}

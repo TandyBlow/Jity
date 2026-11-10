@@ -1,0 +1,80 @@
+{
+ "pack": "cf24-r1-batch-09",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0047",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [
+    "fact_visible_conflict"
+   ],
+   "reason": "事实本身写的就是“放在门槛边”；门槛不在可见清单，属输入/事实与可见清单不一致，输出忠实表达事实，不计生成缺陷"
+  },
+  {
+   "code": "c0107",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [
+    "fact_visible_conflict"
+   ],
+   "reason": "事实本身写的就是“放在门槛边”；门槛不在可见清单，属输入/事实与可见清单不一致，输出忠实表达事实，不计生成缺陷"
+  },
+  {
+   "code": "c0041",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0062",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0088",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0144",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0070",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0032",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0075",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0148",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

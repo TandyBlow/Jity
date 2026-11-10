@@ -1,0 +1,86 @@
+{
+ "pack": "cf24-r1-batch-11",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0123",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0013",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0139",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0163",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0071",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0093",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0095",
+   "verdict": "undetermined",
+   "categories": [
+    "sanity_value"
+   ],
+   "flags": [
+    "sanity_value_unverifiable"
+   ],
+   "reason": "理智 12→9，输入只给可感描述；输出写了发紧与手指不听使唤，方向可感但数值保真不可核"
+  },
+  {
+   "code": "c0066",
+   "verdict": "undetermined",
+   "categories": [
+    "sanity_value"
+   ],
+   "flags": [
+    "sanity_value_unverifiable"
+   ],
+   "reason": "同 c0095"
+  },
+  {
+   "code": "c0149",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "移动句尾追加“鱼筐上沾着鱼鳞”，属事实之外的新状态"
+  },
+  {
+   "code": "c0006",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

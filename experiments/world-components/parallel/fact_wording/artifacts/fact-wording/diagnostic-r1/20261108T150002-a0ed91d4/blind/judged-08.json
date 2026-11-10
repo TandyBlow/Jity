@@ -1,0 +1,84 @@
+{
+ "pack": "cf24-r1-batch-08",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0140",
+   "verdict": "fail",
+   "categories": [
+    "repetition"
+   ],
+   "flags": [],
+   "reason": "“擦得透亮”与“透亮起来”同义重复，一句里说了两次"
+  },
+  {
+   "code": "c0038",
+   "verdict": "fail",
+   "categories": [
+    "repetition"
+   ],
+   "flags": [],
+   "reason": "“擦得透亮”与“已经透亮”重复"
+  },
+  {
+   "code": "c0079",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0042",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0112",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0035",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0012",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "移动事实里追加“抱起一叠纸”，纸不在潮生巷可见清单"
+  },
+  {
+   "code": "c0137",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "同 c0012：追加抱纸动作与物件"
+  },
+  {
+   "code": "c0089",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0009",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}
