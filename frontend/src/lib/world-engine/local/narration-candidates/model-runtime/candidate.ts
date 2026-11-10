@@ -102,10 +102,10 @@ function issuesOf(verification: CandidateVerification | null, text: string, poli
   return issues;
 }
 
-function repairNote(issues: CandidateIssue[]): string {
+function repairNote(issues: CandidateIssue[], previousText: string): string {
   const hard = issues.filter((issue) => issue.severity === 'hard');
   if (hard.length === 0) return '';
-  const lines = ['上一版正文没有通过事实核对，请重写，只修正下面这些点：'];
+  const lines = ['上一版正文没有通过核对。保留其中正确的部分，只修正下面这些点：'];
   for (const issue of hard.slice(0, 6)) {
     const label: Record<string, string> = {
       actor_swap: '人物写反了', direction_reversed: '方向写反了', wrong_number: '数字写错了',
@@ -207,7 +207,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
   for (let index = 0; index < maxAttempts; index += 1) {
     if (args.signal?.aborted) throw new Error('aborted');
     const attemptStarted = performance.now();
-    const repair = index > 0 && best ? repairNote(best.issues) : '';
+    const repair = index > 0 && best ? repairNote(best.issues, best.text) : '';
     const userText = repair ? `${baseUser}\n\n${repair}` : baseUser;
     let display = '';
     const filter = new ThinkingFilter();
