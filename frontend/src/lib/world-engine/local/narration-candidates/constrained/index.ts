@@ -67,7 +67,13 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
 
   const projectMs = now() - projectStarted;
   const requireTime = policy.requireTime ?? scene.facts.some((fact) => fact.kind === 'time');
-  const minChars = policy.minChars ?? (scene.timeOnly ? 40 : scene.hasSceneMaterial ? 120 : 90);
+  // The length floor scales with the settled content of the point, not with
+  // the clock: an elapsed-time-only point has nothing to say beyond the time
+  // and the room, so demanding a complex-scene budget would force invented
+  // business. A point with several settled changes must not shrink into a
+  // two-sentence summary.
+  const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
+  const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(120, 40 + changeCount * 12));
   const maxChars = policy.maxChars ?? 1400;
   const planStarted = now();
   const plan = planBeats(scene, {
@@ -88,9 +94,21 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     forbiddenKnowledge: policy.forbiddenKnowledge ?? [],
   };
 
-  const modelEnabled = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
+  const modelRequested = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
     ? policy.enableModel !== false
     : false;
+  const deadline = started + Math.max(5_000, policy.turnTimeoutMs ?? 180_000);
+  let modelBudgetSpent = false;
+  const modelBudget = (): { enabled: boolean; timeoutMs: number } => {
+    if (!modelRequested || modelBudgetSpent) return { enabled: false, timeoutMs: 0 };
+    const remaining = deadline - now();
+    if (remaining <= 5_000) {
+      modelBudgetSpent = true;
+      return { enabled: false, timeoutMs: 0 };
+    }
+    return { enabled: true, timeoutMs: Math.min(policy.model?.timeoutMs ?? 90_000, remaining - 1_000) };
+  };
+  const modelEnabled = modelRequested;
   const ctx = createRealizerContext(scene, priorText, sanityStyle);
   ctx.avoidOpenings = policy.avoidOpenings ?? [];
 
@@ -112,6 +130,8 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       sanityStyle,
       verifyOptions,
       modelEnabled,
+      modelBudget,
+      modelBudgetSpent: () => modelBudgetSpent,
       prior: joinText(beatTexts),
       emit,
       addVerifyMs: (ms) => { verifyMs += ms; },
@@ -261,6 +281,8 @@ interface WriteBeatArgs {
   sanityStyle: 'direction' | 'number';
   verifyOptions: Parameters<typeof verifyText>[1];
   modelEnabled: boolean;
+  modelBudget: () => { enabled: boolean; timeoutMs: number };
+  modelBudgetSpent: () => boolean;
   prior: string;
   emit: (progress: CandidateProgress) => void;
   addVerifyMs: (ms: number) => void;
@@ -310,7 +332,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
   // 2. Constrained model writer (one call per beat, one feedback retry).
   let modelAttempted = false;
   let modelFailed = false;
-  if (modelEnabled) {
+  if (modelEnabled && args.modelBudget().enabled) {
     modelAttempted = true;
     const maxAttempts = Math.max(1, Math.min(2, policy.model?.maxAttempts ?? 2));
     let feedback: string | null = null;
@@ -320,9 +342,9 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
         const result = await composeBeatWithModel(input.engine, beat, scene, args.prior || null, {
           sanityStyle,
           instruction: policy.model?.instruction ?? null,
-          maxTokens: policy.model?.maxTokensPerBeat ?? 200,
-          temperature: policy.model?.temperature ?? 0.7,
-          timeoutMs: policy.model?.timeoutMs ?? 90_000,
+          maxTokens: policy.model?.maxTokensPerBeat ?? policy.maxTokens ?? 200,
+          temperature: policy.model?.temperature ?? policy.temperature ?? 0.7,
+          timeoutMs: args.modelBudget().timeoutMs,
           signal: input.signal,
           feedback,
           onProgress: (progress) => args.emit({
@@ -352,6 +374,10 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
     }
     modelFailed = true;
     issues.push({ kind: 'beat_fallback', severity: 'soft', beatId: beat.id, detail: 'model beat fell back to the program realizer' });
+  }
+
+  if (modelEnabled && !modelAttempted) {
+    issues.push({ kind: 'beat_fallback', severity: 'soft', beatId: beat.id, detail: 'turn budget spent; program wrote this beat' });
   }
 
   // 3. Program realization of the same beat.

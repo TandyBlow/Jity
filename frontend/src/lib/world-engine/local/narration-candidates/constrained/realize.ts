@@ -164,8 +164,11 @@ function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
   // The room is described after the arrival, in the move beat, when the
   // viewpoint moves this point; describing it first would spoil the move.
   if (detail && !viewpointMoved) {
-    variants.push(`${place}里，${detail}`);
-    variants.push(`${place}。${detail}`);
+    if (detail.includes(place)) variants.push(detail);
+    else {
+      variants.push(`${place}里，${detail}`);
+      variants.push(`${place}。${detail}`);
+    }
   }
   // Only assert a standing position when the point itself says the viewpoint
   // is here (a move beat follows otherwise and would be told backwards).
@@ -215,7 +218,10 @@ function moveBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext)
     const detail = clause(ctx.scene.place.note, 24);
     const alreadySaid = [...ctx.used].some((used) => used.includes(stripEnd(detail)));
     // Keep the room's name on the detail so it cannot read as a stray sign.
-    const framed = detail ? asSentence(`${ctx.scene.place.name || ctx.scene.viewpoint.location}里，${detail}`) : '';
+    const placeName = ctx.scene.place.name || ctx.scene.viewpoint.location;
+    const framed = detail
+      ? asSentence(detail.includes(placeName) ? detail : `${placeName}里，${detail}`)
+      : '';
     if (framed && !alreadySaid && acceptable(ctx, framed)) paragraphs.push(remember(ctx, framed));
   }
   return paragraphs.filter(Boolean).join('\n\n');

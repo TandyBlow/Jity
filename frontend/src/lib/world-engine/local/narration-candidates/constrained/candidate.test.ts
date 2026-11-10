@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest';
 import { applyPoint, buildInitialState, stateDigest } from '../../state';
 import type { InitialState, TimelinePoint } from '../../../types';
-import { createRealizerContext, generateCandidate, planBeats, projectConstrainedScene, realizeBeat, verifyText } from './index';
+import { createRealizerContext, generateCandidate, planBeats, projectConstrainedScene, realizeBeat, sanitizeBeat, verifyText } from './index';
 import type { BeatDirective, CommittedScenePacket } from './types';
 
 const initial = (): InitialState => ({
@@ -348,6 +348,73 @@ describe('generateCandidate model mode', () => {
     // Two attempts (initial + one feedback retry) on the move beat only.
     expect(prompts.filter((prompt) => prompt.includes('路明非从值班室到后院')).length).toBe(2);
     expect(prompts.some((prompt) => prompt.includes('上一稿没有写清'))).toBe(true);
+  });
+});
+
+describe('small-model output handling', () => {
+  it('unwraps a JSON answer and still checks the facts', () => {
+    const nl = String.fromCharCode(10, 10);
+    expect(sanitizeBeat('{"text":"两分钟过去了。"}')).toBe('两分钟过去了。');
+    const fenced = `\`\`\`json${String.fromCharCode(10)}{"narration":"路明非走进后院。"}${String.fromCharCode(10)}\`\`\``;
+    expect(sanitizeBeat(fenced)).toContain('路明非走进后院');
+    expect(sanitizeBeat(JSON.stringify(['第一段。', '第二段。']))).toBe(`第一段。${nl}第二段。`);
+  });
+
+  it('rejects a heading/annotation answer for the beat and writes that beat with the program', async () => {
+    const { packet } = await fixture();
+    const { engine, prompts } = scriptedEngine((prompt) => (
+      factLine(prompt, '路明非从值班室到后院')
+        ? ['【正文】', '事实：路明非移动到后院', '正文：他走了。'].join(String.fromCharCode(10))
+        : modelReplyForPrompt(prompt)
+    ));
+    const result = await generateCandidate({ engine, committed: packet, inputText: '', policy: { mode: 'model' } });
+    expect(result.accepted).toBe(true);
+    const moveBeat = result.rawAttempts.find((beat) => beat.beatId.startsWith('move:lu'));
+    expect(moveBeat?.source).toBe('program');
+    expect(moveBeat?.issues.some((issue) => ['prompt_echo', 'fact_list', 'fact_missing'].includes(issue.kind))).toBe(true);
+    expect(prompts.filter((prompt) => prompt.includes('路明非从值班室到后院')).length).toBe(2);
+    expect(result.text).not.toContain('事实：');
+  });
+
+  it.each([
+    ['empty reply', () => ''],
+    ['fact-list reply', () => ['- 时间：2分钟', '- 路明非移动到后院', '- 人格变化'].join(String.fromCharCode(10))],
+    ['english reply', () => 'Lu Mingfei walked into the yard after two minutes.'],
+    ['prompt echo', (prompt: string) => prompt],
+  ])('never lets a %s become the player text', async (_label, reply: (prompt: string) => string) => {
+    const { packet } = await fixture();
+    const { engine } = scriptedEngine(reply, false);
+    const result = await generateCandidate({ engine, committed: packet, inputText: '', policy: { mode: 'model' } });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('后院');
+    expect(result.text).not.toContain('- 时间');
+    expect(result.text).not.toContain('after two minutes');
+    expect(result.rawAttempts.some((beat) => beat.source === 'program' || beat.source === 'fallback')).toBe(true);
+  });
+
+  it('spends the turn budget on the program instead of overrunning the wait', async () => {
+    const { packet } = await fixture();
+    let calls = 0;
+    const engine: ScriptedEngine = {
+      info: { backend: 'slow', modelId: 'slow-1' },
+      async load() {},
+      async dispose() {},
+      async complete(prompt) {
+        calls += 1;
+        await new Promise((done) => setTimeout(done, 40));
+        return modelReplyForPrompt(prompt);
+      },
+    };
+    const started = performance.now();
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '',
+      policy: { mode: 'model', turnTimeoutMs: 60, model: { timeoutMs: 5000 } },
+    });
+    const wall = performance.now() - started;
+    expect(result.accepted).toBe(true);
+    expect(calls).toBeLessThan(6);
+    expect(result.rawAttempts.some((beat) => beat.issues.some((issue) => issue.detail.includes('turn budget')))).toBe(true);
+    expect(wall).toBeLessThan(4000);
   });
 });
 

@@ -29,8 +29,10 @@ const vite = await createServer({
 let exitCode = 0;
 try {
   const stateModule = await vite.ssrLoadModule('/src/lib/world-engine/local/state.ts');
+  const shortModule = await vite.ssrLoadModule('/src/lib/world-engine/runtime/b3-short-samples.ts');
   const candidateModule = await vite.ssrLoadModule('/src/lib/world-engine/local/narration-candidates/constrained/index.ts');
   const { buildInitialState, applyPoint, stateDigest } = stateModule;
+  const { SHORT_STATE } = shortModule;
   const { generateCandidate } = candidateModule;
 
   const initial = buildInitialState(world.initial);
@@ -156,7 +158,64 @@ try {
     async *stream() { throw new Error('program mode: no model engine'); },
   };
 
+  // ---- public short sample (same asset as the browser driver) --------------
+  const shortRoot = structuredClone(SHORT_STATE);
+  const shortRootDigest = await stateDigest(shortRoot);
+  const shortMovePoint = {
+    worldId: shortRoot.worldId, id: 'point_short_move', sequence: 1, kind: 'normal', previousPointId: 'root_short',
+    roundId: 'round_short', advanceId: 'advance_short_1', trigger: 'player', linkedFromPointId: null,
+    timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } },
+    entityDeltas: { person_a: { entityId: 'person_a', positionSet: at('hall') } },
+  };
+  const shortMoved = applyPoint(shortRoot, shortMovePoint);
+  const shortMovedDigest = await stateDigest(shortMoved);
+  const shortElapsedPoint = {
+    worldId: shortRoot.worldId, id: 'point_short_elapsed', sequence: 2, kind: 'normal', previousPointId: 'point_short_move',
+    roundId: 'round_short', advanceId: 'advance_short_2', trigger: 'automatic', linkedFromPointId: null,
+    timeAdvance: minute(2),
+    entityDeltas: {},
+  };
+  const shortElapsed = applyPoint(shortMoved, shortElapsedPoint);
+  const shortElapsedDigest = await stateDigest(shortElapsed);
+  const shortPackets = [
+    {
+      id: 'short-root', input: '我在走廊里站了一会儿，先看清都有谁。',
+      packet: {
+        anchor: { worldId: shortRoot.worldId, pointId: 'root_short', version: 0, stateDigest: shortRootDigest, previousPointId: null },
+        state: shortRoot, beforeState: null, timeAdvance: null, entityDeltas: {}, facts: [],
+      },
+    },
+    {
+      id: 'short-move', input: '我看着林川往门厅走。',
+      packet: {
+        anchor: { worldId: shortRoot.worldId, pointId: 'point_short_move', version: 1, stateDigest: shortMovedDigest, previousPointId: 'root_short' },
+        state: shortMoved, beforeState: shortRoot, timeAdvance: shortMovePoint.timeAdvance, entityDeltas: shortMovePoint.entityDeltas, facts: [],
+      },
+    },
+    {
+      id: 'short-elapsed', input: '我留在走廊，听门厅那边的动静。',
+      packet: {
+        anchor: { worldId: shortRoot.worldId, pointId: 'point_short_elapsed', version: 2, stateDigest: shortElapsedDigest, previousPointId: 'point_short_move' },
+        state: shortElapsed, beforeState: shortMoved, timeAdvance: shortElapsedPoint.timeAdvance, entityDeltas: {}, facts: [],
+      },
+    },
+  ];
+
   const runs = [];
+  let shortPrior = null;
+  for (const entry of shortPackets) {
+    const result = await generateCandidate({
+      engine: noopEngine,
+      committed: entry.packet,
+      inputText: entry.input,
+      priorText: shortPrior,
+      policy: { mode: 'program', knowledge: { metCharacterIds: ['person_a'] } },
+    });
+    runs.push({ id: entry.id, input: entry.input, result });
+    if (!result.accepted) exitCode = 1;
+    if (result.text) shortPrior = result.text;
+  }
+
   const simple = await generateCandidate({
     engine: noopEngine,
     committed: simplePacket,
@@ -199,6 +258,9 @@ try {
       root: { pointId: point0.id, version: 0, stateDigest: rootDigest },
       simple: { pointId: point1.id, version: 1, stateDigest: digest1 },
       complex: { pointId: point2.id, version: 2, stateDigest: digest2 },
+      shortRoot: { pointId: 'root_short', version: 0, stateDigest: shortRootDigest },
+      shortMove: { pointId: 'point_short_move', version: 1, stateDigest: shortMovedDigest },
+      shortElapsed: { pointId: 'point_short_elapsed', version: 2, stateDigest: shortElapsedDigest },
     },
     runs: runs.map(({ id, input, result }) => ({
       id,

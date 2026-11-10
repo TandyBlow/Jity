@@ -188,7 +188,7 @@ export type CandidateIssueKind =
   | 'fact_missing' | 'fact_actor_swap' | 'fact_direction_reversed' | 'fact_wrong_number'
   | 'fact_time_wrong' | 'task_without_fact' | 'movement_without_fact'
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
-  | 'perspective_leak' | 'prompt_echo' | 'empty_text' | 'too_short' | 'too_long'
+  | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
   | 'repeated_sentence' | 'echo_prior' | 'engine_error' | 'cancelled'
   | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing';
 
@@ -241,6 +241,9 @@ export interface SceneHints {
 }
 
 export interface ConstrainedPolicy {
+  /** Driver-level knobs (the shared browser driver forwards these names). */
+  maxTokens?: number;
+  temperature?: number;
   /** Defaults to the world protagonist. */
   viewpointId?: Id;
   /** Read-only description overrides (all already settled). */
@@ -276,6 +279,10 @@ export interface ConstrainedPolicy {
    * advances with amount > 0, false otherwise. */
   requireTime?: boolean;
   maxBeats?: number;
+  /** Whole-turn wall budget for model writing (default 180000 ms). Once it is
+   * spent, remaining beats are written by the program so the player still gets
+   * a readable turn instead of a timeout. */
+  turnTimeoutMs?: number;
   seed?: number;
   /** Strings the prose must not contain verbatim (hidden knowledge). */
   forbiddenKnowledge?: string[];

@@ -121,18 +121,53 @@ export interface ModelBeatResult {
   feedback: string | null;
 }
 
+/** A small model often answers with a JSON object or a list even when asked for
+ * prose. Take its text field when that is unambiguous; otherwise leave the raw
+ * text for the beat gate to judge. */
+function unwrapStructured(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) return raw;
+  try {
+    const parsed = JSON.parse(trimmed) as unknown;
+    const pick = (value: unknown): string | null => {
+      if (typeof value === 'string') return value;
+      if (Array.isArray(value)) {
+        const parts = value.map(pick).filter((part): part is string => Boolean(part && part.trim()));
+        return parts.length ? parts.join(String.fromCharCode(10, 10)) : null;
+      }
+      if (value && typeof value === 'object') {
+        const record = value as Record<string, unknown>;
+        for (const key of ['text', 'narration', '正文', 'content', 'paragraphs']) {
+          const found = pick(record[key]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return pick(parsed) ?? raw;
+  } catch {
+    return raw;
+  }
+}
+
 /** Strip wrappers a small model adds; the beat gate still checks the facts. */
+const THREE_NEWLINES = new RegExp(String.fromCharCode(10) + '{3,}', 'gu');
+
 export function sanitizeBeat(raw: string): string {
-  const body = raw.includes('【正文】') ? raw.split('【正文】').pop() ?? raw : raw;
-  return body
-    .replace(/```[\s\S]*?```/gu, '')
-    .replace(/```/gu, '')
+  const NL = String.fromCharCode(10);
+  const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
+  const afterMarker = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
+  // Remove fence markers first, then read a structured answer: a fenced JSON
+  // object is still the model's text, not a code sample to discard.
+  const unfenced = afterMarker.replace(/```[a-zA-Z]*/gu, '').replace(/```/gu, '');
+  const stripped = unwrapStructured(unfenced)
     .replace(/^\s*(正文|叙事|输出|片段)[:：]\s*/u, '')
     .replace(/【[^】]{1,10}】/gu, '')
     .replace(/\*\*/gu, '')
-    .replace(/[ \t]+/gu, ' ')
-    .replace(/\n{2,}/gu, '\n')
+    .replace(/[ 	]+/gu, ' ')
+    .replace(THREE_NEWLINES, NL + NL)
     .trim();
+  return stripped;
 }
 
 export async function composeBeatWithModel(

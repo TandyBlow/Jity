@@ -35,7 +35,12 @@ export interface VerifyOptions {
 import { SANITY_DOWN_CUES as DOWN_CUES, SANITY_UP_CUES as UP_CUES } from './realize';
 const REDISCOVERY = /(第一次|头一次|头一回|第一次看见|这才注意到|第一次注意)/;
 const PRIVATE_THOUGHT = /(心想|心里想|暗自想|在心里想|心中想|暗自盘算)/;
-const PROMPT_ECHO = /(必须全部|输出格式|只输出正文|【正文】|事实[:：]|JSON)/;
+const PROMPT_ECHO = /(必须全部|输出格式|只输出正文|【正文】|JSON)/;
+// A bullet list or a "fact:" line is the model handing back the brief instead
+// of writing prose — the exact regression this route was built to stop.
+const NEWLINES = new RegExp(String.fromCharCode(10) + '+', 'u');
+const FACT_LIST_LINE = /^\s*(?:[-*•]|\d+[.、)])\s*/u;
+const FACT_LABEL = /^\s*(?:事实|时间|地点|人物|变化|任务|结果|场景)[:：]/u;
 const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
   '捡起', '拾起', '递给', '塞进', '敲门', '打开', '关上', '锁上', '躲到', '藏在', '翻过', '爬上', '跳下',
   '喊住', '大叫', '大喊', '呼喊', '点燃', '砸碎', '撕开', '拿出', '掏出'];
@@ -269,6 +274,19 @@ export function verifyText(text: string, options: VerifyOptions): {
 
   if (PROMPT_ECHO.test(text)) {
     issues.push({ kind: 'prompt_echo', severity: 'hard', beatId: null, detail: 'text repeats prompt material' });
+  }
+
+  const lines = text.split(NEWLINES).map((line) => line.trim()).filter(Boolean);
+  if (lines.some((line) => FACT_LIST_LINE.test(line) || FACT_LABEL.test(line))) {
+    issues.push({ kind: 'fact_list', severity: 'hard', beatId: null, detail: 'bullet/label list is not prose' });
+  }
+
+  // Chinese prose: Latin letters are only allowed when they are part of a
+  // licensed name (e.g. a mixed-script item name).
+  const latin = (text.match(/[A-Za-z]/gu) ?? []).length;
+  const cjk = (text.match(/[一-鿿]/gu) ?? []).length;
+  if (latin > 6 && latin * 3 > cjk) {
+    issues.push({ kind: 'off_language', severity: 'hard', beatId: null, detail: `letters ${latin} vs CJK ${cjk}` });
   }
 
   // ---- 4. shape ------------------------------------------------------------
