@@ -139,3 +139,5 @@
 **程序兜底精确位置（2026-11-11）**：`results/quality/requests-01-to-06-program-projection.md`。06 当前 `game-model.ts:746` 仍把 `resultsText` 按 `；` 拼进正文（凯撒/内部判定句），`783-788` 把所有实体 `tasksAchieved` 写成正文（17:37 的 14 人清单），`765-771` 用 `initialAppearance` 而非当前外貌。f15d 走模型正文未触发，但下一次任何 fallback 会重现。
 
 **下一次 09 run（2026-11-11）**：06 已冻结 `6bd382d0`（build xQg4…, pid 25132，含 02 的 invented-mark/filled-hand/quiet-turn 修复）。`results/product/browser-requests/01-input-to-09-f15d-next-run.json` 请 09 在 6bd382d0 上跑，逐点记录最终原文/attempt/拒绝原因，并确认自动轮不再覆盖玩家点；f15d 的 185 字自动轮不是玩家点正文。
+
+**阻断下一次 09 run 的显示 bug（2026-11-11）**：`results/quality/requests-01-to-06-narration-binding.md`。`page.tsx:639-666` 的 `onNarrationComplete/onNarrationProgress` 仍无条件 `updateLast`，自动轮 narration 会覆盖玩家点 entry；f15d 的 185 字就是这样顶掉 180 字玩家点正文的。在这条修好前，09 的"最终正文"仍不是玩家点的；先修绑定，再跑一回合。
