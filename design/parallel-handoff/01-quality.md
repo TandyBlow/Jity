@@ -208,3 +208,4 @@
 - dfde（run 2026-11-10T2210-414a，head dfdedb18，build PR70dLlINuWjz8cXgKyoV）重复 2603：第 1 回合 0 字，results 被 `fact only asserted completion` 中止；构建不含 04 `1f65b0b2`。两次独立真实运行，非偶发。
 - 04 `b2e1dab2`/`c2c8484b`：results 提示加具体走/看行动例；repair 错误带冻结成员行动并要求直接可见结果。repair 改善，但 mixed 答案 drop/retry 仍未实现，06 未构建。
 - dfde 结束 **FAILED**（22:13:55Z），1 回合 0 字；06 `12175c21`（加载时补完未 ready 的 head narration）是页面修复，不解决 results 中止。下个构建需含 04 `1f65b0b2`/`b2e1dab2`/`c2c8484b` 与 drop/retry。
+- prompt-route hour 独立复核（7 case）：全部有硬/重大无据错误（路明非红发×2、诺诺束发变散×3、无据风声/声音×5、新/移动物件×4、状态清单），6/7 自动 accepted 不是质量；71 字两例也因事实失败。**建议 no-go**：当前 prompt 不作为主路线，停止串行 prompt 补丁，保留 7 例作回归，转向已结算事实结构+模型正文。见 `decision.md`/`review/`。
