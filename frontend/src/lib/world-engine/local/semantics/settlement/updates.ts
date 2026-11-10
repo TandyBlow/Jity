@@ -380,12 +380,20 @@ export class UpdatesRunner {
       error: evidence.error,
       evidence,
     };
+    const stageMs: Record<string, number> = {};
+    outcomes.forEach((outcome, index) => {
+      const stage = Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage;
+      const stageTime = joinedMs(outcome.calls);
+      if (stageTime) stageMs[stage] = Math.round(stageTime);
+    });
     this.options.onTask?.('updates', key, {
       ms,
       fallback,
       error: evidence.error,
       raw: evidence.raw,
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
+      stageMs,
+      stages: outcomes.map((outcome, index) => (Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage)),
     });
     return outcome;
   }

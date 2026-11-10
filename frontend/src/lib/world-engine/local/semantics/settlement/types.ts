@@ -45,6 +45,10 @@ export interface ModelTaskDetail {
   error?: string;
   raw?: string;
   promptChars?: number;
+  /** Per-stage model time for an updates task, so a slow turn can be attributed
+   * without waiting for the whole submission to close. */
+  stageMs?: Record<string, number>;
+  stages?: string[];
 }
 
 export interface ModelCallEvidence {
