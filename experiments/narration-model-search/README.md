@@ -58,6 +58,6 @@ python -X utf8 src/screen.py \
 ## 主 agent 需要做的接线
 
 - **06/02/08**：先看 `models/candidates.json` 的候选与许可标记；没有质量结果前不要替换页面叙事模型。若 preflight/后续批次产出候选，接线点仍是 `NARRATION_MODEL`（`frontend/src/app/world-local/page.tsx`）和 02 的生成策略，由 06 合入；11 不写页面。
-- **10**：按 preflight 请求下载/校验/加载冒烟；quality 请求当前不可提交，等 11 把 `readyToSubmit` 置 true 且 preregistration 与 prompts manifest 哈希一致。
+- **10**：preflight 和 `batch-2-subset12` 都已 ready；按请求里的 hash 下载/校验/加载冒烟，再跑 12 例 × 7 臂。product LoRA 若集群没有就跳过并说明。
 - **09**：只在 11 报告某候选通过 RUBRIC §6 后，接 `/world-local` 做小验证；请求会带模型/模板/输入哈希与离线原始证据。不要为候选轮流占 4060。
 - **01**：三个无法序列化的 case 需要修（或明确把它们从包里排除并更新 manifest/RUBRIC）；它们涉及唯一的物品转交例和两条连续例。
