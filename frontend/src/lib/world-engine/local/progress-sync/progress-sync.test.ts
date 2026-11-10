@@ -983,6 +983,45 @@ describe('createProductSync', () => {
     expect(Array.isArray(cStatus.branches)).toBe(true);
   });
 
+  it('a queued local save is local-ahead or diverged, never in-sync or remote-ahead', async () => {
+    const server = new FakeProgressServer();
+    const storeA = new ProductStore();
+    const make = (store: ProductStore = new ProductStore()) => createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    const a = make(storeA);
+    // The session writes the durable store; the sync adapter only uploads.
+    await storeA.save('w1', snapshot(1));
+    await a.save(snapshot(1), { requestId: 'q-1' });
+    expect((await a.status()).relation).toBe('in-sync');
+
+    // Offline: the upload stays queued, so the server head is still A's base.
+    server.offline = true;
+    const queued = await a.save(snapshot(2, '离线的一回合'), { requestId: 'q-2' });
+    expect(queued.outcome?.status).toBe('queued');
+    // Back online, the remote head has not moved: the queued save is ahead.
+    server.offline = false;
+    expect((await a.status()).relation).toBe('local-ahead');
+
+    // Another device moves the head while A's save is still queued: the page
+    // must offer a choice, not call itself in-sync or merely behind.
+    const b = make();
+    expect((await b.restore()).source).toBe('remote');
+    await b.push(snapshot(3, 'B的一回合'), { requestId: 'q-3' });
+    const diverged = await a.status();
+    expect(diverged.relation).toBe('diverged');
+    expect(diverged.branches?.length).toBeGreaterThanOrEqual(1);
+    // status() still writes nothing.
+    expect(await a.pending()).toBe(1);
+  });
+
   it('flush returns the conflicts themselves so the page can ask the player', async () => {
     const server = new FakeProgressServer();
     const a = createProductSync<unknown>({
