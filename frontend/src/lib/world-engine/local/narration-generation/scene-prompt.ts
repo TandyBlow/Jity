@@ -186,7 +186,6 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push('【可见物件与归属】');
     for (const object of held) {
       const owner = ownerOf(object.name);
-      const note = object.note?.trim();
       const short = trimNote(object.note, 60);
       lines.push(`- ${object.name}${owner ? `（属于${owner}）` : ''}${short ? `：${short}` : ''}`);
     }
