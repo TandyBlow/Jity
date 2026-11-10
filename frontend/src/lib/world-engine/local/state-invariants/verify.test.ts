@@ -8,7 +8,7 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyWorldRecord,
+  pointContinuityIssues, RecordInvariantError, verifyVisibleAcceptance, verifyWorldRecord,
   type WorldRecordLike,
 } from './index';
 import { restoreVerified, verifyBeforeRestore } from './guarded-restore';
@@ -189,5 +189,30 @@ describe('completion and discovery monotonicity', () => {
     });
     const issues = pointContinuityIssues(s1, p2);
     expect(issues.map((item) => item.code)).toContain('change_duplicate');
+  });
+});
+
+describe('visible acceptance summary', () => {
+  it('accepts monotonic visible history and tasks', () => {
+    const result = verifyVisibleAcceptance([
+      { before: { historyCount: '3', tasks: [{ goal: '开门', done: false }] }, after: { historyCount: '4', tasks: [{ goal: '开门', done: true }] }, text: '门开了。', historyDelta: 1 },
+    ]);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings.map((item) => item.code)).toContain('evidence_shape');
+  });
+
+  it('rejects a visible task that returns to not-done', () => {
+    const result = verifyVisibleAcceptance([
+      { before: { historyCount: 1, tasks: [{ goal: '开门', done: false }] }, after: { historyCount: 2, tasks: [{ goal: '开门', done: true }] }, text: '门开了。', historyDelta: 1 },
+      { before: { historyCount: 2, tasks: [{ goal: '开门', done: true }] }, after: { historyCount: 3, tasks: [{ goal: '开门', done: false }] }, text: '门又关上了。', historyDelta: 1 },
+    ]);
+    expect(result.errors.map((item) => item.code)).toContain('task_regressed');
+  });
+
+  it('rejects a recorded completed turn that added no history and a refresh that did not restore', () => {
+    const result = verifyVisibleAcceptance([
+      { before: { historyCount: 4 }, after: { historyCount: 4 }, text: '正文', historyDelta: 0, refreshMidSettle: { restored: false } },
+    ]);
+    expect(result.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['history_regressed', 'refresh_not_restored']));
   });
 });

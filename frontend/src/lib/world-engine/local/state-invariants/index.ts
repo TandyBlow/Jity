@@ -46,7 +46,10 @@ export type InvariantCode =
   | 'work_invalid'
   | 'checkpoint_invalid'
   | 'commands_invalid'
-  | 'evidence_shape';
+  | 'evidence_shape'
+  | 'history_regressed'
+  | 'refresh_not_restored';
+
 
 export interface InvariantIssue {
   code: InvariantCode;
@@ -616,4 +619,90 @@ export async function verifyTurnEntry(entry: unknown): Promise<InvariantReport> 
   for (const error of validateWorldPositions(replayed)) report.errors.push(issue('position_invalid', error));
   report.ok = report.errors.length === 0;
   return report;
+}
+
+/** Optional check for 09's page-visible acceptance summary. That file does not
+ * contain a full transport record, so this is not a replay: it only checks
+ * monotonic history/task continuity and the refresh marker. A full snapshot is
+ * still required for the S0+delta invariant checks. */
+export interface VisibleStateLike {
+  historyCount?: unknown;
+  place?: unknown;
+  tasks?: unknown;
+}
+
+export interface VisibleTurnLike {
+  before?: unknown;
+  after?: unknown;
+  text?: unknown;
+  historyDelta?: unknown;
+  problems?: unknown;
+  refreshMidSettle?: unknown;
+}
+
+function visibleHistory(value: unknown): number | null {
+  if (!isRecord(value)) return null;
+  const raw = value.historyCount;
+  if (typeof raw === 'number' && Number.isInteger(raw)) return raw;
+  if (typeof raw === 'string' && /^\d+$/.test(raw)) return Number(raw);
+  return null;
+}
+
+function visibleTasks(value: unknown): Map<string, boolean> | null {
+  if (!isRecord(value) || !Array.isArray(value.tasks)) return null;
+  const tasks = new Map<string, boolean>();
+  for (const task of value.tasks) {
+    if (!isRecord(task) || typeof task.goal !== 'string' || typeof task.done !== 'boolean') continue;
+    tasks.set(task.goal, task.done);
+  }
+  return tasks;
+}
+
+export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; errors: InvariantIssue[]; warnings: InvariantIssue[] } {
+  const errors: InvariantIssue[] = [];
+  const warnings: InvariantIssue[] = [];
+  const seenDone = new Map<string, boolean>();
+  let lastHistory: number | null = null;
+  let sawSnapshot = false;
+  for (const raw of entries) {
+    if (!isRecord(raw)) continue;
+    const entry = raw as VisibleTurnLike;
+    if ('snapshot' in raw || 'transport' in raw || 'record' in raw) sawSnapshot = true;
+    const before = visibleHistory(entry.before);
+    const after = visibleHistory(entry.after);
+    if (before != null) {
+      if (lastHistory != null && before < lastHistory) {
+        errors.push(issue('history_regressed', `history count fell from ${lastHistory} to ${before}`));
+      }
+      lastHistory = before;
+    }
+    if (before != null && after != null) {
+      if (after < before) errors.push(issue('history_regressed', `history count fell from ${before} to ${after}`));
+      const recorded = typeof entry.historyDelta === 'number' ? entry.historyDelta : after - before;
+      const problems = isStringArray(entry.problems) ? entry.problems : [];
+      const exceptional = problems.some((problem) => /timeout|error|cancel|refresh/i.test(problem));
+      if (!exceptional && typeof entry.text === 'string' && entry.text.length > 0 && recorded !== 1) {
+        errors.push(issue('history_regressed', `a completed turn added ${recorded} history entries instead of 1`));
+      }
+      lastHistory = after;
+    }
+    const tasks = visibleTasks(entry.after) ?? visibleTasks(entry.before);
+    if (tasks) {
+      for (const [goal, done] of seenDone) {
+        if (done && tasks.get(goal) === false) {
+          errors.push(issue('task_regressed', `visible task returned to not-done: ${goal}`));
+        }
+      }
+      for (const [goal, done] of tasks) seenDone.set(goal, done);
+    }
+    if (entry.refreshMidSettle != null) {
+      if (!isRecord(entry.refreshMidSettle) || entry.refreshMidSettle.restored !== true) {
+        errors.push(issue('refresh_not_restored', 'mid-settlement refresh was not marked restored'));
+      } else if (typeof entry.refreshMidSettle.historyDelta === 'number' && entry.refreshMidSettle.historyDelta < 0) {
+        errors.push(issue('history_regressed', 'history fell across a mid-settlement refresh'));
+      }
+    }
+  }
+  if (!sawSnapshot) warnings.push(issue('evidence_shape', 'no full transport snapshot in this record; only visible history/task/refresh continuity was checked'));
+  return { ok: errors.length === 0, errors, warnings };
 }

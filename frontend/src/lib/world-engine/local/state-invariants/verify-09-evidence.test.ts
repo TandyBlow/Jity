@@ -12,7 +12,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { verifySessionSnapshot, verifyTurnEntry, type InvariantReport } from './index';
+import { verifySessionSnapshot, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport } from './index';
 
 const evidencePath = process.env.WORLD_STATE_EVIDENCE;
 
@@ -49,8 +49,21 @@ function labelFor(document: unknown, index: number): string {
 async function verifyDocument(document: unknown): Promise<{ label: string; report: InvariantReport }[]> {
   const entries = entriesOf(document);
   const results: { label: string; report: InvariantReport }[] = [];
+  const visibleOnly: unknown[] = [];
   for (let index = 0; index < entries.length; index += 1) {
     const entry = entries[index];
+    // 09's acceptance JSON stores page-visible before/after summaries, not a
+    // transport snapshot. Only entries with a replay anchor go through the
+    // full verifier; the rest are checked for visible continuity below.
+    const record = entry && typeof entry === 'object' ? entry as Record<string, unknown> : null;
+    const before = record?.before ?? record?.stateBefore;
+    const point = record?.point ?? record?.delta;
+    const hasReplayAnchor = Boolean(record && (record.snapshot != null || record.transport != null || record.record != null))
+      || (Boolean(before) && typeof before === 'object' && Boolean(point) && typeof point === 'object');
+    if (!hasReplayAnchor) {
+      visibleOnly.push(entry);
+      continue;
+    }
     const report = await verifyTurnEntry(entry);
     if (report.errors.length === 0 && report.points === 0 && report.replayDigest == null) {
       // A snapshot envelope was not present; try the envelope itself.
@@ -59,6 +72,24 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
     } else {
       results.push({ label: labelFor(entry, index), report });
     }
+  }
+  if (visibleOnly.length > 0) {
+    const visible = verifyVisibleAcceptance(visibleOnly);
+    results.push({
+      label: 'visible-summary',
+      report: {
+        ok: visible.ok,
+        worldId: null,
+        version: null,
+        points: 0,
+        headPointId: null,
+        rootDigest: null,
+        headDigest: null,
+        replayDigest: null,
+        errors: visible.errors,
+        warnings: visible.warnings,
+      },
+    });
   }
   return results;
 }
