@@ -184,6 +184,18 @@ describe('projection collection rules', () => {
     expect(rendered).toContain('阿空（人物）：外貌[]');
   });
 
+  it('renders an empty personality list explicitly too', () => {
+    const world0 = tinyWorld();
+    const before = applyDelta(world0, {
+      blank: { entityId: 'blank', personalityChanges: [{ id: 'ch_p_old', text: '旧脾气', supersedes: [] }] },
+    });
+    const { result } = project(before, {
+      blank: { entityId: 'blank', personalityChanges: [{ id: 'ch_p_remove', text: null, supersedes: ['ch_p_old'] }] },
+    });
+    expect(result.projection.resultState['阿空']).toEqual({ 个性: [] });
+    expect(renderResultInput(result.projection).text).toContain('阿空（人物）：个性[]');
+  });
+
   it('renders item movement with the settled position and keeps the item line legacy-shaped', () => {
     const before = tinyWorld();
     const delta: Record<string, EntityDelta> = {

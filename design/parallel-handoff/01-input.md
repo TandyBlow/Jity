@@ -107,7 +107,7 @@ npx eslint src/lib/world-engine/local/narration-input --ext .ts
 npx vitest run src/lib/world-engine/local/narration-input --maxWorkers=1
 ```
 
-结果：TypeScript 无错误；ESLint 0 error/0 warning；6 个测试文件 46 个测试通过。关键证据：
+结果：TypeScript 无错误；ESLint 0 error/0 warning；6 个测试文件 47 个测试通过。关键证据：
 
 - 真实 199 行逐字节：`legacy-golden.test.ts` 读取源数据 `rows-xy.jsonl` + `yuyan/rows-yuyan.jsonl`，对每一行用 TS 重渲染，与 Python 已存 `xProse` **逐字节相同**，并与 manifest 的 SHA/字符数/UTF-8 字节全部一致；同时核对源文件哈希。30 行代表性金标冻结在 `goldens/legacy-rows-v1.json`，199 行哈希在 `goldens/legacy-rows-v1-manifest.json`。
 - 旧结果块漏写：row-0008 无变化行 v2 无结果块；row-0095 的 `外貌[]` 在 v2 显式出现；row-0002 的物品移动/任务/位置在 v2 出现。
@@ -131,6 +131,7 @@ WRITE_LENGTH_STATS=1 npx vitest run src/lib/world-engine/local/narration-input/l
 - **没有跑真实 GPU/模型生成**。本线只交付可调用输入适配与字节/结构验证；正文质量、整链等待和 35 次终验留给主集成与预约运行。不得把本线测试写成模型语义验收通过。
 - `yuyan-prose-result-v2` 没有已训练权重。格式已冻结、有 30 行样例金标，但质量未验证；不能拿旧权重跑 v2 后声称兼容。
 - 旧格式本身有损：物品行不写位置（`place_line` 只读 `位于`）、任务层级被压成一个大任务+小任务列表、没有结果块。`renderLegacyInput` 忠实复现这些损失，不宣称可通用反解析旧自然语言。
+- 旧格式只能表达一个大任务加一个小任务列表；一个角色有多个根任务时投影直接拒绝（`multiple_task_roots`），不会静默拍平或任选一个。
 - 位置文本会把容器/槽位标签一起写出（例如 `大厅（窗前）`、`路明非的身上（在西侧服务巷里）`），可见性判断本身只用最内层地点；如果主 agent 要求纯地点名，需要在投影策略里另立版本，不能直接改现有字节。
 - 地点只补一级上级（数据源规则），不展开全部祖先/同级。父层深度可通过 `policy.locationParentDepth` 调整，但调整即改变投影版本，应重建对应训练输入。
 - `timeAdvance` 是必填；根点/无时间点没有伪造默认值。`before` 不能为空；不要用 after 冒充上一状态。
