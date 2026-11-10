@@ -75,6 +75,7 @@ python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
 - 199 行答案隔离检查通过；199 行 tokenizer 可编码；
 - 41 条物品状态行都含 `位于`；
 - 49 条 golden 自检通过，覆盖统计见 `golden/manifest.json`；
+- 本地 CPU 微型模型 smoke 验证 `resume.pt` 恢复：1 epoch 后 `--epochs 2 --resume auto` 从 epoch 2 继续并完成；
 - 199 行中没有真实物品移动或精神值 0；这些由 synthetic golden 覆盖，不是训练行。
 
 ## 5. HPC 实际结果

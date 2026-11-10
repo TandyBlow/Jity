@@ -170,6 +170,7 @@ python -X utf8 train/hpc_client.py fetch <jobId>
 - `labels` 只在目标 token + EOS 上，prompt token 全部 `-100`；
 - 训练前检查目标正文（含 40 字连续片段）不在输入里；
 - 每 epoch 保存 `resume.pt`（adapter + optimizer + epoch + RNG + best），`--resume auto` 续跑；
+- 本地 CPU 微型模型 smoke 已验证恢复路径：先跑 1 epoch 生成 `resume.pt`，再以 `--epochs 2 --resume auto` 启动，日志打印 `resumed ... at epoch 2`，报告包含 epoch 2；这只证明恢复代码可跑，不代表真实模型质量；
 - dev 选模型，test 只在最后评估一次；
 - 报告记录实际数据/基座/tokenizer/config 哈希、train/dev/test id 哈希、长度、截断数、响应 mask、逐轮 loss 和生成样本。
 
