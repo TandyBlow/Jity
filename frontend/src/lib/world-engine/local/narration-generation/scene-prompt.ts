@@ -288,9 +288,13 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     minChars: Math.min(policy.minChars ?? Math.round(cap * 0.7), Math.round(cap * 0.7)),
   };
   const { count, min, max } = paragraphsOf(effective);
-  lines.push(count === 1
-    ? `要求：写成一段，合计 ${min}～${max} 字，直接给正文，不要小标题，不要解释。`
-    : `要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
+  // The reference corpus is 61-158 characters (median 97) and all one to two
+  // paragraphs, so length cannot be a hard gate: the product allows a turn to
+  // be shorter when less happened. The range below is guidance, and the
+  // verifier only notes a shorter passage when it still says everything.
+  const shape = count === 1 ? '写成一段' : `写成 ${count} 段，段与段之间空一行`;
+  lines.push(`要求：${shape}，一共 ${min}～${max} 字左右，直接给正文，不要小标题，不要解释。`);
+  lines.push('事情少的一回合可以短一些，写到这一刻写完为止；宁可短一点，也不要把没发生的事补进去。');
   lines.push('把它写成一幕，不是写成清单：让视角人物看见、停下、打量、皱眉、屏住呼吸、在心里嘀咕，'
     + '或者对在场的人说一句话——这些细微反应都允许，不用向上面报备。');
   lines.push('写明已经发生的事（谁到了哪里、过去了多久、什么办完了），但不要把它们排成一串「A在…，B在…」；'

@@ -931,20 +931,11 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
       priorText, attempt: attempt.attempt, promptEchoMarkers: [],
     });
     const remainingHard = check.issues.filter((issue) => issue.severity === 'hard');
-    // Deleting the one false sentence can leave a passage shorter than the
-    // page's floor. Failing the whole turn then hands the player a program
-    // fallback, which is worse than a short honest passage: accept it when the
-    // only remaining problem is length and the text keeps most of its body.
-    const onlyShort = remainingHard.length > 0
-      && remainingHard.every((issue) => issue.kind === 'too_short')
-      && charsOf(repaired) >= Math.round((policy.minChars ?? 140) * 0.6);
-    if (remainingHard.length && !onlyShort) continue;
+    if (remainingHard.length) continue;
     attempt.repairedIssues = [...(attempt.issues ?? [])];
     attempt.cleaned = repaired;
     attempt.accepted = true;
-    attempt.issues = onlyShort
-      ? [...check.issues, { kind: 'unverified_sentence', severity: 'soft', attempt: attempt.attempt, detail: 'shorter after removing a sentence that asserted an event the input does not have' }]
-      : [...check.issues];
+    attempt.issues = [...check.issues];
     // One repaired draft is enough; later attempts are older drafts.
     break;
   }

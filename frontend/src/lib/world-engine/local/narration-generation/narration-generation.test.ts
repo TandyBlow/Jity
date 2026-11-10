@@ -1729,3 +1729,32 @@ describe('a clause said twice in one passage is an echo', () => {
     });
   });
 });
+
+describe('length is judged with the content, not instead of it', () => {
+  const taskCommitted = {
+    facts: [{ id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对簿子' }],
+  } as never;
+
+  test('a complete 120-character passage passes a 140-character contract with a note', async () => {
+    const text = '林川把三本簿子摊开，比对完了，屋里的光落到纸边。他把结果记在册子背面，字写得比平时慢一些。院子里有人走过，脚步停在台阶外，又走远了。他没抬头，只把笔放下，听着那点声音散掉，才伸手去够下一本，指节在桌沿上停了一下。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskCommitted, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 140, targetChars: 200 },
+    });
+    expect([...text].length).toBeLessThan(140);
+    expect(result.accepted).toBe(true);
+    expect(result.accepted && result.rawAttempts[0].issues.some((issue) => issue.kind === 'shorter_than_contract')).toBe(true);
+  });
+
+  test('a 40-character fragment is still rejected', async () => {
+    const text = '林川比对完了。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskCommitted, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 140, targetChars: 200 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'too_short')).toBe(true);
+  });
+});

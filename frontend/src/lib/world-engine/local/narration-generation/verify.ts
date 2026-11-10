@@ -356,8 +356,16 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
+  // Length is not a pass/fail criterion on its own. The product allows a turn
+  // to be shorter when nothing big happened, as long as it still says what
+  // changed. Below two thirds of the contract the text stops reading as prose,
+  // and that stays hard; between there and the contract it is a soft note.
   const minChars = policy.minChars ?? 60;
-  if (chars > 0 && chars < minChars) issues.push(hard('too_short', attempt, `${chars} < ${minChars} characters`));
+  if (chars > 0 && chars < Math.round(minChars * 0.67)) {
+    issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));
+  } else if (chars > 0 && chars < minChars) {
+    issues.push(soft('shorter_than_contract', attempt, `${chars} < ${minChars} characters`));
+  }
   if (finishReason === 'length') {
     issues.push(hard('truncated', attempt, 'generation stopped at the token limit'));
   } else if (chars >= 40 && !TERMINAL.test(text.trim())) {

@@ -26,6 +26,7 @@ export type NarrationIssueKind =
   | 'promise_without_fact' | 'past_without_fact'
   /** Shape and length problems. */
   | 'empty_narration' | 'too_short' | 'too_long' | 'truncated' | 'premature_closure'
+  | 'shorter_than_contract'
   /** Repetition across turns or inside one draft. */
   | 'echo_prior' | 'loop_repeated_sentence' | 'loop_repeated_clause'
   /** Viewpoint / knowledge boundary. */
