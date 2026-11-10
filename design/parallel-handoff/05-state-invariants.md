@@ -50,7 +50,7 @@ npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
 npx vitest run src/lib/world-engine/local --maxWorkers=1
 → 6 files passed, 1 skipped; 113 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 10 bridge tests passed (requires the sibling 06 worktree)
+→ 1 file, 11 bridge tests passed (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -205,6 +205,24 @@ snapshot and gets the draft label (10 bridge tests pass). `snapshotForPersist`
 still reads only the live ref; 05 sent a one-line merge patch
 `patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
 after restore can otherwise drop older labels.
+
+## 95dc: state/provenance pass; program player text still fails
+
+Run `2026-11-10T2032-3f72` at 06 `95dc8e8e`, page `bdac63ec`, has version 2:
+the player point `point_round_3_1` is `program`, the automatic point is
+`model`. Reload is stable 1 entry/history 1 and keeps `narrationSources` in
+both the public snapshot and `__worldRestore`; 5f8f646b works for the restored
+public path.
+
+The saved state is not the failure. The displayed player paragraph is a
+program fallback and `acceptedMs=212874` (>60s); the page joins it with the
+later model paragraph. 05 rejects the program point and the slow accepted
+text; full snapshot chain passes. `restoredEntries` labels the turn `mixed`
+(program player + model auto), which is honest but still exposes program prose
+to the player.
+
+`snapshotForPersist` still reads only the live source ref; 05 patch
+`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending.
 
 ## Real 09 run found a sync-ownership conflict
 
