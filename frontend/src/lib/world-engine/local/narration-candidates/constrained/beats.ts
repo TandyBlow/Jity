@@ -127,20 +127,7 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
     });
   }
 
-  // 5. The settlement's result line, in its own words.
-  const resultFact = visible.find((fact) => fact.kind === 'result');
-  if (resultFact) {
-    push({
-      id: 'result',
-      kind: 'result',
-      subject: null,
-      factIds: [resultFact.id],
-      details: [],
-      mustMention: [],
-    });
-  }
-
-  // 6. Scene texture: existing objects. Optional facts only; never a new prop.
+  // 5. Scene texture: existing objects. Optional facts only; never a new prop.
   const sceneFacts = optional.filter((fact) => fact.kind === 'item_discovered' || fact.kind === 'item_present');
   const hasTexture = scene.hasSceneMaterial && (scene.present.length > 0 || scene.objects.length > 0 || sceneFacts.length > 0);
   if (hasTexture) {
@@ -152,6 +139,20 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
       factIds: chosen.map((fact) => fact.id),
       details: chosen.map((fact) => ('note' in fact ? fact.note : '')).filter(Boolean),
       mustMention: chosen.map((fact) => fact.name),
+    });
+  }
+
+  // 6. The settlement's result line, in the caller's own words. It is not
+  // optional: dropping it loses the answer the player just read.
+  const resultFact = visible.find((fact) => fact.kind === 'result');
+  if (resultFact) {
+    push({
+      id: 'result',
+      kind: 'result',
+      subject: null,
+      factIds: [resultFact.id],
+      details: [],
+      mustMention: [],
     });
   }
 

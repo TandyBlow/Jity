@@ -417,7 +417,7 @@ export function projectConstrainedScene(
   // hand-off does not disappear from the prose.
   if (options.resultsText && options.resultsText.trim()) {
     facts.push({
-      id: `${prefix}:result`, kind: 'result', mandatory: false, visibility: 'scene',
+      id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
       text: clampSentences(options.resultsText, 2, 130),
     });
   }

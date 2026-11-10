@@ -14,6 +14,7 @@ const frontend = fileURLToPath(new URL('../../', import.meta.url));
 const option = (flag, fallback) => process.argv.includes(flag) ? process.argv[process.argv.indexOf(flag) + 1] : fallback;
 const outPath = option('--out', resolve(frontend, '../.local/candidate-constrained/run.json'));
 const mode = option('--mode', 'program');
+const composerPath = option('--composer', null);
 
 const worldFile = resolve(frontend, 'public/worlds/dragon-raja-free-day.world.json');
 const world = JSON.parse(readFileSync(worldFile, 'utf8'));
@@ -201,6 +202,22 @@ try {
     },
   ];
 
+  // Optional external writer (lane 07). It is loaded from its own worktree and
+  // injected through policy.composer; no cross-lane import exists in src.
+  let composer = null;
+  let composerInfo = null;
+  if (composerPath) {
+    const composerModule = await vite.ssrLoadModule(composerPath.startsWith('/') || composerPath.includes(':')
+      ? `/@fs/${composerPath.split(String.fromCharCode(92)).join('/')}`
+      : composerPath);
+    const factory = composerModule.createBeatComposer ?? composerModule.default;
+    if (typeof factory !== 'function') {
+      throw new Error(`--composer ${composerPath} exports no createBeatComposer()`);
+    }
+    composer = factory();
+    composerInfo = composerPath;
+  }
+
   const runs = [];
   let shortPrior = null;
   for (const entry of shortPackets) {
@@ -209,7 +226,7 @@ try {
       committed: entry.packet,
       inputText: entry.input,
       priorText: shortPrior,
-      policy: { mode: 'program', knowledge: { metCharacterIds: ['person_a'] } },
+      policy: { mode: 'program', knowledge: { metCharacterIds: ['person_a'] }, composer },
     });
     runs.push({ id: entry.id, input: entry.input, result });
     if (!result.accepted) exitCode = 1;
@@ -221,7 +238,7 @@ try {
     committed: simplePacket,
     inputText: '我走进器材棚，先看看领用台上有什么。',
     priorText: null,
-    policy: { mode: 'program', knowledge: { discoveredItemIds: ['map', 'rules'] } },
+    policy: { mode: 'program', knowledge: { discoveredItemIds: ['map', 'rules'] }, composer },
   });
   runs.push({ id: 'simple', input: '我走进器材棚，先看看领用台上有什么。', result: simple });
   if (!simple.accepted) exitCode = 1;
@@ -235,6 +252,7 @@ try {
       mode: 'program',
       knowledge: { discoveredItemIds: ['map', 'rules'], visitedLocationIds: ['lane', 'shed'], metCharacterIds: ['nono', 'fingel'] },
       resultsText: '路明非把护目镜推到额头上，问秦越担架放在哪一侧；秦越说担架已经在器材笼门口，先报用途再登记。',
+      composer,
     },
   });
   runs.push({ id: 'complex', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', result: complex });
@@ -245,7 +263,7 @@ try {
   const factsOnly = await generateCandidate({
     engine: noopEngine,
     committed: { ...factsOnlyBase, inputText: '我把护目镜推到额头上，问秦越担架在哪一侧。', priorText: simple.text },
-    policy: { mode: 'program' },
+    policy: { mode: 'program', composer },
   });
   runs.push({ id: 'facts-only', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', result: factsOnly });
   if (!factsOnly.accepted) exitCode = 1;
@@ -253,6 +271,7 @@ try {
   const report = {
     generatedAt: new Date().toISOString(),
     mode,
+    composer: composerInfo,
     worldFile,
     points: {
       root: { pointId: point0.id, version: 0, stateDigest: rootDigest },
