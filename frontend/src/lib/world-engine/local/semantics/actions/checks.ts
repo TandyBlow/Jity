@@ -336,7 +336,7 @@ export interface ReactionCheckContext {
 /** Reaction text → accepted reaction or a repair request. */
 export function checkReactionText(text: string, context: ReactionCheckContext, options: CheckOptions): CheckResult<string> {
   const { scene, state, source, sourceActionText } = context;
-  const value = stripOutputLabel(text).normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -345,6 +345,14 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
   };
   const memberName = scene.actorName;
   const sourceName = source.name;
+  // Same grammar fix as the action text: the member is known, so a
+  // clause-initial 我 is the member speaking, not a semantic choice.
+  const rewritten = rewriteClauseSpeaker(value, memberName);
+  if (rewritten.count > 0) {
+    push(issue('first_person_rewritten', 'info',
+      `模型用了第一人称；程序把句首的“我”改成${memberName}（原文：${value}）`, { detail: value }));
+    value = rewritten.text;
+  }
 
   const copiedGoal = taskGoalCopy(value, allGoals(state));
   if (copiedGoal) {

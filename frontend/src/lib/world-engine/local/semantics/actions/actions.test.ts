@@ -219,6 +219,17 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(String(reactionResult.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
   });
 
+  it('rewrites a clause-initial first person in a reaction too', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine(['我按住门板，让路明非退到柜台后。']);
+    const result = await createActionHandlers({ engine }).reaction('hero', reactionInput(state, 'hero', 'ally', '路明非把木门推开，问阿宁还能不能走。'));
+
+    expect(result.attempts).toBe(1);
+    expect(String(result.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
+    expect(codes(result)).toContain('first_person_rewritten');
+    expect(codes(result)).not.toContain('reaction_first_person');
+  });
+
   it('rewrites a clause-initial first person instead of burning a repair', async () => {
     const state = buildTestWorld();
     // The 13:21Z run answered twice in first person and fell back to a skip.
