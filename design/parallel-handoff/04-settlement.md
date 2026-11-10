@@ -307,3 +307,14 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 生产路径不受影响：端口在每轮第一次 results 前保存状态、continuation 前取 after，生成真实 evidence；时间-only、场外依赖、阅读动作仍有独立回归。
 
 测试变为 **75 passed | 1 expected fail**。`b3ad76f5` 需要 06 合入；`03ec/cf` 构建不含它。
+
+### 2026-11-11 d101 真实单回合：aec9 生效，结果事实还有 ASCII 句号漏洞（`aa9622a3`）
+
+09 在 06 `d1019f09`/页面 chunk `page-a922...` 上完成了一次**有效**单回合：
+
+- `continuationCalls: 1`，`continuationDecision: policy_stop`，`stops: continuation_policy_abstract_task_goal`；没有 auto2。`aec9e622` 的抽象任务目标拒绝在真实页面生效。
+- `results` group_10 **两次尝试**：第一次事实以中文句号结尾，清洗后只剩“路明非”，被 `fact only asserted completion` 拒绝并触发修复；第二次模型只把结尾改成 ASCII `.`，旧清洗器把任务从句删掉后留下 `路明非.`，name-only 检查只剥中文标点，于是错误接受。
+- 结果事实因此可能把“路明非”这个名字本身当成已结算事实，任务行仍未完成。`aa9622a3` 把 `. , ; ! ?` 当作事实标点：完成从句边界、name-only 检查都覆盖；清洗后没有任何非标点残字就 abort，不再提交。
+- 回归用 d101 的两次原始回答（中文 `。`、ASCII `.`）复现：第二次也必须 `fact only asserted completion`，`results` 返回 null；76 focused passed | 1 expected fail。
+
+这条修复**没有**改模型提示词或放宽检查；模型的第二次回答仍然是任务完成句，产品按“失败修复即 abort”处理。06 下一冻结头需要 `aa9622a3`；d101 构建不含它，也不能把这个污染事实当成通过。
