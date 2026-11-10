@@ -228,6 +228,55 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.sanitizedFacts[0]?.removed).toEqual(expect.arrayContaining(['任务完成', '成功执行行动']));
   });
 
+  it('rejects the 95dc results fact that only claims a choice/task completion', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非完成了任务。', effects: [] }],
+      facts: [{ text: '路明非成功完成自己的参赛选择并完成任务，符合规则要求。', memberIds: ['lu'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'lu', actionText: '我沿着服务巷往里走，先看清墙上的演习规则牌。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('fact only asserted completion');
+  });
+
+  it('strips 95dc internal false and negative task claims from result facts', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '没有允许路明非反应。', effects: [] }],
+      facts: [{ text: '诺诺未成功触发路明非的骰点资格为false，且未被允许反应。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺观察路明非。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value!.nono).toBe('诺诺未成功触发路明非的骰点，且未被允许反应。');
+    expect(outcome.value!.nono).not.toContain('false');
+    const detail = outcome.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
+    expect(detail.sanitizedFacts[0]?.removed).toContain('资格为布尔值');
+
+    const raw2 = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '没有允许路明非反应。', effects: [] }],
+      facts: [{ text: '路明非未被允许反应，因此未达成目标。', memberIds: ['nono'] }],
+    });
+    const handlers2 = createSettlementHandlers({ engine: scriptedEngine([raw2]) });
+    const outcome2 = await handlers2.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺观察路明非。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome2.value!.nono).toBe('路明非未被允许反应。');
+    expect(outcome2.value!.nono).not.toContain('未达成目标');
+    const detail2 = outcome2.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
+    expect(detail2.sanitizedFacts[0]?.removed).toContain('未达成目标');
+  });
+
   it('drops the b7cd auto1 position answer that only echoed lu lane', async () => {
     const { state } = loadWorld();
     const afterFirst = projectStage(state, 'position', {
