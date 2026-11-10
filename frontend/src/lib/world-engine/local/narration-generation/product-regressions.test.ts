@@ -280,3 +280,36 @@ describe('product regressions: a wall prop in a hand', () => {
     expect(issues.some((issue) => /scene prop 演习规则牌 appears in a hand/u.test(issue.detail ?? ''))).toBe(true);
   });
 });
+
+describe('product regressions: a settled task the draft never says', () => {
+  // 09 dense point: move and two minutes written, the finished task omitted in
+  // both attempts, so the whole turn fell back to program text.
+  test('one sentence about the outcome is appended instead of failing', async () => {
+    const taskFact: NarrationFact = {
+      id: 'lu:task', actorId: 'lu', name: '路明非', kind: 'task_achieved',
+      taskId: 'task_books', goal: '把三份互相矛盾的登记簿比对完',
+    };
+    const movedFact: NarrationFact = {
+      id: 'lu:position', actorId: 'lu', name: '路明非', kind: 'moved',
+      fromId: 'lane', from: '西侧服务巷', toId: 'courtyard', to: '中央庭院',
+    };
+    const body = '路明非从西侧服务巷走到中央庭院。两分钟过去，他站在石阶上。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: body },
+      { kind: 'text', text: body },
+      { kind: 'text', text: '登记簿比对完了。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: quiet.anchor, facts: [movedFact, taskFact] },
+      inputText: quietInput.replace('演习规则牌（墙上）', '演习规则牌'),
+      priorText: null,
+      policy: {
+        ...quietPolicy, targetChars: 40, minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('登记簿比对完了');
+    expect(result.assembly.appendedSentences).toContain('登记簿比对完了。');
+  });
+});
