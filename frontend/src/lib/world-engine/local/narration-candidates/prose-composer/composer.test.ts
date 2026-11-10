@@ -244,7 +244,10 @@ describe('validateScene and generateCandidate', () => {
         },
       },
     });
-    expect(task.text).toContain('过了三分钟，林川');
+    // One paragraph: the clock opens the same sentence as the settled task.
+    expect(task.text.split(/\n{2,}/u).some((part) => part.includes('三分钟') && part.includes('「问清局势」'))).toBe(true);
+    expect(task.text).toContain('三分钟');
+    expect(task.text).toContain('林川');
     expect(task.text).toContain('「问清局势」');
     const talk = generateCandidate({
       policy: {

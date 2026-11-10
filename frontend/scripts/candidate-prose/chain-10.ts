@@ -92,6 +92,10 @@ for (const [index, turn] of turns.entries()) {
     entityDeltas: point.entityDeltas,
   };
   const { base: committed } = projectConstrainedScene(afterRead, beforeRead);
+  if (process.env.DUMP_BEATS === String(index + 1)) {
+    console.log('BEATS keys', Object.keys(committed as Record<string, unknown>));
+    console.log('BEATS', JSON.stringify(committed, null, 1).slice(0, 4000));
+  }
   const result = generateCandidate({
     committed: { ...(committed as Record<string, unknown>), state: after },
     state: after,

@@ -195,6 +195,22 @@ function isRequired(beat: ProseBeat): boolean {
     || beat.kind === 'sanity';
 }
 
+/** A first-clause place detail that the session has not read yet. Used only
+ * when a turn would otherwise be a bare settled field (personality/task): the
+ * clause keeps real scene content in the sentence without inventing anything.
+ * Only the first clause of each detail sentence is used; splitting on every
+ * comma produced fragments that read worse than the panel. */
+function freshPlaceClause(scene: ProseScene, seenText: string | null, salt: string): string {
+  const clauses = (scene.location.details ?? [])
+    .flatMap((detail) => detail.split('。'))
+    .map((sentence) => sentence.split(/[，；]/u)[0]?.trim() ?? '')
+    .filter((clause) => charCount(clause) >= 6 && charCount(clause) <= 24);
+  const fresh = seenText ? clauses.filter((clause) => !seenText.includes(clause)) : clauses;
+  const pool = fresh.length ? fresh : clauses;
+  if (!pool.length) return '';
+  return pool[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|${salt}`) % pool.length];
+}
+
 /** A detail that can open a paragraph without becoming a wall of scenery. */
 function anchorClause(detail: string, max = 44): string {
   const text = detail.trim();
@@ -509,21 +525,36 @@ export function composeProse(scene: ProseScene): ComposedProse {
       case 'task': {
         const actor = actorOf(scene, beat.actorId);
         if (!actor) break;
-        if (beat.factText) {
-          pushBeat(ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)), beat);
-        } else {
-          const name = refs.name(actor.id);
-          const label = beat.label;
-          // Always the full name: a pronoun right after another speaker's line
-          // reads as that speaker, not as the task owner.
-          const quoted = `「${normalizeClause(label)}」`;
-          const variants = [
-            `${quoted}，${name}做完了。`,
-            `${name}把${quoted}这件事办完了。`,
-            `${quoted}这件事，${name}收了尾。`,
-          ];
-          pushBeat(templates.pick('task', variants), beat);
-        }
+        // 01's reviewer strips the actor and the exact goal, so a turn that only
+        // reports a completed task reads as a status panel. When nothing else
+        // happened, open with a licensed place clause; with a move or a line in
+        // the same turn the sentence already has scene content.
+        const onlyClockAndTask = body.every((entry) => entry.kind === 'time' || entry.kind === 'scene'
+          || entry.kind === 'task')
+          && body.filter((entry) => entry.kind === 'task').length === 1;
+        // The constrained beat keeps its subject-first contract; only a whole
+        // scene narration opens with the place clause.
+        const lead = onlyClockAndTask && !beatOnly ? freshPlaceClause(scene, seenText, 'task') : '';
+        const sentence = beat.factText
+          ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId))
+          : templates.pick('task', [
+            (() => {
+              const name = refs.name(actor.id);
+              // Always the full name: a pronoun right after another speaker's
+              // line reads as that speaker, not as the task owner.
+              const quoted = `「${normalizeClause(beat.label)}」`;
+              return `${quoted}，${name}做完了。`;
+            })(),
+            (() => {
+              const name = refs.name(actor.id);
+              return `${name}把「${normalizeClause(beat.label)}」这件事办完了。`;
+            })(),
+            (() => {
+              const name = refs.name(actor.id);
+              return `「${normalizeClause(beat.label)}」这件事，${name}收了尾。`;
+            })(),
+          ]);
+        pushBeat(lead ? `${lead}，${sentence}` : sentence, beat);
         break;
       }
       case 'subtask': {
@@ -561,18 +592,8 @@ export function composeProse(scene: ProseScene): ComposedProse {
           // 01's reviewer strips names (place names included), the goal and the
           // personality text; a bare place name therefore still reads as a
           // status panel. A licensed place clause keeps real scene content in
-          // the same sentence. Only the first clause of each detail sentence is
-          // used: splitting on every comma produced fragments like
-          // "但要同时暴露给两边的窗口" that read worse than the panel.
-          const clauses = (scene.location.details ?? [])
-            .flatMap((detail) => detail.split('。'))
-            .map((sentence) => sentence.split(/[，；]/u)[0]?.trim() ?? '')
-            .filter((clause) => charCount(clause) >= 6 && charCount(clause) <= 24);
-          const freshClauses = seenText ? clauses.filter((clause) => !seenText.includes(clause)) : clauses;
-          const pool = freshClauses.length ? freshClauses : clauses;
-          const clause = pool.length
-            ? pool[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|mental`) % pool.length]
-            : '';
+          // the same sentence.
+          const clause = freshPlaceClause(scene, seenText, 'mental');
           const lead = `${pendingTime.clause}${clause ? `，${clause}` : place ? `，${place}里` : ''}`;
           pushBeat(ensurePeriod(`${lead}，${named}`), beat);
           record(pendingTime.beat, units.length - 1, ensurePeriod(lead));
