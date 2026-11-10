@@ -195,6 +195,17 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
+  it('drops a leading answer label from an action and a reaction', async () => {
+    const state = buildTestWorld();
+    const actionEngine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: '行动：阿宁把木门拉上，横过门栓。' })]);
+    const actionResult = await createActionHandlers({ engine: actionEngine }).action('ally', actInput(state, 'ally', '我盯着门口。'));
+    expect(actionResult.value).toEqual({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
+
+    const reactionEngine = new ScriptedEngine(['反应：阿宁按住门板，让路明非退到柜台后。']);
+    const reactionResult = await createActionHandlers({ engine: reactionEngine }).reaction('hero', reactionInput(state, 'hero', 'ally', '路明非把木门推开，问阿宁还能不能走。'));
+    expect(String(reactionResult.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
+  });
+
   it('rejects first-person narration and repairs it', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine(['{"kind":"act","text":"我退回门边，把门闩压紧。"}', '{"kind":"act","text":"阿宁退回门边，把门闩压紧。"}']);

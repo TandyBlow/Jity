@@ -76,11 +76,20 @@ function allGoals(state: WorldState): string[] {
     .flatMap((id) => Object.values(state.characters[id].tasks).map((task) => task.goal));
 }
 
+/** Small instruct models often answer a labelled prompt with the label:
+ * 「行动：…」「反应：…」. The label is formatting, not prose; keeping it would
+ * stage "行动：" into the frozen action text (and then into results/narration).
+ * Only one leading label is removed, and only when content follows. */
+export function stripOutputLabel(text: string): string {
+  const match = /^\s*(?:行动|动作|反应|回应|回复|回答|台词)\s*[:：]\s*(?=\S)/u.exec(text);
+  return match ? text.slice(match[0].length) : text;
+}
+
 /** Action text of one character. `actorIsProtagonist` relaxes exactly the
  * checks that a player-authored command is allowed to fail (the player may
  * speak as themselves and may repeat yesterday's words). */
 export function checkActionText(text: string, scene: ActionScene, state: WorldState, options: CheckOptions): CheckResult<string> {
-  const value = text.normalize('NFC').trim();
+  const value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -284,7 +293,7 @@ export interface ReactionCheckContext {
 /** Reaction text → accepted reaction or a repair request. */
 export function checkReactionText(text: string, context: ReactionCheckContext, options: CheckOptions): CheckResult<string> {
   const { scene, state, source, sourceActionText } = context;
-  const value = text.normalize('NFC').trim();
+  const value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
