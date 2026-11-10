@@ -178,7 +178,70 @@ export class LocalGameModel implements WorldModelPort {
   private async updates(key: Id, input: Json): Promise<Generated> {
     const outcome = await this.settlement.updates(key, input);
     const value = requireSettlementValue(outcome);
-    return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
+    const state = (input as { workingState?: WorldState }).workingState;
+    const results = (input as { results?: Record<Id, string> }).results ?? {};
+    const stage = (input as { stage?: string }).stage;
+    const merged = await this.injectMovement(state, value, results, stage);
+    return { value: merged as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
+  }
+
+  /** A player sentence that walks to a named room is a movement the state must
+   * reflect. The six-stage settlement leaves it to a free-text position scan,
+   * which the small model often answers with "no change"; this asks the one
+   * pick-from-a-list question it answers reliably and merges the result into
+   * the position stage before the controller previews it. */
+  private async injectMovement(state: WorldState | undefined, value: unknown, results: Record<Id, string>, stage: string | undefined): Promise<unknown> {
+    if (!state || stage) return value;
+    const view = state.protagonistId;
+    if (!MOVEMENT.test(this.lastPlayerInput)) return value;
+    const calls = Array.isArray(value) ? value as { stage: string; changes: Record<Id, EntityDelta> }[] : null;
+    if (!calls) return value;
+    const hasMove = calls.some((call) => call.changes?.[view]?.positionSet);
+    if (hasMove) return value;
+    const current = state.characters[view]?.position.containerId ?? '';
+    const moved = await this.movementJudgement(state, results);
+    if (!moved || moved === current) return value;
+    const position: { stage: 'position'; changes: Record<Id, EntityDelta> } = {
+      stage: 'position',
+      changes: { [view]: { entityId: view, positionSet: { containerId: moved, slotId: null, relativeTo: null } } },
+    };
+    const index = calls.findIndex((call) => call.stage === 'position');
+    if (index < 0) return [position, ...calls];
+    const merged = { stage: 'position', changes: { ...calls[index].changes, ...position.changes } };
+    return calls.map((call, at) => (at === index ? merged : call));
+  }
+
+  private async movementJudgement(state: WorldState, results: Record<Id, string>): Promise<Id | null> {
+    const current = state.characters[state.protagonistId]?.position.containerId;
+    const candidates = adjacentLocations(state, current, [this.lastPlayerInput]);
+    const prompt = [
+      '你是中文跑团游戏的位置判断器。只输出 JSON。',
+      '判断主角在这一回合结束后是否换了地点。只有主角真的移动到别处才算；原地说话、观察、等待都不算。',
+      `主角：${describeCharacter(state, state.protagonistId, false)}`,
+      `玩家输入：${this.lastPlayerInput}`,
+      `结算结果：${Object.values(results).join('；') || '（无）'}`,
+      `候选地点：${candidates}`,
+      '输出：{"moved":true,"toLocationId":"地点id"} 或 {"moved":false,"toLocationId":null}。toLocationId 只能从候选地点里选，不能等于主角当前地点。',
+    ].join(String.fromCharCode(10));
+    try {
+      const raw = await this.engine.complete(prompt, {
+        maxTokens: 64, temperature: 0, timeoutMs: 60_000,
+        jsonSchema: {
+          type: 'object', additionalProperties: false, required: ['moved'],
+          properties: { moved: { type: 'boolean' }, toLocationId: { type: ['string', 'null'] } },
+        },
+      });
+      const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '');
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start < 0 || end <= start) return null;
+      const output = JSON.parse(text.slice(start, end + 1)) as { moved?: boolean; toLocationId?: string | null };
+      const target = typeof output.toLocationId === 'string' ? output.toLocationId.trim() : '';
+      if (output.moved !== true || !state.initial.locations[target] || target === current) return null;
+      return target;
+    } catch {
+      return null;
+    }
   }
 
   private async continuation(key: Id, input: Json): Promise<Generated> {
@@ -259,9 +322,18 @@ export class LocalGameModel implements WorldModelPort {
       attempts.push(evaluate(second.raw));
     }
     const best = attempts.reduce((left, right) => ([...right.supported].length > [...left.supported].length ? right : left));
-    const finalAlignment = alignNarration(packet, best.supported, alignmentOptions);
-    const accepted = best.dropped.length === 0 && best.validation.ok && finalAlignment.ok && [...best.supported].length >= 80;
-    const text = accepted ? best.supported : draft;
+    // The support filter works on wording; alignment works on claims. A
+    // sentence can survive the first and still assert an uncommitted result,
+    // so prune again on the accepted candidate until it stops contradicting
+    // the settled facts (bounded: each pass only removes sentences).
+    let safe = best.supported;
+    let finalAlignment = alignNarration(packet, safe, alignmentOptions);
+    for (let pass = 0; pass < 3 && finalAlignment.violations.length > 0; pass += 1) {
+      safe = pruneNarration(safe, finalAlignment, after, view).text;
+      finalAlignment = alignNarration(packet, safe, alignmentOptions);
+    }
+    const accepted = best.dropped.length === 0 && best.validation.ok && finalAlignment.ok && [...safe].length >= 80;
+    const text = accepted ? safe : draft;
     const reason = accepted ? undefined : [...new Set([
       best.validation.reason,
       ...best.dropped.map((entry) => entry.reason),
@@ -463,7 +535,7 @@ function supportNarration(text: string, draft: string): string {
     if (grams.size < 6) { kept.push(sentence); continue; }
     let shared = 0;
     for (const gram of grams) if (source.has(gram)) shared += 1;
-    if (shared / grams.size >= 0.22) kept.push(sentence);
+    if (shared / grams.size >= 0.12) kept.push(sentence);
   }
   return kept.join('').replace(/\n{3,}/gu, '\n\n').trim();
 }
