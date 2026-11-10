@@ -96,6 +96,26 @@ CONSIDERED_REJECTED = [
 ]
 
 
+SUPPORTED_TENSOR_TYPES = {
+    "F32", "F16", "BF16", "Q4_0", "Q4_1", "Q5_0", "Q5_1", "Q8_0", "Q2_K", "Q3_K",
+    "Q4_K", "Q5_K", "Q6_K", "Q8_K", "IQ2_XXS", "IQ2_XS", "IQ3_XXS", "IQ1_S",
+    "IQ4_NL", "IQ3_S", "IQ2_S", "IQ4_XS", "IQ1_M", "TQ1_0", "TQ2_0",
+}
+
+
+def remote_head(slug: str) -> dict | None:
+    path = ROOT / "models/remote-heads" / f"{slug}.json"
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text(encoding="utf-8"))
+    template_file = data.get("chatTemplateFile")
+    template_text = ""
+    if template_file and pathlib.Path(template_file).exists():
+        template_text = pathlib.Path(template_file).read_text(encoding="utf-8")
+    data["templateText"] = template_text
+    return data
+
+
 def config_of(slug: str) -> dict:
     path = ROOT / "sources/hf" / slug / "base-config.json"
     try:
@@ -199,16 +219,46 @@ def main() -> int:
         if local and "probe" in local:
             arch_local = local["probe"].get("architecture")
             entry["gguf"]["localProbe"] = local["probe"]
+        head = remote_head(slug)
+        actual_arch = head["gguf"]["architecture"] if head else arch_local
+        normalized_arch = actual_arch.replace("-", "_") if actual_arch else None
         entry["operatorEvidence"] = {
             "wllamaVersion": support["wllamaVersion"],
             "wllamaWasmSha256": support["wasmSha256"],
-            "expectedArchitecture": arch_local,
+            "expectedArchitecture": actual_arch,
             "architectureKnownToShippedWasm": (
-                arch_local in support["architectureModels"] if arch_local else None
+                (normalized_arch in support["architectureModels"]) if normalized_arch else None
             ),
+            "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' "
+                                      "against the llama_model_<arch> symbols in the shipped wasm",
             "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight "
                     "and lane 09's browser run. No inference was run in this lane.",
         }
+        if head:
+            entry["operatorEvidence"].update({
+                "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+                "actualQuantization": head["gguf"]["quantization"],
+                "tensorTypes": head["gguf"]["tensorTypes"],
+                "unsupportedTensorTypes": sorted(
+                    name for name in head["gguf"]["tensorTypes"] if name not in SUPPORTED_TENSOR_TYPES),
+                "chatTemplateSource": "GGUF metadata",
+                "chatTemplateSha256": head["gguf"]["chatTemplateSha256"],
+                "chatTemplateChars": head["gguf"]["chatTemplateChars"],
+                "chatTemplateFile": head.get("chatTemplateFile"),
+                "contextLength": head["gguf"]["contextLength"],
+                "estimatedParameters": head["gguf"]["estimatedParameters"],
+            })
+            entry["chatTemplate"] = {
+                "source": "GGUF metadata (authoritative for the runtime)",
+                "chars": head["gguf"]["chatTemplateChars"],
+                "sha256": head["gguf"]["chatTemplateSha256"],
+                "file": head.get("chatTemplateFile"),
+                "baseTokenizerConfigSha256": template["sha256"],
+                "differsFromBaseTokenizerConfig": head["gguf"]["chatTemplateSha256"] != template["sha256"],
+            }
+            entry["chatTemplateKwargs"] = (
+                {"enable_thinking": False} if "enable_thinking" in head["templateText"] else {}
+            )
         # Pre-inference gate from EXPLORATION-AND-ACCEPTANCE.md.
         reasons = []
         if want["bytes"] > SIZE_GATE:
@@ -217,8 +267,11 @@ def main() -> int:
             reasons.append("no LFS sha256 for the GGUF file")
         if template["source"] == "unavailable":
             reasons.append("chat template not captured from the base tokenizer_config")
-        if arch_local and arch_local not in support["architectureModels"]:
-            reasons.append(f"architecture {arch_local} absent from shipped wllama wasm")
+        if entry["operatorEvidence"]["architectureKnownToShippedWasm"] is False:
+            reasons.append(f"architecture {entry['operatorEvidence']['expectedArchitecture']} absent from shipped wllama wasm")
+        unsupported = entry["operatorEvidence"].get("unsupportedTensorTypes") or []
+        if unsupported:
+            reasons.append(f"tensor types outside the supported set: {unsupported}")
         entry["preInferenceGate"] = {
             "sizeGateBytes": SIZE_GATE,
             "sizePass": want["bytes"] <= SIZE_GATE,
@@ -250,6 +303,7 @@ def main() -> int:
             "probe": product.get("probe"),
             "neverRedownload": True,
         }
+        entry["chatTemplateKwargs"] = {"enable_thinking": False} if bid == "qwen3-1.7b-instruct" else {}
         if bid == "qwen3-1.7b-instruct":
             entry["provenance"] = {
                 "repo": "unsloth/Qwen3-1.7B-GGUF",
@@ -276,6 +330,7 @@ def main() -> int:
             "source": "results/quality/team-08-runtime.json: browser Blob-store aggregate cap ~2 GB; a 1.3 GB blob loads, adding another 1.2 GB fails; a 2.5 GB single file fails; splitting does not bypass",
             "consequence": "For a real 09 browser run the candidate plus the page's other loaded model must stay under the measured cap. All batch-1 candidates are <=1.18 GB, and the 1.5e9-byte single-file gate is aligned. No 4B retry is queued.",
         },
+        "supportedTensorTypes": sorted(SUPPORTED_TENSOR_TYPES),
         "baselines": baselines,
         "candidates": rows,
         "consideredRejected": CONSIDERED_REJECTED,

@@ -143,6 +143,8 @@ def main() -> int:
     parser.add_argument("--out", type=pathlib.Path, default=None)
     parser.add_argument("--load-timeout", type=float, default=600.0)
     parser.add_argument("--case-timeout", type=float, default=600.0)
+    parser.add_argument("--template-kwargs", default="{}",
+                        help="JSON for llama-server chat_template_kwargs, e.g. {\"enable_thinking\": false}")
     parser.add_argument("--allow-provisional", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int, default=0, help="debug only: first N prompts")
@@ -182,6 +184,7 @@ def main() -> int:
     if args.limit:
         prompts = prompts[: args.limit]
     sampling = prompt_manifest["sampling"]
+    template_kwargs = json.loads(args.template_kwargs or "{}")
 
     model_sha = sha256_file(model_path)
     if args.expect_sha256 and model_sha.lower() != args.expect_sha256.lower():
@@ -220,6 +223,7 @@ def main() -> int:
                 "stop": sampling["stop"],
                 "stream": False,
                 "cache_prompt": False,
+                **({"chat_template_kwargs": template_kwargs} if template_kwargs else {}),
             }
             started = time.monotonic()
             status, body = http_json(f"http://127.0.0.1:{port}/v1/chat/completions",
@@ -268,6 +272,7 @@ def main() -> int:
             "promptManifest": prompt_manifest,
             "promptManifestPath": str(args.prompt_manifest),
             "samplingUsed": sampling,
+            "chatTemplateKwargs": template_kwargs,
             "llamaServer": args.llama_server,
             "command": command,
             "startedAt": started_at,

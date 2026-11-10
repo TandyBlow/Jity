@@ -1,0 +1,5 @@
+{% for item in messages %}{% if item['role'] == 'system' %}<|system|>
+{{ item['content'] }}{% elif item['role'] == 'user' %}<|user|>
+{{ item['content'] }}{% elif item['role'] == 'assistant' %}<|assistant|>
+{{ item['content'] }}{% endif %}{% endfor %}{% if add_generation_prompt %}<|assistant|>
+{% endif %}

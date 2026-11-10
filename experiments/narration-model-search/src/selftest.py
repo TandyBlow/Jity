@@ -49,9 +49,14 @@ def main() -> int:
         check("gguf_probe reads a real GGUF", False, f"missing {QWEN3}")
 
     support = json.loads((ROOT / "models/wllama-support.json").read_text(encoding="utf-8"))
-    expected = {"qwen2", "internlm2", "glm4", "hunyuan_dense"}
+    expected = {"qwen2", "internlm2", "chatglm", "hunyuan_dense"}
     missing = expected - set(support["architectureModels"])
     check("wllama wasm lists candidate architectures", not missing, f"missing={sorted(missing)}")
+    registry_pre = json.loads((ROOT / "models/candidates.json").read_text(encoding="utf-8"))
+    bad_arch = [row["id"] for row in registry_pre["candidates"]
+                if row["preInferenceGate"]["passed"]
+                and row["operatorEvidence"]["architectureKnownToShippedWasm"] is not True]
+    check("gate-passing candidates' actual GGUF arch is in the wasm table", not bad_arch, f"bad={bad_arch}")
 
     manifest_sha = __import__("hashlib").sha256((DEV / "manifest.json").read_bytes()).hexdigest()
     with tempfile.TemporaryDirectory() as tmp:

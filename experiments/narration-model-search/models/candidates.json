@@ -10,6 +10,33 @@
   "source": "results/quality/team-08-runtime.json: browser Blob-store aggregate cap ~2 GB; a 1.3 GB blob loads, adding another 1.2 GB fails; a 2.5 GB single file fails; splitting does not bypass",
   "consequence": "For a real 09 browser run the candidate plus the page's other loaded model must stay under the measured cap. All batch-1 candidates are <=1.18 GB, and the 1.5e9-byte single-file gate is aligned. No 4B retry is queued."
  },
+ "supportedTensorTypes": [
+  "BF16",
+  "F16",
+  "F32",
+  "IQ1_M",
+  "IQ1_S",
+  "IQ2_S",
+  "IQ2_XS",
+  "IQ2_XXS",
+  "IQ3_S",
+  "IQ3_XXS",
+  "IQ4_NL",
+  "IQ4_XS",
+  "Q2_K",
+  "Q3_K",
+  "Q4_0",
+  "Q4_1",
+  "Q4_K",
+  "Q5_0",
+  "Q5_1",
+  "Q5_K",
+  "Q6_K",
+  "Q8_0",
+  "Q8_K",
+  "TQ1_0",
+  "TQ2_0"
+ ],
  "baselines": [
   {
    "id": "product-narr-qwen25-1.5b",
@@ -34,6 +61,7 @@
     "estimatedParameters": 1543714304
    },
    "neverRedownload": true,
+   "chatTemplateKwargs": {},
    "provenance": {
     "kind": "local training artifact (lane 10), never re-downloaded"
    }
@@ -61,6 +89,9 @@
     "estimatedParameters": 1720574976
    },
    "neverRedownload": true,
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   },
    "provenance": {
     "repo": "unsloth/Qwen3-1.7B-GGUF",
     "revision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
@@ -135,9 +166,12 @@
     "torch_dtype": "bfloat16"
    },
    "chatTemplate": {
-    "source": "base tokenizer_config.json",
-    "chars": 2507,
-    "sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f"
+    "source": "GGUF metadata (authoritative for the runtime)",
+    "chars": 2509,
+    "sha256": "d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4",
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen25-1.5b-instruct.template.txt",
+    "baseTokenizerConfigSha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "differsFromBaseTokenizerConfig": true
    },
    "license": {
     "spdx": "Apache-2.0",
@@ -155,8 +189,24 @@
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
     "expectedArchitecture": "qwen2",
     "architectureKnownToShippedWasm": true,
-    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane.",
+    "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+    "actualQuantization": "MOSTLY_Q4_K_M",
+    "tensorTypes": {
+     "Q6_K": 29,
+     "Q4_K": 169,
+     "F32": 141
+    },
+    "unsupportedTensorTypes": [],
+    "chatTemplateSource": "GGUF metadata",
+    "chatTemplateSha256": "d5495a1e5db0611132a97e46a65dbb64a642a499421228b9c8b93229097fa9a4",
+    "chatTemplateChars": 2509,
+    "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen25-1.5b-instruct.template.txt",
+    "contextLength": 32768,
+    "estimatedParameters": 1777088000
    },
+   "chatTemplateKwargs": {},
    "preInferenceGate": {
     "sizeGateBytes": 1500000000,
     "sizePass": true,
@@ -209,9 +259,12 @@
     "torch_dtype": "bfloat16"
    },
    "chatTemplate": {
-    "source": "base tokenizer_config.json",
+    "source": "GGUF metadata (authoritative for the runtime)",
     "chars": 211,
-    "sha256": "49aa7cb516942cc5a17d45ed2939828e3b5e4188dc487a3c4b64a570e5b5111f"
+    "sha256": "49aa7cb516942cc5a17d45ed2939828e3b5e4188dc487a3c4b64a570e5b5111f",
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\internlm2_5-1.8b-chat.template.txt",
+    "baseTokenizerConfigSha256": "49aa7cb516942cc5a17d45ed2939828e3b5e4188dc487a3c4b64a570e5b5111f",
+    "differsFromBaseTokenizerConfig": false
    },
    "license": {
     "spdx": "other",
@@ -227,10 +280,26 @@
    "operatorEvidence": {
     "wllamaVersion": "3.8.1",
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
-    "expectedArchitecture": null,
-    "architectureKnownToShippedWasm": null,
-    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+    "expectedArchitecture": "internlm2",
+    "architectureKnownToShippedWasm": true,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane.",
+    "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+    "actualQuantization": "MOSTLY_Q4_K_M",
+    "tensorTypes": {
+     "Q4_K": 145,
+     "Q6_K": 25,
+     "F32": 49
+    },
+    "unsupportedTensorTypes": [],
+    "chatTemplateSource": "GGUF metadata",
+    "chatTemplateSha256": "49aa7cb516942cc5a17d45ed2939828e3b5e4188dc487a3c4b64a570e5b5111f",
+    "chatTemplateChars": 211,
+    "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\internlm2_5-1.8b-chat.template.txt",
+    "contextLength": 32768,
+    "estimatedParameters": 1889110016
    },
+   "chatTemplateKwargs": {},
    "preInferenceGate": {
     "sizeGateBytes": 1500000000,
     "sizePass": true,
@@ -283,9 +352,12 @@
     "torch_dtype": "bfloat16"
    },
    "chatTemplate": {
-    "source": "base tokenizer_config.json",
+    "source": "GGUF metadata (authoritative for the runtime)",
     "chars": 305,
-    "sha256": "92d6b9097a4a1514d7905de211d86698509da9880947c6f5b6f7491c5a1e650e"
+    "sha256": "92d6b9097a4a1514d7905de211d86698509da9880947c6f5b6f7491c5a1e650e",
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\glm-edge-1.5b-chat.template.txt",
+    "baseTokenizerConfigSha256": "92d6b9097a4a1514d7905de211d86698509da9880947c6f5b6f7491c5a1e650e",
+    "differsFromBaseTokenizerConfig": false
    },
    "license": {
     "spdx": "other",
@@ -301,10 +373,26 @@
    "operatorEvidence": {
     "wllamaVersion": "3.8.1",
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
-    "expectedArchitecture": null,
-    "architectureKnownToShippedWasm": null,
-    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+    "expectedArchitecture": "chatglm",
+    "architectureKnownToShippedWasm": true,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane.",
+    "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+    "actualQuantization": "MOSTLY_Q4_K_M",
+    "tensorTypes": {
+     "Q6_K": 29,
+     "F32": 57,
+     "Q4_K": 141
+    },
+    "unsupportedTensorTypes": [],
+    "chatTemplateSource": "GGUF metadata",
+    "chatTemplateSha256": "92d6b9097a4a1514d7905de211d86698509da9880947c6f5b6f7491c5a1e650e",
+    "chatTemplateChars": 305,
+    "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\glm-edge-1.5b-chat.template.txt",
+    "contextLength": 2048,
+    "estimatedParameters": 1593427968
    },
+   "chatTemplateKwargs": {},
    "preInferenceGate": {
     "sizeGateBytes": 1500000000,
     "sizePass": true,
@@ -369,6 +457,7 @@
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
     "expectedArchitecture": null,
     "architectureKnownToShippedWasm": null,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
     "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
    },
    "preInferenceGate": {
@@ -421,9 +510,12 @@
     "torch_dtype": "bfloat16"
    },
    "chatTemplate": {
-    "source": "base tokenizer_config.json",
+    "source": "GGUF metadata (authoritative for the runtime)",
     "chars": 4782,
-    "sha256": "751a70cee1051a921a7592530b5d75766faae8a6ad9d61d72daff0e31246bc3c"
+    "sha256": "751a70cee1051a921a7592530b5d75766faae8a6ad9d61d72daff0e31246bc3c",
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\hunyuan-1.8b-instruct.template.txt",
+    "baseTokenizerConfigSha256": "751a70cee1051a921a7592530b5d75766faae8a6ad9d61d72daff0e31246bc3c",
+    "differsFromBaseTokenizerConfig": false
    },
    "license": {
     "spdx": "other",
@@ -437,9 +529,27 @@
    "operatorEvidence": {
     "wllamaVersion": "3.8.1",
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
-    "expectedArchitecture": null,
-    "architectureKnownToShippedWasm": null,
-    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
+    "expectedArchitecture": "hunyuan-dense",
+    "architectureKnownToShippedWasm": true,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane.",
+    "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+    "actualQuantization": "MOSTLY_Q4_K_M",
+    "tensorTypes": {
+     "F32": 129,
+     "Q6_K": 33,
+     "Q4_K": 192
+    },
+    "unsupportedTensorTypes": [],
+    "chatTemplateSource": "GGUF metadata",
+    "chatTemplateSha256": "751a70cee1051a921a7592530b5d75766faae8a6ad9d61d72daff0e31246bc3c",
+    "chatTemplateChars": 4782,
+    "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\hunyuan-1.8b-instruct.template.txt",
+    "contextLength": 262144,
+    "estimatedParameters": 1791080448
+   },
+   "chatTemplateKwargs": {
+    "enable_thinking": false
    },
    "preInferenceGate": {
     "sizeGateBytes": 1500000000,
@@ -506,6 +616,7 @@
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
     "expectedArchitecture": null,
     "architectureKnownToShippedWasm": null,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
     "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
    },
    "preInferenceGate": {
@@ -583,6 +694,7 @@
     "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
     "expectedArchitecture": null,
     "architectureKnownToShippedWasm": null,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
     "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane."
    },
    "preInferenceGate": {

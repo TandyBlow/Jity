@@ -55,8 +55,16 @@ def model_entry(candidate: dict) -> dict:
         "expectedArchitecture": None,
         "architectureKnownToShippedWasm": True,
         "wllamaWasmSha256": candidate["operatorEvidence"]["wllamaWasmSha256"],
-        "note": "expectedArchitecture is filled from GGUF metadata during preflight; the wasm "
-                "architecture list is necessary evidence only, not a load proof.",
+        "chatTemplateKwargs": candidate.get("chatTemplateKwargs") or {},
+        "ggufEvidence": {
+            "actualArchitecture": candidate["operatorEvidence"].get("expectedArchitecture"),
+            "actualQuantization": candidate["operatorEvidence"].get("actualQuantization"),
+            "chatTemplateSha256": candidate["operatorEvidence"].get("chatTemplateSha256"),
+            "source": candidate["operatorEvidence"].get("source"),
+        },
+        "note": "GGUF architecture/quant/template come from a bounded HTTP range read of the "
+                "pinned file (models/remote-heads/); the real load proof is still this preflight "
+                "and lane 09.",
     }
 
 
@@ -191,6 +199,7 @@ def main() -> int:
                        "--model-id <id> --model-path <file> --expect-sha256 <sha> --llama-server <llama-server> "
                        "--ngl <n> --out <run dir>",
             "backend": "llama-server --jinja (the model's own GGUF chat template)",
+            "templateKwargs": "pass each model's chatTemplateKwargs (Hunyuan: enable_thinking=false; Qwen3 baseline: enable_thinking=false)",
             "sampling": {"temperature": 0.0, "top_k": 1, "top_p": 1.0, "seed": 42,
                          "max_tokens": 320, "context": 8192},
             "perModelOneServer": True,

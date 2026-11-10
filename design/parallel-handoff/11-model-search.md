@@ -8,7 +8,7 @@
 
 1. **官方来源与文件证据**：`experiments/narration-model-search/sources/capture_hf.py` 抓 7 个候选的 HF API、模型卡、config、tokenizer_config（含 chat template）、generation_config、LICENSE；`sources/hf/capture.json` 记录每个 URL、pinned revision、字节数、sha256；GGUF 文件记录 size + LFS sha256。
 2. **候选登记与预筛**：`models/candidates.json` 由抓取证据 + 本地清单 + wllama wasm 架构表生成。批次 1 四型：Qwen2.5-1.5B-Instruct、InternLM2.5-1.8B-Chat、GLM-Edge-1.5B-Chat、Hunyuan-1.8B-Instruct；Gemma-3-1B gated 拿不到模板，MiniCPM5-2B 1.56 GB 超门，MiniCPM-2B 第三方 1.73 GB 超门。基线 `qwen3-1.7b-instruct` 本地哈希等于 unsloth LFS 哈希；产品 LoRA 只读复用。
-3. **GGUF 算子证据工具**：`src/gguf_probe.py` 不加载权重读架构、量化、tensor 类型、模板 sha256、词表、上下文、参数量。`src/wllama_support.py` 从实际 `wllama.wasm` 提取 156 个 `llama_model_*` 架构（含 qwen2/internlm2/glm4/hunyuan_dense/gemma3/minicpm），并明确“存在架构符号只算必要证据，真实加载由 preflight/09 证明”。
+3. **GGUF 算子证据工具**：`src/gguf_probe.py` 不加载权重读架构、量化、tensor 类型、模板 sha256、词表、上下文、参数量；`src/remote_gguf_head.py` 用 HTTP Range 从 pinned revision 只读文件头（8–16 MB）拿到真实架构/量化/模板，不下载整文件。实测：GLM-Edge 的 GGUF 架构是 `chatglm`（不是 glm4），Hunyuan 是 `hunyuan-dense` 且模板要求 `enable_thinking=false`；Qwen2.5 的 GGUF 模板与 base tokenizer_config 不同。`src/wllama_support.py` 从实际 `wllama.wasm` 提取 156 个 `llama_model_*` 架构（含 qwen2/internlm2/glm4/hunyuan_dense/gemma3/minicpm），并明确“存在架构符号只算必要证据，真实加载由 preflight/09 证明”。
 4. **冻结提示词**：`src/build_prompts.py` 校验 01 的 canonical 开发包（manifest/cases/rubric 三个哈希 + 每例 inputSha256），用训练同款 `yuyan-prose-result-v2` 序列化，空白按浏览器路径删除并记账，套 10 的 `chatml-instruct-v1` system/user。当前冻结 12/15 子集（`evidence/prompts-dev-v1/`，prompts sha256 `70475f91…`），三个无法序列化的 case 已单独报告 01（`results/11-model-search/requests/01-dev-package-canonical-delta.json`）。
 5. **批量执行器**：`src/screen.py` 启一个 `llama-server --jinja` 复用给全部 case；每个 case 保存请求体、原始响应、usage/timings、wall ms、finish_reason；每个模型保存 load 秒数、命令、server log tail、模型 sha256。**本线不运行它**；只在 10 的 HPC 上跑。
 6. **机械汇总与复核输入**：`src/collect.py` 输出字数/句数/段数/句内重复/子句重复/耗时/tok/s，明确不产出 pass/fail（事实与文风由 01 判）；`src/make_review_input.py` 把一次 run 按 case 拼成 01 的 `NARRATION_QUALITY_ROWS` JSONL，拒绝缺例/多例/inputSha256 不一致，声明的 3 个排除例单列。
@@ -24,6 +24,7 @@
 | `src/collect.py` | run 目录 | `summary.json`、`summary.md`（无质量结论） | 11/01 |
 | `src/make_review_input.py` | cases + run + prompt manifest | `review-rows.jsonl` + `review.manifest.json`（01 复核输入） | 11/01 |
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
+| `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
 | `src/selftest.py` | 无 | 8 项 PASS/FAIL | 11/06 复核 |
 
 示例：
@@ -41,7 +42,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 9/9 PASS：真实 GGUF 读取、wasm 架构表、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 10/10 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 限制与未验证
 
