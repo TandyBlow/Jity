@@ -236,7 +236,7 @@ if (config.dry) {
         const state = apply(structuredClone(buildInitialState({ ...world.initial, worldId: world.worldId })), entry.patch);
         const focus = entry.task === 'action' ? entry.actor : entry.task === 'targets' ? entry.source : entry.member;
         const offscreen = focus !== state.protagonistId && roomOf(state, focus) !== roomOf(state, state.protagonistId);
-        const scopedSkip = offscreen && entry.offscreenPolicy === 'skip';
+        const scopedSkip = offscreen && (entry.offscreenPolicy ?? 'skip') === 'skip';
         const scene = actions.buildScene(state, focus, {
           playerInput: scopedSkip ? null : entry.playerInput ?? entry.actionText ?? null,
           aliases: {}, events: scopedSkip ? [] : entry.events ?? [] });
