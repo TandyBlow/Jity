@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -34,11 +35,23 @@ const manifest = JSON.parse(readFileSync(join(root, 'golden-manifest.json'), 'ut
   versions: Record<string, string>;
   tokenizer: { sha256: string; vocabSize: number };
 };
+const source = JSON.parse(readFileSync(join(root, 'source.json'), 'utf8')) as {
+  commit: string;
+  files: Record<string, { expected: string; actual: string; ok: boolean }>;
+  versions: Record<string, string>;
+};
 
 describe('lane-10 v2 golden vectors', () => {
   it('freezes the same 49 cases and versions lane 10 published', () => {
     expect(vectors).toHaveLength(49);
     expect(manifest.cases).toBe(49);
+    expect(createHash('sha256').update(readFileSync(join(root, 'vectors.jsonl'))).digest('hex'))
+      .toBe('d699a69734127c4ea763c1ba53dca1f8c5669d955887c6830d97aa177a35b2fc');
+    expect(source.commit).toBe('8f22a086a24f0b1ce030cbaa622862b2b3a16ddc');
+    for (const [name, check] of Object.entries(source.files)) {
+      expect(check.ok, name).toBe(true);
+      expect(check.actual, name).toBe(check.expected);
+    }
     expect(manifest.versions.serializerVersion).toBe('yuyan-prose-result-v2');
     expect(manifest.versions.projectionVersion).toBe('narration-result-view-v2');
     expect(manifest.tokenizer.sha256).toBe('20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4');
