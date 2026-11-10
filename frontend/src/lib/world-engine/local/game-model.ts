@@ -40,12 +40,24 @@ export interface GameModelOptions {
   /** Constrained route only: `program` never calls the model, `model` writes
    * one verified beat per call. Internal. */
   constrainedMode?: 'program' | 'model';
+  /** Trained route only: whole-scene vs beats. Internal evaluation switch. */
+  trainedMode?: 'beats' | 'scene';
+  /** Trained whole-scene prompt shape. `serialized` is the training shape for
+   * the fine-tuned checkpoints; `prose-facts` is the closed-book shape measured
+   * for the deployable instruct model. Internal. */
+  trainedPromptShape?: 'serialized' | 'prose-facts';
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
   /** `fallback` is true when the shown text came from the program composer (a
    * labelled downgrade) rather than verified model prose. The page must not
    * count a fallback as the turn's readable-text timing. */
-  onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean; source: 'model' | 'program' | 'draft' }) => void;
+  onNarrationComplete?: (progress: {
+    pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean;
+    /** `mixed` = some sentences are verified model prose and some are program
+     * realizations; never counted as fully model-written. */
+    source: 'model' | 'program' | 'mixed' | 'draft';
+    segments?: Array<{ id: string; kind: string; source: string; text: string }>;
+  }) => void;
   /** Test/evaluation hook: exposes the draft, raw model text and each repair
    * stage. Never used to make a product decision. */
   onNarrationDebug?: (debug: { pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string; violations: string[]; attempts: number[] }) => void;
@@ -105,6 +117,8 @@ export class LocalGameModel implements WorldModelPort {
         engine: narrationPort,
         candidate: options.narrationCandidate ?? 'auto',
         ...(options.constrainedMode ? { constrainedMode: options.constrainedMode } : {}),
+        ...(options.trainedMode ? { trainedMode: options.trainedMode } : {}),
+        ...(options.trainedPromptShape ? { trainedPromptShape: options.trainedPromptShape } : {}),
         // The page's chat model expects one templated user turn; the candidates
         // send plain text, so the runner wraps them the same way.
         engineTemplate: options.narrationMode === 'instruct' ? 'chatml' : 'none',
@@ -507,16 +521,17 @@ export class LocalGameModel implements WorldModelPort {
       return null;
     }
     const program = result.grade === 'program';
+    const mixed = result.grade === 'mixed';
     if (!program) this.lastAcceptedNarration = result.text;
     this.options.onTask?.('narration', pointId, {
       ms: result.timings.totalMs,
       fallback: program,
-      ...(program ? { error: '程序按已结算事实成文' } : {}),
+      ...(program ? { error: '程序按已结算事实成文' } : mixed ? { error: '部分句子按已结算事实成文' } : {}),
       raw: result.text,
       promptChars: result.promptChars,
     });
     this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion,
-      fallback: program, source: program ? 'program' : 'model' });
+      fallback: program, source: program ? 'program' : mixed ? 'mixed' : 'model', segments: result.segments });
     return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: program };
   }
 

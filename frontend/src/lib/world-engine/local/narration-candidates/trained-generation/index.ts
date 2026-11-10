@@ -18,6 +18,7 @@ import { factPhrases, type CommittedNarration } from '../../../runtime/committed
 import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
+import { renderProseFactsPrompt } from './scene-prompt';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 import { verifyNarration } from './verify';
 import {
@@ -30,7 +31,10 @@ import {
 export * from './types';
 export { buildLedger } from './ledger';
 export { buildRevisionGuidance } from './guidance';
-export { composeNarrationPrompt, insertBeforeBody } from './prompt';
+export { composeNarrationPrompt, insertBeforeBody, writingContract } from './prompt';
+export {
+  NARRATOR_SYSTEM_PROMPT, ownerOf, projectProseFacts, renderProseFactsPrompt, renderProseFactsUser,
+} from './scene-prompt';
 export { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 export { verifyNarration } from './verify';
 export {
@@ -39,6 +43,11 @@ export {
 } from './trained-input';
 
 const nowMs = (): number => performance.now();
+/** Last non-empty sentence of a previously accepted scene. */
+const lastSentence = (text: string): string | null => {
+  const parts = text.split(/[。！？\n]+/u).map((part) => part.trim()).filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : null;
+};
 const charsOf = (text: string): number => [...text].length;
 const clampInt = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, Math.round(Number.isFinite(value) ? value : min)));
@@ -261,6 +270,66 @@ export function dropDuplicateSentences(text: string): { text: string; dropped: s
   return { text: kept.filter(Boolean).join('\n\n'), dropped };
 }
 
+/** Sentences that must not be removed from a scene: they are the only trace of
+ * a settled change. Removal decisions are limited to endings that mention none
+ * of these strings. */
+function protectedStrings(committed: CommittedNarration): string[] {
+  const out: string[] = [];
+  for (const fact of committed.facts) {
+    if (fact.kind === 'moved') out.push(fact.from, fact.to);
+    else if (fact.kind === 'task_achieved') out.push(fact.goal);
+    else if (fact.kind === 'personality_changed') out.push(fact.text);
+    else if (fact.kind === 'sanity_changed') out.push(String(fact.from), String(fact.to));
+    else if (fact.kind === 'at') out.push(fact.location);
+  }
+  return out.filter((value) => value && value.length >= 2);
+}
+
+const bigramSet = (text: string): Set<string> => {
+  const clean = text.replace(/[\s，。！？；：、「」『』“”"'…—·,.!?]/gu, '');
+  const out = new Set<string>();
+  for (let index = 0; index + 1 < clean.length; index += 1) out.add(clean.slice(index, index + 2));
+  return out;
+};
+
+const shareOf = (a: Set<string>, b: Set<string>): number => {
+  if (!a.size || !b.size) return 0;
+  let shared = 0;
+  for (const gram of a) if (b.has(gram)) shared += 1;
+  return shared / Math.min(a.size, b.size);
+};
+
+/** Cross-turn repetition, structurally: a scene that ends on (nearly) the same
+ * sentence as the previous accepted scene is prose the player reads every
+ * turn. The fix belongs to assembly, not to the fact checks: drop that closing
+ * sentence when it carries no settled fact, and stop at two removals so the
+ * scene cannot be hollowed out. Returns the text unchanged when the ending is
+ * new, protected, or the remainder would fall under the length floor. */
+export function trimEchoedEnding(
+  text: string,
+  priorText: string | null | undefined,
+  options: { protect?: readonly string[]; minChars?: number } = {},
+): { text: string; dropped: string[] } {
+  const dropped: string[] = [];
+  if (!priorText || !text.trim()) return { text, dropped };
+  const protect = (options.protect ?? []).filter(Boolean);
+  const floor = Math.max(20, options.minChars ?? 60);
+  let current = text.trim();
+  for (let round = 0; round < 2; round += 1) {
+    const sentences = [...current.matchAll(/[^。！？\n]+[。！？]?/gu)].map((match) => match[0].trim()).filter(Boolean);
+    if (sentences.length < 2) break;
+    const last = sentences[sentences.length - 1];
+    if (protect.some((value) => last.includes(value))) break;
+    const priorTail = priorText.split(/[。！？\n]+/u).map((part) => part.trim()).filter(Boolean).slice(-2).join('');
+    if (shareOf(bigramSet(last), bigramSet(priorTail)) < 0.6) break;
+    const rest = sentences.slice(0, -1).join('').trim();
+    if ([...rest].length < floor) break;
+    dropped.push(last);
+    current = rest;
+  }
+  return { text: current, dropped };
+}
+
 /** Issues for a scene that produced no text at all. */
 function emptySceneIssues(cancelled: boolean, timedOut: boolean): NarrationIssue[] {
   if (cancelled) return [{ kind: 'cancelled', severity: 'hard', attempt: 0, detail: 'cancelled before any beat' }];
@@ -468,6 +537,17 @@ async function generateBeatNarration(
     assembly.droppedSentences.push(...deduped.dropped);
     assembled = deduped.text;
   }
+  // A scene that ends on the same sentence as the previous turn reads as
+  // repeated prose even when every fact is right. Assembly removes that
+  // ending only when the sentence carries no settled fact.
+  const trimmed = trimEchoedEnding(assembled, priorText, {
+    protect: protectedStrings(input.committed),
+    minChars: policy.minChars ?? 60,
+  });
+  if (trimmed.dropped.length) {
+    assembly.droppedSentences.push(...trimmed.dropped);
+    assembled = trimmed.text;
+  }
 
   const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 60 };
   const runFinalVerify = (text: string) => verifyNarration({
@@ -542,6 +622,15 @@ async function generateBeatNarration(
     attemptIndex: attempts.length ? Math.max(0, attemptCount - 1) : null,
     beats: evidence,
     assembly,
+    segments: evidence.map((beat) => ({
+      beatId: beat.beatId, kind: beat.kind, source: beat.source, text: beat.text,
+    })),
+    beatCounts: {
+      model: evidence.filter((beat) => beat.source === 'model').length,
+      fallback: evidence.filter((beat) => beat.source === 'fallback').length,
+      skipped: evidence.filter((beat) => beat.source === 'skipped').length,
+    },
+    mixed: evidence.some((beat) => beat.source === 'model') && evidence.some((beat) => beat.source !== 'model'),
     display: lastDisplay ?? {
       status: displayStatus,
       attempt: Math.max(0, attemptCount - 1),
@@ -593,8 +682,21 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     if (input.signal?.aborted) break;
     const remaining = deadlineMs - (nowMs() - callStarted);
     if (remaining <= 0) { deadlineExceeded = true; break; }
+    // The deployable instruct model was measured on a closed-book turn, not on
+    // lane 01's state record. `prose-facts` renders the same committed packet
+    // in that shape; `serialized` keeps the training shape for fine-tuned
+    // checkpoints. Guidance and the previous draft are appended by the same
+    // composer, so a repair never loses the licensed material.
+    const baseInput = policy.promptShape === 'prose-facts'
+      ? renderProseFactsPrompt({
+        committed: input.committed,
+        policy,
+        scene: policy.scene ?? null,
+        priorTail: priorText ? lastSentence(priorText) : null,
+      })
+      : input.inputText;
     const prompt = composeNarrationPrompt({
-      inputText: input.inputText,
+      inputText: baseInput,
       attempt,
       guidance,
       previousDraft,
@@ -647,7 +749,27 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     : status === 'timeout'
       ? [{ kind: 'timeout', severity: 'hard', attempt: 0, detail: 'deadline exceeded before any attempt' } as NarrationIssue]
       : []);
-  const text = selected?.cleaned ?? '';
+  // Scene mode has no assembly step, so the cross-turn echoed ending is
+  // removed here. It is only applied when the trimmed text still passes the
+  // same verification; otherwise the model's text is kept as written.
+  let text = selected?.cleaned ?? '';
+  const sceneAssembly: NarrationAssembly = { droppedSentences: [], appendedSentences: [] };
+  if (acceptedAttempt && text && priorText) {
+    const trimmed = trimEchoedEnding(text, priorText, {
+      protect: protectedStrings(input.committed),
+      minChars: policy.minChars ?? 60,
+    });
+    if (trimmed.dropped.length) {
+      const recheck = verifyNarration({
+        text: trimmed.text, finishReason: 'stop', committed: input.committed, ledger, policy,
+        priorText, attempt: 0, promptEchoMarkers: [],
+      });
+      if (recheck.issues.every((issue) => issue.severity !== 'hard')) {
+        text = trimmed.text;
+        sceneAssembly.droppedSentences.push(...trimmed.dropped);
+      }
+    }
+  }
   const metrics = selected?.metrics ?? null;
   const attemptIndex = selected ? attempts.indexOf(selected) : null;
   const totalMs = nowMs() - callStarted;
@@ -687,7 +809,12 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     metrics,
     attemptIndex,
     beats: [],
-    assembly: { droppedSentences: [], appendedSentences: [] },
+    assembly: sceneAssembly,
+    // A whole-scene answer is one paragraph, written by the model when the
+    // attempt was accepted; the program never fills part of it.
+    segments: text ? [{ beatId: 'scene', kind: 'scene', source: status === 'accepted' ? 'model' : 'skipped', text }] : [],
+    beatCounts: { model: status === 'accepted' ? 1 : 0, fallback: 0, skipped: status === 'accepted' ? 0 : 1 },
+    mixed: false,
     display: progress.last as NarrationDisplayState,
   };
 }

@@ -33,7 +33,11 @@ type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 interface WorldTurnRecord {
   index: number; input: string;
   acceptedMs: number | null; draftMs: number | null; programMs: number | null;
-  cancelled: boolean; source: 'model' | 'program' | 'draft' | null;
+  /** Time to a scene that mixed verified model sentences with program
+   * realizations. Never counted as fully model-written. */
+  mixedMs: number | null;
+  segments?: Array<{ id: string; source: string }>;
+  cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
   modelId: string | null;
   engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number }>;
 }
@@ -51,6 +55,7 @@ interface TurnEntry {
   /** Wall time to a program-composed passage (settled facts only). It is read-
    * able text, but it is a labelled downgrade, so it is reported separately. */
   programMs: number | null;
+  mixedMs?: number | null;
   cancelled?: boolean;
 }
 
@@ -200,6 +205,23 @@ export default function WorldLocalPage() {
   /** The current turn's evidence record; the same object lives in the window
    * array, so later callbacks update it in place. */
   const turnRecordRef = useRef<WorldTurnRecord | null>(null);
+  /** Internal evaluation arm selected by URL query (never rendered, never a
+   * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
+   * 09 uses it to run the same settled input through different prompt shapes. */
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts' } => {
+    if (typeof window === 'undefined') return {};
+    const q = new URLSearchParams(window.location.search);
+    const candidate = q.get('narrationCandidate');
+    const modeParam = q.get('narrationMode');
+    const shapeParam = q.get('narrationShape');
+    const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
+    const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
+    return {
+      ...(candidate ? { candidate } : {}),
+      ...(mode ? { mode } : {}),
+      ...(shape ? { shape } : {}),
+    };
+  })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
    * the submit closure, so the origin lives in a ref. */
   const submittedAtRef = useRef(0);
@@ -297,9 +319,16 @@ export default function WorldLocalPage() {
         narrationRef.current = narration;
         await narration.load();
         if (!alive) { await narration.dispose(); return; }
+        const arm = narrationArm.current;
+        const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
+        // Arm identity is evidence: 09 records it next to every turn.
+        (window as unknown as { __worldArm?: unknown }).__worldArm = { candidate, mode: arm.mode ?? null, shape: arm.shape ?? null };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
+          narrationCandidate: candidate as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
+          ...(arm.mode ? { trainedMode: arm.mode } : {}),
+          ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
           narrationMaxTokens: 200,
           narrationTemperature: 0.45,
           onTask: (task, key, detail) => {
@@ -331,15 +360,19 @@ export default function WorldLocalPage() {
             const record = turnRecordRef.current;
             if (record) {
               record.source = source;
+              record.segments = progress.segments?.map((segment) => ({ id: segment.id, source: segment.source }));
               if (source === 'model') record.acceptedMs = atMs;
               else if (source === 'program') record.programMs = atMs;
+              else if (source === 'mixed') record.mixedMs = atMs;
             }
             setEntries((list) => updateLast(list, (entry) => (
               source === 'model'
                 ? { ...entry, text, acceptedMs: atMs, ms: atMs }
                 : source === 'program'
                   ? { ...entry, text, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
-                  : { ...entry, text }
+                  : source === 'mixed'
+                    ? { ...entry, text, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
+                    : { ...entry, text }
             )));
             setPhase('ready');
           },
@@ -447,14 +480,14 @@ export default function WorldLocalPage() {
       .filter((entry): entry is NonNullable<typeof entry> => entry != null);
     const record: WorldTurnRecord = {
       index: ((window as unknown as { __worldTurns?: WorldTurnRecord[] }).__worldTurns?.length ?? 0) + 1,
-      input: text, acceptedMs: null, draftMs: null, programMs: null, cancelled: false, source: null,
+      input: text, acceptedMs: null, draftMs: null, programMs: null, mixedMs: null, cancelled: false, source: null,
       modelId: narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? null,
       engines,
     };
     turnRecordRef.current = record;
     const w = window as unknown as { __worldTurns?: WorldTurnRecord[] };
     (w.__worldTurns ??= []).push(record);
-    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null, programMs: null }]);
+    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
     modelRef.current?.beginTurn();
@@ -582,6 +615,7 @@ export default function WorldLocalPage() {
                     你：{entry.input}
                     {entry.acceptedMs != null ? ` · 模型正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（已核对）` : ''}
                     {entry.acceptedMs == null && entry.programMs != null ? ` · 程序成文 ${(entry.programMs / 1000).toFixed(1)}s（降级）` : ''}
+                    {entry.acceptedMs == null && entry.mixedMs != null ? ` · 模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s（部分降级）` : ''}
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
                   <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>

@@ -49,6 +49,12 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
         ...prepared.policy,
         mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
         scene: prepared.scene,
+        // Whole-scene prose on the deployable instruct model uses the
+        // closed-book prompt shape (02's measured arm); the serialized state
+        // record is the training shape and is kept for fine-tuned checkpoints.
+        ...(runPolicy?.sceneMode === 'scene'
+          ? { promptShape: runPolicy.promptShape ?? 'prose-facts' }
+          : {}),
         // Scene mode otherwise writes a static tableau: the page model omitted
         // the settled move and the elapsed time and was rejected for it. This
         // is a constraint, not a fact: the model still reads the sealed delta.
@@ -63,6 +69,12 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       attempt: issue.attempt,
     }));
     const allFellBack = result.beats.length > 0 && result.beats.every((beat) => beat.source !== 'model');
+    // Per-beat provenance: a scene with some model sentences and some program
+    // fallbacks must not be presented as fully model-written.
+    const modelBeats = result.beats.filter((beat) => beat.source === 'model').length;
+    const programBeats = result.beats.filter((beat) => beat.source === 'fallback').length;
+    const mixed = result.accepted && modelBeats > 0 && programBeats > 0;
+    const segments = result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source, text: beat.text }));
     const hard = hardKinds(result.issues);
     const reason = result.accepted
       ? null
@@ -74,7 +86,7 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       route: 'trained',
       text: result.text,
       accepted: result.accepted && result.text.trim().length > 0,
-      grade: result.accepted ? 'candidate' : allFellBack ? 'program' : 'candidate_unverified',
+      grade: !result.accepted ? (allFellBack ? 'program' : 'candidate_unverified') : mixed ? 'candidate_with_program_sentences' : 'candidate',
       status: result.status,
       reason,
       issues,
@@ -95,6 +107,10 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
           issues: beat.issues.map((issue) => `${issue.severity}:${issue.kind}`),
         })),
         assembly: result.assembly,
+        segments,
+        beatCounts: { model: modelBeats, program: programBeats, other: result.beats.length - modelBeats - programBeats },
+        promptShape: runPolicy?.promptShape ?? (runPolicy?.sceneMode === 'scene' ? 'prose-facts' : null),
+        sceneMode: runPolicy?.sceneMode ?? 'beats',
         // Raw engine output per attempt. Truncated for the evidence file; the
         // prompt is already recorded per beat inside the strategy's evidence.
         attemptsEvidence: result.rawAttempts.map((attempt) => ({

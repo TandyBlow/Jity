@@ -22,6 +22,7 @@ import type { TimeAdvance } from '../../../types';
 import type { CommittedNarration, NarrationFact } from '../../../runtime/committed-narration';
 import { factPhrases } from '../../../runtime/committed-narration';
 import type { BeatSceneContext, NarrationLedger, NarrationPolicy } from './types';
+import { ownerOf } from './scene-prompt';
 
 export type BeatKind = 'scene' | 'fact' | 'time';
 
@@ -127,11 +128,10 @@ export function planBeats(input: {
   const quiet = facts.length === 0 && !(ledger.requireTime && ledger.time);
 
   if (scene && (scene.placeNotes?.length || scene.present?.length || scene.location)) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2)
-      .map((note) => note.trim().replace(/[。.]+$/u, ''))
-      .join('；');
+    // The place notes already appear once, under 【环境】. Repeating them in
+    // the directive made the model copy them as prose.
     const people = (scene.present ?? []).map((person) => person.name).filter((name) => name !== viewpointName);
-    const parts = [scene.location ? `这里是${scene.location}` : null, notes || null, people.length ? `${people.join('、')}也在` : null]
+    const parts = [scene.location ? `这里是${scene.location}` : null, people.length ? `${people.join('、')}也在` : null]
       .filter((part): part is string => Boolean(part));
     beats.push({
       id: 'scene-open',
@@ -200,6 +200,11 @@ export interface BeatPromptInput {
 /** One beat prompt. Kept short on purpose: tiny models lose the instruction
  * after a long state dump, and this prompt must stay under ~200 tokens so the
  * first beat streams in about a second. */
+const trimNote = (note: string): string => {
+  const clean = note.replace(/[。.]+$/u, '').trim();
+  return clean.length > 42 ? `${clean.slice(0, 42)}…` : clean;
+};
+
 export function buildBeatPrompt(input: BeatPromptInput): string {
   const { beat, ledger, policy, scene } = input;
   const lines: string[] = ['你是中文小说作者。只写下面这一件事，用一到两句，直接写正文。', ''];
@@ -207,21 +212,38 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
     lines.push(`【视角】${ledger.viewpoint.name}（第三人称；只写${ledger.viewpoint.name}看得见、听得见的东西，不写别人的内心）`);
   }
   if (scene?.location) lines.push(`【地点】${scene.location}`);
-  const present = (scene?.present ?? []).map((person) => person.name).filter((name) => name !== ledger.viewpoint?.name);
-  if (present.length) lines.push(`【在场】${present.join('、')}`);
+  // A present character's visible detail is settled state. Naming the person
+  // without it invited the model to invent an appearance or a held object.
+  const present = (scene?.present ?? []).filter((person) => person.name !== ledger.viewpoint?.name);
+  if (present.length) {
+    lines.push(`【在场】${present.map((person) => {
+      const note = person.note?.trim();
+      return note ? `${person.name}（${trimNote(note)}）` : person.name;
+    }).join('；')}`);
+  }
   const notes = (scene?.placeNotes ?? []).slice(0, 2);
   if (notes.length) lines.push(`【环境】${notes.join('；')}`);
   // Objects in the room are settled state too: naming one gives the model
   // something concrete to touch instead of inventing a prop.
   const objects = (scene?.objects ?? [])
     .slice(0, 3)
-    .map((object) => (object.note ? `${object.name}（${object.note}）` : object.name));
+    .map((object) => {
+      const owner = ownerOf(object.name);
+      const note = object.note?.trim();
+      return `${object.name}${owner ? `（属于${owner}${note ? `；${trimNote(note)}` : ''}）` : note ? `（${trimNote(note)}）` : ''}`;
+    });
   if (objects.length) lines.push(`【手边】${objects.join('、')}`);
   const prior = input.written.length ? input.written.at(-1) ?? '' : (input.priorTail ?? '');
   if (prior) lines.push(`【前一句】${prior}`);
   lines.push(`【这一件】${beat.directive}`);
-  lines.push('【要求】写具体的动作、声音或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
-    + '不写“他心想”“似乎”“仿佛”“某种”；不要解释情绪；不要重复上面的说明；不要标题。');
+  // Dialogue, the viewpoint's own feelings and ordinary figurative language
+  // are allowed polish (goal §137). Only another character's inner life and
+  // new plot facts are forbidden; an earlier prompt banned all three and
+  // produced flat, unnarratable sentences.
+  lines.push('【要求】写具体的动作或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
+    + '可以写视角人物的感受和判断，不要写别人心里怎么想；不要重复上面的说明；不要标题。');
+  lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
+  lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   const extra = policy.instruction?.trim();
   if (extra) lines.push(extra);
   lines.push('正文：');

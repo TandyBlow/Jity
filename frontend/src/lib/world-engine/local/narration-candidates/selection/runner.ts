@@ -36,6 +36,34 @@ export function internalCandidateOverride(): string | null {
 
 const printable = (error: unknown): string => (error instanceof Error ? `${error.name}:${error.message}` : String(error));
 
+/** Map a candidate's own provenance to the page-facing grade. A partially
+ * model-written scene is `mixed`, never `candidate`: the page and the evidence
+ * must be able to tell which sentences are program realizations. */
+function gradeOf(result: CandidateNarrationResult): 'candidate' | 'program' | 'mixed' {
+  if (result.grade === 'program') return 'program';
+  if (result.grade === 'candidate_with_program_sentences') return 'mixed';
+  const sources = (result.detail?.segments as Array<{ source?: string }> | undefined) ?? [];
+  if (sources.length && sources.some((s) => s.source === 'program' || s.source === 'fallback')
+    && sources.some((s) => s.source === 'model' || s.source === 'external')) return 'mixed';
+  return 'candidate';
+}
+
+function resultSegments(result: CandidateNarrationResult): Array<{ id: string; kind: string; source: string; text: string }> {
+  const segments = result.detail?.segments as Array<{ id: string; kind: string; source: string; text: string }> | undefined;
+  if (segments?.length) return segments;
+  // Whole-scene candidates have no per-sentence segmentation; the whole text
+  // is one segment attributed to the candidate's own grade.
+  return [{ id: 'scene', kind: 'scene', source: result.grade === 'program' ? 'program' : 'model', text: result.text }];
+}
+
+function resultBeatCounts(result: CandidateNarrationResult): { model: number; program: number; other: number } {
+  const counts = result.detail?.beatCounts as { model: number; program: number; other: number } | undefined;
+  if (counts) return counts;
+  return result.grade === 'program'
+    ? { model: 0, program: 1, other: 0 }
+    : { model: 1, program: 0, other: 0 };
+}
+
 function summarize(result: CandidateNarrationResult): string {
   if (result.accepted) return '';
   const kinds = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
@@ -137,7 +165,10 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             ...(candidate.route === 'constrained'
               ? { policy: { mode: options.constrainedMode ?? 'program' } }
               : candidate.route === 'trained'
-                ? { policy: { sceneMode: options.trainedMode ?? 'beats' } }
+                ? { policy: {
+                  sceneMode: options.trainedMode ?? 'beats',
+                  ...(options.trainedPromptShape ? { promptShape: options.trainedPromptShape } : {}),
+                } }
                 : {}),
           });
         } catch (error) {
@@ -152,7 +183,9 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             route: result.route,
             text: result.text,
             accepted: true,
-            grade: result.grade === 'program' ? 'program' : 'candidate',
+            grade: gradeOf(result),
+            segments: resultSegments(result),
+            beatCounts: resultBeatCounts(result),
             issues: result.issues,
             timings: result.timings,
             promptChars: result.promptChars,

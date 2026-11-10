@@ -120,6 +120,21 @@ export interface NarrationPolicy {
   /** Full prompt override. The default only inserts guidance before the body
    * marker; it never re-serializes facts. */
   composePrompt?: (args: ComposePromptArgs) => string;
+  /** How characters are referred to. `names` (default) asks for names or an
+   * omitted subject instead of 他/她: the world file has no gender field, and a
+   * 1.7B model wrote 她 for a male character in accepted product prose.
+   * `model` lets the model choose pronouns like ordinary Chinese prose (53 of
+   * lane 01's 71 gold scenes use 他/她), at the cost of that gender risk. */
+  pronouns?: 'names' | 'model';
+  /** How the whole-scene prompt is built: `serialized` (default) continues the
+   * caller's lane-01 serialization — the training shape for fine-tuned
+   * checkpoints; `prose-facts` renders the same packet as a closed-book turn
+   * for instruct models (see scene-prompt.ts). */
+  promptShape?: 'serialized' | 'prose-facts';
+  /** Insert the scene-mode writing contract (see prompt.ts). Default true for
+   * whole-scene mode; tests that measure the caller's serialization alone set
+   * it to false. */
+  writingContract?: boolean;
   /** 'beats' writes the scene one committed beat at a time (small models);
    * 'scene' asks for the whole scene in one call. Defaults to 'beats' when
    * `scene` is supplied, otherwise 'scene'. */
@@ -255,8 +270,22 @@ export interface GeneratedNarration {
   beats: NarrationBeatEvidence[];
   /** Program-side assembly edits in beat mode. */
   assembly: NarrationAssembly;
+  /** Per-paragraph provenance in the shape lane 04's constrained candidate
+   * uses, so one adapter can treat both candidates the same way. A scene with
+   * some model paragraphs and some fallback paragraphs must not be reported as
+   * fully model-written. */
+  segments: NarrationSegment[];
+  beatCounts: { model: number; fallback: number; skipped: number };
+  mixed: boolean;
   /** Last display state emitted to `onProgress`. */
   display: NarrationDisplayState;
+}
+
+export interface NarrationSegment {
+  beatId: string;
+  kind: string;
+  source: 'model' | 'fallback' | 'skipped';
+  text: string;
 }
 
 export interface GenerateCommittedNarrationInput {

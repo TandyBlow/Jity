@@ -76,7 +76,7 @@ export interface CandidateNarrationResult {
   route: NarrationCandidate['route'];
   text: string;
   accepted: boolean;
-  grade: 'candidate' | 'candidate_unverified' | 'program';
+  grade: 'candidate' | 'candidate_unverified' | 'candidate_with_program_sentences' | 'program';
   status: 'accepted' | 'rejected' | 'cancelled' | 'timeout' | 'error';
   /** Internal one-line reason for the fallback record. Never player-facing. */
   reason: string | null;
@@ -104,7 +104,14 @@ export interface CandidateRunArgs {
   onProgress?: (progress: NarrationProgress) => void;
   /** Candidate-specific knobs. The selection layer sets `mode` for the
    * constrained route; no candidate may use it to change facts. */
-  policy?: { mode?: 'program' | 'model'; sceneMode?: 'beats' | 'scene' };
+  policy?: {
+    mode?: 'program' | 'model';
+    sceneMode?: 'beats' | 'scene';
+    /** Whole-scene prompt shape: `serialized` is the training shape for the
+     * fine-tuned checkpoints; `prose-facts` is the closed-book shape measured
+     * for the deployable instruct model. */
+    promptShape?: 'serialized' | 'prose-facts';
+  };
 }
 
 /** One shipped adaptation of a candidate group. `id` and `label` stay
@@ -132,8 +139,13 @@ export type NarrationRunResult =
     text: string;
     accepted: true;
     /** `program` means every beat came from the deterministic realizer: it is
-     * a labelled downgrade, never model prose. */
-    grade: 'candidate' | 'program';
+     * a labelled downgrade, never model prose. `mixed` means some sentences
+     * are model prose and some are program realizations: it is shown with a
+     * visible note and never counted as fully model-written. */
+    grade: 'candidate' | 'program' | 'mixed';
+    /** Per-sentence provenance for the page and evidence. */
+    segments: Array<{ id: string; kind: string; source: string; text: string }>;
+    beatCounts: { model: number; program: number; other: number };
     issues: CandidateIssueSummary[];
     timings: CandidateNarrationResult['timings'];
     promptChars: number;
@@ -166,6 +178,10 @@ export interface NarrationRunnerOptions {
   /** Trained beats route only: `beats` (default) writes one committed fact at a
    * time; `scene` asks for the whole scene from the serialized input. Internal. */
   trainedMode?: 'beats' | 'scene';
+  /** Whole-scene prompt shape for the trained route: `serialized` (training
+   * shape for the fine-tuned checkpoints) or `prose-facts` (closed-book shape
+   * measured for the deployable instruct model). Internal. */
+  trainedPromptShape?: 'serialized' | 'prose-facts';
   /** How the candidate's plain-text prompts reach this engine. `chatml` wraps
    * each prompt like the page's in-model writer when the loaded model is a chat
    * model; `none` (default) passes prompts through unchanged. Internal. */
