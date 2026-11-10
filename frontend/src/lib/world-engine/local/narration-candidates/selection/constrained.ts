@@ -122,7 +122,14 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
       },
     });
     const modelComposed = result.composers.length > 0 && !result.composers.every(isProgramComposer);
-    const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
+    const programBeats = result.composers.filter(isProgramComposer).length;
+    // A scene with some model beats and some program beats is MIXED, not model
+    // prose: the 448e run had two model beats and two program beats but was
+    // labelled 模型正文 on the page.
+    const grade = !result.accepted
+      ? (modelComposed ? 'candidate_unverified' : 'program')
+      : modelComposed && programBeats > 0 ? 'candidate_with_program_sentences'
+        : modelComposed ? 'candidate' : 'program';
     const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
     return {
       candidateId: 'constrained',
