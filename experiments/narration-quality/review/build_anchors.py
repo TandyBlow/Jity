@@ -1014,6 +1014,20 @@ anchors.append(
     },
 )
 
+
+rows_spine = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-spine.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-spine-handchain",
+        "source": "02 Qwen3-1.7B spine-root-2 run (144 chars, accepted by 02): invents a silver bracelet with scratches",
+        "input": rows_spine["q3-spine"]["input"],
+        "text": rows_spine["q3-spine"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "notes": "银质手链 is worn and described, but it is neither in the settled look nor handled from a settled object."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

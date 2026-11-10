@@ -890,14 +890,20 @@ export function reviewNarration(args: {
         continue;
       }
       const window = narration.slice(Math.max(0, index - 8), index + noun.length + 8);
+      // Worn/held with a state marker ("戴着的银质手链") is a claim that the
+      // object exists on someone, even though no handling verb appears.
       const handled = ITEM_HANDLING_VERBS.some((verb) => window.includes(verb))
-        || ITEM_STATE_VERBS.some((verb) => window.includes(verb));
+        || ITEM_STATE_VERBS.some((verb) => window.includes(verb))
+        || /(戴|挂|系|别|套|绑|缠|拎|捧|端|夹|背|抱)(着|在|上|于)/u.test(window);
       const containerClaim = /(?:里面|里|中|内)(?:是|放着|装着|有|多出|躺着)/u.test(window);
-      const rootChar = [...noun][0] ?? '';
-      const rootLicensed = rootChar.length === 1 && projection.sourceText.includes(rootChar);
+      // Only a longer compound whose own head ("担架" in 担架轮) is settled can
+      // be a renamed object; a generic first character ("手" in 手链) is not.
+      const rootHead = [...noun].slice(0, 2).join('');
+      const rootLicensed = [...noun].length >= 3 && rootHead.length === 2
+        && projection.sourceText.includes(rootHead);
       if ((handled || containerClaim) && rootLicensed) {
         findings.push(finding(ctx, 'review.object_added', sentence.text,
-          `${noun} may be a renamed settled object (the state has ${rootChar}); needs reading`, [], []));
+          `${noun} may be a renamed settled object (the state has ${rootHead}); needs reading`, [], []));
         continue;
       }
       if (handled || containerClaim) {
