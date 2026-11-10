@@ -167,7 +167,7 @@ interface PronounBinding {
  * Anything else is ambiguous and becomes a review item: Chinese narration
  * omits subjects, and «林川站在他身后» does not name who 他 is.
  */
-function pronounBindings(sentences: SentenceParts[], names: readonly string[], people: readonly string[] = names, genders?: Record<string, 'male' | 'female'>): PronounBinding[] {
+function pronounBindings(sentences: SentenceParts[], names: readonly string[], people: readonly string[] = names, genders?: Record<string, 'male' | 'female'>, visible: readonly string[] = people): PronounBinding[] {
   const bindings: PronounBinding[] = [];
   let subject: string | null = null;
   sentences.forEach((sentence, sentenceIndex) => {
@@ -195,10 +195,26 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
         const previousNames = nameHits(previousClause, names);
         const direct = local.length === 1 && clause.trimEnd().endsWith(local[0].name)
           && clause.trimEnd().length - clause.indexOf(local[0].name) <= 2;
-        if (index === clauseStart && previousNames.length === 1) {
+        // A pronoun whose only possible antecedent is another gender is still a
+        // hard error; but when a person of the pronoun's gender is also in the
+        // scene, the prose may mean that person (e.g. "诺诺的发圈…他没说话"
+        // is the male viewpoint). Keep it ambiguous instead of blaming 诺诺.
+        const alternativeOfGender = (name: string) => people.find((candidate) => candidate !== name
+          && visible.includes(candidate)
+          && (genders?.[candidate] === gender || genders?.[candidate] === undefined));
+        const previousName = previousNames[0]?.name ?? null;
+        const previousGender = previousName ? genders?.[previousName] : undefined;
+        const directAlternative = local[0]?.name ? alternativeOfGender(local[0].name) : undefined;
+        if (index === clauseStart && previousNames.length === 1
+          && !(previousGender && previousGender !== gender && alternativeOfGender(previousNames[0].name))) {
           // "周宁把袖子卷起，他……" — the only person in the previous clause is
           // the antecedent, so the registry can judge the pronoun directly.
           bindings.push({ pronoun, gender, antecedent: previousNames[0].name, candidates: [previousNames[0].name], strength: 'strong', index, sentence: sentenceIndex });
+          continue;
+        }
+        if (index === clauseStart && previousNames.length === 1 && previousName) {
+          bindings.push({ pronoun, gender, antecedent: null,
+            candidates: [previousName, alternativeOfGender(previousName)!], strength: 'ambiguous', index, sentence: sentenceIndex });
           continue;
         }
         if (index === clauseStart && subject) {
@@ -216,6 +232,12 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
           continue;
         }
         if (direct) {
+          const registered = genders?.[local[0].name];
+          if (registered && registered !== gender && directAlternative) {
+            bindings.push({ pronoun, gender, antecedent: null,
+              candidates: [local[0].name, directAlternative], strength: 'ambiguous', index, sentence: sentenceIndex });
+            continue;
+          }
           bindings.push({ pronoun, gender, antecedent: local[0].name, candidates: [local[0].name], strength: 'strong', index, sentence: sentenceIndex });
           continue;
         }
@@ -1374,7 +1396,7 @@ export function reviewNarration(args: {
   }
 
   // -------------------------------------------------------------- gender
-  const bound = pronounBindings(sentences, names, Object.keys(projection.people), options.genders);
+  const bound = pronounBindings(sentences, names, Object.keys(projection.people), options.genders, projection.visibleNames);
   const genderByAntecedent = new Map<string, Set<'male' | 'female'>>();
   for (const binding of bound) {
     const sentence = sentences[binding.sentence];

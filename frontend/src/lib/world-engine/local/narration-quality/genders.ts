@@ -28,6 +28,29 @@ export const REVIEWED_GENDERS: Record<string, GenderEntry> = {
     gender: 'female',
     source: 'team-08-runtime.json humanReviewFindings: the 2026-11-10 product review recorded 周宁 being narrated as 他 as an error',
   },
+  // Free-day cast. Sources are 05-kernel's character-gender-evidence.md
+  // (world sha256 0a8b63be…), each a unique pronoun bound to the name in a
+  // settled world-file string; names without such a source stay unknown.
+  路明非: {
+    gender: 'male',
+    source: '05 character-gender-evidence: /initial/characters/nono/initialPersonality “愿意给路明非提示，但不愿替他选阵营”',
+  },
+  诺诺: {
+    gender: 'female',
+    source: '05 character-gender-evidence: /initial/items/radio_caesar/initialAppearance “不能显示她已执行任何路线”',
+  },
+  楚子航: {
+    gender: 'male',
+    source: '05 character-gender-evidence: /initial/characters/su/initialPersonality “愿意替楚子航补上他没有说出口的细节”',
+  },
+  林亦舟: {
+    gender: 'male',
+    source: '05 character-gender-evidence: /initial/items/lin_gun/initialAppearance “与坐着的林亦舟相隔一臂，已离开他的手”',
+  },
+  沈澄: {
+    gender: 'female',
+    source: '05 character-gender-evidence: /initial/items/shen_band/initialAppearance “已脱离沈澄身体，和她退出演习的登记相符”',
+  },
 };
 
 /** Plain name -> gender map for `ReviewOptions.genders`. */

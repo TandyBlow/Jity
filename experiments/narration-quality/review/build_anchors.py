@@ -200,6 +200,7 @@ genders = {
     "诺诺": {"gender": "female", "source": "world/character text: 「不能显示她」", "confidence": "world-text"},
     "楚子航": {"gender": "male", "source": "world/character text: 「楚子航补上他」", "confidence": "world-text"},
     "沈澄": {"gender": "female", "source": "world/character text: 「和她」", "confidence": "world-text"},
+    "林亦舟": {"gender": "male", "source": "05 character-gender-evidence: 「已离开他的手」", "confidence": "world-text"},
     "周宁": {"gender": "female", "source": "08 report humanReviewFindings: product review 2026-11-10 recorded 周宁 narrated as 他 as an error", "confidence": "recorded-review"},
 }
 
@@ -1064,6 +1065,32 @@ anchors.append(
         "options": {"genders": {}, "minChars": 1},
         "expect": {"fact": [], "style": [], "review": [], "forbid": ["review.unseen_entity"],
                    "notes": "路明非 is at 西侧服务巷/slot_wall; looking at 西侧服务巷 is not an unseen place."},
+    },
+)
+
+
+rows_gender = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-all.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/zhouning-pronoun",
+        "source": "02 q3 1.5B run: 周宁 (female, recorded by the 2026-11-10 product review) is narrated as 他 eleven times",
+        "input": rows_gender["real-model-1.5b::elapsed-two-minutes"]["input"],
+        "text": rows_gender["real-model-1.5b::elapsed-two-minutes"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.gender"], "style": [], "review": [],
+                   "notes": "A single-person scene; 他 cannot be anyone but 周宁."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/nono-pronoun",
+        "source": "02 Qwen3 free-day-calibrated run: 诺诺's hair band, then 他 = the male viewpoint",
+        "input": rows_gender["real-qwen3-free-day-calibrated::free-day-root-160::prose"]["input"],
+        "text": rows_gender["real-qwen3-free-day-calibrated::free-day-root-160::prose"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [],
+                   "forbid": ["fact.gender"],
+                   "notes": "The male viewpoint is visible; 他 must not be blamed on 诺诺."},
     },
 )
 

@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { reviewNarration } from './review';
+import { genderOptions } from './genders';
 import type { DatasetInput } from './scene';
 
 interface Row {
@@ -38,7 +39,7 @@ describe.skipIf(!rowsPath)('corpus review batch', () => {
         id: row.id,
         input: row.input,
         text: row.text,
-        options: { genders: row.genders ?? {} },
+        options: { genders: row.genders ?? genderOptions() },
       });
       return { ...report, textSource: row.textSource ?? null };
     });
