@@ -8,8 +8,8 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyVisibleAcceptance, verifyWorldRecord,
-  type WorldRecordLike,
+  pointContinuityIssues, RecordInvariantError, verifyVisibleAcceptance, verifySnapshotSequence,
+  verifyWorldRecord, type WorldRecordLike,
 } from './index';
 import { restoreVerified, verifyBeforeRestore } from './guarded-restore';
 
@@ -263,6 +263,17 @@ describe('visible acceptance summary', () => {
       { before: { historyCount: 4 }, after: { historyCount: 3 }, text: '正文', historyDelta: -1, refreshMidSettle: { restored: false } },
     ]);
     expect(result.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['history_regressed', 'refresh_not_restored']));
+  });
+
+  it('requires a snapshot series to keep the previous head and never move backwards', async () => {
+    const initial = fixture.normal.initial as InitialState;
+    const s0 = buildInitialState(structuredClone(initial));
+    const first = await recordOf(initial, [point(s0, 1, {})]);
+    const second = await recordOf(initial, [point(s0, 1, {}), point(s0, 2, {})]);
+    const forward = await verifySnapshotSequence([{ transport: first }, { transport: second }]);
+    expect(forward.errors).toEqual([]);
+    const backward = await verifySnapshotSequence([{ transport: second }, { transport: first }]);
+    expect(backward.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['version_regressed', 'points_regressed']));
   });
 
   it('warns, rather than failing, when the visible history delta is unusual', () => {

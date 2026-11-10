@@ -58,7 +58,8 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
     const record = entry && typeof entry === 'object' ? entry as Record<string, unknown> : null;
     const before = record?.before ?? record?.stateBefore;
     const point = record?.point ?? record?.delta;
-    const hasReplayAnchor = Boolean(record && (record.snapshot != null || record.transport != null || record.record != null))
+    const hasReplayAnchor = Boolean(record && (record.snapshot != null || record.snapshotAfter != null
+      || record.snapshotBefore != null || record.transport != null || record.record != null))
       || (Boolean(before) && typeof before === 'object' && Boolean(point) && typeof point === 'object');
     if (!hasReplayAnchor) {
       visibleOnly.push(entry);

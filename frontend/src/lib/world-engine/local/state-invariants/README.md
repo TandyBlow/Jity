@@ -76,3 +76,20 @@ that is not a substitute for the replay.
   `06-page-snapshot-hook.patch` (or an equivalent read-only hook).
 - This suite is CPU-only. It says nothing about real model prose, page latency
   or user acceptance; 09 owns those runs.
+
+## 09 snapshot series and display history
+
+`verifySnapshotSequence(values)` accepts full `LocalGameSnapshot` values (or
+transport records) in turn order. It replays each snapshot with the same S0 +
+point rules and additionally rejects a later snapshot with an older version or
+fewer points, a missing previous head, or a changed stored digest for the
+previous head. `verifyTurnEntry`/the evidence test accept the hook fields as
+`snapshot`, `snapshotAfter` or `snapshotBefore`.
+
+The page's rendered `entries` are display data, not world truth. The real 09
+run at `0b173b6a` restored the IndexedDB state but lost both entries
+(`historyCount` stayed 1, `entriesBefore=2, entriesAfter=0`) because no code
+persisted them. `06-page-entry-restore.patch` stores them beside the committed
+snapshot, keyed by `worldId + headPointId`, and refuses to attach them after a
+rollback/fork. It does not change `LocalGameSnapshot`, the world asset or the
+save contract.

@@ -20,10 +20,13 @@ import type {
 export type InvariantCode =
   | 'record_shape'
   | 'world_binding'
+  | 'world_mismatch'
   | 'initial_invalid'
   | 'root_state_missing'
   | 'root_state_mismatch'
   | 'point_sequence_gap'
+  | 'version_regressed'
+  | 'points_regressed'
   | 'point_chain_broken'
   | 'point_state_missing'
   | 'point_state_orphan'
@@ -602,6 +605,79 @@ export async function verifySessionSnapshot(value: unknown): Promise<InvariantRe
   return report;
 }
 
+function transportOfSnapshot(value: unknown): WorldRecordLike | null {
+  if (!isRecord(value)) return null;
+  const snapshot = value as SessionSnapshotLike;
+  if (isRecord(snapshot.transport)) return snapshot.transport as WorldRecordLike;
+  return value as WorldRecordLike;
+}
+
+function storedDigest(record: WorldRecordLike, pointId: unknown): string | null {
+  if (!isNonBlankString(pointId) || !isRecord(record.pointStates)) return null;
+  const entry = record.pointStates[pointId];
+  if (!isRecord(entry) || typeof entry.stateDigest !== 'string') return null;
+  return entry.stateDigest;
+}
+
+/** Verify a time-ordered list of full session snapshots (09 can capture one
+ * after every turn with the read-only hook). Each snapshot replays its own S0
+ * and chain; this cross-check additionally prevents a later file from being
+ * older than an earlier one, or from silently replacing the previous head. */
+export async function verifySnapshotSequence(values: unknown[]): Promise<InvariantReport> {
+  const reports: InvariantReport[] = [];
+  const snapshots: WorldRecordLike[] = [];
+  for (const value of values) {
+    const record = transportOfSnapshot(value);
+    if (!record) continue;
+    snapshots.push(record);
+    reports.push(await verifySessionSnapshot(value));
+  }
+  if (reports.length === 0) return emptyReport('snapshot sequence has no full snapshot');
+  const merged: InvariantReport = {
+    ok: true, worldId: null, version: null, points: 0, headPointId: null,
+    rootDigest: null, headDigest: null, replayDigest: null, errors: [], warnings: [],
+  };
+  for (let index = 0; index < reports.length; index += 1) {
+    const report = reports[index];
+    for (const error of report.errors) merged.errors.push(issue(error.code, `snapshot ${index + 1}: ${error.detail}`, error.pointId));
+    for (const warning of report.warnings) merged.warnings.push(issue(warning.code, `snapshot ${index + 1}: ${warning.detail}`, warning.pointId));
+    const record = snapshots[index];
+    if (merged.worldId == null) merged.worldId = report.worldId;
+    else if (report.worldId !== null && report.worldId !== merged.worldId) {
+      merged.errors.push(issue('world_mismatch', `snapshot ${index + 1} world ${report.worldId} differs from ${merged.worldId}`));
+    }
+    const previous = index > 0 ? snapshots[index - 1] : null;
+    if (previous) {
+      const previousVersion = typeof previous.version === 'number' ? previous.version : null;
+      const currentVersion = typeof record.version === 'number' ? record.version : null;
+      if (previousVersion != null && currentVersion != null && currentVersion < previousVersion) {
+        merged.errors.push(issue('version_regressed', `snapshot ${index + 1} version ${currentVersion} is older than ${previousVersion}`));
+      }
+      const previousPoints = isRecord(previous.points) ? Object.keys(previous.points).length : null;
+      const currentPoints = isRecord(record.points) ? Object.keys(record.points).length : null;
+      if (previousPoints != null && currentPoints != null && currentPoints < previousPoints) {
+        merged.errors.push(issue('points_regressed', `snapshot ${index + 1} has ${currentPoints} points, fewer than ${previousPoints}`));
+      }
+      const previousHead = previous.headPointId;
+      if (isNonBlankString(previousHead) && isRecord(record.points) && !(previousHead in record.points)) {
+        merged.errors.push(issue('point_chain_broken', `snapshot ${index + 1} no longer contains the previous head ${previousHead}`, previousHead));
+      }
+      const previousDigest = storedDigest(previous, previousHead);
+      const currentDigest = storedDigest(record, previousHead);
+      if (previousDigest && currentDigest && previousDigest !== currentDigest) {
+        merged.errors.push(issue('point_digest_mismatch', `snapshot ${index + 1} changed the stored digest of ${previousHead}`, String(previousHead)));
+      }
+    }
+    merged.version = report.version ?? merged.version;
+    merged.points = report.points;
+    merged.headPointId = report.headPointId ?? merged.headPointId;
+    merged.headDigest = report.headDigest ?? merged.headDigest;
+    merged.replayDigest = report.replayDigest ?? merged.replayDigest;
+  }
+  merged.ok = merged.errors.length === 0;
+  return merged;
+}
+
 function emptyReport(detail: string): InvariantReport {
   return {
     ok: false, worldId: null, version: null, points: 0, headPointId: null,
@@ -614,7 +690,9 @@ function emptyReport(detail: string): InvariantReport {
  * triple. This checks the triple with the same kernel and returns one report. */
 export async function verifyTurnEntry(entry: unknown): Promise<InvariantReport> {
   if (!isRecord(entry)) return emptyReport('turn entry is not an object');
-  const snapshot = entry.snapshot ?? entry.transport ?? entry.record;
+  // 09 records the hook result as snapshotAfter (and optionally the pre-turn
+  // snapshotBefore); older evidence used snapshot/transport/record.
+  const snapshot = entry.snapshot ?? entry.snapshotAfter ?? entry.transport ?? entry.record ?? entry.snapshotBefore;
   if (snapshot != null) return verifySessionSnapshot(snapshot);
   const before = entry.before ?? entry.stateBefore;
   const after = entry.after ?? entry.stateAfter;
