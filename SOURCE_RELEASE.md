@@ -11,3 +11,10 @@
 - Scope limits: no complete Windows/CUDA MacBERT retraining, browser integration, production state writes or full-chain latency acceptance is claimed.
 - Publish audit: `scripts/hybrid/check_release.py` rejects model extensions, LFS pointers, files over 2 MiB, possible credentials and Windows-incompatible paths. Historical existing text evidence below this bound remains in the D baseline.
 - All weights, checkpoints, caches and local environments remain outside the tracked release.
+
+## Observed GitHub results for code commit `ccb1fae188ee97294af3d2f19096859635dd28b6`
+
+- [API/D03 source handoff run](https://github.com/TandyBlow/Jity/actions/runs/42804774150): **Windows and Ubuntu both passed**. Includes source-only audit, D03 data/portable CPU tests and mocked API orchestration. This does not mean full Windows/CUDA MacBERT training was run.
+- [Inherited application CI](https://github.com/TandyBlow/Jity/actions/runs/42804774056): frontend tests/lint/build passed; backend had 75 failed / 814 passed; world-interface failed on `generated artifact drift: api-contract.json`. Protocol/schema/fixture mismatches remain unresolved.
+- `backend/`, `design/world-protocol/`, and inherited `.github/workflows/ci.yml` are byte-identical to base `51bd76e9` in this release. No attempt was made to rewrite the authoritative world protocol as part of a D03 source handoff.
+- The following documentation-only commit records these observed results; it does not alter the code tested above.
