@@ -34,5 +34,20 @@
   "10 semantic probe on the two frozen cases (0.6B + five candidates) with --expected",
   "No model-route change until both are observed."
  ],
- "notAQualityGate": true
+ "notAQualityGate": true,
+ "post117Run": {
+  "source": "results/product/evidence/09-one-legal-turn.json",
+  "sourceSha256": "599951e68384ce81648ee566e5ac7a147f0715ef695a8accb71d987e42751088",
+  "status": "IN_PROGRESS",
+  "pageHead": "a5ca28d7c26212b6292f134621de92b8c7472a1e",
+  "turnInput": "我沿着服务巷往里走，先看清墙上的演习规则牌。",
+  "updates": "console: updates group_10 142159ms fallback=false; no unknown-task abort",
+  "timeScan": "console: updates time_scan:point_round_auto_mway0khl_1_1 64321ms fallback=false",
+  "turn": "330131 ms wait; timeout; no accepted model text; narration wrong_person/low_support fallback; historyDelta 0",
+  "interpretation": [
+   "04 117befcf removed the task_doctor_flag abort: the second time_scan completed without fallback",
+   "the page still misses the 300 s target and has no accepted prose; that is 02/06/09, not evidence about the 0.6B semantic model",
+   "the run did not include a positive task input; the copy-vs-judgment question remains open"
+  ]
+ }
 }
