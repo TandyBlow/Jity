@@ -10,6 +10,7 @@ import {
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
 import { buildBeatPrompt, planBeats } from './beats';
+import { renderProseFactsPrompt } from './scene-prompt';
 import { buildLedger } from './ledger';
 import { missingRequired, projectProseFacts } from './scene-prompt';
 
@@ -1257,5 +1258,25 @@ describe('scene prompt: repair keeps the prose-facts shape', () => {
     expect(retry).not.toContain('【视角】周宁');
     expect(retry.trimEnd().endsWith('正文：')).toBe(true);
     expect(result.accepted).toBe(true);
+  });
+});
+
+describe('pronoun policy: names by default, model pronouns on request', () => {
+  const facts = () => renderProseFactsPrompt({
+    committed: packet(moved, povAt), policy: basePolicy, scene: { location: '走廊' }, priorTail: null,
+  });
+
+  test('names: the prompt asks for names instead of 他/她', () => {
+    expect(facts()).toContain('不要用「他」「她」指代人物');
+  });
+
+  test('model: the pronoun line is gone, everything else stays', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(moved, povAt), policy: { ...basePolicy, pronouns: 'model' },
+      scene: { location: '走廊' }, priorTail: null,
+    });
+    expect(prompt).not.toContain('不要用「他」「她」');
+    expect(prompt).toContain('林川从走廊移动到门厅');
+    expect(prompt).toContain('不要写上面没有写过的姿势');
   });
 });

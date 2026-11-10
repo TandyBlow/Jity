@@ -67,7 +67,7 @@ export const NARRATOR_SYSTEM_PROMPT = [
   '正文用第三人称，贴着视角人物写，可以写动作、对话、环境与感受。',
   '必须写到下面列出的每一条已发生事实；不得反转方向、换人物、改数字。',
   '不得新增下面没有的人物、地点、物品、任务、往事或线索；不得替任何角色做出未提交的新行动。',
-  '称呼人物时用名字或省略主语，不要用「他」「她」指代人物：这些人物没有给出性别，写错不如不写。',
+
   '只写下面给出的声音、气味和物件；没有给出的脚步声、枪声、风声、心跳都不要补。',
   '名字是「某人的某物」的东西只属于那个人；不要把它写到别人手里，也不要让视角人物凭空握住或收起别人的东西。',
   '不要写上面没有写过的姿势（蹲下、坐下、靠墙、站起、躺下），也不要给人物换一个更戏剧化的站位；保持上面给出的姿态。',
@@ -115,6 +115,13 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   const lines: string[] = [];
 
   if (view) lines.push(`视角人物：${view}。只写${view}看得见、听得见、知道的事。`);
+  // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
+  // 她 for a male character in prose the grader accepted. `names` avoids that;
+  // `model` keeps ordinary Chinese pronouns (53 of lane 01's 71 gold scenes
+  // use 他/她), at the cost of that gender risk.
+  if ((policy.pronouns ?? 'names') === 'names') {
+    lines.push('称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
+  }
   if (scene?.location) {
     const notes = (scene.placeNotes ?? []).slice(0, 2).map((note) => note.trim()).join(' ');
     lines.push(`【地点】${scene.location}${notes ? `：${notes}` : ''}`);

@@ -120,6 +120,12 @@ export interface NarrationPolicy {
   /** Full prompt override. The default only inserts guidance before the body
    * marker; it never re-serializes facts. */
   composePrompt?: (args: ComposePromptArgs) => string;
+  /** How characters are referred to. `names` (default) asks for names or an
+   * omitted subject instead of 他/她: the world file has no gender field, and a
+   * 1.7B model wrote 她 for a male character in accepted product prose.
+   * `model` lets the model choose pronouns like ordinary Chinese prose (53 of
+   * lane 01's 71 gold scenes use 他/她), at the cost of that gender risk. */
+  pronouns?: 'names' | 'model';
   /** How the whole-scene prompt is built: `serialized` (default) continues the
    * caller's lane-01 serialization — the training shape for fine-tuned
    * checkpoints; `prose-facts` renders the same packet as a closed-book turn
