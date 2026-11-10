@@ -497,10 +497,10 @@ that archive. The detailed review is
 The current 06 history pairs commands to points by array index. When a failed
 command sits between two successes (commands A,B,C; points A,C), C is labelled
 with B's sentence. The count-safe fallback only avoids a wrong tail label; it
-does not recover the exact mapping. `06-command-point-map-v4.patch` adds optional
+does not recover the exact mapping. `06-command-point-map-v4.patch` described optional
 `snapshot.commandPointIds` aligned with `commands`: a successful submit binds
 the committed player point to its command, a failed/cancelled command stays
 null, and the map is saved/restored. `history.ts` then shows A and C with their
 own sentences and B as unfinished; older saves with unequal counts show blank
-labels rather than a wrong sentence. v4 applies at current 06 `58beddad`; the v2 disposable session
+labels rather than a wrong sentence. 06 implemented the equivalent at `101bb3d2`; do not apply v4 on top. the v2 disposable session
 test passed at the older tree, so current 06 still needs to run it.
