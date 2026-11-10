@@ -38,11 +38,17 @@ export function renderNarrationUser(
     for (const entry of policy.knownPositions) lines.push(`- ${entry.name}在${entry.location}。`);
   }
   if (policy.priorText) lines.push(`上一点已写正文（延续语气与位置，不要重复其事件）：\n${trim(policy.priorText, 400)}`);
-  if (inputText.trim()) lines.push(`本点输入资料（只作依据，不要逐项复述）：\n${trim(inputText, 1200)}`);
+  // The raw serializer string is evidence for the caller, not material for the
+  // prose: feeding 【状态】/【变化】 labels to an instruction model invites it to
+  // copy the state format instead of writing a scene. Only include it on request.
+  if (policy.includeInputText && inputText.trim()) {
+    lines.push(`本点输入资料（只作依据，不要逐项复述，不要照抄字段名）：\n${trim(inputText, 1200)}`);
+  }
   const length = policy.targetChars
     ? `写 ${Math.max(policy.minChars ?? 80, 1)}～${policy.targetChars} 字左右。`
     : '写两到四句，约 80～200 字。';
   lines.push(`要求：${length}直接给正文，不要小标题，不要解释，不要重复已知位置清单。`);
+  lines.push('用具体的动作、声音和细节推进，不要把「本回合已发生」逐条翻译成句子。');
   if (policy.instruction) lines.push(`补充要求：${policy.instruction}`);
   if (policy.knownEntities?.length) {
     lines.push(`可用专名：${policy.knownEntities.join('、')}。不得出现名单外的专名。`);

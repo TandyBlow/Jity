@@ -97,6 +97,10 @@ export interface CandidatePolicy {
   temperature?: number;
   /** Soft instruction from the caller (style, length, register). */
   instruction?: string;
+  /** Include the caller's raw serializer string in the prompt. Off by
+   * default: instruction models copy field labels from it instead of writing
+   * prose. Kept for debugging and for candidates that expect it. */
+  includeInputText?: boolean;
   /** Prior accepted prose, for continuity turns. */
   priorText?: string | null;
   /** Additive runtime controls. */

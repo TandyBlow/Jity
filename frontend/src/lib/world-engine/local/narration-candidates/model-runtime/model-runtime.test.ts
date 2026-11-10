@@ -112,9 +112,13 @@ describe('prompt rendering', () => {
     expect(text).toContain('- 周宁在走廊。');
     expect(text).toContain('可用专名：林川、周宁、门厅');
     expect(text).toContain('120～240 字左右');
-    // The raw serializer projection is quoted as evidence, never as the body.
-    expect(text).toContain('本点输入资料');
-    expect(text.indexOf('【状态】原始投影串')).toBeGreaterThan(text.indexOf('本回合已发生'));
+    // The raw serializer string is not fed to the prose by default (it makes
+    // instruct models copy field labels); it stays available on request.
+    expect(text).not.toContain('本点输入资料');
+    expect(text).not.toContain('【状态】原始投影串');
+    const withInput = renderNarrationUser(movePacket(), '【状态】原始投影串', { includeInputText: true });
+    expect(withInput).toContain('本点输入资料');
+    expect(withInput.indexOf('【状态】原始投影串')).toBeGreaterThan(withInput.indexOf('本回合已发生'));
   });
 
   test('an empty delta explicitly forbids inventing changes', () => {
