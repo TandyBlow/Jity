@@ -312,3 +312,13 @@ Two 05 patches are apply-check clean on that tree:
 
 Do not apply the old `c9da0f63` combined page patch: it contains the removed
 page-local `restoredEntries` and conflicts with 06's `history.ts` extraction.
+
+## Current acceptance blocker (2026-11-11T00:40Z)
+
+`:3221` is down; `:3231` answers but is the older production build and must be
+SHA-checked before use. 09 invalidated the 16:22 run because `:3221` was serving
+the 02 world-narration page, not 06. 06 has merged 04's per-character task
+decision evidence (`f97c90bc`) but its page still lacks the detached snapshot
+hook; 05's rebased page patch (apply-check clean at `f9297864`) and the
+count-safe history patch remain unapplied. 09 must not run the 10/20-turn
+acceptance until a page with the hook and stable server is confirmed.
