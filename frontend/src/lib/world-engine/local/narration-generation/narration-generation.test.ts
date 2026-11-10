@@ -1278,7 +1278,7 @@ describe('pronoun policy: names by default, model pronouns on request', () => {
     });
     expect(prompt).not.toContain('不要用「他」「她」');
     expect(prompt).toContain('林川从走廊移动到门厅');
-    expect(prompt).toContain('不要写上面没有写过的姿势');
+    expect(prompt).toContain('不替别人做他没做的动作');
   });
 });
 
@@ -1414,7 +1414,7 @@ describe('personality change is required, and required as behaviour', () => {
       committed: { anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: null }, facts: [personalityFact] },
       policy: basePolicy, scene: null, priorTail: null,
     });
-    expect(prompt).toContain('必须写到');
+    expect(prompt).toContain('事实变化');
   });
 
   // Known hole in the shared verifier (01 owns verify.ts; filed as
