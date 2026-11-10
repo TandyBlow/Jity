@@ -1,0 +1,268 @@
+{
+  "kind": "lane12-n1-current-checker-diagnosis",
+  "createdAt": "2026-11-10T15:27:42.119Z",
+  "diagnosticOnly": true,
+  "doesNotReplacePinnedReport": true,
+  "modelRerun": false,
+  "nExpanded": false,
+  "source": {
+    "raw": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\raw.jsonl",
+    "rawSha256": "b2324fa56b90bd3371c140b4ecfeb687927beafcdb36d46dc0c9ff7e084c182c",
+    "pinnedReport": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\report.json",
+    "pinnedCheckerCombinedSha256": "92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f",
+    "currentChecker": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\frontend\\src\\lib\\world-engine\\local\\narration-quality",
+    "currentCheckerCombinedSha256": "8db1def676f311bdf2cabcb295c1efe23f1be9b75f6724a72580c039980de28c",
+    "currentCheckerFiles": {
+      "anchors.test.ts": "79d97dad2248dd69d71dc6f844d82b2d025db3ba2c2775e3daa450c47184352b",
+      "batch.test.ts": "4f07082ccba206ac66026a167313aff59c3f394c0a3fccc9f442fd9b89694990",
+      "fallback.test.ts": "88694175a3823266b580c436bd8871a20018d48e2af3adc9a3bfe78dbb8a3bc4",
+      "gate.test.ts": "653ab580f3002d9e44553a60135b074350d683bcfd36a87bead691dda5d75bad",
+      "gate.ts": "d2d7fe40ea0b3660f4ef1156f4277c9b86d61e3223ffe15bde0db89a26b1032e",
+      "genders.test.ts": "37cbed31af88c333df0d4b6e5e50a5d72de9a450963e549a4bfe3bb63aeb75eb",
+      "genders.ts": "090e33bfaeeb4a270174047ece8831c233c09b3471b908dda08f0fa78481744a",
+      "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
+      "lexicon.ts": "f08530591c48d77e0552684fc938de710cf2622f812f6b800ebcf4135faa9cd2",
+      "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
+      "review.ts": "e211f4142cb07d7dc65411a32c963f44442269691f0d4918949e40619a8b9b57",
+      "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
+      "sequence-batch.test.ts": "f2181ccd31a157df2e34b39602e58181ba705b7fd4b53ec219c7b5fdab0f6cdd",
+      "sequence.test.ts": "e8b6220e042d266c0e2486adfb043a355d8b57d2861c60400c98959df4167828",
+      "sequence.ts": "3b3a01bf1a62dee45d5ba6c3dff10e7f06f6b259816f0c7536849dd0d4a0fff1",
+      "types.ts": "f0d856a33a297564ac8e33882993debc05bea9144c49c13253565f54f2b0b288"
+    },
+    "currentCheckerSource": "01-input live worktree; not the pinned ec7ffc0e snapshot"
+  },
+  "handoffChecks": {
+    "timeMissingStillFlagged": true,
+    "personalityOmittedStillFlagged": true,
+    "staleRemovedItemCaught": false,
+    "traitOwnerOrTraitCopyCaught": false,
+    "firstPersonCaught": false,
+    "statusRecitalStyleCaught": false
+  },
+  "rows": [
+    {
+      "seed": 17,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.micro_action"
+      ],
+      "mandatoryCovered": 1,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "温执站在还书处，袖口沾着墨迹，指节上还残留着旧伤，眼镜上蒙着一层灰尘。"
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.micro_action"
+      ],
+      "mandatoryCovered": 1,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "温执站在还书处，箱底垫了一块木板，袖口沾了墨。"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.micro_action",
+        "review.tone"
+      ],
+      "mandatoryCovered": 1,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.tone",
+          "sentence": "他似乎在为十年前那场火灾的真相而努力。"
+        }
+      ]
+    },
+    {
+      "seed": 61,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.pronoun",
+        "review.micro_action"
+      ],
+      "mandatoryCovered": 1,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.pronoun",
+          "sentence": "袖口沾了墨，这是他日常工作的痕迹。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。"
+        }
+      ]
+    },
+    {
+      "seed": 79,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.micro_action"
+      ],
+      "mandatoryCovered": 1,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "温执站在还书处，他戴着一副圆框眼镜，指节上还留着旧伤，袖口沾了墨。"
+        }
+      ]
+    },
+    {
+      "seed": 97,
+      "decision": "fail",
+      "pinnedDecision": "fail",
+      "factKinds": [
+        "fact.time_missing",
+        "fact.move_omitted",
+        "fact.personality_omitted"
+      ],
+      "styleKinds": [],
+      "reviewKinds": [
+        "review.micro_action"
+      ],
+      "mandatoryCovered": 0,
+      "mandatoryTotal": 3,
+      "newKindsVsPinned": [],
+      "goneKindsVsPinned": [],
+      "findings": [
+        {
+          "severity": "fact",
+          "kind": "fact.time_missing",
+          "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.move_omitted",
+          "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "fact",
+          "kind": "fact.personality_omitted",
+          "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。"
+        },
+        {
+          "severity": "review",
+          "kind": "review.micro_action",
+          "sentence": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。"
+        }
+      ]
+    }
+  ],
+  "note": "Current-checker diagnosis only. The b01 result remains 0 fact-qualified under the pinned report; human review is still pending."
+}

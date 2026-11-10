@@ -67,6 +67,7 @@ The package is public development regression material, never a final holdout.
 | `src/compare-b01-v2.ts` | side-by-side v1/v2 report; never pools the two prompts |
 | `src/ingest_result.py` | copy one fetched HPC result into `results/<batch>`, verify record hashes and call count; no network |
 | `src/arms.ts` / `src/arms.test.ts` | all size-N subsets; C(6,1)=6, C(6,2)=15, C(6,4)=15 |
+| `src/check-current.ts` | N=1 diagnostic: re-judge the six frozen b01 texts with 01's current checker; no model/N, does not replace the pinned report |
 | `data/<batch>/` | generated request/expected files (committed) |
 | `results/<batch>/` | raw outputs, env, report (committed) |
 
