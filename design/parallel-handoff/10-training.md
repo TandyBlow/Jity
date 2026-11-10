@@ -105,7 +105,9 @@ YuYan 诊断臂已实际跑完。配置 `configs/yuyan-lora-v2.json`；基座
 - 不把这次训练写成产品验收通过；正文质量仍需独立评估。
 
 完整清单：`experiments/narration-runtime-v2/hpc/runs/251206/run-manifest.json`；
-失败记录：`.../hpc/runs/251205/README.md`。代码提交 `a9d6606b` 包含实际部署的 trainer。
+失败记录：`.../hpc/runs/251205/README.md`。代码提交 `a9d6606b` 包含实际部署的 trainer
+（SHA-256 `cf84e1e6…`）。之后 trainer 增加了 token 溢出拒绝（tip `6aff0fc1`），只做了本地 CPU
+smoke，未重跑 HPC；上表的 HPC 数值仍属于 `a9d6606b`。
 
 ## 6. 主 agent 需要做的接线
 
