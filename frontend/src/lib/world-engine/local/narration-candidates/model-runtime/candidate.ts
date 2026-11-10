@@ -13,12 +13,13 @@
  * caller receives `accepted: false` and the issues, so a page can show the
  * draft as unverified or fall back on its own terms.
  */
-import type { CompletionEvidence } from '../../../runtime/engine';
+import { IncompleteGenerationError, isAbortError, type CompletionEvidence } from '../../../runtime/engine';
 import { alignNarration } from '../../../runtime/narration-alignment';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import {
   buildMessages, cleanNarration, describeCommitted, renderFallbackPrompt, renderNarrationUser, ThinkingFilter,
 } from './template';
+import { modelSpecByFile } from './catalog';
 import type {
   CandidateArgs, CandidateAttempt, CandidateIssue, CandidatePolicy, CandidateResult, CandidateVerification,
   ChatCapableEngine, ModelSpec,
@@ -30,6 +31,11 @@ export interface GenerateCandidateOptions {
   /** Catalog identity for the evidence record; the engine is supplied by the
    * caller, so this is descriptive, never used to load anything. */
   spec?: ModelSpec;
+}
+
+function specFor(engine: ChatCapableEngine): ModelSpec | undefined {
+  if (!engine.info.modelId) return undefined;
+  try { return modelSpecByFile(engine.info.modelId); } catch { return undefined; }
 }
 
 const DEFAULT_MAX_TOKENS_CEILING = 700;
@@ -68,8 +74,9 @@ function verifiedResult(
   };
 }
 
-function issuesOf(verification: CandidateVerification | null, text: string, policy: CandidatePolicy): CandidateIssue[] {
+function issuesOf(verification: CandidateVerification | null, text: string, policy: CandidatePolicy, truncated = false): CandidateIssue[] {
   const issues: CandidateIssue[] = [];
+  if (truncated) issues.push({ kind: 'truncated', detail: 'generation hit maxTokens before the model finished', severity: 'hard' });
   if (!verification) return issues;
   for (const violation of verification.violations) {
     issues.push({ kind: violation.kind, detail: violation.detail, severity: 'hard' });
@@ -100,11 +107,18 @@ function repairNote(issues: CandidateIssue[]): string {
       task_claimed_without_fact: '写了没有提交的任务', movement_without_fact: '写了没有提交的移动',
       state_claim_without_fact: '写了没有提交的状态', wrong_time: '时间写错了', added_event: '加了没有提交的事件',
       omitted_fact: '漏了必须写到的事实', time_not_narrated: '没有写经过的时间', too_short: '正文太短',
-      empty_narration: '正文为空',
+      empty_narration: '正文为空', truncated: '上一版在上限处被截断，请写得更短并收束',
     };
     lines.push(`- ${label[issue.kind] ?? issue.kind}：${issue.detail}`);
   }
   return lines.join('\n');
+}
+
+interface ModelCall {
+  text: string;
+  completion: CompletionEvidence | null;
+  /** The model stopped at maxTokens; the text is real but cut off. */
+  truncated: boolean;
 }
 
 async function callModel(
@@ -114,7 +128,7 @@ async function callModel(
   policy: CandidatePolicy,
   temperature: number,
   onChunk: (text: string) => void,
-): Promise<{ text: string; completion: CompletionEvidence | null }> {
+): Promise<ModelCall> {
   let completion: CompletionEvidence | null = null;
   const options = {
     maxTokens: maxTokensFor(policy),
@@ -126,18 +140,31 @@ async function callModel(
     onProgress: (progress: { raw: string; elapsedMs: number }) => onChunk(progress.raw),
     onCompletion: (evidence: CompletionEvidence) => { completion = evidence; },
   };
-  if (engine.chat && spec && !spec.rawCompletion) {
-    const raw = await engine.chat(buildMessages(spec, userText), options);
-    return { text: raw, completion };
+  const invoke = async (): Promise<string> => {
+    if (engine.chat && spec && !spec.rawCompletion) return engine.chat(buildMessages(spec, userText), options);
+    const prompt = spec ? renderFallbackPrompt(spec, userText) : userText;
+    return engine.complete(prompt, options);
+  };
+  try {
+    return { text: await invoke(), completion, truncated: false };
+  } catch (error) {
+    // A length-capped answer is real text the player paid for. Keep it as a
+    // non-accepted draft (the caller sees `truncated` and may show/replace it)
+    // instead of losing the whole point; the next attempt asks for less.
+    if (error instanceof IncompleteGenerationError || (error as { name?: string })?.name === 'IncompleteGenerationError') {
+      const evidence = (error as IncompleteGenerationError).completion ?? completion;
+      return { text: evidence?.raw ?? '', completion: evidence ?? completion, truncated: true };
+    }
+    throw error;
   }
-  const prompt = spec ? renderFallbackPrompt(spec, userText) : userText;
-  const raw = await engine.complete(prompt, options);
-  return { text: raw, completion };
 }
 
 export async function generateCandidate(args: CandidateArgs, options: GenerateCandidateOptions = {}): Promise<CandidateResult> {
   const policy = args.policy ?? {};
-  const spec = options.spec;
+  // A shared driver (09) loads the engine itself and calls with no spec; the
+  // catalog still identifies the checkpoint from info.modelId, so the model's
+  // real template is used instead of a fused fallback prompt.
+  const spec = options.spec ?? specFor(args.engine);
   const maxAttempts = Math.max(1, Math.min(policy.attempts ?? 2, 3));
   const temperature = policy.temperature ?? 0.7;
   const started = performance.now();
@@ -169,6 +196,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     };
     let text = '';
     let completion: CompletionEvidence | null = null;
+    let truncated = false;
     try {
       const result = await callModel(args.engine, spec, userText, policy, index === 0 ? temperature : REPAIR_TEMPERATURE, onChunk);
       const tail = filter.flush();
@@ -177,6 +205,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       }
       text = cleanNarration(result.text || filter.text);
       completion = result.completion;
+      truncated = result.truncated;
     } catch (error) {
       if (args.signal?.aborted) throw error;
       perAttemptMs.push(performance.now() - attemptStarted);
@@ -188,7 +217,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       throw error;
     }
     const verification = verifiedResult(args.committed, text, policy);
-    const issues = issuesOf(verification, text, policy);
+    const issues = issuesOf(verification, text, policy, truncated);
     const accepted = verification.ok && !issues.some((issue) => issue.severity === 'hard');
     const attemptMs = performance.now() - attemptStarted;
     perAttemptMs.push(attemptMs);

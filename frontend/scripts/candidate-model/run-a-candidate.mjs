@@ -279,6 +279,12 @@ try {
       try {
         result = await generate({
           engine, committed, inputText, priorText,
+          // 03's instruct candidate builds its own projection from the settled
+          // states; the reference candidate ignores these extras.
+          state: scenario.after.state,
+          before: scenario.before?.state ?? null,
+          delta: scenario.delta,
+          pointId: scenario.after.pointId,
           policy: { ...policyFor(scenario.after.state, view, scenario.time), ...(priorText ? { priorText } : {}) },
         }, { spec });
       } catch (error) {
@@ -296,7 +302,7 @@ try {
         text: result.text,
         issues: result.issues,
         verification: result.verification,
-        attempts: (result.rawAttempts ?? []).map((attempt) => ({
+        attempts: (result.rawAttempts ?? result.attempts ?? []).map((attempt) => ({
           index: attempt.index, temperature: attempt.temperature, promptChars: attempt.promptChars,
           text: attempt.text, accepted: attempt.accepted, issueKinds: attempt.issueKinds,
           prompt: attempt.prompt,

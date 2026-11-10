@@ -221,6 +221,7 @@ try {
     }, 400);
     const result = await page.evaluate(async (config) => {
       const startedAt = performance.now();
+      try {
       const { modelSpec } = await import('/src/lib/world-engine/local/narration-candidates/model-runtime/catalog.ts');
       const { loadCandidateModel, webgpuAvailable } = await import('/src/lib/world-engine/local/narration-candidates/model-runtime/backend.ts');
       const { generateCandidate } = await import('/src/lib/world-engine/local/narration-candidates/model-runtime/candidate.ts');
@@ -339,6 +340,10 @@ try {
         diagnostics: diagnostics.summary(),
         totalMs: performance.now() - startedAt,
       };
+      } catch (error) {
+        // One model failing must not throw away the models already measured.
+        return { modelId: config.modelId, error: String(error?.message ?? error), stack: String(error?.stack ?? '') };
+      }
     }, { ...runConfig, modelId });
     clearInterval(sampler);
     const peakAfter = mmSampler();
@@ -347,6 +352,10 @@ try {
     record.memory = { before: report.device.gpuAtStart, peakMiB: peak?.usedMiB ?? null, after: peakAfter };
     report.memorySamples = [...(report.memorySamples ?? []), { modelId, peak: peak?.usedMiB ?? null, after: peakAfter }];
     save();
+    if (result.error) {
+      console.log(`[probe] ${modelId}: FAILED ${result.error}`);
+      continue;
+    }
     const tok = result.attemptsText[0]?.completion;
     const tps = tok?.predictedTokens && tok?.predictedMs ? (tok.predictedTokens / (tok.predictedMs / 1000)).toFixed(1) : null;
     console.log(`[probe] ${modelId}: backend=${result.backend} load=${Math.round(result.loadMs)}ms firstReadable=${Math.round(result.firstReadableMs ?? -1)}ms gen=${Math.round(result.generationMs)}ms tok/s=${tps} accepted=${result.accepted} chars=${[...result.text].length}`);

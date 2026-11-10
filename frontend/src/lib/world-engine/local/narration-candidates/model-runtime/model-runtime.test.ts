@@ -236,6 +236,35 @@ describe('generateCandidate', () => {
     expect(result.model).toEqual({ id: SPEC.id, templateId: SPEC.template.id });
   });
 
+  test('a length-capped answer is kept as a non-accepted draft and retried shorter', async () => {
+    const { IncompleteGenerationError } = await import('../../../runtime/engine');
+    let round = 0;
+    const engine: ChatCapableEngine = {
+      info: { backend: 'fake', modelId: 'fake' },
+      load: async () => undefined,
+      dispose: async () => undefined,
+      complete: async () => { throw new Error('unused'); },
+      chat: async (_messages, options) => {
+        round += 1;
+        if (round === 1) {
+          options?.onProgress?.({ raw: '两分钟里，林川从走廊走到', elapsedMs: 1 });
+          throw new IncompleteGenerationError({
+            raw: '两分钟里，林川从走廊走到', finishReason: 'length', firstTokenMs: 5, wallMs: 10,
+          });
+        }
+        options?.onProgress?.({ raw: VERIFIED_TEXT, elapsedMs: 1 });
+        return VERIFIED_TEXT;
+      },
+    };
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(result.rawAttempts).toHaveLength(2);
+    expect(result.rawAttempts[0]!.text).toContain('林川从走廊走到');
+    expect(result.rawAttempts[0]!.issueKinds).toContain('truncated');
+    expect(result.rawAttempts[0]!.accepted).toBe(false);
+    expect(result.rawAttempts[1]!.prompt).toContain('被截断');
+    expect(result.accepted).toBe(true);
+  });
+
   test('a model that aborts does not get turned into an accepted scene', async () => {
     const controller = new AbortController();
     const { engine } = fakeEngine([VERIFIED_TEXT]);
