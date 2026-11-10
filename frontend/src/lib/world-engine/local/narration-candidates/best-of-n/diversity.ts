@@ -257,18 +257,19 @@ export function comparePair(a: SampleProfile, b: SampleProfile, config?: Partial
     reasons.push(`same_opening_and_closing:${openingJaccard.toFixed(2)}/${closingJaccard.toFixed(2)}>=${cfg.edgeDuplicate}`);
   }
 
-  const ambiguous = reasons.length === 0
-    ? [
-      near(surfaceJaccard, cfg.surfaceNearDuplicate, cfg.ambiguityBand),
-      near(containmentScore, cfg.containmentDuplicate, cfg.ambiguityBand),
-      near(structureJaccard, cfg.skeletonStructure, cfg.ambiguityBand),
-      near(alignedJaccard, cfg.skeletonAligned, cfg.ambiguityBand),
-      near(openingJaccard, cfg.edgeDuplicate, cfg.ambiguityBand),
-      near(closingJaccard, cfg.edgeDuplicate, cfg.ambiguityBand),
-    ].some(Boolean)
-    : reasons.some((reason) => reason.includes('same_skeleton')
-      && (near(structureJaccard, cfg.skeletonStructure, cfg.ambiguityBand)
-        || near(alignedJaccard, cfg.skeletonAligned, cfg.ambiguityBand)));
+  // Any decision metric sitting within the band of its own threshold makes the
+  // pair review-worthy. This can over-flag a clearly non-homogeneous pair; it
+  // never changes the automatic verdict, and the preregistered review request
+  // carries the raw scores for the independent reviewer.
+  const ambiguous = [
+    near(surfaceJaccard, cfg.surfaceNearDuplicate, cfg.ambiguityBand),
+    near(containmentScore, cfg.containmentDuplicate, cfg.ambiguityBand),
+    near(structureJaccard, cfg.skeletonStructure, cfg.ambiguityBand),
+    near(alignedJaccard, cfg.skeletonAligned, cfg.ambiguityBand),
+    near(openingJaccard, cfg.edgeDuplicate, cfg.ambiguityBand),
+    near(closingJaccard, cfg.edgeDuplicate, cfg.ambiguityBand),
+    detailJaccard !== null && near(detailJaccard, cfg.skeletonDetail, cfg.ambiguityBand),
+  ].some(Boolean);
 
   return {
     a: a.id,

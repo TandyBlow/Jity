@@ -112,6 +112,15 @@ describe('realization diversity', () => {
     expect(report.qualifiedDistinctClusters).toBe(2);
   });
 
+  it('counts zero qualified clusters when no sample passed, without touching the repetition denominator', () => {
+    const profiles = [profile('a', A, 1), profile('b', B, 2), profile('c', C, 3)];
+    const report = buildDiversityReport({ profiles, qualifiedIds: [] });
+    expect(report.qualifiedCount).toBe(0);
+    expect(report.qualifiedClusters).toBe(0);
+    expect(report.qualifiedDistinctClusters).toBe(0);
+    expect(report.effectiveRepetition).toBeCloseTo(1 - 2 / 3, 6);
+  });
+
   it('returns zero repetition for an empty pool and keeps the formula safe', () => {
     expect(effectiveRepetition(0, 0)).toBe(0);
   });
