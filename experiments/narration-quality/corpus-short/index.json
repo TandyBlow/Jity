@@ -1,6 +1,6 @@
 {
   "batch": 1,
-  "createdAt": "2026-11-10T05:35:00Z",
+  "createdAt": "2026-11-10T05:40:00Z",
   "status": "first-batch-ready",
   "rowsFile": "rows.jsonl",
   "rowCount": 21,
@@ -56,7 +56,7 @@
   "targetLength": {
     "min": 62,
     "max": 106,
-    "mean": 86.0
+    "mean": 85.9
   },
   "rows": [
     {
@@ -96,7 +96,7 @@
         "location_change",
         "item_change"
       ],
-      "targetChars": 81
+      "targetChars": 80
     },
     {
       "id": "short-0060-corridor-glasses",
