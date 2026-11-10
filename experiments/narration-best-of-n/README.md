@@ -65,6 +65,7 @@ The package is public development regression material, never a final holdout.
 | `src/analyze.ts` | 01 checker + diversity + arm comparison + evidence report |
 | `checker-pinned/` + `checker-source.json` | read-only snapshot of 01's checker at `ec7ffc0e`, the exact version used for b01; v1/v2 must use the same bytes |
 | `src/compare-b01-v2.ts` | side-by-side v1/v2 report; never pools the two prompts |
+| `src/ingest_result.py` | copy one fetched HPC result into `results/<batch>`, verify record hashes and call count; no network |
 | `src/arms.ts` / `src/arms.test.ts` | all size-N subsets; C(6,1)=6, C(6,2)=15, C(6,4)=15 |
 | `data/<batch>/` | generated request/expected files (committed) |
 | `results/<batch>/` | raw outputs, env, report (committed) |
@@ -81,6 +82,9 @@ python -X utf8 experiments/narration-best-of-n/src/verify_pack.py --batch b01
 # HPC: executed only by lane 10, never by this lane
 python -X utf8 generate_hpc.py --requests data/b01/requests.jsonl \
   --expected-prereg <sha256> --out-dir results/b01 --model ~/qwen15b
+
+# after 10 fetches a result: verify and copy it (no SSH)
+python -X utf8 experiments/narration-best-of-n/src/ingest_result.py   --source results/product/hpc-results/12-best-of-n-b01-v2 --batch b01-template-v2
 
 # offline analysis (01 checker + this lane's module)
 cd frontend && node_modules/.bin/jiti ../experiments/narration-best-of-n/src/analyze.ts --batch b01
