@@ -258,5 +258,31 @@
     "leakingRows": 2
    }
   }
+ },
+ "fullTextArms": {
+  "shipped-default@repair": {
+   "rows": 8,
+   "clean": 0,
+   "materializedDraftMiss": 8,
+   "inventedNumberRows": 0,
+   "dialogueRows": 3,
+   "meanChars": 240,
+   "minChars": 139,
+   "maxChars": 305,
+   "file": "worktrees/06-recovery/frontend/public/models/qwen25-1.5b-narr-Q4_K_M.gguf (sha 6ed2268d, not lane-10 trained)",
+   "data": "data/train-page-v5.jsonl dev, 8 rows, llama-server chat, CPU"
+  },
+  "page-v3@repair": {
+   "rows": 6,
+   "clean": 1,
+   "materializedDraftMiss": 4,
+   "inventedNumberRows": 0,
+   "dialogueRows": 4,
+   "meanChars": 171,
+   "minChars": 58,
+   "maxChars": 293,
+   "file": "models-narration/qwen15b-page-v3/model-Q4_K_M.gguf",
+   "data": "same 6 dev rows (8-row set not rerun for v3)"
+  }
  }
 }

@@ -73,6 +73,19 @@ def time_spoken(prose: str, amount: int, unit: str) -> bool:
     return unit in prose or ("小时" in prose and unit == "分钟" and amount == 60)
 
 
+def has_added_dialogue(prose: str, draft: str) -> bool:
+    """True when the prose quotes speech the draft does not license.
+
+    The draft itself may quote a task goal ("查清…"), so those spans are removed
+    before looking for quotation marks; otherwise every row with a goal would
+    look like invented dialogue.
+    """
+    stripped = prose
+    for span in re.findall(r"[「“『]([^」”』]{1,40})[」”』]", draft):
+        stripped = stripped.replace(span, "")
+    return bool(re.search(r"[「“『]", stripped))
+
+
 def covers(prose: str, clause: str) -> bool:
     """A draft clause counts as carried when its names appear and at least half
     of its 2-char pieces do."""
@@ -167,7 +180,7 @@ def main() -> int:
                 issues.append("filler:" + ",".join(filler[:2]))
             if len(prose) > 320:
                 issues.append("too_long")
-            dialogue = bool(re.search(r"[「“『]", prose)) and not re.search(r"[「“『]", row["draft"])
+            dialogue = has_added_dialogue(prose, row["draft"])
             if dialogue:
                 # Reported, not failed: a licensed fact can legitimately be
                 # spoken, but the page forbids new dialogue, so reviewers must see it.
