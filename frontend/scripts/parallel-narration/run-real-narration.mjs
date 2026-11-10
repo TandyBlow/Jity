@@ -210,7 +210,7 @@ try {
         evidence.deviceProof.verdict = 'ok';
       }
       save();
-      console.log(`[adapter] vendor=${vendor || 'unknown'} arch=${record.adapter?.architecture ?? '?'}`);
+      console.log(`[adapter] ${identity.trim() || 'identity unavailable'} verdict=${evidence.deviceProof.verdict}`);
       return;
     }
     evidence.runs = [...evidence.runs.filter((run) => run.id !== record.id), record];
