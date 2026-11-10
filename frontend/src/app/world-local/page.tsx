@@ -11,6 +11,7 @@ import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
+import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
@@ -124,7 +125,36 @@ function viewOf(state: WorldState): ViewState {
 
 /** Runtime generation evidence per engine, so 09 can distinguish a context
  * overflow from a model failure without reading worker internals. Bounded. */
-type GenerationNote = { engine: string; promptTokens: number | null; contextSize: number; wallMs: number; finishReason: string | null; at: number };
+/** Full GenerationEvidence passthrough plus which engine produced it: 09 can
+ * separate prefill (prompt_ms/prompt_n) from decode (predicted_ms/predicted_n),
+ * prove streaming (firstToken/firstReadable/streamChunks) and cancel latency
+ * (stoppedMs/hardStopped) without reading worker internals. */
+type GenerationNote = {
+  engine: string;
+  outcome: string | null;
+  promptTokens: number | null;
+  cachedPromptTokens: number | null;
+  contextSize: number;
+  maxTokens: number | null;
+  cachePrompt: boolean | null;
+  wallMs: number;
+  finishReason: string | null;
+  firstTokenMs: number | null;
+  firstReadableMs: number | null;
+  firstChunkMs: number | null;
+  maxStreamGapMs: number | null;
+  streamChunks: number | null;
+  stoppedMs: number | null;
+  hardStopped: boolean | null;
+  abortCause: string | null;
+  abortRequestedMs: number | null;
+  promptMs: number | null;
+  predictedMs: number | null;
+  promptN: number | null;
+  predictedN: number | null;
+  cacheN: number | null;
+  at: number;
+};
 function recordGeneration(note: GenerationNote): void {
   const w = globalThis as unknown as { __worldGenerations?: GenerationNote[] };
   (w.__worldGenerations ??= []).push(note);
@@ -148,11 +178,38 @@ async function loadEngine(
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
   // must not leave the first player turn waiting forever.
-  const onEvidence = (record: { kind?: string; promptTokens?: number | null; contextSize?: number; wallMs?: number; finishReason?: string | null }) => {
-    if (record.kind !== 'generation') return;
+  const onEvidence = (evidence: ModelLoadEvidence | GenerationEvidence) => {
+    if (evidence.kind !== 'generation') return;
+    const record = evidence as unknown as Record<string, unknown>;
+    const num = (value: unknown): number | null => (typeof value === 'number' && Number.isFinite(value) ? value : null);
+    const bool = (value: unknown): boolean | null => (typeof value === 'boolean' ? value : null);
+    const text = (value: unknown): string | null => (typeof value === 'string' ? value : null);
+    const timings = (record.timings ?? null) as Record<string, unknown> | null;
     recordGeneration({
-      engine: label, promptTokens: record.promptTokens ?? null, contextSize: record.contextSize ?? contextSize,
-      wallMs: record.wallMs ?? 0, finishReason: record.finishReason ?? null, at: Date.now(),
+      engine: label,
+      outcome: text(record.outcome),
+      promptTokens: num(record.promptTokens),
+      cachedPromptTokens: num(record.cachedPromptTokens),
+      contextSize: num(record.contextSize) ?? contextSize,
+      maxTokens: num(record.maxTokens),
+      cachePrompt: bool(record.cachePrompt),
+      wallMs: num(record.wallMs) ?? 0,
+      finishReason: text(record.finishReason),
+      firstTokenMs: num(record.firstTokenMs),
+      firstReadableMs: num(record.firstReadableMs),
+      firstChunkMs: num(record.firstChunkMs),
+      maxStreamGapMs: num(record.maxStreamGapMs),
+      streamChunks: num(record.streamChunks),
+      stoppedMs: num(record.stoppedMs),
+      hardStopped: bool(record.hardStopped),
+      abortCause: text(record.abortCause),
+      abortRequestedMs: num(record.abortRequestedMs),
+      promptMs: timings ? num(timings.prompt_ms) : null,
+      predictedMs: timings ? num(timings.predicted_ms) : null,
+      promptN: timings ? num(timings.prompt_n) : null,
+      predictedN: timings ? num(timings.predicted_n) : null,
+      cacheN: timings ? num(timings.cache_n) : null,
+      at: Date.now(),
     });
   };
   const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
