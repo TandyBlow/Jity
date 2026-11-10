@@ -1,0 +1,3 @@
+# 本目录的实验产物按字节哈希冻结（frozen/manifest.json）。
+# 禁止任何换行转换，保证 git checkout 后的 SHA-256 与生成时一致。
+* -text

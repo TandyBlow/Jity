@@ -1,0 +1,51 @@
+{
+ "reviewer": "agent-precheck（待独立人工确认）",
+ "unadjudicated": [],
+ "byArm": {
+  "A": {
+   "clauses": 24,
+   "supported": 22,
+   "unsupported": 2,
+   "undetermined": 0,
+   "unauthorizedActionClauses": 2,
+   "factErrorClauses": 2,
+   "realOmissions": [],
+   "expressionIssueClauses": 2,
+   "programFalseNegatives": 3,
+   "perspectiveHints": 1,
+   "programGapClauses": 1
+  },
+  "B": {
+   "clauses": 24,
+   "supported": 22,
+   "unsupported": 2,
+   "undetermined": 0,
+   "unauthorizedActionClauses": 2,
+   "factErrorClauses": 0,
+   "realOmissions": [
+    "学生A 从走廊到了大厅",
+    "学生A 位于大厅"
+   ],
+   "expressionIssueClauses": 1,
+   "programFalseNegatives": 2,
+   "perspectiveHints": 1,
+   "programGapClauses": 1
+  },
+  "C": {
+   "clauses": 24,
+   "supported": 21,
+   "unsupported": 3,
+   "undetermined": 0,
+   "unauthorizedActionClauses": 2,
+   "factErrorClauses": 1,
+   "realOmissions": [
+    "学生A 从走廊到了大厅",
+    "学生A 位于大厅"
+   ],
+   "expressionIssueClauses": 4,
+   "programFalseNegatives": 2,
+   "perspectiveHints": 0,
+   "programGapClauses": 1
+  }
+ }
+}

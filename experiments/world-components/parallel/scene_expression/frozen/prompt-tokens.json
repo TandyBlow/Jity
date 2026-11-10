@@ -1,0 +1,224 @@
+{
+ "perSample": {
+  "ns-appear-1": {
+   "calls": [
+    {
+     "slot": 1,
+     "kind": "appearanceText",
+     "tokens": {
+      "A": 125,
+      "B": 160,
+      "C": 197
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     125
+    ],
+    "B": [
+     160
+    ],
+    "C": [
+     197
+    ]
+   }
+  },
+  "ns-loc-appear-1": {
+   "calls": [
+    {
+     "slot": 1,
+     "kind": "appearanceText",
+     "tokens": {
+      "A": 123,
+      "B": 156,
+      "C": 193
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     123
+    ],
+    "B": [
+     156
+    ],
+    "C": [
+     193
+    ]
+   }
+  },
+  "ns-task-1": {
+   "calls": [],
+   "perArm": {
+    "A": [],
+    "B": [],
+    "C": []
+   }
+  },
+  "ns-task-time-1": {
+   "calls": [],
+   "perArm": {
+    "A": [],
+    "B": [],
+    "C": []
+   }
+  },
+  "ns-pers-1": {
+   "calls": [
+    {
+     "slot": 2,
+     "kind": "personalityText",
+     "tokens": {
+      "A": 115,
+      "B": 137,
+      "C": 171
+     }
+    },
+    {
+     "slot": 3,
+     "kind": "sanity_changed",
+     "tokens": {
+      "A": 114,
+      "B": 136,
+      "C": 170
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     115,
+     114
+    ],
+    "B": [
+     137,
+     136
+    ],
+    "C": [
+     171,
+     170
+    ]
+   }
+  },
+  "ns-multi-1": {
+   "calls": [
+    {
+     "slot": 1,
+     "kind": "position",
+     "tokens": {
+      "A": 117,
+      "B": 152,
+      "C": 173
+     }
+    },
+    {
+     "slot": 2,
+     "kind": "appearanceText",
+     "tokens": {
+      "A": 125,
+      "B": 160,
+      "C": 181
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     117,
+     125
+    ],
+    "B": [
+     152,
+     160
+    ],
+    "C": [
+     173,
+     181
+    ]
+   }
+  },
+  "ns-empty-1": {
+   "calls": [],
+   "perArm": {
+    "A": [],
+    "B": [],
+    "C": []
+   }
+  },
+  "ns-cont-1": {
+   "calls": [
+    {
+     "slot": 1,
+     "kind": "position",
+     "tokens": {
+      "A": 117,
+      "B": 139,
+      "C": 168
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     117
+    ],
+    "B": [
+     139
+    ],
+    "C": [
+     168
+    ]
+   }
+  },
+  "ns-cont-2": {
+   "calls": [
+    {
+     "slot": 1,
+     "kind": "appearanceText",
+     "tokens": {
+      "A": 120,
+      "B": 142,
+      "C": 171
+     }
+    }
+   ],
+   "perArm": {
+    "A": [
+     120
+    ],
+    "B": [
+     142
+    ],
+    "C": [
+     171
+    ]
+   }
+  },
+  "ns-cont-3": {
+   "calls": [],
+   "perArm": {
+    "A": [],
+    "B": [],
+    "C": []
+   }
+  }
+ },
+ "summary": {
+  "A": {
+   "count": 8,
+   "min": 114,
+   "p50": 118.5,
+   "max": 125
+  },
+  "B": {
+   "count": 8,
+   "min": 136,
+   "p50": 147.0,
+   "max": 160
+  },
+  "C": {
+   "count": 8,
+   "min": 168,
+   "p50": 172.0,
+   "max": 197
+  }
+ }
+}
