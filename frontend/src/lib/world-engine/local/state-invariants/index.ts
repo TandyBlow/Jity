@@ -1109,7 +1109,12 @@ export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; erro
       }
     }
   }
-  if (!sawSnapshot) warnings.push(issue('evidence_shape', 'no full transport snapshot in this record; only visible history/task/refresh continuity was checked'));
+  if (!sawSnapshot) {
+    // Visible summaries alone cannot prove state replay. A record without a
+    // full transport snapshot is not acceptance evidence, even if the page
+    // history numbers look monotonic.
+    errors.push(issue('evidence_shape', 'no full transport snapshot in this record; state cannot be replayed'));
+  }
   return { ok: errors.length === 0, errors, warnings };
 }
 

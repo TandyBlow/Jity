@@ -214,10 +214,9 @@ describe('completion and discovery monotonicity', () => {
 describe('visible acceptance summary', () => {
   it('accepts monotonic visible history and tasks', () => {
     const result = verifyVisibleAcceptance([
-      { before: { historyCount: '3', tasks: [{ goal: '开门', done: false }] }, after: { historyCount: '4', tasks: [{ goal: '开门', done: true }] }, text: '门开了。', historyDelta: 1 },
+      { before: { historyCount: '3', tasks: [{ goal: '开门', done: false }] }, after: { historyCount: '4', tasks: [{ goal: '开门', done: true }] }, text: '门开了。', historyDelta: 1, snapshot: {} },
     ]);
     expect(result.errors).toEqual([]);
-    expect(result.warnings.map((item) => item.code)).toContain('evidence_shape');
   });
 
   it('rejects a roll ledger with a repeated roll id', async () => {
@@ -332,7 +331,7 @@ describe('visible acceptance summary', () => {
 
   it('warns, rather than failing, when the visible history delta is unusual', () => {
     const result = verifyVisibleAcceptance([
-      { before: { historyCount: 4 }, after: { historyCount: 4 }, text: '正文', historyDelta: 0 },
+      { before: { historyCount: 4 }, after: { historyCount: 4 }, text: '正文', historyDelta: 0, snapshot: {} },
     ]);
     expect(result.errors).toEqual([]);
     expect(result.warnings.map((item) => item.code)).toContain('history_delta');
