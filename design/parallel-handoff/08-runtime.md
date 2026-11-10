@@ -115,6 +115,41 @@ Runtime states and what the page should do:
   load itself is not shortened by the engine beyond the direct-blob path and
   the `loadTimeoutMs` bound.
 
+## Ready / draft / verified timing (acceptance 2026-11-10)
+
+The acceptance text forbids counting an unverified first token as the 60-second
+"readable prose" pass. The runtime and the candidate now expose three distinct
+timestamps:
+
+| field | meaning | where |
+|---|---|---|
+| `GenerationEvidence.firstReadableMs` | first non-whitespace streamed fragment (may be a draft that later fails facts) | engine |
+| `CandidateResult.timings.firstReadableMs` | same, per point, across all attempts | candidate |
+| `CandidateResult.timings.acceptedFirstReadableMs` | first readable text **of the attempt that passed fact verification**; null if no attempt was accepted | candidate |
+| `CandidateResult.timings.acceptedReadableMs` | when the accepted text finished verification (the first fact-verified prose the player can be shown); null if rejected | candidate |
+
+09 must report `acceptedReadableMs` (or both accepted fields) for the 60 s /
+300 s budget, and may report `firstReadableMs` only as draft latency.
+
+**Ready gate:** `complete()` / `chat()` throw `wllama engine is not loaded`
+synchronously when the engine is not ready — they never wait for a model
+timeout (the old 152-second wait was a retry into a dead worker, fixed earlier).
+The driver must `await engine.ensureLoaded()` (or `load()`) before generation;
+a load failure is a request failure, not a generation timeout. Recovery is
+explicit and bounded: at most one reload per request through `ensureLoaded()`;
+there is no automatic reload loop, and a reload never switches weights because
+a different URL throws while a model is loaded.
+
+**4B split status:** the interface and files exist, both shards fetch as
+`arrayBuffer` in Edge, and native llama.cpp loads/generates from them. That is
+not browser proof. The 4B is not deployable or recommended until 09 records a
+real load/generation with adapter and timings.
+
+**Exploration lanes:** 11/12 do not get runtime priority. Their candidates reach
+09 only after 10's offline screening and preregistration; 08 only supplies the
+load/cancel/timing contract above, and does not take the 4060 ahead of the
+product queue.
+
 ## 02/06 integration entry points
 
 - 06 product page / game-model: construct one engine and call

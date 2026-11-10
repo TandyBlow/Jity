@@ -639,6 +639,14 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(fake.calls.exits).toBe(1);
   });
 
+  test('chat before ready rejects immediately instead of waiting for a model timeout', async () => {
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fakeWllama().instance);
+    const started = Date.now();
+    await expect(engine.chat([{ role: 'user', content: 'P' }])).rejects.toThrow(/not loaded/);
+    expect(Date.now() - started).toBeLessThan(50);
+    await expect(engine.ensureLoaded()).resolves.toBeUndefined(); // the explicit recovery path
+  });
+
   test('complete before load is an ordering error, and dispose is terminal', async () => {
     let factories = 0;
     const fake = fakeWllama();

@@ -180,6 +180,14 @@ export interface CandidateTimings {
   calls: number;
   totalMs: number;
   perAttemptMs: number[];
+  /** Request start → the first readable text of the attempt that passed fact
+   * verification. Null when no attempt was accepted. This is separate from
+   * `firstReadableMs`, which may belong to a rejected draft. */
+  acceptedFirstReadableMs: number | null;
+  /** Request start → the accepted text finished fact verification. This is the
+   * first fact-verified readable prose the player could be shown; an early
+   * unverified draft must not be reported under this name. Null if rejected. */
+  acceptedReadableMs: number | null;
 }
 
 export interface CandidateProgress {

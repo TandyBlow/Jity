@@ -269,6 +269,9 @@ describe('generateCandidate', () => {
     expect(calls[0]!.options).toMatchObject({ maxTokens: 192, temperature: 0.7, seed: 42 });
     expect(result.timings.calls).toBe(1);
     expect(result.timings.firstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedFirstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedReadableMs).not.toBeNull();
+    expect(result.timings.acceptedReadableMs!).toBeGreaterThanOrEqual(result.timings.acceptedFirstReadableMs!);
     expect(seen[0]!.status).toBe('streaming');
     expect(seen.at(-1)).toMatchObject({ status: 'done', verified: true });
   });
@@ -294,6 +297,8 @@ describe('generateCandidate', () => {
     const repairPrompt = result.rawAttempts[1]!.prompt;
     expect(repairPrompt).toContain('方向写反了');
     expect(result.timings.calls).toBe(2);
+    expect(result.timings.acceptedFirstReadableMs).not.toBeNull();
+    expect(result.timings.acceptedFirstReadableMs!).toBeGreaterThanOrEqual(result.timings.firstReadableMs!);
     expect(result.rawAttempts[1]!.temperature).toBeLessThan(result.rawAttempts[0]!.temperature);
     expect(calls).toHaveLength(2);
   });
@@ -305,6 +310,8 @@ describe('generateCandidate', () => {
     ]);
     const result = await generateCandidate(args({ engine }), { spec: SPEC });
     expect(result.accepted).toBe(false);
+    expect(result.timings.acceptedFirstReadableMs).toBeNull();
+    expect(result.timings.acceptedReadableMs).toBeNull();
     const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
     expect(hard).toContain('omitted_fact');
     expect(hard).toContain('time_not_narrated');
