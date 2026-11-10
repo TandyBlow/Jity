@@ -133,12 +133,12 @@ committed no point. The page calls `sync.save(snapshot)`; the sync adapter write
 the session-owned IndexedDB record without `expectedRevision`, bumping its
 revision, so the session's next checkpoint conflicts.
 
-Patch: `results/product/evidence/05-kernel/patches/06-sync-local-ownership.patch`.
-It adds `skipLocal` to the client/adapter and makes the page ask sync for the
-remote copy only; the session remains the sole local writer. Validated in a
-disposable current-06 source copy: the skipLocal regression test passes and 24
-progress-sync tests pass. 09 must rerun the same 10 inputs after 06/07 applies
-it. This is a state/persistence failure, not a narration-quality finding.
+06's current tree fixes this with `ProductSync.push` plus `client.skipLocal`
+and the page now calls `sync.push(snapshot)`; the session stays the sole local
+writer. Commit `10c1407a` added the path and a test. The old 05 patch is under
+`patches/merged/`. 09 must rerun the same 10 inputs on the current product
+commit; the failed `bc005e51` run is not acceptance evidence. This was a
+state/persistence failure, not a narration-quality finding.
 
 ## Merge bundle
 
