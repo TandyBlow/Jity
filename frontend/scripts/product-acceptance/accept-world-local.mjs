@@ -80,6 +80,7 @@ if (integrationUrl && !base.startsWith(integrationUrl.replace(/\/$/, '')) && !ba
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 const runId = `${new Date().toISOString().replace(/[:.]/g, '').slice(0, 15)}-${Math.random().toString(16).slice(2, 6)}`;
 // Two runs must never share a path: the 15:57 base report was lost that way.
+const expectedPageSha = (process.argv.find((arg) => arg.startsWith('--expect-page-sha=')) ?? '').split('=')[1] || null;
 const evidenceFile = existsSync(out) && !process.argv.includes('--resume')
   ? out.replace(/\.json$/, `-${runId}.json`)
   : out;
@@ -272,6 +273,10 @@ try {
     evidence.productState.worktree = productWorktree;
     evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
     evidence.productState.pageSha256 = sha256(readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8'));
+    evidence.productState.expectedPageSha256 = expectedPageSha;
+    if (expectedPageSha && !evidence.productState.pageSha256.startsWith(expectedPageSha.replace(/\.\.\.$/, ''))) {
+      noteFailure('product', `page source ${evidence.productState.pageSha256.slice(0, 12)} does not match the frozen ${expectedPageSha}`);
+    }
   } catch (error) {
     evidence.productState.error = String(error).slice(0, 200);
   }
