@@ -1451,10 +1451,10 @@ describe('serialized scene: the settled duration is named in the contract', () =
 });
 
 describe('length and paragraph shape follow the reference corpus', () => {
-  test('the default scene is one paragraph of 100-160 characters', () => {
-    const prompt = renderProseFactsPrompt({ committed: packet(moved, povAt), policy: { ...basePolicy, minChars: 100, targetChars: undefined }, scene: { location: '走廊' }, priorTail: null });
-    expect(prompt).toContain('写成一段');
-    expect(prompt).toContain('100～160 字');
+  test('the default scene follows the page contract, 140-200 characters in two paragraphs', () => {
+    const prompt = renderProseFactsPrompt({ committed: packet(moved, povAt), policy: { ...basePolicy, minChars: 140, targetChars: undefined }, scene: { location: '走廊' }, priorTail: null });
+    expect(prompt).toContain('写成 2 段');
+    expect(prompt).toContain('140～200 字');
   });
 
   test('an explicit paragraph count is still honoured', () => {
@@ -1479,7 +1479,7 @@ describe('closed name list: a countable constraint instead of a general ban', ()
     expect(prompt).toContain('周宁'); // viewpoint
     expect(prompt).toContain('林川'); // present
     expect(prompt).toContain('林川的盒子'); // held object
-    expect(prompt).toContain('清单之外的人名、物名、声音、气味都不要写');
+    expect(prompt).toContain('不要引入清单之外的新人物、新地点、新物件');
   });
 });
 
@@ -1615,8 +1615,8 @@ describe('a single invented sentence can be repaired instead of losing the draft
 });
 
 describe('an invented posture is repairable sentence by sentence', () => {
-  test('leaning on a wall is flagged and the repaired draft is accepted', async () => {
-    const dirty = '林川从走廊走到门厅，靠在墙边。周宁留在走廊。';
+  test('an object moved to the floor is flagged and the repaired draft is accepted', async () => {
+    const dirty = '林川从走廊走到门厅，盒子躺在地上。周宁留在走廊。';
     const engine = new ScriptedEngine([
       { kind: 'text', text: dirty },
       { kind: 'text', text: dirty },
@@ -1627,8 +1627,8 @@ describe('an invented posture is repairable sentence by sentence', () => {
       policy: { ...basePolicy, writingContract: false, maxAttempts: 2, minChars: 20 },
     });
     expect((result.rawAttempts[0].repairedIssues ?? []).some((issue) => issue.kind === 'unlicensed_action')).toBe(true);
-    expect(engine.calls[2].prompt).toContain('靠在');
+    expect(engine.calls[2].prompt).toContain('躺在地上');
     expect(result.accepted).toBe(true);
-    expect(result.text).not.toContain('靠在');
+    expect(result.text).not.toContain('躺在地上');
   });
 });

@@ -11,14 +11,14 @@
  * - a hand verb is licensed when the object has no stated position in the
  *   input, or when the verb appears in the input next to that object.
  */
-// Sitting is left out on purpose: two of the 71 reference scenes sit down
-  // without stating it, and a seat in the input is enough to make it true.
-export const POSTURE_VERBS = ['蹲下', '蹲在', '靠在', '靠墙', '站起', '躺下'] as const;
+// Posture ("crouching", "leaning", "sitting") is a micro-action and is NOT a
+// violation; only what changes a world fact is checked here.
+export const OBJECT_MOVE_PHRASES = ['躺在地上', '倒在地上', '放在地上', '塞进兜里', '揣进兜里'] as const;
 export const HAND_VERBS = ['握着', '握住', '拿着', '捏着', '攥着', '收起', '揣进', '摸向', '摸了摸', '摸着', '摘下', '戴上', '摘掉'] as const;
 
 export interface ActionViolation {
   sentence: string;
-  kind: 'posture' | 'hand';
+  kind: 'hand' | 'position';
   word: string;
   object?: string;
 }
@@ -45,13 +45,16 @@ function statedPositions(inputText: string): { name: string; position: string }[
 }
 
 export function actionViolations(text: string, inputText: string): ActionViolation[] {
+  // Posture is deliberately NOT a violation: crouching, leaning or sitting are
+  // micro-actions that change no world fact, and the product now keeps them.
+  // A hand on someone else's property and an object that moves are the classes
+  // that change what is true, so only those are returned as violations.
   const found: ActionViolation[] = [];
   const positions = statedPositions(inputText);
   for (const sentence of sentencesOf(text)) {
-    for (const verb of POSTURE_VERBS) {
-      if (!sentence.includes(verb)) continue;
-      if (inputText.includes(verb)) continue;
-      found.push({ sentence, kind: 'posture', word: verb });
+    for (const phrase of OBJECT_MOVE_PHRASES) {
+      if (!sentence.includes(phrase) || inputText.includes(phrase)) continue;
+      found.push({ sentence, kind: 'position', word: phrase });
     }
     for (const verb of HAND_VERBS) {
       if (!sentence.includes(verb)) continue;

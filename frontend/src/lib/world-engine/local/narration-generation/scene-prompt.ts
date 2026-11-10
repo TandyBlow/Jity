@@ -115,9 +115,13 @@ function paragraphsOf(policy: NarrationPolicy): { count: number; min: number; ma
   // Gold scenes are 61-155 chars, median 95, p25 81, so a 100-char floor
   // rejected 43 of the 71 human rows. Half the target stays inside the
   // reference range without inviting one-line answers.
-  const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 160)));
-  const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.5))));
-  const count = policy.paragraphs ?? (max > 300 ? 2 : 1);
+  // The page's contract (06, prompt.ts): 160-240 characters for a first draft
+  // and 140-220 for a repair. The reference corpus is shorter (median 95), but
+  // the product requires the longer scene, so the floor follows the page, not
+  // the corpus. 06 issues the single version both 02 and 10 must use.
+  const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 200)));
+  const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.7))));
+  const count = policy.paragraphs ?? (max > 300 ? 3 : 2);
   return { count: Math.max(1, Math.min(3, Math.round(count))), min, max };
 }
 
@@ -206,8 +210,8 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   ].filter(Boolean);
   const uniqueNames = [...new Set(allowedNames)];
   if (uniqueNames.length) {
-    lines.push(`【可用名字】这一回合只允许出现这些人和物的名字：${uniqueNames.join('、')}。`);
-    lines.push('清单之外的人名、物名、声音、气味都不要写；需要指代时用上面的名字或省略主语。');
+    lines.push(`【可用名字】${uniqueNames.join('、')}。`);
+    lines.push('不要引入清单之外的新人物、新地点、新物件，也不要替别人做他这一回合没做的动作。');
   }
 
   if (projected.required.length) {
@@ -223,7 +227,7 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
       lines.push('任务完成要让人看得出是这件事办完了，不要写出答案或下一件事。');
     }
   } else {
-    lines.push('这一小段时间里没有实体变化：人物留在原地，不要走向、靠近、离开或转向任何地点，也不要写任务达成或新的行动。');
+    lines.push('这一小段时间里没有外部事件：没有人到来或离开，没有人完成任务，世界状态不变。');
   }
 
   const time = policy.time ?? null;
@@ -259,14 +263,17 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push('另外的变化（用动作或神态表现，不要照抄原句、不要写数字）：');
     for (const hint of projected.hints) lines.push(`- ${hint}`);
   }
-  lines.push('除了上面列出的，这一小段时间里没有别的事件：人物位置和物品都保持原样。');
+  lines.push('除此之外没有别的事件：人物位置和物品都保持原样。');
 
   const { count, min, max } = paragraphsOf(policy);
   lines.push(count === 1
     ? `要求：写成一段，合计 ${min}～${max} 字，直接给正文，不要小标题，不要解释。`
     : `要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
-  lines.push('用具体的动作、环境和对话推进，不要把上面的清单逐条翻译成句子；场景说明只用来了解环境，不要整句照抄。');
-  lines.push('视角人物只拿自己的物品，不要替别人做动作，也不要改变别人手里东西的位置。');
+  lines.push('把它写成一幕，不是写成清单：让视角人物看见、停下、打量、皱眉、屏住呼吸、在心里嘀咕，'
+    + '或者对在场的人说一句话——这些细微反应都允许，不用向上面报备。');
+  lines.push('写明已经发生的事（谁到了哪里、过去了多久、什么办完了），但不要把它们排成一串「A在…，B在…」；'
+    + '用视角人物的注意力把它们带出来。对话可以写，措辞由你定，但不要让别人说出没发生过的消息。');
+  lines.push('视角人物只动自己的东西；别人的物品、别人的身体保持原样。');
   // The opening is as reusable as the ending: a model that starts every scene
   // the same way reads as a template even when every sentence is true.
   if (args.priorOpen) lines.push(`上一回合的开头是「${args.priorOpen}…」，不要用同样的开头或句式。`);
