@@ -98,6 +98,57 @@ MemoryQueueStore / createWebStorageQueueStore(key, storage)
 diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 祖先→叶排序，只看父链，不看时间戳。
 
+## 存储/同步会不会覆盖正文历史（给 06 的排查结论）
+
+刷新后条目从 2 变 0，先说历史存在哪：`LocalGameSnapshot` 里有三处。
+
+- `snapshot.commands`：玩家提交过的输入，按顺序；
+- `snapshot.transport.points`：已提交的点位（含 `trigger: 'player'`）；
+- `snapshot.transport.narrations[pointId]`：每个点的正文和状态（`pending` → `ready`）。
+
+页面 `restoredEntries()` 用后两处重建列表，再用 `commands[index]` 配输入。三处任何一处
+缺失，历史就少。
+
+同步这一侧做了什么，逐条列清楚：
+
+| 调用 | 读/写 | 会不会改历史 |
+|---|---|---|
+| `sync.save(snapshot)`（默认） | 只读本地记录 + 上传 | 不会；不写 store |
+| `sync.push(snapshot)` | 只上传 | 不会 |
+| `sync.flush()` | 只读队列 + 上传 | 不会 |
+| `sync.restore()`（默认） | 本地有就返回本地；本地没有才读远端 | 不会写 store；返回的快照交给会话打开 |
+| `sync.status()` | 只读 | 不会 |
+| `sync.choose(...)`（默认） | 服务端选分支 + 返回快照 | 不会写 store |
+| `createProductSync({ writeLocal: true })` | 会写 store | 只有这一种会覆盖本地记录；产品不用它 |
+
+拿 06 的真实存储实现跑过（`frontend/scripts/parallel-sync/session-owned-store-check.ts`，
+内存后端，和 IndexedDB 同一套 `store.ts` 代码）：
+
+- 会话先存一份带 2 条正文历史的快照（revision 1）；
+- 页面回调按它的写法调 `sync.save(snapshot)`；
+- 结果：revision 仍是 1，store 里 `commands` 3 条、`narrations` 3 条原样；会话下一次
+  `expectedRevision: 1` 的保存成功；
+- 同一个脚本的 `writeLocal: true` 分支仍能复现 04 撞到的 `progress_conflict`
+  （revision 变 3，会话下一次保存冲突），说明这个检查确实测到了问题。
+
+另外，真实服务上有往返测试（`real-server.test.ts`）：带 3 条命令、3 条 narration 和
+checkpoint 的快照上传后读回，`toEqual` 完全一致。
+
+所以按现有代码，**同步不会改正文历史**。2→0 最可能不是渲染丢字段，而是那一轮保存
+根本没落盘：04 的证据里第一次提交就被 `progress_conflict` 拒了（`resultsCalls: 0`），
+没有持久记录，刷新自然没有条目。双写已经在 `2b96e783` 从适配层默认值里去掉，06 升到
+这个提交后，页面保存路径不用改代码；仍要补的是 `storage: window.localStorage`
+（离线队列和已知 head）以及 `restore()`/冲突选择。
+
+如果升级后刷新仍少条目，按顺序查这三处（都在 06 的代码里）：
+
+1. `snapshot.transport.points` 里已提交点的 `trigger` 是不是 `'player'`（自动回合会被
+   `restoredEntries` 过滤掉，而 `commands` 仍计入，索引会错位）；
+2. `narrations[pointId].status` 是不是 `'ready'`（`'accepted'`、`'pending'` 都会显示成
+   “正文没有保存成功”，但不是 0 条）；
+3. 会话那次保存是否真的成功（`metadata.revision` 有没有递增），以及 `commands` 与
+   player 点的数量是否一一对应。
+
 ## 接线
 
 ### 给 06：产品接入（2026-11-10 组织调整后）

@@ -45,23 +45,27 @@ interface Snapshot {
     headPointId: string;
     version: number;
   };
-  commands: Array<{ text: string }>;
+  commands: string[];
 }
 
 const worldId = process.env.PROGRESS_SYNC_URL
   ? `w_owned_${Date.now().toString(36)}`
   : 'w_owned';
-const snapshot = (revision: number, text: string): Snapshot => ({
+const snapshot = (revision: number, text: string, history: string[] = []): Snapshot => ({
   transport: {
     worldId,
     state: { characters: {}, locations: {}, items: {} },
-    pointStates: { p1: { stateDigest: `digest-${revision}` } },
+    pointStates: Object.fromEntries(
+      [...history, text].map((entry, index) => [`p${index + 1}`, { stateDigest: `digest-${revision}-${index}` }]),
+    ),
     control: { revision, phase: 'idle', paused: false },
-    narrations: {},
-    headPointId: 'p1',
+    narrations: Object.fromEntries(
+      [...history, text].map((entry, index) => [`p${index + 1}`, { status: 'accepted', text: entry }]),
+    ),
+    headPointId: `p${history.length + 1}`,
     version: revision,
   },
-  commands: [{ text }],
+  commands: [...history, text],
 });
 
 const offline = (async () => {
@@ -84,23 +88,28 @@ async function run(mode: 'old' | 'current' | 'online') {
     sleep: async () => undefined,
   });
 
-  // The session opens the world and persists its first point (revision 1).
-  await store.save(worldId, snapshot(1, 'initial'), { expectedRevision: 0 });
+  // The session opens the world and persists its first point (revision 1),
+  // with two played commands and their narration entries already history.
+  await store.save(worldId, snapshot(1, 'initial', ['第一回合正文', '第二回合正文']), { expectedRevision: 0 });
   // The page's refresh handler asks sync to save the same snapshot.
-  const saved = await sync.save(snapshot(1, 'initial'), { requestId: `page-${mode}` });
+  const saved = await sync.save(snapshot(1, 'initial', ['第一回合正文', '第二回合正文']),
+    { requestId: `page-${mode}` });
   const after = await store.load(worldId);
   let sessionNext: 'ok' | 'conflict';
   try {
-    await store.save(worldId, snapshot(2, 'turn-1'), { expectedRevision: 1 });
+    await store.save(worldId, snapshot(2, 'turn-1', ['第一回合正文', '第二回合正文']), { expectedRevision: 1 });
     sessionNext = 'ok';
   } catch {
     sessionNext = 'conflict';
   }
+  const stored = after?.snapshot;
   return {
     mode,
     outcome: saved.outcome?.status ?? null,
     localSaved: saved.localSaved,
     storedRevisionAfterPageSave: after?.metadata.revision ?? null,
+    storedCommands: stored?.commands.length ?? null,
+    storedNarrations: stored ? Object.keys(stored.transport.narrations).length : null,
     sessionNextSave: sessionNext,
   };
 }
