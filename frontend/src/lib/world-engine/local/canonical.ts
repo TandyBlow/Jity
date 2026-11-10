@@ -21,7 +21,12 @@ function assertUnicode(value: unknown): void {
     return;
   }
   if (Array.isArray(value)) { for (const item of value) assertUnicode(item); return; }
-  if (value && typeof value === 'object') { for (const item of Object.values(value as Record<string, unknown>)) assertUnicode(item); }
+  if (value && typeof value === 'object') {
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      assertUnicode(key);
+      assertUnicode(item);
+    }
+  }
 }
 
 function pushAscii(out: number[], text: string): void {
@@ -58,7 +63,7 @@ function encode(value: unknown, out: number[]): void {
   if (typeof value === 'object') {
     const record = value as Record<string, unknown>;
     const keys = Object.keys(record);
-    for (const key of keys) if (!/^[\x20-\x7e]*$/.test(key)) throw new Error('object keys must be ASCII strings');
+    for (const key of keys) if (!/^[\x00-\x7f]*$/.test(key)) throw new Error('object keys must be ASCII strings');
     keys.sort();
     out.push(0x7b);
     keys.forEach((key, index) => {

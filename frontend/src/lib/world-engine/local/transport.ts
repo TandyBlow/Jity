@@ -11,7 +11,8 @@ import type {
 } from '../types';
 import { canonicalDigest, canonicalJson } from './canonical';
 import {
-  applyPoint, buildInitialState, buildTimelinePoint, clone, KernelViolation, pointEntityDeltas, stateDigest,
+  applyPoint, buildInitialState, buildTimelinePoint, clone, KernelViolation, normalizeInitialState,
+  normalizeSettlementGroup, normalizeTimeAdvance, normalizeTimelinePoint, pointEntityDeltas, stateDigest,
 } from './state';
 
 const ENGINE = 'world-engine-v1' as const;
@@ -309,7 +310,7 @@ function claimValid(claim: Claim | null): boolean {
 }
 
 function createRecord(initial: InitialTemplate, worldId: Id): PersistedRecord {
-  const withId = { ...initial, worldId } as InitialState;
+  const withId = normalizeInitialState({ ...initial, worldId });
   const state = buildInitialState(withId);
   const rootPointId = `point_root_${worldId}`;
   const record: PersistedRecord = {
@@ -450,10 +451,14 @@ function handleBeginPoint(record: PersistedRecord, request: RequestMap['checkpoi
   checkNotPaused(record);
   if (record.work) refuse('phase_invalid', 'a point work is still active');
   if (!record.advance || !record.round) refuse('phase_invalid', 'no active advance');
+  if (request.kind !== 'normal' && request.kind !== 'instant' && request.kind !== 'linked') {
+    refuse('request_malformed', 'begin_point.kind is not a contract kind');
+  }
   if (request.pointId === record.rootPointId || record.points[request.pointId]) refuse('version_mismatch', 'point id is already committed');
-  if (!timeAdvanceValid(request.kind, request.timeAdvance)) refuse('request_malformed', 'point time does not match its kind');
+  const timeAdvance = normalizeTimeAdvance(request.timeAdvance, 'begin_point.timeAdvance');
+  if (!timeAdvanceValid(request.kind, timeAdvance)) refuse('request_malformed', 'point time does not match its kind');
   record.work = {
-    pointId: request.pointId, kind: request.kind, timeAdvance: clone(request.timeAdvance), timeLocked: false,
+    pointId: request.pointId, kind: request.kind, timeAdvance: clone(timeAdvance), timeLocked: false,
     sealed: false, prefixDigest: null, timeScanComplete: false, timeScan: null,
     baseline: { headPointId: record.headPointId, version: record.version, stateDigest: record.pointStates[record.headPointId].stateDigest },
     phase: 'select_actor',
@@ -537,7 +542,7 @@ async function handleStageUnit(record: PersistedRecord, request: RequestMap['che
   const group = work.pendingGroup;
   if (!group || group.groupId !== request.groupId) refuse('version_mismatch', 'group binding differs from the pending group');
   if (!group.closed) refuse('phase_invalid', 'staging requires a closed group');
-  const candidates = request.candidates;
+  const candidates = normalizeSettlementGroup(request.candidates);
   if (candidates.groupId !== request.groupId) refuse('request_malformed', 'candidates name another group');
   if (!same([...candidates.actorIds].sort(), uniqSorted(group.memberIds))) refuse('request_malformed', 'staged actors differ from the admitted closed-group members');
   validateCommitGroups(record, [candidates]);
@@ -572,9 +577,10 @@ function handleStageTimeScan(record: PersistedRecord, request: RequestMap['check
   const work = checkWorkPoint(record, request.pointId);
   checkNotPaused(record);
   if (work.timeScanComplete) refuse('request_malformed', 'time-scan candidates are already confirmed');
-  if (request.candidates.groupId !== null) refuse('request_malformed', 'time-scan candidates cannot name a group');
-  validateCommitGroups(record, [request.candidates]);
-  work.timeScan = clone(request.candidates);
+  const candidates = normalizeSettlementGroup(request.candidates);
+  if (candidates.groupId !== null) refuse('request_malformed', 'time-scan candidates cannot name a group');
+  validateCommitGroups(record, [candidates]);
+  work.timeScan = clone(candidates);
   work.timeScanComplete = true;
   work.timeLocked = true;
   work.working = scanWorking(work.working, record.round!.order);
@@ -601,7 +607,7 @@ async function handleSealPoint(record: PersistedRecord, request: RequestMap['che
 async function handlePrepareSuccessor(record: PersistedRecord, request: RequestMap['checkpoint_prepare_successor']): Promise<DataMap['checkpoint_prepare_successor']> {
   const data = await handleSealPoint(record, { ...request, operation: 'seal_point' } as never);
   const work = record.work!;
-  work.successor = { pointId: request.successorPointId, predecessorPointId: work.pointId, timeAdvance: clone(request.timeAdvance),
+  work.successor = { pointId: request.successorPointId, predecessorPointId: work.pointId, timeAdvance: clone(normalizeTimeAdvance(request.timeAdvance, 'prepare_successor.timeAdvance')),
     expectedPredecessorVersion: record.version, prefixDigest: data.prefixDigest,
     expectedPredecessorStateDigest: record.pointStates[record.headPointId].stateDigest, baseline: { ...work.baseline } };
   return { pointId: work.pointId, successorPointId: request.successorPointId, prefixDigest: data.prefixDigest, successor: clone(work.successor) };
@@ -633,7 +639,7 @@ async function handlePreview(record: PersistedRecord, request: RequestMap['previ
     trigger: record.round.trigger, linkedFromPointId: work.kind === 'normal' ? null : work.baseline.headPointId,
     timeAdvance: clone(request.timeAdvance), entityDeltas: {},
   });
-  const merged = pointEntityDeltas(request.settlementGroups, null);
+  const merged = pointEntityDeltas(request.settlementGroups.map(normalizeSettlementGroup), null);
   const projection = { ...point, entityDeltas: clone(merged) };
   const working = applyPoint(record.state, projection);
   return { pointId: request.pointId, pointProjection: projection, mergedEntityDeltas: clone(merged),
@@ -682,32 +688,34 @@ async function handleCommitPoint(record: PersistedRecord, request: RequestMap['c
   checkExpected(record, request);
   checkChain(record, request.advanceId, request.roundId);
   checkNotPaused(record);
+  const point = normalizeTimelinePoint(request.point);
   if (request.pointId !== work.pointId) refuse('version_mismatch', 'commit targets another point than the sealed work');
-  if (request.point.kind !== work.kind || canonicalJson(request.point.timeAdvance) !== canonicalJson(work.timeAdvance)) {
+  if (point.kind !== work.kind || canonicalJson(point.timeAdvance) !== canonicalJson(work.timeAdvance)) {
     refuse('version_mismatch', 'point kind or time differs from the sealed prefix', { reason: 'prefix_binding_mismatch' });
   }
-  if (request.point.id !== work.pointId || request.point.previousPointId !== record.headPointId) refuse('version_mismatch', 'point chains from another head');
-  if (request.point.advanceId !== request.advanceId || request.point.roundId !== request.roundId
-    || request.point.sequence !== record.version + 1 || request.point.trigger !== record.round!.trigger) {
+  if (point.id !== work.pointId || point.previousPointId !== record.headPointId) refuse('version_mismatch', 'point chains from another head');
+  if (point.advanceId !== request.advanceId || point.roundId !== request.roundId
+    || point.sequence !== record.version + 1 || point.trigger !== record.round!.trigger) {
     refuse('version_mismatch', 'commit point metadata differs from the active chain');
   }
+  const groups = request.settlementGroups.map(normalizeSettlementGroup);
   const staged = work.units;
-  if (request.settlementGroups.length !== staged.length) refuse('version_mismatch', 'settlementGroups differ from the sealed settledUnits', { reason: 'prefix_binding_mismatch' });
+  if (groups.length !== staged.length) refuse('version_mismatch', 'settlementGroups differ from the sealed settledUnits', { reason: 'prefix_binding_mismatch' });
   for (let index = 0; index < staged.length; index++) {
     const unit = staged[index];
-    const group = request.settlementGroups[index];
+    const group = groups[index];
     if (unit.groupId !== group.groupId || canonicalJson(unit.memberIds) !== canonicalJson([...group.actorIds].sort())
       || unit.contentHash !== await canonicalDigest(group)) {
       refuse('version_mismatch', 'settlementGroups differ from the sealed settledUnits', { reason: 'prefix_binding_mismatch' });
     }
   }
-  validateCommitGroups(record, request.settlementGroups);
-  const merged = pointEntityDeltas(request.settlementGroups, work.timeScan);
-  if (!same(request.point.entityDeltas, merged)) refuse('request_malformed', 'point deltas differ from the merged settlement');
-  const newState = applyPoint(record.state, request.point);
+  validateCommitGroups(record, groups);
+  const merged = pointEntityDeltas(groups, work.timeScan);
+  if (!same(point.entityDeltas, merged)) refuse('request_malformed', 'point deltas differ from the merged settlement');
+  const newState = applyPoint(record.state, point);
   record.state = newState;
   record.version += 1;
-  record.points[request.pointId] = clone(request.point);
+  record.points[point.id] = clone(point);
   record.pointStates[request.pointId] = { version: record.version, state: clone(newState), stateDigest: await stateDigest(newState) };
   record.round!.cursor = work.working.cursor;
   record.round!.actedIds = [...work.working.actedIds];
@@ -918,8 +926,9 @@ export class LocalWorldTransport implements WorldTransport {
         checkLease(record, request);
         const work = checkWorkPoint(record, request.pointId);
         if (work.timeLocked) refuse('point_time_locked', 'point time is locked');
-        if (!timeAdvanceValid(work.kind, request.timeAdvance)) refuse('request_malformed', 'point time does not match its kind');
-        work.timeAdvance = clone(request.timeAdvance);
+        const timeAdvance = normalizeTimeAdvance(request.timeAdvance, 'set_point_time.timeAdvance');
+        if (!timeAdvanceValid(work.kind, timeAdvance)) refuse('request_malformed', 'point time does not match its kind');
+        work.timeAdvance = clone(timeAdvance);
         record.control.revision += 1;
         return { pointId: work.pointId, timeAdvance: clone(work.timeAdvance) };
       }
