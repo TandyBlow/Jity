@@ -13,6 +13,7 @@ import { buildBeatPrompt, planBeats } from './beats';
 import { BACKGROUND_RULES, projectProseFacts, renderProseFactsPrompt } from './scene-prompt';
 import { composeNarrationPrompt } from './prompt';
 import { buildLedger } from './ledger';
+import { senseViolations } from './licensed-sense';
 import { missingRequired } from './scene-prompt';
 
 // ---------------------------------------------------------------------------
@@ -1681,5 +1682,122 @@ describe('length follows material', () => {
       scene: { location: '走廊' }, priorTail: null,
     });
     expect(prompt).toContain('140～240 字');
+  });
+});
+
+describe('a completed task may be paraphrased', () => {
+  const taskPacket = {
+    facts: [
+      { id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对三份互相矛盾的登记簿' },
+    ],
+  } as never;
+
+  test('a paraphrase with a completion cue counts as expressing the task', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川把三本簿子摊开，比对完毕，屋里安静下来。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskPacket, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+  });
+
+  test('still reading with no result stays a hard omission', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川盯着三本登记簿，一页页翻过去，眉头越皱越紧。' },
+      { kind: 'text', text: '林川盯着三本登记簿，一页页翻过去，眉头越皱越紧。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskPacket, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'fact_omitted')).toBe(true);
+  });
+});
+
+describe('a clause said twice in one passage is an echo', () => {
+  test('the same five-character clause twice is a hard loop', () => {
+    const text = '林川把簿子合上，三分钟过去，屋里静下来。他抬头看窗外，三分钟过去，光移动了一点。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const committed = { facts: [{ id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对簿子' }] } as never;
+    return generateCommittedNarration({
+      engine, committed, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    }).then((result) => {
+      expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'loop_repeated_clause')).toBe(true);
+    });
+  });
+});
+
+describe('length is judged with the content, not instead of it', () => {
+  const taskCommitted = {
+    facts: [{ id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对簿子' }],
+  } as never;
+
+  test('a complete 120-character passage passes a 140-character contract with a note', async () => {
+    const text = '林川把三本簿子摊开，比对完了，屋里的光落到纸边。他把结果记在册子背面，字写得比平时慢一些。院子里有人走过，脚步停在台阶外，又走远了。他没抬头，只把笔放下，听着那点声音散掉，才伸手去够下一本，指节在桌沿上停了一下。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskCommitted, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 140, targetChars: 200 },
+    });
+    expect([...text].length).toBeLessThan(140);
+    expect(result.accepted).toBe(true);
+    expect(result.accepted && result.rawAttempts[0].issues.some((issue) => issue.kind === 'shorter_than_contract')).toBe(true);
+  });
+
+  test('a 40-character fragment is still rejected', async () => {
+    const text = '林川比对完了。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskCommitted, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 140, targetChars: 200 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'too_short')).toBe(true);
+  });
+});
+
+describe('a static prop does not speak', () => {
+  test('a sign making a sound and announcing the time is an invented event', () => {
+    const found = senseViolations(
+      '远处传来演习规则牌的声响，提醒着他们时间已到。',
+      '【物品】演习规则牌（在墙上）：牌面写明 使用弗里嘉演习弹',
+      { staticNames: ['演习规则牌'] },
+    );
+    expect(found.map((entry) => entry.noun)).toEqual(['演习规则牌']);
+  });
+
+  test('a person speaking is not affected', () => {
+    const found = senseViolations(
+      '诺诺在巷口喊了一声，声音传出去。',
+      '【人物】诺诺',
+      { staticNames: ['演习规则牌'] },
+    );
+    expect(found).toEqual([]);
+  });
+
+  test('a device the input says makes noise stays licensed', () => {
+    const found = senseViolations(
+      '除湿机的声音从墙角传来。',
+      '【物品】除湿机：一直响着',
+      { staticNames: ['除湿机'] },
+    );
+    expect(found).toEqual([]);
+  });
+});
+
+describe('a passage that empties hands it filled', () => {
+  test('«he held the goggles» then «his hands were empty» is a contradiction', async () => {
+    const text = '路明非把护目镜拿在手中，镜片上映出巷口的光。一分钟过去，他依旧站在原地，手中没有拿任何东西。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => issue.kind === 'self_contradiction')).toBe(true);
   });
 });

@@ -26,6 +26,7 @@ export type NarrationIssueKind =
   | 'promise_without_fact' | 'past_without_fact'
   /** Shape and length problems. */
   | 'empty_narration' | 'too_short' | 'too_long' | 'truncated' | 'premature_closure'
+  | 'shorter_than_contract'
   /** Repetition across turns or inside one draft. */
   | 'echo_prior' | 'loop_repeated_sentence' | 'loop_repeated_clause'
   /** Viewpoint / knowledge boundary. */
@@ -35,7 +36,7 @@ export type NarrationIssueKind =
   | 'unlicensed_sense'
   /** A posture or a hand on a thing the input never moved (02's narrow
    * generation check, same status as unlicensed_sense). */
-  | 'unlicensed_action'
+  | 'unlicensed_action' | 'unlicensed_appearance' | 'self_contradiction'
   /** The model copied the instructions instead of writing prose. */
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */

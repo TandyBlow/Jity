@@ -109,6 +109,23 @@ const dialogueShare = (text: string): number => {
   return inside / chars;
 };
 
+/** Content words of a task goal, used to accept a paraphrase instead of the
+ * exact sentence. Drops numbers, measure words and connectives. */
+function goalKeyTerms(goal: string): string[] {
+  const stopChars = new Set(['的', '了', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '两', '几',
+    '份', '本', '个', '件', '条', '些', '把', '和', '与', '或', '在', '里', '上', '下']);
+  const terms: string[] = [];
+  // Bigrams of the goal keep a paraphrase like «比对完毕» connected to
+  // «比对三份互相矛盾的登记簿» without demanding the whole phrase.
+  for (let i = 0; i + 2 <= goal.length; i += 1) {
+    const term = goal.slice(i, i + 2);
+    if ([...term].some((char) => stopChars.has(char))) continue;
+    if ([...term].every((char) => /[a-zA-Z0-9]/u.test(char))) continue;
+    if (!terms.includes(term)) terms.push(term);
+  }
+  return terms;
+}
+
 export function verifyNarration(input: VerifyInput): VerifyOutput {
   const { text, ledger, policy, attempt, finishReason, priorText } = input;
   const issues: NarrationIssue[] = [];
@@ -277,6 +294,21 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // when it appears verbatim and the actor's name is in the scene, keep the
     // content but flag the actor binding for review. Moved/task time still
     // need the alignment; this is not a keyword-only pass.
+    // Paraphrase: the run that completed «比对三份互相矛盾的登记簿» wrote
+    // «将三本簿子比对完毕» and was still failed for the literal goal string.
+    // A task is expressed when the actor, a key term from the goal and a
+    // completion cue are all present, so the content is kept without demanding
+    // a verbatim quote.
+    if (fact.kind === 'task_achieved' && text.includes(fact.name)) {
+      const keys = goalKeyTerms(fact.goal).filter((term) => text.includes(term));
+      const done = /(办完|完成|做完|搞定|达成|结束|办妥|了结|完毕|对上|查清|核清|对完|看完|翻完)/u.test(text);
+      if (keys.length && done) {
+        expressed.add(fact.id);
+        issues.push(soft('unverified_sentence', attempt,
+          `task result paraphrased (${keys.join('、')}); actor binding needs review`, undefined));
+        continue;
+      }
+    }
     if (fact.kind === 'task_achieved' && text.includes(fact.goal) && text.includes(fact.name)
       && /(办完|完成|做完|搞定|达成|结束|办妥|了结)/u.test(text)) {
       expressed.add(fact.id);
@@ -324,8 +356,37 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
+  // Length is not a pass/fail criterion on its own. The product allows a turn
+  // to be shorter when nothing big happened, as long as it still says what
+  // changed. Below two thirds of the contract the text stops reading as prose,
+  // and that stays hard; between there and the contract it is a soft note.
+  // A passage that says «他手中的护目镜…» and later «手中没有拿任何东西» is
+  // contradicting itself; the page's accepted 185-character turn did exactly
+  // that. This is not a fact check against the input — it needs no input at all.
+  {
+    const sentences = text.split(/(?<=[。！？!?])|\n+/u).map((sentence) => sentence.trim()).filter(Boolean);
+    const HAND = /(手中|手里|手上)/u;
+    const EMPTY = /(没有|没|空着|空空|什么也没有|什么也没拿)/u;
+    let held: string | null = null;
+    for (const sentence of sentences) {
+      if (!HAND.test(sentence)) continue;
+      if (EMPTY.test(sentence)) {
+        if (held) {
+          issues.push(hard('self_contradiction', attempt,
+            `text first says ${held} is in the hand, then says the hand is empty`, sentence));
+        }
+        continue;
+      }
+      held = sentence.slice(0, 40);
+    }
+  }
+
   const minChars = policy.minChars ?? 60;
-  if (chars > 0 && chars < minChars) issues.push(hard('too_short', attempt, `${chars} < ${minChars} characters`));
+  if (chars > 0 && chars < Math.round(minChars * 0.67)) {
+    issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));
+  } else if (chars > 0 && chars < minChars) {
+    issues.push(soft('shorter_than_contract', attempt, `${chars} < ${minChars} characters`));
+  }
   if (finishReason === 'length') {
     issues.push(hard('truncated', attempt, 'generation stopped at the token limit'));
   } else if (chars >= 40 && !TERMINAL.test(text.trim())) {
@@ -359,10 +420,14 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   for (const [entry] of repeatedSentences) {
     issues.push(hard('loop_repeated_sentence', attempt, `sentence repeated ${sentenceCount.get(entry)}x`, entry.slice(0, 80)));
   }
-  const clauses = text.split(CLAUSE_SPLIT).map(normalize).filter((entry) => entry.length >= 8);
+  const clauses = text.split(CLAUSE_SPLIT).map(normalize).filter((entry) => entry.length >= 5);
   const clauseCount = new Map<string, number>();
   for (const entry of clauses) clauseCount.set(entry, (clauseCount.get(entry) ?? 0) + 1);
-  const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 3
+  // Twice is already an echo in a passage this short: the unseen-world run
+  // wrote «三分钟过去» twice in 189 characters and nothing flagged it. The 71
+  // reference scenes contain no clause of 8+ characters repeated even twice,
+  // so the threshold is two, not three.
+  const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 2
     && !repeatedSentences.some(([sentence]) => sentence.includes(entry)));
   for (const [entry, count] of repeatedClauses) {
     issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));

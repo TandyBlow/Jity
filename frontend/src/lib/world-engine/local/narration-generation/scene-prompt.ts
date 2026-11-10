@@ -85,6 +85,9 @@ export const NARRATOR_SYSTEM_PROMPT = [
   // dialogue and the viewpoint's own mind are allowed and are what make the
   // paragraph read like prose. The world-fact limits stay.
   '第三人称，贴着视角人物的眼睛和心思写：他看见什么、怎么反应、心里怎么想。细微动作、神态、对话、环境氛围都可以写。',
+  // Measured against the reference corpus: 42% of its scenes contain a line of
+  // speech, and none of the accepted 02 scenes did. An invitation, not a rule.
+  '场面里有两个人在的时候，可以让他说一句短话；话里的措辞由你定，但不要借这句话带出没发生过的消息或结果。',
   '世界只按下面给出的事实变化：不新增人物、地点、物件、往事或线索，不替别人做他没做的动作，不改变别人的物品，不写没有结算的结果。',
   '给出的方向、地点、时长、数量要写准；同义改写可以，反转或换人不行。',
   '不要把状态逐条念出来：不写「精神值」「任务」「未完成」这些字样，也不要用一句话复述场景说明。',
@@ -154,7 +157,14 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     const spine = projected.required.map((fact) => fact.kind === 'moved'
       ? `${fact.name}从${fact.from}走到${fact.to}`
       : `${fact.name}办完了「${'goal' in fact ? fact.goal : ''}」这件事`).join('；');
-    lines.push(`【这一幕的骨架】${spine}。先用一句把这个动作写清楚（谁、从哪、到哪），再写他在这之后看见、听见和想到的。`);
+    const hasMove = projected.required.some((fact) => fact.kind === 'moved');
+    const hasTask = projected.required.some((fact) => fact.kind === 'task_achieved');
+    const how = hasMove && hasTask
+      ? '先用一句把移动写清楚（谁、从哪、到哪），再用一句让人看出那件事办完了；'
+      : hasMove
+        ? '先用一句把移动写清楚（谁、从哪、到哪）；'
+        : '先用一句写出这件事的结果（例如「比对完了」「对上了」「查清了」），不能只写还在看、还在翻、还在想，也不要写出答案或下一件事；';
+    lines.push(`【这一幕的骨架】${spine}。${how}再写这一刻的场面。`);
   } else {
     lines.push('【这一幕的骨架】这一小段时间没有外部事件：没有人到来或离开，没有人完成任务。写视角人物此刻在一个地方待着的一小段。');
     // A no-event turn is where the model fills the gap with a past memory or a
@@ -162,6 +172,24 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     // 他伸手去拿»). Naming what the turn does NOT contain is a task statement,
     // not another word ban.
     lines.push('这一小段里也没有新回忆：不要写「他记得」「他想起」「以前」「常坐的」这类往事，也不要移动或拿起任何东西。只写此刻的姿势、呼吸、视线和眼前环境的变化。');
+    // The page's accepted 185-character turn on exactly this kind of input
+    // (no deltas, one minute) catalogued props: goggles in his hand, a mark
+    // flickering, a smell of dirt and metal, a sign announcing the time, and
+    // then «手中没有拿任何东西». Naming what to write is what stopped the
+    // catalogue in other runs; the ban list alone did not.
+    lines.push('只写这一刻的一两件事：时间怎么过去，视角人物此刻在做什么（站着、等着、看着某处），'
+      + '以及眼前一两样东西现在的样子。不要清点身边的物件，不要替在场的人拿东西、走动、说话或报时。');
+  }
+  const time = policy.time ?? null;
+  if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
+    const amount = cnAmount(time.duration.amount);
+    const unit = UNIT_CN[time.duration.unit];
+    // Time is the first thing the passage says: it was the one fact the page's
+    // trained candidate missed in 09's 2324 run (time_missing twice), while the
+    // model had been told further down the prompt. Put it at the top with the
+    // spine, as a sentence shape rather than a reminder.
+    lines.push(`【时间】这一回合过去了${amount}${unit}。开头一两句里要写出「${amount}${unit}过去」，不要含糊成「过了一会儿」。`);
+    lines.push(`本回合经过的时间：${time.duration.amount}${unit}。正文里要明确写出「${amount}${unit}」这句话。`);
   }
   // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
   // 她 for a male character in prose the grader accepted. `names` avoids that;
@@ -231,12 +259,6 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push('不要引入清单之外的新人物、新地点、新物件，也不要替别人做他这一回合没做的动作。');
   }
 
-  const time = policy.time ?? null;
-  if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
-    const amount = cnAmount(time.duration.amount);
-    const unit = UNIT_CN[time.duration.unit];
-    lines.push(`本回合经过的时间：${time.duration.amount}${unit}。正文里要明确写出「${amount}${unit}」这句话。`);
-  }
 
   // Standing positions of the people the viewpoint can see. Only the ones in
   // this scene: 09's driver offers the whole roster, and a smaller model
@@ -279,9 +301,13 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     minChars: Math.min(policy.minChars ?? Math.round(cap * 0.7), Math.round(cap * 0.7)),
   };
   const { count, min, max } = paragraphsOf(effective);
-  lines.push(count === 1
-    ? `要求：写成一段，合计 ${min}～${max} 字，直接给正文，不要小标题，不要解释。`
-    : `要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
+  // The reference corpus is 61-158 characters (median 97) and all one to two
+  // paragraphs, so length cannot be a hard gate: the product allows a turn to
+  // be shorter when less happened. The range below is guidance, and the
+  // verifier only notes a shorter passage when it still says everything.
+  const shape = count === 1 ? '写成一段' : `写成 ${count} 段，段与段之间空一行`;
+  lines.push(`要求：${shape}，一共 ${min}～${max} 字左右，直接给正文，不要小标题，不要解释。`);
+  lines.push('事情少的一回合可以短一些，写到这一刻写完为止；宁可短一点，也不要把没发生的事补进去。');
   lines.push('把它写成一幕，不是写成清单：让视角人物看见、停下、打量、皱眉、屏住呼吸、在心里嘀咕，'
     + '或者对在场的人说一句话——这些细微反应都允许，不用向上面报备。');
   lines.push('写明已经发生的事（谁到了哪里、过去了多久、什么办完了），但不要把它们排成一串「A在…，B在…」；'

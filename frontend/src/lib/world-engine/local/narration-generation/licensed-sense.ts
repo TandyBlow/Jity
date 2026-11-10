@@ -33,6 +33,28 @@ export const AMBIENT_SENSE_NOUNS = [
   '气味', '香味', '木香', '臭味',
 ] as const;
 
+export const APPEARANCE_MARK_NOUNS = [
+  '红痕', '疤痕', '伤口', '淤青', '口红', '纹身', '血迹', '眼影', '胭脂', '唇印', '粉',
+] as const;
+
+/** A visible mark on a person that the input never states. The page's accepted
+ * quiet turn wrote «她耳后有淡淡的粉»; an earlier one wrote «她身上的红痕».
+ * In the 71 reference scenes every mark that appears («演习弹红痕») is also in
+ * the input, so requiring the input gives 0 false positives there. */
+export function appearanceViolations(text: string, inputText: string): SenseViolation[] {
+  const found: SenseViolation[] = [];
+  for (const sentence of sentencesOf(text)) {
+    for (const noun of APPEARANCE_MARK_NOUNS) {
+      if (!sentence.includes(noun) || inputText.includes(noun)) continue;
+      // «粉» is also a colour word and a common noun (粉笔灰, 花粉); only the
+      // applied-to-a-person sense is a mark.
+      if (noun === '粉' && !/(耳后|脸上|颊|腮|唇|眉|妆)/u.test(sentence)) continue;
+      found.push({ sentence, noun });
+    }
+  }
+  return found;
+}
+
 export interface SenseViolation {
   sentence: string;
   noun: string;
@@ -49,10 +71,19 @@ function licensedSources(inputText: string): string[] {
   return [...names];
 }
 
+/** Verbs that make a thing a speaker: something is heard, or it tells someone
+ * something. A sign or a sheet of paper in a scene is not a speaker. */
+const SPEAKING_VERBS = /(传来|响起|发出|飘来|回荡|作响|响了|响着|提醒|告诉|说道|喊道)/u;
+const SOUND_NOUNS = /(声|响|动静)/u;
+
 export interface SenseOptions {
   /** People with a committed move this point. Their own footsteps are a
    * consequence of the settled movement, not an invented sound. */
   movedNames?: readonly string[];
+  /** Things in the scene that cannot speak: signs, papers, boards, ropes,
+   * maps, weapons lying there. A real page run wrote «演习规则牌的声响…
+   * 提醒着他们时间已到», which is an event the state does not have. */
+  staticNames?: readonly string[];
 }
 
 export function senseViolations(text: string, inputText: string, options: SenseOptions = {}): SenseViolation[] {
@@ -80,6 +111,24 @@ export function senseViolations(text: string, inputText: string, options: SenseO
       // settled action rather than an invented sound; a quiet point has none.
       if (noun === '脚步声' && (options.movedNames ?? []).length > 0) continue;
       found.push({ sentence, noun });
+    }
+  }
+  // A static thing as the speaker of a sound or a message.
+  for (const sentence of sentencesOf(text)) {
+    if (!SPEAKING_VERBS.test(sentence)) continue;
+    for (const name of options.staticNames ?? []) {
+      if (name.length < 2 || !sentence.includes(name)) continue;
+      // The thing is named in a sentence that reports a sound or a message:
+      // «传来…的声响», «…提醒着他们». Word order varies («远处传来演习规则牌
+      // 的声响»), so the name only has to be in the same sentence as the verb.
+      if (!SPEAKING_VERBS.test(sentence)) continue;
+      if (!SOUND_NOUNS.test(sentence) && !/(提醒|告诉|说道|喊道)/u.test(sentence)) continue;
+      // The input itself says this thing makes a noise (a radio, a machine):
+      // then it is not a static prop for this sentence.
+      const at = inputText.indexOf(name);
+      const near = at < 0 ? '' : inputText.slice(Math.max(0, at - 20), at + name.length + 20);
+      if (/响|嗡|鸣|滴|沙沙|吱|呼呼|播放|广播/u.test(near)) continue;
+      found.push({ sentence, noun: name });
     }
   }
   return found;
