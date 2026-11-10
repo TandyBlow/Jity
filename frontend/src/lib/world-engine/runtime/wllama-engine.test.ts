@@ -682,7 +682,8 @@ describe('WllamaInferenceEngine option mapping', () => {
     });
     await engine.load();
     expect(fetched).toHaveLength(1);
-    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4 });
+    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4, lastLoadFromCache: false });
+    expect(engine.runtime.lastLoadMs).toBeGreaterThan(0);
 
     await expect(engine.complete('P', { timeoutMs: 10, maxTokens: 1 })).rejects.toBeInstanceOf(IncompleteGenerationError);
     expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, cachedModel: true });
@@ -690,7 +691,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     await engine.ensureLoaded();
     expect(fetched).toHaveLength(1); // the Blob was reused, not fetched again
     expect(fakes[1]!.calls.blobs).toHaveLength(1);
-    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true });
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true, lastLoadFromCache: true, lastLoadFetchMs: 0 });
     expect(evidence.at(-1)).toMatchObject({ outcome: 'loaded', fromCache: true, fetchMs: 0 });
     expect(await engine.complete('P')).toBe('ok');
   });
