@@ -238,6 +238,13 @@ internal "未成功触发骰点" field language and repeated scene text. 06 415c
 keeps the player point source and labels both program points per point; 05
 rejects the turn. This is not a state-kernel failure.
 
+## 3-turn d101: turn 1 valid, turn 2 infra-invalid
+
+Run `2026-11-10T2137-ac7c` at 06 `d1019f09`: turn 1 is a valid model/state
+turn (127.4s accepted); turn 2 times out at 330s with zero results/updates and
+no new point. The snapshot stays version 1, and 04 records a 06 restart during
+turn 2. Turn 2 is infrastructure-invalid, not a game/state failure.
+
 ## d101: first accepted model turn; only latency fails
 
 Run `2026-11-10T2129-cad9` at 06 `d1019f09`, page `84dcce4f`, produced one
