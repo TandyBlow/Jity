@@ -1383,7 +1383,8 @@ describe('cross-turn echo: the previous opening is as reusable as its ending', (
       priorOpen: '走廊的灯还亮着', priorTail: '他没有再说话',
     });
     expect(text).toContain('上一回合的开头是「走廊的灯还亮着…」');
-    expect(text).toContain('上一回合的结尾是「…他没有再说话」');
+    expect(text).toContain('上一回合的最后一句是「…他没有再说话」');
+    expect(text).toContain('接着这个时刻往下写');
   });
 
   test('a scene-mode retry keeps both lines', async () => {

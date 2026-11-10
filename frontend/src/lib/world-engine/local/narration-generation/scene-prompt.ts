@@ -269,10 +269,15 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   lines.push('写明已经发生的事（谁到了哪里、过去了多久、什么办完了），但不要把它们排成一串「A在…，B在…」；'
     + '用视角人物的注意力把它们带出来。对话可以写，措辞由你定，但不要让别人说出没发生过的消息。');
   lines.push('视角人物只动自己的东西；别人的物品、别人的身体保持原样。');
+  // Continuity before anti-repeat: with only "do not repeat" and no material,
+  // a 1.7B model invented a war memory and children's laughter to fill the
+  // turn. The previous accepted ending is the one thing it may build on.
+  if (args.priorTail) {
+    lines.push(`上一回合的最后一句是「…${args.priorTail}」。接着这个时刻往下写，不要重复它的句子。`);
+  }
   // The opening is as reusable as the ending: a model that starts every scene
   // the same way reads as a template even when every sentence is true.
   if (args.priorOpen) lines.push(`上一回合的开头是「${args.priorOpen}…」，不要用同样的开头或句式。`);
-  if (args.priorTail) lines.push(`上一回合的结尾是「…${args.priorTail}」，不要照抄，也不要重复同样的收尾。`);
   if (policy.instruction?.trim()) lines.push(`补充要求：${policy.instruction.trim()}`);
   return lines.join('\n');
 }
