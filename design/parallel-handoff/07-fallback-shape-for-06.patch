@@ -1,0 +1,99 @@
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/constrained/candidate.test.ts b/frontend/src/lib/world-engine/local/narration-candidates/constrained/candidate.test.ts
+index e23563fb..2a127f7e 100644
+--- a/frontend/src/lib/world-engine/local/narration-candidates/constrained/candidate.test.ts
++++ b/frontend/src/lib/world-engine/local/narration-candidates/constrained/candidate.test.ts
+@@ -8,7 +8,7 @@
+ import { describe, expect, it } from 'vitest';
+ import { applyPoint, buildInitialState, stateDigest } from '../../state';
+ import type { InitialState, TimelinePoint } from '../../../types';
+-import { createRealizerContext, generateCandidate, planBeats, projectConstrainedScene, realizeBeat, sanitizeBeat, verifyText } from './index';
++import { createRealizerContext, generateCandidate, joinText, planBeats, projectConstrainedScene, realizeBeat, sanitizeBeat, verifyText } from './index';
+ import type { BeatDirective, CommittedScenePacket } from './types';
+ 
+ const initial = (): InitialState => ({
+@@ -763,4 +763,26 @@ describe('error reporting', () => {
+     expect(result.status).toBe('error');
+     expect(result.issues[0].detail).toContain('before_missing');
+   });
++});
++
++describe('joinText', () => {
++  it('joins a short scene into one paragraph', () => {
++    const text = joinText([
++      { text: '一分钟过去。' },
++      { text: '巷口的绳已放下。' },
++      { text: '诺诺还在。' },
++    ]);
++    expect(text).toBe('一分钟过去。巷口的绳已放下。诺诺还在。');
++    expect(text).not.toContain('\n\n');
++  });
++
++  it('keeps the blank line for a long scene', () => {
++    const text = joinText([{ text: `${'甲'.repeat(90)}。` }, { text: `${'乙'.repeat(90)}。` }]);
++    expect(text).toContain('\n\n');
++  });
++
++  it('keeps the blank line when joining would drop below the length floor', () => {
++    const text = joinText([{ text: '甲。' }, { text: '乙。' }], 20);
++    expect(text).toContain('\n\n');
++  });
+ });
+\ No newline at end of file
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts b/frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts
+index 798834eb..15786648 100644
+--- a/frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts
++++ b/frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts
+@@ -138,7 +138,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
+       modelEnabled,
+       modelBudget,
+       modelBudgetSpent: () => modelBudgetSpent,
+-      prior: joinText(beatTexts),
++      prior: joinText(beatTexts, minChars),
+       emit,
+       addVerifyMs: (ms) => { verifyMs += ms; },
+     });
+@@ -151,7 +151,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
+     // as token streaming.
+     if (outcome.evidence.source === 'model' || outcome.evidence.source === 'external') {
+       emit({
+-        text: joinText(beatTexts),
++        text: joinText(beatTexts, minChars),
+         status: 'streaming',
+         verified: false,
+         elapsedMs: now() - started,
+@@ -161,7 +161,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
+   }
+   const composeMs = now() - composeStarted;
+ 
+-  let assembled = dedupeSentences(joinText(beatTexts));
++  let assembled = dedupeSentences(joinText(beatTexts, minChars));
+   const verifyStarted = now();
+   let verification = verifyText(assembled, { ...verifyOptions, minChars, maxChars, checkPrior: true });
+   verifyMs += now() - verifyStarted;
+@@ -196,7 +196,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
+       const index = composers.length - 1;
+       if (index >= 0) composers[index] = composers[index] === 'program' ? 'program' : `${composers[index]}+repair`;
+     }
+-    assembled = dedupeSentences(joinText(beatTexts));
++    assembled = dedupeSentences(joinText(beatTexts, minChars));
+     const startedVerify = now();
+     verification = verifyText(assembled, { ...verifyOptions, minChars, maxChars, checkPrior: true });
+     verifyMs += now() - startedVerify;
+@@ -473,8 +473,15 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
+   };
+ }
+ 
+-function joinText(parts: { text: string }[]): string {
+-  return parts.map((part) => part.text).filter(Boolean).join('\n\n');
++export function joinText(parts: { text: string }[], minChars = 0): string {
++  const texts = parts.map((part) => part.text.trim()).filter(Boolean);
++  const joined = texts.join('\n\n');
++  // A short program scene reads as one paragraph in the reviewed corpus
++  // (61-158 chars, single paragraph). Blank lines only separate long scenes,
++  // and joining must not push the scene below the caller's length floor.
++  if ([...joined].length > 158) return joined;
++  const single = texts.join('').replace(/\n{2,}/gu, '');
++  return [...single].length >= minChars ? single : joined;
+ }
+ 
+ /** Drop duplicate sentences so two beats cannot repeat the same clause. */

@@ -581,6 +581,7 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 - `07-checkpoint.patch`
 - `07-page-sync.patch`
 - `07-prose.patch`（可选，成文模块）
+- `07-fallback-shape.patch`（06 的 `joinText`：短场景一段，补 02 指出的 5 段形状）
 
 `07-manifest.json` 记录 apply 顺序、每个补丁的 sha256、验证过的 06 head 和结果。
 工作树里的 design/parallel-handoff/ 保留同内容副本。
@@ -618,12 +619,18 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 ')`。
 
-所以即使 06 应用了 `07-prose.patch`，一拍一句的卡片形状仍在。最小改法在 06 的
-`joinText`：整段口 ≤158 字且不含对白时用 `''` 拼（并保留句号），超过 158 字或
-有对白才 `
+所以即使 06 应用了 `07-prose.patch`，一拍一句的卡片形状仍在。为此另给了一个
+只改 `joinText` 的最小补丁 `07-fallback-shape.patch`：
 
-`。07 的整场入口 `generateCandidate` 已经是这个规则，若 06 愿意
-把兜底切到整场入口，也能一次拿到同一条规则。这一点归 06 决定，07 不写它的文件。
+- 整段口 ≤158 字时把各拍直接拼成一段（保留句号），超过 158 字才用空行分段；
+- 拼段后若低于该候选自己的 `minChars`，保持原来的空行分段，避免把本来刚够长的
+  兜底压成 `too_short` 而被丢弃；
+- 加了三个单测：短场景一段、长场景保留空行、低于长度下限时保留空行。
+
+在 06 `d597fb6a` 上连同另外四个补丁一起验证：五个补丁干净应用、tsc 0、
+`local` + controller **646 passed | 2 skipped**、audit READY。`joinText` 的行为
+归 06，补丁只是提案；若 06 把兜底切到 07 的整场入口 `generateCandidate`，也
+已经是同一条规则。
 
 ### 给 09：双设备真实运行的前置（CORS 与 URL）
 
