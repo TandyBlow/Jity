@@ -36,6 +36,32 @@ describe('restoredEntries', () => {
     expect(entries.every((entry) => entry.restored)).toBe(true);
   });
 
+  it('joins the automatic points of one turn after the player point', () => {
+    const withAuto = {
+      commands: ['我走进服务巷。'],
+      narrationSources: { p1: { source: 'model' }, auto: { source: 'draft' } },
+      transport: {
+        points: {
+          p1: { id: 'p1', sequence: 1, trigger: 'player' },
+          auto: { id: 'auto', sequence: 2, trigger: 'automatic' },
+        },
+        narrations: {
+          p1: { status: 'ready', text: '巷口的绳已经放下。' },
+          auto: { status: 'ready', text: '诺诺没有动，只把手套收紧。' },
+        },
+      },
+    } as unknown as LocalGameSnapshot;
+    const entries = restoredEntries(withAuto);
+    // One player turn, but both committed paragraphs stay: the automatic round
+    // must not replace the player point's prose.
+    expect(entries.length).toBe(1);
+    expect(entries[0].text).toBe('巷口的绳已经放下。\n\n诺诺没有动，只把手套收紧。');
+    expect(entries[0].points?.map((part) => part.pointId)).toEqual(['p1', 'auto']);
+    // A draft anywhere in the turn keeps the whole entry labelled as a draft.
+    expect(entries[0].source).toBe('draft');
+    expect(entries[0].note).toContain('草稿');
+  });
+
   it('keeps a submitted-but-uncommitted turn as an explicit unfinished entry', () => {
     const base = snapshot();
     const withPending = {

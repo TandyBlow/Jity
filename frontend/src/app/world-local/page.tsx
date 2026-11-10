@@ -54,6 +54,9 @@ interface WorldTurnRecord {
    * realizations. Never counted as fully model-written. */
   mixedMs: number | null;
   segments?: Array<{ id: string; source: string }>;
+  /** Committed prose per point in this turn (player point first). Appending by
+   * point keeps a later automatic round from replacing the player's text. */
+  points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft' }>;
   /** Per-point narration provenance in this turn (player point first). */
   narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
@@ -100,6 +103,8 @@ interface WorldTurnRecord {
 
 interface TurnEntry {
   key: number; input: string; text: string; note: string | null; ms: number | null;
+  /** Committed prose per point in this turn (player point first). */
+  points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft' }>;
   /** Wall time from submit to the first streamed character. A draft stream is
    * shown for reading, but it is NOT the acceptance number: a draft is not
    * fact-checked yet and can still be replaced or cancelled. */
@@ -638,9 +643,13 @@ export default function WorldLocalPage() {
             const draftMs = Math.round(performance.now() - submittedAtRef.current);
             const record = turnRecordRef.current;
             if (record && record.draftMs == null) record.draftMs = draftMs;
-            setEntries((list) => updateLast(list, (entry) => ({
-              ...entry, text, draftMs: entry.draftMs ?? draftMs,
-            })));
+            setEntries((list) => updateLast(list, (entry) => {
+              const points = [...(entry.points ?? [])];
+              const index = points.findIndex((part) => part.pointId === progress.pointId);
+              if (index < 0) points.push({ pointId: progress.pointId, text, source: 'draft' });
+              else if (points[index].source === 'draft') points[index] = { ...points[index], text };
+              return { ...entry, points, text: points.map((part) => part.text.trim()).filter(Boolean).join('\n\n'), draftMs: entry.draftMs ?? draftMs };
+            }));
           },
           onNarrationComplete: (progress) => {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
@@ -676,17 +685,22 @@ export default function WorldLocalPage() {
               else if (source === 'program') record.programMs = record.programMs ?? atMs;
               else if (source === 'mixed') record.mixedMs = record.mixedMs ?? atMs;
             }
-            setEntries((list) => updateLast(list, (entry) => (
-              source === 'model'
-                ? { ...entry, text, acceptedMs: atMs, ms: atMs }
+            setEntries((list) => updateLast(list, (entry) => {
+              const points = [...(entry.points ?? [])];
+              const index = points.findIndex((part) => part.pointId === progress.pointId);
+              if (index < 0) points.push({ pointId: progress.pointId, text, source });
+              else points[index] = { pointId: progress.pointId, text, source };
+              const joined = points.map((part) => part.text.trim()).filter(Boolean).join('\n\n');
+              return source === 'model'
+                ? { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs }
                 : source === 'program'
-                  ? { ...entry, text, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
+                  ? { ...entry, points, text: joined, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
                   : source === 'mixed'
-                    ? { ...entry, text, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
+                    ? { ...entry, points, text: joined, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
                     : source === 'draft'
-                    ? { ...entry, text, note: entry.note ?? '这段没有通过事实自检，只是按已结算事实列出的草稿，不是成文正文。' }
-                    : { ...entry, text }
-            )));
+                    ? { ...entry, points, text: joined, note: entry.note ?? '这段没有通过事实自检，只是按已结算事实列出的草稿，不是成文正文。' }
+                    : { ...entry, points, text: joined };
+            }));
             setPhase('ready');
           },
         });

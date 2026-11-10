@@ -11,6 +11,10 @@ export interface RestoredTurn {
   key: number;
   input: string;
   text: string;
+  /** Every committed narration in this turn, in point order: the player's
+   * point first, then the automatic rounds that continued it. Restoring joins
+   * them, so later auto prose never erases the player's paragraph. */
+  points?: { pointId: string; text: string; source?: NarrationSourceNote['source'] }[];
   note: string | null;
   /** How the committed text was produced; a draft is never accepted prose. */
   source?: NarrationSourceNote['source'];
@@ -31,15 +35,30 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
     narrations?: Record<string, { status: string; text: string | null }>;
     advance?: { inputText?: string | null; intentStatus?: string } | null;
   };
-  const points = Object.values(record.points ?? {})
-    .filter((point) => point.trigger === 'player')
-    .sort((a, b) => a.sequence - b.sequence);
+  const allPoints = Object.values(record.points ?? {}).sort((a, b) => a.sequence - b.sequence);
+  const points = allPoints.filter((point) => point.trigger === 'player');
   const entries: RestoredTurn[] = points.map((point, index) => {
-    const narration = record.narrations?.[point.id];
-    const ready = narration?.status === 'ready' && Boolean(narration.text);
-    const provenance = snapshot.narrationSources?.[point.id];
-    const source = provenance?.source;
-    const note = !ready
+    // A turn owns its player point plus every automatic point up to the next
+    // player point. Joining their committed narrations keeps the whole turn.
+    const start = allPoints.findIndex((row) => row.id === point.id);
+    const end = allPoints.findIndex((row) => row.trigger === 'player' && row.sequence > point.sequence);
+    const group = allPoints.slice(start, end < 0 ? allPoints.length : end);
+    const parts = group.map((row) => {
+      const narration = record.narrations?.[row.id];
+      const ready = narration?.status === 'ready' && Boolean(narration.text);
+      const provenance = snapshot.narrationSources?.[row.id];
+      const source = provenance?.source;
+      return { pointId: row.id, text: ready ? (narration?.text ?? '') : '', source };
+    }).filter((part) => part.text);
+    const text = parts.map((part) => part.text.trim()).filter(Boolean).join('\n\n');
+    const sources = parts.map((part) => part.source).filter(Boolean);
+    const source = sources.includes('draft')
+      ? 'draft'
+      : sources.includes('program') && sources.includes('model') ? 'mixed'
+        : sources.includes('program') ? 'program'
+          : sources.includes('mixed') ? 'mixed'
+            : sources.includes('model') ? 'model' : undefined;
+    const note = parts.length === 0
       ? '这一回合的正文没有保存成功，刷新后无法显示原文。'
       : source === 'draft'
         ? '这一回合的正文没有通过事实自检，保存下来的只是按已结算事实列出的草稿。'
@@ -51,7 +70,8 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
     return {
       key: -1 - point.sequence,
       input: snapshot.commands[index] ?? '',
-      text: ready ? (narration?.text ?? '') : '',
+      text,
+      points: parts.length ? parts : undefined,
       note,
       source,
       ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null,
