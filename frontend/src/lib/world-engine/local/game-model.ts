@@ -82,6 +82,13 @@ export interface GameModelOptions {
 
 interface Generated { value: Json; raw: string; ms: number; fallback: boolean; error?: string }
 
+/** Violations that mean the text asserts something the settlement did not
+ * produce. Style, length and wording are not in this set. */
+const FATAL_ALIGNMENT = new Set([
+  'added_event', 'actor_swap', 'direction_reversed', 'wrong_number',
+  'movement_without_fact', 'task_claimed_without_fact', 'state_claim_without_fact',
+]);
+
 
 export class LocalGameModel implements WorldModelPort {
   private readonly engine: InferenceEngine;
@@ -346,6 +353,24 @@ export class LocalGameModel implements WorldModelPort {
     return { value, raw: '', ms: performance.now() - started, fallback: false };
   }
 
+  /** Alignment inputs shared by the in-model writer and the independent
+   * candidate gate, so both judge the same committed facts with same rules. */
+  private alignmentOptionsFor(
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    after: WorldState,
+  ) {
+    const view = after.protagonistId;
+    return {
+      roster: Object.values(after.initial.characters).map((entity) => entity.name),
+      locations: Object.values(after.initial.locations).map((entity) => entity.name),
+      time: delta.timeAdvance?.duration ?? null,
+      knownPositions: visibleCharacters(after, view).filter((id) => id !== view)
+        .map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
+      allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
+    };
+  }
+
   private async narration(key: Id, input: Json): Promise<Generated> {
     const data = input as { pointId?: Id; before?: WorldState | null; delta?: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }; after?: WorldState; perspective?: string };
     const after = data.after;
@@ -369,13 +394,7 @@ export class LocalGameModel implements WorldModelPort {
       ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft)
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
     const packet = alignmentPacket(before, delta, after);
-    const alignmentOptions = {
-      roster: Object.values(after.initial.characters).map((entity) => entity.name),
-      locations: Object.values(after.initial.locations).map((entity) => entity.name),
-      time: delta.timeAdvance?.duration ?? null,
-      knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
-      allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
-    };
+    const alignmentOptions = this.alignmentOptionsFor(before, delta, after);
 
     const sceneNamesList = sceneNames(after, view);
     const protagonistName = after.initial.characters[view]?.name ?? view;
@@ -551,6 +570,26 @@ export class LocalGameModel implements WorldModelPort {
     if (result.kind !== 'adopted') {
       console.info('[narration] candidate fallback', result.reason);
       return null;
+    }
+    // Independent protection against invented current events. The candidate's
+    // own verifier accepted text with a speaking rule sign, a gunshot derived
+    // from a conditional trait, and invented pistol handling. This gate is
+    // fact-based (alignment against the committed packet), not a word ban: a
+    // licensed micro-action stays, an event the settlement never produced is
+    // refused for the whole point and the in-model writer takes over.
+    if (result.grade !== 'program') {
+      const packet = alignmentPacket(before, delta, after);
+      const alignment = alignNarration(packet, result.text, this.alignmentOptionsFor(before, delta, after));
+      const fatal = alignment.violations.filter((violation) => FATAL_ALIGNMENT.has(violation.kind));
+      if (fatal.length > 0) {
+        const reasons = [...new Set(fatal.map((violation) => violation.kind))];
+        console.info('[narration] candidate rejected by the independent fact gate', reasons.join(','), fatal[0]?.sentence ?? '');
+        this.options.onNarrationEvidence?.({
+          pointId, candidateId: result.candidateId, grade: result.grade, rejectedBy: 'independent_fact_gate',
+          reasons, sentences: fatal.map((violation) => violation.sentence), strategyVersion: result.strategyVersion,
+        });
+        return null;
+      }
     }
     const program = result.grade === 'program';
     const mixed = result.grade === 'mixed';
