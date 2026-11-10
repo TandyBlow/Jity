@@ -71,6 +71,8 @@ export interface CandidateSceneContext {
 export interface InstructCandidatePolicy {
   /** Whose scene this is. Defaults to the state's protagonist. */
   viewpointId?: Id;
+  /** Lane-02 compatible alias ({id,name}); `viewpointId` wins when both exist. */
+  viewpoint?: { id?: Id; name?: string } | null;
   template?: InstructTemplate;
   /** 'chat': use the engine's real chat turns when it exposes `chat()`
    * (system + user), otherwise send the same text through `complete()` and let
@@ -107,6 +109,10 @@ export interface InstructCandidatePolicy {
   /** A short style sample. It is labelled style-only in the prompt; its facts
    * must not enter the scene. Off by default. */
   styleSample?: string | null;
+  /** Optional prompt variant for A/B evidence. `plain` (default) uses the
+   * shipped instruction; `scene-first` puts the material before the rules and
+   * drops the numbered writing plan. Unknown values fall back to `plain`. */
+  variant?: 'plain' | 'scene-first';
   /** System prompt override for experiments. The default is the shipped one. */
   systemPrompt?: string;
 }
@@ -164,6 +170,12 @@ export interface CandidateFact {
   mandatory: boolean;
   /** Display name of the changed entity, when it has one (item checks). */
   entity?: string;
+  /** For item moves: the person now carrying it, when it is a character. */
+  holder?: string;
+  /** For moves shared by several actors: the origin and destination, so a
+   * 「两人走进庭院」 sentence can be credited to each of them. */
+  from?: string;
+  to?: string;
 }
 
 export interface SceneCharacter {
@@ -174,6 +186,12 @@ export interface SceneCharacter {
   personality: string;
   /** Items carried / worn (visible). */
   carrying: string[];
+}
+
+export interface ScenePosition {
+  name: string;
+  location: string;
+  viewpoint: boolean;
 }
 
 export interface SceneItem {
@@ -190,6 +208,7 @@ export interface SceneProjection {
   advance: TimeAdvance | null;
   place: { id: Id; name: string; appearance: string; notes: string[] };
   characters: SceneCharacter[];
+  positions: ScenePosition[];
   items: SceneItem[];
   facts: CandidateFact[];
   playerAction: string | null;

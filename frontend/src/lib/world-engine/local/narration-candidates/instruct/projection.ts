@@ -13,7 +13,7 @@
 import type { Id, TimeAdvance, WorldState } from '../../../types';
 import { activeText, locationName, roomOf, visibleCharacters } from '../../prompt';
 import type {
-  CandidateDelta, CandidateFact, InstructCandidatePolicy, SceneCharacter, SceneItem, SceneProjection,
+  CandidateDelta, CandidateFact, InstructCandidatePolicy, SceneCharacter, SceneItem, ScenePosition, SceneProjection,
 } from './types';
 
 const charLimit = (text: string, limit: number) => (text.length <= limit ? text : `${text.slice(0, limit)}…`);
@@ -119,7 +119,11 @@ function committedFacts(committed: { facts: { id: string; kind: string; [key: st
   const facts: CandidateFact[] = [];
   for (const fact of committed.facts) {
     const statement = statementOf(fact);
-    if (statement) facts.push({ id: fact.id, kind: fact.kind, statement, source: 'committed', mandatory: true });
+    if (!statement) continue;
+    facts.push({
+      id: fact.id, kind: fact.kind, statement, source: 'committed', mandatory: true,
+      ...(fact.kind === 'moved' ? { from: String(fact.from ?? ''), to: String(fact.to ?? '') } : {}),
+    });
   }
   return facts;
 }
@@ -138,6 +142,7 @@ function itemFacts(state: WorldState, before: WorldState | null, delta: Candidat
     facts.push({
       id: `${id}:item-position`, kind: 'item_moved', source: 'item', mandatory: true,
       entity: state.initial.items[id].name,
+      holder,
       statement: `${state.initial.items[id].name}现在在${place}`,
     });
   }
@@ -180,7 +185,7 @@ export function buildProjection(inputs: ProjectionInputs): SceneProjection {
 
 function fromState(inputs: ProjectionInputs, state: WorldState): SceneProjection {
   const { committed, policy, playerInput, priorText } = inputs;
-  const viewId = policy?.viewpointId ?? state.protagonistId;
+  const viewId = policy?.viewpointId ?? policy?.viewpoint?.id ?? state.protagonistId;
   const viewName = state.initial.characters[viewId]?.name ?? viewId;
   const room = roomOf(state, viewId);
   const advance = inputs.delta?.timeAdvance ?? null;
@@ -203,7 +208,22 @@ function fromState(inputs: ProjectionInputs, state: WorldState): SceneProjection
   const advanceText = advanceSentence(advance);
   if (advanceText) facts.unshift({ id: 'time', kind: 'time', source: 'time', mandatory: true, statement: advanceText });
 
+  const positions: ScenePosition[] = [viewId, ...present].map((id) => ({
+    name: state.initial.characters[id]?.name ?? id,
+    location: locationName(state, roomOf(state, id)),
+    viewpoint: id === viewId,
+  }));
   const priorExcerpt = priorText ? charLimit(priorText.trim().replace(/\s+/g, ' '), 200) : null;
+  // The player's committed action often IS the movement this point settled.
+  // Printing it twice (action block + must-write fact + plan step) made a 1.5B
+  // model narrate the same walk twice (run-2 S1). The fact keeps it; the
+  // separate action line is redundant then.
+  const action = playerInput?.trim() || null;
+  const movedPairs = (inputs.committed?.facts ?? [])
+    .filter((fact) => fact.kind === 'moved')
+    .map((fact) => ({ from: String(fact.from ?? ''), to: String(fact.to ?? '') }));
+  const actionCarriesMovement = Boolean(action)
+    && movedPairs.some((pair) => action!.includes(pair.from) && action!.includes(pair.to));
   return {
     viewpoint: { id: viewId, name: viewName },
     time: [formatWorldTime(state.time), advance?.duration.amount ? `（推进 ${advance.duration.amount} ${UNIT_NAMES[advance.duration.unit]}）` : ''].join(''),
@@ -215,16 +235,20 @@ function fromState(inputs: ProjectionInputs, state: WorldState): SceneProjection
       notes: [charLimit(activeText(state.locations[room]?.appearanceChanges ?? []).join('；'), 120)].filter(Boolean),
     },
     characters,
+    positions,
     items: visibleItems(state, viewId),
     facts,
-    playerAction: playerInput?.trim() || null,
+    playerAction: actionCarriesMovement ? null : action,
     priorExcerpt,
     recentEvents: (inputs.recentEvents ?? []).slice(-4),
     fromState: true,
     licensing: {
       roster: policy?.roster ?? Object.values(state.initial.characters).map((entity) => entity.name),
       locations: policy?.locations ?? Object.values(state.initial.locations).map((entity) => entity.name),
-      knownPositions: policy?.knownPositions ?? [viewId, ...present].map((id) => ({
+      // Only positions the viewpoint can actually see. A caller's list may
+      // include the whole roster (lane 09 passes it mechanically); printing or
+      // licensing an off-screen true position is still a viewpoint leak.
+      knownPositions: [viewId, ...present].map((id) => ({
         name: state.initial.characters[id]?.name ?? id,
         location: locationName(state, roomOf(state, id)),
       })),
@@ -284,6 +308,7 @@ function fromSerializedText(inputs: ProjectionInputs): SceneProjection {
       notes: [],
     },
     characters,
+    positions: [{ name: viewpointName, location: scene?.location ?? '', viewpoint: true }],
     items,
     facts,
     playerAction: inputs.playerInput?.trim() || scene?.previousAction || null,

@@ -156,9 +156,25 @@ export function verifyDraft(inputs: VerifyInputs): VerifyResult {
     // A task still has to be *said* — the actor plus at least two content
     // bigrams of the goal in one sentence — so the reader learns it happened.
     const expressed = new Set(alignment.coverage.filter((entry) => entry.expressed).map((entry) => entry.id));
+    // 「两人一起走进庭院」 is a legitimate rendering of two per-actor move
+    // facts: the grader can only bind names, so the group phrasing is credited
+    // to every actor that shares the same origin and destination.
+    const groupMove = (fact: { name: string; from: string; to: string }): boolean => {
+      const peers = committed.facts.filter((entry) => entry.kind === 'moved'
+        && entry.from === fact.from && entry.to === fact.to);
+      if (peers.length < 2) return false;
+      const actorNames = peers.map((entry) => entry.name).filter((name) => text.includes(name));
+      if (actorNames.length === peers.length) return true; // names are there; binding may still fail
+      return /两人|二人|他们|她们|一行人/.test(text) && text.includes(fact.to)
+        && new RegExp('(?:走到|走进|来到|进入|赶到|前往|抵达|走向|朝)').test(text);
+    };
     for (const fact of committed.facts) {
       if (expressed.has(fact.id)) continue;
       const label = factPhrases(fact)[0];
+      if (fact.kind === 'moved' && groupMove(fact as typeof fact & { from: string; to: string })) {
+        issues.push(issue('fact_omitted', 'soft', `${label} (group phrasing)`));
+        continue;
+      }
       if (fact.kind === 'task_achieved') {
         if (!taskStated(text, fact.name, fact.goal)) issues.push(issue('fact_omitted', 'hard', label));
         else issues.push(issue('fact_omitted', 'soft', `${label} (stated without the frozen goal wording)`));
@@ -177,7 +193,11 @@ export function verifyDraft(inputs: VerifyInputs): VerifyResult {
       issues.push(issue('time_missing', 'hard', `time advance ${time.amount} ${time.unit} not narrated`));
     }
     for (const fact of inputs.projection.facts.filter((entry) => entry.kind === 'item_moved')) {
-      if (fact.entity && !text.includes(fact.entity)) issues.push(issue('fact_omitted', 'hard', `item change not narrated: ${fact.statement}`));
+      if (fact.entity && !text.includes(fact.entity)) {
+        issues.push(issue('fact_omitted', 'hard', `item change not narrated: ${fact.statement}`));
+      } else if (fact.holder && !sentencesOf(text).some((sentence) => sentence.includes(fact.holder!) && (fact.entity ? sentence.includes(fact.entity) : true))) {
+        issues.push(issue('fact_omitted', 'soft', `item change does not say it reached ${fact.holder}: ${fact.statement}`));
+      }
     }
     // Small-model loop: the same 8-char clause three times is not prose.
     const shingles = new Map<string, number>();

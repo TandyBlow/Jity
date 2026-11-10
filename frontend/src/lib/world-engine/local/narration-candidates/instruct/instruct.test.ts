@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CompletionEvidence, CompleteOptions, EngineInfo, InferenceEngine } from '../../../runtime/engine';
+import { IncompleteGenerationError } from '../../../runtime/engine';
 import { applyPoint, buildInitialState } from '../../state';
 import type { EntityDelta, Position, TimeAdvance, WorldState } from '../../../types';
 import { cleanDraft, shapeIssues } from './clean';
@@ -173,7 +174,9 @@ describe('projection', () => {
     expect(prompt).not.toContain('周舟');
     expect(prompt).toContain('铜台灯');
     expect(prompt).not.toContain('- 仓库钥匙（');
-    expect(prompt).toContain('【本次变化】');
+    expect(prompt).toContain('【此刻站位】');
+    expect(prompt).toContain('陈默在大厅');
+    expect(prompt).toContain('【本段必须写到】');
     expect(prompt).toContain('大约过了 2 分钟');
   });
 
@@ -310,7 +313,9 @@ describe('chat-capable engine', () => {
     const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
     const messages: { role: string; content: string }[] = [];
     const engine = {
-      info: { backend: 'wllama', modelId: 'qwen2.5-1.5b-instruct-q4_k_m.gguf' },
+      // A loader may not have written the model id yet; chat mode must not
+      // refuse just because the template name cannot be inferred.
+      info: { backend: 'wllama', modelId: null as unknown as string },
       async load() {},
       async dispose() {},
       async complete() { throw new Error('complete() must not be used when chat() exists'); },
@@ -324,5 +329,76 @@ describe('chat-capable engine', () => {
     expect(messages.map((turn) => turn.role)).toEqual(['system', 'user']);
     expect(messages[0].content).toContain('中文小说作者');
     expect(messages[1].content).toContain('陈默从大厅走到庭院');
+  });
+});
+
+describe('run-2 failure corpus', () => {
+  it('does not print a separate player action when it already is the settled movement', () => {
+    const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
+    const projection = buildProjection({
+      state: point.after, before: point.before, delta: point.delta, committed: point.committed,
+      playerInput: '我从大厅走到庭院，前后大约两分钟。',
+    });
+    const prompt = buildSceneUserPrompt(projection, {});
+    expect(projection.playerAction).toBeNull();
+    expect(prompt).not.toContain('【主角刚才做了什么】');
+    expect(prompt.split('陈默从大厅走到庭院').length - 1).toBe(1);
+  });
+
+  it('keeps a non-movement player action as its own cue', () => {
+    const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
+    const projection = buildProjection({
+      state: point.after, before: point.before, delta: point.delta, committed: point.committed,
+      playerInput: '我把外套扣好。',
+    });
+    expect(projection.playerAction).toBe('我把外套扣好。');
+  });
+
+  it('marks a token-cap finish as truncated, keeps the paid text and repairs once', async () => {
+    const partial = '陈默从大厅走到庭院，前后大约两分钟。院里没有人，他站在石阶边';
+    const engine = {
+      info: { backend: 'wllama', modelId: 'qwen2.5-1.5b-instruct-q4_k_m.gguf' },
+      async load() {}, async dispose() {},
+      async complete() {
+        throw new IncompleteGenerationError({ raw: partial, finishReason: 'length', firstTokenMs: 1, wallMs: 2 });
+      },
+      async chat() {
+        throw new IncompleteGenerationError({ raw: partial, finishReason: 'length', firstTokenMs: 1, wallMs: 2 });
+      },
+    };
+    const point = settle(initial(), { patches: [{ entityId: 'hero', containerId: 'yard' }] });
+    const result = await generateCandidate(baseArgs(engine, point, { policy: { targetChars: 120, minChars: 20, maxAttempts: 2 } }));
+    expect(result.rawAttempts).toHaveLength(2);
+    expect(result.rawAttempts[0].raw).toBe(partial);
+    expect(result.rawAttempts[0].issues.map((issue) => issue.kind)).toContain('truncated');
+    expect(result.status).toBe('rejected');
+  });
+});
+
+describe('later projection/verifier fixes', () => {
+  it('credits a group move to both actors when the prose says 两人', async () => {
+    const point = settle(initial(), { patches: [
+      { entityId: 'hero', containerId: 'yard' },
+      { entityId: 'ally', containerId: 'yard' },
+    ] });
+    const draft = '两人一前一后走进庭院，前后大约两分钟。院里的石板还湿着，陈默把外套拢紧了一点。';
+    const result = await generateCandidate(baseArgs(new ScriptedEngine([draft]), point, {
+      playerInput: '我和林夏一起走进庭院。',
+    }));
+    const omissions = result.issues.filter((issue) => issue.kind === 'fact_omitted');
+    expect(omissions.some((issue) => issue.severity === 'hard')).toBe(false);
+  });
+
+  it('asks for the new holder when an item changes hands', async () => {
+    const point = settle(initial(), { patches: [{ entityId: 'map', containerId: 'ally' }] });
+    const draft = '陈默从大厅走到庭院，前后大约两分钟。旧地图被他卷起来收好。';
+    const result = await generateCandidate(baseArgs(new ScriptedEngine([draft]), point));
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'fact_omitted', severity: 'soft', detail: expect.stringContaining('林夏') }),
+    ]));
+  });
+
+  it('strips a 【正文】 prefix that sits on the same line as the prose', () => {
+    expect(cleanDraft('【正文】陈默走到庭院。').text).toBe('陈默走到庭院。');
   });
 });

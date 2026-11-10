@@ -17,6 +17,7 @@ export interface CleanResult {
 /** A whole line that is only a heading (`【本次变化】`) is dropped; a label
  * prefix with content after it (`正文：……`) keeps the content. */
 const PURE_LABEL = /^\s*(?:【[^】]{1,10}】|\[[^\]]{1,10}\])\s*$/;
+const BRACKET_PREFIX = /^\s*【(?:正文|叙事|输出|回答|场景|小说正文|旁白)】\s*/;
 const LABEL_PREFIX = /^\s*(?:正文|叙事|输出|回答|场景|小说正文|旁白)\s*[:：]\s*/;
 const META_TAIL = /[（(]\s*(?:约|共|全文)?\s*\d{2,4}\s*字\s*[)）]\s*$/;
 const FENCE = /```[a-zA-Z]*\n?|```/g;
@@ -42,6 +43,12 @@ export function cleanDraft(raw: string): CleanResult {
     const trimmed = line.trim();
     if (!trimmed) { kept.push(''); continue; }
     if (PURE_LABEL.test(trimmed)) { echoedLabels.push(trimmed.slice(0, 24)); continue; }
+    if (BRACKET_PREFIX.test(trimmed)) {
+      echoedLabels.push(trimmed.slice(0, 24));
+      const rest = trimmed.replace(BRACKET_PREFIX, '').trim();
+      if (rest) kept.push(rest);
+      continue;
+    }
     if (LABEL_PREFIX.test(trimmed)) {
       echoedLabels.push(trimmed.slice(0, 24));
       const rest = trimmed.replace(LABEL_PREFIX, '').trim();

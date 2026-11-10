@@ -17,11 +17,20 @@ export type ResolvedTemplate = Exclude<InstructTemplate, 'auto'>;
 
 export interface ChatTurn { system: string; user: string }
 
-export function resolveTemplate(template: InstructTemplate | undefined, info: EngineInfo): ResolvedTemplate {
+/** `allowUnknown` is for chat mode: the engine's own template renders the
+ * turns, so the name is evidence only. Hand-written ChatML (raw mode) must
+ * never guess, because a wrong header is exactly the template-mismatch failure
+ * lane 02 documented. */
+export function resolveTemplate(
+  template: InstructTemplate | undefined,
+  info: EngineInfo,
+  allowUnknown = false,
+): ResolvedTemplate | null {
   if (template && template !== 'auto') return template;
   const id = (info.modelId ?? '').toLowerCase();
   if (id.includes('qwen3')) return 'qwen3-instruct';
   if (id.includes('qwen2.5') || id.includes('qwen2_5') || id.includes('qwen25')) return 'qwen2.5-instruct';
+  if (allowUnknown) return null;
   throw new Error(`unknown_instruct_template:${info.modelId ?? 'null'}`);
 }
 

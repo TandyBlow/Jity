@@ -66,8 +66,11 @@ function chooseBest(attempts: CandidateAttempt[]): CandidateAttempt | null {
 
 export async function generateCandidate(args: GenerateInstructCandidateArgs): Promise<GeneratedInstructCandidate> {
   const policy = args.policy ?? {};
-  const template: ResolvedTemplate = resolveTemplate(policy.template, args.engine.info);
   const promptMode: PromptMode = resolvePromptMode(policy.promptMode, args.engine.info);
+  // In chat mode the adapter's GGUF template renders the turns; an unknown or
+  // not-yet-loaded model id is not a reason to refuse. Raw mode still throws.
+  const template: ResolvedTemplate | null = resolveTemplate(policy.template, args.engine.info, promptMode === 'chat');
+  const chatTemplate: ResolvedTemplate = template ?? 'qwen2.5-instruct';
   const projection = buildProjection({
     state: args.state ?? null,
     before: args.before ?? null,
@@ -98,7 +101,7 @@ export async function generateCandidate(args: GenerateInstructCandidateArgs): Pr
     const user = attempt === 1 || !previousText
       ? buildSceneUserPrompt(projection, policy)
       : buildRepairPrompt({ projection, policy, previousText, issues: attempts[attempts.length - 1]?.issues ?? [] });
-    const prompt = renderPrompt({ system, user }, template, promptMode);
+    const prompt = renderPrompt({ system, user }, chatTemplate, promptMode);
     lastPrompt = prompt;
     const attemptStart = now();
     let attemptFirstToken: number | null = null;
@@ -112,7 +115,7 @@ export async function generateCandidate(args: GenerateInstructCandidateArgs): Pr
         maxTokens: policy.maxTokens ?? 520,
         temperature: attempt === 1 ? (policy.temperature ?? 0.6) : (policy.retryTemperature ?? 0.35),
         seed: policy.seed ?? 42,
-        stop: promptMode === 'raw' ? stopSequences(template) : undefined,
+        stop: promptMode === 'raw' ? stopSequences(chatTemplate) : undefined,
         timeoutMs: policy.timeoutMs ?? 120_000,
         ...(args.signal ? { signal: args.signal } : {}),
         onProgress: (progress) => {
@@ -139,9 +142,14 @@ export async function generateCandidate(args: GenerateInstructCandidateArgs): Pr
         // The adapter rejects a generation that stopped at the token cap (or
         // lost its finish reason) instead of returning a silent partial. The
         // paid text still has to be judged: keep it and let `truncated` drive
-        // the repair, never relabel it as a transport error.
+        // the repair, never relabel it as a transport error. A deadline is a
+        // real timeout: keep any partial text as evidence but never accept it.
         raw = caught.completion.raw;
         finishReason = caught.completion.finishReason;
+        if (finishReason === 'timeout' || /deadline|timeout|timed out/i.test(caught.message)) {
+          attemptTimedOut = true;
+          timedOut = true;
+        }
       } else {
         error = caught instanceof Error ? caught.message : String(caught);
       }
