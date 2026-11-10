@@ -30,6 +30,7 @@ const config = {
   deadlineMs: Number(option('--deadline-ms', '250')),
   abortGraceMs: Number(option('--abort-grace-ms', '2500')),
   channel: option('--channel', 'msedge'),
+  hardStop: hasFlag('--hard-stop'),
   out: resolve(frontend, option('--out', '../.local/parallel-runtime/measure.json')),
 };
 const modelUrl = `/models/${config.modelFile}`;
@@ -255,12 +256,59 @@ try {
     queue.dispose();
 
     const disposeStarted = performance.now();
+    const gpuLayers = engine.runtime.gpuLayers;
     await engine.dispose();
     const firstDisposeMs = performance.now() - disposeStarted;
     const secondStarted = performance.now();
     await engine.dispose();
     probe.dispose = { firstDisposeMs, secondDisposeMs: performance.now() - secondStarted,
       terminal: !engine.runtime.loaded && engine.info.modelId === null };
+
+    // Real hard-stop scenario: a fresh engine with abortGraceMs 0 is aborted
+    // while the prompt is being evaluated, so the native cancel cannot act
+    // before the grace expires and the worker has to be terminated. This is
+    // the only real-device proof of the termination path and the reload that
+    // follows it; the normal runs above use the cooperative native cancel.
+    if (config.hardStop !== false) {
+      const hardEngine = new modules.engine.WllamaInferenceEngine({ modelUrl: config.modelUrl, contextSize: config.contextSize,
+        numThreads: config.numThreads, nGpuLayers: gpuLayers, abortGraceMs: 0, onEvidence: diagnostics.record });
+      const hardLoadStarted = performance.now();
+      await hardEngine.load();
+      const hardLoadMs = performance.now() - hardLoadStarted;
+      const hardAbort = new AbortController();
+      let hardCompletion = null;
+      const hardStarted = performance.now();
+      let hardOutcome;
+      try {
+        const running = hardEngine.complete(longPrompt, { maxTokens: 512, temperature: 0.7, seed: 7, cachePrompt: false,
+          timeoutMs: 120000, signal: hardAbort.signal, onCompletion: (evidence) => { hardCompletion = evidence; } });
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        hardAbort.abort();
+        const text = await running;
+        hardOutcome = { settledWithValue: true, chars: text.length };
+      } catch (error) {
+        hardOutcome = { settledWithValue: false, name: error?.name, message: error?.message };
+      }
+      const hardStop = { loadMs: hardLoadMs, wallMs: performance.now() - hardStarted, ...hardOutcome, completion: hardCompletion,
+        runtimeAfter: hardEngine.runtime, loadedAfter: hardEngine.runtime.loaded };
+      if (!hardEngine.runtime.loaded) {
+        const reloadStarted = performance.now();
+        await hardEngine.load();
+        hardStop.reloadMs = performance.now() - reloadStarted;
+        try {
+          const recoveryStarted = performance.now();
+          let recoveryCompletion = null;
+          const text = await hardEngine.complete(prompt, { maxTokens: config.maxTokens, temperature: 0, seed: 42, cachePrompt: false,
+            timeoutMs: config.shortTimeoutMs, onCompletion: (evidence) => { recoveryCompletion = evidence; } });
+          hardStop.recovery = { wallMs: performance.now() - recoveryStarted, chars: text.length, completion: recoveryCompletion };
+        } catch (error) {
+          hardStop.recovery = { error: `${error?.name}: ${error?.message}` };
+        }
+      }
+      await hardEngine.dispose();
+      probe.hardStop = hardStop;
+    }
+
     probe.timings.totalMs = performance.now() - startedAt;
     probe.timer = timer.snapshot();
     probe.diagnostics = diagnostics.snapshot();
@@ -282,6 +330,10 @@ try {
       hardStopped: result.abort.completion?.hardStopped, stoppedMs: result.abort.completion?.stoppedMs },
     deadline: result.deadline && { name: result.deadline.name, hardStopped: result.deadline.completion?.hardStopped,
       stoppedMs: result.deadline.completion?.stoppedMs, runtimeAfter: result.deadline.runtimeAfter },
+    hardStop: result.hardStop && { settled: result.hardStop.settledWithValue, name: result.hardStop.name,
+      hardStopped: result.hardStop.completion?.hardStopped, stoppedMs: result.hardStop.completion?.stoppedMs,
+      loadedAfter: result.hardStop.loadedAfter, reloadMs: result.hardStop.reloadMs,
+      recoveryChars: result.hardStop.recovery?.chars },
     cancels: summary.cancellations,
     queue: summary.queue,
     errors: result.errors,

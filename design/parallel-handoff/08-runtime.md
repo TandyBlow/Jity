@@ -195,8 +195,10 @@ source digests, model/bundle/wasm hashes and the git status; `source.head` is
 - Two models are loaded sequentially by the page; the observed 43 s is one
   model on this run, not the whole page budget. The deadline is not a hard
   wall: native cancel can only act at the next result chunk (496 ms here).
-- Hard stop drops the loaded model; its real reload cost is covered by mocks,
-  not by a real stuck-device run.
+- Hard stop drops the loaded model; its worker-termination path and reload are
+  covered by fake-runner tests. The probe has an opt-in `--hard-stop` scenario
+  for a real termination run, but the cited default run did not execute it
+  (the scenario was added after that run).
 - The page/game-model are not wired in this lane. `LocalGameModel` calls
   `complete` without a signal for most tasks (especially narration), so the
   page must use `cancelActive()` for the stop button (or thread a signal
