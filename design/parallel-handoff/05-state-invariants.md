@@ -290,3 +290,25 @@ The invariant reading of this failure is: the failed turn left the committed
 state at the head (correct atomicity), but the failed input must not be counted
 as display history, and the next submit must not be blocked by a pending
 advance. Do not use this run as a state-replay pass.
+
+## 06 current-tree handoff (2026-11-11T00:xxZ)
+
+06 has merged 04 results membership (`c4a78f90`, `d051c149`) and full-cast
+task/personality/sanity skeleton changes (`7b38971a`, merge `c1027684`), and has
+its own `history.ts` (uncommitted turns plus `committedEntries`/
+`unfinishedEntries`). Its page at `cef95c7e` still does not expose a detached
+snapshot and still reports `entriesTotal`/`entriesRestored` without
+`overallRestored`; `history.ts` still pairs a point to `commands[index]`.
+
+Two 05 patches are apply-check clean on that tree:
+
+- `06-page-restore-and-hook.patch` (sha256 `ff2ca96f...`): detached
+  `__worldSnapshot`, `overallRestored`, synchronous submit lock. It no longer
+  rewrites `restoredEntries`.
+- `06-history-command-pairing.patch` (sha256 `8aa87257...`): conservative
+  count-safe input fallback; it prevents an interleaved failed command from
+  labelling a later committed point, but a real command→point map remains the
+  correct fix.
+
+Do not apply the old `c9da0f63` combined page patch: it contains the removed
+page-local `restoredEntries` and conflicts with 06's `history.ts` extraction.
