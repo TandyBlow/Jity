@@ -196,7 +196,10 @@ automatic round inherits `consumed` and cannot re-consume a player input.
 Before this, a consumed protagonist slot asked the model to "continue the same
 thing"; that could replay the old command in an automatic round or invent a new
 player action. The goal-copy guard tests were rewritten accordingly; an NPC
-still covers the all-character goal guard.
+still covers the all-character goal guard. This matches the earlier G5
+composition decision (commit `54f630ca`, "let consumed action opportunities skip
+without an input binding"): a consumed opportunity skips, it is never
+adjudicated.
 
 ## Open trade-offs (not silently decided here)
 
