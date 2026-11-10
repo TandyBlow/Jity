@@ -194,7 +194,10 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 `frontend/scripts/parallel-sync/two-device-session-check.ts`：A 用 06 的 session 打完一回合
 上传到真实服务；B 没有任何本地存档，从远端恢复、写进自己的 store、用 `LocalGameSession.open`
 打开（`created=false`），看到同一条输入和同一段正文；B 再打一回合，上传的父节点就是 A 的
-快照。实测 B 的 `commandsPlayed` 为 `["我打开盒盖。"]`、正文逐字相同、父链包含 A。
+快照。实测 B 的 `commandsPlayed` 为 `["我打开盒盖。"]`、正文逐字相同、父链包含 A。脚本还验证了
+第二种打开方式（C）：不先写 store，直接 `LocalGameSession.restore(远端快照)`，历史一致，
+上传挂在 B 的快照下；C 的 store 在 session 自己保存之前保持空（revision 为 null），
+因为 `save()` 默认只上传。
 
 ```
 PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/two-device-session-check.ts
