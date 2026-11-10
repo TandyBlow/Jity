@@ -165,7 +165,12 @@ SENTENCE = re.compile(r"(?<=[。！？])")
 SANITY_WORD = re.compile(r"(精神值|理智值|精神)")
 
 
-def clamp_to_draft(target: str, draft: str) -> str:
+def bigrams(text: str):
+    clean = re.sub(r"[^一-鿿]", "", text)
+    return {clean[i:i + 2] for i in range(len(clean) - 1)}
+
+
+def clamp_to_draft(target: str, draft: str, min_overlap: float = 0.0) -> str:
     """Keep only sentences the draft can license.
 
     The page's draft has no sanity line (`factualNarration` ignores sanity), while
@@ -175,15 +180,24 @@ def clamp_to_draft(target: str, draft: str) -> str:
     any number the draft does not contain, is dropped.
     """
     allowed = set(re.findall(r"[0-9]+", draft))
+    draft_grams = bigrams(draft)
     kept = []
     for sentence in SENTENCE.split(target):
         if not sentence.strip():
             continue
         if SANITY_WORD.search(sentence):
             continue
+        if re.search(r"[「“『]", sentence):
+            # The page forbids new dialogue; a target with quoted speech teaches
+            # the model to invent it.
+            continue
         numbers = set(re.findall(r"[0-9]+", sentence))
         if numbers - allowed:
             continue
+        if min_overlap > 0 and draft_grams:
+            grams = bigrams(sentence)
+            if grams and len(grams & draft_grams) / len(grams) < min_overlap:
+                continue
         kept.append(sentence)
     return "".join(kept).strip()
 
@@ -196,6 +210,8 @@ def main() -> int:
     parser.add_argument("--scenes-weight", type=int, default=2)
     parser.add_argument("--include-scenes", dest="include_scenes", action="store_true", default=False)
     parser.add_argument("--exclude-scenes", dest="include_scenes", action="store_false")
+    parser.add_argument("--min-draft-overlap", type=float, default=0.0,
+                        help="keep only target sentences whose character bigrams overlap the draft by this share")
     parser.add_argument("--clamp-to-draft", action="store_true",
                         help="drop target sentences the draft cannot license (sanity values, unknown numbers)")
     parser.add_argument("--include-05", action="store_true",
@@ -203,6 +219,9 @@ def main() -> int:
     parser.add_argument("--rows05", default=os.path.join(
         REPO, "..", "05-kernel", "experiments", "narration-quality",
         "corpus-scenes", "generated", "rows.jsonl"))
+    parser.add_argument("--new-rows", default="",
+                        help="JSONL of new hand-written rows: id, viewpoint, draft, target, "
+                             "optional worldFamily/lineage/sourceWorld; draft is used verbatim")
     parser.add_argument("--page-template-source", default="worktrees/06-recovery/frontend/src/lib/world-engine/local/prompt.ts")
     args = parser.parse_args()
 
@@ -212,6 +231,7 @@ def main() -> int:
                 for row_id in frozen.get(name, [])}
 
     out: List[Dict[str, Any]] = []
+    skipped: List[str] = []
     groups: Dict[str, str] = {}
     sources: Dict[str, str] = {"pageTemplate": args.page_template_source}
 
@@ -219,10 +239,15 @@ def main() -> int:
         sources["rows-v2"] = sha256(ROWS_V2)
         for row in read_jsonl(ROWS_V2):
             draft = page_draft(row["x"])
+            target = row["y"]
+            if args.clamp_to_draft:
+                target = clamp_to_draft(target, draft, args.min_draft_overlap)
+                if not target:
+                    continue
             out.append({"id": row["id"], "split": split_of[row["id"]], "mode": "scene",
                         "draft": draft,
                         "user": page_prompt(viewpoint_of(row["x"]), draft),
-                        "target": row["y"], "weight": args.scenes_weight,
+                        "target": target, "weight": args.scenes_weight,
                         "source": "rows-v2"})
 
     sources["rows-short-v1"] = sha256(SHORT_ROWS)
@@ -235,7 +260,7 @@ def main() -> int:
         groups[key] = split
         target = row["target"]
         if args.clamp_to_draft:
-            target = clamp_to_draft(target, draft)
+            target = clamp_to_draft(target, draft, args.min_draft_overlap)
             if not target:
                 continue
         out.append({"id": row["id"], "split": split, "mode": "scene", "draft": draft,
@@ -253,7 +278,7 @@ def main() -> int:
             # never provide a dev or test sample.
             target = row["targetText"]
             if args.clamp_to_draft:
-                target = clamp_to_draft(target, draft)
+                target = clamp_to_draft(target, draft, args.min_draft_overlap)
                 if not target:
                     continue
             out.append({"id": row["id"], "split": "train", "mode": "scene", "draft": draft,
@@ -261,6 +286,30 @@ def main() -> int:
                         "target": target,
                         "weight": max(1, args.short_weight // 2),
                         "source": "short-05"})
+
+    if args.new_rows:
+        sources["new-rows"] = sha256(args.new_rows)
+        for row in read_jsonl(args.new_rows):
+            draft = (row.get("draft") or "").strip()
+            target = (row.get("target") or "").strip()
+            viewpoint = row.get("viewpoint") or ""
+            if not draft or not target or not viewpoint:
+                # A row without a draft, a target or a viewpoint cannot become a
+                # page prompt; skip it loudly instead of guessing a viewpoint.
+                skipped.append(row.get("id", "?"))
+                continue
+            if args.clamp_to_draft:
+                target = clamp_to_draft(target, draft, args.min_draft_overlap)
+                if not target:
+                    skipped.append(row.get("id", "?"))
+                    continue
+            family = row.get("worldFamily") or row.get("sourceWorld") or "unknown"
+            key = f"{family}#{row.get('lineage') or row.get('sourceWorld') or 'single'}"
+            split = group_split(key)
+            groups[key] = split
+            out.append({"id": row["id"], "split": split, "mode": "scene", "draft": draft,
+                        "user": page_prompt(viewpoint, draft), "target": target,
+                        "weight": args.short_weight, "source": "new-rows"})
 
     with io.open(args.split_manifest, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps({"version": "page-splits-v1",
@@ -282,6 +331,7 @@ def main() -> int:
                "weighted": weighted, "sources": sources, "out": args.out,
                "splitManifest": args.split_manifest,
                "splitManifestSha256": sha256(args.split_manifest),
+               "skipped": skipped,
                "sample": out[0]["user"] if out else ""}
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     return 0

@@ -1,0 +1,262 @@
+{
+ "source": "QAQ.5-1.5B instruct, same 5 dev rows, same page prompt, temperature 0.5, seed 20261110, V100 fp16 transformers",
+ "arms": {
+  "base": {
+   "rows": [
+    {
+     "chars": 336,
+     "missingClauses": 2,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0050-backdoor-lock"
+    },
+    {
+     "chars": 321,
+     "missingClauses": 2,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0169-archive-fire-answer"
+    },
+    {
+     "chars": 285,
+     "missingClauses": 1,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0182-corridor-separation"
+    },
+    {
+     "chars": 281,
+     "missingClauses": 1,
+     "inventedNumbers": [
+      "2",
+      "3"
+     ],
+     "dialogueAdded": true,
+     "leaks": [],
+     "id": "short-0194-power-room-fear"
+    },
+    {
+     "chars": 205,
+     "missingClauses": 1,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0161-damp-plant"
+    }
+   ],
+   "totals": {
+    "chars": 1428,
+    "missingClauses": 7,
+    "inventedNumbers": 2,
+    "dialogueAdded": 1,
+    "leakingRows": 0
+   }
+  },
+  "v1-r16-3ep": {
+   "rows": [
+    {
+     "chars": 125,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0050-backdoor-lock"
+    },
+    {
+     "chars": 91,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-long-0117-two-tasks-and-relief",
+       "合订本按年份排在铁柜里。"
+      ],
+      [
+       "short2-0177-fire-and-notices",
+       "报刊库的合订本按年份排在"
+      ]
+     ],
+     "id": "short-0169-archive-fire-answer"
+    },
+    {
+     "chars": 106,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short2-0090-locked-door-and-watched-table",
+       "岗亭玻璃上的值班表被暖器"
+      ]
+     ],
+     "id": "short-0182-corridor-separation"
+    },
+    {
+     "chars": 62,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-0178-dirty-hands",
+       "江既白低头看了一眼，手指"
+      ]
+     ],
+     "id": "short-0194-power-room-fear"
+    },
+    {
+     "chars": 111,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-0098-newsroom-cup",
+       "搪瓷杯里的水已经干了，杯"
+      ]
+     ],
+     "id": "short-0161-damp-plant"
+    }
+   ],
+   "totals": {
+    "chars": 495,
+    "missingClauses": 0,
+    "inventedNumbers": 0,
+    "dialogueAdded": 0,
+    "leakingRows": 4
+   }
+  },
+  "v2-r8-1ep-82rows": {
+   "rows": [
+    {
+     "chars": 103,
+     "missingClauses": 2,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0050-backdoor-lock"
+    },
+    {
+     "chars": 94,
+     "missingClauses": 1,
+     "inventedNumbers": [
+      "53",
+      "58"
+     ],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0169-archive-fire-answer"
+    },
+    {
+     "chars": 92,
+     "missingClauses": 0,
+     "inventedNumbers": [
+      "51",
+      "49"
+     ],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0182-corridor-separation"
+    },
+    {
+     "chars": 61,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-0178-dirty-hands",
+       "江既白低头看了一眼，手指"
+      ]
+     ],
+     "id": "short-0194-power-room-fear"
+    },
+    {
+     "chars": 108,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-0100-desk-swap",
+       "听了一会儿——楼上长桌区"
+      ]
+     ],
+     "id": "short-0161-damp-plant"
+    }
+   ],
+   "totals": {
+    "chars": 458,
+    "missingClauses": 3,
+    "inventedNumbers": 4,
+    "dialogueAdded": 0,
+    "leakingRows": 2
+   }
+  },
+  "v3-clamped": {
+   "rows": [
+    {
+     "chars": 73,
+     "missingClauses": 2,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0050-backdoor-lock"
+    },
+    {
+     "chars": 110,
+     "missingClauses": 1,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0169-archive-fire-answer"
+    },
+    {
+     "chars": 57,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [],
+     "id": "short-0182-corridor-separation"
+    },
+    {
+     "chars": 45,
+     "missingClauses": 1,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short-0101-power-room-doubt",
+       "配电间的门开着一半，焦味"
+      ]
+     ],
+     "id": "short-0194-power-room-fear"
+    },
+    {
+     "chars": 94,
+     "missingClauses": 0,
+     "inventedNumbers": [],
+     "dialogueAdded": false,
+     "leaks": [
+      [
+       "short2-0056-duty-name-and-copy",
+       "铁柜的抽屉很涩。十五分钟"
+      ]
+     ],
+     "id": "short-0161-damp-plant"
+    }
+   ],
+   "totals": {
+    "chars": 379,
+    "missingClauses": 4,
+    "inventedNumbers": 0,
+    "dialogueAdded": 0,
+    "leakingRows": 2
+   }
+  }
+ }
+}
