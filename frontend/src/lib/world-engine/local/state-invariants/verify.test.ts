@@ -221,6 +221,16 @@ describe('visible acceptance summary', () => {
     expect(report.errors.map((item) => item.code)).toContain('roll_invalid');
   });
 
+  it('rejects a task id that appears under two characters', async () => {
+    const record = await recordOf(fixture.normal.initial as InitialState, []);
+    const state = record.state as WorldState;
+    state.characters.person_b.tasks.task_a_root = {
+      id: 'task_a_root', ownerId: 'person_b', parentTaskId: null, goal: '重复 id', status: 'pending',
+    };
+    const report = await verifyWorldRecord(record);
+    expect(report.errors.map((item) => item.code)).toContain('task_hierarchy');
+  });
+
   it('rejects a stored task whose parent does not exist in the same character', async () => {
     const record = await recordOf(fixture.normal.initial as InitialState, []);
     const state = record.state as WorldState;

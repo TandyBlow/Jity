@@ -138,10 +138,11 @@ Both patches are checked with `git apply --check` in a read-only 06 worktree:
     summaries, not replay S0+delta.
 - `results/product/evidence/05-kernel/patches/06-state-apply-guards.patch`
   - `state.ts` fix, not just a verifier: reject a second appearance change with
-    the same id and a second added task with the same id. Applied in a
-    disposable 05 tree; 39 state/transport tests pass. 06 must confirm the
-    shared-file ownership before applying. 04's smaller legacy `state.ts`
-    needs its own patch if it still uses that path.
+    the same id, a second added task with the same id, and task ids/owners/
+    parents that break the world-global hierarchy. Applied in a disposable 05
+    tree; 42 state/transport/guard tests pass. 06 must confirm the shared-file
+    ownership before applying. 04's smaller legacy `state.ts` needs its own
+    patch if it still uses that path.
 - `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
   - closes the same-tick page submit gap with a synchronous ref; checked
     against the observed current page.
