@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { EntityDelta, InitialState, WorldState } from '../../types';
+import type { EntityDelta, InitialState, TimeAdvance, WorldState } from '../../types';
 import { buildInitialState } from '../state';
 import { compareCodePoints } from './code-points';
 import { projectNarrationInput } from './project';
@@ -7,7 +7,7 @@ import { renderNarrationInput } from './pipeline';
 import { applyDelta, tinyWorld } from './test-fixtures';
 import { NarrationInputError } from './types';
 
-const TIME = { boundary: 'elapsed' as const, duration: { amount: 3, unit: 'minute' as const } };
+const TIME: TimeAdvance = { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } };
 
 function expectCode(fn: () => unknown, code: string): NarrationInputError {
   try {
@@ -24,7 +24,7 @@ function project(
   before: WorldState,
   delta: Record<string, EntityDelta>,
   viewpointId = 'hero',
-  timeAdvance = TIME,
+  timeAdvance: TimeAdvance = TIME,
 ) {
   const after = applyDelta(before, delta, timeAdvance);
   return {

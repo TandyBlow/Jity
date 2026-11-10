@@ -1,0 +1,197 @@
+{
+  "package": "narration-dev-package-v1",
+  "frozenAt": "2026-11-10",
+  "owner": "01-input",
+  "status": "public_development_regression_not_final",
+  "purpose": "One shared settled-input package for lanes 11/12 (and any candidate comparison) so results are comparable without building another platform.",
+  "caseCount": 15,
+  "categories": [
+    "appearance_item",
+    "continuity",
+    "dialogue",
+    "gender_pronoun",
+    "item_transfer_fixture",
+    "long_text",
+    "move_direction",
+    "multi_person_reference",
+    "no_change",
+    "sanity",
+    "task_sanity",
+    "task_time",
+    "time_only_derived"
+  ],
+  "inputs": {
+    "shortCorpus": {
+      "path": "worktrees/01-input/experiments/narration-quality/corpus-short/rows.jsonl",
+      "sha256": "b108813aabe9c64bce859ea907439cf0adaa03988a53547f28076564c5e64cde"
+    },
+    "frozen199": {
+      "path": "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+      "sha256": "b7cc1c1b33f7b3f179c58c2244fe3d532184840be0ef2827ea72d3f71ca62ef2"
+    },
+    "tideScenes": {
+      "path": "D:/others/Jity/.local/parallel-local-game/worktrees/05-kernel/experiments/narration-quality/corpus-scenes/generated/rows.jsonl",
+      "sha256": "d23e0688e147fa120919be36d290c72bdd09d0a6a954849638ec12cbe52feee8"
+    },
+    "world": {
+      "path": "worktrees/01-input/frontend/public/worlds/dragon-raja-free-day.world.json",
+      "sha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a"
+    }
+  },
+  "cases": [
+    {
+      "caseId": "dr-0021-no-change-three-people",
+      "category": "no_change",
+      "worldFamily": "dragon-raja-free-day",
+      "knownIssues": [],
+      "inputSha256": "97da3b6a06b00e4b73077d6720f5cbcda3782af3df0d975305c424365d298a37",
+      "referenceSha256": "e44c2b94c9921d026de0d0d817a5cc3493254b320a8436cbaa2eb1a4ee7b6b72",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short2-0034-carved-line-worn",
+      "category": "move_direction",
+      "worldFamily": "library-courtyard",
+      "knownIssues": [],
+      "inputSha256": "ef2e2a4027e70270c9f337830cdde44f17c38d33aac06607d66de3bc8400ce36",
+      "referenceSha256": "780a31971a5eb66ef22c36215421eb4bc2ab3fdb375c7230b3d70cfd6e7b0f72",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "dr-0003-task-goggles",
+      "category": "task_time",
+      "worldFamily": "dragon-raja-free-day",
+      "knownIssues": [],
+      "inputSha256": "9dadb59cd685355480dd0dfd6340879e58242121654a467da45619191b243b01",
+      "referenceSha256": "b6fd27ac1aa8a147be3d06b76e0d7e188bb2b9a3f0d971a18e32df0cea062cd3",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short2-0102-three-copies-collated",
+      "category": "multi_person_reference",
+      "worldFamily": "library-news",
+      "knownIssues": [],
+      "inputSha256": "dfdcd317cecc6e76191663cc7c16e31aafc8c86f9bbb2e689ee1a9ffa1e3ee6e",
+      "referenceSha256": "173a0e2e3586d11d348d19e026dabd8108c2af7d76725cb583f78538a1d6b974",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "dr-0019-tomiyama-shen-symptom",
+      "category": "sanity",
+      "worldFamily": "dragon-raja-free-day",
+      "knownIssues": [],
+      "inputSha256": "326a8efeb23c63abc9c2b1068aaf134299b3a4f143cfc9287c0e4aacdb22c21a",
+      "referenceSha256": "5ada0d16a902729fb25175f13490bb61a4e44d16ddbcd3c477c85ce06e7cc894",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short2-0031-binding-glue-and-tape",
+      "category": "appearance_item",
+      "worldFamily": "library-basement",
+      "knownIssues": [],
+      "inputSha256": "bbca858c9bacc0fc26a0a62103474b6a0b298d6103d8bf5b92e6fa4030c15ef4",
+      "referenceSha256": "40138cf30eaa4b92bb1754c9f0d3c744a51b02f59adf315fe227eb6131f5b162",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "dr-0018-fingel-tells-hatch",
+      "category": "dialogue",
+      "worldFamily": "dragon-raja-free-day",
+      "knownIssues": [],
+      "inputSha256": "39382ceda28e99b4823f348c714254ca4b448631ddab412bd62cd29af4b32f39",
+      "referenceSha256": "64f3624c96e8b07b6b01ae15bfd52c6274f4790cf1061ffe43912a4e88f8fe6b",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short2-0056-duty-name-and-copy",
+      "category": "gender_pronoun",
+      "worldFamily": "library-news",
+      "knownIssues": [],
+      "inputSha256": "a58a72638b17beb49caa67cec8de166efefe5a54d1ea590887faedd9018fc608",
+      "referenceSha256": "9f1916ed682d71301a7ff026904e53fa8cad4eb0e3f501595f2dee2e1732d764",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short-0008-two-minute-no-change",
+      "category": "time_only_derived",
+      "worldFamily": "library-basement",
+      "knownIssues": [],
+      "inputSha256": "1135c978dd43e49ff5861a391820df37f732372e437dec8658631dc9410b51a1",
+      "referenceSha256": "a213e9a3a8b603738a1510d3d1f6dbf6fb9b3e8a12e1d489e45c60bbd9dc7c9d",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "short2-0129-film-version-and-fear",
+      "category": "task_sanity",
+      "worldFamily": "library-news",
+      "knownIssues": [],
+      "inputSha256": "cab3ec53681a2f0adc664328f3a90541e890bbc0408bab10605869da16853c8d",
+      "referenceSha256": "e23e6dc4d4c07112065e27c2db174574386cae2e7dba60bea39b9c17701c9301",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "frozen-row-0012",
+      "category": "long_text",
+      "worldFamily": "library-frozen-train",
+      "knownIssues": [
+        "The reference text never states the elapsed time (198/199 frozen rows share this gap).",
+        "The reference adds footsteps with no settled move."
+      ],
+      "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+      "referenceSha256": "551a188b4ea60b821734a50e09d7c6d7f5a55fea2d63ecee731e1300cad50366",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "tide-continuity-tide-duty-t1",
+      "category": "continuity",
+      "worldFamily": "tide-watch-1998",
+      "knownIssues": [
+        "The reference has an unbound footstep sound (一串脚步声) although nobody moved this point; reported to 05."
+      ],
+      "inputSha256": "feaef5bd4d066248a3b411c092c58b577e6287bc6ffb87d0a7f6b02201b0498f",
+      "referenceSha256": "80dd7a5fa09f127b8166e1d5fc1234f021a51d4679fc82430deabf9a1ac522d9",
+      "priorTextCount": 0
+    },
+    {
+      "caseId": "tide-continuity-tide-duty-t2",
+      "category": "continuity",
+      "worldFamily": "tide-watch-1998",
+      "knownIssues": [],
+      "inputSha256": "9a5ec1fae57223bfa3eba6299c87ba16c14f51c855afb2ab6e3280a3b5386539",
+      "referenceSha256": "975ac2e27f12672032286c8362c13f9f19891ed9754ffcca362877ac9907d6df",
+      "priorTextCount": 1
+    },
+    {
+      "caseId": "tide-continuity-tide-duty-t3",
+      "category": "continuity",
+      "worldFamily": "tide-watch-1998",
+      "knownIssues": [],
+      "inputSha256": "85379a6cbb01bebe6ef3538060d22212dee52d52ffaeff447322da81cdce72dd",
+      "referenceSha256": "14c82e2caed5e3ab6caaa19c3ef1700f1b5975579be281073ed0ecd6b952da7d",
+      "priorTextCount": 2
+    },
+    {
+      "caseId": "fixture-goggles-transfer",
+      "category": "item_transfer_fixture",
+      "worldFamily": "dragon-raja-free-day",
+      "knownIssues": [],
+      "inputSha256": "38a9662ebce022575ac6e07576c00cb2cfb97f1acb765ae237087839eb0faf6f",
+      "referenceSha256": "36339fdf14e9cfa115110512665e84bb46da91f6b808367935150ecd9b32e519",
+      "priorTextCount": 0
+    }
+  ],
+  "files": {
+    "cases.jsonl": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b"
+  },
+  "rubric": "RUBRIC.md",
+  "checkerReference": "frontend/src/lib/world-engine/local/narration-quality/ (reviewNarration) and its batch harness",
+  "independence": {
+    "finalSet": false,
+    "reason": "All cases are public development material: 01/05 authored scenes, frozen train rows, or a 01-authored fixture. They can never become the independent final set, and changing the reviewer does not change that.",
+    "authors": [
+      "01-input",
+      "05-kernel",
+      "world-components dataset"
+    ]
+  }
+}
