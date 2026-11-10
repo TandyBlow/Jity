@@ -69,14 +69,17 @@ const out = generateCandidate({
   state, beforeState,    // 可选：共享运行器已经传的已结算读；只作场景材料
   delta,                 // 可选：{timeAdvance}，作为时间事实
   priorText,
-  policy: { scene },      // 04 的整段骨架，优先于 committed
+  policy: { scene },      // ProseScene 或运行器的 SceneGrounding，优先于 committed
 });
 out.text; out.accepted; out.rawAttempts; out.issues;
 out.timings; out.strategyVersion;
 ```
 
 返回里额外带 `attemptIndex`、`status`、`display`、`composed`、`sparse`，
-02 的循环不需要读它们也能工作。没有 `policy.scene` 时，会用 02 的事实包
+02 的循环不需要读它们也能工作。`policy.scene` 可以是本 composer 的
+`ProseScene`，也可以是共享运行器的 `SceneGrounding`（`location` 字符串、
+`placeNotes`、`present`、`objects`）；后者会用 `committed.facts` 补事实、
+用 grounding 补场景。没有 `policy.scene` 也没有 state 时，会用 02 的事实包
 拼一个 `sparse: true` 的骨架（地点外观、对白、物品细节不可得），并在
 `issues` 里明说，不假装信息完整。
 
@@ -139,98 +142,77 @@ signal, onProgress}`），整段口会**只把 state 当场景材料**用：
 
 ## 实跑结果
 
-`frontend/scripts/candidate-prose/compose-samples.ts` 从公开世界
-`data/worlds/dragon-raja-free-day.world.json` 读真实人名、地点、物品，
-跑整段口和逐 beat 口。当前输出（原文，未润色）：
+### 09 共享页面（真实驱动，3/3 accepted）
+
+运行器把 `committed` 事实包、`state`、`before`、`delta` 和一份
+`SceneGrounding`（`location` / `placeNotes` / `present` / `objects` /
+`inventory`）一起交给候选。整段口直接吃这份输入，三次都 accepted，
+`issues=[]`，页面回传的正文如下（原文）：
 
 ```text
-过了四分钟，路明非还在西侧服务巷。
+巷口的黄黑绳已放下，进入即算踏入演习区。
 
-路明非从西侧服务巷走到器材棚。
+身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。
 
-相机备用电池被带到了器材棚。器材棚里，推拉门可回服务巷，领用台在门内右侧。
+演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。
 
-路明非身上，护目镜的带子在手腕上绕了一圈。
+赛区路线图还在西侧服务巷。图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。
 
-路明非完成了「把护目镜戴好并确认镜片没有裂纹」。
-
-路明非把话咽了回去，喉咙发紧。
-
-芬格尔的呼吸紧了一下。
-
-芬格尔还在器材棚，头发乱着，手指在机身上敲了两下。
-
-路明非没有马上再动，芬格尔也没有动。
+路明非把目光落到赛区路线图上。
 ```
 
-同一份素材在 04 的 `generateCandidate` 里（`policy.composer = createBeatComposer()`）
-得到 `accepted: true`、`composers` 全是 `program:prose-composer`、`issues: []`，
-每个 beat 都通过 04 的 `verifyBeatText`。复现：
+```text
+廊柱连接器材区与钟楼西门，腰高石栏可作掩体。
+
+一分钟过去，路明非从西侧服务巷走到西回廊。
+
+诺诺从西侧服务巷来到西回廊。
+
+身边还有林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。
+
+林亦舟放下的演习枪还在原来的地方。枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。
+```
+
+```text
+过了三分钟，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。
+
+路明非不再等别人替他决定，愿意先迈出一步。
+
+身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。
+```
+
+136 / 151 / 92 字，页面内 4–11 ms。证据：
+`artifacts/prose-composer/browser-07.json`。
+
+这次用的是 **program-only 装载器**（`scripts/candidate-prose/stub-engine-loader.ts`），
+因为本 composer 从不调用模型；共享运行器仍要求一个 engine 槽，所以用 stub
+满足它，证据里 `backend` 明确写着 `program-only stub (no model)`，不冒充模型运行。
+第一次用真实模型租约时 06 正在跑，本线没有抢锁。
+
+复现：
 
 ```bash
-cd frontend
-./node_modules/.bin/jiti ./scripts/candidate-prose/compose-samples.ts
-LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/run-04-beats.ts
-LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/sweep-free-day.ts
-./node_modules/.bin/vitest run src/lib/world-engine/local/narration-candidates/prose-composer/ --maxWorkers=1
-./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
+cd <09 worktree>/frontend && node scripts/quality-candidates/run-browser-candidates.mjs   --lane 07-prose --candidate 07-prose=<07 worktree>/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts   --candidate-loader "07-prose=<07 worktree>/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel"   --candidate-model-id 07-prose=none --set free-day --max-runs 3 --no-lease   --model /models/stub.gguf --model-dir <dir with stub.gguf>   --out <07 worktree>/artifacts/prose-composer/browser-07.json
 ```
 
-`sweep-free-day.ts` 在公开世界的 14 个真实点位上各跑一遍 04 全流程
-（移动到器材棚、两人同时移动、任务完成+精神下降、外貌+个性、物品转移、
-新增待办、纯时间流逝、中央庭院移动、两人反向移动、精神回升、物品外貌变化、
-任务+待办+个性+精神同点、只过一秒、带上一轮正文的续写）。当前 14/14 都是
-`accepted`，每个 beat 都来自本 composer，没有回退到 04 自己的 realizer。
-其中两段：
+### 04 逐 beat 全流程（14/14 accepted）
 
-```text
-过了一分钟，路明非还在西侧服务巷。
+`scripts/candidate-prose/sweep-free-day.ts` 用 04 的真实内核和
+`projectConstrainedScene` 跑公开世界 14 个点位，每个 beat 都由本 composer
+产出，没有回退到 04 的 `realizeBeat`。覆盖：走到器材棚、两人移动一人留下、
+任务达成并掉精神、外貌与个性变化、电池被带出、新增小任务、纯时间、校园移动
+带两名目击者、两人反向移动、精神恢复、物品外貌变化、四事实复合、一秒过去、
+简报后的续写。
 
-西侧服务巷里，巷口的黄黑绳已放下，进入即算踏入演习区。
+### 整段口 + 真实 state（283 字）
 
-诺诺从西侧服务巷走到红方集结点，芬格尔从器材棚走进西侧服务巷。
-
-身边还有芬格尔，头盔歪扣着，食指蹭了油；旧相机挂在脖子上，左臂没有阵营布带。
-
-路明非没有马上再动，芬格尔也没有动。
-```
-
-```text
-过了一分钟，路明非还在西侧服务巷。
-
-赛区路线图还在西侧服务巷，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态。
-```
-
-这两段暴露过的两个坑已经修掉，代码里保留了注释：
-
-1. 场景纹理不能写“某人也在地点”，否则 04 的旧对齐门槛会把它读成
-   对主角位置事实的冒名（actor swap）。改用“身边还有某人，……”。
-2. 物品说明只有在整段（含物品名）都被 04 的 license 覆盖时才能用。
-   路线图这类会列出别的房间的说明，要么连名带注一起许可，要么不用；
-   不能用半段无主语的“图上画出……”。
-
-浏览器入口检查（不加载模型、不占推理锁）：
-
-```bash
-cd <09 worktree>/frontend
-node scripts/quality-candidates/run-browser-candidates.mjs \
-  --candidate 07-prose=<本工作树>/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts \
-  --inspect --out <本工作树>/inspect-07.json
-# [inspect] 07-prose: export=generateCandidate ... documented=true
-```
-
-这证明共享页面运行器能在真实 Edge 里导入本模块并认出文档化的
-`generateCandidate` 导出；真正逐点出正文仍要走 04 注入 composer 的那条路径。
-
-整段口接 04 的 facts + 真实 state 的一段（器材棚，移动 + 任务 + 个性 + 精神），
-实际输出 285 字，`sparse=false`、`issues=[]`：
+用 04 的事实包加本轮已结算的 state 调本 composer 的整段口（不是 04 的
+beat realizer），得到 283 字、`sparse=false`、`issues=[]`：
 
 ```text
 推拉门可回服务巷。
 
-过了五分钟。
-
-路明非从西侧服务巷走进器材棚。
+过了五分钟，路明非从西侧服务巷走进器材棚。
 
 「把胸前护目镜戴好并确认镜片没有裂纹」这件事，路明非收了尾。
 
@@ -242,8 +224,6 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 
 开盖演习弹药箱还在器材棚。箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹；黄色封套上写明不得与实弹混用。
 
-路明非看了一眼开盖演习弹药箱。
-
 器材领用台还在器材棚。台上夹着领用簿，笔尖尚湿；台下留有放备用护具的位置。
 
 器材笼挂锁还在原来的地方。挂锁扣住笼门插销，锁眼朝外，锁梁完整；器材笼钥匙能开。
@@ -251,11 +231,11 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 
 复现：`LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/sample-committed-state.ts`
 
-耗时：整段 0.7–5.3 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
+耗时：整段 0.2–7.8 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
 按 `QUALITY-TEAMS.md` 的口径，首段和整段都远在 60 s / 300 s 以内，
 且不依赖模型、WebGPU 或网络。
 
-## 已知限制（等 09/04 真实回传再改）
+## 已知限制
 
 1. 只写事实骨架里有的东西。输入只有“移动 + 任务”时，正文就是短、直白，
    不会自己长出对白或环境戏；那是 04 的 `licensed.details` / action / line
@@ -278,8 +258,9 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 
 ## 下一步（按优先级）
 
-1. 用 09 在真实页面上跑出的正文，逐段对比“哪里像流水账、哪里缺衔接”，
-   在同一 beat 契约内改模板；不改 04 的映射和校验。
+1. 09 的共享页面已经 3/3 accepted；下一步是把这三个场景之外的 free-day
+   点位也跑一遍，逐段看“哪里像流水账、哪里缺衔接”，在同一 beat 契约内改
+   模板；不改 04 的映射和校验。
 2. 按角色给 sanity/personality 句式加去重盐，消除同回合重复体感。
 3. 若 04 提供 `action` / `line` fact（例如玩家动作的已结算结果），把
    `from-beat.ts` 的映射扩到这些 kind，并保持同一 guard。
