@@ -303,11 +303,13 @@ def main() -> int:
               group_id="g2"),
     ]
     same_point = merge_refusal(same_point_groups)
-    empty_removal_group = SettlementGroup.model_construct(
-        groupId="group_empty_removal", actorIds=["person_a"], positions={},
-        appearances={"person_a": [{"id": "ch_x", "text": None, "supersedes": []}]},
-        tasksAchieved={}, subtasksAdded={}, personalities={}, sanities={},
-        taskCoverageIds=["person_a"], personalityCoverageIds=[])
+    empty_removal_payload = {
+        "groupId": "group_empty_removal", "actorIds": ["person_a"], "positions": {},
+        "appearances": {"person_a": [{"id": "ch_x", "text": None, "supersedes": []}]},
+        "tasksAchieved": {}, "subtasksAdded": {}, "personalities": {}, "sanities": {},
+        "taskCoverageIds": ["person_a"], "personalityCoverageIds": [],
+    }
+    empty_removal_group = SettlementGroup.model_construct(**empty_removal_payload)
     try:
         point_entity_deltas([empty_removal_group], None)
     except Exception as error:
@@ -420,7 +422,7 @@ def main() -> int:
             "samePointRefused": same_point,
             "samePointGroups": [entry.model_dump(mode="json") for entry in same_point_groups],
             "pureRemovalWithoutSupersedes": pure_removal_without_supersedes,
-            "emptyRemovalGroups": [empty_removal_group.model_dump(mode="json")],
+            "emptyRemovalGroups": [empty_removal_payload],
             "unknownSupersede": unknown_supersede,
         },
         "time": {"cases": time_cases},
