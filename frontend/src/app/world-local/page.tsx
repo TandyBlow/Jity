@@ -339,6 +339,12 @@ export default function WorldLocalPage() {
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
           onNarrationDebug: (debug) => { (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug; },
+          // Candidate provenance (grade, per-sentence sources, attempts) is kept
+          // apart from the in-model debug record and from the program draft.
+          onNarrationEvidence: (record) => {
+            const w = window as unknown as { __worldCandidate?: unknown[] };
+            (w.__worldCandidate ??= []).push(record);
+          },
           onNarrationProgress: (progress) => {
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));

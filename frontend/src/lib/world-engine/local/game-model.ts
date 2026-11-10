@@ -60,7 +60,22 @@ export interface GameModelOptions {
   }) => void;
   /** Test/evaluation hook: exposes the draft, raw model text and each repair
    * stage. Never used to make a product decision. */
-  onNarrationDebug?: (debug: { pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string; violations: string[]; attempts: number[] }) => void;
+  onNarrationDebug?: (debug: {
+    pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string;
+    violations: string[]; attempts: number[];
+    /** Every model attempt's raw text, in order. Kept separately from the
+     * program draft so no one mistakes the draft for model output. */
+    rawAttempts: string[];
+    /** Share of accepted sentences that already appear verbatim in the program
+     * draft that was shown to the model. High values mean the "model text" is an
+     * echo of the draft, not independent generation. */
+    draftEcho: number;
+    programFallback: boolean;
+    prompt: string;
+  }) => void;
+  /** Internal evidence sink for candidate runs: candidate id, grade, per-beat
+   * segments and the candidate's own attempt record. Never rendered. */
+  onNarrationEvidence?: (record: Record<string, unknown>) => void;
   onTask?: (task: ModelTask, key: string, detail: { ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number }) => void;
 }
 
@@ -488,7 +503,17 @@ export class LocalGameModel implements WorldModelPort {
       }
     }
     const finalReason = programFallback ? '程序按已结算事实成文' : reason;
-    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
+    // Provenance guard: the program draft is part of the prompt. If the model
+    // echoes it, the accepted text is still model output but it is not
+    // independent evidence of style or of state-copy behaviour. Measure it and
+    // keep it separate in evidence.
+    const draftSentences = draft.split(/[。！？!?]/u).map((part) => part.trim()).filter((part) => [...part].length >= 6);
+    const acceptedSentences = text.split(/[。！？!?]/u).map((part) => part.trim()).filter((part) => [...part].length >= 6);
+    const echoed = acceptedSentences.filter((sentence) => draftSentences.some((candidate) => candidate.includes(sentence) || sentence.includes(candidate))).length;
+    const draftEcho = acceptedSentences.length ? echoed / acceptedSentences.length : 0;
+    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText,
+      violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length),
+      rawAttempts: attempts.map((entry) => entry.raw), draftEcho, programFallback, prompt: brief.prompt });
     this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });
     this.options.onNarrationComplete?.({ pointId, raw: finalText, fallback: !accepted || programFallback,
       source: accepted ? 'model' : programFallback ? 'program' : 'draft',
@@ -529,6 +554,11 @@ export class LocalGameModel implements WorldModelPort {
       ...(program ? { error: '程序按已结算事实成文' } : mixed ? { error: '部分句子按已结算事实成文' } : {}),
       raw: result.text,
       promptChars: result.promptChars,
+    });
+    this.options.onNarrationEvidence?.({
+      pointId, candidateId: result.candidateId, route: result.route, grade: result.grade,
+      strategyVersion: result.strategyVersion, segments: result.segments, beatCounts: result.beatCounts,
+      issues: result.issues, timings: result.timings, detail: result.detail ?? null,
     });
     this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion,
       fallback: program, source: program ? 'program' : mixed ? 'mixed' : 'model', segments: result.segments });
