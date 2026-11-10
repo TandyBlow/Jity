@@ -43,7 +43,7 @@ def main() -> int:
         "id": "qwen3-0.6b", "role": "page-semantic-baseline", "source": "product-page-blob",
         "file": "Qwen3-0.6B-Q4_K_M.gguf", "bytes": 396705472,
         "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
-        "localPath": "D:\others\Jity\.local\world-narration-worktree\frontend\public\models\Qwen3-0.6B-Q4_K_M.gguf",
+        "localPath": "D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-0.6B-Q4_K_M.gguf",
         "architecture": "qwen3", "license": "apache-2.0",
         "chatTemplateKwargs": {"enable_thinking": False},
     }]
