@@ -659,7 +659,7 @@ export function reviewNarration(args: {
       if (!claimers.length) {
         const before = narration.slice(0, Math.max(0, narration.indexOf(clause)));
         const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
-        if (unique.length === 1 && /^\s*(?:他|她|他们|她们)/u.test(clause)) implied = unique;
+        if (unique.length === 1 && /^\s*(?:他|她|他们|她们|手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)) implied = unique;
       }
       if (holder === 'scene') {
         // Carrying it from A to B is licensed when the object and a person
