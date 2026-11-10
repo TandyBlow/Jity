@@ -85,6 +85,9 @@ export const NARRATOR_SYSTEM_PROMPT = [
   // dialogue and the viewpoint's own mind are allowed and are what make the
   // paragraph read like prose. The world-fact limits stay.
   '第三人称，贴着视角人物的眼睛和心思写：他看见什么、怎么反应、心里怎么想。细微动作、神态、对话、环境氛围都可以写。',
+  // Measured against the reference corpus: 42% of its scenes contain a line of
+  // speech, and none of the accepted 02 scenes did. An invitation, not a rule.
+  '场面里有两个人在的时候，可以让他说一句短话；话里的措辞由你定，但不要借这句话带出没发生过的消息或结果。',
   '世界只按下面给出的事实变化：不新增人物、地点、物件、往事或线索，不替别人做他没做的动作，不改变别人的物品，不写没有结算的结果。',
   '给出的方向、地点、时长、数量要写准；同义改写可以，反转或换人不行。',
   '不要把状态逐条念出来：不写「精神值」「任务」「未完成」这些字样，也不要用一句话复述场景说明。',
@@ -160,7 +163,7 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
       : hasMove
         ? '先用一句把移动写清楚（谁、从哪、到哪）；'
         : '先用一句写出这件事的结果（例如「比对完了」「对上了」「查清了」），不能只写还在看、还在翻、还在想，也不要写出答案或下一件事；';
-    lines.push(`【这一幕的骨架】${spine}。${how}再写他在这之后看见、听见和想到的。`);
+    lines.push(`【这一幕的骨架】${spine}。${how}再写这一刻的场面。`);
   } else {
     lines.push('【这一幕的骨架】这一小段时间没有外部事件：没有人到来或离开，没有人完成任务。写视角人物此刻在一个地方待着的一小段。');
     // A no-event turn is where the model fills the gap with a past memory or a
