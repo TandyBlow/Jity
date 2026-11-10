@@ -592,7 +592,10 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 - 删除无依据的声音句：离开后的“X 的脚步声往 Y 那边去了”、进场时的
   “没有别的声音”、no-change 收束里的“在原地站了一会儿”；
-- 短回合单段（158 字以内且无对白），对齐 02 复核的人话语料形状；
+- 短回合单段（158 字以内且无对白），对齐 02 复核的人话语料形状；注意这只覆盖
+  `prose-composer` 自己的整场入口（`generateCandidate`）。页面当前的兜底走的是
+  06 的 constrained 候选，它把每一拍用空行拼起来（`constrained/index.ts:477`
+  `joinText`），108 字仍会是 5 段——那一步是 06 的拼装，补丁改不到；
 - 续写回合没有已结算事实时返回 `empty_scene`，让页面显示重试，不再拿未变的
   场景描写作正文；
 - 任务句的地点锚点、只有个性/精神变化时的地点细节、`policy.avoidText`
@@ -602,6 +605,25 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 整个前端 **1258 passed | 2 skipped**（只有 4 个既有的 `styles.test.ts` 失败）。
 这只是更新 06 树里的成文模块；页面是否把程序兜底切到它、以及失败时怎么显示，
 仍归 06 决定。不替换模型正文，也不是产品质量通过。
+
+### 给 06：页面兜底为什么还是 5 段（2026-11-11，指向具体行）
+
+02 复核的真实页面兜底（108 字、5 段）来自 06 的 constrained 候选，不是本补丁
+能改的成文模块：
+
+- `game-model.ts:528` 在模型正文未被接受时调用 `narrationRunner.generateProgram`；
+- 它走 `selection/runner.ts:105` 的 `generateProgram`，选的是 `constrained` 候选；
+- 该候选逐拍调用 07 的 `policy.composer`，然后用
+  `constrained/index.ts:476` 的 `joinText` 把所有拍 `join('
+
+')`。
+
+所以即使 06 应用了 `07-prose.patch`，一拍一句的卡片形状仍在。最小改法在 06 的
+`joinText`：整段口 ≤158 字且不含对白时用 `''` 拼（并保留句号），超过 158 字或
+有对白才 `
+
+`。07 的整场入口 `generateCandidate` 已经是这个规则，若 06 愿意
+把兜底切到整场入口，也能一次拿到同一条规则。这一点归 06 决定，07 不写它的文件。
 
 ### 给 09：双设备真实运行的前置（CORS 与 URL）
 
