@@ -10,6 +10,7 @@ import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
+import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
@@ -270,6 +271,44 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
   };
 }
 
+/** localStorage key for an explicit lease takeover. After the player chooses
+ * "continue in this tab", the reload must open with the same holder id that
+ * took the lease, otherwise the fresh page would be blocked again. */
+const LEASE_TAKEOVER_KEY = 'jity.world.local.lease.takeover';
+
+/** Open the saved session, waiting briefly when a just-unloaded page has not
+ * released its lease yet. A held lease is never treated as a corrupt save. */
+async function openWithLease(
+  store: LocalProgressStore,
+  world: { worldId: string; template: Parameters<typeof LocalGameSession.create>[0] },
+  model: LocalGameModel,
+  alive: () => boolean,
+  attempts = 6,
+  delayMs = 1500,
+): Promise<LocalGameSession> {
+  const takeoverId = (() => {
+    try { return sessionStorage.getItem(LEASE_TAKEOVER_KEY); } catch { return null; }
+  })();
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    if (!alive()) throw new Error('page_unmounted');
+    try {
+      const opened = await LocalGameSession.open(
+        store, { worldId: world.worldId, initial: world.template }, model,
+        takeoverId ? { sessionId: takeoverId } : {},
+      );
+      if (opened.created) await opened.session.start();
+      if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
+      return opened.session;
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof SessionLeaseHeldError)) throw error;
+      await new Promise<void>((resolve) => { setTimeout(resolve, delayMs); });
+    }
+  }
+  throw lastError;
+}
+
 export default function WorldLocalPage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
@@ -321,6 +360,10 @@ export default function WorldLocalPage() {
   const syncRef = useRef<ProductSync<LocalGameSnapshot> | null>(null);
   const [syncLabel, setSyncLabel] = useState<string | null>(null);
   const [durable, setDurable] = useState<boolean | null>(null);
+  /** A live lease held by another tab (or by a reload that has not released
+   * yet). The save is valid; it must never be archived or deleted for this. */
+  const [leaseBlocked, setLeaseBlocked] = useState(false);
+  const leaseWorldRef = useRef<string | null>(null);
 
   /** Fallback only: when the platform has no IndexedDB the session runs in
    * memory and the page keeps a best-effort localStorage copy so a refresh is
@@ -514,13 +557,19 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          const opened = await LocalGameSession.open(store, { worldId: world.worldId, initial: world.template }, model);
-          session = opened.session;
-          restored = !opened.created;
-          if (opened.created) await session.start();
+          session = await openWithLease(store, world, model, () => alive);
+          restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
         } catch (openError) {
-          // Never delete the only save. Archive the readable record first, tell
-          // the player, then start a new world.
+          if (openError instanceof SessionLeaseHeldError) {
+            // The save is fine and another writer owns the lease (a second tab,
+            // or the page that was just reloaded and has not released yet).
+            // Offer a retry/takeover; never touch the record.
+            leaseWorldRef.current = world.worldId;
+            setLeaseBlocked(true);
+            setPhase('error');
+            setError('另一个标签页正在使用这个存档。可以等它释放后继续，或在这个标签页接管。');
+            return;
+          }
           console.error('[world-local] saved progress could not be opened', openError);
           const record = await store.load(world.worldId).catch(() => null);
           let archived = false;
@@ -628,9 +677,34 @@ export default function WorldLocalPage() {
   // the last write does not lose a settled point.
   useEffect(() => {
     const flush = () => { void sessionRef.current?.flushPersistence().catch(() => undefined); };
-    window.addEventListener('pagehide', flush);
+    // A real unload closes the session: it flushes the last settled point and
+    // releases the writer lease immediately, so a reload does not have to wait
+    // for the 30 s lease to expire. A bfcache freeze keeps the session alive.
+    const onPageHide = (event: PageTransitionEvent) => {
+      const session = sessionRef.current;
+      if (!session) return;
+      if (event.persisted) { void session.flushPersistence().catch(() => undefined); return; }
+      void session.close().catch(() => undefined);
+    };
+    window.addEventListener('pagehide', onPageHide);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
-    return () => { window.removeEventListener('pagehide', flush); };
+    return () => { window.removeEventListener('pagehide', onPageHide); };
+  }, []);
+
+  /** Explicit takeover after a "another tab owns this save" stop. The chosen
+   * holder id is stored so the reload opens as that holder. */
+  const takeOverLease = useCallback(async () => {
+    const store = storeRef.current;
+    const worldId = leaseWorldRef.current;
+    if (!store || !worldId) return;
+    const holderId = `session_takeover_${Date.now().toString(36)}`;
+    try {
+      sessionStorage.setItem(LEASE_TAKEOVER_KEY, holderId);
+      await store.takeoverLease(worldId, holderId);
+      window.location.reload();
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    }
   }, []);
 
   const submit = useCallback(async () => {
@@ -837,6 +911,11 @@ export default function WorldLocalPage() {
             </div>
           </div>
 
+          {leaseBlocked && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>
+            存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。
+            <button onClick={() => window.location.reload()} style={{ marginLeft: 8, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>重试</button>
+            <button onClick={() => void takeOverLease()} style={{ marginLeft: 6, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>在这个标签页接管</button>
+          </div>}
           {durable === false && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
           {warning && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c', whiteSpace: 'pre-wrap' }}>{warning}</div>}
           {error && <div style={{ marginTop: 10, padding: '8px 10px', background: '#ffe8e5', border: '1px solid #e7b1a9', borderRadius: 6, fontSize: 12, color: '#8b2a1e', whiteSpace: 'pre-wrap' }}>{error}</div>}
