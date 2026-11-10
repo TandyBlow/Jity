@@ -189,8 +189,14 @@ try {
   }
 
   if (!keepStorage) {
+    // Clear only on the first navigation of this tab: a reload later in the run
+    // must read the product's own save, otherwise the restore check is a fake.
     await context.addInitScript(() => {
-      try { localStorage.clear(); } catch { /* ignore */ }
+      try {
+        if (sessionStorage.getItem('__acceptCleared') === '1') return;
+        localStorage.clear();
+        sessionStorage.setItem('__acceptCleared', '1');
+      } catch { /* ignore */ }
     });
   }
 
@@ -336,14 +342,18 @@ try {
         const sample = await page.evaluate((count) => {
           const articles = [...document.querySelectorAll('article')];
           const last = articles.at(-1);
-          const stage = (document.querySelector('main section > div > div > div > span:last-child')?.textContent ?? '').trim();
+          const stage = [...document.querySelectorAll('span')]
+            .map((node) => (node.textContent ?? '').trim())
+            .find((label) => /^(结算中|正在写正文|本轮完成|本轮已交还|本轮停止)/.test(label)) ?? '';
           const text = last?.querySelector('div[style*="pre-wrap"]')?.textContent ?? '';
+          const bodyText = document.body.innerText;
           return {
             count: articles.length,
             stage,
             text,
-            busy: /结算中|正在写正文/.test(document.body.innerText),
-            failed: /Error|加载失败/.test(document.body.innerText),
+            busy: /结算中|正在写正文/.test(bodyText),
+            done: /本轮完成|本轮已交还|本轮停止/.test(bodyText),
+            failed: /Error|加载失败/.test(bodyText),
           };
         }, beforeCount);
         if (sample.count <= beforeCount && !sample.failed) {
@@ -359,7 +369,7 @@ try {
           firstReadableAt = Date.now() - submitAt;
           entry.timings.firstReadableMs = firstReadableAt;
         }
-        if (!sample.busy && sample.count > beforeCount && sample.text) break;
+        if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
         if (sample.failed) {
           entry.problems.push('page_error');
           break;
