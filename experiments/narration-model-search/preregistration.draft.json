@@ -7,15 +7,16 @@
  "devPackage": {
   "owner": "01-input",
   "note": "01 owns the single frozen manifest/rubric for lanes 11 and 12. This draft records hashes as observed while 01 was still editing; it does not freeze or fork the package.",
-  "manifestPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\manifest.json",
+  "manifestPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\manifest.json",
   "manifestSha256Observed": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
-  "casesPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\cases.jsonl",
+  "casesPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\cases.jsonl",
   "casesSha256Observed": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
-  "rubricPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\RUBRIC.md",
+  "rubricPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\RUBRIC.md",
   "rubricSha256Observed": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
   "statusObserved": "public_development_regression_not_final",
   "final": false,
-  "finalityRule": "A batch may start only after 01 marks the package final and the manifest/cases/rubric sha256 above are re-read and pinned in preregistration.v1.json. Any change afterwards creates a new version and keeps old results."
+  "finalityRule": "A batch may start only after 01 marks the package final and the manifest/cases/rubric sha256 above are re-read and pinned in preregistration.v1.json. Any change afterwards creates a new version and keeps old results.",
+  "canonicalCopy": "D:/others/Jity/.local/parallel-local-game/results/quality/dev-package-v1/ (same bytes as 01's worktree copy; hashes checked)"
  },
  "condition": {
   "promptTemplateId": "narration-trained-instruct-whole-scene-v1",
@@ -49,7 +50,44 @@
   "limitations": [
    "Whole-scene condition, not the product's current beat-scoped prompt (02's strategy). It is a model-comparison condition only; promotion still runs the real product page via 09.",
    "Case priorTexts are used by the checker for echo detection, not inserted into the prompt. Cross-turn context is 04/07's scope."
-  ]
+  ],
+  "subsetCoverage": {
+   "includedCases": 12,
+   "totalCases": 15,
+   "categoriesAll": {
+    "no_change": 1,
+    "move_direction": 1,
+    "task_time": 1,
+    "multi_person_reference": 1,
+    "sanity": 1,
+    "appearance_item": 1,
+    "dialogue": 1,
+    "gender_pronoun": 1,
+    "time_only_derived": 1,
+    "task_sanity": 1,
+    "long_text": 1,
+    "continuity": 3,
+    "item_transfer_fixture": 1
+   },
+   "categoriesIncluded": {
+    "no_change": 1,
+    "move_direction": 1,
+    "task_time": 1,
+    "multi_person_reference": 1,
+    "sanity": 1,
+    "appearance_item": 1,
+    "dialogue": 1,
+    "gender_pronoun": 1,
+    "time_only_derived": 1,
+    "task_sanity": 1,
+    "long_text": 1,
+    "continuity": 1
+   },
+   "missingCategories": [
+    "item_transfer_fixture"
+   ],
+   "warning": "The excluded set removes the only item_transfer_fixture case and two of the three continuity cases. A 12-case result cannot claim item-transfer or full continuity coverage, even if it reaches a high pass count."
+  }
  },
  "arms": {
   "baselines": [
