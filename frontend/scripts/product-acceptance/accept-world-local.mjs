@@ -681,6 +681,20 @@ try {
           supportedChars: typeof debug.supported === 'string' ? debug.supported.length : null,
         };
       }).catch(() => null);
+      entry.candidate = await page.evaluate(() => {
+        const list = globalThis.__worldCandidate;
+        if (!Array.isArray(list)) return null;
+        const trim = (value, depth = 0) => {
+          if (typeof value === 'string') return value.slice(0, 1500);
+          if (Array.isArray(value)) return depth > 3 ? `[${value.length} items]` : value.slice(0, 24).map((item) => trim(item, depth + 1));
+          if (value && typeof value === 'object') {
+            if (depth > 3) return '[object]';
+            return Object.fromEntries(Object.entries(value).slice(0, 40).map(([key, item]) => [key, trim(item, depth + 1)]));
+          }
+          return value;
+        };
+        return { count: list.length, tail: trim(list.slice(-6)) };
+      }).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.narrationRejections = entry.console
         .filter((line) => /\[narration\] (in-model rejected|candidate fallback rejected)/.test(line))
