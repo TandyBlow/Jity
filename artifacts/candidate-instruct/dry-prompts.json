@@ -1,6 +1,6 @@
 {
   "status": "DRY",
-  "recordedAt": "2026-11-10T06:42:02.874Z",
+  "recordedAt": "2026-11-10T06:56:07.425Z",
   "candidate": "instruct-narration-candidate",
   "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
   "config": {
@@ -15,13 +15,13 @@
     "styleSample": null
   },
   "source": {
-    "head": "190443e2c790a196ca48774e6fb6ca1202067705",
-    "status": "M frontend/scripts/candidate-instruct/run-instruct-candidate.mjs\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/instruct.test.ts\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/projection.ts\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/prompt.ts\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/types.ts\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/verify.ts\n?? artifacts/candidate-instruct/dry-root.json\n?? design/narration-single-model-goal.md\n?? frontend/src/lib/world-engine/local/narration-candidates/instruct/product-world.test.ts",
+    "head": "b326ec4c73e0cf03e6ed196e04216820d1f0c94e",
+    "status": "M frontend/scripts/candidate-instruct/run-instruct-candidate.mjs\n M frontend/src/lib/world-engine/local/narration-candidates/instruct/projection.ts\n?? design/narration-single-model-goal.md",
     "sha256": {
       "src/lib/world-engine/local/narration-candidates/instruct/index.ts": "8a6417d91209d7d938103b7077527a5d45d24ed5eb22debe05b6b53520e3f18e",
-      "src/lib/world-engine/local/narration-candidates/instruct/projection.ts": "9dd4496000a4a074844a16451014ed25e4604e4543806969cbd4e54f8ce9f464",
-      "src/lib/world-engine/local/narration-candidates/instruct/prompt.ts": "2d1ebf0365e777592e0d8142a007280900a6896d9feedffce8fd0a14d437b985",
-      "src/lib/world-engine/local/narration-candidates/instruct/verify.ts": "2124e726be631e153d0c23c65dbf2c8ba2f81d4e218a8fdbd306429b21588905",
+      "src/lib/world-engine/local/narration-candidates/instruct/projection.ts": "dfb273b3173ec08eb0d5f35b71c40747499cae3efcbd570560c3f7757585c80e",
+      "src/lib/world-engine/local/narration-candidates/instruct/prompt.ts": "b96f97e2871cb3e2203ccfade79a191bbdfa391b6f122273774d48a0f38c3fd1",
+      "src/lib/world-engine/local/narration-candidates/instruct/verify.ts": "e43b37be266128c07f27f5d2cece34bbeed9012d8a30de5a1d8f54f39c6a7fdc",
       "src/lib/world-engine/local/narration-candidates/instruct/facts.ts": "74b1f175b046c8642ea100e825bc8f66012046c584fe87d7112969a713260cce",
       "src/lib/world-engine/local/narration-candidates/instruct/template.ts": "416f84e2487f2e965b86668d1f6cfcb56b0bafa93fdca9a8d072480549f220dc",
       "src/lib/world-engine/local/narration-candidates/instruct/clean.ts": "b68f84bc720b6f9878d627c8661e37d17a1e6a57c8c3cbf6d0dafaa0e88c0f45",
@@ -248,7 +248,7 @@
       }
     }
   ],
-  "completedAt": "2026-11-10T06:42:05.520Z",
+  "completedAt": "2026-11-10T06:56:10.448Z",
   "cleanup": {
     "browserClosed": true,
     "serverClosed": true

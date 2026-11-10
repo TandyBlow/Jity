@@ -45,7 +45,10 @@ function appearanceOf(state: WorldState, id: Id): string {
   const initial = state.initial.characters[id] ?? state.initial.items[id];
   const changes = character ? activeText(character.appearanceChanges) : item ? activeText(item.appearanceChanges) : [];
   if (!initial) return '';
-  const clauses = [initial.initialAppearance, ...changes].join('。').split(/[。；;]/).filter(Boolean);
+  const clauses = [initial.initialAppearance, ...changes].join('。').split(/[。；;]/).filter(Boolean)
+    // Behavioural cues ("听见枪声会缩肩") are not visible facts; a small model
+    // copies them verbatim into the prose. Keep visual/state clauses only.
+    .filter((clause) => !/^(?:听见|听到|看到|闻到|习惯|喜欢|不愿|总会|从不|愿意|讨厌|害怕)/.test(clause.trim()));
   return charLimit(clauses.slice(0, 2).join('。'), 80);
 }
 

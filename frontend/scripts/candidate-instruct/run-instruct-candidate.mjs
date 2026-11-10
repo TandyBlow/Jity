@@ -47,6 +47,7 @@ const config = {
   maxAttempts: Number(option('--max-attempts', '2')),
   targetChars: Number(option('--target-chars', '220')),
   styleSample: option('--style-sample', ''),
+  variant: option('--variant', 'plain'),
   dry: hasFlag('--dry'),
   only: option('--cases', '') ? option('--cases', '').split(',') : null,
 };
@@ -61,6 +62,13 @@ const assetPath = resolve(config.assets, config.model.replace(/^\//, ''));
 // `delta` is the entity delta of that point. Names/rooms come from the
 // shipped world, so the projection is the actual scene, not a fixture.
 const CASES = [
+  {
+    id: 'S0-root-open',
+    note: '开局点：没有任何结算变化，只有初始场景（自由一日服务巷，15:20）',
+    playerInput: null,
+    patches: [],
+    time: null,
+  },
   {
     id: 'S1-move-time',
     note: '主角从服务巷走到器材棚，时间 2 分钟；棚里有人和器材',
@@ -224,7 +232,8 @@ const buildCaseSource = String.raw`
     const point = {
       worldId: initial.worldId, id: 'point_case', sequence: 1, kind: 'normal', previousPointId: 'root',
       roundId: 'round_case', advanceId: 'advance_case', trigger: 'player', linkedFromPointId: null,
-      timeAdvance, entityDeltas,
+      timeAdvance: timeAdvance ?? { boundary: 'instant', duration: { amount: 0, unit: 'second' } },
+      entityDeltas,
     };
     const after = applyPoint(target, point);
     const packet = projectFacts(before, { timeAdvance, entityDeltas }, after);
@@ -314,6 +323,7 @@ try {
             maxAttempts: config.maxAttempts, maxTokens: config.maxTokens,
             temperature: config.temperature, retryTemperature: config.retryTemperature,
             seed: config.seed, timeoutMs: config.timeoutMs,
+            variant: config.variant === 'scene-first' ? 'scene-first' : 'plain',
             ...(config.styleSample ? { styleSample: config.styleSample } : {}),
           },
           onProgress: (state) => progress.push({ status: state.status, chars: state.text.length, elapsedMs: Math.round(state.elapsedMs) }),
