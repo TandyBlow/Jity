@@ -145,5 +145,7 @@
     "status": "failed",
     "cause": "print() received ensure_ascii kwarg",
     "path": "hpc/runs/251205/README.md"
-  }
+  },
+  "codeCommitEvidence": "The deployed train_yuyan_v2.py SHA-256 cf84e1e6... is the exact file committed in a9d6606b. report.json codeCommit is \"unknown\" because the HPC work directory has no .git; the job log and this manifest carry the identity instead.",
+  "reportCodeCommit": "unknown"
 }

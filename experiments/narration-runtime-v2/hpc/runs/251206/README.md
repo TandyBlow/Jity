@@ -20,6 +20,7 @@
 | split | `c6686b4b…`，train 139 / dev 40 / test 20 |
 | 训练 | LoRA rank 16 / alpha 32，lr 1e-4，6 epochs，batch 1，maxLen 2560，seed 20261109 |
 | 显存峰值 | 11,089 MiB |
+| 代码身份 | `train_yuyan_v2.py` 部署文件 SHA-256 `cf84e1e6…`，对应提交 `a9d6606b`；`report.json` 的 `codeCommit` 为 `unknown`（远端工作目录无 `.git`），以 `run-manifest.json` 为准 |
 | 最终 adapter | `hpc:~/narr_v2/runs/yuyan-result-v2-r1/adapter-best.pt`，SHA-256 `789ab22c…`（未提交权重） |
 | resume | `hpc:~/narr_v2/runs/yuyan-result-v2-r1/resume.pt`，SHA-256 `15ccfd0d…`（未提交权重） |
 
