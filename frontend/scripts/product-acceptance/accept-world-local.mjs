@@ -682,6 +682,9 @@ try {
         };
       }).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
+      entry.narrationRejections = entry.console
+        .filter((line) => /\[narration\] (in-model rejected|candidate fallback rejected)/.test(line))
+        .map((line) => line.slice(0, 300));
       entry.shownChars = (entry.text ?? '').length;
       // Full per-call evidence (semantic + narration) before any reload can
       // clear the page globals.
