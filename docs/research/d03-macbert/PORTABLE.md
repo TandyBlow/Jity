@@ -25,3 +25,7 @@ py -3.12 -m venv .venv-d03
 权重、checkpoint、优化器和日志仅存`.local/`，虚拟环境`.venv-d03/`也忽略。运行目录必须是新的，失败记录不覆盖。原始`train_r2.py`/`train_r3.py`属于历史执行证据，组员使用`portable_train.py`。
 
 新入口仅验证了工程等价/数据和微型CPU梯度流程，不自动声称与Mac历史模型相同，也不表示D03 R3质量通过。各组员新运行以自己生成的summary和原始预测为准。
+
+## R3 后的游戏剧情继续训练
+
+新增 `--stage gameplay`，使用组员已完成的 `--parent-run .local/d03-macbert/runs/my-r3`。该阶段保留历史游戏训练配置及输入格式，包括明确的未知已行动状态。允许从未过探索门的 R3 继续做研究，不改变质量结论。17条用户接受样本、7条排除样本和 Windows 命令见 [游戏剧情说明](../d03-gameplay-dataset-20261110-v1/PORTABLE.md)。此用户接受记录只适用于这17条，不追溯改变 R2/R3 助手草稿的复核状态。

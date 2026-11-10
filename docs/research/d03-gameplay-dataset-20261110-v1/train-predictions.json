@@ -1,0 +1,95 @@
+[
+  {
+    "sceneId": "gameplay:game-01:T0008",
+    "sourceGroup": "game-01",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.004715663380920887,
+      "n0": 0.9978833794593811
+    },
+    "rosterMs": 88.30983400548575
+  },
+  {
+    "sceneId": "gameplay:game-01:T0010",
+    "sourceGroup": "game-01",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.0028375929687172174,
+      "n0": 0.9969045519828796
+    },
+    "rosterMs": 34.128334002161864
+  },
+  {
+    "sceneId": "gameplay:game-01:T0011",
+    "sourceGroup": "game-01",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.0036357296630740166,
+      "n0": 0.08572101593017578
+    },
+    "rosterMs": 90.7062499973108
+  },
+  {
+    "sceneId": "gameplay:game-01:T0035",
+    "sourceGroup": "game-01",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.0035099086817353964,
+      "n0": 0.0034921367187052965
+    },
+    "rosterMs": 182.7669580015936
+  },
+  {
+    "sceneId": "gameplay:game-02:T0019",
+    "sourceGroup": "game-02",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.003188053611665964,
+      "n0": 0.9973763227462769,
+      "n1": 0.002332697855308652
+    },
+    "rosterMs": 442.50129099964397
+  },
+  {
+    "sceneId": "gameplay:game-02:T0024",
+    "sourceGroup": "game-02",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.003646016353741288,
+      "n0": 0.00822543352842331
+    },
+    "rosterMs": 86.38745799544267
+  },
+  {
+    "sceneId": "gameplay:game-02:T0025",
+    "sourceGroup": "game-02",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.004222041927278042,
+      "n0": 0.9970391988754272
+    },
+    "rosterMs": 83.77383300103247
+  }
+]

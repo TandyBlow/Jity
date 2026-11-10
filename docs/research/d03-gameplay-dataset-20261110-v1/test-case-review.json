@@ -1,0 +1,88 @@
+[
+  {
+    "sceneId": "gameplay:game-04:T0011",
+    "action": "追问诺诺：是谁赶在你之前清空了报到桌",
+    "expected": [
+      "诺诺"
+    ],
+    "predicted": [
+      "诺诺"
+    ],
+    "correct": true,
+    "scores": {
+      "player": 0.003348010592162609,
+      "n0": 0.9943361878395081
+    }
+  },
+  {
+    "sceneId": "gameplay:game-04:T0018",
+    "action": "趁诺诺带路，留意走廊两侧门框的编号，记下哪几扇门是实墙",
+    "expected": [],
+    "predicted": [
+      "诺诺"
+    ],
+    "correct": false,
+    "scores": {
+      "player": 0.005279740784317255,
+      "n0": 0.9853540658950806,
+      "n1": 0.005031074862927198
+    }
+  },
+  {
+    "sceneId": "gameplay:game-04:T0021",
+    "action": "问诺诺，卡在光下发热意味着什么，她是不是早就知道会这样",
+    "expected": [
+      "诺诺"
+    ],
+    "predicted": [
+      "诺诺"
+    ],
+    "correct": true,
+    "scores": {
+      "player": 0.006110748276114464,
+      "n0": 0.5830298066139221
+    }
+  },
+  {
+    "sceneId": "gameplay:game-04:T0024",
+    "action": "问诺诺S级观察对象到底意味着什么，学院会怎么盯着自己",
+    "expected": [
+      "诺诺"
+    ],
+    "predicted": [
+      "诺诺"
+    ],
+    "correct": true,
+    "scores": {
+      "player": 0.0020465634297579527,
+      "n0": 0.9971979856491089,
+      "n1": 0.0020291623659431934
+    }
+  },
+  {
+    "sceneId": "gameplay:game-04:T0026",
+    "action": "检查那个空位旁边的索引标签，比对任务单上的编号",
+    "expected": [],
+    "predicted": [],
+    "correct": true,
+    "scores": {
+      "player": 0.003392218379303813,
+      "n0": 0.0033416186925023794
+    }
+  },
+  {
+    "sceneId": "gameplay:game-04:T0030",
+    "action": "问诺诺这半个印章她认不认得，她见过学院里的旧档案封条",
+    "expected": [
+      "诺诺"
+    ],
+    "predicted": [
+      "诺诺"
+    ],
+    "correct": true,
+    "scores": {
+      "player": 0.005843907129019499,
+      "n0": 0.7884564995765686
+    }
+  }
+]

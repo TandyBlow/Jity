@@ -29,3 +29,5 @@ docs/research/d03-macbert/** text eol=lf
 scripts/hybrid/** text eol=lf
 .github/workflows/api-d03-windows.yml text eol=lf
 DEVELOPMENT_WINDOWS.md text eol=lf
+
+docs/research/d03-gameplay-dataset-20261110-v1/** text eol=lf

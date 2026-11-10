@@ -1,0 +1,84 @@
+[
+  {
+    "sceneId": "gameplay:game-04:T0011",
+    "sourceGroup": "game-04",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.01705511473119259,
+      "n0": 0.01804037019610405
+    },
+    "rosterMs": 43.854165996890515
+  },
+  {
+    "sceneId": "gameplay:game-04:T0018",
+    "sourceGroup": "game-04",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.04204810783267021,
+      "n0": 0.8942016959190369,
+      "n1": 0.041108228266239166
+    },
+    "rosterMs": 44.51208299724385
+  },
+  {
+    "sceneId": "gameplay:game-04:T0021",
+    "sourceGroup": "game-04",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.09240945428609848,
+      "n0": 0.11977584660053253
+    },
+    "rosterMs": 30.489541997667402
+  },
+  {
+    "sceneId": "gameplay:game-04:T0024",
+    "sourceGroup": "game-04",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.0017168901395052671,
+      "n0": 0.004891652148216963,
+      "n1": 0.0017083885613828897
+    },
+    "rosterMs": 44.98374999820953
+  },
+  {
+    "sceneId": "gameplay:game-04:T0026",
+    "sourceGroup": "game-04",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.13934722542762756,
+      "n0": 0.005515521392226219
+    },
+    "rosterMs": 31.215499999234453
+  },
+  {
+    "sceneId": "gameplay:game-04:T0030",
+    "sourceGroup": "game-04",
+    "targetIds": [
+      "n0"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "player": 0.060244861990213394,
+      "n0": 0.029780834913253784
+    },
+    "rosterMs": 30.215833998227026
+  }
+]

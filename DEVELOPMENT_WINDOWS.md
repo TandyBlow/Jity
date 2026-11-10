@@ -2,7 +2,7 @@
 
 ## 当前版本与范围
 
-以 D 的干净源码提交 `51bd76e97a8892a6ff012a2ebea57476deb22d4b` 为基础，合入 D03 第三轮及前置 R2 的源码、冻结数据和结果。没有合入撤回的模型归档提交、LFS 指针或 D02 小模型方案。
+以 D 的干净源码提交 `51bd76e97a8892a6ff012a2ebea57476deb22d4b` 为基础，合入 D03 第三轮及前置 R2，以及从 R3 继续训练的真实游戏剧情首轮源码、冻结数据和结果。没有合入撤回的模型归档提交、LFS 指针或 D02 小模型方案。
 
 | 职责 | 当前方案 |
 |---|---|
@@ -23,6 +23,7 @@ py -3.12 -m venv .venv-d03
 .\.venv-d03\Scripts\python.exe -m pip install -r experiments/d03-macbert/requirements.txt
 .\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage r2 --audit
 .\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage r3 --audit
+.\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage gameplay --audit
 ```
 
 路径含空格时用引号。仓库用 `.gitattributes` 固定冻结文件的 LF；不要自行用记事本换编码、换行或改标签。脚本使用 UTF-8。无需 Mac 的 MPS、Conda、bash 或作者绝对目录。
@@ -35,7 +36,10 @@ py -3.12 -m venv .venv-d03
 .\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/fetch_model.py
 .\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage r2 --run my-r2 --device cpu
 .\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage r3 --run my-r3 --parent-run .local/d03-macbert/runs/my-r2 --device cpu
+.\.venv-d03\Scripts\python.exe -X utf8 experiments/d03-macbert/portable_train.py --stage gameplay --run my-gameplay-v1 --parent-run .local/d03-macbert/runs/my-r3 --device cpu
 ```
+
+依次执行。最新游戏剧情阶段名为 `gameplay`，使用已完成的本机 R3；允许继续研究尚未通过质量门的 R3，不表示质量验收。详见 [游戏剧情训练说明](docs/research/d03-gameplay-dataset-20261110-v1/PORTABLE.md)。
 
 依次执行。R2 需通过自己的探索质量门，R3才接受它作为父模型。父模型按本机实际SHA核验，不要求与作者Mac逐字节一致；跨设备重训分数不保证复现。已有CUDA兼容PyTorch及NVIDIA GPU时显式改用`--device cuda`。默认CPU，设备不可用报错，不静默切换。
 
@@ -66,7 +70,8 @@ $env:JITY_API_KEY = [System.Net.NetworkCredential]::new('', $key).Password
 
 - R2 简化测试24/24，仅4个机制组及相关改写。
 - R3 新难题12/24；父模型在同题上8/24；旧基础题回归24/24。R3仍未通过质量门，不可称为已部署教师。
-- 数据均为助手草稿，人工复核数0。见 [R3报告](docs/research/d03-macbert/r3/report.md)。
+- R2/R3 合成数据为助手草稿，人工复核数0。见 [R3报告](docs/research/d03-macbert/r3/report.md)。
+- 最新游戏剧情阶段：用户接受17条，训练7/开发4/测试6，另7条歧义样本排除。测试5/6（R3父模型同题1/6），旧题回归24/24；仍未通过探索质量门。四份记录来自同一战役，不能当作跨世界泛化验证。见 [训练报告](docs/research/d03-gameplay-dataset-20261110-v1/training-report.md)。
 - Windows/Linux CI 检查源码保护、数据分组、UTF-8/跨目录入口、CPU微型模型梯度及保存重载、无网络API编排；**不会下载MacBERT或进行完整重训**。
 - 本机检查和GitHub CI结果分别记录在分支发布记录中。没有将Mac结果冒称为完整Windows/CUDA训练结果。
 

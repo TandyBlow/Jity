@@ -18,3 +18,12 @@
 - [Inherited application CI](https://github.com/TandyBlow/Jity/actions/runs/42804774056): frontend tests/lint/build passed; backend had 75 failed / 814 passed; world-interface failed on `generated artifact drift: api-contract.json`. Protocol/schema/fixture mismatches remain unresolved.
 - `backend/`, `design/world-protocol/`, and inherited `.github/workflows/ci.yml` are byte-identical to base `51bd76e9` in this release. No attempt was made to rewrite the authoritative world protocol as part of a D03 source handoff.
 - The following documentation-only commit records these observed results; it does not alter the code tested above.
+
+## Gameplay continuation update (2026-11-10)
+
+- Adds the user-accepted 17-scene subset from four recorded games (train 7 / development 4 / test 6), plus seven excluded candidates and provenance. All four games share one campaign.
+- Preserves historical gameplay source/data/reports byte-for-byte; excludes event logs, caches and all weights. Historical author paths are evidence only; PORTABLE.md routes teammates to the supported entry.
+- Adds `portable_train.py --stage gameplay`, starting from a teammate-owned R3 run with its actual verified checkpoint and frozen R3 dataset identity. A failed R3 exploratory gate is permitted for this research continuation, not treated as production approval.
+- Historical Mac gameplay result: test 5/6 versus parent 1/6; R2 regression 24/24. Still not quality-approved; no integration or deployment.
+- Local D03 checks: 16 tests passed, including actual eight-epoch tiny CPU gameplay training, input equivalence and parent preservation. Full Windows/CUDA MacBERT training was not run.
+- New commit CI status must be checked independently of the earlier run above. No paid API calls or model publication are part of this update.

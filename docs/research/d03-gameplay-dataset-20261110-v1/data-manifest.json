@@ -1,0 +1,34 @@
+{
+  "datasetSha256": "0e0de41abde319704a7f5dccbc70d487de45497ac72001d62d8d969ec1f8d165",
+  "originalManifestSha256": "bbcaf104c010b3a53f11f1b2edbf956fac88339d669d67ec9e61f4d3fe41d3aa",
+  "approvedScenes": 17,
+  "excludedScenes": 7,
+  "approval": "User said: 这个标注没有问题，开始训练. Accepted usable 17-row subset; seven unresolved candidates remain excluded.",
+  "splits": {
+    "train": {
+      "games": [
+        "game-01",
+        "game-02"
+      ],
+      "scenes": 7,
+      "nonempty": 4,
+      "empty": 3
+    },
+    "development": {
+      "games": [
+        "game-03"
+      ],
+      "scenes": 4,
+      "nonempty": 2,
+      "empty": 2
+    },
+    "test": {
+      "games": [
+        "game-04"
+      ],
+      "scenes": 6,
+      "nonempty": 4,
+      "empty": 2
+    }
+  }
+}

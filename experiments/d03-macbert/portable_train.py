@@ -38,7 +38,7 @@ def load_data(path=DATA):
 def pair_text(row, candidate):
     value = row['input']
     roster = '；'.join((c['id'] + '=' + c['name'] for c in value['characters']))
-    premise = '人物名册：' + roster + '。行动者编号：' + value['actorId'] + '。已行动编号：' + '、'.join(value['alreadyActedIds']) + '。世界事实：' + value['world'] + '当前已确认行动：' + value['action']
+    premise = '人物名册：' + roster + '。行动者编号：' + value['actorId'] + '。已行动编号：' + ('未知' if row.get('alreadyActedStatus') == 'unknown_in_legacy_capture_not_observed_empty' else '、'.join(value['alreadyActedIds'])) + '。世界事实：' + value['world'] + '当前已确认行动：' + value['action']
     query = '候选角色：' + candidate['id'] + '=' + candidate['name'] + '。判断此角色是否被当前行动牵连。已行动不排除受影响，行动者自身不算其他目标。'
     return (premise, query)
 
@@ -64,13 +64,13 @@ def main():
     global DATA, BASE, PARENT, PARENT_SHA
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', default='portable-r2')
-    parser.add_argument('--stage', choices=['r2', 'r3'], default='r2')
+    parser.add_argument('--stage', choices=['r2', 'r3', 'gameplay'], default='r2')
     parser.add_argument('--base', type=Path, default=BASE)
     parser.add_argument('--parent-run', type=Path)
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--device', choices=['cpu', 'mps', 'cuda'], default='cpu')
     args = parser.parse_args()
-    DATA = ROOT / 'docs/research/d03-macbert' / args.stage / 'scenes.jsonl'
+    DATA = (ROOT / 'docs/research/d03-gameplay-dataset-20261110-v1/scenes.jsonl' if args.stage == 'gameplay' else ROOT / 'docs/research/d03-macbert' / args.stage / 'scenes.jsonl')
     BASE = args.base.resolve()
     if Path(args.run).name != args.run or args.run in ('.', '..'):
         parser.error('--run must be one directory name')
@@ -79,17 +79,20 @@ def main():
     if sha(DATA) != data_manifest['datasetSha256']:
         raise ValueError('Frozen dataset hash mismatch')
     if args.audit:
-        print(json.dumps({'stage': args.stage, 'datasetSha256': sha(DATA), 'scenes': len(rows), 'pairs': sum((len(r['input']['characters']) for r in rows)), 'humanReviewedCount': 0, 'status': 'data_audit_only'}))
+        print(json.dumps({'stage': args.stage, 'datasetSha256': sha(DATA), 'scenes': len(rows), 'pairs': sum((len(r['input']['characters']) for r in rows)), 'userAcceptedScenes': 17 if args.stage == 'gameplay' else 0, 'independentReviewClaim': False, 'status': 'data_audit_only'}))
         return
-    if args.stage == 'r3':
+    if args.stage in ('r3', 'gameplay'):
         if args.parent_run is None:
-            parser.error('R3 requires --parent-run pointing to your own completed R2 run')
+            parser.error(args.stage + ' requires --parent-run pointing to your own completed ' + ('R3' if args.stage == 'gameplay' else 'R2') + ' run')
         PARENT = args.parent_run.resolve()
         parent_config = json.loads((PARENT / 'run.json').read_text(encoding='utf-8'))
-        if parent_config.get('stage') != 'r2':
-            raise ValueError('Parent must be a portable R2 run')
+        expected_stage = 'r3' if args.stage == 'gameplay' else 'r2'
+        if parent_config.get('stage') != expected_stage:
+            raise ValueError('Parent must be a portable ' + expected_stage.upper() + ' run')
+        if args.stage == 'gameplay' and parent_config.get('datasetSha256') != sha(ROOT / 'docs/research/d03-macbert/r3/scenes.jsonl'):
+            raise ValueError('Parent R3 dataset identity mismatch')
         parent_summary = json.loads((PARENT / 'summary.json').read_text(encoding='utf-8'))
-        if not parent_summary.get('exploratoryQualityGate'):
+        if args.stage == 'r3' and not parent_summary.get('exploratoryQualityGate'):
             raise ValueError('Parent R2 did not pass its experimental quality gate')
         PARENT_SHA = sha(PARENT / 'model/model.safetensors')
         if PARENT_SHA != parent_summary['checkpointSha256']:
@@ -108,7 +111,7 @@ def main():
     run = ROOT / '.local/d03-macbert/runs' / args.run
     run.mkdir(parents=True, exist_ok=False)
     start = time.perf_counter()
-    config = {'seed': 42, 'epochs': 8, 'batchSize': 8, 'learningRate': 2e-05, 'weightDecay': 0.01, 'gradientClip': 1.0, 'maxTokens': 512, 'thresholdGrid': [i / 20 for i in range(1, 20)], 'device': args.device, 'dtype': 'float32', 'encoderFrozen': False, 'datasetSha256': sha(DATA), 'codeSha256': sha(__file__), 'protocolSha256': sha(DATA.parent / 'protocol.md'), 'portableProtocolSha256': sha(ROOT / 'docs/research/d03-macbert/PORTABLE.md'), 'stage': args.stage, 'historicalReproductionClaim': False, 'torch': torch.__version__, 'transformers': transformers.__version__, 'scope': 'assistant-authored relational 2-3-character curriculum', 'parentCheckpointSha256': PARENT_SHA, 'initialization': 'your R2 selected model' if args.stage == 'r3' else 'pinned public MacBERT', 'testUsedForSelection': False}
+    config = {'seed': 42, 'epochs': 8, 'batchSize': 8, 'learningRate': 2e-05, 'weightDecay': 0.01, 'gradientClip': 1.0, 'maxTokens': 512, 'thresholdGrid': [i / 20 for i in range(1, 20)], 'device': args.device, 'dtype': 'float32', 'encoderFrozen': False, 'datasetSha256': sha(DATA), 'codeSha256': sha(__file__), 'protocolSha256': sha(DATA.parent / ('training-protocol.md' if args.stage == 'gameplay' else 'protocol.md')), 'portableProtocolSha256': sha(ROOT / 'docs/research/d03-macbert/PORTABLE.md'), 'stage': args.stage, 'historicalReproductionClaim': False, 'torch': torch.__version__, 'transformers': transformers.__version__, 'scope': 'user-accepted gameplay subset' if args.stage == 'gameplay' else 'assistant-authored relational 2-3-character curriculum', 'parentCheckpointSha256': PARENT_SHA, 'initialization': 'your R3 selected model' if args.stage == 'gameplay' else 'your R2 selected model' if args.stage == 'r3' else 'pinned public MacBERT', 'testUsedForSelection': False}
     (run / 'run.json').write_text(json.dumps(config, indent=2), encoding='utf-8')
     events = (run / 'events.jsonl').open('a', buffering=1, encoding='utf-8')
 
@@ -137,7 +140,7 @@ def main():
                     raise ValueError('Input exceeds 512; no truncation: ' + row['sceneId'])
                 pairs.append({'scene': row, 'candidateId': candidate['id'], 'encoding': encoding, 'label': int(candidate['id'] in row['targetIds'])})
         event('audit', scenes=len(rows), pairs=len(pairs), maxTokens=max((len(p['encoding']['input_ids']) for p in pairs)), splitScenes={s: sum((r['split'] == s for r in rows)) for s in ['train', 'development', 'test']})
-        if args.stage == 'r3':
+        if args.stage in ('r3', 'gameplay'):
             model = AutoModelForSequenceClassification.from_pretrained(PARENT / 'model', local_files_only=True, trust_remote_code=False).to(args.device)
         else:
             model = AutoModelForSequenceClassification.from_pretrained(BASE, num_labels=2, local_files_only=True, trust_remote_code=False).to(args.device)
@@ -229,7 +232,7 @@ def main():
             (run / f'{name}-predictions.json').write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding='utf-8')
         parent_metrics = None
         regression_metrics = None
-        if args.stage == 'r3':
+        if args.stage in ('r3', 'gameplay'):
             old_data = ROOT / 'docs/research/d03-macbert/r2/scenes.jsonl'
             old_manifest = json.loads((old_data.parent / 'data-manifest.json').read_text(encoding='utf-8'))
             if sha(old_data) != old_manifest['datasetSha256']:

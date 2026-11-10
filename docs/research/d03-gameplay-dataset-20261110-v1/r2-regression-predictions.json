@@ -1,0 +1,342 @@
+[
+  {
+    "sceneId": "r2:watch:2:one",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p28": 0.0013795143458992243,
+      "p11": 0.9986681938171387
+    },
+    "rosterMs": 67.34870899526868
+  },
+  {
+    "sceneId": "r2:watch:2:none",
+    "sourceGroup": "r2:watch",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p53": 0.0012803204590454698,
+      "p28": 0.0011938968673348427
+    },
+    "rosterMs": 73.29679199756356
+  },
+  {
+    "sceneId": "r2:watch:3:first",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.0015375782968476415,
+      "p11": 0.001448383554816246,
+      "p53": 0.998561441898346
+    },
+    "rosterMs": 138.82270899921423
+  },
+  {
+    "sceneId": "r2:watch:3:second",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.9985736608505249,
+      "p76": 0.001418116851709783,
+      "p53": 0.001824503531679511
+    },
+    "rosterMs": 105.70000000006985
+  },
+  {
+    "sceneId": "r2:watch:3:both",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11",
+      "p76"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.0013500751229003072,
+      "p11": 0.9986245632171631,
+      "p76": 0.9987396597862244
+    },
+    "rosterMs": 98.99183300149161
+  },
+  {
+    "sceneId": "r2:watch:3:none",
+    "sourceGroup": "r2:watch",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.0012973160482943058,
+      "p53": 0.001319307368248701,
+      "p94": 0.0013160163071006536
+    },
+    "rosterMs": 53.29550000169547
+  },
+  {
+    "sceneId": "r2:glove:2:one",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p53": 0.0013616398209705949,
+      "p11": 0.998636782169342
+    },
+    "rosterMs": 84.78795900009573
+  },
+  {
+    "sceneId": "r2:glove:2:none",
+    "sourceGroup": "r2:glove",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p76": 0.0013328914064913988,
+      "p53": 0.0013633397174999118
+    },
+    "rosterMs": 30.54675000021234
+  },
+  {
+    "sceneId": "r2:glove:3:first",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.0017666277708485723,
+      "p76": 0.0013633735943585634,
+      "p94": 0.9986549615859985
+    },
+    "rosterMs": 101.22695799509529
+  },
+  {
+    "sceneId": "r2:glove:3:second",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p76": 0.0014842546079307795,
+      "p11": 0.0017305004876106977,
+      "p94": 0.9985262155532837
+    },
+    "rosterMs": 105.65537499496713
+  },
+  {
+    "sceneId": "r2:glove:3:both",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94",
+      "p28"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p53": 0.0014759114710614085,
+      "p94": 0.9986382126808167,
+      "p28": 0.9986829161643982
+    },
+    "rosterMs": 546.8056669997168
+  },
+  {
+    "sceneId": "r2:glove:3:none",
+    "sourceGroup": "r2:glove",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p76": 0.001341049442999065,
+      "p11": 0.0014281178591772914,
+      "p94": 0.0014053803170099854
+    },
+    "rosterMs": 51.70395800087135
+  },
+  {
+    "sceneId": "r2:bottle:2:one",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p76"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.0013270475901663303,
+      "p76": 0.9985369443893433
+    },
+    "rosterMs": 177.17854100192199
+  },
+  {
+    "sceneId": "r2:bottle:2:none",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.0012788944877684116,
+      "p76": 0.0013227207818999887
+    },
+    "rosterMs": 70.18204199994216
+  },
+  {
+    "sceneId": "r2:bottle:3:first",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p76"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p28": 0.0017783340299502015,
+      "p76": 0.9987581968307495,
+      "p94": 0.0013887507375329733
+    },
+    "rosterMs": 49.21429200476268
+  },
+  {
+    "sceneId": "r2:bottle:3:second",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.001391317113302648,
+      "p11": 0.9986673593521118,
+      "p53": 0.0018398481188341975
+    },
+    "rosterMs": 91.94058300636243
+  },
+  {
+    "sceneId": "r2:bottle:3:both",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p11",
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.998737633228302,
+      "p53": 0.9988112449645996,
+      "p76": 0.0015199128538370132
+    },
+    "rosterMs": 87.18475000205217
+  },
+  {
+    "sceneId": "r2:bottle:3:none",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.0013199113309383392,
+      "p53": 0.0013205463765189052,
+      "p28": 0.0013628203887492418
+    },
+    "rosterMs": 104.06808300467674
+  },
+  {
+    "sceneId": "r2:puzzle:2:one",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p11": 0.9986687898635864,
+      "p76": 0.0013997001806274056
+    },
+    "rosterMs": 112.35024999768939
+  },
+  {
+    "sceneId": "r2:puzzle:2:none",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "captured_gameplay",
+    "scores": {
+      "p53": 0.0013068171683698893,
+      "p11": 0.0013034994481131434
+    },
+    "rosterMs": 35.55979199882131
+  },
+  {
+    "sceneId": "r2:puzzle:3:first",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p28"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p94": 0.0016017541056498885,
+      "p28": 0.9987568855285645,
+      "p11": 0.001339086564257741
+    },
+    "rosterMs": 45.939832998556085
+  },
+  {
+    "sceneId": "r2:puzzle:3:second",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p28": 0.0017030929448083043,
+      "p94": 0.001377027714625001,
+      "p53": 0.9987452030181885
+    },
+    "rosterMs": 93.3226659981301
+  },
+  {
+    "sceneId": "r2:puzzle:3:both",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p76",
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p28": 0.0014128878246992826,
+      "p94": 0.9987738728523254,
+      "p76": 0.9986675977706909
+    },
+    "rosterMs": 49.1501669966965
+  },
+  {
+    "sceneId": "r2:puzzle:3:none",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "captured_gameplay",
+    "scores": {
+      "p76": 0.0012605086667463183,
+      "p94": 0.0012886420590803027,
+      "p11": 0.001270339940674603
+    },
+    "rosterMs": 51.74191699916264
+  }
+]

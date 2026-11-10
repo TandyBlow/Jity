@@ -1,0 +1,49 @@
+{
+  "status": "curated_draft_not_trained",
+  "sourceGames": 4,
+  "candidateScenes": 24,
+  "usableDraftScenes": 17,
+  "needsAdjudication": 7,
+  "humanReviewed": 0,
+  "splits": {
+    "train": {
+      "games": [
+        "game-01",
+        "game-02"
+      ],
+      "scenes": 7,
+      "nonempty": 4,
+      "empty": 3
+    },
+    "development": {
+      "games": [
+        "game-03"
+      ],
+      "scenes": 4,
+      "nonempty": 2,
+      "empty": 2
+    },
+    "test": {
+      "games": [
+        "game-04"
+      ],
+      "scenes": 6,
+      "nonempty": 4,
+      "empty": 2
+    }
+  },
+  "exactDuplicateActionsAcrossSplits": 0,
+  "limitations": [
+    "Same campaign and recurring characters across games; game split is not an independent-world test.",
+    "Assistant-selected/annotated drafts. No original D03 labels exist in the legacy recordings.",
+    "Local-scene projection; distant world facts and current D03 acted-state unavailable.",
+    "Small sample, few positive target names, no stable quality estimate or training claim."
+  ],
+  "files": {
+    "all-candidates.jsonl": "56deea9c4526147f862ad99f001dc453bc35877a3132fe9afc389025f4b02517",
+    "development.jsonl": "c6305c49e13e7de5314909330b80825dae18a862d6313bda745bf822a1dd817f",
+    "review-queue.jsonl": "86eeeafd4f755bdb72aa2d45883c43914e7e57294c66588e41726a418a4d54f2",
+    "test.jsonl": "0c19d8a40b6d96e7be1e6619131fa96f20370cbba7b09c50eda4d035eb67db79",
+    "train.jsonl": "7bfdf5f38319bce599569e68782d5fdd9c6e2d13df9276c598c456774723f3a0"
+  }
+}

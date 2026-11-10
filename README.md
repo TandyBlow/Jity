@@ -2,11 +2,11 @@
 
 本分支以 D 源码分支为基础。**只有 D03 使用小模型候选，其他语义任务按方案交给 API。** 当前小模型为 MacBERT；旧 MiniRBT/Qwen/D02 小模型实验只作历史资料，不是此方案的活动后端。
 
-Windows/Linux 专项 CI 已通过；继承的后端/世界协议 CI 仍有失败，见 [发布与验证记录](SOURCE_RELEASE.md)。
+此前版本的 Windows/Linux 专项 CI 已通过；继承的后端/世界协议 CI 仍有失败，见 [发布与验证记录](SOURCE_RELEASE.md)。
 
-从 [Windows 开发说明](DEVELOPMENT_WINDOWS.md) 开始。附 D03 R1–R3 源码、数据、结果和 Windows CPU/CUDA 重训入口，**不包含权重、检查点、缓存或虚拟环境**。
+从 [Windows 开发说明](DEVELOPMENT_WINDOWS.md) 开始。附 D03 R1–R3 及最新真实游戏剧情阶段源码、数据、结果和 Windows CPU/CUDA 重训入口，**不包含权重、检查点、缓存或虚拟环境**。
 
-D03 R3 新关系题为12/24，旧基础题回归24/24，尚未通过质量门。新增 API + D03 入口是独立实验脚本，默认 API-only；小模型只在显式 shadow 模式记录对照，不改写世界、不替代正式生产链。完整生产接线仍待开发。
+D03 R3 新关系题为12/24；在它之后，基于四份游戏记录的继续训练测试为5/6，旧基础题回归24/24，尚未通过质量门。最新阶段使用 `--stage gameplay`，见 [数据与重训说明](docs/research/d03-gameplay-dataset-20261110-v1/PORTABLE.md)。新增 API + D03 入口是独立实验脚本，默认 API-only；小模型只在显式 shadow 模式记录对照，不改写世界、不替代正式生产链。完整生产接线仍待开发。
 
 下方为继承项目的历史应用说明；其中旧本地模型、Conda/bash 启动方法不是本次 Windows 实验的入口。
 
