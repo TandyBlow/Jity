@@ -116,6 +116,7 @@ export interface ProseUserArgs {
   /** Last sentence of the previous accepted scene; used only as an anti-repeat
    * hint, never as material to continue. */
   priorTail?: string | null;
+  priorOpen?: string | null;
 }
 
 /** The user turn: scene, required events, time, standing, hints, length. */
@@ -133,8 +134,17 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   // 她 for a male character in prose the grader accepted. `names` avoids that;
   // `model` keeps ordinary Chinese pronouns (53 of lane 01's 71 gold scenes
   // use 他/她), at the cost of that gender risk.
-  if ((policy.pronouns ?? 'names') === 'names') {
+  const pronouns = policy.pronouns ?? 'names';
+  if (pronouns === 'names') {
     lines.push('称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
+  } else if (pronouns === 'map') {
+    // Gender comes from an explicit map, never from a name. Only listed
+    // characters may be referred to by pronoun; the rest keep the safe rule.
+    const known = Object.entries(policy.genders ?? {})
+      .map(([name, gender]) => `${name}（${gender === 'male' ? '男' : '女'}）`);
+    lines.push(known.length
+      ? `已知性别：${known.join('、')}。可以用「他」「她」指代这些人；没有列出性别的人仍然只用名字或省略主语。`
+      : '称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
   }
   if (scene?.location) {
     const notes = (scene.placeNotes ?? []).slice(0, 2).map((note) => note.trim()).join(' ');
@@ -215,6 +225,9 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   lines.push(`要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
   lines.push('用具体的动作、环境和对话推进，不要把上面的清单逐条翻译成句子；场景说明只用来了解环境，不要整句照抄。');
   lines.push('视角人物只拿自己的物品，不要替别人做动作，也不要改变别人手里东西的位置。');
+  // The opening is as reusable as the ending: a model that starts every scene
+  // the same way reads as a template even when every sentence is true.
+  if (args.priorOpen) lines.push(`上一回合的开头是「${args.priorOpen}…」，不要用同样的开头或句式。`);
   if (args.priorTail) lines.push(`上一回合的结尾是「…${args.priorTail}」，不要照抄，也不要重复同样的收尾。`);
   if (policy.instruction?.trim()) lines.push(`补充要求：${policy.instruction.trim()}`);
   return lines.join('\n');

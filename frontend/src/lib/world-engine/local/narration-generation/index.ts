@@ -44,6 +44,12 @@ export {
 
 const nowMs = (): number => performance.now();
 /** Last non-empty sentence of a previously accepted scene. */
+const firstSentence = (text: string): string | null => {
+  const parts = text.split(/[。！？\n]+/u).map((part) => part.trim()).filter(Boolean);
+  return parts.length ? parts[0] : null;
+};
+
+/** Last non-empty sentence of a previously accepted scene. */
 const lastSentence = (text: string): string | null => {
   const parts = text.split(/[。！？\n]+/u).map((part) => part.trim()).filter(Boolean);
   return parts.length ? parts[parts.length - 1] : null;
@@ -697,6 +703,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
         policy,
         scene: policy.scene ?? null,
         priorTail: priorText ? lastSentence(priorText) : null,
+        priorOpen: priorText ? firstSentence(priorText) : null,
       })
       : input.inputText;
     const prompt = composeNarrationPrompt({

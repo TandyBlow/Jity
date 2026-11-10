@@ -125,7 +125,13 @@ export interface NarrationPolicy {
    * 1.7B model wrote 她 for a male character in accepted product prose.
    * `model` lets the model choose pronouns like ordinary Chinese prose (53 of
    * lane 01's 71 gold scenes use 他/她), at the cost of that gender risk. */
-  pronouns?: 'names' | 'model';
+  pronouns?: 'names' | 'model' | 'map';
+  /** Explicit gender per character name, e.g. { '路明非': 'male' }. Only used
+   * with `pronouns: 'map'`. The world state has no gender field, so this map
+   * must come from an evidence-backed source (lane 05's character notes), not
+   * from guessing at Chinese names. Characters missing from the map keep the
+   * names-only rule. */
+  genders?: Record<string, 'male' | 'female'>;
   /** How the whole-scene prompt is built: `serialized` (default) continues the
    * caller's lane-01 serialization — the training shape for fine-tuned
    * checkpoints; `prose-facts` renders the same packet as a closed-book turn

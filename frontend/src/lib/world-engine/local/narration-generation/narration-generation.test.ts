@@ -1356,3 +1356,46 @@ describe('time beat: the duration must be named, not just implied', () => {
     expect(time.directive).toContain('时间句');
   });
 });
+
+describe('pronouns come from evidence, not from the shape of a name', () => {
+  const prompt = (policy: Record<string, unknown>) => renderProseFactsPrompt({
+    committed: packet(moved, povAt), policy: { ...basePolicy, ...policy },
+    scene: { location: '走廊' }, priorTail: null,
+  });
+
+  test('map mode lists only the characters whose gender is given', () => {
+    const text = prompt({ pronouns: 'map', genders: { 林川: 'male' } });
+    expect(text).toContain('已知性别：林川（男）');
+    expect(text).toContain('没有列出性别的人仍然只用名字');
+    expect(text).not.toContain('周宁（');
+  });
+
+  test('map mode with no evidence falls back to the names-only rule', () => {
+    const text = prompt({ pronouns: 'map', genders: {} });
+    expect(text).toContain('不要用「他」「她」指代人物');
+  });
+});
+
+describe('cross-turn echo: the previous opening is as reusable as its ending', () => {
+  test('the prompt shows both the previous opening and ending', () => {
+    const text = renderProseFactsPrompt({
+      committed: packet(moved, povAt), policy: basePolicy, scene: { location: '走廊' },
+      priorOpen: '走廊的灯还亮着', priorTail: '他没有再说话',
+    });
+    expect(text).toContain('上一回合的开头是「走廊的灯还亮着…」');
+    expect(text).toContain('上一回合的结尾是「…他没有再说话」');
+  });
+
+  test('a scene-mode retry keeps both lines', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '走廊的灯还亮着。周宁站着没动。' },
+      { kind: 'text', text: '门厅的灯忽明忽暗。林川从走廊走到门厅，在门口停住。周宁留在走廊。' },
+    ]);
+    await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】',
+      priorText: '走廊的灯还亮着。他站着。他没有再说话。',
+      policy: { ...basePolicy, mode: 'scene', promptShape: 'prose-facts', writingContract: false },
+    });
+    expect(engine.calls[1].prompt).toContain('上一回合的开头是');
+  });
+});
