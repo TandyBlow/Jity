@@ -1,7 +1,7 @@
 {
   "lane": "07-prose",
   "kind": "browser-candidate-runs",
-  "updatedAt": "2026-11-10T07:08:21.424Z",
+  "updatedAt": "2026-11-10T07:13:25.203Z",
   "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
   "runner": {
     "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
@@ -43,9 +43,9 @@
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
       "source": {
-        "commit": "a3e2ed013ba5e544c2629f24c8b7e2d49fd0cfe3",
+        "commit": "bb65082eea679fc6573aafe46d7d583b4f05e126",
         "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
-        "dirty": true
+        "dirty": false
       },
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
@@ -57,7 +57,7 @@
         "file": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts"
       },
       "notes": "no model: deterministic prose from settled facts; loader is a stub",
-      "firstSeenAt": "2026-11-10T07:08:03.765Z",
+      "firstSeenAt": "2026-11-10T07:13:24.639Z",
       "engine": {
         "modelUrl": "/models/stub.gguf",
         "loadMs": 0,
@@ -88,38 +88,38 @@
           "mtime": "2026-11-10T07:00:23.567Z"
         }
       },
-      "queuedAt": "2026-11-10T07:08:03.584Z",
+      "queuedAt": "2026-11-10T07:13:24.520Z",
       "latest": {
         "free-day-open": {
-          "runId": "07-prose::free-day-open::mwaclwht",
-          "at": "2026-11-10T07:08:03.890Z",
+          "runId": "07-prose::free-day-open::mwacss1n",
+          "at": "2026-11-10T07:13:24.724Z",
           "accepted": true,
           "chars": 136,
-          "wallMs": 11,
+          "wallMs": 7,
           "firstParagraph": "巷口的黄黑绳已放下，进入即算踏入演习区。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-open::mwaclwht]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-open::mwacss1n]",
           "contractOk": true,
           "error": null
         },
         "free-day-move": {
-          "runId": "07-prose::free-day-move::mwaclwif",
-          "at": "2026-11-10T07:08:03.921Z",
+          "runId": "07-prose::free-day-move::mwacss2d",
+          "at": "2026-11-10T07:13:24.751Z",
           "accepted": true,
           "chars": 151,
           "wallMs": 6,
           "firstParagraph": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-move::mwaclwif]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-move::mwacss2d]",
           "contractOk": true,
           "error": null
         },
         "free-day-task": {
-          "runId": "07-prose::free-day-task::mwaclwj1",
-          "at": "2026-11-10T07:08:03.945Z",
+          "runId": "07-prose::free-day-task::mwacss34",
+          "at": "2026-11-10T07:13:24.779Z",
           "accepted": true,
           "chars": 92,
-          "wallMs": 4,
+          "wallMs": 5,
           "firstParagraph": "过了三分钟，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-task::mwaclwj1]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json#runs[07-prose::free-day-task::mwacss34]",
           "contractOk": true,
           "error": null
         }
@@ -128,15 +128,15 @@
   },
   "runs": [
     {
-      "runId": "07-prose::free-day-open::mwaclwht",
+      "runId": "07-prose::free-day-open::mwacss1n",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-open",
-      "startedAt": "2026-11-10T07:08:03.890Z",
-      "wallMs": 11.434999465942383,
+      "startedAt": "2026-11-10T07:13:24.724Z",
+      "wallMs": 6.804999351501465,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -500,14 +500,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 2.1949996948242188,
-          "composeMs": 3.744999885559082,
-          "verifyMs": 0.3600006103515625,
-          "totalMs": 1424.1750001907349,
+          "planMs": 1.1599998474121094,
+          "composeMs": 1.4250001907348633,
+          "verifyMs": 0.33500003814697266,
+          "totalMs": 645.1050004959106,
           "attemptMs": [
-            9.079999923706055
+            4.84999942779541
           ],
-          "attemptsMs": 9.079999923706055,
+          "attemptsMs": 4.84999942779541,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -521,7 +521,7 @@
             "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。\n\n赛区路线图还在西侧服务巷。图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。\n\n路明非把目光落到赛区路线图上。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 9.079999923706055,
+            "durationMs": 4.84999942779541,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -533,7 +533,7 @@
               "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。\n\n赛区路线图还在西侧服务巷。图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。\n\n路明非把目光落到赛区路线图上。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 9.079999923706055,
+              "durationMs": 4.84999942779541,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -556,15 +556,15 @@
       },
       "progress": {
         "count": 1,
-        "firstAtMs": 11,
-        "lastAtMs": 11,
-        "firstReadableAtMs": 11,
+        "firstAtMs": 7,
+        "lastAtMs": 7,
+        "firstReadableAtMs": 7,
         "tail": [
           {
             "text": "巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。\n\n赛区路线图还在西侧服务巷。图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。\n\n路明非把目光落到赛区路线图上。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 9.079999923706055
+            "elapsedMs": 4.84999942779541
           }
         ]
       },
@@ -612,15 +612,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json"
     },
     {
-      "runId": "07-prose::free-day-move::mwaclwif",
+      "runId": "07-prose::free-day-move::mwacss2d",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-move",
-      "startedAt": "2026-11-10T07:08:03.921Z",
-      "wallMs": 5.579999923706055,
+      "startedAt": "2026-11-10T07:13:24.751Z",
+      "wallMs": 5.75,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -1008,14 +1008,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 1.1949996948242188,
-          "composeMs": 2.369999885559082,
-          "verifyMs": 0.06000041961669922,
-          "totalMs": 1446.840000152588,
+          "planMs": 0.9050006866455078,
+          "composeMs": 1.875,
+          "verifyMs": 0.07999992370605469,
+          "totalMs": 671.1950006484985,
           "attemptMs": [
-            4.114999771118164
+            3.234999656677246
           ],
-          "attemptsMs": 4.114999771118164,
+          "attemptsMs": 3.234999656677246,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -1029,7 +1029,7 @@
             "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n一分钟过去，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n身边还有林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。\n\n林亦舟放下的演习枪还在原来的地方。枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 4.114999771118164,
+            "durationMs": 3.234999656677246,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -1041,7 +1041,7 @@
               "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n一分钟过去，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n身边还有林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。\n\n林亦舟放下的演习枪还在原来的地方。枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 4.114999771118164,
+              "durationMs": 3.234999656677246,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -1072,7 +1072,7 @@
             "text": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。\n\n一分钟过去，路明非从西侧服务巷走到西回廊。\n\n诺诺从西侧服务巷来到西回廊。\n\n身边还有林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。\n\n林亦舟放下的演习枪还在原来的地方。枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 4.114999771118164
+            "elapsedMs": 3.234999656677246
           }
         ]
       },
@@ -1120,15 +1120,15 @@
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07.json"
     },
     {
-      "runId": "07-prose::free-day-task::mwaclwj1",
+      "runId": "07-prose::free-day-task::mwacss34",
       "candidateId": "07-prose",
       "owner": "07-prose",
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "exportName": "generateCandidate",
       "modelUrl": "/models/stub.gguf",
       "scenarioId": "free-day-task",
-      "startedAt": "2026-11-10T07:08:03.945Z",
-      "wallMs": 4.109999656677246,
+      "startedAt": "2026-11-10T07:13:24.779Z",
+      "wallMs": 5.244999885559082,
       "coldStart": false,
       "loadMs": 0,
       "identity": {
@@ -1516,14 +1516,14 @@
         "status": "accepted",
         "strategyVersion": "prose-composer-v1",
         "timings": {
-          "planMs": 0.18500041961669922,
-          "composeMs": 2.1999998092651367,
-          "verifyMs": 0.08500003814697266,
-          "totalMs": 1469,
+          "planMs": 0.19499969482421875,
+          "composeMs": 1.8400001525878906,
+          "verifyMs": 0.0950002670288086,
+          "totalMs": 698.4750003814697,
           "attemptMs": [
-            2.679999351501465
+            2.330000877380371
           ],
-          "attemptsMs": 2.679999351501465,
+          "attemptsMs": 2.330000877380371,
           "firstTokenMs": null,
           "deadlineExceeded": false
         },
@@ -1537,7 +1537,7 @@
             "cleaned": "过了三分钟，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。",
             "finishReason": "stop",
             "error": null,
-            "durationMs": 2.679999351501465,
+            "durationMs": 2.330000877380371,
             "firstTokenMs": null,
             "accepted": true,
             "issues": [],
@@ -1549,7 +1549,7 @@
               "cleaned": "过了三分钟，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。",
               "finishReason": "stop",
               "error": null,
-              "durationMs": 2.679999351501465,
+              "durationMs": 2.330000877380371,
               "firstTokenMs": null,
               "completion": null,
               "alignment": null,
@@ -1572,15 +1572,15 @@
       },
       "progress": {
         "count": 1,
-        "firstAtMs": 4,
-        "lastAtMs": 4,
-        "firstReadableAtMs": 4,
+        "firstAtMs": 5,
+        "lastAtMs": 5,
+        "firstReadableAtMs": 5,
         "tail": [
           {
             "text": "过了三分钟，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。",
             "status": "complete",
             "verified": true,
-            "elapsedMs": 2.679999351501465
+            "elapsedMs": 2.330000877380371
           }
         ]
       },
