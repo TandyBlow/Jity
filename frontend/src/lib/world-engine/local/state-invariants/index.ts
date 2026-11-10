@@ -693,7 +693,12 @@ export async function verifySnapshotSequence(values: unknown[]): Promise<Invaria
         merged.errors.push(issue('points_regressed', `snapshot ${index + 1} has ${currentPoints} points, fewer than ${previousPoints}`));
       }
       const previousHead = previous.headPointId;
-      if (isNonBlankString(previousHead) && isRecord(record.points) && !(previousHead in record.points)) {
+      // The S0/root point is stored in pointStates, not in the points map.
+      // A later snapshot containing the same rootPointId is the same root, not
+      // a deleted point; only a non-root previous head must appear in points.
+      const rootPointId = record.rootPointId;
+      if (isNonBlankString(previousHead) && isRecord(record.points)
+        && !(previousHead in record.points) && previousHead !== rootPointId) {
         merged.errors.push(issue('point_chain_broken', `snapshot ${index + 1} no longer contains the previous head ${previousHead}`, previousHead));
       }
       const previousDigest = storedDigest(previous, previousHead);
@@ -939,7 +944,8 @@ export function verifyTaskDecisionEvidence(
   if (Array.isArray(coverage.rejectedTaskIds)) {
     report.rejected = coverage.rejectedTaskIds.map((item) => isRecord(item) ? `${String(item.characterId)}:${String(item.taskId)}` : String(item));
   }
-  if (coverage.mode && coverage.mode !== 'per_character_decision') {
+  const mode = typeof coverage.mode === 'string' ? coverage.mode : 'per_character_decision';
+  if (mode !== 'per_character_decision' && mode !== 'affected_projection') {
     report.errors.push(issue('task_coverage', `unexpected task decision mode ${String(coverage.mode)}`));
   }
   if (report.characters !== expected.characters) {
@@ -955,7 +961,49 @@ export function verifyTaskDecisionEvidence(
     const ids = Array.isArray(coverage.taskCoverageIds) ? coverage.taskCoverageIds : [];
     if (ids.length !== expected.characters) report.errors.push(issue('task_coverage', `taskCoverageIds has ${ids.length}/${expected.characters} characters`));
   }
-  if (report.assertedUnchanged != null && report.taskRows != null && report.assertedUnchanged + report.achieved !== report.taskRows) {
+  if (mode === 'affected_projection') {
+    // 04's affected projection sends only tasks touched by this point to the
+    // model; the program preserves the remaining rows. Full-world coverage is
+    // still required: the two lists must partition the 73 rows without a
+    // duplicate or an overlap, and every affected row must be either newly
+    // achieved or explicitly unchanged. The unaffected rows are not model
+    // decisions, so they are not counted in assertedUnchanged.
+    const affected = isStringArray(coverage.affectedTaskIds) ? coverage.affectedTaskIds : null;
+    const unaffected = isStringArray(coverage.unaffectedTaskIds) ? coverage.unaffectedTaskIds : null;
+    const affectedCharacters = num(coverage.affectedCharacters);
+    const unaffectedCharacters = isStringArray(coverage.unaffectedCharacters) ? coverage.unaffectedCharacters : null;
+    if (!affected || !unaffected) {
+      report.errors.push(issue('task_coverage', 'affected projection must list both affectedTaskIds and unaffectedTaskIds'));
+    } else {
+      const all = new Set<string>();
+      let duplicate = false;
+      for (const taskId of affected) {
+        if (all.has(taskId)) duplicate = true;
+        all.add(taskId);
+      }
+      let overlap = false;
+      for (const taskId of unaffected) {
+        if (all.has(taskId)) overlap = true;
+        all.add(taskId);
+      }
+      if (duplicate) report.errors.push(issue('task_coverage', 'affectedTaskIds contains a duplicate task id'));
+      if (overlap) report.errors.push(issue('task_coverage', 'affected and unaffected task lists overlap'));
+      if (all.size !== report.taskRows) {
+        report.errors.push(issue('task_coverage', `affected + unaffected lists cover ${all.size}/${String(report.taskRows)} task rows`));
+      }
+      const achievedOnAffected = [...achievedIds].filter((key) => affected.includes(key.slice(key.indexOf(':') + 1))).length;
+      if (report.assertedUnchanged != null && report.assertedUnchanged !== affected.length - achievedOnAffected) {
+        report.errors.push(issue('task_coverage', `assertedUnchanged ${report.assertedUnchanged} != affected ${affected.length} - achieved ${achievedOnAffected}`));
+      }
+      if (achievedOnAffected !== report.achieved) {
+        report.errors.push(issue('task_coverage', `${report.achieved - achievedOnAffected} achieved task ids are outside the affected scope`));
+      }
+      if (affectedCharacters != null && unaffectedCharacters != null
+        && affectedCharacters + unaffectedCharacters.length !== report.characters) {
+        report.errors.push(issue('task_coverage', `affected ${affectedCharacters} + unaffected ${unaffectedCharacters.length} characters != ${String(report.characters)}`));
+      }
+    }
+  } else if (report.assertedUnchanged != null && report.taskRows != null && report.assertedUnchanged + report.achieved !== report.taskRows) {
     report.errors.push(issue('task_coverage', `assertedUnchanged ${report.assertedUnchanged} + achieved ${report.achieved} != taskRows ${report.taskRows}`));
   }
   if (report.assertedUnchanged == null && report.taskRows != null) {
@@ -1062,7 +1110,10 @@ export function verifyDisplayedCommit(entries: unknown[]): {
   return { ok: errors.length === 0, errors, warnings };
 }
 
-export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; errors: InvariantIssue[]; warnings: InvariantIssue[] } {
+export function verifyVisibleAcceptance(
+  entries: unknown[],
+  hasFullSnapshot = false,
+): { ok: boolean; errors: InvariantIssue[]; warnings: InvariantIssue[] } {
   const errors: InvariantIssue[] = [];
   const warnings: InvariantIssue[] = [];
   const seenDone = new Map<string, boolean>();
@@ -1109,10 +1160,11 @@ export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; erro
       }
     }
   }
-  if (!sawSnapshot) {
+  if (!sawSnapshot && !hasFullSnapshot) {
     // Visible summaries alone cannot prove state replay. A record without a
     // full transport snapshot is not acceptance evidence, even if the page
-    // history numbers look monotonic.
+    // history numbers look monotonic. A document-level snapshot chain (for
+    // example 09's per-turn and post-reload snapshots) satisfies this check.
     errors.push(issue('evidence_shape', 'no full transport snapshot in this record; state cannot be replayed'));
   }
   return { ok: errors.length === 0, errors, warnings };

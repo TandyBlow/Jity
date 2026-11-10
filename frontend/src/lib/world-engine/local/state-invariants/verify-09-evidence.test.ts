@@ -13,8 +13,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  verifyDisplayHistory, verifyDisplayedCommit, verifySessionSnapshot, verifyTaskCoverage, verifyTaskDecisionEvidence,
-  verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
+  verifyDisplayHistory, verifyDisplayedCommit, verifySessionSnapshot, verifySnapshotSequence,
+  verifyTaskCoverage, verifyTaskDecisionEvidence, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
 } from './index';
 
 const evidencePath = process.env.WORLD_STATE_EVIDENCE;
@@ -119,6 +119,31 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
       results.push({ label: labelFor(entry, index), report: addTaskDecisionReport(entry, addDisplayReport(entry, report)) });
     }
   }
+  // 09's newer records keep the per-turn and post-reload full snapshots in
+  // separate fields. Verify them as one forward chain; the root snapshot is a
+  // valid earlier state, not a missing save.
+  const fullSnapshots: unknown[] = [];
+  for (const entry of entries) {
+    if (!entry || typeof entry !== 'object') continue;
+    const value = (entry as Record<string, unknown>).snapshotAfterTurn;
+    if (value != null) fullSnapshots.push(value);
+  }
+  if (document && typeof document === 'object') {
+    const restore = (document as Record<string, unknown>).refreshRestore;
+    if (restore && typeof restore === 'object') {
+      const value = (restore as Record<string, unknown>).snapshotAfterReload;
+      if (value != null) fullSnapshots.push(value);
+    }
+    const direct = (document as Record<string, unknown>).snapshotAfterReload;
+    if (direct != null) fullSnapshots.push(direct);
+  }
+  if (fullSnapshots.length > 0) {
+    const full = fullSnapshots.length > 1
+      ? await verifySnapshotSequence(fullSnapshots)
+      : await verifySessionSnapshot(fullSnapshots[0]);
+    results.push({ label: 'full-snapshot-chain', report: full });
+  }
+
   const displayed = verifyDisplayedCommit(entries);
   results.push({
     label: 'displayed-commit',
@@ -137,7 +162,7 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
   });
 
   if (visibleOnly.length > 0) {
-    const visible = verifyVisibleAcceptance(visibleOnly);
+    const visible = verifyVisibleAcceptance(visibleOnly, fullSnapshots.length > 0);
     for (const entry of visibleOnly) {
       const empty: InvariantReport = {
         ok: true, worldId: null, version: null, points: 0, headPointId: null,

@@ -273,6 +273,10 @@ describe('visible acceptance summary', () => {
     const second = await recordOf(initial, [point(s0, 1, {}), point(s0, 2, {})]);
     const forward = await verifySnapshotSequence([{ transport: first }, { transport: second }]);
     expect(forward.errors).toEqual([]);
+    const root = await recordOf(initial, []);
+    const fromRoot = await verifySnapshotSequence([{ transport: root }, { transport: first }]);
+    expect(fromRoot.errors).toEqual([]);
+    expect(fromRoot.version).toBe(1);
     const backward = await verifySnapshotSequence([{ transport: second }, { transport: first }]);
     expect(backward.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['version_regressed', 'points_regressed']));
   });
@@ -308,6 +312,22 @@ describe('visible acceptance summary', () => {
     expect(verifyTaskDecisionEvidence({ ...full, excluded: ['onstage_only'] }).errors.map((item) => item.code)).toContain('task_coverage');
     const rejected = verifyTaskDecisionEvidence({ ...full, rejectedTaskIds: [{ characterId: 'doctor', taskId: 'task_doctor_flag' }] });
     expect(rejected.errors.map((item) => item.code)).toContain('task_coverage');
+  });
+
+  it('accepts an affected projection only when its two task lists partition the full world', () => {
+    const affected = {
+      mode: 'affected_projection', tasks: 3, taskRows: 4, affectedCharacters: 2,
+      affectedTaskIds: ['a1', 'a2', 'b1'], unaffectedTaskIds: ['off1'],
+      unaffectedCharacters: ['off'], assertedUnchanged: 3, achievedByCharacter: [], rejectedTaskIds: [],
+    };
+    const expected = { characters: 3, tasks: 4 };
+    const report = verifyTaskDecisionEvidence(affected, expected);
+    expect(report.errors, JSON.stringify(report.errors)).toEqual([]);
+    expect(report.ok).toBe(true);
+    expect(verifyTaskDecisionEvidence({ ...affected, unaffectedTaskIds: [] }, expected).errors.map((item) => item.code)).toContain('task_coverage');
+    expect(verifyTaskDecisionEvidence({ ...affected, affectedTaskIds: ['a1', 'a1', 'a2', 'b1'] }, expected).errors.map((item) => item.code)).toContain('task_coverage');
+    expect(verifyTaskDecisionEvidence({ ...affected, affectedTaskIds: ['a1', 'a2', 'b1', 'off1'] }, expected).errors.map((item) => item.code)).toContain('task_coverage');
+    expect(verifyTaskDecisionEvidence({ ...affected, assertedUnchanged: 4 }, expected).errors.map((item) => item.code)).toContain('task_coverage');
   });
 
   it('does not call a retained failed input a committed history', async () => {
