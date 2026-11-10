@@ -30,6 +30,7 @@ export type ActionIssueCode =
   // action value
   | 'model_skip'
   | 'action_too_long'
+  | 'action_is_task_goal'
   | 'action_first_person'
   | 'npc_repeats_player'
   | 'npc_quotes_player'
@@ -60,6 +61,7 @@ export type ActionIssueCode =
   | 'reaction_off_topic'
   | 'reaction_member_absent'
   | 'reaction_empty'
+  | 'reaction_goal_copy'
   // generation plumbing
   | 'repair_requested'
   | 'repair_failed'
@@ -115,9 +117,13 @@ export interface ActionHandlerOptions {
   maxActionChars?: number;
   maxReactionChars?: number;
   maxTargets?: number;
-  /** Off-screen characters are outside the player's scene. 'skip' keeps them
-   * out of the round's model budget (default); 'judge' still asks the model,
-   * with the actor's own room as the scene. Either way the reason is logged. */
+  /** Off-screen characters are outside the player's scene but still part of
+   * the world. 'skip' (default) keeps them out of the round's model budget —
+   * a scene-scope decision, not a name rule: every same-room character is
+   * judged regardless of naming. 'judge' asks the model from the actor's own
+   * room and hides the protagonist's move/events from it (full simulation;
+   * measured ~6s per call, so a 14-actor round does not fit the wait budget).
+   * Either way the reason is logged. */
   offscreenPolicy?: 'skip' | 'judge';
   /** When the protagonist is the admitted reaction target, the player's own
    * character must not be written by a model. 'minimal' returns a program

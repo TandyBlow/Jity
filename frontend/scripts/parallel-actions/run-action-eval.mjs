@@ -75,9 +75,15 @@ const CASES = [
     note: 'Named but only small talk; a short reply or inaction are both legal.',
   },
   {
-    id: 'A4-offscreen', task: 'action', actor: 'fingel',
+    id: 'A4a-offscreen-skip', task: 'action', actor: 'fingel',
     playerInput: '我靠在巷口墙边喘口气。',
-    note: 'Fingel is in the shed; must be a zero-call scope skip.',
+    note: 'Fingel is in the shed; the default skip policy makes this a zero-call scope decision.',
+  },
+  {
+    id: 'A4b-offscreen-judge', task: 'action', actor: 'fingel', offscreenPolicy: 'judge',
+    playerInput: '我靠在巷口墙边喘口气。',
+    events: ['器材棚门口传来脚步，停了一下又走远了。'],
+    note: 'Explicit judge policy: judge Fingel from the shed only; the protagonist move must be hidden from him.',
   },
   {
     id: 'A5-protagonist-pending', task: 'action', actor: 'lu',
@@ -217,6 +223,7 @@ if (config.dry) {
     const rows = await page.evaluate(async (entries) => {
       const actions = await import('/src/lib/world-engine/local/semantics/actions/index.ts');
       const { buildInitialState } = await import('/src/lib/world-engine/local/state.ts');
+      const { roomOf } = await import('/src/lib/world-engine/local/prompt.ts');
       const world = await (await fetch('/worlds/dragon-raja-free-day.world.json')).json();
       const apply = (state, patch = []) => {
         for (const move of patch) {
@@ -228,11 +235,15 @@ if (config.dry) {
       return entries.map((entry) => {
         const state = apply(structuredClone(buildInitialState({ ...world.initial, worldId: world.worldId })), entry.patch);
         const focus = entry.task === 'action' ? entry.actor : entry.task === 'targets' ? entry.source : entry.member;
-        const scene = actions.buildScene(state, focus, { playerInput: entry.playerInput ?? entry.actionText ?? null, aliases: {}, events: entry.events ?? [] });
+        const offscreen = focus !== state.protagonistId && roomOf(state, focus) !== roomOf(state, state.protagonistId);
+        const scopedSkip = offscreen && entry.offscreenPolicy === 'skip';
+        const scene = actions.buildScene(state, focus, {
+          playerInput: scopedSkip ? null : entry.playerInput ?? entry.actionText ?? null,
+          aliases: {}, events: scopedSkip ? [] : entry.events ?? [] });
         const prompt = entry.task === 'action' ? actions.actionPrompt(scene)
           : entry.task === 'targets' ? actions.targetsPrompt(scene, entry.actionText, 2)
           : actions.reactionPrompt(scene, actions.buildScene(state, entry.source).actor, entry.actionText);
-        return { id: entry.id, task: entry.task, promptChars: prompt.length, prompt,
+        return { id: entry.id, task: entry.task, offscreen, scopedSkip, promptChars: prompt.length, prompt,
           scene: { room: scene.roomName, visible: scene.visible.map((c) => c.name), absent: scene.absent.map((c) => `${c.name}@${c.roomName}`),
             items: scene.items.map((item) => `${item.name}@${item.position}`) } };
       });
@@ -288,6 +299,7 @@ try {
       const handlers = actions.createActionHandlers({ engine: window.__actions.engine, options: {
         capturePrompts: true, temperature: config.temperature, seed: config.seed,
         timeoutMs: config.timeoutMs, maxTokens: { action: config.maxTokens, targets: config.maxTokens, reaction: config.maxTokens },
+        offscreenPolicy: entry.offscreenPolicy ?? 'skip',
         recentEvents: () => entry.events ?? [],
       } });
       const input = entry.task === 'action'
@@ -295,11 +307,17 @@ try {
         : entry.task === 'targets'
           ? { sourceId: entry.source, actionText: entry.actionText, workingState: state }
           : { sourceId: entry.source, memberId: entry.member, sourceActionText: entry.actionText, rollId: 'roll_eval', workingState: state };
+      const focus = entry.task === 'action' ? entry.actor : entry.task === 'targets' ? entry.source : entry.member;
+      const scene = actions.buildScene(state, focus, { playerInput: entry.playerInput ?? null, aliases: {}, events: entry.events ?? [] });
       const started = performance.now();
       const result = entry.task === 'action' ? await handlers.action(entry.actor, input)
         : entry.task === 'targets' ? await handlers.targets(entry.source, input)
           : await handlers.reaction(entry.member, input);
-      return { ...result, wallMs: Math.round(performance.now() - started), sourceType: result.source };
+      return { ...result, wallMs: Math.round(performance.now() - started), sourceType: result.source,
+        scene: { room: scene.roomName,
+          visible: scene.visible.map((character) => ({ id: character.id, name: character.name, position: character.position })),
+          absent: scene.absent.map((character) => ({ id: character.id, name: character.name, room: character.roomName })),
+          items: scene.items.map((item) => ({ id: item.id, name: item.name, position: item.position })) } };
     }, { entry, config });
     report.runs.push({ ...row, caseId: entry.id, note: entry.note, input: entry });
     save();
@@ -311,9 +329,14 @@ try {
   for (const run of report.runs) {
     const raw = typeof run.value === 'string' ? run.value : JSON.stringify(run.value);
     assert.ok(raw && raw.length > 0, `${run.caseId}: empty value`);
-    if (run.caseId === 'A4-offscreen') {
-      assert.equal(run.source, 'program', 'off-screen actor must not be model-decided');
-      assert.equal(run.attempts, 0, 'off-screen actor must not spend a call');
+    if (run.caseId === 'A4a-offscreen-skip') {
+      assert.equal(run.source, 'program', 'skip policy must not be model-decided');
+      assert.equal(run.attempts, 0, 'skip policy must not spend a call');
+    }
+    if (run.caseId === 'A4b-offscreen-judge') {
+      assert.ok(run.attempts >= 1, 'judge policy must actually ask the model');
+      assert.ok(run.calls[0].prompt.includes('主角不在这里'), 'judged off-screen actor must not see the protagonist move');
+      assert.ok(!run.calls[0].prompt.includes('我靠在巷口墙边喘口气。'), 'judged off-screen actor must not receive the player line');
     }
     if (run.caseId === 'A5-protagonist-pending') {
       assert.equal(run.source, 'program', 'pending player command is program-owned');

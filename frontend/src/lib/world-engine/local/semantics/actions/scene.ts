@@ -71,6 +71,7 @@ export interface ActionScene {
   roomName: string;
   roomChain: string[];
   protagonistRoomId: Id;
+  protagonistRoomName: string;
   sameRoomAsProtagonist: boolean;
   actor: SceneCharacter;
   visible: SceneCharacter[];
@@ -264,6 +265,7 @@ export function buildScene(state: WorldState, focusId: Id, options: BuildSceneOp
     roomName: locationName(state, roomId),
     roomChain: roomChain(state, roomId),
     protagonistRoomId,
+    protagonistRoomName: locationName(state, protagonistRoomId),
     sameRoomAsProtagonist: roomId === protagonistRoomId,
     actor: characterView(state, focusId, 'actor'),
     visible,

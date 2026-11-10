@@ -78,6 +78,35 @@ export function longestSharedSpan(a: string, b: string): SharedSpan {
   return { length: best, text: left.slice(bestEnd - best, bestEnd).join('') };
 }
 
+export interface SharedSubsequence {
+  length: number;
+  /** Share of `a` covered by the common subsequence. */
+  coverage: number;
+}
+
+/** Longest common SUBSEQUENCE length on skeletons. Unlike a contiguous
+ * span, this exposes a paraphrase that keeps the player's words in order with
+ * a word swapped or dropped — the small-model habit of restating the
+ * protagonist's action as if it were the NPC's. */
+export function sharedSubsequence(a: string, b: string): SharedSubsequence {
+  const left = [...skeleton(a)];
+  const right = [...skeleton(b)];
+  if (!left.length) return { length: 0, coverage: 0 };
+  let previous = new Uint16Array(right.length + 1);
+  let current = new Uint16Array(right.length + 1);
+  for (let i = 1; i <= left.length; i += 1) {
+    for (let j = 1; j <= right.length; j += 1) {
+      current[j] = left[i - 1] === right[j - 1] ? previous[j - 1] + 1 : Math.max(previous[j], current[j - 1]);
+    }
+    const swap = previous;
+    previous = current;
+    current = swap;
+    current.fill(0);
+  }
+  const length = previous[right.length];
+  return { length, coverage: length / left.length };
+}
+
 const PRONOUN = /他们|她们|它们|他|她|它|对方|那人|这人|这个人|那个人|这位|那位|两人|二人|众人|来人|别人/u;
 const DEICTIC = /面前|身边|对面|旁边|眼前|门口|身后|手里|身上|这里|那里/u;
 

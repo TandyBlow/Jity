@@ -28,6 +28,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import { decodeTaskOutput } from '../../../runtime/structured-output';
 import { taskOutputSchema } from '../../../runtime/output-schema';
 import type { ModelTask } from '../../../schedule';
+import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
@@ -179,10 +180,19 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     const started = now();
     const call = readActionCall(key, rawInput);
     const issues: ActionIssue[] = [];
+    if (!call.state.characters[call.actor]) throw new Error(`actor_unknown:${call.actor}`);
+    // Off-screen means outside the player's scene, not outside the world: the
+    // actor is still judged from its own room, but it must not see or answer
+    // the protagonist's move. 'skip' keeps those actors out of the model
+    // budget; 'judge' (default) lets their own tasks and events evolve the
+    // world instead of freezing everyone who is not in the current room.
+    const offscreen = call.actor !== call.state.protagonistId
+      && roomOf(call.state, call.actor) !== roomOf(call.state, call.state.protagonistId);
+    const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'skip') === 'judge';
     const scene = buildScene(call.state, call.actor, {
-      playerInput: call.inputText,
+      playerInput: judgeOffscreen ? null : call.inputText,
       intentStatus: call.intentStatus,
-      events: options.recentEvents?.() ?? [],
+      events: judgeOffscreen ? [] : options.recentEvents?.() ?? [],
       aliases: options.aliases,
     });
 
@@ -198,13 +208,12 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     }
 
     // Scene scope: a character in another room is not visible to the player's
-    // scene. This is a scope rule, not a name rule — same-room characters are
-    // judged in full, named or not. 'judge' opts into off-screen generation.
-    if (!scene.isProtagonist && !scene.sameRoomAsProtagonist && options.offscreenPolicy !== 'judge') {
-      const protagonistRoom = call.state.initial.locations[scene.protagonistRoomId]?.name ?? scene.protagonistRoomId;
+    // scene. With 'skip' it is a zero-call scope decision; with 'judge' it is a
+    // full judgement of the actor's own room (protagonist context hidden).
+    if (offscreen && !judgeOffscreen) {
       issues.push({
         code: 'actor_out_of_scene', severity: 'info',
-        message: `${scene.actorName}在${scene.roomName}，不在主角所在的${protagonistRoom}，本场景不判断`,
+        message: `${scene.actorName}在${scene.roomName}，不在主角所在的${scene.protagonistRoomName}，本场景不判断`,
         entityId: scene.actorId,
       });
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');

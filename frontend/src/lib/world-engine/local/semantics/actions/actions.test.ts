@@ -135,7 +135,7 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
-  it('skips a character in another room without spending a model call', async () => {
+  it('skips a character in another room without spending a model call by default', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine([]);
     const handlers = createActionHandlers({ engine });
@@ -145,6 +145,22 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(result.source).toBe('program');
     expect(codes(result)).toContain('actor_out_of_scene');
     expect(engine.prompts).toHaveLength(0);
+    codecAccepts(result);
+  });
+
+  it('judges a character in another room from its own scene when configured', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine(['{"kind":"act","text":"老周把字条塞进袖口，转身把书房门锁上。"}']);
+    const handlers = createActionHandlers({ engine, options: { offscreenPolicy: 'judge' } });
+    const result = await handlers.action('rival', actInput(state, 'rival', '我在大厅喊老周的名字。'));
+
+    expect(result.source).toBe('model');
+    expect(codes(result)).not.toContain('actor_out_of_scene');
+    expect(result.value).toEqual({ kind: 'act', text: '老周把字条塞进袖口，转身把书房门锁上。' });
+    // The actor gets its own room and tasks, never the protagonist's move.
+    expect(engine.prompts[0]).toContain('task_rival_guard');
+    expect(engine.prompts[0]).toContain('主角不在这里');
+    expect(engine.prompts[0]).not.toContain('我在大厅喊老周的名字。');
     codecAccepts(result);
   });
 
@@ -212,6 +228,39 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(result.source).toBe('model');
     expect(result.attempts).toBe(1);
     expect(result.issues.find((item) => item.code === 'absent_character_in_action')?.severity).toBe('warn');
+    codecAccepts(result);
+  });
+
+  it('rejects a task goal copied as the action', async () => {
+    const state = buildTestWorld();
+    const goal = state.characters.ally!.tasks.task_ally_watch.goal;
+    const engine = new ScriptedEngine([
+      JSON.stringify({ kind: 'act', text: goal }),
+      '{"kind":"act","text":"阿宁走到门后，把门闩扣上。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('action_is_task_goal');
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁走到门后，把门闩扣上。' });
+    codecAccepts(result);
+  });
+
+  it('rejects a paraphrase of the player action, not only a verbatim copy', async () => {
+    const state = buildTestWorld();
+    // No 8-character contiguous span with the player line: only the
+    // in-order coverage check can catch this dropped-subject restatement.
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"把护目镜推上去，看巷口的动静。"}',
+      '{"kind":"act","text":"阿宁把对讲机从腰间取下来，换了一块电池。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('ally', actInput(state, 'ally', '我把护目镜推上去，先看巷口的动静。'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('npc_repeats_player');
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁把对讲机从腰间取下来，换了一块电池。' });
     codecAccepts(result);
   });
 
@@ -321,10 +370,24 @@ describe('targets: anaphora, names, absence and containers', () => {
     const state = withPosition(buildTestWorld(), 'servant', { containerId: 'hall', slotId: null, relativeTo: null });
     const engine = new ScriptedEngine(['{"targets":[{"targetId":"ally"},{"targetId":"servant"}]}']);
     const handlers = createActionHandlers({ engine, options: { maxTargets: 1 } });
-    const result = await handlers.targets('hero', targetsInput(state, 'hero', '我朝两个人喊了一声。'));
+    const result = await handlers.targets('hero', targetsInput(state, 'hero', '我朝阿宁和小满喊了一声。'));
 
     expect(result.value).toEqual({ targets: [{ targetId: 'ally' }] });
     expect(codes(result)).toContain('targets_capped');
+    codecAccepts(result);
+  });
+
+  it('rejects a target the action never names and falls back to an empty set', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"ally"}]}', '{"targets":[{"targetId":"ally"}]}']);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.targets('hero', targetsInput(state, 'hero', '我走向巷子尽头的检修口。'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('target_unmentioned');
+    expect(codes(result)).toContain('repair_failed');
+    expect(result.value).toEqual({ targets: [] });
+    expect(result.fallback).toBe(true);
     codecAccepts(result);
   });
 });
@@ -411,6 +474,22 @@ describe('reaction: causal link, attribution and player agency', () => {
     expect(result.value).toBe('路明非没有作出反应。');
     expect(codes(result)).toContain('protagonist_reaction_minimal');
     expect(engine.prompts).toHaveLength(0);
+    codecAccepts(result);
+  });
+
+  it('rejects a reaction that copies the member task goal', async () => {
+    const state = buildTestWorld();
+    const goal = state.characters.ally!.tasks.task_ally_watch.goal;
+    const engine = new ScriptedEngine([
+      goal,
+      '阿宁把肩膀抵在门板上，侧耳听外头的脚步。',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.reaction('hero', reactionInput(state, 'hero', 'ally', '我把木箱推到门边。'));
+
+    expect(result.attempts).toBe(2);
+    expect(codes(result)).toContain('reaction_goal_copy');
+    expect(result.value).toBe('阿宁把肩膀抵在门板上，侧耳听外头的脚步。');
     codecAccepts(result);
   });
 

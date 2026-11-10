@@ -16,7 +16,7 @@ import type { Id, WorldState } from '../../../types';
 import type { SceneCharacter, ActionScene } from './scene';
 import { sceneMentions } from './scene';
 import {
-  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, skeleton, splitQuotes, speaksAs, startsWithName,
+  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
 } from './text';
 import type { ActionIssue } from './types';
 
@@ -46,11 +46,26 @@ function names(mentions: { entry: { name: string } }[]): string {
  * not a rejection, so the guard errs toward accepting legal prose. */
 const DIRECTED = /(说|问|喊|叫|告诉|提醒|回答|解释|递给|交给|递|交|推|拉|拽|扶|抱|救|找|攻击|威胁|拦|挡|追|冲|打|踢)/u;
 
-function interactionNear(text: string, alias: string): boolean {
-  const index = text.indexOf(alias);
-  if (index < 0) return false;
-  const window = text.slice(Math.max(0, index - 5), index + alias.length + 5);
+function interactionNear(text: string, index: number, length: number): boolean {
+  const window = text.slice(Math.max(0, index - 5), index + length + 5);
   return DIRECTED.test(window);
+}
+
+/** A task goal ("把故障短讯机恢复到能与凯撒联络的状态") is a standing
+ * objective, not one action a character performs now. Small models copy it
+ * verbatim — the first real probe produced three such "actions" (all three
+ * were goal copies), so the guard rejects equality or near-total coverage. */
+function taskGoalCopy(text: string, tasks: readonly { goal: string }[]): string | null {
+  const value = skeleton(text);
+  if (value.length < 4) return null;
+  for (const task of tasks) {
+    const goal = skeleton(task.goal);
+    if (goal.length < 4) continue;
+    if (value === goal) return task.goal;
+    if (goal.length <= 12 && longestSharedSpan(text, task.goal).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return task.goal;
+    if (sharedSubsequence(text, task.goal).coverage >= 0.85) return task.goal;
+  }
+  return null;
 }
 
 /** Action text of one character. `actorIsProtagonist` relaxes exactly the
@@ -68,6 +83,11 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
   if ([...value].length > options.maxActionChars) {
     push(issue('action_too_long', 'warn', `行动描述 ${[...value].length} 字，超过建议长度 ${options.maxActionChars}`));
   }
+  const goal = taskGoalCopy(value, scene.actor.tasks);
+  if (goal) {
+    push(issue('action_is_task_goal', 'error', `行动句照抄了待办任务目标：“${goal}”；这不是这一刻的具体行动`, { detail: goal }),
+      '不要照抄待办任务；写这个角色此刻具体做的这一步');
+  }
   if (firstPersonOutsideQuotes(value)) {
     push(issue('action_first_person', 'error', '行动用了第一人称“我”；行动句必须是关于该角色的第三人称描述',
       { detail: value }), '用第三人称写这个角色的行动，不要用“我”');
@@ -84,6 +104,15 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
     } else if (shared.length >= 8 || (playerSkeleton.length <= 8 && playerSkeleton.length >= 3 && valueSkeleton.includes(playerSkeleton))) {
       push(issue('npc_repeats_player', 'error', `行动句与玩家原话有 ${shared.length} 字连续重合（“${shared.text}”）`, { detail: shared.text }),
         '不要复述玩家的原话，只写这个角色自己做了什么');
+    } else {
+      // Paraphrase echo: the player's words in order with a token swapped.
+      // A real standalone action rarely covers >=80% of the player's text.
+      const subsequence = sharedSubsequence(value, player);
+      if (valueSkeleton.length >= 6 && subsequence.coverage >= 0.8) {
+        push(issue('npc_repeats_player', 'error',
+          `行动句把玩家原话改写了一遍（覆盖 ${Math.round(subsequence.coverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
+          { detail: value }), '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
+      }
     }
     for (const quote of longQuotes(value)) {
       if (player.includes(quote)) {
@@ -93,25 +122,27 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
     }
   }
 
+  // Absent entities are only rejected in narration; inside quotes the
+  // character may legitimately talk about someone who is elsewhere.
+  const { plain } = splitQuotes(value);
+
   if (!scene.isProtagonist) {
     const protagonist = scene.protagonistName;
     const actor = scene.actorName;
-    if (speaksAs(value, protagonist) && !value.includes(actor)) {
+    // The actor's name inside a quote must not rescue a sentence whose
+    // subject is still the protagonist.
+    if (speaksAs(value, protagonist) && !plain.includes(actor)) {
       push(issue('attribution_swap', 'error', `行动把台词记在主角${protagonist}名下，而这个角色是${actor}`, { detail: protagonist }),
         '台词和动作只能属于本次判断的角色，不能替主角说话');
-    } else if (startsWithName(value, protagonist) && !value.includes(actor)) {
+    } else if (startsWithName(value, protagonist) && !plain.includes(actor)) {
       push(issue('attribution_swap', 'error', `行动句以主角${protagonist}开头，而这个角色是${actor}`, { detail: protagonist }),
         '把主语改成本次判断的角色，不能写主角的行动');
     }
   }
-
-  // Absent entities are only rejected in narration; inside quotes the
-  // character may legitimately talk about someone who is elsewhere.
-  const { plain } = splitQuotes(value);
   const mentions = sceneMentions(scene, state, plain);
   // A mention of someone elsewhere is legal prose (thought, report, a name on
   // a radio); attempting to interact with them in this action is not.
-  const directed = mentions.absentCharacters.filter((mention) => interactionNear(plain, mention.alias));
+  const directed = mentions.absentCharacters.filter((mention) => interactionNear(plain, mention.index, mention.alias.length));
   const incidental = mentions.absentCharacters.filter((mention) => !directed.includes(mention));
   if (directed.length) {
     push(issue('absent_character_in_action', 'error',
@@ -137,7 +168,12 @@ function characterNameIndex(state: WorldState): { byId: Map<Id, string>; byAlias
     byId.set(id, name);
     byAlias.set(name, id);
     const chars = [...name];
-    if (chars.length >= 3) byAlias.set(chars.slice(-2).join(''), id);
+    // A shortened personal name ("路明非" → "明非") may come back instead of
+    // the id. Only add it when it cannot collide with another registered name.
+    if (chars.length >= 3) {
+      const short = chars.slice(-2).join('');
+      if (!byAlias.has(short)) byAlias.set(short, id);
+    }
   }
   return { byId, byAlias };
 }
@@ -208,9 +244,18 @@ export function checkTargets(value: { targets: { targetId: string }[] }, scene: 
       return ![name, ...alias].some((value) => actionText.includes(value));
     });
     if (unmentioned.length) {
-      push(issue('target_unmentioned', 'warn',
-        `行动句没有点名${unmentioned.map((id) => index.byId.get(id)).join('、')}，目标来自模型的现场推断`,
-        { detail: unmentioned.join(',') }));
+      const named = scene.visible
+        .filter((character) => actionText.includes(character.name))
+        .map((character) => character.name);
+      const targetNames = unmentioned.map((id) => index.byId.get(id)).join('、');
+      // A target the action never names (and no anaphor stands in for) breaks
+      // the causal link the reaction group depends on. Precision wins here: a
+      // phantom target forces a roll and a fabricated reaction, a missed one
+      // only means a quieter scene.
+      push(issue('target_unmentioned', 'error',
+        `目标${targetNames}既没有被行动点名，也没有指代可用${named.length ? `（行动点名的是${named.join('、')}）` : ''}`,
+        { detail: unmentioned.join(',') }),
+        `只选行动句直接触及的人；${targetNames}没有出现在行动里，不能作为目标；行动只写移动、观察或对物品操作时返回空数组`);
     }
   }
   return { value: { targets: capped.map((targetId) => ({ targetId })) }, issues, repairs };
@@ -236,6 +281,11 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
   const memberName = scene.actorName;
   const sourceName = source.name;
 
+  const copiedGoal = taskGoalCopy(value, scene.actor.tasks);
+  if (copiedGoal) {
+    push(issue('reaction_goal_copy', 'error', `反应照抄了${memberName}的任务目标：“${copiedGoal}”`, { detail: copiedGoal }),
+      '不要照抄任务目标；写这个角色此刻被这条行动逼出的具体反应');
+  }
   if (!value.length) {
     push(issue('reaction_empty', 'error', '反应是空文本'), '写出这个角色针对这条行动的一句反应');
   }

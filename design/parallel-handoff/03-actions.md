@@ -76,8 +76,11 @@ actionPrompt / targetsPrompt / reactionPrompt
 - **action**：主角且 `intentStatus==='pending'` → 玩家原话原样作为冻结行动（0 次调用）；
   主角且 `consumed` → 只判断“同一件事是否还要继续”，不许复述原话；其他角色 →
   同房间就交给模型，按自己的待办任务、个性、精神、现场事件决定 act/skip，**不点名也问**。
-  异地角色默认 `actor_out_of_scene` 程序跳过（可 `offscreenPolicy:'judge'` 改为在
-  角色自己房间判断）；这不是“统一 skip”，同房间角色全部真判断。
+  异地角色默认 `offscreenPolicy:'skip'`：0 调用、记为 `actor_out_of_scene`。这是
+  **可见范围/等待预算**规则，不是点名规则——同房间角色无论是否被点名都真判断。
+  `'judge'` 模式会让异地角色按自己的房间判断（提示词只给它自己房间的人/物/事件，
+  隐藏主角的举动），但首次实测每次调用均值 6.3s，14 人整轮放不进等待预算，首接线
+  不要默认打开。
 - **targets**：始终把行动者所在房间的在场人物 + 不在场干扰名单交给模型；指代由模型
   按现场解析。程序只做事后校验：未登记 id、物品/地点当人、自己、重复、异地、超过
   `maxTargets`（默认 2）都会记录并按规则处理。没有在场候选时 0 次调用。
@@ -168,12 +171,12 @@ if (source !== state.protagonistId && !this.lastPlayerInput.includes(state.initi
 ```bash
 cd frontend
 npx vitest run src/lib/world-engine/local/semantics/actions/actions.test.ts --maxWorkers=1
-# 28 passed
+# 33 passed
 npx tsc --noEmit -p tsconfig.json
 # 0 errors
 node scripts/parallel-actions/run-action-eval.mjs --dry \
   --out ../artifacts/action-eval/dry-prompts.json
-# DRY, 16 prompts dumped（无模型；证明接口、场景、提示词可运行）
+# DRY, 17 prompts dumped（无模型；证明接口、场景、提示词可运行）
 ```
 
 测试覆盖（脚本化 engine，仅结构/规则证据）：不点名自主行动、点名但合法不行动、
@@ -182,11 +185,33 @@ node scripts/parallel-actions/run-action-eval.mjs --dry \
 姓名回映射、缺席目标/物品目标/空目标/上限、合法空目标、容器内人物不可选、
 反应因果、复述威胁、替发起者/主角行动、现场外人物、主角成员 0 调用、连续失败回退。
 
-真实模型：`frontend/scripts/parallel-actions/run-action-eval.mjs`（Edge + wllama +
-Qwen3-0.6B Q4_K_M，16 个案例，COOP/COEP，温度 0/种子 42）。资源锁由其他线占用时
-不抢跑；跑完把归档放在 `artifacts/action-eval/`，逐案记录 prompt、原始输出、解码值、
-issues、repair、耗时。**本 handoff 的首版尚未包含真实模型结果**，以 `completion.json`
-的 `tests`/`limitations` 为准。
+真实模型：`frontend/scripts/parallel-actions/run-action-eval.mjs`（Edge 157 +
+wllama + Qwen3-0.6B Q4_K_M，17 个案例：含异地 skip 与异地 judge 两臂，COOP/COEP，
+温度 0/种子 42）。资源锁由其他线占用时不抢跑；归档在 `artifacts/action-eval/`，
+逐案记录 prompt、原始输出、解码值、issues、repair、耗时。
+
+### 真实模型第一轮（`run-1-unguarded.json`，16 次调用，均值 6.3s / p50 7.1s / 最大 11.3s）
+
+结论不是“模型不行”，而是第一版守卫漏了三类真错误，已按证据补上：
+
+| 案例 | 模型实际输出 | 第一版处理 | 现在的处理 |
+|---|---|---|---|
+| A1 不点名自主行动 | “靠在巷口墙边，确认护目镜是否起雾”（把玩家动作去掉主语复述） | **误收**为诺诺行动 | 顺序覆盖 ≥80% 判 `npc_repeats_player`，重试 |
+| A4b 异地 NPC | “换上相机备用电池，拍到有辨识度的争旗场面”（照抄任务目标） | **误收** | `action_is_task_goal`，重试 |
+| A6 主角 consumed | “向诺诺问清当前红蓝两方局势…中立”（照抄主角任务目标） | **误收** | 同上 |
+| A7 玩家提楚子航 | “让红方的旗台行动有可执行的掩护…”（照抄诺诺任务目标） | **误收** | 同上 |
+| A2 点名请求 | 第一次原句复述玩家；重试后 “诺诺查看西回廊是否有需要帮助的人” | 守卫拦下并修好 | 保留；提示词补了合法对白写法 |
+| A3 点名闲聊 | 两次都复述 “诺诺，你叫什么名字？” | 回退不行动（诚实但生硬） | 提示词允许“诺诺回答：‘……’”，待复测 |
+| T3 去钟楼找楚子航 | 把唯一在场的诺诺当目标 | 仅 warn，**误收** | `target_unmentioned` 升 error，重试；再失败空目标 |
+| T4 递给诺诺 | 把旁观的芬格尔当目标 | 仅 warn，**误收** | 同上 |
+| T5 走向检修口 | 把诺诺当目标 | 仅 warn，**误收** | 同上 |
+| T6 同时问两人 | 只选芬格尔，漏诺诺 | 无守卫（少选） | 提示词要求“点名要回应的人通常都列入”，待复测 |
+| R1/R3 反应 | 让识别带“闪烁/发烫”、短讯机自己移动 | 词面因果通过，误收 | 提示词禁止物品凭空变化；程序无守卫，仍靠读评 |
+
+第一轮之后新增/收紧的守卫都在这份代码里：`sharedSubsequence` 改写复述检查、
+`taskGoalCopy`（行动与反应都查）、`target_unmentioned` 升级为 error + 重试。
+第二轮（`run-2-guarded.json`）用同一 17 案例、同设备同参数复测；若资源锁被占，
+`completion.json` 会明确写“第一轮已跑、第二轮待跑”，不把第一轮当成达标。
 
 ```bash
 python D:/others/Jity/.local/parallel-local-game/resource_lease.py acquire --lane 03-actions --purpose "action/targets/reaction real-model probe"
@@ -203,8 +228,10 @@ python D:/others/Jity/.local/parallel-local-game/resource_lease.py release --lan
   本线只处理“已登记但不在场”的实体，以及物品/地点被误当人物。模型凭空造的新名字
   仍要靠后续结果/叙事事实门。
 - 指代解析交给模型；程序只记录 `anaphora_present`，无法独立核对“他”指谁。
-- 异地角色默认跳过，所以异地人物的任务不会在主角场景里产生可见变化；这是场景范围
-  规则，不是全人物固定 skip。
+- 异地角色默认范围跳过（0 调用），异地任务不会在主角场景里产生可见变化；
+  `offscreenPolicy:'judge'` 可让它们在自己的房间判断并推进全局状态，但实测均值
+  6.3s/次，14 人整轮约 88s，超出当前等待预算。两种模式都记录原因，同房间角色
+  不受影响，不是全人物固定 skip。
 - 反应与威胁的“因果”程序只能做到拒绝明显错误（复述、主语错位、现场外人物、完全
   无呼应），不能证明语义因果；最终仍由读评/叙事事实门确认。
 - 主角作为反应成员时返回“没有作出反应。”是保守程序下限，保留玩家决定权；是否要在
