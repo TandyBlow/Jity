@@ -20,6 +20,7 @@ import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
 import { renderProseFactsPrompt } from './scene-prompt';
 import { senseViolations } from './licensed-sense';
+import { stripBeatLabel } from './beats';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 import { verifyNarration } from './verify';
 import {
@@ -444,9 +445,26 @@ async function writeBeat(
       attempts: attempt + 1, durationMs: nowMs() - started, prompts, raws,
     };
     if (result.attempt.accepted && result.attempt.cleaned) {
+      // A beat label the model echoed («【环境】…») is an instruction, not
+      // prose; the page would show it as text. Strip it before using the beat.
+      const body = stripBeatLabel(result.attempt.cleaned);
+      const invented = senseViolations(body, input.inputText, {
+        movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
+      });
+      if (invented.length) {
+        // Same narrow rule as the whole-scene path: an invented sound or smell
+        // fails the beat instead of reaching the page as narration.
+        const detail = invented.map((item) => `${item.noun}（${item.sentence}）`).join('；');
+        issues.push({ kind: 'unlicensed_sense', severity: 'hard', attempt: attempt + 1, detail, sentence: invented[0].sentence });
+        return {
+          evidence: { ...evidenceBase, text: body, source: 'skipped', issues: [...issues, { kind: 'unlicensed_sense', severity: 'hard', attempt: attempt + 1, detail, sentence: invented[0].sentence }] },
+          text: '',
+          source: 'skipped',
+        };
+      }
       return {
-        evidence: { ...evidenceBase, text: result.attempt.cleaned, source: 'model', issues: [...issues] },
-        text: result.attempt.cleaned,
+        evidence: { ...evidenceBase, text: body, source: 'model', issues: [...issues] },
+        text: body,
         source: 'model',
       };
     }

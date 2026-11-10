@@ -254,3 +254,15 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   lines.push('正文：');
   return lines.join('\n');
 }
+
+/** A beat answer sometimes echoes the prompt's own section marker
+ * («【环境】…»). That marker is an instruction, not prose: strip a leading
+ * label so the page never shows it. Only a leading 【…】 is removed, and only
+ * when the rest of the answer still has content. */
+export function stripBeatLabel(text: string): string {
+  const trimmed = text.trim();
+  const match = /^【[^】]{1,12}】\s*/u.exec(trimmed);
+  if (!match) return trimmed;
+  const rest = trimmed.slice(match[0].length).trim();
+  return rest.length >= 12 ? rest : trimmed;
+}

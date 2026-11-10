@@ -1539,3 +1539,24 @@ describe('minimal background keeps static notes from becoming material', () => {
     expect(prompt).toContain('兰花');
   });
 });
+
+describe('beats never show a prompt label or an invented sense', () => {
+  const scene = {
+    location: '走廊',
+    present: [{ name: '林川' }],
+    beats: ['环境', '手边'],
+  } as never;
+
+  test('a leading 【环境】 marker is stripped from the beat text', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '【环境】走廊的灯亮着，墙皮有些起翘。' },
+      { kind: 'text', text: '盒子还在墙角，盒盖关着。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, sceneMode: 'beats', scene, targetChars: 80, minChars: 40 },
+    });
+    expect(result.text ?? '').not.toContain('【环境】');
+    expect(result.text ?? '').toContain('墙皮');
+  });
+});
