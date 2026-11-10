@@ -189,6 +189,19 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 - 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
   1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
 
+### 两台设备、真实服务、06 的 session（2026-11-10）
+
+`frontend/scripts/parallel-sync/two-device-session-check.ts`：A 用 06 的 session 打完一回合
+上传到真实服务；B 没有任何本地存档，从远端恢复、写进自己的 store、用 `LocalGameSession.open`
+打开（`created=false`），看到同一条输入和同一段正文；B 再打一回合，上传的父节点就是 A 的
+快照。实测 B 的 `commandsPlayed` 为 `["我打开盒盖。"]`、正文逐字相同、父链包含 A。
+
+```
+PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/two-device-session-check.ts
+```
+
+这是存储和分支关系的检查（模型是脚本），不是真实页面、不是模型正文、也不是质量通过。
+
 这证明“存储/同步覆盖正文历史”在修好双写后不会发生；页面若仍少条目，问题在渲染或
 恢复字段，不在同步。不是产品质量结论。
 
