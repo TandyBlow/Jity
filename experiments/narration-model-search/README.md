@@ -61,7 +61,8 @@ experiments/narration-model-search/
 ├── src/build_prompts.py            # 校验 01 包哈希 -> 冻结 12 例提示词（subset-declaration.json）
 ├── src/screen.py                   # llama-server --jinja 批量执行器（仅 10 在 HPC 跑）
 ├── src/collect.py                  # 机械汇总：字数/句数/重复/耗时，不判质量
-├── src/selftest.py                 # 8 项离线自检，无模型推理
+├── src/make_review_input.py        # 把一次 run 接成 01 的 batch harness 输入（{id,input,text}）
+├── src/selftest.py                 # 9 项离线自检，无模型推理
 ├── src/make_requests.py            # 写 10 的 HPC 请求 JSON
 ├── models/candidates.json          # 候选/基线/预筛结论/运行时上限
 ├── evidence/prompts-dev-v1/        # 冻结的 12 例提示词 + 哈希清单 + 空白账本

@@ -113,6 +113,29 @@ def main() -> int:
             detail = f"repeat={run_summary['caseStats'][0]['sentenceRepeat']['duplicateOccurrences']}"
         check("collect reports repetition and no quality pass", ok, detail)
 
+    with tempfile.TemporaryDirectory() as tmp:
+        prompts = [json.loads(line) for line in
+                   (ROOT / "evidence/prompts-dev-v1/prompts.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+        run_dir = pathlib.Path(tmp) / "run"
+        run_dir.mkdir()
+        for prompt in prompts:
+            record = {"caseId": prompt["caseId"], "inputSha256": prompt["inputSha256"],
+                      "text": "合成正文。用于检查交接格式。", "httpStatus": 200}
+            (run_dir / f"{prompt['caseId']}.json").write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+        (run_dir / "run-manifest.json").write_text(json.dumps({"modelId": "synthetic"}), encoding="utf-8")
+        review = run(["src/make_review_input.py",
+                      "--cases", str(DEV / "cases.jsonl"),
+                      "--run", str(run_dir),
+                      "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json"),
+                      "--out", str(pathlib.Path(tmp) / "review")])
+        ok = review.returncode == 0
+        detail = ""
+        if ok:
+            manifest = json.loads((pathlib.Path(tmp) / "review/review.manifest.json").read_text(encoding="utf-8"))
+            ok = manifest["rows"] == 12 and not manifest["problems"] and len(manifest["declaredExcluded"]) == 3
+            detail = f"rows={manifest['rows']} excluded={len(manifest['declaredExcluded'])}"
+        check("review input joins 12 outputs and lists 3 declared exclusions", ok, detail)
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])
