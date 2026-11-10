@@ -626,7 +626,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,114 @@
 +/** B-route adaptation: lane 02's committed-fact narration strategy (beats).
 + *
 + * The strategy owns prompt construction, verification and repair. This adapter
@@ -678,6 +678,12 @@ new file mode 100644
 +        ...prepared.policy,
 +        mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
 +        scene: prepared.scene,
++        // Scene mode otherwise writes a static tableau: the page model omitted
++        // the settled move and the elapsed time and was rejected for it. This
++        // is a constraint, not a fact: the model still reads the sealed delta.
++        ...(runPolicy?.sceneMode === 'scene'
++          ? { instruction: '正文必须写出【变化】里的移动和这段时间的推进；不要新增人物、物品、事件或往事。' }
++          : {}),
 +      },
 +    });
 +    const issues = result.issues.map((issue) => ({

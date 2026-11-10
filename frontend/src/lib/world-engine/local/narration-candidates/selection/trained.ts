@@ -49,6 +49,12 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
         ...prepared.policy,
         mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
         scene: prepared.scene,
+        // Scene mode otherwise writes a static tableau: the page model omitted
+        // the settled move and the elapsed time and was rejected for it. This
+        // is a constraint, not a fact: the model still reads the sealed delta.
+        ...(runPolicy?.sceneMode === 'scene'
+          ? { instruction: '正文必须写出【变化】里的移动和这段时间的推进；不要新增人物、物品、事件或往事。' }
+          : {}),
       },
     });
     const issues = result.issues.map((issue) => ({

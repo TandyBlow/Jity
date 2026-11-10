@@ -29,7 +29,7 @@ controller 把已结算点组装成 `narration` 输入：
 | C：constrained fact-to-prose | `11e7433b`（v1.3，facts-only scene hints + 结算结果原句） | `generateCandidate({ committed, inputText, priorText, policy: { mode, scene, resultsText, … } })` | `narrationCandidate: 'constrained'`，可选 `constrainedMode: program \| model` | 否 |
 | A：instruct | 只有 `goal/local-03-actions` 的 `e74ac849`，**未合入** | `generateCandidate({ state, before, delta, playerInput, … })` | 无 | 未交付 |
 
-- B 的两种模式都实测过：beats 在页面叙述模型（`qwen25-1.5b-narr`）上被逐段拒绝；scene 在同一个模型上写出 226 字流畅正文，但因漏掉已结算移动和时间被拒（拒绝草稿保存在证据里，没有当成正文提交）。
+- B 的两种模式都实测过：beats 在页面叙述模型（`qwen25-1.5b-narr`）上被逐段拒绝；scene 写出 226 字流畅正文，但因漏掉已结算移动和时间被拒；再加“必须写出移动和时间”的约束后，模型写出了移动，却又编造钥匙、钥匙环等动作、仍然漏掉时间，仍被拒（拒绝草稿都原样保存，没有当成正文提交）。
 - C 的 `program` 模式不调用模型，v1.3 在真实点位上 171 字、23 ms 接受；`model` 模式在 `qwen2.5-1.5b-instruct` 上 223 字接受（约 121 s），但夹带模型自加动作，且部分段由程序补写，不能算合格叙事。
 - A 未交付：`e74ac849` 的模块能编译，但 22 个自带测试在已整合内核下失败（`id_unresolved: entity key uses slot slot_pocket outside ally`）。这是 lane 03 的 fixture 与内核兼容问题；把失败测试带进主树不是“可用候选”。它修好后新增 `selection/instruct.ts` 并加入 `SHIPPED_CANDIDATES` 即可。
 
@@ -45,7 +45,7 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b8c2122b2a0a.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
@@ -54,7 +54,7 @@ frontend/scripts/candidate-shipping/patches/manifest.json
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b8c2122b2a0a.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -140,7 +140,8 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 证据文件：
 
 - `results/06-recovery/real-candidate-constrained-program-v13.json`：C v1.3 真实点位，171 字、23 ms、未调用模型。
-- `results/06-recovery/real-candidate-trained-scene.json`：B scene 模式，226 字但 `fact_omitted+time_missing` 拒绝，草稿原样保存。
+- `results/06-recovery/real-candidate-trained-scene.json`：B scene 模式，226 字但 `fact_omitted+time_missing` 拒绝。
+- `results/06-recovery/real-candidate-trained-scene-instructed.json`：B scene + 移动/时间约束，233 字但 `fact_movement_claimed+time_missing` 拒绝，并含编造动作。
 - `results/06-recovery/real-candidate-15bnarr-v3.json`：B beats，拒绝。
 - `results/06-recovery/real-candidate-instruct15.json`：B + instruct 1.5B，104 字接受，434.6 s，含模型自加道具动作。
 - `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B，223 字，模型段与程序段混合，含编造动作。
@@ -151,7 +152,7 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 
 - **没有合格叙事候选**：B 在页面模型上不被接受；C 程序版是流水账降级；C 模型版夹带编造动作。产品默认保持原位单发写作，等 02/10/03/04 交出让候选自己接受、且事实与文风都合格的正文。
 - C 程序版 v1.3 仍会补“没有停/也没有动”这类动作句；lane 04 的 realizer/verifier 需要继续收紧。
-- B 的 scene 模式能写长文但会漏掉已结算移动与时间；beats 模式在页面模型上逐段超长/加事件。
+- B 的 scene 模式能写长文但漏掉已结算移动与时间；加上约束后移动写了、时间仍漏，并开始编造动作。beats 模式在页面模型上逐段超长/加事件。
 - C model 模式在 instruct 1.5B 上 121 s，且部分段回退程序；页面当前加载的是叙述 LoRA，不是 instruct 模型。
 - A 未交付（fixture 与整合内核不兼容）。
 - 开局叙述仍由原位模型写（约 66–73 s）；候选主动让位。
