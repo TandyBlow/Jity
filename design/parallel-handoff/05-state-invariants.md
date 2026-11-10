@@ -222,9 +222,7 @@ model auto point is kept per point and the note says the turn contains program
 prose, so the player still sees it.
 
 `snapshotForPersist` still reads only the live source ref; 05 patch
-`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is now merged in
-06 d1019f09; the next-write bridge test passes. A fresh product run still
-needs to confirm the served page path.
+The page already exposes a detached getter; `06-session-persist-restored-sources.patch` merged in 06 d1019f09; the next-write bridge test passes.
 
 ## 415c: both points program; state/recovery pass
 
@@ -499,11 +497,10 @@ that archive. The detailed review is
 The current 06 history pairs commands to points by array index. When a failed
 command sits between two successes (commands A,B,C; points A,C), C is labelled
 with B's sentence. The count-safe fallback only avoids a wrong tail label; it
-does not recover the exact mapping. `06-command-point-map-v3.patch` adds optional
+does not recover the exact mapping. `06-command-point-map-v4.patch` adds optional
 `snapshot.commandPointIds` aligned with `commands`: a successful submit binds
 the committed player point to its command, a failed/cancelled command stays
 null, and the map is saved/restored. `history.ts` then shows A and C with their
 own sentences and B as unfinished; older saves with unequal counts show blank
-labels rather than a wrong sentence. v3 applies at 06 `415ccbe0`/`624f5cd2`
-and together with the `snapshotForPersist` source patch; the v2 disposable session
+labels rather than a wrong sentence. v4 applies at current 06 `58beddad`; the v2 disposable session
 test passed at the older tree, so current 06 still needs to run it.
