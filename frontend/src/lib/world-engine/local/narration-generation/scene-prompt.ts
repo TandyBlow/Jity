@@ -156,6 +156,11 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push(`【这一幕的骨架】${spine}。先用一句把这个动作写清楚（谁、从哪、到哪），再写他在这之后看见、听见和想到的。`);
   } else {
     lines.push('【这一幕的骨架】这一小段时间没有外部事件：没有人到来或离开，没有人完成任务。写视角人物此刻在一个地方待着的一小段。');
+    // A no-event turn is where the model fills the gap with a past memory or a
+    // moved object (real continuation run: «他记得…» and «规则牌躺在地上…
+    // 他伸手去拿»). Naming what the turn does NOT contain is a task statement,
+    // not another word ban.
+    lines.push('这一小段里也没有新回忆：不要写「他记得」「他想起」「以前」「常坐的」这类往事，也不要移动或拿起任何东西。只写此刻的姿势、呼吸、视线和眼前环境的变化。');
   }
   // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
   // 她 for a male character in prose the grader accepted. `names` avoids that;
