@@ -25,9 +25,11 @@ node frontend/scripts/parallel-settlement/run-focused.mjs
 
 ```bash
 node scripts/parallel-settlement/check-run.mjs <09 的证据文件> --cast 14
+node scripts/parallel-settlement/check-run.mjs <09 的证据文件> --timings
 node scripts/parallel-settlement/check-run.mjs --self-test
 ```
 
 接受的输入：单个提交对象、`{submissions:[...]}`、或 `{turns:[{submission:...}]}`。
 检查项：每个提交是否真的跑了 results / 六阶段；阶段是否按 位置→外貌→任务→新增小任务→个性→理智 且不重复；任务覆盖是否等于全人物数（默认 14，自由一日世界）；个性覆盖是否也为全人物；策略停止是否被误记成模型交还；整次提交起止时间是否存在。
+`--timings` 额外输出每次提交的 results 耗时、六阶段各自耗时合计和整次提交耗时，用来定位慢在哪个阶段。
 硬失败退出码为 1，软问题（回退、策略停止、缺计时）只记录不拦截。它不判断文风，也不替代 01/09 的验收。

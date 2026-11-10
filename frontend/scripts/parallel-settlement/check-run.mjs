@@ -53,6 +53,8 @@ function stageProblems(call, where) {
 
 export function checkRun(input, options = {}) {
   const cast = options.cast ?? 14;
+  const collectTimings = options.timings === true;
+  const timingRows = [];
   const subs = submissionsOf(input);
   const hard = [];
   const soft = [];
@@ -105,13 +107,32 @@ export function checkRun(input, options = {}) {
       }
       soft.push(`${where}: policy stop ${policyStops.join(';')} (visible failure, no state rewrite expected)`);
     }
+    if (collectTimings) {
+      const stages = {};
+      let updatesMs = 0;
+      let resultsMs = 0;
+      for (const call of calls) {
+        if (call.task === 'updates') {
+          updatesMs += Number(call.ms) || 0;
+          for (const [stage, ms] of Object.entries(call.stageMs ?? {})) stages[stage] = (stages[stage] ?? 0) + Number(ms);
+        }
+        if (call.task === 'results') resultsMs += Number(call.ms) || 0;
+      }
+      timingRows.push({ submission: index + 1, input: sub.inputText ?? '', resultsMs: Math.round(resultsMs), updatesMs: Math.round(updatesMs), stages, submissionMs: typeof sub.startedAtMs === 'number' && typeof sub.endedAtMs === 'number' ? Math.round(sub.endedAtMs - sub.startedAtMs) : null });
+    }
     const started = sub.startedAtMs;
     const ended = sub.endedAtMs;
     if (typeof started !== 'number' || typeof ended !== 'number') {
       soft.push(`${where}: whole-submission timing missing (startedAtMs/endedAtMs)`);
     } else if (ended < started) hard.push(`${where}: end time precedes start time`);
   });
-  return { ok: hard.length === 0, submissions: subs.length, cast, hard, soft };
+  const result = { ok: hard.length === 0, submissions: subs.length, cast, hard, soft };
+  if (collectTimings) {
+    const totals = {};
+    for (const row of timingRows) for (const [stage, ms] of Object.entries(row.stages)) totals[stage] = (totals[stage] ?? 0) + ms;
+    result.timings = { rows: timingRows, totals };
+  }
+  return result;
 }
 
 function print(result) {
@@ -154,12 +175,12 @@ if (args.includes('--self-test')) {
 } else {
   const file = args.find((arg) => !arg.startsWith('--'));
   if (!file) {
-    console.error('usage: node check-run.mjs <file.json> [--cast 14]');
+    console.error('usage: node check-run.mjs <file.json> [--cast 14] [--timings]');
     process.exit(2);
   }
   const castIndex = args.indexOf('--cast');
   const cast = castIndex >= 0 ? Number(args[castIndex + 1]) : undefined;
-  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), cast ? { cast } : {});
+  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), { ...(cast ? { cast } : {}), timings: args.includes('--timings') });
   print(result);
   process.exitCode = result.ok ? 0 : 1;
 }
