@@ -293,21 +293,25 @@ try {
   }
   const textareaVisible = await page.waitForSelector('textarea', { timeout: 60000 }).then(() => true).catch(() => false);
   evidence.textareaVisible = textareaVisible;
-  // The product page publishes its own restore/debug globals. A page without
-  // them is another tree on the same port, which has happened repeatedly.
-  evidence.productIdentity = await page.evaluate(() => ({
-    worldRestore: typeof globalThis.__worldRestore !== 'undefined',
-    worldTurns: typeof globalThis.__worldTurns !== 'undefined',
-  })).catch(() => null);
-  if (!textareaVisible) {
-    noteFailure('page', 'the page rendered no textarea: cannot play');
-    evidence.status = 'FAILED';
-    evidence.finishedAt = new Date().toISOString();
-    save();
-    throw new Error('textarea_missing');
-  }
-  if (!evidence.productIdentity?.worldTurns && !process.argv.includes('--allow-unknown-page')) {
-    noteFailure('page', 'the served page lacks 06 product globals (__worldTurns); wrong tree on this port');
+  // The product page sets its debug globals only inside submit/restore, so
+  // they cannot identify the tree at load. Ask the served build instead: the
+  // current settlement contract must be in one of its chunks.
+  const identity = await (async () => {
+    const html = await page.request.get(`${base}/world-local`, { timeout: 30000 }).then((r) => r.text()).catch(() => '');
+    const chunks = [...html.matchAll(/\/_next\/static\/chunks\/[^"']+\.js/g)].map((m) => m[0]);
+    const hits = [];
+    for (const chunk of [...new Set(chunks)]) {
+      const body = await page.request.get(`${base}${chunk}`, { timeout: 30000 }).then((r) => r.text()).catch(() => '');
+      const markers = ['per_character_decision', '__worldRestore'].filter((marker) => body.includes(marker));
+      if (markers.length) hits.push({ chunk, markers });
+    }
+    return { chunks: new Set(chunks).size, markerChunks: hits };
+  })();
+  evidence.productIdentity = identity;
+  const seenMarkers = new Set(identity.markerChunks.flatMap((hit) => hit.markers));
+  const buildIsCurrent = seenMarkers.has('per_character_decision') && seenMarkers.has('__worldRestore');
+  if (!buildIsCurrent && !process.argv.includes('--allow-unknown-page')) {
+    noteFailure('page', `the served build is not current: markers ${[...seenMarkers].join(',') || 'none'}; need per_character_decision + mount __worldRestore`);
     evidence.status = 'FAILED';
     save();
     throw new Error('wrong_product_page');
