@@ -414,9 +414,11 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // assembly removes duplicates itself), so the sentence rule respects it.
   if (priorText && (policy.maxPriorOverlap ?? 0.55) < 1) {
     const normalizeSentence = (value: string) => value.replace(/[\s，。！？!?；;、]/gu, '');
-    const priorSentences = new Set(
-      priorText.split(/[。！？!?\n]+/u).map(normalizeSentence).filter((entry) => entry.length >= 8),
-    );
+    // Only the previous closing and opening lines are echoes: a state sentence
+    // repeated in the middle («红发用发圈束在脑后») is the same true fact, and
+    // 09's b7cd run was failed for exactly that on a later point.
+    const priorParts = priorText.split(/[。！？!?\n]+/u).map(normalizeSentence).filter((entry) => entry.length >= 8);
+    const priorSentences = new Set([priorParts[0], priorParts[priorParts.length - 1]].filter(Boolean) as string[]);
     for (const sentence of sentences) {
       const key = normalizeSentence(sentence);
       if (key.length < 8 || !priorSentences.has(key)) continue;

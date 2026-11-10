@@ -191,3 +191,27 @@ describe('product regressions: a worn item of a present character', () => {
     expect(hard.map((issue) => issue.kind)).not.toContain('unlicensed_entity');
   });
 });
+
+describe('product regressions: what counts as a repeated ending', () => {
+  const prior = '诺诺站在巷口，红发用发圈束在脑后。路明非把手插进兜里，没有再看诺诺。';
+
+  test('a state sentence repeated in the middle is the same true fact', async () => {
+    const text = '红发用发圈束在脑后。诺诺站在巷口，没有动。一分钟过去，风停了。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    const kinds = result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => issue.kind));
+    expect(kinds).not.toContain('echo_prior');
+  });
+
+  test('the previous closing sentence repeated verbatim is an echo', async () => {
+    const text = '诺诺先开了口，声音很轻，巷口很静。路明非把手插进兜里，没有再看诺诺。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    const kinds = result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => issue.kind));
+    expect(kinds).toContain('echo_prior');
+  });
+});
