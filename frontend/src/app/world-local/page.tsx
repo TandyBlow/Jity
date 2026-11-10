@@ -515,6 +515,10 @@ export default function WorldLocalPage() {
         setPhase('ready');
         setMessage(restored ? '已恢复本地存档，继续上次的进度。' : '本地世界已就绪。');
       } catch (e) {
+        // React StrictMode mounts the effect twice in dev: the first cleanup
+        // aborts its own cold load, and this catch must not paint that abort
+        // over the second, still-progressing load.
+        if (!alive) return;
         console.error(e);
         setPhase('error');
         setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));

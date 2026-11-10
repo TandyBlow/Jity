@@ -247,10 +247,16 @@ export function narrationPolicy(point: NarrationPoint, limits: {
 /** Serialize the point with lane 01's result renderer. A refusal is reported,
  * never repaired locally: a broken projection must not become a made-up input. */
 export function serializeNarrationInput(point: NarrationPoint): { text: string | null; error: string | null } {
-  if (!point.before) return { text: null, error: 'no_before_state' };
+  // The opening point has no previous state. With no settled change that is
+  // honest (there is nothing before it), so the state itself is the "before" of
+  // an empty delta. A point that claims changes but has no before state cannot
+  // be serialized without inventing where things came from.
+  const changed = Object.keys(point.delta.entityDeltas ?? {}).length > 0;
+  if (!point.before && changed) return { text: null, error: 'no_before_state' };
+  const before = point.before ?? point.after;
   try {
     const projected = projectNarrationInput({
-      before: point.before,
+      before,
       after: point.after,
       delta: point.delta.entityDeltas ?? {},
       timeAdvance: point.delta.timeAdvance ?? INSTANT,
