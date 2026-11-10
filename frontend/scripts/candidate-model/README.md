@@ -46,6 +46,30 @@ Useful flags: `--max-tokens`, `--threads`, `--context`, `--force-cpu`,
 `--cpu-compare <catalog-id>` (same model on CPU, for an honest backend
 comparison), `--channel`, `--out`.
 
+## Split GGUF (browser whole-file limit)
+
+wllama 3.8.1 materialises a model through `fetch().arrayBuffer()`, so a single
+file of 2.5 GB (Qwen3-4B Q4_K_M) fails to load even though the HTTP fetch and
+Range requests work. The supported workaround is a real GGUF split, not a byte
+split:
+
+```bash
+D:/others/Jity/.local/llama-cpp/llama-gguf-split.exe --split --split-max-size 1300M   <model>.gguf <out>/<model>.gguf
+```
+
+This writes `<model>.gguf-00001-of-00002.gguf` (1.22 GiB) and
+`...-00002-of-00002.gguf` (1.11 GiB). Shard 1 keeps the metadata and chat
+template; shard 2 keeps the remaining tensors. Native validation with
+`llama-cli -m <shard1> -c 2048 -ngl 0` is the quickest way to prove the split
+is loadable before asking 09 for a browser window.
+
+`WllamaInferenceEngine` accepts `modelUrls: string[]` or a single first-shard
+`modelUrl`; it expands `-00001-of-00002.gguf` to all siblings, fetches every
+shard in the direct-blob path and passes the blobs in order. wllama renames
+them to its canonical `model-00001-of-00002.gguf` names and llama.cpp opens the
+siblings. The non-blob `loadModelFromUrl` path rejects a split (wllama's URL
+API only accepts one file).
+
 ## Honest backend reporting
 
 wllama has no public "which ggml backend ran" flag. The probe therefore
