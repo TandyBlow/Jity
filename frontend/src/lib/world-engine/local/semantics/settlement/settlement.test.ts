@@ -684,3 +684,37 @@ describe('results group membership (09 one-legal-turn shape)', () => {
     expect(engine.prompts[1]).toContain('facts 的 memberIds 只能填本组成员');
   });
 });
+
+describe('bounded task-id contract', () => {
+  it('rejects an invented or wrong-owner task id per entry and keeps the valid decisions', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['a1', 'task_ghost'] },
+      { characterId: 'b', achieved: ['a1'] },
+      { characterId: 'off', achieved: [] },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(outcome.value).not.toBeNull();
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+    expect(call.changes.b).toBeUndefined();
+    const detail = outcome.evidence.detail as { taskScope: { rejectedTaskIds: { characterId: string; taskId: string; reason: string }[] } };
+    expect(detail.taskScope.rejectedTaskIds).toEqual([
+      { characterId: 'a', taskId: 'task_ghost', reason: 'unknown_task_id' },
+      { characterId: 'b', taskId: 'a1', reason: 'task_belongs_to_a' },
+    ]);
+    // A bounded reject does not spend a repair call.
+    expect(engine.prompts).toHaveLength(1);
+  });
+
+  it('still refuses a task answer that omits a whole character', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
+      JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('task character coverage incomplete: 2/3; missing off');
+  });
+});

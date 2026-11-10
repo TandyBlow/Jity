@@ -58,6 +58,7 @@ export interface PortCallRecord {
      * mistaken for semantic agreement. */
     achievedByCharacter?: { characterId: string; taskIds: string[] }[];
     assertedUnchanged?: number;
+    rejectedTaskIds?: { characterId: string; taskId: string; reason: string }[];
   };
   /** Model time per updates stage, for finding which stage made a turn slow. */
   stageMs?: Record<string, number>;
@@ -145,7 +146,7 @@ export function createSettlementModelPort(
       if (Object.keys(stageMs).length) record.stageMs = stageMs;
     }
     const scope = (outcome.evidence.detail as { taskScope?: {
-      taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown;
+      taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown; rejectedTaskIds?: unknown;
     } } | null)?.taskScope;
     if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds) || scope) {
       record.coverage = {
@@ -157,6 +158,9 @@ export function createSettlementModelPort(
           ? { achievedByCharacter: scope.achievedByCharacter as { characterId: string; taskIds: string[] }[] }
           : {}),
         ...(Number.isFinite(Number(scope?.assertedUnchanged)) ? { assertedUnchanged: Number(scope?.assertedUnchanged) } : {}),
+        ...(Array.isArray(scope?.rejectedTaskIds)
+          ? { rejectedTaskIds: scope.rejectedTaskIds as { characterId: string; taskId: string; reason: string }[] }
+          : {}),
       };
     }
     if (outcome.error) {
