@@ -45,3 +45,19 @@ npx vitest run src/lib/world-engine/local/narration-quality/gate-batch.test.ts -
 - `accept_as_model_prose` → 仍需保留四层证据（原始/清洗/截去/显示）。
 
 程序成文的文本必须带 `textSource: 'program_fallback'`，否则 `fallback_suspected_but_labelled_model` 会要求重写。
+
+## 直接调用的样子（06 用）
+
+```ts
+import { reviewNarration } from '@/lib/world-engine/local/narration-quality/review';
+import { gateNarration } from '@/lib/world-engine/local/narration-quality/gate';
+
+const report = reviewNarration({ id: turnId, input: settledInput, text: candidate });
+const gate = gateNarration(report, { textSource: 'model', minChars: 50 });
+// gate.decision: 'accept_as_model_prose' | 'hold_for_review' | 'regenerate'
+// gate.reasons: 人可读的原因列表；regenerate 时不要展示 candidate
+```
+
+- `settledInput` 是四字段结构化输入（`视角/上回合状态/本回合变化/本回合状态`），不是提示字符串。
+- 页面已有的 `narration-alignment` 检查继续保留；这个门只补"事实与文风"的判断，不替代对齐检查。
+- `hold_for_review` 可以展示，但证据里要记 `humanReviewed: false`。
