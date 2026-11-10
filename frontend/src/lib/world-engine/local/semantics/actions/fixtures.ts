@@ -19,19 +19,19 @@ export function buildTestWorld(): WorldState {
     protagonistId: 'hero',
     initialTime: { calendar: 'gregorian', dateTime: '2009-10-17T15:20:00', instantOrdinal: 0 },
     locations: {
-      hall: { id: 'hall', name: '大厅', parentLocationId: null, initialAppearance: '空旷的大厅，木门半掩。' },
+      hall: { id: 'hall', name: '大厅', parentLocationId: null, initialAppearance: '空旷的大厅，木门半掩。', slots: [{ id: 'slot_entry', label: '门口' }, { id: 'slot_counter', label: '柜台' }] },
       study: { id: 'study', name: '书房', parentLocationId: null, initialAppearance: '书房里堆着旧书。' },
       cage: { id: 'cage', name: '铁笼', parentLocationId: 'hall', initialAppearance: '大厅角落的铁笼。' },
     },
     items: {
-      crate: { id: 'crate', name: '木箱', initialPosition: ground('hall'), initialAppearance: '半人高的木箱。' },
+      crate: { id: 'crate', name: '木箱', initialPosition: ground('hall'), initialAppearance: '半人高的木箱。', slots: [{ id: 'slot_top', label: '箱顶' }] },
       knife: { id: 'knife', name: '短刀', initialPosition: ground('crate', 'slot_top'), initialAppearance: '一把短刀。' },
       note: { id: 'note', name: '字条', initialPosition: ground('study'), initialAppearance: '上面写着字。' },
       torch: { id: 'torch', name: '手电', initialPosition: ground('hero', 'slot_body'), initialAppearance: '旧手电。' },
     },
     characters: {
       hero: {
-        id: 'hero', name: '路明非', initialPosition: ground('hall', 'slot_entry'), initialAppearance: '穿旧外套。',
+        id: 'hero', name: '路明非', initialPosition: ground('hall', 'slot_entry'), initialAppearance: '穿旧外套。', slots: [{ id: 'slot_body', label: '身上' }],
         initialPersonality: '嘴硬心软，遇事先退半步。', initialSanity: 60,
         tasks: { task_hero_key: { id: 'task_hero_key', ownerId: 'hero', parentTaskId: null, goal: '找到后门的钥匙', status: 'pending' } },
       },

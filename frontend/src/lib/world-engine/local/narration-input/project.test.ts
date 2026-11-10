@@ -170,6 +170,7 @@ describe('projection collection rules', () => {
 
   it('renders an empty appearance list explicitly and removes the old text from the delta', () => {
     const world0 = tinyWorld();
+    world0.initial.characters.blank.initialAppearance = '';
     const before = applyDelta(world0, {
       blank: { entityId: 'blank', appearanceChanges: [{ id: 'ch_old', text: '旧外套', supersedes: [] }] },
     });
@@ -186,6 +187,7 @@ describe('projection collection rules', () => {
 
   it('renders an empty personality list explicitly too', () => {
     const world0 = tinyWorld();
+    world0.initial.characters.blank.initialPersonality = '';
     const before = applyDelta(world0, {
       blank: { entityId: 'blank', personalityChanges: [{ id: 'ch_p_old', text: '旧脾气', supersedes: [] }] },
     });
@@ -287,7 +289,7 @@ describe('projection error paths', () => {
     const delta: Record<string, EntityDelta> = {
       hero: { entityId: 'hero', appearanceChanges: [{ id: 'ch_bad', text: null, supersedes: [] }] },
     };
-    expectCode(() => project(before, delta), 'pure_removal_without_supersedes');
+    expectCode(() => projectNarrationInput({ before, after: before, delta, timeAdvance: TIME, viewpointId: 'hero' }), 'pure_removal_without_supersedes');
   });
 });
 

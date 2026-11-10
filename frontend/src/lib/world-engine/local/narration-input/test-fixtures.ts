@@ -75,8 +75,8 @@ export function tinyWorld(): WorldState {
       },
       blank: {
         id: 'blank', name: '阿空', initialPosition: { containerId: 'cellar', slotId: null, relativeTo: null },
-        initialAppearance: '', slots: [],
-        initialPersonality: '', initialSanity: 20,
+        initialAppearance: '神情空白。', slots: [],
+        initialPersonality: '沉默。', initialSanity: 20,
         tasks: {},
       },
     },
