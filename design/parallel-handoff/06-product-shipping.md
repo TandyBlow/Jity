@@ -44,6 +44,7 @@ controller 把已结算点组装成 `narration` 输入：
 
 补丁只改 `frontend/src/lib/world-engine/local/game-model.ts`，页面 `page.tsx` 不用改。
 
+- 候选的提示词现在按页面的聊天模板包一层（`engineTemplate: 'chatml'`，页面 `narrationMode: 'instruct'` 时自动开启），与单发写作完全相同的 `<|im_start|>user…<|im_end|><|im_start|>assistant` 形状；此前候选发的是纯文本，聊天模型没有按它训练时的形状回答，这是逐段失败的一个可疑原因，待真实模型验证。
 - 新增内部选项 `narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin'`（默认 `auto`）。
 - 构造函数按选项建 `createNarrationRunner`；`builtin` 不建。
 - `narration()` 先尝试候选；只有 `adopted` 直接返回，其余继续原来的单发路径。
@@ -53,7 +54,7 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ee4c77aebefb-b980c112fb0b.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
@@ -64,7 +65,7 @@ frontend/scripts/candidate-shipping/patches/manifest.json
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ee4c77aebefb-b980c112fb0b.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -108,7 +109,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
 | 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
-| 开局 + 第一轮 | 补丁 `3e73bdf`，默认 `auto`（真实主树快照） | 开局与回合的单发写作都被自己的校验拒绝，补丁各写一次程序正文 | 两段都显示 04+07 程序正文，带结算结果句 `路明非：无判定。`，标注“程序按已结算事实成文” | 就绪 137.3 s；整轮 163.0 s（其中回合写作 113.6 s） |
+| 开局 + 第一轮 | 补丁 `b980c11`，默认 `auto`（真实主树快照） | 开局与回合的单发写作都被自己的校验拒绝，补丁各写一次程序正文 | 两段都显示 04+07 程序正文，带结算结果句 `路明非：无判定。`，标注“程序按已结算事实成文” | 就绪 137.3 s；整轮 163.0 s（其中回合写作 113.6 s） |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 
