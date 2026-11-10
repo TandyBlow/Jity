@@ -13,7 +13,7 @@ export const TOKENIZER_SHA256 = '20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134
 export const TOKENIZER_VOCAB_SIZE = 13668 as const;
 
 export interface NarrationVersionSet {
-  projectionVersion: typeof PROJECTION_VERSION;
+  projectionVersion: typeof PROJECTION_VERSION | typeof LEGACY_PROJECTION_VERSION;
   serializerVersion: typeof SERIALIZER_VERSION | typeof LEGACY_SERIALIZER_VERSION;
   legacyProjectionVersion: typeof LEGACY_PROJECTION_VERSION;
   legacySerializerVersion: typeof LEGACY_SERIALIZER_VERSION;
@@ -27,8 +27,9 @@ export interface NarrationVersionSet {
 export function narrationVersions(
   serializerVersion: typeof SERIALIZER_VERSION | typeof LEGACY_SERIALIZER_VERSION = SERIALIZER_VERSION,
 ): NarrationVersionSet {
+  const legacy = serializerVersion === LEGACY_SERIALIZER_VERSION;
   return {
-    projectionVersion: PROJECTION_VERSION,
+    projectionVersion: legacy ? LEGACY_PROJECTION_VERSION : PROJECTION_VERSION,
     serializerVersion,
     legacyProjectionVersion: LEGACY_PROJECTION_VERSION,
     legacySerializerVersion: LEGACY_SERIALIZER_VERSION,

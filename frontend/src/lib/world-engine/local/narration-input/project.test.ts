@@ -408,6 +408,7 @@ describe('serializer binding and safety', () => {
     expect(rendered.version.tokenizerVocabSize).toBe(13668);
     const legacy = render(project(before, {}).result, 'legacy');
     expect(legacy.serializerVersion).toBe('yuyan-prose-legacy-v1');
+    expect(legacy.version.projectionVersion).toBe('narration-result-view-v1');
     expect(legacy.version.tokenizerVocabSize).toBe(13668);
   });
 
