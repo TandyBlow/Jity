@@ -120,18 +120,23 @@ def page_draft(x: Dict[str, Any]) -> str:
     task_ops = (ops or {}).get("完成任务") if isinstance(ops, dict) else None
     for goal in (task_ops or []):
         out.append(f"{view}完成了「{goal}」。")
-    appearance = (after.get(room) or {}).get("外貌") if after else None
-    if appearance:
-        out.append(f"{room}里，{pick_clauses('。'.join(appearance), 2)}。")
+    # The page reads the static initial world (`after.initial`), which in these
+    # rows is `上回合状态`: locations and people there carry `外貌`. Reading it
+    # from `本回合状态` yields empty scenery, because that block only lists what
+    # changed this turn.
+    locations = (before.get("地点") or {})
+    room_look = (locations.get(room) or {}).get("外貌") or []
+    if room_look:
+        out.append(f"{room}里，{pick_clauses('。'.join(room_look), 2)}。")
     people = cast_names(before)
-    for other, value in (after or {}).items():
+    present = sorted(people) if people else [name for name in (after or {})]
+    for other in present:
         if other == view or other == room:
             continue
-        if people and other not in people:
-            continue
-        position = (value or {}).get("位置")
+        value = (after or {}).get(other) or {}
+        position = value.get("位置") or ((before.get("人物") or {}).get(other) or {}).get("位置")
         if position == room:
-            look = (value or {}).get("外貌") or []
+            look = ((before.get("人物") or {}).get(other) or {}).get("外貌") or []
             out.append(f"{other}{pick_clauses('。'.join(look), 2) if look else '没有出声'}。")
     for other, ops in delta.items():
         if other == view or not isinstance(ops, dict):
@@ -162,7 +167,13 @@ def main() -> int:
     parser.add_argument("--split-manifest", default=os.path.join(V2, "data", "splits-page-v1.json"))
     parser.add_argument("--short-weight", type=int, default=6)
     parser.add_argument("--scenes-weight", type=int, default=2)
-    parser.add_argument("--include-scenes", action="store_true", default=True)
+    parser.add_argument("--include-scenes", dest="include_scenes", action="store_true", default=False)
+    parser.add_argument("--exclude-scenes", dest="include_scenes", action="store_false")
+    parser.add_argument("--include-05", action="store_true",
+                        help="include 05's 11 hand-written tide scenes as longer targets")
+    parser.add_argument("--rows05", default=os.path.join(
+        REPO, "..", "05-kernel", "experiments", "narration-quality",
+        "corpus-scenes", "generated", "rows.jsonl"))
     parser.add_argument("--page-template-source", default="worktrees/06-recovery/frontend/src/lib/world-engine/local/prompt.ts")
     args = parser.parse_args()
 
@@ -197,6 +208,20 @@ def main() -> int:
                     "user": page_prompt(viewpoint_of(row["input"]), draft),
                     "target": row["target"], "weight": args.short_weight,
                     "source": "short-01"})
+
+    if args.include_05 and os.path.exists(args.rows05):
+        sources["rows-05"] = sha256(args.rows05)
+        for row in read_jsonl(args.rows05):
+            draft = page_draft(row["input"])
+            if not draft:
+                continue
+            # 05's rows are one continuous sequence, so they stay in train and
+            # never provide a dev or test sample.
+            out.append({"id": row["id"], "split": "train", "mode": "scene", "draft": draft,
+                        "user": page_prompt(viewpoint_of(row["input"]), draft),
+                        "target": row["targetText"],
+                        "weight": max(1, args.short_weight // 2),
+                        "source": "short-05"})
 
     with io.open(args.split_manifest, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps({"version": "page-splits-v1",

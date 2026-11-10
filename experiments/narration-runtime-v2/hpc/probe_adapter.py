@@ -29,7 +29,7 @@ def read_jsonl(path: str):
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--adapter", required=True)
+    parser.add_argument("--adapter", default="", help="empty with --base-only measures the unadapted baseline")
     parser.add_argument("--config", required=True)
     parser.add_argument("--data", required=True)
     parser.add_argument("--split", default="dev")
@@ -37,6 +37,7 @@ def main() -> int:
     parser.add_argument("--max-new", type=int, default=220)
     parser.add_argument("--temperature", type=float, default=0.5)
     parser.add_argument("--seed", type=int, default=20261110)
+    parser.add_argument("--base-only", action="store_true")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
@@ -52,12 +53,15 @@ def main() -> int:
     model = AutoModelForCausalLM.from_pretrained(
         base, local_files_only=True, torch_dtype=torch.float16).cuda()
     lora = config["training"]["lora"]
-    model = get_peft_model(model, LoraConfig(
-        r=int(lora["r"]), lora_alpha=int(lora["alpha"]),
-        lora_dropout=float(lora.get("dropout", 0.05)),
-        target_modules=list(lora["targetModules"]), bias="none", task_type="CAUSAL_LM"))
-    state = torch.load(args.adapter, map_location="cpu")
-    missing = model.load_state_dict(state, strict=False)
+    if not args.base_only:
+        model = get_peft_model(model, LoraConfig(
+            r=int(lora["r"]), lora_alpha=int(lora["alpha"]),
+            lora_dropout=float(lora.get("dropout", 0.05)),
+            target_modules=list(lora["targetModules"]), bias="none", task_type="CAUSAL_LM"))
+        state = torch.load(args.adapter, map_location="cpu")
+        missing = model.load_state_dict(state, strict=False)
+    else:
+        missing = type("M", (), {"missing_keys": []})()
     model.eval()
 
     rows = [row for row in read_jsonl(args.data) if row["split"] == args.split][:args.limit]
@@ -78,7 +82,7 @@ def main() -> int:
                         "newTokens": int(out.shape[1] - encoded["input_ids"].shape[1])})
         print(f"{row['id']} {results[-1]['newTokens']}tok {len(results[-1]['prose'])}ch", flush=True)
 
-    report = {"adapter": args.adapter, "loadedMissing": [k for k in missing.missing_keys][:5],
+    report = {"adapter": args.adapter or None, "baseOnly": args.base_only, "loadedMissing": [k for k in missing.missing_keys][:5],
               "base": base, "split": args.split, "temperature": args.temperature,
               "seed": args.seed, "rows": results,
               "note": "raw adapter output on dev prompts; no grading and no quality claim"}

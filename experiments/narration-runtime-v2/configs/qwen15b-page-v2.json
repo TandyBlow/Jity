@@ -15,11 +15,11 @@
     "variants": []
   },
   "splits": {
-    "file": "data/splits-page-v1.json"
+    "file": "data/splits-page-v2.json"
   },
   "training": {
-    "epochs": 2,
-    "lr": 0.0002,
+    "epochs": 1,
+    "lr": 0.00015,
     "batch": 1,
     "gradAccum": 2,
     "maxLen": 1280,
@@ -42,6 +42,6 @@
     }
   },
   "data": {
-    "file": "data/train-page-v1.jsonl"
+    "file": "data/train-page-v2.jsonl"
   }
 }
