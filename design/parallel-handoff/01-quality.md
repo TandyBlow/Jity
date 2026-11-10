@@ -137,3 +137,5 @@
 **f15d 独立复核（2026-11-11）**：`results/quality/findings-f15d-01.md`。06 `f15d7a98`、qwen3-1.7b `b139949c…`、trained/scene/prose-facts；等待 299.3 s、接受 287.4 s、25 semantic + 3 narration。页面 `turns[0].text` 是**自动轮** `point_round_auto…` 的 185 字，不是玩家点 `point_round_3_1` 的 180 字（玩家点 17.4 s 已生成但被 `updateLast` 覆盖）。硬错误：自动轮"手中护目镜"（结算挂在胸前、右手空着，末句又写手中没有东西）、规则牌声响、"时间已到"；玩家点"胸袋还有一只弹匣"（结算只说能放）、漏"读规则牌"结果；开场左臂红痕、发圈松散、胸袋弹匣。玩家点与自动轮最后一句完全相同。source=model/COMPLETED/violations=[] 不是质量证书；287 s 不是 60 s。已发 `requests-01-to-02-f15d.md`、`requests-01-to-04-f15d-review.md`，并在 `requests-01-to-06-new-chain-2324.md` 追加"自动轮覆盖玩家点正文"。124 字旧回合拒绝原因已更正为未证明。
 
 **程序兜底精确位置（2026-11-11）**：`results/quality/requests-01-to-06-program-projection.md`。06 当前 `game-model.ts:746` 仍把 `resultsText` 按 `；` 拼进正文（凯撒/内部判定句），`783-788` 把所有实体 `tasksAchieved` 写成正文（17:37 的 14 人清单），`765-771` 用 `initialAppearance` 而非当前外貌。f15d 走模型正文未触发，但下一次任何 fallback 会重现。
+
+**下一次 09 run（2026-11-11）**：06 已冻结 `6bd382d0`（build xQg4…, pid 25132，含 02 的 invented-mark/filled-hand/quiet-turn 修复）。`results/product/browser-requests/01-input-to-09-f15d-next-run.json` 请 09 在 6bd382d0 上跑，逐点记录最终原文/attempt/拒绝原因，并确认自动轮不再覆盖玩家点；f15d 的 185 字自动轮不是玩家点正文。
