@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "hpc:~/narr_v2/train/train_yuyan_v2.py", line 517, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "hpc:~/narr_v2/train/train_yuyan_v2.py", line 347, in main
+    print(json.dumps({"rows": len(rows), "train": len(train_rows), "dev": len(dev_rows),
+TypeError: 'ensure_ascii' is an invalid keyword argument for print()
