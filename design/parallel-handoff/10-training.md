@@ -295,3 +295,37 @@ node scripts/quality-candidates/run-browser-candidates.mjs   --candidate 10-beat
   内核序列化器再接。
 - 0.5B 在长场景上的 loss 与正文质量没有对应关系；目前唯一的质量证据是真实浏览器文本。
 
+
+## 9. 页面草稿臂：按 06 自己那条提示词训练（2026-11-10 晚）
+
+06 的树里已经有两步确定性文本：`game-model.ts` 的 `factualNarration` 把已结算事实写成
+“草稿段”，`prompt.ts` 的 `instructNarrationInput(..., draft)` 再把草稿变成给模型的指令。
+这两步都在页面里，不在我这边；我原来自己造的 `【事实草稿】…【正文】` 模板和它对不上，
+按那个模板训练等于训练一个页面不会发出的输入。
+
+现在的做法：
+
+| 项 | 内容 |
+| --- | --- |
+| `src/build_page_pairs.py` | 把上面两段 TS 的字符串与拼装顺序逐字搬到 Python；页面模板一变，必须重新生成数据，不能在推理时临时改提示词 |
+| `data/train-page-v1.jsonl` | 71 条人工短行（01 的 20 条龙族世界行 + 51 条图书馆行），每条 = 页面式提示词 + 人工正文；sha256 `6df3a8c7…` |
+| `data/splits-page-v1.json` | 199 行冻结 split 不动；01 的 71 行按 `worldFamily#lineage` 整组划分，同一来源的所有变体只在同一侧；组清单连同哈希一起存 |
+| `configs/qwen15b-page-v1.json` | 1.5B + LoRA r16/a32，3 epoch，lr 1.5e-4，maxLen 1280 |
+| HPC `251495` | CPU 分区 16 核，输出目录 `~/beats_v1/runs/qwen15b-page-v1`，独占写入 |
+| `browser/draft-candidate.ts` | 与训练同一条提示词；页面把草稿传进来就用页面的，页面没传才用本文件的降级拼法；输出先过草稿事实覆盖/凭空数字/空话/新增对白检查，未通过才回退草稿 |
+| `src/eval_draft.py` | 离线筛查导出后的 GGUF；已用 71 条人工正文校准：71/71 全过，说明它不会把人工写法判死 |
+| `hpc/batch_screen.py` | 给 11/12 的批量服务：一个 GGUF、一份冻结 case 文件、N 个 seed，输出原始正文 + 时间 + 便宜的事实检查；不做质量判定 |
+| `hpc/gpu_probe.py` | 在真实 V100 上量 fp16 推理是否可跑、单实例 tokens/s；训练 bf16 的限制不能直接推到推理 |
+
+两条要说清的落差：
+
+1. 页面要求 160–240 字，01 的人工正文只有 61–158 字（中位 97）。用这批数据训出来的模型会
+   写得更短。这是数据事实，先报给 06，不靠改提示词掩盖。
+2. 199 行冻结场景没有进这一臂：它们的正文有对白、也没逐条覆盖草稿事实，混进来会教模型
+   “不用管草稿”。它们仍留在场景臂和冻结 split 里。
+
+## 9.1 HPC 台账与轮询纪律
+
+`results/product/hpc-queue.json` 是唯一台账：作业用途/状态/分区/输出目录/数据哈希/取消原因，
+GPU 与吞吐取不到就写 unknown。远程 `sleep` 属于同步等待、会堵住 agent 窗口，已停用；轮询改成
+每 ~15 分钟一次短 `squeue`/`tail`，`nextPollAt` 写在台账里，中间做代码/数据/导出/评审工作。
