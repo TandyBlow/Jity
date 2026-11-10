@@ -95,6 +95,7 @@ export class RuntimeDiagnostics {
         failed: loads.filter((record) => record.outcome === 'failed').length,
         aborted: loads.filter((record) => record.outcome === 'aborted').length,
         discarded: loads.filter((record) => record.outcome === 'discarded').length,
+        timeout: loads.filter((record) => record.outcome === 'timeout').length,
         lastModelId: lastLoad?.modelId ?? null,
         lastContextSize: lastLoad?.contextSize ?? null,
         total: timingStats(loads.map((record) => record.totalMs)),

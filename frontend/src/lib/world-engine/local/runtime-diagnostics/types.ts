@@ -27,7 +27,9 @@ export interface ModelLoadEvidence {
   /** Time spent inside wllama loadModel/loadModelFromUrl (parse + compile). */
   compileMs: number | null;
   totalMs: number;
-  outcome: 'loaded' | 'failed' | 'aborted' | 'discarded';
+  /** Abort budget for the load, null when the caller set none. */
+  loadTimeoutMs?: number | null;
+  outcome: 'loaded' | 'failed' | 'aborted' | 'discarded' | 'timeout';
   error?: string;
   /** Monotonic clock (performance.now) when the load finished. */
   at: number;
@@ -97,6 +99,7 @@ export interface RuntimeDiagnosticsSummary {
     failed: number;
     aborted: number;
     discarded: number;
+    timeout: number;
     lastModelId: string | null;
     lastContextSize: number | null;
     total: TimingStats;
