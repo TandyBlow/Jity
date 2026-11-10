@@ -1,0 +1,93 @@
+{
+  "batchId": "b02-generalization-v2",
+  "preparedAt": "2026-11-10T12:30:48.964Z",
+  "pack": {
+    "package": "narration-dev-package-v1",
+    "caseCount": 15,
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+  },
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79,
+    97
+  ],
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "quantization": "none (safetensors)",
+    "why": "Same loaded instance as b01 when 10 can batch them; no new model."
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "renderTrainedInstructUser(input)",
+    "addGenerationPrompt": true,
+    "instruction": "请把下面的已结算状态写成一段中文小说正文，180 到 260 字。必须写出【本回合变化】里的移动、时间推进、物品变化和人物变化；可以写细微动作、对白和视角人物的感受，但不得新增人物、物品、地点、事件、往事或承诺；不要逐条复述状态，不要写标题或列表。",
+    "whyThisInstruction": "same instruction frozen in preregistration.v2; no case-specific wording"
+  },
+  "instruction": "请把下面的已结算状态写成一段中文小说正文，180 到 260 字。必须写出【本回合变化】里的移动、时间推进、物品变化和人物变化；可以写细微动作、对白和视角人物的感受，但不得新增人物、物品、地点、事件、往事或承诺；不要逐条复述状态，不要写标题或列表。",
+  "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628",
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true
+  },
+  "calls": 30,
+  "cases": [
+    {
+      "caseId": "dr-0021-no-change-three-people",
+      "category": "no_change",
+      "inputSha256": "97da3b6a06b00e4b73077d6720f5cbcda3782af3df0d975305c424365d298a37",
+      "userPromptSha256": "2d800dfa5dc1ac9ff515ac490133a4c4cd0954b0e1e35eaa2f37a5d4a26841cc",
+      "userPromptChars": 1466,
+      "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628"
+    },
+    {
+      "caseId": "short2-0034-carved-line-worn",
+      "category": "move_direction",
+      "inputSha256": "ef2e2a4027e70270c9f337830cdde44f17c38d33aac06607d66de3bc8400ce36",
+      "userPromptSha256": "abeb949b9cf47318712b77d3ee7b1d85eb164d1476f88de883bd56732800caa6",
+      "userPromptChars": 786,
+      "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628"
+    },
+    {
+      "caseId": "fixture-goggles-transfer",
+      "category": "item_transfer_fixture",
+      "inputSha256": "38a9662ebce022575ac6e07576c00cb2cfb97f1acb765ae237087839eb0faf6f",
+      "userPromptSha256": "530e1f583a96062103f790c569ae96088b847dc28e95646ac9307005a057eb00",
+      "userPromptChars": 776,
+      "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628"
+    },
+    {
+      "caseId": "short2-0056-duty-name-and-copy",
+      "category": "gender_pronoun",
+      "inputSha256": "a58a72638b17beb49caa67cec8de166efefe5a54d1ea590887faedd9018fc608",
+      "userPromptSha256": "2fd29f87d5fba30e9fa5ecd234c4baa289e509a5b268a970f6128694406c86fe",
+      "userPromptChars": 936,
+      "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628"
+    },
+    {
+      "caseId": "tide-continuity-tide-duty-t2",
+      "category": "continuity",
+      "inputSha256": "9a5ec1fae57223bfa3eba6299c87ba16c14f51c855afb2ab6e3280a3b5386539",
+      "userPromptSha256": "351be81e6ca0cec893608be0cd38715970ec92d13ed265700957e84c1e3add62",
+      "userPromptChars": 2163,
+      "instructionSha256": "1d538e9bb9c8a857aee40ad975afbad4f47da4a496d603cab80af27b5bfcd628"
+    }
+  ],
+  "requestsSha256": "fcc5647480f1733eb8385f29c8c1f4889b71976830ef3390bd165ce9bdcd324f",
+  "expectedSha256": "a1184e12c6925e95554b704d024007d8bd9ae33fc0467a50fe01db8f8d96db5b",
+  "renderer": "frontend/src/lib/world-engine/local/narration-generation/trained-input.ts:renderTrainedInstructUser",
+  "referenceExcluded": true,
+  "frontendRoot": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\frontend"
+}
