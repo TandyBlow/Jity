@@ -361,6 +361,11 @@ export class LocalGameModel implements WorldModelPort {
     // writer model invents less when it is told exactly which facts it may
     // use. The freer scene prompt runs only if that rewrite is rejected, so a
     // normal round costs one generation instead of two.
+    // Publish the settled draft the moment narration starts. The player reads a
+    // true, third-person scene instead of waiting for the writer model; the
+    // streamed rewrite replaces it only if it passes the same gate.
+    this.options.onNarrationProgress?.({ pointId, raw: draft, elapsedMs: performance.now() - started });
+
     const attempts: ReturnType<typeof evaluate>[] = [];
     const rewrite = instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft, 'repair');
     const first = await generate(rewrite.prompt, Math.min(0.35, this.options.narrationTemperature ?? 0.45));
@@ -537,7 +542,7 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   // whoever is there with the detail that actually matters.
   const scenery: string[] = [];
   const appearance = after.initial.locations[room]?.initialAppearance;
-  if (appearance) scenery.push(shortClause(appearance, 88));
+  if (appearance) scenery.push(pickClauses(appearance, 2));
   if (scenery.length) out.push(`${place}里，${scenery.join('，')}。`);
 
   const others = visibleCharacters(after, view).filter((candidate) => candidate !== view).slice(0, 2);
@@ -546,7 +551,7 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
     if (!other) continue;
     const look = after.initial.characters[id]?.initialAppearance;
     const where = roomOf(after, id) === room ? '' : `在${locationName(after, roomOf(after, id))}，`;
-    out.push(`${other}${where}${look ? shortClause(look, 46) : '没有出声'}。`);
+    out.push(`${other}${where}${look ? pickClauses(look, 2) : '没有出声'}。`);
   }
   for (const [id, entity] of Object.entries(delta.entityDeltas ?? {})) {
     const other = after.initial.characters[id]?.name ?? after.initial.items[id]?.name;
@@ -717,6 +722,27 @@ function sentenceEnd(text: string): string {
 function firstFeature(text: string, max: number): string {
   const first = firstClause(text).split(/[，,]/u)[0]?.trim() ?? '';
   return [...first].length > max ? `${[...first].slice(0, max).join('')}……` : first;
+}
+
+/** World files describe people like a character sheet: posture, clothing,
+ * marks, what they hold. Reading all of it aloud reads like a form, so pick the
+ * one or two clauses that actually describe what the protagonist would notice:
+ * what the person is doing, then the mark that matters. */
+function pickClauses(text: string, max: number): string {
+  const clauses = text.split(/[，,；;。]/u).map((clause) => clause.trim()).filter(Boolean);
+  if (!clauses.length) return '';
+  const score = (clause: string): number => {
+    if (/^(坐|站|靠|蹲|躺|跪|趴|倚|背靠)/u.test(clause)) return 0;
+    if (/(伤|血|肿|痕|绷带|按住|捂着)/u.test(clause)) return 1;
+    if (/(手|枪|刀|绳|带|门|锁)/u.test(clause)) return 2;
+    return 3;
+  };
+  const picked = clauses.map((clause, index) => ({ clause, index, rank: score(clause) }))
+    .sort((left, right) => left.rank - right.rank || left.index - right.index)
+    .slice(0, max)
+    .sort((left, right) => left.index - right.index)
+    .map((entry) => entry.clause);
+  return picked.join('，');
 }
 
 function shortClause(text: string, max: number): string {
