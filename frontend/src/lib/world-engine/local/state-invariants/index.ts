@@ -73,12 +73,6 @@ export interface InvariantReport {
   warnings: InvariantIssue[];
 }
 
-interface StoredPointState {
-  version: number;
-  state: WorldState;
-  stateDigest: string;
-}
-
 /** The subset of the transport record this verifier reads. Kept structural so
  * both the local transport and an exported acceptance record can be checked
  * without importing or mutating the transport class. */
