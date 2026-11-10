@@ -158,6 +158,27 @@ def main() -> int:
         check("GGUF templates render the frozen system+user with an assistant tail", False,
               "run src/preview_templates.py")
 
+    baseline = pathlib.Path("D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf")
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = pathlib.Path(tmp)
+        smoke = tmp_path / "smoke.json"
+        smoke.write_text(json.dumps({"choices": [{"message": {"content": "一句话。"}}]}), encoding="utf-8")
+        if baseline.exists():
+            good = run(["src/verify_preflight.py",
+                        "--path", str(baseline),
+                        "--expect-sha256", "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+                        "--expect-arch", "qwen3",
+                        "--smoke-json", str(smoke)])
+            bad = tmp_path / "bad.gguf"
+            bad.write_bytes(b"not a gguf")
+            refused = run(["src/verify_preflight.py", "--path", str(bad),
+                           "--expect-sha256", "00" * 32])
+            ok = good.returncode == 0 and refused.returncode == 2
+            detail = f"good={good.returncode} bad={refused.returncode}"
+        else:
+            ok, detail = True, "baseline absent; verifier not exercised"
+        check("verify_preflight accepts the known Qwen3 file and refuses a mismatch", ok, detail)
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])

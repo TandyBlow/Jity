@@ -16,6 +16,10 @@
 8. **运行时预算**：按 08 的 Blob 总容量约 2 GB，把候选 + 页面语义模型（Qwen3-0.6B，396,705,472 B）一起检查；五个候选 1.38–1.68 GB（含语义模型）全通过（`models/candidates.json` 的 `runtimeBudget`）。
 9. **预注册**：`preregistration.draft.json` 冻结比较条件、基线、RUBRIC §6 晋级门（无硬错误 ≥10/15、文风不合格 ≤3、0 例无据实体、相对 Qwen3-1.7B 至少 2 例 fail→pass）、失败退出、资源估计。包/子集 pin 后升为 `preregistration.v1.json`。
 
+## 预检验收
+
+`python -X utf8 src/verify_preflight.py --model-id <id> --path <file> --smoke-json <saved response>`：按 `models/candidates.json` 校验大小、sha256、GGUF 架构和模板哈希；有 smoke 响应时还检查非空正文。退出码 0 通过、2 拒绝。
+
 ## 导出 API（脚本 CLI，不是 TS 模块）
 
 | 脚本 | 输入 | 输出 | 谁用 |
@@ -26,7 +30,7 @@
 | `src/make_review_input.py` | cases + run + prompt manifest | `review-rows.jsonl` + `review.manifest.json`（01 复核输入） | 11/01 |
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
-| `src/selftest.py` | 无 | 11 项 PASS/FAIL | 11/06 复核 |
+| `src/selftest.py` | 无 | 12 项 PASS/FAIL | 11/06 复核 |
 
 示例：
 
@@ -43,7 +47,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 11/11 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 12/12 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 限制与未验证
 
