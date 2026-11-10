@@ -131,6 +131,17 @@ export interface ReviewReport {
     unboundSentences: number;
     styleFindings: number;
   };
+  /** Metadata check for integration: a text made only of settled-fact lines,
+   * with no dialogue, is what a program fallback emits. It must not be labelled
+   * model prose without per-segment metadata. */
+  fallbackSuspicion: {
+    suspected: boolean;
+    factOnlySentences: number;
+    sentences: number;
+    dialogueRatio: number;
+    panelShare: number;
+    note: string;
+  };
   reviewer: 'ai-independent-checker-v1';
   /** Explicit reminder stored in every report. */
   disclaimer: string;

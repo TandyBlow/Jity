@@ -19,6 +19,7 @@ import type { Finding, FindingKind, MandatoryReview, ReviewOptions, ReviewReport
 
 /** Style findings that make a text unusable for a player even when the facts
  * are right. Register/field wording is reported separately. */
+const SQUARE_FORM = new Set<string>(['style.status_panel', 'style.field_sentence']);
 const BLOCKING_STYLE = new Set<string>([
   'style.status_panel', 'style.loop', 'style.echo_prior', 'style.repeated_opening',
   'style.truncated', 'style.premature_closure', 'style.meta', 'style.roster_recital',
@@ -33,7 +34,7 @@ const PROPS = [
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
 
-interface SentenceParts {
+export interface SentenceParts {
   text: string;
   paragraph: number;
   /** Sentence with quoted spans emptied, for narration-side rules. */
@@ -42,7 +43,7 @@ interface SentenceParts {
 }
 
 /** Split on 。！？ and newlines, protecting quoted dialogue from splitting. */
-function splitSentences(text: string): SentenceParts[] {
+export function splitSentences(text: string): SentenceParts[] {
   const parts: string[] = [];
   let buffer = '';
   let inQuote = false;
@@ -62,7 +63,10 @@ function splitSentences(text: string): SentenceParts[] {
     }
   }
   if (buffer.trim()) paragraphs.push(buffer.trim());
-  for (const entry of paragraphs) parts.push(entry);
+  for (const entry of paragraphs) {
+    // A stray "。" left by duplicated punctuation is not a sentence.
+    if (/[\p{Script=Han}A-Za-z0-9]/u.test(entry)) parts.push(entry);
+  }
   return parts.map((entry, index) => {
     const quotes = [...entry.matchAll(/「([^」]*)」/gu)].map((match) => match[1]);
     return {
@@ -1003,6 +1007,34 @@ export function reviewNarration(args: {
   const blockingStyles = [...new Set(findings
     .filter((entry) => entry.severity === 'style' && BLOCKING_STYLE.has(entry.kind))
     .map((entry) => entry.kind))];
+  const factLiterals = [
+    ...projection.taskCompleted.map((entry) => entry.goal),
+    ...projection.taskAdded.map((entry) => entry.goal),
+    ...projection.personalityAdded.map((entry) => entry.text),
+    ...projection.appearanceAdded.map((entry) => entry.text),
+    ...projection.itemDescriptions,
+    ...(projection.timeText ? [projection.timeText] : []),
+  ].filter((entry) => [...entry].length >= 8);
+  const restatement = (sentence: SentenceReview): boolean => {
+    if (sentence.findings.some((item) => SQUARE_FORM.has(item.kind))) return true;
+    for (const literal of factLiterals) {
+      for (let index = 0; index + 8 <= literal.length; index += 4) {
+        if (sentence.sentence.includes(literal.slice(index, index + 8))) return true;
+      }
+    }
+    return false;
+  };
+  const factOnlySentences = sentenceReviews.filter(restatement).length;
+  const ratio = dialogueRatio(text);
+  const panelShare = sentences.length ? factOnlySentences / sentences.length : 0;
+  const fallbackSuspicion = {
+    suspected: sentences.length >= 2 && panelShare >= 0.6,
+    factOnlySentences,
+    sentences: sentences.length,
+    dialogueRatio: ratio,
+    panelShare,
+    note: 'Most sentences restate settled fact text verbatim, which is what program fallbacks emit. Check the per-segment source before calling this model prose.',
+  };
   return {
     id,
     chars: charCount,
@@ -1029,6 +1061,7 @@ export function reviewNarration(args: {
     factsClean: counts.fact === 0,
     readable: blockingStyles.length === 0,
     blockingStyles,
+    fallbackSuspicion,
     reviewer: 'ai-independent-checker-v1',
     disclaimer: 'Automated sentence-scoped review. `review` and `style` items are not passes; only a human reading decides quality. No human signature is implied.',
   };
