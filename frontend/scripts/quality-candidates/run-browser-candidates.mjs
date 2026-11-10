@@ -548,7 +548,7 @@ try {
   browser = await chromium.launch({
     headless: true,
     channel: config.channel,
-    ...(config.gpu ? { args: ['--enable-unsafe-webgpu'] } : {}),
+    ...(config.gpu ? { args: ['--enable-unsafe-webgpu', '--force_high_performance_gpu', '--ignore-gpu-blocklist'] } : {}),
   });
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
