@@ -106,6 +106,7 @@ def main() -> int:
         "to": "10-training",
         "requestedAt": now(),
         "kind": "model-preflight",
+        "readyToSubmit": True,
         "qualityBatch": False,
         "priority": "below current product blockers and below 12's first batch; download/load work only, can share a window",
         "purpose": "Download the pinned candidate GGUFs, verify sha256, read GGUF metadata "
