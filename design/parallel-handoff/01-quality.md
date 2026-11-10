@@ -215,3 +215,4 @@
 - 3-turn a178（run 2026-11-10T2241-5ac2，head a178ef78）第 1 回合：**program** 128 字/140.5 s，无模型正文；状态面板、护目镜当行动者、输入走/看被写成未看到。不是模型正文通过。
 - 3-turn a178 第 2 回合（问诺诺红蓝/中立）：**program** 113 字/128.2 s；问题未答、无对白，状态面板+清单。
 - 3-turn a178 第 3 回合：**program** 132 字/163 s；护目镜三次当主语、引路无回答；run 22:51:34Z **FAILED**，3 回合全 program。
+- a178 候选：两次 `echo_prior+unlicensed_sense` 拒绝，第三次 95 字 accepted 仍含「阳光下微光」（同类未拦住）；continuation `abstract_task_goal` 后 settlement_failed/policy_stop。
