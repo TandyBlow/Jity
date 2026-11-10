@@ -206,11 +206,22 @@ describe('21c3 trace replay (CPU)', () => {
       before: state,
       after: same,
       facts: [],
-      actions: ['路明非在西侧服务巷。'],
+      actions: ['lu:路明非在西侧服务巷。'],
       knownFacts: new Set<string>(),
-      knownActions: new Set(['路明非在西侧服务巷']),
+      knownActions: new Set(['lu:路明非在西侧服务巷']),
     });
     expect(echoed.evidence.progress).toBe(false);
+
+    const otherActorSameWords = await roundProgressFromState({
+      before: state,
+      after: same,
+      facts: [],
+      actions: ['nono:路明非在西侧服务巷。'],
+      knownFacts: new Set<string>(),
+      knownActions: new Set(['lu:路明非在西侧服务巷']),
+    });
+    expect(otherActorSameWords.evidence.progress).toBe(true);
+    expect(otherActorSameWords.evidence.reason).toBe('new_action');
 
     const later = structuredClone(state);
     later.time = { ...later.time, dateTime: '2026-11-09T12:01:00' };

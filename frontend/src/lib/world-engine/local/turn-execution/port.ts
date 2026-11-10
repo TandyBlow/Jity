@@ -236,7 +236,15 @@ export function createSettlementModelPort(
         for (const member of members) {
           if (member == null || typeof member !== 'object') continue;
           const text = (member as { actionText?: unknown }).actionText;
-          if (typeof text === 'string' && text.trim()) roundActionTexts.push(text.trim());
+          const memberId = (member as { memberId?: unknown }).memberId;
+          if (typeof text === 'string' && text.trim()) {
+            // Identity includes the actor: two characters may legitimately use
+            // the same short phrase, and that is not a replayed action.
+            const label = typeof memberId === 'string' && memberId.trim()
+              ? `${memberId.trim()}:${text.trim()}`
+              : text.trim();
+            roundActionTexts.push(label);
+          }
         }
       }
     }
