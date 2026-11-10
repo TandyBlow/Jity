@@ -12,6 +12,7 @@ const result = spawnSync(process.execPath, [
   vitest,
   'run',
   'src/lib/world-engine/local/semantics/settlement',
+  'src/lib/world-engine/local/turn-execution',
   '--maxWorkers=1',
 ], { cwd: frontend, stdio: 'inherit' });
 

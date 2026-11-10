@@ -51,7 +51,11 @@ export interface ContinuationPolicyDecision {
 
 export const continuationPolicy: Required<ContinuationPolicyOptions> = {
   noProgressRounds: 2,
-  repeatRounds: 2,
+  // The 21c3/1737 traces show the same accepted follow-up repeated after a
+  // group that only echoed its current position. One repeat is enough to prove
+  // the chain is not producing a new action; waiting for a second repeat spends
+  // another whole group and continuation call.
+  repeatRounds: 1,
   maxAutoContinuations: null,
   maxCandidates: 8,
 };

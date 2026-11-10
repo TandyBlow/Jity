@@ -126,7 +126,14 @@ export function projectPoint(
   const sceneCharacters = new Set<Id>();
   const sceneItems = new Set<Id>();
   for (const id of Object.keys(state.characters)) if (sceneLocations.has(locationOf(state, id) ?? '')) sceneCharacters.add(id);
-  for (const id of Object.keys(state.items)) if (sceneLocations.has(locationOf(state, id) ?? '')) sceneItems.add(id);
+  for (const id of Object.keys(state.items)) {
+    if (sceneLocations.has(locationOf(state, id) ?? '')) { sceneItems.add(id); continue; }
+    // A held item's direct container is its holder, not the room; visible
+    // characters' possessions (21c3: nono's red_band_nono) are part of what can
+    // change and what the appearance/narration scope knows about.
+    const holder = state.items[id]?.position.containerId;
+    if (holder && sceneCharacters.has(holder)) sceneItems.add(id);
+  }
 
   const changedEntities = new Set<Id>();
   const timeChanged = baseline.time.dateTime !== state.time.dateTime;

@@ -133,6 +133,28 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('drops a completion claim from a result fact and keeps the action result', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲确认了状态。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙留在房间。', effects: [] },
+      ],
+      facts: [
+        { text: '甲确认故障短讯机与乙的联络状态，且未被阻止或阻碍，行动成功完成。', memberIds: ['a'] },
+        { text: '乙留在房间里。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toBe('甲确认故障短讯机与乙的联络状态，且未被阻止或阻碍。');
+    expect(outcome.value!.a).not.toContain('行动成功完成');
+    const detail = outcome.evidence.detail as { sanitizedFacts: { memberIds: string[]; original: string; text: string; removed: string[] }[] };
+    expect(detail.sanitizedFacts).toHaveLength(1);
+    expect(detail.sanitizedFacts[0]?.memberIds).toEqual(['a']);
+    expect(detail.sanitizedFacts[0]?.removed).toContain('行动成功完成');
+    expect(detail.sanitizedFacts[0]?.text).not.toContain('行动成功完成');
+  });
+
   it('rejects a denied roll narrated as a reaction and retries with feedback', async () => {
     const state = world();
     const input = {
@@ -403,21 +425,19 @@ describe('continuation', () => {
     expect(continuationPolicy.noProgressRounds).toBe(2);
   });
 
-  it('hands back when the same candidate repeats after two progressing rounds', async () => {
+  it('stops the second identical accepted candidate instead of spending another group', async () => {
     const engine = new ScriptedEngine([
-      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
       continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
       continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
     ]);
     const handlers = createSettlementHandlers({ engine });
     const first = await handlers.continuation('r1', continuationInput(progress(59)));
     const second = await handlers.continuation('r2', continuationInput(progress(58)));
-    const third = await handlers.continuation('r3', continuationInput(progress(57)));
     expect((first.value as { kind: string }).kind).toBe('continue');
-    expect((second.value as { kind: string }).kind).toBe('continue');
-    expect(third.value).toBeNull();
-    expect(third.error).toBe('continuation_policy_repeated_candidate');
-    expect((third.evidence.detail as { decision: string }).decision).toBe('policy_stop');
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_repeated_candidate');
+    expect((second.evidence.detail as { decision: string }).decision).toBe('policy_stop');
+    expect(continuationPolicy.repeatRounds).toBe(1);
   });
 
   it('turns a configured 0 call cap into a policy stop, not a model handback', async () => {
@@ -524,6 +544,17 @@ describe('affected-dependency projection', () => {
     expect(engine.prompts[0]).not.toContain('id=b');
   });
 
+  it('drops a position delta that only repeats the current position', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [
+      { entityId: 'a', containerId: 'room', slotId: null, relativeTo: null },
+    ] })]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#position', updatesInput(world(), 'position'));
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as UpdatesCall).changes).toEqual({});
+    const detail = outcome.evidence.detail as { stageDetail: { droppedNoopEntityIds?: string[] } };
+    expect(detail.stageDetail.droppedNoopEntityIds).toEqual(['a']);
+  });
+
   it('a global fact keeps every task in the prompt', async () => {
     const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
     const handlers = createSettlementHandlers({ engine });
@@ -546,6 +577,44 @@ describe('affected-dependency projection', () => {
     expect(engine.prompts[0]).toContain('id=a');
     expect(engine.prompts[0]).not.toContain('id=b');
     expect(engine.prompts[0]).not.toContain('id=off');
+  });
+
+  it('includes an off-screen task whose goal names a fact entity (indirect dependency)', async () => {
+    const indirect = world();
+    indirect.characters.off.tasks.off1.goal = '把工具收进盒子';
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '甲把工具推进盒子。' }) as Record<string, unknown>), workingState: indirect } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('id=off');
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[]; unaffectedTaskIds: string[] } };
+    expect(detail.taskScope.affectedTaskIds).toContain('off1');
+    expect(detail.taskScope.unaffectedTaskIds).not.toContain('off1');
+  });
+
+  it('includes an off-screen time-condition task when the fact states elapsed time', async () => {
+    const timeWorld = world();
+    timeWorld.characters.off.tasks.off1.goal = '在天亮前回来';
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '几分钟后，甲把工具推进盒子。' }) as Record<string, unknown>), workingState: timeWorld } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('id=off');
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[] } };
+    expect(detail.taskScope.affectedTaskIds).toContain('off1');
+  });
+
+  it('includes the family closure of an affected parent task', async () => {
+    const family = world();
+    family.characters.a.tasks.a3 = { id: 'a3', ownerId: 'a', parentTaskId: 'a1', goal: '打开工具盒', status: 'pending' };
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '甲把工具推进盒子。' }) as Record<string, unknown>), workingState: family } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[]; unaffectedTaskIds: string[]; taskRows: number } };
+    expect(detail.taskScope.affectedTaskIds).toContain('a3');
+    expect(detail.taskScope.unaffectedTaskIds).not.toContain('a3');
+    expect(detail.taskScope.taskRows).toBe(5);
   });
 
   it('projects position and appearance to actors, scene and fact entities', async () => {

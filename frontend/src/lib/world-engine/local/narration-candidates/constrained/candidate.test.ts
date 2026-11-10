@@ -5,6 +5,8 @@
  * (`buildInitialState` + `applyPoint`), so these tests exercise saved-state
  * reads rather than hand-written packets.
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { applyPoint, buildInitialState, stateDigest } from '../../state';
 import type { InitialState, TimelinePoint } from '../../../types';
@@ -79,6 +81,33 @@ const initial = (): InitialState => ({
     },
   },
 });
+
+async function productWorldFixture() {
+  const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
+  const world = JSON.parse(readFileSync(file, 'utf8'));
+  const state0 = buildInitialState(world.initial as InitialState);
+  // b7cd group_10: lu walks from lane/slot_wall to lane with no slot; one minute
+  // passes; no task is achieved by this point.
+  const point: TimelinePoint = {
+    worldId: world.initial.worldId, id: 'b7cd_p1', sequence: 1, kind: 'normal', previousPointId: 'root',
+    roundId: 'r1', advanceId: 'a1', trigger: 'player', linkedFromPointId: null,
+    timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+    entityDeltas: {
+      lu: { entityId: 'lu', positionSet: { containerId: 'lane', slotId: null, relativeTo: null } },
+    },
+  };
+  const state1 = applyPoint(state0, point);
+  const digest = await stateDigest(state1);
+  const packet: CommittedScenePacket = {
+    anchor: { worldId: world.initial.worldId, pointId: point.id, version: 1, stateDigest: digest, previousPointId: 'root' },
+    state: state1,
+    beforeState: state0,
+    timeAdvance: point.timeAdvance,
+    entityDeltas: point.entityDeltas,
+    facts: [],
+  };
+  return { packet };
+}
 
 async function fixture() {
   const state0 = buildInitialState(initial());
@@ -287,6 +316,37 @@ describe('generateCandidate program mode', () => {
     });
     expect(result.accepted).toBe(true);
     expect(result.text).toMatch(/精神值从五十落到四十六|数值从五十落到四十六/);
+  });
+
+  it('expresses the b7cd real-world move and minute without inventing a task', async () => {
+    const { packet } = await productWorldFixture();
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我沿着服务巷往里走，先看清墙上的演习规则牌。',
+      policy: { mode: 'program' },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('西侧服务巷');
+    expect(result.text).toMatch(/一分钟/);
+    expect(result.text).not.toContain('任务完成');
+    expect(result.text).not.toContain('行动成功完成');
+    expect(result.segments.every((segment) => segment.source === 'program')).toBe(true);
+  });
+
+  it('does not repeat the e9a5 player ending in the next constrained point', async () => {
+    const { packet } = await productWorldFixture();
+    const priorText = '路明非站在西侧服务巷口，看着黄黑绳缓缓放下。风掠过巷口，带起一阵潮湿的泥土味，他忽然想起什么，却只在心里嘀咕了一句。他望着诺诺站在不远处，红发用发圈束在脑后，目光平静。他注意到她手中的演习短枪，枪上有黄色演习标记。一分钟过去，他依旧站在原地，呼吸平稳，目光落在路明非的护目镜和演习背心上，没有动弹。';
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: { ...packet, priorText },
+      inputText: '',
+      policy: { mode: 'program' },
+    });
+    expect(result.accepted).toBe(true);
+    const closing = result.text.split(String.fromCharCode(10, 10)).filter(Boolean).slice(-1)[0] ?? '';
+    expect(closing).not.toContain('没有动弹');
+    expect(result.text).not.toContain('目光落在路明非的护目镜和演习背心上，没有动弹。');
   });
 
   it('works from a facts-only packet with no full state', async () => {

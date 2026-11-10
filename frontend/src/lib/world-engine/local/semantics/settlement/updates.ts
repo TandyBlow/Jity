@@ -400,7 +400,24 @@ export class UpdatesRunner {
     if (!Object.keys(outcome.changes).length) return {};
     try {
       projectStage(state, stage, outcome.changes);
-      return outcome.changes;
+      // A model may echo the current position/sanity. Those deltas are not
+      // progress; leaving them in makes the continuation policy believe a
+      // repeated unchanged group moved the world.
+      const dropped: Id[] = [];
+      const cleaned: Record<Id, Partial<EntityDelta>> = {};
+      for (const [entityId, delta] of Object.entries(outcome.changes)) {
+        if (stage === 'position' && delta.positionSet && sameCurrentPosition(state, entityId, delta.positionSet)) {
+          dropped.push(entityId);
+          continue;
+        }
+        if (stage === 'sanity' && delta.sanitySet != null && state.characters[entityId]?.sanity === delta.sanitySet) {
+          dropped.push(entityId);
+          continue;
+        }
+        cleaned[entityId] = delta;
+      }
+      if (dropped.length) outcome.detail = { ...outcome.detail, droppedNoopEntityIds: dropped.sort() };
+      return cleaned;
     } catch (error) {
       outcome.error = outcome.error ?? `stage_candidate_rejected:${errorText(error)}`;
       outcome.fallback = true;
@@ -566,6 +583,18 @@ function parseUpdatesInput(input: Json): UpdatesInput | { error: string } {
   return { groupId, mode, stage, results, workingState: world };
 }
 
+function sameCurrentPosition(state: WorldState, entityId: Id, next: { containerId: Id; slotId?: Id | null; relativeTo?: { entityId: Id; relation: string } | null }): boolean {
+  const current = state.characters[entityId]?.position ?? state.items[entityId]?.position;
+  if (!current) return false;
+  const relative = (left?: { entityId: Id; relation: string } | null, right?: { entityId: Id; relation: string } | null) => {
+    if (!left && !right) return true;
+    return Boolean(left && right && left.entityId === right.entityId && left.relation === right.relation);
+  };
+  return current.containerId === next.containerId
+    && (current.slotId ?? null) === (next.slotId ?? null)
+    && relative(current.relativeTo, next.relativeTo);
+}
+
 async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   const scanned = projection.affectedMovable;
@@ -592,14 +621,16 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       jsonSchema: POSITION_SCHEMA,
       validate: (value) => validatePositionAnswer(value, ctx.state),
     });
-    const changes = readPositionChanges(answer.value, ctx.state, new Set(scanned));
+    const read = readPositionChanges(answer.value, ctx.state, new Set(scanned));
+    const changes = read.changes;
     projectStage(ctx.state, 'position', changes);
-    return {
-      changes,
-      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), positionScope: scope },
-      fallback: false,
-      calls: answer.calls,
+    const detail: Record<string, unknown> = {
+      scannedEntityIds: scanned,
+      changedEntityIds: Object.keys(changes).sort(),
+      positionScope: scope,
     };
+    if (read.rejected.length) detail.rejectedPositionEntries = read.rejected;
+    return { changes, detail, fallback: false, calls: answer.calls };
   } catch (error) {
     return stageFailure({ scannedEntityIds: scanned, positionScope: scope }, error);
   }
@@ -1049,46 +1080,63 @@ function validatePositionAnswer(value: unknown, state: WorldState): void {
   readPositionChanges(value, state);
 }
 
-function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id>): Record<Id, Partial<EntityDelta>> {
+interface PositionRead {
+  changes: Record<Id, Partial<EntityDelta>>;
+  rejected: { entityId: string; reason: string }[];
+}
+
+/** Reject a single bad position entry instead of discarding the whole stage.
+ * The 21c3 trace invented lane/slot_waist: the model's other valid entries
+ * (here a real lane move) must survive, and the invalid one stays in evidence. */
+function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id>): PositionRead {
   const rows = asRecord(value).changes;
   if (!Array.isArray(rows)) throw new Error('changes must be an array');
   const movable = new Set(movableIds(state));
   const known = new Set(allEntityIds(state));
   const seen = new Set<Id>();
   const changes: Record<Id, Partial<EntityDelta>> = {};
+  const rejected: PositionRead['rejected'] = [];
   for (const raw of rows) {
-    if (!isRecord(raw)) throw new Error('change must be an object');
-    const rawEntityId = asString(raw.entityId);
-    const entityId = resolveEntityId(state, rawEntityId);
-    if (!entityId) throw new Error(referenceError(state, rawEntityId, 'entity', movableIds(state)[0]));
-    if (!movable.has(entityId)) throw new Error(`position entity is not movable: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
-    if (onlyIds && !onlyIds.has(entityId)) continue;
-    if (seen.has(entityId)) throw new Error(`duplicate position change: ${entityId}`);
-    seen.add(entityId);
-    const position = positionFromRow(raw);
-    if (!position) throw new Error(`invalid position for ${entityId}`);
-    const rawContainerId = position.containerId;
-    const containerId = resolveEntityId(state, rawContainerId);
-    if (!containerId) throw new Error(referenceError(state, rawContainerId, 'entity', sampleContainerId(state)));
-    position.containerId = containerId;
-    if (!known.has(position.containerId)) throw new Error(`unknown container ${rawContainerId}${containerId !== rawContainerId ? ` (${containerId})` : ''}`);
-    if (position.containerId === entityId) throw new Error(`entity ${entityId} cannot contain itself`);
-    const slots = slotsOf(state, position.containerId);
-    if (position.slotId != null && !slots.some((slot) => slot.id === position.slotId)) {
-      throw new Error(`slot ${position.slotId} does not belong to ${position.containerId}`);
+    try {
+      if (!isRecord(raw)) throw new Error('change must be an object');
+      const rawEntityId = asString(raw.entityId);
+      const entityId = resolveEntityId(state, rawEntityId);
+      if (!entityId) throw new Error(referenceError(state, rawEntityId, 'entity', movableIds(state)[0]));
+      if (!movable.has(entityId)) throw new Error(`position entity is not movable: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
+      if (onlyIds && !onlyIds.has(entityId)) continue;
+      if (seen.has(entityId)) throw new Error(`duplicate position change: ${entityId}`);
+      seen.add(entityId);
+      const position = positionFromRow(raw);
+      if (!position) throw new Error(`invalid position for ${entityId}`);
+      const rawContainerId = position.containerId;
+      const containerId = resolveEntityId(state, rawContainerId);
+      if (!containerId) throw new Error(referenceError(state, rawContainerId, 'entity', sampleContainerId(state)));
+      position.containerId = containerId;
+      if (!known.has(position.containerId)) throw new Error(`unknown container ${rawContainerId}${containerId !== rawContainerId ? ` (${containerId})` : ''}`);
+      if (position.containerId === entityId) throw new Error(`entity ${entityId} cannot contain itself`);
+      const slots = slotsOf(state, position.containerId);
+      if (position.slotId != null && !slots.some((slot) => slot.id === position.slotId)) {
+        throw new Error(`slot ${position.slotId} does not belong to ${position.containerId}`);
+      }
+      if (position.relativeTo) {
+        const rawRelativeId = position.relativeTo.entityId;
+        const relativeId = resolveEntityId(state, rawRelativeId);
+        if (!relativeId) throw new Error(referenceError(state, rawRelativeId, 'entity', movableIds(state)[0]));
+        position.relativeTo.entityId = relativeId;
+        if (!known.has(position.relativeTo.entityId)) throw new Error(`unknown relative target ${rawRelativeId}${relativeId !== rawRelativeId ? ` (${relativeId})` : ''}`);
+        if (position.relativeTo.entityId === entityId) throw new Error(`entity ${entityId} cannot be relative to itself`);
+        if (!RELATIONS.includes(position.relativeTo.relation)) throw new Error(`invalid relation ${position.relativeTo.relation}`);
+      }
+      changes[entityId] = { positionSet: position };
+    } catch (error) {
+      // A literal placeholder is a contract error: it must trigger the repair
+      // call and, if still present, abort the point. Only bad references inside
+      // an otherwise usable answer are skipped per entry.
+      if (errorText(error).includes('placeholder_id')) throw error;
+      rejected.push({ entityId: isRecord(raw) ? asString(raw.entityId) : '?', reason: errorText(error) });
     }
-    if (position.relativeTo) {
-      const rawRelativeId = position.relativeTo.entityId;
-      const relativeId = resolveEntityId(state, rawRelativeId);
-      if (!relativeId) throw new Error(referenceError(state, rawRelativeId, 'entity', movableIds(state)[0]));
-      position.relativeTo.entityId = relativeId;
-      if (!known.has(position.relativeTo.entityId)) throw new Error(`unknown relative target ${rawRelativeId}${relativeId !== rawRelativeId ? ` (${relativeId})` : ''}`);
-      if (position.relativeTo.entityId === entityId) throw new Error(`entity ${entityId} cannot be relative to itself`);
-      if (!RELATIONS.includes(position.relativeTo.relation)) throw new Error(`invalid relation ${position.relativeTo.relation}`);
-    }
-    changes[entityId] = { positionSet: position };
   }
-  return changes;
+  return { changes, rejected };
 }
 
 function sampleContainerId(state: WorldState): Id {
