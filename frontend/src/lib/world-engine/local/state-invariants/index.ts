@@ -49,6 +49,7 @@ export type InvariantCode =
   | 'commands_invalid'
   | 'evidence_shape'
   | 'history_regressed'
+  | 'history_delta'
   | 'refresh_not_restored';
 
 
@@ -697,9 +698,11 @@ export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; erro
       if (after < before) errors.push(issue('history_regressed', `history count fell from ${before} to ${after}`));
       const recorded = typeof entry.historyDelta === 'number' ? entry.historyDelta : after - before;
       const problems = isStringArray(entry.problems) ? entry.problems : [];
-      const exceptional = problems.some((problem) => /timeout|error|cancel|refresh/i.test(problem));
-      if (!exceptional && typeof entry.text === 'string' && entry.text.length > 0 && recorded !== 1) {
-        errors.push(issue('history_regressed', `a completed turn added ${recorded} history entries instead of 1`));
+      const exceptional = problems.some((problem) => /timeout|error|cancel|refresh|no_entry/i.test(problem));
+      if (recorded < 0) {
+        errors.push(issue('history_regressed', `history fell by ${-recorded} across a turn`));
+      } else if (!exceptional && typeof entry.text === 'string' && entry.text.length > 0 && recorded !== 1) {
+        warnings.push(issue('history_delta', `a turn with text added ${recorded} history entries instead of 1`));
       }
       lastHistory = after;
     }

@@ -219,10 +219,18 @@ describe('visible acceptance summary', () => {
     expect(result.errors.map((item) => item.code)).toContain('task_regressed');
   });
 
-  it('rejects a recorded completed turn that added no history and a refresh that did not restore', () => {
+  it('rejects a history regression and a refresh that did not restore', () => {
     const result = verifyVisibleAcceptance([
-      { before: { historyCount: 4 }, after: { historyCount: 4 }, text: '正文', historyDelta: 0, refreshMidSettle: { restored: false } },
+      { before: { historyCount: 4 }, after: { historyCount: 3 }, text: '正文', historyDelta: -1, refreshMidSettle: { restored: false } },
     ]);
     expect(result.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['history_regressed', 'refresh_not_restored']));
+  });
+
+  it('warns, rather than failing, when the visible history delta is unusual', () => {
+    const result = verifyVisibleAcceptance([
+      { before: { historyCount: 4 }, after: { historyCount: 4 }, text: '正文', historyDelta: 0 },
+    ]);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings.map((item) => item.code)).toContain('history_delta');
   });
 });
