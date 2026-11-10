@@ -1715,3 +1715,17 @@ describe('a completed task may be paraphrased', () => {
     expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'fact_omitted')).toBe(true);
   });
 });
+
+describe('a clause said twice in one passage is an echo', () => {
+  test('the same five-character clause twice is a hard loop', () => {
+    const text = '林川把簿子合上，三分钟过去，屋里静下来。他抬头看窗外，三分钟过去，光移动了一点。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const committed = { facts: [{ id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对簿子' }] } as never;
+    return generateCommittedNarration({
+      engine, committed, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    }).then((result) => {
+      expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'loop_repeated_clause')).toBe(true);
+    });
+  });
+});

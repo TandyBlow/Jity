@@ -391,10 +391,14 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   for (const [entry] of repeatedSentences) {
     issues.push(hard('loop_repeated_sentence', attempt, `sentence repeated ${sentenceCount.get(entry)}x`, entry.slice(0, 80)));
   }
-  const clauses = text.split(CLAUSE_SPLIT).map(normalize).filter((entry) => entry.length >= 8);
+  const clauses = text.split(CLAUSE_SPLIT).map(normalize).filter((entry) => entry.length >= 5);
   const clauseCount = new Map<string, number>();
   for (const entry of clauses) clauseCount.set(entry, (clauseCount.get(entry) ?? 0) + 1);
-  const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 3
+  // Twice is already an echo in a passage this short: the unseen-world run
+  // wrote «三分钟过去» twice in 189 characters and nothing flagged it. The 71
+  // reference scenes contain no clause of 8+ characters repeated even twice,
+  // so the threshold is two, not three.
+  const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 2
     && !repeatedSentences.some(([sentence]) => sentence.includes(entry)));
   for (const [entry, count] of repeatedClauses) {
     issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));

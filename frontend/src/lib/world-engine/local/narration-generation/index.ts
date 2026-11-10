@@ -694,6 +694,27 @@ export const generateCandidate = (
  * habitual gesture, so this narrows the task to a single sentence. The caller
  * re-checks the spliced text with the same narrow rules and the full verifier;
  * a repaired sentence that still invents something is discarded. */
+/** The sentence that repeats a clause already used earlier in the passage. */
+function repeatTarget(text: string): { sentence: string; lines: string[] } | null {
+  const sentences = text.split(/(?<=[。！？])/u).map((entry) => entry.trim()).filter(Boolean);
+  const seen = new Map<string, string>();
+  for (const sentence of sentences) {
+    for (const clause of sentence.split(/[，。！？；：、]+/u).map((entry) => entry.trim()).filter((entry) => entry.length >= 5)) {
+      if (seen.has(clause)) {
+        return { sentence, lines: [
+          `「${clause}」这句话在前面已经说过一次，这里是第二次。`,
+          `原句：${sentence}`,
+          '',
+          '只重写这一句：换一种说法写出同一件事，不要删掉这句里已经发生的事，不要新增动作、人物或物品。',
+          '只输出重写后的这一句，不要解释。',
+        ] };
+      }
+      seen.set(clause, sentence);
+    }
+  }
+  return null;
+}
+
 async function repairSentences(args: {
   engine: InferenceEngine;
   text: string;
@@ -708,8 +729,9 @@ async function repairSentences(args: {
     const movedNames = args.ledger.mandatory.filter((fact) => fact.kind === 'moved').map((fact) => fact.name);
     const senses = senseViolations(text, args.inputText, { movedNames });
     const acts = senses.length ? [] : actionViolations(text, args.inputText);
-    if (!senses.length && !acts.length) return text;
-    const target = senses.length
+    const echo = senses.length || acts.length ? null : repeatTarget(text);
+    if (!senses.length && !acts.length && !echo) return text;
+    const target = echo ?? (senses.length
       ? { sentence: senses[0].sentence, lines: [
         '下面这句里写了没有出现过的声音或气味：',
         `原句：${senses[0].sentence}`,
@@ -723,7 +745,7 @@ async function repairSentences(args: {
         '',
         `只重写这一句：删掉「${acts[0].word}」这个动作（${acts[0].object ? `以及摆弄${acts[0].object}的部分` : '如果它只是被这个人拿在手里'}），保留这句里其它已经发生的事，不要新增动作、人物或物品。`,
         '只输出重写后的这一句，不要解释。',
-      ] };
+      ] });
     let answer = '';
     try {
       answer = (await args.engine.complete(target.lines.join(String.fromCharCode(10)), {
@@ -888,8 +910,11 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // Length is included: a draft can be short *and* invent something, and the
     // repair only touches the invented sentence. The full verifier still runs
     // on the repaired text, so a draft that stays too short is rejected.
+    // An echoed clause is also repaired sentence by sentence: the rewrite is
+    // asked to say the second occurrence differently instead of dropping it.
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
-      || issue.kind === 'unlicensed_action' || issue.kind === 'too_short');
+      || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
+      || issue.kind === 'loop_repeated_clause');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,
