@@ -133,7 +133,8 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     for (const object of held) {
       const owner = ownerOf(object.name);
       const note = object.note?.trim();
-      lines.push(`- ${object.name}${owner ? `（属于${owner}）` : ''}${note ? `：${note}` : ''}`);
+      const short = note && note.length > 60 ? `${note.slice(0, 60)}…` : note;
+      lines.push(`- ${object.name}${owner ? `（属于${owner}）` : ''}${short ? `：${short}` : ''}`);
     }
   }
 
@@ -175,8 +176,12 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     for (const entry of inScene) lines.push(`- ${entry.name}在${entry.location}。`);
   }
   const moved = new Set(projected.required.filter((fact) => fact.kind === 'moved').map((fact) => fact.name));
+  // Only worth saying when somebody did move: otherwise the "no change"
+  // sentence above already covers the whole scene.
   const still = [...presentNames].filter((name) => !moved.has(name));
-  if (still.length) lines.push(`本回合没有移动的人：${still.join('、')}。他们留在原地。`);
+  if (still.length && moved.size > 0) {
+    lines.push(`本回合没有移动的人：${still.join('、')}。${still.length > 1 ? '他们' : '这个人'}留在原地。`);
+  }
 
   if (projected.hints.length) {
     lines.push('另外的变化（用动作或神态表现，不要照抄原句、不要写数字）：');
