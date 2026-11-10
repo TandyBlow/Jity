@@ -106,8 +106,21 @@ ${trim(inputText, 1200)}`);
   // meaningful.
   lines.push('没有变化的人物可以保持不动，只写视角人物看到、听到、想到的东西。');
   if (policy.instruction) lines.push(`补充要求：${policy.instruction}`);
-  if (policy.knownEntities?.length) {
-    lines.push(`可用专名：${policy.knownEntities.join('、')}。不得出现名单外的专名。`);
+  // 09 offers every character/location/item in the world as `knownEntities`
+  // (120+ names for the free-day world). Listing them all invites name-dropping
+  // and roster recitals, so keep only names this point can actually use: the
+  // viewpoint, the scene's people/objects/place, and the fact actors.
+  const usableNames = new Set<string>([
+    ...(viewName ? [viewName] : []),
+    ...(scene ? [scene.location] : []),
+    ...(scene?.present ?? []).map((entry) => entry.name),
+    ...(scene?.objects ?? []).map((entry) => entry.name),
+    ...projected.packet.facts.map((fact) => fact.name),
+    ...(policy.viewpoint?.name ? [policy.viewpoint.name] : []),
+  ]);
+  const knownEntities = (policy.knownEntities ?? []).filter((name) => !scene || usableNames.has(name));
+  if (knownEntities.length > 0) {
+    lines.push(`可用专名：${knownEntities.join('、')}。不得出现名单外的专名。`);
   }
   return lines.join('\n');
 }

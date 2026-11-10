@@ -108,7 +108,20 @@ describe('prose projection', () => {
     expect(mergePositions([{ name: '周宁', location: '门厅' }], [{ name: '周宁', location: '走廊' }, { name: '林川', location: '门厅' }]))
       .toEqual([{ name: '周宁', location: '门厅' }, { name: '林川', location: '门厅' }]);
   });
+
+  test('a world-sized knownEntities list is reduced to the scene names', () => {
+    const text = renderNarrationUser(movePacket(), '', {
+      scene: { location: '门厅', present: [{ name: '林川' }, { name: '周宁' }], objects: [{ name: '盒子' }] },
+      knownEntities: ['林川', '周宁', '门厅', '盒子', '楚子航', '凯撒', '钟楼', '红方地图桌'],
+    });
+    const line = text.split(String.fromCharCode(10)).find((entry) => entry.startsWith('可用专名')) ?? '';
+    expect(line).toContain('林川');
+    expect(line).toContain('盒子');
+    expect(line).not.toContain('楚子航');
+    expect(line).not.toContain('钟楼');
+  });
 });
+
 
   test('a long previous passage is cut to its tail, not quoted whole', () => {
     // Unique head characters: a repeated filler would legally reappear inside
