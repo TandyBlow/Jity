@@ -172,13 +172,16 @@ export interface ProductSync<P> {
 export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSync<P> {
   const { worldId } = options;
   const baseUrl = options.baseUrl?.trim() ? options.baseUrl.trim() : null;
-  if (!options.storage && typeof globalThis.localStorage !== 'undefined') {
-    // 06's page used to forget this: the queue and the last known head then
-    // vanish on reload and an offline save cannot be uploaded later. Loud on
-    // purpose, once per adapter, so a real-page run notices instead of
-    // silently losing progress.
-    console.warn('[progress-sync] storage is not passed: the offline queue and the last known head will be lost on reload. '
-      + 'Pass storage: window.localStorage.');
+  // A browser has localStorage and nothing else to lose: use it unless the
+  // caller explicitly opted out with `storage: null`. 06's page forgot to pass
+  // it, so the queue and the last known head vanished on reload and an offline
+  // save could never be uploaded. Explicit `storage: null` still means "keep
+  // everything in memory".
+  const storage = options.storage === undefined
+    ? (typeof globalThis.localStorage !== 'undefined' ? globalThis.localStorage : null)
+    : options.storage;
+  if (!storage && typeof globalThis.localStorage === 'undefined') {
+    console.warn('[progress-sync] no browser storage: the offline queue and the last known head live in memory only.');
   }
 
   const client = new ProgressSyncClient<P>({
@@ -188,11 +191,9 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       throw new TypeError('progress service is not configured');
     },
     localStore: createLocalSnapshotStore(options.store),
-    headStore: options.storage
-      ? createWebStorageHeadStore(options.storage, options.headKey)
-      : undefined,
-    queueStore: options.storage
-      ? createWebStorageQueueStore(options.queueKey ?? 'jity.progress-sync.queue.v1', options.storage)
+    headStore: storage ? createWebStorageHeadStore(storage, options.headKey) : undefined,
+    queueStore: storage
+      ? createWebStorageQueueStore(options.queueKey ?? 'jity.progress-sync.queue.v1', storage)
       : undefined,
     timeoutMs: options.timeoutMs,
     retry: options.retry,

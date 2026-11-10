@@ -197,7 +197,52 @@ describe('product wiring survives a reload only with browser storage', () => {
     expect(store.records.get('w1')).toBeUndefined();
   });
 
-  it('warns once in a browser when storage is not passed', () => {
+  it('uses the browser store automatically when storage is not passed', async () => {
+    const memory = new Map<string, string>();
+    const fake = {
+      getItem: (key: string) => memory.get(key) ?? null,
+      setItem: (key: string, value: string) => { memory.set(key, value); },
+      removeItem: (key: string) => { memory.delete(key); },
+    };
+    const globals = globalThis as { localStorage?: unknown };
+    const previous = globals.localStorage;
+    globals.localStorage = fake;
+    try {
+      // Offline save with no `storage` option, then a fresh adapter (a reload)
+      // must find the queued upload and the head it was based on.
+      const first = createProductSync<{ turn: number }>({
+        store: typedStore(), worldId: 'w1', baseUrl: 'http://127.0.0.1:9/local-progress',
+        writeLocal: true, fetchImpl: offlineFetch, sleep: async () => undefined,
+      });
+      const saved = await first.save({ turn: 1 });
+      expect(saved.outcome?.status).toBe('queued');
+
+      let uploads = 0;
+      const online = (async (input: RequestInfo | URL) => {
+        const url = new URL(String(input));
+        if (url.pathname.endsWith('/snapshots')) {
+          uploads += 1;
+          return new Response(JSON.stringify({
+            snapshotId: 'snap-1', worldId: 'w1', parentSnapshotIds: [], revision: 1,
+            contentDigest: 'd', sizeBytes: 1, createdAt: '2026-01-01T00:00:00Z', reused: false,
+          }), { status: 201, headers: { 'content-type': 'application/json' } });
+        }
+        return new Response(JSON.stringify({ worldId: 'w1', headSnapshotId: null, revision: 0 }),
+          { status: 200, headers: { 'content-type': 'application/json' } });
+      }) as unknown as typeof fetch;
+      const second = createProductSync<{ turn: number }>({
+        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
+        fetchImpl: online, sleep: async () => undefined,
+      });
+      const flushed = await second.flush();
+      expect(flushed.uploaded + flushed.conflicts).toBe(1);
+      expect(uploads).toBe(1);
+    } finally {
+      globals.localStorage = previous;
+    }
+  });
+
+  it('keeps everything in memory when the caller passes storage: null', async () => {
     const memory = new Map<string, string>();
     const fake = {
       getItem: (key: string) => memory.get(key) ?? null,
@@ -211,18 +256,16 @@ describe('product wiring survives a reload only with browser storage', () => {
     globals.localStorage = fake;
     console.warn = (...args: unknown[]) => { warnings.push(args.join(' ')); };
     try {
-      createProductSync<{ turn: number }>({
-        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress', sleep: async () => undefined,
-      });
-      createProductSync<{ turn: number }>({
+      const sync = createProductSync<{ turn: number }>({
         store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
-        storage: fake, sleep: async () => undefined,
+        storage: null, writeLocal: true, fetchImpl: offlineFetch, sleep: async () => undefined,
       });
+      await sync.save({ turn: 1 });
     } finally {
       console.warn = originalWarn;
       globals.localStorage = previous;
     }
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toContain('storage is not passed');
+    expect(warnings).toHaveLength(0);
+    expect(memory.size).toBe(0);
   });
 });
