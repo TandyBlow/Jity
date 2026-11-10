@@ -334,6 +334,17 @@ describe('generateCandidate', () => {
     expect(result.accepted).toBe(true);
   });
 
+  test('a 240-char target treats a 100-char draft as too short and repairs once', async () => {
+    const short = '两分钟里，林川从走廊走到门厅。';
+    const long = '两分钟里，林川从走廊走到门厅，脚步在瓷砖上敲出回声，随后停在门边。周宁把盒子往怀里按了按，指节有些发白，呼吸也放轻了。走廊尽头的灯闪了一下，门厅那边传来一声轻响，像是有人在挪动椅子。她侧过身，眼睛始终没有离开那扇半开的门，直到四周重新安静下来，才把目光移向手里的盒子，指腹在盒盖上停了很久。';
+    const { engine, calls } = fakeEngine([[short], [long]]);
+    const result = await generateCandidate(args({ engine, policy: { ...args().policy, targetChars: 240, minChars: undefined } }), { spec: SPEC });
+    expect(result.rawAttempts[0]!.issueKinds).toContain('too_short');
+    expect(result.rawAttempts[1]!.prompt).toContain('正文太短');
+    expect(result.accepted).toBe(true);
+    expect(calls).toHaveLength(2);
+  });
+
   test('an engine deadline is terminal: no second call into a stopped worker', async () => {
     const { IncompleteGenerationError } = await import('../../../runtime/engine');
     let calls = 0;

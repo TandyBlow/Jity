@@ -92,7 +92,10 @@ function issuesOf(verification: CandidateVerification | null, text: string, poli
   for (const sentence of verification.unverified) {
     issues.push({ kind: 'unverified_sentence', detail: sentence, severity: 'soft' });
   }
-  const minChars = policy.minChars ?? 0;
+  // A scene asked for 240 chars that comes back at 100 is not the product's
+  // "complete body text". The explicit policy wins; otherwise use 60% of the
+  // target so a draft that stops after two sentences gets one bounded repair.
+  const minChars = policy.minChars ?? (policy.targetChars ? Math.round(policy.targetChars * 0.6) : 0);
   if ([...text.replace(/\s+/g, '')].length < minChars) {
     issues.push({ kind: 'too_short', detail: `${[...text].length} chars < minChars ${minChars}`, severity: 'hard' });
   }
