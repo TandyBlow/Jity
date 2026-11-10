@@ -44,7 +44,8 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 
 - `--set short` 先跑公开短场景三个点；`--set free-day` 是自由一日真实点位。`--only` 可只跑单个场景。
 - `mode:"program"` 时同一命令不需要模型：把 `--candidate-policy` 换成 `{"mode":"program"}` 即可（仍然会加载引擎，除非用 `--dry`/`--inspect`）。
-- 模型每回合最多 6 次顺序调用，`turnTimeoutMs` 用完后剩余段由程序写，不会把整回合拖过等待上限；`--hard-timeout-ms` 是 runner 自己的兜底。
+- 默认 `mode:"program"`：不显式写 `"mode":"model"` 就不会调用模型。
+- 模型每回合最多 6 段顺序调用，`turnTimeoutMs`（默认 180 s）用完后剩余段由程序写，不会把整回合拖过等待上限；`--hard-timeout-ms` 是 runner 自己的兜底。
 - 返回的 `rawAttempts` 里有每段的提示词、模型原始输出、这一段的全部问题；`composers` 标明每段谁写的（`model`/`program`/`program+model-failed`/`*:external`）。
 
 ## 3. 单元与类型检查（本线）

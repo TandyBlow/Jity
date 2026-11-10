@@ -83,7 +83,7 @@ const result = await generateCandidate({
   priorText,                 // 上一回合被接受的正文
   signal, onProgress,
   policy: {
-    mode: 'program' | 'model' | 'auto',
+    mode: 'program' | 'model' | 'auto',   // 默认 program：不显式要模型就不调用模型
     sanityStyle: 'direction' | 'number',   // 页面若仍要过旧门禁，用 number
     knowledge: { discoveredItemIds, visitedLocationIds, metCharacterIds },
     resultsText,                            // 本回合结算结果原话
@@ -119,7 +119,7 @@ const result = await generateCandidate({
 未验证 / 已知限制：
 
 - **model 模式（真实模型逐段写）尚未在浏览器里跑完**：共享推理租约从 05:59Z 起由 06-recovery 持有，且其会话仍在执行一个 25 分钟上限的真实回合，不是残留锁；本线按公约不删别线的锁。model 模式目前只有脚本引擎测试证明「每段一次调用、失败重写同一段、超出回合预算就换程序写」的流程成立。
-- 模型每回合最多 6 次顺序调用；0.5B 模型在 CPU 上的实际首段/整段耗时必须等真实运行才能给数，不能拿本文的毫秒数代替。
+- 模型每回合最多 6 段顺序调用（`maxBeats` 默认在 model 模式取 6、程序模式取 10）；0.5B 模型在 CPU 上的实际首段/整段耗时必须等真实运行才能给数，不能拿本文的毫秒数代替。`turnTimeoutMs`（默认 180 s）用完后剩余段由程序写，不会把整回合拖过等待上限。
 - 程序版句子模板有限，同一段连续多回合会换说法但不是无限多样；`avoidOpenings` 只能避开重复开头。
 - 人格/外貌的「撤销」事实（`removed`）只用被替换的旧句说明，没有独立的否认证词。
 - 事实包模式（没有完整状态）没有地点细节和在场人物，正文明显更薄。

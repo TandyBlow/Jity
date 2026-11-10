@@ -75,7 +75,9 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
   const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(100, 36 + changeCount * 8));
   const maxChars = policy.maxChars ?? 1400;
-  const modelRequested = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
+  // Program is the default: a caller that did not ask for model writing gets
+  // deterministic prose and no model calls. Model/auto must be explicit.
+  const modelRequested = policy.mode === 'model' || policy.mode === 'auto'
     ? policy.enableModel !== false
     : false;
   const planStarted = now();
