@@ -235,6 +235,12 @@ describe('turn execution through the real kernel', () => {
     for (const task of updates) expect(task.stages?.slice(0, 4)).toEqual(['position', 'appearance', 'tasks', 'subtasks']);
     const full = updates.find((task) => task.stages?.length === 6);
     expect(full?.stages).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    // The ledger carries the coverage counts, so the page evidence can prove the
+    // task/personality answers covered the whole cast, not just the room.
+    const cast = Object.keys(initial.characters).length;
+    expect(full?.coverage).toEqual({ tasks: cast, personality: cast });
+    expect(Object.keys(full?.stageMs ?? {})).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    expect(Object.values(full?.stageMs ?? {}).every((ms) => Number.isFinite(ms) && ms >= 0)).toBe(true);
     expect(submission?.continuationCalls).toBe(1);
   });
 

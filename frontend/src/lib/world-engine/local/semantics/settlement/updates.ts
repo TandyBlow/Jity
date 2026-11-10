@@ -282,6 +282,9 @@ export class UpdatesRunner {
       personalityChangedIds: [...mergedPersonalityOwners].sort(),
       stages: outcomes.map((outcome, index) => ({
         stage: SETTLEMENT_STAGES[index],
+        // Per-stage model time is what a slow-turn investigation needs; the
+        // whole updates task has its own total in the ledger.
+        ms: joinedMs(outcome.calls),
         error: outcome.error ?? null,
         fallback: outcome.fallback,
         ...outcome.detail,
