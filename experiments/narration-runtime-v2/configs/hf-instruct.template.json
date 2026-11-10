@@ -15,15 +15,16 @@
     "source": "",
     "revision": "",
     "file": "",
-    "sha256": null
+    "sha256": null,
+    "combinedSha256": null
   },
   "data": {
-    "file": "data/rows-v2.jsonl",
-    "manifest": "data/manifest.json",
+    "file": "experiments/narration-runtime-v2/data/rows-v2.jsonl",
+    "manifest": "experiments/narration-runtime-v2/data/manifest.json",
     "sha256": "a9b7ca0971c21b79b348c639a6819ffc2570767484fb28a6c3c99c6fa119fb55"
   },
   "splits": {
-    "file": "../world-components/narration-dataset-v1/splits/v1.json",
+    "file": "experiments/world-components/narration-dataset-v1/splits/v1.json",
     "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836"
   },
   "seed": 20261109,

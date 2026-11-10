@@ -108,8 +108,11 @@ def hf_lengths(config: Dict[str, Any], rows: List[Dict[str, Any]]) -> Dict[str, 
         return {"ok": True, "skipped": "config status=pending; no base/tokenizer selected",
                 "problems": []}
     base = resolve_path(config["base"]["file"])
+    tokenizer_path = base
+    if config.get("tokenizer", {}).get("file"):
+        tokenizer_path = resolve_path(config["tokenizer"]["file"])
     from transformers import AutoTokenizer
-    tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True,
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, local_files_only=True,
                                               trust_remote_code=False)
     if tokenizer.eos_token is None:
         return {"ok": False, "problems": ["tokenizer has no eos token"], "lengths": {}}
@@ -193,9 +196,10 @@ def main() -> int:
         summary["sourceChecks"] = {"skipped": "frozen source directory is not present",
                                    "sourceDir": legacy.SOURCE_DIR}
 
-    dict_path = resolve_path(args.dict or config.get("tokenizer", {}).get("file", ""))
+    tokenizer_file = args.dict or config.get("tokenizer", {}).get("file", "")
+    dict_path = resolve_path(tokenizer_file) if tokenizer_file else ""
     profile = None
-    if dict_path and os.path.exists(dict_path):
+    if dict_path and os.path.isfile(dict_path):
         profile = load_tokenizer_profile(dict_path)
         summary["tokenizer"] = {key: value for key, value in profile.items() if key != "vocab"}
         if config.get("tokenizer", {}).get("sha256") and \

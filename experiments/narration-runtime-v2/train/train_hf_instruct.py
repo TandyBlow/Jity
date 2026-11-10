@@ -144,7 +144,7 @@ def main() -> int:
     test_rows = [by_id[row_id] for row_id in test_ids]
 
     template = config["template"]
-    tokenizer = AutoTokenizer.from_pretrained(base_path, local_files_only=True,
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, local_files_only=True,
                                               trust_remote_code=False)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -367,7 +367,8 @@ def main() -> int:
             "dataPath": os.path.abspath(data_path), "dataSha256": data_sha,
             "splitsPath": os.path.abspath(splits_path), "splitSha256Lf": split_sha,
             "basePath": os.path.abspath(base_path), "baseHashes": base_hashes,
-            "tokenizerPath": os.path.abspath(base_path),
+            "tokenizerPath": os.path.abspath(tokenizer_path),
+            "tokenizerHashes": tokenizer_hashes,
             "trainIdsSha256": sha256_text("\n".join(train_ids) + "\n"),
             "devIdsSha256": sha256_text("\n".join(dev_ids) + "\n"),
             "testIdsSha256": sha256_text("\n".join(test_ids) + "\n"),
