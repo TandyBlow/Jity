@@ -77,7 +77,11 @@ describe('run-1 failures stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '芬格尔把电池从口袋里摸出来，换上相机。' });
   });
 
-  it('A6: the protagonist task goal is not a continuation', async () => {
+  it('A6: a consumed protagonist opportunity never reaches the model, so no goal can become one', async () => {
+    // run-5 produced Nono's/Lu's task goal as the protagonist's next step
+    // because the protagonist was still sent to the model after the command
+    // was consumed. The product now answers a consumed protagonist slot with
+    // a program skip, so the goal string has no path into a player action.
     const engine = new ScriptedEngine([
       '{"kind":"act","text":"向诺诺问清当前红蓝两方局势和自己是否可以保持中立"}',
       '{"kind":"act","text":"路明非把护目镜往上推了推，眯眼看向巷口。"}',
@@ -85,9 +89,10 @@ describe('run-1 failures stay rejected', () => {
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('lu', action(base, 'lu', '我把护目镜推上去，先看巷口的动静。', 'consumed'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '路明非把护目镜往上推了推，眯眼看向巷口。' });
+    expect(result.source).toBe('program');
+    expect(result.value).toEqual({ kind: 'skip' });
+    expect(engine.prompts).toHaveLength(0);
+    expect(codes(result)).toContain('protagonist_command_consumed');
   });
 
   it('A7: a copied squad goal is not an action', async () => {
@@ -154,16 +159,18 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
 
   it('A6: another character goal is not the protagonist continuation', async () => {
     // run-5: the model produced Nono's goal as the protagonist's next step;
-    // the actor-only goal list missed it.
+    // the actor-only goal list missed it. The consumed-protagonist rule above
+    // closes the path from a goal string to a player action; this pin keeps
+    // the all-character goal guard itself covered on an NPC actor.
     const engine = new ScriptedEngine([
       '{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}',
-      '{"kind":"act","text":"路明非把护目镜往上推了推，眯眼看向巷口。"}',
+      '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
     ]);
     const handlers = createActionHandlers({ engine });
-    const result = await handlers.action('lu', action(base, 'lu', '我把护目镜推上去，先看巷口的动静。', 'consumed'));
+    const result = await handlers.action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
 
     expect(result.attempts).toBe(2);
     expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '路明非把护目镜往上推了推，眯眼看向巷口。' });
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺抬手指了指钟楼方向，没有接话。' });
   });
 });

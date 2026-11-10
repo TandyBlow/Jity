@@ -24,7 +24,7 @@ export type ActionIssueCode =
   | 'actor_out_of_scene'
   | 'protagonist_command'
   | 'protagonist_no_input'
-  | 'protagonist_continues'
+  | 'protagonist_command_consumed'
   | 'protagonist_reaction_minimal'
   | 'protagonist_reaction_model'
   // action value
