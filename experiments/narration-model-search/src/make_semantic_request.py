@@ -63,7 +63,10 @@ def main() -> int:
              "collect.py", "verify_preflight.py", "build_semantic_case_from_state.py")}
     request = {
         "lane": "11-model-search",
+        "requestId": "11-model-search-semantic-001",
         "id": "11-model-search-semantic-001",
+        "from": "11-model-search",
+        "to": "10-training",
         "kind": "structured-semantic-probe",
         "batchId": "semantic-73-two-cases-1",
         "priority": "small exploratory probe (12 calls, 6 model loads); below product blockers "
