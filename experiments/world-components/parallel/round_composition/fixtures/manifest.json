@@ -1,0 +1,785 @@
+{
+ "version": "round-composition-manifest-v0.1",
+ "experiment": "C7 / R11 offline round composition",
+ "recordedAt": "2026-11-08T09:18:35.802291+00:00",
+ "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
+ "git": {
+  "branch": "exp/c-round-composition",
+  "headAtRecording": "a1e4b5a725d61c578a998d99c2cd079b24f878bc",
+  "headSubject": "C7 round composition: restore N4 global invariants, share identity record, N5 v4.2",
+  "porcelain": [
+   "M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/character_identity.py",
+   " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
+   " M experiments/world-components/parallel/round_composition/fixtures/n4-groups-rb-move-outcome.txt",
+   " M experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration-key.json",
+   " M experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration.json",
+   " M experiments/world-components/parallel/round_composition/make_reviewer_packet.py",
+   " M experiments/world-components/parallel/round_composition/n4_groups.py",
+   " M experiments/world-components/parallel/round_composition/record_manifest.py",
+   " M experiments/world-components/parallel/round_composition/rejudge_archives_v4.py",
+   " M experiments/world-components/parallel/round_composition/second-reviewer-plan.md",
+   " M experiments/world-components/parallel/round_composition/test_n4_groups.py",
+   "?? TASK.md"
+  ]
+ },
+ "environment": {
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0"
+ },
+ "sources": {
+  "N1_fact_extraction": [
+   {
+    "path": "experiments/world-components/narration_pipeline.py",
+    "sha256": "5f8e311d21a279f735bb84574dbb2fb1a6f00d641460263728db8f61e6c06866",
+    "bytes": 101408
+   }
+  ],
+  "N2_selection_rule": [
+   {
+    "path": "experiments/world-components/n2_perspective.py",
+    "sha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+    "bytes": 20076
+   }
+  ],
+  "N3_organization_check": [
+   {
+    "path": "experiments/world-components/n3_organize.py",
+    "sha256": "12b6db4728505105a5805ed61c09c540f56c989755ad0b9688147346a4254913",
+    "bytes": 16551
+   }
+  ],
+  "N4_0_scene_and_packing": [
+   {
+    "path": "experiments/world-components/n4_input_renderer/__init__.py",
+    "sha256": "940564933d4460165a4b236f074b4d9b0a2aa4f0506ee79a4ddcb093d270bac3",
+    "bytes": 761
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/packer.py",
+    "sha256": "6e5d1e5e815740f49baa3d751fd455b2a3192499888f11e9472ddd0d0b67a1b7",
+    "bytes": 11696
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/renderer.py",
+    "sha256": "e43b28c3ec86394c3fefe0cfbb5395d4c470a0dd4819d493d52e0146cb947227",
+    "bytes": 13426
+   },
+   {
+    "path": "experiments/world-components/n4_input_renderer/scene_context.py",
+    "sha256": "57d71610864c33084b90c81bf2b78a7afd3bcac3077e203b1cf9dafa35cc8a78",
+    "bytes": 7975
+   }
+  ],
+  "N5_rule_v2_aligner": [
+   {
+    "path": "experiments/world-components/n4_corpus_v2/eval_n4_v2.py",
+    "sha256": "b283c1a4c0c9e4eca3cec7065acdc1957760653b07cc19bcb8c7d6aabdfd6ea1",
+    "bytes": 21727
+   }
+  ],
+  "N5_rule_v7_recognizer_crosscheck": [
+   {
+    "path": "experiments/world-components/n4_corpus/corpus_check.py",
+    "sha256": "27197e681d978c7c6817e1cf67464ff5d072c7c43d97734df62ca61287088655",
+    "bytes": 29074
+   }
+  ],
+  "N3_plan_baselines_and_interface": [
+   {
+    "path": "experiments/world-components/n2_selection/n3_plan.py",
+    "sha256": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+    "bytes": 6618
+   },
+   {
+    "path": "experiments/world-components/n2_selection/n3_n4_fixture.py",
+    "sha256": "8c4d1943321429d5cfeb97bcdf28b563ccabeeb5c4c5490229b82f3d5e6a79d7",
+    "bytes": 38178
+   }
+  ],
+  "legacy_renderer_units": [
+   {
+    "path": "experiments/world-components/n4_corpus/n4_render.py",
+    "sha256": "b436d4b23ef059832740701fed83583a40b5809fe0e07fa19395ae7a98f352cd",
+    "bytes": 6380
+   }
+  ],
+  "contracts_and_rules": [
+   {
+    "path": "design/world-engine-reports/components/component-contracts.md",
+    "sha256": "17a99ae5f90603865848393b62f25427f5cf67c648a576e6b2be036a59c471c2",
+    "bytes": 42699
+   },
+   {
+    "path": "design/world-engine-reports/components/n4-input-packing.md",
+    "sha256": "04c9683b9bcf1fcc05fc5f878fd34a3de97e46c7103cc44d0a9d34e851f08a89",
+    "bytes": 9263
+   },
+   {
+    "path": "design/world-engine-reports/components/n4-narrative-dev.md",
+    "sha256": "d3b41f411fd6433df0be26f09a7af79edc3abc6bef3d80c60eeacb6053552e07",
+    "bytes": 50294
+   },
+   {
+    "path": "design/world-engine-reports/components/n2-annotation-rubric.md",
+    "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631",
+    "bytes": 5827
+   }
+  ],
+  "previous_composition_archives": [
+   {
+    "path": "artifacts/world-components/n1-n5-composition-r1.json",
+    "sha256": "2e7bcf42a477614b1a585ed497d368a8fd726008590abd7363ba94f4da05ae59",
+    "bytes": 5145
+   },
+   {
+    "path": "artifacts/world-components/n1-n5-composition-v2-r1.json",
+    "sha256": "fcdc4a35f555028aef3f386ee635295e01b45435416557f2a4776caaa4b37e56",
+    "bytes": 9226
+   },
+   {
+    "path": "artifacts/world-components/n4-input-packing-r1.json",
+    "sha256": "6feff5fbb18a6e86053523d84cc3fb6e6fe08510bdc20c111a5bf19dcbc650a9",
+    "bytes": 3599
+   }
+  ],
+  "this_experiment": [
+   {
+    "path": "experiments/world-components/parallel/round_composition/.gitattributes",
+    "sha256": "8f2fbdf4381c479ed6f6d318605df027842c04cd666ff64e10b6e8ecf58b0c88",
+    "bytes": 246
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/README.md",
+    "sha256": "42e46dddaf35d2e9012a23bbe8a4c79f5292b0d360a3f665dd185831d6dbb544",
+    "bytes": 49146
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/conclusion.md",
+    "sha256": "04d17db8c3e2701fcecc16d626d8ce9d288101448130d26fd978056a710168e3",
+    "bytes": 2088
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/contract-decisions.md",
+    "sha256": "97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba",
+    "bytes": 19902
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/contract_probes.py",
+    "sha256": "8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c",
+    "bytes": 9425
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v3.py",
+    "sha256": "5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54",
+    "bytes": 21216
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/compose_v3.py",
+    "sha256": "e1c331e3b4a75dbe09da68bacb7c619e63345a858ac54185ea176b036d5b766e",
+    "bytes": 36026
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_v3_fixtures.py",
+    "sha256": "e33e95c937f4531e798cf9e725ae139300121fa1b88be45b99d86f61052ab39f",
+    "bytes": 19992
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v3.py",
+    "sha256": "d41d378f95353a8fd5705143a4dca157a44711bb096ece6091883b262892f1c8",
+    "bytes": 16517
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/human-review-v1.md",
+    "sha256": "c7522ed3b1686c479f576f06a2fd00476627630490da8555620c732e3b4524fa",
+    "bytes": 4435
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+    "sha256": "3a03c0813edf11e819a8d163a325a6a78d1bc25673d856c2ffe39da1f0b840b0",
+    "bytes": 74329
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/annotations-v1.json",
+    "sha256": "3a3ede5e4b8064a732fadba2fb6ce776b87457870d2416dfe97ab800ff94e2e1",
+    "bytes": 2204
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/console-v3.log",
+    "sha256": "31607a547582bd5fb703f1693c98f655bb1ad17b6376485613f5944381c8f1dc",
+    "bytes": 3215
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_real_batch.py",
+    "sha256": "f957de2e6439072b3f331c09bbabb3b556b246c82a7550d34404e6105e03ef06",
+    "bytes": 22288
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real_batch.py",
+    "sha256": "b3870908bf7717b18772b98d5064ae6465c1c9061f9d0fcd1cd844d3d376ee63",
+    "bytes": 16853
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/write_review_v1.py",
+    "sha256": "058a465a42f0e4cce57f6242bdf6b53e5004a193e6cc8b1d23b0172e1a64d0d9",
+    "bytes": 11010
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/apply_review.py",
+    "sha256": "ca59bb33d55d07ec96262faea576f045bff2577eed1e376d41e5d66fc2486a63",
+    "bytes": 5476
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real-batch-v1.md",
+    "sha256": "53090c36e9fb6be7d4c4d3ff5f1a4eff5acdcaf4ee5ebd25cee226f89ff6357c",
+    "bytes": 12045
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v1.json",
+    "sha256": "b5f62d5e313a00731735f954c9c7ef4f8baac38de609e6d50c1539913101bb2e",
+    "bytes": 3785
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v1-cases.json",
+    "sha256": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7",
+    "bytes": 120239
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v1.json",
+    "sha256": "d84f67ed1a32d4414d14b5615c62ad9a628565b6e54939d7aeda156094fe45f0",
+    "bytes": 13535
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v1-raw.jsonl",
+    "sha256": "666d260be3130852b0a7029eb9adc009da428fc3b0970417d59ee590bce3b8a8",
+    "bytes": 85385
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v1-summary.txt",
+    "sha256": "ed9b06ebb1dce8fc0eb784a9d416b450667db017c1898756ac496d54845d2ddc",
+    "bytes": 2064
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/errata-v1.json",
+    "sha256": "80f2cee4ddad0df1605c6d5c7a898ea6153a20fba082b6480d5222238d42c19d",
+    "bytes": 3954
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v2.json",
+    "sha256": "592bd1e2599a093c6d024e73b33897401337a5ab511b13dc6493e84355e9a8ab",
+    "bytes": 4308
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v2.json",
+    "sha256": "41954324dd015d6128e9d544fec1f87dc890365a2f553fd5720f8e40ec4325ea",
+    "bytes": 24631
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_real_batch_v2.py",
+    "sha256": "7b38b959f6b19faa52b9f88745afc5fb31887f12e152cda60a5d5c57cda4032a",
+    "bytes": 6844
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real_batch_v2.py",
+    "sha256": "0dc3965a04485e3bc169774ec81e351860e1ceaee48ff1a48e67ae9c1ea0850e",
+    "bytes": 18049
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/write_review_v2.py",
+    "sha256": "470c73c0e7104357ae1bb8f03a63baa3eb10426b3c9ce8af46154364fe32fd76",
+    "bytes": 12064
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_tripwire_v2.py",
+    "sha256": "4123181fa0bb3fecf20388769c5502a2cbede65587012ec395fdb2a8c56b7022",
+    "bytes": 2074
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real-batch-v2.md",
+    "sha256": "79872a71700e8f4a5899436eadaee9a1ccd69acd4906debec0317e0a984d8928",
+    "bytes": 9190
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v2-raw.jsonl",
+    "sha256": "27666bbc9cdbf0e7ee652b5b484af60234411b3b02501f3a943c10b8dc0a6514",
+    "bytes": 120662
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v2-summary.txt",
+    "sha256": "e62b0c2268ea7c2efcf7218b8070d0e51de3984cb5d5dbe79efc21dd5231e406",
+    "bytes": 1964
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/errata-v2.json",
+    "sha256": "ef2354d44dbc0912acc3502b01fc355be74e55ee5a0c12593528218a0007702b",
+    "bytes": 2315
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/errata-v3.json",
+    "sha256": "ae51359de2b5298b0b4d21f36e4bf6102ce97f123ceb036a0f201be67f28ec77",
+    "bytes": 1164
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v3.json",
+    "sha256": "c6cca23eb243f1c672ef1b57f4f2528aaae3648945a5149ab78002c53943fa03",
+    "bytes": 5710
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v3.json",
+    "sha256": "38c51fe3d58bb7ef6070d692babf8958764db6416baa83f5f71388c7e044637d",
+    "bytes": 13469
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_real_batch_v3.py",
+    "sha256": "7d701521f37d734d9abce5777ef24a4398be1c900f0aece66c253ae752b44b4d",
+    "bytes": 9520
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real_batch_v3.py",
+    "sha256": "d48bedcb1b36ca0b0fc98517c7530b8b11ea68f69b45efea221449530a7cf351",
+    "bytes": 19774
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/write_review_v3.py",
+    "sha256": "c13bb0eb3b71ecea18c49ba10ea0771cec0860ed87ad30a3e8ef7cd4a0982829",
+    "bytes": 10894
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real-batch-v3.md",
+    "sha256": "bec4dc1d0ade3f9d675d257b8beea623f0e5b58cf864fb5ac3b48a918373667a",
+    "bytes": 8564
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-raw.jsonl",
+    "sha256": "2853217f0c0cb92aebd058673614a75a108c5fda87485b2e5c306e7d21aace08",
+    "bytes": 84328
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-summary.txt",
+    "sha256": "955fd6fc36e0a36b91f35e45f5fa2391dac674e408af077f0f50d985f531ad2e",
+    "bytes": 2329
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-aborted-no-intervention.json",
+    "sha256": "9e7c2318cfa4229e608dbb2d81b0ce56186c267fa1f08284d82a2748ae385d94",
+    "bytes": 328686
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/probe_judge_gaps.py",
+    "sha256": "1691271f5a52031f01a7ab5ecc1a8d9512ab99def76ac3dac29da18d9cd12d88",
+    "bytes": 11164
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge-gaps.md",
+    "sha256": "a170e361c480363b95135de70dcef3101a1c498f352da9030d8ca7f1a96e9f49",
+    "bytes": 5056
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/judge-gaps-probes.json",
+    "sha256": "174333d5a94eb2fd9ec720c2afe437da50a2421f1139d824e484ccabaa476e5a",
+    "bytes": 22372
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/judge-gaps-probes.log",
+    "sha256": "706be4ca7073a37e32bc74b6bd9ffc921b860721f0e60103bcce540af624052d",
+    "bytes": 4409
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_fact_omission.py",
+    "sha256": "6c397131b63870b4078878fa338f158434ba302aa7e38a22a9a725c3893d0274",
+    "bytes": 12725
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/fact-omission-v3.json",
+    "sha256": "33feafb26124c3580a25ff293f048e70dadc7766487190db05adac72b391edae",
+    "bytes": 7807
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fact-omission-v3.md",
+    "sha256": "7a9084dc13ec71a558f5de9108e46ef5f4ef5db224cd8c4445d664e0827304c7",
+    "bytes": 5708
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/runner_guards.py",
+    "sha256": "15191f90c69696166f456250ce07987ce0b338bb5c9fba8e8e3119bb5a9eaf8c",
+    "bytes": 6698
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_runner_guards.py",
+    "sha256": "a13c01d93e4a694b2d00a3c3ccf06b9c9f6f72b932aef0b2ee030acef62153e1",
+    "bytes": 6405
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/review-response.md",
+    "sha256": "0670980a78ab43e5d7aed7489b7f5c46e27fea0aa09a071dd6b6dc9041434094",
+    "bytes": 4332
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v4.py",
+    "sha256": "b13af17aa1eaa2561fb8e67319f5c180c621557657d70308764e9a531b4693e2",
+    "bytes": 13040
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v4.py",
+    "sha256": "7f4456b6ee81d6dd5960e84cc9a9bf47ae22d5dd064c1a30a8779a8cb977808a",
+    "bytes": 10473
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/rejudge_archives_v4.py",
+    "sha256": "b8651e2318cf93c67da0a034d378a7b9f3db83565ca11c59d6b2257f1cc52c46",
+    "bytes": 5579
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n5-v4.md",
+    "sha256": "5179bec2a07235681c3d0b8c107022da0b61e658096617ef5460083cf02b899d",
+    "bytes": 4686
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n4-input-design.md",
+    "sha256": "bf0b47555bffae7620e1186e7dbbe19596576d6eca27078c8d542dd9975049f0",
+    "bytes": 8801
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/second-reviewer-plan.md",
+    "sha256": "918bb482219884d7d270374cd304ccbb8c19396fcbdaaec6eab4707a45319e80",
+    "bytes": 4768
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_reviewer_packet.py",
+    "sha256": "f95ba03a7f848ce22f5a24321d26c7eea820abff39dbaf398d099ab6bed0479d",
+    "bytes": 9227
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-packet-v3.json",
+    "sha256": "10aa7365aaefcab78b32a206cea25fc0feaa553a3f9a1d7fc516721ab63e5e5e",
+    "bytes": 17947
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration.json",
+    "sha256": "bb34a13e6b50a4142a3e04cfd8c2eee057ad05f234be19d2cc35edcf5cefd509",
+    "bytes": 4103
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration-key.json",
+    "sha256": "7ce09400ad553653ec3cb3fa48c3f9b07cc15ea9f340dcf971021cd2aaee846b",
+    "bytes": 968
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v4_1.py",
+    "sha256": "0af6d8cae41834e5b830ede9d973440756a9eb08226c59e824ec6b951f3988cf",
+    "bytes": 17941
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v4_1.py",
+    "sha256": "2f1957dd556b9f6254d8b1ac5f68742472d29892f3564f9ad445e8ec4e98e334",
+    "bytes": 8002
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n5-v4-1.md",
+    "sha256": "71e11aa5bb16f3a8421488f9edde62ce1f79ee782674d33435b35c600e1a1252",
+    "bytes": 4112
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n4_groups.py",
+    "sha256": "031f40a83b6832b95433a2cd35d85d785429d3cc532183a969d78f4b01a05a7c",
+    "bytes": 11638
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_n4_groups.py",
+    "sha256": "e100577a03071bf2b21e6025b2b76bdec3a9feed8709e9368e79b9e10f372702",
+    "bytes": 9348
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/n4-groups-rb-move-outcome.txt",
+    "sha256": "998eb20cdb9d60e7d96e3a4d21db0756017b2f61ade0fd6364a22e0783663758",
+    "bytes": 929
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/character_identity.py",
+    "sha256": "83a820ae108350857d0eb3def0978540e007d7efb35a53e271d3786ed8e8d779",
+    "bytes": 6269
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v4_2.py",
+    "sha256": "0acc37faedad6c9fbbdd5790237475d859686b0af0f330c70928f3a2101ca998",
+    "bytes": 19459
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v4_2.py",
+    "sha256": "6294cabfacf3678b38336fb47cec82d54a75686eab4df330ae2d541d72bf0457",
+    "bytes": 6447
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n5-v4-2.md",
+    "sha256": "3a48905c13d1ace1d2076b29f171d3477c54571aebc13b0c309e3b32dcdf4a3e",
+    "bytes": 3326
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v4_3.py",
+    "sha256": "0c760fd8ec336acad97db3eeec029685d21016563b8e32995bca05b85bb57206",
+    "bytes": 20963
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v4_3.py",
+    "sha256": "37a142ddf6df208714f6cb1ef12feb2bc50a3e1684ceef60d6a47b00c1735eb1",
+    "bytes": 4971
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n5-v4-3.md",
+    "sha256": "fdd24faed4635e60fa91461bc9e859d1784dbb99ed09627b691a10bf815a170a",
+    "bytes": 2127
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v3-independent-TEMPLATE.json",
+    "sha256": "531f6ffa1b983dd949562fa5c584833cb14e701e7369e8700820aa7e4c34ab54",
+    "bytes": 5542
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/compose.py",
+    "sha256": "0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020",
+    "bytes": 24229
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_fixtures.py",
+    "sha256": "c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735",
+    "bytes": 14646
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/cases.json",
+    "sha256": "b4f55779218715ef255dc2a795a1271d1f914c8a99f775676a7d017a2a7291df",
+    "bytes": 164769
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/mocks.json",
+    "sha256": "6051a7afab4094f4f08120aa96bd6b42eb43c5691d347656096ecd03a1c32627",
+    "bytes": 6440
+   }
+  ]
+ },
+ "outputs": [
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4-1.json",
+   "sha256": "065c654a1124ec2dd61fff91a7c307b1f23c521e22563643a4c40e29006f0f0c",
+   "bytes": 29064
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4-2.json",
+   "sha256": "d5ef2c04a9236f2bf5c2d7d9debb4ac4352a56277720713e872b95bfb24ab952",
+   "bytes": 29061
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4-3.json",
+   "sha256": "91fc428ed27f55989efea3bcd0258cfc14aa2e50fffb4348098b7486922a54c8",
+   "bytes": 29046
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4.json",
+   "sha256": "929c797686bfe500e673e0673120e31028fe3aa7bad77d42c3994cc89bd73896",
+   "bytes": 29060
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-run.json",
+   "sha256": "b594c0085d03cc783938d29570a35a02aacb748e155fecf06c67c79b8444dc8d",
+   "bytes": 172858
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\composition-v3-run.json",
+   "sha256": "cb40fcc05c16ef0e752a49751ef9f55613b9f6d01047e4a62b27f7dd74f937a6",
+   "bytes": 192252
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\contract-probes.json",
+   "sha256": "57e27e0c076dd5ac6a07c402e7d8bc90336a0cb472442392abe83a4a226cefdf",
+   "bytes": 4078
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-a.json",
+   "sha256": "184599975ef05e32af21b30b8532de3e941d82d3dae7a00be4d5970faa3a2bd7",
+   "bytes": 172862
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-b.json",
+   "sha256": "e2b95e7427f74c49ee2bd3464556ea6a6821a80dd0c772437ae4a99334189b36",
+   "bytes": 172865
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-a.json",
+   "sha256": "d9abe58c26d9ca7532775cdffa04b04c153e0b526c00b74fba487621777583ec",
+   "bytes": 192261
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism-v3-b.json",
+   "sha256": "46d3493d55067f734ebd7db0f7150606be1f6fc4be1fc5658f18e9703b795159",
+   "bytes": 192247
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\determinism.json",
+   "sha256": "43aa5b7a4b2a9248a842cbb76136994b6d98d3af58285f14e77b71950edfb644",
+   "bytes": 577
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\judge-gaps-probes.json",
+   "sha256": "174333d5a94eb2fd9ec720c2afe437da50a2421f1139d824e484ccabaa476e5a",
+   "bytes": 22372
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v1-reviewed.json",
+   "sha256": "adbb81408f6930d42293ad4208eda9e555254679ae601e5cdd8fb4e272487dc4",
+   "bytes": 240223
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v1.json",
+   "sha256": "132b19827c56337ef2b7d5b51843ceda078522216c09de4fc1ca36a6bf40251f",
+   "bytes": 225097
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v2-reviewed.json",
+   "sha256": "8da96520841615f414436b9ff0945ee48e10b1c70676ec71e3bea018545de078",
+   "bytes": 337833
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v2.json",
+   "sha256": "456dc6c9dfedfe158c17e189c0458c2c3574f2106f5fb684d89ad565ca95f387",
+   "bytes": 313394
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3-aborted-no-intervention.json",
+   "sha256": "9e7c2318cfa4229e608dbb2d81b0ce56186c267fa1f08284d82a2748ae385d94",
+   "bytes": 328686
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3-reviewed.json",
+   "sha256": "fa941b61c03074d58a2d42acb137f811af4f642e407a60ee8d5377fad38b9100",
+   "bytes": 239620
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3.json",
+   "sha256": "fc24c9fd849ca0fc33abee22e9e118d676a252bc1ab30bfdcfada9e004ae652d",
+   "bytes": 226173
+  }
+ ],
+ "missing": [],
+ "n5Rules": {
+  "v3_adjudicated": {
+   "file": "judge_v3.py",
+   "version": "n5-v3",
+   "applies": "out/composition-v3-run.json only",
+   "D1": "outcome + resultText; missing resultText blocks (JudgeBlocked outcome-result-missing); the goal is never accepted as a substitute",
+   "D2": "vague expression accepted; any stated duration is parsed and compared with the authoritative time fact",
+   "D3": "hard gates only; quality() returns pending/undetermined unless an executed N6 result is supplied",
+   "D5": "G4/G5 data-triggered; the judge takes no rowId",
+   "D4": "unregistered names come from human labels: unchecked -> count null, checked-and-clean -> 0"
+  },
+  "v2_frozen": {
+   "file": "eval_n4_v2.py",
+   "applies": "out/composition-run.json (kept unchanged)",
+   "note": "still rowId-substring triggered; still requires the exact time value and the quoted task goal"
+  }
+ },
+ "n5Rule": {
+  "gating": "eval_n4_v2.judge_row (frozen v2 holdout gate): G1 alignment/must coverage, G2 residue name+goal scan, G3 exact time value, G4 conflict names (rowId-gated), G5 same-name bare (rowId-gated), G6 no truncation. P1/P2 pronoun gates are aggregate-level and not used per case.",
+  "recordedOnly": "corpus_check.check_narration via narration_pipeline.verify_text (v7 recognizer): must-coverage and unrecognized content are review-class, no truncation rule. Archived as n5CrossCheck; never gates, never auto-passes.",
+  "semanticReview": "not run in this experiment"
+ },
+ "n5GateCoverage": {
+  "status": "measured",
+  "archive": "composition-run.json",
+  "archiveSha256": "b594c0085d03cc783938d29570a35a02aacb748e155fecf06c67c79b8444dc8d",
+  "trigger": "eval_n4_v2.judge_row gates: G1/G2/G3/G6 always run; G4 runs only when rowId[case] contains 'conflict' and G5 only when it contains 'same-name'",
+  "executed": {
+   "G1_alignment": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G2_no_fabrication": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G3_time": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   },
+   "G4_conflict_names": {
+    "evaluations": 2,
+    "cases": [
+     "contract-time-conflict"
+    ],
+    "values": [
+     true
+    ]
+   },
+   "G6_no_truncation": {
+    "evaluations": 14,
+    "cases": [
+     "contract-time-conflict",
+     "fail-n5-extra-actor",
+     "fallback-unsupported-kind",
+     "n5-false-pass-unregistered-actor",
+     "normal-inner-change",
+     "normal-move-task",
+     "normal-two-actors",
+     "reject-n5",
+     "retry-n5-success"
+    ],
+    "values": [
+     false,
+     true
+    ]
+   }
+  },
+  "notExecuted": [
+   "G5_same_name_bare"
+  ],
+  "notes": {
+   "G4": "evaluated only on the case whose caseId contains 'conflict' (contract-time-conflict). That case has ONE actor (two facts, both 管线甲), so G4 took its 'same-name multiple mention' branch text.count(name)>=2; this is an ACCIDENTAL trigger, not a validated conflict case. No designed two-actor conflict case exists in this composition.",
+   "G5": "not executed: no caseId contains 'same-name'.",
+   "G3": "evaluated on one case carrying a time fact; it fails on the N4.0-compliant vague time and passes only on an exact value (see out/contract-probes.json)."
+  }
+ },
+ "tokenGate": {
+  "applied": false,
+  "reason": "mock ports take text, so no N4 token limit applies here; N4.0 packs measure 287-390 tokens with the T5 tokenizer in the archived n4-input-packing-r1 record, and no checkpoint is present in this worktree to recount"
+ }
+}

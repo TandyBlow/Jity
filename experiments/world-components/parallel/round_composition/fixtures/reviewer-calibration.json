@@ -1,0 +1,174 @@
+{
+ "version": "reviewer-calibration-r3",
+ "note": "every text comes with the authoritative scene, the characters (entityId) and the allowed facts, so a label can be checked against evidence instead of guessed",
+ "texts": [
+  {
+   "id": "c1",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他喘了口气。"
+  },
+  {
+   "id": "c2",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。王五在楼梯口等他。"
+  },
+  {
+   "id": "c3",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。钟声在雾里散开。"
+  },
+  {
+   "id": "c4",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼，又去了柳溪渡。"
+  },
+  {
+   "id": "c5",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼。管线甲并未把铜铃挂回钟楼。"
+  },
+  {
+   "id": "c6",
+   "authority": {
+    "scene": {
+     "location": "钟楼",
+     "appearance": "旧"
+    },
+    "characters": [
+     {
+      "entityId": "char_pa",
+      "name": "管线甲",
+      "personality": "沉稳",
+      "appearance": "常态"
+     }
+    ],
+    "visible": [],
+    "perspectiveEntityId": "char_pa",
+    "allowedFacts": [
+     "管线甲从管线镇来到钟楼",
+     "管线甲把铜铃挂回钟楼"
+    ],
+    "allowedAdditions": [
+     "与场景一致的环境描写",
+     "视角人物的感受"
+    ]
+   },
+   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他的手指还在抖。"
+  }
+ ]
+}

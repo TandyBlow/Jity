@@ -1,0 +1,30 @@
+{
+ "version": "round-composition-determinism-v0.2",
+ "strippedFields": [
+  "runAt",
+  "timings",
+  "*.stages.*.ms",
+  "*.stages.*.attempts[].ms"
+ ],
+ "versions": {
+  "v2": {
+   "script": "compose.py",
+   "compared": [
+    "out\\determinism-a.json",
+    "out\\determinism-b.json"
+   ],
+   "identicalAfterStrip": true,
+   "firstDifference": null
+  },
+  "v3": {
+   "script": "compose_v3.py",
+   "compared": [
+    "out\\determinism-v3-a.json",
+    "out\\determinism-v3-b.json"
+   ],
+   "identicalAfterStrip": true,
+   "firstDifference": null
+  }
+ },
+ "identicalAfterStrip": true
+}

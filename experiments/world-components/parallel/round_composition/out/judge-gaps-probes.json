@@ -1,0 +1,932 @@
+{
+ "version": "judge-gaps-probes",
+ "judge": "n5-v3",
+ "probes": [
+  {
+   "id": "P1-g2-repeated-registered-name",
+   "claim": "G2 rejects a registered character's name outside the matched fact span even though the mention adds no event",
+   "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。管线甲在窗边站定，望着远处的塔尖，没有说话。",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "pass",
+   "observed": {
+    "hardPass": false,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": false,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "residue-name:管线甲",
+     "residue-name:管线甲"
+    ],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "residue": "。。管线甲在窗边站定，望着远处的塔尖，没有说话。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P2-g2-scope-unregistered-name",
+   "claim": "G2 does not look at names that are not in the registry, so an invented actor is invisible to the hard gates (D4/N6 must catch it)",
+   "text": "王五站在门口，看着管线甲把铜铃挂回了钟楼。",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f1"
+    ],
+    "residue": "王五站在门口，看着。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P3-g1-negated-result",
+   "claim": "G1 accepts a negated result because up to 8 characters may sit between the subject and the result text",
+   "text": "管线甲并未把铜铃挂回了钟楼，他只是站在楼梯口看了一会儿。",
+   "facts": [
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f1"
+    ],
+    "residue": "，他只是站在楼梯口看了一会儿。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P4-g1-hedged-result",
+   "claim": "G1 accepts a hedged/unrealised result ('差点就') for the same reason",
+   "text": "管线甲差点就把铜铃挂回了钟楼，手抖了一下又缩了回去。",
+   "facts": [
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f1"
+    ],
+    "residue": "，手抖了一下又缩了回去。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P5-g1-observer-attribution",
+   "claim": "G1 cannot tell the actor from an observer when the result text follows the named subject",
+   "text": "王五看见管线甲把铜铃挂回了钟楼。",
+   "facts": [
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f1"
+    ],
+    "residue": "王五看见。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P6-g4-count-only",
+   "claim": "G4 only counts occurrences of the shared name, so one person described twice satisfies the two-actor condition",
+   "text": "管线乙从管线镇来到了钟楼。管线乙从钟楼来到了广场。",
+   "facts": [
+    "g0",
+    "g1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true,
+     "G4_conflict_names": true
+    },
+    "problems": [],
+    "covered": [
+     "g0",
+     "g1"
+    ],
+    "residue": "。。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P7-g6-missing-finish-reason",
+   "claim": "G6 treats a missing finish reason as a normal stop (the runner maps null to 'eos'), so truncation cannot be detected without done_reason",
+   "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "finishReason": null,
+   "desired": "reject",
+   "observed": {
+    "hardPass": true,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "residue": "。。",
+    "status": "judged"
+   },
+   "defectReproduced": true
+  },
+  {
+   "id": "P8-g6-length",
+   "claim": "control: a length-capped call is rejected",
+   "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "finishReason": "length",
+   "desired": "reject",
+   "observed": {
+    "hardPass": false,
+    "gates": {
+     "G1_alignment": true,
+     "G2_residue": true,
+     "G3_time": true,
+     "G6_no_truncation": false
+    },
+    "problems": [
+     "truncated-or-unfinished"
+    ],
+    "covered": [
+     "f0",
+     "f1"
+    ],
+    "residue": "。。",
+    "status": "judged"
+   },
+   "defectReproduced": false
+  },
+  {
+   "id": "P9-g1-wrong-result",
+   "claim": "control: the same frame rejects a different result",
+   "text": "管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了城门口。",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": false,
+    "gates": {
+     "G1_alignment": false,
+     "G2_residue": false,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "uncovered:f1:outcome",
+     "residue-name:管线甲",
+     "residue-name:管线甲"
+    ],
+    "covered": [
+     "f0"
+    ],
+    "residue": "。管线甲把铜铃挂回了城门口。",
+    "status": "judged"
+   },
+   "defectReproduced": false
+  },
+  {
+   "id": "P10-g2-goal-leak",
+   "claim": "control: a task goal repeated outside the matched span is still caught",
+   "text": "管线甲从管线镇来到了钟楼。任务「把铜铃挂回原位」还没有结束。",
+   "facts": [
+    "f0",
+    "f9"
+   ],
+   "finishReason": "stop",
+   "desired": "reject",
+   "observed": {
+    "hardPass": false,
+    "gates": {
+     "G1_alignment": false,
+     "G2_residue": false,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "problems": [
+     "uncovered:f9:task_achieved",
+     "residue-goal:把铜铃挂回原位"
+    ],
+    "covered": [
+     "f0"
+    ],
+    "residue": "。任务「把铜铃挂回原位」还没有结束。",
+    "status": "judged"
+   },
+   "defectReproduced": false
+  }
+ ],
+ "archiveImpact": {
+  "real-batch-v1": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-vague",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": false,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome",
+      "uncovered:time (no vague expression and no value)",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-inner-change",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:appearance_changed",
+      "uncovered:f1:personality_changed",
+      "uncovered:f2:sanity_changed",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-same-name",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false,
+      "G4_conflict_names": false
+     },
+     "residueNames": [
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved",
+      "uncovered:f2:moved",
+      "same-name-actors-not-all-named:管线乙 needs 2 mentions",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-subtask",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:subtask_added",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:personality_changed",
+      "uncovered:f1:sanity_changed",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": true,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [],
+     "problemsWithoutResidue": [
+      "uncovered:f1:no_change",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": false,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:outcome",
+      "uncovered:f1:outcome",
+      "time-value-unparseable:一年",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    }
+   ],
+   "residueFlaggedSamples": 9,
+   "residueFlags": 16,
+   "wouldPassIfResidueIgnored": 0,
+   "coveredOutcomes": 0,
+   "coveredOutcomesWithGap": 0,
+   "coveredOutcomesWithNegation": 0
+  },
+  "real-batch-v2": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-vague",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": false,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome",
+      "uncovered:time (no vague expression and no value)"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-inner-change",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:appearance_changed",
+      "uncovered:f1:personality_changed",
+      "uncovered:f2:sanity_changed"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-same-name",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true,
+      "G4_conflict_names": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved",
+      "uncovered:f2:moved"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-subtask",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:subtask_added"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:personality_changed",
+      "uncovered:f1:sanity_changed"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": true,
+      "G3_time": true,
+      "G6_no_truncation": false
+     },
+     "residueNames": [],
+     "problemsWithoutResidue": [
+      "uncovered:f1:no_change",
+      "truncated-or-unfinished"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:outcome",
+      "uncovered:f1:outcome"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    }
+   ],
+   "residueFlaggedSamples": 9,
+   "residueFlags": 19,
+   "wouldPassIfResidueIgnored": 0,
+   "coveredOutcomes": 0,
+   "coveredOutcomesWithGap": 0,
+   "coveredOutcomesWithNegation": 0
+  },
+  "real-batch-v3": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-vague",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:outcome"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-inner-change",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:appearance_changed",
+      "uncovered:f1:personality_changed",
+      "uncovered:f2:sanity_changed"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-same-name",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true,
+      "G4_conflict_names": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线乙",
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:moved",
+      "uncovered:f2:moved"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-subtask",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved",
+      "uncovered:f1:subtask_added"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲",
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:personality_changed",
+      "uncovered:f1:sanity_changed"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-time-only",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": true,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [],
+     "problemsWithoutResidue": [
+      "uncovered:f1:no_change"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线乙"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:outcome",
+      "uncovered:f1:outcome"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "hardPass": false,
+     "gates": {
+      "G1_alignment": false,
+      "G2_residue": false,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "residueNames": [
+      "residue-name:管线甲"
+     ],
+     "problemsWithoutResidue": [
+      "uncovered:f0:moved"
+     ],
+     "wouldPassIfResidueIgnored": false,
+     "outcomeGaps": []
+    }
+   ],
+   "residueFlaggedSamples": 9,
+   "residueFlags": 18,
+   "wouldPassIfResidueIgnored": 0,
+   "coveredOutcomes": 0,
+   "coveredOutcomesWithGap": 0,
+   "coveredOutcomesWithNegation": 0
+  }
+ },
+ "note": "The judge was NOT modified. Each probe records what the frozen judge does with a hand-written counter-example."
+}

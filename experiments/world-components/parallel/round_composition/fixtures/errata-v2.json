@@ -1,0 +1,27 @@
+{
+ "version": "real-batch-v2-errata",
+ "batchId": "real-batch-2026-11-08-v2-budget384",
+ "recordedAt": "2026-11-08",
+ "status": "Corrections to the v2 REVIEW, not to the raw run. out/real-batch-v2.json and out/real-batch-v2-raw.jsonl are unchanged; the review and the merged archive were re-generated with the corrections below.",
+ "items": [
+  {
+   "id": "E1-n6-semantics",
+   "what": "Several v2 N6 reasons repeated the N5 regex result ('paraphrased, so the fact is not checkable') instead of judging what the text conveys.",
+   "effect": "Under independent semantic judgement these texts DO convey the result: '将铜铃挂回原位' conveys that the bell was hung back; rain soaking the coat conveys the appearance change; '肩膀抵住了钟沿' conveys the second result. Their N6 verdicts therefore cannot rest on the regex miss.",
+   "fix": "n5Formal lists N5 findings separately; N6 reasons are semantic only. Where a fact is conveyed, it is recorded as conveyed even though the formal frame still fails. Verdicts that remain 'fail' rest on other findings (missing move, invented content, truncation, format echo)."
+  },
+  {
+   "id": "E2-attempt-binding",
+   "what": "The v2 review was written against the first call but the archive did not say so, and the retry outputs were never reviewed.",
+   "effect": "A reader could mistake the reviewed quality for the quality of the final output.",
+   "fix": "Review records reviewedAttempt=1. The merged archive records reviewedAttempt per case, qualityPrimary (= reviewed attempt) and qualityFinal (pending whenever a retry exists, because its text was not reviewed). Summary reports both."
+  },
+  {
+   "id": "E3-moved-denominator",
+   "what": "v2 reporting said the move fact was never stated, implying all 10 samples.",
+   "effect": "Only 6 of the 10 samples carry a moved fact (rb-move-outcome, rb-time-vague, rb-two-actors-move, rb-same-name, rb-subtask, rb-move-other-appearance). The other four have no move to state.",
+   "fix": "The movement statistic is reported over 6 samples (6/6 not conveyed in v2), and the sample list is recorded in the review summary."
+  }
+ ],
+ "restatedConclusion": "Raising the output budget from 128 to 384 substantially reduced truncation (0/10 -> 8/10 first calls ending normally); the hard-gate pass rate is still zero."
+}

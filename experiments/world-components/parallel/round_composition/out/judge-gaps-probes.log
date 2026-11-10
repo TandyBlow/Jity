@@ -1,0 +1,76 @@
+# judge_v3 gap probes (n5-v3)
+
+P1-g2-repeated-registered-name: DEFECT REPRODUCED
+  claim   : G2 rejects a registered character's name outside the matched fact span even though the mention adds no event
+  text    : 管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。管线甲在窗边站定，望着远处的塔尖，没有说话。
+  desired : pass
+  gates   : {"G1_alignment": true, "G2_residue": false, "G3_time": true, "G6_no_truncation": true}
+  problems: ['residue-name:管线甲', 'residue-name:管线甲']
+
+P2-g2-scope-unregistered-name: DEFECT REPRODUCED
+  claim   : G2 does not look at names that are not in the registry, so an invented actor is invisible to the hard gates (D4/N6 must catch it)
+  text    : 王五站在门口，看着管线甲把铜铃挂回了钟楼。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true}
+  problems: []
+
+P3-g1-negated-result: DEFECT REPRODUCED
+  claim   : G1 accepts a negated result because up to 8 characters may sit between the subject and the result text
+  text    : 管线甲并未把铜铃挂回了钟楼，他只是站在楼梯口看了一会儿。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true}
+  problems: []
+
+P4-g1-hedged-result: DEFECT REPRODUCED
+  claim   : G1 accepts a hedged/unrealised result ('差点就') for the same reason
+  text    : 管线甲差点就把铜铃挂回了钟楼，手抖了一下又缩了回去。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true}
+  problems: []
+
+P5-g1-observer-attribution: DEFECT REPRODUCED
+  claim   : G1 cannot tell the actor from an observer when the result text follows the named subject
+  text    : 王五看见管线甲把铜铃挂回了钟楼。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true}
+  problems: []
+
+P6-g4-count-only: DEFECT REPRODUCED
+  claim   : G4 only counts occurrences of the shared name, so one person described twice satisfies the two-actor condition
+  text    : 管线乙从管线镇来到了钟楼。管线乙从钟楼来到了广场。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true, "G4_conflict_names": true}
+  problems: []
+
+P7-g6-missing-finish-reason: DEFECT REPRODUCED
+  claim   : G6 treats a missing finish reason as a normal stop (the runner maps null to 'eos'), so truncation cannot be detected without done_reason
+  text    : 管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": true}
+  problems: []
+
+P8-g6-length: not reproduced
+  claim   : control: a length-capped call is rejected
+  text    : 管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了钟楼。
+  desired : reject
+  gates   : {"G1_alignment": true, "G2_residue": true, "G3_time": true, "G6_no_truncation": false}
+  problems: ['truncated-or-unfinished']
+
+P9-g1-wrong-result: not reproduced
+  claim   : control: the same frame rejects a different result
+  text    : 管线甲从管线镇来到了钟楼。管线甲把铜铃挂回了城门口。
+  desired : reject
+  gates   : {"G1_alignment": false, "G2_residue": false, "G3_time": true, "G6_no_truncation": true}
+  problems: ['uncovered:f1:outcome', 'residue-name:管线甲', 'residue-name:管线甲']
+
+P10-g2-goal-leak: not reproduced
+  claim   : control: a task goal repeated outside the matched span is still caught
+  text    : 管线甲从管线镇来到了钟楼。任务「把铜铃挂回原位」还没有结束。
+  desired : reject
+  gates   : {"G1_alignment": false, "G2_residue": false, "G3_time": true, "G6_no_truncation": true}
+  problems: ['uncovered:f9:task_achieved', 'residue-goal:把铜铃挂回原位']
+
+# archived first calls re-judged
+real-batch-v1: residue-flagged samples 9/10, flags 16, would pass if residue ignored 0, covered outcomes 0 (with gap 0, negated 0)
+real-batch-v2: residue-flagged samples 9/10, flags 19, would pass if residue ignored 0, covered outcomes 0 (with gap 0, negated 0)
+real-batch-v3: residue-flagged samples 9/10, flags 18, would pass if residue ignored 0, covered outcomes 0 (with gap 0, negated 0)
