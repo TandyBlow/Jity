@@ -98,6 +98,7 @@ def summarize_run(run_dir: pathlib.Path) -> dict:
         if "caseId" in record:
             cases.append(case_stats(record))
     walls = [case["wallMs"] for case in cases if isinstance(case["wallMs"], (int, float))]
+    duplicate = [case["clauseRepeat"]["duplicateRatio"] for case in cases]
     decodes = [case["predictedPerSecond"] for case in cases
                if isinstance(case["predictedPerSecond"], (int, float))]
     return {
@@ -106,6 +107,12 @@ def summarize_run(run_dir: pathlib.Path) -> dict:
         "loadSeconds": manifest.get("loadSeconds"),
         "cases": len(cases),
         "emptyCases": [case["caseId"] for case in cases if case["empty"]],
+        "httpErrors": [case["caseId"] for case in cases
+                       if case.get("error") or case.get("httpStatus") not in (None, 200)],
+        "clauseDuplicateRatio": {
+            "mean": round(statistics.mean(duplicate), 3) if duplicate else None,
+            "max": max(duplicate) if duplicate else None,
+        },
         "wallMs": {
             "mean": round(statistics.mean(walls), 1) if walls else None,
             "p50": round(statistics.median(walls), 1) if walls else None,
@@ -142,13 +149,14 @@ def main() -> int:
         "",
         "No quality pass/fail here. Fact/style decisions use 01's rubric.",
         "",
-        "| model | cases | empty | chars mean | wall p50 ms | decode tok/s p50 | load s |",
-        "|---|---|---|---|---|---|---|",
+        "| model | cases | empty | errors | chars mean | clause dup max | wall p50 ms | decode tok/s p50 | load s |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for run in summary["runs"]:
         lines.append(
             f"| {run['modelId']} | {run['cases']} | {len(run['emptyCases'])} | "
-            f"{run['chars']['mean']} | {run['wallMs']['p50']} | "
+            f"{len(run['httpErrors'])} | {run['chars']['mean']} | "
+            f"{run['clauseDuplicateRatio']['max']} | {run['wallMs']['p50']} | "
             f"{run['predictedPerSecond']['p50']} | {run['loadSeconds']} |"
         )
     (out / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
