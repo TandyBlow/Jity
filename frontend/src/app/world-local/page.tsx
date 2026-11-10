@@ -52,6 +52,10 @@ interface WorldTurnRecord {
   mixedMs: number | null;
   segments?: Array<{ id: string; source: string }>;
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
+  /** Settlement ledger for this turn (results/updates/continuation calls,
+   * six-stage coverage/stageMs, policy stops). Attached when the submission
+   * closes, so one turn record carries both narration and settlement evidence. */
+  submission?: unknown;
   modelId: string | null;
   /** Requested narration variant and prompt shape, copied from window.__worldArm
    * at submit so one evidence file cannot mix two arms unknowingly. */
@@ -548,6 +552,7 @@ export default function WorldLocalPage() {
         live.modelId = narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? live.modelId;
       }
       const submission = modelRef.current?.endSubmission() ?? null;
+      if (submission && turnRecordRef.current) turnRecordRef.current.submission = submission;
       if (submission) {
         console.info('[world-local submission]', JSON.stringify({
           input: submission.inputText,
