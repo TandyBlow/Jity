@@ -415,6 +415,22 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
+  // A passage that hears a sound and then says it heard no sound at all is
+  // contradicting itself inside one paragraph. 09's accepted dense point
+  // (real-qwen3-dense-point-4.json) has «听着远处传来轻微的水声» followed by
+  // «也没有听到任何声音». This is not a fact check against the input: the two
+  // clauses cannot both be true.
+  {
+    const HEARD = /(听见|听到|听着|传来|响起|响了一声|发出一声)/u;
+    const NO_SOUND = /((?:没有|没)(?:听到|听见|听不到)|没有任何|没有一点)[^。！？]{0,6}(声音|动静)/u;
+    const heardAt = sentences.findIndex((sentence) => HEARD.test(sentence) && !NO_SOUND.test(sentence));
+    const silentAt = sentences.findIndex((sentence) => NO_SOUND.test(sentence));
+    if (heardAt >= 0 && silentAt >= 0 && heardAt !== silentAt) {
+      issues.push(hard('self_contradiction', attempt,
+        'text hears a sound and also says it heard no sound at all', sentences[silentAt]));
+    }
+  }
+
   const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < Math.round(minChars * 0.67)) {
     issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));
