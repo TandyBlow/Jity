@@ -145,9 +145,11 @@ def main() -> int:
         "environmentPlan": {
             "existingBuild": "first check for an existing llama-server (and llama-gguf) on the cluster; "
                              "record its version/commit and use it if it loads the models",
-            "ifMissing": "build ggml-org/llama.cpp from a pinned release tag with cmake; CPU build is "
-                         "enough for this preflight, CUDA is preferable for the quality batch; record "
-                         "the exact tag/commit",
+            "ifMissing": "build ggml-org/llama.cpp from source with cmake: "
+                         "git clone https://github.com/ggml-org/llama.cpp && cmake -B build "
+                         "-DGGML_CUDA=ON -DLLAMA_CURL=ON && cmake --build build -j --target "
+                         "llama-server llama-quantize. CPU-only (no -DGGML_CUDA) is enough for the "
+                         "preflight; record the exact commit and the llama.cpp version banner.",
             "whyNotTransformers": "the offline batch must apply the GGUF's own chat template through "
                                   "llama-server --jinja; a transformers run would be a different "
                                   "template path and is not comparable to the browser run",
