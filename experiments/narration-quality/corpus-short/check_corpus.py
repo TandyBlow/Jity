@@ -72,9 +72,13 @@ def load_world_names(world_path: pathlib.Path) -> set[str]:
 
 
 def check_no_posture(errors: list[str], label: str, record: dict[str, object]) -> None:
-    match = POSTURE_PATTERN.search(record["targetText"])
-    if match:
-        fail(errors, f"{label}: targetText claims an unsettled posture: {match.group(0)!r}")
+    licensed = json.dumps(record["input"], ensure_ascii=False)
+    for match in POSTURE_PATTERN.finditer(record["targetText"]):
+        word = match.group(0)
+        if word in licensed:
+            continue
+        fail(errors, f"{label}: targetText claims an unsettled posture: {word!r}")
+        return
 
 
 def check_authored_entities(

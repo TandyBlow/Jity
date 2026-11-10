@@ -1510,6 +1510,166 @@
       ],
       "notes": "移动 + 任务完成；把已知的门闩事实说清，但不替路明非做路线决定。",
       "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0019-tomiyama-shen-symptom",
+      "slug": "tomiyama-shen-symptom",
+      "sourceRowId": "authored:dragon-raja-free-day#tomiyama-shen-symptom",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "tomiyama",
+      "locations": [
+        "campus",
+        "annex",
+        "rest"
+      ],
+      "characters": [
+        "tomiyama",
+        "shen"
+      ],
+      "items": [
+        "water",
+        "blanket",
+        "shen_band"
+      ],
+      "taskGoals": [
+        "task_tomiyama_shen"
+      ],
+      "time": "19 分钟",
+      "delta": {
+        "富山雅史": {
+          "完成任务": [
+            "询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友"
+          ]
+        },
+        "沈澄": {
+          "精神值": 46
+        }
+      },
+      "targetText": "十九分钟过去，沈澄坐在长椅上喝水，右手指尖还带着一点木。富山雅史隔着一人的距离问她，麻感有没有轻一些；沈澄想了想，说手还是有点麻，可她更担心的是拖累队友。富山雅史没有说她不该这样想，只把保温毯往她那边推了推。",
+      "categories": [
+        "task_complete",
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "19 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "富山雅史",
+          "goal": "询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "沈澄",
+          "from": 41,
+          "to": 46
+        }
+      ],
+      "licensedDetails": [
+        "沈澄坐着喝水、右手指尖轻微麻感（人物外貌）",
+        "休息区保温毯、饮水杯（物品外貌）",
+        "推保温毯（安抚的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "富山雅史",
+        "canKnow": [
+          "沈澄说出口的麻感和担心",
+          "沈澄在长椅上喝水",
+          "保温毯在长椅空位旁"
+        ],
+        "mustNotReveal": [
+          "沈澄没有说出口的战术见闻",
+          "顾岚的诊断",
+          "其他人的谈话"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写诊断结果或治疗",
+        "不得写沈澄回场",
+        "不得新增人物、物品或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0055",
+        "row-0197"
+      ],
+      "notes": "任务完成 + 另一人精神上升；伤情只说“有点麻”，不写医学结论。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0020-su-checks-magazine",
+      "slug": "su-checks-magazine",
+      "sourceRowId": "authored:dragon-raja-free-day#su-checks-magazine",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "su",
+      "locations": [
+        "campus",
+        "east_arcade"
+      ],
+      "characters": [
+        "su"
+      ],
+      "items": [
+        "rifle_su",
+        "su_magazine",
+        "window_pad",
+        "canvas_blind"
+      ],
+      "taskGoals": [
+        "task_su_reload"
+      ],
+      "time": "9 分钟",
+      "delta": {
+        "苏茜": {
+          "完成任务": [
+            "在当前弹匣打空前确认身后的备用弹匣属于自己"
+          ]
+        }
+      },
+      "targetText": "九分钟过去，苏茜把长枪的枪口收在窗内，侧过身看身后那只备用弹匣。蓝色胶带上写着她的名字，八发演习弹都在；她没有把弹匣拿起来，只把数目记下，又把枪托往软垫上压稳。",
+      "categories": [
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "9 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "苏茜",
+          "goal": "在当前弹匣打空前确认身后的备用弹匣属于自己"
+        }
+      ],
+      "licensedDetails": [
+        "低窗软垫、窗框上方的遮光帘（地点外貌）",
+        "蓝色胶带名字和八发演习弹（物品外貌）",
+        "收枪口、侧身看弹匣、压稳枪托（确认弹药的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏茜",
+        "canKnow": [
+          "自己备用弹匣上的名字和弹数",
+          "枪仍然收在窗内",
+          "软垫的状态"
+        ],
+        "mustNotReveal": [
+          "唐骁的位置或弹药",
+          "凯撒的进攻计划",
+          "任何未结算的命中"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写开火或换弹匣",
+        "不得写拿起弹匣",
+        "不得新增人物、物品或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0178"
+      ],
+      "notes": "任务完成；只确认备用弹匣属于自己，不写换弹或开火。",
+      "reviewState": "manually-read-input-and-target"
     }
   ]
 }
