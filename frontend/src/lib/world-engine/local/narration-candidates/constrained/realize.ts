@@ -196,7 +196,7 @@ function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
       `过了${label}`,
       `${label}之后`,
       `又过了${label}`,
-      `${label}的时间过去`,
+      `整整${label}过去`,
     ])));
   }
   const detailText = sentenceClause(scene.place.note, 48);
@@ -313,6 +313,7 @@ function eventBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   for (const fact of facts) {
     if (fact.kind === 'task_achieved') {
       push(choose(ctx, beat.seed, `${fact.id}`, [
+        `「${fact.goal}」这件事，到这里有了结果`,
         `${fact.name}完成了「${fact.goal}」`,
         `${fact.name}把「${fact.goal}」这件事做完了`,
       ]));
