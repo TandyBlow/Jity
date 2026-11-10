@@ -219,8 +219,19 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
+    // The protagonist is the player's character: no model call may write their
+    // action, not even a "continuation". A consumed input means an earlier
+    // opportunity (or an automatic round) already handled it, so the correct
+    // answer is skip, never a generated second action. Replaying the frozen
+    // text here would also re-execute the player's command.
     if (scene.isProtagonist) {
-      issues.push({ code: 'protagonist_continues', severity: 'info', message: '主角的命令已执行过；只判断同一件事是否还要继续' });
+      issues.push({
+        code: 'protagonist_command_consumed', severity: 'info',
+        message: call.inputText
+          ? '主角这条输入已经被处理过；本机会不再重复执行，也不由模型代写后续动作'
+          : '主角没有新的输入；本机会不行动',
+      });
+      return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
     const generated = await generate<{ kind: 'act'; text?: string } | { kind: 'skip' }>({

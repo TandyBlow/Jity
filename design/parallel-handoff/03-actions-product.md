@@ -129,6 +129,50 @@ world:
   (`settlementGroups` = `[['ally'], ['hero']]`), so no partial group result is
   written.
 
+### 4. Transport: consume the input at the protagonist's opportunity, not at the first unit
+
+`local/transport.ts` currently turns `intentStatus: 'pending'` into `consumed` in
+`stageWorking`/`skipWorking` for **any** character:
+
+```ts
+function consume(status: Working['intentStatus']): Working['intentStatus'] {
+  return status === 'pending' ? 'consumed' : status;
+}
+```
+
+The design says the player input is consumed when the **protagonist's** action
+opportunity is processed (including a skip or a forced reaction), not when the
+first NPC settles a unit. Today the product uses one point per round, so the
+protagonist's slot is inside that point and still sees `pending`; but once
+04/06 split a round into linked points (or defer a slot), the protagonist's
+later slot sees `consumed`, and the action port then has to skip the player's
+command instead of freezing it.
+
+Concrete patch (06's file):
+
+```ts
+function consume(status: Working['intentStatus'], actorIds: readonly Id[], protagonistId: Id): Working['intentStatus'] {
+  return status === 'pending' && actorIds.includes(protagonistId) ? 'consumed' : status;
+}
+// stageWorking: consume(working.intentStatus, actors, record.state.protagonistId)
+// skipWorking:  consume(working.intentStatus, [slotActor], record.state.protagonistId)
+```
+
+`advance.intentStatus` is still committed from the working state, so an
+automatic round inherits `consumed` and cannot re-consume a player input.
+
+### 5. The protagonist is never model-written
+
+`semantics/actions/index.ts` now answers a protagonist `action` call as:
+
+- `intentStatus: 'pending'` + non-empty text → the text verbatim (`program`);
+- anything else → `{kind: 'skip'}` with `protagonist_command_consumed` (`program`), zero model calls.
+
+Before this, a consumed protagonist slot asked the model to "continue the same
+thing"; that could replay the old command in an automatic round or invent a new
+player action. The goal-copy guard tests were rewritten accordingly; an NPC
+still covers the all-character goal guard.
+
 ## Open trade-offs (not silently decided here)
 
 1. **Off-screen actors.** `offscreenPolicy: 'skip'` means a character outside the

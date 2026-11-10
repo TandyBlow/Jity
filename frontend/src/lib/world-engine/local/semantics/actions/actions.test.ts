@@ -177,18 +177,21 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
-  it('judges the protagonist continuation after the command was consumed', async () => {
+  it('never lets the model write the protagonist after the command was consumed', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine(['{"kind":"act","text":"路明非顺着箱盖的缝隙又顶了一下。"}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('hero', actInput(state, 'hero', '我推开木箱。', 'consumed'));
 
-    expect(result.source).toBe('model');
-    expect(result.value).toEqual({ kind: 'act', text: '路明非顺着箱盖的缝隙又顶了一下。' });
-    expect(codes(result)).toContain('protagonist_continues');
-    expect(engine.prompts[0]).toContain('已经执行过');
-    expect(engine.prompts[0]).toContain('不能复述');
-    expect(engine.prompts[0]).toContain('我推开木箱。');
+    // A consumed opportunity means the input was already handled (or this is
+    // an automatic round). Replaying it would re-execute the player's command,
+    // and generating a new protagonist action would take the decision away
+    // from the player, so the program answers skip and spends no model call.
+    expect(result.source).toBe('program');
+    expect(result.value).toEqual({ kind: 'skip' });
+    expect(result.attempts).toBe(0);
+    expect(engine.prompts).toHaveLength(0);
+    expect(codes(result)).toContain('protagonist_command_consumed');
     codecAccepts(result);
   });
 
