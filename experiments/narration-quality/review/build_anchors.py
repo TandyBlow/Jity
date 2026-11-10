@@ -278,6 +278,50 @@ PROGRAM_TEXT = "\n\n".join([
 ])
 
 anchors = []
+# ------------------------------------------------------- 08 counterexamples
+gaze_scene = {
+    "视角": "主角视角（周宁）",
+    "上回合状态": {
+        "地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]},
+                 "门厅": {"位于": None, "外貌": ["门厅里的灯亮着。"]}},
+        "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"]},
+                 "林川": {"位置": "门厅", "精神值": 10, "外貌": ["穿灰衣"]}},
+        "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+route_scene = {
+    "视角": "主角视角（林川）",
+    "上回合状态": {
+        "地点": {"库房": {"位于": None, "外貌": ["库房里堆着木箱。"]},
+                 "平台": {"位于": None, "外貌": ["平台边上有栏杆。"]},
+                 "楼梯间": {"位于": None, "外貌": ["窄楼梯拐角堆着沙袋。"]}},
+        "人物": {"林川": {"位置": "库房", "精神值": 40, "外貌": ["穿灰衣"]}},
+        "物品": {},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {"林川": {"位置": "平台"}}},
+    "本回合状态": {"林川": {"位置": "平台"}},
+}
+anchors += [
+    {
+        "id": "neg/08-gaze-is-not-movement",
+        "source": "worktrees/08-runtime/.local/candidate-model/run-qwen25-1.5b-dev-r3.json point continuation-elapsed; the shared grader flagged movement_without_fact on the gaze",
+        "input": gaze_scene,
+        "text": "两分钟过去。周宁的视线在门厅与走廊之间来回扫动，偶尔停顿在那扇门上，似乎在等待门厅那边的人迈出步伐。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [], "notes": "The subject is the gaze, not the body: no movement fact is needed."},
+    },
+    {
+        "id": "neg/wrong-source-floor",
+        "source": "08-runtime limitation: the unseen-world move point paraphrases 库房→平台 as 从楼梯间走来 and the shared grader missed the wrong source",
+        "input": route_scene,
+        "text": "两分钟过去，林川从楼梯间走来，停在平台边上。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.wrong_source"], "style": [], "notes": "The origin is a known place and differs from the settled origin; the destination alone does not make the move right."},
+    },
+]
+
 
 
 def add(case):

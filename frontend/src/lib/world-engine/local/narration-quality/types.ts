@@ -24,6 +24,7 @@ export type FindingKind =
   // Facts: contradictions with settled state.
   | 'fact.actor_swap'
   | 'fact.direction_reversed'
+  | 'fact.wrong_source'
   | 'fact.wrong_number'
   | 'fact.false_position'
   | 'fact.item_misattribution'

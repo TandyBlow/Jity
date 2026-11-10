@@ -391,6 +391,19 @@ export function reviewNarration(args: {
           continue;
         }
       }
+      // "从X走来/进入…" states an origin. If X is a known place but not the
+      // settled origin, the sentence invents a different route.
+      const origin = /从([^，。；、「」]{1,10}?)(?:走来|走来过|走|来|跑|退|出|进|返回|回到|撤离|挪|移)/u.exec(sentence.narration);
+      if (origin && move.from && !move.from.includes(origin[1])) {
+        const named = origin[1].replace(/(?:里|中|内|上|外|边|口|侧)$/u, '');
+        const knownPlace = Object.keys(projection.places).some((place) => place === origin[1] || place === named);
+        if (knownPlace) {
+          findings.push(finding(ctx, 'fact.wrong_source', sentence.text,
+            `${move.name}: the sentence starts from ${origin[1]}, but the settled move starts from ${move.from}`,
+            [`${move.name}: ${move.from} → ${move.to}`], [move.id]));
+          continue;
+        }
+      }
       expressedMoves.add(move.id);
       moveSentences.set(move.id, sentence.text);
     }
