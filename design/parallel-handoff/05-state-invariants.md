@@ -173,9 +173,10 @@ worktree:
     `handleCommitPoint` and refuses with `request_malformed`.
   - **Dependency:** merge `local/state-invariants/index.ts` first.
 - `results/product/evidence/05-kernel/patches/06-page-snapshot-hook.patch`
-  - exposes a read-only `window.__worldSnapshot()` so 09 can capture the real
-    `LocalGameSnapshot` after each turn; without it 09 can only check visible
-    summaries, not replay S0+delta.
+  - exposes a read-only `window.__worldSnapshot()` returning a detached
+    `structuredClone`, so 09 can capture the real `LocalGameSnapshot` after
+    each turn. It applies to 06's older page; 06 must re-base it on current
+    `d0dfe99a`, which already has `__worldRestore` but not `__worldSnapshot`.
 - `results/product/evidence/05-kernel/patches/06-state-apply-guards.patch`
   - `state.ts` fix, not just a verifier: reject a second appearance change with
     the same id, a second added task with the same id, and task ids/owners/
@@ -202,21 +203,25 @@ restore-failure state. 06 owns that integration.
 
 ## Page/session wiring status (06's current tree)
 
-The observed current page already opens `openLocalProgressStore()` and
-`LocalGameSession.open(store, ...)`, migrates the legacy key, archives a
-corrupt record before deleting, and passes the storage to the session. The
-remaining acceptance work is 09's real-page refresh/restore and cancel test,
-not a new 05 patch:
+06's current tree already opens the IndexedDB store/session, archives a
+corrupt record before deleting, and (commit `37e2aa38`) rebuilds visible
+entries from committed player points plus `snapshot.narrations`. That replaces
+the earlier 05 page-localStorage patch, which is now under
+`patches/superseded/`. Three gaps remain and are recorded in
+`results/product/ownership-requests/05-kernel.json`:
 
-1. Confirm refresh during an open point resumes the frozen work and does not
-   reroll; the read-only verifier can check the saved snapshot.
-2. Confirm the visible turn entries are rebuilt from `commandsPlayed` and the
-   head narration after restore; React entry state is not durable.
-3. Confirm `reset` uses `store.delete(worldId, {force:true})` after explicit
-   confirmation, not `localStorage.removeItem`.
-4. If 06 prefers the guard inside `session.ts` instead of `transport.ts`, it can
-   call `verifyBeforeRestore(snapshot)` before the raw restore. 05 does not write
-   that file.
+1. `restoredEntries` pairs `snapshot.commands[index]` with player points sorted
+   by sequence. Failed/cancelled commands are intentionally retained (six
+   existing resume/cancel tests depend on it), so after a failed turn the next
+   committed point can show the wrong input. Pair at commit time or persist a
+   command→point map; do not pop commands.
+2. `__worldRestore` has no `overallRestored`, and `entriesTotal` is
+   `commands.length`, not committed player points/history. The boolean must be
+   the AND of state, entries and input-consumption restoration.
+3. A terminal settlement failure leaves the advance in place; the next submit
+   returns `turn_in_progress`, so the page cannot retry without cancel/refresh.
+   This belongs to 06/04; 05's rejected command-popping patch is kept under
+   `patches/superseded/` only as a counterexample.
 
 ## 09 evidence
 
@@ -233,12 +238,25 @@ The test is read-only, prints per-record errors/warnings, and fails on any
 invariant violation. It does not accept a hand-written after state as a
 settlement.
 
-## Current limits
+## Current evidence and limits
 
-- No real model/browser/GPU run in this lane; 09 owns that queue.
-- 06 has already changed the page and continuation wiring; the findings above
-  record the earlier failures as history, not the current tree. 09 must verify
-  the current integration on the real page.
-- The 09 verifier has not run on a real 10/20-turn record yet.
-- The stricter task/change guards are not part of the pinned Python reference;
-  they are product continuity checks, not a second state protocol.
+- The 09 run at product `0b173b6a` attempted two inputs: turn 1 committed a
+  labelled program fallback after 272 s; turn 2 timed out at 330 s. Final
+  refresh kept place/sanity/history=1 but entries went 2→0 (`entriesKept=false`,
+  `storageChars=0`). The cause was React-only entries; 06's current
+  `restoredEntries` addresses the display reconstruction, subject to the three
+  gaps above.
+- `results/product/evidence/09-product-10turn.json` is **not** acceptance
+  evidence. `verify-09-evidence` on it reports only `visible-summary` +
+  `evidence_shape`; no point could be replayed.
+- `verifySnapshotSequence` (new in `369b9be9`) checks a turn-ordered series of
+  full snapshots for version/points regression, a missing previous head, and a
+  changed stored digest. The 09 test now accepts `snapshotAfter`/`snapshotBefore`.
+- Character gender evidence is delivered as
+  `results/product/evidence/05-kernel/character-gender-evidence.json`: five
+  characters have a direct, uniquely bound pronoun in the current world file
+  (路明非/诺诺/楚子航/林亦舟/沈澄); the other nine stay unknown. No schema,
+  world hash, or save-contract change.
+- No real model/browser/GPU run in this lane; 09 owns that queue. The stricter
+  task/change guards are not part of the pinned Python reference; they are
+  product continuity checks, not a second state protocol.
