@@ -809,13 +809,15 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // happen. The real runs invented wind, footsteps and the smell of exercise
     // rounds in texts the general gate accepted, so this narrow class is checked
     // here, before the retry decision, and the guidance names the sentence.
-    if (result.attempt.accepted) {
+    // The check is independent of the other rules: a draft that is also too
+    // short can still assert an invented sound, and the evidence must say so.
+    if (result.attempt.cleaned) {
       const invented = senseViolations(result.attempt.cleaned, input.inputText, {
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
       if (invented.length) {
         result.attempt.accepted = false;
-        result.attempt.issues.push({
+        if (!result.attempt.issues.some((issue) => issue.kind === 'unlicensed_sense')) result.attempt.issues.push({
           kind: 'unlicensed_sense', severity: 'hard', attempt: result.attempt.attempt,
           detail: invented.map((item) => `${item.noun}（${item.sentence}）`).join('；'),
           sentence: invented[0].sentence,
