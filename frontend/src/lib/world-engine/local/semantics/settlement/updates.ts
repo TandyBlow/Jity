@@ -20,7 +20,6 @@ import {
   positionFromRow, projectStage, roster, sameChangeText, taskIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
-import { locationName } from '../../prompt';
 
 interface UpdatesInput {
   groupId: Id | null;
@@ -696,22 +695,21 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>): st
 }
 
 function positionLineFor(state: WorldState, id: Id): string {
-  const kind = state.characters[id] ? '人物' : '物品';
   const name = state.initial.characters[id]?.name ?? state.initial.items[id]?.name ?? id;
   const entity = state.characters[id] ?? state.items[id];
   const position = entity.position;
-  const base = `${locationName(state, position.containerId)}${position.slotId ? `/${position.slotId}` : ''}`;
+  const base = `${position.containerId}${position.slotId ? `/${position.slotId}` : ''}`;
   const relative = position.relativeTo
-    ? `（${position.relativeTo.relation} ${locationName(state, position.relativeTo.entityId)}）`
+    ? `~${position.relativeTo.relation}:${position.relativeTo.entityId}`
     : '';
-  return `${name}（id=${id}，${kind}）当前位置=${base}${relative}`;
+  return `${id}=${name}@${base}${relative}`;
 }
 
 function containerCatalog(state: WorldState): string[] {
   return allEntityIds(state).map((id) => {
     const name = state.initial.locations[id]?.name ?? state.initial.items[id]?.name ?? state.initial.characters[id]?.name ?? id;
     const slots = state.initial.locations[id]?.slots ?? state.initial.items[id]?.slots ?? state.initial.characters[id]?.slots ?? [];
-    return `- ${id}=${name}${slots.length ? `；槽位=${slots.map((slot) => `${slot.id}(${slot.label})`).join('、')}` : ''}`;
+    return `${id}=${name}${slots.length ? `[${slots.map((slot) => slot.id).join(',')}]` : ''}`;
   });
 }
 
@@ -759,7 +757,13 @@ function slotsOf(state: WorldState, containerId: Id): { id: Id; label: string }[
 
 function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, kind: 'appearance' | 'personality'): string {
   const ids = kind === 'appearance' ? allEntityIds(state) : roster(state);
-  const lines = ids.map((id) => `- ${kind === 'appearance' ? appearanceLine(state, id) : personalityLine(state, id)}`);
+  // The appearance scan covers every entity, so the per-line prose budget is
+  // derived from the cast size: a bigger world gets shorter tails, the line
+  // set itself is never cut. Rules + settled results take roughly 3.5k chars.
+  const tail = kind === 'appearance' ? Math.max(20, Math.min(88, Math.floor(4200 / Math.max(1, ids.length)))) : 0;
+  const lines = ids.map((id) => (kind === 'appearance'
+    ? appearanceLine(state, id, { compactTail: tail })
+    : `- ${personalityLine(state, id)}`));
   const title = kind === 'appearance' ? '外貌' : '个性';
   return [
     `你是中文跑团游戏的${title}结算器。只输出 JSON，不要解释。`,
