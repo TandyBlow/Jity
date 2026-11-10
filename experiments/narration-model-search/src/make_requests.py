@@ -108,7 +108,10 @@ def main() -> int:
         "kind": "model-preflight",
         "readyToSubmit": True,
         "qualityBatch": False,
-        "priority": "below current product blockers and below 12's first batch; download/load work only, can share a window",
+        "priority": "parallel-safe offline preflight; no dev-package generation and no GPU required, "
+                    "so it can run alongside the product blockers without delaying them",
+        "parallelSafe": True,
+        "gpuOptional": True,
         "purpose": "Download the pinned candidate GGUFs, verify sha256, read GGUF metadata "
                    "(architecture/quantisation/chat template) and prove llama.cpp can load and "
                    "generate one neutral smoke sentence. This is operator/load evidence only; it "
