@@ -94,6 +94,14 @@ export function allTasks(state: WorldState): { ownerId: Id; task: Task }[] {
 
 /** Short, stable task keys for prompts and answers. The program owns the
  * mapping; the model never repeats long record ids for every task. */
+/** Facts with stable f1.. ids: the task answer must quote one of these (or
+ * `time`) for every new achievement, so a known task id alone is not proof. */
+export function resultFacts(results: Record<Id, string>): { id: string; memberId: Id; text: string }[] {
+  return Object.entries(results)
+    .filter(([, text]) => typeof text === 'string' && text.trim())
+    .map(([memberId, text], index) => ({ id: `f${index + 1}`, memberId, text }));
+}
+
 export function taskKeyIndex(state: WorldState): Map<Id, string> {
   const keys = new Map<Id, string>();
   allTasks(state).forEach(({ task }, index) => keys.set(task.id, `t${index + 1}`));

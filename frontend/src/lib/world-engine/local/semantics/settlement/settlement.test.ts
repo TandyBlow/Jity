@@ -189,8 +189,7 @@ describe('six-stage updates', () => {
       JSON.stringify({ unchanged: ['b'], achieved: [
         { characterId: 'a', achieved: ['a1'] },
         { characterId: 'off', achieved: ['off1'] },
-      ] }),
-      JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '把工具从盒子里取回' }] }),
+      ], subtasks: [{ parentTaskId: 't1', goal: '把工具从盒子里取回' }] }),
       JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [
         { entityId: 'a', op: 'add', recordIds: [], text: '更愿意相信同伴' },
         { entityId: 'off', op: 'add', recordIds: [], text: '开始留意远处的动静' },
@@ -747,3 +746,74 @@ describe('compact subtask parent keys', () => {
   });
 });
 
+
+describe('grounded task transitions', () => {
+  it('does not accept the 17:37 all-cast answer when no settled fact is cited', async () => {
+    // The real run's program draft listed every character as having completed
+    // a root task; the task answer named known ids but no fact. Strict product
+    // mode must reject those transitions, not commit them on coverage alone.
+    const allCast = JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['a1', 'a2'] },
+      { characterId: 'b', achieved: ['b1'] },
+      { characterId: 'off', achieved: ['off1'] },
+    ] });
+    const engine = new ScriptedEngine([allCast, allCast]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('task_support_incomplete');
+    expect(outcome.error).toContain('a1:missing_support');
+    expect(outcome.error).toContain('b1:missing_support');
+    expect(outcome.error).toContain('off1:missing_support');
+    // A repair retry is spent; the point is not committed on coverage alone.
+    expect(engine.prompts).toHaveLength(2);
+  });
+
+  it('accepts an achievement that cites a settled fact', async () => {
+    const grounded = JSON.stringify({ unchanged: ['b'], achieved: [
+      { characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] },
+      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f1' }] },
+    ] });
+    const engine = new ScriptedEngine([grounded, JSON.stringify({ judgments: [
+      { characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '甲拿到工具，目标条件成立。' },
+      { characterId: 'off', taskId: 'off1', satisfied: 'yes', reason: '丙在远处等待的条件成立。' },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+    expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
+    const scope = (outcome.evidence.detail as { taskScope: {
+      supports: { characterId: string; taskId: string; basis: string }[];
+      rejectedTaskIds: unknown[];
+      verifier?: { satisfied: string }[];
+    } }).taskScope;
+    expect(scope.supports).toEqual([
+      { characterId: 'a', taskId: 'a1', basis: 'f1' },
+      { characterId: 'off', taskId: 'off1', basis: 'f1' },
+    ]);
+    expect(scope.rejectedTaskIds).toEqual([]);
+    expect(scope.verifier?.map((row) => row.satisfied)).toEqual(['yes', 'yes']);
+  });
+
+  it('drops an achievement whose cited fact only shows an attempt', async () => {
+    const claimed = JSON.stringify({ unchanged: ['b', 'off'], achieved: [
+      { characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] },
+    ] });
+    const engine = new ScriptedEngine([claimed, JSON.stringify({ judgments: [
+      { characterId: 'a', taskId: 'a1', satisfied: 'partial', reason: '只把工具推向乙，还没有被甲拿到。' },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes).toEqual({});
+    const scope = (outcome.evidence.detail as { taskScope: {
+      rejectedTaskIds: { characterId: string; taskId: string; reason: string }[];
+      supports: unknown[];
+    } }).taskScope;
+    expect(scope.rejectedTaskIds).toEqual([
+      { characterId: 'a', taskId: 'a1', reason: 'condition_partial' },
+    ]);
+    expect(scope.supports).toEqual([]);
+  });
+});

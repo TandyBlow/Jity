@@ -37,6 +37,10 @@ export interface SettlementOptions {
    * uses a timestamp plus a local counter. */
   nextRoundId?: () => Id;
   onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
+  /** Product default: a new task achievement must cite a settled result fact
+   * (or a time basis). Unit fixtures may leave this off, but the page port
+   * never does. */
+  requireTaskSupport?: boolean;
 }
 
 export interface ModelTaskDetail {

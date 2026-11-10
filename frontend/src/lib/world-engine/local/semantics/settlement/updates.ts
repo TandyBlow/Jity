@@ -12,12 +12,13 @@ import type { Change, EntityDelta, Id, Json, WorldState } from '../../../types';
 import type { InferenceEngine } from '../../../runtime/engine';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import { callJson, JsonCallError, joinedMs, joinedRaw } from './engine-call';
+import { filterSubtasksByAccepted, verifyTaskAchievements, type VerifierVerdict } from './task-verifier';
 import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, SettlementOutcome } from './types';
 import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
-  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
+  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
 
@@ -39,6 +40,9 @@ interface StageContext {
   personalityOwners: Set<Id>;
   allocator: LocalIdAllocator;
   options: SettlementOptions;
+  /** One merged answer can carry tasks and their new subtasks; the cache keeps
+   * the subtasks stage from re-prefilling the same task list. */
+  shared?: { pendingSubtasks?: Record<Id, Partial<EntityDelta>> };
 }
 
 interface StageOutcome {
@@ -118,7 +122,6 @@ const OPERATIONS_SCHEMA = {
 const TASKS_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['unchanged', 'achieved'],
   properties: {
     // Every character with tasks is named exactly once: in `unchanged` when no
     // task of theirs changed, or in `achieved` when at least one did. This is
@@ -129,14 +132,32 @@ const TASKS_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['characterId', 'achieved'],
+        required: ['characterId', 'tasks'],
         properties: {
           characterId: { type: 'string' },
-          achieved: { type: 'array', items: { type: 'string' } },
+          tasks: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['taskId', 'basis'],
+              properties: { taskId: { type: 'string' }, basis: { type: 'string' } },
+            },
+          },
         },
       },
     },
+    subtasks: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['parentTaskId', 'goal'],
+        properties: { parentTaskId: { type: 'string' }, goal: { type: 'string' } },
+      },
+    },
   },
+  required: ['unchanged', 'achieved', 'subtasks'],
 };
 
 const PERSONALITY_SCHEMA = {
@@ -248,6 +269,7 @@ export class UpdatesRunner {
       personalityOwners: splitPersonalityOwners,
       allocator: this.allocator,
       options: this.options,
+      shared: {},
     };
     if (stage) {
       const outcome = await this.runStage(stage, ctx);
@@ -600,6 +622,8 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
   }
   const prompt = buildTasksPrompt(ctx);
   const taskScope = taskScopeFor(ctx.state);
+  const factIds = new Set(resultFacts(ctx.results).map((fact) => fact.id));
+  const strictSupport = ctx.options.requireTaskSupport === true;
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 520),
@@ -607,10 +631,54 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state),
+      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds }),
     });
-    const read = readTaskDecisions(answer.value, ctx.state);
-    const changes = read.changes;
+    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds });
+    let changes = read.changes;
+    let acceptedSupports = read.supports;
+    let rejected = read.rejected;
+    let verifier: VerifierVerdict[] | null = null;
+    let verifierCalls: ModelCallEvidence[] = [];
+    if (strictSupport && read.supports.length) {
+      try {
+        const checked = await verifyTaskAchievements(
+          { engine: ctx.engine, state: ctx.state, results: ctx.results, options: ctx.options },
+          read.supports,
+        );
+        verifier = checked.judgments;
+        verifierCalls = checked.calls;
+      } catch (error) {
+        if (error instanceof JsonCallError) {
+          throw new JsonCallError(error.message, [...answer.calls, ...error.calls]);
+        }
+        throw error;
+      }
+      const accepted = new Set((verifier ?? [])
+        .filter((row) => row.satisfied === 'yes')
+        .map((row) => `${row.characterId}:${row.taskId}`));
+      const filtered: Record<Id, Partial<EntityDelta>> = {};
+      for (const [ownerId, delta] of Object.entries(changes)) {
+        const taskIds = (delta.tasksAchieved ?? []).filter((taskId) => accepted.has(`${ownerId}:${taskId}`));
+        if (taskIds.length) filtered[ownerId] = { tasksAchieved: taskIds };
+      }
+      changes = filtered;
+      acceptedSupports = read.supports.filter((row) => accepted.has(`${row.characterId}:${row.taskId}`));
+      for (const support of read.supports) {
+        if (accepted.has(`${support.characterId}:${support.taskId}`)) continue;
+        const verdict = verifier?.find((row) => row.characterId === support.characterId && row.taskId === support.taskId);
+        rejected = [...rejected, {
+          characterId: support.characterId,
+          taskId: support.taskId,
+          reason: verdict?.satisfied === 'partial' ? 'condition_partial' : 'condition_not_satisfied',
+        }];
+      }
+    }
+    if (ctx.shared && Array.isArray(asRecord(answer.value).subtasks)) {
+      const parsed = readSubtaskProposals(
+        answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
+      );
+      ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
+    }
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
       .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
@@ -624,13 +692,15 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           assertedUnchanged: rows.length - newlyAchieved.length,
           achievedByCharacter,
           emptyCharacters: taskScope.characters - achievedByCharacter.length,
-          rejectedTaskIds: read.rejected,
+          rejectedTaskIds: rejected,
+          supports: acceptedSupports,
+          verifier: verifier ?? undefined,
         },
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
         newlyAchievedTaskIds: newlyAchieved.sort(),
       },
       fallback: false,
-      calls: answer.calls,
+      calls: [...answer.calls, ...verifierCalls],
     };
   } catch (error) {
     return stageFailure({ taskCoverageIds: characters, taskScope, decidedTaskIds: rows.map(({ task }) => task.id).sort() }, error);
@@ -645,6 +715,7 @@ function taskScopeFor(state: WorldState): {
   mode: string; characters: number; taskRows: number; excluded: string[];
   achievedByCharacter: { characterId: Id; taskIds: Id[] }[];
   rejectedTaskIds: { characterId: Id; taskId: string; reason: string }[];
+  supports: { characterId: Id; taskId: Id; basis: string }[];
 } {
   const rows = allTasks(state);
   return {
@@ -654,6 +725,7 @@ function taskScopeFor(state: WorldState): {
     excluded: [],
     achievedByCharacter: [],
     rejectedTaskIds: [],
+    supports: [],
   };
 }
 
@@ -662,6 +734,20 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
   const characters = roster(ctx.state);
   if (!rows.length) {
     return { changes: {}, detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_parent_tasks' }, fallback: false, calls: [] };
+  }
+  if (ctx.shared?.pendingSubtasks) {
+    const changes = ctx.shared.pendingSubtasks;
+    return {
+      changes,
+      detail: {
+        parentTaskIds: rows.map(({ task }) => task.id).sort(),
+        characterIds: characters,
+        addedTaskIds: Object.values(changes).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort(),
+        source: 'merged_tasks_answer',
+      },
+      fallback: false,
+      calls: [],
+    };
   }
   const prompt = buildSubtasksPrompt(ctx);
   try {
@@ -814,9 +900,11 @@ function latestPersonalityOwners(state: WorldState): Set<Id> {
  * prompt prefix across calls (wllama cache_prompt), so the settled results and
  * time are read once instead of being re-prefilled by every stage. */
 function sharedHeader(state: WorldState, results: Record<Id, string>): string {
+  const facts = resultFacts(results);
   return [
     `当前世界时间：${state.time.dateTime}`,
-    `本组结算结果：${resultText(results) || '（无）'}`,
+    '本组结算结果（任务达成必须引用其中的编号）：',
+    facts.length ? facts.map((fact) => `${fact.id} [${fact.memberId}] ${fact.text}`).join(String.fromCharCode(10)) : '（无）',
   ].join('\n');
 }
 
@@ -1070,14 +1158,18 @@ function buildTasksPrompt(ctx: StageContext): string {
     '- achieved 只列本轮新达成的任务编号（每行开头的 t1、t2…）；该人物其余任务保持原状，不要逐条输出 pending。',
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
+    '- achieved 里每个任务必须同时写 basis：引用结算结果里的 f1、f2…；只有目标确实由时间推移直接触发时才可写 basis: "time"。没有 basis 的任务不得列入。',
     '- 只有本组结算结果里明确提到该人物的事实，才可列入 achieved；结算结果没有提到的人物保持原状，不能因为时间过去就替不在场人物完成任务。',
     '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
     '- 本轮是时间扫描：没有行动结果时，只有时间推移本身明确触发或到期的任务才可达成，其余保持原状。',
     '- 任务编号必须逐字复制该人物行里已有的编号，不能自己造编号；不确定就留空，不要写近似的名字。',
+    '如果本组结算结果产生了新的具体目标，也可以在同一答案里给出 subtasks：',
+    '- 小任务必须挂在已有任务下，parentTaskId 用行首任务编号（t1、t2…）；负责人必须是父任务的负责人；新任务一律 pending。',
+    '- 没有新的具体目标就输出空数组，不要为了凑数量新增。',
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
-    `输出 {"unchanged":[${unchanged}],"achieved":[]}（unchanged 列出所有没有变化的人物；achieved 只写有变化的人物，行内 achieved 填本轮新达成的任务编号；每个有任务的人物必须出现一次）。`,
+    `输出 {"unchanged":[${unchanged}],"achieved":[],"subtasks":[]}（unchanged 列出所有没有变化的人物；achieved 只写有变化的人物，形如 {"characterId":"lu","tasks":[{"taskId":"t1","basis":"f1"}]}；每个有任务的人物必须出现一次；subtasks 只在真的有新目标时填写）。`,
   ].join('\n');
 }
 
@@ -1088,17 +1180,32 @@ function buildTasksPrompt(ctx: StageContext): string {
 interface TaskDecisionRead {
   changes: Record<Id, Partial<EntityDelta>>;
   rejected: { characterId: Id; taskId: string; reason: string }[];
+  supports: { characterId: Id; taskId: Id; basis: string }[];
 }
 
 /** One decision per character covers all of that character's tasks. Character
  * coverage is hard (retry, then abort). A task id that does not exist, is a
  * placeholder, or belongs to another character is rejected per entry and kept
- * in evidence: it cannot become state, but it must not erase the other valid
- * decisions or turn a typo into an aborted point. */
-function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead {
+ * in evidence. In product mode every new achievement must also cite the settled
+ * fact it rests on (f1.. or time); a known task id alone is not proof of goal
+ * satisfaction. */
+function readTaskDecisions(
+  value: unknown,
+  state: WorldState,
+  options: { strictSupport?: boolean; factIds?: Set<string> } = {},
+): TaskDecisionRead {
   const payload = asRecord(value);
-  let decisions: unknown[] | undefined = Array.isArray(payload.decisions) ? payload.decisions : undefined;
-  if (!decisions && (Array.isArray(payload.unchanged) || Array.isArray(payload.achieved))) {
+  type Entry = { taskId: string; basis?: string };
+  type Row = { characterId: string; entries: Entry[] };
+  let decisions: Row[] | undefined;
+  if (Array.isArray(payload.decisions)) {
+    decisions = payload.decisions.map((raw): Row => {
+      if (!isRecord(raw)) throw new Error('decision must be an object');
+      const characterId = asString(raw.characterId);
+      if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
+      return { characterId, entries: raw.achieved.map((item) => ({ taskId: asString(item) })) };
+    });
+  } else if (Array.isArray(payload.unchanged) || Array.isArray(payload.achieved)) {
     const unchanged = Array.isArray(payload.unchanged) ? payload.unchanged.map(asString) : [];
     const achievedRows = Array.isArray(payload.achieved) ? payload.achieved : [];
     const named = new Set<string>();
@@ -1108,7 +1215,7 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
       if (!characterId) throw new Error('unchanged must contain character ids or full names');
       if (named.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
       named.add(characterId);
-      decisions.push({ characterId, achieved: [] });
+      decisions.push({ characterId, entries: [] });
     }
     for (const row of achievedRows as unknown[]) {
       if (!isRecord(row)) throw new Error('achieved entries must be objects');
@@ -1116,7 +1223,19 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
       if (!characterId) throw new Error('achieved entry needs characterId');
       if (named.has(characterId)) throw new Error(`character ${characterId} appears in both unchanged and achieved`);
       named.add(characterId);
-      decisions.push({ characterId, achieved: Array.isArray(row.achieved) ? row.achieved : [] });
+      let entries: Entry[];
+      if (Array.isArray(row.tasks)) {
+        entries = row.tasks.map((item) => {
+          if (!isRecord(item)) throw new Error(`task entry must be an object for ${characterId}`);
+          return { taskId: asString(item.taskId), basis: asString(item.basis) };
+        });
+      } else if (Array.isArray(row.achieved)) {
+        // Pre-support compact shape: accepted only outside product mode.
+        entries = row.achieved.map((item) => ({ taskId: asString(item) }));
+      } else {
+        throw new Error(`achieved entry needs tasks for ${characterId}`);
+      }
+      decisions.push({ characterId, entries });
     }
   }
   if (!decisions) throw new Error('decisions or unchanged/achieved must be an array');
@@ -1133,22 +1252,21 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
   const required = [...ownerTasks.keys()].sort();
   const byCharacter = new Map<Id, Id[]>();
   const rejected: TaskDecisionRead['rejected'] = [];
+  const supports: TaskDecisionRead['supports'] = [];
   for (const raw of decisions) {
-    if (!isRecord(raw)) throw new Error('decision must be an object');
     const rawCharacterId = asString(raw.characterId);
     const characterId = resolveCharacterId(state, rawCharacterId);
     if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
     if (!state.characters[characterId]) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
-    if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
-    const achieved = raw.achieved.map((item) => asString(item));
     if (!ownerTasks.has(characterId)) {
-      for (const taskId of achieved) rejected.push({ characterId, taskId, reason: 'character_has_no_tasks' });
+      for (const entry of raw.entries) rejected.push({ characterId, taskId: entry.taskId, reason: 'character_has_no_tasks' });
       continue;
     }
     if (byCharacter.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
     const seen = new Set<Id>();
     const list: Id[] = [];
-    for (const rawTaskId of achieved) {
+    for (const entry of raw.entries) {
+      const rawTaskId = entry.taskId;
       if (!rawTaskId) { rejected.push({ characterId, taskId: rawTaskId, reason: 'empty_task_id' }); continue; }
       const keyed = /^t\d+$/.test(rawTaskId) ? realByKey.get(rawTaskId) : undefined;
       if (/^t\d+$/.test(rawTaskId) && !keyed) {
@@ -1166,7 +1284,15 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
       if (seen.has(taskId)) { rejected.push({ characterId, taskId, reason: 'duplicate_task_id' }); continue; }
       seen.add(taskId);
       if (row.task.status === 'achieved') continue;
+      if (options.strictSupport) {
+        if (!entry.basis) { rejected.push({ characterId, taskId, reason: 'missing_support' }); continue; }
+        if (entry.basis !== 'time' && !options.factIds?.has(entry.basis)) {
+          rejected.push({ characterId, taskId, reason: 'unknown_support' });
+          continue;
+        }
+      }
       list.push(taskId);
+      if (options.strictSupport && entry.basis) supports.push({ characterId, taskId, basis: entry.basis });
     }
     byCharacter.set(characterId, list);
   }
@@ -1174,11 +1300,18 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
   if (missing.length) {
     throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${missing.join(',')}`);
   }
+  if (options.strictSupport) {
+    const unsupported = rejected.filter((row) => row.reason === 'missing_support' || row.reason === 'unknown_support');
+    if (unsupported.length) {
+      const list = unsupported.map((row) => `${row.characterId}:${row.taskId}:${row.reason}`).join(',');
+      throw new Error(`task_support_incomplete:${list}; 每个新达成任务必须引用结算结果里的 f1、f2… 或 time`);
+    }
+  }
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const [ownerId, taskIds] of byCharacter) {
     if (taskIds.length) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   }
-  return { changes, rejected };
+  return { changes, rejected, supports };
 }
 
 function buildSubtasksPrompt(ctx: StageContext): string {
