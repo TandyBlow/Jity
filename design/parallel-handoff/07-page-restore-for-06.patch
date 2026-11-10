@@ -1,0 +1,150 @@
+diff --git a/frontend/src/app/world-local/page.tsx b/frontend/src/app/world-local/page.tsx
+index 8997850b..fde83f62 100644
+--- a/frontend/src/app/world-local/page.tsx
++++ b/frontend/src/app/world-local/page.tsx
+@@ -13,6 +13,7 @@ import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore
+ import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
+ import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
+ import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
++import type { ProgressConflictError } from '@/lib/world-engine/local/progress-sync/types';
+ import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
+ import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
+ import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
+@@ -349,6 +350,15 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
+  * took the lease, otherwise the fresh page would be blocked again. */
+ const LEASE_TAKEOVER_KEY = 'jity.world.local.lease.takeover';
+ 
++/** The progress service could not be read. This is not an empty save: the page
++ * must not create a new world over a copy that exists on another device. */
++class ProgressUnavailableError extends Error {
++  constructor() {
++    super('progress_service_unavailable');
++    this.name = 'ProgressUnavailableError';
++  }
++}
++
+ /** Open the saved session, waiting briefly when a just-unloaded page has not
+  * released its lease yet. A held lease is never treated as a corrupt save. */
+ async function openWithLease(
+@@ -356,9 +366,24 @@ async function openWithLease(
+   world: { worldId: string; template: Parameters<typeof LocalGameSession.create>[0] },
+   model: LocalGameModel,
+   alive: () => boolean,
++  sync: ProductSync<LocalGameSnapshot> | null = null,
+   attempts = 6,
+   delayMs = 1500,
+ ): Promise<LocalGameSession> {
++  // A fresh browser can still own progress on another device. Ask the
++  // progress service before creating a new world; an unreadable head is not
++  // the same as an empty one.
++  if (sync) {
++    const local = await store.load(world.worldId).catch(() => null);
++    if (!local) {
++      const remote = await sync.restore().catch(() => null);
++      if (remote?.source === 'unavailable') throw new ProgressUnavailableError();
++      if (remote?.source === 'remote' && remote.snapshot) {
++        if (!alive()) throw new Error('page_unmounted');
++        return LocalGameSession.restore(remote.snapshot, model, { storage: store });
++      }
++    }
++  }
+   const takeoverId = (() => {
+     try { return sessionStorage.getItem(LEASE_TAKEOVER_KEY); } catch { return null; }
+   })();
+@@ -436,11 +461,38 @@ export default function WorldLocalPage() {
+   /** A live lease held by another tab (or by a reload that has not released
+    * yet). The save is valid; it must never be archived or deleted for this. */
+   const [leaseBlocked, setLeaseBlocked] = useState(false);
++  /** Both copies of a diverged world stay stored until the player picks one. */
++  const [conflict, setConflict] = useState<ProgressConflictError<LocalGameSnapshot> | null>(null);
+   const leaseWorldRef = useRef<string | null>(null);
+ 
+   /** Fallback only: when the platform has no IndexedDB the session runs in
+    * memory and the page keeps a best-effort localStorage copy so a refresh is
+    * not a guaranteed loss. Durable sessions save through the store instead. */
++  /** The player's explicit choice after a visible conflict. The service keeps
++   * both leaves; choosing remote replaces only this device's head. */
++  const resolveConflict = useCallback(async (choice: 'keep-local-fork' | 'keep-remote') => {
++    const sync = syncRef.current;
++    if (!sync || !conflict) return;
++    try {
++      const resolved = await sync.choose(choice, conflict);
++      setConflict(null);
++      if (choice === 'keep-remote' && resolved.snapshot) {
++        const store = storeRef.current;
++        await sessionRef.current?.close().catch(() => undefined);
++        if (!store) {
++          setError('没有可写的本地存档，无法切换到另一台设备的进度。');
++          return;
++        }
++        await store.save(conflict.worldId, resolved.snapshot.payload);
++        window.location.reload();
++        return;
++      }
++      setSyncLabel('已把这一台的版本设为同步主线');
++    } catch (e) {
++      setError(e instanceof Error ? `选择没有保存：${e.message}` : String(e));
++    }
++  }, [conflict]);
++
+   const save = useCallback((snapshot: LocalGameSnapshot) => {
+     if (snapshot.transport.work) return; // never persist a half-settled point
+     const sync = syncRef.current;
+@@ -450,6 +502,7 @@ export default function WorldLocalPage() {
+       // sync layer can never bump the revision behind the session's back.
+       void sync.push(snapshot).then((result) => {
+         const outcome = result.outcome;
++        if (outcome?.status === 'conflict') setConflict(outcome.conflict);
+         setSyncLabel(outcome?.status === 'synced' ? '已同步'
+           : outcome?.status === 'queued' ? '已存本地，等待联网同步'
+           : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
+@@ -620,8 +673,10 @@ export default function WorldLocalPage() {
+         const store = await openLocalProgressStore();
+         storeRef.current = store;
+         const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
+-        if (store.durable) {
+-          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase });
++        const sync = store.durable
++          ? createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase })
++          : null;
++        if (sync) {
+           syncRef.current = sync;
+           void sync.flush().then((outcome) => {
+             if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
+@@ -639,7 +694,7 @@ export default function WorldLocalPage() {
+         let session: LocalGameSession;
+         let restored = false;
+         try {
+-          session = await openWithLease(store, world, model, () => alive);
++          session = await openWithLease(store, world, model, () => alive, sync);
+           restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
+         } catch (openError) {
+           if (openError instanceof SessionLeaseHeldError) {
+@@ -652,6 +707,13 @@ export default function WorldLocalPage() {
+             setError('另一个标签页正在使用这个存档。可以等它释放后继续，或在这个标签页接管。');
+             return;
+           }
++          if (openError instanceof ProgressUnavailableError) {
++            // Do not archive or replace anything: the local store is empty, and
++            // starting a new world here would silently orphan the remote save.
++            setPhase('error');
++            setError('进度服务暂时读不到这个世界的存档。为避免覆盖，没有开始新的一局；请等网络恢复后刷新重试。');
++            return;
++          }
+           console.error('[world-local] saved progress could not be opened', openError);
+           const record = await store.load(world.worldId).catch(() => null);
+           let archived = false;
+@@ -993,6 +1055,13 @@ export default function WorldLocalPage() {
+             </div>
+           </div>
+ 
++          {conflict && (
++            <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>
++              另一台设备也保存了同一个世界，两份都还在。请选择保留哪一份：
++              <button onClick={() => void resolveConflict('keep-local-fork')} style={{ marginLeft: 8, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>保留这一台的进度</button>
++              <button onClick={() => void resolveConflict('keep-remote')} style={{ marginLeft: 6, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>改用另一台的进度</button>
++            </div>
++          )}
+           {leaseBlocked && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>
+             存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。
+             <button onClick={() => window.location.reload()} style={{ marginLeft: 8, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>重试</button>
