@@ -1,0 +1,57 @@
+{
+ "note": "Captured from turn-execution/real-world.test.ts on the real product world (14 chars). Scripted model answers; the ledger shape and counts are the port's own. Not model-quality evidence.",
+ "submission": {
+  "inputText": "我问楚子航地下检修门的门闩到底会不会再插上。",
+  "startedAtMs": 0,
+  "endedAtMs": 12,
+  "calls": [
+   {
+    "task": "results",
+    "key": "group_10",
+    "stage": null,
+    "ms": 0.12770000000000437,
+    "promptChars": 1394,
+    "fallback": false,
+    "calls": 1,
+    "evidenceCalls": 1
+   },
+   {
+    "task": "updates",
+    "key": "group_10",
+    "stage": null,
+    "ms": 0.2779000000002725,
+    "promptChars": 28580,
+    "fallback": false,
+    "calls": 6,
+    "evidenceCalls": 6,
+    "stages": [
+     "position",
+     "appearance",
+     "tasks",
+     "subtasks",
+     "personality",
+     "sanity"
+    ],
+    "coverage": {
+     "tasks": 14,
+     "personality": 14
+    }
+   },
+   {
+    "task": "continuation",
+    "key": "round_3",
+    "stage": null,
+    "ms": 0.017799999999851934,
+    "promptChars": 1045,
+    "fallback": false,
+    "calls": 1,
+    "evidenceCalls": 1
+   }
+  ],
+  "resultsCalls": 1,
+  "updatesCalls": 1,
+  "continuationCalls": 1,
+  "continuationDecision": "handback",
+  "stops": []
+ }
+}
