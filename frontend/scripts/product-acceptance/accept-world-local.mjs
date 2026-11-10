@@ -522,6 +522,9 @@ try {
       entry.message = afterInfo.message;
       entry.timings.doneMs = Date.now() - timer.submittedAtMs;
       entry.after = await snapshot();
+      const loadCounts = (entry.product?.engines ?? []).map((engine) => `${engine.label}:${engine.loadCount}/${engine.workersCreated}/${engine.generations}`);
+      entry.engineCounters = loadCounts;
+      entry.warmTurn = entry.turn > 1;
       // The page already exposes its narration debug object; the driver only
       // reads it. Absence is recorded, never filled in by the harness.
       entry.product = await page.evaluate(() => {
@@ -547,6 +550,11 @@ try {
               promptChars: call.promptChars ?? null, fallback: Boolean(call.fallback), error: call.error ?? null,
               calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
               stageMs: call.stageMs ?? null,
+              raw: typeof call.raw === 'string' ? call.raw.slice(0, 4000) : (call.raw ?? null),
+              attempts: Array.isArray(call.attempts) ? call.attempts.map((attempt) => ({
+                ms: attempt?.ms ?? null, error: attempt?.error ?? null, finishReason: attempt?.finishReason ?? null,
+                raw: typeof attempt?.raw === 'string' ? attempt.raw.slice(0, 4000) : (attempt?.raw ?? null),
+              })) : (call.attempts ?? null),
             })),
           } : null,
         };
@@ -569,7 +577,14 @@ try {
       if (!entry.text) entry.problems.push('empty_text');
       if (afterInfo.count <= beforeCount) entry.problems.push('no_entry_added');
       if (/Error|加载失败/.test(afterInfo.body.slice(-1200))) entry.problems.push('error_visible');
+      entry.textSource = entry.product?.source ?? (entry.note ? 'program' : (entry.text ? 'unknown_or_draft' : 'none'));
+      entry.modelId = entry.product?.modelId ?? null;
       if (entry.note) entry.problems.push('program_fallback_labelled');
+      if (entry.textSource === 'program') entry.problems.push('program_text_not_model');
+      const prose = entry.text ?? '';
+      if (/^(…+|。|，|、|\s)$/.test(prose.trim())) entry.problems.push('placeholder_only_text');
+      if (/(结算|回退|fallback|本拍|本组|模型未|无法确认|未产生)/.test(prose)) entry.problems.push('internal_note_in_prose');
+      if (/^(上一|刚才|此前)/.test(prose.trim()) && /(结算|修正|回退)/.test(prose)) entry.problems.push('internal_note_in_prose');
       if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');
       if (entry.text && turn.input && entry.text.includes(turn.input)) entry.problems.push('echoes_player_input');
       const beforeHistory = Number(entry.before?.historyCount ?? NaN);
@@ -648,22 +663,39 @@ try {
   }
   const entriesAfterReload = await entryCount();
   const stateAfterReload = await snapshot();
+  const restoredText2 = await page.evaluate(() => document.body.innerText);
+  const beforeEntries = await page.evaluate(() => window.__acceptEntryInputs ?? null).catch(() => null);
+  // Entry identity, not just a count: a page can report 'restored' while the
+  // visible history is empty.
+  const entriesContract = await page.evaluate(() => {
+    const entries = [...document.querySelectorAll('article')].map((node) => node.querySelector('div')?.textContent ?? '');
+    return { count: entries.length, inputs: entries.map((line) => line.replace(/^你：/, '').split(' · ')[0]) };
+  });
+  const stateRestored = stateBeforeReload.place === stateAfterReload.place
+    && stateBeforeReload.sanity === stateAfterReload.sanity;
+  const historyRestored = stateBeforeReload.historyCount === stateAfterReload.historyCount;
+  const entriesRestored = entriesAfterReload >= entriesBeforeReload
+    && entriesContract.count >= entriesBeforeReload;
   evidence.refreshRestore = {
     ms: Date.now() - reloadStarted,
+    pageSaysRestored: /已恢复本地存档/.test(restoredText2),
     entriesBefore: entriesBeforeReload,
     entriesAfter: entriesAfterReload,
-    restored: /已恢复本地存档/.test(await page.evaluate(() => document.body.innerText)),
+    entriesNow: entriesContract,
     stateBefore: stateBeforeReload,
     stateAfter: stateAfterReload,
-    samePlace: stateBeforeReload.place === stateAfterReload.place,
-    sameSanity: stateBeforeReload.sanity === stateAfterReload.sanity,
-    entriesKept: entriesAfterReload >= entriesBeforeReload,
+    stateRestored,
+    historyRestored,
+    inputConsumptionRestored: historyRestored,
+    entriesRestored,
+    // The product may only claim recovery when everything a player relies on
+    // is actually back. A matching place/sanity is not enough.
+    overallRestored: stateRestored && historyRestored && entriesRestored,
   };
-  if (!evidence.refreshRestore.entriesKept) noteFailure('reload', 'entries were not restored after refresh', evidence.refreshRestore);
-  if (evidence.refreshRestore.stateBefore.place !== evidence.refreshRestore.stateAfter.place
-      || evidence.refreshRestore.stateBefore.sanity !== evidence.refreshRestore.stateAfter.sanity) {
-    noteFailure('reload', 'state changed across refresh/restore', evidence.refreshRestore);
-  }
+  if (!entriesRestored) noteFailure('reload', `entries were not restored after refresh: ${entriesBeforeReload} -> ${entriesAfterReload}`, evidence.refreshRestore);
+  if (!stateRestored) noteFailure('reload', 'state changed across refresh/restore', evidence.refreshRestore);
+  if (!historyRestored) noteFailure('reload', 'history count changed across refresh/restore', evidence.refreshRestore);
+  if (!evidence.refreshRestore.overallRestored) evidence.refreshRestore.failure = 'overall_not_restored';
   save();
 
   // Contract checks that do not need inference: cancel control and save service.
