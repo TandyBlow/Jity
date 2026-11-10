@@ -239,6 +239,8 @@ describe('turn execution through the real kernel', () => {
     // task/personality answers covered the whole cast, not just the room.
     const cast = Object.keys(initial.characters).length;
     expect(full?.coverage).toEqual({ tasks: cast, personality: cast });
+    expect(Object.keys(full?.stageMs ?? {})).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    expect(Object.values(full?.stageMs ?? {}).every((ms) => Number.isFinite(ms) && ms >= 0)).toBe(true);
     expect(submission?.continuationCalls).toBe(1);
   });
 

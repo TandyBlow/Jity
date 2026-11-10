@@ -51,6 +51,8 @@ export interface PortCallRecord {
   /** How many characters the stage answers covered. The full cast is a product
    * requirement, and this is the lightweight proof 09 can read from the page. */
   coverage?: { tasks: number; personality: number };
+  /** Model time per updates stage, for finding which stage made a turn slow. */
+  stageMs?: Record<string, number>;
 }
 
 export interface PortSubmission {
@@ -121,6 +123,13 @@ export function createSettlementModelPort(
     } | null;
     if (Array.isArray(detail?.stages)) {
       record.stages = detail.stages.map((row) => String(row.stage));
+      const stageMs: Record<string, number> = {};
+      for (const row of detail.stages) {
+        const stage = String(row.stage ?? '');
+        const ms = Number((row as { ms?: unknown }).ms);
+        if (stage && Number.isFinite(ms)) stageMs[stage] = Math.round(ms);
+      }
+      if (Object.keys(stageMs).length) record.stageMs = stageMs;
     }
     if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds)) {
       record.coverage = {
