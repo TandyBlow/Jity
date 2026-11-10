@@ -22,7 +22,7 @@ HPC 作业 251512（V100-SXM2-32GB，fp16，hpcgpu01）完成了 6 次真实生�
 
 原因分析见 `experiments/narration-best-of-n/cause-analysis-b01.md`：最可能的 H1 是状态视图提示词从未要求写正文，模型把输入当摘要任务。已冻结 `preregistration.v2`（SHA-256 `ea077908…`），只加一段固定写作指令，同 case/模型/种子/采样/上限/rubric；请求在 `results/product/hpc-requests/12-best-of-n-b01-v2.json`，尚无 v2 输出。
 
-## 2. 已交付（当前 HEAD `1c8a8e59849b461df38f09519b9608c51db4d5cb`（模块与 v1 预注册在 `adb54647`，b01 结果与 v2 预注册在 `1c8a8e59`））
+## 2. 已交付（当前 HEAD `38606b1b`；模块与 v1 预注册在 `adb54647`，b01 结果与 v2 预注册在 `1c8a8e59`，b02-v2 条件预注册在 `2d121a87`）
 
 ### 2.1 产品候选模块（新目录，未接页面）
 
@@ -66,6 +66,9 @@ selectCandidate({ candidates, assessments, options })
 - 使用 01 的共享包 `narration-dev-package-v1`（manifest `20da8db9…`、cases `8dd2de92…`、rubric `020c9ca9…`），没有另建输入包。
 - b01：`frozen-row-0012`，种子 `17,29,43,61,79,97`；模型 `~/qwen15b`（HPC 基座，不是浏览器产品权重）；temperature 0.45 / top-p 0.95 / top-k 40 / 240 new tokens（产品候选默认量级）。
 - b02（泛化，未提交）：no_change、move_direction、item_transfer、gender_pronoun、continuity 各一例。
+- `preregistration.v2.json` + `.sha256`：v2 只加固定写作指令，SHA-256 `ea077908…`；请求在 `results/product/hpc-requests/12-best-of-n-b01-v2.json`，尚无输出。
+- `preregistration.v3.json` + `.sha256`：条件性 b02-v2，SHA-256 `a2c5fd00…`；只有在 v2 有 ≥2 份事实合格且 ≥2 个合格簇时才允许运行，未向 10 提交。
+- `analysis-addendum-arms.md`：N arm 改成全部 C(6,N) 子集，避免种子前缀偏差；SHA-256 `12c9c428…`。
 - `src/prepare.ts`：校验包哈希、用产品 `renderTrainedInstructUser` 渲染请求、写 `data/b01/{requests,expected,plan}`；`expected` 不含 `reference`。
 - `src/verify_pack.py`：HPC 前再次校验 manifest/cases/rubric 哈希、Python 规范化 input SHA、prompt SHA、种子顺序、reference-only 子串泄漏。
 - `src/generate_hpc.py`：10 专用；模型加载、chat template、逐种子真实生成、原始文本/首 token/总耗时/token 数/finishReason/GPU/模型权重哈希全部落盘；输出目录存在即拒绝。
@@ -75,7 +78,9 @@ selectCandidate({ candidates, assessments, options })
 
 ```bash
 npx vitest run src/lib/world-engine/local/narration-candidates/best-of-n/best-of-n.test.ts
-# 22/22 pass
+# 24/24 pass
+node_modules/.bin/jiti ../experiments/narration-best-of-n/src/arms.test.ts
+# arms.test: ok (C(6,1)=6, C(6,2)=15, C(6,4)=15)
 
 npx tsc --noEmit --target ES2020 --module esnext --moduleResolution bundler --strict \
   --skipLibCheck --resolveJsonModule --lib ES2020,DOM \
@@ -93,13 +98,17 @@ python -X utf8 experiments/narration-best-of-n/src/verify_pack.py --batch b01
 
 ## 4. 未完成 / 限制（如实）
 
-- **尚无真实模型输出**。b01 已准备并通过哈希校验，HPC 请求在 `results/product/hpc-requests/12-best-of-n-b01.json`，等 10 运行/取回。没有 6 份原文前，不写收益结论、不接产品。
+- **b01 是真实负面结果，不是“待运行”**：6 份原文、4 簇、0/6 事实合格；报告在 `experiments/narration-best-of-n/results/b01/`。没有收益，N 未扩大。
+- **v2 尚无输出**：预注册已冻结、请求已交 10；v2 结果出来前不写 best-of-N 收益、不接产品。
+- **b02-v2 是条件准备，不是已提交运行**：只有 v2 过门才允许跑。
 - 模型是 `~/qwen15b` 基座，不是当前浏览器产品权重；任何产品结论需同条件复测。
 - 01/rubric 检查器是机械判据，不是人工；`pending` 不通过。独立逐句复核请求会在有原文后写 `review-request.json` 交 01，AI 审读另标 `independent_agent`，真实人工未发生记 pending。
 - HPC 时间不是浏览器时间；60/300 秒必须由 09 在同一产品页实测。
 - `runCandidatePool` 只负责“N 次生成 + 记录”，不替产品做重试策略；候选内部的 retry 时间必须计入 `totalMs`。
 
-## 5. 给 06 的接线（等真实证据后，不现在改页面）
+## 5. 给 06 的接线（现在不要接）
+
+**结论：现在不要接线。** b01 的 6 份真实输出 0 份事实合格，4 个簇是四种错误形态，不是四种有效写法；best-of-N 没有可复核收益。模块可以独立测试，但产品候选池只会多花 N 倍调用。等 v2 过门、b02 泛化、arm 比较和 09 时序四项都满足后再谈接线。
 
 建议把 best-of-N 做成现有 `NarrationCandidate` 的一个新候选，而不是改 `selection/`：
 
@@ -131,7 +140,7 @@ async run({ engine, prepared, point, policy }) {
 
 接的前提（缺一不接）：
 
-1. b01+b02 至少 2 个 case 有 ≥2 份事实合格且不同质；
+1. b01-template-v2 至少 2 份事实合格且 ≥2 个合格簇，b02-v2 至少 2 个 case 有 ≥2 份事实合格且不同质；
 2. N=2 或 N=4 在相同条件下严格优于 N=1；
 3. 09 实测 N 方案仍满足 60 秒首可读/300 秒整回合；
 4. 用户可见文本只来自通过检查的候选，程序降级单独标记。
