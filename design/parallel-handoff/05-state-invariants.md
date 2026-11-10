@@ -240,6 +240,18 @@ internal "未成功触发骰点" field language and repeated scene text. 06 415c
 keeps the player point source and labels both program points per point; 05
 rejects the turn. This is not a state-kernel failure.
 
+## d101: first accepted model turn; only latency fails
+
+Run `2026-11-10T2129-cad9` at 06 `d1019f09`, page `84dcce4f`, produced one
+version-1 player point. Both root and player sources are `model`; reload is
+stable and keeps labels; the point chain/digests and 73-row task coverage pass.
+The player paragraph is accepted model prose, `programFallback=false`; the page
+note only reports a later automatic round that did not finish.
+
+`acceptedMs=137786` (>60s), total 144.1s. 05 rejects only that gate. 09 currently
+turns any note into `program_fallback_labelled`; `patches/09-note-not-program.patch`
+fixes the driver to use product source/programMs or a program-specific note.
+
 ## Real 09 run found a sync-ownership conflict
 
 The first real 10-turn page run (`results/product/evidence/09-product-10turn.json`,
