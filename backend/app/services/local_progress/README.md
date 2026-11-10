@@ -34,6 +34,28 @@ No existing world route or shared database schema is changed. Storage defaults
 to `data/local_progress.sqlite3` (ignored by git), configurable with
 `LOCAL_PROGRESS_DB`.
 
+## Real-page run (06 product + 09 acceptance)
+
+The product page defaults to `http://127.0.0.1:8000/local-progress`. Either
+mount the router into the API that already serves :8000, or run the standalone
+service on :8010 and tell the frontend at start time. A browser fetch is
+cross-origin, so the page's origin must be in `LOCAL_PROGRESS_CORS_ORIGINS`:
+
+```bash
+# progress service
+cd backend
+LOCAL_PROGRESS_DB=../../.tmp/09-progress/progress.sqlite3 LOCAL_PROGRESS_CORS_ORIGINS=http://127.0.0.1:3221,http://localhost:3221,http://127.0.0.1:3241,http://localhost:3241 python -X utf8 -m uvicorn app.services.local_progress.standalone:app --port 8010 --host 127.0.0.1
+
+# product page, started with the service URL (Next inlines NEXT_PUBLIC_*)
+cd worktrees/06-recovery/frontend
+NEXT_PUBLIC_LOCAL_PROGRESS_URL=http://127.0.0.1:8010/local-progress npx next dev --port 3221
+```
+
+Acceptance runs can leave `LOCAL_PROGRESS_TOKEN` unset (localhost service).
+If the token is set, the page must pass it through `createProductSync({ token })`;
+the current product page does not, so a token-protected service needs that one
+wiring line from 06.
+
 ## Protocol
 
 `POST /local-progress/worlds/{worldId}/snapshots`

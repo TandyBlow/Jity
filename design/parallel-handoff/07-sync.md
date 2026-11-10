@@ -552,6 +552,16 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 # 以及离线链上传与分叉保留两副本。
 ```
 
+### 给 09：双设备真实运行的前置（CORS 与 URL）
+
+页面默认请求 `http://127.0.0.1:8000/local-progress`；如果进度服务单独跑在
+8010，页面启动时必须带 `NEXT_PUBLIC_LOCAL_PROGRESS_URL`，并且服务端要把页面
+来源（3221/3241）加进 `LOCAL_PROGRESS_CORS_ORIGINS`，否则浏览器会因跨域失败，
+看起来像“同步坏了”。命令写在
+`backend/app/services/local_progress/README.md` 的 “Real-page run” 一节。
+本轮验收可以不给服务设 token（本机服务）；若设了 token，页面还缺一行
+`createProductSync({ token })`，需要 06 补。
+
 ### 给 06：页面补丁（2026-11-10，已验证，未写 06 的树）
 
 `design/parallel-handoff/07-page-restore-for-06.patch` 在 06 `81d5507a` 上、
