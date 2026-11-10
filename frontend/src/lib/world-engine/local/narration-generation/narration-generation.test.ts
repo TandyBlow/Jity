@@ -1239,3 +1239,23 @@ describe('beat prompt: allowed polish is not forbidden', () => {
     expect(prompt).not.toContain('他是');
   });
 });
+
+describe('scene prompt: repair keeps the prose-facts shape', () => {
+  test('the retry prompt carries the guidance before the body marker and stays in the closed-book shape', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '走廊的灯还亮着。周宁站着没动。' },
+      { kind: 'text', text: '走廊的灯还亮着。林川从走廊走到门厅，在门口停住。周宁留在走廊。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【视角】周宁【正文】', priorText: null,
+      policy: { ...basePolicy, mode: 'scene', promptShape: 'prose-facts', writingContract: false },
+    });
+    expect(engine.calls).toHaveLength(2);
+    const retry = engine.calls[1].prompt;
+    expect(retry).toContain('【本次写作要求】');
+    expect(retry).toContain('林川从走廊走到门厅');
+    expect(retry).not.toContain('【视角】周宁');
+    expect(retry.trimEnd().endsWith('正文：')).toBe(true);
+    expect(result.accepted).toBe(true);
+  });
+});
