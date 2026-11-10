@@ -157,6 +157,10 @@ export class LocalGameModel implements WorldModelPort {
         temperature: options.narrationTemperature ?? 0.45,
         maxTokens: options.narrationMaxTokens ?? 240,
         timeoutMs: options.narrationTimeoutMs ?? 150_000,
+        // Variable-length contract: a short complete paragraph is allowed, so
+        // candidates only reject a near-empty string, not a scene under a
+        // fixed character count.
+        minChars: 20,
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
@@ -413,7 +417,7 @@ export class LocalGameModel implements WorldModelPort {
       const grounding = groundingRatio(candidate.supported, sceneNamesList);
       // The narration contract is 160–240 chars; a supported scene shorter than
       // 140 is a short summary, not the contracted paragraph.
-      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2 && [...candidate.supported].length >= 140;
+      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2;
     };
 
     const evaluate = (raw: string) => {
@@ -508,7 +512,7 @@ export class LocalGameModel implements WorldModelPort {
     const audit = proseAudit(safe, protagonistName);
     const grounding = groundingRatio(safe, sceneNamesList);
     const accepted = best.validation.ok && finalAlignment.ok && audit.ok
-      && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 140;
+      && grounding.ratio >= 0.5 && grounding.count >= 2;
     const text = accepted ? safe : draft;
     if (accepted) this.lastAcceptedNarration = text;
     const reason = accepted ? undefined : [...new Set([
