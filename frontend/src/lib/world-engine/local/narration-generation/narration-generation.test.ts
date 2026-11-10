@@ -1612,3 +1612,22 @@ describe('a single invented sentence can be repaired instead of losing the draft
     expect((result.issues ?? []).some((issue) => issue.kind === 'unlicensed_sense')).toBe(true);
   });
 });
+
+describe('an invented posture is repairable sentence by sentence', () => {
+  test('leaning on a wall is flagged and the repaired draft is accepted', async () => {
+    const dirty = '林川从走廊走到门厅，靠在墙边。周宁留在走廊。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: '林川从走廊走到门厅，停在门口。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, maxAttempts: 2, minChars: 20 },
+    });
+    expect((result.rawAttempts[0].repairedIssues ?? []).some((issue) => issue.kind === 'unlicensed_action')).toBe(true);
+    expect(engine.calls[2].prompt).toContain('靠在');
+    expect(result.accepted).toBe(true);
+    expect(result.text).not.toContain('靠在');
+  });
+});

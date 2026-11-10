@@ -33,6 +33,9 @@ export type NarrationIssueKind =
   /** A sound or smell with no settled source (02's narrow generation check;
    * the shared grader treats the same sentence as unverified by design). */
   | 'unlicensed_sense'
+  /** A posture or a hand on a thing the input never moved (02's narrow
+   * generation check, same status as unlicensed_sense). */
+  | 'unlicensed_action'
   /** The model copied the instructions instead of writing prose. */
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */
@@ -227,6 +230,10 @@ export interface NarrationAttempt {
   cancelled: boolean;
   timedOut: boolean;
   progressEvents: number;
+  /** Issues the draft had before the sentence-level repair. Kept so the
+   * evidence still shows what was wrong even though the returned text is
+   * clean; `issues` describes the final text. */
+  repairedIssues?: NarrationIssue[];
 }
 
 /** One beat's outcome. `fallback` text is the committed fact sentence used
