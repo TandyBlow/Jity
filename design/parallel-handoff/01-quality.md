@@ -119,3 +119,5 @@
 **06 provenance / 篇幅契约（2026-11-11）**：`results/quality/review-06-20261111-provenance.md`。c02f527a 的 draft/program 标注与 17:37 证据一致；但 02 的 `7f8e102f` 无变化回合提示 84～120 字，06 接受门槛仍是 140 字（`game-model.ts:416/511`），prose-facts 路径下无变化回合必被拒。需要 06 把门槛写进 policy、02 从 policy 派生，不能两边硬编码。04/03 的修复只能由真实回合验证。
 
 **更正 + 性别表（2026-11-11）**：17:37 证据里 `turns[0]` 前后任务列表其实完全相同，"任务少一条"是 `refreshRestore` 面板窗口差异，已在 `findings-09-1737-turn.md` 与 ten-turn-hold 里显式更正（提交点仍由 committedEntries/headPointId/historyCount 支撑，但载荷未证明）。检查器采用 05 的 `character-gender-evidence.md`：路明非/诺诺/楚子航/林亦舟/沈澄 五人带引文来源，周宁仍按 08 的人工记录；q3 里 10 句"周宁…他"变成硬错误，"诺诺的发圈…他没说话"保持歧义（男性视角在场）。锚点 56。
+
+**开场 wrong_person（2026-11-11）**：cf3d027e 的开场 88.6 s 后被 `wrong_person` 拒绝 → 程序兜底。原因是提示词只写"X 视角"、没写第三人称，而 `narration-alignment.ts:331` 只收第三人称（引号外出现"我"即拒）。已写 `requests-01-to-06-real-turn.md` 追加八：建议 02 在提示词明确第三人称；否则 06 的对齐器要接受"我=视角人物"。被拒原文仍未存，无法进一步判断。
