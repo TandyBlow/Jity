@@ -22,6 +22,7 @@ import type { TimeAdvance } from '../../types';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import { factPhrases } from '../../runtime/committed-narration';
 import type { BeatSceneContext, NarrationLedger, NarrationPolicy } from './types';
+import { BACKGROUND_RULES, ownerOf } from './scene-prompt';
 
 export type BeatKind = 'scene' | 'fact' | 'time';
 
@@ -127,19 +128,22 @@ export function planBeats(input: {
   const quiet = facts.length === 0 && !(ledger.requireTime && ledger.time);
 
   if (scene && (scene.placeNotes?.length || scene.present?.length || scene.location)) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2)
-      .map((note) => note.trim().replace(/[。.]+$/u, ''))
-      .join('；');
+    // The place notes already appear once, under 【环境】. Repeating them in
+    // the directive made the model copy them as prose.
     const people = (scene.present ?? []).map((person) => person.name).filter((name) => name !== viewpointName);
-    const parts = [scene.location ? `这里是${scene.location}` : null, notes || null, people.length ? `${people.join('、')}也在` : null]
+    const parts = [scene.location ? `这里是${scene.location}` : null, people.length ? `${people.join('、')}也在` : null]
       .filter((part): part is string => Boolean(part));
     beats.push({
       id: 'scene-open',
       kind: 'scene',
       fact: null,
+      // The old quiet directive asked for "光、声音、手上的东西、一个小动作",
+      // i.e. exactly the invented material the gate then rejected. A quiet
+      // point has nothing settled, so the only licensed content is what stands
+      // there: the place, who is present, and the state of the named objects.
       directive: quiet
-        ? `${parts.join('。')}。写三到四句眼前的场景：光、声音、手上的东西、${viewpointName ?? '主角'}的一个小动作。不要写任何人走动、开门、递东西、说话或回忆。`
-        : `${parts.join('。')}。写一到两句眼前的场景：光、声音、手上的动作。不要写任何人走动、开门、递东西或说话。`,
+        ? `${parts.join('。')}。只写眼前静止的画面：${scene.location ? `这个地方现在的样子、` : ''}在场的人此刻保持的姿势、手边物品现在的状态。写四到五句，合计一百字上下；不要写光、声音、气味，不要写任何新动作、对话或回忆。`
+        : `${parts.join('。')}。写一到两句眼前已经存在的画面：这里现在的样子、手边物品的状态。不要写任何人走动、开门、递东西或说话，也不要写新出现的声音和气味。`,
       anchors: [],
       licensed: [
         ...people,
@@ -174,7 +178,10 @@ export function planBeats(input: {
       id: 'time',
       kind: 'time',
       fact: null,
-      directive: `时间过去了${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}。用一句写这段时间是怎么过去的，不要写新的动作或事件。`,
+      // Four attempts in the first real run wrote atmosphere but never the
+      // duration, so the beat fell back to the program sentence. Naming the
+      // opening clause is a form constraint: the duration itself is settled.
+      directive: `时间过去了${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}。先写一句带着「${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}」的时间句（例如「${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}过去」），再写这段时间里场景怎么过去；不要写新的动作、事件或回忆。`,
       anchors: [`${duration.amount}${UNIT_CN[duration.unit]}`, `${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}`],
       licensed: [],
       fallback: 'time-sentence',
@@ -200,6 +207,11 @@ export interface BeatPromptInput {
 /** One beat prompt. Kept short on purpose: tiny models lose the instruction
  * after a long state dump, and this prompt must stay under ~200 tokens so the
  * first beat streams in about a second. */
+const trimNote = (note: string): string => {
+  const clean = note.replace(/[。.]+$/u, '').trim();
+  return clean.length > 42 ? `${clean.slice(0, 42)}…` : clean;
+};
+
 export function buildBeatPrompt(input: BeatPromptInput): string {
   const { beat, ledger, policy, scene } = input;
   const lines: string[] = ['你是中文小说作者。只写下面这一件事，用一到两句，直接写正文。', ''];
@@ -207,23 +219,54 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
     lines.push(`【视角】${ledger.viewpoint.name}（第三人称；只写${ledger.viewpoint.name}看得见、听得见的东西，不写别人的内心）`);
   }
   if (scene?.location) lines.push(`【地点】${scene.location}`);
-  const present = (scene?.present ?? []).map((person) => person.name).filter((name) => name !== ledger.viewpoint?.name);
-  if (present.length) lines.push(`【在场】${present.join('、')}`);
+  // A present character's visible detail is settled state. Naming the person
+  // without it invited the model to invent an appearance or a held object.
+  const present = (scene?.present ?? []).filter((person) => person.name !== ledger.viewpoint?.name);
+  if (present.length) {
+    lines.push(`【在场】${present.map((person) => {
+      const note = person.note?.trim();
+      return note ? `${person.name}（${trimNote(note)}）` : person.name;
+    }).join('；')}`);
+  }
   const notes = (scene?.placeNotes ?? []).slice(0, 2);
   if (notes.length) lines.push(`【环境】${notes.join('；')}`);
   // Objects in the room are settled state too: naming one gives the model
   // something concrete to touch instead of inventing a prop.
   const objects = (scene?.objects ?? [])
     .slice(0, 3)
-    .map((object) => (object.note ? `${object.name}（${object.note}）` : object.name));
+    .map((object) => {
+      const owner = ownerOf(object.name);
+      const note = object.note?.trim();
+      return `${object.name}${owner ? `（属于${owner}${note ? `；${trimNote(note)}` : ''}）` : note ? `（${trimNote(note)}）` : ''}`;
+    });
   if (objects.length) lines.push(`【手边】${objects.join('、')}`);
   const prior = input.written.length ? input.written.at(-1) ?? '' : (input.priorTail ?? '');
   if (prior) lines.push(`【前一句】${prior}`);
   lines.push(`【这一件】${beat.directive}`);
-  lines.push('【要求】写具体的动作、声音或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
-    + '不写“他心想”“似乎”“仿佛”“某种”；不要解释情绪；不要重复上面的说明；不要标题。');
+  // Dialogue, the viewpoint's own feelings and ordinary figurative language
+  // are allowed polish (goal §137). Only another character's inner life and
+  // new plot facts are forbidden; an earlier prompt banned all three and
+  // produced flat, unnarratable sentences.
+  lines.push('【要求】写具体的动作或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
+    + '可以写视角人物的感受和判断，不要写别人心里怎么想；不要重复上面的说明；不要标题。');
+  lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
+  lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
+  lines.push('不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。');
+  lines.push(...BACKGROUND_RULES);
   const extra = policy.instruction?.trim();
   if (extra) lines.push(extra);
   lines.push('正文：');
   return lines.join('\n');
+}
+
+/** A beat answer sometimes echoes the prompt's own section marker
+ * («【环境】…»). That marker is an instruction, not prose: strip a leading
+ * label so the page never shows it. Only a leading 【…】 is removed, and only
+ * when the rest of the answer still has content. */
+export function stripBeatLabel(text: string): string {
+  const trimmed = text.trim();
+  const match = /^【[^】]{1,12}】\s*/u.exec(trimmed);
+  if (!match) return trimmed;
+  const rest = trimmed.slice(match[0].length).trim();
+  return rest.length >= 12 ? rest : trimmed;
 }

@@ -40,7 +40,13 @@ const config = {
   maxTokens: Number(option('--max-tokens', '200')),
   maxAttempts: Number(option('--max-attempts', '2')),
   minChars: Number(option('--min-chars', '80')),
-  mode: option('--mode', 'beats'),
+  temperature: Number(option('--temperature', '0.7')),
+  retryTemperature: Number(option('--retry-temperature', '0.5')),
+  // One or more arms measured in the same browser session (one model load).
+  //   scene  — whole scene from lane 01's serialized input + writing contract
+  //   prose  — whole scene rendered as the lane-08 reference closed-book turn
+  //   beats  — one committed thing per call (lane 02 strategy)
+  modes: (option('--modes', option('--mode', 'beats'))).split(',').map((value) => value.trim()).filter(Boolean),
   // scene mode only: which prompt shape the weights were trained on
   template: option('--template', 'legacy'),
   // The B-scene candidate was trained with a separate system turn. The page
@@ -53,6 +59,17 @@ const config = {
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
+  // The comparison must run on the discrete adapter, not whatever Edge picks.
+  // --require-vendor nvidia fails the run when the adapter is wrong instead of
+  // producing numbers that look valid; empty string accepts any adapter.
+  requireVendor: option('--require-vendor', process.argv.includes('--gpu') ? 'nvidia' : ''),
+  // A model that never loads must fail within a bounded time instead of
+  // hanging the queue.
+  loadTimeoutMs: Number(option('--load-timeout-ms', '180000')),
+  // With a scenario file, also run the built-in dev move + elapsed points on
+  // the declared SHORT_STATE fixture: the product opening has no settled
+  // change, so fact expression needs a point that does.
+  withDev: process.argv.includes('--with-dev'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 if (config.scenarioFile) {
@@ -80,7 +97,7 @@ const evidence = {
   config: {
     model: config.model, modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
-    mode: config.mode, template: config.template, set: config.set,
+    modes: config.modes, template: config.template, set: config.set,
     system: config.system || null,
     threads: config.numThreads, gpu: config.gpu, maxTokens: config.maxTokens,
     maxAttempts: config.maxAttempts, minChars: config.minChars,
@@ -153,15 +170,75 @@ try {
   const port = server.httpServer.address().port;
   browser = await chromium.launch({
     headless: true, channel: config.channel,
-    ...(config.gpu ? { args: ['--enable-unsafe-webgpu'] } : {}),
+    // --force_high_performance_gpu is required for Edge to expose the NVIDIA
+    // adapter; without it the run may quietly measure the integrated GPU.
+    ...(config.gpu ? { args: ['--enable-unsafe-webgpu', '--force_high_performance_gpu'] } : {}),
   });
   evidence.browser = browser.version();
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
+  // wllama prints the ggml backend and adapter it actually used. Those lines
+  // are the only proof that the weights ran on the requested adapter.
+  const consoleLines = [];
+  page.on('console', (message) => {
+    const text = message.text();
+    if (/ggml|webgpu|adapter|nvidia|vulkan/i.test(text)) consoleLines.push(text.slice(0, 300));
+  });
+  evidence.deviceProof = { requiredVendor: config.requireVendor || null, adapter: null, console: consoleLines };
+  // Persist each finished arm from Node. Without this every result is lost if
+  // the page crashes after the last arm; a run must be readable while it is
+  // still going.
+  const checkpoint = async (record) => {
+    if (record.id === '__adapter') {
+      evidence.deviceProof.adapter = record.adapter ?? null;
+      const wanted = (config.requireVendor || '').toLowerCase();
+      const adapter = record.adapter ?? {};
+      // Chrome/Edge sometimes leave vendor empty but fill description. Match on
+      // every field the browser exposes; only fail when nothing identifies the
+      // adapter (then the proof is missing, so it is unverified, not "wrong").
+      const identity = [adapter.vendor, adapter.architecture, adapter.device, adapter.description]
+        .map((value) => String(value ?? '')).join(' ').toLowerCase();
+      if (wanted && identity.trim() && !identity.includes(wanted)) {
+        evidence.deviceProof.verdict = 'wrong_adapter';
+        evidence.status = 'FAILED_ADAPTER';
+        evidence.error = `required adapter vendor ${wanted}, got ${identity}`;
+        save();
+        throw new Error(evidence.error);
+      }
+      if (wanted && !identity.trim()) {
+        evidence.deviceProof.verdict = 'adapter_unverified';
+        console.warn('[adapter] browser exposed no adapter identity; backend target is unverified');
+      } else {
+        evidence.deviceProof.verdict = 'ok';
+      }
+      save();
+      console.log(`[adapter] ${identity.trim() || 'identity unavailable'} verdict=${evidence.deviceProof.verdict}`);
+      return;
+    }
+    evidence.runs = [...evidence.runs.filter((run) => run.id !== record.id), record];
+    save();
+    console.log(`[checkpoint] ${record.id} accepted=${record.accepted} chars=${record.chars}`);
+  };
+  await page.exposeFunction('__narrationCheckpoint', checkpoint);
   await page.goto(`http://127.0.0.1:${port}/__narration`);
 
   const result = await page.evaluate(async (config) => {
     if (!crossOriginIsolated) throw new Error('real narration run requires cross-origin isolation');
+    const adapterInfo = await (async () => {
+      if (!navigator.gpu) return { available: false, reason: 'navigator.gpu missing' };
+      const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+      if (!adapter) return { available: false, reason: 'requestAdapter returned null' };
+      const info = adapter.info ?? {};
+      return {
+        available: true,
+        vendor: info.vendor ?? null, architecture: info.architecture ?? null,
+        device: info.device ?? null, description: info.description ?? null,
+      };
+    })();
+    if (window.__narrationCheckpoint) await window.__narrationCheckpoint({
+      id: '__adapter', accepted: Boolean(adapterInfo.available), chars: 0, status: 'device',
+      adapter: adapterInfo, attempts: [], beats: [], text: '',
+    });
     const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
     const { createWllama } = await import('/src/lib/benchmark/wllama-loader.ts');
     const { IncompleteGenerationError } = await import('/src/lib/world-engine/runtime/engine.ts');
@@ -262,7 +339,11 @@ try {
         ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
       });
     const loadStarted = performance.now();
-    await engine.load();
+    // Bounded load: a stuck fetch/compile must not hold the queue forever.
+    await Promise.race([
+      engine.load(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`model load exceeded ${config.loadTimeoutMs} ms`)), config.loadTimeoutMs)),
+    ]);
     const loadMs = performance.now() - loadStarted;
 
     const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -449,6 +530,11 @@ try {
       if (config.set === 'dev' || config.set === 'all') addDev();
       if (config.set === 'unseen' || config.set === 'all') addUnseen();
       if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    } else if (config.withDev) {
+      // Only the two points that carry a settled change and a required time.
+      addDev();
+      const quietRoot = scenarios.findIndex((entry) => entry.id === 'root-scene');
+      if (quietRoot >= 0) scenarios.splice(quietRoot, 1);
     }
 
     const runs = [];
@@ -466,7 +552,7 @@ try {
         ?? projectCommittedNarration(scenario.after, scenario.before ?? null);
       const view = scenario.view ?? scenario.after.state.protagonistId;
       const inputText = scenario.inputText ?? await (async () => {
-        if (config.mode === 'beats' || config.template === 'legacy') {
+        if (config.modes.includes('beats') || config.template === 'legacy') {
           return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
         }
         if (config.template === 'v2') {
@@ -498,24 +584,33 @@ try {
         }
         return renderTrainedRawPrompt(trained);
       })();
+      for (const mode of config.modes) {
       const streamed = [];
+      let firstTextMs = null;
       let progressEvents = 0;
       const started = performance.now();
       const generated = await generateCommittedNarration({
         engine, committed, inputText, priorText,
         onProgress: (state) => {
           progressEvents += 1;
+          if (firstTextMs === null && state.text.trim().length >= 20) firstTextMs = performance.now() - started;
           streamed.push({ status: state.status, chars: [...state.text].length, verified: state.verified });
         },
         policy: scenario.policy ? {
           ...scenario.policy,
-          mode: config.mode,
-          scene: config.mode === 'beats' ? (scenario.scene ?? null) : null,
+          // CLI knobs win over the fixture's defaults so one command measures
+          // the same input under an explicit decoder/length setting.
+          maxTokens: config.maxTokens,
+          minChars: config.minChars,
+          mode: mode === 'beats' ? 'beats' : 'scene',
+          ...(mode === 'prose' ? { promptShape: 'prose-facts' } : {}),
+          scene: mode === 'beats' ? (scenario.scene ?? null) : (scenario.scene ?? null),
           time: scenario.time,
           ...(config.instruction ? { instruction: config.instruction } : {}),
         } : {
-          mode: config.mode,
-          scene: config.mode === 'beats' ? sceneFrom(scenario.after.state, view) : null,
+          mode: mode === 'beats' ? 'beats' : 'scene',
+          ...(mode === 'prose' ? { promptShape: 'prose-facts' } : {}),
+          scene: sceneFrom(scenario.after.state, view),
           viewpoint: { id: view, name: scenario.after.state.initial.characters[view].name },
           roster: Object.values(scenario.after.state.initial.characters).map((entity) => entity.name),
           locations: Object.values(scenario.after.state.initial.locations).map((entity) => entity.name),
@@ -531,7 +626,7 @@ try {
           minChars: config.minChars, targetChars: 240,
           maxAttempts: config.maxAttempts, maxTokens: config.maxTokens, maxTokensCeiling: 700,
           beatAttempts: config.maxAttempts,
-          temperature: 0.7, retryTemperature: 0.5, seed: 42,
+          temperature: config.temperature, retryTemperature: config.retryTemperature, seed: 42,
           deadlineMs: 300_000, timeoutMs: 150_000,
           ...(config.instruction ? { instruction: config.instruction } : {}),
         },
@@ -539,11 +634,11 @@ try {
       const wallMs = performance.now() - started;
       scenario.text = generated.accepted ? generated.text : null;
       const record = {
-        id: scenario.id, note: scenario.note,
+        id: `${scenario.id}::${mode}`, mode, note: scenario.note,
         inputChars: inputText.length, inputText,
         accepted: generated.accepted, status: generated.status, strategyVersion: generated.strategyVersion,
         text: generated.text, chars: [...generated.text].length,
-        wallMs, timings: generated.timings, metrics: generated.metrics,
+        wallMs, firstTextMs, timings: generated.timings, metrics: generated.metrics,
         ledger: {
           mandatory: generated.ledger.mandatory.map((fact) => ({ id: fact.id, kind: fact.kind })),
           optional: generated.ledger.optional.length,
@@ -560,6 +655,11 @@ try {
           raws: beat.raws,
         })),
         assembly: generated.assembly,
+        // Same per-paragraph provenance lane 04's constrained candidate reports,
+        // so one adapter can treat both candidates the same way.
+        segments: generated.segments,
+        beatCounts: generated.beatCounts,
+        mixed: generated.mixed,
         displayStatus: generated.display.status,
         progressEvents, streamedTail: streamed.slice(-6),
         attempts: generated.rawAttempts.map((attempt) => ({
@@ -570,6 +670,7 @@ try {
           progressEvents: attempt.progressEvents, accepted: attempt.accepted,
           cancelled: attempt.cancelled, timedOut: attempt.timedOut,
           issues: attempt.issues,
+          repairedIssues: attempt.repairedIssues ?? null,
           metrics: attempt.metrics,
           alignment: attempt.alignment ? {
             timeExpressed: attempt.alignment.timeExpressed,
@@ -582,9 +683,15 @@ try {
         })),
       };
       runs.push(record);
-      console.log(`[narration] ${scenario.id}: accepted=${generated.accepted} status=${generated.status} `
+      // Per-arm checkpoint: raw prompt/text/attempts/timings/provenance land on
+      // disk as soon as this arm finishes, not after the whole evaluate returns.
+      if (typeof window !== 'undefined' && window.__narrationCheckpoint) {
+        await window.__narrationCheckpoint(clone(record));
+      }
+      console.log(`[narration] ${scenario.id} [${mode}]: accepted=${generated.accepted} status=${generated.status} `
         + `chars=${record.chars} wallMs=${Math.round(wallMs)} attempts=${generated.rawAttempts.length} `
         + `beats=${(generated.beats ?? []).map((beat) => beat.source).join(',')}`);
+      }
     }
     const info = engine.info;
     const diagnostics = engine.diagnostics;
@@ -593,10 +700,11 @@ try {
   }, config);
 
   evidence.status = 'DONE';
+  evidence.deviceProof.console = consoleLines.slice(-40);
   evidence.loadMs = result.loadMs;
   evidence.engine = { info: result.info, diagnostics: result.diagnostics };
-  evidence.runs = result.runs;
-  evidence.strategy = result.runs[0]?.strategyVersion ?? null;
+  evidence.runs = result.runs.length ? result.runs : evidence.runs;
+  evidence.strategy = evidence.runs[0]?.strategyVersion ?? null;
   save();
   const summary = result.runs.map((run) => ({
     id: run.id, accepted: run.accepted, status: run.status, chars: run.chars,
@@ -606,8 +714,11 @@ try {
   }));
   console.log(JSON.stringify({ out: config.out, model: config.model, loadMs: Math.round(result.loadMs), summary }, null, 2));
 } catch (error) {
-  evidence.status = 'FAILED';
+  // Never overwrite a more specific verdict (wrong adapter) with a generic one,
+  // and keep whatever arms already reached their checkpoint.
+  if (evidence.status !== 'FAILED_ADAPTER') evidence.status = 'FAILED';
   evidence.error = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  evidence.completedArms = evidence.runs.map((run) => run.id);
   save();
   throw error;
 } finally {

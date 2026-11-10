@@ -30,6 +30,12 @@ export type NarrationIssueKind =
   | 'echo_prior' | 'loop_repeated_sentence' | 'loop_repeated_clause'
   /** Viewpoint / knowledge boundary. */
   | 'perspective_leak' | 'knowledge_leak' | 'unlicensed_entity'
+  /** A sound or smell with no settled source (02's narrow generation check;
+   * the shared grader treats the same sentence as unverified by design). */
+  | 'unlicensed_sense'
+  /** A posture or a hand on a thing the input never moved (02's narrow
+   * generation check, same status as unlicensed_sense). */
+  | 'unlicensed_action'
   /** The model copied the instructions instead of writing prose. */
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */
@@ -120,6 +126,36 @@ export interface NarrationPolicy {
   /** Full prompt override. The default only inserts guidance before the body
    * marker; it never re-serializes facts. */
   composePrompt?: (args: ComposePromptArgs) => string;
+  /** How characters are referred to. `names` (default) asks for names or an
+   * omitted subject instead of 他/她: the world file has no gender field, and a
+   * 1.7B model wrote 她 for a male character in accepted product prose.
+   * `model` lets the model choose pronouns like ordinary Chinese prose (53 of
+   * lane 01's 71 gold scenes use 他/她), at the cost of that gender risk. */
+  pronouns?: 'names' | 'model' | 'map';
+  /** How many paragraphs the whole-scene answer should use. Defaults to one:
+   * lane 01's 71 human short scenes are all single-paragraph (61-158 chars). */
+  paragraphs?: number;
+  /** How much background detail the whole-scene prompt carries. `minimal`
+   * (default) keeps one short clause per place/person/object: the real runs
+   * turned long static notes into new events (a rule board that speaks, wind
+   * from a hairstyle, the smell of exercise rounds). `full` keeps the notes as
+   * written, for callers that have a checker strong enough to hold them. */
+  backgroundDetail?: 'full' | 'minimal';
+  /** Explicit gender per character name, e.g. { '路明非': 'male' }. Only used
+   * with `pronouns: 'map'`. The world state has no gender field, so this map
+   * must come from an evidence-backed source (lane 05's character notes), not
+   * from guessing at Chinese names. Characters missing from the map keep the
+   * names-only rule. */
+  genders?: Record<string, 'male' | 'female'>;
+  /** How the whole-scene prompt is built: `serialized` (default) continues the
+   * caller's lane-01 serialization — the training shape for fine-tuned
+   * checkpoints; `prose-facts` renders the same packet as a closed-book turn
+   * for instruct models (see scene-prompt.ts). */
+  promptShape?: 'serialized' | 'prose-facts';
+  /** Insert the scene-mode writing contract (see prompt.ts). Default true for
+   * whole-scene mode; tests that measure the caller's serialization alone set
+   * it to false. */
+  writingContract?: boolean;
   /** 'beats' writes the scene one committed beat at a time (small models);
    * 'scene' asks for the whole scene in one call. Defaults to 'beats' when
    * `scene` is supplied, otherwise 'scene'. */
@@ -194,6 +230,10 @@ export interface NarrationAttempt {
   cancelled: boolean;
   timedOut: boolean;
   progressEvents: number;
+  /** Issues the draft had before the sentence-level repair. Kept so the
+   * evidence still shows what was wrong even though the returned text is
+   * clean; `issues` describes the final text. */
+  repairedIssues?: NarrationIssue[];
 }
 
 /** One beat's outcome. `fallback` text is the committed fact sentence used
@@ -255,8 +295,22 @@ export interface GeneratedNarration {
   beats: NarrationBeatEvidence[];
   /** Program-side assembly edits in beat mode. */
   assembly: NarrationAssembly;
+  /** Per-paragraph provenance in the shape lane 04's constrained candidate
+   * uses, so one adapter can treat both candidates the same way. A scene with
+   * some model paragraphs and some fallback paragraphs must not be reported as
+   * fully model-written. */
+  segments: NarrationSegment[];
+  beatCounts: { model: number; fallback: number; skipped: number };
+  mixed: boolean;
   /** Last display state emitted to `onProgress`. */
   display: NarrationDisplayState;
+}
+
+export interface NarrationSegment {
+  beatId: string;
+  kind: string;
+  source: 'model' | 'fallback' | 'skipped';
+  text: string;
 }
 
 export interface GenerateCommittedNarrationInput {
