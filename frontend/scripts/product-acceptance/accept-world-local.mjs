@@ -47,6 +47,7 @@ const turnTimeoutMs = Number(flag('--turn-timeout-ms', '330000'));
 const readyTimeoutMs = Number(flag('--ready-timeout-ms', '900000'));
 const intent = flag('--intent', '10-turn');
 const preflightOnly = has('--preflight');
+const qualityHandoff = flag('--quality-handoff', null);
 const keepStorage = has('--keep-storage') || has('--resume');
 const fresh = has('--fresh') || !has('--resume');
 const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
@@ -328,6 +329,13 @@ try {
         entry.timings.doneMs = Date.now() - submitAt;
         entry.problems.push('mid_settle_refresh');
         if (!entry.refreshMidSettle.restored) entry.problems.push('mid_settle_refresh_not_restored');
+        const beforeHistory = Number(entry.refreshMidSettle.beforeState?.historyCount ?? NaN);
+        const afterHistory = Number(entry.refreshMidSettle.afterState?.historyCount ?? NaN);
+        entry.refreshMidSettle.historyDelta = Number.isFinite(beforeHistory) && Number.isFinite(afterHistory)
+          ? afterHistory - beforeHistory : null;
+        if (entry.refreshMidSettle.historyDelta !== null && entry.refreshMidSettle.historyDelta < 0) {
+          entry.problems.push('history_went_backwards_after_refresh');
+        }
         evidence.turns.push(entry);
         save();
         console.log(`[turn ${entry.turn}] ${entry.id} mid-settle refresh restored=${entry.refreshMidSettle.restored}`);
@@ -422,6 +430,12 @@ try {
       if (entry.note) entry.problems.push('program_fallback_labelled');
       if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');
       if (entry.text && turn.input && entry.text.includes(turn.input)) entry.problems.push('echoes_player_input');
+      const beforeHistory = Number(entry.before?.historyCount ?? NaN);
+      const afterHistory = Number(entry.after?.historyCount ?? NaN);
+      if (Number.isFinite(beforeHistory) && Number.isFinite(afterHistory)) {
+        entry.historyDelta = afterHistory - beforeHistory;
+        if (entry.text && entry.historyDelta !== 1) entry.problems.push(`history_delta_${entry.historyDelta}`);
+      }
       const stageText = entry.stages.map((stage) => stage.label).join('|');
       entry.stageSequence = stageText;
       if (!/正在写正文/.test(stageText)) entry.problems.push('no_streaming_stage_observed');
@@ -492,6 +506,33 @@ try {
   }
   evidence.status = evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED');
   evidence.finishedAt = new Date().toISOString();
+  if (qualityHandoff) {
+    // What 01 needs to review sentence by sentence: the input, the displayed
+    // prose, any fallback label and the page-visible state around the turn.
+    // Nothing here is a verdict; 09 does not grade prose.
+    const handoff = {
+      kind: '09-quality-handoff',
+      at: evidence.finishedAt,
+      reviewer: '01-input (independent)',
+      recordedBy: '09-ui',
+      product: evidence.integration,
+      driver: 'scripts/product-acceptance/accept-world-local.mjs',
+      pageConditions: { crossOriginIsolated: evidence.environment.crossOriginIsolated, adapter: evidence.environment.adapter },
+      turns: evidence.turns.map((turn) => ({
+        id: turn.id, input: turn.input, purpose: turn.purpose,
+        text: turn.text, fallbackNote: turn.note, message: turn.message,
+        before: turn.before, after: turn.after, historyDelta: turn.historyDelta ?? null,
+        timings: turn.timings, problems: turn.problems,
+        narrationDebug: turn.narrationDebug ?? null,
+      })),
+      note: '01 reviews fact fidelity/prose across turns; 09 records playability, provenance, timing and fallbacks. Neither substitutes for human/user review.',
+    };
+    const target = resolve(qualityHandoff);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, JSON.stringify(handoff, null, 2));
+    evidence.qualityHandoff = target;
+    console.log(`[handoff] ${target}`);
+  }
   evidence.summary = {
     turns: evidence.turns.length,
     turnsWithText: evidence.turns.filter((turn) => turn.text).length,
