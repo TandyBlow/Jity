@@ -96,6 +96,58 @@ const points: Point[] = [
     deltas: {},
   },
   {
+    name: 'campus move with two witnesses',
+    time: { amount: 4, unit: 'minute' },
+    deltas: {
+      lu: { entityId: 'lu', positionSet: { containerId: 'yard', slotId: null, relativeTo: null } },
+      tang: { entityId: 'tang', positionSet: { containerId: 'east_arcade', slotId: null, relativeTo: null } },
+    },
+  },
+  {
+    name: 'two moves in opposite directions',
+    time: { amount: 2, unit: 'minute' },
+    deltas: {
+      lu: { entityId: 'lu', positionSet: { containerId: 'shed', slotId: 'slot_counter', relativeTo: null } },
+      fingel: { entityId: 'fingel', positionSet: { containerId: 'lane', slotId: 'slot_entry', relativeTo: null } },
+    },
+  },
+  {
+    name: 'sanity recovers',
+    time: { amount: 3, unit: 'minute' },
+    deltas: { lu: { entityId: 'lu', sanitySet: 47 } },
+  },
+  {
+    name: 'item appearance changes in view',
+    time: { amount: 2, unit: 'minute' },
+    deltas: {
+      camera_battery: {
+        entityId: 'camera_battery',
+        appearanceChanges: [{ id: 'sweep_item_a1', text: '包装被拆开了，外壳上留着一道指甲划痕。', supersedes: [] }],
+      },
+    },
+  },
+  {
+    name: 'complex point: task, subtask, personality, sanity',
+    time: { amount: 6, unit: 'minute' },
+    deltas: {
+      lu: {
+        entityId: 'lu',
+        sanitySet: 38,
+        tasksAchieved: ['task_lu_goggles'],
+        subtasksAdded: [{
+          id: 'sweep_t2', ownerId: 'lu', parentTaskId: 'task_lu_match',
+          goal: '把护目镜的镜片对着光再检查一遍', status: 'pending',
+        }],
+        personalityChanges: [{ id: 'sweep_p2', text: '不再把选择推给别人。', supersedes: [] }],
+      },
+    },
+  },
+  {
+    name: 'one second passes',
+    time: { amount: 1, unit: 'second' },
+    deltas: {},
+  },
+  {
     name: 'continuation after a briefing',
     time: { amount: 1, unit: 'minute' },
     deltas: { nono: { entityId: 'nono', positionSet: { containerId: 'red_rally', slotId: null, relativeTo: null } } },

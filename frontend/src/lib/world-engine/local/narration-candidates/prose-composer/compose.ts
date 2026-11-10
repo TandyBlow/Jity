@@ -74,6 +74,18 @@ class Referencer {
     return this.name(id);
   }
 
+  /** Reference for a paragraph that already opened with this name: an explicit
+   * reference or an unambiguous pronoun, otherwise the name again. Unlike
+   * `subject`, this does not enforce the every-third-mention rhythm. */
+  reference(id: string): string {
+    const actor = this.actors.get(id);
+    if (!actor) return id;
+    const explicit = actor.references?.find((ref) => ref && ref !== actor.name);
+    if (explicit) return explicit;
+    if (this.pronounSafe.get(id)) return (actor.gender ?? 'unknown') === 'female' ? '她' : '他';
+    return this.name(id);
+  }
+
   /** Object position: names are preferred; 对方 only for a known addressee. */
   object(id: string, addressee = false): string {
     if (addressee) return '对方';
@@ -691,7 +703,8 @@ export function composeProse(scene: ProseScene): ComposedProse {
     if (bucket) paragraphs.push(bucket);
   }
 
-  const merged = mergeShortNarration(paragraphs, scene);
+  const varied = beatOnly ? paragraphs : varyRepeatedSubjects(paragraphs, scene, refs);
+  const merged = beatOnly ? varied : mergeShortNarration(varied, scene);
   const text = merged.join('\n\n');
   const verifyMs = nowMs();
   const factIssues = verifyBeats(scene, body, rendered);
@@ -726,6 +739,23 @@ function paragraphCount(text: string): number {
 /** Merge two short narration paragraphs when they share a scene block. Quotes,
  * time cues and repeated-name pairs stay separate, which keeps the rhythm of
  * the source prose instead of producing one paragraph per fact. */
+/** A paragraph that opens with the same name as the one before it reads like a
+ * list. Replace the second mention with a pronoun when the cast makes that
+ * pronoun unambiguous; otherwise keep the name. */
+function varyRepeatedSubjects(paragraphs: string[], scene: ProseScene, refs: Referencer): string[] {
+  const byLength = [...scene.cast].sort((left, right) => right.name.length - left.name.length);
+  let lastSubject: string | null = null;
+  return paragraphs.map((paragraph) => {
+    if (paragraph.startsWith('「')) return paragraph;
+    const lead = byLength.find((actor) => paragraph.startsWith(actor.name));
+    if (!lead) return paragraph;
+    const replacement = lead.name === lastSubject ? refs.reference(lead.id) : lead.name;
+    lastSubject = lead.name;
+    if (replacement === lead.name || charCount(paragraph) <= 6) return paragraph;
+    return `${replacement}${paragraph.slice(lead.name.length)}`;
+  });
+}
+
 function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] {
   const placeNames = [scene.location.name, scene.parentLocation?.name].filter((name): name is string => Boolean(name));
   const startsWithPlace = (text: string) => placeNames.some((name) => text.startsWith(name));

@@ -161,9 +161,10 @@ LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ```
 
-`sweep-free-day.ts` 在公开世界的 8 个真实点位上各跑一遍 04 全流程
+`sweep-free-day.ts` 在公开世界的 14 个真实点位上各跑一遍 04 全流程
 （移动到器材棚、两人同时移动、任务完成+精神下降、外貌+个性、物品转移、
-新增待办、纯时间流逝、带上一轮正文的续写）。当前 8/8 都是
+新增待办、纯时间流逝、中央庭院移动、两人反向移动、精神回升、物品外貌变化、
+任务+待办+个性+精神同点、只过一秒、带上一轮正文的续写）。当前 14/14 都是
 `accepted`，每个 beat 都来自本 composer，没有回退到 04 自己的 realizer。
 其中两段：
 
@@ -193,7 +194,20 @@ LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/
    路线图这类会列出别的房间的说明，要么连名带注一起许可，要么不用；
    不能用半段无主语的“图上画出……”。
 
-耗时：整段 0.7–4.8 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
+浏览器入口检查（不加载模型、不占推理锁）：
+
+```bash
+cd <09 worktree>/frontend
+node scripts/quality-candidates/run-browser-candidates.mjs \
+  --candidate 07-prose=<本工作树>/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts \
+  --inspect --out <本工作树>/inspect-07.json
+# [inspect] 07-prose: export=generateCandidate ... documented=true
+```
+
+这证明共享页面运行器能在真实 Edge 里导入本模块并认出文档化的
+`generateCandidate` 导出；真正逐点出正文仍要走 04 注入 composer 的那条路径。
+
+耗时：整段 0.7–5.3 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
 按 `QUALITY-TEAMS.md` 的口径，首段和整段都远在 60 s / 300 s 以内，
 且不依赖模型、WebGPU 或网络。
 
@@ -202,17 +216,20 @@ LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/
 1. 只写事实骨架里有的东西。输入只有“移动 + 任务”时，正文就是短、直白，
    不会自己长出对白或环境戏；那是 04 的 `licensed.details` / action / line
    beat 该补的素材。
-2. 同一回合两个角色都掉精神值时，可能选中同一句体感（“把手指收紧了”）。
-   变化靠 beat seed，尚未按角色去重。
-3. `sanityStyle: 'number'` 不支持：本 composer 写体感。若页面仍要旧
+2. 整段口会对连续以同一人名开头的段落做代词替换（同性别在场角色唯一时才换）；
+   04 的逐 beat 口看不到别的 beat，所以跨 beat 的重复人名只能靠 04 在拼装时
+   处理，或给 `ScenePerson` 补性别后由 04 合并。
+3. 同一回合两个角色都掉精神值时，可能选中同一句体感（“把手指收紧了”）。
+   已按角色 id 混入变体盐，但更长回合仍可能重复句式。
+4. `sanityStyle: 'number'` 不支持：本 composer 写体感。若页面仍要旧
    `alignNarration` 的数字口径，请在 04 侧把 sanity fact 从 packet 里去掉，
    或继续用 04 自带的数字 realizer。
-4. 02 事实包直连时是 `sparse` 骨架：没有地点外观、对白和物品细节，
+5. 02 事实包直连时是 `sparse` 骨架：没有地点外观、对白和物品细节，
    只保证移动/任务/个性/精神状态方向不走样。
-5. 段落合并是启发式（短句、代词/地点开头才并段）。遇到特别长的许可细节，
+6. 段落合并是启发式（短句、代词/地点开头才并段）。遇到特别长的许可细节，
    仍可能出现一段景物描写偏密。
-6. 没有做风格评分器，也没有对训练范文做句子级检索；只吸收节奏和结构。
-7. 一个点位里出现两个以上“同一事实类别”的纹理（两件物品、两个在场人物）
+7. 没有做风格评分器，也没有对训练范文做句子级检索；只吸收节奏和结构。
+8. 一个点位里出现两个以上“同一事实类别”的纹理（两件物品、两个在场人物）
    时，只按 04 的 beat 预算展开；不会主动挑最有戏的一件。
 
 ## 下一步（按优先级）

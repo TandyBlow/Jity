@@ -185,6 +185,32 @@ describe('validateScene and generateCandidate', () => {
     expect(result.composed.text).toBe(result.text);
   });
 
+  it('accepts the shared browser driver call shape', () => {
+    const events: string[] = [];
+    const controller = new AbortController();
+    // The driver spreads the whole run context: engine, committed, state, before,
+    // delta, inputText, priorText, policy, signal, onProgress.
+    const result = generateCandidate({
+      engine: { info: { backend: 'none', modelId: 'none' } },
+      committed: {
+        anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: 'root' },
+        facts: [{ id: 'm', actorId: 'a', name: '林川', kind: 'moved', from: '走廊', to: '门厅' }],
+      },
+      state: {}, before: null, delta: { timeAdvance: null, entityDeltas: {} },
+      inputText: '林川从走廊走到门厅。',
+      priorText: null,
+      policy: { scene: SHORT_MOVE_SCENE, minChars: 40 },
+      signal: controller.signal,
+      onProgress: (event: { status: string }) => events.push(event.status),
+    } as never);
+    expect(result.text.length).toBeGreaterThan(0);
+    expect(result.accepted).toBe(true);
+    expect(result.rawAttempts.length).toBe(1);
+    expect(result.issues).toEqual([]);
+    expect(result.timings.totalMs).toBeGreaterThanOrEqual(0);
+    expect(events).toEqual(['complete']);
+  });
+
   it('fails closed when neither a skeleton nor facts are supplied', () => {
     const result = generateCandidate({});
     expect(result.accepted).toBe(false);
@@ -204,6 +230,34 @@ describe('composeProse style mechanics', () => {
       const previous = result.paragraphs[index - 1].slice(0, 3);
       expect(result.paragraphs[index].startsWith(previous)).toBe(false);
     }
+  });
+
+  it('turns a repeated paragraph-opening name into a pronoun when unambiguous', () => {
+    const scene: ProseScene = {
+      ...clone(SHORT_MOVE_SCENE),
+      beats: [
+        { kind: 'action', actorId: 'person_a', text: '林川把袖口卷起来。' },
+        { kind: 'action', actorId: 'person_a', text: '林川又看了一眼门口。' },
+      ],
+    };
+    const result = composeProse(scene);
+    expect(result.text).toContain('他又看了一眼门口');
+  });
+
+  it('keeps the name when two actors share the gender', () => {
+    const scene: ProseScene = {
+      ...clone(SHORT_MOVE_SCENE),
+      cast: [
+        { id: 'person_a', name: '林川', gender: 'male' },
+        { id: 'person_b', name: '陈默', gender: 'male' },
+      ],
+      beats: [
+        { kind: 'action', actorId: 'person_a', text: '林川把袖口卷起来。' },
+        { kind: 'action', actorId: 'person_a', text: '林川又看了一眼门口。' },
+      ],
+    };
+    const result = composeProse(scene);
+    expect(result.text).toContain('林川又看了一眼门口');
   });
 
   it('does not merge a place-stance line into a place-detail line', () => {
