@@ -1,0 +1,38 @@
+{
+ "kind": "lane-11-real-page-semantic-observation",
+ "at": "2026-11-10T17:25:00Z",
+ "source": "results/product/reviews/09-one-turn-81d5507a.json",
+ "sourceSha256": "25aaaeb4c1c11374ed1a50cc1869c0a52a2fc2ce7b544b59115f3089b03f7a11",
+ "pageHead": "81d5507a973a99360d26b1d2a9877ad37f966ddd",
+ "pageSha": "f861ace956bc1ffeab9e9b6f95337658cad7f5dff32fb6f8c1fd88a53dbaf1d9",
+ "observed": {
+  "results": "ok 14.9 s",
+  "updates": {
+   "coverageTasks": 14,
+   "taskRows": 73,
+   "mode": "per_character_decision",
+   "achievedByCharacter": [],
+   "assertedUnchanged": 73,
+   "ms": 128135
+  },
+  "continuation": "ok 12.3 s",
+  "secondUpdates": {
+   "error": "unknown task task_doctor_flag; only listed task ids allowed",
+   "ms": 93187
+  },
+  "page": "recoverable failure after 323 s, no prose, history kept"
+ },
+ "interpretation": [
+  "coverage.tasks=14 means all 14 decision owners were covered; it is not 14/73 task rows. The old 12/73 was the per-task echo contract.",
+  "The input was a rules look; task_lu_rules was already achieved in the initial state, so achievedByCharacter=[] is not proof of a wrong judgment, but it also cannot distinguish a copied all-empty skeleton.",
+  "The second time_scan invented task_doctor_flag. 04 117befcf now rejects unknown/placeholder/other-owner ids per entry and keeps valid decisions; 06 a5ca28d7 merged it.",
+  "323 s and no prose are 06/09 performance/failure-display issues, not evidence that the 0.6B cannot judge tasks.",
+  "Do not declare the 0.6B incapable or pivot to a larger model from this run. The positive task case is still needed."
+ ],
+ "next": [
+  "09 one turn on a5ca28d7 with the same legal input, then the positive goggles input, capturing rejectedTaskIds and raw tasks output",
+  "10 semantic probe on the two frozen cases (0.6B + five candidates) with --expected",
+  "No model-route change until both are observed."
+ ],
+ "notAQualityGate": true
+}

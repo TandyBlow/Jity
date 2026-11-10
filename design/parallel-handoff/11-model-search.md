@@ -4,7 +4,7 @@
 
 当前产品叙事模型是 Qwen2.5-1.5B 叙事 LoRA，历史基线是 Qwen3-1.7B。需要找这两者之外、能在同一个 Edge+wllama 运行时（浏览器 Blob 总容量上限约 2 GB）加载、中文小说叙事可能更好的 GGUF。不能按榜单或参数量猜正文质量；必须用 01/10 的同一公开冻结开发包、同条件采样、01 的 rubric 比较。
 
-**09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。
+**09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。详细分析：`experiments/narration-model-search/results/real-page-81d5507a.json`。
 
 **当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器和两例真实状态语义探针（selftest 18/18；frozen prompt pack 已生成），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight、15 例质量批次和一个独立语义探针请求仍 ready，10 尚未登记领取；01 已发布 v1.1：`d6c7e766…`，15/15 可序列化，三个旧 delta 形状已规范化。没有任何模型正文、语义或质量结论。
 
