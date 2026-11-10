@@ -203,6 +203,9 @@ def main() -> int:
             "sampling": {"temperature": 0.0, "top_k": 1, "top_p": 1.0, "seed": 42,
                          "max_tokens": 320, "context": 8192},
             "perModelOneServer": True,
+            "templateKwargsFallback": "llama-server must accept per-request chat_template_kwargs "
+                                      "(Hunyuan needs enable_thinking=false). If this build does not, "
+                                      "stop and report the version; do not run Hunyuan with thinking on.",
         },
         "resourceEstimate": {
             "calls": 12,
@@ -224,6 +227,8 @@ def main() -> int:
             "Do not skip a case; if a prompt file is missing or a call errors, report it.",
             "Do not judge quality; lane 01 reviews the raw texts.",
             "Keep all raw outputs, including failures and empty texts.",
+            "Record the exact llama.cpp version/commit. Template rendering differences from the "
+            "browser's wllama build are a known limitation; lane 09's browser run is authoritative.",
         ],
     }
 
