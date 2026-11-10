@@ -114,10 +114,11 @@ function paragraphsOf(policy: NarrationPolicy): { count: number; min: number; ma
   // Gold scenes are 61-155 chars, median 95, p25 81, so a 100-char floor
   // rejected 43 of the 71 human rows. Half the target stays inside the
   // reference range without inviting one-line answers.
-  // The page's contract (06, prompt.ts): 160-240 characters for a first draft
-  // and 140-220 for a repair. The reference corpus is shorter (median 95), but
-  // the product requires the longer scene, so the floor follows the page, not
-  // the corpus. 06 issues the single version both 02 and 10 must use.
+  // The single narration contract (06, results/product/contracts/
+  // narration-contract-06.md): 160-240 characters for both the first draft and
+  // a repair, with >=140 supported characters to accept. The reference corpus is
+  // shorter (median 95), but the product requires the longer scene, so the floor
+  // follows the contract, not the corpus.
   const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 200)));
   const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.7))));
   const count = policy.paragraphs ?? (max > 300 ? 3 : 2);
