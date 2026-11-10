@@ -16,7 +16,7 @@ import type { Id, WorldState } from '../../../types';
 import type { SceneCharacter, ActionScene } from './scene';
 import { sceneMentions } from './scene';
 import {
-  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
+  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, rewriteClauseSpeaker, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
 } from './text';
 import type { ActionIssue } from './types';
 
@@ -89,7 +89,7 @@ export function stripOutputLabel(text: string): string {
  * checks that a player-authored command is allowed to fail (the player may
  * speak as themselves and may repeat yesterday's words). */
 export function checkActionText(text: string, scene: ActionScene, state: WorldState, options: CheckOptions): CheckResult<string> {
-  const value = stripOutputLabel(text).normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -99,6 +99,18 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
 
   if ([...value].length > options.maxActionChars) {
     push(issue('action_too_long', 'warn', `行动描述 ${[...value].length} 字，超过建议长度 ${options.maxActionChars}`));
+  }
+  // Person is a grammatical reference, not a semantic choice: the actor is
+  // known, so a clause-initial 我 is rewritten instead of burning a repair
+  // call (the 13:21Z run answered twice in first person and fell back to a
+  // skip). Mid-clause 我 is still an error below.
+  if (!scene.isProtagonist) {
+    const rewritten = rewriteClauseSpeaker(value, scene.actorName);
+    if (rewritten.count > 0) {
+      push(issue('first_person_rewritten', 'info',
+        `模型用了第一人称；程序把句首的“我”改成${scene.actorName}（原文：${value}）`, { detail: value }));
+      value = rewritten.text;
+    }
   }
   const goal = taskGoalCopy(value, allGoals(state));
   if (goal) {

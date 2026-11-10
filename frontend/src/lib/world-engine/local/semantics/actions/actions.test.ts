@@ -219,16 +219,36 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(String(reactionResult.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
   });
 
-  it('rejects first-person narration and repairs it', async () => {
+  it('rewrites a clause-initial first person instead of burning a repair', async () => {
     const state = buildTestWorld();
-    const engine = new ScriptedEngine(['{"kind":"act","text":"我退回门边，把门闩压紧。"}', '{"kind":"act","text":"阿宁退回门边，把门闩压紧。"}']);
+    // The 13:21Z run answered twice in first person and fell back to a skip.
+    // The actor is known, so the subject is a deterministic reference: rewrite
+    // it and keep the model's action, with the original recorded in the issue.
+    const engine = new ScriptedEngine(['{"kind":"act","text":"我退回门边，把门闩压紧。"}']);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
+
+    expect(result.attempts).toBe(1);
+    expect(codes(result)).not.toContain('action_first_person');
+    expect(codes(result)).toContain('first_person_rewritten');
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁退回门边，把门闩压紧。' });
+    const rewritten = result.issues.find((item) => item.code === 'first_person_rewritten');
+    expect(rewritten?.detail).toContain('我退回门边');
+    codecAccepts(result);
+  });
+
+  it('still rejects a mid-clause first person that means the player', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"老周把我推到门边，自己退开。"}',
+      '{"kind":"act","text":"阿宁把门闩压紧，退到门边。"}',
+    ]);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
 
     expect(result.attempts).toBe(2);
     expect(codes(result)).toContain('action_first_person');
-    expect(result.value).toEqual({ kind: 'act', text: '阿宁退回门边，把门闩压紧。' });
-    codecAccepts(result);
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁把门闩压紧，退到门边。' });
   });
 
   it('rejects an action that puts an absent character in the scene', async () => {

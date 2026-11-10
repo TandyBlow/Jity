@@ -25,6 +25,36 @@ export function skeleton(text: string): string {
 
 /** Splits quoted speech out of a line. `plain` is the narration with the
  * quoted spans removed (so attribution checks never fire on dialogue). */
+/** The action prompt demands third person. A small model sometimes answers
+ * 「我…」 anyway. The actor is known, so the clause subject is a deterministic
+ * reference, not a semantic decision: replace a CLAUSE-INITIAL 我 (never inside
+ * quotes, never part of 我们) with the actor's name. Mid-clause 我 ("他把我
+ * 推开") is left alone — there it is the player, and the guard must still
+ * reject it. Returns the count so the caller can record the rewrite. */
+export function rewriteClauseSpeaker(text: string, name: string): { text: string; count: number } {
+  const openers = new Set(QUOTE_PAIRS.map((pair) => pair[0]));
+  const closers = new Set(QUOTE_PAIRS.map((pair) => pair[1]));
+  const boundary = new Set(['', '，', '。', '；', '：', '！', '？', '、', '\n', ' ']);
+  let out = '';
+  let count = 0;
+  let depth = 0;
+  let previous = '';
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index]!;
+    if (openers.has(character)) depth += 1;
+    else if (closers.has(character) && depth > 0) depth -= 1;
+    const clauseStart = boundary.has(previous);
+    if (depth === 0 && character === '我' && clauseStart && text[index + 1] !== '们') {
+      out += name;
+      count += 1;
+    } else {
+      out += character;
+    }
+    previous = character;
+  }
+  return { text: out, count };
+}
+
 export function splitQuotes(text: string): { plain: string; quotes: string[] } {
   let plain = normalize(text);
   const quotes: string[] = [];
