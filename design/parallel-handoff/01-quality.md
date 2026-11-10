@@ -125,3 +125,5 @@
 **cf3d027e 合法回合（2026-11-11）**：`results/quality/findings-09-cf3d-turn.md`。开场 88.6 s 被 `wrong_person`/`repetition` 拒；玩家回合 303.5 s，narration 58 s 被拒 `added_event,ungrounded,low_support`，提交程序文本（`textSource: program`，`firstReadableMs null`）。程序文本以**凯撒**开头（玩家是路明非），并有"诺诺：未成功触发…"的内部判定句；最可能是 `game-model.ts:742-750` 把整段 `resultsText` 逐句拼进正文，只去掉了视角人物的名字前缀（results raw 未存，属推断）。03 的 action 修复见效（无 `action_is_task_goal`）；04 无任务点名册但两次自动轮仍各 76 s。10 回合仍不接受。
 
 **02 accepted 的 unseen 189 字含未结算裁纸刀（2026-11-11）**：`results/quality/findings-02-unseen-01.md`。02 标 accepted 的稿子里"黎含章的裁纸刀在桌角…"不在结算输入（只有三本登记簿、算盘），是 `fact.object_added`；同一稿"三分钟过去"重复两次（`style.punctuation`）。检查器工具规则已扩展到"出现且未结算即判"，锚点 60（`neg/unseen-accepted-knife`）；human-71/final-v1 仍 0 事实。
+
+**状态（2026-11-11 02:28Z）**：06 冻结 `2324cde1`（page `7bfcdb99`），新增完整 committed snapshot + narration sources 供状态复核；尚未包含 resultsText/开场第三人称的正文修复。09 在 2cc873e4 上试的 joint-group（`09-joint-group-cf3d-invalid.json`）因页面 sha 不匹配 + Qwen3-0.6B 分片 fetch 失败判 INVALID，不是产品正文证据。等 09 在 2324cde1 上的合法回合；本轮检查器已到 60 锚点，human-71/final-v1 仍 0 事实。
