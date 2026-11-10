@@ -70,6 +70,9 @@ export interface SaveOptions {
   requestId?: string;
   /** Save only on the local store; useful while deliberately playing offline. */
   localOnly?: boolean;
+  /** The caller already wrote its own durable record (06's repository does),
+   * so do not write it a second time just to upload. */
+  skipLocal?: boolean;
 }
 
 export interface UploadCasOptions {
@@ -141,6 +144,13 @@ export class ProgressSyncClient<P = unknown> {
     return this.queueError;
   }
 
+  /** The snapshot this device last uploaded/read, best-effort (memory then
+   * whatever the product persisted). Used by the page to decide whether the
+   * remote moved ahead. */
+  async lastKnownHead(worldId: WorldId): Promise<HeadState | null> {
+    return this.knownHead(worldId);
+  }
+
   /** Last known head-persistence failure, if any. Sync still works this page. */
   get headPersistenceError(): unknown {
     return this.headError;
@@ -152,6 +162,16 @@ export class ProgressSyncClient<P = unknown> {
     });
     this.remember(head);
     return head;
+  }
+
+  /** Read the remote head without teaching this client that it is in sync.
+   * Status checks must not clear the "we may be behind" knowledge. */
+  async peekHead(worldId: WorldId): Promise<HeadState> {
+    return this.request<HeadState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/head`));
+  }
+
+  async peekGraph(worldId: WorldId): Promise<GraphState> {
+    return this.request<GraphState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/graph`));
   }
 
   async graph(worldId: WorldId): Promise<GraphState> {
@@ -203,7 +223,7 @@ export class ProgressSyncClient<P = unknown> {
       activate,
       payload,
     };
-    const localSaved = await this.saveLocal(worldId, payload);
+    const localSaved = options.skipLocal ? false : await this.saveLocal(worldId, payload);
     if (options.localOnly) return { status: 'local-only', localSaved, request };
 
     // Do not send a newer save ahead of an older unsynced save for the same

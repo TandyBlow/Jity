@@ -312,8 +312,10 @@ export default function WorldLocalPage() {
     if (snapshot.transport.work) return; // never persist a half-settled point
     const sync = syncRef.current;
     if (sync) {
-      // Local first, remote best-effort; a network failure only queues.
-      void sync.save(snapshot).then((result) => {
+      // The session already wrote the durable record (it owns the revision CAS).
+      // push() uploads that payload without writing the store again, so the
+      // sync layer can never bump the revision behind the session's back.
+      void sync.push(snapshot).then((result) => {
         const outcome = result.outcome;
         setSyncLabel(outcome?.status === 'synced' ? '已同步'
           : outcome?.status === 'queued' ? '已存本地，等待联网同步'
@@ -344,7 +346,13 @@ export default function WorldLocalPage() {
     setView(viewOf(state));
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
-    await session.flushPersistence();
+    // A conflict-blocked session can leave flushPersistence waiting on its own
+    // drain; the page must still paint. Bounded wait, then the snapshot save is
+    // best effort.
+    await Promise.race([
+      session.flushPersistence().catch(() => undefined),
+      new Promise<void>((resolve) => setTimeout(resolve, 8_000)),
+    ]);
     save(session.snapshot);
     setPhase((current) => current === 'streaming' ? 'ready' : current);
     return context;
@@ -583,6 +591,13 @@ export default function WorldLocalPage() {
       const status = await session.submit(text);
       console.info('[world-local] turn status', status);
       await refresh();
+      if (status.kind === 'stop' && status.reason === 'progress_conflict') {
+        // The stored record was written by another writer/session. Play cannot
+        // continue on a record whose revision the session does not own; the
+        // honest recovery is an explicit reset (archives/deletes via reset()),
+        // not silently playing on a diverged save.
+        setError('本地存档被另一处写入过，本回合没有结算。请点右上角“重新开始”清掉这份存档（或回到原来的标签页继续）。');
+      }
       setMessage(status.kind === 'stop' && status.reason === 'world_complete' ? '本轮已交还，继续输入下一步行动。' : status.kind === 'stop' ? `本轮停止：${status.reason}` : '本轮完成。');
     } catch (e) {
       console.error(e);
