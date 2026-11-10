@@ -11,7 +11,7 @@ import type { DatasetInput, SceneProjection } from './scene';
 import { projectScene, parseMinutes } from './scene';
 import {
   BODY_ACTIONS, BODY_REACTION, CHANGE_MARKERS, CLOSURE, COMPLETION_VERBS, EVENT_VERBS, FAREWELL,
-  FIELD_WORDS, HOLD_MARKERS, INTERIOR, ITEM_STATE_VERBS, MOVE_VERBS, NEGATION,
+  ACCESSORY_NOUNS, FIELD_WORDS, HOLD_MARKERS, INTERIOR, ITEM_STATE_VERBS, MOVE_VERBS, NEGATION,
   HANDLING_VERBS, INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, SPEECH_VERBS_UNQUOTED, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
   SOUND_WORDS, TERMINAL_PUNCTUATION,
 } from './lexicon';
@@ -761,6 +761,7 @@ export function reviewNarration(args: {
 
   // ---------------------------------------------------------------- items
   const itemStateCovered = new Set<string>();
+  const reportedSounds = new Set<string>();
   for (const sentence of sentences) {
     const narration = sentence.narration;
     for (const [object, holder] of ctx.holders.holders) {
@@ -774,6 +775,11 @@ export function reviewNarration(args: {
         const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
         const pronounLocative = /(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause);
         if (unique.length === 1 && (/^\s*(?:他|她|他们|她们|手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause) || pronounLocative)) implied = unique;
+        // 「她手中的短枪」 with no name in the clause binds to the last person named.
+        if (!unique.length && /^(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)) {
+          const last = lastPersonBefore.get(sentences.indexOf(sentence));
+          if (last) implied = [last];
+        }
       }
       if (holder === 'scene') {
         // Carrying it from A to B is licensed when the object and a person
@@ -987,6 +993,8 @@ export function reviewNarration(args: {
         || HANDLING_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
         || MOVE_VERBS.some((verb) => narration.includes(verb) && moverHere);
       if (actionHere && sound !== '脚步声') continue;
+      if (reportedSounds.has(sound)) continue;
+      reportedSounds.add(sound);
       findings.push(finding(ctx, 'fact.sound_added', sentence.text,
         `${sound} has no settled source`, [], []));
     }
@@ -1123,24 +1131,80 @@ export function reviewNarration(args: {
     // viewpoint fallback would pin a copied description of someone else onto
     // the player.
     const namedHere = nameHits(narration, names, Object.keys(projection.people)).map((hit) => hit.name);
-    const lookOwner = namedHere.length ? null : (Object.entries(projection.people).find(([, person]) =>
-      person.appearanceAfter.some((look) => look.length >= 3 && sharesRun(narration, look, 3)))?.[0] ?? null);
+    const lookMatch = (person: (typeof projection.people)[string]): boolean =>
+      person.appearanceAfter.some((look) => look.length >= 4 && sharesRun(narration, look, 4));
+    const bound = (personName: string): boolean =>
+      /(他|她)/u.test(narration) && lastPersonBefore.get(sentences.indexOf(sentence)) === personName;
     for (const [personName, person] of Object.entries(projection.people)) {
-      if (namedHere.length) {
-        if (!namedHere.includes(personName)) continue;
-      } else if (lookOwner ? lookOwner !== personName : !refersTo(narration, sentences.indexOf(sentence), personName, true)) {
-        continue;
-      }
+      const eligible = namedHere.length
+        ? namedHere.includes(personName)
+        : lookMatch(person) || bound(personName);
+      if (!eligible) continue;
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
       const body = /(手背|手心|手指|手腕|手臂|胳膊|大臂|小臂|右臂|左臂|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
       if (!body) continue;
+      // 「右袖的红痕」 must not be read as a mark on the 左臂 named earlier.
+      const sideBefore = /([左右])(?:袖|臂|手|腿|脚)[^。；，]{0,4}$/u.exec(narration.slice(Math.max(0, mark.index - 8), mark.index));
+      if (sideBefore && /^[左右]/u.test(body[1]) && body[1][0] !== sideBefore[1]) continue;
       const settled = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
       if (settled.includes(mark[1])) continue;
       findings.push(finding(ctx, 'fact.body_mark_added', sentence.text,
         `${personName}: ${body[1]} has ${mark[1]} in the prose but not in the settled appearance`, [settled.slice(0, 40)], []));
       break;
+    }
+    // Goggles settled on the chest cannot be worn on the eyes in the same turn
+    // unless the point completed the "put them on" task.
+    {
+      const wornTask = [...projection.taskCompleted, ...projection.taskAdded]
+        .some((task) => /戴(上|好|起)?(护目镜|眼镜)/u.test(task.goal));
+      if (!wornTask) {
+        for (const [personName, person] of Object.entries(projection.people)) {
+          const looks = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
+          if (!/(护目镜|眼镜)/u.test(looks) || !/(挂在胸前|没戴|不在眼前|挂在颈|别在胸前)/u.test(looks)) continue;
+          if (!refersTo(sentence.text, sentences.indexOf(sentence), personName)) continue;
+          if (!/(护目镜|眼镜)/u.test(narration)) continue;
+          // A rule board saying "护目镜必须戴好" is not someone wearing them.
+          if (/(牌面|写明|规则|规定|必须|禁止|要求|白线)/u.test(narration)) continue;
+          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛)/u.test(narration)) continue;
+          if (/(未|没|不|尚未|没有)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
+          findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+            `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
+            [looks.slice(0, 40)], []));
+          break;
+        }
+      }
+    }
+    // A personal accessory in a sentence that names only other people belongs
+    // to the wrong body.
+    {
+      const named = nameHits(narration, names, Object.keys(projection.people)).map((hit) => hit.name);
+      if (named.length) {
+        const phrases = new Map<string, Set<string>>();
+        for (const [owner, person] of Object.entries(projection.people)) {
+          for (const look of [...person.appearanceAfter, ...person.appearanceBefore]) {
+            for (const match of look.matchAll(/([红蓝白黑金银灰褐]?色?(?:识别带|发带|发圈|护目镜|眼镜|围巾|手套|头盔|耳机))/gu)) {
+              const phrase = match[1];
+              if (!ACCESSORY_NOUNS.some((noun) => phrase.includes(noun))) continue;
+              const set = phrases.get(phrase) ?? new Set<string>();
+              set.add(owner);
+              phrases.set(phrase, set);
+            }
+          }
+        }
+        const hit = [...phrases.entries()].find(([phrase, owners]) =>
+          owners.size === 1 && narration.includes(phrase));
+        if (hit) {
+          const [phrase, owners] = hit;
+          const owner = [...owners][0];
+          if (!named.includes(owner)) {
+            findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
+              `${phrase} belongs to ${owner}, but the sentence names ${named.join('/')} only`,
+              [phrase], [`accessory:${owner}:${phrase}`]));
+          }
+        }
+      }
     }
     // A mark settled on one side of the body cannot move to the other side.
     for (const [personName, person] of Object.entries(projection.people)) {

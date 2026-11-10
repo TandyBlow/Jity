@@ -47,13 +47,18 @@ export const PROP_VERBS = [
 export const SOUND_WORDS = [
   '脚步声', '枪声', '铃声', '钟声', '回声', '低语声', '呼喊声', '喊声', '惨叫',
   '咳嗽声', '爆裂声', '碎裂声', '撞击声', '摩擦声', '沙沙声', '嗡嗡声',
-  '哨声', '哨音', '号声', '警笛', '闷响', '巨响',
+  '哨声', '哨音', '号声', '警笛', '闷响', '巨响', '风铃',
 ] as const;
 
 /** Speech that is narrated without quotes; wording is allowed, the event needs reading. */
 export const SPEECH_VERBS_UNQUOTED = ['交谈', '说话', '低声说', '开口', '应声', '回答', '问道', '嘟囔', '压低声音', '念叨'] as const;
 
 /** Handling that implies the person had the object, without a holding verb. */
+/** Worn or carried accessories that identify one person's body. */
+export const ACCESSORY_NOUNS = [
+  '发圈', '发带', '识别带', '护目镜', '眼镜', '围巾', '手套', '头盔', '耳机', '手链', '项链', '胸牌',
+] as const;
+
 export const HANDLING_VERBS = ['放在', '放进', '放到', '塞进', '收进', '收好', '别在', '挂在', '揣进', '插在', '压在'] as const;
 
 /** Strong past-event references. Allowed only when the same word appears in
