@@ -25,9 +25,10 @@ import { combinations } from './arms';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const EXP = resolve(HERE, '..');
-const PARALLEL_ROOT = process.env.PARALLEL_ROOT
-  ?? 'D:/others/Jity/.local/parallel-local-game';
-const CHECKER_DIR = join(PARALLEL_ROOT, 'worktrees/01-input/frontend/src/lib/world-engine/local/narration-quality');
+// Frozen copy of 01's checker at the commit used for b01. Do not replace this
+// with 01's live worktree: the checker has changed since b01 and v1/v2 must use
+// identical bytes. Source and hashes are in checker-source.json.
+const CHECKER_DIR = join(EXP, 'checker-pinned');
 const CHECKER_ENTRY = join(CHECKER_DIR, 'index.ts');
 
 const sha256 = (value: string | Buffer): string => createHash('sha256').update(value).digest('hex');
@@ -561,6 +562,7 @@ async function main(): Promise<void> {
       module: 'worktrees/01-input/frontend/src/lib/world-engine/local/narration-quality',
       files: checkerIdentity.files,
       combinedSha256: checkerIdentity.combined,
+      source: loadJson(join(EXP, 'checker-source.json')),
       reviewKind: 'mechanical_checker',
       independent: false,
       note: 'mechanical fact/style/review screen; not a human and not an independent sign-off',

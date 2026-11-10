@@ -73,6 +73,7 @@ selectCandidate({ candidates, assessments, options })
 - `src/verify_pack.py`：HPC 前再次校验 manifest/cases/rubric 哈希、Python 规范化 input SHA、prompt SHA、种子顺序、reference-only 子串泄漏。
 - `src/generate_hpc.py`：10 专用；模型加载、chat template、逐种子真实生成、原始文本/首 token/总耗时/token 数/finishReason/GPU/模型权重哈希全部落盘；输出目录存在即拒绝。
 - `src/analyze.ts`：调用 01 的 `reviewNarration` 判 fact/style/review；用本模块算重复率、合格簇、N=1/2/4 arm 对比；写 `report.json`、`report.md`、`review-request.json`。不读参考答案。
+- `checker-pinned/`：01 checker 在 `ec7ffc0e` 的只读快照（combined `92eccd94…`），就是 b01 用的版本。01 现在已到 `3cd5b153`（`78e6521a…`，新增文风规则）；v1/v2 必须用同一份冻结副本，不能一边用旧、一边用新。
 
 ## 3. 验证（本提交实际结果）
 

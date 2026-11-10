@@ -62,6 +62,7 @@ The package is public development regression material, never a final holdout.
 | `src/verify_pack.py` | Python-side pack/hash verification before HPC |
 | `src/generate_hpc.py` | dumb HPC runner: prompt in, raw text + timings + env out |
 | `src/analyze.ts` | 01 checker + diversity + arm comparison + evidence report |
+| `checker-pinned/` + `checker-source.json` | read-only snapshot of 01's checker at `ec7ffc0e`, the exact version used for b01; v1/v2 must use the same bytes |
 | `src/compare-b01-v2.ts` | side-by-side v1/v2 report; never pools the two prompts |
 | `src/arms.ts` / `src/arms.test.ts` | all size-N subsets; C(6,1)=6, C(6,2)=15, C(6,4)=15 |
 | `data/<batch>/` | generated request/expected files (committed) |

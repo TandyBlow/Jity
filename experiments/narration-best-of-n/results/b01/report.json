@@ -1,6 +1,6 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T12:33:46.023Z",
+  "createdAt": "2026-11-10T12:56:19.333Z",
   "batches": [
     "b01"
   ],
@@ -36,6 +36,39 @@
       "types.ts": "318476e88645252ee0db5c4bf162a3f8428b2c763712c15489b200a74b5d8a78"
     },
     "combinedSha256": "92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f",
+    "source": {
+      "owner": "01-input",
+      "module": "frontend/src/lib/world-engine/local/narration-quality",
+      "pinnedFromCommit": "ec7ffc0e7fd1a6d393648bcdfca395b7b8958183",
+      "pinnedFromCommitSubject": "fix(quality): reviewed gender table, sound licensing, compound objects",
+      "capturedAt": "2026-11-10T12:48:00Z",
+      "reason": "b01 report / checker hash 92eccd94... was produced with this version. 01 continued to 3cd5b153 (combined 78e6521a...), which adds style rules; using the live worktree for v2 would change the checker between compared batches. This frozen copy keeps v1/v2 on identical checker bytes.",
+      "copyRule": "read-only snapshot; lane 12 does not edit these files",
+      "files": {
+        "anchors.test.ts": "79d97dad2248dd69d71dc6f844d82b2d025db3ba2c2775e3daa450c47184352b",
+        "batch.test.ts": "bb2c731fc5515a5c4068b31a63b9a393361518fc0e941a039aeaba7e64352482",
+        "fallback.test.ts": "88694175a3823266b580c436bd8871a20018d48e2af3adc9a3bfe78dbb8a3bc4",
+        "gate.test.ts": "653ab580f3002d9e44553a60135b074350d683bcfd36a87bead691dda5d75bad",
+        "gate.ts": "d2d7fe40ea0b3660f4ef1156f4277c9b86d61e3223ffe15bde0db89a26b1032e",
+        "genders.test.ts": "37cbed31af88c333df0d4b6e5e50a5d72de9a450963e549a4bfe3bb63aeb75eb",
+        "genders.ts": "090e33bfaeeb4a270174047ece8831c233c09b3471b908dda08f0fa78481744a",
+        "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
+        "lexicon.ts": "2116666ea7374f132bc34d24b8d96c2ac31ff8e5acc11306b855a472d13d75b9",
+        "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
+        "review.ts": "cd8957afc8e5293bf526b1d35219e9420c3d833a22723b72560a501d6a72ffa3",
+        "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
+        "sequence-batch.test.ts": "f2181ccd31a157df2e34b39602e58181ba705b7fd4b53ec219c7b5fdab0f6cdd",
+        "sequence.test.ts": "e8b6220e042d266c0e2486adfb043a355d8b57d2861c60400c98959df4167828",
+        "sequence.ts": "3b3a01bf1a62dee45d5ba6c3dff10e7f06f6b259816f0c7536849dd0d4a0fff1",
+        "types.ts": "318476e88645252ee0db5c4bf162a3f8428b2c763712c15489b200a74b5d8a78"
+      },
+      "combinedSha256": "92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f",
+      "current01AtCapture": {
+        "commit": "3cd5b153",
+        "combinedSha256": "78e6521a6391324d1f137f2c26886d2d5339278047d82e4be1b35d414218dd02",
+        "usedForThisComparison": false
+      }
+    },
     "reviewKind": "mechanical_checker",
     "independent": false,
     "note": "mechanical fact/style/review screen; not a human and not an independent sign-off"
@@ -43,7 +76,7 @@
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
     "select": "88014ef747c5bbdb87a6dd4a535260650a821343b4d5f30d14b3ce84e556a69c",
-    "analyzer": "fc44d5d65368c3101fc7cb78d81b22ed9c702c01d5fa84ab1100afa7db54caaf"
+    "analyzer": "68e39bc022b06c898430517540d3e90bdbbd97259d84968653a75c4ed9126c04"
   },
   "analysisPlan": {
     "path": "analysis-addendum-arms.md",
@@ -305,7 +338,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 8.215800000000058
+            "elapsedMs": 9.443700000000035
           },
           "metrics": {
             "chars": 52,
@@ -404,7 +437,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.7852000000000317
+            "elapsedMs": 0.8355000000000246
           },
           "metrics": {
             "chars": 20,
@@ -511,7 +544,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.276200000000017
+            "elapsedMs": 1.782699999999977
           },
           "metrics": {
             "chars": 62,
@@ -621,7 +654,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.9092000000000553
+            "elapsedMs": 0.9891000000000076
           },
           "metrics": {
             "chars": 94,
@@ -720,7 +753,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.4895000000000209
+            "elapsedMs": 0.3488999999999578
           },
           "metrics": {
             "chars": 50,
@@ -832,7 +865,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.18809999999996307
+            "elapsedMs": 0.14659999999992124
           },
           "metrics": {
             "chars": 22,
