@@ -1,0 +1,3 @@
+# Keep the v2 data/golden bytes identical on checkout.  The manifests record
+# SHA-256 over these exact LF bytes; autocrlf must not rewrite them.
+* text eol=lf
