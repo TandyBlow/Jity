@@ -516,17 +516,19 @@ await sync.choose('keep-remote', conflict);
 ```bash
 cd backend
 python -X utf8 -m pytest -q tests/test_local_progress_sync.py
-# 14 passed：CAS 失败、幂等重放、祖先不能覆盖、离线分叉、分支选择、
-# 双设备恢复、重启恢复、父链/大小/token/不透明 payload、同内容不同分支位置。
+# 16 passed：CAS 失败、幂等重放、祖先不能覆盖、离线分叉、分支选择、
+# 双设备恢复、重启恢复、父链/大小/token/不透明 payload、同内容不同分支位置、
+# 读时内容摘要与大小校验（被篡改的 payload/digest 返回 500，head 不变）。
 
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 30 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
-# 保存链、丢响应幂等、分叉/选择、双设备、队列冲突两种显式选择及依赖 rebase、
-# web storage 队列、lineage 比较、product 适配器、push 不重复写本地、head 恢复。
+# 37 passed | 6 skipped（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/
+# 多离线保存链、丢响应幂等、分叉/选择、双设备、队列冲突两种显式选择及依赖 rebase、
+# web storage 队列、lineage 比较、product 适配器、push 不重复写本地、head 恢复、
+# restore 的 none/unavailable 区分、status 计数离线队列。
 PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret   ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 33 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
+# 43 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
 # 以及离线两次保存→重连只上传后代链→第二次 flush 幂等→另一设备取回。
 
 ./node_modules/.bin/eslint src/lib/world-engine/local/progress-sync scripts/parallel-sync
@@ -551,6 +553,25 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 # 3 passed：真实 HTTP 下两个客户端 save→pull→CAS 冲突→fork→选择→恢复，
 # 以及离线链上传与分叉保留两副本。
 ```
+
+### 与 06 真实 session/store 的联调脚本（2026-11-11 复跑）
+
+这些脚本都用 06 的 `LocalGameSession` + `persistence/store` 和真实进度服务，
+只读 06 的树（`LANE06_ROOT`），不写页面：
+
+| 脚本 | 证明的事 |
+|---|---|
+| `session-history-check.ts` | 一回合提交 + 页面式 `sync.save`（离线）后，命令、正文、revision 都不变；关掉重开仍在，半结算 work 为空 |
+| `two-device-session-check.ts` | A 上传；B 从远端恢复出同一命令/正文，下一回合是 A 的子节点；C 直接 `LocalGameSession.restore(远端快照)` 不写 store，内容不变，未变 payload 复用 head |
+| `ten-turn-sync-check.ts` | 5 在线 + 2 离线排队 + 刷新 + 重连只上传 2 条后代 + 再 3 回合；最终远端 head 正好是玩家打过的 10 条命令 |
+| `fork-session-check.ts` | 真分叉：`flush` 报冲突、`status=diverged`、`choose('keep-local-fork')` 后本机副本成为 head，另一份仍可读，不合并 |
+| `page-keep-remote-check.ts` | 页面的“改用另一台”分支：head 保持远端；本机记录先以 `fork:` 备份、关会话、写入选中快照、重开；重开后是远端历史，落选副本仍能从备份读出，两边不互相吸收 |
+| `page-wiring-audit.ts` | 只读检查 06 的 `page.tsx`：同步调用、开局恢复、显式选择三项 required；06 当前 NOT READY，打上页面补丁后 READY |
+| `refresh-next-turn-repro.ts` / `failed-turn-*.ts` | 06 侧三个会话/历史问题的可运行复现（见下方“存储/同步会不会覆盖正文历史”） |
+
+成文侧的同一输入复核在 `design/parallel-handoff/07-candidate-prose.md`：
+`chain-10.ts`（20 回合，0 复读）、`review-01-gate.ts`（01 的检查器 0/20 regenerate）、
+`fallback-same-input.ts`（02 复核过的真实页面兜底回合，同输入对照）。
 
 ### 给 06：成文补丁（可选，但页面若用程序兜底应升级）
 
