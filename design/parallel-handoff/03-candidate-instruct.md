@@ -76,13 +76,20 @@ python D:/others/Jity/.local/parallel-local-game/resource_lease.py release --lan
 
 | 归档 | 结果 |
 |---|---|
-| `dry-prompts.json` | 6 个自由一日点的真实投影/prompt（无模型），证明入口与场景数据可运行 |
+| `dry-prompts.json` / `dry-root.json` | 6 个结算点 + 开局点的真实投影/prompt（无模型）；开局 1046 字、0 条变化，只打印路明非与诺诺 |
 | `probe-qwen25-s1.json` | Qwen2.5-1.5B 第一次真实生成：把玩家“我”续写进正文，50 字，两次都被拒；暴露提示词第三人称问题 |
 | `run-qwen25-r2.json` | 已改第三人称/自然时间/放宽数值后：S1 生成 167 字但重复移动句并撞 340 token 上限；S2/S4 第二轮为空（适配器在 token 上限时抛 `IncompleteGenerationError`，旧代码丢了已付费文本）；S4 出现“诺诺的手…”复读 |
 
-r2 直接导致三项修复（已提交在后续提交里）：接收 `IncompleteGenerationError.completion.raw` 并按 `truncated` 处理；maxTokens 340→520、温度 0.6、近重复句去重与复读硬检查；投影剪短外貌/随身物、物品 5 件、地点 160 字（减少模型逐字照抄）。
+r2 之后已提交的修复（`190443e2`, `9400784f` 及后续）：
 
-**首次加载 42–52 s（冷启动，不计入单点等待）；首 token 3–25 s；单次 520 token 生成在 1.5B/6 线程约 60–90 s。** 60 s 首段、300 s 整段的验收线要用最终组合在页面实测，这里只给单次生成证据。
+- 接收 `IncompleteGenerationError.completion.raw`：token 上限按 `truncated` 判，不丢已生成文本；deadline 保留残稿作证据但绝不接受；
+- 玩家行动已经就是本点移动时，不再单独打印一遍；写作顺序只点“移动/物品/任务/时间”这类节拍，不重复事实原句；
+- 投影只保留视角自己的物品与一句行为个性、每人两条外貌；只打印和许可“看得见”的站位；两人同向移动可用“两人走进…”表达；
+- 清洗同句/近重复句、`【正文】` 同行前缀；8 字复读硬检查；资料内但不在场的物品/地点也按 `unlicensed_entity` 拒绝；
+- 修复提示带上一次正文（可保留合格句），只列硬问题；
+- chat 模式不再因 loader 尚未写入 `info.modelId` 而拒绝（真正模板由引擎的 GGUF 模板负责）；raw 模式仍拒绝未知模板。
+
+**最终一轮真实原文尚未产生**：共享推理锁自 05:59Z 起被 06 持有（40+ 分钟，06 仍在活动），本线没有抢跑/释放别线锁。09 的第一次调用在生成前失败（上一个候选 hard stop 把共享引擎的 `info.modelId` 置空）；本线已在 chat 模式容忍该状态，并请求 09 在引擎健康时重跑 `free-day-open`。
 
 ## 5. 风格示例（可选）
 
