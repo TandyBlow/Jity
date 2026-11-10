@@ -113,7 +113,7 @@ const result = await generateCandidate({
 - `npx vitest run src/lib/world-engine/local/narration-candidates/constrained --maxWorkers=1`：15 个测试，含真实状态内核点位、方向反写、没登记的人名、已知物品再发现、模型失败换程序写同一段、07 composer 注入。
 - `npx tsc -p tsconfig.world-contract.json --noEmit` 与 eslint 无错误。
 
-真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 6–14 ms、首段 6–14 ms，`strategyVersion=constrained-candidate-v1.2`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
+真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 7–18 ms、首段 7–18 ms，`strategyVersion=constrained-candidate-v1.3`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
 
 真实浏览器证据（09 的共用入口，05:43Z，qwen2.5-1.5b-instruct，CPU）：
 
