@@ -90,7 +90,7 @@ export function targetsPrompt(scene: ActionScene, actionText: string, maxTargets
     // Show a real registered id, never a literal like "id"/"角色id": a small
     // model copies the example and the id then fails to resolve (the 13:21Z
     // run produced a literal `id` in the updates output).
-    `最多 ${maxTargets} 人。输出 {"targets":[{"targetId":"${candidates[0]?.id ?? scene.actor.id}"}]}；没有就是 {"targets":[]}。`,
+    `最多 ${maxTargets} 人。输出 {"targets":[{"targetId":"${(candidates.find((character) => character.id !== scene.actor.id) ?? candidates[0])?.id ?? scene.actor.id}"}]}；没有就是 {"targets":[]}。`,
     '',
     `【行动者】${characterLine(scene.actor, false)}`,
     `【行动】${clip(actionText, 160)}`,

@@ -230,7 +230,7 @@ describe('real round through the controller with the action-execution port', () 
 
     // The joint-group inputs carry the frozen action, the declared target and
     // the source action the reaction must answer; no prompt is a bare id.
-    const targetsPrompt = prompts.find((prompt) => prompt.includes('牵连判断器')) ?? '';
+    const targetsPrompt = prompts.find((prompt) => prompt.includes('牵连判断器') && prompt.includes(playerText)) ?? '';
     expect(targetsPrompt).toContain(playerText);
     expect(targetsPrompt).toContain('老周');
     const reactionPrompt = prompts.find((prompt) => prompt.includes('反应生成器')) ?? '';
