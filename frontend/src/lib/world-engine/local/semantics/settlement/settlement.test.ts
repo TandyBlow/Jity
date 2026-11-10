@@ -165,15 +165,16 @@ describe('common-group results', () => {
     expect(engine.prompts[1]).toContain('reacted=true contradicts admitted=false');
   });
 
-  it('returns a conservative no-change result instead of success after repeated invalid output', async () => {
+  it('aborts the point after repeated invalid output instead of inventing a result', async () => {
     const engine = new ScriptedEngine(['not json', 'still not json']);
     const handlers = createSettlementHandlers({ engine });
     const outcome = await handlers.results('g1', resultsInput());
-    expect(outcome.value).not.toBeNull();
+    expect(outcome.value).toBeNull();
     expect(outcome.fallback).toBe(true);
     expect(outcome.error).toContain('model_output_invalid');
-    expect(outcome.value!.a).toBe('本组结算未能确认新的结果。');
-    expect(outcome.value!.b).toBe('本组结算未能确认新的结果。');
+    const detail = outcome.evidence.detail as { reason: string };
+    expect(detail.reason).toBe('point_aborted_after_repair');
+    expect(outcome.raw).toContain('not json');
   });
 });
 
@@ -186,10 +187,9 @@ describe('six-stage updates', () => {
       ] }),
       JSON.stringify({ operations: [{ entityId: 'tool', op: 'add', recordIds: [], text: '表面沾了灰' }] }),
       JSON.stringify({ decisions: [
-        { characterId: 'a', taskId: 'a1', label: 'achieved' },
-        { characterId: 'a', taskId: 'a2', label: 'achieved' },
-        { characterId: 'b', taskId: 'b1', label: 'pending' },
-        { characterId: 'off', taskId: 'off1', label: 'achieved' },
+        { characterId: 'a', achieved: ['a1'] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: ['off1'] },
       ] }),
       JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '把工具从盒子里取回' }] }),
       JSON.stringify({ operations: [
@@ -228,10 +228,9 @@ describe('six-stage updates', () => {
       JSON.stringify({ changes: [] }),
       JSON.stringify({ operations: [] }),
       JSON.stringify({ decisions: [
-        { characterId: 'a', taskId: 'a1', label: 'pending' },
-        { characterId: 'a', taskId: 'a2', label: 'achieved' },
-        { characterId: 'b', taskId: 'b1', label: 'pending' },
-        { characterId: 'off', taskId: 'off1', label: 'pending' },
+        { characterId: 'a', achieved: [] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
       ] }),
       JSON.stringify({ subtasks: [] }),
     ]);
@@ -246,10 +245,9 @@ describe('six-stage updates', () => {
   it('skips position/appearance on a time scan, scans every task, and keeps sanity empty when personality stays unchanged', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ decisions: [
-        { characterId: 'a', taskId: 'a1', label: 'achieved' },
-        { characterId: 'a', taskId: 'a2', label: 'achieved' },
-        { characterId: 'b', taskId: 'b1', label: 'pending' },
-        { characterId: 'off', taskId: 'off1', label: 'pending' },
+        { characterId: 'a', achieved: ['a1'] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
       ] }),
       JSON.stringify({ subtasks: [] }),
       JSON.stringify({ operations: [
@@ -272,15 +270,14 @@ describe('six-stage updates', () => {
     expect(engine.prompts.some((prompt) => prompt.includes('理智重算器'))).toBe(false);
   });
 
-  it('keeps the current sanity visible when the sanity answer is invalid (no invented personality)', async () => {
+  it('aborts the whole six-stage point when the sanity answer cannot be repaired', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
       JSON.stringify({ operations: [] }),
       JSON.stringify({ decisions: [
-        { characterId: 'a', taskId: 'a1', label: 'achieved' },
-        { characterId: 'a', taskId: 'a2', label: 'achieved' },
-        { characterId: 'b', taskId: 'b1', label: 'pending' },
-        { characterId: 'off', taskId: 'off1', label: 'pending' },
+        { characterId: 'a', achieved: ['a1'] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
       ] }),
       JSON.stringify({ subtasks: [] }),
       JSON.stringify({ operations: [
@@ -294,20 +291,20 @@ describe('six-stage updates', () => {
     ]);
     const handlers = createSettlementHandlers({ engine });
     const outcome = await handlers.updates('g1', updatesInput());
-    const calls = outcome.value as UpdatesCall[];
-    expect(calls[4].changes.a.personalityChanges?.[0].text).toBe('更愿意相信同伴');
-    expect(calls[5].changes.a.sanitySet).toBe(60);
+    expect(outcome.value).toBeNull();
     expect(outcome.fallback).toBe(true);
     expect(outcome.error).toContain('missing sanity');
+    const detail = outcome.evidence.detail as { reason: string; stageErrors?: { stage: string }[] };
+    expect(detail.reason).toBe('point_aborted_after_repair');
+    expect(detail.stageErrors?.map((row) => row.stage)).toEqual(['sanity']);
   });
 
   it('returns one UpdatesCall for a split stage and uses the batch task achievement for personality', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ decisions: [
-        { characterId: 'a', taskId: 'a1', label: 'achieved' },
-        { characterId: 'a', taskId: 'a2', label: 'achieved' },
-        { characterId: 'b', taskId: 'b1', label: 'pending' },
-        { characterId: 'off', taskId: 'off1', label: 'pending' },
+        { characterId: 'a', achieved: ['a1'] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
       ] }),
       JSON.stringify({ operations: [
         { entityId: 'a', op: 'keep', recordIds: [], text: null },
@@ -478,5 +475,134 @@ describe('continuation', () => {
     expect(outcome.value).toBeNull();
     expect(outcome.error).toContain('continuation_head_mismatch');
     expect(engine.prompts).toHaveLength(0);
+  });
+});
+
+describe('real failed-output shapes (09 product run)', () => {
+  it('repairs a task answer that skips a whole character, then covers every character', async () => {
+    const partial = JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['a1'] },
+      { characterId: 'b', achieved: [] },
+    ] });
+    const full = JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['a1'] },
+      { characterId: 'b', achieved: [] },
+      { characterId: 'off', achieved: ['off1'] },
+    ] });
+    const engine = new ScriptedEngine([partial, full]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(outcome.value).not.toBeNull();
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+    expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
+    expect(engine.prompts).toHaveLength(2);
+    expect(engine.prompts[1]).toContain('task character coverage incomplete: 2/3; missing off');
+    expect(engine.prompts[1]).toContain('必须为每个有任务的人物各写一条');
+    const detail = outcome.evidence.detail as { taskScope: { mode: string; characters: number; taskRows: number; assertedUnchanged: number } };
+    expect(detail.taskScope).toEqual({ mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [] });
+  });
+
+  it('accepts a unique full character name for a task decision', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ decisions: [
+      { characterId: '甲', achieved: ['a1'] },
+      { characterId: '乙', achieved: [] },
+      { characterId: '丙', achieved: [] },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+  });
+
+  it('repairs the literal id placeholder before accepting a position change', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [{ entityId: 'id', containerId: 'far', slotId: null, relativeTo: null }] }),
+      JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far', slotId: null, relativeTo: null }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#position', updatesInput(world(), 'position'));
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as UpdatesCall).changes.a?.positionSet?.containerId).toBe('far');
+    expect(engine.prompts[1]).toContain('placeholder_id:id');
+    expect(engine.prompts[1]).toContain('例如 a');
+  });
+
+  it('aborts a position stage whose placeholder is not repaired', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [{ entityId: 'id', containerId: 'far', slotId: null, relativeTo: null }] }),
+      JSON.stringify({ changes: [{ entityId: 'id', containerId: 'far', slotId: null, relativeTo: null }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#position', updatesInput(world(), 'position'));
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('placeholder_id:id');
+    expect(outcome.evidence.detail).toMatchObject({ reason: 'point_aborted_after_repair' });
+  });
+
+  it('repairs an effect for an undeclared target and resolves full names', async () => {
+    const invalid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了。', effects: [{ targetId: 'tool', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '没有反应。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具推向乙。', memberIds: ['a', 'b'] }],
+    });
+    const valid = JSON.stringify({
+      judgments: [
+        { memberId: '甲', label: 'partial', reason: '推到了。', effects: [{ targetId: '乙', reacted: true }] },
+        { memberId: '乙', label: 'no_change', reason: '没有反应。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具推向乙。', memberIds: ['甲', '乙'] }],
+    });
+    const engine = new ScriptedEngine([invalid, valid]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('甲把工具推向乙');
+    expect(engine.prompts[1]).toContain('effect for undeclared target tool');
+    expect(engine.prompts[1]).toContain('判定目标只有 b');
+  });
+
+  it('does not invent a member when the model writes the schema placeholder', async () => {
+    const invalid = JSON.stringify({
+      judgments: [
+        { memberId: '成员id', label: 'partial', reason: '推到了。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '没有反应。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具推向乙。', memberIds: ['a', 'b'] }],
+    });
+    const valid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '没有反应。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具推向乙。', memberIds: ['a', 'b'] }],
+    });
+    const engine = new ScriptedEngine([invalid, valid]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[1]).toContain('placeholder_id:成员id');
+  });
+
+  it('resolves a protagonist full name to the id and still drops the candidate', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ candidates: [{ characterId: '甲', text: '甲自己继续向前走。' }] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.continuation('r1', continuationInput([]));
+    expect(outcome.value).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    const detail = outcome.evidence.detail as { reason: string; rejectedCandidates: { characterId: string; reason: string }[] };
+    expect(detail.reason).toBe('no_eligible_candidate');
+    expect(detail.rejectedCandidates[0]).toMatchObject({ characterId: 'a', reason: 'protagonist_action_belongs_to_player' });
+    expect(engine.prompts).toHaveLength(1);
+  });
+
+  it('resolves a full name in both the proposal and the judgment', async () => {
+    const proposal = JSON.stringify({ candidates: [{ characterId: '乙', text: '乙继续向前走。' }] });
+    const judgment = JSON.stringify({ judgments: [{ characterId: '乙', text: '乙继续向前走。', likely: true, related: true, reason: '相关。' }] });
+    const engine = new ScriptedEngine([proposal, judgment]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.continuation('r1', continuationInput([]));
+    expect(outcome.value).toMatchObject({ kind: 'continue' });
   });
 });

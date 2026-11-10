@@ -83,8 +83,9 @@ function scriptedEngine(brain: Brain): InferenceEngine {
         return JSON.stringify({ operations: brain.appearanceOps ? brain.appearanceOps(prompt) : [] });
       }
       if (prompt.includes('任务判定器')) {
-        // Every task must be decided, including the off-screen owner's task.
-        return JSON.stringify({ decisions: [{ characterId: 'person_a', taskId: 'task_watch', label: brain.taskAchieved ? 'achieved' : 'pending' }] });
+        // One decision per character with tasks; the off-screen owner must be
+        // decided too, and the decision covers all of that character's tasks.
+        return JSON.stringify({ decisions: [{ characterId: 'person_a', achieved: brain.taskAchieved ? ['task_watch'] : [] }] });
       }
       if (prompt.includes('新增小任务判断器')) return JSON.stringify({ subtasks: [] });
       if (prompt.includes('个性变化判断器')) {
@@ -238,7 +239,8 @@ describe('turn execution through the real kernel', () => {
     // The ledger carries the coverage counts, so the page evidence can prove the
     // task/personality answers covered the whole cast, not just the room.
     const cast = Object.keys(initial.characters).length;
-    expect(full?.coverage).toEqual({ tasks: cast, personality: cast });
+    expect(full?.coverage).toMatchObject({ tasks: cast, personality: cast, mode: 'per_character_decision' });
+    expect(full?.coverage?.taskRows).toBeGreaterThan(0);
     expect(Object.keys(full?.stageMs ?? {})).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
     expect(Object.values(full?.stageMs ?? {}).every((ms) => Number.isFinite(ms) && ms >= 0)).toBe(true);
     expect(submission?.continuationCalls).toBe(1);
@@ -413,5 +415,35 @@ describe('turn execution through the real kernel', () => {
     const snapshot = transport.snapshot();
     expect(snapshot.round?.conclusion).toBeNull();
     expect(snapshot.round?.trigger).toBe('player');
+  });
+});
+
+describe('settlement port failure evidence', () => {
+  it('aborts a failed repair and keeps raw output, attempts and timings in the ledger', async () => {
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'failure-evidence' },
+      async load() {},
+      async dispose() {},
+      async complete() { return 'not json'; },
+    };
+    const port = createSettlementModelPort(engine);
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const input = {
+      groupId: 'group_failure',
+      members: [{ memberId: 'person_c', actionText: '我推门。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json;
+    port.beginSubmission('我推门。');
+    await expect(port.generate('results', 'group_failure', input)).rejects.toThrow('settlement_failed:results');
+    const submission = port.endSubmission();
+    expect(submission?.resultsCalls).toBe(1);
+    expect(submission?.stops[0]).toContain('model_output_invalid');
+    const record = submission?.calls[0];
+    expect(record?.fallback).toBe(true);
+    expect(record?.raw).toContain('not json');
+    expect(record?.rawChars).toBeGreaterThan(0);
+    expect(record?.attempts).toHaveLength(2);
+    expect(record?.attempts?.[0].ms).toBeGreaterThanOrEqual(0);
+    expect(record?.attempts?.[0].rawChars).toBe(8);
   });
 });

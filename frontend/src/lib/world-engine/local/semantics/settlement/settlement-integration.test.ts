@@ -28,7 +28,7 @@ function settlementEngine(): InferenceEngine {
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });
       if (prompt.includes('外貌结算器')) return JSON.stringify({ operations: [] });
       if (prompt.includes('任务判定器')) {
-        return JSON.stringify({ decisions: [{ characterId: 'person_a', taskId: 'task_watch', label: 'achieved' }] });
+        return JSON.stringify({ decisions: [{ characterId: 'person_a', achieved: ['task_watch'] }] });
       }
       if (prompt.includes('新增小任务判断器')) return JSON.stringify({ subtasks: [] });
       if (prompt.includes('个性变化判断器')) {

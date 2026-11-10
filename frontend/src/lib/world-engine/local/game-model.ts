@@ -133,6 +133,10 @@ export class LocalGameModel implements WorldModelPort {
     this.settlement = createSettlementModelPort(semanticEngine, {
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
+      // The appearance stage measures 7877 chars on the shipped world; a retry
+      // with feedback is ~7970. The guard must leave room for the repair while
+      // still refusing a runaway prompt (lane 04's measured numbers).
+      maxPromptChars: 11_000,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

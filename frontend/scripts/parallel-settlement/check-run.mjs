@@ -23,7 +23,9 @@ import { readFileSync } from 'node:fs';
 const STAGES = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'];
 
 function submissionsOf(input) {
-  if (Array.isArray(input)) return input;
+  // A raw window.__worldTurns dump is an array of turn records; each record
+  // carries its settlement ledger under `submission`.
+  if (Array.isArray(input)) return input.map((item) => item?.submission ?? item).filter(Boolean);
   if (Array.isArray(input?.submissions)) return input.submissions;
   if (Array.isArray(input?.turns)) return input.turns.map((turn) => turn?.submission ?? turn).filter(Boolean);
   if (input?.submission) return [input.submission];
@@ -51,6 +53,8 @@ function stageProblems(call, where) {
 
 export function checkRun(input, options = {}) {
   const cast = options.cast ?? 14;
+  const collectTimings = options.timings === true;
+  const timingRows = [];
   const subs = submissionsOf(input);
   const hard = [];
   const soft = [];
@@ -90,7 +94,7 @@ export function checkRun(input, options = {}) {
       if (call.error) soft.push(`${where} updates/${call.key}: error ${call.error}`);
     }
     for (const call of results) {
-      if (call.fallback) soft.push(`${where} results/${call.key}: conservative fallback (${call.error ?? 'no error text'})`);
+      if (call.fallback) soft.push(`${where} results/${call.key}: failed, point aborted (${call.error ?? 'no error text'})`);
     }
     const decision = sub.continuationDecision ?? 'handback';
     if (decision === 'continue' && !continuation.length) hard.push(`${where}: decision is continue but no continuation call ran`);
@@ -103,13 +107,32 @@ export function checkRun(input, options = {}) {
       }
       soft.push(`${where}: policy stop ${policyStops.join(';')} (visible failure, no state rewrite expected)`);
     }
+    if (collectTimings) {
+      const stages = {};
+      let updatesMs = 0;
+      let resultsMs = 0;
+      for (const call of calls) {
+        if (call.task === 'updates') {
+          updatesMs += Number(call.ms) || 0;
+          for (const [stage, ms] of Object.entries(call.stageMs ?? {})) stages[stage] = (stages[stage] ?? 0) + Number(ms);
+        }
+        if (call.task === 'results') resultsMs += Number(call.ms) || 0;
+      }
+      timingRows.push({ submission: index + 1, input: sub.inputText ?? '', resultsMs: Math.round(resultsMs), updatesMs: Math.round(updatesMs), stages, submissionMs: typeof sub.startedAtMs === 'number' && typeof sub.endedAtMs === 'number' ? Math.round(sub.endedAtMs - sub.startedAtMs) : null });
+    }
     const started = sub.startedAtMs;
     const ended = sub.endedAtMs;
     if (typeof started !== 'number' || typeof ended !== 'number') {
       soft.push(`${where}: whole-submission timing missing (startedAtMs/endedAtMs)`);
     } else if (ended < started) hard.push(`${where}: end time precedes start time`);
   });
-  return { ok: hard.length === 0, submissions: subs.length, cast, hard, soft };
+  const result = { ok: hard.length === 0, submissions: subs.length, cast, hard, soft };
+  if (collectTimings) {
+    const totals = {};
+    for (const row of timingRows) for (const [stage, ms] of Object.entries(row.stages)) totals[stage] = (totals[stage] ?? 0) + ms;
+    result.timings = { rows: timingRows, totals };
+  }
+  return result;
 }
 
 function print(result) {
@@ -128,6 +151,12 @@ function selfTest() {
       call.task === 'updates' ? { ...call, stages: ['appearance', 'position', 'tasks', 'subtasks', 'personality', 'sanity'] } : call
     )) }, false],
     ['policy stop as handback', { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_no_progress'], closedBy: 'model' }, false],
+    ['time scan round', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates'
+        ? { ...call, stages: ['tasks', 'subtasks'], coverage: { tasks: 14, personality: 0 } }
+        : call
+    )) }, true],
+    ['raw __worldTurns array', [{ index: 1, submission: base }], true],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {
@@ -146,12 +175,12 @@ if (args.includes('--self-test')) {
 } else {
   const file = args.find((arg) => !arg.startsWith('--'));
   if (!file) {
-    console.error('usage: node check-run.mjs <file.json> [--cast 14]');
+    console.error('usage: node check-run.mjs <file.json> [--cast 14] [--timings]');
     process.exit(2);
   }
   const castIndex = args.indexOf('--cast');
   const cast = castIndex >= 0 ? Number(args[castIndex + 1]) : undefined;
-  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), cast ? { cast } : {});
+  const result = checkRun(JSON.parse(readFileSync(file, 'utf8')), { ...(cast ? { cast } : {}), timings: args.includes('--timings') });
   print(result);
   process.exitCode = result.ok ? 0 : 1;
 }

@@ -351,3 +351,71 @@ export function changeFromRow(id: Id, row: Record<string, unknown>): Change | nu
   if (text == null && supersedes.length === 0) return null;
   return { id, text, supersedes };
 }
+
+/* ---------- model-written references ----------
+ * The model sees full names and ids in every prompt. It may answer with either,
+ * but a name is only usable when it names exactly one known entity. Unknown and
+ * ambiguous references are errors (the caller retries with that error and then
+ * aborts the point); a placeholder copied from an output example is never a
+ * default id. Program input still uses ids and does not go through here. */
+
+const ID_PLACEHOLDERS = new Set([
+  'id', '<id>', 'entityid', 'targetid', 'characterid', 'taskid', 'memberid',
+  'parenttaskid', 'containerid', '人物id', '成员id', '目标id', '任务id',
+  '父任务id', '实体id', '人物ID', '成员ID', '目标ID', '任务ID',
+]);
+
+export function isPlaceholderId(value: string): boolean {
+  return ID_PLACEHOLDERS.has(value.trim());
+}
+
+function matchesName<T extends { name?: string }>(space: Record<Id, T> | undefined, value: string): Id[] {
+  if (!space) return [];
+  const wanted = value.trim();
+  return Object.keys(space).filter((id) => (space[id]?.name ?? '').trim() === wanted);
+}
+
+/** Resolve a model-written character reference to its id. Throws only for an
+ * ambiguous full name, because guessing between two characters is unsafe. */
+export function resolveCharacterId(state: WorldState, raw: string): Id | null {
+  const value = raw.trim();
+  if (!value || isPlaceholderId(value)) return null;
+  if (state.characters[value]) return value;
+  const matches = matchesName(state.initial.characters, value);
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) throw new Error(`ambiguous character name ${value}: ${matches.sort().join(',')}`);
+  return null;
+}
+
+/** Resolve any world entity (character, item or location). A name shared by two
+ * entities of any kind is ambiguous and rejected. */
+export function resolveEntityId(state: WorldState, raw: string): Id | null {
+  const value = raw.trim();
+  if (!value || isPlaceholderId(value)) return null;
+  if (state.characters[value] || state.items[value] || state.locations[value]) return value;
+  const matches = [...new Set([
+    ...matchesName(state.initial.characters, value),
+    ...matchesName(state.initial.items, value),
+    ...matchesName(state.initial.locations, value),
+  ])];
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) throw new Error(`ambiguous entity name ${value}: ${matches.sort().join(',')}`);
+  return null;
+}
+
+/** Build the retry instruction for a bad reference. It names the rule and one
+ * real example instead of pasting every id, so the feedback still fits beside
+ * the longest stage prompt. */
+export function referenceError(
+  state: WorldState,
+  raw: string,
+  what: 'character' | 'entity' | 'task',
+  example?: Id,
+): string {
+  const value = raw.trim();
+  const sample = example ?? (what === 'character' ? roster(state)[0] : allEntityIds(state)[0]);
+  if (isPlaceholderId(value)) {
+    return `placeholder_id:${value || '(empty)'} for ${what}; 这是输出格式里的占位符，必须换成名单里的真实 id${sample ? `（例如 ${sample}）` : ''}`;
+  }
+  return `unknown ${what} ${value || '(empty)'}; 只能使用名单里已有的 id${sample ? `（例如 ${sample}）` : ''}，也可以写人物的唯一全名`;
+}

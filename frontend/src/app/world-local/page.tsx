@@ -408,7 +408,9 @@ export default function WorldLocalPage() {
         const narrationKey: NarrationModelKey = arm.model ?? DEFAULT_NARRATION_MODEL;
         const narrationSpec = NARRATION_MODELS[narrationKey];
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
-        const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic', SEMANTIC_MODEL_BYTES);
+        // 12288 covers the settlement's measured prompt (7877 chars) plus the
+        // repair feedback; 8192 left a retry on the edge of the context.
+        const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         // The stop button must reach a cold load. The ref is set before the
         // await so cancelTurn is never blind during the first 30-60 s.
         semanticRef.current = semantic;
@@ -474,6 +476,14 @@ export default function WorldLocalPage() {
             // invented event). 'program' is the labelled downgrade and 'drafted'
             // was never accepted; neither fills the readable-text timing.
             const source = progress.source ?? (progress.fallback ? 'program' : 'draft');
+            if (!text.trim()) {
+              // An empty completion is a failure, not a silent blank paragraph.
+              setEntries((list) => updateLast(list, (entry) => entry.acceptedMs == null
+                ? { ...entry, text: '', failed: true, note: '这一回合没有写出正文；已结算的事实仍保留，可以再试一次。' }
+                : entry));
+              setPhase('ready');
+              return;
+            }
             const record = turnRecordRef.current;
             if (record) {
               record.source = source;
@@ -800,7 +810,7 @@ export default function WorldLocalPage() {
                     {entry.acceptedMs == null && entry.mixedMs != null ? ` · 模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s（部分降级）` : ''}
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
                   {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
                   {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
                   {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}

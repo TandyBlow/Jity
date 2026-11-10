@@ -7,7 +7,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import { callJson, JsonCallError, joinedMs, joinedRaw } from './engine-call';
 import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, SettlementOutcome } from './types';
 import {
-  asInteger, asRecord, asString, errorText, isRecord, toJson,
+  asInteger, asRecord, asString, errorText, isRecord, referenceError, resolveCharacterId, resolveEntityId, toJson,
 } from './support';
 import { describeCharacter, describeItem, sameRoomItems, visibleCharacters } from '../../prompt';
 
@@ -114,20 +114,21 @@ export async function runResults(
       timeoutMs: options.timeoutMs,
       maxPromptChars: options.maxPromptChars,
       jsonSchema: RESULTS_SCHEMA,
-      validate: (value) => validateResultsAnswer(value, members, workingState),
+      validate: (value) => { readResultsAnswer(value, members, workingState); },
     });
     calls = answer.calls;
-    const value = normalizeResults(answer.value as ResultsAnswer, members);
+    const parsedAnswer = readResultsAnswer(answer.value, members, workingState);
+    const value = normalizeResults(parsedAnswer, members);
     const evidence = makeEvidence(key, answer.calls, false, undefined, {
       groupId,
       memberIds: members.map((member) => member.memberId),
       rollReceiptCount: members.reduce((sum, member) => sum + member.rolls.length, 0),
-      factCount: (answer.value as ResultsAnswer).facts.length,
+      factCount: parsedAnswer.facts.length,
       memberFactCoverage: members.map((member) => ({
         memberId: member.memberId,
-        factCount: (answer.value as ResultsAnswer).facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
+        factCount: parsedAnswer.facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
       })),
-      labels: (answer.value as ResultsAnswer).judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+      labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -144,16 +145,17 @@ export async function runResults(
   } catch (error) {
     calls = error instanceof JsonCallError ? error.calls : calls;
     const message = errorText(error);
-    const fallbackText = '本组结算未能确认新的结果。';
-    const value: Record<Id, string> = Object.fromEntries(members.map((member) => [member.memberId, fallbackText]));
+    // A repair that still fails aborts the frozen point. A made-up
+    // "conservative result" would invent facts the model never judged and
+    // would let the six-stage settlement commit a partial common group.
     const evidence = makeEvidence(key, calls, true, message, {
       groupId,
       memberIds: members.map((member) => member.memberId),
-      fallbackText,
-      reason: 'conservative_no_change_after_model_failure',
+      declaredTargets: members.map((member) => ({ memberId: member.memberId, targetIds: member.rolls.map((roll) => roll.targetId) })),
+      reason: 'point_aborted_after_repair',
     });
     const outcome: SettlementOutcome<Record<Id, string>> = {
-      value,
+      value: null,
       raw: joinedRaw(calls),
       ms: joinedMs(calls),
       fallback: true,
@@ -241,6 +243,9 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
     .map((id) => state.characters[id] ? describeCharacter(state, id, false) : describeItem(state, id));
+  const exampleMember = members[0];
+  const exampleTarget = exampleMember.rolls[0]?.targetId;
+  const exampleEffects = exampleTarget ? `[{"targetId":"${exampleTarget}","reacted":true或false}]` : '[]';
   return [
     '你是中文跑团游戏的共同结算器。只输出 JSON，不要解释。',
     '下面是一个已经冻结的结算组：行动已经确认，骰点已经落定。请统一结算全组行动，写清实际发生了什么。',
@@ -248,6 +253,8 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- 只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
     '- 一个成员的行动可以成功、部分成功、失败或被制止；行动被接纳不等于目标达成。',
     '- 骰点 准入=false 表示该目标这次没有被迫反应；effects 中该 target 的 reacted 必须为 false。已行动人物不会再次反应。',
+    '- effects 必须恰好覆盖该成员判定里列出的每个目标各一条，不多不少；不要把判定之外的人物写进 effects。',
+    '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员。',
     `本组：${groupId}`,
@@ -255,23 +262,29 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     ...memberLines,
     '场景：',
     ...scene,
-    '输出格式：',
-    '{"judgments":[{"memberId":"成员id","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":[{"targetId":"目标id","reacted":true或false}]}],"facts":[{"text":"结果事实","memberIds":["成员id"]}]}',
+    '输出格式（示例里的 id 都是本组真实 id；没有判定目标的成员 effects 写 []）：',
+    `{"judgments":[{"memberId":"${exampleMember.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${exampleEffects}}],"facts":[{"text":"结果事实","memberIds":["${exampleMember.memberId}"]}]}`,
     '现在输出 JSON：',
   ].join('\n');
 }
 
-function validateResultsAnswer(value: unknown, members: GroupMember[], state: WorldState): void {
+/** Read the answer into ids. A unique full name resolves to its id; an unknown
+ * or placeholder reference is a named error so the retry prompt can fix it, and
+ * is never defaulted to some entity. */
+function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldState): ResultsAnswer {
   const answer = asRecord(value);
   if (!Array.isArray(answer.judgments)) throw new Error('judgments must be an array');
   if (!Array.isArray(answer.facts) || answer.facts.length === 0) throw new Error('facts must be a non-empty array');
   const memberById = new Map(members.map((member) => [member.memberId, member]));
   const seen = new Set<Id>();
+  const judgments: Judgment[] = [];
   for (const rawJudgment of answer.judgments) {
     if (!isRecord(rawJudgment)) throw new Error('judgment must be an object');
-    const memberId = asString(rawJudgment.memberId);
+    const rawMemberId = asString(rawJudgment.memberId);
+    const memberId = resolveCharacterId(state, rawMemberId);
+    if (!memberId) throw new Error(referenceError(state, rawMemberId, 'character', members[0]?.memberId));
     const member = memberById.get(memberId);
-    if (!member) throw new Error(`judgment for unknown member ${memberId || '?'}`);
+    if (!member) throw new Error(`judgment for non-member ${rawMemberId}${memberId !== rawMemberId ? ` (${memberId})` : ''}; 本组只有 ${members.map((row) => row.memberId).join(',')}`);
     if (seen.has(memberId)) throw new Error(`duplicate judgment for ${memberId}`);
     seen.add(memberId);
     const label = asString(rawJudgment.label);
@@ -280,24 +293,39 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
     if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${memberId}`);
     const expected = new Map(member.rolls.map((roll) => [roll.targetId, roll.admitted]));
     const effectIds = new Set<Id>();
+    const effects: Judgment['effects'] = [];
     for (const rawEffect of rawJudgment.effects) {
       if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${memberId}`);
-      const targetId = asString(rawEffect.targetId);
-      if (!expected.has(targetId)) throw new Error(`effect for undeclared target ${targetId || '?'}`);
+      const rawTargetId = asString(rawEffect.targetId);
+      const targetId = resolveCharacterId(state, rawTargetId);
+      if (!targetId) {
+        // A known entity that is not a rolled target is the real "undeclared
+        // target" shape; only a value that names nothing is an unknown id.
+        if (resolveEntityId(state, rawTargetId)) {
+          throw new Error(`effect for undeclared target ${rawTargetId}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
+        }
+        throw new Error(referenceError(state, rawTargetId, 'character', member.rolls[0]?.targetId));
+      }
+      if (!expected.has(targetId)) {
+        throw new Error(`effect for undeclared target ${rawTargetId}${targetId !== rawTargetId ? ` (${targetId})` : ''}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
+      }
       if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
       effectIds.add(targetId);
       if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
       if (rawEffect.reacted !== expected.get(targetId)) {
         throw new Error(`reacted=${rawEffect.reacted} contradicts admitted=${expected.get(targetId)} for ${memberId}->${targetId}`);
       }
+      effects.push({ targetId, reacted: rawEffect.reacted });
     }
     for (const targetId of expected.keys()) {
       if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
     }
+    judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
   for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);
   const factRecipients = new Set<Id>();
   const knownNumbers = knownDigitRuns(state, members);
+  const facts: Fact[] = [];
   for (const rawFact of answer.facts) {
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
     const text = asString(rawFact.text);
@@ -305,15 +333,20 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
     for (const number of text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
     }
-    const recipientIds = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
-    if (!recipientIds.length) throw new Error('fact must name at least one member');
+    const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
+    if (!rawRecipients.length) throw new Error('fact must name at least one member');
+    const recipientIds = rawRecipients.map((raw) => {
+      const id = resolveCharacterId(state, raw);
+      if (!id) throw new Error(referenceError(state, raw, 'character', members[0]?.memberId));
+      if (!memberById.has(id)) throw new Error(`fact names non-member ${raw}${id !== raw ? ` (${id})` : ''}`);
+      return id;
+    });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
-    for (const recipient of recipientIds) {
-      if (!memberById.has(recipient)) throw new Error(`fact names unknown member ${recipient}`);
-      factRecipients.add(recipient);
-    }
+    for (const recipient of recipientIds) factRecipients.add(recipient);
+    facts.push({ text, memberIds: recipientIds });
   }
   for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
+  return { judgments, facts };
 }
 
 function normalizeResults(answer: ResultsAnswer, members: GroupMember[]): Record<Id, string> {

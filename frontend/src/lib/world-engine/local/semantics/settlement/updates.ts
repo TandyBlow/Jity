@@ -16,8 +16,8 @@ import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, Settleme
 import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
-  isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
-  positionFromRow, projectStage, roster, sameChangeText, taskIndex, taskLine, toJson,
+  isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
+  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, roster, sameChangeText, taskIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
 
@@ -125,11 +125,10 @@ const TASKS_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['characterId', 'taskId', 'label'],
+        required: ['characterId', 'achieved'],
         properties: {
           characterId: { type: 'string' },
-          taskId: { type: 'string' },
-          label: { enum: ['pending', 'achieved'] },
+          achieved: { type: 'array', items: { type: 'string' } },
         },
       },
     },
@@ -224,9 +223,21 @@ export class UpdatesRunner {
     if (stage) {
       const outcome = await this.runStage(stage, ctx);
       const changes = this.guardStage(stage, ctx.state, outcome);
+      if (outcome.error) {
+        // A failed stage cannot be replaced by an empty delta: that would
+        // commit a partial six-stage point and hide the model error.
+        this.batches.delete(baseKey);
+        return this.outcomeFailure(key, outcome.error, started, outcome.calls, {
+          mode: ctx.mode,
+          stage,
+          stageDetail: outcome.detail,
+          taskScope: (outcome.detail as { taskScope?: unknown }).taskScope ?? null,
+          sanityBasis,
+        });
+      }
       if (stage === 'tasks') {
         batch.tasksStageSeen = true;
-        batch.tasksFailed = Boolean(outcome.error) || outcome.fallback;
+        batch.tasksFailed = false;
         batch.tasksAchieved = achievedFromChanges(changes);
       }
       if (stage === 'personality') batch.personalityOwners = new Set(Object.keys(changes));
@@ -235,6 +246,7 @@ export class UpdatesRunner {
         mode: ctx.mode,
         sanityBasis,
         taskCoverageIds: roster(ctx.state),
+        taskScope: (outcome.detail as { taskScope?: unknown }).taskScope ?? null,
         personalityCoverageIds: stage === 'tasks'
           ? (achievedFromChanges(changes).size > 0 ? roster(ctx.state) : [])
           : stage === 'personality' && Object.keys(changes).length > 0
@@ -271,12 +283,30 @@ export class UpdatesRunner {
       if (currentStage === 'tasks') newAchieved = achievedFromChanges(changes);
       if (currentStage === 'personality') mergedPersonalityOwners = new Set(Object.keys(changes));
     }
+    const failed = outcomes
+      .map((outcome, index) => ({ outcome, stage: SETTLEMENT_STAGES[index] }))
+      .filter((row) => Boolean(row.outcome.error));
+    if (failed.length) {
+      this.batches.delete(baseKey);
+      return this.outcomeFailure(
+        key,
+        failed.map((row) => `${row.stage}:${row.outcome.error}`).join('; '),
+        started,
+        outcomes.flatMap((outcome) => outcome.calls),
+        {
+          mode: ctx.mode,
+          stageErrors: failed.map((row) => ({ stage: row.stage, error: row.outcome.error ?? null })),
+          taskScope: (outcomes[SETTLEMENT_STAGES.indexOf('tasks')]?.detail as { taskScope?: unknown } | undefined)?.taskScope ?? null,
+        },
+      );
+    }
     const taskCoverageIds = roster(ctx.state);
     const personalityCoverageIds = newAchieved.size > 0 ? taskCoverageIds : [];
     const detail = {
       mode: ctx.mode,
       sanityBasis: 'merged_personality_stage',
       taskCoverageIds,
+      taskScope: (outcomes[SETTLEMENT_STAGES.indexOf('tasks')]?.detail as { taskScope?: unknown } | undefined)?.taskScope ?? null,
       personalityCoverageIds,
       newlyAchievedTaskIds: [...newAchieved].sort(),
       personalityChangedIds: [...mergedPersonalityOwners].sort(),
@@ -358,6 +388,37 @@ export class UpdatesRunner {
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
     });
     return outcome;
+  }
+
+  /** A resolved model answer could not be repaired. The caller must not commit
+   * any stage of this point; the evidence keeps every call, raw output and
+   * stage error so the failure is diagnosable and retryable. */
+  private outcomeFailure(
+    key: Id,
+    error: string,
+    started: number,
+    calls: ModelCallEvidence[],
+    detail: Record<string, unknown>,
+  ): SettlementOutcome<UpdatesCall[] | UpdatesCall> {
+    const ms = joinedMs(calls);
+    const evidence: SettlementEvidence = {
+      task: 'updates',
+      key,
+      raw: joinedRaw(calls),
+      ms: ms || performance.now() - started,
+      fallback: true,
+      error,
+      calls,
+      detail: toJson({ ...detail, reason: 'point_aborted_after_repair' }),
+    };
+    this.options.onTask?.('updates', key, {
+      ms: evidence.ms,
+      fallback: true,
+      error,
+      raw: evidence.raw,
+      promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
+    });
+    return { value: null, raw: evidence.raw, ms: evidence.ms, fallback: true, error, evidence };
   }
 
   private failure(key: Id, error: string, started: number): SettlementOutcome<UpdatesCall[] | UpdatesCall> {
@@ -501,9 +562,10 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     };
   }
   const prompt = buildTasksPrompt(ctx);
+  const taskScope = taskScopeFor(ctx.state);
   try {
     const answer = await callJson(ctx.engine, prompt, {
-      maxTokens: stageTokens(ctx, 420),
+      maxTokens: stageTokens(ctx, 520),
       temperature: ctx.options.temperature ?? 0,
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
@@ -511,19 +573,35 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       validate: (value) => readTaskDecisions(value, ctx.state),
     });
     const changes = readTaskDecisions(answer.value, ctx.state);
+    const newlyAchieved = [...achievedFromChanges(changes)];
     return {
       changes,
       detail: {
         taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: rows.length - newlyAchieved.length },
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
-        newlyAchievedTaskIds: [...achievedFromChanges(changes)].sort(),
+        newlyAchievedTaskIds: newlyAchieved.sort(),
       },
       fallback: false,
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ taskCoverageIds: characters, decidedTaskIds: rows.map(({ task }) => task.id).sort() }, error);
+    return stageFailure({ taskCoverageIds: characters, taskScope, decidedTaskIds: rows.map(({ task }) => task.id).sort() }, error);
   }
+}
+
+/** The full-world task scope this stage presents and the decision granularity
+ * it records. Every character with tasks appears in the prompt and must make
+ * one decision; that decision covers all of the character's tasks, so silence
+ * is an explicit "no task of mine changed", not a program-filled pending row. */
+function taskScopeFor(state: WorldState): { mode: string; characters: number; taskRows: number; excluded: string[] } {
+  const rows = allTasks(state);
+  return {
+    mode: 'per_character_decision',
+    characters: new Set(rows.map((row) => row.ownerId)).size,
+    taskRows: rows.length,
+    excluded: [],
+  };
 }
 
 async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
@@ -609,9 +687,9 @@ async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: SANITY_SCHEMA,
-      validate: (value) => readSanityValues(value, owners),
+      validate: (value) => readSanityValues(value, owners, ctx.state),
     });
-    const values = readSanityValues(answer.value, owners);
+    const values = readSanityValues(answer.value, owners, ctx.state);
     const changes: Record<Id, Partial<EntityDelta>> = {};
     for (const owner of owners) changes[owner] = { sanitySet: values[owner] };
     return {
@@ -681,6 +759,10 @@ function latestPersonalityOwners(state: WorldState): Set<Id> {
 
 function buildPositionPrompt(state: WorldState, results: Record<Id, string>): string {
   const entities = movableIds(state).map((id) => `- ${positionLineFor(state, id)}`);
+  const sampleId = movableIds(state)[0] ?? '';
+  const sampleContainer = state.characters[sampleId]?.position.containerId
+    ?? state.items[sampleId]?.position.containerId
+    ?? allEntityIds(state)[0] ?? '';
   return [
     '你是中文跑团游戏的位置结算器。只输出 JSON，不要解释。',
     '下面列出所有可移动实体（人物和物品）的当前位置。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。',
@@ -693,7 +775,7 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>): st
     ...entities,
     '地点和容器（id=名字，槽位）：',
     ...containerCatalog(state),
-    '输出 {"changes":[{"entityId":"id","containerId":"id","slotId":null,"relativeTo":null}]}；没有变化输出 {"changes":[]}。',
+    `输出 {"changes":[{"entityId":"${sampleId}","containerId":"${sampleContainer}","slotId":null,"relativeTo":null}]}；没有变化输出 {"changes":[]}。`,
   ].join('\n');
 }
 
@@ -729,26 +811,40 @@ function readPositionChanges(value: unknown, state: WorldState): Record<Id, Part
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('change must be an object');
-    const entityId = asString(raw.entityId);
-    if (!movable.has(entityId)) throw new Error(`position entity is not movable: ${entityId || '?'}`);
+    const rawEntityId = asString(raw.entityId);
+    const entityId = resolveEntityId(state, rawEntityId);
+    if (!entityId) throw new Error(referenceError(state, rawEntityId, 'entity', movableIds(state)[0]));
+    if (!movable.has(entityId)) throw new Error(`position entity is not movable: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
     if (seen.has(entityId)) throw new Error(`duplicate position change: ${entityId}`);
     seen.add(entityId);
     const position = positionFromRow(raw);
     if (!position) throw new Error(`invalid position for ${entityId}`);
-    if (!known.has(position.containerId)) throw new Error(`unknown container ${position.containerId}`);
+    const rawContainerId = position.containerId;
+    const containerId = resolveEntityId(state, rawContainerId);
+    if (!containerId) throw new Error(referenceError(state, rawContainerId, 'entity', sampleContainerId(state)));
+    position.containerId = containerId;
+    if (!known.has(position.containerId)) throw new Error(`unknown container ${rawContainerId}${containerId !== rawContainerId ? ` (${containerId})` : ''}`);
     if (position.containerId === entityId) throw new Error(`entity ${entityId} cannot contain itself`);
     const slots = slotsOf(state, position.containerId);
     if (position.slotId != null && !slots.some((slot) => slot.id === position.slotId)) {
       throw new Error(`slot ${position.slotId} does not belong to ${position.containerId}`);
     }
     if (position.relativeTo) {
-      if (!known.has(position.relativeTo.entityId)) throw new Error(`unknown relative target ${position.relativeTo.entityId}`);
+      const rawRelativeId = position.relativeTo.entityId;
+      const relativeId = resolveEntityId(state, rawRelativeId);
+      if (!relativeId) throw new Error(referenceError(state, rawRelativeId, 'entity', movableIds(state)[0]));
+      position.relativeTo.entityId = relativeId;
+      if (!known.has(position.relativeTo.entityId)) throw new Error(`unknown relative target ${rawRelativeId}${relativeId !== rawRelativeId ? ` (${relativeId})` : ''}`);
       if (position.relativeTo.entityId === entityId) throw new Error(`entity ${entityId} cannot be relative to itself`);
       if (!RELATIONS.includes(position.relativeTo.relation)) throw new Error(`invalid relation ${position.relativeTo.relation}`);
     }
     changes[entityId] = { positionSet: position };
   }
   return changes;
+}
+
+function sampleContainerId(state: WorldState): Id {
+  return allEntityIds(state)[0] ?? '';
 }
 
 function slotsOf(state: WorldState, containerId: Id): { id: Id; label: string }[] {
@@ -779,7 +875,7 @@ function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, 
     `结算结果：${resultText(results) || '（无）'}`,
     kind === 'appearance' ? '实体：' : '人物：',
     ...lines,
-    '输出 {"operations":[{"entityId":"id","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。',
+    `输出 {"operations":[{"entityId":"${ids[0] ?? ''}","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。`,
   ].join('\n');
 }
 
@@ -796,8 +892,10 @@ function readDescriptionOperations(
   const byEntity = new Map<Id, OperationRow[]>();
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('operation must be an object');
-    const entityId = asString(raw.entityId);
-    if (!targets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${entityId || '?'}`);
+    const rawEntityId = asString(raw.entityId);
+    const entityId = kind === 'appearance' ? resolveEntityId(state, rawEntityId) : resolveCharacterId(state, rawEntityId);
+    if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
+    if (!targets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
     const op = asString(raw.op);
     if (!OPS.has(op)) throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
     const recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
@@ -873,49 +971,78 @@ function readDescriptionOperations(
 function buildTasksPrompt(ctx: StageContext): string {
   const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
   const now = ctx.state.time.dateTime;
+  const sample = allTasks(ctx.state)[0]?.ownerId;
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
-    '下面列出所有人物和他们的全部任务（包括已完成）。请逐个判断当前状态：pending 或 achieved。',
+    '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
     '规则：',
-    '- 已完成的任务保持 achieved，不能改回 pending。',
-    '- 只有结算结果明确表明目标已经达成，才把 pending 改为 achieved；只是尝试、接近、部分完成、被制止、目标尚未完成，都保持 pending。',
+    '- decisions 必须为每个有任务的人物各写一条，characterId 用括号里的 id 或人物全名；不能只写在场人物。',
+    '- achieved 只列本轮新达成的任务 id；该人物其余任务保持原状，不要逐条输出 pending。',
+    '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
+    '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
     '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
-    '- 必须覆盖每一个任务；没有任务的人物不用输出。',
     `当前世界时间：${now}`,
     `结算结果：${resultText(ctx.results) || '（无）'}`,
     '人物和任务：',
     ...rows,
-    '输出 {"decisions":[{"characterId":"人物id","taskId":"任务id","label":"pending|achieved"}]}。',
+    `输出 {"decisions":[{"characterId":"${sample ?? '人物id'}","achieved":[]}]}。`,
   ].join('\n');
 }
 
+/** One decision per character covers all of that character's tasks. A missing
+ * character is a hard coverage failure (retry, then abort the point); a missing
+ * task row is not silently filled as pending because the character decision
+ * itself asserts "none of my other tasks changed". */
 function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partial<EntityDelta>> {
   const decisions = asRecord(value).decisions;
   if (!Array.isArray(decisions)) throw new Error('decisions must be an array');
   const rows = allTasks(state);
   const byTask = new Map(rows.map((row) => [row.task.id, row]));
-  const seen = new Set<Id>();
-  const achieved = new Map<Id, Id[]>();
+  const ownerTasks = new Map<Id, Set<Id>>();
+  for (const { ownerId, task } of rows) {
+    const list = ownerTasks.get(ownerId) ?? new Set<Id>();
+    list.add(task.id);
+    ownerTasks.set(ownerId, list);
+  }
+  const required = [...ownerTasks.keys()].sort();
+  const byCharacter = new Map<Id, Id[]>();
   for (const raw of decisions) {
     if (!isRecord(raw)) throw new Error('decision must be an object');
-    const characterId = asString(raw.characterId);
-    const taskId = asString(raw.taskId);
-    const row = byTask.get(taskId);
-    if (!row || row.ownerId !== characterId) throw new Error(`decision names an unknown task/owner: ${characterId}/${taskId}`);
-    if (seen.has(taskId)) throw new Error(`duplicate task decision: ${taskId}`);
-    seen.add(taskId);
-    const label = asString(raw.label);
-    if (label !== 'pending' && label !== 'achieved') throw new Error(`invalid task label for ${taskId}`);
-    if (row.task.status === 'achieved' && label !== 'achieved') throw new Error(`achieved task ${taskId} cannot be reopened`);
-    if (row.task.status === 'pending' && label === 'achieved') {
-      const list = achieved.get(characterId) ?? [];
-      list.push(taskId);
-      achieved.set(characterId, list);
+    const rawCharacterId = asString(raw.characterId);
+    const characterId = resolveCharacterId(state, rawCharacterId);
+    if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
+    if (!state.characters[characterId]) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
+    if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
+    const achieved = raw.achieved.map((item) => asString(item));
+    if (!ownerTasks.has(characterId)) {
+      if (achieved.length) throw new Error(`character ${characterId} has no tasks; achieved must be empty`);
+      continue;
     }
+    if (byCharacter.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
+    const own = ownerTasks.get(characterId)!;
+    const seen = new Set<Id>();
+    const list: Id[] = [];
+    for (const taskId of achieved) {
+      if (!taskId) throw new Error(`empty task id for ${characterId}`);
+      if (isPlaceholderId(taskId)) throw new Error(referenceError(state, taskId, 'task', [...own][0]));
+      if (!byTask.has(taskId)) throw new Error(referenceError(state, taskId, 'task', [...own][0]));
+      const row = byTask.get(taskId)!;
+      if (row.ownerId !== characterId) throw new Error(`task ${taskId} belongs to ${row.ownerId}, not ${characterId}`);
+      if (seen.has(taskId)) throw new Error(`duplicate task ${taskId} under ${characterId}`);
+      seen.add(taskId);
+      if (row.task.status === 'achieved') continue;
+      list.push(taskId);
+    }
+    byCharacter.set(characterId, list);
   }
-  if (seen.size !== rows.length) throw new Error(`task decision coverage incomplete: ${seen.size}/${rows.length}`);
+  const missing = required.filter((id) => !byCharacter.has(id));
+  if (missing.length) {
+    throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${missing.join(',')}`);
+  }
   const changes: Record<Id, Partial<EntityDelta>> = {};
-  for (const [ownerId, taskIds] of achieved) changes[ownerId] = { tasksAchieved: taskIds.sort() };
+  for (const [ownerId, taskIds] of byCharacter) {
+    if (taskIds.length) changes[ownerId] = { tasksAchieved: taskIds.sort() };
+  }
   return changes;
 }
 
@@ -951,8 +1078,9 @@ function readSubtaskProposals(
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('subtask must be an object');
     const parentTaskId = asString(raw.parentTaskId);
+    if (isPlaceholderId(parentTaskId)) throw new Error(referenceError(state, parentTaskId, 'task', rows[0]?.task.id));
     const parent = index.get(parentTaskId);
-    if (!parent) throw new Error(`unknown subtask parent ${parentTaskId || '?'}`);
+    if (!parent) throw new Error(referenceError(state, parentTaskId, 'task', allTasks(state)[0]?.task.id));
     const goal = asString(raw.goal);
     if (!goal) throw new Error(`subtask for ${parentTaskId} has an empty goal`);
     const key = `${parentTaskId}:${normalizeChangeText(goal)}`;
@@ -994,7 +1122,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
-    '输出 {"operations":[{"entityId":"人物id","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。',
+    `输出 {"operations":[{"entityId":"${roster(ctx.state)[0] ?? '人物id'}","op":"keep|add|remove|replace","recordIds":[],"text":null}]}；entityId 用真实 id 或人物全名。`,
   ].filter(Boolean).join('\n');
 }
 
@@ -1008,11 +1136,11 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     `本组结算结果：${resultText(ctx.results) || '（无）'}`,
     ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    '输出 {"sanity":[{"characterId":"人物id","value":整数}]}。',
+    `输出 {"sanity":[{"characterId":"${owners[0]}","value":整数}]}；characterId 用真实 id 或人物全名。`,
   ].join('\n');
 }
 
-function readSanityValues(value: unknown, owners: Id[]): Record<Id, number> {
+function readSanityValues(value: unknown, owners: Id[], state: WorldState): Record<Id, number> {
   const rows = asRecord(value).sanity;
   if (!Array.isArray(rows)) throw new Error('sanity must be an array');
   const expected = new Set(owners);
@@ -1020,8 +1148,10 @@ function readSanityValues(value: unknown, owners: Id[]): Record<Id, number> {
   const values: Record<Id, number> = {};
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('sanity row must be an object');
-    const characterId = asString(raw.characterId);
-    if (!expected.has(characterId)) throw new Error(`sanity for a character without a personality change: ${characterId || '?'}`);
+    const rawCharacterId = asString(raw.characterId);
+    const characterId = resolveCharacterId(state, rawCharacterId);
+    if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', owners[0]));
+    if (!expected.has(characterId)) throw new Error(`sanity for a character without a personality change: ${rawCharacterId}${characterId !== rawCharacterId ? ` (${characterId})` : ''}`);
     if (seen.has(characterId)) throw new Error(`duplicate sanity for ${characterId}`);
     seen.add(characterId);
     const value = asInteger(raw.value);
