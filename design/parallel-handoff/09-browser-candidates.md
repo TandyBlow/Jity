@@ -37,6 +37,19 @@ node scripts/quality-candidates/run-browser-candidates.mjs --inspect \
 ... --lease-wait-seconds 600
 ```
 
+## 2.5 本机模型（2026-11-10 实测）
+
+模型目录：`D:/others/Jity/.local/world-narration-worktree/frontend/public/models`（由 `--model-dir` 服务）。
+
+| 文件 | 字节 | sha256 | 用途 |
+|---|---:|---|---|
+| `qwen2.5-1.5b-instruct-q4_k_m.gguf` | 1117320736 | `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e` | 03/04/08 的 A/C 模型路线 |
+| `qwen25-0.5b-narration-Q4_K_M.gguf` | 397807488 | `a5fea8c3e313786bcb409804355c6f27a4e4804062683c05d996f724c25b9f81` | 02/10 的 B 训练权重 |
+| `qwen25-1.5b-narr-Q4_K_M.gguf` | 986048096 | `6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b` | 06 页面 B 对照 |
+| `Qwen3-0.6B-Q4_K_M.gguf` | 396705472 | `ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a` | 08 的快速对照（本轮未跑） |
+
+1.5B instruct 在 GPU 上加载 39–46 s；0.5B narration 20–24 s。`--gpu` 的直连引擎只记录“请求了 GPU”；08 加载器会明确写 `backend=webgpu`，本 handoff 的 WebGPU 结论只引用后者或 console 的 `ggml_webgpu` 行。
+
 ## 3. 候选契约（队列实际传给候选的东西）
 
 ```ts
@@ -119,14 +132,35 @@ generateCandidate({
 - 07 free-day-task：63 字，直接把任务目标写进正文；07 free-day-move 同一人“诺诺”出现两次。
 - 这些都写进 `notices[]`；`accepted` 不是产品读评。
 
-### 5.5 当前队列的三组候选
+### 5.5 B 02/10 的 free-day 真实模型正文（0.5B narration，WebGPU 请求）
 
-03/04 用 1.5B instruct + 08 的 `loadCandidateModel`，02/10 用 0.5B narration；`--gpu`，短场景 `short-root` 先行。命令与候选路径由 `--status` 可查；证据会写 `backend=webgpu`（08 加载器）或 `gpuRequested=true, backendNote=...`（直连引擎，未独立验证）。
+`free-day-open` 与 `free-day-move` 都跑了；0.5B narration 加载 20.3–24.2 s，线程 6，`gpuRequested=true`（直连引擎未独立验证 backend）。
+
+- 02 free-day-open：最终 0 字、rejected，19.0 s；两次真实模型调用都有原文，但都在 maxTokens 处 `truncated`，所有 beat 回退，最终为空。
+- 02 free-day-move：最终 43 字、rejected，66.1 s，8 次调用，`firstReadable=4834ms`；真实 raw 里有多段模型正文，但最后一次两条 hard `fact_actor_swap` + `too_short` + `all_beats_fell_back`，最终只剩事实句。
+- 10 free-day-open：`accepted=true`、0 字、0 attempts、1 ms。根因是 10 的 `toBeats()` 只处理 moved/task/personality/sanity/time，root 无变化 → `beats=[]`、循环不执行、`accepted` 仍为 true。09 已把这种结果改判 `accepted=false`、`contract.ok=false`，并在 `runs[].queueCorrection` 保留原始 accepted 值。
+- 10 free-day-move：`accepted=true`，195 字，24.5 s，5 attempts，`firstReadable=12253ms`；正文开头是 prompt 元信息
+  「【本拍事实】路明非从西侧服务巷走到西回廊」，后面编出「林亦舟站在台阶上，手里还拿着一支演习枪」和「诺诺……又走了回来」。
+  事实包只有路明非/诺诺的位置变化；这是 meta leak + added_event，accepted 只代表 10 自己的 check 没覆盖到。
+
+### 5.6 C 04 的 free-day-move/task 真实模型（1.5B instruct，WebGPU）
+
+- free-day-move：`accepted=true`，345 字，151.9 s，`firstReadable=27143ms`，5 attempts（33.9/36.8/36.0/25.4/19.7 s）。
+  前七段是程序 realizer；最后模型段把林亦舟的「蓝色识别带沾灰、左脚踝肿起、背靠第三根廊柱坐着」写到了诺诺身上，并重复枪/蓝布带事实——
+  这是 hard `fact_actor_swap`，04 的 verifier 没抓到。
+- free-day-task：`accepted=true`，197 字，98.6 s，`firstReadable=14373ms`，5 attempts；仍把任务目标原句
+  「路明非完成了「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」。」和「身上多了一点变化」写进正文。
+- 已写进 `notices[]` 给 04/07；accepted 不等于产品读评。
+
+### 5.7 当前队列入口
+
+03/04 用 1.5B instruct + 08 的 `loadCandidateModel`，02/10 用 0.5B narration；`--gpu`。命令与候选路径由 `--status` 可查；证据会写 `backend=webgpu`（08 加载器）或 `gpuRequested=true, backendNote=...`（直连引擎，未独立验证）。
+`--no-engine` 只给程序成文候选（04 program / 07），不加载权重、不占锁；模型候选在 `--no-engine` 下会得到抛错的 stub engine，不会被误当成跑过。
 
 ## 6. 待办与判断
 
-- A：1.5B instruct 在这条自由一日开局输入上 150 秒无首 token。需要确认是模型/CPU 太慢、候选的 chat 路径不流式，还是 prompt 过长；下一次健康引擎重跑会区分。
-- C：先修 at 事实的归属判定（或 realizer 的 payload 绑定），再用健康引擎跑模型 beat；程序回退版的正文目前是事实句拼接，可读性还不到产品要求。
-- B：02 的入口已可导入（`generateCommittedNarration`，非标准导出名），等其 v3 提交后用同一队列跑同一 free-day 输入。
+- A：03 的 1.5B 真机首段 18.3 s，但第一人称 3 处、重复衣着段；需要候选侧改成第三人称并补必写事实。08 自己的 1.5B dev 3 点也全 rejected（root 幻觉、move 截断/新增事件、continuation 无事实移动）。A 仍无 accepted 正文。
+- B：02 的真实 raw 有内容但 beat 截断/actor swap；10 的 move 有 195 字 but meta/added_event。B 仍未达到产品正文；02/10 已收到具体坏句。
+- C：04 的 move 已被真实模型写出 345 字，但 verifier 漏掉跨人物换位；task 仍是任务目标原句 + 告诉。C 的可读性比程序层好，但需要修 verifier 和 task 写法。
 - 本线不判断正文质量；谁先有可读正文由各负责人读 `runs[].result.paragraphs`。
-- 锁：06 自 05:59 手工 acquire 后一直持到 08:35 才释放（product-turn 07:08 已写完）；08 在 08:37 接过锁跑 4B 失败、1.5B dev 3 点全 rejected。09 的队列只在启动浏览器前 acquire、finally release；等待期间不启动第二个浏览器，并把占用原样写进 `notices[]`/`failures[]`。B（02/10）的真实模型运行仍在等 08 释放锁。
+- 锁：06 自 05:59 手工 acquire 后一直持到 08:35 才释放（product-turn 07:08 已写完）；08 在 08:37 接过锁跑 4B 失败、1.5B dev 3 点全 rejected；10 在 09:20 跑过一轮。09 的队列只在启动浏览器前 acquire、finally release；等待期间不启动第二个浏览器，并把占用原样写进 `notices[]`/`failures[]`。
