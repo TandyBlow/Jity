@@ -238,3 +238,79 @@ export function settledAppearanceViolations(
   }
   return found;
 }
+
+/** Settled object/person states that the prose may not re-enact or move.
+ *
+ * 01's route review: «黄黑绳被风吹起» (rope settled 已放下), «水花在停水的喷泉池»
+ * (pool settled 停水), «演习规则牌在脚下» (board settled on the wall), «诺诺站在
+ * 他身后» (prior text has her 不远处). Each needs the input line, so this is a
+ * comparison, not a word ban. */
+export function settledStateViolations(
+  text: string, inputText: string, priorText: string | null = null,
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  const NL = String.fromCharCode(10);
+  const lines = inputText.split(NL);
+  const prior = priorText ?? '';
+  for (const sentence of sentencesOf(text)) {
+    for (const line of lines) {
+      // A completed «已放下» state is not lifted by wind.
+      const down = /([一-鿿]{2,8})[^一-鿿]{0,3}已放下/u.exec(line);
+      if (down) {
+        const thing = down[1].replace(/^.*[【\s]/u, '');
+        if (thing.length >= 2
+          && new RegExp(`${thing}[^。！？]{0,10}(吹起|飘起|扬起|卷起|抬起)`, 'u').test(sentence)) {
+          found.push({ sentence, detail: `${thing} is settled 已放下; lifting it again is a state change` });
+        }
+      }
+      // A place written on the object line is where the object stays.
+      const placed = /([一-鿿]{2,8})[（(](墙上|桌上|地上|架子上)[）)]/u.exec(line);
+      if (placed) {
+        const thing = placed[1];
+        const elsewhere = /(脚下|脚边|手里|手中|怀里)/u.exec(sentence);
+        if (elsewhere && sentence.includes(thing)) {
+          found.push({ sentence, detail: `${thing} is settled on the ${placed[2]}, not ${elsewhere[1]}` });
+        }
+      }
+    }
+    // Water cannot be seen in a pool the state says has stopped.
+    if (/停水/u.test(inputText) && /(水花|水面|水声|水珠|喷泉[^。！？]{0,4}(喷|涌|冒))/u.test(sentence)) {
+      found.push({ sentence, detail: 'the pool is settled 停水; water contradicts it' });
+    }
+  }
+  // A person the prior passage placed 不远处 is not standing 身后.
+  for (const line of `${prior}${NL}${inputText}`.split(NL)) {
+    if (!/不远处/u.test(line)) continue;
+    for (const name of ['路明非', '诺诺']) {
+      if (!line.includes(name)) continue;
+      const moved = new RegExp(`${name}[^。！？]{0,8}(身后|背后)`, 'u').exec(text);
+      if (moved) found.push({ sentence: moved[0], detail: `${name} is settled 不远处, not 身后` });
+    }
+  }
+  return found;
+}
+
+/** A carried or scene accessory cannot be the actor of a human movement. 01's
+ * route review: «路明非的护目镜在原地站了一会儿», «…没有马上再动». */
+export function objectActorViolations(text: string, inputText: string): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  const NL = String.fromCharCode(10);
+  const items = new Set<string>();
+  for (const line of inputText.split(NL)) {
+    for (const match of line.matchAll(/([一-鿿]{2,10})(?:（|：|:)/gu)) {
+      const name = match[1];
+      if (name.includes('的')) items.add(name);
+    }
+  }
+  const ACT = /(站了一会儿|站在原地|走了过来|走过去|跑|跳|转身|抬头|低头|再动|动了)/u;
+  for (const sentence of sentencesOf(text)) {
+    for (const item of items) {
+      const at = sentence.indexOf(item);
+      if (at < 0) continue;
+      const after = sentence.slice(at + item.length, at + item.length + 12);
+      const verb = ACT.exec(after);
+      if (verb) found.push({ sentence, detail: `${item} is an object, not an actor (${verb[1]})` });
+    }
+  }
+  return found;
+}

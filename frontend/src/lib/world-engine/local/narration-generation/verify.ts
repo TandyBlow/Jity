@@ -18,7 +18,7 @@ import { factPhrases } from '../../runtime/committed-narration';
 import { alignNarration, numbersIn, type AlignmentResult } from '../../runtime/narration-alignment';
 import type { NarrationIssue, NarrationIssueKind, NarrationLedger, NarrationMetrics, NarrationPolicy } from './types';
 import { PAST_MARKERS, PROMISE_VERBS } from './ledger';
-import { settledAppearanceViolations } from './licensed-sense';
+import { objectActorViolations, settledAppearanceViolations, settledStateViolations } from './licensed-sense';
 
 const ALIGNMENT_KINDS: Record<string, NarrationIssueKind> = {
   actor_swap: 'fact_actor_swap',
@@ -407,6 +407,18 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   {
     const names = policy.roster ?? policy.scene?.present?.map((person) => person.name) ?? [];
     for (const violation of settledAppearanceViolations(text, inputText, names.filter(Boolean), policy.scene?.inventory ?? [])) {
+      issues.push(hard('self_contradiction', attempt, violation.detail, violation.sentence));
+    }
+  }
+
+  // Re-enacted settled states and an accessory used as an actor: 01's route
+  // review found the rope lifted again, the board underfoot, water in a pool
+  // marked 停水, 诺诺 moved 身后, and the goggles standing on their own.
+  {
+    for (const violation of settledStateViolations(text, inputText, priorText)) {
+      issues.push(hard('self_contradiction', attempt, violation.detail, violation.sentence));
+    }
+    for (const violation of objectActorViolations(text, inputText)) {
       issues.push(hard('self_contradiction', attempt, violation.detail, violation.sentence));
     }
   }
