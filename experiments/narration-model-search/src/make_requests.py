@@ -167,8 +167,8 @@ def main() -> int:
         },
         "resourceEstimate": {
             "downloadBytes": sum(row["gguf"]["bytes"] for row in passing),
-            "downloadBytesHuman": "~4.4 GB",
-            "disk": "~4.5 GB scratch",
+            "downloadBytesHuman": "~5.7 GB",
+            "disk": "~5.8 GB scratch",
             "gpu": "1 GPU if available, otherwise CPU is acceptable for a load/smoke test; record which",
             "loadSecondsPerModel": "expect 30-180 s depending on backend; record actual",
             "smokeSecondsPerModel": "expect 5-60 s for 64 tokens; record actual",
@@ -196,6 +196,8 @@ def main() -> int:
         "to": "10-training",
         "requestedAt": now(),
         "kind": "frozen-prompt-batch",
+        "priority": "below current product blockers; 84 short calls with one load per arm, "
+                    "no training, can share a GPU window",
         "batchId": batch_id,
         "subsetOnly": True,
         "qualityGateClaim": "none: 12/15 declared subset; the 10/15 gate needs all 15",
