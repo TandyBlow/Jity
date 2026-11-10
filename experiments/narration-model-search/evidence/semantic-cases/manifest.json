@@ -13,5 +13,14 @@
  "packSha256": "9c0bda9cbe26c71a849c446ed5ba442fec56fb1ef2da699211c80ba48ead751e",
  "contractCommit": "d051c149605f44688578f26e92df44753fefbe20",
  "freezeRefused": true,
- "note": "The settled result is a move only, so the proposed expected decisions are all empty. 03/04 must confirm or replace both the prompt and the expectation before any frozen run."
+ "note": "The settled result is a move only, so the proposed expected decisions are all empty. 03/04 must confirm or replace both the prompt and the expectation before any frozen run.",
+ "promptTokenEstimate": {
+  "low": 3116,
+  "high": 3971,
+  "method": "char count x 0.51-0.65, the observed range in 09's benchmark metadata (2393/4684=0.51; 1307/2003=0.65); an estimate, not a tokenizer measurement",
+  "semanticContextSize": 12288,
+  "semanticContextSource": "06-recovery/frontend/src/app/world-local/page.tsx line 427 loads Qwen3-0.6B with contextSize 12_288",
+  "conclusion": "the real 73-task prompt is about a quarter of the semantic context; context truncation is not the obvious cause of the 12/14 coverage failure"
+ },
+ "snapshotCaveat": "The prompt is built from the post-turn state stored in local-turn-15blora.json, not a replay of the exact stage-time working state. Task ownership and task text are the real 14/73 rows; position/time may reflect the later snapshot. 03/04 should confirm the expected decisions and, if they want a historical case, replace the state snapshot."
 }
