@@ -197,3 +197,4 @@
 
 - 3-turn d101 第 2 回合：输入「我向诺诺问：现在红蓝两方各在哪，我能不能先保持中立？」；submission 170 ms、results/updates/continuation 调用全 0、decision null，随后 330 s 超时、no_entry_added、history_delta_0、textSource program；显示文本与第 1 回合模型正文逐字相同（不是本轮回退）。06 不得用上回合正文冒充本轮；0 调用提交需单独追因。
 - 3-turn d101 结束 **FAILED**（21:48:06Z），只有 2 回合；第 2 回合 0 调用 170 ms 提交 + 330 s 超时 + 显示第 1 回合正文；不是完成的 3 回合证据。
+- 02 `418e83df`：dense-point-4 的水声/没有声音矛盾已由 `hard:self_contradiction` 覆盖（测试逐字用原文）；但雨和「他没有移动」仍未覆盖，01 的 rain/move 判据保留。
