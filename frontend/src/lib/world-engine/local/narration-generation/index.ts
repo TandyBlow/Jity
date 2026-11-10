@@ -678,6 +678,63 @@ export const generateCandidate = (
   input: GenerateCommittedNarrationInput,
 ): Promise<GeneratedNarration> => generateCommittedNarration(input);
 
+/** Ask the model to rewrite ONE sentence that invented a sound or smell.
+ *
+ * The whole-draft retry keeps reproducing the same ambient detail, so this
+ * narrows the task to a single sentence. The caller re-checks the spliced
+ * text; a repaired sentence that still invents a sense is discarded. */
+async function repairSenses(args: {
+  engine: InferenceEngine;
+  text: string;
+  inputText: string;
+  policy: NarrationPolicy;
+  attempt: number;
+  ledger: NarrationLedger;
+  signal?: AbortSignal;
+}): Promise<string | null> {
+  let text = args.text;
+  for (let round = 0; round < 2; round += 1) {
+    const violations = senseViolations(text, args.inputText, {
+      movedNames: args.ledger.mandatory.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
+    });
+    if (!violations.length) return text;
+    const target = violations[0];
+    const prompt = [
+      '下面这句里写了没有出现过的声音或气味：',
+      `原句：${target.sentence}`,
+      '',
+      '只重写这一句：删掉那个声音或气味，保留这句里其它已经发生的事，不要新增任何声音、气味、动作或人物。',
+      '只输出重写后的这一句，不要解释。',
+    ].join('\n');
+    let answer = '';
+    try {
+      const returned = await args.engine.complete(prompt, {
+        maxTokens: 120,
+        temperature: 0.3,
+        ...(args.policy.seed !== undefined ? { seed: args.policy.seed } : {}),
+        ...(args.signal ? { signal: args.signal } : {}),
+        timeoutMs: 45_000,
+      });
+      answer = (returned ?? '').trim();
+    } catch {
+      return null;
+    }
+    const clean = answer.split(/\n+/u)[0]?.trim() ?? '';
+    if (!clean || clean.length > 120) return null;
+    if (!text.includes(target.sentence)) return null;
+    // keep exactly one closing mark.
+    const at = text.indexOf(target.sentence);
+    if (at < 0) return null;
+    const after = text.slice(at + target.sentence.length);
+    const hasMark = /^[。！？!?]/u.test(after);
+    const punct = hasMark ? after[0] : '。';
+    const body = clean.replace(/[。！？!?]+$/u, '');
+    const rest = hasMark ? after.slice(1) : after;
+    text = text.slice(0, at) + body + punct + rest;
+  }
+  return text;
+}
+
 export async function generateCommittedNarration(input: GenerateCommittedNarrationInput): Promise<GeneratedNarration> {
   if (!input.inputText.trim()) throw new Error('narration_input_empty: caller serialization produced no model input');
   const policy = input.policy ?? {};
@@ -776,24 +833,36 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     if (nowMs() - callStarted >= deadlineMs) { deadlineExceeded = true; break; }
   }
 
-  // A sound or smell with no settled source is not a style flourish: it
-  // asserts something that did not happen. The three real runs invented wind,
-  // footsteps and the smell of exercise rounds in texts the general gate
-  // accepted, so the scene path checks this one narrow class itself and fails
-  // the draft instead of presenting it as narration.
+  // Sentence-level repair for the one class the whole-draft retry cannot fix:
+  // a sound or smell with no settled source. Rewriting the whole scene again
+  // reproduces the same ambient detail, so the caller asks for the offending
+  // sentence only and splices it back. If that still invents a sense, the
+  // draft stays rejected; nothing is presented as narration on a guess.
   for (const attempt of attempts) {
-    if (!attempt.accepted || (attempt.issues ?? []).some((issue) => issue.severity === 'hard')) continue;
-    const invented = senseViolations(attempt.cleaned, input.inputText, {
+    const hard = (attempt.issues ?? []).filter((issue) => issue.severity === 'hard');
+    // Only a draft whose sole hard problem is the invented sense is repaired;
+    // any other hard issue means the sentence is not the thing to fix.
+    if (attempt.accepted || !attempt.cleaned) continue;
+    if (!hard.length || hard.some((issue) => issue.kind !== 'unlicensed_sense')) continue;
+    const repaired = await repairSenses({
+      engine: input.engine, text: attempt.cleaned, inputText: input.inputText,
+      policy, attempt: attempt.attempt, ledger, signal: input.signal,
+    });
+    if (!repaired) continue;
+    const still = senseViolations(repaired, input.inputText, {
       movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
     });
-    if (!invented.length) continue;
-    const detail = invented.map((item) => `${item.noun}（${item.sentence}）`).join('；');
-    attempt.issues.push({
-      kind: 'unlicensed_sense', severity: 'hard', attempt: attempt.attempt,
-      detail: `sound or smell with no settled source: ${detail}`,
-      sentence: invented[0].sentence,
+    if (still.length) continue;
+    const check = verifyNarration({
+      text: repaired, finishReason: 'stop', committed: input.committed, ledger, policy,
+      priorText, attempt: attempt.attempt, promptEchoMarkers: [],
     });
-    attempt.accepted = false;
+    if (check.issues.some((issue) => issue.severity === 'hard')) continue;
+    attempt.cleaned = repaired;
+    attempt.accepted = true;
+    attempt.issues = [...check.issues];
+    // One repaired draft is enough; later attempts are older drafts.
+    break;
   }
 
   const acceptedAttempt = attempts.find((attempt) => attempt.accepted) ?? null;
@@ -885,3 +954,4 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     display: progress.last as NarrationDisplayState,
   };
 }
+// ZZZ_MARKER

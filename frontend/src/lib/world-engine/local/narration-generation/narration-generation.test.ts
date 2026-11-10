@@ -1576,3 +1576,39 @@ describe('a quiet point asks only for licensed content', () => {
     expect(open.directive).toContain('不要写光、声音、气味');
   });
 });
+
+describe('a single invented sentence can be repaired instead of losing the draft', () => {
+  test('the retry keeps inventing, then the sentence-level repair succeeds', async () => {
+    const dirty = '林川从走廊走到门厅，空气里有硝烟味。周宁留在走廊。';
+    const repaired = '林川从走廊走到门厅，站在门口。周宁留在走廊。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: '林川从走廊走到门厅，站在门口。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, maxAttempts: 2 },
+    });
+    expect(engine.calls).toHaveLength(3);
+    expect(engine.calls[2].prompt).toContain('只重写这一句');
+    expect(engine.calls[2].prompt).toContain('硝烟');
+    expect(result.accepted).toBe(true);
+    expect(result.text).toBe(repaired);
+  });
+
+  test('a repair that still invents a sense is discarded', async () => {
+    const dirty = '林川从走廊走到门厅，空气里有硝烟味。周宁留在走廊。';
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: dirty },
+      { kind: 'text', text: '林川从走廊走到门厅，风里全是硝烟味。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, maxAttempts: 2 },
+    });
+    expect(result.accepted).toBe(false);
+    expect((result.issues ?? []).some((issue) => issue.kind === 'unlicensed_sense')).toBe(true);
+  });
+});
