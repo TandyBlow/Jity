@@ -39,6 +39,9 @@ interface StageContext {
   personalityOwners: Set<Id>;
   allocator: LocalIdAllocator;
   options: SettlementOptions;
+  /** One merged answer can carry tasks and their new subtasks; the cache keeps
+   * the subtasks stage from re-prefilling the same task list. */
+  shared?: { pendingSubtasks?: Record<Id, Partial<EntityDelta>> };
 }
 
 interface StageOutcome {
@@ -118,7 +121,6 @@ const OPERATIONS_SCHEMA = {
 const TASKS_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['unchanged', 'achieved'],
   properties: {
     // Every character with tasks is named exactly once: in `unchanged` when no
     // task of theirs changed, or in `achieved` when at least one did. This is
@@ -144,7 +146,17 @@ const TASKS_SCHEMA = {
         },
       },
     },
+    subtasks: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['parentTaskId', 'goal'],
+        properties: { parentTaskId: { type: 'string' }, goal: { type: 'string' } },
+      },
+    },
   },
+  required: ['unchanged', 'achieved', 'subtasks'],
 };
 
 const PERSONALITY_SCHEMA = {
@@ -256,6 +268,7 @@ export class UpdatesRunner {
       personalityOwners: splitPersonalityOwners,
       allocator: this.allocator,
       options: this.options,
+      shared: {},
     };
     if (stage) {
       const outcome = await this.runStage(stage, ctx);
@@ -621,6 +634,11 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     });
     const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds });
     const changes = read.changes;
+    if (ctx.shared && Array.isArray(asRecord(answer.value).subtasks)) {
+      ctx.shared.pendingSubtasks = readSubtaskProposals(
+        answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
+      );
+    }
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
       .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
@@ -675,6 +693,20 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
   const characters = roster(ctx.state);
   if (!rows.length) {
     return { changes: {}, detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_parent_tasks' }, fallback: false, calls: [] };
+  }
+  if (ctx.shared?.pendingSubtasks) {
+    const changes = ctx.shared.pendingSubtasks;
+    return {
+      changes,
+      detail: {
+        parentTaskIds: rows.map(({ task }) => task.id).sort(),
+        characterIds: characters,
+        addedTaskIds: Object.values(changes).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort(),
+        source: 'merged_tasks_answer',
+      },
+      fallback: false,
+      calls: [],
+    };
   }
   const prompt = buildSubtasksPrompt(ctx);
   try {
@@ -1090,10 +1122,13 @@ function buildTasksPrompt(ctx: StageContext): string {
     '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
     '- 本轮是时间扫描：没有行动结果时，只有时间推移本身明确触发或到期的任务才可达成，其余保持原状。',
     '- 任务编号必须逐字复制该人物行里已有的编号，不能自己造编号；不确定就留空，不要写近似的名字。',
+    '如果本组结算结果产生了新的具体目标，也可以在同一答案里给出 subtasks：',
+    '- 小任务必须挂在已有任务下，parentTaskId 用行首任务编号（t1、t2…）；负责人必须是父任务的负责人；新任务一律 pending。',
+    '- 没有新的具体目标就输出空数组，不要为了凑数量新增。',
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
-    `输出 {"unchanged":[${unchanged}],"achieved":[]}（unchanged 列出所有没有变化的人物；achieved 只写有变化的人物，形如 {"characterId":"lu","tasks":[{"taskId":"t1","basis":"f1"}]}；每个有任务的人物必须出现一次）。`,
+    `输出 {"unchanged":[${unchanged}],"achieved":[],"subtasks":[]}（unchanged 列出所有没有变化的人物；achieved 只写有变化的人物，形如 {"characterId":"lu","tasks":[{"taskId":"t1","basis":"f1"}]}；每个有任务的人物必须出现一次；subtasks 只在真的有新目标时填写）。`,
   ].join('\n');
 }
 

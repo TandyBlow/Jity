@@ -189,8 +189,7 @@ describe('six-stage updates', () => {
       JSON.stringify({ unchanged: ['b'], achieved: [
         { characterId: 'a', achieved: ['a1'] },
         { characterId: 'off', achieved: ['off1'] },
-      ] }),
-      JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '把工具从盒子里取回' }] }),
+      ], subtasks: [{ parentTaskId: 't1', goal: '把工具从盒子里取回' }] }),
       JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [
         { entityId: 'a', op: 'add', recordIds: [], text: '更愿意相信同伴' },
         { entityId: 'off', op: 'add', recordIds: [], text: '开始留意远处的动静' },
