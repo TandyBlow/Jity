@@ -110,7 +110,7 @@ def main() -> int:
             "job": "251643",
             "problem": "llama-cpp-python 0.3.16 vendors llama.cpp 4227c9b (2025-08-14), which has no qwen35 architecture, and LLAMA_BUILD_TOOLS/EXAMPLES are off, so the llama-server target is not generated. Preflight would reject Qwen3.5-2B and may not produce the runner.",
             "required": "llama-cpp-python 0.3.36 sdist sha256 832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e vendors llama.cpp 0c1e57098bba43ac29e6e3b677cdceebdd22334f (2026-10-01) with qwen35/qwen35moe, qwen2, internlm2, chatglm and hunyuan-dense.",
-            "cmakeFlags": ["-DGGML_CUDA=ON", "-DCMAKE_CUDA_ARCHITECTURES=70;89", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON", "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_BUILD_COMMON=ON", "-DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs", "-DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs", "-DCMAKE_BUILD_TYPE=Release"],
+            "cmakeFlags": ["-DGGML_CUDA=OFF", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON", "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_BUILD_COMMON=ON", "-DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs", "-DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs", "-DCMAKE_BUILD_TYPE=Release"],
             "targets": ["llama-server", "llama-cli", "llama-quantize"],
             "verify": ["record llama-server --version and the vendor git commit", "record the binary sha256", "load Qwen3.5-2B and one qwen2 model with --jinja", "confirm per-request chat_template_kwargs works for qwen35/hunyuan"],
         },
@@ -220,7 +220,7 @@ def main() -> int:
         "toolchain": {
             "job": "251643",
             "required": "llama-cpp-python 0.3.36 sdist sha256 832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e vendors llama.cpp 0c1e57098bba43ac29e6e3b677cdceebdd22334f (2026-10-01), supports qwen35 and --jinja. 0.3.16/4227c9b has no qwen35.",
-            "cmakeFlags": ["-DGGML_CUDA=ON", "-DCMAKE_CUDA_ARCHITECTURES=70;89", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON", "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_BUILD_COMMON=ON", "-DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs", "-DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs", "-DCMAKE_BUILD_TYPE=Release"],
+            "cmakeFlags": ["-DGGML_CUDA=OFF", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DBUILD_SHARED_LIBS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON", "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_BUILD_COMMON=ON", "-DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs", "-DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs", "-DCMAKE_BUILD_TYPE=Release"],
             "targets": ["llama-server", "llama-cli", "llama-quantize"],
             "doNotRun": "Do not start the old 84-call quality request; it lacks 3 cases and the v1.1 hashes.",
         },

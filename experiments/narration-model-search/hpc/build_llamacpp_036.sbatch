@@ -6,7 +6,8 @@
 #SBATCH --time=01:20:00
 #SBATCH --output=%x_%j.out
 #
-# Build llama-server/llama-cli/llama-quantize with qwen35 support.
+# Build llama-server/llama-cli/llama-quantize with qwen35 support (CPU first;
+# the GPU queue is congested and preflight/quality allow CPU).
 # 0.3.16 vendors llama.cpp 4227c9b (2025-08-14) and has no qwen35.
 # 0.3.36 vendors 0c1e5709 (2026-10-01), which has qwen35/qwen35moe.
 # In this tree llama-server lives under tools/, so LLAMA_BUILD_TOOLS=ON and
@@ -25,7 +26,7 @@ rm -rf extract && mkdir extract && tar xf llama_cpp_python-0.3.36.tar.gz -C extr
 LLAMA=$(find extract -maxdepth 3 -type d -name llama.cpp | head -1)
 echo "vendor tree: $LLAMA"
 git -C "$LLAMA" log -1 --format='llamacpp_commit=%H %ci' 2>/dev/null || { echo "no git metadata"; exit 1; }
-cmake -B "$SRC/build" -S "$LLAMA"   -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES="70;89"   -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF   -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=ON   -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_COMMON=ON   -DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs -DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs   -DCMAKE_BUILD_TYPE=Release || exit 1
+cmake -B "$SRC/build" -S "$LLAMA"   -DGGML_CUDA=OFF   -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF   -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=ON   -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_COMMON=ON   -DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs -DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs   -DCMAKE_BUILD_TYPE=Release || exit 1
 cmake --build "$SRC/build" -j 24 --target llama-server llama-cli llama-quantize || exit 1
 cp "$SRC/build/bin/llama-server" "$SRC/build/bin/llama-cli" "$SRC/build/bin/llama-quantize" "$HOME/bin/" || exit 1
 sha256sum "$HOME/bin/llama-server" "$HOME/bin/llama-cli" "$HOME/bin/llama-quantize"
