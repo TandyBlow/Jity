@@ -7,7 +7,7 @@
 - `stopCurrentScheme=true`：**不扩大 N，不重跑当前零合格方案**；六份 b01 原文、预注册和负面结论全部保留；
 - HPC v2 请求改为 `withdrawn-by-recharge-stop`，b02-v2 仍只是条件准备，均不运行；
 - 只做 N=1 的失败诊断/选择器修正：选择器新增显式 `perspectiveQualified=false` 拒绝（事实干净但视角有 finding 的候选不再可采纳）；不修改 01 标准，不另建质量平台；
-- 具体失败交 01/02/10：见 `results/12-best-of-n/handoff-recharge.json`（漏时间/个性、seed 61 个性归属错、seed 43 旧物品状态、seed 97 第一人称、状态面板文风未被机械 checker 报出）；
+- 具体失败交 01/02/10：见 `results/12-best-of-n/handoff-recharge.json`（漏时间/个性、seed 61 个性归属错、seed 43 旧物品状态、seed 97 第一人称、状态面板文风未被机械 checker 报出）；01 最新 checker `b35d23fd` 复查仍未覆盖这四项，请求在 `results/quality/requests-12-to-01-b01-checker-gaps.md`；
 - 没有新输入前不自转、不反复写报告；本线保留为可恢复的暂停任务，产品未完成。
 
 ## 1. 问题
