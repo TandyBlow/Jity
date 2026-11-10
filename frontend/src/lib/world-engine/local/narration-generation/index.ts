@@ -325,6 +325,15 @@ async function writeBeat(
       ? `${base.replace(/正文：$/u, '')}\n【改写要求】${guidance}\n正文：`
       : base;
     prompts.push(prompt);
+    // A scene/atmosphere beat is optional and must not eat the whole budget:
+    // it is capped to a short paragraph and a short call, so a slow model
+    // reaches the fact beats instead of stalling the point. Fact/time beats
+    // keep the caller's full budget.
+    const isSceneBeat = beat.kind === 'scene';
+    const beatTokens = isSceneBeat
+      ? Math.min(policy.maxTokens ?? 160, 90)
+      : beat.kind === 'time' ? Math.min(policy.maxTokens ?? 160, 48) : (policy.maxTokens ?? 160);
+    const beatRemaining = isSceneBeat ? Math.min(remaining, 45_000) : remaining;
     const result = await runAttempt({
       engine: input.engine,
       prompt,
@@ -333,9 +342,9 @@ async function writeBeat(
       ledger: scopedLedger,
       policy: scopedPolicy,
       priorText: written.at(-1) ?? input.priorText ?? null,
-      maxTokens: policy.maxTokens ?? 160,
+      maxTokens: beatTokens,
       temperature: attempt === 0 ? (policy.temperature ?? 0.7) : (policy.retryTemperature ?? 0.5),
-      remainingMs: remaining,
+      remainingMs: beatRemaining,
       guidance,
       signal: input.signal,
       onProgress: (state) => {

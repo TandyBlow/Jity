@@ -590,6 +590,19 @@ const beatPolicy: NarrationPolicy = {
   beatAttempts: 2,
 };
 
+describe('trained-shape prompt insertion', () => {
+  test('guidance and instruction go before the body marker', async () => {
+    const { composeNarrationPrompt } = await import('./prompt');
+    const inputText = ['【状态】{}', '【视角】主角视角（周宁）', '【叙事】'].join(String.fromCharCode(10));
+    const guidance = ['【本次写作要求】', '要写出时间过去了约2分钟'].join(String.fromCharCode(10));
+    const prompt = composeNarrationPrompt({
+      inputText, attempt: 1, guidance, previousDraft: null, instruction: null,
+    }, {});
+    expect(prompt.indexOf('【本次写作要求】')).toBeGreaterThan(prompt.indexOf('【视角】'));
+    expect(prompt.endsWith('【叙事】')).toBe(true);
+  });
+});
+
 describe('beat mode', () => {
   test('writes one beat per committed thing and assembles paragraphs', async () => {
     const engine = new ScriptedEngine([

@@ -43,6 +43,12 @@ const config = {
   mode: option('--mode', 'beats'),
   // scene mode only: which prompt shape the weights were trained on
   template: option('--template', 'legacy'),
+  // The B-scene candidate was trained with a separate system turn. The page
+  // engine always wraps a single user message, so a fair run needs an engine
+  // that sends the system turn explicitly. This is probe tooling; the page
+  // integration request is in results/quality/integration-02.json.
+  system: option('--system', ''),
+  inputWorktree: option('--input-worktree', 'D:/others/Jity/.local/parallel-local-game/worktrees/01-input'),
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
@@ -57,6 +63,7 @@ const evidence = {
     model: config.model, modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
     mode: config.mode, template: config.template, set: config.set,
+    system: config.system || null,
     threads: config.numThreads, gpu: config.gpu, maxTokens: config.maxTokens,
     maxAttempts: config.maxAttempts, minChars: config.minChars,
     instruction: config.instruction || null,
@@ -116,7 +123,10 @@ function assetMiddleware(vite) {
 
 const server = await createServer({
   root: frontend, configFile: false, logLevel: 'warn',
-  server: { host: '127.0.0.1', port: 0, hmr: false },
+  server: {
+    host: '127.0.0.1', port: 0, hmr: false,
+    fs: { strict: true, allow: [frontend, config.modelDir, config.inputWorktree] },
+  },
   plugins: [{ name: 'narration-strategy-assets', configureServer: assetMiddleware }],
 });
 let browser;
@@ -135,6 +145,8 @@ try {
   const result = await page.evaluate(async (config) => {
     if (!crossOriginIsolated) throw new Error('real narration run requires cross-origin isolation');
     const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
+    const { createWllama } = await import('/src/lib/benchmark/wllama-loader.ts');
+    const { IncompleteGenerationError } = await import('/src/lib/world-engine/runtime/engine.ts');
     const { generateCommittedNarration } = await import('/src/lib/world-engine/local/narration-generation/index.ts');
     const {
       renderTrainedRawPrompt, renderTrainedInstructUser, trainedSceneView, wrapChatml,
@@ -143,10 +155,94 @@ try {
     const { legacyNarrationInput } = await import('/src/lib/world-engine/local/prompt.ts');
     const { SHORT_STATE } = await import('/src/lib/world-engine/runtime/b3-short-samples.ts');
 
-    const engine = new WllamaInferenceEngine({
-      modelUrl: config.model, contextSize: 4096, numThreads: config.numThreads,
-      ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
-    });
+    /** System-turn chat engine: the trained shape of the 0.5B scene candidate
+     * (Qwen2.5 ChatML with a separate system message). */
+    class ChatEngine {
+      constructor(modelUrl, system, threads, gpu) {
+        this.info = { backend: 'wllama-chat', modelId: null };
+        this.modelUrl = modelUrl; this.system = system; this.threads = threads; this.gpu = gpu;
+        this.instance = null; this.disposed = false;
+      }
+      async load() {
+        const instance = await createWllama();
+        const response = await fetch(this.modelUrl);
+        if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${this.modelUrl}`);
+        const blob = await response.blob();
+        await instance.loadModel([blob], {
+          n_ctx: 4096, n_gpu_layers: this.gpu ? 99999 : 0, n_threads: this.threads,
+        });
+        if (this.disposed) { await instance.exit(); return; }
+        this.instance = instance;
+        this.info.modelId = this.modelUrl.split('/').pop() ?? this.modelUrl;
+      }
+      async complete(prompt, options = {}) {
+        const instance = this.instance;
+        if (!instance) throw new Error('chat engine is not loaded');
+        if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+        const timeoutMs = options.timeoutMs ?? 120_000;
+        const controller = new AbortController();
+        const callerAbort = () => controller.abort();
+        options.signal?.addEventListener('abort', callerAbort, { once: true });
+        let timedOut = false;
+        const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
+        const started = performance.now();
+        const evidence = { raw: '', finishReason: null, firstTokenMs: null, wallMs: 0 };
+        try {
+          const messages = [];
+          if (this.system) messages.push({ role: 'system', content: this.system });
+          messages.push({ role: 'user', content: prompt });
+          await instance.createChatCompletion({
+            messages,
+            chat_template_kwargs: { enable_thinking: false },
+            cache_prompt: true, stream: true,
+            max_tokens: options.maxTokens ?? 256,
+            temperature: options.temperature ?? 0,
+            ...(options.seed !== undefined ? { seed: options.seed } : {}),
+            ...(options.stop !== undefined ? { stop: options.stop } : {}),
+            abortSignal: controller.signal,
+            onData: (chunk) => {
+              const choice = chunk.choices?.[0];
+              const text = choice?.delta?.content ?? '';
+              if (text && evidence.firstTokenMs === null) evidence.firstTokenMs = performance.now() - started;
+              evidence.raw += text;
+              if (choice?.finish_reason) evidence.finishReason = choice.finish_reason;
+              if (chunk.usage) evidence.usage = chunk.usage;
+              if (chunk.timings) evidence.timings = chunk.timings;
+              options.onProgress?.({ raw: evidence.raw, elapsedMs: performance.now() - started });
+            },
+          });
+          if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+          if (timedOut) throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+        } catch (error) {
+          if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+          if (timedOut) {
+            evidence.finishReason = 'timeout';
+            throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+          }
+          throw error;
+        } finally {
+          clearTimeout(timer);
+          options.signal?.removeEventListener('abort', callerAbort);
+          evidence.wallMs = performance.now() - started;
+          options.onCompletion?.(evidence);
+        }
+        if (evidence.finishReason !== 'stop') throw new IncompleteGenerationError(evidence);
+        return evidence.raw;
+      }
+      async dispose() {
+        this.disposed = true;
+        const instance = this.instance;
+        this.instance = null;
+        if (instance) await instance.exit();
+      }
+    }
+
+    const engine = config.system
+      ? new ChatEngine(config.model, config.system, config.numThreads, config.gpu)
+      : new WllamaInferenceEngine({
+        modelUrl: config.model, contextSize: 4096, numThreads: config.numThreads,
+        ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
+      });
     const loadStarted = performance.now();
     await engine.load();
     const loadMs = performance.now() - loadStarted;
@@ -335,9 +431,24 @@ try {
       const priorText = priorFor.get(scenario.id) ?? null;
       const committed = projectCommittedNarration(scenario.after, scenario.before ?? null);
       const view = scenario.after.state.protagonistId;
-      const inputText = (() => {
+      const inputText = await (async () => {
         if (config.mode === 'beats' || config.template === 'legacy') {
           return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
+        }
+        if (config.template === 'v2') {
+          const input = await import(
+            `/@fs/${config.inputWorktree}/frontend/src/lib/world-engine/local/narration-input/index.ts`
+          );
+          const built = input.buildNarrationInput({
+            // Root point: no previous state exists; the settled after-state
+            // is the snapshot, with the empty delta the root already has.
+            before: scenario.before?.state ?? scenario.after.state,
+            after: scenario.after.state,
+            delta: scenario.delta.entityDeltas,
+            timeAdvance: scenario.delta.timeAdvance,
+            viewpointId: view,
+          }, { model: 'result-v2', checkTokenizer: false });
+          return built.rendered.text;
         }
         const trained = trainedSceneView({
           before: scenario.before?.state ?? null,

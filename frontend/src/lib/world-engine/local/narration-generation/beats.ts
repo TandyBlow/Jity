@@ -127,7 +127,9 @@ export function planBeats(input: {
   const quiet = facts.length === 0 && !(ledger.requireTime && ledger.time);
 
   if (scene && (scene.placeNotes?.length || scene.present?.length || scene.location)) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2).join('；');
+    const notes = (scene.placeNotes ?? []).slice(0, 2)
+      .map((note) => note.trim().replace(/[。.]+$/u, ''))
+      .join('；');
     const people = (scene.present ?? []).map((person) => person.name).filter((name) => name !== viewpointName);
     const parts = [scene.location ? `这里是${scene.location}` : null, notes || null, people.length ? `${people.join('、')}也在` : null]
       .filter((part): part is string => Boolean(part));
