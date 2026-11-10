@@ -276,6 +276,15 @@ describe('visible acceptance summary', () => {
     expect(backward.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['version_regressed', 'points_regressed']));
   });
 
+  it('does not call a retained failed input a committed history', async () => {
+    const initial = fixture.normal.initial as InitialState;
+    const record = await recordOf(initial, []);
+    const report = verifyDisplayHistory({ transport: record, commands: ['failed input kept for resume'] });
+    expect(report.total).toBe(0);
+    expect(report.errors).toEqual([]);
+    expect(report.warnings.map((item) => item.code)).toContain('history_missing_command');
+  });
+
   it('reports a command list shorter than the committed player history', async () => {
     const initial = fixture.normal.initial as InitialState;
     const s0 = buildInitialState(structuredClone(initial));
