@@ -31,8 +31,8 @@ read-only here. No product acceptance is claimed.
     transport accepts it.
 - `frontend/scripts/parallel-kernel/product-session-bridge.test.ts`
   - explicit local bridge only; drives 06's real `LocalGameSession` and
-    `MemoryProgressBackend` for 10 consecutive turns, mid-settlement refresh,
-    duplicate submit, cancel/restore;
+    `MemoryProgressBackend` for 10- and 20-turn chains, mid-settlement
+    refresh, duplicate submit, cancel/restore;
   - verifies every checkpoint with the same read-only verifier;
   - not collected by the normal `src/**` include; run it with the dedicated
     `vitest.bridge.config.mts`.
