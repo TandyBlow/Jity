@@ -65,6 +65,23 @@ const git = (...args) => {
   catch { return ''; }
 };
 
+// `ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: ...`
+// is the only trustworthy statement about which GPU actually served the
+// WebGPU context. The page's own requestAdapter() may return a different
+// default adapter, so keep both and never infer from n_gpu_layers.
+const parseGgmlAdapter = (lines) => {
+  for (const line of lines ?? []) {
+    const match = line.match(/adapter_info:\s*(.*)$/);
+    if (!match) continue;
+    const fields = Object.fromEntries(match[1].split('|').map((part) => {
+      const at = part.indexOf(':');
+      return at > 0 ? [part.slice(0, at).trim(), part.slice(at + 1).trim()] : [part.trim(), ''];
+    }));
+    return fields;
+  }
+  return null;
+};
+
 const nvidiaMemory = () => {
   try {
     const raw = execFileSync('nvidia-smi', ['--query-gpu=memory.used,utilization.gpu', '--format=csv,noheader,nounits'], { encoding: 'utf8' }).trim().split('\n')[0];
@@ -402,6 +419,8 @@ try {
   report.status = 'COMPLETED';
   report.finishedAt = new Date().toISOString();
   report.consoleBackendLines = [...new Set(consoleLines)].slice(0, 80);
+  report.ggmlAdapter = parseGgmlAdapter(report.consoleBackendLines);
+  report.gpuPreference = config.lowPowerGpu ? 'low-power (forced)' : 'high-performance (forced)';
   save();
   console.log(JSON.stringify({ status: report.status, output: config.out, models: report.models.map((entry) => ({
     id: entry.id, backend: entry.result?.backend, loadMs: entry.result?.loadMs, firstReadableMs: entry.result?.firstReadableMs, accepted: entry.result?.accepted,
