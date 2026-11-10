@@ -64,7 +64,7 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接。04 的 `ad90cfba` 已把任务提示词改成每个 required 人物一条可抄的空决定行，`f97c90bc` 记录实际达成人物；11 据此冻结了两例 73 任务探针：`tasks-free-day-real-73-no-change`（6650 字符，expected 全空）和 `tasks-free-day-real-73-one-achieved`（6664 字符，expected 只给 `lu: [task_lu_goggles]`，结算结果是构造的）。`semantic_validate.py --expected` 会拒绝照抄全空骨架。frozen prompts 在 `evidence/semantic-prompts-v1/`，prereg 在 `semantic-probes/preregistration.v1.json`；独立 10 请求待生成/领取。没有候选语义结果。
+真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接。04 的 `ad90cfba` 已把任务提示词改成每个 required 人物一条可抄的空决定行，`f97c90bc` 记录实际达成人物；11 据此冻结了两例 73 任务探针：`tasks-free-day-real-73-no-change`（6650 字符，expected 全空）和 `tasks-free-day-real-73-one-achieved`（6664 字符，expected 只给 `lu: [task_lu_goggles]`，结算结果是构造的）。`semantic_validate.py --expected` 会拒绝照抄全空骨架。frozen prompts 在 `evidence/semantic-prompts-v1/`，prereg 在 `semantic-probes/preregistration.v1.json`；独立 10 请求 `results/product/hpc-requests/11-model-search-semantic-001.json` 已生成（2 case × 6 models，12 calls，`--expected` 评分）待 10 领取；给 09 的小回归请求在 `results/11-model-search/requests/11-to-09-semantic-fix-check.json`（目标 06 head `81d5507a`、merge `98a3eb53`，不跑十回合、不判质量）。没有候选语义结果。
 
 ## 限制与未验证
 
