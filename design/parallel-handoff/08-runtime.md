@@ -224,6 +224,18 @@ Use the existing candidate runner with `--load-only` for one split load
 (no generation, no new runner): `results/product/browser-requests/08-runtime-load-reconcile.json`.
 Cold-load differences do not prove hot-generation failure.
 
+### 10-turn runtime observation (2026-11-10T13:34Z)
+
+`results/product/evidence/09-product-10turn.json` FAILED on content/lifecycle,
+not on loading: both engines held `loadCount=1`, `workersCreated=1`,
+`workersExited=0` across t1/t2; no hard stop, reload or worker leak. t1 took
+272 s and made 14 semantic + 4 narration calls before a labelled program
+fallback (undeclared target / unknown id / coverage); t2 then stopped in 158 ms
+with `turn_in_progress` and 0 model calls, but the page stayed
+`结算中：继续判断` for the 330 s harness timeout. Do not attribute these to the
+runtime; 04/03 own the settlement/action failures and 06 owns the visible stop
+and retry path. The runtime load/worker contract held.
+
 ## 02/06 integration entry points
 
 - 06 product page / game-model: construct one engine and call
