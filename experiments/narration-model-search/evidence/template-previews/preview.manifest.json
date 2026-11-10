@@ -68,6 +68,22 @@
    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\hunyuan-1.8b-instruct.txt"
   },
   {
+   "id": "qwen35-2b",
+   "rendered": true,
+   "chars": 1143,
+   "sha256": "392b7fcf6ed9f0202f0c1b8e7d1f6fd20c6ea41e3aad5f303cb9d9515e3332cf",
+   "templateKwargs": {
+    "enable_thinking": false
+   },
+   "hasAssistantTail": true,
+   "literalTemplateLeft": false,
+   "containsBodyMarker": true,
+   "containsSystemText": true,
+   "head": "<|im_start|>system\n你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。<|im_end|>\n<|im_start|>user\n【已结算输入】\n【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护",
+   "tail": "完成）。【物品】赛区路线图（位于西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路、地下检修通道用虚线标注，未标门闩状态。【变化】时间推进2分钟。这一回合没有结算出变化。【正文】\n请写出这一回合的正文。<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+   "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\qwen35-2b.txt"
+  },
+  {
    "id": "minicpm-2b-dpo",
    "rendered": false,
    "reason": "no captured GGUF template"

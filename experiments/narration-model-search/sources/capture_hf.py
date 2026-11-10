@@ -81,6 +81,14 @@ TARGETS = [
         "wantFile": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
     },
     {
+        "id": "qwen35-2b",
+        "family": "Qwen3.5",
+        "base": "Qwen/Qwen3.5-2B",
+        "gguf": "unsloth/Qwen3.5-2B-GGUF",
+        "ggufPublisher": "third-party (unsloth)",
+        "wantFile": "Qwen3.5-2B-Q4_K_M.gguf",
+    },
+    {
         "id": "minicpm-2b-dpo",
         "family": "MiniCPM-2B",
         "base": "openbmb/MiniCPM-2B-dpo-bf16",

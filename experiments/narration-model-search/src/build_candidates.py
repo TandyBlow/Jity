@@ -41,6 +41,14 @@ LICENSE_NOTES = {
         "decisionRequired": False,
         "note": "HF license tag apache-2.0; captured LICENSE body is Apache License 2.0.",
     },
+    "qwen35-2b": {
+        "spdx": "Apache-2.0",
+        "commercialUse": "allowed",
+        "decisionRequired": False,
+        "note": "HF license tag apache-2.0 on both the base repo and unsloth's GGUF repo; "
+                "captured base LICENSE is Apache License 2.0. The GGUF is a third-party "
+                "quantisation and the base model is multimodal; only its text path is used here.",
+    },
     "internlm2_5-1.8b-chat": {
         "spdx": "other",
         "commercialUse": "free commercial usage via application form",

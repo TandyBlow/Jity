@@ -1,0 +1,36 @@
+{
+ "repo": "Qwen/Qwen3.5-2B",
+ "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+ "lastModified": "2026-03-02T11:26:29.000Z",
+ "licenseTags": [
+  "apache-2.0"
+ ],
+ "downloads": 3781825,
+ "likes": 476,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 11544,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 62814,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 2908,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 16709,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

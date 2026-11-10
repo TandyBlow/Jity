@@ -72,7 +72,12 @@ def main() -> int:
     registry = json.loads(CANDIDATES.read_text(encoding="utf-8"))
     passing = [row for row in registry["candidates"] if row["preInferenceGate"]["passed"]]
     prompts_dir = ROOT / "evidence/prompts-dev-v1"
-    pinned_preregistration = ROOT / "preregistration.v1.json"
+    prompt_manifest = json.loads((prompts_dir / "prompts.manifest.json").read_text(encoding="utf-8"))
+    prompt_count = int(prompt_manifest.get("promptCount") or 0)
+    arm_count = len(passing) + 2
+    pinned_preregistration = ROOT / "preregistration.v2.json"
+    if not pinned_preregistration.exists():
+        pinned_preregistration = ROOT / "preregistration.v1.json"
     pinned_status = None
     if pinned_preregistration.exists():
         try:
@@ -80,6 +85,8 @@ def main() -> int:
         except ValueError:
             pinned_status = None
     quality_ready = bool(pinned_status and pinned_status.startswith("pinned"))
+    pinned_doc = json.loads(pinned_preregistration.read_text(encoding="utf-8")) if pinned_preregistration.exists() else {}
+    batch_id = pinned_doc.get("batchId") or "batch-1-subset12"
     quality_blocked = (
         "None for the declared 12-case subset: preregistration.v1.json is pinned and the subset "
         "was declared before any model output. The full 10/15 gate still needs 01 to fix "
@@ -175,7 +182,7 @@ def main() -> int:
             "browser runs (lane 09)",
             "quality judgement (lane 01)",
             "training or quantisation",
-            "candidates beyond the listed four",
+            "candidates beyond the listed passing set",
         ],
     }
 
@@ -185,13 +192,13 @@ def main() -> int:
         "to": "10-training",
         "requestedAt": now(),
         "kind": "frozen-prompt-batch",
-        "batchId": "batch-1-subset12",
+        "batchId": batch_id,
         "subsetOnly": True,
         "qualityGateClaim": "none: 12/15 declared subset; the 10/15 gate needs all 15",
         "readyToSubmit": quality_ready,
-        "submitCondition": "01 either fixes the three cases the reference serializer refuses, or "
-                           "explicitly acknowledges the declared 12-case subset; 11 then re-pins the "
-                           "preregistration, reruns build_prompts.py and flips readyToSubmit to true.",
+        "submitCondition": "Ready for the declared 12/15 subset. The full 15-case gate needs 01 to fix "
+                           "the three serializer-refused cases; 11 then builds a new batch, never merges "
+                           "old and new outputs into a 15-case claim.",
         "blockedBy": quality_blocked,
         "preregistration": {
             "path": str(preregistration_path),
@@ -222,22 +229,23 @@ def main() -> int:
                        "--model-id <id> --model-path <file> --expect-sha256 <sha> --llama-server <llama-server> "
                        "--ngl <n> --out <run dir>",
             "backend": "llama-server --jinja (the model's own GGUF chat template)",
-            "templateKwargs": "pass each model's chatTemplateKwargs (Hunyuan: enable_thinking=false; Qwen3 baseline: enable_thinking=false)",
+            "templateKwargs": "pass each model's chatTemplateKwargs (Hunyuan and Qwen3.5: enable_thinking=false; Qwen3 baseline: enable_thinking=false)",
             "sampling": {"temperature": 0.0, "top_k": 1, "top_p": 1.0, "seed": 42,
                          "max_tokens": 320, "context": 8192},
             "perModelOneServer": True,
             "cpuFallback": "if no GPU is free, CPU with -t <cores> is acceptable for the batch; record "
                            "the actual tok/s so the browser-latency decision is not based on GPU numbers alone",
             "templateKwargsFallback": "llama-server must accept per-request chat_template_kwargs "
-                                      "(Hunyuan needs enable_thinking=false). If this build does not, "
-                                      "stop and report the version; do not run Hunyuan with thinking on.",
+                                      "(Hunyuan and Qwen3.5 need enable_thinking=false). If this build "
+                                      "does not, stop and report the version; do not run either model "
+                                      "with thinking on.",
         },
         "resourceEstimate": {
-            "calls": 12,
-            "arms": 6,
-            "callsTotal": 72,
+            "calls": prompt_count,
+            "arms": arm_count,
+            "callsTotal": prompt_count * arm_count,
             "perCall": "~320 max tokens; expect 5-60 s on GPU depending on model",
-            "wall": "~10-40 min generation plus 6 loads; record actual tok/s",
+            "wall": "~10-50 min generation plus one load per arm; record actual tok/s",
             "gpu": 1,
             "cost": "existing authorised cluster resources only",
         },

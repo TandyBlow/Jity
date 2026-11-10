@@ -147,7 +147,7 @@ def main() -> int:
     if preview_path.exists():
         preview = json.loads(preview_path.read_text(encoding="utf-8"))
         rendered = [entry for entry in preview["results"] if entry.get("rendered")]
-        ok = len(rendered) == 4 and all(
+        ok = len(rendered) == 5 and all(
             entry.get("hasAssistantTail") and entry.get("containsBodyMarker")
             and entry.get("containsSystemText") and not entry.get("literalTemplateLeft")
             for entry in rendered

@@ -625,6 +625,109 @@
    }
   },
   {
+   "id": "qwen35-2b",
+   "family": "Qwen3.5",
+   "base": {
+    "repo": "Qwen/Qwen3.5-2B",
+    "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "lastModified": "2026-03-02T11:26:29.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "card": {
+     "path": "sources/hf/qwen35-2b/base-README.md",
+     "bytes": 62814,
+     "lfsSha256": null
+    }
+   },
+   "gguf": {
+    "repo": "unsloth/Qwen3.5-2B-GGUF",
+    "publisher": "third-party (unsloth)",
+    "revision": "f6d5376be1edb4d416d56da11e5397a961aca8ae",
+    "lastModified": "2026-03-02T14:07:35.000Z",
+    "licenseTags": [
+     "apache-2.0"
+    ],
+    "file": "Qwen3.5-2B-Q4_K_M.gguf",
+    "bytes": 1280835840,
+    "lfsSha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
+    "local": null
+   },
+   "config": {
+    "path": "sources/hf/qwen35-2b/base-config.json",
+    "architectures": [
+     "Qwen3_5ForConditionalGeneration"
+    ],
+    "model_type": "qwen3_5"
+   },
+   "chatTemplate": {
+    "source": "GGUF metadata (authoritative for the runtime)",
+    "chars": 7816,
+    "sha256": "7f0e529032c25183bcd66c7f238da2d377f43be754a94e2725a58c4e16d2ed67",
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen35-2b.template.txt",
+    "baseTokenizerConfigSha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80",
+    "differsFromBaseTokenizerConfig": true
+   },
+   "license": {
+    "spdx": "Apache-2.0",
+    "commercialUse": "allowed",
+    "decisionRequired": false,
+    "note": "HF license tag apache-2.0 on both the base repo and unsloth's GGUF repo; captured base LICENSE is Apache License 2.0. The GGUF is a third-party quantisation and the base model is multimodal; only its text path is used here.",
+    "capturedFile": "hf/qwen35-2b/base-LICENSE",
+    "capturedSha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+    "ggufRepoLicenseTags": [
+     "apache-2.0"
+    ]
+   },
+   "operatorEvidence": {
+    "wllamaVersion": "3.8.1",
+    "wllamaWasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "expectedArchitecture": "qwen35",
+    "architectureKnownToShippedWasm": true,
+    "architectureMatchMethod": "GGUF general.architecture with '-' normalised to '_' against the llama_model_<arch> symbols in the shipped wasm",
+    "note": "Necessary, not sufficient: the real load/生成 test is the HPC preflight and lane 09's browser run. No inference was run in this lane.",
+    "source": "GGUF metadata read through an HTTP range request (models/remote-heads/<id>.json)",
+    "actualQuantization": "MOSTLY_Q4_K_M",
+    "tensorTypes": {
+     "F32": 133,
+     "Q6_K": 17,
+     "Q4_K": 98,
+     "Q5_K": 36,
+     "Q8_0": 36
+    },
+    "unsupportedTensorTypes": [],
+    "chatTemplateSource": "GGUF metadata",
+    "chatTemplateSha256": "7f0e529032c25183bcd66c7f238da2d377f43be754a94e2725a58c4e16d2ed67",
+    "chatTemplateChars": 7816,
+    "chatTemplateFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\models\\remote-heads\\qwen35-2b.template.txt",
+    "contextLength": 262144,
+    "estimatedParameters": 1881825088
+   },
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   },
+   "preInferenceGate": {
+    "sizeGateBytes": 1500000000,
+    "sizePass": true,
+    "licenseDecisionRequired": false,
+    "passed": true,
+    "reasons": []
+   },
+   "runtimeBudget": {
+    "capBytes": 2000000000,
+    "capSource": "results/quality/team-08-runtime.json: Blob-store aggregate cap ~2 GB",
+    "otherLoadedModels": [
+     {
+      "id": "Qwen3-0.6B-Q4_K_M",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+     }
+    ],
+    "candidatePlusOtherBytes": 1677541312,
+    "pass": true
+   }
+  },
+  {
    "id": "minicpm-2b-dpo",
    "family": "MiniCPM-2B",
    "base": {
