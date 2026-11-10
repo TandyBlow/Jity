@@ -1082,16 +1082,10 @@ export function verifyDisplayedCommit(entries: unknown[]): {
     const hasSubmission = turn.submission != null;
     const label = typeof turn.turn === 'number' ? `turn ${turn.turn}` : 'turn';
     if (!text) {
-      // An explicit failed/empty turn is not a display with nothing to check;
-      // the absence of prose is the failure. This prevents a settlement abort
-      // from being silently accepted when no full snapshot is present.
-      const failed = problems.some((item) =>
-        item === 'empty_text' || item === 'settlement_failed_recoverable'
-        || item === 'turn_timeout' || item === 'no_entry_added'
-        || item.startsWith('submit_refused:'));
-      if (failed) {
-        add(errors, 'evidence_shape', `${label}: empty/failed turn has no committed prose`);
-      }
+      // Every recorded turn must have prose. A failed/empty turn is not a
+      // display with nothing to check; its absence is the failure. This also
+      // prevents malformed evidence without a `problems` list from passing.
+      add(errors, 'evidence_shape', `${label}: empty turn has no committed prose`);
       continue;
     }
     if (source === 'draft' || problems.includes('draft_only_not_accepted')) {

@@ -389,7 +389,7 @@ describe('visible acceptance summary', () => {
       submission: { inputText: '我沿着服务巷往里走。' },
     }]);
     expect(report.ok).toBe(false);
-    expect(report.errors.some((item) => item.detail.includes('empty/failed'))).toBe(true);
+    expect(report.errors.some((item) => item.detail.includes('empty turn'))).toBe(true);
   });
 
   it('rejects a program fallback and a slow accepted turn', () => {
