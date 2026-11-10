@@ -467,6 +467,7 @@ try {
             done: /本轮完成|本轮已交还|本轮停止/.test(bodyText),
             doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? ''),
             failed: /Error|加载失败/.test(bodyText),
+            cancelVisible: [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? '')),
             failureNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('这一回合的结算没有完成')) ?? ''),
             turnNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('本回合没有完成：')) ?? ''),
           };
@@ -475,6 +476,7 @@ try {
           await page.waitForTimeout(settleDelayMs);
           continue;
         }
+        if (sample.cancelVisible) entry.cancelSeen = true;
         if (sample.stage && sample.stage !== lastStage) {
           lastStage = sample.stage;
           entry.stages.push({ atMs: Date.now() - submitAt, label: sample.stage });
@@ -749,6 +751,9 @@ try {
 
   // Contract checks that do not need inference: cancel control and save service.
   evidence.controls = {
+    // The stop control only has to exist while work runs; read it from the
+    // sampled turns instead of the quiet end state.
+    cancelButtonDuringTurn: evidence.turns.some((turn) => turn.cancelSeen === true),
     cancelButton: await page.evaluate(() => [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? ''))),
     resetButton: await page.evaluate(() => [...document.querySelectorAll('button')].some((node) => /重新开始/.test(node.textContent ?? ''))),
     historyVisible: await page.evaluate(() => /已行动：\d+/.test(document.body.innerText)),
@@ -757,7 +762,7 @@ try {
     persistenceRequests: evidence.modelRequests.filter((request) => /api\//.test(request.url)),
     modelRequests: evidence.modelRequests.filter((request) => /\/models\/.*\.gguf/.test(request.url)),
   };
-  if (!evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control in the product page');
+  if (!evidence.controls.cancelButtonDuringTurn && !evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control while a turn was running');
 
   }
   evidence.status = selfTest ? (evidence.failures.some((failure) => /models/.test(failure.scope)) && evidence.turns.every((turn) => turn.text) ? 'SELFTEST' : (evidence.failures.length && !selfTest ? 'FAILED' : 'SELFTEST')) : (evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
