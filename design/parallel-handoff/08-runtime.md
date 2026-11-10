@@ -267,6 +267,29 @@ failure; 02 narration used the program fallback. No accepted prose, 323 s.
 The runtime stayed at one load/worker and no hang. This is runtime evidence,
 not product acceptance.
 
+## Call localization for the 17:01 long turn
+
+The 17:01 page run (`a5ca28d7` / page `4d05a899`) is not one stuck 162 s
+narration. The console/stage evidence is:
+
+- ready 105.8 s (semantic load 20.8 s + narration 37.0 s; one load/worker each);
+- turn: targets 2.8 s, results 15.8 s, **updates group_10 142.159 s** (the
+  six-stage aggregate, not 14 per-task JSON times), **first narration
+  point_round_3_1 57.519 s rejected wrong_person/low_support**, continuation
+  11.982 s, nono actions 17.5 s, **time_scan 64.321 s**;
+- the page's "正在写正文" stage appears at 173.686 s and a 49-char draft is
+  displayed at 173.5 s, but no prose is accepted and history_delta is 0; the
+  first segment must be measured from player submission and the stage switch
+  is not an accepted model first token.
+
+The t1 `engines[].generations=0` / `lastGeneration=null` on the semantic engine
+is a timeout snapshot: the page reads the turn record at timeout before
+finalising it, while the semantic tasks are visibly in the console. Do not
+report it as a zero-generation model. The full `__worldGenerations` global has
+the per-call evidence; 09 should capture it before the post-turn reload. The
+separate 16:46 end-of-turn run remains the source for semantic prefill/decode
+(3,701 prompt tokens/16.24 s, 11 predicted/1.70 s).
+
 ## 02/06 integration entry points
 
 - 06 per-engine generation timing: include `engine.runtime.lastGeneration` in
