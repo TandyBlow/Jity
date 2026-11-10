@@ -57,9 +57,16 @@ const config = {
 // An absolute path is converted here, not by the shell: Git Bash rewrites
 // arguments that start with '/@fs/' into a Windows path (and mangles the drive
 // colon), which made a 03 run fail before the model was even called.
-if (config.entry && /^[A-Za-z]:[\/]/.test(config.entry)) {
-  config.entry = '/@fs/' + config.entry.split(String.fromCharCode(92)).join('/');
-}
+const entryFile = config.entry && /^[A-Za-z]:[\/]/.test(config.entry) ? config.entry : '';
+if (entryFile) config.entry = '/@fs/' + entryFile.split(String.fromCharCode(92)).join('/');
+// A module in another worktree imports its own siblings; allow that tree's
+// frontend root, not only the entry file's directory.
+const entryRoot = (() => {
+  if (!entryFile) return null;
+  const normalized = entryFile.split(String.fromCharCode(92)).join('/');
+  const at = normalized.lastIndexOf('/frontend/');
+  return at > 0 ? normalized.slice(0, at + '/frontend'.length) : dirname(entryFile);
+})();
 
 const sha256File = (file) => new Promise((done, fail) => {
   const hash = createHash('sha256');
@@ -126,7 +133,12 @@ save();
 const wllamaRoot = resolve(frontend, 'node_modules/@wllama/wllama/esm');
 const server = await createServer({
   root: frontend, configFile: false, logLevel: 'warn', cacheDir: '../.local/candidate-model-vite',
-  server: { host: '127.0.0.1', port: 0, hmr: false },
+  server: {
+    host: '127.0.0.1', port: 0, hmr: false,
+    // --entry may live in another lane's worktree; Vite only serves the
+    // project root unless the candidate directory is allowed explicitly.
+    fs: { allow: [frontend, ...(entryRoot ? [entryRoot] : [])] },
+  },
   plugins: [{ name: 'candidate-model-run', configureServer(vite) {
     vite.middlewares.use((request, response, next) => {
       response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
