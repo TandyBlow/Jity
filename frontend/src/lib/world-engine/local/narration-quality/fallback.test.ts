@@ -42,13 +42,12 @@ const PANEL_TEXT = [
   '约三分钟过去了。',
 ].join('\n\n');
 
-const PROSE_TEXT = '三分钟过去，路明非把护目镜往上推了推。
-
-「红蓝两边现在各占哪儿？」他问。
-
-诺诺拿枪口点了点西回廊。「红方在集结点，蓝方守着钟楼。」
-
-路明非没急着走，先问自己能不能不动。诺诺看了他一眼，没有答。';
+const PROSE_TEXT = [
+  '三分钟过去，路明非把护目镜往上推了推。',
+  '「红蓝两边现在各占哪儿？」他问。',
+  '诺诺拿枪口点了点西回廊。「红方在集结点，蓝方守着钟楼。」',
+  '路明非没急着走，先问自己能不能不动。诺诺看了他一眼，没有答。',
+].join('\n\n');
 
 describe('fallback suspicion', () => {
   it('flags a text built only from settled-fact lines as consistent with a program fallback', () => {

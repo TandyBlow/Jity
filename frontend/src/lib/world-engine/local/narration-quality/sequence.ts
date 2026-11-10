@@ -53,6 +53,11 @@ export interface SequenceReport {
   disclaimer: string;
 }
 
+interface TaskBlock {
+  大任务?: { 目标?: string; 状态?: string };
+  小任务?: Array<{ 目标?: string; 状态?: string }>;
+}
+
 interface SettledPerson {
   place: string | null;
   tasks: Map<string, string>;
@@ -71,7 +76,7 @@ function settledPeople(input: DatasetInput): Map<string, SettledPerson> {
     if (block?.大任务?.目标) tasks.set(block.大任务.目标, block.大任务.状态 ?? '未完成');
     for (const task of block?.小任务 ?? []) if (task.目标) tasks.set(task.目标, task.状态 ?? '未完成');
     if (!tasks.size) {
-      const before = (input['上回合状态'] as { 人物?: Record<string, { 任务?: any }> }).人物?.[name]?.任务;
+      const before = (input['上回合状态'] as { 人物?: Record<string, { 任务?: TaskBlock }> }).人物?.[name]?.任务;
       if (before?.大任务?.目标) tasks.set(before.大任务.目标, before.大任务.状态 ?? '未完成');
       for (const task of before?.小任务 ?? []) if (task.目标) tasks.set(task.目标, task.状态 ?? '未完成');
     }
@@ -131,7 +136,6 @@ export function reviewSequence(turns: TurnRecord[]): SequenceReport {
   const elapsedSoFar = new Map<number, { turn: number; minutes: number }>();
 
   ordered.forEach((record, index) => {
-    const label = `${record.groupId}#${record.turn}`;
     if (index > 0 && ordered[index - 1].turn === record.turn) {
       throw new Error(`duplicate turn ${record.turn} in ${record.groupId}`);
     }
