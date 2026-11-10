@@ -49,8 +49,9 @@ export interface GameModelOptions {
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
   /** `fallback` is true when the shown text came from the program composer (a
-   * labelled downgrade) rather than verified model prose. The page must not
-   * count a fallback as the turn's readable-text timing. */
+   * labelled downgrade) rather than model prose the candidate's own gate
+   * accepted. `source: 'model'` is that gate's verdict, never independent
+   * quality review. The page must not count a fallback as readable model text. */
   onNarrationComplete?: (progress: {
     pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean;
     /** `mixed` = some sentences are verified model prose and some are program

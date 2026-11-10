@@ -73,9 +73,11 @@ interface TurnEntry {
    * shown for reading, but it is NOT the acceptance number: a draft is not
    * fact-checked yet and can still be replaced or cancelled. */
   draftMs: number | null;
-  /** Wall time from submit to the fact-verified MODEL text that was committed
-   * to the page. This is the only "readable" number used for product acceptance.
-   * Program-composed prose and unverified drafts never fill it. */
+  /** Wall time from submit to the model text the candidate's own gate accepted.
+   * `accepted` is that gate's verdict, not independent quality review: 02's arm
+   * run shows accepted scenes with invented current events, so this number is
+   * readable-text latency, not a quality claim. Program prose and drafts never
+   * fill it. */
   acceptedMs: number | null;
   /** Wall time to a program-composed passage (settled facts only). It is read-
    * able text, but it is a labelled downgrade, so it is reported separately. */
@@ -400,9 +402,10 @@ export default function WorldLocalPage() {
           onNarrationComplete: (progress) => {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
             const atMs = Math.round(performance.now() - submittedAtRef.current);
-            // Only a stop-finish narration is fact/style-verified model prose.
-            // 'program' is the labelled downgrade and 'drafted' was never
-            // accepted; neither may fill the readable-text timing.
+            // `model` means the candidate's own verifier accepted the text; it is
+            // not independent review (the 02 arm run has accepted text with an
+            // invented event). 'program' is the labelled downgrade and 'drafted'
+            // was never accepted; neither fills the readable-text timing.
             const source = progress.source ?? (progress.fallback ? 'program' : 'draft');
             const record = turnRecordRef.current;
             if (record) {
@@ -663,7 +666,7 @@ export default function WorldLocalPage() {
                 <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
                   <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>
                     你：{entry.input}
-                    {entry.acceptedMs != null ? ` · 模型正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（已核对）` : ''}
+                    {entry.acceptedMs != null ? ` · 模型正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（候选自检通过，未经独立复核）` : ''}
                     {entry.acceptedMs == null && entry.programMs != null ? ` · 程序成文 ${(entry.programMs / 1000).toFixed(1)}s（降级）` : ''}
                     {entry.acceptedMs == null && entry.mixedMs != null ? ` · 模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s（部分降级）` : ''}
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
