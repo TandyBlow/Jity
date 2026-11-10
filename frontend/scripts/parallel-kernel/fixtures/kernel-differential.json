@@ -1,0 +1,4304 @@
+{
+  "format": "parallel-kernel-differential-v1",
+  "source": {
+    "referenceCommit": "fc60a603c7e0b57805fffea0458192bcfebf6ffc",
+    "generator": "frontend/scripts/parallel-kernel/build-kernel-fixtures.py",
+    "files": [
+      {
+        "path": "backend/app/schemas/world/canonical.py",
+        "sha256": "2c2dd4de9fb743d8932d59b9b04e246c5dceda2d61844649732762384b9cfca1"
+      },
+      {
+        "path": "backend/app/schemas/world/contracts.py",
+        "sha256": "97b0b59b727761565fed1873ded256e3698b49049aae31ce9a5ca6e6f16f4a9c"
+      },
+      {
+        "path": "backend/app/schemas/world/v2/work.py",
+        "sha256": "3e8eebd8e285f872831ae21bf15c2c9678836dd13d77310f57beeeea805a1e31"
+      },
+      {
+        "path": "backend/app/services/world/apply.py",
+        "sha256": "e626fdbb0679ca0cff73053f06b5887bf8a8a0f42280219fdd94b8e4b257af66"
+      },
+      {
+        "path": "backend/app/services/world/merge.py",
+        "sha256": "dbe5fb4b22c62d0bc6bc86599c84227528cb9a636e5728021ad44d748a4647c4"
+      },
+      {
+        "path": "backend/app/services/world/preview.py",
+        "sha256": "55e7852e74b0db0de9b213833155b33d3577cb8388f43d0c31bd7f4e63fd888d"
+      },
+      {
+        "path": "backend/app/services/world/replay.py",
+        "sha256": "af45a5d18bdb4adc08282082f3b7555c48353f7757b574a948f8a3f4f5cde7ed"
+      },
+      {
+        "path": "backend/app/services/world/state.py",
+        "sha256": "b13ce5de770e7be883bae03ad682482f097393b597dce7e8d117b151df0a1ed6"
+      },
+      {
+        "path": "backend/app/services/world/timing.py",
+        "sha256": "3dfd9c8072177dd26cf8875fe0b09881af41f56c3124bea2a60ca29d4d4b2407"
+      },
+      {
+        "path": "backend/app/services/world/units.py",
+        "sha256": "9f8f080fed827352faa984d381f1d2f0868b789e063d2038939ddf2588111753"
+      },
+      {
+        "path": "backend/app/services/world/violations.py",
+        "sha256": "84b8a529cb688675f2a7e12da7ed0f84838f58c182f81f1234065644c8fd5e7e"
+      }
+    ],
+    "world": {
+      "path": "data/worlds/dragon-raja-free-day.world.json",
+      "textSha256Lf": "6262d5fcf088959bb427fbd2dfef7472bcf2cbf78edb9c76b98d4ea2b25db92e",
+      "rawSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+      "stateDigest": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
+      "initialDigest": "c82f058fda8fbe8000887b36b05a9b62a1bf5ae72672f3460472056381061ccb",
+      "counts": {
+        "locations": 26,
+        "items": 74,
+        "characters": 14,
+        "tasks": 73
+      }
+    }
+  },
+  "worlds": {
+    "school": {
+      "worldId": "world_school",
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "protagonistId": "person_c",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T11:59:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "school": {
+          "id": "school",
+          "name": "学校",
+          "parentLocationId": null,
+          "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor1": {
+          "id": "floor1",
+          "name": "一楼",
+          "parentLocationId": "school",
+          "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "lobby": {
+          "id": "lobby",
+          "name": "大堂",
+          "parentLocationId": "floor1",
+          "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "corridor": {
+          "id": "corridor",
+          "name": "走廊",
+          "parentLocationId": "floor1",
+          "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor2": {
+          "id": "floor2",
+          "name": "二楼",
+          "parentLocationId": "school",
+          "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom1": {
+          "id": "classroom1",
+          "name": "一号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom2": {
+          "id": "classroom2",
+          "name": "二号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        }
+      },
+      "items": {
+        "coat": {
+          "id": "coat",
+          "name": "外套",
+          "initialPosition": {
+            "containerId": "person_c",
+            "slotId": "body",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的外套。",
+          "slots": [
+            {
+              "id": "left_pocket",
+              "label": "左侧口袋"
+            }
+          ]
+        },
+        "key": {
+          "id": "key",
+          "name": "铜钥匙",
+          "initialPosition": {
+            "containerId": "coat",
+            "slotId": "left_pocket",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+          "slots": []
+        },
+        "blackboard": {
+          "id": "blackboard",
+          "name": "黑板",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的黑板。",
+          "slots": []
+        },
+        "door": {
+          "id": "door",
+          "name": "重门",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的重门。",
+          "slots": []
+        },
+        "book": {
+          "id": "book",
+          "name": "书",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的书。",
+          "slots": []
+        },
+        "bag": {
+          "id": "bag",
+          "name": "背包",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的背包。",
+          "slots": []
+        },
+        "badge": {
+          "id": "badge",
+          "name": "校徽",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的校徽。",
+          "slots": []
+        },
+        "phone": {
+          "id": "phone",
+          "name": "手机",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的手机。",
+          "slots": []
+        },
+        "bottle": {
+          "id": "bottle",
+          "name": "水瓶",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的水瓶。",
+          "slots": []
+        },
+        "coin": {
+          "id": "coin",
+          "name": "硬币",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的硬币。",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "A",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 10,
+          "tasks": {
+            "task_a_root": {
+              "id": "task_a_root",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_b": {
+          "id": "person_b",
+          "name": "B",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 20,
+          "tasks": {
+            "task_b_root": {
+              "id": "task_b_root",
+              "ownerId": "person_b",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_c": {
+          "id": "person_c",
+          "name": "C",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 30,
+          "tasks": {
+            "task_c_root": {
+              "id": "task_c_root",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            },
+            "task_wait_noon": {
+              "id": "task_wait_noon",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "坚持到中午十二点。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_d": {
+          "id": "person_d",
+          "name": "D",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 40,
+          "tasks": {
+            "task_d_root": {
+              "id": "task_d_root",
+              "ownerId": "person_d",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_e": {
+          "id": "person_e",
+          "name": "E",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 50,
+          "tasks": {
+            "task_e_root": {
+              "id": "task_e_root",
+              "ownerId": "person_e",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_f": {
+          "id": "person_f",
+          "name": "F",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 60,
+          "tasks": {
+            "task_f_root": {
+              "id": "task_f_root",
+              "ownerId": "person_f",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        }
+      }
+    },
+    "fixture": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "multi": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        },
+        "room_b": {
+          "id": "room_b",
+          "name": "B 房间",
+          "parentLocationId": null,
+          "initialAppearance": "另一间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        },
+        "item_b": {
+          "id": "item_b",
+          "name": "石凳",
+          "initialPosition": {
+            "containerId": "room_b",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "冰冷",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    }
+  },
+  "canonical": [
+    {
+      "value": {
+        "b": 1,
+        "a": [
+          true,
+          null,
+          "中文"
+        ]
+      },
+      "canonical": "{\"a\":[true,null,\"中文\"],\"b\":1}",
+      "sha256": "484124c319c01c5df44f55bbebc8be3889dd9ed00c493f807c5b7f150e3a6184"
+    },
+    {
+      "value": {
+        "\u0001": 1,
+        "": 2
+      },
+      "canonical": "{\"\\u0001\":1,\"\":2}",
+      "sha256": "40e68312ecbea11aa37deace24c205e60d234804dbc4eb9676790154c5666ebd"
+    },
+    {
+      "value": "quote\" backslash\\ control\u0001 tab\t newline\n   😀",
+      "canonical": "\"quote\\\" backslash\\\\ control\\u0001 tab\\u0009 newline\\u000a   😀\"",
+      "sha256": "01dcf48ffec0c7711ba9948cc3a959858f2f7113e01aa622b060ef890b79fc05"
+    },
+    {
+      "value": [
+        0,
+        0,
+        9007199254740991,
+        -9007199254740991
+      ],
+      "canonical": "[0,0,9007199254740991,-9007199254740991]",
+      "sha256": "f4144ea7ca86030ea6be5f9c4d62cabf22ae4c1b5fe700278725a8f83925e097"
+    }
+  ],
+  "normal": {
+    "initial": {
+      "worldId": "world_school",
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "protagonistId": "person_c",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T11:59:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "school": {
+          "id": "school",
+          "name": "学校",
+          "parentLocationId": null,
+          "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor1": {
+          "id": "floor1",
+          "name": "一楼",
+          "parentLocationId": "school",
+          "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "lobby": {
+          "id": "lobby",
+          "name": "大堂",
+          "parentLocationId": "floor1",
+          "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "corridor": {
+          "id": "corridor",
+          "name": "走廊",
+          "parentLocationId": "floor1",
+          "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor2": {
+          "id": "floor2",
+          "name": "二楼",
+          "parentLocationId": "school",
+          "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom1": {
+          "id": "classroom1",
+          "name": "一号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom2": {
+          "id": "classroom2",
+          "name": "二号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        }
+      },
+      "items": {
+        "coat": {
+          "id": "coat",
+          "name": "外套",
+          "initialPosition": {
+            "containerId": "person_c",
+            "slotId": "body",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的外套。",
+          "slots": [
+            {
+              "id": "left_pocket",
+              "label": "左侧口袋"
+            }
+          ]
+        },
+        "key": {
+          "id": "key",
+          "name": "铜钥匙",
+          "initialPosition": {
+            "containerId": "coat",
+            "slotId": "left_pocket",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+          "slots": []
+        },
+        "blackboard": {
+          "id": "blackboard",
+          "name": "黑板",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的黑板。",
+          "slots": []
+        },
+        "door": {
+          "id": "door",
+          "name": "重门",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的重门。",
+          "slots": []
+        },
+        "book": {
+          "id": "book",
+          "name": "书",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的书。",
+          "slots": []
+        },
+        "bag": {
+          "id": "bag",
+          "name": "背包",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的背包。",
+          "slots": []
+        },
+        "badge": {
+          "id": "badge",
+          "name": "校徽",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的校徽。",
+          "slots": []
+        },
+        "phone": {
+          "id": "phone",
+          "name": "手机",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的手机。",
+          "slots": []
+        },
+        "bottle": {
+          "id": "bottle",
+          "name": "水瓶",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的水瓶。",
+          "slots": []
+        },
+        "coin": {
+          "id": "coin",
+          "name": "硬币",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的硬币。",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "A",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 10,
+          "tasks": {
+            "task_a_root": {
+              "id": "task_a_root",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_b": {
+          "id": "person_b",
+          "name": "B",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 20,
+          "tasks": {
+            "task_b_root": {
+              "id": "task_b_root",
+              "ownerId": "person_b",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_c": {
+          "id": "person_c",
+          "name": "C",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 30,
+          "tasks": {
+            "task_c_root": {
+              "id": "task_c_root",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            },
+            "task_wait_noon": {
+              "id": "task_wait_noon",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "坚持到中午十二点。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_d": {
+          "id": "person_d",
+          "name": "D",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 40,
+          "tasks": {
+            "task_d_root": {
+              "id": "task_d_root",
+              "ownerId": "person_d",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_e": {
+          "id": "person_e",
+          "name": "E",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 50,
+          "tasks": {
+            "task_e_root": {
+              "id": "task_e_root",
+              "ownerId": "person_e",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_f": {
+          "id": "person_f",
+          "name": "F",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 60,
+          "tasks": {
+            "task_f_root": {
+              "id": "task_f_root",
+              "ownerId": "person_f",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        }
+      }
+    },
+    "stateDigestBefore": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+    "groups": [
+      {
+        "groupId": "group_a",
+        "actorIds": [
+          "person_a"
+        ],
+        "positions": {
+          "person_a": {
+            "containerId": "corridor",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "appearances": {},
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ],
+        "personalityCoverageIds": []
+      }
+    ],
+    "point": {
+      "worldId": "world_school",
+      "id": "p1",
+      "sequence": 1,
+      "kind": "normal",
+      "previousPointId": "root_0",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {
+        "person_a": {
+          "entityId": "person_a",
+          "positionSet": {
+            "containerId": "corridor",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      }
+    },
+    "mergedEntityDeltas": {
+      "person_a": {
+        "entityId": "person_a",
+        "positionSet": {
+          "containerId": "corridor",
+          "slotId": null,
+          "relativeTo": null
+        }
+      }
+    },
+    "stateAfter": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_school",
+      "protagonistId": "person_c",
+      "time": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T11:59:02",
+        "instantOrdinal": 0
+      },
+      "initial": {
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "worldId": "world_school",
+        "protagonistId": "person_c",
+        "initialTime": {
+          "calendar": "gregorian",
+          "dateTime": "2026-01-01T11:59:00",
+          "instantOrdinal": 0
+        },
+        "locations": {
+          "school": {
+            "id": "school",
+            "name": "学校",
+            "parentLocationId": null,
+            "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "floor1": {
+            "id": "floor1",
+            "name": "一楼",
+            "parentLocationId": "school",
+            "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "lobby": {
+            "id": "lobby",
+            "name": "大堂",
+            "parentLocationId": "floor1",
+            "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "corridor": {
+            "id": "corridor",
+            "name": "走廊",
+            "parentLocationId": "floor1",
+            "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "floor2": {
+            "id": "floor2",
+            "name": "二楼",
+            "parentLocationId": "school",
+            "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "classroom1": {
+            "id": "classroom1",
+            "name": "一号教室",
+            "parentLocationId": "floor2",
+            "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "classroom2": {
+            "id": "classroom2",
+            "name": "二号教室",
+            "parentLocationId": "floor2",
+            "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          }
+        },
+        "items": {
+          "coat": {
+            "id": "coat",
+            "name": "外套",
+            "initialPosition": {
+              "containerId": "person_c",
+              "slotId": "body",
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的外套。",
+            "slots": [
+              {
+                "id": "left_pocket",
+                "label": "左侧口袋"
+              }
+            ]
+          },
+          "key": {
+            "id": "key",
+            "name": "铜钥匙",
+            "initialPosition": {
+              "containerId": "coat",
+              "slotId": "left_pocket",
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+            "slots": []
+          },
+          "blackboard": {
+            "id": "blackboard",
+            "name": "黑板",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的黑板。",
+            "slots": []
+          },
+          "door": {
+            "id": "door",
+            "name": "重门",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的重门。",
+            "slots": []
+          },
+          "book": {
+            "id": "book",
+            "name": "书",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的书。",
+            "slots": []
+          },
+          "bag": {
+            "id": "bag",
+            "name": "背包",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的背包。",
+            "slots": []
+          },
+          "badge": {
+            "id": "badge",
+            "name": "校徽",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的校徽。",
+            "slots": []
+          },
+          "phone": {
+            "id": "phone",
+            "name": "手机",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的手机。",
+            "slots": []
+          },
+          "bottle": {
+            "id": "bottle",
+            "name": "水瓶",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的水瓶。",
+            "slots": []
+          },
+          "coin": {
+            "id": "coin",
+            "name": "硬币",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的硬币。",
+            "slots": []
+          }
+        },
+        "characters": {
+          "person_a": {
+            "id": "person_a",
+            "name": "A",
+            "initialPosition": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 10,
+            "tasks": {
+              "task_a_root": {
+                "id": "task_a_root",
+                "ownerId": "person_a",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_b": {
+            "id": "person_b",
+            "name": "B",
+            "initialPosition": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 20,
+            "tasks": {
+              "task_b_root": {
+                "id": "task_b_root",
+                "ownerId": "person_b",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_c": {
+            "id": "person_c",
+            "name": "C",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 30,
+            "tasks": {
+              "task_c_root": {
+                "id": "task_c_root",
+                "ownerId": "person_c",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              },
+              "task_wait_noon": {
+                "id": "task_wait_noon",
+                "ownerId": "person_c",
+                "parentTaskId": "task_c_root",
+                "goal": "坚持到中午十二点。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_d": {
+            "id": "person_d",
+            "name": "D",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 40,
+            "tasks": {
+              "task_d_root": {
+                "id": "task_d_root",
+                "ownerId": "person_d",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_e": {
+            "id": "person_e",
+            "name": "E",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 50,
+            "tasks": {
+              "task_e_root": {
+                "id": "task_e_root",
+                "ownerId": "person_e",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_f": {
+            "id": "person_f",
+            "name": "F",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 60,
+            "tasks": {
+              "task_f_root": {
+                "id": "task_f_root",
+                "ownerId": "person_f",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          }
+        }
+      },
+      "locations": {
+        "school": {
+          "id": "school",
+          "appearanceChanges": []
+        },
+        "floor1": {
+          "id": "floor1",
+          "appearanceChanges": []
+        },
+        "lobby": {
+          "id": "lobby",
+          "appearanceChanges": []
+        },
+        "corridor": {
+          "id": "corridor",
+          "appearanceChanges": []
+        },
+        "floor2": {
+          "id": "floor2",
+          "appearanceChanges": []
+        },
+        "classroom1": {
+          "id": "classroom1",
+          "appearanceChanges": []
+        },
+        "classroom2": {
+          "id": "classroom2",
+          "appearanceChanges": []
+        }
+      },
+      "items": {
+        "coat": {
+          "id": "coat",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "person_c",
+            "slotId": "body",
+            "relativeTo": null
+          }
+        },
+        "key": {
+          "id": "key",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "coat",
+            "slotId": "left_pocket",
+            "relativeTo": null
+          }
+        },
+        "blackboard": {
+          "id": "blackboard",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "door": {
+          "id": "door",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "book": {
+          "id": "book",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "bag": {
+          "id": "bag",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "badge": {
+          "id": "badge",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "phone": {
+          "id": "phone",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "bottle": {
+          "id": "bottle",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "coin": {
+          "id": "coin",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "corridor",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 10,
+          "tasks": {
+            "task_a_root": {
+              "id": "task_a_root",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_b": {
+          "id": "person_b",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 20,
+          "tasks": {
+            "task_b_root": {
+              "id": "task_b_root",
+              "ownerId": "person_b",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_c": {
+          "id": "person_c",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 30,
+          "tasks": {
+            "task_c_root": {
+              "id": "task_c_root",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            },
+            "task_wait_noon": {
+              "id": "task_wait_noon",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "坚持到中午十二点。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_d": {
+          "id": "person_d",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 40,
+          "tasks": {
+            "task_d_root": {
+              "id": "task_d_root",
+              "ownerId": "person_d",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_e": {
+          "id": "person_e",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 50,
+          "tasks": {
+            "task_e_root": {
+              "id": "task_e_root",
+              "ownerId": "person_e",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_f": {
+          "id": "person_f",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 60,
+          "tasks": {
+            "task_f_root": {
+              "id": "task_f_root",
+              "ownerId": "person_f",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "stateDigestAfter": "4f5a33e7032d02b6dfec9a94f424da2f5b2ac7eca7f3cc6815e0600e99b72964"
+  },
+  "preview": {
+    "initial": {
+      "worldId": "world_school",
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "protagonistId": "person_c",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T11:59:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "school": {
+          "id": "school",
+          "name": "学校",
+          "parentLocationId": null,
+          "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor1": {
+          "id": "floor1",
+          "name": "一楼",
+          "parentLocationId": "school",
+          "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "lobby": {
+          "id": "lobby",
+          "name": "大堂",
+          "parentLocationId": "floor1",
+          "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "corridor": {
+          "id": "corridor",
+          "name": "走廊",
+          "parentLocationId": "floor1",
+          "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "floor2": {
+          "id": "floor2",
+          "name": "二楼",
+          "parentLocationId": "school",
+          "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom1": {
+          "id": "classroom1",
+          "name": "一号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        },
+        "classroom2": {
+          "id": "classroom2",
+          "name": "二号教室",
+          "parentLocationId": "floor2",
+          "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+          "slots": []
+        }
+      },
+      "items": {
+        "coat": {
+          "id": "coat",
+          "name": "外套",
+          "initialPosition": {
+            "containerId": "person_c",
+            "slotId": "body",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的外套。",
+          "slots": [
+            {
+              "id": "left_pocket",
+              "label": "左侧口袋"
+            }
+          ]
+        },
+        "key": {
+          "id": "key",
+          "name": "铜钥匙",
+          "initialPosition": {
+            "containerId": "coat",
+            "slotId": "left_pocket",
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+          "slots": []
+        },
+        "blackboard": {
+          "id": "blackboard",
+          "name": "黑板",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的黑板。",
+          "slots": []
+        },
+        "door": {
+          "id": "door",
+          "name": "重门",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的重门。",
+          "slots": []
+        },
+        "book": {
+          "id": "book",
+          "name": "书",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的书。",
+          "slots": []
+        },
+        "bag": {
+          "id": "bag",
+          "name": "背包",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的背包。",
+          "slots": []
+        },
+        "badge": {
+          "id": "badge",
+          "name": "校徽",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的校徽。",
+          "slots": []
+        },
+        "phone": {
+          "id": "phone",
+          "name": "手机",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的手机。",
+          "slots": []
+        },
+        "bottle": {
+          "id": "bottle",
+          "name": "水瓶",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的水瓶。",
+          "slots": []
+        },
+        "coin": {
+          "id": "coin",
+          "name": "硬币",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "一件表面有使用痕迹的硬币。",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "A",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 10,
+          "tasks": {
+            "task_a_root": {
+              "id": "task_a_root",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_b": {
+          "id": "person_b",
+          "name": "B",
+          "initialPosition": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 20,
+          "tasks": {
+            "task_b_root": {
+              "id": "task_b_root",
+              "ownerId": "person_b",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_c": {
+          "id": "person_c",
+          "name": "C",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 30,
+          "tasks": {
+            "task_c_root": {
+              "id": "task_c_root",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            },
+            "task_wait_noon": {
+              "id": "task_wait_noon",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "坚持到中午十二点。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_d": {
+          "id": "person_d",
+          "name": "D",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 40,
+          "tasks": {
+            "task_d_root": {
+              "id": "task_d_root",
+              "ownerId": "person_d",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_e": {
+          "id": "person_e",
+          "name": "E",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 50,
+          "tasks": {
+            "task_e_root": {
+              "id": "task_e_root",
+              "ownerId": "person_e",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        },
+        "person_f": {
+          "id": "person_f",
+          "name": "F",
+          "initialPosition": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+          "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+          "initialSanity": 60,
+          "tasks": {
+            "task_f_root": {
+              "id": "task_f_root",
+              "ownerId": "person_f",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          },
+          "slots": [
+            {
+              "id": "body",
+              "label": "身上"
+            }
+          ]
+        }
+      }
+    },
+    "pointProjection": {
+      "worldId": "world_school",
+      "id": "p1",
+      "sequence": 1,
+      "kind": "normal",
+      "previousPointId": "root_0",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {
+        "person_a": {
+          "entityId": "person_a",
+          "positionSet": {
+            "containerId": "corridor",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      }
+    },
+    "mergedEntityDeltas": {
+      "person_a": {
+        "entityId": "person_a",
+        "positionSet": {
+          "containerId": "corridor",
+          "slotId": null,
+          "relativeTo": null
+        }
+      }
+    },
+    "workingStateDigest": "4f5a33e7032d02b6dfec9a94f424da2f5b2ac7eca7f3cc6815e0600e99b72964",
+    "pointProjectionDigest": "02b75b795d24430c01a1944fe42e720b574084cd12dd544474e2315814a3495a",
+    "workingState": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_school",
+      "protagonistId": "person_c",
+      "time": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T11:59:02",
+        "instantOrdinal": 0
+      },
+      "initial": {
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "worldId": "world_school",
+        "protagonistId": "person_c",
+        "initialTime": {
+          "calendar": "gregorian",
+          "dateTime": "2026-01-01T11:59:00",
+          "instantOrdinal": 0
+        },
+        "locations": {
+          "school": {
+            "id": "school",
+            "name": "学校",
+            "parentLocationId": null,
+            "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "floor1": {
+            "id": "floor1",
+            "name": "一楼",
+            "parentLocationId": "school",
+            "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "lobby": {
+            "id": "lobby",
+            "name": "大堂",
+            "parentLocationId": "floor1",
+            "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "corridor": {
+            "id": "corridor",
+            "name": "走廊",
+            "parentLocationId": "floor1",
+            "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "floor2": {
+            "id": "floor2",
+            "name": "二楼",
+            "parentLocationId": "school",
+            "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "classroom1": {
+            "id": "classroom1",
+            "name": "一号教室",
+            "parentLocationId": "floor2",
+            "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          },
+          "classroom2": {
+            "id": "classroom2",
+            "name": "二号教室",
+            "parentLocationId": "floor2",
+            "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+            "slots": []
+          }
+        },
+        "items": {
+          "coat": {
+            "id": "coat",
+            "name": "外套",
+            "initialPosition": {
+              "containerId": "person_c",
+              "slotId": "body",
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的外套。",
+            "slots": [
+              {
+                "id": "left_pocket",
+                "label": "左侧口袋"
+              }
+            ]
+          },
+          "key": {
+            "id": "key",
+            "name": "铜钥匙",
+            "initialPosition": {
+              "containerId": "coat",
+              "slotId": "left_pocket",
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+            "slots": []
+          },
+          "blackboard": {
+            "id": "blackboard",
+            "name": "黑板",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的黑板。",
+            "slots": []
+          },
+          "door": {
+            "id": "door",
+            "name": "重门",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的重门。",
+            "slots": []
+          },
+          "book": {
+            "id": "book",
+            "name": "书",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的书。",
+            "slots": []
+          },
+          "bag": {
+            "id": "bag",
+            "name": "背包",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的背包。",
+            "slots": []
+          },
+          "badge": {
+            "id": "badge",
+            "name": "校徽",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的校徽。",
+            "slots": []
+          },
+          "phone": {
+            "id": "phone",
+            "name": "手机",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的手机。",
+            "slots": []
+          },
+          "bottle": {
+            "id": "bottle",
+            "name": "水瓶",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的水瓶。",
+            "slots": []
+          },
+          "coin": {
+            "id": "coin",
+            "name": "硬币",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "一件表面有使用痕迹的硬币。",
+            "slots": []
+          }
+        },
+        "characters": {
+          "person_a": {
+            "id": "person_a",
+            "name": "A",
+            "initialPosition": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 10,
+            "tasks": {
+              "task_a_root": {
+                "id": "task_a_root",
+                "ownerId": "person_a",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_b": {
+            "id": "person_b",
+            "name": "B",
+            "initialPosition": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 20,
+            "tasks": {
+              "task_b_root": {
+                "id": "task_b_root",
+                "ownerId": "person_b",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_c": {
+            "id": "person_c",
+            "name": "C",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 30,
+            "tasks": {
+              "task_c_root": {
+                "id": "task_c_root",
+                "ownerId": "person_c",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              },
+              "task_wait_noon": {
+                "id": "task_wait_noon",
+                "ownerId": "person_c",
+                "parentTaskId": "task_c_root",
+                "goal": "坚持到中午十二点。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_d": {
+            "id": "person_d",
+            "name": "D",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 40,
+            "tasks": {
+              "task_d_root": {
+                "id": "task_d_root",
+                "ownerId": "person_d",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_e": {
+            "id": "person_e",
+            "name": "E",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 50,
+            "tasks": {
+              "task_e_root": {
+                "id": "task_e_root",
+                "ownerId": "person_e",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_f": {
+            "id": "person_f",
+            "name": "F",
+            "initialPosition": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+            "slots": [
+              {
+                "id": "body",
+                "label": "身上"
+              }
+            ],
+            "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+            "initialSanity": 60,
+            "tasks": {
+              "task_f_root": {
+                "id": "task_f_root",
+                "ownerId": "person_f",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          }
+        }
+      },
+      "locations": {
+        "school": {
+          "id": "school",
+          "appearanceChanges": []
+        },
+        "floor1": {
+          "id": "floor1",
+          "appearanceChanges": []
+        },
+        "lobby": {
+          "id": "lobby",
+          "appearanceChanges": []
+        },
+        "corridor": {
+          "id": "corridor",
+          "appearanceChanges": []
+        },
+        "floor2": {
+          "id": "floor2",
+          "appearanceChanges": []
+        },
+        "classroom1": {
+          "id": "classroom1",
+          "appearanceChanges": []
+        },
+        "classroom2": {
+          "id": "classroom2",
+          "appearanceChanges": []
+        }
+      },
+      "items": {
+        "coat": {
+          "id": "coat",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "person_c",
+            "slotId": "body",
+            "relativeTo": null
+          }
+        },
+        "key": {
+          "id": "key",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "coat",
+            "slotId": "left_pocket",
+            "relativeTo": null
+          }
+        },
+        "blackboard": {
+          "id": "blackboard",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "door": {
+          "id": "door",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "book": {
+          "id": "book",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "bag": {
+          "id": "bag",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "badge": {
+          "id": "badge",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "phone": {
+          "id": "phone",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "bottle": {
+          "id": "bottle",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        },
+        "coin": {
+          "id": "coin",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "corridor",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 10,
+          "tasks": {
+            "task_a_root": {
+              "id": "task_a_root",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_b": {
+          "id": "person_b",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "lobby",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 20,
+          "tasks": {
+            "task_b_root": {
+              "id": "task_b_root",
+              "ownerId": "person_b",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_c": {
+          "id": "person_c",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 30,
+          "tasks": {
+            "task_c_root": {
+              "id": "task_c_root",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            },
+            "task_wait_noon": {
+              "id": "task_wait_noon",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "坚持到中午十二点。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_d": {
+          "id": "person_d",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 40,
+          "tasks": {
+            "task_d_root": {
+              "id": "task_d_root",
+              "ownerId": "person_d",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_e": {
+          "id": "person_e",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 50,
+          "tasks": {
+            "task_e_root": {
+              "id": "task_e_root",
+              "ownerId": "person_e",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        },
+        "person_f": {
+          "id": "person_f",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "classroom1",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 60,
+          "tasks": {
+            "task_f_root": {
+              "id": "task_f_root",
+              "ownerId": "person_f",
+              "parentTaskId": null,
+              "goal": "安全度过校园中的这段时间。",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    }
+  },
+  "positions": {
+    "fixtureInitial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "multiInitial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        },
+        "room_b": {
+          "id": "room_b",
+          "name": "B 房间",
+          "parentLocationId": null,
+          "initialAppearance": "另一间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        },
+        "item_b": {
+          "id": "item_b",
+          "name": "石凳",
+          "initialPosition": {
+            "containerId": "room_b",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "冰冷",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "name": "unknown_container",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_missing",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "expected": {
+          "refused": "id_unresolved"
+        }
+      },
+      {
+        "name": "slot_outside_container",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_a",
+              "slotId": "nope",
+              "relativeTo": null
+            }
+          }
+        },
+        "expected": {
+          "refused": "id_unresolved"
+        }
+      },
+      {
+        "name": "unknown_relative",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "ghost",
+                "relation": "beside"
+              }
+            }
+          }
+        },
+        "expected": {
+          "refused": "id_unresolved"
+        }
+      },
+      {
+        "name": "cross_room_relative",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            },
+            "room_b": {
+              "id": "room_b",
+              "name": "B 房间",
+              "parentLocationId": null,
+              "initialAppearance": "另一间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            },
+            "item_b": {
+              "id": "item_b",
+              "name": "石凳",
+              "initialPosition": {
+                "containerId": "room_b",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "冰冷",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_b",
+                "relation": "beside"
+              }
+            }
+          }
+        },
+        "expected": {
+          "refused": "semantic_invalid"
+        }
+      },
+      {
+        "name": "self_container_cycle",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "person_a",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "expected": {
+          "refused": "semantic_invalid"
+        }
+      },
+      {
+        "name": "mixed_relative_container_cycle",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            },
+            "room_b": {
+              "id": "room_b",
+              "name": "B 房间",
+              "parentLocationId": null,
+              "initialAppearance": "另一间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            },
+            "item_b": {
+              "id": "item_b",
+              "name": "石凳",
+              "initialPosition": {
+                "containerId": "room_b",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "冰冷",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_a",
+                "relation": "beside"
+              }
+            }
+          },
+          "item_a": {
+            "entityId": "item_a",
+            "positionSet": {
+              "containerId": "person_a",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "expected": {
+          "refused": "semantic_invalid"
+        }
+      },
+      {
+        "name": "same_room_relative_accepted",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_a",
+                "relation": "beside"
+              }
+            }
+          }
+        },
+        "expected": {
+          "stateDigest": "d0b9bd59be071441a3e2b59bee1f9f9dce6aa20c8e5c340bab2b8c2e449ca1c9"
+        }
+      },
+      {
+        "name": "relative_reference_moves_with_target",
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_fixture",
+          "protagonistId": "person_a",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T00:00:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "room_a": {
+              "id": "room_a",
+              "name": "A 房间",
+              "parentLocationId": null,
+              "initialAppearance": "空房间",
+              "slots": []
+            },
+            "room_b": {
+              "id": "room_b",
+              "name": "B 房间",
+              "parentLocationId": null,
+              "initialAppearance": "另一间",
+              "slots": []
+            }
+          },
+          "items": {
+            "item_a": {
+              "id": "item_a",
+              "name": "木箱",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "崭新",
+              "slots": []
+            },
+            "item_b": {
+              "id": "item_b",
+              "name": "石凳",
+              "initialPosition": {
+                "containerId": "room_b",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "冰冷",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "主角",
+              "initialPosition": {
+                "containerId": "room_a",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "平凡",
+              "initialPersonality": "谨慎",
+              "initialSanity": 50,
+              "tasks": {
+                "task_a": {
+                  "id": "task_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "活下来",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_a",
+                "relation": "beside"
+              }
+            }
+          },
+          "item_a": {
+            "entityId": "item_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "expected": {
+          "stateDigest": "3f7eca6834e4f22800cb62bd10ba1a357fec5c4c359caa72118d95d344f0d15f"
+        }
+      }
+    ],
+    "jointOrders": [
+      {
+        "deltas": {
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_a",
+                "relation": "beside"
+              }
+            }
+          },
+          "item_a": {
+            "entityId": "item_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "stateDigest": "3f7eca6834e4f22800cb62bd10ba1a357fec5c4c359caa72118d95d344f0d15f"
+      },
+      {
+        "deltas": {
+          "item_a": {
+            "entityId": "item_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "person_a": {
+            "entityId": "person_a",
+            "positionSet": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": {
+                "entityId": "item_a",
+                "relation": "beside"
+              }
+            }
+          }
+        },
+        "stateDigest": "3f7eca6834e4f22800cb62bd10ba1a357fec5c4c359caa72118d95d344f0d15f"
+      }
+    ],
+    "dangling": {
+      "initial": {
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "worldId": "world_fixture",
+        "protagonistId": "person_a",
+        "initialTime": {
+          "calendar": "gregorian",
+          "dateTime": "2026-01-01T00:00:00",
+          "instantOrdinal": 0
+        },
+        "locations": {
+          "room_a": {
+            "id": "room_a",
+            "name": "A 房间",
+            "parentLocationId": null,
+            "initialAppearance": "空房间",
+            "slots": []
+          },
+          "room_b": {
+            "id": "room_b",
+            "name": "B 房间",
+            "parentLocationId": null,
+            "initialAppearance": "另一间",
+            "slots": []
+          }
+        },
+        "items": {
+          "item_a": {
+            "id": "item_a",
+            "name": "木箱",
+            "initialPosition": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "崭新",
+            "slots": []
+          },
+          "item_b": {
+            "id": "item_b",
+            "name": "石凳",
+            "initialPosition": {
+              "containerId": "room_b",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "冰冷",
+            "slots": []
+          }
+        },
+        "characters": {
+          "person_a": {
+            "id": "person_a",
+            "name": "主角",
+            "initialPosition": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "平凡",
+            "initialPersonality": "谨慎",
+            "initialSanity": 50,
+            "tasks": {
+              "task_a": {
+                "id": "task_a",
+                "ownerId": "person_a",
+                "parentTaskId": null,
+                "goal": "活下来",
+                "status": "pending"
+              }
+            }
+          }
+        }
+      },
+      "deltas": {
+        "item_a": {
+          "entityId": "item_a",
+          "positionSet": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      },
+      "expected": {
+        "refused": "semantic_invalid"
+      }
+    }
+  },
+  "tasks": {
+    "fixtureInitial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "collapse": {
+      "groups": [
+        {
+          "groupId": "group_task",
+          "actorIds": [
+            "person_c"
+          ],
+          "positions": {},
+          "appearances": {
+            "person_c": [
+              {
+                "id": "change_final",
+                "text": "嘴角已止血。",
+                "supersedes": []
+              }
+            ]
+          },
+          "tasksAchieved": {
+            "person_c": [
+              "task_new_child"
+            ]
+          },
+          "subtasksAdded": {
+            "person_c": [
+              {
+                "id": "task_new_parent",
+                "ownerId": "person_c",
+                "parentTaskId": "task_c_root",
+                "goal": "检查教室内的安全状况。",
+                "status": "pending"
+              },
+              {
+                "id": "task_new_child",
+                "ownerId": "person_c",
+                "parentTaskId": "task_new_parent",
+                "goal": "确认门边没有障碍。",
+                "status": "pending"
+              }
+            ]
+          },
+          "personalities": {},
+          "sanities": {},
+          "taskCoverageIds": [
+            "person_a",
+            "person_b",
+            "person_c",
+            "person_d",
+            "person_e",
+            "person_f"
+          ],
+          "personalityCoverageIds": [
+            "person_c"
+          ]
+        }
+      ],
+      "mergedEntityDeltas": {
+        "person_c": {
+          "entityId": "person_c",
+          "appearanceChanges": [
+            {
+              "id": "change_final",
+              "text": "嘴角已止血。",
+              "supersedes": []
+            }
+          ],
+          "subtasksAdded": [
+            {
+              "id": "task_new_parent",
+              "ownerId": "person_c",
+              "parentTaskId": "task_c_root",
+              "goal": "检查教室内的安全状况。",
+              "status": "pending"
+            },
+            {
+              "id": "task_new_child",
+              "ownerId": "person_c",
+              "parentTaskId": "task_new_parent",
+              "goal": "确认门边没有障碍。",
+              "status": "achieved"
+            }
+          ]
+        }
+      }
+    },
+    "cases": [
+      {
+        "name": "hierarchy_level_order",
+        "groups": [
+          {
+            "groupId": "group_hierarchy",
+            "actorIds": [
+              "person_a"
+            ],
+            "positions": {},
+            "appearances": {},
+            "tasksAchieved": {
+              "person_a": [
+                "task_grandchild"
+              ]
+            },
+            "subtasksAdded": {
+              "person_a": [
+                {
+                  "id": "task_child",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_parent",
+                  "goal": "子任务",
+                  "status": "pending"
+                },
+                {
+                  "id": "task_parent",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_a",
+                  "goal": "父任务",
+                  "status": "pending"
+                },
+                {
+                  "id": "task_grandchild",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_child",
+                  "goal": "孙任务",
+                  "status": "pending"
+                }
+              ]
+            },
+            "personalities": {},
+            "sanities": {},
+            "taskCoverageIds": [
+              "person_a"
+            ],
+            "personalityCoverageIds": []
+          }
+        ],
+        "expected": {
+          "merged": {
+            "person_a": {
+              "entityId": "person_a",
+              "subtasksAdded": [
+                {
+                  "id": "task_parent",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_a",
+                  "goal": "父任务",
+                  "status": "pending"
+                },
+                {
+                  "id": "task_child",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_parent",
+                  "goal": "子任务",
+                  "status": "pending"
+                },
+                {
+                  "id": "task_grandchild",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_child",
+                  "goal": "孙任务",
+                  "status": "achieved"
+                }
+              ]
+            }
+          },
+          "stateDigest": "7078b06910e534c240205c0e4b9dede3c31f1b196a6dc8ab26ba3b407efb3e5d"
+        }
+      },
+      {
+        "name": "cycle_refused",
+        "groups": [
+          {
+            "groupId": "group_case",
+            "actorIds": [
+              "person_a"
+            ],
+            "positions": {},
+            "appearances": {},
+            "tasksAchieved": {},
+            "subtasksAdded": {
+              "person_a": [
+                {
+                  "id": "t_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": "t_b",
+                  "goal": "a",
+                  "status": "pending"
+                },
+                {
+                  "id": "t_b",
+                  "ownerId": "person_a",
+                  "parentTaskId": "t_a",
+                  "goal": "b",
+                  "status": "pending"
+                }
+              ]
+            },
+            "personalities": {},
+            "sanities": {},
+            "taskCoverageIds": [
+              "person_a"
+            ],
+            "personalityCoverageIds": []
+          }
+        ],
+        "expected": {
+          "refused": "schema",
+          "detail": "1 validation error for EntityDelta"
+        }
+      },
+      {
+        "name": "duplicate_added_refused",
+        "groups": [
+          {
+            "groupId": "group_case",
+            "actorIds": [
+              "person_a"
+            ],
+            "positions": {},
+            "appearances": {},
+            "tasksAchieved": {},
+            "subtasksAdded": {
+              "person_a": [
+                {
+                  "id": "t_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_a",
+                  "goal": "a",
+                  "status": "pending"
+                },
+                {
+                  "id": "t_a",
+                  "ownerId": "person_a",
+                  "parentTaskId": "task_a",
+                  "goal": "b",
+                  "status": "pending"
+                }
+              ]
+            },
+            "personalities": {},
+            "sanities": {},
+            "taskCoverageIds": [
+              "person_a"
+            ],
+            "personalityCoverageIds": []
+          }
+        ],
+        "expected": {
+          "refused": "schema",
+          "detail": "1 validation error for EntityDelta"
+        }
+      }
+    ]
+  },
+  "supersedes": {
+    "fixtureInitial": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "initialTime": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:00",
+        "instantOrdinal": 0
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "name": "A 房间",
+          "parentLocationId": null,
+          "initialAppearance": "空房间",
+          "slots": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "name": "木箱",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "崭新",
+          "slots": []
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "name": "主角",
+          "initialPosition": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "initialAppearance": "平凡",
+          "initialPersonality": "谨慎",
+          "initialSanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "points": [
+      {
+        "worldId": "world_fixture",
+        "id": "p1",
+        "sequence": 1,
+        "kind": "normal",
+        "previousPointId": "root_0",
+        "roundId": "round_f",
+        "advanceId": "advance_f",
+        "trigger": "player",
+        "linkedFromPointId": null,
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "second"
+          }
+        },
+        "entityDeltas": {
+          "item_a": {
+            "entityId": "item_a",
+            "appearanceChanges": [
+              {
+                "id": "ch_1",
+                "text": "崭新未拆",
+                "supersedes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "worldId": "world_fixture",
+        "id": "p2",
+        "sequence": 2,
+        "kind": "normal",
+        "previousPointId": "p_prev",
+        "roundId": "round_f",
+        "advanceId": "advance_f",
+        "trigger": "player",
+        "linkedFromPointId": null,
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "second"
+          }
+        },
+        "entityDeltas": {
+          "item_a": {
+            "entityId": "item_a",
+            "appearanceChanges": [
+              {
+                "id": "ch_2",
+                "text": null,
+                "supersedes": [
+                  "ch_1"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "finalState": {
+      "engineVersion": "world-engine-v1",
+      "schemaVersion": 1,
+      "worldId": "world_fixture",
+      "protagonistId": "person_a",
+      "time": {
+        "calendar": "gregorian",
+        "dateTime": "2026-01-01T00:00:02",
+        "instantOrdinal": 0
+      },
+      "initial": {
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "worldId": "world_fixture",
+        "protagonistId": "person_a",
+        "initialTime": {
+          "calendar": "gregorian",
+          "dateTime": "2026-01-01T00:00:00",
+          "instantOrdinal": 0
+        },
+        "locations": {
+          "room_a": {
+            "id": "room_a",
+            "name": "A 房间",
+            "parentLocationId": null,
+            "initialAppearance": "空房间",
+            "slots": []
+          }
+        },
+        "items": {
+          "item_a": {
+            "id": "item_a",
+            "name": "木箱",
+            "initialPosition": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "崭新",
+            "slots": []
+          }
+        },
+        "characters": {
+          "person_a": {
+            "id": "person_a",
+            "name": "主角",
+            "initialPosition": {
+              "containerId": "room_a",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "initialAppearance": "平凡",
+            "slots": [],
+            "initialPersonality": "谨慎",
+            "initialSanity": 50,
+            "tasks": {
+              "task_a": {
+                "id": "task_a",
+                "ownerId": "person_a",
+                "parentTaskId": null,
+                "goal": "活下来",
+                "status": "pending"
+              }
+            }
+          }
+        }
+      },
+      "locations": {
+        "room_a": {
+          "id": "room_a",
+          "appearanceChanges": []
+        }
+      },
+      "items": {
+        "item_a": {
+          "id": "item_a",
+          "appearanceChanges": [
+            {
+              "id": "ch_1",
+              "text": "崭新未拆",
+              "supersedes": [],
+              "sourcePointId": "p1",
+              "sourceSequence": 1,
+              "active": false
+            },
+            {
+              "id": "ch_2",
+              "text": null,
+              "supersedes": [
+                "ch_1"
+              ],
+              "sourcePointId": "p2",
+              "sourceSequence": 2,
+              "active": true
+            }
+          ],
+          "position": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          }
+        }
+      },
+      "characters": {
+        "person_a": {
+          "id": "person_a",
+          "appearanceChanges": [],
+          "position": {
+            "containerId": "room_a",
+            "slotId": null,
+            "relativeTo": null
+          },
+          "personalityChanges": [],
+          "sanity": 50,
+          "tasks": {
+            "task_a": {
+              "id": "task_a",
+              "ownerId": "person_a",
+              "parentTaskId": null,
+              "goal": "活下来",
+              "status": "pending"
+            }
+          }
+        }
+      }
+    },
+    "finalStateDigest": "5ae787d8b7a5fed27fb24bebbfaf2033420cfb389a3296befa09410fb20bd2ef",
+    "samePointRefused": {
+      "refused": "schema",
+      "detail": "1 validation error for EntityDelta"
+    },
+    "samePointGroups": [
+      {
+        "groupId": "g1",
+        "actorIds": [
+          "person_a"
+        ],
+        "positions": {},
+        "appearances": {
+          "person_a": [
+            {
+              "id": "ch_x",
+              "text": "第一句",
+              "supersedes": []
+            }
+          ]
+        },
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a"
+        ],
+        "personalityCoverageIds": []
+      },
+      {
+        "groupId": "g2",
+        "actorIds": [
+          "person_a"
+        ],
+        "positions": {},
+        "appearances": {
+          "person_a": [
+            {
+              "id": "ch_y",
+              "text": "第二句",
+              "supersedes": [
+                "ch_x"
+              ]
+            }
+          ]
+        },
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a"
+        ],
+        "personalityCoverageIds": []
+      }
+    ],
+    "pureRemovalWithoutSupersedes": {
+      "refused": "schema",
+      "detail": "1 validation error for EntityDelta"
+    },
+    "emptyRemovalGroups": [
+      {
+        "groupId": "group_empty_removal",
+        "actorIds": [
+          "person_a"
+        ],
+        "positions": {},
+        "appearances": {
+          "person_a": [
+            {
+              "id": "ch_x",
+              "text": null,
+              "supersedes": []
+            }
+          ]
+        },
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a"
+        ],
+        "personalityCoverageIds": []
+      }
+    ],
+    "unknownSupersede": {
+      "refused": "id_unresolved"
+    }
+  },
+  "time": {
+    "cases": [
+      {
+        "from": "2026-01-31T00:00:00",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "month"
+          }
+        },
+        "expected": {
+          "dateTime": "2026-02-28T00:00:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2024-01-31T12:00:00",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "month"
+          }
+        },
+        "expected": {
+          "dateTime": "2024-02-29T12:00:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2024-02-29T00:00:00",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "year"
+          }
+        },
+        "expected": {
+          "dateTime": "2025-02-28T00:00:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2026-01-01T00:00:00",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 14,
+            "unit": "month"
+          }
+        },
+        "expected": {
+          "dateTime": "2027-03-01T00:00:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2026-01-01T23:00:00",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 90,
+            "unit": "minute"
+          }
+        },
+        "expected": {
+          "dateTime": "2026-01-02T00:30:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2026-12-31T23:59:59",
+        "advance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "second"
+          }
+        },
+        "expected": {
+          "dateTime": "2027-01-01T00:00:00",
+          "ordinal": 0
+        }
+      },
+      {
+        "from": "2026-03-15T08:00:00",
+        "advance": {
+          "boundary": "instant",
+          "duration": {
+            "amount": 0,
+            "unit": "second"
+          }
+        },
+        "expected": {
+          "dateTime": "2026-03-15T08:00:00",
+          "ordinal": 6
+        }
+      }
+    ]
+  }
+}

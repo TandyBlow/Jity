@@ -1,0 +1,2991 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-11-10T03:25:26.828Z",
+  "config": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "assets": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public",
+    "contextSize": 4096,
+    "numThreads": 4,
+    "channel": "msedge",
+    "seed": 42,
+    "temperature": 0,
+    "timeoutMs": 120000,
+    "maxTokens": 160,
+    "dry": false,
+    "only": null,
+    "assetPath": "D:\\others\\Jity\\.local\\world-narration-worktree\\frontend\\public\\models\\Qwen3-0.6B-Q4_K_M.gguf"
+  },
+  "source": {
+    "head": "48e8d904bc1be5b64abb6744088924c32c0350e0",
+    "status": "M artifacts/action-eval/dry-prompts.json\n M design/parallel-handoff/03-actions.md\n M frontend/scripts/parallel-actions/run-action-eval.mjs\n M frontend/src/lib/world-engine/local/semantics/actions/actions.test.ts\n M frontend/src/lib/world-engine/local/semantics/actions/checks.ts\n M frontend/src/lib/world-engine/local/semantics/actions/index.ts\n M frontend/src/lib/world-engine/local/semantics/actions/prompts.ts\n M frontend/src/lib/world-engine/local/semantics/actions/scene.ts\n M frontend/src/lib/world-engine/local/semantics/actions/types.ts",
+    "sha256": {
+      "frontend/scripts/parallel-actions/run-action-eval.mjs": "c3aab10aea55718a8cf0f4fb6476422ae2a102e27ae6607f3f2a3bef203aea93",
+      "frontend/src/lib/world-engine/local/semantics/actions/index.ts": "4575b6e7ab80c08bf4a57e8fa4a5ffd03988f87ac704ffd74a6b7dcca2193f93",
+      "frontend/src/lib/world-engine/local/semantics/actions/checks.ts": "6ac959b2f1ba93eb8ac4968a615e5ca210873d3ccbfc68a4c945d806fcf84bbe",
+      "frontend/src/lib/world-engine/local/semantics/actions/scene.ts": "d8b4e8f7f164b3c6287832a36ff94c78ba7f796aa5649bcd13dea9f2386521b5",
+      "frontend/src/lib/world-engine/local/semantics/actions/prompts.ts": "5ae1b70805c904fbec1690f5d5bdacb92a0452d0cd081e769913794b59924f6e",
+      "frontend/src/lib/world-engine/local/semantics/actions/text.ts": "28ad25b002b4771e1bb7cb57555057e65c92a325807a5bc45fde6e1aac77464f",
+      "frontend/src/lib/world-engine/local/semantics/actions/inputs.ts": "a7308d9306ac76e49b73f007a634bc53bfd303364ef0890bf03cf41c26ffa6d2",
+      "frontend/src/lib/world-engine/local/semantics/actions/types.ts": "8d0aace5ca2b6d5476bc863729ab18e92c09186105ffe9aeb7c90e936c1d2844",
+      "frontend/src/lib/world-engine/local/semantics/actions/fixtures.ts": "db44f2e4a24e49cafb4b81cf6c0ac367677cafafa7e9d8688a90fe6c80f3840e",
+      "frontend/src/lib/world-engine/local/state.ts": "024b61fb63f2bec78c46a1cd4ed158a5798b4e28c31293b2d3765acbb6497b43",
+      "frontend/src/lib/world-engine/local/prompt.ts": "a21489ca6480d479d83a97cb750cf93011b468fa80e29e74aed8d1558d5f98b8",
+      "frontend/src/lib/world-engine/runtime/structured-output.ts": "26f0a2278df8fa9c03c68220ad847b66272ef937b73f99b1bf1286b3cbb1fd70",
+      "frontend/src/lib/world-engine/runtime/output-schema.ts": "4d028f3aa429c3b37b52ec19945d0b3c72569585735eabce267cb50fa0868a53",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "817873d4fcf38a207a4629915581d4846e31a92257161e313e70f8c72bd15d5e",
+      "frontend/src/lib/world-engine/runtime/engine.ts": "eadd0a2c8f98736f9ac37ed04ad118f3a04ce1850ec8c6c26e5490791c5ae28d"
+    },
+    "contractDigest": {
+      "protocolVersion": 2,
+      "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+    }
+  },
+  "assets": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "modelBytes": 396705472,
+    "wllamaSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "cases": [
+    {
+      "id": "A1-autonomous-unnamed",
+      "task": "action",
+      "note": "Named? no. Should still be judged from her own tasks and the radio event."
+    },
+    {
+      "id": "A2-named-request",
+      "task": "action",
+      "note": "Named and asked to do something."
+    },
+    {
+      "id": "A3-named-idle",
+      "task": "action",
+      "note": "Named but only small talk; a short reply or inaction are both legal."
+    },
+    {
+      "id": "A4a-offscreen-skip",
+      "task": "action",
+      "note": "Fingel is in the shed; explicit skip policy must make this a zero-call scope decision."
+    },
+    {
+      "id": "A4b-offscreen-judge",
+      "task": "action",
+      "note": "Default policy: judge Fingel from the shed only; the protagonist move must be hidden from him."
+    },
+    {
+      "id": "A5-protagonist-pending",
+      "task": "action",
+      "note": "Player pending command is the frozen action."
+    },
+    {
+      "id": "A6-protagonist-consumed",
+      "task": "action",
+      "note": "Command already executed: continuation only, no verbatim repeat."
+    },
+    {
+      "id": "A7-absent-npc-named",
+      "task": "action",
+      "note": "Player names someone in another room; Nono may answer about him without acting as him."
+    },
+    {
+      "id": "T1-pronoun-single",
+      "task": "targets",
+      "note": "Pronoun with one present candidate."
+    },
+    {
+      "id": "T2-pronoun-ambiguous",
+      "task": "targets",
+      "note": "Pronoun with two present candidates; the choice must be argued from the scene."
+    },
+    {
+      "id": "T3-absent-name",
+      "task": "targets",
+      "note": "Names a registered character in another room: no target, absence recorded."
+    },
+    {
+      "id": "T4-container",
+      "task": "targets",
+      "note": "Shed scene: Qin is inside the cage (child location) and must not be selectable."
+    },
+    {
+      "id": "T5-empty-move",
+      "task": "targets",
+      "note": "Movement only: a legal empty target set."
+    },
+    {
+      "id": "T6-two-present",
+      "task": "targets",
+      "note": "Two named present characters; both may be touched."
+    },
+    {
+      "id": "R1-member-reaction",
+      "task": "reaction",
+      "note": "Reaction of the admitted member to a specific threat."
+    },
+    {
+      "id": "R2-protagonist-member",
+      "task": "reaction",
+      "note": "The player character is the member: zero-call program floor."
+    },
+    {
+      "id": "R3-echo-risk",
+      "task": "reaction",
+      "note": "Long source action that invites verbatim repetition."
+    }
+  ],
+  "runs": [
+    {
+      "task": "action",
+      "key": "nono",
+      "value": {
+        "kind": "act",
+        "text": "靠在巷口墙边，确认护目镜是否起雾"
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 11303,
+      "attempts": 1,
+      "raw": "{\"kind\":\"act\",\"text\":\"靠在巷口墙边，确认护目镜是否起雾\"}",
+      "issues": [],
+      "calls": [
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 1565,
+          "raw": "{\"kind\":\"act\",\"text\":\"靠在巷口墙边，确认护目镜是否起雾\"}",
+          "elapsedMs": 11302,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：我靠在巷口墙边，先确认护目镜有没有起雾。】\n【本回合已发生的事】\n- 巷口的红方无线电响了一声，报出西回廊有人接近。\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 11303,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A1-autonomous-unnamed",
+      "note": "Named? no. Should still be judged from her own tasks and the radio event.",
+      "input": {
+        "id": "A1-autonomous-unnamed",
+        "task": "action",
+        "actor": "nono",
+        "playerInput": "我靠在巷口墙边，先确认护目镜有没有起雾。",
+        "events": [
+          "巷口的红方无线电响了一声，报出西回廊有人接近。"
+        ],
+        "note": "Named? no. Should still be judged from her own tasks and the radio event."
+      }
+    },
+    {
+      "task": "action",
+      "key": "nono",
+      "value": {
+        "kind": "act",
+        "text": "诺诺查看西回廊是否有需要帮助的人"
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 6363,
+      "attempts": 2,
+      "raw": "{\"kind\":\"act\",\"text\":\"诺诺查看西回廊是否有需要帮助的人\"}",
+      "issues": [
+        {
+          "code": "action_first_person",
+          "severity": "error",
+          "message": "行动用了第一人称“我”；行动句必须是关于该角色的第三人称描述",
+          "detail": "诺诺，你帮我看一下西回廊那边有没有人。"
+        },
+        {
+          "code": "npc_repeats_player",
+          "severity": "error",
+          "message": "行动句逐字复述了玩家原话（原样照抄）",
+          "detail": "诺诺，你帮我看一下西回廊那边有没有人。"
+        },
+        {
+          "code": "repair_requested",
+          "severity": "warn",
+          "message": "第 1 次输出被拒：行动用了第一人称“我”；行动句必须是关于该角色的第三人称描述；行动句逐字复述了玩家原话（原样照抄）"
+        }
+      ],
+      "calls": [
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 1542,
+          "raw": "{\"kind\":\"act\",\"text\":\"诺诺，你帮我看一下西回廊那边有没有人。\"}",
+          "elapsedMs": 3794,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：诺诺，你帮我看一下西回廊那边有没有人。】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        },
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 2,
+          "promptChars": 1613,
+          "raw": "{\"kind\":\"act\",\"text\":\"诺诺查看西回廊是否有需要帮助的人\"}",
+          "elapsedMs": 2569,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：诺诺，你帮我看一下西回廊那边有没有人。】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00\n\n【上一次输出不能采用】用第三人称写这个角色的行动，不要用“我”；不要复述玩家的原话，只写这个角色自己做了什么。请重新判断，只输出规定格式。"
+        }
+      ],
+      "wallMs": 6363,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A2-named-request",
+      "note": "Named and asked to do something.",
+      "input": {
+        "id": "A2-named-request",
+        "task": "action",
+        "actor": "nono",
+        "playerInput": "诺诺，你帮我看一下西回廊那边有没有人。",
+        "note": "Named and asked to do something."
+      }
+    },
+    {
+      "task": "action",
+      "key": "nono",
+      "value": {
+        "kind": "skip"
+      },
+      "source": "fallback",
+      "fallback": true,
+      "elapsedMs": 5311,
+      "attempts": 2,
+      "raw": "{\"kind\":\"act\",\"text\":\"诺诺，你叫什么名字？\"}",
+      "issues": [
+        {
+          "code": "npc_repeats_player",
+          "severity": "error",
+          "message": "行动句逐字复述了玩家原话（原样照抄）",
+          "detail": "诺诺，你叫什么名字？"
+        },
+        {
+          "code": "repair_requested",
+          "severity": "warn",
+          "message": "第 1 次输出被拒：行动句逐字复述了玩家原话（原样照抄）"
+        },
+        {
+          "code": "npc_repeats_player",
+          "severity": "error",
+          "message": "行动句逐字复述了玩家原话（原样照抄）",
+          "detail": "诺诺，你叫什么名字？"
+        },
+        {
+          "code": "repair_requested",
+          "severity": "warn",
+          "message": "第 2 次输出被拒：行动句逐字复述了玩家原话（原样照抄）"
+        },
+        {
+          "code": "npc_repeats_player",
+          "severity": "error",
+          "message": "行动句逐字复述了玩家原话（原样照抄）",
+          "detail": "诺诺，你叫什么名字？"
+        },
+        {
+          "code": "repair_failed",
+          "severity": "error",
+          "message": "行动判断没有可用输出，按不行动回退"
+        }
+      ],
+      "calls": [
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 1533,
+          "raw": "{\"kind\":\"act\",\"text\":\"诺诺，你叫什么名字？\"}",
+          "elapsedMs": 2716,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：诺诺，你叫什么名字？】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        },
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 2,
+          "promptChars": 1583,
+          "raw": "{\"kind\":\"act\",\"text\":\"诺诺，你叫什么名字？\"}",
+          "elapsedMs": 2594,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：诺诺，你叫什么名字？】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00\n\n【上一次输出不能采用】不要复述玩家的原话，只写这个角色自己做了什么。请重新判断，只输出规定格式。"
+        }
+      ],
+      "wallMs": 5311,
+      "sourceType": "fallback",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A3-named-idle",
+      "note": "Named but only small talk; a short reply or inaction are both legal.",
+      "input": {
+        "id": "A3-named-idle",
+        "task": "action",
+        "actor": "nono",
+        "playerInput": "诺诺，你叫什么名字？",
+        "note": "Named but only small talk; a short reply or inaction are both legal."
+      }
+    },
+    {
+      "task": "action",
+      "key": "fingel",
+      "value": {
+        "kind": "skip"
+      },
+      "source": "program",
+      "fallback": false,
+      "elapsedMs": 1,
+      "attempts": 0,
+      "raw": "",
+      "issues": [
+        {
+          "code": "actor_out_of_scene",
+          "severity": "info",
+          "message": "芬格尔在器材棚，不在主角所在的西侧服务巷，本场景不判断",
+          "entityId": "fingel"
+        }
+      ],
+      "calls": [],
+      "wallMs": 1,
+      "sourceType": "program",
+      "scene": {
+        "room": "器材棚",
+        "visible": [
+          {
+            "id": "qin",
+            "name": "秦越",
+            "position": "器材棚/笼内"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "lu",
+            "name": "路明非",
+            "room": "西侧服务巷"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "room": "西侧服务巷"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "ammo_box",
+            "name": "开盖演习弹药箱",
+            "position": "器材棚"
+          },
+          {
+            "id": "cage_key",
+            "name": "器材笼钥匙",
+            "position": "秦越身上/腰间"
+          },
+          {
+            "id": "cage_lock",
+            "name": "器材笼挂锁",
+            "position": "器材棚"
+          },
+          {
+            "id": "camera",
+            "name": "芬格尔的相机",
+            "position": "芬格尔身上/身上"
+          },
+          {
+            "id": "camera_battery",
+            "name": "相机备用电池",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "checkout_book",
+            "name": "器材领用簿",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "meal_tickets",
+            "name": "芬格尔的饭票夹",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "spare_blue_band",
+            "name": "备用蓝色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "spare_goggles",
+            "name": "备用护目镜",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_gun",
+            "name": "未领用演习短枪",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_mag1",
+            "name": "通用短枪弹匣甲",
+            "position": "开盖演习弹药箱（在器材棚）/左格"
+          },
+          {
+            "id": "spare_mag2",
+            "name": "通用短枪弹匣乙",
+            "position": "开盖演习弹药箱（在器材棚）/右格"
+          },
+          {
+            "id": "spare_red_band",
+            "name": "备用红色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "supply_counter",
+            "name": "器材领用台",
+            "position": "器材棚"
+          }
+        ]
+      },
+      "caseId": "A4a-offscreen-skip",
+      "note": "Fingel is in the shed; explicit skip policy must make this a zero-call scope decision.",
+      "input": {
+        "id": "A4a-offscreen-skip",
+        "task": "action",
+        "actor": "fingel",
+        "offscreenPolicy": "skip",
+        "playerInput": "我靠在巷口墙边喘口气。",
+        "note": "Fingel is in the shed; explicit skip policy must make this a zero-call scope decision."
+      }
+    },
+    {
+      "task": "action",
+      "key": "fingel",
+      "value": {
+        "kind": "act",
+        "text": "换上相机备用电池，拍到有辨识度的争旗场面"
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 9417,
+      "attempts": 1,
+      "raw": "{\"kind\":\"act\",\"text\":\"换上相机备用电池，拍到有辨识度的争旗场面\"}",
+      "issues": [],
+      "calls": [
+        {
+          "task": "action",
+          "key": "fingel",
+          "attempt": 1,
+          "promptChars": 1605,
+          "raw": "{\"kind\":\"act\",\"text\":\"换上相机备用电池，拍到有辨识度的争旗场面\"}",
+          "elapsedMs": 9417,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 芬格尔（id=fingel）位置=器材棚/柜台后；精神=51/100；个性=愿意把每一条小道说成独家情报，能赚钱或换饭时尤其热心；并不愿真把同伴带进死路。与路明非同住，知道检修通道通向钟楼地下门，…；待办=task_fingel_camera=换上相机备用电池，拍到有辨识度的争旗场面；task_fingel_deal=在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\n【角色待办任务】\n- task_fingel_camera：换上相机备用电池，拍到有辨识度的争旗场面\n- task_fingel_deal：在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\n- task_fingel_help：若路明非求助，给出可验证的器材或路线帮助，而不是空口保证安全\n- task_fingel_map：把检修门从里面插闩这件事告诉准备走地下路线的人\n- task_fingel_soup：保住自己腰包里的饭票，不拿别人的补给抵债\n【同地点可见人物】\n- 秦越（id=qin）位置=器材棚/笼内；精神=61；待办=task_qin_battery=确认短讯机电池与相机电池型号不同，避免拿错；task_qin_gear=让演习器材可追溯地发放，并优先保证伤员搬运\n【同地点可见物品（含各人身上物品）】\n- 开盖演习弹药箱（id=ammo_box）位置=器材棚\n- 器材笼钥匙（id=cage_key）位置=秦越身上/腰间\n- 器材笼挂锁（id=cage_lock）位置=器材棚\n- 芬格尔的相机（id=camera）位置=芬格尔身上/身上\n- 相机备用电池（id=camera_battery）位置=芬格尔身上/口袋里\n- 器材领用簿（id=checkout_book）位置=器材领用台（在器材棚）/台面上\n- 芬格尔的饭票夹（id=meal_tickets）位置=芬格尔身上/口袋里\n- 备用蓝色识别带（id=spare_blue_band）位置=器材领用台（在器材棚）/台面上\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 林亦舟（id=lin）在西回廊\n- 路明非（id=lu）在西侧服务巷\n- 曼施坦因（id=manstein）在演习观察席\n- 诺诺（id=nono）在西侧服务巷\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角不在这里（主角在西侧服务巷）；你看不到、也回应不了主角，只按本地点的情况和自己的任务判断。】\n【本回合已发生的事】\n（无）\n【地点】器材棚（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 9417,
+      "sourceType": "model",
+      "scene": {
+        "room": "器材棚",
+        "visible": [
+          {
+            "id": "qin",
+            "name": "秦越",
+            "position": "器材棚/笼内"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "lu",
+            "name": "路明非",
+            "room": "西侧服务巷"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "room": "西侧服务巷"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "ammo_box",
+            "name": "开盖演习弹药箱",
+            "position": "器材棚"
+          },
+          {
+            "id": "cage_key",
+            "name": "器材笼钥匙",
+            "position": "秦越身上/腰间"
+          },
+          {
+            "id": "cage_lock",
+            "name": "器材笼挂锁",
+            "position": "器材棚"
+          },
+          {
+            "id": "camera",
+            "name": "芬格尔的相机",
+            "position": "芬格尔身上/身上"
+          },
+          {
+            "id": "camera_battery",
+            "name": "相机备用电池",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "checkout_book",
+            "name": "器材领用簿",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "meal_tickets",
+            "name": "芬格尔的饭票夹",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "spare_blue_band",
+            "name": "备用蓝色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "spare_goggles",
+            "name": "备用护目镜",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_gun",
+            "name": "未领用演习短枪",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_mag1",
+            "name": "通用短枪弹匣甲",
+            "position": "开盖演习弹药箱（在器材棚）/左格"
+          },
+          {
+            "id": "spare_mag2",
+            "name": "通用短枪弹匣乙",
+            "position": "开盖演习弹药箱（在器材棚）/右格"
+          },
+          {
+            "id": "spare_red_band",
+            "name": "备用红色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "supply_counter",
+            "name": "器材领用台",
+            "position": "器材棚"
+          }
+        ]
+      },
+      "caseId": "A4b-offscreen-judge",
+      "note": "Default policy: judge Fingel from the shed only; the protagonist move must be hidden from him.",
+      "input": {
+        "id": "A4b-offscreen-judge",
+        "task": "action",
+        "actor": "fingel",
+        "playerInput": "我靠在巷口墙边喘口气。",
+        "events": [
+          "器材棚门口传来脚步，停了一下又走远了。"
+        ],
+        "note": "Default policy: judge Fingel from the shed only; the protagonist move must be hidden from him."
+      }
+    },
+    {
+      "task": "action",
+      "key": "lu",
+      "value": {
+        "kind": "act",
+        "text": "我把护目镜推上去，先看巷口的动静。"
+      },
+      "source": "program",
+      "fallback": false,
+      "elapsedMs": 2,
+      "attempts": 0,
+      "raw": "",
+      "issues": [
+        {
+          "code": "protagonist_command",
+          "severity": "info",
+          "message": "主角的待处理命令原样作为冻结行动"
+        }
+      ],
+      "calls": [],
+      "wallMs": 2,
+      "sourceType": "program",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A5-protagonist-pending",
+      "note": "Player pending command is the frozen action.",
+      "input": {
+        "id": "A5-protagonist-pending",
+        "task": "action",
+        "actor": "lu",
+        "playerInput": "我把护目镜推上去，先看巷口的动静。",
+        "note": "Player pending command is the frozen action."
+      }
+    },
+    {
+      "task": "action",
+      "key": "lu",
+      "value": {
+        "kind": "act",
+        "text": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立"
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 9881,
+      "attempts": 1,
+      "raw": "{\"kind\":\"act\",\"text\":\"向诺诺问清当前红蓝两方局势和自己是否可以保持中立\"}",
+      "issues": [
+        {
+          "code": "protagonist_continues",
+          "severity": "info",
+          "message": "主角的命令已执行过；只判断同一件事是否还要继续"
+        }
+      ],
+      "calls": [
+        {
+          "task": "action",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1605,
+          "raw": "{\"kind\":\"act\",\"text\":\"向诺诺问清当前红蓝两方局势和自己是否可以保持中立\"}",
+          "elapsedMs": 9880,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"}（延续同一件事）或 {\"kind\":\"skip\"}（这件事不需要主角再动）。\n\n【本次判断的角色】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43/100；个性=习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应…；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【角色待办任务】\n- task_lu_ally：得到至少一名在场者明确同意的协作，不替他人擅自承诺\n- task_lu_choice：向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n- task_lu_goggles：把胸前护目镜戴好并确认镜片没有裂纹\n- task_lu_kit：在进入交火区前拿到可用的护目镜与演习装备\n- task_lu_match：在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n- task_lu_route：在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n【同地点可见人物】\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角上一步的命令（已经执行过；只判断这件事是否还需要主角继续做下一步，不能改做别的事，不能复述原话）：我把护目镜推上去，先看巷口的动静。】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 9881,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A6-protagonist-consumed",
+      "note": "Command already executed: continuation only, no verbatim repeat.",
+      "input": {
+        "id": "A6-protagonist-consumed",
+        "task": "action",
+        "actor": "lu",
+        "intentStatus": "consumed",
+        "playerInput": "我把护目镜推上去，先看巷口的动静。",
+        "note": "Command already executed: continuation only, no verbatim repeat."
+      }
+    },
+    {
+      "task": "action",
+      "key": "nono",
+      "value": {
+        "kind": "act",
+        "text": "让红方的旗台行动有可执行的掩护，而不把路明非当诱饵"
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 3916,
+      "attempts": 1,
+      "raw": "{\"kind\":\"act\",\"text\":\"让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\"}",
+      "issues": [],
+      "calls": [
+        {
+          "task": "action",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 1531,
+          "raw": "{\"kind\":\"act\",\"text\":\"让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\"}",
+          "elapsedMs": 3916,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的角色行动判断器。只输出 JSON。\n你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。\n判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。\n行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。\n输出只能是 {\"kind\":\"act\",\"text\":\"一句话行动\"} 或 {\"kind\":\"skip\"}（这个角色此刻不行动）。\n\n【本次判断的角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【角色待办任务】\n- task_nono_battery：把故障短讯机恢复到能与凯撒联络的状态\n- task_nono_lu：问清路明非的参赛意愿并说明三条接近钟楼的路线\n- task_nono_signal：与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷\n- task_nono_squad：让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\n- task_nono_wounded：确认西回廊的蓝方伤员是否需要真正的医护帮助\n【同地点可见人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点可见物品（含各人身上物品）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【不在场角色（不能当作现场人物）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：楚子航在钟楼吗？】\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 3916,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "A7-absent-npc-named",
+      "note": "Player names someone in another room; Nono may answer about him without acting as him.",
+      "input": {
+        "id": "A7-absent-npc-named",
+        "task": "action",
+        "actor": "nono",
+        "playerInput": "楚子航在钟楼吗？",
+        "note": "Player names someone in another room; Nono may answer about him without acting as him."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "nono"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 7127,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+      "issues": [
+        {
+          "code": "anaphora_present",
+          "severity": "info",
+          "message": "行动用指代而不是姓名，目标由现场判断",
+          "detail": "我把手里的地图递给她。"
+        }
+      ],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1197,
+          "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+          "elapsedMs": 7126,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我把手里的地图递给她。\n【同地点人物】\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 7127,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "T1-pronoun-single",
+      "note": "Pronoun with one present candidate.",
+      "input": {
+        "id": "T1-pronoun-single",
+        "task": "targets",
+        "source": "lu",
+        "actionText": "我把手里的地图递给她。",
+        "note": "Pronoun with one present candidate."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "fingel"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 7200,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+      "issues": [
+        {
+          "code": "anaphora_present",
+          "severity": "info",
+          "message": "行动用指代而不是姓名，目标由现场判断",
+          "detail": "我把地图递给他。"
+        }
+      ],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1406,
+          "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+          "elapsedMs": 7200,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我把地图递给他。\n【同地点人物】\n- 芬格尔（id=fingel）位置=西侧服务巷；精神=51/100；个性=愿意把每一条小道说成独家情报，能赚钱或换饭时尤其热心；并不愿真把同伴带进死路。与路明非同住，知道检修通道通向钟楼地下门，…；待办=task_fingel_camera=换上相机备用电池，拍到有辨识度的争旗场面；task_fingel_deal=在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 芬格尔的相机（id=camera）位置=芬格尔身上/身上\n- 相机备用电池（id=camera_battery）位置=芬格尔身上/口袋里\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 芬格尔的饭票夹（id=meal_tickets）位置=芬格尔身上/口袋里\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 7200,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "camera",
+            "name": "芬格尔的相机",
+            "position": "芬格尔身上/身上"
+          },
+          {
+            "id": "camera_battery",
+            "name": "相机备用电池",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "meal_tickets",
+            "name": "芬格尔的饭票夹",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "T2-pronoun-ambiguous",
+      "note": "Pronoun with two present candidates; the choice must be argued from the scene.",
+      "input": {
+        "id": "T2-pronoun-ambiguous",
+        "task": "targets",
+        "source": "lu",
+        "patch": [
+          {
+            "entityId": "fingel",
+            "containerId": "lane",
+            "slotId": null
+          }
+        ],
+        "actionText": "我把地图递给他。",
+        "note": "Pronoun with two present candidates; the choice must be argued from the scene."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "nono"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 6113,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+      "issues": [
+        {
+          "code": "absent_character_named",
+          "severity": "info",
+          "message": "行动提到不在场的人：楚子航；他们没有反应机会",
+          "detail": "楚子航"
+        },
+        {
+          "code": "target_unmentioned",
+          "severity": "warn",
+          "message": "行动句没有点名诺诺，目标来自模型的现场推断",
+          "detail": "nono"
+        }
+      ],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1195,
+          "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+          "elapsedMs": 6113,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我去钟楼找楚子航。\n【同地点人物】\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 6113,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "T3-absent-name",
+      "note": "Names a registered character in another room: no target, absence recorded.",
+      "input": {
+        "id": "T3-absent-name",
+        "task": "targets",
+        "source": "lu",
+        "actionText": "我去钟楼找楚子航。",
+        "note": "Names a registered character in another room: no target, absence recorded."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "fingel"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 7107,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+      "issues": [
+        {
+          "code": "target_unmentioned",
+          "severity": "warn",
+          "message": "行动句没有点名芬格尔，目标来自模型的现场推断",
+          "detail": "fingel"
+        }
+      ],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1414,
+          "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+          "elapsedMs": 7106,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=器材棚；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我把货架上的备用护目镜拿下来，递给诺诺。\n【同地点人物】\n- 芬格尔（id=fingel）位置=器材棚/柜台后；精神=51/100；个性=愿意把每一条小道说成独家情报，能赚钱或换饭时尤其热心；并不愿真把同伴带进死路。与路明非同住，知道检修通道通向钟楼地下门，…；待办=task_fingel_camera=换上相机备用电池，拍到有辨识度的争旗场面；task_fingel_deal=在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\n- 诺诺（id=nono）位置=器材棚；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材笼内\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 开盖演习弹药箱（id=ammo_box）位置=器材棚\n- 器材笼挂锁（id=cage_lock）位置=器材棚\n- 芬格尔的相机（id=camera）位置=芬格尔身上/身上\n- 相机备用电池（id=camera_battery）位置=芬格尔身上/口袋里\n- 器材领用簿（id=checkout_book）位置=器材领用台（在器材棚）/台面上\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 芬格尔的饭票夹（id=meal_tickets）位置=芬格尔身上/口袋里\n【本回合已发生的事】\n（无）\n【地点】器材棚（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 7107,
+      "sourceType": "model",
+      "scene": {
+        "room": "器材棚",
+        "visible": [
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "position": "器材棚/柜台后"
+          },
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "器材棚"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材笼内"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "ammo_box",
+            "name": "开盖演习弹药箱",
+            "position": "器材棚"
+          },
+          {
+            "id": "cage_lock",
+            "name": "器材笼挂锁",
+            "position": "器材棚"
+          },
+          {
+            "id": "camera",
+            "name": "芬格尔的相机",
+            "position": "芬格尔身上/身上"
+          },
+          {
+            "id": "camera_battery",
+            "name": "相机备用电池",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "checkout_book",
+            "name": "器材领用簿",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "meal_tickets",
+            "name": "芬格尔的饭票夹",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "spare_blue_band",
+            "name": "备用蓝色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "spare_goggles",
+            "name": "备用护目镜",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_gun",
+            "name": "未领用演习短枪",
+            "position": "器材领用台（在器材棚）/架子上"
+          },
+          {
+            "id": "spare_mag1",
+            "name": "通用短枪弹匣甲",
+            "position": "开盖演习弹药箱（在器材棚）/左格"
+          },
+          {
+            "id": "spare_mag2",
+            "name": "通用短枪弹匣乙",
+            "position": "开盖演习弹药箱（在器材棚）/右格"
+          },
+          {
+            "id": "spare_red_band",
+            "name": "备用红色识别带",
+            "position": "器材领用台（在器材棚）/台面上"
+          },
+          {
+            "id": "supply_counter",
+            "name": "器材领用台",
+            "position": "器材棚"
+          }
+        ]
+      },
+      "caseId": "T4-container",
+      "note": "Shed scene: Qin is inside the cage (child location) and must not be selectable.",
+      "input": {
+        "id": "T4-container",
+        "task": "targets",
+        "source": "lu",
+        "patch": [
+          {
+            "entityId": "lu",
+            "containerId": "shed",
+            "slotId": null
+          },
+          {
+            "entityId": "nono",
+            "containerId": "shed",
+            "slotId": null
+          },
+          {
+            "entityId": "qin",
+            "containerId": "cage",
+            "slotId": null
+          }
+        ],
+        "actionText": "我把货架上的备用护目镜拿下来，递给诺诺。",
+        "note": "Shed scene: Qin is inside the cage (child location) and must not be selectable."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "nono"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 6565,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+      "issues": [
+        {
+          "code": "target_unmentioned",
+          "severity": "warn",
+          "message": "行动句没有点名诺诺，目标来自模型的现场推断",
+          "detail": "nono"
+        }
+      ],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1198,
+          "raw": "{\"targets\": [{\"targetId\": \"nono\"}]}",
+          "elapsedMs": 6564,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我走向巷子尽头的检修口。\n【同地点人物】\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 芬格尔（id=fingel）在器材棚\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 6565,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "T5-empty-move",
+      "note": "Movement only: a legal empty target set.",
+      "input": {
+        "id": "T5-empty-move",
+        "task": "targets",
+        "source": "lu",
+        "actionText": "我走向巷子尽头的检修口。",
+        "note": "Movement only: a legal empty target set."
+      }
+    },
+    {
+      "task": "targets",
+      "key": "lu",
+      "value": {
+        "targets": [
+          {
+            "targetId": "fingel"
+          }
+        ]
+      },
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 7401,
+      "attempts": 1,
+      "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+      "issues": [],
+      "calls": [
+        {
+          "task": "targets",
+          "key": "lu",
+          "attempt": 1,
+          "promptChars": 1421,
+          "raw": "{\"targets\": [{\"targetId\": \"fingel\"}]}",
+          "elapsedMs": 7400,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的牵连判断器。只输出 JSON。\n给定一条已经确认的行动，判断它直接牵连同地点里的哪些角色：只有会被这条行动直接触及、必须立刻做出回应的角色才算。\n指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。\n行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动只提到地点、物品或移动时，通常没有牵连对象，返回空数组。\n不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。\n最多 2 人。输出 {\"targets\":[{\"targetId\":\"角色id\"}]}；没有就是 {\"targets\":[]}。\n\n【行动者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【行动】我把地图摊在地上，问诺诺和芬格尔谁认得这条路。\n【同地点人物】\n- 芬格尔（id=fingel）位置=西侧服务巷；精神=51/100；个性=愿意把每一条小道说成独家情报，能赚钱或换饭时尤其热心；并不愿真把同伴带进死路。与路明非同住，知道检修通道通向钟楼地下门，…；待办=task_fingel_camera=换上相机备用电池，拍到有辨识度的争旗场面；task_fingel_deal=在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\n- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【不在场角色（不可选）】\n- 凯撒（id=caesar）在红方集结点\n- 楚子航（id=chu）在钟楼二层平台\n- 顾岚（id=doctor）在演习医护处置室\n- 林亦舟（id=lin）在西回廊\n- 曼施坦因（id=manstein）在演习观察席\n- 秦越（id=qin）在器材棚\n- 沈澄（id=shen）在医护休息区\n- 苏茜（id=su）在东回廊\n- 唐骁（id=tang）在中央庭院\n- 富山雅史（id=tomiyama）在医护休息区\n- 周映（id=zhou）在钟楼旗台外廊\n【同地点物品（不是人物）】\n- 芬格尔的相机（id=camera）位置=芬格尔身上/身上\n- 相机备用电池（id=camera_battery）位置=芬格尔身上/口袋里\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 芬格尔的饭票夹（id=meal_tickets）位置=芬格尔身上/口袋里\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00"
+        }
+      ],
+      "wallMs": 7401,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "camera",
+            "name": "芬格尔的相机",
+            "position": "芬格尔身上/身上"
+          },
+          {
+            "id": "camera_battery",
+            "name": "相机备用电池",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "meal_tickets",
+            "name": "芬格尔的饭票夹",
+            "position": "芬格尔身上/口袋里"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "T6-two-present",
+      "note": "Two named present characters; both may be touched.",
+      "input": {
+        "id": "T6-two-present",
+        "task": "targets",
+        "source": "lu",
+        "patch": [
+          {
+            "entityId": "fingel",
+            "containerId": "lane",
+            "slotId": null
+          }
+        ],
+        "actionText": "我把地图摊在地上，问诺诺和芬格尔谁认得这条路。",
+        "note": "Two named present characters; both may be touched."
+      }
+    },
+    {
+      "task": "reaction",
+      "key": "nono",
+      "value": "诺诺的红色识别带在路明非的战术地图上闪烁，她迅速将故障短讯机塞入口袋，目光紧锁着路明非。",
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 7646,
+      "attempts": 1,
+      "raw": "诺诺的红色识别带在路明非的战术地图上闪烁，她迅速将故障短讯机塞入口袋，目光紧锁着路明非。",
+      "issues": [],
+      "calls": [
+        {
+          "task": "reaction",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 910,
+          "raw": "诺诺的红色识别带在路明非的战术地图上闪烁，她迅速将故障短讯机塞入口袋，目光紧锁着路明非。",
+          "elapsedMs": 7646,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的反应生成器。只输出正文，不要 JSON、不要解释、不要标题。\n写被牵连角色的即时反应：一两句第三人称，写清他/她针对发起者这条行动的反应。\n必须和这条威胁有因果关系；不得替发起者或主角行动；不得复述或引用发起者的原话；不得新增人物、地点、物品、往事、线索；不写结果成败（结算层会判定）。\n\n【被牵连角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【发起者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【发起者的行动】我把地图塞到她手里，让她先看路线。\n【同地点人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点物品】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00\n反应："
+        }
+      ],
+      "wallMs": 7647,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "R1-member-reaction",
+      "note": "Reaction of the admitted member to a specific threat.",
+      "input": {
+        "id": "R1-member-reaction",
+        "task": "reaction",
+        "source": "lu",
+        "member": "nono",
+        "actionText": "我把地图塞到她手里，让她先看路线。",
+        "note": "Reaction of the admitted member to a specific threat."
+      }
+    },
+    {
+      "task": "reaction",
+      "key": "lu",
+      "value": "路明非没有作出反应。",
+      "source": "program",
+      "fallback": false,
+      "elapsedMs": 0,
+      "attempts": 0,
+      "raw": "",
+      "issues": [
+        {
+          "code": "protagonist_reaction_minimal",
+          "severity": "info",
+          "message": "被牵连的是主角，模型不代写玩家角色的反应；本段记为未反应，决定权留在玩家"
+        }
+      ],
+      "calls": [],
+      "wallMs": 0,
+      "sourceType": "program",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "nono",
+            "name": "诺诺",
+            "position": "西侧服务巷/入口"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "R2-protagonist-member",
+      "note": "The player character is the member: zero-call program floor.",
+      "input": {
+        "id": "R2-protagonist-member",
+        "task": "reaction",
+        "source": "nono",
+        "member": "lu",
+        "actionText": "诺诺一把拽住路明非的袖子，把他往墙边带。",
+        "note": "The player character is the member: zero-call program floor."
+      }
+    },
+    {
+      "task": "reaction",
+      "key": "nono",
+      "value": "诺诺的红色识别带在西回廊的暗处微微发烫，她迅速将故障短讯机贴近胸前，指尖在腰间轻轻摩挲着那把演习短枪。",
+      "source": "model",
+      "fallback": false,
+      "elapsedMs": 6158,
+      "attempts": 1,
+      "raw": "诺诺的红色识别带在西回廊的暗处微微发烫，她迅速将故障短讯机贴近胸前，指尖在腰间轻轻摩挲着那把演习短枪。",
+      "issues": [],
+      "calls": [
+        {
+          "task": "reaction",
+          "key": "nono",
+          "attempt": 1,
+          "promptChars": 919,
+          "raw": "诺诺的红色识别带在西回廊的暗处微微发烫，她迅速将故障短讯机贴近胸前，指尖在腰间轻轻摩挲着那把演习短枪。",
+          "elapsedMs": 6158,
+          "decoded": true,
+          "prompt": "你是中文跑团游戏的反应生成器。只输出正文，不要 JSON、不要解释、不要标题。\n写被牵连角色的即时反应：一两句第三人称，写清他/她针对发起者这条行动的反应。\n必须和这条威胁有因果关系；不得替发起者或主角行动；不得复述或引用发起者的原话；不得新增人物、地点、物品、往事、线索；不写结果成败（结算层会判定）。\n\n【被牵连角色】- 诺诺（id=nono）位置=西侧服务巷/入口；精神=58/100；个性=看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有…；待办=task_nono_battery=把故障短讯机恢复到能与凯撒联络的状态；task_nono_lu=问清路明非的参赛意愿并说明三条接近钟楼的路线\n【发起者】- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【发起者的行动】我把地图铺在地上，用指尖点着西回廊和检修口两条路线。\n【同地点人物】\n- 路明非（id=lu）位置=西侧服务巷/墙边；精神=43；待办=task_lu_ally=得到至少一名在场者明确同意的协作，不替他人擅自承诺；task_lu_choice=向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n【同地点物品】\n- 路明非的护目镜（id=goggles_lu）位置=路明非身上/身上\n- 路明非的演习背心（id=jacket_lu）位置=路明非身上/身上\n- 赛区路线图（id=map）位置=西侧服务巷\n- 诺诺的演习短枪（id=pistol_nono）位置=诺诺身上/右手\n- 诺诺的故障短讯机（id=radio_nono）位置=诺诺身上/腰间\n- 诺诺的红色识别带（id=red_band_nono）位置=诺诺身上/身上\n- 演习规则牌（id=rules）位置=西侧服务巷\n【本回合已发生的事】\n（无）\n【地点】西侧服务巷（西侧器材区 < 卡塞尔学院演习区）；时间 2009-10-17T15:20:00\n反应："
+        }
+      ],
+      "wallMs": 6158,
+      "sourceType": "model",
+      "scene": {
+        "room": "西侧服务巷",
+        "visible": [
+          {
+            "id": "lu",
+            "name": "路明非",
+            "position": "西侧服务巷/墙边"
+          }
+        ],
+        "absent": [
+          {
+            "id": "caesar",
+            "name": "凯撒",
+            "room": "红方集结点"
+          },
+          {
+            "id": "chu",
+            "name": "楚子航",
+            "room": "钟楼二层平台"
+          },
+          {
+            "id": "doctor",
+            "name": "顾岚",
+            "room": "演习医护处置室"
+          },
+          {
+            "id": "fingel",
+            "name": "芬格尔",
+            "room": "器材棚"
+          },
+          {
+            "id": "lin",
+            "name": "林亦舟",
+            "room": "西回廊"
+          },
+          {
+            "id": "manstein",
+            "name": "曼施坦因",
+            "room": "演习观察席"
+          },
+          {
+            "id": "qin",
+            "name": "秦越",
+            "room": "器材棚"
+          },
+          {
+            "id": "shen",
+            "name": "沈澄",
+            "room": "医护休息区"
+          },
+          {
+            "id": "su",
+            "name": "苏茜",
+            "room": "东回廊"
+          },
+          {
+            "id": "tang",
+            "name": "唐骁",
+            "room": "中央庭院"
+          },
+          {
+            "id": "tomiyama",
+            "name": "富山雅史",
+            "room": "医护休息区"
+          },
+          {
+            "id": "zhou",
+            "name": "周映",
+            "room": "钟楼旗台外廊"
+          }
+        ],
+        "items": [
+          {
+            "id": "goggles_lu",
+            "name": "路明非的护目镜",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "jacket_lu",
+            "name": "路明非的演习背心",
+            "position": "路明非身上/身上"
+          },
+          {
+            "id": "map",
+            "name": "赛区路线图",
+            "position": "西侧服务巷"
+          },
+          {
+            "id": "pistol_nono",
+            "name": "诺诺的演习短枪",
+            "position": "诺诺身上/右手"
+          },
+          {
+            "id": "radio_nono",
+            "name": "诺诺的故障短讯机",
+            "position": "诺诺身上/腰间"
+          },
+          {
+            "id": "red_band_nono",
+            "name": "诺诺的红色识别带",
+            "position": "诺诺身上/身上"
+          },
+          {
+            "id": "rules",
+            "name": "演习规则牌",
+            "position": "西侧服务巷"
+          }
+        ]
+      },
+      "caseId": "R3-echo-risk",
+      "note": "Long source action that invites verbatim repetition.",
+      "input": {
+        "id": "R3-echo-risk",
+        "task": "reaction",
+        "source": "lu",
+        "member": "nono",
+        "actionText": "我把地图铺在地上，用指尖点着西回廊和检修口两条路线。",
+        "note": "Long source action that invites verbatim repetition."
+      }
+    }
+  ],
+  "browser": "157.0.4341.42",
+  "loadMs": 16517.650000572205,
+  "topology": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "summary": {
+    "cases": 17,
+    "calls": 16,
+    "meanCallMs": 6344,
+    "p50CallMs": 7106,
+    "maxCallMs": 11302,
+    "perTask": {
+      "action": {
+        "cases": 8,
+        "model": 5,
+        "program": 2,
+        "fallback": 1,
+        "withIssues": 2,
+        "repairs": 2
+      },
+      "targets": {
+        "cases": 6,
+        "model": 6,
+        "program": 0,
+        "fallback": 0,
+        "withIssues": 3,
+        "repairs": 0
+      },
+      "reaction": {
+        "cases": 3,
+        "model": 2,
+        "program": 1,
+        "fallback": 0,
+        "withIssues": 0,
+        "repairs": 0
+      }
+    },
+    "issueCounts": {
+      "action_first_person": 1,
+      "npc_repeats_player": 4,
+      "repair_requested": 3,
+      "repair_failed": 1,
+      "actor_out_of_scene": 1,
+      "protagonist_command": 1,
+      "protagonist_continues": 1,
+      "anaphora_present": 2,
+      "absent_character_named": 1,
+      "target_unmentioned": 3,
+      "protagonist_reaction_minimal": 1
+    }
+  },
+  "completedAt": "2026-11-10T03:27:26.827Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}

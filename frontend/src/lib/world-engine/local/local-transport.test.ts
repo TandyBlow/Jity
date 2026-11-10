@@ -1,9 +1,14 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ControllerDriver, initialMemory, type WorldModelPort } from '../controller';
 import type { ModelTask } from '../schedule';
 import type { InitialTemplate, Json } from '../types';
+import { WorldApiError } from '../transport';
 import { LocalWorldTransport } from './transport';
 import { SHORT_STATE } from '../runtime/b3-short-samples';
+
+const kernelFixture = JSON.parse(readFileSync(resolve('scripts/parallel-kernel/fixtures/kernel-differential.json'), 'utf8'));
 
 function template(): InitialTemplate {
   const initial = structuredClone(SHORT_STATE.initial) as InitialTemplate & { worldId?: string };
@@ -91,8 +96,6 @@ describe('LocalGameSession', () => {
   });
 });
 
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 describe('free-day static world', () => {
   it('loads the full WorldState and settles a no-change point for the whole roster', async () => {
@@ -129,4 +132,106 @@ describe('free-day static world', () => {
     expect(snap.state.time.dateTime).toBe('2009-10-17T15:21:00');
     expect(snap.round?.cursor).toBe(order.length);
   }, 30000);
+});
+
+/** Drives the real controller + local transport over the T01 fixture and
+ * compares the committed state with the pinned Python digest. This covers the
+ * transport's group normalization, merge, preview, commit and persistence as
+ * one chain rather than testing the kernel functions in isolation. */
+function t01Model(log: string[]): WorldModelPort {
+  return {
+    async generate(task, key, input): Promise<Json> {
+      log.push(`${task}:${key}`);
+      if (task === 'pointPlan') {
+        return [{ pointId: 'p1', kind: 'normal',
+          timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } },
+          actorIds: ['person_a'] }];
+      }
+      if (task === 'action') {
+        const data = input as { actor: string; workingState: { protagonistId: string }; advance: { inputText: string | null } };
+        return data.actor === data.workingState.protagonistId
+          ? { kind: 'act', text: data.advance.inputText ?? '我走进走廊。' }
+          : { kind: 'skip' };
+      }
+      if (task === 'targets') return { targets: [] };
+      if (task === 'results') return {};
+      if (task === 'updates') {
+        return [{ stage: 'position', changes: { person_a: {
+          entityId: 'person_a',
+          positionSet: { containerId: 'corridor', slotId: null, relativeTo: null },
+        } } }];
+      }
+      if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
+      if (task === 'narration') return '走廊里空着，只有门缝下的光。';
+      throw new Error(`unexpected task ${task}`);
+    },
+  };
+}
+
+describe('LocalWorldTransport differential', () => {
+  it('commits the T01 fixture point to the pinned Python state digest', async () => {
+    const initial = structuredClone(kernelFixture.normal.initial) as InitialTemplate & { worldId?: string };
+    delete initial.worldId;
+    const order = Object.keys(initial.characters).sort();
+    const transport = await LocalWorldTransport.create(initial, { worldId: 'world_school', roll: () => 13 });
+    const memory = initialMemory('world_school', 'holder_school');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: '我走进走廊。', order };
+    memory.allocPlan = {
+      allocationKey: 't01_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const log: string[] = [];
+    const driver = new ControllerDriver({ transport, model: t01Model(log) }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+    const snapshot = transport.snapshot();
+    expect(snapshot.version).toBe(1);
+    expect(snapshot.pointStates[snapshot.headPointId].stateDigest)
+      .toBe(kernelFixture.normal.stateDigestAfter);
+    expect(snapshot.state).toEqual(kernelFixture.normal.stateAfter);
+    expect(snapshot.round?.cursor).toBe(order.length);
+  });
+});
+
+describe('LocalWorldTransport transactions', () => {
+  it('rejects an invalid create and leaves the committed record untouched', async () => {
+    const transport = await LocalWorldTransport.create(template(), { worldId: 'world_tx', roll: () => 13 });
+    const before = transport.snapshot();
+    const invalid = template() as InitialTemplate & { characters: Record<string, { initialPosition: { containerId: string } }> };
+    invalid.characters.person_a.initialPosition.containerId = 'missing_room';
+    const failure = await transport.execute('create_world', {
+      protocolVersion: 2, requestId: 'req_bad_create', initial: invalid,
+    } as never, { worldId: 'world_tx' }).then(() => null, (error: unknown) => error);
+    expect(failure).toBeInstanceOf(WorldApiError);
+    expect(['request_malformed', 'version_mismatch']).toContain((failure as WorldApiError).response.error.code);
+    const after = transport.snapshot();
+    expect(after.worldId).toBe(before.worldId);
+    expect(after.version).toBe(before.version);
+    expect(after.pointStates[after.headPointId].stateDigest).toBe(before.pointStates[before.headPointId].stateDigest);
+  });
+
+  it('replays an identical write without applying it twice', async () => {
+    const transport = await LocalWorldTransport.create(template(), { worldId: 'world_idem', roll: () => 13 });
+    const before = transport.snapshot();
+    const request = {
+      protocolVersion: 2, requestId: 'req_pause_once', worldId: 'world_idem',
+      leaseToken: before.lease!.leaseToken, fenceEpoch: before.lease!.fenceEpoch,
+      expectedPointId: before.headPointId, expectedVersion: before.version,
+      expectedCheckpointRevision: before.control.revision, operation: 'pause',
+    };
+    await transport.execute('checkpoint_pause', request as never, { worldId: 'world_idem' });
+    const paused = transport.snapshot();
+    expect(paused.control.paused).toBe(true);
+    expect(paused.control.revision).toBe(before.control.revision + 1);
+    const replay = await transport.execute('checkpoint_pause', request as never, { worldId: 'world_idem' });
+    expect(replay.replayed).toBe(true);
+    const after = transport.snapshot();
+    expect(after.control.revision).toBe(paused.control.revision);
+    expect(after.control.paused).toBe(true);
+  });
 });

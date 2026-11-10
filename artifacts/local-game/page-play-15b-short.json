@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "readyMs": 49337,
+  "wallMs": 333567,
+  "turns": [
+    {
+      "input": "我沿着车道向西回廊快走，贴着墙，注意听枪声",
+      "turnMs": 45322,
+      "text": "。\n你：我沿着车道向西回廊快走，贴着墙，注意听枪声 · 正文 23.1s\n路明非在西回廊。「你从这儿过去。」路明非把门推开一条缝，目光沿着走廊尽头寻找动静。「听不见。」林亦舟的声音传来，带着一丝无奈。「确实听不分明。」「那就从这头跑过去。」林亦舟说，「我在这头等。」她的话语中透露出一种坚定和期待。林亦舟坐在第三根廊柱脚下，背靠石栏，只有一半的身子靠着它。「你先走吧。」「我已经站了半个钟头了。」路明非回答，语气平静而认真。「那我从这头过去。」林亦舟的话语中带着一丝犹豫和无奈。「站一会儿就走。」她说。「行。」路明非把门又推开一点，两人开始交替前进。走廊尽头的灯光时明时暗，忽远忽近。她从第三根廊柱走到钟楼方向，再返回西侧服务巷。灯灭了。林亦舟完成了「从这儿过去」。\n正文已按已结算事实修正：added_event,added_event,movement_without_fact,task_claimed_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我蹲下来问林亦舟伤得怎么样，需不需要帮忙",
+      "turnMs": 46640,
+      "text": "。\n你：我沿着车道向西回廊快走，贴着墙，注意听枪声 · 正文 23.1s\n路明非在西回廊。「你从这儿过去。」路明非把门推开一条缝，目光沿着走廊尽头寻找动静。「听不见。」林亦舟的声音传来，带着一丝无奈。「确实听不分明。」「那就从这头跑过去。」林亦舟说，「我在这头等。」她的话语中透露出一种坚定和期待。林亦舟坐在第三根廊柱脚下，背靠石栏，只有一半的身子靠着它。「你先走吧。」「我已经站了半个钟头了。」路明非回答，语气平静而认真。「那我从这头过去。」林亦舟的话语中带着一丝犹豫和无奈。「站一会儿就走。」她说。「行。」路明非把门又推开一点，两人开始交替前进。走廊尽头的灯光时明时暗，忽远忽近。她从第三根廊柱走到钟楼方向，再返回西侧服务巷。灯灭了。林亦舟完成了「从这儿过去」。\n正文已按已结算事实修正：added_event,added_event,movement_without_fact,task_claimed_without_fact\n你：我蹲下来问林亦舟伤得怎么样，需不需要帮忙 · 正文 22.7s\n路明非在西回廊。路明非蹲下来问林亦舟。「你怎么了？」他问道。「崴了。」林亦舟说，「刚才站太久。」「我扶你过去吧。」「不行。」林亦舟坚定地说，「你看看你的手。」路明非把手凑近自己的护目镜。镜片上有一道亮线。」「裂了。」他轻声说道。「裂了换镜。」「换镜需要时间。」「那就先扶着走。」林亦舟说。灯的光落在廊柱之间，把这一段石栏照得很长。钟楼方向的一块青苔湿滑，路明非踩上去的时候差点倒下。他迅速站起身来。「我上来吧。」「你腿还行。」「现在不行了。」「那我们分两头走？」林亦舟摇了摇头。「不行。」路明非把手从镜片上抹开，「这样你会摔跤，我扶不住你也站不稳。」",
+      "warning": null
+    },
+    {
+      "input": "我检查他放在地上的演习枪，确认保险是关着的",
+      "turnMs": 61852,
+      "text": "的话语中透露出一种坚定和期待。林亦舟坐在第三根廊柱脚下，背靠石栏，只有一半的身子靠着它。「你先走吧。」「我已经站了半个钟头了。」路明非回答，语气平静而认真。「那我从这头过去。」林亦舟的话语中带着一丝犹豫和无奈。「站一会儿就走。」她说。「行。」路明非把门又推开一点，两人开始交替前进。走廊尽头的灯光时明时暗，忽远忽近。她从第三根廊柱走到钟楼方向，再返回西侧服务巷。灯灭了。林亦舟完成了「从这儿过去」。\n正文已按已结算事实修正：added_event,added_event,movement_without_fact,task_claimed_without_fact\n你：我蹲下来问林亦舟伤得怎么样，需不需要帮忙 · 正文 22.7s\n路明非在西回廊。路明非蹲下来问林亦舟。「你怎么了？」他问道。「崴了。」林亦舟说，「刚才站太久。」「我扶你过去吧。」「不行。」林亦舟坚定地说，「你看看你的手。」路明非把手凑近自己的护目镜。镜片上有一道亮线。」「裂了。」他轻声说道。「裂了换镜。」「换镜需要时间。」「那就先扶着走。」林亦舟说。灯的光落在廊柱之间，把这一段石栏照得很长。钟楼方向的一块青苔湿滑，路明非踩上去的时候差点倒下。他迅速站起身来。「我上来吧。」「你腿还行。」「现在不行了。」「那我们分两头走？」林亦舟摇了摇头。「不行。」路明非把手从镜片上抹开，「这样你会摔跤，我扶不住你也站不稳。」\n你：我检查他放在地上的演习枪，确认保险是关着的 · 正文 24.2s\n路明非在西回廊。路明非把地上那两弹夹收进护目镜下面，拉开椅子坐下。椅背上落了一点灰。「你查到了。」他说。「查到什么。」「那天夜里那一枪，是哪一端射出去的。」他把椅子往前挪了半步，腿压在廊柱上。「我翻遍了所有的记录。」他说，「登记簿上写着是十点二十分。可门卫值班表上却写着是十一点。「两个人签的字不一样。」林亦舟从第三根廊柱那边过来，走到他身边坐下时，鞋跟敲在石板上。「你抄了那张图吗？」路明非把纸抽出来给他看。图上的箭头和文字都被压平了。「这图我昨天才画的。」他说。「是用尺子量出来的吧。」林亦舟没有接话，只是盯着那张图看了会儿。「你先说。」",
+      "warning": null
+    },
+    {
+      "input": "我把护目镜戴好，问他红方现在在哪个方向",
+      "turnMs": 34125,
+      "text": "了？」他问道。「崴了。」林亦舟说，「刚才站太久。」「我扶你过去吧。」「不行。」林亦舟坚定地说，「你看看你的手。」路明非把手凑近自己的护目镜。镜片上有一道亮线。」「裂了。」他轻声说道。「裂了换镜。」「换镜需要时间。」「那就先扶着走。」林亦舟说。灯的光落在廊柱之间，把这一段石栏照得很长。钟楼方向的一块青苔湿滑，路明非踩上去的时候差点倒下。他迅速站起身来。「我上来吧。」「你腿还行。」「现在不行了。」「那我们分两头走？」林亦舟摇了摇头。「不行。」路明非把手从镜片上抹开，「这样你会摔跤，我扶不住你也站不稳。」\n你：我检查他放在地上的演习枪，确认保险是关着的 · 正文 24.2s\n路明非在西回廊。路明非把地上那两弹夹收进护目镜下面，拉开椅子坐下。椅背上落了一点灰。「你查到了。」他说。「查到什么。」「那天夜里那一枪，是哪一端射出去的。」他把椅子往前挪了半步，腿压在廊柱上。「我翻遍了所有的记录。」他说，「登记簿上写着是十点二十分。可门卫值班表上却写着是十一点。「两个人签的字不一样。」林亦舟从第三根廊柱那边过来，走到他身边坐下时，鞋跟敲在石板上。「你抄了那张图吗？」路明非把纸抽出来给他看。图上的箭头和文字都被压平了。「这图我昨天才画的。」他说。「是用尺子量出来的吧。」林亦舟没有接话，只是盯着那张图看了会儿。「你先说。」\n你：我把护目镜戴好，问他红方现在在哪个方向 · 正文 23.9s\n路明非在西回廊。「红方现在是斜着走。」路明非把护目镜摘下来，又戴好。「你刚才说那批人从钟楼这边过去。」「我刚才说‘从钟楼那边’。」林亦舟站起来，「钟楼的方向是西门，不是东门。」「你是从第三根廊柱后面过来的。」「我是从第三根廊柱侧面过来的。」他把手插回裤兜，「从后面过去就不必担心被踩到。我站在这边，前面那条石板空着。」路明非把笔尖在纸上压了一下。「钟楼那边的门牌号你记得住吧。」林亦舟低头想了想。「九番馆。」「第九个。」「第十一个呢。」「第十一个也是第九个。」他把手从裤兜里拿出来，「我走的时候是第十个。」路明非把笔立起来。「那你现在是第几个。」\n正文已按已结算事实修正：movement_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我扶他站起来，一起往钟楼西门走",
+      "turnMs": 72217,
+      "text": "。」他把椅子往前挪了半步，腿压在廊柱上。「我翻遍了所有的记录。」他说，「登记簿上写着是十点二十分。可门卫值班表上却写着是十一点。「两个人签的字不一样。」林亦舟从第三根廊柱那边过来，走到他身边坐下时，鞋跟敲在石板上。「你抄了那张图吗？」路明非把纸抽出来给他看。图上的箭头和文字都被压平了。「这图我昨天才画的。」他说。「是用尺子量出来的吧。」林亦舟没有接话，只是盯着那张图看了会儿。「你先说。」\n你：我把护目镜戴好，问他红方现在在哪个方向 · 正文 23.9s\n路明非在西回廊。「红方现在是斜着走。」路明非把护目镜摘下来，又戴好。「你刚才说那批人从钟楼这边过去。」「我刚才说‘从钟楼那边’。」林亦舟站起来，「钟楼的方向是西门，不是东门。」「你是从第三根廊柱后面过来的。」「我是从第三根廊柱侧面过来的。」他把手插回裤兜，「从后面过去就不必担心被踩到。我站在这边，前面那条石板空着。」路明非把笔尖在纸上压了一下。「钟楼那边的门牌号你记得住吧。」林亦舟低头想了想。「九番馆。」「第九个。」「第十一个呢。」「第十一个也是第九个。」他把手从裤兜里拿出来，「我走的时候是第十个。」路明非把笔立起来。「那你现在是第几个。」\n正文已按已结算事实修正：movement_without_fact\n你：我扶他站起来，一起往钟楼西门走 · 正文 23.6s\n钟楼的正门是虚掩着的，门厅里堆砌着一片阴影。「你从哪儿出来的？」他问道。「西回廊。」路明非答道，「回廊那头有人在等你们。」「你怎么知道我从这儿出来？」「因为我在等你。」他说，「等你从那边走到这面墙。」钟楼的门厅比走廊长了许多，窗子大着一条缝。他把围巾往脖子里塞了塞，然后站起身来。「那就从这里出去吧。」「不行。」路明非说，「门厅这边有一道斜线，从上面往下走能过去。你从下面往上走，会碰上别人。」「你怎么知道有别人？」「因为这是回廊的一部分。」他解释道，「这条斜线是回廊中间那条缝的对面。」路明非没有再说话。他把门厅到钟楼那段的楼梯扶手握紧，一步步地往上走。\n正文已按已结算事实修正：movement_without_fact,movement_without_fact",
+      "warning": null
+    }
+  ],
+  "restored": true,
+  "snapshotBytes": 779544,
+  "snapshotStable": true,
+  "finalText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:25 · 钟楼\n已恢复本地存档，继续上次的进度。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：钟楼\n在附近\n没有别人\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：5 次",
+  "logs": [
+    "[info] [world-local task] results group_28 0ms fallback=true program_single_member",
+    "[info] [world-local task] updates move 3054ms fallback=false ",
+    "[info] [world-local task] updates group_28 16387ms fallback=false ",
+    "[info] [world-local task] narration point_round_21_1 22716ms fallback=true ",
+    "[info] [world-local task] continuation continuation 2772ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lin 4791ms fallback=false ",
+    "[info] [world-local task] targets lin 3838ms fallback=false ",
+    "[info] [world-local task] results group_46 4319ms fallback=false ",
+    "[info] [world-local task] updates move 3410ms fallback=false ",
+    "[info] [world-local task] updates group_46 16584ms fallback=false ",
+    "[info] [world-local task] results group_47 0ms fallback=true program_single_member",
+    "[warning] slot   operator(): id  3 | task 237 | need to evaluate at least 1 token for each active slot (n_past = 1564, task.n_tokens() = 1564)",
+    "[warning] slot   operator(): id  3 | task 237 | n_past was set to 1563",
+    "[info] [world-local task] updates move 3691ms fallback=false ",
+    "[info] [world-local task] updates group_47 4487ms fallback=false ",
+    "[info] [world-local task] narration point_round_40_1 24158ms fallback=true ",
+    "[info] [world-local task] continuation continuation 3275ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 2727ms fallback=false ",
+    "[info] [world-local task] results group_65 0ms fallback=true program_single_member",
+    "[warning] slot   operator(): id  3 | task 313 | need to evaluate at least 1 token for each active slot (n_past = 1564, task.n_tokens() = 1564)",
+    "[warning] slot   operator(): id  3 | task 313 | n_past was set to 1563",
+    "[info] [world-local task] updates move 2919ms fallback=false ",
+    "[info] [world-local task] updates group_65 3624ms fallback=false ",
+    "[info] [world-local task] narration point_round_58_1 23921ms fallback=true movement_without_fact",
+    "[info] [world-local task] continuation continuation 3396ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 2731ms fallback=false ",
+    "[info] [world-local task] results group_84 3477ms fallback=false ",
+    "[info] [world-local task] updates move 3999ms fallback=false ",
+    "[info] [world-local task] updates group_84 31836ms fallback=true program_movement_fallback",
+    "[info] [world-local task] narration point_round_77_1 23570ms fallback=true movement_without_fact,movement_without_fact",
+    "[info] [world-local task] continuation continuation 5387ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden"
+  ]
+}

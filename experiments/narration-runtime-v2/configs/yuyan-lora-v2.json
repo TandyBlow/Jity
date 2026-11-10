@@ -1,0 +1,61 @@
+{
+  "runId": "yuyan-lora-result-v2-r1",
+  "backend": "yuyan",
+  "data": {
+    "file": "~/narr_v2/data/rows-yuyan-v2.jsonl",
+    "manifest": "~/narr_v2/data/manifest.json",
+    "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+    "rows": 199
+  },
+  "splits": {
+    "file": "~/narr_v2/splits/v1.json",
+    "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836"
+  },
+  "base": {
+    "file": "~/narr_rows/checkpoint_best.pt",
+    "sha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106",
+    "mode": "lora"
+  },
+  "tokenizer": {
+    "file": "~/narr_rows/dict.txt",
+    "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4"
+  },
+  "seed": 20261109,
+  "training": {
+    "epochs": 6,
+    "lr": 0.0001,
+    "batch": 1,
+    "rank": 16,
+    "alpha": 32,
+    "maxLen": 2560,
+    "gradClip": 1.0,
+    "weightDecay": 0.0,
+    "sampleMaxNew": 600
+  },
+  "checkpoint": {
+    "saveEveryEpoch": true,
+    "keepBest": true
+  },
+  "responseMask": "target_only",
+  "template": {
+    "name": "yuyan-raw-completion-v1",
+    "promptField": "xProse",
+    "targetField": "yMarked",
+    "eos": "</s>"
+  },
+  "comparison": {
+    "legacyReport": "experiments/world-components/narration-dataset-v1/hpc/runs/report-250409.json",
+    "legacyReportSha256": "f1ec11b9bbc2e19fa9bb3e37f6e8264cbe7765f616d38856a903c9fe96585591",
+    "legacyDataSha256Lf": "645df1b1438c4a388fbb09fb7d71ed99796b33393005dbda528f3d3d8c5db824",
+    "sameBase": true,
+    "sameRows": true,
+    "sameSplit": true,
+    "sameSeed": true,
+    "sameLoraConfig": true,
+    "sameEpochs": true,
+    "onlySerializerChanged": true,
+    "note": "Controlled paired diagnostic. The legacy arm has no result block; this arm adds 【本回合状态】 and item positions. Do not mix formats across weights.",
+    "legacyMaxLen": 2048,
+    "maxLenNote": "The legacy 199-row run used max_len=2048 and silently truncated row-0002 (2382 tokens after the result block; the legacy input was shorter but still at the limit). v2 uses 2560 so no row is truncated; this is a recorded difference from the legacy arm."
+  }
+}

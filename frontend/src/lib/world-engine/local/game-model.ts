@@ -10,10 +10,11 @@ import type { WorldModelPort } from '../controller';
 import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../types';
 import type { CompletionEvidence, InferenceEngine } from '../runtime/engine';
 import { decodeTaskOutput } from '../runtime/structured-output';
-import { alignNarration } from '../runtime/narration-alignment';
+import { alignNarration, EVENT_VERBS } from '../runtime/narration-alignment';
+import { IncompleteGenerationError } from '../runtime/engine';
 import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
 import { taskOutputSchema } from '../runtime/output-schema';
-import { describeCharacter, describeDelta, describeItem, describeLocation, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
+import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
 export interface GameModelOptions {
   modelUrl?: string;
@@ -21,8 +22,15 @@ export interface GameModelOptions {
   nGpuLayers?: number;
   temperature?: number;
   narrationTemperature?: number;
+  narrationMaxTokens?: number;
+  narrationTimeoutMs?: number;
   narrationEngine?: InferenceEngine;
+  /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
+   * 'instruct' states the task for an instruction-tuned narration model. */
+  narrationMode?: 'legacy' | 'instruct';
   maxTokensByTask?: Partial<Record<ModelTask, number>>;
+  /** Automatic rounds after one player action. Default 0: one action = one round. */
+  maxAutoContinuations?: number;
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
   onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
@@ -41,10 +49,18 @@ const JSON_SCHEMAS = {
     type: 'object', additionalProperties: false, required: ['continue'],
     properties: { continue: { type: 'boolean' }, reason: { type: 'string' } },
   },
+  move: {
+    type: 'object', additionalProperties: false, required: ['moved'],
+    properties: { moved: { type: 'boolean' }, toLocationId: { type: ['string', 'null'] } },
+  },
   changes: {
     type: 'object', additionalProperties: false, required: ['changes'],
     properties: {
-      changes: { type: 'object', additionalProperties: {
+      move: {
+    type: 'object', additionalProperties: false, required: ['moved'],
+    properties: { moved: { type: 'boolean' }, toLocationId: { type: ['string', 'null'] } },
+  },
+  changes: { type: 'object', additionalProperties: {
         type: 'object', additionalProperties: false,
         properties: {
           positionSet: { anyOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['containerId'], properties: {
@@ -77,6 +93,7 @@ export class LocalGameModel implements WorldModelPort {
   private readonly options: GameModelOptions;
   private roundCounter = 0;
   private lastPlayerInput = '';
+  private lastResultsText = '';
   private autoContinuations = 0;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
@@ -218,6 +235,7 @@ export class LocalGameModel implements WorldModelPort {
     const members = data.members ?? [];
     if (members.length === 1 && members[0].memberId === state.protagonistId) {
       const text = this.programResult(members[0].actionText ?? '', state);
+      this.lastResultsText = text;
       this.options.onTask?.('results', key, { ms: 0, fallback: true, error: 'program_single_member', raw: text });
       return { value: { [members[0].memberId]: text } as unknown as Json, raw: text, ms: 0, fallback: true, error: 'program_single_member' };
     }
@@ -246,6 +264,7 @@ export class LocalGameModel implements WorldModelPort {
       if (id && !normalized[id]) normalized[id] = match[2].trim();
     }
     for (const member of members) if (!normalized[member.memberId]) normalized[member.memberId] = '行动发生了，但没有产生新的结果。';
+    this.lastResultsText = Object.values(normalized).join('；');
     this.options.onTask?.('results', key, { ms: performance.now() - started, fallback: false, raw, promptChars: prompt.length });
     return { value: normalized as unknown as Json, raw, ms: performance.now() - started, fallback: false };
   }
@@ -276,6 +295,17 @@ export class LocalGameModel implements WorldModelPort {
     try {
       let value = parseLineChanges(raw, state);
       let fallback = false;
+      // A small model often answers NONE for its own movement. Ask the one
+      // question it can answer reliably — did the protagonist change room,
+      // and which room id — and merge that into the parsed changes.
+      const moved = await this.movementJudgement(state, data.results ?? {}, locations);
+      const groups = value as unknown as { stage: string; changes: Record<Id, EntityDelta> }[];
+      const hasMove = Array.isArray(groups) && groups.some((group) => group?.changes?.[state.protagonistId]?.positionSet);
+      if (moved && !hasMove) {
+        const positionStage = { stage: 'position', changes: { [state.protagonistId]: { entityId: state.protagonistId, positionSet: { containerId: moved, slotId: null, relativeTo: null } } } };
+        const list = Array.isArray(groups) ? groups : [];
+        value = [positionStage, ...list].sort((a, b) => STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage)) as unknown as Json;
+      }
       if (Array.isArray(value) && value.length === 0) {
         const program = this.programMovementChanges(state, data.results ?? {});
         if (program.length) { value = program as unknown as Json; fallback = true; }
@@ -285,6 +315,34 @@ export class LocalGameModel implements WorldModelPort {
     } catch (error) {
       this.options.onTask?.('updates', key, { ms: performance.now() - started, fallback: true, error: error instanceof Error ? error.message : String(error), raw, promptChars: prompt.length });
       return { value: [], raw, ms: performance.now() - started, fallback: true, error: error instanceof Error ? error.message : String(error) };
+    }
+  }
+
+  /** Structured movement judgement. The location catalog makes this a pick
+   * from a list, which the 0.6B model answers far more reliably than free
+   * text. Returns the destination id or null. */
+  private async movementJudgement(state: WorldState, results: Record<Id, string>, locations: string): Promise<Id | null> {
+    const current = state.characters[state.protagonistId]?.position.containerId;
+    // Only rooms next to the protagonist are offered. The full catalog made
+    // the 0.6B model teleport across the map because every name was legal.
+    const candidates = adjacentLocations(state, current, [this.lastPlayerInput]);
+    const prompt = [
+      '你是中文跑团游戏的位置判断器。只输出 JSON。',
+      '判断主角在这一回合结束后是否换了地点。只有主角真的移动到别处才算；原地说话、观察、等待都不算。',
+      `主角：${describeCharacter(state, state.protagonistId, false)}`,
+      `玩家输入：${this.lastPlayerInput}`,
+      `结算结果：${Object.values(results).join('；') || '（无）'}`,
+      `候选地点：${candidates}`,
+      '输出：{"moved":true,"toLocationId":"地点id"} 或 {"moved":false,"toLocationId":null}。toLocationId 只能从候选地点里选，不能等于主角当前地点。',
+    ].join(String.fromCharCode(10));
+    try {
+      const generated = await this.objectTask('updates', prompt, JSON_SCHEMAS.move, 'move');
+      const output = generated.value as { moved?: boolean; toLocationId?: string | null };
+      const target = typeof output?.toLocationId === 'string' ? output.toLocationId.trim() : '';
+      if (output?.moved !== true || !state.initial.locations[target] || target === current) return null;
+      return target;
+    } catch {
+      return null;
     }
   }
 
@@ -304,7 +362,7 @@ export class LocalGameModel implements WorldModelPort {
     const output = generated.value as { continue?: boolean; reason?: string };
     const nextRoundId = `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`;
     const candidates = [state.protagonistId, ...visibleCharacters(state, state.protagonistId).filter((id) => id !== state.protagonistId)];
-    const wantContinue = output.continue === true && this.autoContinuations < 1;
+    const wantContinue = output.continue === true && this.autoContinuations < (this.options.maxAutoContinuations ?? 0);
     if (wantContinue) this.autoContinuations += 1;
     const conclusion = wantContinue
       ? { kind: 'continue', closedBy: 'model', cancelReason: null, nextRoundId, candidateCharacterIds: candidates }
@@ -318,30 +376,50 @@ export class LocalGameModel implements WorldModelPort {
     if (!after) throw new Error('narration without after state');
     const pointId = data.pointId ?? key;
     const view = after.protagonistId;
-    const facts = legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view);
+    const brief = this.options.narrationMode === 'instruct'
+      ? instructNarrationInput(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput, this.lastResultsText)
+      : { prompt: legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view), brief: legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view) };
+    const facts = brief.prompt;
     const started = performance.now();
-    const raw = await this.narrationEngine.complete(facts, {
-      maxTokens: 480, temperature: this.options.narrationTemperature ?? 0.7,
-      timeoutMs: 120_000,
-      onProgress: (progress) => this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started }),
-    });
-    const cleaned = cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10)).trim();
-    const validation = validateNarration(cleaned, facts, after, view);
-    const hasDelta = Object.keys(data.delta?.entityDeltas ?? {}).length > 0;
-    const alignment = !hasDelta ? { ok: true, violations: [] as { kind: string }[] } : alignNarration(alignmentPacket(data.before ?? null, data.delta ?? {}, after), cleaned, {
+    let raw = '';
+    try {
+      raw = await this.narrationEngine.complete(facts, {
+        maxTokens: this.options.narrationMaxTokens ?? 380, temperature: this.options.narrationTemperature ?? 0.7,
+        timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
+        onProgress: (progress) => this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started }),
+      });
+    } catch (error) {
+      // A length-limited generation still carries usable prose: keep the
+      // complete sentences instead of throwing the whole point away.
+      const partial = error instanceof IncompleteGenerationError ? error.completion.raw : '';
+      if (partial.trim().length < 80) {
+        const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+        const text = factualNarration(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput);
+        this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: true, error: message, raw: text, promptChars: facts.length });
+        return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: true, error: message };
+      }
+      raw = partial;
+    }
+    const cleaned = finishSentences(cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10))).trim();
+    const validation = validateNarration(cleaned, brief.brief, after, view);
+    const alignment = alignNarration(alignmentPacket(data.before ?? null, data.delta ?? {}, after), cleaned, {
       roster: Object.values(after.initial.characters).map((entity) => entity.name),
       locations: Object.values(after.initial.locations).map((entity) => entity.name),
       time: data.delta?.timeAdvance?.duration ?? null,
       knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
+      allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     });
-    const hard = alignment.violations.map((violation) => violation.kind).join(',');
-    const reason = validation.ok ? (alignment.ok ? undefined : `align:${hard}`) : validation.reason;
-    this.options.onNarrationComplete?.({
-      pointId, raw: cleaned,
-      completion: { raw: cleaned, finishReason: validation.ok && alignment.ok ? 'stop' : 'validation_failed', firstTokenMs: null, wallMs: performance.now() - started },
-    });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !validation.ok || !alignment.ok, error: reason, raw: cleaned, promptChars: facts.length });
-    return { value: cleaned as unknown as Json, raw: cleaned, ms: performance.now() - started, fallback: !validation.ok || !alignment.ok, error: reason };
+    // Sentence-level repair keeps the literary text and only removes the
+    // claims the settled state cannot support. Whole-text rejection made the
+    // page show a state summary almost every round, which is worse than a
+    // slightly shorter scene.
+    const pruned = pruneNarration(cleaned, alignment, after, view);
+    const text = [...pruned.text].length >= 140 ? pruned.text : factualNarration(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput);
+    const accepted = pruned.dropped.length === 0 && validation.ok && alignment.ok;
+    const reason = accepted ? undefined : [validation.reason, ...pruned.dropped.map((entry) => entry.reason)].filter(Boolean).join(',');
+    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: facts.length });
+    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: accepted ? 'stop' : 'pruned', firstTokenMs: null, wallMs: performance.now() - started } });
+    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
   }
 
   private normalizeChanges(input: { changes?: Record<Id, EntityDelta> }, state: WorldState): Json {
@@ -501,6 +579,8 @@ function cleanNarration(raw: string): string {
   return body
     .replace(/```[\s\S]*?```/g, '')
     .replace(/【[^】]{1,8}】/g, '')
+    .replace(/\*\*/g, '')
+    .replace(/^#{1,6}\s*/gmu, '')
     .replace(/^\s*(正文|叙事|输出)[:：]\s*/u, '')
     .trim();
 }
@@ -510,11 +590,12 @@ function validateNarration(text: string, facts: string, after: WorldState, view:
   // Third-person prose may use “他/她” for a whole paragraph without naming
   // the protagonist; absence of the literal name is not a fact error.
 
-  const changedNames = Object.keys(after.characters).filter((id) => facts.includes(`（id=${id}）`) && facts.includes('位置→'));
-  for (const id of changedNames) {
-    const name = after.initial.characters[id]?.name;
-    if (name && !text.includes(name)) return { ok: false, reason: `missing_changed_character:${id}` };
-  }
+  // A field table is not prose: the page must not show field headings.
+  const fieldLines = text.split(String.fromCharCode(10)).filter((line) => /^(时间|地点|人物|事件|变化|视角|场景)[:：]/u.test(line.trim()));
+  if (fieldLines.length >= 2) return { ok: false, reason: 'structure_dump' };
+  // Copying the fact brief back is the other failure mode of a small model.
+  const probe = briefProbe(facts);
+  if (probe && text.includes(probe)) return { ok: false, reason: 'copied_brief' };
   const numbers = text.match(/\d+/g) ?? [];
   for (const number of numbers) if (!facts.includes(number)) return { ok: false, reason: `unverified_number:${number}` };
   // Any known character/location/item the projector did not put in the input
@@ -627,4 +708,109 @@ function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeA
     for (const change of d?.personalityChanges ?? []) if (change.text) facts.push({ id: `${id}:personality:${change.id}`, actorId: id, name, kind: 'personality_changed', changeId: change.id, text: change.text });
   }
   return { anchor: { worldId: after.worldId, pointId: `local_${Date.now()}`, version: 0, stateDigest: '', previousPointId: null }, facts };
+}
+
+function factualNarration(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = ''): string {
+  const out: string[] = [];
+  const name = after.initial.characters[view]?.name ?? view;
+  const time = delta.timeAdvance;
+  if (time) out.push(`时间过去了约${time.duration.amount}${timeUnit(time.duration.unit)}。`);
+  const change = delta.entityDeltas?.[view];
+  const room = roomOf(after, view);
+  if (change?.positionSet) {
+    const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
+    const to = locationName(after, change.positionSet.containerId);
+    const declared = actionText.trim().replace(/^我/u, name);
+    out.push(`${declared && MOVEMENT.test(declared) ? endSentence(declared) : `${name}${from ? `从${from}` : ''}走到${to}。`}`);
+  }
+  const appearance = after.initial.locations[room]?.initialAppearance;
+  if (appearance) out.push(`${locationName(after, room)}里，${firstClause(appearance)}。`);
+  for (const id of visibleCharacters(after, view).filter((candidate) => candidate !== view)) {
+    const other = after.initial.characters[id]?.name;
+    if (!other) continue;
+    const look = after.initial.characters[id]?.initialAppearance;
+    out.push(`${other}在${locationName(after, roomOf(after, id))}${look ? `，${firstClause(look)}` : ''}。`);
+  }
+  for (const [id, entity] of Object.entries(delta.entityDeltas ?? {})) {
+    const other = after.initial.characters[id]?.name ?? after.initial.items[id]?.name;
+    if (!other) continue;
+    for (const taskId of entity.tasksAchieved ?? []) {
+      const goal = after.characters[id]?.tasks[taskId]?.goal;
+      if (goal) out.push(`${other}完成了「${goal}」。`);
+    }
+    if (entity.sanitySet != null) out.push(`${other}的精神值变成 ${entity.sanitySet}。`);
+  }
+  if (!out.length) out.push(`${name}停在${locationName(after, room)}，没有新的变化。`);
+  return out.join('');
+}
+
+function endSentence(text: string): string {
+  return `${text.replace(/[。！？!?；;\s]+$/u, '')}。`;
+}
+
+function firstClause(text: string): string {
+  return text.split(/[。；;]/u).slice(0, 2).join('，').replace(/[，,]\s*$/u, '').slice(0, 120);
+}
+
+function timeUnit(unit: TimeAdvance['duration']['unit']): string {
+  return ({ second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' } as Record<string, string>)[unit] ?? unit;
+}
+
+/** Drop unsupported sentences, then re-add the position/time facts the scene
+ * must state. Alignment reports which sentence broke which rule, so the repair
+ * needs no second pass over the model output. */
+function pruneNarration(
+  text: string,
+  alignment: { violations: { sentence: string; kind: string }[]; omissions: string[] },
+  after: WorldState,
+  view: Id,
+): { text: string; dropped: { reason: string; sentence: string }[] } {
+  const hard = new Set(alignment.violations.map((violation) => violation.sentence.trim()));
+  const dropped = alignment.violations.map((violation) => ({ reason: violation.kind, sentence: violation.sentence }));
+  const kept: string[] = [];
+  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
+    const sentence = raw.trim();
+    if (!sentence || hard.has(sentence)) continue;
+    kept.push(sentence);
+  }
+  const body = kept.join('');
+  const name = after.initial.characters[view]?.name ?? view;
+  const place = locationName(after, roomOf(after, view));
+  const positionOmitted = alignment.omissions.some((entry) => entry.includes('position'));
+  const headText = positionOmitted || !body.includes(place) ? `${name}在${place}。` : '';
+  return { text: `${headText}${body}`.replace(/\n{3,}/gu, '\n\n').trim(), dropped };
+}
+
+/** Longest brief slice to look for in the prose. Short fragments like a name
+ * or a location are expected in any scene. */
+function briefProbe(facts: string): string {
+  const lines = facts.split(String.fromCharCode(10)).map((line) => line.trim()).filter((line) => line.length > 40);
+  const longest = lines.sort((a, b) => b.length - a.length)[0] ?? '';
+  return longest.slice(0, 28);
+}
+
+
+const STAGE_ORDER = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'];
+
+
+/** Cut a truncated generation back to its last complete sentence. */
+function finishSentences(text: string): string {
+  const last = Math.max(text.lastIndexOf('。'), text.lastIndexOf('！'), text.lastIndexOf('？'), text.lastIndexOf('」'));
+  return last > 40 ? text.slice(0, last + 1) : text;
+}
+
+
+/** Rooms the protagonist can reach in one point: the current room, its
+ * parent, its siblings and its children, plus any room the player named. */
+export function adjacentLocations(state: WorldState, current: Id, named: string[] = []): string {
+  const locations = state.initial.locations;
+  const parent = locations[current]?.parentLocationId ?? null;
+  const ids = new Set<Id>([current]);
+  if (parent) {
+    ids.add(parent);
+    for (const [id, location] of Object.entries(locations)) if (location.parentLocationId === parent) ids.add(id);
+  }
+  for (const [id, location] of Object.entries(locations)) if (location.parentLocationId === current) ids.add(id);
+  for (const [id, location] of Object.entries(locations)) if (named.some((text) => text.includes(location.name))) ids.add(id);
+  return [...ids].map((id) => `${id}=${locations[id]?.name ?? id}`).join('；');
 }

@@ -13,9 +13,11 @@ import type { Id, InitialTemplate, WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
-const NARRATION_MODEL = '/models/qwen25-0.5b-narration-Q4_K_M.gguf';
+const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
+
+interface TurnEntry { key: number; input: string; text: string; note: string | null; ms: number | null }
 
 interface ViewState {
   time: string;
@@ -39,11 +41,11 @@ function viewOf(state: WorldState): ViewState {
   };
 }
 
-async function loadEngine(url: string): Promise<WllamaInferenceEngine> {
-  const engine = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize: 6144, nGpuLayers: 99999 });
+async function loadEngine(url: string, contextSize = 6144): Promise<WllamaInferenceEngine> {
+  const engine = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize, nGpuLayers: 99999 });
   try { await engine.load(); return engine; } catch (gpuError) {
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
-    const cpu = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize: 6144, nGpuLayers: 0 });
+    const cpu = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize, nGpuLayers: 0 });
     await cpu.load();
     return cpu;
   }
@@ -52,13 +54,14 @@ async function loadEngine(url: string): Promise<WllamaInferenceEngine> {
 export default function WorldLocalPage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
-  const [prose, setProse] = useState('');
+  const [entries, setEntries] = useState<TurnEntry[]>([]);
   const [view, setView] = useState<ViewState | null>(null);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
+  const [stage, setStage] = useState<string>('');
   const sessionRef = useRef<LocalGameSession | null>(null);
   const semanticRef = useRef<WllamaInferenceEngine | null>(null);
   const narrationRef = useRef<WllamaInferenceEngine | null>(null);
@@ -75,8 +78,6 @@ export default function WorldLocalPage() {
     const state = await session.state();
     setView(viewOf(state));
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
-    const latest = Object.values(session.snapshot.transport.narrations).filter((entry) => entry.text).at(-1);
-    if (latest?.text) setProse(latest.text.replace(/※/g, '\n\n'));
     setHistory(session.commandsPlayed);
     save(session.snapshot);
     setPhase((current) => current === 'streaming' ? 'ready' : current);
@@ -92,33 +93,41 @@ export default function WorldLocalPage() {
         const semantic = await loadEngine(SEMANTIC_MODEL);
         if (!alive) { await semantic.dispose(); return; }
         semanticRef.current = semantic;
-        setMessage('正在加载叙事模型（Qwen2.5-0.5B narration）…');
-        const narration = await loadEngine(NARRATION_MODEL);
+        setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
+        const narration = await loadEngine(NARRATION_MODEL, 3072);
         if (!alive) { await narration.dispose(); return; }
         narrationRef.current = narration;
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
+          narrationMode: 'instruct',
+          narrationMaxTokens: 220,
+          maxAutoContinuations: 0,
           onTask: (task, key, detail) => {
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
-            if (task === 'narration' && detail.fallback) setWarning(detail.error ?? '叙事事实校验未通过');
-            if (task === 'narration' && !detail.fallback) setWarning(null);
+            setStage(STAGE_LABEL[task] ?? task);
+            if (task === 'narration') setStage('');
+            if (task !== 'narration') return;
+            setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
           onNarrationProgress: (progress) => {
             setPhase('streaming');
-            setProse(progress.raw.replace(/※/g, '\n\n'));
+            const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
+            setEntries((list) => updateLast(list, (entry) => ({ ...entry, text })));
           },
           onNarrationComplete: (progress) => {
-            setProse(progress.raw.replace(/※/g, '\n\n'));
+            const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
+            setEntries((list) => updateLast(list, (entry) => ({ ...entry, text })));
             setPhase('ready');
           },
         });
         modelRef.current = model;
         const saved = localStorage.getItem(SAVE_KEY);
         let session: LocalGameSession;
+        let restored = false;
         if (saved) {
           try {
             session = await LocalGameSession.restore(JSON.parse(saved) as LocalGameSnapshot, model);
-            setMessage('已恢复本地存档。');
+            restored = true;
           } catch (restoreError) {
             console.warn('[world-local] restore failed; starting new world', restoreError);
             localStorage.removeItem(SAVE_KEY);
@@ -133,7 +142,7 @@ export default function WorldLocalPage() {
         await refresh();
         if (!alive) return;
         setPhase('ready');
-        setMessage('本地世界已就绪。');
+        setMessage(restored ? '已恢复本地存档，继续上次的进度。' : '本地世界已就绪。');
       } catch (e) {
         console.error(e);
         setPhase('error');
@@ -147,7 +156,9 @@ export default function WorldLocalPage() {
     const session = sessionRef.current;
     const text = input.trim();
     if (!session || !text || busy) return;
-    setBusy(true); setError(null); setWarning(null); setProse(''); setPhase('thinking');
+    setBusy(true); setError(null); setWarning(null); setPhase('thinking');
+    const key = Date.now();
+    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
     modelRef.current?.resetAutoContinuations();
@@ -187,14 +198,20 @@ export default function WorldLocalPage() {
           <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 18, minHeight: 280 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7b6d59', marginBottom: 10 }}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
-              <span>{phase === 'thinking' ? '结算中…' : phase === 'streaming' ? '正在写正文…' : message}</span>
+              <span>{phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}</span>
             </div>
-            <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>
-              {prose || (phase === 'loading' ? '正在加载本地模型，第一次会久一些。' : '等待输入…')}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? '正在加载本地模型，第一次会久一些。' : '等待输入…'}</div>}
+              {entries.map((entry) => (
+                <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
+                  <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>你：{entry.input}{entry.ms ? ` · 正文 ${(entry.ms / 1000).toFixed(1)}s` : ''}</div>
+                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>
+                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>正文已按已结算事实修正：{entry.note}</div>}
+                </article>
+              ))}
             </div>
           </div>
 
-          {warning && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff3d8', border: '1px solid #e4cb91', borderRadius: 6, fontSize: 12, color: '#7a5b19' }}>叙事事实校验未通过：{warning}。正文已保留，可继续游玩；这一问题会作为质量缺陷记录。</div>}
           {error && <div style={{ marginTop: 10, padding: '8px 10px', background: '#ffe8e5', border: '1px solid #e7b1a9', borderRadius: 6, fontSize: 12, color: '#8b2a1e', whiteSpace: 'pre-wrap' }}>{error}</div>}
 
           <div style={{ marginTop: 16 }}>
@@ -233,3 +250,22 @@ export default function WorldLocalPage() {
     </main>
   );
 }
+
+function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry): TurnEntry[] {
+  if (!list.length) return list;
+  const copy = list.slice();
+  copy[copy.length - 1] = update(copy[copy.length - 1]);
+  return copy;
+}
+
+
+const STAGE_LABEL: Record<string, string> = {
+  targets: '判断牵连',
+  action: '角色行动',
+  reaction: '即时反应',
+  results: '结算',
+  updates: '状态更新',
+  continuation: '继续判断',
+  narration: '写正文',
+  pointPlan: '安排回合',
+};

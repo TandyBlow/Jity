@@ -186,3 +186,60 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
   if (!delta || Object.keys(delta).length === 0) bits.push('这一回合没有结算出变化。');
   return bits.join('');
 }
+
+/** Instruct-model narration brief. A small instruct model copies long rule
+ * lists and bullet dumps back out, so the brief is one short paragraph of
+ * facts and two sentences of task. Nothing here invents state. */
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = ''): { prompt: string; brief: string } {
+  const name = after.initial.characters[view]?.name ?? view;
+  const room = roomOf(after, view);
+  const sentences: string[] = [];
+  const declared = actionText.trim().replace(/^我/u, name);
+  if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
+  if (resultsText.trim()) sentences.push(`这一回合的结算结果：${squash(resultsText).slice(0, 120)}。`);
+  const time = after.time.dateTime.slice(11, 16);
+  if (delta.timeAdvance) sentences.push(`时间到了${time}，过去${delta.timeAdvance.duration.amount}${timeUnitName(delta.timeAdvance.duration.unit)}。`);
+  const own = delta.entityDeltas?.[view];
+  if (own?.positionSet) {
+    const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
+    sentences.push(`${name}${from ? `从${from}` : ''}走到了${locationName(after, own.positionSet.containerId)}。`);
+  }
+  const appearance = after.initial.locations[room]?.initialAppearance;
+  sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 160)}` : ''}。`);
+  const props = sameRoomItems(after, view).slice(0, 3);
+  for (const id of props) {
+    const item = after.initial.items[id];
+    if (!item) continue;
+    const looks = [item.initialAppearance, ...activeText(after.items[id]?.appearanceChanges ?? [])].map(squash).filter(Boolean).join('，').slice(0, 40);
+    sentences.push(`屋里有${item.name}${looks ? `，${looks}` : ''}。`);
+  }
+  const others = visibleCharacters(after, view).filter((id) => id !== view);
+  for (const id of others.slice(0, 3)) {
+    const other = after.initial.characters[id];
+    const current = after.characters[id];
+    const looks = [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
+    const where = current.position.slotId ? locationName(after, room) : locationName(after, current.position.containerId);
+    sentences.push(`${other.name}也在${where}${looks ? `，${looks}` : ''}。`);
+  }
+  for (const [id, change] of Object.entries(delta.entityDeltas ?? {})) {
+    if (id === view) continue;
+    const other = after.initial.characters[id]?.name ?? after.initial.items[id]?.name ?? id;
+    if (change.positionSet) sentences.push(`${other}去了${locationName(after, change.positionSet.containerId)}。`);
+    for (const taskId of change.tasksAchieved ?? []) sentences.push(`${other}完成了「${after.characters[id]?.tasks[taskId]?.goal ?? taskId}」。`);
+    if (change.sanitySet != null && after.characters[id]) sentences.push(`${other}的精神值变成${change.sanitySet}。`);
+  }
+  if (!others.length) sentences.push('房间里没有别人。');
+  const brief = sentences.join('');
+  const prompt = [
+    `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，180 到 260 字。`,
+    '要求：只写事实里有的人和事；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要加人物、地点、物品、事件或数字；短句，对白用「」，分 2 到 4 段。',
+    '事实：',
+    brief,
+    '正文：',
+  ].join(String.fromCharCode(10));
+  return { prompt, brief };
+}
+
+function timeUnitName(unit: TimeAdvance['duration']['unit']): string {
+  return ({ second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' } as Record<string, string>)[unit] ?? unit;
+}
