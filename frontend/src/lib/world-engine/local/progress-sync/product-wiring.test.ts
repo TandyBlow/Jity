@@ -268,4 +268,19 @@ describe('product wiring survives a reload only with browser storage', () => {
     expect(warnings).toHaveLength(0);
     expect(memory.size).toBe(0);
   });
+
+  it('restore says unavailable when the head cannot be read, not "none"', async () => {
+    const store = typedStore();
+    const offline = (async () => { throw new TypeError('offline'); }) as unknown as typeof fetch;
+    const sync = createProductSync<unknown>({
+      store, worldId: 'w1', baseUrl: 'http://127.0.0.1:9/local-progress', storage: null,
+      fetchImpl: offline, retry: { attempts: 0, baseDelayMs: 0 }, sleep: async () => undefined,
+    });
+    const restored = await sync.restore();
+    expect(restored.source).toBe('unavailable');
+    expect(restored.snapshot).toBeNull();
+    expect(restored.note).toBeTruthy();
+    // Unknown is not the same as "the server has no head": nothing was written.
+    expect(store.records.get('w1')).toBeUndefined();
+  });
 });
