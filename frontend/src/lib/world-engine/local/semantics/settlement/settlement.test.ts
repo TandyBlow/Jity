@@ -169,6 +169,7 @@ describe('common-group results', () => {
     expect(engine.prompts[0]).toContain('乙伸手接住工具');
     expect(engine.prompts[0]).not.toContain('协助甲');
     expect(engine.prompts[0]).not.toContain('待办=');
+    expect(engine.prompts[0]).toContain('不要写“完成参赛选择/任务”');
   });
 
   it('drops a completion claim from a result fact and keeps the action result', async () => {
