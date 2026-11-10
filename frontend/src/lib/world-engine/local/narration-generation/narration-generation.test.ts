@@ -1234,6 +1234,8 @@ describe('beat prompt: allowed polish is not forbidden', () => {
     expect(prompt).not.toContain('不写“他心想”');
     expect(prompt).not.toContain('仿佛');
     // The gender-safe rule is "use names", not "everyone is 他".
-    expect(prompt).not.toMatch(/他(?!们)|她/u.test('') ? /x/ : /他\//u);
+    /** The gender-safe rule is to use names, so the prompt never states a pronoun for a character. */
+    expect(prompt).toContain('不要用他/她指代');
+    expect(prompt).not.toContain('他是');
   });
 });
