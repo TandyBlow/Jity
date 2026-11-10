@@ -450,6 +450,7 @@ async function writeBeat(
       // prose; the page would show it as text. Strip it before using the beat.
       const body = stripBeatLabel(result.attempt.cleaned);
       const invented = senseViolations(body, input.inputText, {
+        staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
       const acted = actionViolations(body, input.inputText);
@@ -715,6 +716,16 @@ function repeatTarget(text: string): { sentence: string; lines: string[] } | nul
   return null;
 }
 
+/** Scene objects and vehicles: things that can lie or stand in a scene but do
+ * not speak. People are never in this list because the caller's scene objects
+ * are items. */
+function staticNamesOf(policy: NarrationPolicy | undefined): string[] {
+  const names = [
+    ...(policy?.scene?.objects ?? []).map((object) => object.name),
+  ].filter((name) => name && name.length >= 2);
+  return [...new Set(names)];
+}
+
 async function repairSentences(args: {
   engine: InferenceEngine;
   text: string;
@@ -727,7 +738,7 @@ async function repairSentences(args: {
   let text = args.text;
   for (let round = 0; round < 3; round += 1) {
     const movedNames = args.ledger.mandatory.filter((fact) => fact.kind === 'moved').map((fact) => fact.name);
-    const senses = senseViolations(text, args.inputText, { movedNames });
+    const senses = senseViolations(text, args.inputText, { movedNames, staticNames: staticNamesOf(args.policy) });
     const acts = senses.length ? [] : actionViolations(text, args.inputText);
     const echo = senses.length || acts.length ? null : repeatTarget(text);
     if (!senses.length && !acts.length && !echo) return text;
@@ -866,6 +877,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // short can still assert an invented sound, and the evidence must say so.
     if (result.attempt.cleaned) {
       const invented = senseViolations(result.attempt.cleaned, input.inputText, {
+        staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });
       if (invented.length) {
@@ -922,6 +934,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     });
     if (!repaired) continue;
     const still = senseViolations(repaired, input.inputText, {
+      staticNames: staticNamesOf(policy),
       movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
     });
     if (still.length) continue;

@@ -13,6 +13,7 @@ import { buildBeatPrompt, planBeats } from './beats';
 import { BACKGROUND_RULES, projectProseFacts, renderProseFactsPrompt } from './scene-prompt';
 import { composeNarrationPrompt } from './prompt';
 import { buildLedger } from './ledger';
+import { senseViolations } from './licensed-sense';
 import { missingRequired } from './scene-prompt';
 
 // ---------------------------------------------------------------------------
@@ -1756,5 +1757,34 @@ describe('length is judged with the content, not instead of it', () => {
     });
     expect(result.accepted).toBe(false);
     expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'too_short')).toBe(true);
+  });
+});
+
+describe('a static prop does not speak', () => {
+  test('a sign making a sound and announcing the time is an invented event', () => {
+    const found = senseViolations(
+      '远处传来演习规则牌的声响，提醒着他们时间已到。',
+      '【物品】演习规则牌（在墙上）：牌面写明 使用弗里嘉演习弹',
+      { staticNames: ['演习规则牌'] },
+    );
+    expect(found.map((entry) => entry.noun)).toEqual(['演习规则牌']);
+  });
+
+  test('a person speaking is not affected', () => {
+    const found = senseViolations(
+      '诺诺在巷口喊了一声，声音传出去。',
+      '【人物】诺诺',
+      { staticNames: ['演习规则牌'] },
+    );
+    expect(found).toEqual([]);
+  });
+
+  test('a device the input says makes noise stays licensed', () => {
+    const found = senseViolations(
+      '除湿机的声音从墙角传来。',
+      '【物品】除湿机：一直响着',
+      { staticNames: ['除湿机'] },
+    );
+    expect(found).toEqual([]);
   });
 });

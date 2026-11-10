@@ -49,10 +49,19 @@ function licensedSources(inputText: string): string[] {
   return [...names];
 }
 
+/** Verbs that make a thing a speaker: something is heard, or it tells someone
+ * something. A sign or a sheet of paper in a scene is not a speaker. */
+const SPEAKING_VERBS = /(传来|响起|发出|飘来|回荡|作响|响了|响着|提醒|告诉|说道|喊道)/u;
+const SOUND_NOUNS = /(声|响|动静)/u;
+
 export interface SenseOptions {
   /** People with a committed move this point. Their own footsteps are a
    * consequence of the settled movement, not an invented sound. */
   movedNames?: readonly string[];
+  /** Things in the scene that cannot speak: signs, papers, boards, ropes,
+   * maps, weapons lying there. A real page run wrote «演习规则牌的声响…
+   * 提醒着他们时间已到», which is an event the state does not have. */
+  staticNames?: readonly string[];
 }
 
 export function senseViolations(text: string, inputText: string, options: SenseOptions = {}): SenseViolation[] {
@@ -80,6 +89,24 @@ export function senseViolations(text: string, inputText: string, options: SenseO
       // settled action rather than an invented sound; a quiet point has none.
       if (noun === '脚步声' && (options.movedNames ?? []).length > 0) continue;
       found.push({ sentence, noun });
+    }
+  }
+  // A static thing as the speaker of a sound or a message.
+  for (const sentence of sentencesOf(text)) {
+    if (!SPEAKING_VERBS.test(sentence)) continue;
+    for (const name of options.staticNames ?? []) {
+      if (name.length < 2 || !sentence.includes(name)) continue;
+      // The thing is named in a sentence that reports a sound or a message:
+      // «传来…的声响», «…提醒着他们». Word order varies («远处传来演习规则牌
+      // 的声响»), so the name only has to be in the same sentence as the verb.
+      if (!SPEAKING_VERBS.test(sentence)) continue;
+      if (!SOUND_NOUNS.test(sentence) && !/(提醒|告诉|说道|喊道)/u.test(sentence)) continue;
+      // The input itself says this thing makes a noise (a radio, a machine):
+      // then it is not a static prop for this sentence.
+      const at = inputText.indexOf(name);
+      const near = at < 0 ? '' : inputText.slice(Math.max(0, at - 20), at + name.length + 20);
+      if (/响|嗡|鸣|滴|沙沙|吱|呼呼|播放|广播/u.test(near)) continue;
+      found.push({ sentence, noun: name });
     }
   }
   return found;
