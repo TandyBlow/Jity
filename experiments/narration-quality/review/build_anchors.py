@@ -650,3 +650,25 @@ anchors += [
                    "notes": "Shortened sub-place name stays inside the settled place; no flag."},
     },
 ]
+
+
+anchors += [
+    {
+        "id": "neg/09-smoke-prose",
+        "source": "results/02-narration/smoke-probe-05b.json free-day-root::prose, 0.5B narration model, old gate accepted",
+        "input": arms_scene,
+        "text": "西侧服务巷的灯亮着，空气中带着纸屑和空气的味道。\n\n路明非站在东侧的服务台前，手里拿着一只盒子。\n\n「这个盒子。」他说。\n\n诺诺站在他身后，看着他拿。\n\n「你拿的是什么。」\n\n「演习用的背心。」\n\n诺诺凑近看。「这是新的吗？」\n\n「是新买的。」路明非说，「胸袋里放着一支枪，肩上没有。」\n\n诺诺没说话。她把盒子推过去，放在台子边上。\n\n「我来拿。」她说，「你先坐这儿。」\n\n路明非没有立刻走开。「站住。」\n\n诺诺停下。「站住。」\n\n他站着没走。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution"], "style": [],
+                   "notes": "An empty hand holds an invented box; the wrong place (东侧服务台) is not covered yet."},
+    },
+    {
+        "id": "neg/09-smoke-scene",
+        "source": "results/02-narration/smoke-probe-05b.json free-day-root::scene, 0.5B narration model, old gate accepted",
+        "input": arms_scene,
+        "text": "「哨声响了。」\n\n路明非把枪放在桌上，对着空场。\n\n诺诺站在旁边，手里紧着一条布条。「有伤员吗？」\n\n「没有。」\n\n诺诺没再问。她转过头看着他，脸上闪过一丝复杂。\n\n「我猜你们在做什么。」她说。\n\n「都在做什么。」\n\n「都在做一件事。」\n\n路明非把枪收好，背在背后。\n\n回廊上响起了脚步声。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.sound_added"], "style": [],
+                   "notes": "An empty hand handles a gun twice; a corridor footstep has no move fact."},
+    },
+]

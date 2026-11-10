@@ -12,7 +12,7 @@ import { projectScene, parseMinutes } from './scene';
 import {
   BODY_ACTIONS, BODY_REACTION, CHANGE_MARKERS, CLOSURE, COMPLETION_VERBS, EVENT_VERBS, FAREWELL,
   FIELD_WORDS, HOLD_MARKERS, INTERIOR, ITEM_STATE_VERBS, MOVE_VERBS, NEGATION,
-  INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
+  HANDLING_VERBS, INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
   SOUND_WORDS, TERMINAL_PUNCTUATION,
 } from './lexicon';
 import type { Finding, FindingKind, MandatoryReview, ReviewOptions, ReviewReport, SentenceReview } from './types';
@@ -683,10 +683,26 @@ export function reviewNarration(args: {
       const named = mentions(narration, person.name, names);
       const impliedViewpoint = projection.viewpoint === person.name && !nameHits(narration, names, Object.keys(projection.people)).length;
       if (!named && !impliedViewpoint) continue;
-      const prop = [...ctx.holders.holders.keys()].find((entry) => possessionClause(narration, entry))
-        ?? PROPS.find((entry) => possessionClause(narration, entry));
+      const handled = (entry: string): string | null => {
+        const clause = possessionClause(narration, entry);
+        if (clause) return clause;
+        const index = narration.indexOf(entry);
+        if (index < 0) return null;
+        const around = clauseAt(narration, index).text;
+        if (!hasAny(around, HANDLING_VERBS)) return null;
+        // Wearing something is not holding it.
+        if (/(挂在|戴在|别在)[^，。]{0,5}(胸前|身上|颈|脖子|肩|腰|头发)/u.test(around)) return null;
+        const settled = Object.entries(projection.items)
+          .filter(([name]) => name.includes(entry) || entry.includes(name.replace(/^.*的/u, '')))
+          .flatMap(([, item]) => item.descriptions);
+        if (settled.some((text) => sharesRun(around, text, 4))) return null;
+        return around;
+      };
+      const prop = [...ctx.holders.holders.keys()].find((entry) => handled(entry))
+        ?? PROPS.find((entry) => handled(entry));
       if (!prop) continue;
-      const verb = hasAny(possessionClause(narration, prop) ?? '', POSSESSION_VERBS);
+      const verb = hasAny(handled(prop) ?? '', POSSESSION_VERBS)
+        ?? hasAny(handled(prop) ?? '', HANDLING_VERBS);
       if (!verb) continue;
       findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
         `${person.name}'s settled appearance says the hand is empty, but the prose has ${prop} in it`,

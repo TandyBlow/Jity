@@ -47,7 +47,11 @@ export const PROP_VERBS = [
 export const SOUND_WORDS = [
   '脚步声', '枪声', '铃声', '钟声', '回声', '低语声', '呼喊声', '喊声', '惨叫',
   '咳嗽声', '呼吸声', '爆裂声', '碎裂声', '撞击声', '摩擦声', '沙沙声', '嗡嗡声',
+  '哨声', '哨音', '号声', '警笛',
 ] as const;
+
+/** Handling that implies the person had the object, without a holding verb. */
+export const HANDLING_VERBS = ['放在', '放进', '放到', '塞进', '收进', '收好', '别在', '挂在', '揣进', '插在', '压在'] as const;
 
 /** Strong past-event references. Allowed only when the same word appears in
  * the settled input (task, personality or description). */
