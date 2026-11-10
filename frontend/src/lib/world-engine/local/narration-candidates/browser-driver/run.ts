@@ -60,6 +60,14 @@ export interface PrepareConfig {
   include?: string[] | null;
   exclude?: string[] | null;
   candidates: CandidateSpec[];
+  /** Lane 01's `narration-input` module. When given, scenario input is built by
+   * the shipped renderer (`result-v2` by default) instead of the legacy prompt,
+   * so the queue feeds candidates the same text the page does. */
+  productInput?: {
+    moduleUrl: string;
+    format?: 'result-v2' | 'legacy';
+    exportName?: string;
+  } | null;
 }
 
 export interface ScenarioSummary {
@@ -76,11 +84,39 @@ export interface ScenarioSummary {
  * decide what to run (no world state is copied into evidence here). */
 export async function prepare(config: PrepareConfig): Promise<ScenarioSummary[]> {
   const store = state();
+  let inputBuilder: import('./scenarios').InputBuilder | null = null;
+  let productInputError: string | null = null;
+  if (config.productInput) {
+    try {
+      const module = await import(/* @vite-ignore */ config.productInput.moduleUrl) as Record<string, unknown>;
+      const build = (module.buildNarrationInput ?? module.projectNarrationInput) as
+        ((args: unknown, options?: unknown) => Record<string, unknown>) | undefined;
+      if (typeof build !== 'function') throw new Error('buildNarrationInput_missing');
+      const format = config.productInput.format ?? 'result-v2';
+      inputBuilder = (args) => {
+        const built = build({
+          before: args.before ?? args.after,
+          after: args.after,
+          delta: args.delta.entityDeltas,
+          timeAdvance: args.delta.timeAdvance ?? { boundary: 'instant', duration: { amount: 0, unit: 'second' } },
+          viewpointId: args.viewpointId,
+        }, { model: format });
+        const rendered = (built.rendered ?? built) as { text?: unknown } | undefined;
+        const text = typeof rendered?.text === 'string' ? rendered.text : null;
+        if (!text) throw new Error('product_input_render_empty');
+        return text;
+      };
+    } catch (error) {
+      productInputError = error instanceof Error ? error.message : String(error);
+      throw new Error(`product_input_failed:${productInputError}`);
+    }
+  }
   const scenarios = await buildScenarios({
     set: config.set,
     freeDay: config.freeDay ?? null,
     include: config.include ?? null,
     exclude: config.exclude ?? null,
+    inputBuilder,
   });
   store.scenarios = new Map(scenarios.map((scenario) => [scenario.id, scenario]));
   store.candidates = new Map(config.candidates.map((candidate) => [candidate.id, candidate]));

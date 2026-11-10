@@ -165,6 +165,16 @@ function changeKinds(delta: Record<Id, EntityDelta>): string[] {
   return [...kinds].sort();
 }
 
+/** Optional product input serializer. The default is the legacy prompt the
+ * early candidates were trained on; lane 01's `result-v2` renderer is what the
+ * shipped page sends, so the queue must be able to use it verbatim. */
+export type InputBuilder = (args: {
+  before: WorldState | null;
+  after: WorldState;
+  delta: { timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, EntityDelta> };
+  viewpointId: Id;
+}) => string;
+
 /** Build a scenario from a settled projection. `inputText` is the product's
  * serialized fact input, never a candidate-specific template. */
 export async function scenarioFromProjection(args: {
@@ -179,10 +189,13 @@ export async function scenarioFromProjection(args: {
   version: number;
   previousPointId?: Id | null;
   stateDigest?: string;
+  inputBuilder?: InputBuilder | null;
 }): Promise<CandidateScenario> {
   const viewpoint = args.after.protagonistId;
   const scene = sceneFromState(args.after, viewpoint);
-  const inputText = legacyNarrationInput(args.before, args.delta, args.after, viewpoint);
+  const inputText = args.inputBuilder
+    ? args.inputBuilder({ before: args.before, after: args.after, delta: args.delta, viewpointId: viewpoint })
+    : legacyNarrationInput(args.before, args.delta, args.after, viewpoint);
   const committed = projectWorldFacts(args.before, args.after, args.delta);
   committed.anchor.pointId = args.pointId;
   committed.anchor.version = args.version;
@@ -234,11 +247,12 @@ export async function scenarioFromProjection(args: {
 }
 
 /** Public short-world scenarios, identical inputs to the earlier probes. */
-export async function shortWorldScenarios(): Promise<CandidateScenario[]> {
+export async function shortWorldScenarios(inputBuilder?: InputBuilder | null): Promise<CandidateScenario[]> {
   const root = structuredClone(SHORT_STATE) as WorldState;
   const rootScenario = await scenarioFromProjection({
     id: 'short-root', label: '公开短场景 · 起点',
     note: '无可结算变化：只能写已记录的走廊场景。新增事件/站立位置即事实错误。',
+    inputBuilder: inputBuilder ?? null,
     before: null, after: root,
     delta: { timeAdvance: null, entityDeltas: {} },
     pointId: 'root_short', version: 0, previousPointId: null,
@@ -252,6 +266,7 @@ export async function shortWorldScenarios(): Promise<CandidateScenario[]> {
   const moveScenario = await scenarioFromProjection({
     id: 'short-move', label: '公开短场景 · 一人移动',
     note: '必须写出林川从走廊到门厅；视角周宁仍在走廊；不得新增物品或事件。',
+    inputBuilder: inputBuilder ?? null,
     before: move.before, after: move.after,
     delta: { timeAdvance: move.point.timeAdvance, entityDeltas: move.point.entityDeltas },
     stateDigest: move.digest, version: 1, pointId: move.point.id, previousPointId: 'root_short',
@@ -266,6 +281,7 @@ export async function shortWorldScenarios(): Promise<CandidateScenario[]> {
   const elapsedScenario = await scenarioFromProjection({
     id: 'short-elapsed', label: '公开短场景 · 时间流逝',
     note: '空 delta + 2 分钟：时间必须表达，不得编造新变化。',
+    inputBuilder: inputBuilder ?? null,
     before: elapsed.before, after: elapsed.after,
     delta: { timeAdvance: elapsed.point.timeAdvance, entityDeltas: {} },
     stateDigest: elapsed.digest, version: 2, pointId: elapsed.point.id, previousPointId: 'point_short_move',
@@ -282,13 +298,14 @@ export type FreeDayWorldAsset = WorldState;
 /** The actual free-day world, projected at its opening point and after authored
  * probe settlements. The settlements are deterministic probes applied by the
  * real kernel; they are not a model's settlement output. */
-export async function freeDayScenarios(asset: FreeDayWorldAsset): Promise<CandidateScenario[]> {
+export async function freeDayScenarios(asset: FreeDayWorldAsset, inputBuilder?: InputBuilder | null): Promise<CandidateScenario[]> {
   const initial = structuredClone(asset) as unknown as WorldState;
   if (initial.engineVersion !== 'world-engine-v1') throw new Error('free_day_asset_invalid');
 
   const root = await scenarioFromProjection({
     id: 'free-day-open', label: '自由一日 · 开局',
     note: '自由一日真实开局投影：路明非在西侧服务巷墙边，诺诺在巷口，多个物品在场。无变化。',
+    inputBuilder: inputBuilder ?? null,
     before: null, after: initial,
     delta: { timeAdvance: null, entityDeltas: {} },
     pointId: 'root_free_day', version: 0, previousPointId: null,
@@ -305,6 +322,7 @@ export async function freeDayScenarios(asset: FreeDayWorldAsset): Promise<Candid
   const moveScenario = await scenarioFromProjection({
     id: 'free-day-move', label: '自由一日 · 两人转进西回廊',
     note: '路明非与诺诺同一分钟内从西侧服务巷移到西回廊；场景可写回廊与在场的人，不得新增未结算事件。',
+    inputBuilder: inputBuilder ?? null,
     before: move.before, after: move.after,
     delta: { timeAdvance: move.point.timeAdvance, entityDeltas: move.point.entityDeltas },
     stateDigest: move.digest, version: 1, pointId: move.point.id, previousPointId: 'root_free_day',
@@ -326,6 +344,7 @@ export async function freeDayScenarios(asset: FreeDayWorldAsset): Promise<Candid
   const taskScenario = await scenarioFromProjection({
     id: 'free-day-task', label: '自由一日 · 任务达成与个性变化',
     note: '任务 task_lu_choice 已达成，个性变化与精神值 43→48 是同一因果链；正文必须让读者看到这个变化，不得编造额外往事。',
+    inputBuilder: inputBuilder ?? null,
     before: task.before, after: task.after,
     delta: { timeAdvance: task.point.timeAdvance, entityDeltas: task.point.entityDeltas },
     stateDigest: task.digest, version: 2, pointId: task.point.id, previousPointId: 'point_free_day_move',
@@ -344,12 +363,13 @@ export async function buildScenarios(args: {
   freeDay?: FreeDayWorldAsset | null;
   include?: string[] | null;
   exclude?: string[] | null;
+  inputBuilder?: InputBuilder | null;
 }): Promise<CandidateScenario[]> {
   const scenarios: CandidateScenario[] = [];
-  if (args.set === 'short' || args.set === 'all') scenarios.push(...await shortWorldScenarios());
+  if (args.set === 'short' || args.set === 'all') scenarios.push(...await shortWorldScenarios(args.inputBuilder));
   if (args.set === 'free-day' || args.set === 'all') {
     if (!args.freeDay) throw new Error('free_day_asset_required');
-    scenarios.push(...await freeDayScenarios(args.freeDay));
+    scenarios.push(...await freeDayScenarios(args.freeDay, args.inputBuilder));
   }
   const include = args.include?.filter(Boolean) ?? null;
   const exclude = new Set(args.exclude?.filter(Boolean) ?? []);

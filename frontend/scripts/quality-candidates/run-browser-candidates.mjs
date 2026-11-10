@@ -81,6 +81,8 @@ const config = {
   status: flag('--status'),
   noEngine: flag('--no-engine'),
   continuation: value('--continuation', 'accepted'),
+  inputModule: value('--input-module', ''),
+  inputFormat: value('--input-format', 'result-v2'),
   quiet: flag('--quiet'),
   aliasSrc: resolve(value('--alias-src', resolve(frontend, 'src'))),
   allowDirs: values('--allow-dir'),
@@ -185,6 +187,7 @@ if ((!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) 
 }
 if (!['short', 'free-day', 'all'].includes(config.set)) fail(`--set must be short|free-day|all, got ${config.set}`);
 if (!['accepted', 'displayed'].includes(config.continuation)) fail(`--continuation must be accepted|displayed, got ${config.continuation}`);
+if (!['result-v2', 'legacy'].includes(config.inputFormat)) fail(`--input-format must be result-v2|legacy, got ${config.inputFormat}`);
 if (!existsSync(config.world)) fail(`world asset missing: ${config.world}`);
 
 const candidates = Object.entries(config.candidateSpecs).map(([id, modulePath]) => {
@@ -210,6 +213,14 @@ const candidates = Object.entries(config.candidateSpecs).map(([id, modulePath]) 
   };
 });
 
+const productInput = config.inputModule
+  ? (() => {
+    const file = isAbsolute(config.inputModule) ? config.inputModule : resolve(frontend, config.inputModule);
+    if (!existsSync(file)) fail(`--input-module missing: ${file}`);
+    return { file, moduleUrl: moduleUrlFor(file), format: config.inputFormat };
+  })()
+  : null;
+
 /** Vite URL for a module file inside or outside the frontend root. */
 function moduleUrlFor(file) {
   const normalized = resolve(file).replace(/\\/g, '/');
@@ -221,6 +232,7 @@ function moduleUrlFor(file) {
  * must be readable by the dev server; nothing is copied. */
 function allowedDirectories(candidateList) {
   const dirs = new Set([frontend, config.modelDir, config.aliasSrc, ...config.allowDirs.map((dir) => resolve(dir))]);
+  if (productInput) dirs.add(dirname(productInput.file));
   const files = [...candidateList.map((candidate) => candidate.file), ...candidateList.map((candidate) => candidate.loader?.file).filter(Boolean)];
   for (const file of files) {
     let dir = dirname(file);
@@ -540,7 +552,15 @@ try {
   });
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
-  page.on('console', (message) => { if (message.type() === 'error') console.error('[console]', message.text()); });
+  const ggmlLines = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') console.error('[console]', message.text());
+    const text = message.text();
+    if (/ggml_webgpu|adapter_info|device_desc|lovelace|nvidia/i.test(text)) {
+      ggmlLines.push(text.slice(0, 400));
+      evidence.device.ggml = ggmlLines.slice(-8);
+    }
+  });
   await page.goto(`http://127.0.0.1:${port}/__candidates`);
 
   const buffer = await page.evaluate(() => ({ isolated: crossOriginIsolated, gpu: typeof navigator !== 'undefined' && 'gpu' in navigator }));
@@ -567,6 +587,7 @@ try {
 
   const prepared = await call('prepare', {
     set: config.set,
+    productInput: productInput ? { moduleUrl: productInput.moduleUrl, format: productInput.format } : null,
     freeDay: world,
     include: config.only,
     exclude: config.exclude,
