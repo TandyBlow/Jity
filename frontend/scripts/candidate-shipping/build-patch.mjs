@@ -243,10 +243,11 @@ const header = [
   '# Prerequisite: lane 02 beats commit 211fd463 (narration-generation beats +',
   '# trained-input). New module files are additions from lane 06.',
   '#',
-  '# To enable the beats candidate for evaluation on the product page, pass',
+  '# Default `auto` selects the constrained program candidate (C): fact-grounded,',
+  '# instant, and labelled by the page as a downgrade. To evaluate the committed-',
+  '# fact beats candidate (B) on an instruct narration model, pass',
   "#   narrationCandidate: 'trained'",
-  '# in the LocalGameModel options (page.tsx). The default `auto` stays on the',
-  '# existing in-model writer until a candidate has accepted real-model prose.',
+  '# in the LocalGameModel options (page.tsx). The page file itself does not change.',
   '',
 ].join('\n');
 const patchText = [
