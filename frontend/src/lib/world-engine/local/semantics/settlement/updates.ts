@@ -16,7 +16,7 @@ import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, Settleme
 import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
-  isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
+  isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove, scopedState,
   positionFromRow, projectStage, roster, sameChangeText, taskIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
@@ -33,6 +33,8 @@ interface UpdatesInput {
 interface StageContext {
   engine: InferenceEngine;
   state: WorldState;
+  /** The state the stages judge: the full world, or the protagonist's scene. */
+  scope: WorldState;
   results: Record<Id, string>;
   mode: 'group' | 'time_scan';
   newAchieved: Set<Id>;
@@ -171,6 +173,55 @@ const SANITY_SCHEMA = {
   },
 };
 
+
+const MERGED_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'],
+  properties: {
+    position: POSITION_SCHEMA.properties.changes,
+    appearance: OPERATIONS_SCHEMA.properties.operations,
+    tasks: TASKS_SCHEMA.properties.decisions,
+    subtasks: SUBTASKS_SCHEMA.properties.subtasks,
+    personality: OPERATIONS_SCHEMA.properties.operations,
+    sanity: SANITY_SCHEMA.properties.sanity,
+  },
+};
+
+const MERGED_NOTE = [
+  '一次回答，六个键，没有变化的键给空数组。',
+  '规则：',
+  '- position：只列真的换了位置的实体；containerId 必须是已登记 id；不能成环。',
+  '- appearance：只列本回合外貌有变化的实体；op=add/remove/replace/keep，recordIds 指向已有记录 id，text 是新描述。',
+  '- tasks：逐个判断待办任务；只有结果明确表明目标达成才写 achieved，只是尝试、接近、被制止都写 pending。没把握就不要列。',
+  '- subtasks：只为已达成的大任务补下一步小目标，最多 3 条。',
+  '- personality：只有本回合有新任务达成时才写；op=keep/add/remove/replace。',
+  '- sanity：只为个性真的变化的人物写 0-100 的整数，其他人不要列。',
+  '- 不得新增人物、地点、物品、任务、往事；不得把行动结果当成任务达成。',
+];
+
+function buildMergedPrompt(ctx: StageContext): string {
+  const scope = ctx.scope;
+  const entities = movableIds(scope).map((id) => `- ${positionLineFor(scope, id)}`);
+  const tasks = roster(scope).map((id) => taskLine(scope, id));
+  const people = roster(scope).map((id) => `- ${id}=${scope.initial.characters[id].name}：${personalityLine(scope, id)}`);
+  return [
+    '你是中文跑团游戏的结算记录器。只输出一个 JSON 对象，不要解释。',
+    ...MERGED_NOTE,
+    `结算结果：${resultText(ctx.results) || '（无）'}`,
+    '可移动实体和当前位置：',
+    ...entities,
+    '地点和容器（id=名字，槽位）：',
+    ...containerCatalog(scope),
+    '人物和任务：',
+    ...tasks,
+    '人物个性：',
+    ...people,
+    `当前时间：${scope.time.dateTime}`,
+    '输出：{"position":[],"appearance":[],"tasks":[],"subtasks":[],"personality":[],"sanity":[]}。',
+  ].join('\n');
+}
+
 export class UpdatesRunner {
   private readonly batches = new Map<Id, BatchMemory>();
   private readonly allocator = new LocalIdAllocator();
@@ -214,6 +265,7 @@ export class UpdatesRunner {
     const ctx: StageContext = {
       engine: this.engine,
       state: parsed.workingState,
+      scope: this.options.sceneScope ? scopedState(parsed.workingState, parsed.workingState.protagonistId) : parsed.workingState,
       results: parsed.results,
       mode: parsed.mode,
       newAchieved: effectiveNew,
@@ -235,14 +287,15 @@ export class UpdatesRunner {
       return this.finish(key, value, [outcome], started, {
         mode: ctx.mode,
         sanityBasis,
-        taskCoverageIds: roster(ctx.state),
+        taskCoverageIds: roster(ctx.scope),
         personalityCoverageIds: stage === 'tasks'
-          ? (achievedFromChanges(changes).size > 0 ? roster(ctx.state) : [])
+          ? (achievedFromChanges(changes).size > 0 ? roster(ctx.scope) : [])
           : stage === 'personality' && Object.keys(changes).length > 0
-            ? roster(ctx.state)
+            ? roster(ctx.scope)
             : [],
       });
     }
+    if (this.options.mergedStages) return this.runMerged(key, ctx, started);
     const calls: UpdatesCall[] = [];
     const outcomes: StageOutcome[] = [];
     let view = ctx.state;
@@ -252,6 +305,7 @@ export class UpdatesRunner {
       const stageCtx: StageContext = {
         ...ctx,
         state: view,
+        scope: this.options.sceneScope ? scopedState(view, view.protagonistId) : view,
         newAchieved,
         recoveredAchieved: new Set<Id>(),
         personalityOwners: mergedPersonalityOwners,
@@ -272,7 +326,7 @@ export class UpdatesRunner {
       if (currentStage === 'tasks') newAchieved = achievedFromChanges(changes);
       if (currentStage === 'personality') mergedPersonalityOwners = new Set(Object.keys(changes));
     }
-    const taskCoverageIds = roster(ctx.state);
+    const taskCoverageIds = roster(ctx.scope);
     const personalityCoverageIds = newAchieved.size > 0 ? taskCoverageIds : [];
     const detail = {
       mode: ctx.mode,
@@ -287,6 +341,128 @@ export class UpdatesRunner {
         fallback: outcome.fallback,
         ...outcome.detail,
       })),
+    };
+    return this.finish(key, calls, outcomes, started, detail);
+  }
+
+
+  /** One model call carrying all six stage sections. The stage order, the
+   * validators and the projection checks stay identical; only the number of
+   * round trips changes, which is what makes a six-stage settlement fit the
+   * browser wait budget. Each section is validated on its own: a broken
+   * section becomes an empty stage with evidence, never a discarded round. */
+  private async runMerged(key: Id, ctx: StageContext, started: number): Promise<SettlementOutcome<UpdatesCall[] | UpdatesCall>> {
+    const prompt = buildMergedPrompt(ctx);
+    const outcomes: StageOutcome[] = [];
+    const calls: UpdatesCall[] = [];
+    let view = ctx.state;
+    let newAchieved = new Set<Id>();
+    let personalityOwners = new Set<Id>();
+    let answer: { value: unknown; calls: ModelCallEvidence[] } | null = null;
+    let overallError: string | undefined;
+    try {
+      answer = await callJson(this.engine, prompt, {
+        maxTokens: this.options.maxTokens?.updates ?? 420,
+        temperature: this.options.temperature ?? 0,
+        timeoutMs: this.options.timeoutMs ?? 120_000,
+        maxPromptChars: this.options.maxPromptChars ?? 11_000,
+        jsonSchema: MERGED_SCHEMA,
+        validate: (value) => {
+          if (!isRecord(value)) throw new Error('merged answer must be an object');
+          for (const section of ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']) {
+            if (!Array.isArray(value[section])) throw new Error(`merged answer is missing ${section}`);
+          }
+        },
+      });
+    } catch (error) {
+      overallError = errorText(error);
+    }
+    const sections = (answer?.value ?? {}) as Record<string, unknown>;
+    const read = <T>(label: string, fn: () => T, fallbackValue: T): T => {
+      try {
+        return fn();
+      } catch (error) {
+        outcomes.push({ changes: {}, detail: { mergedSection: label }, error: errorText(error), fallback: true, calls: [] });
+        return fallbackValue;
+      }
+    };
+    const nextCtx = (): StageContext => ({
+      ...ctx,
+      state: view,
+      scope: this.options.sceneScope ? scopedState(view, view.protagonistId) : view,
+      newAchieved,
+      recoveredAchieved: new Set<Id>(),
+      personalityOwners,
+    });
+    // The single merged model call is the evidence for the whole batch: attach
+    // its call records to the first stage that lands so `ms`/`raw` report the
+    // real generation instead of zero.
+    let callsAttached = false;
+    const mergedCalls = answer?.calls ?? [];
+    const apply = (stage: UpdatesStage, changes: Record<Id, Partial<EntityDelta>>, detail: Record<string, unknown>) => {
+      const attach = !callsAttached ? mergedCalls : [];
+      callsAttached = true;
+      try {
+        view = projectStage(view, stage, changes);
+      } catch (error) {
+        outcomes.push({ changes: {}, detail: { ...detail, stage }, error: `stage_projection_rejected:${errorText(error)}`, fallback: true, calls: [] });
+        calls.push({ stage, changes: {} });
+        return;
+      }
+      outcomes.push({ changes, detail: { ...detail, stage, mergedSection: true }, fallback: false, calls: attach });
+      calls.push({ stage, changes: changes as UpdatesCall['changes'] });
+      if (stage === 'tasks') newAchieved = achievedFromChanges(changes);
+      if (stage === 'personality') personalityOwners = new Set(Object.keys(changes));
+    };
+
+    const positionScope = nextCtx().scope;
+    const position = read('position', () => readPositionChanges({ changes: sections.position }, positionScope), {});
+    apply('position', position, { changedEntityIds: Object.keys(position).sort() });
+
+    const appearanceScope = nextCtx().scope;
+    const appearance = read('appearance', () => readDescriptionOperations({ operations: sections.appearance }, appearanceScope, 'appearance', this.allocator, false), {});
+    apply('appearance', appearance, { changedEntityIds: Object.keys(appearance).sort() });
+
+    const taskScope = nextCtx().scope;
+    const tasks = read('tasks', () => readTaskDecisions({ decisions: sections.tasks }, taskScope), {});
+    apply('tasks', tasks, { decisionCoverage: taskDecisionCoverage() });
+
+    const subtaskScope = nextCtx().scope;
+    const subtasks = read('subtasks', () => readSubtaskProposals({ subtasks: sections.subtasks }, subtaskScope, this.allocator, this.options.maxNewTasks ?? 8), {});
+    apply('subtasks', subtasks, { addedTaskIds: Object.values(subtasks).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort() });
+
+    const personalityScope = nextCtx().scope;
+    const personality = newAchieved.size > 0
+      ? read('personality', () => readDescriptionOperations({ operations: sections.personality }, personalityScope, 'personality', this.allocator, true), {})
+      : {};
+    apply('personality', personality, { triggeredByTaskIds: [...newAchieved].sort(), triggered: newAchieved.size > 0 });
+
+    const sanityOwners = [...personalityOwners].sort();
+    const sanity: Record<Id, Partial<EntityDelta>> = {};
+    if (sanityOwners.length) {
+      try {
+        const values = readSanityValues({ sanity: sections.sanity }, sanityOwners);
+        for (const owner of sanityOwners) sanity[owner] = { sanitySet: values[owner] };
+      } catch (error) {
+        const current = nextCtx().scope;
+        for (const owner of sanityOwners) if (current.characters[owner]) sanity[owner] = { sanitySet: current.characters[owner].sanity };
+        outcomes.push({ changes: {}, detail: { mergedSection: 'sanity', fallback: 'current_sanity' }, error: errorText(error), fallback: true, calls: [] });
+      }
+    }
+    apply('sanity', sanity, { owners: sanityOwners });
+
+    if (overallError && calls.every((call) => Object.keys(call.changes).length === 0)) {
+      return this.failure(key, overallError, started);
+    }
+    const detail = {
+      mode: ctx.mode,
+      mergedStages: true,
+      taskCoverageIds: roster(ctx.scope),
+      personalityCoverageIds: newAchieved.size > 0 ? roster(ctx.scope) : [],
+      newlyAchievedTaskIds: [...newAchieved].sort(),
+      personalityChangedIds: [...personalityOwners].sort(),
+      stageErrors: outcomes.filter((outcome) => outcome.error).map((outcome) => outcome.error),
+      stages: outcomes,
     };
     return this.finish(key, calls, outcomes, started, detail);
   }
@@ -429,11 +605,11 @@ function parseUpdatesInput(input: Json): UpdatesInput | { error: string } {
 }
 
 async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = movableIds(ctx.state);
+  const scanned = movableIds(ctx.scope);
   if (ctx.mode === 'time_scan') {
     return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildPositionPrompt(ctx.state, ctx.results);
+  const prompt = buildPositionPrompt(ctx.scope, ctx.results);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 240),
@@ -441,10 +617,10 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: POSITION_SCHEMA,
-      validate: (value) => validatePositionAnswer(value, ctx.state),
+      validate: (value) => validatePositionAnswer(value, ctx.scope),
     });
-    const changes = readPositionChanges(answer.value, ctx.state);
-    projectStage(ctx.state, 'position', changes);
+    const changes = readPositionChanges(answer.value, ctx.scope);
+    projectStage(ctx.scope, 'position', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
@@ -457,11 +633,11 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = allEntityIds(ctx.state);
+  const scanned = allEntityIds(ctx.scope);
   if (ctx.mode === 'time_scan') {
     return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance');
+  const prompt = buildDescriptionPrompt(ctx.scope, ctx.results, 'appearance');
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 420),
@@ -469,10 +645,10 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false),
+      validate: (value) => readDescriptionOperations(value, ctx.scope, 'appearance', ctx.allocator, false),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false);
-    projectStage(ctx.state, 'appearance', changes);
+    const changes = readDescriptionOperations(answer.value, ctx.scope, 'appearance', ctx.allocator, false);
+    projectStage(ctx.scope, 'appearance', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
@@ -485,8 +661,8 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
-  const rows = allTasks(ctx.state);
-  const characters = roster(ctx.state);
+  const rows = allTasks(ctx.scope);
+  const characters = roster(ctx.scope);
   if (!rows.length) {
     return { changes: {}, detail: { taskCoverageIds: characters, decidedTaskIds: [], skipped: 'no_tasks' }, fallback: false, calls: [] };
   }
@@ -506,14 +682,15 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state),
+      validate: (value) => readTaskDecisions(value, ctx.scope),
     });
-    const changes = readTaskDecisions(answer.value, ctx.state);
+    const changes = readTaskDecisions(answer.value, ctx.scope);
     return {
       changes,
       detail: {
         taskCoverageIds: characters,
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
+        decisionCoverage: taskDecisionCoverage(),
         newlyAchievedTaskIds: [...achievedFromChanges(changes)].sort(),
       },
       fallback: false,
@@ -525,8 +702,8 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
-  const rows = allTasks(ctx.state);
-  const characters = roster(ctx.state);
+  const rows = allTasks(ctx.scope);
+  const characters = roster(ctx.scope);
   if (!rows.length) {
     return { changes: {}, detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_parent_tasks' }, fallback: false, calls: [] };
   }
@@ -538,9 +715,9 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: SUBTASKS_SCHEMA,
-      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8),
+      validate: (value) => readSubtaskProposals(value, ctx.scope, ctx.allocator, ctx.options.maxNewTasks ?? 8),
     });
-    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8);
+    const changes = readSubtaskProposals(answer.value, ctx.scope, ctx.allocator, ctx.options.maxNewTasks ?? 8);
     return {
       changes,
       detail: {
@@ -557,7 +734,7 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
-  const characters = roster(ctx.state);
+  const characters = roster(ctx.scope);
   const triggerIds = ctx.newAchieved.size > 0 ? [...ctx.newAchieved] : [...ctx.recoveredAchieved];
   if (!triggerIds.length) {
     return {
@@ -575,9 +752,9 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true),
+      validate: (value) => readDescriptionOperations(value, ctx.scope, 'personality', ctx.allocator, true),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true);
+    const changes = readDescriptionOperations(answer.value, ctx.scope, 'personality', ctx.allocator, true);
     return {
       changes,
       detail: {
@@ -595,7 +772,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
-  const owners = [...ctx.personalityOwners].filter((id) => Boolean(ctx.state.characters[id])).sort();
+  const owners = [...ctx.personalityOwners].filter((id) => Boolean(ctx.scope.characters[id])).sort();
   if (!owners.length) {
     return { changes: {}, detail: { owners: [], skipped: 'no_personality_change' }, fallback: false, calls: [] };
   }
@@ -623,7 +800,7 @@ async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
     // that keeps the current value is legal and visible; it never invents a
     // psychological change.
     const changes: Record<Id, Partial<EntityDelta>> = {};
-    for (const owner of owners) changes[owner] = { sanitySet: ctx.state.characters[owner].sanity };
+    for (const owner of owners) changes[owner] = { sanitySet: ctx.scope.characters[owner].sanity };
     const calls = error instanceof JsonCallError ? error.calls : [];
     return {
       changes,
@@ -864,8 +1041,8 @@ function readDescriptionOperations(
 }
 
 function buildTasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
-  const now = ctx.state.time.dateTime;
+  const rows = roster(ctx.scope).map((id) => taskLine(ctx.scope, id));
+  const now = ctx.scope.time.dateTime;
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成）。请逐个判断当前状态：pending 或 achieved。',
@@ -881,6 +1058,17 @@ function buildTasksPrompt(ctx: StageContext): string {
     '输出 {"decisions":[{"characterId":"人物id","taskId":"任务id","label":"pending|achieved"}]}。',
   ].join('\n');
 }
+
+let lastTaskCoverage: { decided: number; total: number } = { decided: 0, total: 0 };
+
+function recordTaskCoverage(decided: number, total: number): void {
+  lastTaskCoverage = { decided, total };
+}
+
+export function taskDecisionCoverage(): { decided: number; total: number } {
+  return lastTaskCoverage;
+}
+
 
 function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partial<EntityDelta>> {
   const decisions = asRecord(value).decisions;
@@ -906,14 +1094,18 @@ function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partia
       achieved.set(characterId, list);
     }
   }
-  if (seen.size !== rows.length) throw new Error(`task decision coverage incomplete: ${seen.size}/${rows.length}`);
+  // A small model often answers only the tasks it thinks changed. Silence is
+  // not evidence of completion: undecided tasks keep their current status,
+  // and the coverage gap is recorded in evidence instead of rejecting the
+  // whole stage (which threw away the tasks that were judged correctly).
+  recordTaskCoverage(seen.size, rows.length);
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const [ownerId, taskIds] of achieved) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   return changes;
 }
 
 function buildSubtasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
+  const rows = roster(ctx.scope).map((id) => taskLine(ctx.scope, id));
   return [
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
     '根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。',
@@ -967,7 +1159,7 @@ function readSubtaskProposals(
 }
 
 function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: boolean): string {
-  const index = taskIndex(ctx.state);
+  const index = taskIndex(ctx.scope);
   const triggerLines = triggerIds.map((taskId) => {
     const row = index.get(taskId);
     return row ? `- ${row.ownerId}：${row.task.id} ${row.task.goal}` : `- ${taskId}`;
@@ -986,7 +1178,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     '触发任务：',
     ...triggerLines,
     '人物个性：',
-    ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
+    ...roster(ctx.scope).map((id) => `- ${personalityLine(ctx.scope, id)}`),
     '输出 {"operations":[{"entityId":"人物id","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。',
   ].filter(Boolean).join('\n');
 }
@@ -1000,7 +1192,7 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 理智必须是 0 到 100 的整数；不要用小数、布尔或字符串。',
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     `本组结算结果：${resultText(ctx.results) || '（无）'}`,
-    ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
+    ...owners.map((id) => `- ${personalityLine(ctx.scope, id)}`),
     '输出 {"sanity":[{"characterId":"人物id","value":整数}]}。',
   ].join('\n');
 }

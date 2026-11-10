@@ -190,7 +190,7 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
 /** Instruct-model narration brief. A small instruct model copies long rule
  * lists and bullet dumps back out, so the brief is one short paragraph of
  * facts and two sentences of task. Nothing here invents state. */
-export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = ''): { prompt: string; brief: string } {
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene'): { prompt: string; brief: string } {
   const name = after.initial.characters[view]?.name ?? view;
   const room = roomOf(after, view);
   const sentences: string[] = [];
@@ -230,13 +230,23 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   }
   if (!others.length) sentences.push('房间里没有别人。');
   const brief = sentences.join('');
-  const prompt = [
-    `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，180 到 260 字。`,
-    '要求：只写事实里有的人和事；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要加人物、地点、物品、事件或数字；短句，对白用「」，分 2 到 4 段。',
-    '事实：',
-    brief,
-    '正文：',
-  ].join(String.fromCharCode(10));
+  const prompt = draft
+    ? [
+      mode === 'repair'
+        ? `你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 ${name} 视角的小说正文，140 到 220 字。`
+        : `你是中文小说作者。请把下面这段已经结算的事实草稿改写成 ${name} 视角的小说正文，160 到 240 字。`,
+      '要求：只能使用草稿里明确写出的动作、位置、外观和结果；可以调整语序、连接词和短句节奏，但不得新增任何动作、对白、物品、人物、地点、数字、伤情、往事、心理活动或比喻；每个人物的伤势、衣物和物品只属于本人，不要用“他/她”把一个人的特征挪到另一个人身上；不要逐条复述草稿，不要把人物外貌列成清单；以动作为主线写成一个连续场景，环境和人物只保留与当前动作有关的一两笔；不要写标题、列表或 Markdown；分 2 到 3 段。',
+      '事实草稿：',
+      draft,
+      '正文：',
+    ].join(String.fromCharCode(10))
+    : [
+      `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，160 到 240 字。`,
+      '要求：只写事实里明确出现的动作、位置、外观和结果；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要新增人物、地点、物品、事件、数字、伤情、往事或心理活动；事实里没有直接引用的原话时不要写对白；短句，分 2 到 3 段。',
+      '事实：',
+      brief,
+      '正文：',
+    ].join(String.fromCharCode(10));
   return { prompt, brief };
 }
 
