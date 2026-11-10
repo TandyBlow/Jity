@@ -57,6 +57,13 @@ const config = {
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
+  // The comparison must run on the discrete adapter, not whatever Edge picks.
+  // --require-vendor nvidia fails the run when the adapter is wrong instead of
+  // producing numbers that look valid; empty string accepts any adapter.
+  requireVendor: option('--require-vendor', process.argv.includes('--gpu') ? 'nvidia' : ''),
+  // A model that never loads must fail within a bounded time instead of
+  // hanging the queue.
+  loadTimeoutMs: Number(option('--load-timeout-ms', '180000')),
   // With a scenario file, also run the built-in dev move + elapsed points on
   // the declared SHORT_STATE fixture: the product opening has no settled
   // change, so fact expression needs a point that does.
@@ -161,15 +168,65 @@ try {
   const port = server.httpServer.address().port;
   browser = await chromium.launch({
     headless: true, channel: config.channel,
-    ...(config.gpu ? { args: ['--enable-unsafe-webgpu'] } : {}),
+    // --force_high_performance_gpu is required for Edge to expose the NVIDIA
+    // adapter; without it the run may quietly measure the integrated GPU.
+    ...(config.gpu ? { args: ['--enable-unsafe-webgpu', '--force_high_performance_gpu'] } : {}),
   });
   evidence.browser = browser.version();
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
+  // wllama prints the ggml backend and adapter it actually used. Those lines
+  // are the only proof that the weights ran on the requested adapter.
+  const consoleLines = [];
+  page.on('console', (message) => {
+    const text = message.text();
+    if (/ggml|webgpu|adapter|nvidia|vulkan/i.test(text)) consoleLines.push(text.slice(0, 300));
+  });
+  evidence.deviceProof = { requiredVendor: config.requireVendor || null, adapter: null, console: consoleLines };
+  // Persist each finished arm from Node. Without this every result is lost if
+  // the page crashes after the last arm; a run must be readable while it is
+  // still going.
+  const checkpoint = async (record) => {
+    if (record.id === '__adapter') {
+      evidence.deviceProof.adapter = record.adapter ?? null;
+      const wanted = (config.requireVendor || '').toLowerCase();
+      const vendor = String(record.adapter?.vendor ?? '').toLowerCase();
+      if (wanted && !vendor.includes(wanted)) {
+        evidence.deviceProof.verdict = 'wrong_adapter';
+        evidence.status = 'FAILED_ADAPTER';
+        evidence.error = `required adapter vendor ${wanted}, got ${vendor || 'unknown'}`;
+        save();
+        throw new Error(evidence.error);
+      }
+      evidence.deviceProof.verdict = 'ok';
+      save();
+      console.log(`[adapter] vendor=${vendor || 'unknown'} arch=${record.adapter?.architecture ?? '?'}`);
+      return;
+    }
+    evidence.runs = [...evidence.runs.filter((run) => run.id !== record.id), record];
+    save();
+    console.log(`[checkpoint] ${record.id} accepted=${record.accepted} chars=${record.chars}`);
+  };
+  await page.exposeFunction('__narrationCheckpoint', checkpoint);
   await page.goto(`http://127.0.0.1:${port}/__narration`);
 
   const result = await page.evaluate(async (config) => {
     if (!crossOriginIsolated) throw new Error('real narration run requires cross-origin isolation');
+    const adapterInfo = await (async () => {
+      if (!navigator.gpu) return { available: false, reason: 'navigator.gpu missing' };
+      const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+      if (!adapter) return { available: false, reason: 'requestAdapter returned null' };
+      const info = adapter.info ?? {};
+      return {
+        available: true,
+        vendor: info.vendor ?? null, architecture: info.architecture ?? null,
+        device: info.device ?? null, description: info.description ?? null,
+      };
+    })();
+    if (window.__narrationCheckpoint) await window.__narrationCheckpoint({
+      id: '__adapter', accepted: Boolean(adapterInfo.available), chars: 0, status: 'device',
+      adapter: adapterInfo, attempts: [], beats: [], text: '',
+    });
     const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
     const { createWllama } = await import('/src/lib/benchmark/wllama-loader.ts');
     const { IncompleteGenerationError } = await import('/src/lib/world-engine/runtime/engine.ts');
@@ -270,7 +327,11 @@ try {
         ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
       });
     const loadStarted = performance.now();
-    await engine.load();
+    // Bounded load: a stuck fetch/compile must not hold the queue forever.
+    await Promise.race([
+      engine.load(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`model load exceeded ${config.loadTimeoutMs} ms`)), config.loadTimeoutMs)),
+    ]);
     const loadMs = performance.now() - loadStarted;
 
     const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -604,6 +665,11 @@ try {
         })),
       };
       runs.push(record);
+      // Per-arm checkpoint: raw prompt/text/attempts/timings/provenance land on
+      // disk as soon as this arm finishes, not after the whole evaluate returns.
+      if (typeof window !== 'undefined' && window.__narrationCheckpoint) {
+        await window.__narrationCheckpoint(clone(record));
+      }
       console.log(`[narration] ${scenario.id} [${mode}]: accepted=${generated.accepted} status=${generated.status} `
         + `chars=${record.chars} wallMs=${Math.round(wallMs)} attempts=${generated.rawAttempts.length} `
         + `beats=${(generated.beats ?? []).map((beat) => beat.source).join(',')}`);
@@ -616,10 +682,11 @@ try {
   }, config);
 
   evidence.status = 'DONE';
+  evidence.deviceProof.console = consoleLines.slice(-40);
   evidence.loadMs = result.loadMs;
   evidence.engine = { info: result.info, diagnostics: result.diagnostics };
-  evidence.runs = result.runs;
-  evidence.strategy = result.runs[0]?.strategyVersion ?? null;
+  evidence.runs = result.runs.length ? result.runs : evidence.runs;
+  evidence.strategy = evidence.runs[0]?.strategyVersion ?? null;
   save();
   const summary = result.runs.map((run) => ({
     id: run.id, accepted: run.accepted, status: run.status, chars: run.chars,
@@ -629,8 +696,11 @@ try {
   }));
   console.log(JSON.stringify({ out: config.out, model: config.model, loadMs: Math.round(result.loadMs), summary }, null, 2));
 } catch (error) {
-  evidence.status = 'FAILED';
+  // Never overwrite a more specific verdict (wrong adapter) with a generic one,
+  // and keep whatever arms already reached their checkpoint.
+  if (evidence.status !== 'FAILED_ADAPTER') evidence.status = 'FAILED';
   evidence.error = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  evidence.completedArms = evidence.runs.map((run) => run.id);
   save();
   throw error;
 } finally {
