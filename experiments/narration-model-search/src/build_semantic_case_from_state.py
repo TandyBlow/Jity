@@ -79,6 +79,8 @@ def build_prompt(state: dict[str, Any], results: dict[str, str]) -> tuple[str, l
                        if ((state.get("characters") or {}).get(owner) or {}).get("tasks")})
     sample = required[0] if required else ""
     checklist = "、".join(f"{name_of(state, owner)}({owner})" for owner in required)
+    skeleton = ",".join(f'{{"characterId":"{owner}","achieved":[]}}' for owner in required)
+    example_id = sample or "人物id"
     result_text = "；".join(f"{key}：{value}" for key, value in results.items())
     now = (state.get("time") or {}).get("dateTime", "")
     prompt = "\n".join([
@@ -95,7 +97,7 @@ def build_prompt(state: dict[str, Any], results: dict[str, str]) -> tuple[str, l
         "人物和任务：",
         *rows,
         f"有任务、必须各写一条的人物（{len(required)} 人）：{checklist}",
-        f'输出 {{"decisions":[{{"characterId":"{sample or "人物id"}",\"achieved\":[]}}]}}。',
+        f'输出 {{"decisions":[{skeleton}]}}（每个人物一条，achieved 只填本轮新达成的任务 id；没有就保留空数组）。示例 id 用 {example_id}。',
     ])
     allowed = {owner: sorted(((state.get("characters") or {}).get(owner) or {}).get("tasks", {}).keys())
                for owner in required}
@@ -112,6 +114,8 @@ def main() -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--pack-out", help="optional JSONL pack case for semantic_validate.py")
     parser.add_argument("--contract-commit", default="", help="04 commit this prompt was modelled from")
+    parser.add_argument("--achieved", default="{}",
+                        help='JSON object of newly achieved task ids, e.g. {"lu":["task_lu_goggles"]}')
     args = parser.parse_args()
     state_path = pathlib.Path(args.state)
     raw = json.loads(state_path.read_text(encoding="utf-8"))
@@ -119,6 +123,11 @@ def main() -> int:
     results = json.loads(args.results)
     if not isinstance(results, dict):
         raise SystemExit("--results must be a JSON object")
+    achieved = json.loads(args.achieved)
+    if not isinstance(achieved, dict):
+        raise SystemExit("--achieved must be a JSON object")
+    achieved = {str(owner): [str(task_id) for task_id in task_ids]
+                for owner, task_ids in achieved.items()}
     prompt, required, allowed = build_prompt(state, {str(k): str(v) for k, v in results.items()})
     names = {str(entity.get("name")): character_id
              for character_id, entity in ((state.get("initial") or {}).get("characters") or {}).items()
@@ -129,7 +138,18 @@ def main() -> int:
                      for tasks in ((state.get("characters") or {}).values())
                      for task in (tasks.get("tasks") or {}).values()
                      if task.get("status") == "achieved")
-    expected = {"decisions": [{"characterId": owner, "achieved": []} for owner in required]}
+    expected = {"decisions": [{"characterId": owner, "achieved": achieved.get(owner, [])}
+                                for owner in required]}
+    for owner, task_ids in achieved.items():
+        if owner not in allowed:
+            raise SystemExit(f"achieved owner {owner!r} has no tasks in this state")
+        unknown = [task_id for task_id in task_ids if task_id not in allowed[owner]]
+        if unknown:
+            raise SystemExit(f"achieved task ids not owned by {owner}: {unknown}")
+        repeated = [task_id for task_id in task_ids if task_id in already]
+        if repeated:
+            raise SystemExit(f"achieved task ids already achieved in the state: {repeated}")
+    positive = any(achieved.values())
     case = {
         "caseId": args.case_id,
         "kind": "tasks",
@@ -145,8 +165,13 @@ def main() -> int:
         "requiredCharacterIds": required,
         "allowedTaskIdsByCharacter": allowed,
         "expected": expected,
-        "expectedStatus": "proposed empty decisions (the settled result is a move only); "
-                          "awaiting 03/04 confirmation; not a frozen case",
+        "expectedStatus": ("proposed decisions from a constructed settled result; "
+                            "03/04 must confirm before freeze") if positive else
+                           ("proposed empty decisions (the settled result is a move only); "
+                            "awaiting 03/04 confirmation; not a frozen case"),
+        "expectedBasis": ("the settled result explicitly states the task goal was reached"
+                           if positive else "the settled result contains no task achievement"),
+        "constructedResult": positive,
         "correctedContract": False,
         "contractCommit": args.contract_commit,
         "allowedIds": allowed_ids,

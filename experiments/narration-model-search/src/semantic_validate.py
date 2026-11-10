@@ -107,6 +107,7 @@ class Checker:
         allowed_by_character = self.case.get("allowedTaskIdsByCharacter") or {}
         already = set(self.case.get("alreadyAchievedTaskIds") or [])
         seen: set[str] = set()
+        actual: dict[str, set[str]] = {}
         for index, raw in enumerate(decisions):
             if not isinstance(raw, dict):
                 self.errors.append(f"tasks.decisions[{index}]: not an object")
@@ -123,6 +124,7 @@ class Checker:
                 self.errors.append(f"tasks.decisions[{index}].achieved: must be an array")
                 continue
             allowed_tasks = set(allowed_by_character.get(character) or [])
+            actual_tasks: set[str] = set()
             for task_index, task_id in enumerate(achieved):
                 where = f"tasks.decisions[{index}].achieved[{task_index}]"
                 resolved = self.resolve(str(task_id), where)
@@ -132,9 +134,28 @@ class Checker:
                     self.errors.append(f"{where}: {resolved} does not belong to {character}")
                 if resolved in already:
                     self.errors.append(f"{where}: repeats already-achieved task {resolved}")
+                actual_tasks.add(resolved)
+            actual[character] = actual_tasks
         missing = sorted(set(required) - seen)
         if missing:
             self.errors.append(f"tasks: character coverage {len(seen)}/{len(required)}; missing {missing}")
+        if self.case.get("expected") and self.case.get("checkExpected"):
+            expected = self.case["expected"].get("decisions") if isinstance(self.case.get("expected"), dict) else None
+            if not isinstance(expected, list):
+                self.errors.append("tasks: expected.decisions must be an array")
+            else:
+                expected_by_character = {str(row.get("characterId")): set(map(str, row.get("achieved") or []))
+                                         for row in expected if isinstance(row, dict)}
+                for character in required:
+                    want = expected_by_character.get(character)
+                    if want is None:
+                        self.errors.append(f"tasks: expected has no decision for {character}")
+                        continue
+                    got = actual.get(character, set())
+                    for task_id in sorted(want - got):
+                        self.errors.append(f"tasks: expected task {task_id} not marked achieved for {character}")
+                    for task_id in sorted(got - want):
+                        self.errors.append(f"tasks: unexpected achieved task {task_id} for {character}")
 
     def results(self, value: object) -> None:
         members = value.get("members") if isinstance(value, dict) else None
@@ -185,11 +206,15 @@ def main() -> int:
     parser.add_argument("--pack", type=pathlib.Path, required=True)
     parser.add_argument("--run-dir", type=pathlib.Path, required=True)
     parser.add_argument("--out", type=pathlib.Path)
+    parser.add_argument("--expected", action="store_true",
+                        help="also compare tasks decisions with case.expected (semantic correctness, not prose)")
     args = parser.parse_args()
 
     cases = [json.loads(line) for line in args.pack.read_text(encoding="utf-8").splitlines() if line.strip()]
     reports = []
     for case in cases:
+        if args.expected and case.get("kind") == "tasks":
+            case = dict(case, checkExpected=True)
         path = args.run_dir / f"{case['caseId']}.json"
         report = {"caseId": case["caseId"], "kind": case.get("kind"), "ok": False,
                   "errors": [], "warnings": []}
@@ -228,6 +253,7 @@ def main() -> int:
         "pack": str(args.pack),
         "runDir": str(args.run_dir),
         "cases": len(reports),
+        "expectedChecked": bool(args.expected),
         "passed": sum(1 for report in reports if report["ok"]),
         "reports": reports,
     }

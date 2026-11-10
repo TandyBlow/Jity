@@ -332,6 +332,39 @@ def main() -> int:
         check("the saved real-state 73-task case still accepts 14/14 and rejects 12/14", False,
               "missing real-state case")
 
+    positive_path = ROOT / "evidence/semantic-cases/tasks-free-day-real-73-one-achieved.json"
+    positive_pack = ROOT / "evidence/semantic-cases/tasks-free-day-real-73-one-achieved.pack.jsonl"
+    if positive_path.exists() and positive_pack.exists():
+        positive = json.loads(positive_path.read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = pathlib.Path(tmp)
+            run_dir = tmp_path / "run"
+            run_dir.mkdir()
+            pack = json.loads(positive_pack.read_text(encoding="utf-8").splitlines()[0])
+            (tmp_path / "pack.jsonl").write_text(
+                json.dumps(pack, ensure_ascii=False) + chr(10), encoding="utf-8")
+            for name, value in (("ok", positive["expected"]),
+                                ("copy", {"decisions": [{"characterId": row["characterId"], "achieved": []}
+                                                        for row in positive["expected"]["decisions"]]})):
+                (run_dir / f"{positive['caseId']}.json").write_text(
+                    json.dumps({"caseId": positive["caseId"], "text": json.dumps(value, ensure_ascii=False)},
+                               ensure_ascii=False), encoding="utf-8")
+                proc = run(["src/semantic_validate.py", "--pack", str(tmp_path / "pack.jsonl"),
+                            "--run-dir", str(run_dir), "--out", str(tmp_path / f"{name}.json"),
+                            "--expected"])
+                report = json.loads((tmp_path / f"{name}.json").read_text(encoding="utf-8"))
+                if name == "ok":
+                    ok_positive = proc.returncode == 0 and report["reports"][0]["ok"]
+                else:
+                    ok_copy = (proc.returncode == 2
+                               and any("expected task task_lu_goggles" in error
+                                       for error in report["reports"][0]["errors"]))
+            check("semantic_validate --expected accepts the achieved task and rejects copying the skeleton",
+                  ok_positive and ok_copy, f"ok={ok_positive} copyRejected={ok_copy}")
+    else:
+        check("semantic_validate --expected accepts the achieved task and rejects copying the skeleton",
+              False, "missing positive case")
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])

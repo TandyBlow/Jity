@@ -1,26 +1,62 @@
 {
  "kind": "real-state-semantic-case-draft",
- "status": "draft; awaiting 03/04 confirmation; not frozen and not a model result",
- "caseId": "tasks-free-day-real-73-no-change",
- "source": "..\\..\\..\\06-recovery\\artifacts\\local-game\\local-turn-15blora.json",
+ "status": "prompt follows 04's committed copyable-skeleton fix (ad90cfba, ledger f97c90bc); frozen prompt pack exists; expected decisions are lane-11 proposals for an exploratory semantic probe",
+ "source": "06-recovery/artifacts/local-game/local-turn-15blora.json",
  "sourceSha256": "33010db02d5ff6488dece53c8b04cc63287379cb27da56de9ef03e54cd071aa9",
  "sourceStateCharacterCount": 14,
  "sourceStateTaskCount": 73,
- "promptChars": 6109,
- "expectedDecisions": 14,
- "expectedAllEmpty": true,
- "caseSha256": "a84fcd266bca2d918020b4155ab887a0ac4f53c431eb048a6577cdde1203a339",
- "packSha256": "9c0bda9cbe26c71a849c446ed5ba442fec56fb1ef2da699211c80ba48ead751e",
- "contractCommit": "d051c149605f44688578f26e92df44753fefbe20",
- "freezeRefused": true,
- "note": "The settled result is a move only, so the proposed expected decisions are all empty. 03/04 must confirm or replace both the prompt and the expectation before any frozen run.",
+ "contractCommit": "f97c90bcc2438006976c970e2a6e233565382989",
+ "contractFixes": [
+  "ad90cfba: task prompt carries one copyable empty row for every required character",
+  "f97c90bc: ledger records achievedByCharacter/emptyCharacters"
+ ],
+ "cases": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "casePath": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.json",
+   "caseSha256": "763e5d4b86c8b9e284f44d20182c7c5d390453930a6f0667049ead98fabf4245",
+   "packPath": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.pack.jsonl",
+   "packSha256": "b471f3e983662bd22d08d4b79ed8b2d8718d419d1d39704aafd7e76ec5252043",
+   "promptChars": 6650,
+   "expectedDecisions": 14,
+   "achievedExpected": [],
+   "constructedResult": false,
+   "expectedBasis": "the settled result contains no task achievement"
+  },
+  {
+   "caseId": "tasks-free-day-real-73-one-achieved",
+   "casePath": "evidence\\semantic-cases\\tasks-free-day-real-73-one-achieved.json",
+   "caseSha256": "dd025a9094740c7695cdd0cbf3ed2219cfab9a347e152b0f6699376b49bdb4e5",
+   "packPath": "evidence\\semantic-cases\\tasks-free-day-real-73-one-achieved.pack.jsonl",
+   "packSha256": "b3216c3005ffc751fd9b77c2094df4fbb9848c39a30e7abdcba145968bee1a64",
+   "promptChars": 6664,
+   "expectedDecisions": 14,
+   "achievedExpected": [
+    {
+     "characterId": "lu",
+     "achieved": [
+      "task_lu_goggles"
+     ]
+    }
+   ],
+   "constructedResult": true,
+   "expectedBasis": "the settled result explicitly states the task goal was reached"
+  }
+ ],
+ "combinedPack": "evidence\\semantic-cases\\tasks-73-two-cases.pack.jsonl",
+ "combinedPackSha256": "44fe552768ae2c2dc837e17013e2f4b971dcc6c40359c287ab35c618e7445abe",
  "promptTokenEstimate": {
-  "low": 3116,
-  "high": 3971,
-  "method": "char count x 0.51-0.65, the observed range in 09's benchmark metadata (2393/4684=0.51; 1307/2003=0.65); an estimate, not a tokenizer measurement",
+  "low": 3392,
+  "high": 4322,
+  "method": "char count x 0.51-0.65 observed in 09 benchmark metadata; estimate, not tokenizer",
   "semanticContextSize": 12288,
-  "semanticContextSource": "06-recovery/frontend/src/app/world-local/page.tsx line 427 loads Qwen3-0.6B with contextSize 12_288",
-  "conclusion": "the real 73-task prompt is about a quarter of the semantic context; context truncation is not the obvious cause of the 12/14 coverage failure"
+  "conclusion": "about 3.4-4.3k tokens against 12,288; context truncation is not the obvious cause"
  },
- "snapshotCaveat": "The prompt is built from the post-turn state stored in local-turn-15blora.json, not a replay of the exact stage-time working state. Task ownership and task text are the real 14/73 rows; position/time may reflect the later snapshot. 03/04 should confirm the expected decisions and, if they want a historical case, replace the state snapshot."
+ "copyTest": "the positive case must mark task_lu_goggles for lu; copying the all-empty skeleton is rejected by semantic_validate --expected",
+ "freezeRefused": false,
+ "note": "No model has run this pack. The no-change result is a real move; the positive settled result is constructed to state the goggles goal explicitly and is labeled constructedResult=true.",
+ "releasePack": "semantic-probes\\tasks-73-release.pack.jsonl",
+ "releasePackSha256": "4ba297288c2329f453eaa30fdccfe5dcbaebc74af3e3cd1a6bd7bd362ce3b0f9",
+ "frozenPromptPack": "evidence/semantic-prompts-v1/prompts.manifest.json",
+ "frozenPromptPackSha256": "03341e788c02c9cd687108f9d5eba29780e2097b41daad8da4daffe3a6e2b2fc"
 }
