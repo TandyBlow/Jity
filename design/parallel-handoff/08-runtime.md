@@ -34,7 +34,8 @@ dependencies are untouched.
    loaded. It now rejects with an explicit configuration error (same URL stays
    idempotent); concurrent loads of different URLs are rejected too. Load
    evidence records `modelId`, URL, context size, GPU layers, threads,
-   OPFS/direct-blob mode, fetch/compile/total timings and outcome.
+   OPFS/direct-blob mode, fetch/compile/total timings, `fromCache` (a
+   hard-stop reload reused the fetched Blob, so fetchMs is 0) and outcome.
 5. **The queue had no non-terminal stop and no abort timing.** Added
    `cancelPending()` (reject queued, abort running, keep the queue usable),
    queue evidence (`queued/started/resolved/rejected/aborted-running/stopped/
@@ -270,6 +271,7 @@ queue.stats;                                // NEW
 new RuntimeDiagnostics({ limit?: number });
 diagnostics.record / onLoad / onGeneration / onQueue; // bound handlers
 diagnostics.summary(); diagnostics.snapshot(); diagnostics.toJSON();
+// summary.loads.cached counts hard-stop reloads that reused the fetched Blob.
 new StageTimer(now?);
 timer.mark(stage, detail?); timer.tick(); timer.maxGapMs; timer.snapshot();
 ```
