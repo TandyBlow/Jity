@@ -215,6 +215,19 @@ describe('real recovery session continuity', () => {
     expect(next?.narrationSources?.p1?.source).toBe('model');
   });
 
+  it('restores the real 415c snapshot and preserves its state and sources', async () => {
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-415c.json'), 'utf8'));
+    const session = await LocalGameSession.restore(
+      evidence.refreshRestore.snapshotAfterReload, scriptedModel([]), { leaseHeartbeat: false });
+    const report = await verifyWorldRecord(session.snapshot.transport);
+    expect(report.ok).toBe(true);
+    expect(session.snapshot.transport.version).toBe(2);
+    expect(session.snapshot.transport.headPointId).toBe('point_round_auto_mwb6b3j2_1_1');
+    expect(session.snapshot.narrationSources?.['point_round_3_1']?.source).toBe('program');
+    expect(session.snapshot.narrationSources?.['point_round_auto_mwb6b3j2_1_1']?.source).toBe('program');
+  });
+
   it('keeps both 415c program points after reload', () => {
     const evidence = JSON.parse(readFileSync(
       resolve('../../../results/product/evidence/09-one-legal-turn-415c.json'), 'utf8'));
