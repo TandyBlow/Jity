@@ -13,7 +13,7 @@
 5. **批量执行器**：`src/screen.py` 启一个 `llama-server --jinja` 复用给全部 case；每个 case 保存请求体、原始响应、usage/timings、wall ms、finish_reason；每个模型保存 load 秒数、命令、server log tail、模型 sha256；默认自动读取该模型的 `chatTemplateKwargs`（Hunyuan/Qwen3.5 的 `enable_thinking:false`），只有显式 `--template-kwargs` 才覆盖。**本线不运行它**；只在 10 的 HPC 上跑。
 6. **预检验收脚本**：`src/verify_preflight.py` 按候选登记检查下载文件的大小/sha256、真实 GGUF 架构、模板哈希和（可选）保存的 smoke 响应；退出码 0/2，不判质量。
 7. **机械汇总与复核输入**：`src/collect.py` 输出字数/句数/段数/句内重复/子句重复/耗时/tok/s，明确不产出 pass/fail（事实与文风由 01 判）；`src/make_review_input.py` 把一次 run 按 case 拼成 01 的 `NARRATION_QUALITY_ROWS` JSONL，拒绝缺例/多例/inputSha256 不一致，声明的 3 个排除例单列。
-8. **HPC 请求**：`results/product/hpc-requests/11-model-search-preflight-001.json`（下载/哈希/GGUF 元数据/加载冒烟，明确非质量）；`11-model-search-quality-001.json`（`batch-3-full15`，`readyToSubmit:true`，完整 15 例包；11 不自评，01 按 RUBRIC 复核）。
+8. **HPC 请求**：`results/product/hpc-requests/11-model-search-preflight-001.json`（下载/哈希/GGUF 元数据/加载冒烟，明确非质量）；`11-model-search-quality-001.json`（`batch-3-full15`，`readyToSubmit:true`，15 例 × 7 臂 = 105 calls，完整 15 例包；11 不自评，01 按 RUBRIC 复核）。
 9. **运行时预算**：按 08 的 Blob 总容量约 2 GB，把候选 + 页面语义模型（Qwen3-0.6B，396,705,472 B）一起检查；五个候选 1.38–1.68 GB（含语义模型）全通过（`models/candidates.json` 的 `runtimeBudget`）。
 10. **预注册**：`preregistration.draft.json` 冻结比较条件、基线、RUBRIC §6 晋级门（无硬错误 ≥10/15、文风不合格 ≤3、0 例无据实体、相对 Qwen3-1.7B 至少 2 例 fail→pass）、失败退出、资源估计。包/子集 pin 后升为 `preregistration.v1.json`；加入 Qwen3.5-2B 臂后升为 `preregistration.v2.json`；01 发布 v1.1 后升为 `preregistration.v3.json`（`batch-3-full15`，完整 15/15，不是子集；没有模型输出前完成）。
 
@@ -31,7 +31,7 @@
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
 | `src/wllama_features.py` | 无 | `models/wllama-features.json`（wasm 里的模型源码路径 + tensor 名） | 11/08 |
-| `src/selftest.py` | 无 | 11 项 PASS/FAIL | 11/06 复核 |
+| `src/selftest.py` | 无 | 17 项 PASS/FAIL | 11/06 复核 |
 
 示例：
 
