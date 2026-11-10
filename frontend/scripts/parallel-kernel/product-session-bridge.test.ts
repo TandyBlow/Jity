@@ -13,7 +13,7 @@ import type { WorldModelPort } from '../../../../06-recovery/frontend/src/lib/wo
 import type { ModelTask } from '../../../../06-recovery/frontend/src/lib/world-engine/schedule';
 import type { InitialTemplate, Json } from '../../../../06-recovery/frontend/src/lib/world-engine/types';
 import { SHORT_STATE } from '../../../../06-recovery/frontend/src/lib/world-engine/runtime/b3-short-samples';
-import { LocalGameSession } from '../../../../06-recovery/frontend/src/lib/world-engine/local/session';
+import { LocalGameSession, type LocalGameSnapshot } from '../../../../06-recovery/frontend/src/lib/world-engine/local/session';
 import { restoredEntries } from '../../../../06-recovery/frontend/src/lib/world-engine/local/history';
 import {
   createLocalProgressStore, MemoryProgressBackend, ProgressConflictError,
@@ -194,7 +194,7 @@ describe('real recovery session continuity', () => {
   // merges 06-session-persist-restored-sources.patch.
   it.fails('keeps restored narration sources in the next persisted snapshot', async () => {
     const sources = { p1: { source: 'model' as const } };
-    let persisted: any = null;
+    let persisted: LocalGameSnapshot | null = null;
     const session = await LocalGameSession.create(template(), scriptedModel([]), {
       roll: () => 13,
       narrationSourceOf: () => sources,
@@ -204,7 +204,7 @@ describe('real recovery session continuity', () => {
     await session.submit('我打开盒盖。');
     expect(persisted?.narrationSources?.p1?.source).toBe('model');
 
-    let next: any = null;
+    let next: LocalGameSnapshot | null = null;
     const restored = await LocalGameSession.restore(persisted, scriptedModel([]), {
       leaseHeartbeat: false,
       narrationSourceOf: () => undefined,
