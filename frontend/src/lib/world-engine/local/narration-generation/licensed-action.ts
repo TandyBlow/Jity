@@ -21,7 +21,7 @@ export const PICKUP_VERBS = ['抓起', '拿起', '捡起', '捧起', '握住', '
 
 export interface ActionViolation {
   sentence: string;
-  kind: 'hand' | 'position';
+  kind: 'hand' | 'position' | 'state';
   word: string;
   object?: string;
 }
@@ -51,6 +51,19 @@ function statedPositions(inputText: string): { name: string; position: string }[
   return found.filter((item) => /挂在|戴在|放在|压在|插在|装着|系在|收在|穿在|胸前|肩上|腰间|手里|袋里|兜里/u.test(item.position));
 }
 
+/** A scene state the input gives as already true («黄黑绳已放下»), with the
+ * verb that produced it. Writing the change again («看着黄黑绳缓缓放下») is an
+ * event the settlement never produced; the page showed exactly that. */
+function completedStates(inputText: string): { name: string; verb: string }[] {
+  const found: { name: string; verb: string }[] = [];
+  const re = new RegExp('([一-鿿]{2,10}?)(?:已经|已)(放下|垂下|落下|打开|关上|关闭|收起|系好|熄灭|升起)', 'gu');
+  for (const match of inputText.matchAll(re)) {
+    const name = match[1].includes('的') ? match[1].slice(match[1].lastIndexOf('的') + 1) : match[1];
+    if (name.length >= 2) found.push({ name, verb: match[2] });
+  }
+  return found;
+}
+
 export function actionViolations(text: string, inputText: string): ActionViolation[] {
   // Posture is deliberately NOT a violation: crouching, leaning or sitting are
   // micro-actions that change no world fact, and the product now keeps them.
@@ -58,7 +71,15 @@ export function actionViolations(text: string, inputText: string): ActionViolati
   // that change what is true, so only those are returned as violations.
   const found: ActionViolation[] = [];
   const positions = statedPositions(inputText);
+  const states = completedStates(inputText);
+  const already = new RegExp('(?:已经|已)' + '', 'u');
   for (const sentence of sentencesOf(text)) {
+    for (const state of states) {
+      if (!sentence.includes(state.name) || !sentence.includes(state.verb)) continue;
+      // «已经放下» restates the state; «缓缓放下» re-enacts it.
+      if (sentence.includes('已经' + state.verb) || sentence.includes('已' + state.verb)) continue;
+      found.push({ sentence, kind: 'state', word: state.verb, object: state.name });
+    }
     for (const phrase of OBJECT_MOVE_PHRASES) {
       if (!sentence.includes(phrase) || inputText.includes(phrase)) continue;
       found.push({ sentence, kind: 'position', word: phrase });

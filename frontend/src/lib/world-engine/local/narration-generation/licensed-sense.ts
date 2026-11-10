@@ -179,3 +179,138 @@ export function senseViolations(text: string, inputText: string, options: SenseO
   }
   return found;
 }
+
+/** Attributes that belong to one settled person, and settled looks that the
+ * prose must not re-describe as another state. 01's independent review of the
+ * 2026-11-10 prompt-route batch found three recurring classes in text the
+ * automatic verifier accepted:
+ *   - «路明非站在西侧服务巷，红发在风中晃动» (红发 is 诺诺's settled look)
+ *   - «诺诺蹲在墙角，发圈垂落» (settled: 红发用发圈束在脑后)
+ *   - «镜片后的眼睛微微发亮» (goggles settled 挂在胸前, not worn)
+ * Each is a binding error against the serialized input, not a style opinion. */
+export interface SettledViolation {
+  sentence: string;
+  detail: string;
+}
+
+const HAIR_COLOR_NOUNS = ['红发', '银发', '金发', '白发'] as const;
+
+export function settledAppearanceViolations(
+  text: string, inputText: string, names: readonly string[] = [],
+  inventory: readonly { name: string; note?: string }[] = [],
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  // Some settled lines live in the scene packet, not the serialized input
+  // (09 dense: «路明非的护目镜：挂在胸前» only in scene.inventory).
+  const settledText = [inputText, ...inventory.map((item) => `${item.name}：${item.note ?? ''}`)].join(String.fromCharCode(10));
+  const inputLines = settledText.split(new RegExp('\r?\n', 'u'));
+  const ownerOf = (noun: string): string | null => {
+    let best: { name: string; distance: number } | null = null;
+    for (const line of inputLines) {
+      if (!line.includes(noun)) continue;
+      const here = nearestName(line, noun, names);
+      if (here && here.distance < (best?.distance ?? Number.POSITIVE_INFINITY)) best = here;
+    }
+    return best?.name ?? null;
+  };
+  for (const sentence of sentencesOf(text)) {
+    for (const noun of HAIR_COLOR_NOUNS) {
+      if (!sentence.includes(noun)) continue;
+      const owner = ownerOf(noun);
+      if (!owner) continue;
+      const here = nearestName(sentence, noun, names);
+      if (here && here.name !== owner) {
+        found.push({ sentence, detail: `${noun} belongs to ${owner}, not ${here.name}` });
+      }
+    }
+    // The settled hair is tied: rewriting it loose changes how the person looks.
+    if (settledText.includes('束在脑后')) {
+      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,6}(垂落|垂下|轻垂|散开|披散)/u.exec(sentence);
+      if (loose) found.push({ sentence, detail: `the settled hair is tied (${loose[0]})` });
+    }
+    // Goggles settled on the chest are not worn over the eyes.
+    const chest = new RegExp('(挂在胸前|胸前挂着|胸前[^\\n]{0,6}护目镜|护目镜[^\\n]{0,6}胸前)', 'u').test(settledText);
+    if (chest && settledText.includes('护目镜')) {
+      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
+        found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
+      }
+    }
+  }
+  return found;
+}
+
+/** Settled object/person states that the prose may not re-enact or move.
+ *
+ * 01's route review: «黄黑绳被风吹起» (rope settled 已放下), «水花在停水的喷泉池»
+ * (pool settled 停水), «演习规则牌在脚下» (board settled on the wall), «诺诺站在
+ * 他身后» (prior text has her 不远处). Each needs the input line, so this is a
+ * comparison, not a word ban. */
+export function settledStateViolations(
+  text: string, inputText: string, priorText: string | null = null,
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  const NL = String.fromCharCode(10);
+  const lines = inputText.split(NL);
+  const prior = priorText ?? '';
+  for (const sentence of sentencesOf(text)) {
+    for (const line of lines) {
+      // A completed «已放下» state is not lifted by wind.
+      const down = /([一-鿿]{2,8})[^一-鿿]{0,3}已放下/u.exec(line);
+      if (down) {
+        const thing = down[1].replace(/^.*[【\s]/u, '');
+        if (thing.length >= 2
+          && new RegExp(`${thing}[^。！？]{0,10}(吹起|飘起|扬起|卷起|抬起)`, 'u').test(sentence)) {
+          found.push({ sentence, detail: `${thing} is settled 已放下; lifting it again is a state change` });
+        }
+      }
+      // A place written on the object line is where the object stays.
+      const placed = /([一-鿿]{2,8})[（(](墙上|桌上|地上|架子上)[）)]/u.exec(line);
+      if (placed) {
+        const thing = placed[1];
+        const elsewhere = /(脚下|脚边|手里|手中|怀里)/u.exec(sentence);
+        if (elsewhere && sentence.includes(thing)) {
+          found.push({ sentence, detail: `${thing} is settled on the ${placed[2]}, not ${elsewhere[1]}` });
+        }
+      }
+    }
+    // Water cannot be seen in a pool the state says has stopped.
+    if (/停水/u.test(inputText) && /(水花|水面|水声|水珠|喷泉[^。！？]{0,4}(喷|涌|冒))/u.test(sentence)) {
+      found.push({ sentence, detail: 'the pool is settled 停水; water contradicts it' });
+    }
+  }
+  // A person the prior passage placed 不远处 is not standing 身后.
+  for (const line of `${prior}${NL}${inputText}`.split(NL)) {
+    if (!/不远处/u.test(line)) continue;
+    for (const name of ['路明非', '诺诺']) {
+      if (!line.includes(name)) continue;
+      const moved = new RegExp(`${name}[^。！？]{0,8}(身后|背后)`, 'u').exec(text);
+      if (moved) found.push({ sentence: moved[0], detail: `${name} is settled 不远处, not 身后` });
+    }
+  }
+  return found;
+}
+
+/** A carried or scene accessory cannot be the actor of a human movement. 01's
+ * route review: «路明非的护目镜在原地站了一会儿», «…没有马上再动». */
+export function objectActorViolations(text: string, inputText: string): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  const NL = String.fromCharCode(10);
+  const items = new Set<string>();
+  for (const line of inputText.split(NL)) {
+    for (const match of line.matchAll(/([一-鿿]{2,10})(?:（|：|:)/gu)) {
+      const name = match[1];
+      if (name.includes('的')) items.add(name);
+    }
+  }
+  const ACT = /(站了一会儿|站在原地|走了过来|走过去|跑|跳|转身|抬头|低头|再动|动了)/u;
+  for (const sentence of sentencesOf(text)) {
+    for (const item of items) {
+      const at = sentence.indexOf(item);
+      if (at < 0) continue;
+      const after = sentence.slice(at + item.length, at + item.length + 12);
+      const verb = ACT.exec(after);
+      if (verb) found.push({ sentence, detail: `${item} is an object, not an actor (${verb[1]})` });
+    }
+  }
+  return found;
+}

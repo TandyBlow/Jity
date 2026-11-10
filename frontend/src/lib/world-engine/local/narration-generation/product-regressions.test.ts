@@ -19,7 +19,7 @@
 import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
-import { contradictionTarget, generateCommittedNarration } from './index';
+import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -406,5 +406,151 @@ describe('product regressions: heard water, heard nothing', () => {
     expect(target!.sentence).toContain('没有听到任何声音');
     expect(target!.lines.join(String.fromCharCode(10))).toContain('去掉「没有听到任何声音」');
     expect(target!.lines.join(String.fromCharCode(10))).toContain('听着远处传来轻微的水声');
+  });
+});
+
+describe('product regressions: a repeated closing line', () => {
+  // 09 d101/415c: the trained candidate was rejected for echo_prior and the page
+  // fell back, although scene mode can trim the repeated closing line.
+  const prior = '诺诺站在巷口，红发用发圈束在脑后。路明非把手插进兜里，没有再看诺诺。';
+
+  test('the repeated closing line is trimmed, not turned into a rejection', async () => {
+    const text = '路明非站在西侧服务巷，风从巷口吹过。一分钟过去，他没有动。路明非把手插进兜里，没有再看诺诺。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.assembly.droppedSentences).toContain('路明非把手插进兜里，没有再看诺诺。');
+    expect(result.text).not.toContain('没有再看诺诺');
+  });
+});
+
+describe('product regressions: the rope that is already down', () => {
+  // 09 f15d/e9a5 opened with «路明非站在西侧服务巷口，看着黄黑绳缓缓放下» while
+  // the input says «巷口的黄黑绳已放下».
+  test('re-enacting a state the input gives as already true is an action', async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷口，看着黄黑绳缓缓放下。一分钟过去，他没有动。');
+    expect(kinds).toContain('hard:unlicensed_action');
+  });
+
+  test('restating the same state is not an action', async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷口，黄黑绳已放下。一分钟过去，他没有动。');
+    expect(kinds).not.toContain('hard:unlicensed_action');
+  });
+});
+
+describe('product regressions: repair wording for a re-enacted state', () => {
+  test('the repair asks for a state, not for deleting the object', () => {
+    const target = stateRepairLines({ sentence: '路明非站在西侧服务巷口，看着黄黑绳缓缓放下', word: '放下', object: '黄黑绳' });
+    expect(target).not.toBeNull();
+    expect(target!.lines.join(String.fromCharCode(10))).toContain('当成早就如此的状态来写');
+    expect(target!.sentence).toContain('缓缓放下');
+  });
+});
+
+describe('product regressions: the player action the state has no row for', () => {
+  // 09 d101: the player walked into the lane and read the sign. Neither is a
+  // state delta, so the projector's facts cannot carry it; the trained
+  // candidate was never told, and only the legacy writer (which gets action
+  // text) wrote it.
+  test('the scene prompt names the declared action in third person', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非沿着服务巷往里走，看清了墙上的演习规则牌。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('【玩家这一回合的指令】路明非沿着服务巷往里走，先看清墙上的演习规则牌。');
+    expect(prompt).toContain('结果只按上面已结算的事实写，没有结算成功的事不要写成成功');
+  });
+});
+
+describe('product regressions: the declared action is missing from the prose', () => {
+  test('a passage that only describes scenery is noted', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '风从巷口吹过，黄黑绳轻轻晃动。一分钟过去，他没有动。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const notes = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(notes.some((issue) => /declared action is not written/u.test(issue.detail ?? ''))).toBe(true);
+  });
+
+  test('a passage that writes the walk and the board is not noted', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非沿着服务巷往里走，看清了墙上的演习规则牌。一分钟过去，他没有动。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const notes = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(notes.some((issue) => /declared action is not written/u.test(issue.detail ?? ''))).toBe(false);
+  });
+});
+
+describe('product regressions: one writing contract in prose-facts', () => {
+  // quiet-minute-6's attempts[0].prompt carried the scene contract (micro-actions,
+  // dialogue, feelings allowed) and then a second contract that forbade unstated
+  // postures, asked for «约200字，写成一段» after a different paragraph count, and
+  // repeated the pronoun and background rules.
+  test('composed prompt has the scene contract only', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非站在西侧服务巷。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: { ...quietPolicy, promptShape: 'prose-facts' },
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('细微动作、神态、对话、环境氛围都可以写');
+    expect(prompt).not.toContain('【写法】');
+    expect(prompt).not.toContain('不要写上面没有给出的姿势');
+    // The pronoun rule appears once, not twice.
+    const pronoun = prompt.match(/称呼人物时用名字或省略主语/gu) ?? [];
+    expect(pronoun).toHaveLength(1);
+  });
+
+  test('the serialized shape still gets the writing contract', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非站在西侧服务巷。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: `${quietInput}
+【正文】`, priorText: null,
+      policy: { ...quietPolicy, writingContract: true },
+    });
+    expect(engine.calls[0].prompt).toContain('【写法】');
+  });
+});
+
+describe('product regressions: the 2026-11-10 route batch (01 review)', () => {
+  test("another person's settled hair colour is not the viewpoint's", async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷，红发在风中晃动。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the settled tied hair is not rewritten as loose', async () => {
+    const { kinds } = await issuesOf('诺诺蹲在墙角，发圈垂落，红发轻垂。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('goggles settled on the chest are not worn over the eyes', async () => {
+    const { kinds } = await issuesOf('路明非低头，镜片后的眼睛微微发亮。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the same elapsed time in Chinese and Arabic is a duplicate', async () => {
+    const { kinds } = await issuesOf('一分钟过去，他翻完登记簿。1分钟过去，他站在原地。');
+    expect(kinds).toContain('hard:time_duplicate');
+  });
+
+  test('a Chinese-only duration is not a duplicate', async () => {
+    const { kinds } = await issuesOf('一分钟过去，他翻完登记簿。他站在原地。');
+    expect(kinds).not.toContain('hard:time_duplicate');
   });
 });

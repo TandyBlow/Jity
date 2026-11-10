@@ -186,8 +186,27 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     // then «手中没有拿任何东西». Naming what to write is what stopped the
     // catalogue in other runs; the ban list alone did not.
     lines.push('只写这一刻的一两件事：时间怎么过去，视角人物此刻在做什么（站着、等着、看着某处），'
-      + '以及眼前一两样东西现在的样子。不要清点身边的物件，不要替在场的人拿东西、走动、说话或报时。');
+      + '以及眼前最显眼的一样东西现在的样子。不要清点身边的物件，不要替在场的人拿东西、走动、说话或报时。');
   }
+  // What the player actually asked this turn. The projector's input is the
+  // settled state, which by definition has no row for a read or a look; the
+  // page's 09 d101 turn therefore narrated walking and checking the board only
+  // because the legacy writer got the action text, while the trained candidate
+  // saw nothing about it. Without this line a declared action that settles no
+  // state can only be omitted.
+  const action = (scene?.previousAction ?? '').trim()
+    .replace(/^我(?!们)/u, view ?? '他')
+    .replace(/[。！？!?]+$/u, '');
+  if (action) {
+    // A declared action is what the player tried to do, not a settled result.
+    // The line must not turn a refused command into a success: the outcome is
+    // only whatever the committed facts say.
+    lines.push(`【玩家这一回合的指令】${action}。`);
+    lines.push(projected.required.length
+      ? '这件事如果已经写在骨架里，就按骨架写，不要再写一遍；骨架里没有的部分只写动作本身，不写结果。'
+      : '正文要写出他做了或试着做了这个动作；结果只按上面已结算的事实写，没有结算成功的事不要写成成功，也不要写下一件事。');
+  }
+
   const time = policy.time ?? null;
   if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
     const amount = cnAmount(time.duration.amount);
