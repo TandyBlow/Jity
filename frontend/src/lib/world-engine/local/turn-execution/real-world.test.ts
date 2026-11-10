@@ -16,7 +16,7 @@ import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createSettlementModelPort } from './index';
 import { createSettlementHandlers } from '../semantics/settlement/index';
-import { taskKeyIndex } from '../semantics/settlement/support';
+import { projectStage, taskKeyIndex } from '../semantics/settlement/support';
 
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
   const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
@@ -76,6 +76,139 @@ function engineFor(state: WorldState, seen: string[]): InferenceEngine {
     },
   };
 }
+
+describe('21c3 trace replay (CPU)', () => {
+  const readSignFact = '路明非成功看清墙上的演习规则牌并准备行动，符合行动要求。';
+
+  function scriptedEngine(outputs: string[]): InferenceEngine {
+    let index = 0;
+    return {
+      info: { backend: 'scripted', modelId: '21c3-replay' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        const output = outputs[index++];
+        if (output == null) throw new Error('21c3 replay: no output left');
+        return output;
+      },
+    };
+  }
+
+  it('keeps the valid lu lane move and rejects the invented slot_waist entry', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({ changes: [
+      { entityId: 'nono', containerId: 'lane', slotId: 'slot_waist', relativeTo: null },
+      { entityId: 'lu', containerId: 'lane', slotId: null, relativeTo: null },
+    ] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.updates('g1#position', {
+      groupId: 'g1', mode: 'group', stage: 'position',
+      results: { lu: readSignFact }, workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    const changes = (outcome.value as { changes: Record<string, { positionSet: { containerId: string; slotId: string | null } }> }).changes;
+    expect(Object.keys(changes)).toEqual(['lu']);
+    expect(changes.lu.positionSet.containerId).toBe('lane');
+    expect(changes.lu.positionSet.slotId).toBeNull();
+    const detail = outcome.evidence.detail as {
+      stageDetail: { droppedNoopEntityIds?: string[]; rejectedPositionEntries?: { entityId: string; reason: string }[] };
+    };
+    expect(detail.stageDetail.rejectedPositionEntries).toHaveLength(1);
+    expect(detail.stageDetail.rejectedPositionEntries?.[0]?.entityId).toBe('nono');
+    expect(detail.stageDetail.rejectedPositionEntries?.[0]?.reason).toContain('slot_waist');
+  });
+
+  it('drops the auto2 position answer that repeats the post-auto1 state', async () => {
+    const { state } = loadWorld();
+    const afterAuto1 = projectStage(state, 'position', {
+      lu: { positionSet: { containerId: 'lane', slotId: null, relativeTo: null } },
+    });
+    const raw = JSON.stringify({ changes: [
+      { entityId: 'nono', containerId: 'lane', slotId: 'slot_waist', relativeTo: null },
+      { entityId: 'lu', containerId: 'lane', slotId: null, relativeTo: null },
+    ] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.updates('g1#position', {
+      groupId: 'g1', mode: 'group', stage: 'position',
+      results: { lu: readSignFact }, workingState: afterAuto1,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as { changes: Record<string, unknown> }).changes).toEqual({});
+    const detail = outcome.evidence.detail as { stageDetail: { droppedNoopEntityIds?: string[]; rejectedPositionEntries?: unknown[] } };
+    expect(detail.stageDetail.droppedNoopEntityIds).toEqual(['lu']);
+    expect(detail.stageDetail.rejectedPositionEntries).toHaveLength(1);
+  });
+
+  it('stops the repeated 21c3 nono candidate after the first accepted auto round', async () => {
+    const { state } = loadWorld();
+    const text = '让红方的旗台行动有可执行的掩护，而不把路明非当诱';
+    const proposal = JSON.stringify({ candidates: [{ characterId: 'nono', text }] });
+    const judgment = JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: text }] });
+    const engine = scriptedEngine([proposal, judgment, proposal, judgment]);
+    const handlers = createSettlementHandlers({ engine });
+    const roundChanges = (pointId: string): Json[] => [{
+      pointId,
+      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+      entityDeltas: { lu: { positionSet: { containerId: 'lane', slotId: null, relativeTo: null } } },
+    }];
+    const input = (roundId: string, pointId: string) => ({
+      round: { roundId, trigger: 'automatic', conclusion: null },
+      head: { pointId },
+      workingState: state,
+      roundChanges: roundChanges(pointId),
+    }) as unknown as Json;
+    const first = await handlers.continuation('round_3', input('round_3', 'p1'));
+    expect((first.value as { kind: string }).kind).toBe('continue');
+    const second = await handlers.continuation('round_auto_1', input('round_auto_1', 'p2'));
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_repeated_candidate');
+  });
+
+  it('keeps the 21c3 all-pending task answer as no task change', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({ unchanged: ['fingel', 'lu', 'nono'], achieved: [], subtasks: [] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]), options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', {
+      groupId: 'g1', mode: 'group', stage: 'tasks',
+      results: { lu: readSignFact }, workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as { changes: Record<string, unknown> }).changes).toEqual({});
+    const scope = (outcome.evidence.detail as { stageDetail: { taskScope: {
+      mode: string; taskRows: number; affectedCharacters: number;
+      achievedByCharacter: unknown[]; supports: unknown[];
+    } } }).stageDetail.taskScope;
+    expect(scope.mode).toBe('affected_projection');
+    expect(scope.taskRows).toBe(73);
+    expect(scope.achievedByCharacter).toEqual([]);
+    expect(scope.supports).toEqual([]);
+    for (const owner of ['lu', 'nono', 'fingel']) {
+      for (const task of Object.values(state.characters[owner].tasks)) {
+        expect(task.status).toBe(Object.entries(state.initial.characters[owner].tasks).find(([id]) => id === task.id)?.[1]?.status ?? task.status);
+      }
+    }
+  });
+
+  it('does not let a results fact saying 任务完成 auto-achieve the task', async () => {
+    const { state } = loadWorld();
+    const before = Object.fromEntries(Object.entries(state.characters.nono.tasks).map(([id, task]) => [id, task.status]));
+    // The 21c3 group_12 task answer: caesar/fingel/lu/nono unchanged, empty
+    // achieved. The nono fact claims 任务完成, and the task stage must not turn
+    // that prose into a task achievement on its own.
+    const raw = JSON.stringify({ unchanged: ['caesar', 'fingel', 'lu', 'nono'], achieved: [], subtasks: [] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]), options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', {
+      groupId: 'g1', mode: 'group', stage: 'tasks',
+      results: { nono: '诺诺确认任务完成并检查故障短讯机状态，成功执行行动。' },
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as { changes: Record<string, unknown> }).changes).toEqual({});
+    for (const [taskId, status] of Object.entries(before)) {
+      expect(state.characters.nono.tasks[taskId].status).toBe(status);
+    }
+  });
+});
 
 describe('real product world task-truth regression', () => {
   it('aborts the 17:37 all-cast no-support answer for the walk/read-sign action', async () => {

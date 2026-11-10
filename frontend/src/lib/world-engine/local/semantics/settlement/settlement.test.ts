@@ -403,21 +403,19 @@ describe('continuation', () => {
     expect(continuationPolicy.noProgressRounds).toBe(2);
   });
 
-  it('hands back when the same candidate repeats after two progressing rounds', async () => {
+  it('stops the second identical accepted candidate instead of spending another group', async () => {
     const engine = new ScriptedEngine([
-      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
       continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
       continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
     ]);
     const handlers = createSettlementHandlers({ engine });
     const first = await handlers.continuation('r1', continuationInput(progress(59)));
     const second = await handlers.continuation('r2', continuationInput(progress(58)));
-    const third = await handlers.continuation('r3', continuationInput(progress(57)));
     expect((first.value as { kind: string }).kind).toBe('continue');
-    expect((second.value as { kind: string }).kind).toBe('continue');
-    expect(third.value).toBeNull();
-    expect(third.error).toBe('continuation_policy_repeated_candidate');
-    expect((third.evidence.detail as { decision: string }).decision).toBe('policy_stop');
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_repeated_candidate');
+    expect((second.evidence.detail as { decision: string }).decision).toBe('policy_stop');
+    expect(continuationPolicy.repeatRounds).toBe(1);
   });
 
   it('turns a configured 0 call cap into a policy stop, not a model handback', async () => {
@@ -522,6 +520,17 @@ describe('affected-dependency projection', () => {
     expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
     expect(engine.prompts[0]).toContain('id=off');
     expect(engine.prompts[0]).not.toContain('id=b');
+  });
+
+  it('drops a position delta that only repeats the current position', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [
+      { entityId: 'a', containerId: 'room', slotId: null, relativeTo: null },
+    ] })]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#position', updatesInput(world(), 'position'));
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as UpdatesCall).changes).toEqual({});
+    const detail = outcome.evidence.detail as { stageDetail: { droppedNoopEntityIds?: string[] } };
+    expect(detail.stageDetail.droppedNoopEntityIds).toEqual(['a']);
   });
 
   it('a global fact keeps every task in the prompt', async () => {
