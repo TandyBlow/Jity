@@ -109,6 +109,23 @@ const dialogueShare = (text: string): number => {
   return inside / chars;
 };
 
+/** Content words of a task goal, used to accept a paraphrase instead of the
+ * exact sentence. Drops numbers, measure words and connectives. */
+function goalKeyTerms(goal: string): string[] {
+  const stopChars = new Set(['的', '了', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '两', '几',
+    '份', '本', '个', '件', '条', '些', '把', '和', '与', '或', '在', '里', '上', '下']);
+  const terms: string[] = [];
+  // Bigrams of the goal keep a paraphrase like «比对完毕» connected to
+  // «比对三份互相矛盾的登记簿» without demanding the whole phrase.
+  for (let i = 0; i + 2 <= goal.length; i += 1) {
+    const term = goal.slice(i, i + 2);
+    if ([...term].some((char) => stopChars.has(char))) continue;
+    if ([...term].every((char) => /[a-zA-Z0-9]/u.test(char))) continue;
+    if (!terms.includes(term)) terms.push(term);
+  }
+  return terms;
+}
+
 export function verifyNarration(input: VerifyInput): VerifyOutput {
   const { text, ledger, policy, attempt, finishReason, priorText } = input;
   const issues: NarrationIssue[] = [];
@@ -277,6 +294,21 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // when it appears verbatim and the actor's name is in the scene, keep the
     // content but flag the actor binding for review. Moved/task time still
     // need the alignment; this is not a keyword-only pass.
+    // Paraphrase: the run that completed «比对三份互相矛盾的登记簿» wrote
+    // «将三本簿子比对完毕» and was still failed for the literal goal string.
+    // A task is expressed when the actor, a key term from the goal and a
+    // completion cue are all present, so the content is kept without demanding
+    // a verbatim quote.
+    if (fact.kind === 'task_achieved' && text.includes(fact.name)) {
+      const keys = goalKeyTerms(fact.goal).filter((term) => text.includes(term));
+      const done = /(办完|完成|做完|搞定|达成|结束|办妥|了结|完毕|对上|查清|核清|对完|看完|翻完)/u.test(text);
+      if (keys.length && done) {
+        expressed.add(fact.id);
+        issues.push(soft('unverified_sentence', attempt,
+          `task result paraphrased (${keys.join('、')}); actor binding needs review`, undefined));
+        continue;
+      }
+    }
     if (fact.kind === 'task_achieved' && text.includes(fact.goal) && text.includes(fact.name)
       && /(办完|完成|做完|搞定|达成|结束|办妥|了结)/u.test(text)) {
       expressed.add(fact.id);

@@ -1683,3 +1683,35 @@ describe('length follows material', () => {
     expect(prompt).toContain('140～240 字');
   });
 });
+
+describe('a completed task may be paraphrased', () => {
+  const taskPacket = {
+    facts: [
+      { id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对三份互相矛盾的登记簿' },
+    ],
+  } as never;
+
+  test('a paraphrase with a completion cue counts as expressing the task', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川把三本簿子摊开，比对完毕，屋里安静下来。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskPacket, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    expect(result.accepted).toBe(true);
+  });
+
+  test('still reading with no result stays a hard omission', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川盯着三本登记簿，一页页翻过去，眉头越皱越紧。' },
+      { kind: 'text', text: '林川盯着三本登记簿，一页页翻过去，眉头越皱越紧。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: taskPacket, inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'fact_omitted')).toBe(true);
+  });
+});
