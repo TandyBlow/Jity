@@ -195,6 +195,14 @@ a different engine.
    engines `loaded` (the submit button is disabled while loading). A
    `complete`/`chat` before load must reject immediately; it must never wait
    for the 120 s load deadline (the `complete-before-ready` check proves this).
+8. Fresh-run isolation: clearing only `localStorage` is not a fresh run. The
+   page persists through IndexedDB (and may use Cache Storage/OPFS); a stale
+   record makes the first save stop with `progress_conflict`. The runner must
+   delete every IndexedDB database plus Cache Storage/OPFS and assert they are
+   empty before loading the page. A stop must also end the turn visibly: clear
+   the busy/stage state and show a message, or the acceptance waits until its
+   whole-turn timeout even though the turn ended in 168 ms (observed in the
+   first official 10-turn attempt; neither engine had failed).
 
 ## 02/06 integration entry points
 
