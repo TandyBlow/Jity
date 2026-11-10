@@ -138,6 +138,19 @@ export function verifyText(text: string, options: VerifyOptions): {
       .filter((fact): fact is Extract<SceneFact, { kind: 'at' }> => fact.kind === 'at')
       .map((fact) => ({ name: fact.name, location: fact.location })),
   });
+  // A beat may not repeat a sentence the player read last turn verbatim. The
+  // writer is free to rephrase; the program realizer already rotates variants.
+  if (options.priorText) {
+    const previous = new Set(sentences(options.priorText).map((part) => stripEnd(part)));
+    for (const part of parts) {
+      const core = stripEnd(part);
+      if (core && previous.has(core)) {
+        issues.push({ kind: 'echo_prior', severity: 'hard', beatId: null, detail: `repeats last turn: ${core}`, sentence: part });
+        break;
+      }
+    }
+  }
+
   for (const violation of alignment.violations) {
     // Two actors moving along the same route share one payload signature; the
     // legacy grader then attributes the other actor's move to the named one.
@@ -306,7 +319,10 @@ export function verifyText(text: string, options: VerifyOptions): {
   }
 
   const repetition = options.checkPrior === false ? null : repetitionAgainst(text, options.priorText ?? null);
-  if (repetition != null && repetition > 0.5) {
+  // Bigram overlap is naturally high on very short turns (shared names and
+  // place words); only demand a low ratio once both turns carry real prose.
+  const repetitionCap = chars < 200 || (options.priorText ?? '').length < 200 ? 0.75 : 0.5;
+  if (repetition != null && repetition > repetitionCap) {
     issues.push({ kind: 'echo_prior', severity: 'soft', beatId: null, detail: `bigram overlap ${repetition.toFixed(2)}` });
   }
 

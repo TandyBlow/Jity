@@ -73,7 +73,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   // business. A point with several settled changes must not shrink into a
   // two-sentence summary.
   const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
-  const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(120, 40 + changeCount * 12));
+  const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(120, 40 + changeCount * 8));
   const maxChars = policy.maxChars ?? 1400;
   const planStarted = now();
   const plan = planBeats(scene, {

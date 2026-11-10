@@ -32,6 +32,17 @@ try {
   const stateModule = await vite.ssrLoadModule('/src/lib/world-engine/local/state.ts');
   const shortModule = await vite.ssrLoadModule('/src/lib/world-engine/runtime/b3-short-samples.ts');
   const candidateModule = await vite.ssrLoadModule('/src/lib/world-engine/local/narration-candidates/constrained/index.ts');
+  const alignmentModule = await vite.ssrLoadModule('/src/lib/world-engine/runtime/narration-alignment.ts');
+  const { repetitionAgainst } = alignmentModule;
+  const SENTENCE_SPLIT = new RegExp('[' + [0x3002, 0xff01, 0xff1f, 0x0a].map((code) => String.fromCharCode(code)).join('') + ']+', 'u');
+  const sentencesOf = (text) => text.split(SENTENCE_SPLIT).map((part) => part.trim()).filter(Boolean);
+  const verbatimShare = (text, prior) => {
+    if (!prior) return 0;
+    const previous = new Set(sentencesOf(prior));
+    const own = sentencesOf(text);
+    if (!own.length) return 0;
+    return own.filter((sentence) => previous.has(sentence)).length / own.length;
+  };
   const { buildInitialState, applyPoint, stateDigest } = stateModule;
   const { SHORT_STATE } = shortModule;
   const { generateCandidate } = candidateModule;
@@ -228,8 +239,10 @@ try {
       priorText: shortPrior,
       policy: { mode: 'program', knowledge: { metCharacterIds: ['person_a'] }, composer },
     });
-    runs.push({ id: entry.id, input: entry.input, result });
+    const prior = shortPrior;
+    runs.push({ id: entry.id, input: entry.input, prior, result });
     if (!result.accepted) exitCode = 1;
+    if (verbatimShare(result.text, prior) > 0) exitCode = 1;
     if (result.text) shortPrior = result.text;
   }
 
@@ -240,7 +253,7 @@ try {
     priorText: null,
     policy: { mode: 'program', knowledge: { discoveredItemIds: ['map', 'rules'] }, composer },
   });
-  runs.push({ id: 'simple', input: '我走进器材棚，先看看领用台上有什么。', result: simple });
+  runs.push({ id: 'simple', input: '我走进器材棚，先看看领用台上有什么。', prior: null, result: simple });
   if (!simple.accepted) exitCode = 1;
 
   const complex = await generateCandidate({
@@ -255,7 +268,8 @@ try {
       composer,
     },
   });
-  runs.push({ id: 'complex', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', result: complex });
+  runs.push({ id: 'complex', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', prior: simple.text, result: complex });
+  if (verbatimShare(complex.text, simple.text) > 0) exitCode = 1;
   if (!complex.accepted) exitCode = 1;
 
   // Same point without full state: legacy CommittedNarration packet only.
@@ -265,7 +279,7 @@ try {
     committed: { ...factsOnlyBase, inputText: '我把护目镜推到额头上，问秦越担架在哪一侧。', priorText: simple.text },
     policy: { mode: 'program', composer },
   });
-  runs.push({ id: 'facts-only', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', result: factsOnly });
+  runs.push({ id: 'facts-only', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', prior: simple.text, result: factsOnly });
   if (!factsOnly.accepted) exitCode = 1;
 
   const report = {
@@ -281,9 +295,11 @@ try {
       shortMove: { pointId: 'point_short_move', version: 1, stateDigest: shortMovedDigest },
       shortElapsed: { pointId: 'point_short_elapsed', version: 2, stateDigest: shortElapsedDigest },
     },
-    runs: runs.map(({ id, input, result }) => ({
+    runs: runs.map(({ id, input, prior, result }) => ({
       id,
       input,
+      repetitionVsPrior: repetitionAgainst(result.text, prior ?? null),
+      repeatedSentencesVsPrior: verbatimShare(result.text, prior ?? null),
       text: result.text,
       accepted: result.accepted,
       status: result.status,
