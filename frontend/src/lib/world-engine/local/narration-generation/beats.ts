@@ -128,11 +128,10 @@ export function planBeats(input: {
   const quiet = facts.length === 0 && !(ledger.requireTime && ledger.time);
 
   if (scene && (scene.placeNotes?.length || scene.present?.length || scene.location)) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2)
-      .map((note) => note.trim().replace(/[。.]+$/u, ''))
-      .join('；');
+    // The place notes already appear once, under 【环境】. Repeating them in
+    // the directive made the model copy them as prose.
     const people = (scene.present ?? []).map((person) => person.name).filter((name) => name !== viewpointName);
-    const parts = [scene.location ? `这里是${scene.location}` : null, notes || null, people.length ? `${people.join('、')}也在` : null]
+    const parts = [scene.location ? `这里是${scene.location}` : null, people.length ? `${people.join('、')}也在` : null]
       .filter((part): part is string => Boolean(part));
     beats.push({
       id: 'scene-open',
