@@ -261,7 +261,32 @@ python hpc/export_candidate.py --adapter <adapter-best.pt>   --base D:/others/Ji
 3. 模型输出为空、超长或主语不对时，按 02 既有策略记账并回退；不要用模板句冒充模型输出。
 4. 真实浏览器文本由 09 跑、用户看。10 线只登记权重和模板，不签质量结论。
 
-### 8.7 限制
+#### 8.6.1 真实浏览器首跑（2026-11-10 17:25，09 共用执行器）
+
+命令（10 线自己调用 09 的入口，结果只写到自己目录，不碰 `results/quality/browser-09.json`）：
+
+```bash
+node scripts/quality-candidates/run-browser-candidates.mjs   --candidate 10-beat=<lane10>/browser/candidate.ts   --candidate-model 10-beat=/models/model-Q4_K_M.gguf   --model-dir <qwen15b-beat-v2 导出目录> --set free-day --only free-day-move   --threads 8 --hard-timeout-ms 900000
+```
+
+实际正文（Edge + wllama CPU，载入 29.9 s，整轮 269.8 s，96 字，`accepted=false`）：
+
+```text
+路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。
+
+诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。
+
+1分钟过去，屋子里没有别的声音。
+```
+
+读法：三条拍里前两条移动的主语和起终点都对（路明非、诺诺，服务巷→西回廊），但都带了“空气
+里弥漫着紧张”这类空话；第三条是模板回退——模型其实写了“一分钟过去”，检查器只认阿拉伯数字
+把她判错了。检查器已改成同时认“一/两/三…”，并在时间拍的检查里不再要求出现视角人名。第三段
+回退句原来写“屋子里”，现在按场景地点写。
+
+这不是合格正文，只是一次真实调用与真实失败；没有写进 09 的共享文件。
+
+## 8.7 限制
 
 - 拍数据的老师是 7B 模型，句子是机器写的，不是人工金标；通过筛选只说明它守住了这一条事实。
 - 21 条短场景来自 train 行，是开发材料，不是独立终验集。
