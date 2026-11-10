@@ -255,8 +255,10 @@ describe('six-stage updates', () => {
         { entityId: 'off', op: 'keep', recordIds: [], text: null },
       ] }),
     ]);
+    const timeWorld = world();
+    timeWorld.characters.a.tasks.a1.goal = '在天亮前拿到工具';
     const handlers = createSettlementHandlers({ engine });
-    const outcome = await handlers.updates('time_scan:p1', updatesInput(world(), undefined, 'time_scan'));
+    const outcome = await handlers.updates('time_scan:p1', { ...(updatesInput(timeWorld, undefined, 'time_scan') as Record<string, unknown>), workingState: timeWorld } as unknown as Json);
     const calls = outcome.value as UpdatesCall[];
     expect(calls[0].changes).toEqual({});
     expect(calls[1].changes).toEqual({});
@@ -476,6 +478,100 @@ describe('continuation', () => {
   });
 });
 
+describe('affected-dependency projection', () => {
+  function partialInput(stage: UpdatesStage, results: Record<string, string>, mode: 'group' | 'time_scan' = 'group') {
+    return { ...(updatesInput(world(), stage, mode) as Record<string, unknown>), results } as unknown as Json;
+  }
+
+  it('only asks the affected owners and leaves off-screen tasks with an audit basis', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b'], achieved: [] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', partialInput('tasks', { a: '甲把工具推进盒子，乙在旁边看着。' }));
+    expect(outcome.value).not.toBeNull();
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.off).toBeUndefined();
+    const prompt = engine.prompts[0];
+    expect(prompt).toContain('id=a');
+    expect(prompt).toContain('id=b');
+    expect(prompt).not.toContain('id=off');
+    expect(prompt).toContain('程序已按依赖投影保留其余 1 条任务');
+    const detail = outcome.evidence.detail as { taskScope: {
+      mode: string; characters: number; taskRows: number; achievedCharacters: number;
+      affectedCharacters: number; affectedTaskIds: string[]; unaffectedTaskIds: string[];
+      unaffectedCharacters: string[]; unaffectedBasis: string; assertedUnchanged: number;
+    } };
+    expect(detail.taskScope).toMatchObject({
+      mode: 'affected_projection',
+      characters: 3,
+      taskRows: 4,
+      affectedCharacters: 2,
+      unaffectedTaskIds: ['off1'],
+      unaffectedCharacters: ['off'],
+      unaffectedBasis: 'owner_and_goal_outside_point',
+      assertedUnchanged: 3,
+    });
+    expect(detail.taskScope.affectedTaskIds).toEqual(['a1', 'a2', 'b1']);
+  });
+
+  it('includes an off-screen owner when the settled fact names that owner', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: [], achieved: [{ characterId: 'off', tasks: [{ taskId: 'off1', basis: 'f1' }] }] }), JSON.stringify({ judgments: [{ characterId: 'off', taskId: 'off1', satisfied: 'yes', reason: '事实满足条件。' }] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', partialInput('tasks', { off: '远处传来丙的喊声，他仍在等待。' }));
+    expect(outcome.value).not.toBeNull();
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.off?.tasksAchieved).toEqual(['off1']);
+    expect(engine.prompts[0]).toContain('id=off');
+    expect(engine.prompts[0]).not.toContain('id=b');
+  });
+
+  it('a global fact keeps every task in the prompt', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', partialInput('tasks', { a: '全城广播响起，演习区所有人停止。' }));
+    expect(outcome.value).not.toBeNull();
+    const prompt = engine.prompts[0];
+    for (const id of ['a', 'b', 'off']) expect(prompt).toContain(`id=${id}`);
+    const detail = outcome.evidence.detail as { taskScope: { affectedCharacters: number } };
+    expect(detail.taskScope.affectedCharacters).toBe(3);
+  });
+
+  it('a time scan still includes explicit time-condition tasks', async () => {
+    const timeWorld = world();
+    timeWorld.characters.a.tasks.a1.goal = '在天亮前拿到工具';
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a'], achieved: [] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const input = { ...(partialInput('tasks', {}, 'time_scan') as Record<string, unknown>), workingState: timeWorld } as unknown as Json;
+    const outcome = await handlers.updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('id=a');
+    expect(engine.prompts[0]).not.toContain('id=b');
+    expect(engine.prompts[0]).not.toContain('id=off');
+  });
+
+  it('projects position and appearance to actors, scene and fact entities', async () => {
+    const positionEngine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const position = await createSettlementHandlers({ engine: positionEngine }).updates('g1#position', partialInput('position', { a: '甲把工具推进盒子。' }));
+    expect(position.value).not.toBeNull();
+    const positionPrompt = positionEngine.prompts[0];
+    expect(positionPrompt).toContain('tool=工具@room');
+    expect(positionPrompt).toContain('room=房间');
+    expect(positionPrompt).not.toContain('id=off');
+    const positionDetail = position.evidence.detail as { stageDetail: { positionScope: { affectedEntityIds: string[]; unaffectedEntityIds: string[] } } };
+    expect(positionDetail.stageDetail.positionScope.affectedEntityIds).toContain('a');
+    expect(positionDetail.stageDetail.positionScope.unaffectedEntityIds).toContain('off');
+
+    const appearanceEngine = new ScriptedEngine([JSON.stringify({ operations: [] })]);
+    const appearance = await createSettlementHandlers({ engine: appearanceEngine }).updates('g1#appearance', partialInput('appearance', { a: '甲把工具推进盒子。' }));
+    expect(appearance.value).not.toBeNull();
+    const appearancePrompt = appearanceEngine.prompts[0];
+    expect(appearancePrompt).toContain('id=tool');
+    expect(appearancePrompt).toContain('id=room');
+    expect(appearancePrompt).not.toContain('id=off');
+    const appearanceDetail = appearance.evidence.detail as { stageDetail: { appearanceScope: { affectedEntityIds: string[]; unaffectedEntityIds: string[] } } };
+    expect(appearanceDetail.stageDetail.appearanceScope.unaffectedEntityIds).toContain('off');
+  });
+});
+
 describe('real failed-output shapes (09 product run)', () => {
   it('repairs a task answer that skips a whole character, then covers every character', async () => {
     const partial = JSON.stringify({ decisions: [
@@ -502,7 +598,7 @@ describe('real failed-output shapes (09 product run)', () => {
     for (const id of ['a', 'b', 'off']) expect(engine.prompts[0]).toContain(`\"${id}\"`);
     const detail = outcome.evidence.detail as { taskScope: { mode: string; characters: number; taskRows: number; assertedUnchanged: number } };
     expect(detail.taskScope).toMatchObject({
-      mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [], emptyCharacters: 1,
+      mode: 'affected_projection', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [], emptyCharacters: 1,
       achievedByCharacter: [{ characterId: 'a', taskIds: ['a1'] }, { characterId: 'off', taskIds: ['off1'] }],
     });
   });

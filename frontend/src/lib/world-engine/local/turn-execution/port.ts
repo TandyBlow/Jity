@@ -58,6 +58,12 @@ export interface PortCallRecord {
      * mistaken for semantic agreement. */
     achievedByCharacter?: { characterId: string; taskIds: string[] }[];
     assertedUnchanged?: number;
+    /** Affected-projection audit: the model saw the affected owners/rows, the
+     * program carried the rest with a no-dependency basis. */
+    affectedCharacters?: number;
+    unaffectedCharacters?: string[];
+    affectedTaskIds?: string[];
+    unaffectedTaskIds?: string[];
     rejectedTaskIds?: { characterId: string; taskId: string; reason: string }[];
     supports?: { characterId: string; taskId: string; basis: string }[];
   };
@@ -149,6 +155,7 @@ export function createSettlementModelPort(
     }
     const scope = (outcome.evidence.detail as { taskScope?: {
       taskRows?: unknown; mode?: unknown; achievedByCharacter?: unknown; assertedUnchanged?: unknown; rejectedTaskIds?: unknown; supports?: unknown;
+      affectedCharacters?: unknown; unaffectedCharacters?: unknown; affectedTaskIds?: unknown; unaffectedTaskIds?: unknown;
     } } | null)?.taskScope;
     if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds) || scope) {
       record.coverage = {
@@ -160,6 +167,10 @@ export function createSettlementModelPort(
           ? { achievedByCharacter: scope.achievedByCharacter as { characterId: string; taskIds: string[] }[] }
           : {}),
         ...(Number.isFinite(Number(scope?.assertedUnchanged)) ? { assertedUnchanged: Number(scope?.assertedUnchanged) } : {}),
+        ...(Number.isFinite(Number(scope?.affectedCharacters)) ? { affectedCharacters: Number(scope?.affectedCharacters) } : {}),
+        ...(Array.isArray(scope?.unaffectedCharacters) ? { unaffectedCharacters: scope.unaffectedCharacters as string[] } : {}),
+        ...(Array.isArray(scope?.affectedTaskIds) ? { affectedTaskIds: scope.affectedTaskIds as string[] } : {}),
+        ...(Array.isArray(scope?.unaffectedTaskIds) ? { unaffectedTaskIds: scope.unaffectedTaskIds as string[] } : {}),
         ...(Array.isArray(scope?.rejectedTaskIds)
           ? { rejectedTaskIds: scope.rejectedTaskIds as { characterId: string; taskId: string; reason: string }[] }
           : {}),
