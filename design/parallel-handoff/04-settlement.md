@@ -284,3 +284,13 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 这轮只改 04 的语义/端口和离线测试；06 仍负责首段已提交点、段落来源、页面显示策略停止。06 下一冻结头需要包含 `aec9e622`，否则 e9a5/95dc 的续推缺陷仍会复现。
 
 验证：`node scripts/parallel-settlement/run-focused.mjs` → **74 passed | 1 expected fail**；`npx tsc -p tsconfig.world-contract.json --noEmit` 通过。全量前端 `npx vitest run --maxWorkers=1` 为 722 passed、1 expected fail，剩余 14 个失败是工作树已有的 `styles.test.ts` 和 wllama URL mock 环境问题，不在本线文件。
+
+### 2026-11-11 补充：结算时间本身也是进展（`1e678a60`）
+
+控制器在第一次 `results` 之前先把时间推进写进工作态，所以端口保存的 `before` 可能已经带有新时钟，`before/after` 时间相同；只比较这两个快照会漏掉“这一轮只过去了一分钟”的真实事件。`roundAdvancedTime()` 现在从本轮已结算点的 `roundChanges[].timeAdvance.duration.amount > 0` 读取时间推进，传给 `roundProgressFromState`。因此：
+
+- 只推进真实时间、没有位置/任务/外貌变化的回合仍是进展，不会在第二次被 no-progress 误停；
+- 回合内四个不同的无状态动作可以继续到模型没有新候选（handback），不是因为默认调用上限；
+- 真正重复同一位置且没有新动作、事实、时间、状态变化的回合，仍由真实进度和已消费候选停止。
+
+`1e678a60` 需要 06 合入；`03ec746a` 的构建不包含这条时间判定。
