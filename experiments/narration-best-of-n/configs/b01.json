@@ -1,0 +1,61 @@
+{
+  "batchId": "b01",
+  "title": "Six-seed realization diversity on one long dialogue case",
+  "status": "ready-to-submit-after-preregistration-freeze",
+  "purpose": "Produce six real raw generations from the SAME frozen settled input and decide whether they are genuinely different realizations before any best-of-N wiring. This batch is a diversity pilot; it does not by itself establish a best-of-N benefit.",
+  "caseIds": ["frozen-row-0012"],
+  "seeds": [17, 29, 43, 61, 79, 97],
+  "sharedPack": {
+    "owner": "01-input",
+    "package": "narration-dev-package-v1",
+    "root": "D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/dev-package-v1",
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+    "note": "Public development regression material, never a final holdout. Hashes are pinned; a changed package fails preparation instead of silently mixing versions."
+  },
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "family": "Qwen2.5 instruct base (lane-10 training docstring); the runner records the actual config and weight hashes, which are authoritative",
+    "quantization": "none (transformers safetensors, bfloat16 if the node supports it, float16 otherwise)",
+    "why": "Already on HPC (lane-10 base for the qwen15b training arms), no new download and no local 4060 use.",
+    "notTheProductWeights": "This is NOT the current browser product checkpoint. This batch studies base-model sampling diversity; any product claim requires a same-condition re-run on the actual browser weights."
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "renderTrainedInstructUser(input) from frontend/src/lib/world-engine/local/narration-generation/trained-input.ts",
+    "addGenerationPrompt": true,
+    "note": "The shared pack input already is the 视角/上回合状态/本回合变化/本回合状态 view; the user turn is the trained instruct shape. requiredFacts/notes/reference are never in the prompt."
+  },
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1.0,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true,
+    "note": "temperature/top-p/top-k and the token cap follow the product candidate defaults (06 passes temperature 0.45 and maxTokens 240); repetition_penalty/no_repeat_ngram stay neutral so the measurement is not padded."
+  },
+  "stop": ["eos_token_id", "im_end"],
+  "outputs": {
+    "requests": "data/b01/requests.jsonl",
+    "expected": "data/b01/expected.jsonl",
+    "plan": "data/b01/plan.json",
+    "rawDir": "results/b01",
+    "rawFile": "raw.jsonl",
+    "envFile": "env.json",
+    "report": "report.json",
+    "reportMd": "report.md"
+  },
+  "resource": {
+    "executor": "10-training only",
+    "device": "one HPC GPU (prefer RTX 4090; V100 fp16 fallback)",
+    "estimatedCalls": 6,
+    "estimatedMinutes": 5,
+    "network": "offline; no download"
+  }
+}

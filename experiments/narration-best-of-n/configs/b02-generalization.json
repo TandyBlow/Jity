@@ -1,0 +1,63 @@
+{
+  "batchId": "b02-generalization",
+  "title": "Same-condition coverage batch: five other settled-fact categories",
+  "status": "blocked-on-b01-analysis",
+  "purpose": "Check that the b01 diversity finding is not specific to one long dialogue scene. Same model, template, sampling, seed set, caps and pack hashes as b01; only the case changes.",
+  "caseIds": [
+    "dr-0021-no-change-three-people",
+    "short2-0034-carved-line-worn",
+    "fixture-goggles-transfer",
+    "short2-0056-duty-name-and-copy",
+    "tide-continuity-tide-duty-t2"
+  ],
+  "categories": ["no_change", "move_direction", "item_transfer_fixture", "gender_pronoun", "continuity"],
+  "seeds": [17, 29, 43, 61, 79, 97],
+  "sharedPack": {
+    "owner": "01-input",
+    "package": "narration-dev-package-v1",
+    "root": "D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/dev-package-v1",
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+  },
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "quantization": "none (safetensors)",
+    "why": "Same loaded instance as b01 when 10 can batch them; no new model."
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "renderTrainedInstructUser(input)",
+    "addGenerationPrompt": true
+  },
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1.0,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true
+  },
+  "gate": "Do not submit before b01 raw outputs are analyzed and the preregistered diversity/zero-qualified conditions are checked. A zero-qualified or >80% repetition b01 triggers cause analysis first, not automatic expansion.",
+  "outputs": {
+    "requests": "data/b02-generalization/requests.jsonl",
+    "expected": "data/b02-generalization/expected.jsonl",
+    "plan": "data/b02-generalization/plan.json",
+    "rawDir": "results/b02-generalization",
+    "rawFile": "raw.jsonl",
+    "envFile": "env.json",
+    "report": "report.json",
+    "reportMd": "report.md"
+  },
+  "resource": {
+    "executor": "10-training only",
+    "device": "one HPC GPU, same node class as b01 if possible",
+    "estimatedCalls": 30,
+    "estimatedMinutes": 20,
+    "network": "offline; no download"
+  }
+}

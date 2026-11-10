@@ -1,0 +1,60 @@
+{
+  "batchId": "b01",
+  "preparedAt": "2026-11-10T11:58:55.448Z",
+  "pack": {
+    "package": "narration-dev-package-v1",
+    "caseCount": 15,
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+  },
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79,
+    97
+  ],
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "family": "Qwen2.5 instruct base (lane-10 training docstring); the runner records the actual config and weight hashes, which are authoritative",
+    "quantization": "none (transformers safetensors, bfloat16 if the node supports it, float16 otherwise)",
+    "why": "Already on HPC (lane-10 base for the qwen15b training arms), no new download and no local 4060 use.",
+    "notTheProductWeights": "This is NOT the current browser product checkpoint. This batch studies base-model sampling diversity; any product claim requires a same-condition re-run on the actual browser weights."
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "renderTrainedInstructUser(input) from frontend/src/lib/world-engine/local/narration-generation/trained-input.ts",
+    "addGenerationPrompt": true,
+    "note": "The shared pack input already is the 视角/上回合状态/本回合变化/本回合状态 view; the user turn is the trained instruct shape. requiredFacts/notes/reference are never in the prompt."
+  },
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true,
+    "note": "temperature/top-p/top-k and the token cap follow the product candidate defaults (06 passes temperature 0.45 and maxTokens 240); repetition_penalty/no_repeat_ngram stay neutral so the measurement is not padded."
+  },
+  "calls": 6,
+  "cases": [
+    {
+      "caseId": "frozen-row-0012",
+      "category": "long_text",
+      "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
+      "userPromptSha256": "067918ae71b8cb306574e8cf63f3aa6c76eed5a1c1438b59745dc98303581000",
+      "userPromptChars": 896
+    }
+  ],
+  "requestsSha256": "77251fb07437e02abf2a084057782b363807d4228f52aada293a583625ff6c7d",
+  "expectedSha256": "b0c018a3a00a4e81fa32d3154b658af8d33a5e7e66b585535841c9429ecfa060",
+  "renderer": "frontend/src/lib/world-engine/local/narration-generation/trained-input.ts:renderTrainedInstructUser",
+  "referenceExcluded": true,
+  "frontendRoot": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\frontend"
+}
