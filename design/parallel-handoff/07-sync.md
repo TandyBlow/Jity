@@ -35,7 +35,8 @@
   - `activate:false` 只存分叉，不动 head；`select_head` 只移动 head，目标
     必须是分支叶子；另一份始终可读。
   - 同一 `requestId` 重试在 CAS 检查前命中幂等记录，返回原 snapshotId 和
-    当前 head/revision；同 id 不同内容返回 409 `request_id_reused`。
+    当前 head/revision；同 id 不同内容返回 409 `request_id_reused`。请求记录
+    还保存这次 CAS 依据的 expectedHead/expectedRevision。
   - 拒绝父节点缺失、超过大小/节点数/父数上限的写入。
   - 只做 JSON 序列化、大小、标识符、父链和 CAS 检查，不 import world
     engine，不解析 `WorldState`。

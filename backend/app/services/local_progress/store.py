@@ -45,6 +45,8 @@ CREATE TABLE IF NOT EXISTS progress_requests (
   world_id TEXT NOT NULL,
   request_id TEXT NOT NULL,
   request_hash TEXT NOT NULL,
+  expected_head TEXT,
+  expected_revision INTEGER NOT NULL,
   response_json TEXT NOT NULL,
   created_at TEXT NOT NULL,
   PRIMARY KEY (world_id, request_id)
@@ -377,7 +379,16 @@ class LocalProgressStore:
                     "changed": False,
                     "idempotent": False,
                 }
-                self._remember(connection, world_id, request.requestId, request_hash, response, now)
+                self._remember(
+                    connection,
+                    world_id,
+                    request.requestId,
+                    request_hash,
+                    request.expectedHead,
+                    request.expectedRevision,
+                    response,
+                    now,
+                )
                 return response
 
             snapshot_id = document_identity(world_id, digest, parents)
@@ -459,7 +470,16 @@ class LocalProgressStore:
                 "changed": changed,
                 "idempotent": False,
             }
-            self._remember(connection, world_id, request.requestId, request_hash, response, now)
+            self._remember(
+                connection,
+                world_id,
+                request.requestId,
+                request_hash,
+                request.expectedHead,
+                request.expectedRevision,
+                response,
+                now,
+            )
             return response
 
     def select_head(self, world_id: str, request: SelectHeadRequest) -> dict[str, Any]:
@@ -548,7 +568,16 @@ class LocalProgressStore:
                 "changed": changed,
                 "idempotent": False,
             }
-            self._remember(connection, world_id, request.requestId, request_hash, response, now)
+            self._remember(
+                connection,
+                world_id,
+                request.requestId,
+                request_hash,
+                request.expectedHead,
+                request.expectedRevision,
+                response,
+                now,
+            )
             return response
 
     # -- internals -----------------------------------------------------------
@@ -624,14 +653,25 @@ class LocalProgressStore:
         world_id: str,
         request_id: str,
         request_hash: str,
+        expected_head: str | None,
+        expected_revision: int,
         response: dict[str, Any],
         now: str,
     ) -> None:
         connection.execute(
             "INSERT INTO progress_requests "
-            "(world_id, request_id, request_hash, response_json, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (world_id, request_id, request_hash, canonical_json(response), now),
+            "(world_id, request_id, request_hash, expected_head, expected_revision, "
+            " response_json, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (
+                world_id,
+                request_id,
+                request_hash,
+                expected_head,
+                expected_revision,
+                canonical_json(response),
+                now,
+            ),
         )
         if self.idempotency_ttl_days > 0:
             cutoff = (

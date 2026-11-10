@@ -61,7 +61,8 @@ to `data/local_progress.sqlite3` (ignored by git), configurable with
   `POST /worlds/{worldId}/head` explicitly selects a branch leaf.
 - The same `requestId` replayed with the same body returns the original result
   with `idempotent: true` and the current head/revision. Reusing it with a
-  different body returns 409 `request_id_reused`.
+  different body returns 409 `request_id_reused`. The request log also stores
+  the expected head/revision that the CAS was based on.
 - Saving the exact current payload again is a no-op (same head, no revision bump).
 
 Reads:
