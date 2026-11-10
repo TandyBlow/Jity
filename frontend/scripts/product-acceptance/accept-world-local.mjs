@@ -670,6 +670,10 @@ try {
       // clear the page globals.
       // Action-family evidence (targets / roll / reaction) is produced before
       // updates; keep it even when the settlement later aborts.
+      entry.snapshotAfterTurn = await page.evaluate(() => {
+        const snapshot = globalThis.__worldSnapshot;
+        return snapshot ?? null;
+      }).catch(() => null);
       entry.actions = await page.evaluate(() => {
         const turns = globalThis.__worldTurns;
         const record = Array.isArray(turns) ? turns.at(-1) : null;
@@ -789,6 +793,7 @@ try {
   // 06 publishes its own restore judgment; read it instead of guessing from a
   // place/sanity match, and keep the raw object in evidence.
   const restoreReport = await page.evaluate(() => window.__worldRestore ?? null).catch(() => null);
+  const snapshotAfterReload = await page.evaluate(() => globalThis.__worldSnapshot ?? null).catch(() => null);
   // Entry identity, not just a count: a page can report 'restored' while the
   // visible history is empty.
   const entriesContract = await page.evaluate(() => {
@@ -830,6 +835,7 @@ try {
     stateAfter: stateAfterReload,
     stateRestored,
     reported: restoreReport,
+    snapshotAfterReload,
     historyRestored,
     inputConsumptionRestored: historyRestored,
     entriesRestored,
