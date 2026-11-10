@@ -116,6 +116,7 @@ YuYan 诊断臂已实际跑完。配置 `configs/yuyan-lora-v2.json`；基座
 
 - 199 行是 v1 冻结行，不是独立终验；无人工复核元数据。
 - 结果块是部分变化视图，不是完整 after 快照。
-- 真实 199 行没有物品移动/精神值 0；synthetic golden 只证明格式与拒绝路径。
+- 真实 199 行没有物品移动/精神值 0；synthetic golden 只证明格式与拒绝路径，不是人工语义金标。
+- golden 文本由参考 serializer 生成并自检；真实行有旧字节核验，但不等于独立读评。
 - instruct 基座/tokenizer 未选，不能声称 instruct 臂已训练。
 - D 线 4,750 行是短语义监督，未混入叙事训练，也不能作独立终验。

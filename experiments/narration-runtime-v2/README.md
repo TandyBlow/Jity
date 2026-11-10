@@ -205,6 +205,7 @@ instruct 入口的配置 `configs/hf-instruct.template.json` 仍是 `status=pend
 
 - 199 行是 v1 的冻结场景行，不是独立终验集；目标正文是 v1 目标，没有人工复核元数据。
 - 199 行没有真实的物品移动、精神值 0；这些形状只由 synthetic golden 覆盖，不能把它们当作训练行。
+- golden 的成功文本由本目录参考 serializer 生成并自检；真实行部分另有旧 serializer 逐字节核验，但 synthetic 部分是格式夹具，不是人工语义金标或玩家读评。
 - 结果块是部分变化视图，不是完整 after 快照。
 - YuYan tokenizer 已绑定；instruct tokenizer 仍 pending。
 - HPC 实际运行记录见 `hpc/runs/` 和 `design/parallel-handoff/10-training.md`；未运行前不得写成模型质量已改善。
