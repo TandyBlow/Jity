@@ -150,6 +150,9 @@ export interface SelectionCandidate {
   id: string;
   seed: number;
   text: string;
+  /** Transport outcome when the caller has it. A failed call is never
+   * eligible even if a partial text leaked out of the engine. */
+  status?: CandidateSample['status'];
 }
 
 export interface SelectionOptions {

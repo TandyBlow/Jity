@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import {
   buildDiversityReport, profileSample, selectCandidate, textMetrics,
 } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
+import type { CandidateSample } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const EXP = resolve(HERE, '..');
@@ -45,7 +46,7 @@ interface SampleRow {
   callId: string;
   caseId: string;
   seed: number;
-  status: string;
+  status: CandidateSample['status'];
   error?: string | null;
   text: string;
   rawText?: string;
@@ -585,7 +586,7 @@ function computeArms(
     const windowSamples = samples.slice(0, arm);
     const selectionStarted = nowMs();
     const decision = selectCandidate({
-      candidates: windowSamples.map((sample) => ({ id: sample.id, seed: sample.seed, text: sample.text })),
+      candidates: windowSamples.map((sample) => ({ id: sample.id, seed: sample.seed, text: sample.text, status: sample.status as CandidateSample['status'] })),
       assessments,
       options: {
         priorText: expectedRow.priorTexts.join('\n') || null,

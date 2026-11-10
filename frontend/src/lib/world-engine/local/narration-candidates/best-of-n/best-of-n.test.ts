@@ -188,6 +188,15 @@ describe('candidate selection', () => {
     expect(decision.verdict).toBe('provisional');
   });
 
+  it('never selects a transport-failed partial text', () => {
+    const decision = selectCandidate({
+      candidates: [sample('timeout', 1, A, 'timeout')],
+      assessments: [assessment('timeout', true)],
+    });
+    expect(decision.selectedId).toBeNull();
+    expect(decision.rejected[0].reason).toBe('transport_failed');
+  });
+
   it('rejects a hard-failing candidate and keeps it in evidence', () => {
     const decision = selectCandidate({
       candidates: [sample('bad', 1, A), sample('good', 2, C)],

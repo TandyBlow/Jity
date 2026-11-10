@@ -56,6 +56,10 @@ export function selectCandidate(input: {
   const ranking: CandidateRank[] = [];
 
   for (const candidate of ordered) {
+    if (candidate.status && candidate.status !== 'ok' && candidate.status !== 'truncated' && candidate.status !== 'empty') {
+      rejected.push({ id: candidate.id, reason: 'transport_failed', detail: candidate.status });
+      continue;
+    }
     if (!candidate.text.trim()) {
       rejected.push({ id: candidate.id, reason: 'empty', detail: 'empty text' });
       continue;
