@@ -118,6 +118,51 @@ describe('real recovery session continuity', () => {
     expect(session.snapshot.transport.advance).toBeNull();
   }, 60_000);
 
+  it('restores halfway through ten consecutive turns and finishes on the same chain', async () => {
+    const backend = new MemoryProgressBackend();
+    const clock = { value: 3_000_000 };
+    const store = createLocalProgressStore(backend, { now: () => clock.value });
+    const first = await LocalGameSession.create(template(), scriptedModel([]), {
+      storage: store, sessionId: 'tab_a', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
+    });
+    await first.start();
+    for (let turn = 1; turn <= 5; turn += 1) {
+      const status = await first.submit(`第 ${turn} 回合：我把盒盖打开一点。`);
+      expect(status.kind, `turn ${turn} status`).not.toBe('error');
+      const report = await verifyWorldRecord(first.snapshot.transport);
+      expect(report.ok, `turn ${turn}: ${JSON.stringify(report.errors)}`).toBe(true);
+      expect(report.version).toBe(turn);
+    }
+    const beforeClose = await store.load(first.worldId);
+    expect(beforeClose).not.toBeNull();
+    expect((await verifyWorldRecord(beforeClose!.snapshot.transport)).version).toBe(5);
+    const worldId = first.worldId;
+    await first.close();
+
+    clock.value += 5_000;
+    const restored = await LocalGameSession.restoreFromStore(store, worldId, scriptedModel([]), {
+      sessionId: 'tab_b', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
+    });
+    expect(restored).not.toBeNull();
+    expect(restored!.commandsPlayed).toHaveLength(5);
+    expect((await verifyWorldRecord(restored!.snapshot.transport)).version).toBe(5);
+    for (let turn = 6; turn <= 10; turn += 1) {
+      const status = await restored!.submit(`第 ${turn} 回合：我把盒盖打开一点。`);
+      expect(status.kind, `turn ${turn} status`).not.toBe('error');
+      const report = await verifyWorldRecord(restored!.snapshot.transport);
+      expect(report.ok, `turn ${turn}: ${JSON.stringify(report.errors)}`).toBe(true);
+      expect(report.version).toBe(turn);
+    }
+    expect(restored!.commandsPlayed).toHaveLength(10);
+    expect(restored!.snapshot.transport.advance).toBeNull();
+    const afterClose = await store.load(worldId);
+    expect(afterClose).not.toBeNull();
+    const finalReport = await verifyWorldRecord(afterClose!.snapshot.transport);
+    expect(finalReport.ok, JSON.stringify(finalReport.errors)).toBe(true);
+    expect(finalReport.version).toBe(10);
+    await restored!.close();
+  }, 30_000);
+
   it('rejects a stale fork save without overwriting the committed head', async () => {
     const store = createLocalProgressStore(new MemoryProgressBackend(), { now: () => 1_000 });
     const session = await LocalGameSession.create(template(), scriptedModel([]), {
