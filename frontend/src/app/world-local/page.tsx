@@ -11,6 +11,7 @@ import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
+import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -92,6 +93,8 @@ interface TurnEntry {
   mixedMs?: number | null;
   cancelled?: boolean;
   failed?: boolean;
+  /** Shown after a reload for a submitted turn that never committed. */
+  unfinished?: boolean;
   /** True for a turn rebuilt from the saved snapshot after a reload. */
   restored?: boolean;
 }
@@ -267,34 +270,6 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
   };
 }
 
-/** Rebuild the player-visible history from the committed snapshot.
- *
- * The entries are not a second source of truth: each one pairs a stored player
- * command with the narration text the transport committed for that point. A
- * point whose narration never became ready is shown as an unfinished turn, not
- * as an empty or fabricated paragraph. */
-function restoredEntries(snapshot: LocalGameSnapshot): TurnEntry[] {
-  const record = snapshot.transport as unknown as {
-    points?: Record<string, { id: string; sequence: number; trigger: string }>;
-    narrations?: Record<string, { status: string; text: string | null }>;
-  };
-  const points = Object.values(record.points ?? {})
-    .filter((point) => point.trigger === 'player')
-    .sort((a, b) => a.sequence - b.sequence);
-  return points.map((point, index) => {
-    const narration = record.narrations?.[point.id];
-    const ready = narration?.status === 'ready' && Boolean(narration.text);
-    return {
-      key: -1 - point.sequence,
-      input: snapshot.commands[index] ?? '',
-      text: ready ? (narration?.text ?? '') : '',
-      note: ready ? null : '这一回合的正文没有保存成功，刷新后无法显示原文。',
-      ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null,
-      restored: true,
-    };
-  });
-}
-
 export default function WorldLocalPage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
@@ -402,6 +377,9 @@ export default function WorldLocalPage() {
 
   useEffect(() => {
     let alive = true;
+    /** Cancels the StrictMode-probe cold-load timer if this mount is unmounted
+     * before the real load starts. */
+    let releaseLoadGate: (() => void) | null = null;
     loadStartedRef.current = performance.now();
     const ticker = setInterval(() => {
       setLoadSeconds(Math.max(0, Math.round((performance.now() - loadStartedRef.current) / 1000)));
@@ -567,11 +545,15 @@ export default function WorldLocalPage() {
         }
         sessionRef.current = session;
         let restoredCount = 0;
+        let committedCount = 0;
+        let unfinishedCount = 0;
         if (restored) {
           const history = restoredEntries(session.snapshot);
           setEntries(history);
-          restoredCount = history.filter((entry) => entry.text.length > 0).length;
-          if (history.length > 0) console.info('[world-local] restored entries', history.length, 'with text', restoredCount);
+          restoredCount = history.length;
+          committedCount = history.filter((entry) => entry.text.length > 0).length;
+          unfinishedCount = history.filter((entry) => entry.unfinished).length;
+          if (history.length > 0) console.info('[world-local] restored entries', history.length, 'with text', committedCount, 'unfinished', unfinishedCount);
         }
         // Field semantics for 09: state restoration and history restoration are
         // separate facts. `overallRestored` is only true when both hold and no
@@ -580,8 +562,13 @@ export default function WorldLocalPage() {
         const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
         (window as unknown as { __worldRestore?: unknown }).__worldRestore = {
           stateRestored: restored,
+          // entriesTotal is every submitted turn in the save; entriesRestored is
+          // what the page shows for them (committed prose or an explicit
+          // unfinished entry). They are compared as player-visible history.
           entriesRestored: restoredCount,
           entriesTotal: session.snapshot.commands.length,
+          committedEntries: committedCount,
+          unfinishedEntries: unfinishedCount,
           inputConsumptionRestored: context.world.advance.intentStatus !== 'pending',
           commandsPlayed: session.commandsPlayed,
           headPointId: session.snapshot.transport.headPointId,
@@ -589,7 +576,16 @@ export default function WorldLocalPage() {
         };
         // State and history are on screen now. The cold load is the only thing
         // still pending, so the page can be read while it runs and the stop
-        // button can cancel it.
+        // button can cancel it. React StrictMode mounts this effect twice in
+        // dev; starting the load after a short gate means the probe mount's
+        // cleanup cancels its timer before any model fetch/compile, so only the
+        // real mount loads (ready time reflects one round, not two).
+        await new Promise<void>((resolve) => {
+          const timer = setTimeout(() => { releaseLoadGate = null; resolve(); }, 200);
+          releaseLoadGate = () => { clearTimeout(timer); resolve(); };
+        });
+        releaseLoadGate = null;
+        if (!alive) return;
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
         await semantic.load();
         if (!alive) { await semantic.dispose(); return; }
@@ -612,6 +608,7 @@ export default function WorldLocalPage() {
     })();
     return () => {
       alive = false;
+      releaseLoadGate?.();
       clearInterval(ticker);
       // A SPA route change unmounts this page; both workers must exit here
       // instead of living until the tab closes. Best effort, then log counters.
