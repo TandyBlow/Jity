@@ -41,7 +41,7 @@ export function taskStated(text: string, actor: string, goal: string): boolean {
   if (text.includes(goal)) return true;
   const grams = contentBigrams(goal);
   if (!grams.length) return true;
-  return sentencesOf(text).some((sentence) => sentence.includes(actor)
+  return sentencesOf(text).some((sentence) => (sentence.includes(actor) || /他|她|他们|她们/.test(sentence))
     && grams.filter((gram) => sentence.includes(gram)).length >= 2);
 }
 

@@ -10,6 +10,7 @@ import { generateCandidate } from './index';
 import { buildProjection } from './projection';
 import { buildSceneUserPrompt, DEFAULT_SYSTEM_PROMPT, thirdPersonAction } from './prompt';
 import { renderChatML, renderPrompt, resolvePromptMode, resolveTemplate, stripThinking } from './template';
+import { taskStated } from './verify';
 import type { CandidateProgress, GenerateInstructCandidateArgs } from './types';
 
 class ScriptedEngine implements InferenceEngine {
@@ -221,8 +222,9 @@ describe('generateCandidate', () => {
     expect(result.rawAttempts).toHaveLength(2);
     expect(result.rawAttempts[0].accepted).toBe(false);
     expect(result.rawAttempts[0].issues.map((issue) => issue.kind)).toContain('fact_omitted');
-    expect(engine.calls[1].prompt).toContain('上一次没有通过检查');
-    expect(engine.calls[1].prompt).toContain('漏掉');
+    expect(engine.calls[1].prompt).toContain('上一次的正文');
+    expect(engine.calls[1].prompt).toContain('陈默站在大厅里');
+    expect(engine.calls[1].prompt).toContain('漏掉了必须写的变化');
     expect(engine.calls[1].options?.temperature).toBe(0.35);
     expect(result.timings.attemptMs).toHaveLength(2);
   });
@@ -310,6 +312,10 @@ describe('generateCandidate', () => {
     expect(result.accepted).toBe(true);
     const omissions = result.issues.filter((issue) => issue.kind === 'fact_omitted');
     expect(omissions.every((issue) => issue.severity === 'soft')).toBe(true);
+  });
+
+  it('credits a task stated with a pronoun after the actor was introduced', () => {
+    expect(taskStated('诺诺把故障短讯机按在掌心。她重新连上凯撒，短讯机的灯亮了。', '诺诺', '把故障短讯机恢复到能与凯撒联络的状态')).toBe(true);
   });
 
   it('turns the player action into third person outside quotes', () => {

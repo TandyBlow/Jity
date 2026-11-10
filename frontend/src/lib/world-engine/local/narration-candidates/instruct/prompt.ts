@@ -148,18 +148,19 @@ export function buildRepairPrompt(args: {
   projection: SceneProjection;
   policy: InstructCandidatePolicy;
   previousText: string;
-  issues: { kind: CandidateIssueKind; detail: string; sentence?: string }[];
+  issues: { kind: CandidateIssueKind; severity?: 'hard' | 'soft'; detail: string; sentence?: string }[];
 }): string {
   const problems = args.issues
-    .filter((issue) => ISSUE_TEXT[issue.kind])
+    .filter((issue) => issue.severity !== 'soft' && ISSUE_TEXT[issue.kind])
     .slice(0, 6)
     .map((issue, index) => `${index + 1}) ${ISSUE_TEXT[issue.kind]}${issue.sentence ? `：「${issue.sentence.slice(0, 60)}」` : ''}`);
   return [
     buildSceneUserPrompt(args.projection, args.policy),
     '',
-    '【上一次没有通过检查，重写】',
+    '【上一次的正文】（可以保留合格句子，但必须改掉下面的问题）',
+    args.previousText.slice(0, 500),
     '【问题】',
     ...(problems.length ? problems : ['1) 正文与资料不一致']),
-    '【重写要求】换一种写法，删掉没有依据的内容，把漏掉的变化补上；不要解释，只输出正文。',
-  ].join('\n');
+    '【重写要求】直接输出改写后的正文，不要解释；没有依据的内容删掉，漏掉的变化补上。',
+  ].join(NEWLINE);
 }
