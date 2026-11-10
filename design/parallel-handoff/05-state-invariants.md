@@ -540,3 +540,9 @@ test passed at the older tree, so current 06 still needs to run it.
 `6908ccf0` runs five turns, closes the writer, restores from the same store,
 runs five more, and verifies the saved version-10 chain. The bridge is now
 15 tests. This is CPU continuity, not a product/model acceptance.
+
+## 102f run is infrastructure-invalid
+
+Run `2026-11-10T2230-7ddd` raced the page change (`0d72d63d7a12` vs
+frozen `07690eb4`), the Qwen3 shard fetch failed, and reload was refused. No
+snapshot or point; not state or product evidence.
