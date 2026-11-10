@@ -250,6 +250,18 @@ export interface RunOneConfig {
   temperature?: number;
   /** Candidate-specific policy keys; copied over the shared policy. */
   policyOverride?: Record<string, unknown> | null;
+  /** Program-only run: supply an engine that throws if the candidate asks for
+   * inference, so a composer/realizer path can run without loading weights. */
+  stubEngine?: boolean;
+}
+
+function createStubEngine(): InferenceEngine {
+  return {
+    info: { backend: 'stub', modelId: null },
+    async load() { /* no weights */ },
+    async complete() { throw new Error('engine_unavailable:stub_engine'); },
+    async dispose() { /* nothing loaded */ },
+  };
 }
 
 function splitParagraphs(text: string): string[] {
@@ -376,7 +388,18 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   const scenario = store.scenarios.get(config.scenarioId);
   if (!scenario) throw new Error(`scenario_not_prepared:${config.scenarioId}`);
   const modelUrl = candidate.modelUrl ?? '';
-  const slot = store.engines.get(engineKey(modelUrl, candidate.loader));
+  const slot: EngineSlot = config.stubEngine
+    ? {
+      engine: createStubEngine(),
+      evidence: {
+        modelUrl: '', loadMs: 0, info: { backend: 'stub', modelId: null }, diagnostics: null,
+        webgpuAvailable: false, gpuRequested: false,
+        backendNote: 'no engine loaded (--no-engine); program-only candidate path',
+      },
+      dispose: async () => undefined,
+      dead: false,
+    }
+    : store.engines.get(engineKey(modelUrl, candidate.loader))!;
   if (!slot) throw new Error(`engine_not_loaded_for:${modelUrl || 'unset'}`);
 
   const mod = await importCandidate(candidate);

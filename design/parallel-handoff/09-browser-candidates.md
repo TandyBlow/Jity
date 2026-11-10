@@ -65,7 +65,9 @@ generateCandidate({
 
 移动/任务场景的 delta 是确定性探针，不是模型结算输出；证据 `scenario.note` 与 handoff 都这样标注。
 
-## 5. 第一次真实运行（已发生，CPU）
+## 5. 真实运行记录
+
+### 5.1 第一次真实运行（CPU，已发生）
 
 三次运行都写进了 `results/quality/browser-09.json`，`notices[]` 是给各负责人的具体指认。摘要：
 
@@ -77,9 +79,54 @@ generateCandidate({
 
 真实后端：`n_gpu_layers=0`，08 加载器报告 `cpu`；页面 `navigator.gpu` 存在，但本机这条运行**没有**用 WebGPU，证据不写 WebGPU。线程 6。
 
+### 5.2 WebGPU 真机对照（06 的页面 product-turn，2026-11-10 07:08 UTC）
+
+06 在 `scratch/shipping-06` 的页面上用同一把锁跑完一次真实回合（`results/06-recovery/product-turn.json`）：
+
+- 浏览器 console 明确出现 `ggml_webgpu: adapter_info ... intel gen-12lp`，这是 WebGPU 真的在跑，不是把 `navigator.gpu` 当成已经生效。
+- `readyMs=167917`，`turnMs=503844`；root 叙事 candidate 报 `input_unavailable:no_before_state`，round 3 报 `rejected:too_short+all_beats_fell_back`。
+- 实际显示的正文是程序回退，且把玩家输入又复述了一遍：
+
+  > 时间过去了约1分钟。路明非沿着服务巷的低墙走到器材棚门口，先看领用台上有谁。路明非：本组结算未能确认新的结果。……
+
+  这句不能当产品正文；已写进 `notices[]` 给 02/06。
+
+- 同一次运行里，06 的 product page 请求 `Qwen3-0.6B` 和 `qwen25-1.5b-narr` 都是 200；之前的 404 是 dev server 没放模型，不是模型缺失。
+
+### 5.3 真机 WebGPU：C 04 与 A 03 的 free-day-open（2026-11-10 08:35 UTC）
+
+锁释放后，共用队列用 **1.5B instruct + 08 的 `loadCandidateModel` + `--gpu`** 跑了同一条 `free-day-open`（1092 字，`root_free_day`，digest 见 `runs[].identity`）：
+
+- 加载：45639 ms；加载器记录 `backend=webgpu`、`gpuLayers=99999`、无 fallback；模型文件
+  `qwen2.5-1.5b-instruct-q4_k_m.gguf`，sha256 `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e`，1117320736 B。
+- **C 04-settlement**：`accepted=true`，212 字，wall 55132 ms，`firstReadableAtMs=13970`，3 个 beat（21143 / 21844 / 12115 ms）。
+  前四段是程序 realizer 的地点/人物/物品清单；第五段是模型写的
+  「诺诺紧握着红色识别带，右臂上红痕清晰可见，她深吸一口气，准备进入演习区。」
+  事实包只给诺诺在此地（at），没有“准备进入”的下一步动作或心理；该句是否应 accepted 需 04/07 判断。
+- **A 03-actions**：`accepted=false`，175 字，wall 28621 ms，`firstTokenMs=11009`，`firstReadableAtMs=18296`；hard
+  `first_person_narrator`（正文 3 处“我”）、`unlicensed_entity`，另有 13 条 soft `fact_omitted`。原文开头：
+  「我站在西侧服务巷，时间是2009年10月17日15:20。……我身着校服，领口松着，膝盖沾了灰。……校服的领口松着，膝盖沾了灰。护目镜挂在胸前，右手空着。」
+  同一段衣着写了两遍；已写入 `notices[]` 给 03/08。
+- 结论：C 的 accepted 只代表它自己的校验；A 的首段等待 18.3 s 在 60 s 内，但正文第一人称，不能当产品通过。
+
+### 5.4 C 的程序层 6/6 accepted（无模型，`--no-engine`）
+
+04 v1.3（`cda83753`）和 07（`69915b49`）都在同一个队列的 `--no-engine` 路径跑了 6 个场景，全部 `accepted=true`，但原文是事实清单：
+
+- 04 free-day-open：186 字，5 段，14 ms；旧 `fact_actor_swap` 已消失。
+- 04 free-day-task：139 字；「路明非完成了「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」。」是任务目标原句，
+  「路明非身上多了一点变化：不再等别人替他决定，愿意先迈出一步。」是告诉而不是演出。
+- 07 free-day-task：63 字，直接把任务目标写进正文；07 free-day-move 同一人“诺诺”出现两次。
+- 这些都写进 `notices[]`；`accepted` 不是产品读评。
+
+### 5.5 当前队列的三组候选
+
+03/04 用 1.5B instruct + 08 的 `loadCandidateModel`，02/10 用 0.5B narration；`--gpu`，短场景 `short-root` 先行。命令与候选路径由 `--status` 可查；证据会写 `backend=webgpu`（08 加载器）或 `gpuRequested=true, backendNote=...`（直连引擎，未独立验证）。
+
 ## 6. 待办与判断
 
 - A：1.5B instruct 在这条自由一日开局输入上 150 秒无首 token。需要确认是模型/CPU 太慢、候选的 chat 路径不流式，还是 prompt 过长；下一次健康引擎重跑会区分。
 - C：先修 at 事实的归属判定（或 realizer 的 payload 绑定），再用健康引擎跑模型 beat；程序回退版的正文目前是事实句拼接，可读性还不到产品要求。
 - B：02 的入口已可导入（`generateCommittedNarration`，非标准导出名），等其 v3 提交后用同一队列跑同一 free-day 输入。
 - 本线不判断正文质量；谁先有可读正文由各负责人读 `runs[].result.paragraphs`。
+- 锁：06 自 05:59 手工 acquire 后一直持到 08:35 才释放（product-turn 07:08 已写完）；08 在 08:37 接过锁跑 4B 失败、1.5B dev 3 点全 rejected。09 的队列只在启动浏览器前 acquire、finally release；等待期间不启动第二个浏览器，并把占用原样写进 `notices[]`/`failures[]`。B（02/10）的真实模型运行仍在等 08 释放锁。

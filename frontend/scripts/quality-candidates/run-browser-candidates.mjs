@@ -23,7 +23,7 @@
  */
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { createReadStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { closeSync, createReadStream, existsSync, mkdirSync, openSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { cpus } from 'node:os';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -78,6 +78,8 @@ const config = {
   dry: flag('--dry'),
   inspect: flag('--inspect'),
   probe: flag('--probe'),
+  status: flag('--status'),
+  noEngine: flag('--no-engine'),
   quiet: flag('--quiet'),
   aliasSrc: resolve(value('--alias-src', resolve(frontend, 'src'))),
   allowDirs: values('--allow-dir'),
@@ -116,13 +118,69 @@ const candidatePolicies = Object.fromEntries(Object.entries(config.policies).map
 
 const sha256File = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
 
+/** The model that actually loads is the one served from `--model-dir`; a
+ * `--model` path with the same basename is only a request. Hash the served
+ * bytes once and keep both identities so evidence cannot silently name a
+ * different file than the one the browser loaded. */
+const modelHashCache = new Map();
+function servedModelIdentity(url) {
+  const servedPath = resolve(config.modelDir, basename(url));
+  if (!existsSync(servedPath)) return { url, servedPath, exists: false };
+  const stat = statSync(servedPath);
+  const key = `${servedPath}:${stat.size}:${stat.mtimeMs}`;
+  let sha256 = modelHashCache.get(key);
+  if (!sha256) {
+    sha256 = sha256File(servedPath);
+    modelHashCache.set(key, sha256);
+  }
+  return { url, servedPath, exists: true, bytes: stat.size, sha256, mtime: new Date(stat.mtimeMs).toISOString() };
+}
+
+function requestedModelIdentity(requested) {
+  const requestedPath = requested.startsWith('/models/')
+    ? resolve(config.modelDir, basename(requested))
+    : resolve(requested);
+  if (!existsSync(requestedPath)) return { path: requestedPath, exists: false };
+  const stat = statSync(requestedPath);
+  return { path: requestedPath, exists: true, bytes: stat.size };
+}
+
 function fail(message) {
   console.error(`error: ${message}`);
   process.exit(1);
 }
 
-if ((!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) && !config.probe) {
-  fail('at least one --candidate <id>=<module path> is required (or use --probe)');
+function printStatus() {
+  const current = readEvidence();
+  console.log(JSON.stringify({
+    lane: current.lane ?? config.lane,
+    updatedAt: current.updatedAt ?? null,
+    candidates: Object.fromEntries(Object.entries(current.candidates ?? {}).map(([id, candidate]) => [id, {
+      owner: candidate.owner,
+      source: candidate.source,
+      latest: candidate.latest ?? {},
+      modelUrl: candidate.modelUrl,
+    }])),
+    runs: (current.runs ?? []).map((run) => ({
+      runId: run.runId, candidateId: run.candidateId, scenarioId: run.scenarioId,
+      at: run.startedAt, accepted: run.result?.accepted, chars: run.result?.chars,
+      wallMs: Math.round(run.wallMs ?? 0), error: run.error ?? null,
+      firstReadableAtMs: run.progress?.firstReadableAtMs ?? null,
+      engineAlive: run.engineAfter?.alive ?? null,
+    })),
+    failures: current.failures ?? [],
+    notices: (current.notices ?? []).map((notice) => ({ at: notice.at, to: notice.to, runId: notice.runId, summary: notice.summary })),
+    probes: current.probes ?? [],
+  }, null, 2));
+}
+
+if (config.status) {
+  printStatus();
+  process.exit(0);
+}
+
+if ((!config.candidateSpecs || Object.keys(config.candidateSpecs).length === 0) && !config.probe && !config.status) {
+  fail('at least one --candidate <id>=<module path> is required (or use --probe/--status)');
 }
 if (!['short', 'free-day', 'all'].includes(config.set)) fail(`--set must be short|free-day|all, got ${config.set}`);
 if (!existsSync(config.world)) fail(`world asset missing: ${config.world}`);
@@ -224,35 +282,108 @@ function emptyEvidence() {
       lane: config.lane,
     },
     device: { cpu: cpus()[0]?.model, logicalCpus: cpus().length, platform: process.platform },
+    models: {},
     candidates: {},
     runs: [],
     failures: [],
+    notices: [],
+    probes: [],
   };
 }
 
 function readEvidence() {
   if (!existsSync(config.out)) return emptyEvidence();
-  try {
-    const parsed = JSON.parse(readFileSync(config.out, 'utf8'));
-    if (parsed?.kind !== 'browser-candidate-runs') return emptyEvidence();
-    return { ...emptyEvidence(), ...parsed, candidates: parsed.candidates ?? {}, runs: parsed.runs ?? [], failures: parsed.failures ?? [] };
-  } catch (error) {
-    const backup = `${config.out}.corrupt-${Date.now()}`;
-    renameSync(config.out, backup);
-    console.warn(`[queue] unreadable evidence moved to ${backup}: ${error.message}`);
-    return emptyEvidence();
+  // Another lane may write the shared file with an older copy of this script
+  // that does not take the lock or write via rename. Retry a partial read
+  // instead of moving the file away; the old rename-on-error path could
+  // delete a healthy snapshot written a millisecond later.
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    try {
+      const parsed = JSON.parse(readFileSync(config.out, 'utf8'));
+      if (parsed?.kind !== 'browser-candidate-runs') return emptyEvidence();
+      return { ...emptyEvidence(), ...parsed, candidates: parsed.candidates ?? {}, runs: parsed.runs ?? [], failures: parsed.failures ?? [] };
+    } catch {
+      if (attempt === 7) {
+        console.warn(`[queue] ${config.out} stayed unreadable after retries; using an empty snapshot`);
+        return emptyEvidence();
+      }
+      sleepSync(100);
+    }
   }
+  return emptyEvidence();
 }
 
 let evidence = readEvidence();
 
+function mergeEvidence(base, incoming) {
+  const merged = { ...base, ...incoming };
+  const runs = new Map();
+  for (const run of [...(base.runs ?? []), ...(incoming.runs ?? [])]) {
+    if (run?.runId) runs.set(run.runId, run);
+  }
+  merged.runs = [...runs.values()].sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
+  const failures = new Map();
+  for (const failure of [...(base.failures ?? []), ...(incoming.failures ?? [])]) {
+    failures.set(`${failure.at}|${failure.candidateId}|${failure.scenarioId}|${failure.error}`, failure);
+  }
+  merged.failures = [...failures.values()];
+  const candidates = { ...(base.candidates ?? {}) };
+  for (const [id, candidate] of Object.entries(incoming.candidates ?? {})) {
+    const previous = candidates[id] ?? {};
+    const latest = { ...(previous.latest ?? {}) };
+    for (const [scenarioId, entry] of Object.entries(candidate.latest ?? {})) {
+      const old = latest[scenarioId];
+      if (!old || String(entry.at) >= String(old.at)) latest[scenarioId] = entry;
+    }
+    candidates[id] = { ...previous, ...candidate, latest };
+  }
+  merged.candidates = candidates;
+  merged.models = { ...(base.models ?? {}), ...(incoming.models ?? {}) };
+  const notices = new Map();
+  for (const notice of [...(base.notices ?? []), ...(incoming.notices ?? [])]) {
+    notices.set(`${notice.at}|${notice.to}|${notice.summary}`, notice);
+  }
+  merged.notices = [...notices.values()];
+  const probes = new Map();
+  for (const probe of [...(base.probes ?? []), ...(incoming.probes ?? [])]) {
+    probes.set(`${probe.at}|${probe.model}`, probe);
+  }
+  merged.probes = [...probes.values()];
+  return merged;
+}
+
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
 function saveEvidence() {
-  evidence.updatedAt = new Date().toISOString();
-  evidence.runner.command = [process.execPath, ...process.argv.slice(1)].join(' ');
   mkdirSync(dirname(config.out), { recursive: true });
-  const temp = `${config.out}.tmp`;
-  writeFileSync(temp, `${JSON.stringify(evidence, null, 2)}\n`);
-  renameSync(temp, config.out);
+  const lock = `${config.out}.lock`;
+  const deadline = Date.now() + 30_000;
+  let locked = false;
+  while (Date.now() < deadline) {
+    try {
+      const fd = openSync(lock, 'wx');
+      closeSync(fd);
+      locked = true;
+      break;
+    } catch {
+      sleepSync(100);
+    }
+  }
+  try {
+    const current = readEvidence();
+    evidence = mergeEvidence(current, evidence);
+    evidence.updatedAt = new Date().toISOString();
+    evidence.runner.command = [process.execPath, ...process.argv.slice(1)].join(' ');
+    const temp = `${config.out}.tmp-${process.pid}`;
+    writeFileSync(temp, `${JSON.stringify(evidence, null, 2)}\n`);
+    renameSync(temp, config.out);
+  } finally {
+    if (locked) {
+      try { unlinkSync(lock); } catch { /* advisory lock; a lost unlink only delays the next writer */ }
+    }
+  }
 }
 
 /** Provenance for an imported module: which commit it came from and whether
@@ -347,6 +478,16 @@ function releaseLease() {
 
 /* ---------------- server + browser ---------------- */
 
+// Acquire before starting Vite/Chromium: waiting queues must not each hold a
+// browser while another lane owns the inference resource.
+if (!config.dry && !config.inspect && !config.noEngine && !config.noLease && !leaseHeld) {
+  if (!(await acquireLease())) {
+    recordFailure('*', '*', 'lease_busy');
+    saveEvidence();
+    process.exit(2);
+  }
+}
+
 const server = await createServer({
   root: frontend,
   configFile: false,
@@ -413,13 +554,13 @@ try {
   const scenarios = prepared.value;
   const scenarioIds = scenarios.map((scenario) => scenario.id);
   if (config.probe) {
-    if (!config.noLease && !leaseHeld && !(await acquireLease())) { process.exitCode = 2; }
-    else {
+    {
       const loaded = await call('loadEngine', {
         modelUrl: config.model, contextSize: config.contextSize, threads: config.threads, gpu: config.gpu, reuse: false,
       });
       if (!loaded.ok) { recordFailure('probe', '*', `engine_load_failed:${loaded.error}`); process.exitCode = 1; }
       else {
+        loaded.value.modelFile = servedModelIdentity(config.model);
         console.log(`[probe] engine loaded in ${Math.round(loaded.value.loadMs)}ms backend=${loaded.value.info.backend} model=${loaded.value.info.modelId}`);
         const probe = await call('probeEngine', {
           modelUrl: config.model,
@@ -432,7 +573,7 @@ try {
         else {
           console.log(`[probe] ${probe.value.chars} chars in ${Math.round(probe.value.wallMs)}ms progress=${probe.value.progressEvents}`);
           console.log(`[probe-text] ${String(probe.value.text).slice(0, 200)}`);
-          evidence.probes = [...(evidence.probes ?? []), { at: new Date().toISOString(), model: config.model, ...probe.value, engine: loaded.value }];
+          evidence.probes = [...(evidence.probes ?? []), { at: new Date().toISOString(), model: config.model, modelFile: servedModelIdentity(config.model), ...probe.value, engine: loaded.value }];
         }
       }
       await call('dispose', {});
@@ -462,26 +603,40 @@ try {
     const keyOf = (candidate) => `${candidate.modelUrl}::${candidate.loader?.moduleUrl ?? ''}::${candidate.loader?.modelId ?? ''}`;
     const modelOrder = [...new Set(candidates.map(keyOf))];
     let totalRuns = 0;
-    let skippedForLease = false;
     for (const engineKey of modelOrder) {
       const group = candidates.filter((candidate) => keyOf(candidate) === engineKey);
       const modelUrl = group[0].modelUrl;
       const loader = group[0].loader;
-      if (!config.noLease && !leaseHeld && !(await acquireLease())) { skippedForLease = true; break; }
-      const loaded = await call('loadEngine', {
-        modelUrl,
-        contextSize: config.contextSize,
-        threads: config.threads,
-        gpu: config.gpu,
-        reuse: true,
-        loader: loader ? { moduleUrl: loader.moduleUrl, exportName: loader.exportName, modelId: loader.modelId, modelRoot: loader.modelRoot } : null,
-      });
+      const loaded = config.noEngine
+        ? { ok: true, value: {
+          modelUrl: '', loadMs: 0, info: { backend: 'stub', modelId: null }, diagnostics: null,
+          webgpuAvailable: false, gpuRequested: false,
+          backendNote: 'no engine loaded (--no-engine); program-only candidate path',
+        } }
+        : await call('loadEngine', {
+          modelUrl,
+          contextSize: config.contextSize,
+          threads: config.threads,
+          gpu: config.gpu,
+          reuse: true,
+          loader: loader ? { moduleUrl: loader.moduleUrl, exportName: loader.exportName, modelId: loader.modelId, modelRoot: loader.modelRoot } : null,
+        });
       if (!loaded.ok) {
         recordFailure(group[0].id, '*', `engine_load_failed: ${loaded.error}`);
         continue;
       }
+      if (!config.noEngine) {
+        const served = servedModelIdentity(modelUrl);
+        const requested = requestedModelIdentity(config.models[group[0].id] ?? config.model);
+        evidence.models = { ...(evidence.models ?? {}), [modelUrl]: { served, requested, requestedUrl: config.models[group[0].id] ?? config.model } };
+        loaded.value.modelFile = served;
+        if (served.exists && requested.exists && served.bytes !== requested.bytes) {
+          recordFailure(group[0].id, '*', `model_file_mismatch: served=${served.bytes}B requested=${requested.bytes}B`, { afterRun: true });
+        }
+      }
       const reloadNote = loaded.value.reloadReason ? ` reload=${loaded.value.reloadReason}` : '';
-      console.log(`[engine] ${modelUrl} ${loaded.value.coldStart ? `loaded in ${Math.round(loaded.value.loadMs)}ms` : 'reused'} backend=${loaded.value.info.backend} threads=${loaded.value.diagnostics?.numThreads ?? '?'} gpuRequested=${loaded.value.gpuRequested} webgpuAvailable=${loaded.value.webgpuAvailable}${reloadNote}`);
+      if (config.noEngine) console.log('[engine] skipped (--no-engine)');
+      else console.log(`[engine] ${modelUrl} ${loaded.value.coldStart ? `loaded in ${Math.round(loaded.value.loadMs)}ms` : 'reused'} backend=${loaded.value.info.backend} threads=${loaded.value.diagnostics?.numThreads ?? '?'} gpuRequested=${loaded.value.gpuRequested} webgpuAvailable=${loaded.value.webgpuAvailable}${reloadNote}`);
       if (loaded.value.reloadReason) recordFailure(group[0].id, '*', `engine_reload:${loaded.value.reloadReason}`, { afterRun: true });
       for (const candidate of group) {
         registerCandidate(candidate, { engine: loaded.value, queuedAt: new Date().toISOString() });
@@ -493,6 +648,7 @@ try {
               candidateId: candidate.id,
               scenarioId: scenario.id,
               hardTimeoutMs: config.hardTimeoutMs,
+              stubEngine: config.noEngine,
               maxTokens: config.maxTokens,
               temperature: config.temperature,
               policyOverride: candidatePolicies[candidate.id] ?? null,
@@ -504,6 +660,10 @@ try {
             }
             const run = result.value;
             run.repeat = repeat + 1;
+            // Hash at dispatch time, not only at registration: teams edit
+            // their candidate between scenarios, and a long queue must not
+            // attribute later bytes to an earlier run.
+            run.moduleSha256 = sha256File(candidate.file);
             run.engine = loaded.value;
             run.evidenceFile = config.out;
             evidence.runs.push(run);
@@ -526,9 +686,6 @@ try {
       }
     }
     await call('dispose', {});
-    if (skippedForLease) {
-      recordFailure('*', '*', 'lease_busy'); process.exitCode = 2;
-    }
   }
 } catch (error) {
   console.error(error);
@@ -542,4 +699,6 @@ try {
   if (!config.dry) saveEvidence();
 }
 
-if (exitCode !== 0) process.exitCode = exitCode;
+// Vite/Playwright can keep a handle alive after a successful dry/inspect run;
+// the evidence and lease are already flushed, so exit explicitly.
+process.exit(exitCode);

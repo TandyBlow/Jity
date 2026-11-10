@@ -33,8 +33,8 @@ export async function generateCandidate(args: {
 
 ```bash
 cd frontend
-python D:/others/Jity/.local/parallel-local-game/resource_lease.py acquire --lane 09-ui --purpose "candidate queue"
-# 脚本也会自行 acquire/release；手动预先持有时它检测到占用会跳过推理并记 lease_busy
+# 不要手动先拿锁：脚本会在启动浏览器前 acquire，结束（含失败）在 finally release。
+# 等待别的线时只轮询锁文件，不启动第二个浏览器。
 
 node scripts/quality-candidates/run-browser-candidates.mjs \
   --candidate 03-actions=/abs/path/to/instruct/index.ts \
@@ -52,8 +52,13 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 - `--repeat 2`：同一输入重复跑（记录波动，不用于刷分）。
 - `--inspect`：只导入模块、解析导出，不加载模型、不占锁；候选作者可先自查。
 - `--dry`：只打印场景身份，不加载模型。
-- `--gpu`：请求 WebGPU 层；证据会同时记录 `webgpuAvailable` 与 `backendNote`，不把请求当成生效。
+- `--status`：不启动浏览器，只打印证据文件里每个候选最近一次运行、失败与通知。
+- `--probe`：不导入候选，用纯文本 prompt 测浏览器/wllama 栈；用于区分“栈坏了”和“候选 prompt 不好”。
+- `--lease-wait-seconds 1200`：锁被其他线持有时轮询等待；超时记 `lease_busy`，不假装跑过。
+- `--gpu`：请求 WebGPU 层；证据同时记录 `webgpuAvailable`、`gpuRequested`、候选加载器报告的 `backend`（08 加载器）和 `backendNote`。请求不等于生效；只有 `backend=webgpu` 才写 WebGPU。
 - 默认 CPU（`nGpuLayers=0`），证据明确写 CPU-only。
+- `--model-dir <dir>`：模型实际服务目录；证据里的 `modelFile.servedPath/sha256/bytes` 是浏览器真正加载的那份字节，`requested` 是命令行请求，不混为一谈。
+- `--candidate-loader <id>=<path>::loadCandidateModel` + `--candidate-model-id <id>=<catalog id>`：候选自带加载器时使用；同 model+loader 只冷启动一次。
 
 ## 3. 场景
 
