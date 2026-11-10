@@ -302,6 +302,22 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.sanitizedFacts[0].removed).toEqual(expect.arrayContaining(['骰点']));
   });
 
+  it('aborts a fact that is only an invented dice action', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非和骰子互动。', effects: [] }],
+      facts: [{ text: '路明非抓起骰子。', memberIds: ['lu'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'lu', actionText: '路明非看规则牌。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('no action result left');
+  });
+
   it('sanitizes the b7cd result fact so a pending task cannot read as finished', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
