@@ -1656,3 +1656,30 @@ describe('a sound the model will not stop inventing is deleted, not shipped', ()
     expect(result.text).toContain('门厅的灯还亮着');
   });
 });
+
+describe('length follows material', () => {
+  test('a turn with nothing settled asks for a short passage, not a full scene', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(povAt), policy: { ...basePolicy, targetChars: 240, minChars: 140 },
+      scene: { location: '走廊' }, priorTail: null,
+    });
+    expect(prompt).toContain('84～120 字');
+  });
+
+  test('a move keeps the full length', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(moved, povAt), policy: { ...basePolicy, targetChars: 240, minChars: 140 },
+      scene: { location: '走廊' }, priorTail: null,
+    });
+    expect(prompt).toContain('140～240 字');
+  });
+
+  test('elapsed time counts as material too', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(povAt),
+      policy: { ...basePolicy, targetChars: 240, minChars: 140, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } } as never },
+      scene: { location: '走廊' }, priorTail: null,
+    });
+    expect(prompt).toContain('140～240 字');
+  });
+});

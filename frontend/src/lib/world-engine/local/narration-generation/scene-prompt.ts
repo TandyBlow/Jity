@@ -266,7 +266,19 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   }
   lines.push('除此之外没有别的事件：人物位置和物品都保持原样。');
 
-  const { count, min, max } = paragraphsOf(policy);
+  // Length follows material: a turn with a move/task or elapsed time can carry
+  // a full scene; a turn with nothing settled cannot, and forcing 200+ chars
+  // out of nothing is where the invented memories and moved objects came from
+  // (real continuation run). The caller's target is a ceiling, not a floor.
+  const hasMaterial = projected.required.length > 0
+    || (policy.time != null && policy.time.boundary === 'elapsed' && policy.time.duration.amount > 0);
+  const cap = 120;
+  const effective = hasMaterial ? policy : {
+    ...policy,
+    targetChars: Math.min(policy.targetChars ?? cap, cap),
+    minChars: Math.min(policy.minChars ?? Math.round(cap * 0.7), Math.round(cap * 0.7)),
+  };
+  const { count, min, max } = paragraphsOf(effective);
   lines.push(count === 1
     ? `要求：写成一段，合计 ${min}～${max} 字，直接给正文，不要小标题，不要解释。`
     : `要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
