@@ -45,6 +45,13 @@ export interface ModelSpec {
   };
   /** True for trained/raw-completion checkpoints (not a chat model). */
   rawCompletion?: boolean;
+  /** Set when the deployable artifact is a split GGUF. File names and hashes
+   * are for the shards produced from `gguf`; the combined bytes differ from
+   * the single-file bytes because each shard carries its own header. */
+  split?: {
+    tool: string;
+    shards: Array<{ file: string; bytes: number; sha256: string }>;
+  };
 }
 
 export interface ChatTurn {

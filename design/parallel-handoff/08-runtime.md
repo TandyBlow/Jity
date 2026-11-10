@@ -128,9 +128,31 @@ Runtime states and what the page should do:
   draft, thinking strip). Its `NARRATOR_SYSTEM_PROMPT`, `renderNarrationUser`
   and `projectProseFacts` are the parts to compare against the training route;
   the engine/template above is fixed and should not be re-derived per run.
-- No 4B retry: the 2.5 GB single GGUF fails `arrayBuffer()` in wllama 3.8.1 on
-  both WebGPU and CPU. A split/quantized/streaming loader needs a technical
-  feasibility artifact before another browser run.
+- 4B whole-file retry is closed: the 2.5 GB single GGUF fails `arrayBuffer()`
+  in wllama 3.8.1 on both WebGPU and CPU. A **split-GGUF path now exists with
+  technical feasibility evidence**, but it has not been browser-run yet:
+  - `llama-gguf-split` 0.5.0-dev (build 11364) split the Q4_K_M into
+    `...-00001-of-00002.gguf` (1,305,220,960 B, sha256 `a9a9557a…`) and
+    `...-00002-of-00002.gguf` (1,192,060,352 B, sha256 `67020100…`), both
+    under the 2 GiB whole-file limit. Metadata in shard 1 carries
+    `split.count/split.no/split.tensors.count` and the chat template;
+    shard 2 carries the remaining tensors.
+  - the shards load and generate natively: `llama-cli -m <shard1> -p "用一句
+    中文描写雨。" -n 8 -c 2048 -ngl 0` produced `雨丝如织，轻轻敲打着`
+    (CPU 4.6 tok/s; the first attempt with the default 262144 context failed
+    to allocate compute buffers, so a 2048-4096 context is required).
+  - wllama 3.8.1 explicitly accepts multiple blobs (`loadModel`), renames them
+    to its canonical `model-00001-of-00002.gguf` names, and passes every path
+    to llama.cpp, which opens the siblings by that same naming.
+  - this engine now expands one `-00001-of-00002.gguf` URL to all shards
+    (per-call `modelUrl` or `modelUrls`), fetches every shard in the directBlob
+    path, and unit tests cover two-blob load, auto-expansion, per-shard reload
+    after a hard stop, and a clear error when the non-blob path sees a split.
+  - still open: a real Edge/RTX 4060 run (VRAM: ~2.5 GB weights plus KV), its
+    load time, first-readable time and decode rate. Requested from 09; the 4B
+    must not be reported as deployable until that run exists. The shard files
+    live in this worktree at `.local/models/qwen3-4b-split/` (untracked,
+    2.5 GB total) and 09 can serve that directory with `--model-dir`.
 
 `frontend/src/lib/world-engine/runtime/inference-queue.ts`
 

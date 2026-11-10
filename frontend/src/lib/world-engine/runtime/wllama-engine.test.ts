@@ -26,7 +26,7 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 function fakeWllama() {
   const calls = {
     loads: [] as Array<{ url: string; params: Record<string, unknown> }>,
-    blobs: [] as Array<{ size: number; params: Record<string, unknown> }>,
+    blobs: [] as Array<{ size: number; files: number; params: Record<string, unknown> }>,
     completions: [] as FakeCompletionOptions[],
     exits: 0,
   };
@@ -92,7 +92,7 @@ function fakeWllama() {
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
     },
     loadModel: async (files: Blob[], params: Record<string, unknown>) => {
-      calls.blobs.push({ size: files.reduce((sum, file) => sum + file.size, 0), params });
+      calls.blobs.push({ size: files.reduce((sum, file) => sum + file.size, 0), files: files.length, params });
       await awaitLoadGate(params);
       if (loadFailure) throw new Error(loadFailure);
       if (honorLoadAbort && (params.signal as AbortSignal | undefined)?.aborted) throw abortDom();
@@ -272,6 +272,80 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(evidence[0]).toMatchObject({ outcome: 'loaded', directBlob: true, modelId: 'blob.gguf' });
     expect(evidence[0]!.fetchMs).toBeGreaterThanOrEqual(0);
     expect(evidence[0]!.compileMs).toBeGreaterThanOrEqual(0);
+  });
+
+  test('split GGUF shards load as one ordered multi-blob call', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array(url.includes('00001') ? 6 : 4)]));
+    });
+    const evidence: ModelLoadEvidence[] = [];
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true,
+      onEvidence: (record) => { if (record.kind === 'load') evidence.push(record); } }, async () => fake.instance);
+    await engine.load();
+    expect(fetched).toEqual(urls);
+    expect(fake.calls.blobs[0]).toMatchObject({ size: 10, files: 2 });
+    expect(engine.info.modelId).toBe('m.gguf-00001-of-00002.gguf');
+    expect(engine.runtime.lastModelUrls).toEqual(urls);
+    expect(evidence[0]).toMatchObject({ outcome: 'loaded', modelUrl: urls[0], modelUrls: urls, directBlob: true });
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('a single first-shard url expands to all shards automatically', async () => {
+    const fake = fakeWllama();
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response(new Blob([new Uint8Array([1])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m-00001-of-00002.gguf', directBlob: true }, async () => fake.instance);
+    await engine.load();
+    expect(fetched).toEqual(['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf']);
+    expect(fake.calls.blobs[0]).toMatchObject({ files: 2, size: 2 });
+    expect(engine.runtime.lastModelUrls).toEqual(fetched);
+  });
+
+  test('ensureLoaded reloads every shard of the same split model after a hard stop', async () => {
+    const fakes: ReturnType<typeof fakeWllama>[] = [];
+    let factories = 0;
+    const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];
+    let fetches = 0;
+    vi.stubGlobal('fetch', async () => {
+      fetches += 1;
+      return new Response(new Blob([new Uint8Array([1, 2, 3, 4])]));
+    });
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true, abortGraceMs: 10 }, async () => {
+      factories += 1;
+      const fake = fakeWllama();
+      if (factories === 1) {
+        fake.chunks([{ text: 'partial' }]);
+        fake.mode('never');
+      }
+      fakes.push(fake);
+      return fake.instance;
+    });
+    await engine.load();
+    expect(fetches).toBe(2);
+    await expect(engine.complete('P', { timeoutMs: 10 })).rejects.toBeInstanceOf(IncompleteGenerationError);
+    expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, lastModelUrls: urls });
+
+    await engine.ensureLoaded();
+    expect(factories).toBe(2);
+    expect(fetches).toBe(4);
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, lastModelUrls: urls });
+    expect(await engine.complete('P')).toBe('ok');
+  });
+
+  test('a split load without the direct-blob path is a clear error, not a silent single-file load', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrls: ['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf'], directBlob: false },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/directBlob/);
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.info.modelId).toBeNull();
   });
 
   test('a failing fetch is an error, not a silently resolved load', async () => {

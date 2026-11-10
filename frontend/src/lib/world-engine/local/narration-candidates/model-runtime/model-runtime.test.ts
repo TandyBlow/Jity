@@ -157,6 +157,11 @@ describe('model catalog', () => {
     expect(modelSpec('qwen3-1.7b-q4km').thinking).toBe('hybrid');
     expect(modelSpec('qwen3-4b-instruct-2507-q4km').thinking).toBe('none');
     expect(modelSpecByFile('D:/models/Qwen3-1.7B-Q4_K_M.gguf').id).toBe('qwen3-1.7b-q4km');
+    expect(modelSpecByFile('D:/models/Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00001-of-00002.gguf').id).toBe('qwen3-4b-instruct-2507-q4km');
+    const split = modelSpec('qwen3-4b-instruct-2507-q4km').split;
+    expect(split?.shards).toHaveLength(2);
+    expect(split?.shards.every((shard) => shard.bytes < 2 * 1024 * 1024 * 1024)).toBe(true);
+    expect(split?.shards.every((shard) => /^[0-9a-f]{64}$/.test(shard.sha256))).toBe(true);
     expect(() => modelSpec('nope')).toThrow(/unknown candidate model/);
   });
 });

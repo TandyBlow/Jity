@@ -28,6 +28,16 @@ export const MODEL_CATALOG: readonly ModelSpec[] = [
       stop: [],
     },
     recommended: { contextSize: 4096, numThreads: 6, gpuLayers: 99999 },
+    // Split on 2026-11-10 with llama.cpp's llama-gguf-split so each shard is
+    // under the browser's 2 GiB whole-file fetch limit. The engine expands a
+    // single `-00001-of-00002.gguf` URL to both shards.
+    split: {
+      tool: 'llama-gguf-split --split --split-max-size 1300M',
+      shards: [
+        { file: 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00001-of-00002.gguf', bytes: 1305220960, sha256: 'a9a9557ad7468b0c71729567c91bc6fc5e762bc0357df4ab2000a3ec4b477f4a' },
+        { file: 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00002-of-00002.gguf', bytes: 1192060352, sha256: '6702010020cbec28d5608a78ea73c4e5977665db0314e80f581b2c0e9b6d34fd' },
+      ],
+    },
   },
   {
     id: 'qwen3-1.7b-q4km',
@@ -118,7 +128,9 @@ export function modelSpec(id: string): ModelSpec {
 }
 
 export function modelSpecByFile(file: string): ModelSpec {
-  const name = file.split(/[\\/]/).pop() ?? file;
+  // A split shard is named `<model>.gguf-00001-of-00002.gguf`; the catalog
+  // entry describes the checkpoint, so compare the base file name.
+  const name = (file.split(/[\\/]/).pop() ?? file).replace(/-\d{5}-of-\d{5}\.gguf$/i, '');
   const spec = MODEL_CATALOG.find((entry) => entry.gguf === name);
   if (!spec) throw new Error(`no catalog entry for ${name}`);
   return spec;

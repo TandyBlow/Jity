@@ -15,6 +15,8 @@ export interface ModelLoadEvidence {
   kind: 'load';
   /** Normalised absolute URL (or the configured string outside a browser). */
   modelUrl: string;
+  /** All shard URLs in load order; undefined for a single-file load. */
+  modelUrls?: string[];
   modelId: string | null;
   contextSize: number;
   gpuLayers: number;
