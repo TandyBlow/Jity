@@ -8,6 +8,7 @@ the world engine or run model inference.
 from __future__ import annotations
 
 import hashlib
+import json
 
 import pytest
 from fastapi import FastAPI
@@ -122,12 +123,13 @@ def test_content_identity_is_payload_hash_not_timestamp_or_request(client):
     first = payload(1, "同一份内容。")
     created = start(client, first)
     digest = hashlib.sha256(
-        __import__("json").dumps(
+        json.dumps(
             first, ensure_ascii=False, sort_keys=True, separators=(",", ":")
         ).encode("utf-8")
     ).hexdigest()
     assert created["contentDigest"] == digest
-    assert created["snapshotId"] == f"snap_{digest}"
+    assert created["snapshotId"].startswith("snap_")
+    assert created["snapshotId"] != f"snap_{digest}"
 
     duplicate = upload(
         client,
@@ -369,24 +371,36 @@ def test_parent_and_lineage_validation(client):
     assert first_must_activate.status_code == 400
 
 
-def test_content_identity_cannot_create_a_lineage_cycle(client):
+def test_same_content_at_another_lineage_position_is_a_new_branch_node(client):
     root = start(client)
     second = advance(client, root, payload(2))
 
-    # Re-uploading the root's identical payload while naming its descendant as
-    # a parent would make root its own ancestor.
-    cycle = upload(
+    # The same payload at a different lineage position is a distinct save
+    # document. It must not overwrite the root node or its content digest.
+    revert = upload(
         client,
-        request_id="cycle",
+        request_id="revert",
         value=payload(0),
         expected_head=second["snapshotId"],
         expected_revision=2,
         parents=[second["snapshotId"]],
         activate=False,
     )
-    assert cycle.status_code == 400
-    assert cycle.json()["detail"]["code"] == "lineage_cycle"
-    assert client.get("/local-progress/worlds/w1/head").json()["revision"] == 2
+    assert revert.status_code == 201, revert.text
+    body = revert.json()
+    assert body["snapshotId"] != root["snapshotId"]
+    assert body["contentDigest"] == root["contentDigest"]
+    assert body["parentSnapshotIds"] == [second["snapshotId"]]
+    assert body["headSnapshotId"] == second["snapshotId"]
+    assert body["revision"] == 3
+
+    graph = client.get("/local-progress/worlds/w1/graph").json()
+    assert len(graph["nodes"]) == 3
+    assert graph["branches"] == [body["snapshotId"]]
+    assert second["snapshotId"] in {node["snapshotId"] for node in graph["nodes"]}
+    original = client.get(f"/local-progress/worlds/w1/snapshots/{root['snapshotId']}").json()
+    assert original["payload"] == payload(0)
+    assert original["parentSnapshotIds"] == []
 
 
 def test_select_replay_is_idempotent_and_does_not_move_head_twice(client):

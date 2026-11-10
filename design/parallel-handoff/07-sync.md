@@ -24,15 +24,19 @@
   - 三张表：`progress_worlds`（活跃 head + revision）、
     `progress_snapshots`（父链 + 内容摘要 + 原始 payload JSON）、
     `progress_requests`（requestId 幂等响应）。
-  - `snapshotId = snap_<sha256(canonical payload)>`：内容身份只看 payload。
+  - `contentDigest = sha256(canonical payload)`：内容身份只看 payload。
+  - `snapshotId = snap_<sha256(worldId + contentDigest + 排序后的 parents)>`：
+    一份保存文档的身份，绑定内容及其父链位置。同一 payload 在两条分支上是
+    两个节点，不覆盖、不合并事实。
   - 父链、内容身份、revision 互相独立。revision 是服务端保存版本，每次
-    实际写入（新增节点、合并父边、切 head）加一；时间戳不参与覆盖判断。
+    实际写入（新增节点、切 head）加一；时间戳不参与覆盖判断。
+  - 保存与当前 head 完全相同的 payload 是无操作，不新增节点、不加 revision。
   - 所有写事务 `BEGIN IMMEDIATE`，CAS 在事务内比较。
   - `activate:false` 只存分叉，不动 head；`select_head` 只移动 head，目标
     必须是分支叶子；另一份始终可读。
   - 同一 `requestId` 重试在 CAS 检查前命中幂等记录，返回原 snapshotId 和
     当前 head/revision；同 id 不同内容返回 409 `request_id_reused`。
-  - 拒绝父节点缺失、自环/祖先环、超过大小/节点数/父数上限的写入。
+  - 拒绝父节点缺失、超过大小/节点数/父数上限的写入。
   - 只做 JSON 序列化、大小、标识符、父链和 CAS 检查，不 import world
     engine，不解析 `WorldState`。
 - `backend/app/routers/local_progress.py`
@@ -122,7 +126,7 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 cd backend
 python -X utf8 -m pytest -q tests/test_local_progress_sync.py
 # 13 passed：CAS 失败、幂等重放、祖先不能覆盖、离线分叉、分支选择、
-# 双设备恢复、父链/环/大小/token/不透明 payload。
+# 双设备恢复、父链/大小/token/不透明 payload、同内容不同分支位置。
 
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit

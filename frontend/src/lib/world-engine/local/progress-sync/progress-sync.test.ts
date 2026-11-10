@@ -181,17 +181,32 @@ class FakeProgressServer {
       throw this.failure(409, 'head_mismatch', 'stale head', this.head(worldId), []);
     }
     const contentDigest = digest(request.payload);
-    const snapshotId = `snap_${contentDigest}`;
-    const parents = [...new Set(request.parentSnapshotIds.filter((id) => id !== snapshotId))].sort();
+    const parents = [...new Set(request.parentSnapshotIds)].sort();
     for (const parent of parents) {
       if (!world.nodes.has(parent)) throw this.failure(400, 'parent_unknown', `parent ${parent} missing`);
     }
-    if (request.activate && world.headSnapshotId && !parents.includes(world.headSnapshotId) && snapshotId !== world.headSnapshotId) {
+    if (request.activate && world.headSnapshotId && !parents.includes(world.headSnapshotId)) {
       throw this.failure(400, 'request_malformed', 'activating upload must name current head');
     }
+    const headNode = world.headSnapshotId ? world.nodes.get(world.headSnapshotId) : null;
+    if (request.activate && headNode && headNode.contentDigest === contentDigest) {
+      const body = {
+        worldId,
+        snapshotId: headNode.snapshotId,
+        contentDigest,
+        parentSnapshotIds: headNode.parentSnapshotIds,
+        headSnapshotId: world.headSnapshotId,
+        revision: world.revision,
+        created: false,
+        changed: false,
+        idempotent: false,
+      };
+      world.requests.set(request.requestId, { hash, response: body });
+      return { status: 200, body };
+    }
+    const snapshotId = `snap_${digest({ worldId, contentDigest, parentSnapshotIds: parents })}`;
     let node = world.nodes.get(snapshotId);
     let created = false;
-    let parentsChanged = false;
     if (!node) {
       node = {
         snapshotId,
@@ -203,15 +218,9 @@ class FakeProgressServer {
       };
       world.nodes.set(snapshotId, node);
       created = true;
-    } else {
-      const merged = [...new Set([...node.parentSnapshotIds, ...parents])].sort();
-      if (merged.join(',') !== node.parentSnapshotIds.join(',')) {
-        node.parentSnapshotIds = merged;
-        parentsChanged = true;
-      }
     }
     const newHead = request.activate ? snapshotId : world.headSnapshotId;
-    const changed = created || parentsChanged || newHead !== world.headSnapshotId;
+    const changed = created || newHead !== world.headSnapshotId;
     if (changed) {
       world.revision += 1;
       world.headSnapshotId = newHead;
@@ -228,7 +237,7 @@ class FakeProgressServer {
       idempotent: false,
     };
     world.requests.set(request.requestId, { hash, response: body });
-    return { status: created || parentsChanged ? 201 : 200, body };
+    return { status: created ? 201 : 200, body };
   }
 
   private select(worldId: string, request: Record<string, unknown>): { status: number; body: unknown } {

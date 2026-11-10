@@ -49,8 +49,11 @@ to `data/local_progress.sqlite3` (ignored by git), configurable with
 }
 ```
 
-- `snapshotId` is `snap_<sha256(canonical payload)>`; it is content identity,
-  independent of the parent chain and of `revision`.
+- `contentDigest` is `sha256(canonical payload)`: content identity only.
+- `snapshotId` is `snap_<sha256(worldId + contentDigest + sorted parents)>`: the
+  identity of one save document at one lineage position. The same payload may
+  legitimately appear as two nodes in two branches; it does not overwrite a
+  previous node and does not merge their game facts.
 - `parentSnapshotIds` is the lineage DAG edge list (not a timestamp ordering).
 - `expectedHead` + `expectedRevision` are the CAS values. A stale pair returns
   HTTP 409 with the current head and branch list; nothing is overwritten.
@@ -59,7 +62,7 @@ to `data/local_progress.sqlite3` (ignored by git), configurable with
 - The same `requestId` replayed with the same body returns the original result
   with `idempotent: true` and the current head/revision. Reusing it with a
   different body returns 409 `request_id_reused`.
-- Parent merges are refused if they would create a lineage cycle.
+- Saving the exact current payload again is a no-op (same head, no revision bump).
 
 Reads:
 

@@ -89,12 +89,28 @@ def sha256_hex(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def content_identity(payload: Any) -> tuple[str, str, int, str]:
-    """Return (canonical payload, digest, byte size, snapshot id)."""
+def content_identity(payload: Any) -> tuple[str, str, int]:
+    """Return (canonical payload, content digest, byte size).
+
+    The digest answers "is this the same game state?". It is not the snapshot
+    document id: the same state can be a legitimate node in two branches.
+    """
     payload_json = canonical_json(payload)
     encoded = payload_json.encode("utf-8")
-    digest = sha256_hex(payload_json)
-    return payload_json, digest, len(encoded), f"snap_{digest}"
+    return payload_json, sha256_hex(payload_json), len(encoded)
+
+
+def document_identity(world_id: str, content_digest: str, parents: list[str]) -> str:
+    """Identity of a save document: content plus its exact lineage position."""
+    return "snap_" + sha256_hex(
+        canonical_json(
+            {
+                "worldId": world_id,
+                "contentDigest": content_digest,
+                "parentSnapshotIds": parents,
+            }
+        )
+    )
 
 
 class ProgressError(Exception):
@@ -254,7 +270,7 @@ class LocalProgressStore:
                 400,
                 f"at most {self.max_parents} parentSnapshotIds are allowed",
             )
-        payload_json, digest, size_bytes, snapshot_id = content_identity(request.payload)
+        payload_json, digest, size_bytes = content_identity(request.payload)
         if size_bytes > self.max_payload_bytes:
             raise ProgressError(
                 "payload_too_large",
@@ -329,15 +345,7 @@ class LocalProgressStore:
                 )
 
             snapshots = self._snapshots(connection, world_id)
-            # Content identity means a payload is one node. A retry that names
-            # the same node as its own parent is a no-op, not a self-cycle.
-            parents = sorted(
-                {
-                    parent
-                    for parent in request.parentSnapshotIds
-                    if parent != snapshot_id
-                }
-            )
+            parents = sorted(set(request.parentSnapshotIds))
             missing = [parent for parent in parents if parent not in snapshots]
             if missing:
                 raise ProgressError(
@@ -345,7 +353,7 @@ class LocalProgressStore:
                     400,
                     f"parent snapshots are not stored in this world: {', '.join(missing)}",
                 )
-            if request.activate and head is not None and head not in parents and snapshot_id != head:
+            if request.activate and head is not None and head not in parents:
                 raise ProgressError(
                     "request_malformed",
                     400,
@@ -358,9 +366,28 @@ class LocalProgressStore:
                     "a fork upload must name at least one stored parent",
                 )
 
+            # Saving the exact current state is a no-op even if the caller
+            # names an equivalent parent set. This prevents empty self-chains
+            # while keeping content identity separate from snapshot identity.
+            head_node = snapshots.get(head) if head is not None else None
+            if request.activate and head_node is not None and head_node["contentDigest"] == digest:
+                response = {
+                    "worldId": world_id,
+                    "snapshotId": head_node["snapshotId"],
+                    "contentDigest": digest,
+                    "parentSnapshotIds": head_node["parentSnapshotIds"],
+                    "headSnapshotId": head,
+                    "revision": revision,
+                    "created": False,
+                    "changed": False,
+                    "idempotent": False,
+                }
+                self._remember(connection, world_id, request.requestId, request_hash, response, now)
+                return response
+
+            snapshot_id = document_identity(world_id, digest, parents)
             existing = snapshots.get(snapshot_id)
             created = False
-            parents_changed = False
             if existing is None:
                 if len(snapshots) >= self.max_snapshots:
                     raise ProgressError(
@@ -368,7 +395,6 @@ class LocalProgressStore:
                         413,
                         f"world already holds {len(snapshots)} snapshots; limit is {self.max_snapshots}",
                     )
-                _assert_no_cycle(snapshots, snapshot_id, parents)
                 connection.execute(
                     "INSERT INTO progress_snapshots "
                     "(world_id, snapshot_id, parent_snapshot_ids_json, content_digest, "
@@ -387,15 +413,15 @@ class LocalProgressStore:
                 created = True
                 stored_parents = parents
             else:
-                stored_parents = sorted(set(existing["parentSnapshotIds"]) | set(parents))
-                if stored_parents != existing["parentSnapshotIds"]:
-                    _assert_no_cycle(snapshots, snapshot_id, stored_parents)
-                    connection.execute(
-                        "UPDATE progress_snapshots SET parent_snapshot_ids_json = ? "
-                        "WHERE world_id = ? AND snapshot_id = ?",
-                        (canonical_json(stored_parents), world_id, snapshot_id),
+                stored_parents = existing["parentSnapshotIds"]
+                if existing["contentDigest"] != digest:
+                    raise ProgressError(
+                        "snapshot_id_collision",
+                        409,
+                        f"snapshot {snapshot_id} already has different content",
+                        head=_head_from_row(world),
+                        branches=self._branches(connection, world_id),
                     )
-                    parents_changed = True
 
             new_head = head
             if request.activate:
@@ -405,8 +431,20 @@ class LocalProgressStore:
                         400,
                         "the first snapshot must not name parents",
                     )
+                if existing is not None and snapshot_id != head:
+                    has_children = any(
+                        snapshot_id in node["parentSnapshotIds"]
+                        for node in snapshots.values()
+                    )
+                    if has_children:
+                        raise _conflict(
+                            "not_branch_leaf",
+                            f"snapshot {snapshot_id} has children and cannot become the active head",
+                            head=_head_from_row(world),
+                            branches=self._branches(connection, world_id),
+                        )
                 new_head = snapshot_id
-            changed = created or parents_changed or new_head != head
+            changed = created or new_head != head
             if changed:
                 revision += 1
                 connection.execute(
@@ -664,27 +702,6 @@ def _conflict(
     return ProgressError(code, 409, message, head=head, branches=branches or [])
 
 
-def _assert_no_cycle(
-    snapshots: dict[str, dict[str, Any]],
-    snapshot_id: str,
-    parents: list[str],
-) -> None:
-    stack = list(parents)
-    seen: set[str] = set()
-    while stack:
-        current = stack.pop()
-        if current == snapshot_id:
-            raise ProgressError(
-                "lineage_cycle",
-                400,
-                f"adding parents to {snapshot_id} would create a cycle",
-            )
-        if current in seen:
-            continue
-        seen.add(current)
-        stack.extend(snapshots.get(current, {}).get("parentSnapshotIds", []))
-
-
 def _validate_world_id(world_id: str) -> None:
     if not world_id or len(world_id) > 128 or any(
         not (char.isalnum() or char in "._:-") for char in world_id
@@ -705,7 +722,7 @@ def _validate_snapshot_id(snapshot_id: str) -> None:
         raise ProgressError(
             "request_malformed",
             400,
-            "snapshotId must be a content identity of the form snap_<sha256-hex>",
+            "snapshotId must be a document identity of the form snap_<sha256-hex>",
         )
 
 
