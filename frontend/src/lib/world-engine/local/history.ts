@@ -5,13 +5,15 @@
  * point whose narration never became ready is shown as an unfinished turn, not
  * as an empty or fabricated paragraph.
  */
-import type { LocalGameSnapshot } from './session';
+import type { LocalGameSnapshot, NarrationSourceNote } from './session';
 
 export interface RestoredTurn {
   key: number;
   input: string;
   text: string;
   note: string | null;
+  /** How the committed text was produced; a draft is never accepted prose. */
+  source?: NarrationSourceNote['source'];
   /** A turn that was submitted but never committed (the page was reloaded or
    * the settlement failed). It is shown as an unfinished entry, never as prose. */
   unfinished?: boolean;
@@ -35,11 +37,23 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
   const entries: RestoredTurn[] = points.map((point, index) => {
     const narration = record.narrations?.[point.id];
     const ready = narration?.status === 'ready' && Boolean(narration.text);
+    const provenance = snapshot.narrationSources?.[point.id];
+    const source = provenance?.source;
+    const note = !ready
+      ? '这一回合的正文没有保存成功，刷新后无法显示原文。'
+      : source === 'draft'
+        ? '这一回合的正文没有通过事实自检，保存下来的只是按已结算事实列出的草稿。'
+        : source === 'program'
+          ? '这一回合的正文由程序按已结算事实成文（降级，不是模型正文）。'
+          : source === 'mixed'
+            ? '这一回合的正文混有程序按已结算事实写出的句子。'
+            : null;
     return {
       key: -1 - point.sequence,
       input: snapshot.commands[index] ?? '',
       text: ready ? (narration?.text ?? '') : '',
-      note: ready ? null : '这一回合的正文没有保存成功，刷新后无法显示原文。',
+      note,
+      source,
       ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null,
       restored: true as const,
     };

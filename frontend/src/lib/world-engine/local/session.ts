@@ -17,12 +17,20 @@ import {
   type LocalProgressStore, type ProgressMetadata, type SavedLocalProgress,
 } from './persistence/types';
 
+/** How a point's narration was produced. The transport stores the text and its
+ * status only; this page-owned side map keeps the honest label (accepted model,
+ * mixed, program realization, or an unadopted draft) so a reload can still say
+ * which one the player is reading. */
+export interface NarrationSourceNote { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }
+
 export interface LocalGameSnapshot {
   transport: ReturnType<LocalWorldTransport['snapshot']>;
   commands: string[];
   /** Resume hint: the model plan for the open round. Validated against the
    * transport record on restore; never a second source of game facts. */
   checkpoint?: LocalSchedulerCheckpoint;
+  /** pointId → narration provenance. Never changes the committed text. */
+  narrationSources?: Record<string, NarrationSourceNote>;
 }
 
 export type LocalPersistenceState = 'off' | 'saving' | 'saved' | 'error' | 'conflict' | 'lease_lost';
@@ -51,6 +59,8 @@ export interface LocalGameOptions {
   /** Require the held writer lease on every save (default true with storage). */
   requireLease?: boolean;
   onEvent?: (event: LocalSessionEvent) => void;
+  /** Page-owned provenance for committed narration text (label only). */
+  narrationSourceOf?: () => Record<string, NarrationSourceNote> | undefined;
 }
 
 interface ResolvedOptions extends LocalGameOptions {
@@ -377,6 +387,8 @@ export class LocalGameSession {
     const snapshot: LocalGameSnapshot = { transport: record, commands: [...this.commands] };
     const checkpoint = this.currentCheckpoint();
     if (checkpoint) snapshot.checkpoint = checkpoint;
+    const sources = this.options.narrationSourceOf?.();
+    if (sources && Object.keys(sources).length) snapshot.narrationSources = { ...sources };
     return snapshot;
   }
 

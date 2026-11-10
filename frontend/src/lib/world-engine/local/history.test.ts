@@ -5,6 +5,7 @@ import type { LocalGameSnapshot } from './session';
 function snapshot(): LocalGameSnapshot {
   return {
     commands: ['我打开盒盖。', '我退回走廊。'],
+    narrationSources: { p2: { source: 'draft' } },
     transport: {
       // The opening/root point lives in pointStates, not in `points`; only real
       // player and automatic points appear here.
@@ -26,6 +27,8 @@ describe('restoredEntries', () => {
     const entries = restoredEntries(snapshot());
     expect(entries.map((entry) => entry.input)).toEqual(['我打开盒盖。', '我退回走廊。']);
     expect(entries[1].text).toBe('走廊尽头有光。');
+    expect(entries[1].source).toBe('draft');
+    expect(entries[1].note).toContain('草稿');
     expect(entries[0].text).toBe('');
     expect(entries[0].note).toContain('没有保存成功');
     // Automatic points are not player turns and never become entries.

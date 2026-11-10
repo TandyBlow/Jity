@@ -364,6 +364,7 @@ async function openWithLease(
   world: { worldId: string; template: Parameters<typeof LocalGameSession.create>[0] },
   model: LocalGameModel,
   alive: () => boolean,
+  narrationSourceOf: () => Record<string, { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }> | undefined,
   attempts = 20,
   // The writer lease lives 30 s and a page that is being reloaded may not have
   // released it yet (its flush can still be running). Wait past that TTL before
@@ -379,7 +380,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        takeoverId ? { sessionId: takeoverId } : {},
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -440,6 +441,10 @@ export default function WorldLocalPage() {
    * cap instead of watching a chain of auto rounds. */
   const turnDeadlineRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deadlineHitRef = useRef(false);
+  /** pointId → how its committed narration was produced. Persisted inside the
+   * same snapshot so a reload can label a program scene or a rejected draft
+   * instead of showing it as accepted prose. */
+  const narrationSourcesRef = useRef<Record<string, { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }>>({});
   const semanticRef = useRef<ProductEnginePort | null>(null);
   const narrationRef = useRef<ProductEnginePort | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
@@ -640,6 +645,7 @@ export default function WorldLocalPage() {
               setPhase('ready');
               return;
             }
+            narrationSourcesRef.current[progress.pointId] = { source };
             const record = turnRecordRef.current;
             if (record) {
               record.source = source;
@@ -687,7 +693,7 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive);
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current);
           restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
         } catch (openError) {
           if (openError instanceof SessionLeaseHeldError) {
@@ -730,7 +736,9 @@ export default function WorldLocalPage() {
           const history = restoredEntries(session.snapshot);
           setEntries(history);
           restoredCount = history.length;
-          committedCount = history.filter((entry) => entry.text.length > 0).length;
+          // A committed point whose text is an unadopted draft is visible but is
+          // not counted as accepted/committed prose.
+          committedCount = history.filter((entry) => entry.text.length > 0 && entry.source !== 'draft').length;
           unfinishedCount = history.filter((entry) => entry.unfinished).length;
           if (history.length > 0) console.info('[world-local] restored entries', history.length, 'with text', committedCount, 'unfinished', unfinishedCount);
         }
@@ -897,7 +905,7 @@ export default function WorldLocalPage() {
         setError('本地存档被另一处写入过，本回合没有结算。请点右上角“重新开始”清掉这份存档（或回到原来的标签页继续）。');
       }
       setMessage(deadlineHitRef.current
-        ? '本轮已到 295 秒时限：已停止后续自动推进，已结算的正文和状态保留。可以继续下一步行动。'
+        ? '本轮已到 295 秒时限：已停止后续自动推进；已结算的状态和已有文本都保留（未通过校验的文本会标明）。可以继续下一步行动。'
         : status.kind === 'stop' && status.reason === 'world_complete' ? '本轮已交还，继续输入下一步行动。' : status.kind === 'stop' ? `本轮停止：${status.reason}` : '本轮完成。');
     } catch (e) {
       console.error(e);
