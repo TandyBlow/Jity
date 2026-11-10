@@ -56,7 +56,8 @@ export function gateNarration(report: ReviewReport, policy: GatePolicy = {}): Ga
   if (blockingStyles.length) reasons.push(`blocking_style:${blockingStyles.join(',')}`);
   if (policy.minChars !== undefined && report.chars < policy.minChars) reasons.push(`too_short:${report.chars}<${policy.minChars}`);
   if (policy.maxChars !== undefined && report.chars > policy.maxChars) reasons.push(`too_long:${report.chars}>${policy.maxChars}`);
-  if (!report.time.expressed) reasons.push('time_not_expressed');
+  // Only a point that actually advances time has to state it.
+  if (report.time.minutes !== null && !report.time.expressed) reasons.push('time_not_expressed');
   if (fallbackSuspected && !policy.textSource) reasons.push('fallback_suspected_source_unknown');
   if (fallbackSuspected && policy.textSource === 'program_fallback') reasons.push('program_fallback_cannot_be_model_prose');
   if (fallbackSuspected && policy.textSource === 'model') reasons.push('fallback_suspected_but_labelled_model');

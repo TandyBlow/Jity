@@ -1,0 +1,67 @@
+{
+  "reviewer": "ai-independent-checker-v1",
+  "rows": 5,
+  "cases": [
+    {
+      "id": "q3-clean-prose",
+      "chars": 144,
+      "decision": "regenerate",
+      "reasons": [
+        "fact_findings:1"
+      ],
+      "factFindings": 1,
+      "blockingStyles": [],
+      "reviewItems": 6,
+      "fallbackSuspected": false,
+      "perspectiveQualified": true
+    },
+    {
+      "id": "q3-clean-scene",
+      "chars": 122,
+      "decision": "regenerate",
+      "reasons": [
+        "fact_findings:2"
+      ],
+      "factFindings": 2,
+      "blockingStyles": [],
+      "reviewItems": 2,
+      "fallbackSuspected": false,
+      "perspectiveQualified": true
+    },
+    {
+      "id": "q3-clean-beats",
+      "chars": 59,
+      "decision": "hold_for_review",
+      "reasons": [],
+      "factFindings": 0,
+      "blockingStyles": [],
+      "reviewItems": 3,
+      "fallbackSuspected": false,
+      "perspectiveQualified": true
+    },
+    {
+      "id": "q3-repair-prose",
+      "chars": 97,
+      "decision": "regenerate",
+      "reasons": [
+        "fact_findings:2"
+      ],
+      "factFindings": 2,
+      "blockingStyles": [],
+      "reviewItems": 3,
+      "fallbackSuspected": false,
+      "perspectiveQualified": true
+    },
+    {
+      "id": "q3-quiet-beats",
+      "chars": 53,
+      "decision": "hold_for_review",
+      "reasons": [],
+      "factFindings": 0,
+      "blockingStyles": [],
+      "reviewItems": 2,
+      "fallbackSuspected": false,
+      "perspectiveQualified": true
+    }
+  ]
+}
