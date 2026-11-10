@@ -19,6 +19,7 @@ import { createNarrationRunner, type NarrationRunner } from './narration-candida
 import { requireSettlementValue } from './semantics/settlement';
 import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
+import { inventedObjectActions } from './narration-generation/licensed-action';
 
 export interface GameModelOptions {
   modelUrl?: string;
@@ -422,10 +423,21 @@ export class LocalGameModel implements WorldModelPort {
       return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2;
     };
 
+    const entityNames = [
+      ...Object.values(after.initial.items).map((item) => item.name),
+      ...Object.values(after.initial.characters).map((character) => character.name),
+    ];
     const evaluate = (raw: string) => {
       const cleaned = finishSentences(cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10))).trim();
       const validation = validateNarration(cleaned, brief.brief, after, view);
-      const alignment = alignNarration(packet, cleaned, alignmentOptions);
+      const baseAlignment = alignNarration(packet, cleaned, alignmentOptions);
+      // A pickup/throw sentence whose object is not a world entity is an event
+      // the settlement never produced (the d101 dice). Drop that sentence; the
+      // rest of the scene is still judged normally.
+      const invented = inventedObjectActions(cleaned, `${draft}${this.lastResultsText ?? ''}`, entityNames);
+      const alignment = invented.length
+        ? { ...baseAlignment, violations: [...baseAlignment.violations, ...invented.map((violation) => ({ sentence: violation.sentence, kind: 'added_event' }))] }
+        : baseAlignment;
       // Sentence-level repair keeps the literary text and only removes the
       // claims the settled state cannot support. Whole-text rejection made the
       // page show a state summary almost every round, which is worse than a
