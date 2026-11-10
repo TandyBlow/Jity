@@ -212,6 +212,18 @@ a different engine.
    whole-turn timeout even though the turn ended in 168 ms (observed in the
    first official 10-turn attempt; neither engine had failed).
 
+## Load-timing reconciliation (2026-11-10)
+
+The same 1.7B has recorded loads of 174.5 s (02 probe, no adapter proof,
+no fetch/compile split), 44.7 s (08 candidate, NVIDIA proof, no split) and
+70.0 s (09 runtime, NVIDIA proof, fetch 52.6 + compile 17.3). Same sha256,
+context 4096, ngl 99999, threads 6. The 174.5 s is **not** a valid NVIDIA
+cold-load fact; the 44.7 vs 70 gap is not attributed because 08's split is
+missing. Full table and unknowns: `results/quality/load-reconciliation-08.md`.
+Use the existing candidate runner with `--load-only` for one split load
+(no generation, no new runner): `results/product/browser-requests/08-runtime-load-reconcile.json`.
+Cold-load differences do not prove hot-generation failure.
+
 ## 02/06 integration entry points
 
 - 06 product page / game-model: construct one engine and call
