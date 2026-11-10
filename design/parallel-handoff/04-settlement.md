@@ -318,3 +318,17 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 回归用 d101 的两次原始回答（中文 `。`、ASCII `.`）复现：第二次也必须 `fact only asserted completion`，`results` 返回 null；76 focused passed | 1 expected fail。
 
 这条修复**没有**改模型提示词或放宽检查；模型的第二次回答仍然是任务完成句，产品按“失败修复即 abort”处理。06 下一冻结头需要 `aa9622a3`；d101 构建不含它，也不能把这个污染事实当成通过。
+
+### 2026-11-11 d101 机制词与 3-turn 并发（`ab242e32`、`6afa8e39`）
+
+06 的 d101 草稿出现 `诺诺：未，因为路明非的骰点且无法反应。`，来源是 results group_12 的原始事实 `诺诺未成功完成目标，因为路明非的骰点资格为false且无法反应。`。`ab242e32` 在 results 来源处处理：
+
+- 整段删除带 `骰点`、`骰子`、`判定`、`资格/判定为 true|false`、`为 true|false` 的从句；
+- 删完没有主语时用接收者显示名补主语（95dc 变成 `诺诺未被允许反应。`）；
+- 任务从句删除保留否定结果（d101 的 `诺诺未成功完成目标` 变成 `诺诺未成功`，不是 `诺诺未`）；
+- 只剩机制/标点/名字就 abort；删除标签进入 `sanitizedFacts`；
+- `6afa8e39` 增加“事实只有凭空抓骰子”必须 abort 的回归。
+
+测试 **78 focused passed | 1 expected fail**；全前端 **725 passed | 1 expected fail**，14 个既有 styles/wllama 环境失败。d101 构建 `d1019f09` 不含 `ab242e32`/`6afa8e39`。
+
+同日 3-turn `2026-11-10T2137-ac7c`：turn 1 是模型 142 字，`aec9` 一次 continuation 后 policy stop，无 auto2；turn 2 的 330s timeout 与 06 在 21:42:05Z 重启到 5d4c/chunk 81f5 同时发生，页面还是 d101 的 chunk a922，因此 turn 2 是基础设施失效，不是 04 continuation。06 的 served 5d4c/sourceAhead 58bed 已含 `aa9622a3`，不含 `ab242e32`/`6afa8e39`。
