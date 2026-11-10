@@ -190,12 +190,13 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
 /** Instruct-model narration brief. A small instruct model copies long rule
  * lists and bullet dumps back out, so the brief is one short paragraph of
  * facts and two sentences of task. Nothing here invents state. */
-export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = ''): { prompt: string; brief: string } {
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = ''): { prompt: string; brief: string } {
   const name = after.initial.characters[view]?.name ?? view;
   const room = roomOf(after, view);
   const sentences: string[] = [];
   const declared = actionText.trim().replace(/^我/u, name);
   if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
+  if (resultsText.trim()) sentences.push(`这一回合的结算结果：${squash(resultsText).slice(0, 120)}。`);
   const time = after.time.dateTime.slice(11, 16);
   if (delta.timeAdvance) sentences.push(`时间到了${time}，过去${delta.timeAdvance.duration.amount}${timeUnitName(delta.timeAdvance.duration.unit)}。`);
   const own = delta.entityDeltas?.[view];
@@ -204,14 +205,19 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
     sentences.push(`${name}${from ? `从${from}` : ''}走到了${locationName(after, own.positionSet.containerId)}。`);
   }
   const appearance = after.initial.locations[room]?.initialAppearance;
-  sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 60)}` : ''}。`);
+  sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 160)}` : ''}。`);
   const props = sameRoomItems(after, view).slice(0, 3);
-  if (props.length) sentences.push(`这间屋子里的东西：${props.map((id) => after.initial.items[id]?.name ?? id).join('、')}。`);
+  for (const id of props) {
+    const item = after.initial.items[id];
+    if (!item) continue;
+    const looks = [item.initialAppearance, ...activeText(after.items[id]?.appearanceChanges ?? [])].map(squash).filter(Boolean).join('，').slice(0, 40);
+    sentences.push(`屋里有${item.name}${looks ? `，${looks}` : ''}。`);
+  }
   const others = visibleCharacters(after, view).filter((id) => id !== view);
   for (const id of others.slice(0, 3)) {
     const other = after.initial.characters[id];
     const current = after.characters[id];
-    const looks = [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 50);
+    const looks = [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
     const where = current.position.slotId ? locationName(after, room) : locationName(after, current.position.containerId);
     sentences.push(`${other.name}也在${where}${looks ? `，${looks}` : ''}。`);
   }

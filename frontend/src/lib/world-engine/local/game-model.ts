@@ -93,6 +93,7 @@ export class LocalGameModel implements WorldModelPort {
   private readonly options: GameModelOptions;
   private roundCounter = 0;
   private lastPlayerInput = '';
+  private lastResultsText = '';
   private autoContinuations = 0;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
@@ -234,6 +235,7 @@ export class LocalGameModel implements WorldModelPort {
     const members = data.members ?? [];
     if (members.length === 1 && members[0].memberId === state.protagonistId) {
       const text = this.programResult(members[0].actionText ?? '', state);
+      this.lastResultsText = text;
       this.options.onTask?.('results', key, { ms: 0, fallback: true, error: 'program_single_member', raw: text });
       return { value: { [members[0].memberId]: text } as unknown as Json, raw: text, ms: 0, fallback: true, error: 'program_single_member' };
     }
@@ -262,6 +264,7 @@ export class LocalGameModel implements WorldModelPort {
       if (id && !normalized[id]) normalized[id] = match[2].trim();
     }
     for (const member of members) if (!normalized[member.memberId]) normalized[member.memberId] = '行动发生了，但没有产生新的结果。';
+    this.lastResultsText = Object.values(normalized).join('；');
     this.options.onTask?.('results', key, { ms: performance.now() - started, fallback: false, raw, promptChars: prompt.length });
     return { value: normalized as unknown as Json, raw, ms: performance.now() - started, fallback: false };
   }
@@ -374,7 +377,7 @@ export class LocalGameModel implements WorldModelPort {
     const pointId = data.pointId ?? key;
     const view = after.protagonistId;
     const brief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput)
+      ? instructNarrationInput(data.before ?? null, data.delta ?? {}, after, view, this.lastPlayerInput, this.lastResultsText)
       : { prompt: legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view), brief: legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view) };
     const facts = brief.prompt;
     const started = performance.now();
