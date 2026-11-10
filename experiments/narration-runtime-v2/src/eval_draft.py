@@ -28,7 +28,7 @@ V2 = os.path.abspath(os.path.join(HERE, ".."))
 DEFAULT_LLAMA = "D:/others/Jity/.local/llama-cpp/llama-cli.exe"
 DATA = os.path.join(V2, "data", "train-draft-v1.jsonl")
 
-FILLER = ("空气里", "气氛", "仿佛", "似乎", "像是", "好像", "显得", "某种", "不由得", "不禁")
+FILLER = ("气氛", "仿佛", "似乎", "像是", "好像", "显得", "某种", "不由得", "不禁")
 STOP = {"这个", "那个", "一件", "事情", "自己", "已经", "没有", "什么", "一直",
         "一个", "的是", "了的", "里的", "把", "了", "的", "在", "和", "与"}
 
@@ -47,9 +47,34 @@ def pieces(text: str) -> List[str]:
     return out
 
 
+def cn_number(value: int) -> str:
+    digits = "零一二三四五六七八九"
+    if value < 10:
+        return digits[value]
+    if value < 20:
+        return "十" + (digits[value % 10] if value % 10 else "")
+    if value < 100:
+        return digits[value // 10] + "十" + (digits[value % 10] if value % 10 else "")
+    return str(value)
+
+
+def time_spoken(prose: str, amount: int, unit: str) -> bool:
+    """'时间过去20分钟。' is carried by '二十分钟过去', '二十分钟里' ..."""
+    cn = cn_number(amount)
+    variants = {cn, str(amount)}
+    if amount == 2:
+        variants.add("两")
+    if not any(text in prose for text in variants if text):
+        return False
+    return unit in prose or ("小时" in prose and unit == "分钟" and amount == 60)
+
+
 def covers(prose: str, clause: str) -> bool:
     """A draft clause counts as carried when at least half of its 2-char pieces
     appear, and every proper name in it appears."""
+    time = re.match(r"时间过去(\d+)(秒|分钟|小时|天|个月|年)。", clause)
+    if time:
+        return time_spoken(prose, int(time.group(1)), time.group(2))
     names = re.findall(r"[\u4e00-\u9fff]{2,3}(?=从|完成了|多了一条|的精神值)", clause)
     for name in names:
         if name and name not in prose:
