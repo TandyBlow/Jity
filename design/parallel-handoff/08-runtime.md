@@ -267,6 +267,23 @@ failure; 02 narration used the program fallback. No accepted prose, 323 s.
 The runtime stayed at one load/worker and no hang. This is runtime evidence,
 not product acceptance.
 
+## Hard-stop cached reload browser proof (2026-11-10T17:17Z)
+
+`results/product/evidence/08-hard-stop-recheck.json` (09 Edge, `--only-hard-stop`,
+engine `3a7f3095`) now closes the old browser fetch failure:
+
+- Edge 157, crossOriginIsolated true, adapter nvidia/lovelace;
+- hard stop: `hardStopped=true`, `stoppedMs=1.435`, `needsReload=true`;
+- reload: `loadCount 1->2`, `workersCreated=2`, `workersExited=1`,
+  `fromCache=true`, `fetchMs=0`, `compileMs=34,786`, `reloadMs=34,790`,
+  no reload error; the next generation produced 9 characters;
+- cold load in this run: fetch 47,490 + compile 11,892 = 59,398 ms. The 94 s
+  and 59 s numbers are both single configurations, not a universal budget.
+
+The old `TypeError: Failed to fetch` on the second hard-stop load is historical;
+the cached-Blob path is proven in a real browser. Release/switch tests remain
+unit-level; the product 10/20-turn proof still requires a legal turn.
+
 ## Call localization for the 17:01 long turn
 
 The 17:01 page run (`a5ca28d7` / page `4d05a899`) is not one stuck 162 s
