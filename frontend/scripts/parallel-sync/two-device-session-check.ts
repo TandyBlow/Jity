@@ -211,18 +211,23 @@ if (JSON.stringify(cBefore.prose) !== JSON.stringify(bAfter.prose)) {
 const uploadedC = await syncC.save(sessionC.snapshot, { requestId: `two-device-c-${sessionA.worldId}` });
 if (uploadedC.outcome?.status !== 'synced') throw new Error(`C upload failed: ${uploadedC.outcome?.status}`);
 const recordC = await storeC.load(sessionA.worldId);
+// C adds nothing, so the server may reuse the identical head (same content
+// digest) instead of creating a child: that is the correct outcome for an
+// unchanged payload, not a lost lineage.
+const cReusedHead = uploadedC.outcome.upload.snapshotId === uploadedB.outcome.upload.snapshotId;
 console.log(JSON.stringify({
   c: {
     revision: recordC?.metadata.revision ?? null,
     commands: cBefore.commands,
+    reusedHead: cReusedHead,
     parentIncludesB: uploadedC.outcome.upload.parentSnapshotIds.includes(uploadedB.outcome.upload.snapshotId),
   },
 }, null, 2));
-if (!uploadedC.outcome.upload.parentSnapshotIds.includes(uploadedB.outcome.upload.snapshotId)) {
-  throw new Error('C upload does not descend from B');
+if (!cReusedHead && !uploadedC.outcome.upload.parentSnapshotIds.includes(uploadedB.outcome.upload.snapshotId)) {
+  throw new Error('C upload neither descends from B nor reuses B');
 }
 // The session has not saved yet (restore only sets revision 0 and the sync
 // call is upload-only), so the store is empty or holds revision 1 from the
 // session's own first save; either way it must not claim a higher revision.
 if (recordC && recordC.metadata.revision !== 1) throw new Error('C store revision is not the first save');
-console.log('OK: C opened the same remote snapshot directly without a store write, kept the history and chained onto B');
+console.log('OK: C opened the same remote snapshot directly without a store write; an unchanged payload reuses the head');
