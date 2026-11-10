@@ -19,6 +19,7 @@ serializer 的逐字节输出必须保留给旧权重；新格式另立版本。
 | `experiments/narration-runtime-v2/src/v2_render.py` | Python 参考 serializer + `build_result` + 稳定错误码 |
 | `experiments/narration-runtime-v2/src/projection_v2.py` | 字段感知规范化（空格删除账本、标识拒绝） |
 | `experiments/narration-runtime-v2/src/legacy_compat.py` | 导入冻结 v1 转换器并逐字节对照 |
+| `experiments/narration-runtime-v2/src/check_legacy_rules.py` | 直接执行 `split_xy`/`rows_common`：x/xText 199/199、人物结果字段 386/386、物品位置旧缺口 |
 | `experiments/narration-runtime-v2/golden/vectors.jsonl` | 49 条 golden（20 真实 + 16 synthetic + 13 负例） |
 | `experiments/narration-runtime-v2/golden/manifest.json` | 覆盖统计、版本、tokenizer、使用说明 |
 | `experiments/narration-runtime-v2/configs/yuyan-lora-v2.json` | 已绑定实际基座/tokenizer/数据/split/seed 的 YuYan 诊断臂 |
@@ -58,6 +59,7 @@ serializer 的逐字节输出必须保留给旧权重；新格式另立版本。
 cd experiments/narration-runtime-v2
 python -X utf8 src/build_dataset.py
 python -X utf8 src/check_dataset.py
+python -X utf8 src/check_legacy_rules.py
 python -X utf8 src/build_golden.py
 python -X utf8 src/check_golden.py
 python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
@@ -69,6 +71,7 @@ python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
 - 旧 serializer 重渲染 199/199 与已存 `xProse` 逐字节相同；
 - 行集、id、目标正文、`splits/v1.json` 身份不变；train 139 / dev 40 / test 20；
 - v2 199/199 可重渲染且无空白/换行；198 行有结果块，`row-0008` 是无变化行；
+- `split_xy.build_x/build_text` 199/199 与存储的 `x/xText` 相同；`rows_common.result_view` 人物字段 386/386 与 v2 结果相同；物品位置旧缺口被实际复现；
 - 199 行答案隔离检查通过；199 行 tokenizer 可编码；
 - 41 条物品状态行都含 `位于`；
 - 49 条 golden 自检通过，覆盖统计见 `golden/manifest.json`；

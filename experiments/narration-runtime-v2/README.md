@@ -76,6 +76,7 @@ v2 的结果块仍然只是“本回合变化实体的变化字段结果”，�
 | `data/rows-yuyan-v2.jsonl` | 给 YuYan trainer 的五行字段：`id / xProse / yMarked / y / 长度` |
 | `data/normalization-ledger.jsonl` | 每个被删除的空白字符及路径 |
 | `data/result-fills.jsonl` | 从 delta 补进结果的字段；199 行为空 |
+| `data/legacy-rule-audit.json` | 直接执行 `split_xy`/`rows_common` 的审计：x/xText 199/199、人物结果字段 386/386、物品位置旧缺口 |
 | `data/manifest.json` | 源哈希、行集/目标/split 身份、文件哈希、版本、tokenizer、权重可得性、D 线登记、限制 |
 
 `data/rows-v2.jsonl` 里的 `x` 是规范化并补齐结果后的四字段投影；`xProseLegacy` 是旧
@@ -129,6 +130,9 @@ python -X utf8 src/build_dataset.py
 
 # CPU 小检查：行集/目标/split 不变、旧字节、结果块、物品位置、答案隔离、tokenizer
 python -X utf8 src/check_dataset.py
+
+# 直接审计旧 split_xy / rows_common 规则
+python -X utf8 src/check_legacy_rules.py
 
 # 重新生成 golden 并自检
 python -X utf8 src/build_golden.py
