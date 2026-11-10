@@ -35,6 +35,11 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 const GAME_MODEL = 'frontend/src/lib/world-engine/local/game-model.ts';
 const SELECTION_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/selection';
+const COMPOSER_DIR = 'frontend/src/lib/world-engine/local/narration-candidates/prose-composer';
+/** Lane 07's composer is vendored into this patch at a pinned commit so the
+ * target tree does not need the (large, divergent) 07 branch. Runtime files
+ * only; 07 still owns the code. */
+const COMPOSER_SOURCE = 'goal/local-07-sync @ 69915b49';
 
 /** Exact-text insertions. Each anchor must occur exactly once in the live
  * file; a missing/ambiguous anchor stops the build instead of guessing. */
@@ -195,16 +200,19 @@ function addedDiff(relativePath, text) {
 }
 
 function collectAdditions() {
-  const root = join(source, SELECTION_DIR);
-  if (!existsSync(root)) throw new Error(`selection module missing in source tree: ${root}`);
-  // Runtime files only: a lane-owned test file stays in the lane and is not
-  // shipped into the product tree.
-  const files = readdirSync(root).filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts')).sort();
-  return files.map((name) => {
-    const relativePath = `${SELECTION_DIR}/${name}`;
-    const bytes = readFileSync(join(root, name));
-    return { relativePath, bytes, sha256: sha256(bytes) };
-  });
+  const files = [];
+  for (const dir of [SELECTION_DIR, COMPOSER_DIR]) {
+    const root = join(source, dir);
+    if (!existsSync(root)) throw new Error(`candidate module missing in source tree: ${root}`);
+    // Runtime files only: a lane-owned test file stays in the lane and is not
+    // shipped into the product tree.
+    for (const name of readdirSync(root).filter((item) => item.endsWith('.ts') && !item.endsWith('.test.ts')).sort()) {
+      const relativePath = `${dir}/${name}`;
+      const bytes = readFileSync(join(root, name));
+      files.push({ relativePath, bytes, sha256: sha256(bytes) });
+    }
+  }
+  return files;
 }
 
 function verifyApply(patchText, inputText) {
@@ -280,6 +288,13 @@ const entry = {
   inputs: [{ path: GAME_MODEL, sha256: sha256(live.bytes) }],
   transforms: TRANSFORMS.map((transform) => transform.id),
   additions: additions.map((addition) => ({ path: addition.relativePath, sha256: addition.sha256 })),
+  vendored: {
+    proseComposer: {
+      source: COMPOSER_SOURCE,
+      note: 'runtime files only (no tests); the constrained adapter injects createBeatComposer() for the program route',
+      files: additions.filter((addition) => addition.relativePath.startsWith(COMPOSER_DIR)).map((addition) => addition.relativePath),
+    },
+  },
   edits: [GAME_MODEL],
   pageChanges: [],
   prerequisites: [

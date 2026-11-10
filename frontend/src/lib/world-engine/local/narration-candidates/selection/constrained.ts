@@ -17,6 +17,11 @@
  * from the caller's already-settled `BeatSceneContext`.
  */
 import { generateCandidate as generateConstrained } from '../constrained';
+// Lane 07's prose composer. It is deterministic (no model), reads only the
+// skeleton and its licensed material, and plugs into 04's per-beat composer
+// contract. It is used for the program route only; the model route keeps the
+// model writer.
+import { createBeatComposer } from '../prose-composer';
 import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
 
 /** `program+model-failed` is still program text: the model attempt failed its
@@ -93,6 +98,7 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         maxChars: 500,
         requireTime: prepared.policy.requireTime ?? false,
         sanityStyle: 'number',
+        ...(mode === 'program' ? { composer: createBeatComposer() } : {}),
         model: {
           maxTokensPerBeat: prepared.policy.maxTokens ?? 160,
           temperature: prepared.policy.temperature ?? 0.45,

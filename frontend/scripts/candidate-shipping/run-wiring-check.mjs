@@ -166,7 +166,19 @@ try {
   check('auto: no product-default candidate -> no candidate call', candidateCalls.length === 0, candidateCalls.length);
   check('auto: in-model writer produces the text', engineCalls.length === 1, engineCalls.length);
 
-  // 5. a rejected/cancelled candidate must not poison the next accepted
+  // 5. the real constrained candidate (04 skeleton + 07 composer) writes real
+  //    prose through the patched model with no engine call, labelled downgrade.
+  selection.SHIPPED_CANDIDATES[0] = original;
+  engineCalls.length = 0;
+  const program = await makeModel('constrained').run({ ...point, settledResults: ['路明非：无判定。'] });
+  check('constrained: the 07 composer writes the program text',
+    typeof program.value === 'string' && program.value.length >= 40 && program.value !== '不应出现。', program.value);
+  check('constrained: no engine call', engineCalls.length === 0, engineCalls.length);
+  check('constrained: program text is marked as a downgrade',
+    program.events.tasks.some((task) => task.task === 'narration' && task.fallback === true && /程序/.test(task.error ?? '')),
+    program.events.tasks);
+
+  // 6. a rejected/cancelled candidate must not poison the next accepted
   //    continuation's priorText.
   installCandidate({ accepted: false, text: '半句被取消的草稿' });
   const cancelled = await session.run();
@@ -176,7 +188,7 @@ try {
   check('cancelled: a cancelled draft never becomes the next priorText',
     candidateCalls.at(-1)?.priorText === '走廊里的灯影晃了一下，他把手按在门框上。', candidateCalls.at(-1));
 
-  // 6. `builtin` disables the runner entirely.
+  // 7. `builtin` disables the runner entirely.
   engineCalls.length = 0;
   candidateCalls.length = 0;
   await makeModel('builtin').run();

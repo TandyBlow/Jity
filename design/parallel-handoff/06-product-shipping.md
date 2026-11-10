@@ -26,11 +26,11 @@ controller 把已结算点组装成 `narration` 输入：
 | 候选 | 来源提交（已合入本线） | 入口 | 内部开关 | 产品默认 |
 |---|---|---|---|---|
 | B：committed-fact beats | `211fd463` + `92c2d95e` | `generateCandidate({ committed, inputText, priorText, policy })`，`mode: beats \| scene` | `narrationCandidate: 'trained'`，可选 `trainedMode` | 否 |
-| C：constrained fact-to-prose | `11e7433b`（v1.3，facts-only scene hints + 结算结果原句） | `generateCandidate({ committed, inputText, priorText, policy: { mode, scene, resultsText, … } })` | `narrationCandidate: 'constrained'`，可选 `constrainedMode: program \| model` | 否 |
+| C：constrained fact-to-prose + 07 成文 | `11e7433b`（04 骨架，facts-only scene hints + 结算结果原句）+ 07 的 composer（补丁内嵌，源提交 `69915b49`） | `generateCandidate({ committed, inputText, priorText, policy: { mode, scene, resultsText, composer, … } })` | `narrationCandidate: 'constrained'`，可选 `constrainedMode: program \| model` | 否 |
 | A：instruct | 只有 `goal/local-03-actions` 的 `e74ac849`，**未合入** | `generateCandidate({ state, before, delta, playerInput, … })` | 无 | 未交付 |
 
 - B 的两种模式都实测过：beats 在页面叙述模型（`qwen25-1.5b-narr`）上被逐段拒绝；scene 写出 226 字流畅正文，但因漏掉已结算移动和时间被拒；再加“必须写出移动和时间”的约束后，模型写出了移动，却又编造钥匙、钥匙环等动作、仍然漏掉时间，仍被拒（拒绝草稿都原样保存，没有当成正文提交）。
-- C 的 `program` 模式不调用模型，v1.3 在真实点位上 171 字、23 ms 接受；`model` 模式在 `qwen2.5-1.5b-instruct` 上 223 字接受（约 121 s），但夹带模型自加动作，且部分段由程序补写，不能算合格叙事。
+- C 的 `program` 模式把每段交给 07 的 composer（补丁内嵌，源提交 `69915b49`），不调用模型；真实点位上 125 字、28 ms 接受；`model` 模式在 `qwen2.5-1.5b-instruct` 上 223 字接受（约 121 s），但夹带模型自加动作，且部分段由程序补写，不能算合格叙事。
 - A 未交付：`e74ac849` 的模块能编译，但 22 个自带测试在已整合内核下失败（`id_unresolved: entity key uses slot slot_pocket outside ally`）。这是 lane 03 的 fixture 与内核兼容问题；把失败测试带进主树不是“可用候选”。它修好后新增 `selection/instruct.ts` 并加入 `SHIPPED_CANDIDATES` 即可。
 
 ## 3. 最小接线补丁
@@ -45,7 +45,7 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
@@ -54,7 +54,7 @@ frontend/scripts/candidate-shipping/patches/manifest.json
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -97,7 +97,8 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 |---|---|---|---|---|
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
-| 开局 + 第一轮 | C v1.3 程序（内部 `constrained`） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文（场景、在场描述、物品原句、结算结果原句），标注“程序按已结算事实成文” | 整轮 118.0 s |
+| 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
+| 开局 + 第一轮 | C + 07 composer（补丁 `b57a30a`） | 合成器逐段成文，18 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 
@@ -139,7 +140,8 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 
 证据文件：
 
-- `results/06-recovery/real-candidate-constrained-program-v13.json`：C v1.3 真实点位，171 字、23 ms、未调用模型。
+- `results/06-recovery/real-candidate-composer-program.json`：04 骨架 + 07 composer，真实点位 125 字、28 ms、未调用模型。
+- `results/06-recovery/real-candidate-constrained-program-v13.json`：C v1.3（04 realizer）真实点位，171 字、23 ms。
 - `results/06-recovery/real-candidate-trained-scene.json`：B scene 模式，226 字但 `fact_omitted+time_missing` 拒绝。
 - `results/06-recovery/real-candidate-trained-scene-instructed.json`：B scene + 移动/时间约束，233 字但 `fact_movement_claimed+time_missing` 拒绝，并含编造动作。
 - `results/06-recovery/real-candidate-15bnarr-v3.json`：B beats，拒绝。
@@ -152,9 +154,10 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 ## 6. 已知限制
 
 - **没有合格叙事候选**：B 在页面模型上不被接受；C 程序版是流水账降级；C 模型版夹带编造动作。产品默认保持原位单发写作，等 02/10/03/04 交出让候选自己接受、且事实与文风都合格的正文。
-- C 程序版 v1.3 仍会补“没有停/也没有动”这类动作句；lane 04 的 realizer/verifier 需要继续收紧。
+- 07 的 composer 仍会补“没有停/盒子也没有动”这类动作/状态句；它是程序文本，只是比 04 的 realizer 更像段落。
 - B 的 scene 模式能写长文但漏掉已结算移动与时间；加上约束后移动写了、时间仍漏，并开始编造动作。beats 模式在页面模型上逐段超长/加事件。
 - C model 模式在 instruct 1.5B 上 121 s，且部分段回退程序；页面当前加载的是叙述 LoRA，不是 instruct 模型。
+- 07 的 composer 是内嵌进补丁的运行时文件（8 个，源提交 `69915b49`），主树不需要合入 07 的大分支；07 仍拥有这份代码。
 - A 未交付（fixture 与整合内核不兼容）。
 - 开局叙述仍由原位模型写（约 66–73 s）；候选主动让位。
 - 取消：程序候选瞬时完成，没有取消窗口；B 的多段生成在取消后要等当前引擎调用返回（引擎中断属 runtime 线）。刷新：页面仍用主树 localStorage 单槽；lane 06 的 IndexedDB checkpoint 可用但本补丁不接页面。继续回合：只有接受过的正文进入 `priorText`。

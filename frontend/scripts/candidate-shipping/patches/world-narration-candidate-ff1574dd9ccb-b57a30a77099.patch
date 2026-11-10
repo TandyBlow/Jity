@@ -1,0 +1,3794 @@
+# Narration candidate selection wiring (lane 06 shipping).
+#
+# Inputs (sha256) — regenerate when the live files change:
+#   frontend/src/lib/world-engine/local/game-model.ts  ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35
+# Prerequisites: lane 02 beats commits 211fd463 / 92c2d95e and lane 04
+# constrained candidate 11e7433b. New module files are additions from lane 06.
+#
+# Default `auto` selects the constrained program candidate (C): fact-grounded,
+# instant, and labelled by the page as a downgrade. To evaluate the committed-
+# fact beats candidate (B) on an instruct narration model, pass
+#   narrationCandidate: 'trained'
+# in the LocalGameModel options (page.tsx). The page file itself does not change.
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts
+@@ -0,0 +1,140 @@
++/** C-route adaptation: lane 04's constrained fact-to-prose candidate.
++ *
++ * 04 owns the fact skeleton, beat plan and per-beat verification; this adapter
++ * only passes the settled facts, the read-only scene hints and the caller's
++ * limits, then maps the candidate's own verdict back.
++ *
++ * Two honest grades:
++ *   - `candidate`: at least one beat was written by a model (or an injected
++ *     composer) and every beat passed verification.
++ *   - `program`: every beat was written by the program realizer. The text is
++ *     fact-grounded and verified, but it is a downgrade, not model prose; the
++ *     page must label it.
++ *
++ * The facts-only packet is used on purpose. The full-state packet would require
++ * a `get_state` anchor (version/digest/previousPointId) that the narration call
++ * does not carry; inventing one would be a second truth. Scene detail comes
++ * from the caller's already-settled `BeatSceneContext`.
++ */
++import { generateCandidate as generateConstrained } from '../constrained';
++// Lane 07's prose composer. It is deterministic (no model), reads only the
++// skeleton and its licensed material, and plugs into 04's per-beat composer
++// contract. It is used for the program route only; the model route keeps the
++// model writer.
++import { createBeatComposer } from '../prose-composer';
++import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
++
++/** `program+model-failed` is still program text: the model attempt failed its
++ * own beat verification and the realizer wrote that beat. Only a composer that
++ * is not program-prefixed (the model itself, or an injected external composer)
++ * counts as model prose. */
++const isProgramComposer = (composer: string): boolean =>
++  composer === 'fallback' || composer.startsWith('program');
++
++function sceneHints(prepared: PreparedNarration) {
++  const scene = prepared.scene;
++  const presentNotes: Record<string, string> = {};
++  for (const person of scene.present ?? []) {
++    if (person.note) presentNotes[person.name] = person.note;
++  }
++  const objectNotes: Record<string, string> = {};
++  for (const object of scene.objects ?? []) {
++    if (object.note) objectNotes[object.name] = object.note;
++  }
++  return {
++    placeNote: [scene.location, ...(scene.placeNotes ?? [])].filter(Boolean).join('：'),
++    presentNotes,
++    objectNotes,
++    ...(scene.previousAction ? { previousAction: scene.previousAction } : {}),
++  };
++}
++
++export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
++  id: 'constrained',
++  route: 'constrained',
++  version: 'constrained-candidate-v1',
++  label: '04/07 · constrained fact-to-prose',
++  requires: {
++    modules: ['local/narration-candidates/constrained'],
++    template: 'program realizer (no model) unless mode=model',
++  },
++  productDefault: false,
++  availability(point, prepared) {
++    // The world-opening narration is a one-off scene the player reads first;
++    // keep the existing in-model writer there. Program prose starts with the
++    // first settled round.
++    if (!point.before) return { available: false, reason: 'root_point' };
++    if (!prepared.facts.facts.some((fact) => fact.kind === 'at' || fact.kind === 'moved')) {
++      return { available: false, reason: 'facts_packet_without_scene' };
++    }
++    return { available: true, reason: null };
++  },
++  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
++    const mode = runPolicy?.mode === 'model' ? 'model' : 'program';
++    const result = await generateConstrained({
++      engine,
++      committed: {
++        anchor: prepared.facts.anchor,
++        facts: prepared.facts.facts,
++        timeAdvance: point.delta.timeAdvance ?? null,
++        inputText: prepared.inputText,
++        priorText: point.priorText ?? null,
++      },
++      inputText: prepared.inputText,
++      priorText: point.priorText ?? null,
++      signal: point.signal,
++      onProgress: (progress) => onProgress?.({
++        text: progress.text, elapsedMs: progress.elapsedMs, verified: progress.verified, attempt: 0,
++      }),
++      policy: {
++        mode,
++        viewpointId: prepared.viewpointId,
++        scene: sceneHints(prepared),
++        resultsText: point.settledResults?.length ? point.settledResults.join('；') : null,
++        // The program realizer states one sentence per settled fact; a thin
++        // point (time + presence) is short on purpose. 40 keeps it readable
++        // without padding it with invented detail.
++        minChars: 40,
++        maxChars: 500,
++        requireTime: prepared.policy.requireTime ?? false,
++        sanityStyle: 'number',
++        ...(mode === 'program' ? { composer: createBeatComposer() } : {}),
++        model: {
++          maxTokensPerBeat: prepared.policy.maxTokens ?? 160,
++          temperature: prepared.policy.temperature ?? 0.45,
++          timeoutMs: prepared.policy.timeoutMs ?? 90_000,
++          maxAttempts: 2,
++        },
++      },
++    });
++    const modelComposed = result.composers.length > 0 && !result.composers.every(isProgramComposer);
++    const grade = !result.accepted ? (modelComposed ? 'candidate_unverified' : 'program') : modelComposed ? 'candidate' : 'program';
++    const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
++    return {
++      candidateId: 'constrained',
++      route: 'constrained',
++      text: result.text,
++      accepted: result.accepted && result.text.trim().length > 0,
++      grade,
++      status: result.status === 'rejected' ? 'rejected' : result.status,
++      reason: result.accepted ? null : result.status === 'cancelled' ? 'cancelled' : `rejected:${hard.join('+') || 'unknown'}`,
++      issues: result.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
++      attempts: result.rawAttempts.length,
++      promptChars: result.rawAttempts.reduce((sum, beat) => sum + (beat.prompt?.length ?? 0), 0),
++      timings: {
++        totalMs: result.timings.totalMs,
++        attemptMs: result.timings.beatsMs ?? [],
++        firstTokenMs: result.timings.firstTextMs ?? null,
++      },
++      strategyVersion: result.strategyVersion,
++      allFellBack: !modelComposed,
++      detail: {
++        composers: result.composers,
++        coverage: result.verification.coverage,
++        unverifiedSentences: result.verification.unverifiedSentences,
++        hiddenFactIds: result.verification.hiddenFactIds,
++        plan: result.plan?.beats.map((beat) => ({ id: beat.id, kind: beat.kind, factIds: beat.factIds })) ?? null,
++      },
++    };
++  },
++};
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts
+@@ -0,0 +1,16 @@
++/** Public entry of the narration candidate selection layer.
++ *
++ * The product integration imports only `createNarrationRunner` (and, for an
++ * internal QA run, nothing else). Everything below it is candidate adaptation.
++ */
++export { createNarrationRunner, SHIPPED_CANDIDATES, internalCandidateOverride } from './runner';
++export { TRAINED_CANDIDATE } from './trained';
++export { CONSTRAINED_CANDIDATE } from './constrained';
++export {
++  narrationPolicy, narrationScene, prepareNarration, projectNarrationFacts, serializeNarrationInput,
++} from './projection';
++export type {
++  CandidateAvailability, CandidateIssueSummary, CandidateNarrationResult, CandidateRunArgs,
++  NarrationCandidate, NarrationPoint, NarrationProgress, NarrationRunResult, NarrationRunner,
++  NarrationRunnerOptions, PreparedNarration,
++} from './types';
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts
+@@ -0,0 +1,281 @@
++/** Read-only projection of one settled point into candidate-ready material.
++ *
++ * Three outputs come from the SAME sealed records (`before`, the point's
++ * `delta`, `after`):
++ *
++ *   - `facts`: the committed narration vocabulary (moved / at / sanity /
++ *     task / personality). Candidates use it as the fact license.
++ *   - `inputText`: lane 01's `yuyan-prose-result-v2` serializer. This module
++ *     never re-serializes state by hand; if the projection refuses the point,
++ *     the input is reported missing instead of being patched up.
++ *   - `policy`/`scene`: names, rooms, visible objects and length/temperature
++ *     limits. They license material; they cannot add a fact.
++ *
++ * The projector deliberately does not call `projectCommittedNarration`: that
++ * gate requires the `get_state` lineage (digests/versions) the narration call
++ * does not receive, and it rejects slot positions, which the product world
++ * uses. Facts here are copied from the sealed delta and the settled states
++ * only; no change is inferred from prose.
++ */
++import type { EntityDelta, Id, Position, TimeAdvance, WorldState } from '../../../types';
++import type { CommittedNarration, NarrationFact } from '../../../runtime/committed-narration';
++import { EVENT_VERBS } from '../../../runtime/narration-alignment';
++import type { BeatSceneContext, NarrationPolicy } from '../../narration-generation/types';
++import { projectNarrationInput } from '../../narration-input';
++import { renderResultInput } from '../../narration-input';
++import type { NarrationPoint, PreparedNarration } from './types';
++
++const INSTANT: TimeAdvance = { boundary: 'instant', duration: { amount: 0, unit: 'second' } };
++
++/** Facts B's ledger treats as mandatory (`MANDATORY_KINDS`). Kept here only
++ * for the evidence summary; the candidate owns its own requirement list. */
++const MANDATORY = new Set(['moved', 'task_achieved', 'personality_changed', 'sanity_changed']);
++
++type AnyPositioned = { position: Position };
++
++function positionOf(state: WorldState, entityId: Id): AnyPositioned | null {
++  return state.characters[entityId] ?? state.items[entityId] ?? null;
++}
++
++function nameOf(state: WorldState, entityId: Id): string {
++  return state.initial.locations[entityId]?.name
++    ?? state.initial.items[entityId]?.name
++    ?? state.initial.characters[entityId]?.name
++    ?? entityId;
++}
++
++/** Innermost location of an entity: follow the container chain (chair → room)
++ * until a registered location. Returns null for an unplaced entity. */
++function roomOf(state: WorldState, entityId: Id): Id | null {
++  const start = positionOf(state, entityId);
++  if (!start) return null;
++  const seen = new Set<Id>([entityId]);
++  let node = start.position.containerId;
++  for (let depth = 0; depth < 16; depth += 1) {
++    if (seen.has(node)) return null;
++    seen.add(node);
++    if (state.initial.locations[node]) return node;
++    const next = positionOf(state, node);
++    if (!next) return null;
++    node = next.position.containerId;
++  }
++  return null;
++}
++
++function visibleRoomOf(state: WorldState, entityId: Id): Id | null {
++  return roomOf(state, entityId);
++}
++
++function activeNotes(state: WorldState, entityId: Id, initial: string): string[] {
++  const stored = state.locations[entityId]?.appearanceChanges
++    ?? state.items[entityId]?.appearanceChanges
++    ?? state.characters[entityId]?.appearanceChanges
++    ?? [];
++  return [
++    initial,
++    ...stored.filter((change) => change.active && change.text).map((change) => change.text as string),
++  ].filter((line): line is string => Boolean(line && line.trim()));
++}
++
++function changes(state: WorldState, entityId: Id): { id: Id; text: string | null; active: boolean }[] {
++  return state.characters[entityId]?.personalityChanges ?? [];
++}
++
++/** Fact packet for the candidates. `anchor` carries the point identity we do
++ * have; digest fields are copied from the caller when it supplies them and are
++ * otherwise empty strings (the candidates never read them). */
++export function projectNarrationFacts(point: NarrationPoint): CommittedNarration {
++  const { before, after } = point;
++  const facts: NarrationFact[] = [];
++  const seen = new Set<string>();
++  const push = (fact: NarrationFact): void => {
++    if (seen.has(fact.id)) return;
++    seen.add(fact.id);
++    facts.push(fact);
++  };
++  const view = after.protagonistId;
++  const deltas = point.delta.entityDeltas ?? {};
++
++  const roomBefore = (entityId: Id): Id | null => (before ? roomOf(before, entityId) : null);
++  const roomAfter = (entityId: Id): Id | null => roomOf(after, entityId);
++
++  /** Placement + movement for characters and items. Only a room-to-room change
++   * is a `moved` fact; a slot change inside one room stays scene detail. */
++  const projectPosition = (entityId: Id, name: string, delta: EntityDelta | undefined): void => {
++    const fromRoom = roomBefore(entityId);
++    const toRoom = roomAfter(entityId);
++    if (delta?.positionSet !== undefined && fromRoom && toRoom && fromRoom !== toRoom) {
++      push({
++        id: `${entityId}:position`, actorId: entityId, name, kind: 'moved',
++        fromId: fromRoom, from: nameOf(before ?? after, fromRoom), toId: toRoom, to: nameOf(after, toRoom),
++      });
++      return;
++    }
++    if (toRoom) {
++      push({ id: `${entityId}:position`, actorId: entityId, name, kind: 'at', locationId: toRoom, location: nameOf(after, toRoom) });
++    }
++  };
++
++  for (const [entityId, delta] of Object.entries(deltas)) {
++    const isCharacter = Boolean(after.characters[entityId]);
++    const name = after.initial.characters[entityId]?.name ?? after.initial.items[entityId]?.name;
++    if (!name) continue;
++    projectPosition(entityId, name, delta);
++    if (isCharacter) {
++      const previous = before?.characters[entityId];
++      const current = after.characters[entityId];
++      if (previous && current && previous.sanity !== current.sanity) {
++        push({ id: `${entityId}:sanity`, actorId: entityId, name, kind: 'sanity_changed', from: previous.sanity, to: current.sanity });
++      }
++      for (const taskId of delta.tasksAchieved ?? []) {
++        const goal = previous?.tasks[taskId]?.goal ?? current?.tasks[taskId]?.goal;
++        if (!goal || current?.tasks[taskId]?.status !== 'achieved') continue;
++        push({ id: `${entityId}:task:${taskId}`, actorId: entityId, name, kind: 'task_achieved', taskId, goal });
++      }
++      for (const change of delta.personalityChanges ?? []) {
++        const stored = changes(after, entityId).find((entry) => entry.id === change.id);
++        const text = (change.text && change.text.trim())
++          || (changes(before ?? after, entityId).find((entry) => entry.id === change.id)?.text ?? '');
++        if (!text.trim() || !stored) continue;
++        push({ id: `${entityId}:change:${change.id}`, actorId: entityId, name, kind: 'personality_changed', changeId: change.id, text });
++      }
++    }
++  }
++
++  // Backdrop for the scene the reader actually sees: the viewpoint and the
++  // people/items in its room. These are `at` facts (optional), so they license
++  // the room name without requiring a roll-call in the prose.
++  const viewRoom = roomAfter(view);
++  if (viewRoom) {
++    const viewName = after.initial.characters[view]?.name ?? view;
++    push({ id: `${view}:position`, actorId: view, name: viewName, kind: 'at', locationId: viewRoom, location: nameOf(after, viewRoom) });
++    push({ id: `${view}:sanity`, actorId: view, name: viewName, kind: 'sanity', value: after.characters[view]?.sanity ?? 0 });
++    for (const id of Object.keys(after.characters)) {
++      if (roomAfter(id) !== viewRoom) continue;
++      const name = after.initial.characters[id].name;
++      push({ id: `${id}:position`, actorId: id, name, kind: 'at', locationId: viewRoom, location: nameOf(after, viewRoom) });
++    }
++    for (const id of Object.keys(after.items)) {
++      if (roomAfter(id) !== viewRoom) continue;
++      push({ id: `${id}:position`, actorId: id, name: after.initial.items[id].name, kind: 'at', locationId: viewRoom, location: nameOf(after, viewRoom) });
++    }
++  }
++
++  return {
++    anchor: { worldId: after.worldId, pointId: point.pointId, version: 0, stateDigest: '', previousPointId: null },
++    facts,
++  };
++}
++
++export function narrationScene(point: NarrationPoint): BeatSceneContext {
++  const { after } = point;
++  const view = after.protagonistId;
++  const room = visibleRoomOf(after, view);
++  if (!room) return { previousAction: point.playerInput ?? undefined };
++  const name = nameOf(after, room);
++  const presentIds = new Set<Id>([
++    view,
++    ...Object.keys(after.characters).filter((id) => visibleRoomOf(after, id) === room),
++  ]);
++  const inRoomCharacters = Object.keys(after.characters)
++    .filter((id) => id !== view && visibleRoomOf(after, id) === room)
++    .map((id) => ({
++      name: after.initial.characters[id].name,
++      note: activeNotes(after, id, after.initial.characters[id].initialAppearance)[0],
++    }));
++  // Carried items are visible only when their carrier is in this room; a
++  // character two rooms away must not license their inventory here.
++  const carried = Object.keys(after.items).filter((id) => presentIds.has(after.items[id].position.containerId));
++  const objects = Object.keys(after.items)
++    .filter((id) => visibleRoomOf(after, id) === room || carried.includes(id))
++    .slice(0, 8)
++    .map((id) => ({
++      name: after.initial.items[id].name,
++      note: activeNotes(after, id, after.initial.items[id].initialAppearance)[0],
++    }));
++  return {
++    location: name,
++    placeNotes: activeNotes(after, room, after.initial.locations[room]?.initialAppearance ?? '').slice(0, 3),
++    present: inRoomCharacters,
++    objects,
++    previousAction: point.playerInput ?? undefined,
++  };
++}
++
++export function narrationPolicy(point: NarrationPoint, limits: {
++  temperature?: number; retryTemperature?: number; maxTokens?: number; maxTokensCeiling?: number;
++  timeoutMs?: number; deadlineMs?: number; minChars?: number; targetChars?: number;
++} = {}): NarrationPolicy {
++  const { after } = point;
++  const view = after.protagonistId;
++  const room = visibleRoomOf(after, view);
++  const viewName = after.initial.characters[view]?.name ?? view;
++  const inRoom = Object.keys(after.characters).filter((id) => id !== view && visibleRoomOf(after, id) === room);
++  const presentIds = new Set<Id>([view, ...inRoom]);
++  const carried = Object.keys(after.items).filter((id) => presentIds.has(after.items[id].position.containerId));
++  const time = point.delta.timeAdvance ?? null;
++  const playerInput = point.playerInput ?? '';
++  return {
++    viewpoint: { id: view, name: viewName },
++    roster: Object.values(after.initial.characters).map((entity) => entity.name),
++    locations: Object.values(after.initial.locations).map((entity) => entity.name),
++    knownPositions: inRoom.map((id) => ({ name: after.initial.characters[id].name, location: room ? nameOf(after, room) : '' })),
++    knownEntities: [
++      ...Object.values(after.initial.characters).map((entity) => entity.name),
++      ...Object.values(after.initial.locations).map((entity) => entity.name),
++      ...Object.values(after.initial.items).map((entity) => entity.name),
++    ],
++    visibleEntities: Object.keys(after.items)
++      .filter((id) => visibleRoomOf(after, id) === room || carried.includes(id))
++      .map((id) => after.initial.items[id].name),
++    licensedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
++    time,
++    requireTime: Boolean(time && time.boundary === 'elapsed' && time.duration.amount > 0),
++    // Lane 02's short-scene corpus counts 60–149 chars as a complete scene;
++    // forcing 120 rejected faithful short scenes on the product world.
++    minChars: limits.minChars ?? 60,
++    targetChars: limits.targetChars ?? 200,
++    maxTokens: limits.maxTokens ?? 200,
++    maxTokensCeiling: limits.maxTokensCeiling ?? 500,
++    temperature: limits.temperature ?? 0.7,
++    retryTemperature: limits.retryTemperature ?? 0.5,
++    timeoutMs: limits.timeoutMs ?? 150_000,
++    deadlineMs: limits.deadlineMs ?? 300_000,
++  };
++}
++
++/** Serialize the point with lane 01's result renderer. A refusal is reported,
++ * never repaired locally: a broken projection must not become a made-up input. */
++export function serializeNarrationInput(point: NarrationPoint): { text: string | null; error: string | null } {
++  if (!point.before) return { text: null, error: 'no_before_state' };
++  try {
++    const projected = projectNarrationInput({
++      before: point.before,
++      after: point.after,
++      delta: point.delta.entityDeltas ?? {},
++      timeAdvance: point.delta.timeAdvance ?? INSTANT,
++      viewpointId: point.after.protagonistId,
++    });
++    const rendered = renderResultInput(projected.projection);
++    return { text: rendered.text, error: null };
++  } catch (error) {
++    const code = error instanceof Error ? `${error.name}:${error.message}` : String(error);
++    return { text: null, error: code };
++  }
++}
++
++export function prepareNarration(point: NarrationPoint, limits: Parameters<typeof narrationPolicy>[1] = {}): PreparedNarration {
++  const facts = projectNarrationFacts(point);
++  const input = serializeNarrationInput(point);
++  const view = point.after.protagonistId;
++  return {
++    facts,
++    inputText: input.text,
++    inputError: input.error,
++    policy: narrationPolicy(point, limits),
++    scene: narrationScene(point),
++    viewpointId: view,
++    viewpointName: point.after.initial.characters[view]?.name ?? view,
++    mandatoryFactIds: facts.facts.filter((fact) => MANDATORY.has(fact.kind)).map((fact) => fact.id),
++  };
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
+@@ -0,0 +1,157 @@
++/** Narration candidate selection for the product page.
++ *
++ * The page sees ONE decision: did a candidate accept a scene for this point?
++ *   - `adopted`  → the candidate's verified prose is this point's narration;
++ *   - `fallback` → the existing in-model path keeps writing the text it writes
++ *                  today (the page already labels that text honestly).
++ *
++ * Selection order is internal configuration, never a player-visible option:
++ *   1. `globalThis.__jityNarrationCandidate` — QA/evaluation override, set by
++ *      scripts before the page boots; unset in normal play.
++ *   2. the `candidate` option the integrator passes;
++ *   3. `auto`, which only offers candidates marked `productDefault`.
++ *
++ * A candidate marked unavailable, that throws, or that rejects its own draft
++ * never becomes this point's narration. The user's cancel path is the engine's
++ * own; this runner adds no second truth and no hidden retry loop.
++ */
++import type {
++  CandidateNarrationResult, NarrationCandidate, NarrationPoint, NarrationProgress,
++  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration,
++} from './types';
++import { prepareNarration } from './projection';
++import { TRAINED_CANDIDATE } from './trained';
++import { CONSTRAINED_CANDIDATE } from './constrained';
++
++/** Candidates that exist in this tree. A/C adapters are added here when their
++ * entry modules land; nothing else in the product has to change. */
++export const SHIPPED_CANDIDATES: NarrationCandidate[] = [TRAINED_CANDIDATE, CONSTRAINED_CANDIDATE];
++
++/** QA override. Internal: the page never renders or documents this name. */
++export function internalCandidateOverride(): string | null {
++  const value = (globalThis as { __jityNarrationCandidate?: unknown }).__jityNarrationCandidate;
++  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
++}
++
++const printable = (error: unknown): string => (error instanceof Error ? `${error.name}:${error.message}` : String(error));
++
++function summarize(result: CandidateNarrationResult): string {
++  if (result.accepted) return '';
++  const kinds = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
++  return [result.reason ?? result.status, kinds.length ? kinds.join('+') : null].filter(Boolean).join('|');
++}
++
++export function createNarrationRunner(options: NarrationRunnerOptions): NarrationRunner {
++  const candidates = options.candidates ?? SHIPPED_CANDIDATES;
++  const requested = internalCandidateOverride() ?? options.candidate ?? 'auto';
++  const productDefault = candidates.find((candidate) => candidate.productDefault)?.id ?? null;
++  const limits = {
++    temperature: options.temperature,
++    retryTemperature: options.retryTemperature,
++    maxTokens: options.maxTokens,
++    maxTokensCeiling: options.maxTokensCeiling,
++    timeoutMs: options.timeoutMs,
++    deadlineMs: options.deadlineMs,
++    minChars: options.minChars,
++    targetChars: options.targetChars,
++  };
++
++  const ordered = (): NarrationCandidate[] => {
++    if (requested === 'builtin') return [];
++    if (requested === 'auto') return candidates.filter((candidate) => candidate.productDefault);
++    return candidates.filter((candidate) => candidate.id === requested);
++  };
++
++  return {
++    selection: {
++      requested,
++      available: candidates.map((candidate) => candidate.id),
++      productDefault,
++    },
++    async generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult> {
++      const plan = ordered();
++      if (plan.length === 0) {
++        return {
++          kind: 'fallback',
++          candidateId: null,
++          grade: 'program_fallback',
++          reason: requested === 'auto' ? 'no_product_candidate' : requested === 'builtin' ? 'builtin_requested' : `unknown_candidate:${requested}`,
++          notice: null,
++        };
++      }
++      let prepared: PreparedNarration;
++      try {
++        prepared = prepareNarration(point, limits);
++      } catch (error) {
++        return {
++          kind: 'fallback', candidateId: null, grade: 'program_fallback',
++          reason: `prepare_error:${printable(error)}`, notice: null,
++        };
++      }
++      const problems: string[] = [];
++      let last: CandidateNarrationResult | null = null;
++      for (const candidate of plan) {
++        const availability = candidate.availability(point, prepared);
++        if (!availability.available) {
++          problems.push(`unavailable:${candidate.id}|${availability.reason ?? 'unknown'}`);
++          continue;
++        }
++        let result: CandidateNarrationResult;
++        try {
++          result = await candidate.run({
++            engine: options.engine, point, prepared, onProgress,
++            ...(candidate.route === 'constrained'
++              ? { policy: { mode: options.constrainedMode ?? 'program' } }
++              : candidate.route === 'trained'
++                ? { policy: { sceneMode: options.trainedMode ?? 'beats' } }
++                : {}),
++          });
++        } catch (error) {
++          problems.push(`error:${candidate.id}|${printable(error)}`);
++          continue;
++        }
++        last = result;
++        if (result.accepted && result.text.trim().length > 0) {
++          return {
++            kind: 'adopted',
++            candidateId: result.candidateId,
++            route: result.route,
++            text: result.text,
++            accepted: true,
++            grade: result.grade === 'program' ? 'program' : 'candidate',
++            issues: result.issues,
++            timings: result.timings,
++            promptChars: result.promptChars,
++            strategyVersion: result.strategyVersion,
++            attempts: result.attempts,
++            detail: result.detail ?? null,
++            completion: {
++              raw: result.text,
++              finishReason: 'stop',
++              firstTokenMs: result.timings.firstTokenMs,
++              wallMs: result.timings.totalMs,
++            },
++          };
++        }
++        problems.push(`${result.status}:${candidate.id}|${summarize(result)}`);
++      }
++      return {
++        kind: 'fallback',
++        candidateId: plan[0]?.id ?? null,
++        grade: 'program_fallback',
++        reason: problems.join(';') || 'candidate_rejected',
++        notice: null,
++        detail: last ? {
++          candidateId: last.candidateId,
++          status: last.status,
++          text: last.text,
++          issues: last.issues,
++          timings: last.timings,
++          strategyVersion: last.strategyVersion,
++          attempts: last.attempts,
++          candidate: last.detail ?? null,
++        } : undefined,
++      };
++    },
++  };
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts
+@@ -0,0 +1,114 @@
++/** B-route adaptation: lane 02's committed-fact narration strategy (beats).
++ *
++ * The strategy owns prompt construction, verification and repair. This adapter
++ * only supplies:
++ *   - the fact packet (projected from the sealed delta by `projection.ts`),
++ *   - lane 01's serialized input (licensing evidence; beats do not re-use it
++ *     as the prompt),
++ *   - the writing policy (viewpoint, roster, time, lengths, temperature),
++ *   - real progress increments and the final verdict, unmapped and unedited.
++ *
++ * `productDefault` stays false until a real-model evidence record shows at
++ * least one accepted narration; the selection layer never promotes a candidate
++ * on unit-test evidence alone.
++ */
++import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
++import type { NarrationIssue } from '../../narration-generation/types';
++import type { CandidateNarrationResult, NarrationCandidate } from './types';
++
++const hardKinds = (issues: NarrationIssue[]): string[] =>
++  [...new Set(issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind))];
++
++export const TRAINED_CANDIDATE: NarrationCandidate = {
++  id: 'trained',
++  route: 'trained',
++  version: `trained-beats:${NARRATION_STRATEGY_VERSION}`,
++  label: '02-narration · committed-fact beats',
++  requires: {
++    modules: ['local/narration-generation', 'local/narration-input'],
++    template: 'engine chat template (no manual ChatML wrap)',
++  },
++  productDefault: false,
++  availability(_point, prepared) {
++    if (!prepared.inputText) {
++      return { available: false, reason: `input_unavailable:${prepared.inputError ?? 'empty'}` };
++    }
++    return { available: true, reason: null };
++  },
++  async run({ engine, point, prepared, onProgress, policy: runPolicy }): Promise<CandidateNarrationResult> {
++    const result = await generateCandidate({
++      engine,
++      committed: prepared.facts,
++      inputText: prepared.inputText ?? '',
++      priorText: point.priorText ?? null,
++      signal: point.signal,
++      onProgress: (state) => onProgress?.({
++        text: state.text, elapsedMs: state.elapsedMs, verified: state.verified, attempt: state.attempt,
++      }),
++      policy: {
++        ...prepared.policy,
++        mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
++        scene: prepared.scene,
++        // Scene mode otherwise writes a static tableau: the page model omitted
++        // the settled move and the elapsed time and was rejected for it. This
++        // is a constraint, not a fact: the model still reads the sealed delta.
++        ...(runPolicy?.sceneMode === 'scene'
++          ? { instruction: '正文必须写出【变化】里的移动和这段时间的推进；不要新增人物、物品、事件或往事。' }
++          : {}),
++      },
++    });
++    const issues = result.issues.map((issue) => ({
++      kind: issue.kind,
++      severity: issue.severity,
++      attempt: issue.attempt,
++    }));
++    const allFellBack = result.beats.length > 0 && result.beats.every((beat) => beat.source !== 'model');
++    const hard = hardKinds(result.issues);
++    const reason = result.accepted
++      ? null
++      : result.status === 'cancelled' ? 'cancelled'
++        : result.status === 'timeout' ? 'timeout'
++          : `rejected:${hard.join('+') || 'unknown'}`;
++    return {
++      candidateId: 'trained',
++      route: 'trained',
++      text: result.text,
++      accepted: result.accepted && result.text.trim().length > 0,
++      grade: result.accepted ? 'candidate' : allFellBack ? 'program' : 'candidate_unverified',
++      status: result.status,
++      reason,
++      issues,
++      attempts: result.rawAttempts.length,
++      promptChars: result.rawAttempts.reduce((sum, attempt) => sum + attempt.promptChars, 0),
++      timings: {
++        totalMs: result.timings.totalMs,
++        attemptMs: result.timings.attemptMs,
++        firstTokenMs: result.timings.firstTokenMs,
++      },
++      strategyVersion: result.strategyVersion,
++      allFellBack,
++      detail: {
++        mandatory: prepared.mandatoryFactIds,
++        beats: result.beats.map((beat) => ({
++          id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts,
++          durationMs: beat.durationMs, text: beat.text,
++          issues: beat.issues.map((issue) => `${issue.severity}:${issue.kind}`),
++        })),
++        assembly: result.assembly,
++        // Raw engine output per attempt. Truncated for the evidence file; the
++        // prompt is already recorded per beat inside the strategy's evidence.
++        attemptsEvidence: result.rawAttempts.map((attempt) => ({
++          attempt: attempt.attempt,
++          promptChars: attempt.promptChars,
++          durationMs: attempt.durationMs,
++          firstTokenMs: attempt.firstTokenMs,
++          finishReason: attempt.finishReason,
++          error: attempt.error,
++          raw: attempt.raw.slice(0, 1200),
++          cleaned: attempt.cleaned.slice(0, 600),
++          issues: attempt.issues.map((issue) => `${issue.severity}:${issue.kind}`),
++        })),
++      },
++    };
++  },
++};
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
+@@ -0,0 +1,189 @@
++/** Product-facing contracts for narration candidate selection.
++ *
++ * One settled point goes in; one submitted narration goes out. The selection
++ * layer is the only place that decides which candidate writes the scene, and
++ * it keeps two things honest:
++ *
++ *   - the page only submits prose the candidate itself accepted (`adopted`);
++ *   - everything else returns `fallback`, so the existing in-model path keeps
++ *     producing the text the player already sees today.
++ *
++ * Candidate identities, model names and verification issue codes are internal
++ * evidence. Nothing in this file is rendered to the player.
++ */
++import type { EntityDelta, Id, TimeAdvance, WorldState } from '../../../types';
++import type { CommittedNarration } from '../../../runtime/committed-narration';
++import type { CompletionEvidence, InferenceEngine } from '../../../runtime/engine';
++import type { BeatSceneContext, NarrationIssue, NarrationPolicy } from '../../narration-generation/types';
++
++/** The settled point the controller already hands to `narration()`.
++ *
++ * `before`/`delta`/`after` are the same records the state kernel sealed; the
++ * selection layer projects them read-only and never re-derives a change.
++ * `delta.entityDeltas` is the sealed delta of this point only.
++ */
++export interface NarrationPoint {
++  pointId: Id;
++  before: WorldState | null;
++  delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> };
++  after: WorldState;
++  /** The player's committed action for this point (already accepted). */
++  playerInput?: string;
++  /** Settled result lines of this point, used only as visible scene material. */
++  settledResults?: string[];
++  /** Previous narration the candidate accepted for this world, if any. */
++  priorText?: string | null;
++  /** Recent accepted events, newest last. Scene material, never new facts. */
++  recentEvents?: string[];
++  signal?: AbortSignal;
++}
++
++/** Real generation increments from the candidate. `text` is the candidate's
++ * own partial prose; it is never synthesized here. */
++export interface NarrationProgress {
++  text: string;
++  elapsedMs: number;
++  verified: boolean;
++  attempt: number;
++}
++
++/** Read-only inputs every candidate receives. `facts` and `inputText` are
++ * projections of the same settled point; a candidate never writes them. */
++export interface PreparedNarration {
++  facts: CommittedNarration;
++  /** Lane 01 result serializer output; null when the projection refused the
++   * point (then candidates that require a serialized input are skipped). */
++  inputText: string | null;
++  inputError: string | null;
++  policy: NarrationPolicy;
++  scene: BeatSceneContext;
++  viewpointId: Id;
++  viewpointName: string;
++  /** Facts this round must express (moved / task / personality / sanity). */
++  mandatoryFactIds: string[];
++}
++
++export interface CandidateIssueSummary {
++  kind: string;
++  severity: 'hard' | 'soft' | 'detail';
++  attempt?: number;
++}
++
++/** What one candidate produced. `accepted` is the candidate's own verdict;
++ * `grade` states where the text came from, not how good it is. */
++export interface CandidateNarrationResult {
++  candidateId: string;
++  route: NarrationCandidate['route'];
++  text: string;
++  accepted: boolean;
++  grade: 'candidate' | 'candidate_unverified' | 'program';
++  status: 'accepted' | 'rejected' | 'cancelled' | 'timeout' | 'error';
++  /** Internal one-line reason for the fallback record. Never player-facing. */
++  reason: string | null;
++  issues: CandidateIssueSummary[];
++  attempts: number;
++  promptChars: number;
++  timings: { totalMs: number; attemptMs: number[]; firstTokenMs: number | null };
++  strategyVersion: string;
++  /** True when every sentence came from the candidate's own program fallback
++   * rather than generated prose (B's `all_beats_fell_back`). */
++  allFellBack: boolean;
++  detail?: Record<string, unknown>;
++}
++
++export interface CandidateAvailability {
++  available: boolean;
++  /** Internal code such as `module_missing`, `input_unavailable`. */
++  reason: string | null;
++}
++
++export interface CandidateRunArgs {
++  engine: InferenceEngine;
++  point: NarrationPoint;
++  prepared: PreparedNarration;
++  onProgress?: (progress: NarrationProgress) => void;
++  /** Candidate-specific knobs. The selection layer sets `mode` for the
++   * constrained route; no candidate may use it to change facts. */
++  policy?: { mode?: 'program' | 'model'; sceneMode?: 'beats' | 'scene' };
++}
++
++/** One shipped adaptation of a candidate group. `id` and `label` stay
++ * internal: the product page never shows them. */
++export interface NarrationCandidate {
++  id: 'trained' | 'instruct' | 'constrained';
++  route: 'trained' | 'instruct' | 'constrained';
++  /** Module + strategy identity recorded in evidence. */
++  version: string;
++  label: string;
++  /** Modules and model requirements, for availability and diagnostics. */
++  requires: { modules: string[]; template: string };
++  /** Product default gate: a candidate whose real-model evidence is not
++   * positive must be enabled explicitly (internal QA switch), never silently. */
++  productDefault: boolean;
++  availability(point: NarrationPoint, prepared: PreparedNarration): CandidateAvailability;
++  run(args: CandidateRunArgs): Promise<CandidateNarrationResult>;
++}
++
++export type NarrationRunResult =
++  | {
++    kind: 'adopted';
++    candidateId: string;
++    route: NarrationCandidate['route'];
++    text: string;
++    accepted: true;
++    /** `program` means every beat came from the deterministic realizer: it is
++     * a labelled downgrade, never model prose. */
++    grade: 'candidate' | 'program';
++    issues: CandidateIssueSummary[];
++    timings: CandidateNarrationResult['timings'];
++    promptChars: number;
++    strategyVersion: string;
++    attempts: number;
++    /** Candidate-specific evidence (composers, coverage, beat plan). */
++    detail?: Record<string, unknown> | null;
++    completion: CompletionEvidence;
++  }
++  | {
++    kind: 'fallback';
++    /** Candidate that was tried, or null when selection stayed on the
++     * in-model path without a candidate run. */
++    candidateId: string | null;
++    grade: 'program_fallback';
++    /** Internal reason chain, e.g. `rejected:trained|fact_omitted`. */
++    reason: string;
++    /** Player-facing sentence explaining the degraded text, or null. */
++    notice: string | null;
++    /** Internal evidence of the last candidate attempt: its own text, issue
++     * list, timings and candidate-specific detail. Never rendered. */
++    detail?: Record<string, unknown>;
++  };
++
++export interface NarrationRunnerOptions {
++  engine: InferenceEngine;
++  /** Constrained route only: `program` never calls the model; `model` writes
++   * one verified beat per engine call. Internal. */
++  constrainedMode?: 'program' | 'model';
++  /** Trained beats route only: `beats` (default) writes one committed fact at a
++   * time; `scene` asks for the whole scene from the serialized input. Internal. */
++  trainedMode?: 'beats' | 'scene';
++  /** Internal selection. `auto` uses product-default candidates only. */
++  candidate?: NarrationCandidate['id'] | 'auto' | 'builtin';
++  /** Test seam: replace the shipped list. Never set by the page. */
++  candidates?: NarrationCandidate[];
++  temperature?: number;
++  retryTemperature?: number;
++  maxTokens?: number;
++  maxTokensCeiling?: number;
++  timeoutMs?: number;
++  deadlineMs?: number;
++  minChars?: number;
++  targetChars?: number;
++}
++
++export interface NarrationRunner {
++  /** Selection actually in force, for QA scripts and console diagnostics. */
++  readonly selection: { requested: string; available: string[]; productDefault: string | null };
++  generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult>;
++}
++
++export type { NarrationIssue };
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts
+@@ -0,0 +1,272 @@
++/** `generateCandidate`-compatible entry for route C.
++ *
++ * The call shape matches lane 02's `generateCommittedNarration` so lane 06 can
++ * swap implementations without a second game protocol. This candidate does not
++ * call an inference engine: lane 04's skeleton already contains the facts, and
++ * the composer owns language. When only `committed` facts exist, the adapter
++ * builds a sparse skeleton and says so in `issues`.
++ *
++ * `onProgress` is emitted exactly once at the end with the finished text. It is
++ * a program, not a model stream; pretending to stream partial prose would
++ * misreport the work.
++ */
++
++import { composeProse, PROSE_STRATEGY_VERSION } from './compose';
++import { sceneFromCommitted, sceneFromGrounding, type CommittedLike, type SceneGroundingLike } from './from-committed';
++import type { ComposedProse, ProseIssue, ProseScene } from './types';
++
++export const CANDIDATE_STRATEGY_VERSION = PROSE_STRATEGY_VERSION;
++
++export interface CandidateProgress {
++  text: string;
++  status: 'complete' | 'failed';
++  verified: boolean;
++  elapsedMs: number;
++}
++
++export interface CandidatePolicy {
++  /** Lane 04's fact skeleton. Preferred over `committed`. */
++  scene?: ProseScene;
++  /** Override for the composer's own floor. */
++  minChars?: number;
++  seed?: number;
++  /** When only committed facts exist, identify the viewpoint. */
++  viewpoint?: { id?: string; name: string } | null;
++  [key: string]: unknown;
++}
++
++export interface GenerateCandidateArgs {
++  /** Accepted for signature compatibility; the composer needs no model. */
++  engine?: unknown;
++  /** Lane 02's fact packet, used only when `policy.scene` is absent. May carry
++   * the settled `state`/`beforeState` reads the shared driver attaches. */
++  committed?: CommittedLike;
++  /** The same settled read, offered at the top level by the shared driver. */
++  state?: CommittedLike['state'];
++  beforeState?: CommittedLike['beforeState'];
++  /** The driver also offers the settled delta separately. */
++  delta?: { timeAdvance?: CommittedLike['timeAdvance'] } | null;
++  inputText?: string;
++  priorText?: string | null;
++  signal?: AbortSignal;
++  onProgress?: (progress: CandidateProgress) => void;
++  policy?: CandidatePolicy;
++}
++
++export interface CandidateIssue {
++  kind: string;
++  severity: 'hard' | 'soft';
++  detail: string;
++  sentence?: string;
++}
++
++/** The fields lane 02 reads from one attempt. The program composer has no
++ * prompt or model stream, but it reports the same slot so a caller can keep
++ * one loop for both strategies. */
++export interface CandidateAttempt {
++  attempt: number;
++  prompt: string;
++  promptChars: number;
++  raw: string;
++  cleaned: string;
++  finishReason: string | null;
++  error: string | null;
++  durationMs: number;
++  firstTokenMs: number | null;
++  completion: null;
++  alignment: null;
++  issues: CandidateIssue[];
++  metrics: null;
++  accepted: boolean;
++  cancelled: boolean;
++  timedOut: boolean;
++}
++
++export type CandidateStatus = 'accepted' | 'rejected' | 'cancelled' | 'error';
++
++export type CandidateTimings = ComposedProse['timings'] & {
++  attemptMs: number[];
++  attemptsMs: number;
++  firstTokenMs: number | null;
++  deadlineExceeded: boolean;
++};
++
++export interface CandidateResult {
++  text: string;
++  accepted: boolean;
++  rawAttempts: CandidateAttempt[];
++  attemptIndex: number | null;
++  status: CandidateStatus;
++  issues: CandidateIssue[];
++  timings: CandidateTimings;
++  strategyVersion: string;
++  strategy: 'prose-composer';
++  /** Full composer result for callers that want the per-beat ledger. */
++  composed: ComposedProse;
++  /** Present when the adapter had to build a skeleton from bare facts. */
++  sparse: boolean;
++  display: {
++    status: 'accepted' | 'rejected' | 'cancelled' | 'failed';
++    attempt: number;
++    text: string;
++    verified: boolean;
++    elapsedMs: number;
++    issues?: CandidateIssue[];
++  };
++}
++
++function abortIssue(): ProseIssue {
++  return { kind: 'beat_unrendered', severity: 'hard', detail: 'cancelled before composition' };
++}
++
++function attemptFor(composed: ComposedProse, issues: CandidateIssue[], elapsedMs: number): CandidateAttempt {
++  return {
++    attempt: 1,
++    prompt: '',
++    promptChars: 0,
++    raw: composed.text,
++    cleaned: composed.text,
++    finishReason: 'stop',
++    error: null,
++    durationMs: elapsedMs,
++    firstTokenMs: null,
++    completion: null,
++    alignment: null,
++    issues,
++    metrics: null,
++    accepted: composed.accepted,
++    cancelled: false,
++    timedOut: false,
++  };
++}
++
++function timingsFor(composed: ComposedProse['timings'], elapsedMs: number): CandidateTimings {
++  return {
++    ...composed,
++    attemptMs: [elapsedMs],
++    attemptsMs: elapsedMs,
++    firstTokenMs: null,
++    deadlineExceeded: false,
++  };
++}
++
++export function generateCandidate(args: GenerateCandidateArgs): CandidateResult {
++  const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
++  const policy = args.policy ?? {};
++  const provided = policy.scene as unknown;
++  const isProseScene = Boolean(provided && typeof provided === 'object' && 'protagonistId' in provided);
++  const isGrounding = Boolean(provided && typeof provided === 'object'
++    && 'location' in provided && 'present' in provided
++    && typeof (provided as { location?: unknown }).location === 'string');
++  let scene: ProseScene | null = isProseScene ? provided as ProseScene : null;
++  let sparse = false;
++  const issues: CandidateIssue[] = [];
++
++  if (!scene && args.committed) {
++    const adapted = isGrounding
++      ? sceneFromGrounding(provided as SceneGroundingLike, args.committed, {
++        viewpoint: policy.viewpoint ?? null,
++        priorText: args.priorText ?? null,
++        seed: policy.seed,
++        minChars: policy.minChars,
++        state: args.state ?? args.committed.state ?? null,
++        delta: args.delta ?? null,
++        timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
++      })
++      : sceneFromCommitted(args.committed, {
++      viewpoint: policy.viewpoint ?? null,
++      priorText: args.priorText ?? null,
++      seed: policy.seed,
++      minChars: policy.minChars,
++      state: args.state ?? args.committed.state ?? null,
++      timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
++      delta: args.delta ?? null,
++    });
++    scene = adapted.scene;
++    sparse = adapted.sparse;
++    if (sparse) {
++      issues.push({
++        kind: 'sparse_skeleton',
++        severity: 'soft',
++        detail: 'no scene skeleton was supplied; location appearance and dialogue are unavailable',
++      });
++    }
++  }
++
++  if (!scene) {
++    const empty: ComposedProse = {
++      text: '', paragraphs: [], opening: '', closing: '',
++      strategyVersion: CANDIDATE_STRATEGY_VERSION, beats: [], derivedDialogue: [],
++      issues: [{ kind: 'empty_scene', severity: 'hard', detail: 'generateCandidate requires policy.scene or committed facts' }],
++      accepted: false,
++      timings: { planMs: 0, composeMs: 0, verifyMs: 0, totalMs: 0 },
++    };
++    args.onProgress?.({ text: '', status: 'failed', verified: false, elapsedMs: 0 });
++    const emptyIssues = empty.issues.map((issue) => ({ ...issue }));
++    return {
++      text: '', accepted: false, rawAttempts: [], attemptIndex: null, status: 'error',
++      issues: emptyIssues, timings: timingsFor(empty.timings, 0),
++      strategyVersion: CANDIDATE_STRATEGY_VERSION, strategy: 'prose-composer',
++      composed: empty, sparse,
++      display: { status: 'failed', attempt: 1, text: '', verified: false, elapsedMs: 0, issues: emptyIssues },
++    };
++  }
++
++  if (args.signal?.aborted) {
++    const empty: ComposedProse = {
++      text: '', paragraphs: [], opening: '', closing: '',
++      strategyVersion: CANDIDATE_STRATEGY_VERSION, beats: [], derivedDialogue: [],
++      issues: [abortIssue()], accepted: false,
++      timings: { planMs: 0, composeMs: 0, verifyMs: 0, totalMs: 0 },
++    };
++    const abortIssues = empty.issues.map((issue) => ({ ...issue }));
++    return {
++      text: '', accepted: false, rawAttempts: [], attemptIndex: null, status: 'cancelled',
++      issues: abortIssues, timings: timingsFor(empty.timings, 0),
++      strategyVersion: CANDIDATE_STRATEGY_VERSION, strategy: 'prose-composer',
++      composed: empty, sparse,
++      display: { status: 'cancelled', attempt: 1, text: '', verified: false, elapsedMs: 0 },
++    };
++  }
++
++  if (args.priorText && !scene.priorText) scene = { ...scene, priorText: args.priorText };
++  if (policy.minChars !== undefined) {
++    scene = { ...scene, policy: { ...(scene.policy ?? {}), minChars: policy.minChars } };
++  }
++  if (policy.seed !== undefined && scene.seed === undefined) {
++    scene = { ...scene, seed: policy.seed };
++  }
++
++  const composed = composeProse(scene);
++  issues.push(...composed.issues.map((issue) => ({ ...issue })));
++  const elapsedMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - started;
++  args.onProgress?.({
++    text: composed.text,
++    status: composed.accepted ? 'complete' : 'failed',
++    verified: composed.accepted,
++    elapsedMs,
++  });
++  const attempt = attemptFor(composed, issues, elapsedMs);
++  const status: CandidateStatus = composed.accepted ? 'accepted' : 'rejected';
++  return {
++    text: composed.text,
++    accepted: composed.accepted,
++    rawAttempts: [attempt],
++    attemptIndex: composed.text ? 0 : null,
++    status,
++    issues,
++    timings: timingsFor(composed.timings, elapsedMs),
++    strategyVersion: CANDIDATE_STRATEGY_VERSION,
++    strategy: 'prose-composer',
++    composed,
++    sparse,
++    display: {
++      status: composed.accepted ? 'accepted' : 'rejected',
++      attempt: 1,
++      text: composed.text,
++      verified: composed.accepted,
++      elapsedMs,
++      ...(composed.accepted ? {} : { issues }),
++    },
++  };
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts
+@@ -0,0 +1,949 @@
++/** Deterministic prose realisation.
++ *
++ * The writer turns validated beats into short paragraphs. It chooses sentence
++ * forms without repeating one form twice in a row, resolves names into natural
++ * references, anchors the scene in a licensed detail and keeps the last beat
++ * as the ending instead of adding a stock conclusion.
++ */
++
++import { buildLicense, echoOfPrior, guardParagraph } from './guard';
++import {
++  charCount, clampInt, createRandom, ensurePeriod, fillSlots, firstClause, hash32,
++  lastSentence, normalizeClause, overlapRatio, splitSentences, stripQuotes,
++} from './support';
++import type {
++  ComposedProse, ProseActor, ProseBeat, ProseIssue, ProseItem, ProseScene, RenderedBeat,
++} from './types';
++
++export const PROSE_STRATEGY_VERSION = 'prose-composer-v1';
++
++const nowMs = (): number => (typeof performance !== 'undefined' ? performance.now() : Date.now());
++
++class Referencer {
++  private readonly actors: Map<string, ProseActor>;
++  private readonly counts = new Map<string, number>();
++  private readonly rng: () => number;
++  private readonly pronounSafe: Map<string, boolean>;
++
++  constructor(actors: ProseActor[], rng: () => number) {
++    this.actors = new Map(actors.map((actor) => [actor.id, actor]));
++    this.rng = rng;
++    this.pronounSafe = new Map();
++    for (const actor of actors) {
++      const gender = actor.gender ?? 'unknown';
++      const same = gender !== 'unknown'
++        ? actors.filter((other) => (other.gender ?? 'unknown') === gender).length
++        : 0;
++      this.pronounSafe.set(actor.id, same === 1);
++    }
++  }
++
++  has(id: string): boolean {
++    return this.actors.has(id);
++  }
++
++  name(id: string): string {
++    return this.actors.get(id)?.name ?? id;
++  }
++
++  /** Full name; this is what verification looks for. */
++  full(id: string): string {
++    this.counts.set(id, (this.counts.get(id) ?? 0) + 1);
++    return this.name(id);
++  }
++
++  /** Natural subject: full name on first use, then an explicit reference or a
++   * pronoun only when the cast has exactly one actor of that gender. */
++  subject(id: string): string {
++    const actor = this.actors.get(id);
++    if (!actor) return id;
++    const count = this.counts.get(id) ?? 0;
++    if (count === 0) return this.full(id);
++    this.counts.set(id, count + 1);
++    const explicit = actor.references?.filter((ref) => ref && ref !== actor.name) ?? [];
++    if (explicit.length) {
++      const index = Math.min(explicit.length - 1, Math.floor(this.rng() * explicit.length));
++      return explicit[index];
++    }
++    if (this.pronounSafe.get(id)) {
++      const pronoun = (actor.gender ?? 'unknown') === 'female' ? '她' : '他';
++      // Do not make every second mention a pronoun; names are normal in the
++      // source prose and avoid ambiguity after a dialogue exchange.
++      if (count % 3 !== 2) return pronoun;
++    }
++    return this.name(id);
++  }
++
++  /** Reference for a paragraph that already opened with this name: an explicit
++   * reference or an unambiguous pronoun, otherwise the name again. Unlike
++   * `subject`, this does not enforce the every-third-mention rhythm. */
++  reference(id: string): string {
++    const actor = this.actors.get(id);
++    if (!actor) return id;
++    const explicit = actor.references?.find((ref) => ref && ref !== actor.name);
++    if (explicit) return explicit;
++    if (this.pronounSafe.get(id)) return (actor.gender ?? 'unknown') === 'female' ? '她' : '他';
++    return this.name(id);
++  }
++
++  /** Object position: names are preferred; 对方 only for a known addressee. */
++  object(id: string, addressee = false): string {
++    if (addressee) return '对方';
++    return this.name(id);
++  }
++}
++
++class TemplateBag {
++  private readonly used = new Map<string, Set<number>>();
++  private readonly rng: () => number;
++
++  constructor(rng: () => number) {
++    this.rng = rng;
++  }
++
++  pick(key: string, variants: readonly string[]): string {
++    if (!variants.length) throw new Error(`no template variants for ${key}`);
++    const used = this.used.get(key) ?? new Set<number>();
++    this.used.set(key, used);
++    const available = variants
++      .map((text, index) => ({ text, index }))
++      .filter((entry) => !used.has(entry.index));
++    const pool = available.length ? available : variants.map((text, index) => ({ text, index }));
++    const chosen = pool[Math.floor(this.rng() * pool.length) % pool.length];
++    used.add(chosen.index);
++    return chosen.text;
++  }
++
++  reset(key: string): void {
++    this.used.delete(key);
++  }
++}
++
++interface Unit {
++  text: string;
++  beats: ProseBeat[];
++}
++
++function isRecord(value: unknown): value is Record<string, unknown> {
++  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
++}
++
++/** Validate references and impossible skeletons before composing. */
++export function validateScene(scene: ProseScene): ProseIssue[] {
++  const issues: ProseIssue[] = [];
++  if (!scene || !isRecord(scene as unknown)) {
++    return [{ kind: 'empty_scene', severity: 'hard', detail: 'scene is not an object' }];
++  }
++  if (!scene.protagonistId) {
++    issues.push({ kind: 'unknown_reference', severity: 'hard', detail: 'protagonistId is missing' });
++  }
++  const actors = new Set((scene.cast ?? []).map((actor) => actor.id));
++  const items = new Set((scene.items ?? []).map((item) => item.id));
++  if (!actors.has(scene.protagonistId)) {
++    issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `protagonist ${scene.protagonistId} is not in cast` });
++  }
++  for (const beat of scene.beats ?? []) {
++    switch (beat.kind) {
++      case 'move':
++        if (beat.entityKind === 'item') {
++          if (!items.has(beat.actorId)) {
++            issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `move item ${beat.actorId} is not in items` });
++          }
++        } else if (!actors.has(beat.actorId)) {
++          issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `move actor ${beat.actorId} is not in cast` });
++        }
++        break;
++      case 'stay': case 'leave': case 'arrive': case 'task': case 'subtask':
++      case 'personality': case 'sanity': case 'action':
++        if (!actors.has(beat.actorId)) {
++          issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `${beat.kind} actor ${beat.actorId} is not in cast` });
++        }
++        break;
++      case 'line':
++        if (!actors.has(beat.speakerId)) {
++          issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `line speaker ${beat.speakerId} is not in cast` });
++        }
++        if (beat.addresseeId && !actors.has(beat.addresseeId)) {
++          issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `line addressee ${beat.addresseeId} is not in cast` });
++        }
++        break;
++      case 'item':
++        if (!items.has(beat.itemId)) {
++          issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `item ${beat.itemId} is not in items` });
++        }
++        break;
++      default:
++        break;
++    }
++  }
++  return issues;
++}
++
++function actorOf(scene: ProseScene, id: string): ProseActor | undefined {
++  return scene.cast.find((actor) => actor.id === id);
++}
++
++function itemOf(scene: ProseScene, id: string): ProseItem | undefined {
++  return (scene.items ?? []).find((item) => item.id === id);
++}
++
++function isRequired(beat: ProseBeat): boolean {
++  return beat.kind === 'move' || beat.kind === 'leave' || beat.kind === 'arrive'
++    || beat.kind === 'item' || beat.kind === 'task' || beat.kind === 'subtask'
++    || beat.kind === 'personality' || beat.kind === 'appearance'
++    || beat.kind === 'action' || beat.kind === 'line' || beat.kind === 'scene'
++    || beat.kind === 'sanity';
++}
++
++/** A detail that can open a paragraph without becoming a wall of scenery. */
++function anchorClause(detail: string, max = 44): string {
++  const text = detail.trim();
++  if (charCount(text) <= max) return text;
++  // A scene anchor is one or two clauses, not a whole paragraph of scenery.
++  // Split on every clause separator, then take the longest prefix under `max`
++  // that still ends on a clause boundary.
++  const tokens = text.match(/[^。；，!?！？]+[。；，!?！？]?/gu) ?? [text];
++  let picked = '';
++  for (const token of tokens) {
++    const next = `${picked}${token}`;
++    if (picked && charCount(next) > max) break;
++    picked = next;
++  }
++  const clean = picked.replace(/[，；]+$/u, '').trim();
++  return charCount(clean) >= 6 ? clean : text.slice(0, max);
++}
++
++function priorSentences(priorText: string | null): string[] {
++  if (!priorText) return [];
++  return splitSentences(priorText).filter((sentence) => charCount(sentence) >= 6);
++}
++
++/** Pick one licensed scene anchor. Changed details win over unchanged ones,
++ * and a detail the previous turn already used is skipped when possible. */
++function chooseAnchor(scene: ProseScene, priorText: string | null): string[] {
++  const candidates: Array<{ text: string; weight: number }> = [];
++  const prior = priorSentences(priorText);
++  const add = (value: string | null | undefined, weight: number) => {
++    const text = value?.trim();
++    if (!text) return;
++    if (scene.toldFacts?.some((fact) => fact && text.includes(fact))) return;
++    if (candidates.some((entry) => entry.text === text)) return;
++    candidates.push({ text: anchorClause(text), weight });
++  };
++  for (const beat of scene.beats) {
++    if (beat.kind === 'scene') add(beat.detail, 100);
++    // An item change is this turn's event; it is rendered as a beat, not as a
++    // scene opening. Only an unchanged item may serve as the anchor.
++    if (beat.kind === 'item' && beat.change === undefined) add(beat.detail ?? beat.note, 90);
++  }
++  for (const detail of scene.locationChange?.added ?? []) add(detail, 95);
++  for (const detail of scene.location.details ?? []) add(detail, 60);
++  for (const detail of scene.parentLocation?.details ?? []) add(detail, 30);
++  const protagonist = actorOf(scene, scene.protagonistId);
++  // On a continuation the reader already knows how the viewpoint looks; do
++  // not open the new turn by describing him again.
++  if (!scene.priorText) {
++    for (const detail of protagonist?.appearance ?? []) add(detail, 20);
++  }
++  const fresh = candidates.filter((entry) => {
++    if (!prior.length) return true;
++    if (priorText?.includes(entry.text.slice(0, 3))) return false;
++    return !prior.some((sentence) => overlapRatio(entry.text, sentence) > 0.4);
++  });
++  // On a continuation, an all-echo candidate set means the turn has nothing
++  // new to open with; starting on the first beat is better than repeating.
++  const pool = fresh.length ? fresh : (priorText ? [] : candidates);
++  if (!pool.length) return [];
++  pool.sort((left, right) => right.weight - left.weight);
++  const chosen = pool[0];
++  const rest = candidates.filter((entry) => entry.text !== chosen.text).map((entry) => entry.text);
++  return [chosen.text, ...rest];
++}
++
++function paragraphStart(paragraph: string): string {
++  return firstClause(paragraph).slice(0, 5);
++}
++
++export function composeProse(scene: ProseScene): ComposedProse {
++  const started = nowMs();
++  const planStart = nowMs();
++  const policy = scene.policy ?? {};
++  const issues = validateScene(scene);
++  if (!scene.cast?.length) {
++    return emptyResult(scene, issues, started);
++  }
++
++  const seed = scene.seed ?? policy.seed ?? hash32(`${scene.pointId ?? ''}|${scene.protagonistId}|${scene.location.name}`);
++  const rng = createRandom(seed);
++  const refs = new Referencer(scene.cast, rng);
++  const templates = new TemplateBag(rng);
++  const license = buildLicense(scene);
++  const beatOnly = policy.beatOnly === true;
++  const anchorPool = beatOnly ? [] : chooseAnchor(scene, scene.priorText ?? null);
++  const protagonistAppearance = actorOf(scene, scene.protagonistId)?.appearance ?? [];
++  const appearanceOnly = anchorPool[0] !== undefined
++    && protagonistAppearance.some((detail) => anchorClause(detail) === anchorPool[0]);
++  const anchor = !beatOnly && scene.priorText && appearanceOnly
++    && (scene.beats ?? []).some((beat) => beat.kind === 'line' || beat.kind === 'action')
++    ? null
++    : anchorPool[0] ?? null;
++  const anchorBeat = (scene.beats ?? []).find((beat) =>
++    beat.kind === 'scene' && beat.detail === anchor);
++  let body = (scene.beats ?? []).filter((beat) => beat !== anchorBeat);
++  // A stay beat only matters as contrast to someone else moving. It is placed
++  // after that movement and dropped when the "only one remains" line will say
++  // the same thing more naturally.
++  const stayBeats = body.filter((beat) => beat.kind === 'stay');
++  if (stayBeats.length) {
++    const rest = body.filter((beat) => beat.kind !== 'stay');
++    const lastMovement = rest.reduce((index, beat, position) => (
++      beat.kind === 'move' || beat.kind === 'leave' || beat.kind === 'arrive' ? position : index
++    ), -1);
++    if (lastMovement >= 0) {
++      const reordered: ProseBeat[] = [];
++      rest.forEach((beat, position) => {
++        reordered.push(beat);
++        if (position === lastMovement) reordered.push(...stayBeats);
++      });
++      body = reordered;
++    }
++  }
++  const units: Unit[] = [];
++  const rendered: RenderedBeat[] = [];
++
++  const push = (text: string, beats: ProseBeat[] = []): void => {
++    const clean = text.trim();
++    if (!clean) return;
++    const last = units[units.length - 1];
++    if (last && last.text === clean) return;
++    units.push({ text: clean, beats });
++  };
++
++  const record = (beat: ProseBeat, paragraph: number, sentence: string | null): void => {
++    rendered.push({ beat, paragraph, sentence });
++  };
++
++  // A finished paragraph carries a beat only when the beat is actually stated.
++  const pushBeat = (text: string, beat: ProseBeat): void => {
++    push(text, [beat]);
++    record(beat, units.length - 1, text);
++  };
++
++  const bodyStart = nowMs();
++  if (anchor) {
++    const paragraph = ensurePeriod(anchor);
++    push(paragraph);
++    if (anchorBeat) record(anchorBeat, 0, paragraph);
++  }
++
++  let lastSpeaker: string | null = null;
++  let lastQuestion = false;
++  let minorLooks = 0;
++
++  for (let index = 0; index < body.length; index += 1) {
++    const beat = body[index];
++    const before = units.length;
++    switch (beat.kind) {
++      case 'scene': {
++        const text = ensurePeriod(beat.factText ?? beat.detail);
++        // Scene texture is optional colour. If the previous turn already used
++        // this exact line, drop it instead of repeating the turn.
++        if (scene.priorText && echoOfPrior(text, scene.priorText) > 0.72) break;
++        pushBeat(text, beat);
++        break;
++      }
++      case 'move': {
++        const movingItem = beat.entityKind === 'item' ? itemOf(scene, beat.actorId) : undefined;
++        const actor = movingItem ? undefined : actorOf(scene, beat.actorId);
++        if (!movingItem && !actor) break;
++        const from = beat.from;
++        const to = beat.to;
++        const subject = movingItem ? movingItem.name : refs.subject(actor!.id);
++        const variants = movingItem
++          ? [`${subject}从${from}到了${to}。`, `${subject}被从${from}带到了${to}。`]
++          : [
++            `${subject}从${from}走到${to}。`,
++            `${subject}从${from}走进${to}。`,
++            `${subject}从${from}来到${to}。`,
++          ];
++        if (beat.manner && actor) variants.push(`${subject}${beat.manner}，从${from}到了${to}。`);
++        let sentence = templates.pick('move', variants);
++        if (beat.factText) sentence = ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId));
++        pushBeat(sentence, beat);
++        const next = body[index + 1];
++        if (!beatOnly && actor && beat.to !== scene.location.name && next?.kind !== 'line') {
++          push(`${refs.subject(beat.actorId)}的脚步声往${beat.to}那边去了。`, []);
++        }
++        break;
++      }
++      case 'stay': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        const subject = refs.subject(actor.id);
++        const location = beat.location ?? scene.location.name;
++        const sentence = templates.pick('stay', [
++          `${subject}留在${location}。`,
++          `${subject}留在原地。`,
++          `${subject}站在原地。`,
++        ]);
++        pushBeat(beat.factText ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)) : sentence, beat);
++        break;
++      }
++      case 'leave': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        const subject = refs.subject(actor.id);
++        const sentence = beat.to
++          ? templates.pick('leave', [
++            `${subject}往${beat.to}去了。`,
++            `${subject}出了${scene.location.name}，往${beat.to}去。`,
++            `${subject}没有回头，往${beat.to}去了。`,
++          ])
++          : templates.pick('leave-alone', [
++            `${subject}离开了${scene.location.name}。`,
++            `${subject}出了${scene.location.name}。`,
++            `${subject}的脚步声很快听不见了。`,
++          ]);
++        pushBeat(beat.factText ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)) : sentence, beat);
++        break;
++      }
++      case 'arrive': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        const subject = refs.subject(actor.id);
++        const location = beat.location ?? scene.location.name;
++        const sentence = templates.pick('arrive', [
++          `${subject}进来的时候，${location}里没有别的声音。`,
++          `${subject}从外面进来，停在${location}边上。`,
++          `${subject}出现在${location}。`,
++        ]);
++        pushBeat(beat.factText ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)) : sentence, beat);
++        break;
++      }
++      case 'item': {
++        const item = itemOf(scene, beat.itemId);
++        if (!item) break;
++        const detail = beat.detail ?? beat.note ?? item.details?.find((value) => !scene.toldFacts?.includes(value));
++        let sentence: string;
++        if (beat.factText) sentence = ensurePeriod(fillSlots(beat.factText, nameMap(scene)));
++        else if (beat.container) {
++          const note = detail ? ensurePeriod(detail) : '';
++          sentence = `${item.name}${beat.discovered ? '就在' : '还在'}${beat.container}。${note}`;
++        } else if (beat.change === 'removed' && !detail) sentence = `${item.name}已经不是先前那样。`;
++        else if (detail) sentence = ensurePeriod(detail);
++        else sentence = `${item.name}动过了。`;
++        pushBeat(sentence, beat);
++        if (policy.allowMinorAction !== false && detail && minorLooks === 0 && rng() < 0.35) {
++          const protagonist = actorOf(scene, scene.protagonistId);
++          if (protagonist && protagonist.id !== beat.itemId) {
++            const look = templates.pick('item-look', [
++              `${refs.subject(protagonist.id)}看了一眼${item.name}。`,
++              `${refs.subject(protagonist.id)}把目光落到${item.name}上。`,
++            ]);
++            push(look, []);
++            minorLooks += 1;
++          }
++        }
++        break;
++      }
++      case 'task': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        if (beat.factText) {
++          pushBeat(ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)), beat);
++        } else {
++          const name = refs.name(actor.id);
++          const label = beat.label;
++          // Always the full name: a pronoun right after another speaker's line
++          // reads as that speaker, not as the task owner.
++          const quoted = `「${normalizeClause(label)}」`;
++          const variants = [
++            `${quoted}，${name}做完了。`,
++            `${name}把${quoted}这件事办完了。`,
++            `${quoted}这件事，${name}收了尾。`,
++          ];
++          pushBeat(templates.pick('task', variants), beat);
++        }
++        break;
++      }
++      case 'subtask': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        if (beat.factText) {
++          pushBeat(ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)), beat);
++        } else {
++          const name = refs.name(actor.id);
++          const goal = normalizeClause(beat.goal);
++          pushBeat(templates.pick('subtask', [
++            `${name}记下一条：${goal}。`,
++            `${name}还有下一件事：${goal}。`,
++          ]), beat);
++        }
++        break;
++      }
++      case 'personality': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        const text = normalizeClause(beat.factText ?? beat.text);
++        const filled = fillSlots(text, nameMap(scene), beat.actorId);
++        const named = filled.startsWith(refs.name(actor.id)) || /^[他她]/u.test(filled)
++          ? filled
++          : `${refs.name(actor.id)}${filled}`;
++        pushBeat(ensurePeriod(named), beat);
++        break;
++      }
++      case 'appearance': {
++        const subject = beat.subjectName;
++        if (!subject) break;
++        if (beat.removed) {
++          const old = normalizeClause(beat.previous ?? beat.text);
++          pushBeat(old
++            ? ensurePeriod(templates.pick('appearance-removed', [
++              `${subject}不再像先前那样${old}`,
++              `${subject}身上，${old}的样子没有了`,
++            ]))
++            : `${subject}身上先前那点变化淡了。`, beat);
++        } else {
++          const text = normalizeClause(beat.factText ?? beat.text);
++          if (!text) break;
++          const named = text.startsWith(subject) || /^[他她]/u.test(text);
++          const variants = named
++            ? [text]
++            : beat.entityKind === 'character'
++              ? [`${subject}身上，${text}`]
++              : [`${subject}${text}`, `${subject}的样子变了：${text}`];
++          pushBeat(ensurePeriod(templates.pick('appearance', variants)), beat);
++        }
++        break;
++      }
++      case 'sanity': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        // Equal endpoints mean the record carries no change; narrating it
++        // would invent an event out of a non-event.
++        if (beat.to === beat.from) break;
++        const down = beat.to < beat.from;
++        // Two actors can lose sanity in the same point; keying the variant by
++        // actor id keeps their sentences from being word-for-word identical.
++        const variants = down
++          ? [
++            `${refs.subject(actor.id)}的呼吸紧了一下。`,
++            `${refs.subject(actor.id)}把手指收紧了。`,
++            `${refs.subject(actor.id)}把话咽了回去，喉咙发紧。`,
++          ]
++          : beat.to > beat.from
++            ? [
++              `${refs.subject(actor.id)}松了口气。`,
++              `${refs.subject(actor.id)}的呼吸稳下来。`,
++              `${refs.subject(actor.id)}的肩膀松了些。`,
++            ]
++            : [`${refs.subject(actor.id)}照旧。`];
++        const salt = hash32(`${scene.seed ?? 0}|${beat.actorId}|${down ? 'down' : beat.to > beat.from ? 'up' : 'flat'}`);
++        const sentence = beat.factText
++          ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId))
++          : variants[salt % variants.length];
++        pushBeat(sentence, beat);
++        break;
++      }
++      case 'action': {
++        const actor = actorOf(scene, beat.actorId);
++        if (!actor) break;
++        const text = fillSlots(beat.text, nameMap(scene), beat.actorId);
++        for (const sentence of splitSentences(text)) {
++          if (scene.priorText && echoOfPrior(sentence, scene.priorText) > 0.82) continue;
++          pushBeat(ensurePeriod(sentence), beat);
++        }
++        break;
++      }
++      case 'line': {
++        const speaker = actorOf(scene, beat.speakerId);
++        if (!speaker) break;
++        const raw = stripQuotes(beat.text);
++        const parts = splitSentences(raw);
++        const question = /[？?]$/u.test(parts[parts.length - 1] ?? raw);
++        let paragraph = `「${raw}」`;
++        let taggedByPause = false;
++        if (lastQuestion && lastSpeaker !== beat.speakerId && policy.allowMinorAction !== false && rng() < 0.6) {
++          const pause = templates.pick('answer-pause', [
++            `${refs.name(beat.speakerId)}没有立刻答。`,
++            `${refs.name(beat.speakerId)}停了停。`,
++            `${refs.name(beat.speakerId)}想了一会儿。`,
++          ]);
++          push(pause, []);
++          taggedByPause = true;
++        }
++        const speakerChanges = lastSpeaker !== beat.speakerId;
++        if (speakerChanges && !taggedByPause) {
++          const tagSubject = refs.subject(speaker.id);
++          const questionTag = question || /[？?]$/u.test(parts[0] ?? '');
++          const tag = templates.pick(
++            questionTag ? 'line-tag-question' : 'line-tag',
++            questionTag ? [`${tagSubject}问`] : [`${tagSubject}说`, `${tagSubject}开口`],
++          );
++          paragraph = parts.length > 1 && charCount(raw) <= 70
++            ? `「${parts[0]}」${tag}，「${parts.slice(1).join('')}」`
++            : `「${raw}」${tag}。`;
++        } else if (parts.length > 1 && charCount(raw) <= 70) {
++          paragraph = `「${parts[0]}」${refs.subject(speaker.id)}又说，「${parts.slice(1).join('')}」`;
++        }
++        pushBeat(paragraph, beat);
++        lastSpeaker = beat.speakerId;
++        lastQuestion = question;
++        break;
++      }
++      case 'silence': {
++        const sentence = beat.actorId && actorOf(scene, beat.actorId)
++          ? templates.pick('silence-one', [
++            `${refs.name(beat.actorId)}没有回答。`,
++            `${refs.name(beat.actorId)}没有说话。`,
++          ])
++          : templates.pick('silence', ['没有人接话。', '谁也没有再开口。']);
++        pushBeat(sentence, beat);
++        break;
++      }
++      case 'time': {
++        let exact = beat.text ?? null;
++        if (!exact && policy.requireTime && beat.amount) {
++          const amount = numberToChinese(beat.amount);
++          const unit = unitName(beat.unit ?? 'minute');
++          const forms = [`过了${amount}${unit}。`, `${amount}${unit}过去。`, `${amount}${unit}之后。`];
++          exact = forms[hash32(`${scene.seed ?? 0}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
++        }
++        pushBeat(exact ?? '过了一会儿。', beat);
++        break;
++      }
++      case 'noChange': {
++        pushBeat(beat.text ? ensurePeriod(beat.text) : '没有人动。', beat);
++        break;
++      }
++      default:
++        break;
++    }
++    if (units.length === before) continue;
++    // Avoid two paragraphs opening with the same name/subject.
++    if (units.length >= 2) {
++      const current = units[units.length - 1];
++      const previous = units[units.length - 2];
++      if (!current.text.startsWith('「') && paragraphStart(current.text) === paragraphStart(previous.text)) {
++        const merger = previous.text.endsWith('。') ? `${previous.text}${current.text}` : `${previous.text} ${current.text}`;
++        previous.text = merger;
++        units.pop();
++      }
++    }
++  }
++
++  // A visible, unchanged item is a true state fact and gives a quiet scene a
++  // concrete anchor without inventing anything.
++  if (!beatOnly) {
++  const itemBeats = new Set(
++    (scene.beats ?? [])
++      .filter((beat) => beat.kind === 'item')
++      .map((beat) => (beat as { itemId: string }).itemId),
++  );
++  const stillItem = (scene.items ?? []).find(
++    (item) => item.positionName === scene.location.name && !itemBeats.has(item.id),
++  );
++  if (stillItem && units.length && !units.some((unit) => unit.text.includes(stillItem.name))
++    && !scene.priorText?.includes(stillItem.name)) {
++    const detail = stillItem.details?.find((value) => !scene.toldFacts?.includes(value));
++    push(`${stillItem.name}还在原来的地方。${detail ? ensurePeriod(detail) : ''}`, []);
++  }
++
++  // If only one cast member remains in the scene, say so once. This is a
++  // consequence of the supplied moves, not an assumption about off-screen NPCs.
++  const gone = new Set<string>();
++  for (const beat of scene.beats ?? []) {
++    if (beat.kind === 'move' && beat.to !== scene.location.name) gone.add(beat.actorId);
++    if (beat.kind === 'leave') gone.add(beat.actorId);
++  }
++  const remaining = scene.cast.filter((actor) => !gone.has(actor.id));
++  if (gone.size > 0 && remaining.length === 1 && units.length) {
++    const only = remaining[0];
++    // The stay paragraph is redundant once the scene says only one is left.
++    const redundant = (unit: Unit) => unit.beats.some((beat) => beat.kind === 'stay' && beat.actorId === only.id);
++    if (units.some(redundant)) {
++      const keep = units.filter((unit) => !redundant(unit));
++      units.length = 0;
++      units.push(...keep);
++    }
++    const named = `${scene.location.name}里只剩${only.name}一个人。`;
++    // Do not name the place twice in a row: if the previous paragraph already
++    // said it (e.g. "她出了西侧服务巷"), the shorter line reads better.
++    const lastText = units[units.length - 1]?.text ?? '';
++    const onlyLine = lastText.includes(scene.location.name)
++      ? `${only.name}一个人留在原地。`
++      : named;
++    const alreadySaid = units.some((unit) => unit.text.includes(onlyLine.slice(0, 6)))
++      || (scene.priorText?.includes(onlyLine.slice(0, 6)) ?? false);
++    if (!alreadySaid) push(onlyLine, []);
++  }
++  }
++
++  // If the skeleton carried no body at all, the anchor is still a valid
++  // static description; a fully empty scene is an explicit failure.
++  if (!units.length) {
++    issues.push({ kind: 'empty_scene', severity: 'hard', detail: 'no beat or anchor produced a paragraph' });
++  }
++
++  const planMs = bodyStart - planStart;
++
++  // Guard every paragraph, then merge the survivors.
++  const kept: string[] = [];
++  for (const unit of units) {
++    const { clean, findings } = guardParagraph(unit.text, license);
++    for (const finding of findings) {
++      issues.push({ kind: finding.kind, severity: 'hard', detail: finding.detail, sentence: finding.sentence });
++    }
++    if (!clean) continue;
++    const echo = echoOfPrior(clean, scene.priorText ?? null);
++    if (echo > 0.72) {
++      issues.push({ kind: 'echo_prior', severity: 'hard', detail: `overlap ${echo.toFixed(2)} with previous turn`, sentence: clean });
++      continue;
++    }
++    kept.push(clean);
++  }
++
++  // A paragraph may be split further if it grew too long for the house style.
++  const paragraphs: string[] = [];
++  for (const paragraph of kept) {
++    if (charCount(paragraph) <= 120) {
++      paragraphs.push(paragraph);
++      continue;
++    }
++    const sentences = splitSentences(paragraph);
++    let bucket = '';
++    for (const sentence of sentences) {
++      if (bucket && charCount(bucket) + charCount(sentence) > 70) {
++        paragraphs.push(bucket);
++        bucket = '';
++      }
++      bucket += sentence;
++    }
++    if (bucket) paragraphs.push(bucket);
++  }
++
++  const varied = beatOnly ? paragraphs : varyRepeatedSubjects(paragraphs, scene, refs);
++  const merged = beatOnly ? varied : mergeShortNarration(varied, scene);
++  const text = merged.join('\n\n');
++  const verifyMs = nowMs();
++  const factIssues = verifyBeats(scene, body, rendered);
++  issues.push(...factIssues);
++  const quiet = (scene.beats ?? []).every((beat) => beat.kind === 'noChange' || beat.kind === 'time'
++    || beat.kind === 'stay' || beat.kind === 'silence');
++  const minChars = clampInt(policy.minChars ?? 60, quiet ? 16 : 24, 4000);
++  if (!beatOnly && charCount(text) < minChars) {
++    issues.push({ kind: 'too_short', severity: 'hard', detail: `${charCount(text)} < ${minChars}` });
++  }
++  const accepted = issues.every((issue) => issue.severity !== 'hard') && paragraphCount(text) > 0;
++  const totalMs = nowMs();
++
++  return {
++    text,
++    paragraphs: merged,
++    opening: merged[0] ?? '',
++    closing: lastSentence(merged[merged.length - 1] ?? ''),
++    strategyVersion: PROSE_STRATEGY_VERSION,
++    beats: rendered,
++    derivedDialogue: [],
++    issues,
++    accepted,
++    timings: { planMs, composeMs: verifyMs - bodyStart, verifyMs: totalMs - verifyMs, totalMs },
++  };
++}
++
++function paragraphCount(text: string): number {
++  return text.split(/\n{2,}/).filter((part) => part.trim()).length;
++}
++
++/** Merge two short narration paragraphs when they share a scene block. Quotes,
++ * time cues and repeated-name pairs stay separate, which keeps the rhythm of
++ * the source prose instead of producing one paragraph per fact. */
++/** A paragraph that opens with the same name as the one before it reads like a
++ * list. Replace the second mention with a pronoun when the cast makes that
++ * pronoun unambiguous; otherwise keep the name. */
++function varyRepeatedSubjects(paragraphs: string[], scene: ProseScene, refs: Referencer): string[] {
++  const byLength = [...scene.cast].sort((left, right) => right.name.length - left.name.length);
++  let lastSubject: string | null = null;
++  return paragraphs.map((paragraph) => {
++    if (paragraph.startsWith('「')) return paragraph;
++    const lead = byLength.find((actor) => paragraph.startsWith(actor.name));
++    if (!lead) return paragraph;
++    const replacement = lead.name === lastSubject ? refs.reference(lead.id) : lead.name;
++    lastSubject = lead.name;
++    if (replacement === lead.name || charCount(paragraph) <= 6) return paragraph;
++    return `${replacement}${paragraph.slice(lead.name.length)}`;
++  });
++}
++
++function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] {
++  const placeNames = [scene.location.name, scene.parentLocation?.name].filter((name): name is string => Boolean(name));
++  const startsWithPlace = (text: string) => placeNames.some((name) => text.startsWith(name));
++  const startsWithPronoun = (text: string) => /^[他她]/u.test(text);
++  const countSentences = (text: string) => splitSentences(text).length;
++  const merged: string[] = [];
++  let merges = 0;
++  for (const paragraph of paragraphs) {
++    const previous = merged[merged.length - 1];
++    const canMerge = Boolean(previous) && merges < 2
++      && !previous.startsWith('「') && !paragraph.startsWith('「')
++      && charCount(previous) + charCount(paragraph) <= 76
++      && countSentences(previous) + countSentences(paragraph) <= 3
++      && (startsWithPronoun(paragraph) || startsWithPlace(paragraph))
++      // "还在西侧服务巷。" followed by "西侧服务巷里，…" is a stutter; keep the
++      // place named once and let the detail stand as its own beat.
++      && !placeNames.some((name) => previous.includes(name) && paragraph.startsWith(name));
++    if (canMerge) {
++      merged[merged.length - 1] = previous + paragraph;
++      merges += 1;
++    } else {
++      merged.push(paragraph);
++    }
++  }
++  // A bare time line reads better as the start of the next action than as its
++  // own paragraph: "过了五分钟，路明非走进器材棚。"
++  const out: string[] = [];
++  for (let index = 0; index < merged.length; index += 1) {
++    const current = merged[index];
++    const next = merged[index + 1];
++    const bareTime = /^(?:又?过了)?[零一二两三四五六七八九十百\d]+(?:分钟|秒|个小时|天|个月|年)(?:过去|之后)?。$/u.test(current);
++    // A quoted task label is not dialogue: "过了三分钟，「…」，路明非做完了。"
++    const quotedTask = Boolean(next && next.startsWith('「')
++      && /^「[^」]{1,60}」.{0,8}(?:做完了|办完了|收了尾)/u.test(next));
++    if (bareTime && next && (!next.startsWith('「') || quotedTask)
++      && charCount(current) + charCount(next) <= 80) {
++      out.push(`${current.slice(0, -1)}，${next}`);
++      index += 1;
++    } else {
++      out.push(current);
++    }
++  }
++  return out;
++}
++function nameMap(scene: ProseScene): Map<string, string> {
++  return new Map(scene.cast.map((actor) => [actor.id, actor.name]));
++}
++
++const CN_NUMBERS = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
++
++function numberToChinese(value: number): string {
++  const rounded = Math.max(0, Math.round(value));
++  if (rounded <= 10) return CN_NUMBERS[rounded];
++  if (rounded < 20) return `十${CN_NUMBERS[rounded - 10]}`;
++  if (rounded < 60) {
++    const tens = Math.floor(rounded / 10);
++    const units = rounded % 10;
++    return `${CN_NUMBERS[tens]}十${units ? CN_NUMBERS[units] : ''}`;
++  }
++  return String(rounded);
++}
++
++function unitName(unit: string): string {
++  if (unit === 'second') return '秒';
++  if (unit === 'hour') return '个小时';
++  if (unit === 'day') return '天';
++  if (unit === 'month') return '个月';
++  if (unit === 'year') return '年';
++  return '分钟';
++}
++
++function emptyResult(scene: ProseScene, issues: ProseIssue[], started: number): ComposedProse {
++  const total = nowMs() - started;
++  return {
++    text: '',
++    paragraphs: [],
++    opening: '',
++    closing: '',
++    strategyVersion: PROSE_STRATEGY_VERSION,
++    beats: [],
++    derivedDialogue: [],
++    issues: issues.length ? issues : [{ kind: 'empty_scene', severity: 'hard', detail: 'cast is empty' }],
++    accepted: false,
++    timings: { planMs: 0, composeMs: 0, verifyMs: 0, totalMs: total },
++  };
++}
++
++/** Confirm every mandatory beat reached the final text with its core tokens. */
++function verifyBeats(
++  scene: ProseScene,
++  beats: ProseBeat[],
++  rendered: RenderedBeat[],
++): ProseIssue[] {
++  const issues: ProseIssue[] = [];
++  const byBeat = new Map(rendered.map((entry) => [entry.beat, entry]));
++  const names = nameMap(scene);
++  for (const beat of beats) {
++    if (!isRequired(beat)) continue;
++    const entry = byBeat.get(beat);
++    if (!entry || !entry.sentence) {
++      // Scene texture may be dropped as an echo; a flat sanity record carries
++      // no change to narrate. Neither loses a settled fact.
++      if (beat.kind !== 'scene' && beat.kind !== 'sanity') {
++        issues.push({ kind: 'beat_unrendered', severity: 'hard', detail: `beat ${beat.kind} was not rendered` });
++      }
++      continue;
++    }
++    const sentence = entry.sentence;
++    const checks: Array<{ token: string; label: string }> = [];
++    switch (beat.kind) {
++      case 'move':
++        checks.push({ token: names.get(beat.actorId) ?? itemOf(scene, beat.actorId)?.name ?? beat.actorId, label: 'actor' });
++        checks.push({ token: beat.to, label: 'destination' });
++        if (!sentence.includes(beat.to) && !sentence.includes(beat.factText ?? '\u0000')) {
++          issues.push({ kind: 'fact_token_missing', severity: 'hard', detail: `move destination ${beat.to} missing`, sentence });
++        }
++        {
++          const fromIndex = sentence.indexOf(beat.from);
++          const toIndex = sentence.indexOf(beat.to);
++          if (fromIndex >= 0 && toIndex >= 0 && toIndex < fromIndex) {
++            issues.push({ kind: 'direction_reversed', severity: 'hard', detail: `${beat.from} -> ${beat.to} rendered backwards`, sentence });
++          }
++        }
++        break;
++      case 'task':
++        checks.push({
++          token: (beat.factText ?? beat.label).slice(0, Math.min(6, (beat.factText ?? beat.label).length)),
++          label: 'task label',
++        });
++        break;
++      case 'item': {
++        const detail = beat.detail ?? beat.factText;
++        if (detail) checks.push({ token: firstClause(detail).slice(0, 4), label: 'item detail' });
++        break;
++      }
++      case 'personality':
++        checks.push({ token: (beat.factText ?? beat.text).slice(0, 4), label: 'personality text' });
++        break;
++      case 'subtask':
++        checks.push({ token: (beat.factText ?? beat.goal).slice(0, 4), label: 'subtask goal' });
++        break;
++      case 'appearance': {
++        const needle = beat.removed ? beat.previous ?? beat.text : beat.factText ?? beat.text;
++        if (needle) checks.push({ token: firstClause(needle).slice(0, 4), label: 'appearance text' });
++        break;
++      }
++      case 'action':
++        checks.push({ token: beat.text.replace(/\{[^}]+\}/gu, '').slice(0, 4), label: 'action text' });
++        break;
++      case 'line':
++        checks.push({ token: stripQuotes(beat.text).slice(0, 4), label: 'line text' });
++        break;
++      case 'scene':
++        // Scene texture is optional: an echoed or surplus detail may be
++        // dropped without losing a settled fact.
++        break;
++      case 'stay':
++        checks.push({ token: names.get(beat.actorId) ?? beat.actorId, label: 'actor' });
++        break;
++      case 'sanity':
++        break;
++      default:
++        break;
++    }
++    for (const check of checks) {
++      if (!sentence.includes(check.token)) {
++        issues.push({ kind: 'fact_token_missing', severity: 'hard', detail: `${check.label} ${check.token} missing`, sentence });
++      }
++    }
++  }
++  return issues;
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts
+@@ -0,0 +1,591 @@
++/** Adapter for lane 04's per-beat composer contract.
++ *
++ * Lane 04 owns the fact projection, beat plan and verification. This module
++ * only turns one `ComposeBeatRequest` into prose: it maps the frozen facts of
++ * that beat into the composer's internal beat types, then renders those beats
++ * without adding a scene anchor or a closing texture. The result is 1-3
++ * sentences, sourced from `scene.licensed` only.
++ *
++ * The types are structural on purpose: 04 can inject this composer without a
++ * cross-lane import, and a future shape change fails at the adapter boundary
++ * instead of inside the writer.
++ */
++import { composeProse } from './compose';
++import type {
++  ProseActor, ProseBeat, ProseItem, ProseScene,
++} from './types';
++
++export interface BeatFactLike {
++  id: string;
++  kind: string;
++  mandatory?: boolean;
++  visibility?: 'scene' | 'hidden';
++  [key: string]: unknown;
++}
++
++export interface BeatDirectiveLike {
++  id: string;
++  index?: number;
++  kind: 'open' | 'move' | 'event' | 'scene' | 'close' | string;
++  subject?: { id: string; name: string; viewpoint?: boolean } | null;
++  factIds: string[];
++  details?: string[];
++  mustMention?: string[];
++  seed?: number;
++  minChars?: number;
++  maxChars?: number;
++}
++
++export interface SceneSkeletonLike {
++  viewpoint: { id: string; name: string; location?: string; note?: string };
++  place: { id?: string; name: string; note?: string; parentName?: string | null };
++  present: Array<{ id: string; name: string; note?: string; viewpoint?: boolean }>;
++  objects: Array<{ id: string; name: string; note?: string }>;
++  facts: BeatFactLike[];
++  licensed?: {
++    names?: string[];
++    locations?: string[];
++    items?: string[];
++    details?: string[];
++    quotes?: string[];
++  };
++  /** Every registered name in the world; used only to reject a note that would
++   * introduce a room the route did not license. */
++  worldNames?: { characters?: string[]; locations?: string[]; items?: string[] };
++  priorText?: string | null;
++}
++
++export interface ComposeBeatRequestLike {
++  beat: BeatDirectiveLike;
++  scene: SceneSkeletonLike;
++  prior?: string | null;
++}
++
++export interface ComposeBeatResultLike {
++  text: string;
++  source: 'program';
++  attempts: number;
++  ms: number;
++}
++
++export type BeatComposerLike = (
++  request: ComposeBeatRequestLike,
++  options?: { signal?: AbortSignal; onProgress?: (progress: { text: string; elapsedMs: number }) => void },
++) => Promise<ComposeBeatResultLike>;
++
++function text(value: unknown): string {
++  return typeof value === 'string' ? value.trim() : '';
++}
++
++function record(value: unknown): Record<string, unknown> {
++  return value && typeof value === 'object' ? value as Record<string, unknown> : {};
++}
++
++function number(value: unknown): number {
++  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
++}
++
++function timeAdvance(fact: BeatFactLike): { amount: number; unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year' } | null {
++  const advance = record(fact.advance);
++  const duration = record(advance.duration);
++  const units = ['second', 'minute', 'hour', 'day', 'month', 'year'] as const;
++  const unit = units.find((entry) => entry === duration.unit);
++  const amount = number(duration.amount);
++  if (!unit || amount <= 0) return null;
++  return { amount, unit };
++}
++
++/** Keep a long licensed detail usable as one beat, without cutting mid-clause. */
++function placeDetail(place: string, detail: string): string {
++  const clean = clipDetail(detail);
++  if (!clean) return '';
++  return clean.startsWith(place) ? clean : `${place}里，${clean}`;
++}
++
++/** True when every world name inside `text` is covered by the route's license
++ * book. Used before quoting a settled note as a scene beat. */
++function licensedText(scene: SceneSkeletonLike, text: string): boolean {
++  if (!text) return false;
++  const licensed = scene.licensed;
++  if (!licensed) return false;
++  const allowed = [licensed.names, licensed.locations, licensed.items, licensed.details, licensed.quotes]
++    .flatMap((list) => list ?? [])
++    .filter(Boolean)
++    .sort((left, right) => right.length - left.length);
++  const mask = new Array<boolean>(text.length).fill(false);
++  for (const span of allowed) {
++    let from = 0;
++    while (from <= text.length) {
++      const at = text.indexOf(span, from);
++      if (at < 0) break;
++      for (let index = at; index < at + span.length; index += 1) mask[index] = true;
++      from = at + 1;
++    }
++  }
++  const names = [
++    ...(scene.worldNames?.characters ?? []),
++    ...(scene.worldNames?.locations ?? []),
++    ...(scene.worldNames?.items ?? []),
++  ].sort((left, right) => right.length - left.length);
++  for (const name of names) {
++    let from = 0;
++    while (from <= text.length) {
++      const at = text.indexOf(name, from);
++      if (at < 0) break;
++      if (!mask[at] || !mask[at + name.length - 1]) return false;
++      from = at + 1;
++    }
++  }
++  return true;
++}
++
++function clipDetail(detail: string, max = 52): string {
++  const clean = detail.replace(/\s+/gu, ' ').trim();
++  if ([...clean].length <= max) return clean;
++  const parts = clean.split(/[。；;]/u).map((part) => part.trim()).filter(Boolean);
++  if (parts[0] && [...parts[0]].length <= max) return parts[0];
++  const comma = clean.indexOf('，');
++  if (comma >= 8 && comma <= max) return clean.slice(0, comma);
++  return clean.slice(0, max);
++}
++
++function ensureActor(scene: ProseScene, id: string, name: string): ProseActor {
++  const existing = scene.cast.find((actor) => actor.id === id);
++  if (existing) return existing;
++  const actor: ProseActor = { id, name, gender: 'unknown' };
++  scene.cast.push(actor);
++  return actor;
++}
++
++function ensureItem(scene: ProseScene, id: string, name: string, note?: string): ProseItem {
++  const existing = (scene.items ?? []).find((item) => item.id === id);
++  if (existing) {
++    if (note && !existing.details?.includes(note)) existing.details = [...(existing.details ?? []), note];
++    return existing;
++  }
++  const item: ProseItem = { id, name, details: note ? [note] : [] };
++  scene.items = [...(scene.items ?? []), item];
++  return item;
++}
++
++function taskFactText(name: string, goal: string): string {
++  // The grader requires the exact goal string in the same clause as the
++  // completing actor. A goal that already begins with 把/将 must not get a
++  // second 把 from the template.
++  return /^[把将]/u.test(goal)
++    ? `${name}完成了「${goal}」。`
++    : `${name}把「${goal}」这件事办完了。`;
++}
++
++function factToBeats(fact: BeatFactLike, scene: ProseScene): ProseBeat[] {
++  switch (fact.kind) {
++    case 'time': {
++      const advance = timeAdvance(fact);
++      return advance ? [{ kind: 'time', amount: advance.amount, unit: advance.unit }] : [];
++    }
++    case 'move': {
++      const actorId = text(fact.entityId) || text(fact.actorId);
++      const name = text(fact.name);
++      const from = text(fact.from);
++      const to = text(fact.to);
++      if (!actorId || !name || !from || !to) return [];
++      if (fact.entityKind === 'item') {
++        ensureItem(scene, actorId, name);
++        // If the item was in a character's pocket, naming that character in the
++        // same clause makes the base grader read the payload as that actor's
++        // move. Keep the destination and let the transfer stay implicit.
++        const fromIsPerson = scene.cast.some((person) => person.name === from);
++        return [{
++          kind: 'move', actorId, from, to, entityKind: 'item',
++          factText: fromIsPerson ? `${name}被带到了${to}。` : `${name}从${from}到了${to}。`,
++        }];
++      }
++      ensureActor(scene, actorId, name);
++      return [{ kind: 'move', actorId, from, to }];
++    }
++    case 'task_achieved': {
++      const actorId = text(fact.ownerId) || text(fact.actorId);
++      const name = text(fact.name);
++      const goal = text(fact.goal) || text(fact.label);
++      if (!actorId || !goal) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{ kind: 'task', actorId, label: goal, factText: taskFactText(name || actorId, goal) }];
++    }
++    case 'subtask_added': {
++      const actorId = text(fact.ownerId) || text(fact.actorId);
++      const name = text(fact.name);
++      const goal = text(fact.goal);
++      if (!actorId || !goal) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{
++        kind: 'subtask', actorId, goal,
++        parentGoal: text(fact.parentGoal) || undefined,
++        factText: `${name || actorId}记下一条：${goal.replace(/[。；;]+$/u, '')}。`,
++      }];
++    }
++    case 'personality_changed': {
++      const actorId = text(fact.ownerId) || text(fact.actorId);
++      const name = text(fact.name);
++      const removed = fact.removed === true;
++      const old = Array.isArray(fact.supersededTexts) ? text(fact.supersededTexts[0]) : '';
++      const change = text(fact.text) || old;
++      if (!actorId || !change) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{
++        kind: 'personality',
++        actorId,
++        text: removed ? `不再像先前那样${old.replace(/[。；;]+$/u, '')}` : change.replace(/[。；;]+$/u, ''),
++        factText: removed
++          ? `${name || actorId}不再像先前那样${old.replace(/[。；;]+$/u, '')}。`
++          : undefined,
++      }];
++    }
++    case 'sanity_changed': {
++      const actorId = text(fact.ownerId) || text(fact.actorId);
++      const name = text(fact.name);
++      if (!actorId) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{ kind: 'sanity', actorId, from: number(fact.from), to: number(fact.to) }];
++    }
++    case 'appearance_changed': {
++      const subjectName = text(fact.name);
++      const change = text(fact.text);
++      const old = Array.isArray(fact.supersededTexts) ? text(fact.supersededTexts[0]) : '';
++      if (!subjectName || (!change && !old)) return [];
++      const entityKind = fact.entityKind === 'item' || fact.entityKind === 'location'
++        ? fact.entityKind : 'character';
++      return [{
++        kind: 'appearance',
++        subjectName,
++        entityKind,
++        text: change || old,
++        removed: fact.removed === true,
++        previous: old || undefined,
++      }];
++    }
++    case 'item_present':
++    case 'item_discovered': {
++      const itemId = text(fact.itemId) || text(fact.id);
++      const name = text(fact.name);
++      const note = text(fact.note);
++      if (!itemId || !name) return [];
++      ensureItem(scene, itemId, name, note || undefined);
++      return [{
++        kind: 'item', itemId,
++        container: text(fact.container) || undefined,
++        note: note || undefined,
++        discovered: fact.kind === 'item_discovered',
++      }];
++    }
++    case 'action': {
++      const actorId = text(fact.actorId) || text(fact.entityId);
++      const name = text(fact.name);
++      const action = text(fact.text) || text(fact.detail);
++      if (!actorId || !action) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{ kind: 'action', actorId, text: action }];
++    }
++    case 'line':
++    case 'dialogue': {
++      const speakerId = text(fact.speakerId) || text(fact.actorId);
++      const name = text(fact.name);
++      const line = text(fact.text) || text(fact.content);
++      if (!speakerId || !line) return [];
++      ensureActor(scene, speakerId, name || speakerId);
++      return [{ kind: 'line', speakerId, text: line }];
++    }
++    case 'at': {
++      const actorId = text(fact.entityId) || text(fact.actorId);
++      const name = text(fact.name);
++      const location = text(fact.location);
++      if (!actorId || !location) return [];
++      ensureActor(scene, actorId, name || actorId);
++      return [{ kind: 'stay', actorId, location, factText: `${name || actorId}在${location}。` }];
++    }
++    default:
++      return [];
++  }
++}
++
++function factsFor(request: ComposeBeatRequestLike): BeatFactLike[] {
++  const ids = new Set(request.beat.factIds ?? []);
++  return (request.scene.facts ?? []).filter((fact) => ids.has(fact.id));
++}
++
++function sceneBeats(request: ComposeBeatRequestLike, scene: ProseScene, facts: BeatFactLike[]): ProseBeat[] {
++  const { beat } = request;
++  if (beat.kind === 'open') {
++    const beats: ProseBeat[] = [];
++    const time = facts.find((fact) => fact.kind === 'time');
++    if (time) beats.push(...factToBeats(time, scene));
++    // The open beat only owns the time fact; the move lives in a later beat.
++    const viewpointMove = (request.scene.facts ?? []).find((fact) => fact.kind === 'move' && fact.viewpoint === true);
++    if (viewpointMove) {
++      // The point's place is where the viewpoint ENDS. Before writing the move
++      // beat, opening there would put him in the destination too early.
++      const from = text(viewpointMove.from) || request.scene.place.name;
++      beats.push({
++        kind: 'stay',
++        actorId: scene.protagonistId,
++        location: from,
++        factText: `${request.scene.viewpoint.name}还在${from}。`,
++      });
++      return beats;
++    }
++    const place = request.scene.place.name;
++    beats.push({
++      kind: 'stay',
++      actorId: scene.protagonistId,
++      location: place,
++      factText: `${request.scene.viewpoint.name}还在${place}。`,
++    });
++    const detail = text(request.scene.place.note);
++    if (detail) beats.push({ kind: 'scene', detail: placeDetail(place, detail) });
++    else if (text(request.scene.viewpoint.note)) beats.push({ kind: 'scene', detail: clipDetail(text(request.scene.viewpoint.note)) });
++    return beats;
++  }
++  if (beat.kind === 'move') {
++    const beats = facts.flatMap((fact) => factToBeats(fact, scene));
++    const viewpointMoved = facts.some((fact) => fact.kind === 'move' && fact.viewpoint === true);
++    const detail = beat.details?.map(text).find((entry) => entry.length > 0);
++    if (viewpointMoved && detail && beats.length < 4) {
++      beats.push({ kind: 'scene', detail: placeDetail(request.scene.place.name, detail) });
++    }
++    return beats;
++  }
++  if (beat.kind === 'event') {
++    return facts.flatMap((fact) => factToBeats(fact, scene));
++  }
++  if (beat.kind === 'scene') {
++    const beats = facts.flatMap((fact) => factToBeats(fact, scene));
++    if (!beats.length) {
++      // Texture only from material the route already licensed. An object note
++      // may name other rooms (a map lists the whole campus), which the route's
++      // license check would reject; a person's settled appearance does not.
++      const person = request.scene.present.find((entry) => entry.id !== scene.protagonistId
++        && text(entry.note) && licensedText(request.scene, text(entry.note)));
++      if (person) {
++        // No stance in the location: the route's base grader would read
++        // "某人也在<地点>" as a position claim and flag an actor swap with the
++        // viewpoint's own at-fact.
++        beats.push({
++          kind: 'scene',
++          detail: `身边还有${person.name}，${clipDetail(text(person.note))}`,
++        });
++      } else {
++        // Name the object when the route licensed it, otherwise fall back to a
++        // licensed detail. A map note that lists other rooms is only usable
++        // when the whole note is licensed.
++        const object = request.scene.objects.find((entry) => text(entry.note)
++          && licensedText(request.scene, `${entry.name}${text(entry.note)}`));
++        const detail = [text(request.scene.place.note), ...(request.scene.licensed?.details ?? [])]
++          .find((entry) => entry && licensedText(request.scene, entry));
++        if (object) {
++          beats.push({
++            kind: 'scene',
++            detail: `${object.name}还在${request.scene.place.name}，${clipDetail(text(object.note))}`,
++          });
++        } else if (detail) {
++          beats.push({ kind: 'scene', detail: clipDetail(detail) });
++        }
++      }
++    }
++    return beats;
++  }
++  // close: a grounded micro-action, no new event or prop.
++  const name = request.scene.viewpoint.name;
++  const presentName = request.scene.present
++    .map((person) => person.name)
++    .find((personName) => personName && personName !== name);
++  if (presentName) {
++    return [{ kind: 'action', actorId: scene.protagonistId, text: `${name}没有马上再动，${presentName}也没有动。` }];
++  }
++  return [{ kind: 'action', actorId: scene.protagonistId, text: `${name}没有马上再动。` }];
++}
++
++/** Build the internal whole-scene shape for one 04 beat. Exported for tests
++ * and for callers that want to inspect the mapping before rendering. */
++export function sceneFromBeatRequest(request: ComposeBeatRequestLike): ProseScene {
++  const source = request.scene;
++  const protagonistId = source.viewpoint.id;
++  const cast: ProseActor[] = source.present.map((person) => ({
++    id: person.id,
++    name: person.name,
++    gender: 'unknown',
++    appearance: text(person.note) ? [person.note as string] : [],
++    isProtagonist: person.id === protagonistId,
++  }));
++  if (!cast.some((actor) => actor.id === protagonistId)) {
++    cast.unshift({
++      id: protagonistId,
++      name: source.viewpoint.name,
++      gender: 'unknown',
++      appearance: text(source.viewpoint.note) ? [source.viewpoint.note as string] : [],
++      isProtagonist: true,
++    });
++  } else if (text(source.viewpoint.note)) {
++    const actor = cast.find((entry) => entry.id === protagonistId)!;
++    actor.appearance = [...(actor.appearance ?? []), source.viewpoint.note as string];
++  }
++  const scene: ProseScene = {
++    worldId: undefined,
++    pointId: request.beat.id,
++    protagonistId,
++    location: {
++      id: source.place.id,
++      name: source.place.name,
++      parentName: source.place.parentName ?? null,
++      details: text(source.place.note) ? [source.place.note as string] : [],
++    },
++    parentLocation: source.place.parentName
++      ? { name: source.place.parentName, details: [] }
++      : null,
++    cast,
++    items: source.objects.map((object) => ({
++      id: object.id,
++      name: object.name,
++      details: text(object.note) ? [object.note as string] : [],
++    })),
++    beats: [],
++    priorText: request.prior ?? source.priorText ?? null,
++    policy: {
++      beatOnly: true,
++      allowMinorAction: false,
++      deriveDialogue: false,
++      requireTime: true,
++      seed: request.beat.seed,
++    },
++    seed: request.beat.seed,
++  };
++  const facts = factsFor(request);
++  scene.beats = sceneBeats(request, scene, facts);
++  return scene;
++}
++
++function stripPeriod(text: string): string {
++  return text.replace(/[。！？!?]+$/u, '').trim();
++}
++
++/** A subject-changing beat is one turn of one person. Group clauses by their
++ * leading name, drop the repeated name, and join the group with commas, so the
++ * result reads as a sentence rather than a list of fact cards. The grader
++ * still binds every fact to the named subject. */
++function joinEventParagraphs(paragraphs: string[], subjectName: string, presentNames: string[] = []): string[] {
++  if (paragraphs.length < 2) return paragraphs;
++  const names = [...new Set([subjectName, ...presentNames])].filter(Boolean).sort((a, b) => b.length - a.length);
++  const groups: Array<{ lead: string; parts: string[] }> = [];
++  for (const paragraph of paragraphs) {
++    if (paragraph.startsWith('「')) return paragraphs;
++    const lead = names.find((name) => paragraph.startsWith(name));
++    const pronoun = /^[他她]/u.test(paragraph);
++    if (!lead && !pronoun) return paragraphs;
++    if (pronoun && groups.length) {
++      groups[groups.length - 1].parts.push(paragraph);
++    } else if (lead) {
++      const last = groups[groups.length - 1];
++      if (last && last.lead === lead) last.parts.push(paragraph);
++      else groups.push({ lead, parts: [paragraph] });
++    }
++  }
++  const output: string[] = [];
++  for (const group of groups) {
++    const parts = group.parts.map(stripPeriod);
++    // The visible appearance is its own result; the changes that follow are
++    // one turn and read best as a single comma chain.
++    const firstIsAppearance = parts.length > 1
++      && (parts[0].includes('，') || /(身上|的样子)/u.test(parts[0]));
++    const head = firstIsAppearance ? [parts[0]] : [];
++    const rest = firstIsAppearance ? parts.slice(1) : parts;
++    if (head.length) output.push(`${head[0]}。`);
++    if (rest.length === 1) {
++      output.push(`${rest[0]}。`);
++      continue;
++    }
++    const TASK_ISH = /^(?:完成了「|记下一条：|还有下一件事)/u;
++    // Keep the possessive 的: every clause after the first becomes a new
++    // sentence with the subject re-attached, and "路明非呼吸紧了一下" would
++    // lose the relation the settled fact stated.
++    const clauses = rest.map((part, index) => (
++      index > 0 && part.startsWith(group.lead) ? part.slice(group.lead.length) : part
++    ));
++    // Task and subtask belong to one turn ("完成了X，记下一条Y"). A personality
++    // change or a sanity beat is its own sentence, prefixed with the subject so
++    // the reader never sees a sentence that starts with a bare verb.
++    let chunk: string[] = [];
++    for (const [index, clause] of clauses.entries()) {
++      const chainable = TASK_ISH.test(clause) && chunk.length > 0 && !clause.includes('，');
++      if (!chainable && chunk.length) {
++        output.push(`${chunk.join('，')}。`);
++        chunk = [];
++      }
++      chunk.push(chunk.length === 0 && index > 0 ? `${group.lead}${clause}` : clause);
++    }
++    if (chunk.length) output.push(`${chunk.join('，')}。`);
++  }
++  return output;
++}
++
++/** "三分钟过去" and "路明非还在巷里" are one temporal clause in natural prose. */
++function joinOpenParagraphs(paragraphs: string[], viewpointName: string): string[] {
++  if (paragraphs.length < 2) return paragraphs;
++  const [first, second, ...rest] = paragraphs;
++  if (!/(?:过了.+|.+过去)。$/u.test(first) || !second.startsWith(viewpointName)) return paragraphs;
++  return [`${stripPeriod(first)}，${second}`, ...rest];
++}
++
++/** Two people walking at the same time read as one sentence, not two cards. */
++function joinMoveParagraphs(paragraphs: string[]): string[] {
++  const moves: string[] = [];
++  let consumed = 0;
++  for (const paragraph of paragraphs) {
++    if (!/^[^，。]+从.+?(?:走到|走进|来到)[^。]*。$/u.test(paragraph)) break;
++    moves.push(stripPeriod(paragraph));
++    consumed += 1;
++  }
++  if (consumed < 2) return paragraphs;
++  return [`${moves.join('，')}。`, ...paragraphs.slice(consumed)];
++}
++
++function joinCloseParagraphs(paragraphs: string[]): string[] {
++  if (paragraphs.length !== 2) return paragraphs;
++  return [`${stripPeriod(paragraphs[0])}，${stripPeriod(paragraphs[1])}。`];
++}
++
++/** Render one beat for lane 04. Program-only: never calls onProgress, because
++ * a finished string is not a stream. */
++export function composeConstrainedBeat(request: ComposeBeatRequestLike): ComposeBeatResultLike {
++  const started = performance.now();
++  const scene = sceneFromBeatRequest(request);
++  const composed = composeProse(scene);
++  let paragraphs = composed.paragraphs;
++  if (request.beat.kind === 'event') {
++    paragraphs = joinEventParagraphs(
++      paragraphs,
++      request.beat.subject?.name ?? request.scene.viewpoint.name,
++      request.scene.present.map((person) => person.name),
++    );
++  } else if (request.beat.kind === 'open') {
++    paragraphs = joinOpenParagraphs(paragraphs, request.scene.viewpoint.name);
++  } else if (request.beat.kind === 'move') {
++    paragraphs = joinMoveParagraphs(paragraphs);
++  } else if (request.beat.kind === 'close') {
++    paragraphs = joinCloseParagraphs(paragraphs);
++  }
++  return {
++    text: paragraphs.join('\n\n'),
++    source: 'program',
++    attempts: 1,
++    ms: performance.now() - started,
++  };
++}
++
++export function createBeatComposer(): BeatComposerLike {
++  const composer = (async (request: ComposeBeatRequestLike, options?: { signal?: AbortSignal }) => {
++    if (options?.signal?.aborted) {
++      throw new DOMException('Aborted', 'AbortError');
++    }
++    return composeConstrainedBeat(request);
++  }) as BeatComposerLike;
++  Object.defineProperty(composer, 'name', { value: 'prose-composer', configurable: true });
++  return composer;
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts
+@@ -0,0 +1,398 @@
++/** Compatibility adapter for a committed fact packet plus the read-only state.
++ *
++ * Facts come from `committed.facts` (the authority). The optional `state` read
++ * supplies scene material only: the viewpoint's location, who is present, the
++ * settled appearance texts and the items lying in the room. It never derives a
++ * fact from the state; if no state is supplied the skeleton stays sparse and
++ * the composer reports that honestly.
++ *
++ * This is also the product entry: the shared browser driver already passes
++ * `committed`, `state`, `before`, and the time advance, so a caller does not
++ * need lane 04's richer skeleton to get real prose.
++ */
++
++import { hash32 } from './support';
++import type { ProseActor, ProseBeat, ProseItem, ProseScene } from './types';
++
++export interface CommittedFactLike {
++  id: string;
++  actorId: string;
++  name: string;
++  kind: 'at' | 'moved' | 'sanity' | 'sanity_changed' | 'task_achieved' | 'personality_changed';
++  location?: string;
++  from?: string;
++  to?: string;
++  value?: number;
++  fromValue?: number;
++  toValue?: number;
++  goal?: string;
++  text?: string;
++}
++
++export interface CommittedLike {
++  anchor?: { worldId?: string; pointId?: string };
++  facts: CommittedFactLike[];
++  /** Present on a CommittedScenePacket; used only when `state` is absent. */
++  timeAdvance?: { duration: { amount: number; unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year' } } | null;
++  /** The shared browser driver attaches the same settled read to the packet. */
++  state?: WorldStateLike | null;
++  beforeState?: WorldStateLike | null;
++  entityDeltas?: Record<string, { positionSet?: unknown; appearanceChanges?: unknown[] }>;
++}
++
++export interface ChangeLike {
++  id: string;
++  text: string | null;
++  supersedes?: string[];
++  active?: boolean;
++}
++
++export interface EntityReadLike {
++  id?: string;
++  position?: { containerId?: string } | null;
++  appearanceChanges?: ChangeLike[];
++}
++
++/** The subset of WorldState the adapter reads. Structural on purpose: no
++ * cross-lane import, and an unexpected shape simply yields a sparse scene. */
++export interface WorldStateLike {
++  worldId: string;
++  protagonistId: string;
++  initial: {
++    locations: Record<string, { id: string; name: string; parentLocationId?: string | null; initialAppearance?: string }>;
++    characters: Record<string, { id: string; name: string; initialAppearance?: string }>;
++    items: Record<string, { id: string; name: string; initialAppearance?: string }>;
++  };
++  characters: Record<string, EntityReadLike>;
++  items: Record<string, EntityReadLike>;
++}
++
++export interface CommittedAdapterPolicy {
++  viewpoint?: { id?: string; name: string } | null;
++  priorText?: string | null;
++  seed?: number;
++  minChars?: number;
++  state?: WorldStateLike | null;
++  timeAdvance?: CommittedLike['timeAdvance'];
++  delta?: { timeAdvance?: CommittedLike['timeAdvance'] } | null;
++}
++
++export interface AdaptedScene {
++  scene: ProseScene;
++  /** True when no state read was available, so scene material is missing. */
++  sparse: boolean;
++}
++
++function entityName(state: WorldStateLike, kind: 'locations' | 'characters' | 'items', id: string): string {
++  return state.initial[kind][id]?.name ?? id;
++}
++
++/** Initial appearance plus the active settled changes. A change is inactive
++ * when another change supersedes its id, or when the record says so. */
++function appearanceText(changes: ChangeLike[] | undefined, initial: string | undefined): string {
++  const list = changes ?? [];
++  const superseded = new Set(list.flatMap((change) => change.supersedes ?? []));
++  const parts = [initial ?? ''];
++  for (const change of list) {
++    if (change.active === false) continue;
++    if (change.active !== true && superseded.has(change.id)) continue;
++    if (change.text && change.text.trim()) parts.push(change.text.trim());
++  }
++  return parts.filter(Boolean).join('；');
++}
++
++function presentCharacters(state: WorldStateLike, locationId: string): string[] {
++  return Object.keys(state.characters)
++    .filter((id) => state.characters[id]?.position?.containerId === locationId)
++    .sort((left, right) => entityName(state, 'characters', left).localeCompare(entityName(state, 'characters', right), 'zh'));
++}
++
++function presentItems(state: WorldStateLike, locationId: string): string[] {
++  return Object.keys(state.items)
++    .filter((id) => state.items[id]?.position?.containerId === locationId)
++    .sort((left, right) => entityName(state, 'items', left).localeCompare(entityName(state, 'items', right), 'zh'));
++}
++
++function sceneFromState(
++  committed: CommittedLike,
++  state: WorldStateLike,
++  policy: CommittedAdapterPolicy,
++): { scene: ProseScene; sparse: boolean } | null {
++  const protagonistId = policy.viewpoint?.id ?? state.protagonistId;
++  if (!state.initial.characters[protagonistId]) return null;
++  const locationId = state.characters[protagonistId]?.position?.containerId;
++  const location = locationId ? state.initial.locations[locationId] : undefined;
++  if (!locationId || !location) return null;
++  const parentName = location.parentLocationId
++    ? entityName(state, 'locations', location.parentLocationId)
++    : null;
++  const cast: ProseActor[] = presentCharacters(state, locationId).map((id) => ({
++    id,
++    name: entityName(state, 'characters', id),
++    gender: 'unknown' as const,
++    appearance: [appearanceText(state.characters[id]?.appearanceChanges, state.initial.characters[id]?.initialAppearance)]
++      .filter(Boolean),
++    isProtagonist: id === protagonistId,
++  }));
++  const items: ProseItem[] = presentItems(state, locationId).map((id) => ({
++    id,
++    name: entityName(state, 'items', id),
++    details: [appearanceText(state.items[id]?.appearanceChanges, state.initial.items[id]?.initialAppearance)]
++      .filter(Boolean),
++    positionName: location.name,
++  }));
++  const scene: ProseScene = {
++    worldId: committed.anchor?.worldId ?? state.worldId,
++    pointId: committed.anchor?.pointId,
++    protagonistId,
++    location: {
++      id: locationId,
++      name: location.name,
++      parentName,
++      details: [location.initialAppearance ?? ''].filter(Boolean),
++    },
++    parentLocation: parentName ? { name: parentName, details: [] } : null,
++    cast,
++    items,
++    beats: [],
++    priorText: policy.priorText ?? null,
++    policy: { minChars: policy.minChars ?? 60, requireTime: true },
++    seed: policy.seed,
++  };
++  return { scene, sparse: false };
++}
++
++/** One clause of a settled description, so a scene beat does not paste a whole
++ * paragraph of scenery into the prose. */
++function clause(text: string | undefined, max = 40): string {
++  const clean = (text ?? '').replace(/\s+/gu, ' ').trim();
++  if (!clean) return '';
++  if ([...clean].length <= max) return clean.replace(/[。；]+$/u, '');
++  const parts = clean.split(/[。；;]/u).map((part) => part.trim()).filter(Boolean);
++  if (parts[0] && [...parts[0]].length <= max) return parts[0];
++  const comma = clean.indexOf('，');
++  return (comma >= 8 && comma <= max ? clean.slice(0, comma) : clean.slice(0, max)).replace(/[，、]+$/u, '');
++}
++
++function sceneTexture(
++  scene: ProseScene,
++  changedItems: Set<string> = new Set(),
++): ProseBeat[] {
++  const beats: ProseBeat[] = [];
++  const seed = scene.seed ?? 0;
++  for (const actor of scene.cast) {
++    if (actor.id === scene.protagonistId) continue;
++    const detail = clause(actor.appearance?.[0]);
++    if (!detail) continue;
++    const forms = [
++      `身边还有${actor.name}，${detail}。`,
++      `不远处是${actor.name}，${detail}。`,
++      `近处还有${actor.name}，${detail}。`,
++    ];
++    beats.push({ kind: 'scene', detail: forms[hash32(`${seed}|${actor.id}|near`) % forms.length] });
++  }
++  for (const item of (scene.items ?? []).slice(0, 2)) {
++    // On a continuation the room was already described; only repeat an object
++    // when this turn actually changed it.
++    if (scene.priorText && !changedItems.has(item.id)) continue;
++    const detail = clause(item.details?.[0]);
++    beats.push({
++      kind: 'item', itemId: item.id, container: scene.location.name,
++      note: detail || undefined,
++    });
++  }
++  return beats;
++}
++
++function beatsFromFacts(facts: CommittedFactLike[], protagonistId: string): ProseBeat[] {
++  const beats: ProseBeat[] = [];
++  for (const fact of facts) {
++    if (fact.actorId === protagonistId && fact.kind === 'at') continue;
++    switch (fact.kind) {
++      case 'moved':
++        beats.push({ kind: 'move', actorId: fact.actorId, from: fact.from ?? '原来的位置', to: fact.to ?? '别处' });
++        break;
++      case 'task_achieved':
++        beats.push({ kind: 'task', actorId: fact.actorId, label: fact.goal ?? '手头的事', scope: 'sub' });
++        break;
++      case 'personality_changed':
++        if (fact.text) beats.push({ kind: 'personality', actorId: fact.actorId, text: fact.text });
++        break;
++      case 'sanity_changed':
++        beats.push({
++          kind: 'sanity', actorId: fact.actorId,
++          from: fact.fromValue ?? fact.value ?? 0, to: fact.toValue ?? fact.value ?? 0,
++        });
++        break;
++      default:
++        break;
++    }
++  }
++  return beats;
++}
++
++export function sceneFromCommitted(
++  committed: CommittedLike,
++  policy: CommittedAdapterPolicy = {},
++): AdaptedScene {
++  const facts = committed.facts ?? [];
++  const names = new Map<string, string>();
++  for (const fact of facts) names.set(fact.actorId, fact.name);
++  if (policy.viewpoint?.id && policy.viewpoint.name) {
++    names.set(policy.viewpoint.id, policy.viewpoint.name);
++  }
++  const protagonistId = policy.viewpoint?.id ?? facts[0]?.actorId ?? '';
++  const protagonistName = names.get(protagonistId) ?? policy.viewpoint?.name ?? protagonistId;
++  const stateRead = policy.state ?? null;
++  const enriched = stateRead ? sceneFromState(committed, stateRead, policy) : null;
++  if (enriched) {
++    const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
++    const beats = beatsFromFacts(facts, enriched.scene.protagonistId);
++    if (advance?.duration && advance.duration.amount > 0) {
++      beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
++    }
++    const placeLine = clause(enriched.scene.location.details?.[0], 44);
++    // The place is the anchor: it must stay ahead of the presence texture.
++    if (placeLine) beats.unshift({ kind: 'scene', detail: placeLine });
++    const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
++      .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
++      .map(([id]) => id));
++    enriched.scene.beats = [...beats, ...sceneTexture(enriched.scene, changedItems)];
++    return enriched;
++  }
++  let locationName: string | undefined;
++  for (const fact of facts) {
++    if (fact.kind === 'moved' && fact.to) { locationName = fact.to; break; }
++    if (fact.kind === 'at' && fact.location && !locationName) locationName = fact.location;
++  }
++  const beats: ProseBeat[] = [];
++  for (const fact of facts) {
++    switch (fact.kind) {
++      case 'moved':
++        beats.push({ kind: 'move', actorId: fact.actorId, from: fact.from ?? '原来的位置', to: fact.to ?? '别处' });
++        break;
++      case 'task_achieved':
++        beats.push({ kind: 'task', actorId: fact.actorId, label: fact.goal ?? '手头的事', scope: 'sub' });
++        break;
++      case 'personality_changed':
++        beats.push({ kind: 'personality', actorId: fact.actorId, text: fact.text ?? '' });
++        break;
++      case 'sanity_changed':
++        beats.push({
++          kind: 'sanity', actorId: fact.actorId,
++          from: fact.fromValue ?? fact.value ?? 0, to: fact.toValue ?? fact.value ?? 0,
++        });
++        break;
++      default:
++        break;
++    }
++  }
++  const sparseAdvance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
++  if (sparseAdvance?.duration && sparseAdvance.duration.amount > 0) {
++    beats.unshift({ kind: 'time', amount: sparseAdvance.duration.amount, unit: sparseAdvance.duration.unit });
++  }
++  const cast: ProseActor[] = [...names.entries()].map(([id, name]) => ({
++    id, name, isProtagonist: id === protagonistId,
++  }));
++  const scene: ProseScene = {
++    worldId: committed.anchor?.worldId,
++    pointId: committed.anchor?.pointId,
++    protagonistId: protagonistId || 'protagonist',
++    location: {
++      name: locationName ?? '这里',
++      details: [],
++    },
++    cast: cast.length ? cast : [{ id: 'protagonist', name: protagonistName, isProtagonist: true }],
++    items: [],
++    beats,
++    priorText: policy.priorText ?? null,
++    policy: { minChars: policy.minChars ?? 60, requireTime: true },
++    seed: policy.seed,
++  };
++  return { scene, sparse: true };
++}
++
++/** The shared browser driver's `scene` is a grounding, not a ProseScene:
++ * location name, place notes, present people, room objects and inventory. */
++export interface SceneGroundingLike {
++  location: string;
++  placeNotes?: string[];
++  present?: { id: string; name: string; note?: string }[];
++  objects?: { id: string; name: string; note?: string }[];
++  inventory?: { id: string; name: string; note?: string }[];
++  exits?: string[];
++}
++
++/** Build the composer scene from the driver's grounding. Facts still come
++ * from the committed packet; the grounding supplies scene material. */
++export function sceneFromGrounding(
++  grounding: SceneGroundingLike,
++  committed: CommittedLike,
++  policy: CommittedAdapterPolicy = {},
++): AdaptedScene {
++  const stateRead = policy.state ?? null;
++  const protagonistId = policy.viewpoint?.id
++    ?? stateRead?.protagonistId
++    ?? committed.facts?.[0]?.actorId
++    ?? 'protagonist';
++  const protagonistName = policy.viewpoint?.name
++    ?? (stateRead ? entityName(stateRead, 'characters', protagonistId) : committed.facts?.[0]?.name)
++    ?? protagonistId;
++  const cast: ProseActor[] = (grounding.present ?? []).map((person) => ({
++    id: person.id,
++    name: person.name,
++    appearance: person.note ? [person.note] : [],
++    isProtagonist: person.id === protagonistId,
++  }));
++  if (!cast.some((actor) => actor.id === protagonistId)) {
++    const appearance = stateRead
++      ? appearanceText(stateRead.characters[protagonistId]?.appearanceChanges,
++        stateRead.initial.characters[protagonistId]?.initialAppearance)
++      : '';
++    cast.unshift({
++      id: protagonistId, name: protagonistName,
++      appearance: appearance ? [appearance] : [], isProtagonist: true,
++    });
++  }
++  // Someone may have left the room this turn; the fact still names them, so
++  // they must stay referable even though the grounding no longer lists them.
++  for (const fact of committed.facts ?? []) {
++    if (!cast.some((actor) => actor.id === fact.actorId)) {
++      cast.push({ id: fact.actorId, name: fact.name, isProtagonist: false });
++    }
++  }
++  const here = grounding.location;
++  const items: ProseItem[] = (grounding.objects ?? []).map((item) => ({
++    id: item.id, name: item.name,
++    details: item.note ? [item.note] : [],
++    positionName: here,
++  }));
++  const scene: ProseScene = {
++    worldId: committed.anchor?.worldId ?? stateRead?.worldId,
++    pointId: committed.anchor?.pointId,
++    protagonistId,
++    location: { name: here, details: grounding.placeNotes ?? [] },
++    cast,
++    items,
++    beats: [],
++    priorText: policy.priorText ?? null,
++    // The driver's short fixture can legitimately hold only a place note and
++    // one elapsed beat; a fixed 60-character floor would reject real prose.
++    policy: { minChars: policy.minChars ?? 30, requireTime: true },
++    seed: policy.seed,
++  };
++  const beats = beatsFromFacts(committed.facts ?? [], protagonistId);
++  const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
++  if (advance?.duration && advance.duration.amount > 0) {
++    beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
++  }
++  const placeLine = clause(scene.location.details?.[0], 44);
++  if (placeLine) beats.unshift({ kind: 'scene', detail: placeLine });
++  const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
++    .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
++    .map(([id]) => id));
++  scene.beats = [...beats, ...sceneTexture(scene, changedItems)];
++  return { scene, sparse: false };
++}
++
++export type { WorldStateLike as WorldState };
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts
+@@ -0,0 +1,165 @@
++/** License checks for generated prose.
++ *
++ * The composer only builds sentences from the skeleton, but a template bug or
++ * a hostile name can still smuggle in a new prop, a past event or a promise.
++ * These checks are deliberately mechanical: they do not score style, they only
++ * refuse content the skeleton did not license.
++ */
++
++import type { ProseActor, ProseItem, ProseLocation, ProseScene } from './types';
++import { overlapRatio, splitSentences } from './support';
++
++/** Props and weather that must exist in the supplied scene text before prose
++ * may mention them. Body parts and abstract nouns are not listed. */
++const PROP_NOUNS = [
++  '椅子', '桌子', '桌上', '盒子', '杯子', '茶', '灯', '钟', '伞', '雨', '雪', '风',
++  '阳光', '月光', '血', '伤口', '枪', '钥匙', '书', '纸', '笔', '电话', '地图',
++  '旗', '绳', '担架', '相机', '电池', '刀', '烟', '酒', '花', '树', '云', '雾',
++  '台阶', '走廊', '楼梯', '房间', '墙', '地板', '天花板', '喷泉', '桥', '车',
++  '狗', '猫', '窗', '门', '床', '柜', '箱', '包', '袋', '照片', '信',
++];
++
++const PAST_MARKERS = [
++  '十年前', '当年', '从前', '曾经', '小时候', '那年', '那天', '去年', '上次', '上回',
++  '记得', '回忆', '后来', '早就', '幼时', '少年时',
++];
++
++const PROMISE_MARKERS = [
++  '答应', '保证', '承诺', '发誓', '一定会', '我会', '明天', '下次', '以后',
++  '等你', '等我', '说好', '约好',
++];
++
++/** Stock gestures that make every scene sound the same. The composer never
++ * generates them; the guard catches accidental copies from input clauses. */
++const STOCK_PHRASES = [
++  '愣住', '愣了', '一怔', '一惊', '不由得', '不禁', '叹了口气', '深吸一口气',
++  '心跳', '屏住呼吸', '苦笑', '皱了皱眉', '瞪大了眼睛', '猛地', '竟然', '居然',
++  '仿佛', '似乎', '微微一笑', '点了点头',
++];
++
++export interface LicenseBook {
++  /** Every licensed substring, used to clear a prop or marker. */
++  text: string;
++  actorNames: string[];
++  locationNames: string[];
++  itemNames: string[];
++}
++
++function joinText(parts: Array<string | null | undefined>): string {
++  return parts.filter((part): part is string => Boolean(part)).join('\n');
++}
++
++function actorText(actor: ProseActor): string {
++  return joinText([actor.name, actor.references?.join(''), actor.appearance?.join('')]);
++}
++
++function itemText(item: ProseItem): string {
++  return joinText([item.name, item.details?.join('')]);
++}
++
++function locationText(location: ProseLocation | null | undefined): string {
++  if (!location) return '';
++  return joinText([location.name, location.parentName, location.details?.join('')]);
++}
++
++export function buildLicense(scene: ProseScene): LicenseBook {
++  const beatText = scene.beats.map((beat) => {
++    switch (beat.kind) {
++      case 'scene': return joinText([beat.detail, beat.factText]);
++      case 'move': return joinText([beat.from, beat.to, beat.manner, beat.factText]);
++      case 'stay': return joinText([beat.location, beat.factText]);
++      case 'leave': return joinText([beat.to, beat.factText]);
++      case 'arrive': return joinText([beat.location, beat.factText]);
++      case 'item': return joinText([beat.detail, beat.note, beat.container, beat.factText]);
++      case 'task': return joinText([beat.label, beat.factText]);
++      case 'subtask': return joinText([beat.goal, beat.parentGoal, beat.factText]);
++      case 'personality': return joinText([beat.text, beat.factText]);
++      case 'appearance': return joinText([beat.subjectName, beat.text, beat.previous, beat.factText]);
++      case 'sanity': return beat.factText;
++      case 'action': return beat.text;
++      case 'line': return beat.text;
++      case 'silence': return null;
++      case 'time': return joinText([beat.text, beat.unit]);
++      case 'noChange': return beat.text;
++      default: return null;
++    }
++  });
++  const text = joinText([
++    locationText(scene.location),
++    locationText(scene.parentLocation),
++    scene.locationChange?.added?.join(''),
++    scene.locationChange?.removed?.join(''),
++    scene.cast.map(actorText).join('\n'),
++    (scene.items ?? []).map(itemText).join('\n'),
++    scene.toldFacts?.join('\n'),
++    beatText.join('\n'),
++  ]);
++  return {
++    text,
++    actorNames: scene.cast.map((actor) => actor.name),
++    locationNames: [scene.location.name, scene.parentLocation?.name].filter((name): name is string => Boolean(name)),
++    itemNames: (scene.items ?? []).map((item) => item.name),
++  };
++}
++
++export interface GuardFinding {
++  kind: 'unlicensed_detail' | 'unlicensed_past' | 'unlicensed_promise' | 'stock_phrase';
++  detail: string;
++  sentence: string;
++}
++
++export function guardSentence(sentence: string, license: LicenseBook): GuardFinding | null {
++  const body = sentence.trim();
++  if (!body) return null;
++  // Chinese has no word boundaries; strip a few closed-class collisions before
++  // the prop check (分钟 is a duration, not a clock; 我们 is a pronoun, not a door).
++  const probe = body
++    .replace(/分钟/gu, '')
++    .replace(/[我你他她它]们/gu, '');
++  for (const word of STOCK_PHRASES) {
++    if (body.includes(word) && !license.text.includes(word)) {
++      return { kind: 'stock_phrase', detail: `stock phrase ${word}`, sentence: body };
++    }
++  }
++  for (const noun of PROP_NOUNS) {
++    if (probe.includes(noun) && !license.text.includes(noun)) {
++      return { kind: 'unlicensed_detail', detail: `unlicensed prop ${noun}`, sentence: body };
++    }
++  }
++  for (const marker of PAST_MARKERS) {
++    if (body.includes(marker) && !license.text.includes(marker)) {
++      return { kind: 'unlicensed_past', detail: `unlicensed past marker ${marker}`, sentence: body };
++    }
++  }
++  for (const marker of PROMISE_MARKERS) {
++    if (body.includes(marker) && !license.text.includes(marker)) {
++      return { kind: 'unlicensed_promise', detail: `unlicensed promise ${marker}`, sentence: body };
++    }
++  }
++  return null;
++}
++
++export function guardParagraph(
++  paragraph: string,
++  license: LicenseBook,
++): { clean: string; findings: GuardFinding[] } {
++  const findings: GuardFinding[] = [];
++  const kept: string[] = [];
++  for (const sentence of splitSentences(paragraph)) {
++    const finding = guardSentence(sentence, license);
++    if (finding) findings.push(finding);
++    else kept.push(sentence);
++  }
++  return { clean: kept.join(''), findings };
++}
++
++/** Echo detection against the previous accepted turn. */
++export function echoOfPrior(paragraph: string, priorText: string | null | undefined): number {
++  if (!priorText) return 0;
++  let worst = 0;
++  for (const prior of splitSentences(priorText)) {
++    if (prior.length < 8) continue;
++    worst = Math.max(worst, overlapRatio(paragraph, prior));
++  }
++  return worst;
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts
+@@ -0,0 +1,16 @@
++/** Route C language layer: turn a read-only fact skeleton into prose. */
++
++export * from './types';
++export { composeProse, validateScene, PROSE_STRATEGY_VERSION } from './compose';
++export { generateCandidate, CANDIDATE_STRATEGY_VERSION } from './candidate';
++export type {
++  CandidateIssue, CandidatePolicy, CandidateProgress, CandidateResult, GenerateCandidateArgs,
++} from './candidate';
++export { sceneFromCommitted } from './from-committed';
++export type { AdaptedScene, CommittedAdapterPolicy, CommittedFactLike, CommittedLike } from './from-committed';
++export { buildLicense, guardSentence, echoOfPrior } from './guard';
++export { composeConstrainedBeat, createBeatComposer, sceneFromBeatRequest } from './from-beat';
++export type {
++  BeatComposerLike, BeatDirectiveLike, BeatFactLike, ComposeBeatRequestLike, ComposeBeatResultLike,
++  SceneSkeletonLike,
++} from './from-beat';
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts
+@@ -0,0 +1,123 @@
++/** Small text utilities shared by the composer. No world semantics here. */
++
++export function hash32(text: string): number {
++  let value = 0x811c9dc5;
++  for (let index = 0; index < text.length; index += 1) {
++    value ^= text.charCodeAt(index);
++    value = Math.imul(value, 0x01000193) >>> 0;
++  }
++  return value >>> 0;
++}
++
++/** Deterministic 32-bit PRNG. A point always composes the same draft unless
++ * the caller changes the seed. */
++export function createRandom(seed: number): () => number {
++  let state = seed >>> 0;
++  return () => {
++    state = (state + 0x6d2b79f5) >>> 0;
++    let t = state;
++    t = Math.imul(t ^ (t >>> 15), t | 1);
++    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
++    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
++  };
++}
++
++export function clampInt(value: number, min: number, max: number): number {
++  if (!Number.isFinite(value)) return min;
++  return Math.min(max, Math.max(min, Math.round(value)));
++}
++
++export function charCount(text: string): number {
++  return [...text].length;
++}
++
++/** Split prose into sentences without breaking 「」 dialogue. */
++export function splitSentences(text: string): string[] {
++  const result: string[] = [];
++  let current = '';
++  let depth = 0;
++  for (const char of text) {
++    current += char;
++    if (char === '「') depth += 1;
++    else if (char === '」') depth = Math.max(0, depth - 1);
++    else if ((char === '。' || char === '！' || char === '？' || char === '…') && depth === 0) {
++      if (char === '…') {
++        const next = text[text.indexOf(current) + current.length];
++        if (next === '…') continue;
++      }
++      result.push(current.trim());
++      current = '';
++    }
++  }
++  if (current.trim()) result.push(current.trim());
++  return result;
++}
++
++export function stripQuotes(text: string): string {
++  return text
++    .trim()
++    .replace(/^[「『“"']+/, '')
++    .replace(/[」』”"']+$/, '')
++    .trim();
++}
++
++export function normalizeClause(text: string): string {
++  return stripQuotes(text).replace(/[。；;]+$/u, '').trim();
++}
++
++/** Character bigrams, used for echo detection. */
++export function bigrams(text: string): Set<string> {
++  const stripped = text.replace(/[\s，。！？、；：「」『』“”…—]/gu, '');
++  const result = new Set<string>();
++  for (let index = 0; index + 1 < stripped.length; index += 1) {
++    result.add(stripped.slice(index, index + 2));
++  }
++  return result;
++}
++
++export function overlapRatio(left: string, right: string): number {
++  const a = bigrams(left);
++  const b = bigrams(right);
++  if (!a.size || !b.size) return 0;
++  let shared = 0;
++  for (const item of a) if (b.has(item)) shared += 1;
++  return shared / Math.max(a.size, b.size);
++}
++
++export function paragraphStartsWith(paragraph: string, prefix: string): boolean {
++  return paragraph.trim().startsWith(prefix.trim());
++}
++
++export function firstClause(text: string): string {
++  const parts = text.split(/[，。；：]/u).map((part) => part.trim()).filter(Boolean);
++  return parts[0] ?? text.trim();
++}
++
++export function lastSentence(text: string): string {
++  const sentences = splitSentences(text);
++  return sentences[sentences.length - 1] ?? '';
++}
++
++/** A faithful clause may contain slot placeholders. Supported:
++ * {name} for the beat's actor, {actor:ID} for any cast member. */
++export function fillSlots(
++  template: string,
++  names: ReadonlyMap<string, string>,
++  actorId?: string,
++): string {
++  return template.replace(/\{(actor:([^}]+)|name)\}/gu, (match, token: string) => {
++    if (token === 'name') return actorId ? names.get(actorId) ?? match : match;
++    const id = token.slice('actor:'.length);
++    return names.get(id) ?? match;
++  });
++}
++
++export function ensurePeriod(text: string): string {
++  const trimmed = text.trim();
++  if (!trimmed) return '';
++  return /[。！？…」』”]$/u.test(trimmed) ? trimmed : `${trimmed}。`;
++}
++
++export function uniquePush<T>(list: T[], value: T): void {
++  if (!list.includes(value)) list.push(value);
++}
+
+diff --git a/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts
+new file mode 100644
+--- /dev/null
++++ b/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts
+@@ -0,0 +1,179 @@
++/** Input/output contract of the prose composer.
++ *
++ * The composer is the language layer of route C: lane 04 builds a read-only
++ * fact skeleton from the visible projection and committed changes; this module
++ * turns that skeleton into readable paragraphs. It never writes world state,
++ * never invents events and never needs a model call.
++ *
++ * Facts are supplied as structured beats (move/task/item/line/...) plus
++ * optional faithful `factText` clauses. The composer owns order, reference,
++ * rhythm, scene anchoring, dialogue spacing and continuity. Anything not in
++ * `scene` is unlicensed: no new props, weather, people, memories, clues or
++ * promises.
++ */
++
++export type ProseGender = 'male' | 'female' | 'unknown';
++
++export interface ProseActor {
++  id: string;
++  /** Display name. The composer never prints ids. */
++  name: string;
++  /** Optional; when omitted the composer repeats the name instead of guessing. */
++  gender?: ProseGender;
++  /** Explicit reference forms in preference order, e.g. ['她', '诺诺']. Only
++   * used after the first full-name mention. */
++  references?: string[];
++  /** Existing appearance details, licensed for physical description. */
++  appearance?: string[];
++  isProtagonist?: boolean;
++}
++
++export interface ProseLocation {
++  id?: string;
++  name: string;
++  parentName?: string | null;
++  /** Appearance details of this small location. Licensed verbatim. */
++  details?: string[];
++}
++
++export interface ProseItem {
++  id: string;
++  name: string;
++  /** Appearance details, licensed verbatim. */
++  details?: string[];
++  positionName?: string | null;
++}
++
++export type ProseBeat =
++  /** A scene detail that changed (or is newly visible). */
++  | { kind: 'scene'; detail: string; locationId?: string; factText?: string }
++  /** Explicit spatial move; direction is from -> to and must not reverse. */
++  | {
++    kind: 'move'; actorId: string; from: string; to: string; manner?: string; factText?: string;
++    /** Items move too; they are not cast members. */
++    entityKind?: 'character' | 'item';
++  }
++  /** An actor keeps their position while others move. */
++  | { kind: 'stay'; actorId: string; location?: string; factText?: string }
++  /** Leaves the visible scene; `to` is optional and may be a parent area. */
++  | { kind: 'leave'; actorId: string; to?: string; factText?: string }
++  /** Enters the visible scene without a known origin. */
++  | { kind: 'arrive'; actorId: string; location?: string; factText?: string }
++  /** Item appearance/state change. `detail` is the new licensed appearance. */
++  | {
++    kind: 'item'; itemId: string; change?: 'added' | 'removed' | 'modified';
++    detail?: string; container?: string; note?: string; discovered?: boolean; factText?: string;
++  }
++  /** A task (or subtask) reached `achieved`. `label` should be the short goal. */
++  | { kind: 'task'; actorId: string; label: string; scope?: 'main' | 'sub'; factText?: string }
++  /** A new task was recorded; it is not complete. */
++  | { kind: 'subtask'; actorId: string; goal: string; parentGoal?: string; factText?: string }
++  /** Personality change; `text` is the licensed new trait sentence. */
++  | { kind: 'personality'; actorId: string; text: string; factText?: string }
++  /** Appearance/state detail of a character, item or location. `subjectName`
++   * is used when the subject is not in the cast (an item or the room itself). */
++  | {
++    kind: 'appearance'; subjectName: string; text: string; entityKind?: 'character' | 'item' | 'location';
++    removed?: boolean; previous?: string; factText?: string;
++  }
++  /** Sanity change. Numbers are never printed as a status report. */
++  | { kind: 'sanity'; actorId: string; from: number; to: number; factText?: string }
++  /** A licensed action clause. `text` may use {name} / {actor:ID} slots. */
++  | { kind: 'action'; actorId: string; text: string }
++  /** Licensed dialogue. `text` is the spoken content, without 「」. */
++  | { kind: 'line'; speakerId: string; text: string; addresseeId?: string }
++  /** A beat where nobody answers or moves. */
++  | { kind: 'silence'; actorId?: string }
++  /** Elapsed time. `text` overrides the generated phrase. */
++  | { kind: 'time'; amount?: number; unit?: 'minute' | 'second' | 'hour' | 'day' | 'month' | 'year'; text?: string }
++  /** Explicitly nothing changed; used for no-change points. */
++  | { kind: 'noChange'; text?: string };
++
++export interface ProsePolicy {
++  /** Derived Q/A about a licensed change. Default true. Never adds new info. */
++  deriveDialogue?: boolean;
++  /** Allow unregistered micro-actions (a glance, a pause). Default true. */
++  allowMinorAction?: boolean;
++  /** Length floor; below it `accepted` is false. Default 90. */
++  minChars?: number;
++  /** Soft ceiling; paragraphs beyond it are dropped. Default 900. */
++  maxChars?: number;
++  /** Print the exact elapsed duration when a time beat exists. Default false. */
++  requireTime?: boolean;
++  /** Protagonist viewpoint by default. neutral = no inferred interiority. */
++  perspective?: 'protagonist' | 'neutral';
++  seed?: number;
++  /** Render only the supplied beats; no scene anchor, post-pass or paragraph
++   * merging. Used by lane 04's per-beat composer contract. */
++  beatOnly?: boolean;
++}
++
++export interface ProseScene {
++  worldId?: string;
++  pointId?: string;
++  protagonistId: string;
++  location: ProseLocation;
++  /** Changes to the location itself this turn, already projected. */
++  locationChange?: { added?: string[]; removed?: string[] };
++  parentLocation?: ProseLocation | null;
++  cast: ProseActor[];
++  items?: ProseItem[];
++  beats: ProseBeat[];
++  /** Previous accepted prose. Used only to avoid repeating its openings and
++   * sentences; facts already told there should not be supplied as beats. */
++  priorText?: string | null;
++  /** Short human labels for facts already told, to avoid restating them. */
++  toldFacts?: string[];
++  policy?: ProsePolicy;
++  seed?: number;
++}
++
++export type ProseIssueKind =
++  | 'beat_unrendered'
++  | 'fact_token_missing'
++  | 'direction_reversed'
++  | 'unlicensed_detail'
++  | 'unlicensed_past'
++  | 'unlicensed_promise'
++  | 'stock_phrase'
++  | 'echo_prior'
++  | 'too_short'
++  | 'unknown_reference'
++  | 'unmapped_fact'
++  | 'empty_scene';
++
++export interface ProseIssue {
++  kind: ProseIssueKind;
++  severity: 'hard' | 'soft';
++  detail: string;
++  sentence?: string;
++}
++
++export interface RenderedBeat {
++  beat: ProseBeat;
++  /** Index of the paragraph that carries this beat, or -1 if omitted. */
++  paragraph: number;
++  /** The exact sentence fragment used for the beat. */
++  sentence: string | null;
++}
++
++export interface ComposeTimings {
++  planMs: number;
++  composeMs: number;
++  verifyMs: number;
++  totalMs: number;
++}
++
++export interface ComposedProse {
++  text: string;
++  paragraphs: string[];
++  opening: string;
++  closing: string;
++  strategyVersion: string;
++  beats: RenderedBeat[];
++  derivedDialogue: string[];
++  issues: ProseIssue[];
++  /** Programmatic fact/guard verification. Human reading quality is separate. */
++  accepted: boolean;
++  timings: ComposeTimings;
++}
+
+diff --git a/frontend/src/lib/world-engine/local/game-model.ts b/frontend/src/lib/world-engine/local/game-model.ts
+index d7798f6..15d83a0 100644
+--- a/frontend/src/lib/world-engine/local/game-model.ts
++++ b/frontend/src/lib/world-engine/local/game-model.ts
+@@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
+ import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
+ import { taskOutputSchema } from '../runtime/output-schema';
+ import { createActionHandlers, type HandlerResult } from './semantics/actions';
++import { createNarrationRunner } from './narration-candidates/selection';
+ import { createSettlementHandlers, requireSettlementValue, continuationPolicy } from './semantics/settlement';
+ import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
+ 
+@@ -30,6 +31,11 @@ export interface GameModelOptions {
+   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
+    * 'instruct' states the task for an instruction-tuned narration model. */
+   narrationMode?: 'legacy' | 'instruct';
++  /** Internal narration candidate selection. `auto` only offers candidates
++   * whose real-model evidence is positive, so the shipped default changes
++   * nothing until one is accepted; `trained` enables the committed-fact
++   * beats candidate for evaluation runs. Never a player-visible option. */
++  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
+   /** Automatic rounds after one player action. Default 0: one action = one round. */
+   maxAutoContinuations?: number;
+   /** How many non-protagonist actors may open their own frozen group in one
+@@ -56,6 +62,8 @@ export class LocalGameModel implements WorldModelPort {
+   private lastResultsText = '';
+   private autoContinuations = 0;
+   private recentEvents: string[] = [];
++  private lastAcceptedNarration: string | null = null;
++  private readonly narrationRunner: ReturnType<typeof createNarrationRunner> | null;
+   private readonly settlement;
+   private readonly actionHandlers;
+ 
+@@ -63,6 +71,18 @@ export class LocalGameModel implements WorldModelPort {
+     this.engine = engine;
+     this.narrationEngine = options.narrationEngine ?? engine;
+     this.options = options;
++    // Internal selection only: with no product-default candidate,
++    // `generate()` returns `fallback` before a single candidate call, so
++    // enabling this option cannot add model work to a normal turn.
++    this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
++      ? null
++      : createNarrationRunner({
++        engine: this.narrationEngine,
++        candidate: options.narrationCandidate ?? 'auto',
++        temperature: options.narrationTemperature,
++        maxTokens: options.narrationMaxTokens,
++        timeoutMs: options.narrationTimeoutMs,
++      });
+     this.settlement = createSettlementHandlers({ engine, options: {
+       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
+       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
+@@ -263,6 +283,10 @@ export class LocalGameModel implements WorldModelPort {
+     if (!after) throw new Error('narration without after state');
+     const pointId = data.pointId ?? key;
+     const view = after.protagonistId;
++    if (this.narrationRunner) {
++      const adopted = await this.adoptNarrationCandidate(pointId, data.before ?? null, data.delta ?? {}, after);
++      if (adopted) return adopted;
++    }
+     const started = performance.now();
+     const before = data.before ?? null;
+     const delta = data.delta ?? {};
+@@ -346,6 +370,43 @@ export class LocalGameModel implements WorldModelPort {
+     return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
+   }
+ 
++  /** Candidate path. Only a verified scene (`kind: 'adopted'`) becomes this
++   * point's narration; every other outcome logs an internal reason and returns
++   * null, so the in-model writer below keeps producing the honestly-labelled
++   * fallback text the page already shows today. */
++  private async adoptNarrationCandidate(
++    pointId: Id,
++    before: WorldState | null,
++    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
++    after: WorldState,
++  ): Promise<Generated | null> {
++    if (!this.narrationRunner) return null;
++    const result = await this.narrationRunner.generate({
++      pointId,
++      before,
++      delta,
++      after,
++      playerInput: this.lastPlayerInput,
++      settledResults: this.lastResultsText ? [this.lastResultsText] : [],
++      priorText: this.lastAcceptedNarration,
++      recentEvents: this.recentEvents,
++    }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
++    if (result.kind !== 'adopted') {
++      console.info('[narration] candidate fallback', result.reason);
++      return null;
++    }
++    this.lastAcceptedNarration = result.text;
++    this.options.onTask?.('narration', pointId, {
++      ms: result.timings.totalMs,
++      fallback: result.grade === 'program',
++      ...(result.grade === 'program' ? { error: '程序按已结算事实成文' } : {}),
++      raw: result.text,
++      promptChars: result.promptChars,
++    });
++    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });
++    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
++  }
++
+   private fallback(task: ModelTask, key: Id): Json {
+     if (task === 'action') return { kind: 'skip' };
+     if (task === 'targets') return { targets: [] };

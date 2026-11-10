@@ -242,6 +242,8 @@ describe('constrained (C route) candidate', () => {
       expect(result.grade).toBe('program');
       expect(result.text.length).toBeGreaterThan(0);
       expect(result.text).toContain('地窖');
+      // The product route uses lane 07's composer, not 04's flat realizer.
+      expect(String(result.detail?.composers ?? '')).toContain('prose-composer');
     }
   });
 

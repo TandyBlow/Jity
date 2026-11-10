@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-10T08:21:15.185Z",
+  "updatedAt": "2026-11-10T08:37:17.209Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch",
-      "patchSha256": "fa6fe7bf242ccb0d88103185eff2bd980cdc104fdb3d3081149b5c0e37374409",
-      "patchBytes": 48986,
-      "generatedAt": "2026-11-10T08:21:15.182Z",
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch",
+      "patchSha256": "b57a30a770992cddf343368448a1dbc521ac46968b752b318002271d160221d0",
+      "patchBytes": 163313,
+      "generatedAt": "2026-11-10T08:37:17.208Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
@@ -24,7 +24,7 @@
       "additions": [
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts",
-          "sha256": "a1e5ed249b4073e30de4136f276249dfddf5d34299fd79ccb870ce90cbe30bda"
+          "sha256": "cca14490f0c8e41c66d3c837c6cb607734ea70dc3b075fad5a2f4add3dab44d5"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts",
@@ -45,8 +45,56 @@
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts",
           "sha256": "3bd9d1563680a022cfdb9ef30b05f4cba90baa037d5c3a98bc2c821a2df659fb"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts",
+          "sha256": "566640e49dc8a5251bb1ba4995b6a6106d4c670fbc78a8bec0bf44cc9d9cac67"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts",
+          "sha256": "42d7bd9de7f9d08559a520c3695f0f5a9c4323c26b0430d512ff05ded24d08ea"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts",
+          "sha256": "c01158dfa7384f04cdcba627fbcbe283409e030bf4444ba55c69a72e6329425a"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts",
+          "sha256": "7ed7e3efc5f294f4c9b0bd99a53b71cd90a87f3c3114ea7c8074648401a932aa"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts",
+          "sha256": "2f4e8da9e8f8d90819f00460084a7feb8e32aec411a1cb2d32523e0fb95bcac9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+          "sha256": "63bd10bfbb2a6c929d63adfa1c0c03f5393b744b1d124b59314521f9862ab50c"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts",
+          "sha256": "5d4d426a334907cd495f214533aa5e49da4f7cec44095f65a016198cb95dcb29"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts",
+          "sha256": "5dfdf4d6f2719d5dc125b4f626aa63bb475f8d58f622f6e9fed978357a6ddcc9"
         }
       ],
+      "vendored": {
+        "proseComposer": {
+          "source": "goal/local-07-sync @ 69915b49",
+          "note": "runtime files only (no tests); the constrained adapter injects createBeatComposer() for the program route",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts"
+          ]
+        }
+      },
       "edits": [
         "frontend/src/lib/world-engine/local/game-model.ts"
       ],
@@ -195,6 +243,18 @@
         }
       ],
       "retiredAt": "2026-11-10T08:21:15.185Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch",
+      "patchSha256": "fa6fe7bf242ccb0d88103185eff2bd980cdc104fdb3d3081149b5c0e37374409",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:29:56.368Z",
       "reason": "superseded"
     }
   ]
