@@ -143,8 +143,9 @@ def main() -> int:
     parser.add_argument("--out", type=pathlib.Path, default=None)
     parser.add_argument("--load-timeout", type=float, default=600.0)
     parser.add_argument("--case-timeout", type=float, default=600.0)
-    parser.add_argument("--template-kwargs", default="{}",
-                        help="JSON for llama-server chat_template_kwargs, e.g. {\"enable_thinking\": false}")
+    parser.add_argument("--template-kwargs", default=None,
+                        help="JSON for llama-server chat_template_kwargs; default: the candidate "
+                             "row's chatTemplateKwargs (Hunyuan/Qwen3.5 need enable_thinking=false)")
     parser.add_argument("--allow-provisional", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int, default=0, help="debug only: first N prompts")
@@ -170,6 +171,8 @@ def main() -> int:
         "backend": "llama-server --jinja (the GGUF's own chat template)",
         "ngl": args.ngl,
         "context": args.context,
+        "templateKwargs": (json.loads(args.template_kwargs) if args.template_kwargs is not None
+                           else (row or {}).get("chatTemplateKwargs") or {}),
         "note": "This lane never runs this: lane 10 executes the HPC batch, lane 09 runs the browser acceptance.",
     }
     if args.dry_run:
@@ -184,7 +187,8 @@ def main() -> int:
     if args.limit:
         prompts = prompts[: args.limit]
     sampling = prompt_manifest["sampling"]
-    template_kwargs = json.loads(args.template_kwargs or "{}")
+    template_kwargs = (json.loads(args.template_kwargs) if args.template_kwargs is not None
+                       else (row or {}).get("chatTemplateKwargs") or {})
 
     model_sha = sha256_file(model_path)
     if args.expect_sha256 and model_sha.lower() != args.expect_sha256.lower():
@@ -280,6 +284,8 @@ def main() -> int:
             "loadSeconds": load_seconds,
             "ngl": args.ngl,
             "context": args.context,
+        "templateKwargs": (json.loads(args.template_kwargs) if args.template_kwargs is not None
+                           else (row or {}).get("chatTemplateKwargs") or {}),
             "threads": args.threads or None,
             "caseCount": len(results),
             "completed": sum(1 for r in results if r["httpStatus"] == 200 and (r["text"] or "").strip()),
