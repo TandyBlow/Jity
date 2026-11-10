@@ -126,4 +126,74 @@ describe('product wiring survives a reload only with browser storage', () => {
     expect(head).toMatchObject({ worldId: 'w1', headSnapshotId: 'snap-9', revision: 4 });
     expect(storage.dump()).toEqual({});
   });
+
+  it('no default product call writes the store or replaces local history', async () => {
+    const store = typedStore();
+    store.records.set('w1', { turn: 1, commands: ['a', 'b'], narrations: { p1: 'x', p2: 'y' } });
+    let writes = 0;
+    const originalSave = store.save.bind(store);
+    store.save = async (worldId: string, snapshot: { turn: number }) => {
+      writes += 1;
+      return originalSave(worldId, snapshot);
+    };
+    let fetches = 0;
+    const fetching = (async () => {
+      fetches += 1;
+      throw new TypeError('offline');
+    }) as unknown as typeof fetch;
+    const sync = createProductSync<{ turn: number }>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://127.0.0.1:9/local-progress',
+      fetchImpl: fetching,
+      sleep: async () => undefined,
+    });
+
+    // Every default call: save/push/flush/status/restore/choose.
+    await sync.save({ turn: 2 }, { requestId: 'inv-1' });
+    await sync.push({ turn: 2 }, { requestId: 'inv-2' });
+    await sync.flush();
+    await sync.status();
+    const restored = await sync.restore();
+    expect(restored.source).toBe('local');
+    expect(restored.snapshot).toEqual({ turn: 1, commands: ['a', 'b'], narrations: { p1: 'x', p2: 'y' } });
+    const beforeFetches = fetches;
+    expect(writes).toBe(0);
+    expect(store.records.get('w1')).toEqual({ turn: 1, commands: ['a', 'b'], narrations: { p1: 'x', p2: 'y' } });
+
+    // A local save means restore must not go to the network at all: an older
+    // remote copy can never replace newer local history.
+    expect(fetches).toBe(beforeFetches);
+  });
+
+  it('restore still reaches the remote when there is no local save', async () => {
+    const store = typedStore();
+    let fetches = 0;
+    const serving = (async (input: RequestInfo | URL) => {
+      fetches += 1;
+      const url = new URL(String(input));
+      if (url.pathname.endsWith('/head')) {
+        return new Response(JSON.stringify({ worldId: 'w1', headSnapshotId: 'snap-1', revision: 2 }),
+          { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return new Response(JSON.stringify({
+        snapshotId: 'snap-1', worldId: 'w1', parentSnapshotIds: [], revision: 2,
+        contentDigest: 'd', sizeBytes: 10, createdAt: '2026-01-01T00:00:00Z',
+        payload: { turn: 7, commands: ['远程历史'] },
+      }), { status: 200, headers: { 'content-type': 'application/json' } });
+    }) as unknown as typeof fetch;
+    const sync = createProductSync<{ turn: number }>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test/local-progress',
+      fetchImpl: serving,
+      sleep: async () => undefined,
+    });
+    const restored = await sync.restore();
+    expect(restored.source).toBe('remote');
+    expect(restored.snapshot).toEqual({ turn: 7, commands: ['远程历史'] });
+    expect(fetches).toBe(2);
+    // Default restore does not write the session-owned store either.
+    expect(store.records.get('w1')).toBeUndefined();
+  });
 });
