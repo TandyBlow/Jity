@@ -4,7 +4,7 @@
   "mode": "thinking disabled for checker and generation (proxy)",
   "budgetCny": 20.0,
   "guardCny": 18.5,
-  "estimatedSpentCny": 0.643709,
+  "estimatedSpentCny": 0.650062,
   "verification": {
     "calls": 3,
     "failedHttp400": 1,
@@ -16,14 +16,14 @@
   },
   "ledger": {
     "api_checker": {
-      "calls": 152,
-      "prompt": 143545,
-      "completion": 55159,
-      "total": 198704,
-      "cny": 0.623103,
-      "ok": 151,
+      "calls": 155,
+      "prompt": 146383,
+      "completion": 55941,
+      "total": 202324,
+      "cny": 0.629456,
+      "ok": 154,
       "errors": 1,
-      "latencyP50Ms": 1758,
+      "latencyP50Ms": 1749,
       "latencyP95Ms": 3935
     },
     "natural_generation": {
@@ -39,11 +39,11 @@
     }
   },
   "total": {
-    "calls": 172,
-    "prompt": 149727,
-    "completion": 56032,
-    "total": 205759,
-    "cny": 0.643709
+    "calls": 175,
+    "prompt": 152565,
+    "completion": 56814,
+    "total": 209379,
+    "cny": 0.650062
   },
-  "note": "CNY is a conservative estimate from published peak USD prices and 7.1 CNY/USD, not a provider invoice. Includes 28 calls from an aborted rerun whose outputs were not used in metrics."
+  "note": "CNY is a conservative estimate from published peak USD prices and 7.1 CNY/USD, not a provider invoice. Includes 28 calls from an aborted rerun and 3 current-data semantic spot checks."
 }

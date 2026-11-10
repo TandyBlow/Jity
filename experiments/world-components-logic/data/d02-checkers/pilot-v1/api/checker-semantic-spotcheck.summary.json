@@ -1,0 +1,72 @@
+{
+  "schema": "jity-d02-api-checker-run-v1",
+  "requests": 3,
+  "parsed": 3,
+  "exactDecision": 0,
+  "falseAccepts": 1,
+  "falseAcceptIds": [
+    "archive-cabinet:role"
+  ],
+  "spentCny": 0.650062,
+  "usage": {
+    "promptTokens": 2838,
+    "completionTokens": 782,
+    "totalTokens": 3620
+  },
+  "latencyMs": [
+    1495,
+    1577,
+    1657
+  ],
+  "results": [
+    {
+      "sampleId": "harbor-key:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1495
+    },
+    {
+      "sampleId": "archive-cabinet:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1577
+    },
+    {
+      "sampleId": "signal-radio:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1657
+    }
+  ]
+}

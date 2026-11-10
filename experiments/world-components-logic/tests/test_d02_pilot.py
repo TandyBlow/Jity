@@ -73,6 +73,9 @@ class PilotDataTests(unittest.TestCase):
         self.assertEqual(self.manifest['sealedUse'],
                          'opened_by_pilot_api_proxy_not_reusable_as_sealed_test')
         self.assertFalse(self.manifest['trainingAuthorized'])
+        self.assertEqual(self.manifest['assistantReview']['status'], 'completed')
+        self.assertEqual(self.manifest['assistantReview']['reviewedSamples'], 120)
+        self.assertEqual(self.manifest['assistantReview']['humanReview'], 'pending')
 
 
 if __name__ == '__main__':
