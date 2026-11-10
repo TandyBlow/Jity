@@ -6,15 +6,15 @@
 
 ## 本轮实际交付
 
-1. **官方来源与文件证据**：`experiments/narration-model-search/sources/capture_hf.py` 抓 7 个候选的 HF API、模型卡、config、tokenizer_config（含 chat template）、generation_config、LICENSE；`sources/hf/capture.json` 记录每个 URL、pinned revision、字节数、sha256；GGUF 文件记录 size + LFS sha256。
-2. **候选登记与预筛**：`models/candidates.json` 由抓取证据 + 本地清单 + wllama wasm 架构表生成。批次 1 四型：Qwen2.5-1.5B-Instruct、InternLM2.5-1.8B-Chat、GLM-Edge-1.5B-Chat、Hunyuan-1.8B-Instruct；Gemma-3-1B gated 拿不到模板，MiniCPM5-2B 1.56 GB 超门，MiniCPM-2B 第三方 1.73 GB 超门。基线 `qwen3-1.7b-instruct` 本地哈希等于 unsloth LFS 哈希；产品 LoRA 只读复用。
+1. **官方来源与文件证据**：`experiments/narration-model-search/sources/capture_hf.py` 抓 8 个候选的 HF API、模型卡、config、tokenizer_config（含 chat template）、generation_config、LICENSE；`sources/hf/capture.json` 记录每个 URL、pinned revision、字节数、sha256；GGUF 文件记录 size + LFS sha256。
+2. **候选登记与预筛**：`models/candidates.json` 由抓取证据 + 本地清单 + wllama wasm 架构表生成。批次 1 五型：Qwen2.5-1.5B-Instruct、InternLM2.5-1.8B-Chat、GLM-Edge-1.5B-Chat、Hunyuan-1.8B-Instruct、Qwen3.5-2B（GGUF 头为 `qwen35`，Apache-2.0，unsloth 第三方 Q4_K_M，1.28 GB）；Gemma-3-1B gated 拿不到模板，MiniCPM5-2B 1.56 GB 超门，MiniCPM-2B 第三方 1.73 GB 超门。基线 `qwen3-1.7b-instruct` 本地哈希等于 unsloth LFS 哈希；产品 LoRA 只读复用。
 3. **GGUF 算子证据工具**：`src/gguf_probe.py` 不加载权重读架构、量化、tensor 类型、模板 sha256、词表、上下文、参数量；`src/remote_gguf_head.py` 用 HTTP Range 从 pinned revision 只读文件头（8–16 MB）拿到真实架构/量化/模板，不下载整文件。实测：GLM-Edge 的 GGUF 架构是 `chatglm`（不是 glm4），Hunyuan 是 `hunyuan-dense` 且模板要求 `enable_thinking=false`；Qwen2.5 的 GGUF 模板与 base tokenizer_config 不同。`src/preview_templates.py` 再用 Jinja2 预演五个模板，确认冻结的 system+user 能渲染出完整 user 和 assistant 开头（预览非权威，HPC/09 为准）。`src/wllama_support.py` 从实际 `wllama.wasm` 提取 156 个 `llama_model_*` 架构（含 qwen2/internlm2/glm4/qwen35/hunyuan_dense/gemma3/minicpm），并明确“存在架构符号只算必要证据，真实加载由 preflight/09 证明”。
 4. **冻结提示词**：`src/build_prompts.py` 校验 01 的 canonical 开发包（manifest/cases/rubric 三个哈希 + 每例 inputSha256），用训练同款 `yuyan-prose-result-v2` 序列化，空白按浏览器路径删除并记账，套 10 的 `chatml-instruct-v1` system/user。当前冻结 12/15 子集（`evidence/prompts-dev-v1/`，prompts sha256 `70475f91…`），三个无法序列化的 case 已单独报告 01（`results/11-model-search/requests/01-dev-package-canonical-delta.json`），并用 `src/propose_case_fix.py` 在内存副本上验证了最小改写可行（`results/11-model-search/requests/01-case-fix-proposal.json`），没有改 01 的包。
 5. **批量执行器**：`src/screen.py` 启一个 `llama-server --jinja` 复用给全部 case；每个 case 保存请求体、原始响应、usage/timings、wall ms、finish_reason；每个模型保存 load 秒数、命令、server log tail、模型 sha256。**本线不运行它**；只在 10 的 HPC 上跑。
 6. **机械汇总与复核输入**：`src/collect.py` 输出字数/句数/段数/句内重复/子句重复/耗时/tok/s，明确不产出 pass/fail（事实与文风由 01 判）；`src/make_review_input.py` 把一次 run 按 case 拼成 01 的 `NARRATION_QUALITY_ROWS` JSONL，拒绝缺例/多例/inputSha256 不一致，声明的 3 个排除例单列。
 7. **HPC 请求**：`results/product/hpc-requests/11-model-search-preflight-001.json`（下载/哈希/GGUF 元数据/加载冒烟，明确非质量）；`11-model-search-quality-001.json`（`batch-2-subset12`，`readyToSubmit:true`，12/15 声明子集，显式不能声称完整 10/15 门）。
 8. **运行时预算**：按 08 的 Blob 总容量约 2 GB，把候选 + 页面语义模型（Qwen3-0.6B，396,705,472 B）一起检查；五个候选 1.38–1.68 GB（含语义模型）全通过（`models/candidates.json` 的 `runtimeBudget`）。
-9. **预注册**：`preregistration.draft.json` 冻结比较条件、基线、RUBRIC §6 晋级门（无硬错误 ≥10/15、文风不合格 ≤3、0 例无据实体、相对 Qwen3-1.7B 至少 2 例 fail→pass）、失败退出、资源估计。包/子集 pin 后升为 `preregistration.v1.json`。
+9. **预注册**：`preregistration.draft.json` 冻结比较条件、基线、RUBRIC §6 晋级门（无硬错误 ≥10/15、文风不合格 ≤3、0 例无据实体、相对 Qwen3-1.7B 至少 2 例 fail→pass）、失败退出、资源估计。包/子集 pin 后升为 `preregistration.v1.json`；加入 Qwen3.5-2B 臂后升为 `preregistration.v2.json`（`batch-2-subset12`，仍只声明 12/15 子集，没有模型输出前完成）。
 
 ## 导出 API（脚本 CLI，不是 TS 模块）
 
@@ -26,7 +26,7 @@
 | `src/make_review_input.py` | cases + run + prompt manifest | `review-rows.jsonl` + `review.manifest.json`（01 复核输入） | 11/01 |
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
-| `src/selftest.py` | 无 | 8 项 PASS/FAIL | 11/06 复核 |
+| `src/selftest.py` | 无 | 11 项 PASS/FAIL | 11/06 复核 |
 
 示例：
 
@@ -50,7 +50,7 @@ python -X utf8 src/screen.py \
 - 没有候选生成结果；没有质量、速度或"更好"的结论。
 - 12/15 子集不是完整晋级门；三个 case 的缺陷在 01 手里。**不能用 12 例结果声称 10/15 门通过**。
 - 离线模板由 llama-server 的 minja 渲染；wllama wasm 自带模板引擎的具体版本未固定。浏览器端最终以 09 的真实运行为准，preflight 只证明加载与基本生成。
-- 许可只是对原文的阅读：InternLM（申请免费商用）、GLM-Edge（登记+署名）、Hunyuan（地域限制）进产品前需要决定；Qwen2.5 是 Apache-2.0。
+- 许可只是对原文的阅读：InternLM（申请免费商用）、GLM-Edge（登记+署名）、Hunyuan（地域限制）进产品前需要决定；Qwen2.5 和 Qwen3.5 是 Apache-2.0。Qwen3.5-2B 的基座是多模态模型，这里只验证文本路径；GGUF 来自 unsloth 第三方量化。
 - 页面/运行时/生成策略/训练文件都没改。
 
 ## 主 agent 需要做的接线
