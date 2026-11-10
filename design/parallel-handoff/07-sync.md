@@ -190,6 +190,22 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 - 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
   1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
 
+### 分叉：两台设备各走一步，重连冲突，玩家显式保留（2026-11-10）
+
+`frontend/scripts/parallel-sync/fork-session-check.ts`，用 06 的真实 session 快照和真实服务：
+
+1. A 打第 1 回合并上传；
+2. B 恢复后打不同的第 2 回合并上传，激活头变成 B；
+3. A 没看到 B，离线打自己的第 2 回合，重连 `flush()`：得到 1 个冲突、0 次上传，
+   `status()` 为 `diverged`，冲突里列出 B 的分支；
+4. 玩家选 `keep-local-fork`：A 的副本成为新头，B 的副本仍可读且内容和 B 的
+   `commands` 一致，两份没有被合并或覆盖。
+
+顺带修了一个会误导页面的行为：`status()` 原来只看“上次已知 head”和远端，离线存了
+还没上传时也会报 `in-sync`/`remote-ahead`，页面就不会弹出选择。现在它把队列算进去，
+同一 head 下有待传就是 `local-ahead`，远端也动了就是 `diverged`。这是只读判断，不写
+任何存储，也不替玩家选。
+
 ### 两台设备、真实服务、06 的 session（2026-11-10）
 
 `frontend/scripts/parallel-sync/two-device-session-check.ts`：A 用 06 的 session 打完一回合
