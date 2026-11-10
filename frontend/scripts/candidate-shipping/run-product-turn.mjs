@@ -31,13 +31,20 @@ const flag = (name, fallback) => {
 const base = flag('--base', 'http://127.0.0.1:3177');
 const candidate = flag('--candidate', 'trained');
 const input = flag('--input', '我沿着服务巷的低墙走到器材棚门口，先看领用台上有谁。');
+// Optional several inputs: the product bar is continuous turns, not one turn.
+// `--turns "a||b"` runs them in order on the same page and session.
+const turns = (() => {
+  const value = flag('--turns', null);
+  const list = value ? value.split('||').map((entry) => entry.trim()).filter(Boolean) : [input];
+  return list.length ? list : [input];
+})();
 const out = resolve(flag('--out', resolve(here, '../../../results/06-recovery/product-turn.json')));
 const timeoutMs = Number(flag('--timeout-ms', '1_200_000'));
 
 const evidence = {
   status: 'IN_PROGRESS',
   recordedAt: new Date().toISOString(),
-  base, candidate, input,
+  base, candidate, input, turns,
   console: [], requests: [],
 };
 
@@ -76,29 +83,46 @@ try {
   await page.waitForFunction(() => /本地世界已就绪|已恢复本地存档/.test(document.body.innerText), null, { timeout: 900_000 });
   evidence.readyMs = Date.now() - started;
   evidence.readyText = (await page.evaluate(() => document.body.innerText)).slice(0, 400);
-  const before = await page.evaluate(() => document.body.innerText);
-  const submitStarted = Date.now();
-  await page.fill('textarea', input);
-  await page.click('button:has-text("行动")');
-  await page.waitForFunction(
-    (previous) => {
-      const text = document.body.innerText;
-      return text !== previous && /本轮完成|本轮已交还|本轮停止|Error|加载失败/.test(text) && !/结算中…/.test(text);
-    },
-    before,
-    { timeout: timeoutMs },
-  );
-  evidence.turnMs = Date.now() - submitStarted;
-  const after = await page.evaluate(() => document.body.innerText);
-  const body = after.split('Ctrl/⌘ + Enter 提交')[0];
-  const entry = body.split(/行动[\s\S]*?\n/).pop() ?? body;
-  evidence.shownText = entry.trim().slice(-1600);
-  evidence.note = /正文已按已结算事实修正|叙事/.exec(after)?.[0] ?? null;
   evidence.debugPresent = await page.evaluate(() => Boolean(globalThis.__worldDebug));
-  evidence.snapshotBytes = await page.evaluate(() => (localStorage.getItem('jity.world.local.snapshot.v1') ?? '').length);
-  evidence.sidePanel = body.split('本地存档')[1]?.slice(0, 200) ?? null;
-  evidence.status = /Error/.test(after) ? 'FAILED_PAGE' : 'COMPLETED';
-  if (/本轮已交还/.test(after)) evidence.stopReason = 'handback';
+  evidence.turnResults = [];
+  for (const turnInput of turns) {
+    const before = await page.evaluate(() => document.body.innerText);
+    const consoleStart = evidence.console.length;
+    const submitStarted = Date.now();
+    await page.fill('textarea', turnInput);
+    await page.click('button:has-text("行动")');
+    await page.waitForFunction(
+      (previous) => {
+        const text = document.body.innerText;
+        return text !== previous && /本轮完成|本轮已交还|本轮停止|Error|加载失败/.test(text) && !/结算中…/.test(text);
+      },
+      before,
+      { timeout: timeoutMs },
+    );
+    const ms = Date.now() - submitStarted;
+    const after = await page.evaluate(() => document.body.innerText);
+    const body = after.split('Ctrl/⌘ + Enter 提交')[0];
+    const entry = body.split(/行动[\s\S]*?\n/).pop() ?? body;
+    evidence.turnResults.push({
+      input: turnInput,
+      turnMs: ms,
+      shownText: entry.trim().slice(-1600),
+      note: /正文已按已结算事实修正|叙事/.exec(after)?.[0] ?? null,
+      console: evidence.console.slice(consoleStart),
+      snapshotBytes: await page.evaluate(() => (localStorage.getItem('jity.world.local.snapshot.v1') ?? '').length),
+      sidePanel: body.split('本地存档')[1]?.slice(0, 200) ?? null,
+      handback: /本轮已交还/.test(after),
+      failed: /Error|加载失败/.test(after),
+    });
+  }
+  const last = evidence.turnResults.at(-1);
+  evidence.turnMs = evidence.turnResults.reduce((sum, entry) => sum + entry.turnMs, 0);
+  evidence.shownText = last.shownText;
+  evidence.note = last.note;
+  evidence.snapshotBytes = last.snapshotBytes;
+  evidence.sidePanel = last.sidePanel;
+  evidence.status = evidence.turnResults.some((entry) => entry.failed) ? 'FAILED_PAGE' : 'COMPLETED';
+  if (last.handback) evidence.stopReason = 'handback';
 } catch (error) {
   evidence.status = 'FAILED';
   evidence.error = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
@@ -109,6 +133,7 @@ try {
   writeFileSync(out, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({
     status: evidence.status, readyMs: evidence.readyMs, turnMs: evidence.turnMs,
+    turns: evidence.turnResults?.map((entry) => ({ ms: entry.turnMs, note: entry.note, handback: entry.handback, failed: entry.failed })),
     crossOriginIsolated: evidence.crossOriginIsolated, debugPresent: evidence.debugPresent,
     note: evidence.note, console: evidence.console.slice(-12),
     shownText: evidence.shownText?.slice(0, 300), error: evidence.error, out,
