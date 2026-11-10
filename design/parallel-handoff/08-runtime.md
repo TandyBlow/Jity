@@ -575,3 +575,15 @@ cancel (which still stops in ~5 ms and keeps the model loaded).
   truncates the prompt itself and leaves overflow handling to llama.cpp. The
   real runs only produced `finishReason: 'stop'`; length/missing-finish
   rejection is covered by the fake-runner tests.
+
+## 2026-11-10 17:17–18:22Z：hard-stop 重载、产品回合和 compact 构建的核对
+
+这一段是审查后的增量证据，不改变上面的运行器结论，也不是产品验收。
+
+- **硬停止后的缓存重载已由真实浏览器证明 PASS。** `results/product/evidence/08-hard-stop-recheck.json`（09 执行，Edge 157，NVIDIA/lovelace）：`hardStopped=true`，停止 1.435 ms，`needsReload=true`；重载 `loadCount 1→2`，worker 创建 2、退出 1；第二次 `fromCache=true`、`fetchMs=0`、compile 34.79 s；下一次生成 9 字。旧 `TypeError: Failed to fetch` 是历史记录，不再复现。这个证明是**同页**引擎重载；整页刷新会重新 fetch 两个权重（见下），两者不要混写。
+- **08 load-only / 94.9 s / 59.4 s 都是单配置测量。** 1.7B 的 fetch 76.6 + compile 17.3 = 94.9 s 是一次指定配置；硬停止冷加载 47.5 + 11.9 = 59.4 s；产品页 0.6B/1.5B 的 per-engine 加载在 16:46、17:01、17:37、18:12 分别为 19.9/31.0、20.8/37.0、38.4/50.4、21.3/40.3 s，fetch 和 compile 都变。compile 17.3 s 不是所有模型的常数（1.5B 曾 25.1/10.6/9.5 s；0.6B 曾 22.0/6.8 s）。
+- **0b69（17:37）**：page 0695/HEAD 0b69，ready 146.1 s（root 106.1 s program fallback）；t1 330 s 超时，updates 133.6 s（position 11.7/appearance 27.8/tasks 40.5/subtasks 18.9/personality 34.6）；第一点叙事 56.9 s 被 `wrong_person,low_support` 拒绝；nono 三次 `action_is_task_goal` repair_failed。回合后 reload 74.8 s ready，但恢复后 history 0→1、`committedEntries=1`、headPoint point_round_3_1，而回合记录 acceptedMs=null/history_delta=0；这是**未 accepted 的草稿跨刷新变成 committed** 的疑点，不能当干净的恢复。09 30b 后来把该 run 标为 FAILED。
+- **cf3d（18:12）**：首个含 04 compact answers 的构建（page 8a50/HEAD cf3d，BUILD czUvXPRhvpdn1k2wYZd_F）。ready 109.7 s（root 88.6 s program fallback）；semantic 21.3 s = 14.5 + 6.8，narration 40.3 s = 30.8 + 9.5；各一次 load/一个 worker；22 semantic / 4 narration generations。t1 的 updates 两组各 76.1 s（group_10 position 9.8 + appearance 25.8 + tasks 21.0 + subtasks 17.9 + personality 0；group_12 类似），比 0b69 的单组 133.6 s 降约 43%；tasks 40.5→21.0，personality 34.6→0。自动第二组仍把回合推到 303 s；页面 295 s deadline 后 world_complete。叙事仍 `no_product_candidate`，in-model 被 `added_event,ungrounded,low_support` 拒绝，point 58.0 s 是 **program fallback**，source=program，acceptedMs=null；不是 accepted model 正文。03 fe4 后 nono actions fallback=false，repair loop 已消失。
+- **cf3d 回合后整页 reload** 98.1 s ready，`historyCountBefore=1`、`historyCountAfter=1`、`historyStable=true`，entries 1/1，pageSaysRestored/overallRestored；t1 的 program fallback 已作为 program 历史存在，刷新稳定。它证明 program 来源可以被持久化并稳定恢复，**没有**证明 accepted model 正文合法；整页刷新仍重新 fetch 两个权重。
+- **04 的 compact 是真实提速，但还不是 acceptance**：task 40.5→21.0、personality 34.6→0；appearance 25.8/subtasks 17.9 仍是下一杠杆。04 的共享前缀没有命中：cf3d 末次 semantic 1,031 prompt/0 cached，0b69 的 4,026/0、3,740/0 也一样；不要把 `cache_prompt` 写成已复用。
+- **仍然缺**：accepted model 正文的 legal turn、10 回合（含 t6 后刷新）、20 回合 worker/JS heap 增长、真正的玩家取消产品路径，以及连续回合下的单次 load 复用。当前硬停止/缓存重载、流式、prefill/decode 和单回合 load 证据是可用的，但不能替代这些。
