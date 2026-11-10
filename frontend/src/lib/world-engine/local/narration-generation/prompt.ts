@@ -90,7 +90,15 @@ export function composeNarrationPrompt(args: ComposePromptArgs, policy: Narratio
   if (args.instruction?.trim()) blocks.push(args.instruction.trim());
   // Whole-scene mode gets the contract by default; beat mode builds its own
   // per-beat prompt (see beats.ts) and never comes through here.
-  if (policy.mode !== 'beats' && policy.writingContract !== false && !args.previousDraft?.trim()) {
+  // prose-facts already carries its own contract in renderProseFactsPrompt. Adding
+  // this one as well produced two contracts in one prompt: the scene prompt
+  // allows micro-actions, breathing and dialogue, while this one forbids unstated
+  // postures, and it asked for «约200字，写成一段» after the scene prompt had
+  // asked for a different paragraph count. The pronoun and background rules were
+  // printed twice. One contract, owned by the prompt shape.
+  const ownsWritingContract = policy.promptShape === 'prose-facts';
+  if (policy.mode !== 'beats' && policy.writingContract !== false && !args.previousDraft?.trim()
+    && !ownsWritingContract) {
     blocks.push(writingContract(policy));
   }
   if (args.previousDraft?.trim()) {

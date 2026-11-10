@@ -464,8 +464,8 @@ describe('product regressions: the player action the state has no row for', () =
       },
     });
     const prompt = engine.calls[0].prompt;
-    expect(prompt).toContain('【玩家这一回合做的事】路明非沿着服务巷往里走，先看清墙上的演习规则牌。');
-    expect(prompt).toContain('至少写出他做了这件事');
+    expect(prompt).toContain('【玩家这一回合的指令】路明非沿着服务巷往里走，先看清墙上的演习规则牌。');
+    expect(prompt).toContain('结果只按上面已结算的事实写，没有结算成功的事不要写成成功');
   });
 });
 
@@ -494,5 +494,36 @@ describe('product regressions: the declared action is missing from the prose', (
     });
     const notes = result.rawAttempts.flatMap((attempt) => attempt.issues);
     expect(notes.some((issue) => /declared action is not written/u.test(issue.detail ?? ''))).toBe(false);
+  });
+});
+
+describe('product regressions: one writing contract in prose-facts', () => {
+  // quiet-minute-6's attempts[0].prompt carried the scene contract (micro-actions,
+  // dialogue, feelings allowed) and then a second contract that forbade unstated
+  // postures, asked for «约200字，写成一段» after a different paragraph count, and
+  // repeated the pronoun and background rules.
+  test('composed prompt has the scene contract only', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非站在西侧服务巷。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: { ...quietPolicy, promptShape: 'prose-facts' },
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('细微动作、神态、对话、环境氛围都可以写');
+    expect(prompt).not.toContain('【写法】');
+    expect(prompt).not.toContain('不要写上面没有给出的姿势');
+    // The pronoun rule appears once, not twice.
+    const pronoun = prompt.match(/称呼人物时用名字或省略主语/gu) ?? [];
+    expect(pronoun).toHaveLength(1);
+  });
+
+  test('the serialized shape still gets the writing contract', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非站在西侧服务巷。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: `${quietInput}
+【正文】`, priorText: null,
+      policy: { ...quietPolicy, writingContract: true },
+    });
+    expect(engine.calls[0].prompt).toContain('【写法】');
   });
 });

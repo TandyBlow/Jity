@@ -197,10 +197,13 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     .replace(/^我(?!们)/u, view ?? '他')
     .replace(/[。！？!?]+$/u, '');
   if (action) {
-    lines.push(`【玩家这一回合做的事】${action}。`);
+    // A declared action is what the player tried to do, not a settled result.
+    // The line must not turn a refused command into a success: the outcome is
+    // only whatever the committed facts say.
+    lines.push(`【玩家这一回合的指令】${action}。`);
     lines.push(projected.required.length
       ? '这件事如果已经写在骨架里，就按骨架写，不要再写一遍；骨架里没有的部分只写动作本身，不写结果。'
-      : '写这一回合时至少写出他做了这件事；不要写这件事的结果，也不要写下一件事。');
+      : '正文要写出他做了或试着做了这个动作；结果只按上面已结算的事实写，没有结算成功的事不要写成成功，也不要写下一件事。');
   }
 
   const time = policy.time ?? null;
