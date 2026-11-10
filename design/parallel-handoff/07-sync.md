@@ -328,8 +328,14 @@ syncRef.current = sync;
 // 1) 没有本地存档时，先拉远端 head；有本地存档时不覆盖本地
 const restored = await sync.restore();
 if (restored.source === 'remote' && restored.snapshot) {
-  // 让会话打开这份快照（会话是唯一写入者）；不要直接 store.save
-  await session.openSnapshot(restored.snapshot);
+  // restore() 只读，不写 06 的 store。两种打开方式，选一种：
+  // a) 先落一次基线（此时还没有 session，不存在双写），再 open
+  await store.save(world.worldId, restored.snapshot);
+  session = (await LocalGameSession.open(store, { worldId: world.worldId, initial },
+    model, { sessionId, storage: store })).session;
+  // b) 或者直接 LocalGameSession.restore(restored.snapshot, model, { storage: store });
+  //    它读不到本地记录时 revision 记 0，之后第一次保存就是 revision 1。
+  // 不要调用不存在的 openSnapshot()；也不要用 sync 去写 store。
 }
 if (restored.conflict) showConflict(restored.conflict); // 两份都读出来给玩家
 
