@@ -270,14 +270,6 @@ export interface RoundProgressEvidence {
   afterDigest?: string;
 }
 
-export function hasRoundProgress(
-  roundChanges: { entityDeltas?: Record<Id, EntityDelta> }[],
-  evidence?: RoundProgressEvidence | null,
-): boolean {
-  if (evidence) return evidence.progress;
-  return roundChanges.some((point) => Object.values(point.entityDeltas ?? {}).some((delta) => hasDeltaContent(delta)));
-}
-
 export interface RoundProgressComputation {
   before: WorldState | null;
   after: WorldState | null;

@@ -30,7 +30,7 @@
 5. `continuation('r1', input)` 先让模型提出“大概率发生且与主角相关”的候选行动，再让模型逐条判断 `likely` 和 `related`：
    - 两者都为 true 的候选才进入 `candidateCharacterIds`，返回 `kind:'continue'` 和新的 `nextRoundId`。
    - 没有候选，或全部不是 likely+related，返回普通 `kind:'handback'`。
-   - 连续两轮没有任何实体变化（只有时间推进也算无进展），或同一组候选连续三轮重复，策略返回 handback，并把 `no_progress`/`repeated_candidate` 写进 evidence。
+   - 连续两轮没有真实变化（重复写同一个 positionSet 不算；结算时间、新事实/动作、状态或场外依赖变化算），或已消费的候选再次出现，策略返回可见停止：`value:null`，`error:continuation_policy_no_progress|repeated_candidate|abstract_task_goal`，evidence `decision:policy_stop`；不写 handback。
    - 模型调用失败、输出结构错误、head 对不上：返回 `value:null` 和错误，**不返回 handback**。接入方必须抛错/停止，不能把异常当交还。
    - 人物引用可以写唯一全名或 id；程序把唯一全名解析成 id。未知 id、占位符 `id`、未声明的 effect target 都会触发一次带具体原因的修复重试；重试仍失败就中止该点。不会把写错的名字默认到某个实体。
    - 默认 `continuationPolicy.maxAutoContinuations = null`，不存在“默认 0 次”或“只允许 1 次”的静默关闭。
@@ -162,7 +162,7 @@ resetAutoContinuations(): void { this.settlement.resetContinuation(); }
 ```
 
 - 页面如果有 `maxAutoContinuations: 0` 或任何固定次数默认值（当前基线没有该选项，但主树可能已加），删掉它。正常交还不能由次数决定；需要安全上限时用 `continuationPolicy.maxAutoContinuations`（默认 `null` = 不按次数交还），把 `noProgressRounds`/`repeatRounds` 作为可解释的防循环规则。
-- 策略交还目前仍使用现有 `Conclusion` 的 `kind:'handback'`（共享类型只允许 `closedBy:'model'` 或 `cancel`）；具体原因是 evidence 里的 `reason: 'no_progress' | 'repeated_candidate'`。如果页面要显示“推进已暂停”而不是“世界没有后续”，需要读取该 evidence 并显示不同提示；本线不改页面。
+- 策略停止不是模型 handback：`value:null`，evidence `decision:policy_stop`，error 带 `continuation_policy_*`。页面必须把“推进已暂停/策略停止”和“模型交还”分开显示；不能写 `closedBy:'model'`。本线不改页面，06 负责显示。
 
 ## 验证
 
@@ -185,7 +185,7 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 六阶段顺序、物品移动、全人物任务/个性覆盖、跨人物任务达成、已完成任务不重做、个性与理智配对、理智非法回退当前值。
 - 时间扫描跳过位置/外貌，仍扫描全部任务；没有个性变化不写理智。
 - 拆分阶段返回单个 `UpdatesCall`；后续阶段读取已应用工作态；同批任务达成触发个性阶段。
-- 继续：likely+related 才继续；无候选交还；连续无进展/重复候选策略交还；模型失败返回 null；默认无次数上限。
+- 继续：likely+related 才继续；无候选是模型 handback；连续无真实进展/已消费候选/抽象任务目标是可见策略停止；模型失败返回 null；默认无次数上限。
 - `settlement-integration.test.ts` 用真实 `ControllerDriver` + `LocalWorldTransport` + 脚本化 engine 跑通一个回合：results → 六阶段 updates → continuation → 状态提交。
 
 ## 限制和未验证
@@ -267,3 +267,43 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 还没有在新 06 build 上的真实页面运行；真实调用数、prefill token、首次合格正文时间必须由 09 实测。
 - 不做“必降 25 秒”的承诺；没有改 timeout，也没有用空结果避开判断。
 - 10.4M MiniRBT encoder 尚未部署；旧 N2/N5 头不能直接当 position/tasks 通用能力。若投影后仍有具体分类缺口（例如“这条事实是否影响该任务”的召回不足），再由 04 给 06 具体模型/数据/最小验证路径。
+
+## 2026-11-11 续推根因修复（`aec9e622`）
+
+本轮不是继续调 `repeatRounds`，而是修三个被 e9a5/95dc 真实轨迹暴露的根因：
+
+1. **任务目标不是可执行行动。** e9a5/95dc 的 `nono` 候选是任务目标原句（或模型截断的前缀）：“让红方的旗台行动有可执行的掩护，而不把路明非当诱…”。`readCandidates` 现在把它记为 `abstract_task_goal`，在第一组结算后直接产生可见的 `continuation_policy_abstract_task_goal` 停止，不再花第二次 judgment，也不再开第二组。这个停止是程序停止，不是 `closedBy:'model'` 交还。
+2. **已消费的候选身份跨轮保留。** 策略按“人物 id + 规范化行动文本”记录本 submission 已接受的候选；`A -> B -> A` 和 `A -> A` 一样在第三次观察停止。`beginSubmission()` 调 `continuation.reset()` 并清空行动/事实消费集，所以下一回合可以合法重复上一回合做过的动作。
+3. **进展按真实世界算。** 端口在回合第一组 `results` 前保存 `before` 状态，在 `continuation` 前保存 `after` 状态，比较 `stateDigest`、时间、已结算事实和行动文本；重复写同一个 `positionSet` 不再刷新 no-progress。阅读这类“没有状态变化但有新动作/新事实”的合法行动仍算进展；玩家自己的回合不计入自动回合的 no-progress streak；时间推进、屏幕外任务变化、任务依据变化都算真实变化。
+
+保留的边界：
+
+- `continuationPolicy.maxAutoContinuations` 仍是 `null`，没有默认 1 次上限；`repeatRounds` 只作为没有消费身份时的次级安全网，设为 2。
+- 没有跳过任何更新阶段或世界依赖；没有程序名字过滤；没有把策略停止伪装成交还。
+- 21c3/95dc 的真实 14/73 世界回放改成“抽象目标在 judgment 前停止”；原来“第一次 continue、第二次 repeated”的断言不再成立，因为第一次就不该继续。
+- 这轮只改 04 的语义/端口和离线测试；06 仍负责首段已提交点、段落来源、页面显示策略停止。06 下一冻结头需要包含 `aec9e622`，否则 e9a5/95dc 的续推缺陷仍会复现。
+
+验证：`node scripts/parallel-settlement/run-focused.mjs` → **74 passed | 1 expected fail**；`npx tsc -p tsconfig.world-contract.json --noEmit` 通过。全量前端 `npx vitest run --maxWorkers=1` 为 722 passed、1 expected fail，剩余 14 个失败是工作树已有的 `styles.test.ts` 和 wllama URL mock 环境问题，不在本线文件。
+
+### 2026-11-11 补充：结算时间本身也是进展（`1e678a60`）
+
+控制器在第一次 `results` 之前先把时间推进写进工作态，所以端口保存的 `before` 可能已经带有新时钟，`before/after` 时间相同；只比较这两个快照会漏掉“这一轮只过去了一分钟”的真实事件。`roundAdvancedTime()` 现在从本轮已结算点的 `roundChanges[].timeAdvance.duration.amount > 0` 读取时间推进，传给 `roundProgressFromState`。因此：
+
+- 只推进真实时间、没有位置/任务/外貌变化的回合仍是进展，不会在第二次被 no-progress 误停；
+- 回合内四个不同的无状态动作可以继续到模型没有新候选（handback），不是因为默认调用上限；
+- 真正重复同一位置且没有新动作、事实、时间、状态变化的回合，仍由真实进度和已消费候选停止。
+
+`1e678a60` 需要 06 合入；`03ec746a` 的构建不包含这条时间判定。
+
+### 2026-11-11 根因收口：没有实际证据就不算进展（`b3ad76f5`）
+
+上一版 `1e678a60` 让端口用真实时间/状态/事实/动作判断进展，但 `hasRoundProgress` 仍保留“直接调用方没有 evidence 时，只要填了 `positionSet` 等字段就算进展”的后备。这个后备正是 e9a5/21c3 的根因，只是产品端口绕开了它。
+
+`b3ad76f5` 删掉后备：
+
+- `ContinuationPolicy.observe` 只接受 `roundProgress.progress`；没有 evidence 时保守记为“无进展”。
+- 直接 `ContinuationRunner` 调用方必须传 `roundProgress`（端口本来就会传）；否则两个不同候选会在第二轮 `continuation_policy_no_progress` 停止。
+- 新增回归：roundChanges 填了 `b -> far` 的 positionSet，但故意删掉 `roundProgress`；第一次允许，第二次不同候选仍 no-progress 停止。旧代码会错误继续。
+- 生产路径不受影响：端口在每轮第一次 results 前保存状态、continuation 前取 after，生成真实 evidence；时间-only、场外依赖、阅读动作仍有独立回归。
+
+测试变为 **75 passed | 1 expected fail**。`b3ad76f5` 需要 06 合入；`03ec/cf` 构建不含它。

@@ -127,6 +127,7 @@ function scriptedEngine(brain: Brain): InferenceEngine {
 }
 
 function actionPort(state: () => InitialTemplate, brain: Brain): WorldModelPort {
+  let autoActionRound = 0;
   return {
     async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
       if (task === 'pointPlan') {
@@ -148,9 +149,15 @@ function actionPort(state: () => InitialTemplate, brain: Brain): WorldModelPort 
         if (data.actor === data.workingState.protagonistId && data.advance?.intentStatus === 'pending' && data.advance.inputText) {
           return { kind: 'act', text: data.advance.inputText };
         }
-        return data.actor === 'person_a'
-          ? { kind: 'act', text: '林川朝盒盖那边走了一步。' }
-          : { kind: 'skip' };
+        if (data.actor === 'person_a') {
+          // A real automatic action lane resolves the current candidate; using
+          // the same fixed text every round would turn a legitimate chain into
+          // an accidental same-action replay.
+          const plan = brain.continuations[autoActionRound];
+          autoActionRound += 1;
+          return { kind: 'act', text: plan?.candidates[0]?.text ?? '林川朝盒盖那边走了一步。' };
+        }
+        return { kind: 'skip' };
       }
       if (task === 'targets') return { targets: [] };
       if (task === 'reaction') return { kind: 'skip' };
@@ -282,7 +289,7 @@ describe('turn execution through the real kernel', () => {
     expect(consumed.every((call) => call.actor === 'person_c' || call.text === '我打开盒盖。')).toBe(true);
   });
 
-  it('runs a multi-round chain, consumes the command once, and stops on no progress', async () => {
+  it('runs a legitimate multi-round chain of no-state-change actions and ends on handback, not a cap', async () => {
     const brain = brainState({
       placement: { person_c: 'corridor', person_a: 'corridor' },
       taskAchieved: false,
@@ -310,15 +317,15 @@ describe('turn execution through the real kernel', () => {
     };
     const driver = new ControllerDriver({ transport, model }, memory);
     settlement.beginSubmission('我打开盒盖。');
-    await expect(driver.run()).rejects.toThrow(/continuation_policy_no_progress/u);
+    const status = await driver.run();
+    expect(status).toEqual({ kind: 'stop', reason: 'world_complete' });
     const submission = settlement.endSubmission()!;
-    // The player round introduces a new action, and so does the first automatic
-    // round. The automatic lane then repeats the same resolved action without
-    // a new fact, time advance or state change; two such observations are the
-    // designed no-progress stop, not a one-call default cap.
-    expect(submission.continuationCalls).toBe(3);
-    expect(submission.continuationDecision).toBe('policy_stop');
-    expect(submission.stops).toContain('continuation:continuation_policy_no_progress');
+    // Four different no-state-change follow-ups are each a real new action/fact
+    // (or a real minute); none may be deleted as "no progress". The chain ends
+    // because the model has no further candidate, not at a one-call cap.
+    expect(submission.continuationCalls).toBe(5);
+    expect(submission.continuationDecision).toBe('handback');
+    expect(submission.stops.some((stop) => stop.includes('continuation_policy_no_progress'))).toBe(false);
     expect(submission.updatesCalls).toBeGreaterThanOrEqual(2);
     // The player command is executable exactly once; later rounds see it as
     // history and the action lane decides from state instead.
@@ -326,14 +333,13 @@ describe('turn execution through the real kernel', () => {
     expect(executedPlayerCommand.length).toBeGreaterThan(0);
     expect(brain.seenInputs.some((call) => call.intentStatus === 'consumed')).toBe(true);
     const continuationRecords = submission.calls.filter((call) => call.task === 'continuation');
-    expect(continuationRecords).toHaveLength(3);
-    expect(continuationRecords.some((call) => call.roundProgress?.progress === true)).toBe(true);
-    expect(continuationRecords.at(-1)?.roundProgress?.progress).toBe(false);
+    expect(continuationRecords).toHaveLength(5);
+    expect(continuationRecords.every((call) => call.roundProgress?.progress === true)).toBe(true);
     const snapshot = transport.snapshot();
-    expect(snapshot.version).toBe(3);
+    expect(snapshot.version).toBe(5);
     expect(snapshot.round?.trigger).toBe('automatic');
-    expect(snapshot.round?.conclusion).toBeNull();
-    // A policy stop never rewrites committed state.
+    // This chain ended on a real model handback, not a program no-progress stop.
+    expect(snapshot.round?.conclusion?.kind).toBe('handback');
     expect(snapshot.state.characters.person_a.tasks.task_watch?.status).toBe('pending');
   });
 

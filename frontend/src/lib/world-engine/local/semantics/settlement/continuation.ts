@@ -11,7 +11,7 @@ import type {
   ContinuationPolicyOptions, ModelCallEvidence, SettlementConclusion, SettlementEvidence,
   SettlementOptions, SettlementOutcome,
 } from './types';
-import { asRecord, asString, errorText, hasRoundProgress, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
+import { asRecord, asString, errorText, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
 import type { RoundProgressEvidence } from './support';
 import { describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
 
@@ -104,12 +104,15 @@ export class ContinuationPolicy {
   }
 
   observe(
-    roundChanges: RoundPoint[],
+    _roundChanges: RoundPoint[],
     accepted: Candidate[],
     progressEvidence?: RoundProgressEvidence | null,
     trigger = 'automatic',
   ): ContinuationPolicyDecision {
-    const progress = hasRoundProgress(roundChanges, progressEvidence);
+    // Only the port's before/after evidence counts. The old field test treated
+    // a repeated positionSet as progress; callers without evidence get a
+    // conservative no-progress observation instead of a false advance.
+    const progress = progressEvidence?.progress === true;
     // The player's own no-state-change action (for example reading a sign) is
     // a legitimate action, not an automatic no-progress round. Count the
     // streak only for automatic rounds; new actions/facts/time/state reset it.
