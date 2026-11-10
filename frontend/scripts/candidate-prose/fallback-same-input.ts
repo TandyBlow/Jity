@@ -130,6 +130,26 @@ console.log(result.text);
 console.log(`chars=${[...result.text].length} accepted=${result.accepted} issues=${JSON.stringify(result.issues)}`);
 console.log(`gate=${newGate.decision} findings=${JSON.stringify(kinds(newReport))}`);
 
+
+// Turn 2 of the recorded run never settled: continuation timed out and the
+// page showed "…". The composer must not invent text for a turn with no
+// settled facts; it reports an empty scene and lets the page show a retry.
+const nothing = generateCandidate({
+  committed: { anchor: { worldId: world.worldId, pointId: 'recorded_09_turn_2', version: 2 }, facts: [] },
+  state: before,
+  beforeState: before,
+  delta: { timeAdvance: null, entityDeltas: {} },
+  priorText: recorded.text ?? null,
+  policy: { minChars: 12 },
+} as never);
+console.log('\n===== no settled facts (recorded turn 2 timed out)');
+console.log(`text=${JSON.stringify(nothing.text)} accepted=${nothing.accepted} `
+  + `issues=${JSON.stringify(nothing.issues.map((issue) => issue.kind))}`);
+if (nothing.accepted || nothing.text.trim()) {
+  console.log('the composer wrote text without settled facts; that is a finding');
+  process.exitCode = 1;
+}
+
 const oldCount = kinds(oldReport).length;
 const newCount = kinds(newReport).length;
 console.log('\n===== summary');

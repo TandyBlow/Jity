@@ -1,7 +1,7 @@
 {
   "lane": "07-prose",
   "kind": "browser-candidate-runs",
-  "updatedAt": "2026-11-10T17:28:07.484Z",
+  "updatedAt": "2026-11-10T17:32:38.168Z",
   "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
   "runner": {
     "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
@@ -43,7 +43,7 @@
       "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
       "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
       "source": {
-        "commit": "95e54df76ef2c9e49f94238b6bdab37e447f8511",
+        "commit": "db4b810c463600f4c6203eb8c3609c00a9da030d",
         "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
         "dirty": true
       },
@@ -88,38 +88,38 @@
           "mtime": "2026-11-10T07:00:23.567Z"
         }
       },
-      "queuedAt": "2026-11-10T17:28:07.053Z",
+      "queuedAt": "2026-11-10T17:32:33.366Z",
       "latest": {
         "free-day-open": {
-          "runId": "07-prose::free-day-open::mwayrapu",
-          "at": "2026-11-10T17:28:07.166Z",
+          "runId": "07-prose::free-day-open::mwayx0p9",
+          "at": "2026-11-10T17:32:34.116Z",
           "accepted": true,
           "chars": 74,
-          "wallMs": 4,
+          "wallMs": 8,
           "firstParagraph": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwayrapu]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwayx0p9]",
           "contractOk": true,
           "error": null
         },
         "free-day-move": {
-          "runId": "07-prose::free-day-move::mwayraqg",
-          "at": "2026-11-10T17:28:07.188Z",
+          "runId": "07-prose::free-day-move::mwayx0q1",
+          "at": "2026-11-10T17:32:34.149Z",
           "accepted": true,
           "chars": 86,
           "wallMs": 4,
           "firstParagraph": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwayraqg]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwayx0q1]",
           "contractOk": true,
           "error": null
         },
         "free-day-task": {
-          "runId": "07-prose::free-day-task::mwayrar1",
-          "at": "2026-11-10T17:28:07.210Z",
+          "runId": "07-prose::free-day-task::mwayx0ql",
+          "at": "2026-11-10T17:32:34.171Z",
           "accepted": true,
           "chars": 80,
-          "wallMs": 3,
+          "wallMs": 2,
           "firstParagraph": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。",
-          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwayrar1]",
+          "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwayx0ql]",
           "contractOk": true,
           "error": null
         }
@@ -9416,6 +9416,1551 @@
         }
       },
       "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+    },
+    {
+      "runId": "07-prose::free-day-open::mwayx0p9",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "free-day-open",
+      "startedAt": "2026-11-10T17:32:34.116Z",
+      "wallMs": 7.654999732971191,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_dragon_raja_free_day",
+        "pointId": "root_free_day",
+        "version": 0,
+        "stateDigest": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
+        "previousPointId": null,
+        "viewpointId": "lu",
+        "viewpointName": "路明非",
+        "changeKinds": [],
+        "timeAdvance": null
+      },
+      "input": {
+        "textChars": 1092,
+        "text": "【视角】主角视角（路明非）【地点】西侧服务巷（在西侧器材区里）：巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。西侧器材区（在卡塞尔学院演习区里）：器材棚、服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。运送伤员可沿白线到医护附楼，不必穿越庭院。【人物】路明非：在西侧服务巷/slot_wall，精神值43，外貌校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩，个性习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人，任务在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）；向诺诺问清当前红蓝两方局势和自己是否可以保持中立（未完成）；在进入交火区前拿到可用的护目镜与演习装备（未完成）；把胸前护目镜戴好并确认镜片没有裂纹（未完成）；在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线（未完成）；得到至少一名在场者明确同意的协作，不替他人擅自承诺（未完成）；读过服务巷规则牌，知道医护白线内禁止交火（已完成）。诺诺：在西侧服务巷/slot_entry，精神值58，外貌红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面，个性看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实，任务让红方的旗台行动有可执行的掩护，而不把路明非当诱饵（未完成）；问清路明非的参赛意愿并说明三条接近钟楼的路线（未完成）；把故障短讯机恢复到能与凯撒联络的状态（未完成）；确认西回廊的蓝方伤员是否需要真正的医护帮助（未完成）；与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷（未完成）。【物品】路明非的护目镜（在路明非里）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。路明非的演习背心（在路明非里）：背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。诺诺的演习短枪（在诺诺里）：枪上有黄色演习标记，弹匣内剩3发弗里嘉演习弹，保险合上，枪口向下。赛区路线图（在西侧服务巷里）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态。【变化】这一回合没有结算出变化。【正文】",
+        "scene": {
+          "location": "西侧服务巷",
+          "placeNotes": [
+            "巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。"
+          ],
+          "present": [
+            {
+              "id": "lu",
+              "name": "路明非",
+              "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+            },
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "rules",
+              "name": "演习规则牌",
+              "note": "牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；退出者不得返场；15:45停赛。夺旗须取下中立白旗、把本队旗插入底座并由现场确认，携带自己的旗不算占领。"
+            },
+            {
+              "id": "map",
+              "name": "赛区路线图",
+              "note": "图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态。"
+            }
+          ],
+          "inventory": [
+            {
+              "id": "goggles_lu",
+              "name": "路明非的护目镜",
+              "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+            },
+            {
+              "id": "jacket_lu",
+              "name": "路明非的演习背心",
+              "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+            }
+          ],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "lu",
+            "name": "路明非"
+          },
+          "viewpointId": "lu",
+          "roster": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因"
+          ],
+          "locations": [
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "knownPositions": [
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "location": "西侧服务巷"
+            },
+            {
+              "id": "fingel",
+              "name": "芬格尔",
+              "location": "器材棚"
+            },
+            {
+              "id": "chu",
+              "name": "楚子航",
+              "location": "钟楼二层平台"
+            },
+            {
+              "id": "caesar",
+              "name": "凯撒",
+              "location": "红方集结点"
+            },
+            {
+              "id": "su",
+              "name": "苏茜",
+              "location": "东回廊"
+            },
+            {
+              "id": "lin",
+              "name": "林亦舟",
+              "location": "西回廊"
+            },
+            {
+              "id": "tang",
+              "name": "唐骁",
+              "location": "中央庭院"
+            },
+            {
+              "id": "zhou",
+              "name": "周映",
+              "location": "钟楼旗台外廊"
+            },
+            {
+              "id": "qin",
+              "name": "秦越",
+              "location": "器材棚"
+            },
+            {
+              "id": "doctor",
+              "name": "顾岚",
+              "location": "演习医护处置室"
+            },
+            {
+              "id": "shen",
+              "name": "沈澄",
+              "location": "医护休息区"
+            },
+            {
+              "id": "tomiyama",
+              "name": "富山雅史",
+              "location": "医护休息区"
+            },
+            {
+              "id": "manstein",
+              "name": "曼施坦因",
+              "location": "演习观察席"
+            }
+          ],
+          "knownEntities": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因",
+            "演习规则牌",
+            "赛区路线图",
+            "路明非的护目镜",
+            "路明非的演习背心",
+            "诺诺的演习短枪",
+            "诺诺的故障短讯机",
+            "诺诺的红色识别带",
+            "芬格尔的相机",
+            "芬格尔的饭票夹",
+            "相机备用电池",
+            "楚子航的演习枪",
+            "楚子航的蓝方短讯机",
+            "楚子航的蓝色识别带",
+            "红方地图桌",
+            "凯撒的庭院平面图",
+            "凯撒的演习枪",
+            "红方信号旗",
+            "凯撒的红色识别带",
+            "凯撒的红方短讯机",
+            "苏茜的演习长枪",
+            "苏茜的蓝方短讯机",
+            "苏茜的备用弹匣",
+            "低窗软垫",
+            "东回廊遮光帘",
+            "林亦舟放下的演习枪",
+            "林亦舟的短讯机",
+            "折断的蓝布带",
+            "唐骁的演习枪",
+            "唐骁的满弹匣",
+            "庭院空弹匣",
+            "倒放长椅",
+            "南端石花槽",
+            "钟楼旗台底座",
+            "中立白旗",
+            "旗台短安全绳",
+            "蓝方信号旗",
+            "顶层玻璃门",
+            "旗台机械检修图",
+            "值钟间工作台",
+            "门厅翻倒长桌",
+            "钟楼地下检修门",
+            "服务巷检修盖",
+            "绝缘手电",
+            "小桥松动护栏",
+            "医护通道标牌",
+            "器材领用台",
+            "器材领用簿",
+            "未领用演习短枪",
+            "备用护目镜",
+            "备用红色识别带",
+            "备用蓝色识别带",
+            "开盖演习弹药箱",
+            "通用短枪弹匣甲",
+            "通用短枪弹匣乙",
+            "器材笼挂锁",
+            "器材笼钥匙",
+            "折叠担架",
+            "折叠梯",
+            "备用安全绳",
+            "短讯机电池盒",
+            "R型短讯电池甲",
+            "R型短讯电池乙",
+            "医护箱",
+            "未启用冷敷袋",
+            "弹力绷带",
+            "检查手套",
+            "医护空床",
+            "伤情登记夹",
+            "沈澄拆下的红色识别带",
+            "休息区饮水杯",
+            "保温毯",
+            "安全广播话筒",
+            "旗台状态面板",
+            "安全事件记录单",
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "time": null,
+          "requireTime": false,
+          "scene": {
+            "location": "西侧服务巷",
+            "placeNotes": [
+              "巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。"
+            ],
+            "present": [
+              {
+                "id": "lu",
+                "name": "路明非",
+                "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+              },
+              {
+                "id": "nono",
+                "name": "诺诺",
+                "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "rules",
+                "name": "演习规则牌",
+                "note": "牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；退出者不得返场；15:45停赛。夺旗须取下中立白旗、把本队旗插入底座并由现场确认，携带自己的旗不算占领。"
+              },
+              {
+                "id": "map",
+                "name": "赛区路线图",
+                "note": "图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态。"
+              }
+            ],
+            "inventory": [
+              {
+                "id": "goggles_lu",
+                "name": "路明非的护目镜",
+                "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+              },
+              {
+                "id": "jacket_lu",
+                "name": "路明非的演习背心",
+                "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+              }
+            ],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": null,
+        "priorSource": null,
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+        "chars": 74,
+        "paragraphs": [
+          "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。"
+        ],
+        "firstParagraph": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+        "lastParagraph": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 1.7849998474121094,
+          "composeMs": 2.145000457763672,
+          "verifyMs": 0.25,
+          "totalMs": 1184.579999923706,
+          "attemptMs": [
+            6.619999885559082
+          ],
+          "attemptsMs": 6.619999885559082,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+            "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 6.619999885559082,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+              "cleaned": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 6.619999885559082,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 8,
+        "lastAtMs": 8,
+        "firstReadableAtMs": null,
+        "tail": [
+          {
+            "text": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 6.619999885559082
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "free-day",
+        "only": "free-day-open",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+    },
+    {
+      "runId": "07-prose::free-day-move::mwayx0q1",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "free-day-move",
+      "startedAt": "2026-11-10T17:32:34.149Z",
+      "wallMs": 4.02500057220459,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_dragon_raja_free_day",
+        "pointId": "point_free_day_move",
+        "version": 1,
+        "stateDigest": "ba93e9ea3fb6c38f6c21117bf3327460b41e905812787a466429faec2e2b5736",
+        "previousPointId": "root_free_day",
+        "viewpointId": "lu",
+        "viewpointName": "路明非",
+        "changeKinds": [
+          "position"
+        ],
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 1,
+            "unit": "minute"
+          }
+        }
+      },
+      "input": {
+        "textChars": 1403,
+        "text": "【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于交火区。场内使用弗里嘉演习弹，实弹与攻击医护人员均被禁止。西回廊（在卡塞尔学院演习区里）：廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。【人物】林亦舟：在西回廊/slot_pillar3，精神值29，外貌蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳，个性蓝方低年级队员，怕被看成拖累，一开始只报了位置而没有讲清伤势。与同队的苏茜说得上话，信任楚子航会来接应；不愿用假装中弹的方式掩盖真实扭伤，任务在不加重脚踝伤势的情况下到达演习医护处置室（未完成）；向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能（未完成）；把自己的演习枪交给可信的人或移出医护搬运路线（未完成）；得到明确愿意帮忙的搬运者，并沿白线撤离（未完成）；用蓝方短讯机发出自己位于第三根廊柱的求助（已完成）。路明非：在西回廊，精神值43，外貌校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩，个性习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人，任务在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）；向诺诺问清当前红蓝两方局势和自己是否可以保持中立（未完成）；在进入交火区前拿到可用的护目镜与演习装备（未完成）；把胸前护目镜戴好并确认镜片没有裂纹（未完成）；在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线（未完成）；得到至少一名在场者明确同意的协作，不替他人擅自承诺（未完成）；读过服务巷规则牌，知道医护白线内禁止交火（已完成）。诺诺：在西回廊，精神值58，外貌红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面，个性看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实，任务让红方的旗台行动有可执行的掩护，而不把路明非当诱饵（未完成）；问清路明非的参赛意愿并说明三条接近钟楼的路线（未完成）；把故障短讯机恢复到能与凯撒联络的状态（未完成）；确认西回廊的蓝方伤员是否需要真正的医护帮助（未完成）；与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷（未完成）。【物品】林亦舟放下的演习枪（在西回廊里）：枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。路明非的护目镜（在路明非里）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。路明非的演习背心（在路明非里）：背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。折断的蓝布带（在西回廊里）：蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。【变化】时间推进1 minute。路明非（人物）：移动到西回廊。诺诺（人物）：移动到西回廊。【正文】",
+        "scene": {
+          "location": "西回廊",
+          "placeNotes": [
+            "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+          ],
+          "present": [
+            {
+              "id": "lu",
+              "name": "路明非",
+              "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+            },
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+            },
+            {
+              "id": "lin",
+              "name": "林亦舟",
+              "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "lin_gun",
+              "name": "林亦舟放下的演习枪",
+              "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+            },
+            {
+              "id": "broken_blue_band",
+              "name": "折断的蓝布带",
+              "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+            }
+          ],
+          "inventory": [
+            {
+              "id": "goggles_lu",
+              "name": "路明非的护目镜",
+              "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+            },
+            {
+              "id": "jacket_lu",
+              "name": "路明非的演习背心",
+              "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+            }
+          ],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "lu",
+            "name": "路明非"
+          },
+          "viewpointId": "lu",
+          "roster": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因"
+          ],
+          "locations": [
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "knownPositions": [
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "location": "西回廊"
+            },
+            {
+              "id": "fingel",
+              "name": "芬格尔",
+              "location": "器材棚"
+            },
+            {
+              "id": "chu",
+              "name": "楚子航",
+              "location": "钟楼二层平台"
+            },
+            {
+              "id": "caesar",
+              "name": "凯撒",
+              "location": "红方集结点"
+            },
+            {
+              "id": "su",
+              "name": "苏茜",
+              "location": "东回廊"
+            },
+            {
+              "id": "lin",
+              "name": "林亦舟",
+              "location": "西回廊"
+            },
+            {
+              "id": "tang",
+              "name": "唐骁",
+              "location": "中央庭院"
+            },
+            {
+              "id": "zhou",
+              "name": "周映",
+              "location": "钟楼旗台外廊"
+            },
+            {
+              "id": "qin",
+              "name": "秦越",
+              "location": "器材棚"
+            },
+            {
+              "id": "doctor",
+              "name": "顾岚",
+              "location": "演习医护处置室"
+            },
+            {
+              "id": "shen",
+              "name": "沈澄",
+              "location": "医护休息区"
+            },
+            {
+              "id": "tomiyama",
+              "name": "富山雅史",
+              "location": "医护休息区"
+            },
+            {
+              "id": "manstein",
+              "name": "曼施坦因",
+              "location": "演习观察席"
+            }
+          ],
+          "knownEntities": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因",
+            "演习规则牌",
+            "赛区路线图",
+            "路明非的护目镜",
+            "路明非的演习背心",
+            "诺诺的演习短枪",
+            "诺诺的故障短讯机",
+            "诺诺的红色识别带",
+            "芬格尔的相机",
+            "芬格尔的饭票夹",
+            "相机备用电池",
+            "楚子航的演习枪",
+            "楚子航的蓝方短讯机",
+            "楚子航的蓝色识别带",
+            "红方地图桌",
+            "凯撒的庭院平面图",
+            "凯撒的演习枪",
+            "红方信号旗",
+            "凯撒的红色识别带",
+            "凯撒的红方短讯机",
+            "苏茜的演习长枪",
+            "苏茜的蓝方短讯机",
+            "苏茜的备用弹匣",
+            "低窗软垫",
+            "东回廊遮光帘",
+            "林亦舟放下的演习枪",
+            "林亦舟的短讯机",
+            "折断的蓝布带",
+            "唐骁的演习枪",
+            "唐骁的满弹匣",
+            "庭院空弹匣",
+            "倒放长椅",
+            "南端石花槽",
+            "钟楼旗台底座",
+            "中立白旗",
+            "旗台短安全绳",
+            "蓝方信号旗",
+            "顶层玻璃门",
+            "旗台机械检修图",
+            "值钟间工作台",
+            "门厅翻倒长桌",
+            "钟楼地下检修门",
+            "服务巷检修盖",
+            "绝缘手电",
+            "小桥松动护栏",
+            "医护通道标牌",
+            "器材领用台",
+            "器材领用簿",
+            "未领用演习短枪",
+            "备用护目镜",
+            "备用红色识别带",
+            "备用蓝色识别带",
+            "开盖演习弹药箱",
+            "通用短枪弹匣甲",
+            "通用短枪弹匣乙",
+            "器材笼挂锁",
+            "器材笼钥匙",
+            "折叠担架",
+            "折叠梯",
+            "备用安全绳",
+            "短讯机电池盒",
+            "R型短讯电池甲",
+            "R型短讯电池乙",
+            "医护箱",
+            "未启用冷敷袋",
+            "弹力绷带",
+            "检查手套",
+            "医护空床",
+            "伤情登记夹",
+            "沈澄拆下的红色识别带",
+            "休息区饮水杯",
+            "保温毯",
+            "安全广播话筒",
+            "旗台状态面板",
+            "安全事件记录单",
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "time": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 1,
+              "unit": "minute"
+            }
+          },
+          "requireTime": true,
+          "scene": {
+            "location": "西回廊",
+            "placeNotes": [
+              "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+            ],
+            "present": [
+              {
+                "id": "lu",
+                "name": "路明非",
+                "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+              },
+              {
+                "id": "nono",
+                "name": "诺诺",
+                "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+              },
+              {
+                "id": "lin",
+                "name": "林亦舟",
+                "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "lin_gun",
+                "name": "林亦舟放下的演习枪",
+                "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+              },
+              {
+                "id": "broken_blue_band",
+                "name": "折断的蓝布带",
+                "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+              }
+            ],
+            "inventory": [
+              {
+                "id": "goggles_lu",
+                "name": "路明非的护目镜",
+                "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+              },
+              {
+                "id": "jacket_lu",
+                "name": "路明非的演习背心",
+                "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+              }
+            ],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+        "chars": 86,
+        "paragraphs": [
+          "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。"
+        ],
+        "firstParagraph": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+        "lastParagraph": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.7000007629394531,
+          "composeMs": 0.8399991989135742,
+          "verifyMs": 0.03500080108642578,
+          "totalMs": 1213.3500003814697,
+          "attemptMs": [
+            1.9299993515014648
+          ],
+          "attemptsMs": 1.9299993515014648,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+            "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 1.9299993515014648,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+              "cleaned": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 1.9299993515014648,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 4,
+        "lastAtMs": 4,
+        "firstReadableAtMs": 4,
+        "tail": [
+          {
+            "text": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 1.9299993515014648
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "free-day",
+        "only": "free-day-move",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+    },
+    {
+      "runId": "07-prose::free-day-task::mwayx0ql",
+      "candidateId": "07-prose",
+      "owner": "07-prose",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/stub.gguf",
+      "scenarioId": "free-day-task",
+      "startedAt": "2026-11-10T17:32:34.171Z",
+      "wallMs": 2.3999996185302734,
+      "coldStart": false,
+      "loadMs": 0,
+      "identity": {
+        "worldId": "world_dragon_raja_free_day",
+        "pointId": "point_free_day_task",
+        "version": 2,
+        "stateDigest": "4a2ad2571cbf0a625fe5667d8e26950d696ef1502c2878c76d7da600cad22bb6",
+        "previousPointId": "point_free_day_move",
+        "viewpointId": "lu",
+        "viewpointName": "路明非",
+        "changeKinds": [
+          "personality",
+          "sanity",
+          "task_achieved"
+        ],
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 3,
+            "unit": "minute"
+          }
+        }
+      },
+      "input": {
+        "textChars": 1457,
+        "text": "【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于交火区。场内使用弗里嘉演习弹，实弹与攻击医护人员均被禁止。西回廊（在卡塞尔学院演习区里）：廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。【人物】林亦舟：在西回廊/slot_pillar3，精神值29，外貌蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳，个性蓝方低年级队员，怕被看成拖累，一开始只报了位置而没有讲清伤势。与同队的苏茜说得上话，信任楚子航会来接应；不愿用假装中弹的方式掩盖真实扭伤，任务在不加重脚踝伤势的情况下到达演习医护处置室（未完成）；向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能（未完成）；把自己的演习枪交给可信的人或移出医护搬运路线（未完成）；得到明确愿意帮忙的搬运者，并沿白线撤离（未完成）；用蓝方短讯机发出自己位于第三根廊柱的求助（已完成）。路明非：在西回廊，精神值48，外貌校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩，个性习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人、不再等别人替他决定，愿意先迈出一步，任务在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）；向诺诺问清当前红蓝两方局势和自己是否可以保持中立（已完成）；在进入交火区前拿到可用的护目镜与演习装备（未完成）；把胸前护目镜戴好并确认镜片没有裂纹（未完成）；在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线（未完成）；得到至少一名在场者明确同意的协作，不替他人擅自承诺（未完成）；读过服务巷规则牌，知道医护白线内禁止交火（已完成）。诺诺：在西回廊，精神值58，外貌红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面，个性看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实，任务让红方的旗台行动有可执行的掩护，而不把路明非当诱饵（未完成）；问清路明非的参赛意愿并说明三条接近钟楼的路线（未完成）；把故障短讯机恢复到能与凯撒联络的状态（未完成）；确认西回廊的蓝方伤员是否需要真正的医护帮助（未完成）；与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷（未完成）。【物品】林亦舟放下的演习枪（在西回廊里）：枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。路明非的护目镜（在路明非里）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。路明非的演习背心（在路明非里）：背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。折断的蓝布带（在西回廊里）：蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。【变化】时间推进3 minute。路明非（人物）：精神值变成48，多出个性不再等别人替他决定，愿意先迈出一步，完成向诺诺问清当前红蓝两方局势和自己是否可以保持中立。【正文】",
+        "scene": {
+          "location": "西回廊",
+          "placeNotes": [
+            "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+          ],
+          "present": [
+            {
+              "id": "lu",
+              "name": "路明非",
+              "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+            },
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+            },
+            {
+              "id": "lin",
+              "name": "林亦舟",
+              "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+            }
+          ],
+          "objects": [
+            {
+              "id": "lin_gun",
+              "name": "林亦舟放下的演习枪",
+              "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+            },
+            {
+              "id": "broken_blue_band",
+              "name": "折断的蓝布带",
+              "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+            }
+          ],
+          "inventory": [
+            {
+              "id": "goggles_lu",
+              "name": "路明非的护目镜",
+              "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+            },
+            {
+              "id": "jacket_lu",
+              "name": "路明非的演习背心",
+              "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+            }
+          ],
+          "exits": []
+        },
+        "policy": {
+          "viewpoint": {
+            "id": "lu",
+            "name": "路明非"
+          },
+          "viewpointId": "lu",
+          "roster": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因"
+          ],
+          "locations": [
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "knownPositions": [
+            {
+              "id": "nono",
+              "name": "诺诺",
+              "location": "西回廊"
+            },
+            {
+              "id": "fingel",
+              "name": "芬格尔",
+              "location": "器材棚"
+            },
+            {
+              "id": "chu",
+              "name": "楚子航",
+              "location": "钟楼二层平台"
+            },
+            {
+              "id": "caesar",
+              "name": "凯撒",
+              "location": "红方集结点"
+            },
+            {
+              "id": "su",
+              "name": "苏茜",
+              "location": "东回廊"
+            },
+            {
+              "id": "lin",
+              "name": "林亦舟",
+              "location": "西回廊"
+            },
+            {
+              "id": "tang",
+              "name": "唐骁",
+              "location": "中央庭院"
+            },
+            {
+              "id": "zhou",
+              "name": "周映",
+              "location": "钟楼旗台外廊"
+            },
+            {
+              "id": "qin",
+              "name": "秦越",
+              "location": "器材棚"
+            },
+            {
+              "id": "doctor",
+              "name": "顾岚",
+              "location": "演习医护处置室"
+            },
+            {
+              "id": "shen",
+              "name": "沈澄",
+              "location": "医护休息区"
+            },
+            {
+              "id": "tomiyama",
+              "name": "富山雅史",
+              "location": "医护休息区"
+            },
+            {
+              "id": "manstein",
+              "name": "曼施坦因",
+              "location": "演习观察席"
+            }
+          ],
+          "knownEntities": [
+            "路明非",
+            "诺诺",
+            "芬格尔",
+            "楚子航",
+            "凯撒",
+            "苏茜",
+            "林亦舟",
+            "唐骁",
+            "周映",
+            "秦越",
+            "顾岚",
+            "沈澄",
+            "富山雅史",
+            "曼施坦因",
+            "演习规则牌",
+            "赛区路线图",
+            "路明非的护目镜",
+            "路明非的演习背心",
+            "诺诺的演习短枪",
+            "诺诺的故障短讯机",
+            "诺诺的红色识别带",
+            "芬格尔的相机",
+            "芬格尔的饭票夹",
+            "相机备用电池",
+            "楚子航的演习枪",
+            "楚子航的蓝方短讯机",
+            "楚子航的蓝色识别带",
+            "红方地图桌",
+            "凯撒的庭院平面图",
+            "凯撒的演习枪",
+            "红方信号旗",
+            "凯撒的红色识别带",
+            "凯撒的红方短讯机",
+            "苏茜的演习长枪",
+            "苏茜的蓝方短讯机",
+            "苏茜的备用弹匣",
+            "低窗软垫",
+            "东回廊遮光帘",
+            "林亦舟放下的演习枪",
+            "林亦舟的短讯机",
+            "折断的蓝布带",
+            "唐骁的演习枪",
+            "唐骁的满弹匣",
+            "庭院空弹匣",
+            "倒放长椅",
+            "南端石花槽",
+            "钟楼旗台底座",
+            "中立白旗",
+            "旗台短安全绳",
+            "蓝方信号旗",
+            "顶层玻璃门",
+            "旗台机械检修图",
+            "值钟间工作台",
+            "门厅翻倒长桌",
+            "钟楼地下检修门",
+            "服务巷检修盖",
+            "绝缘手电",
+            "小桥松动护栏",
+            "医护通道标牌",
+            "器材领用台",
+            "器材领用簿",
+            "未领用演习短枪",
+            "备用护目镜",
+            "备用红色识别带",
+            "备用蓝色识别带",
+            "开盖演习弹药箱",
+            "通用短枪弹匣甲",
+            "通用短枪弹匣乙",
+            "器材笼挂锁",
+            "器材笼钥匙",
+            "折叠担架",
+            "折叠梯",
+            "备用安全绳",
+            "短讯机电池盒",
+            "R型短讯电池甲",
+            "R型短讯电池乙",
+            "医护箱",
+            "未启用冷敷袋",
+            "弹力绷带",
+            "检查手套",
+            "医护空床",
+            "伤情登记夹",
+            "沈澄拆下的红色识别带",
+            "休息区饮水杯",
+            "保温毯",
+            "安全广播话筒",
+            "旗台状态面板",
+            "安全事件记录单",
+            "卡塞尔学院演习区",
+            "西侧器材区",
+            "西侧服务巷",
+            "器材棚",
+            "器材笼内",
+            "中央庭院",
+            "停水喷泉池",
+            "西回廊",
+            "东回廊",
+            "跨溪小桥",
+            "钟楼",
+            "钟楼门厅",
+            "钟楼下层楼梯",
+            "钟楼二层平台",
+            "值钟间",
+            "钟楼上层楼梯",
+            "钟楼顶层",
+            "钟楼旗台外廊",
+            "红方集结点",
+            "蓝方集结点",
+            "地下检修通道",
+            "服务巷检修口",
+            "医护附楼",
+            "演习医护处置室",
+            "医护休息区",
+            "演习观察席"
+          ],
+          "time": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 3,
+              "unit": "minute"
+            }
+          },
+          "requireTime": true,
+          "scene": {
+            "location": "西回廊",
+            "placeNotes": [
+              "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+            ],
+            "present": [
+              {
+                "id": "lu",
+                "name": "路明非",
+                "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+              },
+              {
+                "id": "nono",
+                "name": "诺诺",
+                "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+              },
+              {
+                "id": "lin",
+                "name": "林亦舟",
+                "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+              }
+            ],
+            "objects": [
+              {
+                "id": "lin_gun",
+                "name": "林亦舟放下的演习枪",
+                "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+              },
+              {
+                "id": "broken_blue_band",
+                "name": "折断的蓝布带",
+                "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+              }
+            ],
+            "inventory": [
+              {
+                "id": "goggles_lu",
+                "name": "路明非的护目镜",
+                "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+              },
+              {
+                "id": "jacket_lu",
+                "name": "路明非的演习背心",
+                "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+              }
+            ],
+            "exits": []
+          },
+          "targetChars": 240
+        },
+        "priorText": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起。",
+        "priorSource": "accepted",
+        "committedExtras": [
+          "state",
+          "beforeState",
+          "timeAdvance",
+          "entityDeltas"
+        ]
+      },
+      "result": {
+        "text": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+        "chars": 80,
+        "paragraphs": [
+          "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。",
+          "路明非不再等别人替他决定，愿意先迈出一步。"
+        ],
+        "firstParagraph": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。",
+        "lastParagraph": "路明非不再等别人替他决定，愿意先迈出一步。",
+        "accepted": true,
+        "status": "accepted",
+        "strategyVersion": "prose-composer-v1",
+        "timings": {
+          "planMs": 0.11999988555908203,
+          "composeMs": 1.0250005722045898,
+          "verifyMs": 0.029999732971191406,
+          "totalMs": 1233.585000038147,
+          "attemptMs": [
+            1.3550004959106445
+          ],
+          "attemptsMs": 1.3550004959106445,
+          "firstTokenMs": null,
+          "deadlineExceeded": false
+        },
+        "issues": [],
+        "attempts": [
+          {
+            "index": 1,
+            "prompt": "",
+            "promptChars": 0,
+            "raw": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+            "cleaned": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+            "finishReason": "stop",
+            "error": null,
+            "durationMs": 1.3550004959106445,
+            "firstTokenMs": null,
+            "accepted": true,
+            "issues": [],
+            "source": {
+              "attempt": 1,
+              "prompt": "",
+              "promptChars": 0,
+              "raw": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+              "cleaned": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+              "finishReason": "stop",
+              "error": null,
+              "durationMs": 1.3550004959106445,
+              "firstTokenMs": null,
+              "completion": null,
+              "alignment": null,
+              "issues": [],
+              "metrics": null,
+              "accepted": true,
+              "cancelled": false,
+              "timedOut": false
+            }
+          }
+        ],
+        "extraKeys": [
+          "attemptIndex",
+          "status",
+          "strategy",
+          "composed",
+          "sparse",
+          "display"
+        ]
+      },
+      "progress": {
+        "count": 1,
+        "firstAtMs": 2,
+        "lastAtMs": 2,
+        "firstReadableAtMs": 2,
+        "tail": [
+          {
+            "text": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
+            "status": "complete",
+            "verified": true,
+            "elapsedMs": 1.3550004959106445
+          }
+        ]
+      },
+      "engineAfter": {
+        "alive": true,
+        "modelId": "none"
+      },
+      "contract": {
+        "ok": true,
+        "missing": [],
+        "notes": []
+      },
+      "error": null,
+      "repeat": 1,
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "reproduce": {
+        "candidate": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "exportName": "generateCandidate",
+        "modelUrl": "/models/stub.gguf",
+        "modelDir": "D:/others/Jity/.local/parallel-local-game/.tmp/stub-model",
+        "loader": "07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel",
+        "loaderModelId": "none",
+        "policy": null,
+        "policyNote": "only the candidate-specific overrides; the rest is the scenario default in input.policy",
+        "set": "free-day",
+        "only": "free-day-task",
+        "gpu": false,
+        "threads": 4,
+        "hardTimeoutMs": 240000,
+        "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
+      },
+      "engine": {
+        "modelUrl": "/models/stub.gguf",
+        "loadMs": 0,
+        "info": {
+          "backend": "program-only (stub loader, no model)",
+          "modelId": "none"
+        },
+        "diagnostics": null,
+        "webgpuAvailable": true,
+        "gpuRequested": false,
+        "backendNote": "program-only stub (no model) backend reported by the candidate loader; requested gpu=false",
+        "loader": {
+          "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/scripts/candidate-prose/stub-engine-loader.ts",
+          "exportName": "loadCandidateModel",
+          "modelId": "none",
+          "backend": "program-only stub (no model)",
+          "fallback": null,
+          "attempts": null
+        },
+        "coldStart": true,
+        "reloadReason": null,
+        "modelFile": {
+          "url": "/models/stub.gguf",
+          "servedPath": "D:\\others\\Jity\\.local\\parallel-local-game\\.tmp\\stub-model\\stub.gguf",
+          "exists": true,
+          "bytes": 39,
+          "sha256": "148151239457a5ec62c866609bf976b74ce1cdfcb6ad8705e3397108276a0b34",
+          "mtime": "2026-11-10T07:00:23.567Z"
+        }
+      },
+      "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json"
     }
   ],
   "failures": [],
@@ -9425,8 +10970,8 @@
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-move",
-      "runId": "07-prose::free-day-move::mwayraqg",
-      "startedAt": "2026-11-10T17:28:07.188Z",
+      "runId": "07-prose::free-day-move::mwayx0q1",
+      "startedAt": "2026-11-10T17:32:34.149Z",
       "accepted": true,
       "chars": 86,
       "wallMs": 4,
@@ -9435,37 +10980,37 @@
       "gpuRequested": false,
       "issues": [],
       "textPreview": "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。又过了一分钟，路明非从西侧服务巷走到西回廊。诺诺从西侧服务巷来到西回廊。不远处是林亦舟，蓝色识别带沾着灰，左脚踝在鞋",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwayraqg]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-move::mwayx0q1]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-open",
-      "runId": "07-prose::free-day-open::mwayrapu",
-      "startedAt": "2026-11-10T17:28:07.166Z",
+      "runId": "07-prose::free-day-open::mwayx0p9",
+      "startedAt": "2026-11-10T17:32:34.116Z",
       "accepted": true,
       "chars": 74,
-      "wallMs": 4,
+      "wallMs": 8,
       "firstReadableAtMs": null,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
       "textPreview": "巷口的黄黑绳已放下，进入即算踏入演习区。不远处是诺诺，红发用发圈束在脑后，红色识别带缠在左臂。演习规则牌还在西侧服务巷。牌面写明：使用弗里嘉演习弹。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwayrapu]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-open::mwayx0p9]"
     },
     {
       "candidateId": "07-prose",
       "scenarioId": "free-day-task",
-      "runId": "07-prose::free-day-task::mwayrar1",
-      "startedAt": "2026-11-10T17:28:07.210Z",
+      "runId": "07-prose::free-day-task::mwayx0ql",
+      "startedAt": "2026-11-10T17:32:34.171Z",
       "accepted": true,
       "chars": 80,
-      "wallMs": 3,
-      "firstReadableAtMs": 3,
+      "wallMs": 2,
+      "firstReadableAtMs": 2,
       "backend": "program-only stub (no model)",
       "gpuRequested": false,
       "issues": [],
       "textPreview": "三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。",
-      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwayrar1]"
+      "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\07-sync\\artifacts\\prose-composer\\browser-07-after.json#runs[07-prose::free-day-task::mwayx0ql]"
     }
   ]
 }

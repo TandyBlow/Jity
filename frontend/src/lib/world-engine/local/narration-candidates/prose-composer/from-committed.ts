@@ -426,6 +426,16 @@ export function sceneFromCommitted(
     if (advance?.duration && advance.duration.amount > 0) {
       beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
     }
+    // A continuation whose point settled nothing (for example the settlement
+    // failed and only the previous state is available) has nothing to narrate.
+    // Describing the unchanged room here would hide the failed turn behind
+    // plausible prose; report an empty scene instead so the caller can show a
+    // retry. The opening turn has no prior text and is unaffected.
+    const hasSettledBeat = beats.some((beat) => beat.kind !== 'scene');
+    if (!hasSettledBeat && policy.priorText && !(advance?.duration && advance.duration.amount > 0)) {
+      enriched.scene.beats = [];
+      return enriched;
+    }
     const placeLine = clause(enriched.scene.location.details?.[0], 44);
     // The place is the anchor: it must stay ahead of the presence texture.
     if (placeLine) beats.unshift({ kind: 'scene', detail: placeLine });
