@@ -40,6 +40,8 @@ const config = {
   maxTokens: Number(option('--max-tokens', '200')),
   maxAttempts: Number(option('--max-attempts', '2')),
   minChars: Number(option('--min-chars', '80')),
+  temperature: Number(option('--temperature', '0.7')),
+  retryTemperature: Number(option('--retry-temperature', '0.5')),
   // One or more arms measured in the same browser session (one model load).
   //   scene  — whole scene from lane 01's serialized input + writing contract
   //   prose  — whole scene rendered as the lane-08 reference closed-book turn
@@ -624,7 +626,7 @@ try {
           minChars: config.minChars, targetChars: 240,
           maxAttempts: config.maxAttempts, maxTokens: config.maxTokens, maxTokensCeiling: 700,
           beatAttempts: config.maxAttempts,
-          temperature: 0.7, retryTemperature: 0.5, seed: 42,
+          temperature: config.temperature, retryTemperature: config.retryTemperature, seed: 42,
           deadlineMs: 300_000, timeoutMs: 150_000,
           ...(config.instruction ? { instruction: config.instruction } : {}),
         },
