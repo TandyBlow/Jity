@@ -181,6 +181,20 @@ a different engine.
    `firstReadableMs` (draft), plus load / first token / per-turn / whole
    submission. Dispose engines at the end and check
    `workersCreated === workersExited`.
+6. Long-session growth (the 10→20-turn requirement): on the product page read
+   `window.__worldTurns`. A healthy 10- or 20-turn run has, per engine,
+   `loadCount === 1`, `workersCreated === 1`, `workersExited === 0`,
+   `generations === turns`, and `cachedModelBytes` constant. If a turn hard
+   stopped, expect `loadCount`/`workersCreated` to increase by exactly one and
+   the reload evidence `fromCache: true, fetchMs: 0`; any other growth is a
+   leak/reload bug, not a quality result. Record the per-turn
+   `acceptedMs`/`draftMs`/`programMs`, the stop latency, and (if exposed)
+   `promptTokens` vs `contextSize`; a prompt near the context limit needs a
+   larger context or trimming, not a model change.
+7. Readiness: before the first submission the page must be `ready` and both
+   engines `loaded` (the submit button is disabled while loading). A
+   `complete`/`chat` before load must reject immediately; it must never wait
+   for the 120 s load deadline (the `complete-before-ready` check proves this).
 
 ## 02/06 integration entry points
 
