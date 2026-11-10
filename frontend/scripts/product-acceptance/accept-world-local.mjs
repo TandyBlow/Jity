@@ -634,6 +634,11 @@ try {
           acceptedMs: record.acceptedMs ?? null, draftMs: record.draftMs ?? null, programMs: record.programMs ?? null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
+          narration: record.narration ?? null,
+          segments: Array.isArray(record.segments) ? record.segments : null,
+          mixedMs: record.mixedMs ?? null,
+          narrationModel: record.narrationModel ?? null,
+          promptShape: record.promptShape ?? null,
           submission: record.submission ? {
             inputText: record.submission.inputText ?? null,
             startedAtMs: record.submission.startedAtMs ?? null,
