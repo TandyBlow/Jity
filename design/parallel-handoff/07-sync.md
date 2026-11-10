@@ -190,6 +190,27 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 - 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
   1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
 
+### 十回合存储验收（2026-11-10）
+
+`frontend/scripts/parallel-sync/ten-turn-sync-check.ts`，06 的真实 session + 真实服务：
+
+- 前 5 回合在线保存，每回合 `localSaved=false`；
+- 第 6、7 回合断网，两笔进入队列；
+- 关闭再打开（等同刷新）：7 条命令和 revision 都还在；
+- 重连 `flush()`：上传 2 笔、0 冲突、0 剩余，远端头正好带 7 条命令；
+- 再打 3 回合：最终远端头正好带 10 条命令，session 从未被阻塞。
+
+这说明“重连只上传后代、不覆盖、不双写”在十回合尺度上成立（存储层，不是页面、
+不是模型正文）。
+
+**同时发现一个不属于同步、但会卡住验收的问题**（已报 06/05）：只规划 1 个点位的
+回合，刷新后下一条命令会被接受但永远不规划——模型根本没被再问一次
+（`plannedAfterReopen=false`），`advance` 一直开着，之后每次提交都是
+`turn_in_progress`。规划 2 个点位时同样流程正常，刷新前的 1 点位回合也正常，所以变量
+在恢复出来的 round/memory 状态。复现脚本
+`frontend/scripts/parallel-sync/refresh-next-turn-repro.ts`。验收计划里“第 6 回合后刷新”
+正好会踩到它；页面没有 `await` 分支也没有恢复按钮。
+
 ### 分叉：两台设备各走一步，重连冲突，玩家显式保留（2026-11-10）
 
 `frontend/scripts/parallel-sync/fork-session-check.ts`，用 06 的真实 session 快照和真实服务：
