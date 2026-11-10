@@ -646,6 +646,23 @@ export function reviewNarration(args: {
       `${change.name}: new personality 「${change.text}」 is not narrated`, [change.text], [change.id]));
   }
 
+  // Track the last person named before each sentence so a bare pronoun can be
+  // read as that person when only one candidate exists.
+  const lastPersonBefore = new Map<number, string | null>();
+  {
+    let lastPerson: string | null = null;
+    sentences.forEach((sentence, index) => {
+      lastPersonBefore.set(index, lastPerson);
+      const hits = nameHits(sentence.narration, names, Object.keys(projection.people));
+      if (hits.length) lastPerson = hits[hits.length - 1].name;
+    });
+  }
+  const refersTo = (sentenceText: string, index: number, personName: string): boolean => {
+    if (sentenceText.includes(personName)) return true;
+    if (projection.viewpoint === personName && !nameHits(sentenceText, names, Object.keys(projection.people)).length) return true;
+    return /(他|她)/u.test(sentenceText) && lastPersonBefore.get(index) === personName;
+  };
+
   // ---------------------------------------------------------------- items
   const itemStateCovered = new Set<string>();
   for (const sentence of sentences) {
@@ -659,7 +676,8 @@ export function reviewNarration(args: {
       if (!claimers.length) {
         const before = narration.slice(0, Math.max(0, narration.indexOf(clause)));
         const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
-        if (unique.length === 1 && /^\s*(?:他|她|他们|她们|手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)) implied = unique;
+        const pronounLocative = /(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause);
+        if (unique.length === 1 && (/^\s*(?:他|她|他们|她们|手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause) || pronounLocative)) implied = unique;
       }
       if (holder === 'scene') {
         // Carrying it from A to B is licensed when the object and a person
@@ -713,6 +731,10 @@ export function reviewNarration(args: {
       const prop = [...ctx.holders.holders.keys()].find((entry) => handled(entry))
         ?? PROPS.find((entry) => handled(entry));
       if (!prop) continue;
+      // Picking a settled scene object up is polish; only a prop with no
+      // settled place (or one that belongs to someone else) is a fact error.
+      const propHolder = [...ctx.holders.holders.entries()].find(([name]) => name === prop || prop.includes(name))?.[1];
+      if (propHolder === 'scene') continue;
       const verb = hasAny(handled(prop) ?? '', POSSESSION_VERBS)
         ?? hasAny(handled(prop) ?? '', HANDLING_VERBS);
       if (!verb) continue;
@@ -1001,9 +1023,7 @@ export function reviewNarration(args: {
     // A body mark (red weal, blood, bruise) on a named body part must exist in
     // the settled appearance; otherwise it is a new physical fact.
     for (const [personName, person] of Object.entries(projection.people)) {
-      const named = narration.includes(personName)
-        || (projection.viewpoint === personName && !nameHits(narration, names, Object.keys(projection.people)).length);
-      if (!named) continue;
+      if (!refersTo(narration, sentences.indexOf(sentence), personName)) continue;
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
@@ -1032,9 +1052,7 @@ export function reviewNarration(args: {
       if (!settledSide) continue;
       const proseSide = sideOf(narration);
       if (!proseSide || proseSide.side === settledSide.side) continue;
-      const named = narration.includes(personName)
-        || (projection.viewpoint === personName && !nameHits(narration, names, Object.keys(projection.people)).length);
-      if (!named) continue;
+      if (!refersTo(narration, sentences.indexOf(sentence), personName)) continue;
       findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
         `${personName}: the ${proseSide.mark} is settled on the ${settledSide.side} side but the prose puts it on the ${proseSide.side} side`, [settledLooks.slice(0, 40)], []));
       break;

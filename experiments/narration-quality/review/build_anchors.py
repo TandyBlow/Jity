@@ -778,6 +778,28 @@ anchors += [
     },
 ]
 
+
+anchors += [
+    {
+        "id": "neg/qwen3-160-prose",
+        "source": "results/02-narration/real-qwen3-free-day-160.json free-day-root-160::prose (accepted, 101 chars)",
+        "input": arms_scene,
+        "text": "路明非望着远处的钟楼，护目镜在胸前晃动。诺诺的红发在风中飘动，枪口压向地面。演习规则牌在手中转着，他听见了风声，也听见了脚步声。路明非的护目镜无裂纹，镜带松着，他看见了诺诺的红痕，也看见了她手里的短枪。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added"], "style": [],
+                   "notes": "A footstep with no mover; the rule sign in hand and the unseen clock tower stay review."},
+    },
+    {
+        "id": "neg/qwen3-closed-prose",
+        "source": "results/02-narration/real-qwen3-free-day-closedlist.json free-day-root-160::prose (accepted, 109 chars)",
+        "input": arms_scene,
+        "text": "路明非握着演习规则牌，看着诺诺手里的短枪压向地面。她发圈松散，红痕在左臂蜿蜒，护目镜松着带，挂在胸前。西侧服务巷的黄黑绳已放下，器材棚门敞开。钟楼旗台外廊的风声在耳边响起，路明非的演习背心前襟完好，肩上没有阵营识别带。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [],
+                   "notes": "The red mark moves to the left arm in the next sentence; the pronoun still refers to 诺诺."},
+    },
+]
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
