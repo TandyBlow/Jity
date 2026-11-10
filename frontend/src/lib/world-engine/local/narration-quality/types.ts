@@ -28,6 +28,7 @@ export type FindingKind =
   | 'fact.wrong_number'
   | 'fact.false_position'
   | 'fact.item_misattribution'
+  | 'fact.item_actor'
   | 'fact.gender'
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'
