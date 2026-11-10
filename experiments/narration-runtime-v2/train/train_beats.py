@@ -30,8 +30,10 @@ import torch.nn.functional as F
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-SYSTEM = ("你是中文小说作者，为一个文字冒险游戏写正文。文字要具体、克制，"
-          "靠动作、环境和物件细节推进，不写标题，不复述设定。")
+# Must equal the system message the GGUF chat template inserts when the
+# browser passes a single user turn (Qwen2.5 default). Training with a custom
+# Chinese system line and inferring without it silently changes the prefix.
+SYSTEM = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 
 MOUNT = ""
 
@@ -152,6 +154,16 @@ def batch(items: List[Dict[str, Any]], pad_id: int):
     return ids, labels, attention
 
 
+def eval_dtype(device) -> "torch.dtype":
+    """Autocast dtype for evaluation must match the training computation dtype."""
+    if getattr(device, "type", str(device)) == "cuda":
+        return torch.float16 if str(device) == "cuda" and AMP_STATE.get("fp16") else torch.bfloat16
+    return torch.bfloat16
+
+
+AMP_STATE: Dict[str, Any] = {"fp16": False, "enabled": False}
+
+
 def evaluate(model, items: List[Dict[str, Any]], pad_id: int, device, batch_size: int) -> float:
     model.eval()
     total, tokens = 0.0, 0
@@ -160,7 +172,10 @@ def evaluate(model, items: List[Dict[str, Any]], pad_id: int, device, batch_size
             chunk = items[start:start + batch_size]
             ids, labels, attention = batch(chunk, pad_id)
             ids, labels, attention = ids.to(device), labels.to(device), attention.to(device)
-            out = model(input_ids=ids, attention_mask=attention, labels=labels)
+            with torch.autocast(device_type=str(device).split(":")[0],
+                                dtype=eval_dtype(device),
+                                enabled=AMP_STATE["enabled"]):
+                out = model(input_ids=ids, attention_mask=attention, labels=labels)
             count = int((labels != -100).sum().item())
             total += float(out.loss.item()) * count
             tokens += count
@@ -188,6 +203,9 @@ def main() -> int:
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--epochs", type=int, default=0)
     parser.add_argument("--max-steps", type=int, default=0)
+    parser.add_argument("--precision", default="auto",
+                        choices=("auto", "bf16", "fp16", "fp32"),
+                        help="compute precision; fp16 is for GPUs without bf16 support (e.g. V100)")
     parser.add_argument("--sample-n", type=int, default=3)
     args = parser.parse_args()
 
@@ -266,8 +284,13 @@ def main() -> int:
     if not train_items:
         raise SystemExit("no training items")
 
+    precision = args.precision
+    if precision == "auto":
+        precision = "bf16" if (args.device != "cuda" or torch.cuda.is_bf16_supported()) else "fp16"
+    model_dtype = {"fp16": torch.float16, "bf16": torch.bfloat16,
+                   "fp32": torch.float32}[precision]
     model = AutoModelForCausalLM.from_pretrained(
-        base_path, local_files_only=True, torch_dtype=torch.bfloat16,
+        base_path, local_files_only=True, torch_dtype=model_dtype,
         device_map={"": 0} if args.device == "cuda" else None)
     if config["training"].get("gradientCheckpointing", True):
         model.gradient_checkpointing_enable()
@@ -284,6 +307,14 @@ def main() -> int:
     pad_id = tokenizer.pad_token_id
 
     trainable = [param for param in model.parameters() if param.requires_grad]
+    if precision == "fp16":
+        # Keep the LoRA master weights in fp32; the forward/backward matmuls run
+        # in fp16 through autocast and the scaler, which is what V100 supports.
+        for param in trainable:
+            param.data = param.data.float()
+    AMP_STATE.update({"fp16": precision == "fp16",
+                      "enabled": precision in ("fp16", "bf16") and args.device == "cuda"})
+    scaler = torch.amp.GradScaler("cuda", enabled=AMP_STATE["fp16"])
     optimizer = torch.optim.AdamW(trainable, lr=float(config["training"]["lr"]),
                                   weight_decay=float(config["training"].get("weightDecay", 0.0)))
     batch_size = int(config["training"].get("batch", 1))
@@ -311,6 +342,7 @@ def main() -> int:
 
     report: Dict[str, Any] = {
         "runId": config.get("runId", "qwen-beat-v1"),
+        "precision": precision, "ampEnabled": AMP_STATE["enabled"], "device": args.device,
         "backend": "hf-causal-lora",
         "base": {"path": base_path, "sha256": base_hash},
         "tokenizer": {"path": tokenizer_path,
@@ -338,12 +370,16 @@ def main() -> int:
         for index, position in enumerate(order):
             ids, labels, attention = batch([train_items[position]], pad_id)
             ids, labels, attention = ids.to(device), labels.to(device), attention.to(device)
-            out = model(input_ids=ids, attention_mask=attention, labels=labels)
-            (out.loss / grad_accum).backward()
+            with torch.autocast(device_type="cuda" if args.device == "cuda" else "cpu",
+                                dtype=model_dtype, enabled=AMP_STATE["enabled"]):
+                out = model(input_ids=ids, attention_mask=attention, labels=labels)
+            scaler.scale(out.loss / grad_accum).backward()
             epoch_loss += float(out.loss.item())
             if (index + 1) % grad_accum == 0 or index + 1 == len(order):
+                scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(trainable, float(config["training"].get("gradClip", 1.0)))
-                optimizer.step()
+                scaler.step(optimizer)
+                scaler.update()
                 optimizer.zero_grad()
             steps += 1
             if args.max_steps and steps >= args.max_steps:
