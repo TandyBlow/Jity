@@ -14,6 +14,33 @@
 结算、掷骰和事实校验仍全部在浏览器/现有内核。06 负责本地仓库和会话，
 本线只通过注入的 `load/save` 接口消费它，不直接改其存储。
 
+## 状态范围、来源与上限（给 02/06 的交代）
+
+**同步的是什么。** 06 的 `LocalGameSnapshot` 整份：`transport`（点位、每点正文
+`narrations`、骰点、半结算 `work`、世界 `state`、head）加 `commands` 和可选
+`checkpoint`。服务器把它当**不透明字节**存：算 SHA-256 内容摘要、记父子引用和
+revision，**不解析 transport、不改写正文、不重算状态、不调模型**。所以：
+
+| 问题 | 答案 |
+|---|---|
+| 谁是状态的唯一写入者 | 06 的 session。本模块默认只上传，`writeLocal:true` 只给没有 session 写入者的调用方 |
+| 服务器能改正文吗 | 不能。它只比较摘要、校验父子关系和大小，原样返回 |
+| 02 和同步的关系 | 02 的正文在 `narrations` 里随快照走；服务器不校验叙事质量，也不修正。正文是否合格仍由 01/02 的流程判定 |
+| 分叉时谁决定 | 玩家。两条都保留、都可读；`choose()` 只移动“激活的头”，不删除另一条 |
+| 能自动合并吗 | 不能。两边都前进就是 `diverged`，必须显式选择；不会静默覆盖 |
+| 02/06 能拿它做重放吗 | 只能由 06 的 session 打开快照重放；服务器不提供“按回合重算”接口 |
+
+**上限（默认值，均可用环境变量调整）：**
+
+- 单快照 payload 4 MiB（`LOCAL_PROGRESS_MAX_PAYLOAD_BYTES`）；
+- 单世界 5000 个快照（`LOCAL_PROGRESS_MAX_SNAPSHOTS`），graph 一次全量返回；
+- 一个快照最多 64 个父（`LOCAL_PROGRESS_MAX_PARENTS`），正常线性推进只用 1 个；
+- 幂等记录保留 30 天（`LOCAL_PROGRESS_IDEMPOTENCY_TTL_DAYS`）；
+- token 是全局 Bearer（`LOCAL_PROGRESS_TOKEN`），不是每用户授权；世界 ID 由调用方生成；
+- 没有压缩、加密、服务端 GC/备份；不做分页。
+
+超过上限的请求会被拒绝并返回明确错误，不会截断后保存。
+
 ## 实现
 
 ### 服务端
