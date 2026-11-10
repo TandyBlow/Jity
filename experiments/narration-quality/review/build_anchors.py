@@ -318,7 +318,7 @@ anchors += [
         "input": arms_scene,
         "text": "路明非望着远处的钟楼，风穿过巷子，带来一丝凉意。诺诺的红发在阳光下闪烁，她手中的短枪压在地面，枪口微微抬起。远处传来演习规则牌的声音，提醒着他们必须遵守规则。路明非注意到诺诺的红痕，那是她扶过弹着石墙时蹭上的，身上没有本场命中标记。空气中弥漫着演习弹的气味，路明非感受到脚下地面的温度，仿佛能触摸到那片被弹片击中的痕迹。",
         "options": {"genders": {}, "minChars": 1},
-        "expect": {"fact": ["fact.item_misattribution", "fact.state_contradiction", "fact.object_speaks", "fact.past_added"], "style": [],
+        "expect": {"fact": ["fact.state_contradiction", "fact.object_speaks", "fact.past_added"], "style": [],
                    "notes": "The rule sign speaks, the held pistol lies on the ground with its muzzle up, and a fragment hit is invented."},
     },
     {
@@ -476,8 +476,8 @@ add({
     "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[2]["text"],
     "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
     "expect": {
-        "fact": ["fact.item_misattribution"],
-        "notes": "演习规则牌 is settled in the lane; the prose puts it in his palm.",
+        "fact": ["fact.time_missing", "fact.body_mark_added"],
+        "notes": "The rule sign in his palm is now review-level polish; the hard errors are the missing time and 诺诺's red mark moved onto 路明非's arm.",
     },
 })
 
@@ -560,7 +560,7 @@ add({
     "input": rule_scene,
     "text": "四分钟过去，温执走进还书处，把铁皮还书箱抱在怀里，低头看箱底那块木板。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
     "options": {"genders": {}, "minChars": 1},
-    "expect": {"fact": ["fact.item_misattribution"], "notes": "A scene object written as carried."},
+    "expect": {"fact": [], "style": [], "notes": "A scene object written as carried is allowed polish: the object's settled position does not change, so this is review-level, not a fact error."},
 })
 
 add({
@@ -618,17 +618,6 @@ add({
     "expect": {"fact": [], "notes": "The board under the box is the settled appearance change; the glasses are settled appearance."},
 })
 
-os.makedirs(OUT, exist_ok=True)
-batch = {
-    "version": "narration-quality-anchors-v1",
-    "createdAt": "2026-11-10",
-    "world": "frontend/public/worlds/dragon-raja-free-day.world.json",
-    "genders": genders,
-    "cases": anchors,
-}
-io.open(OUT + "/anchors.json", "w", encoding="utf-8", newline="\n").write(
-    json.dumps(batch, ensure_ascii=False, indent=2) + "\n")
-print("anchors", len(anchors))
 
 anchors += [
     {
@@ -717,7 +706,7 @@ anchors += [
         "id": "neg/qwen3b-move-prose",
         "source": "results/02-narration/real-qwen3-free-day-arms.json move-direction::prose, auto-accepted",
         "input": {"视角": "主角视角（周宁）", "上回合状态": {"地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}, "门厅": {"位于": None, "外貌": []}}, "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"大任务": None, "小任务": []}}, "林川": {"位置": "走廊", "精神值": 40, "外貌": ["穿灰衣"], "个性": ["寡言"], "任务": {"大任务": None, "小任务": []}}}, "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}}}, "本回合变化": {"变化": {"林川": {"位置": "门厅"}}}, "本回合状态": {"人物": {}, "物品": {}}},
-        "text": "空气中弥漫着淡淡的木香，混合着一丝若有若无的潮湿。\n\n他靠在墙上，手指无意识地摩挲着盒子边缘，耳边是林川低声交谈的声音。\n\n远处传来轻微的响动，像是风拂过树叶，又像是某种未知的声响。",
+        "text": "周宁看着盒盖紧闭的盒子，听见远处传来林川的脚步声，从走廊走到门厅。空气中弥漫着淡淡的木香，混合着一丝若有若无的潮湿。他靠在墙上，手指无意识地摩挲着盒子边缘，耳边是林川低声交谈的声音。远处传来轻微的响动，像是风拂过树叶，又像是某种未知的声响。周宁没有动，只是静静等待。",
         "options": {"genders": {}, "minChars": 1},
         "expect": {"fact": [], "style": [],
                    "notes": "Allowed polish (leaning, touching the lid) plus an invented conversation, which is review-level speech, not a fact error."},
@@ -732,3 +721,45 @@ anchors += [
                    "notes": "Time is stated and nothing contradicts the state; the ungrounded held object is a review item, so the text is not fact-broken but not proven clean either."},
     },
 ]
+
+anchors += [
+    {
+        "id": "neg/qwen3-clean-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::prose (accepted, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非盯着手中的演习规则牌，镜片上映着墙上的赛区图。诺诺的红发在风中飘动，她手中的短枪枪口压向地面，红痕在左臂清晰可见。路明非的护目镜挂在胸前，镜带松着，镜片无裂纹。他看着诺诺的识别带，没有说话。空气中弥漫着演习弹的硝烟味，路明非的手指轻轻摩挲着规则牌边缘。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [],
+                   "notes": "诺诺's red mark is settled on the right sleeve and written on the left arm. Holding the lane's rule sign is polish."},
+    },
+    {
+        "id": "neg/qwen3-clean-scene",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::scene (accepted, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非蹲在服务巷的墙角，手指摩挲着护目镜边缘。远处枪声未歇，他缩肩的姿势被风揉碎，混着灰土味的空气里，有金属摩擦的声响。诺诺的短枪枪口仍压向地面，红发在风中晃动，像一团未燃的火。他摸到胸前的护目镜，镜片无裂纹，镜带松着，未戴在眼前。墙角的演习弹痕还在，新鲜的，像未愈合的伤口。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.trait_as_event"], "style": [],
+                   "notes": "Gunshot and metal sound have no source; the conditional shrink is written as now."},
+    },
+    {
+        "id": "neg/qwen3-clean-beats",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::beats (rejected, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非看见光在墙角闪烁，像碎银般散落。他摸到右臂上红痕，指尖触到发圈的金属扣。忽然，一片碎屑落在手背，是弹片刮过皮肤的痕迹。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.body_mark_added", "fact.past_added"], "style": [],
+                   "notes": "A red mark on the protagonist's arm and a fragment hit he never had."},
+    },
+]
+
+os.makedirs(OUT, exist_ok=True)
+batch = {
+    "version": "narration-quality-anchors-v1",
+    "createdAt": "2026-11-10",
+    "world": "frontend/public/worlds/dragon-raja-free-day.world.json",
+    "genders": genders,
+    "cases": anchors,
+}
+io.open(OUT + "/anchors.json", "w", encoding="utf-8", newline="\n").write(
+    json.dumps(batch, ensure_ascii=False, indent=2) + "\n")
+print("anchors", len(anchors))

@@ -655,7 +655,12 @@ export function reviewNarration(args: {
       if (!clause) continue;
       const personHits = nameHits(clause, names, Object.keys(projection.people));
       const claimers = personHits.map((hit) => hit.name);
-      const implied = projection.viewpoint && !claimers.length ? [projection.viewpoint] : claimers;
+      let implied = projection.viewpoint && !claimers.length ? [projection.viewpoint] : claimers;
+      if (!claimers.length) {
+        const before = narration.slice(0, Math.max(0, narration.indexOf(clause)));
+        const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
+        if (unique.length === 1 && /^\s*(?:他|她|他们|她们)/u.test(clause)) implied = unique;
+      }
       if (holder === 'scene') {
         // Carrying it from A to B is licensed when the object and a person
         // both moved A -> B in this point.
@@ -666,8 +671,8 @@ export function reviewNarration(args: {
               && (sentencePeople.includes(move.name) || claimers.includes(move.name)))
           : undefined;
         if (carrier) continue;
-        findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
-          `${object} is settled in the scene (${ctx.holders.basis.get(object)}) but is written as held`,
+        findings.push(finding(ctx, 'review.micro_action', sentence.text,
+          `${object} is settled in the scene (${ctx.holders.basis.get(object)}) and is written as held; picking it up changes no settled end state`,
           [ctx.holders.basis.get(object) ?? ''], [`item:${object}`]));
         continue;
       }
@@ -845,7 +850,11 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'review.micro_action', sentence.text,
         `physical handling (${verb}) with no settled fact; allowed as a micro-action when it changes no settled state`, [], []));
     }
-    for (const sound of SOUND_WORDS) {
+    const soundForms = [
+      ...SOUND_WORDS.filter((sound) => narration.includes(sound)),
+      ...[...narration.matchAll(/(?:摩擦|撞击|碎裂|爆裂|沙沙|嗡嗡|低语|呼喊)的(?:声响|声音|动静)/gu)].map((match) => match[0]),
+    ];
+    for (const sound of soundForms) {
       if (!narration.includes(sound)) continue;
       if (negatedAt(narration, sound)) continue;
       if (ctx.stateLicensed(sound)) continue;
@@ -932,8 +941,8 @@ export function reviewNarration(args: {
         `${objectName} is a settled object and cannot ${spoken} by itself`, [identity], []));
     }
     // A passive past event ("被弹片击中") needs a settled basis.
-    const passive = /被[^，。；]{0,8}(击中|打中|撞到|推倒|割伤|压住|拖走)/u.exec(narration);
-    if (passive && !ctx.stateLicensed(passive[1])) {
+    const passive = /(?:被[^，。；]{0,8}(?:击中|打中|撞到|推倒|割伤|压住|拖走)|(?:弹片|碎屑|碎片|玻璃)[^，。；]{0,6}(?:刮|划|擦|击|打)(?:过|中|到|伤))/u.exec(narration);
+    if (passive && !ctx.stateLicensed(passive[1] ?? passive[0])) {
       findings.push(finding(ctx, 'fact.past_added', sentence.text,
         `passive past event ${passive[0]} has no settled basis`, [], []));
     }
@@ -997,12 +1006,36 @@ export function reviewNarration(args: {
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
-      const body = /(手背|手心|手指|手腕|手臂|胳膊|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
+      const body = /(手背|手心|手指|手腕|手臂|胳膊|大臂|小臂|右臂|左臂|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
       if (!body) continue;
       const settled = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
       if (settled.includes(mark[1])) continue;
       findings.push(finding(ctx, 'fact.body_mark_added', sentence.text,
         `${personName}: ${body[1]} has ${mark[1]} in the prose but not in the settled appearance`, [settled.slice(0, 40)], []));
+      break;
+    }
+    // A mark settled on one side of the body cannot move to the other side.
+    for (const [personName, person] of Object.entries(projection.people)) {
+      const settledLooks = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
+      const sideOf = (textValue: string): { side: string; mark: string } | null => {
+        const mark = /(红痕|血迹|伤口|淤青)/u.exec(textValue);
+        if (!mark) return null;
+        const before = textValue.slice(Math.max(0, mark.index - 7), mark.index);
+        const left = /([左右])(?:袖|臂|肩|手|腿|脚)[^。；，]{0,4}$/u.exec(before);
+        if (left) return { side: left[1], mark: mark[1] };
+        const after = textValue.slice(mark.index + mark[1].length, mark.index + mark[1].length + 7);
+        const right = /^[^。；，]{0,4}([左右])(?:袖|臂|肩|手|腿|脚)/u.exec(after);
+        return right ? { side: right[1], mark: mark[1] } : null;
+      };
+      const settledSide = sideOf(settledLooks);
+      if (!settledSide) continue;
+      const proseSide = sideOf(narration);
+      if (!proseSide || proseSide.side === settledSide.side) continue;
+      const named = narration.includes(personName)
+        || (projection.viewpoint === personName && !nameHits(narration, names, Object.keys(projection.people)).length);
+      if (!named) continue;
+      findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+        `${personName}: the ${proseSide.mark} is settled on the ${settledSide.side} side but the prose puts it on the ${proseSide.side} side`, [settledLooks.slice(0, 40)], []));
       break;
     }
     // A settled appearance can be contradicted by its opposite direction.
