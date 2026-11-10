@@ -215,6 +215,16 @@ describe('real recovery session continuity', () => {
     expect(next?.narrationSources?.p1?.source).toBe('model');
   });
 
+  it('keeps both 415c program points after reload', () => {
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-415c.json'), 'utf8'));
+    const entries = restoredEntries(evidence.refreshRestore.snapshotAfterReload);
+    expect(entries).toHaveLength(1);
+    expect(entries[0].source).toBe('program');
+    expect(entries[0].note).toContain('程序');
+    expect(entries[0].points?.map((point: { source?: string }) => point.source)).toEqual(['program', 'program']);
+  });
+
   it('keeps the e9a5 player source and flags the later draft paragraph', () => {
     const evidence = JSON.parse(readFileSync(
       resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
