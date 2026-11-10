@@ -189,6 +189,32 @@ describe('real recovery session continuity', () => {
     expect(entries[0].points?.find((point: { pointId: string }) => point.pointId === 'point_round_3_1')?.source).toBe('program');
   });
 
+  // KNOWN 06 BUG: snapshotForPersist reads only the live source ref, so the
+  // first write after restore drops restoredSources. Flip to it() when 06
+  // merges 06-session-persist-restored-sources.patch.
+  it.fails('keeps restored narration sources in the next persisted snapshot', async () => {
+    const sources = { p1: { source: 'model' as const } };
+    let persisted: any = null;
+    const session = await LocalGameSession.create(template(), scriptedModel([]), {
+      roll: () => 13,
+      narrationSourceOf: () => sources,
+      onPersist: (snapshot) => { persisted = snapshot; },
+    });
+    await session.start();
+    await session.submit('我打开盒盖。');
+    expect(persisted?.narrationSources?.p1?.source).toBe('model');
+
+    let next: any = null;
+    const restored = await LocalGameSession.restore(persisted, scriptedModel([]), {
+      leaseHeartbeat: false,
+      narrationSourceOf: () => undefined,
+      onPersist: (snapshot) => { next = snapshot; },
+    });
+    await restored.start();
+    await restored.submit('我退回走廊。');
+    expect(next?.narrationSources?.p1?.source).toBe('model');
+  });
+
   it('labels the e9a5 turn as a draft from its saved per-point sources', () => {
     const evidence = JSON.parse(readFileSync(
       resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
