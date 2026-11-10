@@ -374,6 +374,13 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    // A stripped fact that is only the recipient's display name (95dc's
+    // “路明非成功完成…完成任务”) is still a completion claim, not an action.
+    const nameOnly = cleaned.text.replace(/[\s，、；。！？]/gu, '');
+    if (recipientIds.some((recipient) => {
+      const name = state.initial.characters[recipient]?.name;
+      return Boolean(name) && nameOnly === String(name).replace(/[\s，、；。！？]/gu, '');
+    })) throw new Error(`fact only asserted completion, no action result left: ${original}`);
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
@@ -390,10 +397,24 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   { pattern: /成功完成行动/g, label: '成功完成行动' },
   { pattern: /成功执行行动/g, label: '成功执行行动' },
   { pattern: /成功完成任务/g, label: '成功完成任务' },
+  // The 95dc model wrote the task goal as a verb-object claim:
+  // “成功完成自己的参赛选择并完成任务”. Strip the whole task clause, not
+  // just the contiguous 任务完成 string.
+  { pattern: /(?:成功)?完成(?:了)?[^，。；]*(?:任务|目标|参赛选择)[^，。；]*/g, label: '完成任务' },
   { pattern: /完成了任务/g, label: '完成了任务' },
   { pattern: /任务完成/g, label: '任务完成' },
   { pattern: /任务达成/g, label: '任务达成' },
   { pattern: /目标达成/g, label: '目标达成' },
+  { pattern: /未达成目标/g, label: '未达成目标' },
+  { pattern: /未完成任务/g, label: '未完成任务' },
+  { pattern: /任务未完成/g, label: '任务未完成' },
+  { pattern: /未能完成/g, label: '未能完成' },
+  { pattern: /未达成/g, label: '未达成' },
+  { pattern: /完成目标/g, label: '完成目标' },
+  { pattern: /目标完成/g, label: '目标完成' },
+  { pattern: /符合规则要求/g, label: '符合规则要求' },
+  { pattern: /资格为\s*(?:true|false)/g, label: '资格为布尔值' },
+  { pattern: /资格\s*[=:：]\s*(?:true|false)/g, label: '资格为布尔值' },
   { pattern: /成功完成/g, label: '成功完成' },
 ];
 
@@ -412,6 +433,7 @@ function sanitizeFactText(text: string): { text: string; removed: string[] } {
     .replace(/，\s*(?=[，。；！？]|$)/g, '')
     .replace(/、\s*(?=[，。；！？]|$)/g, '')
     .replace(/；\s*(?=[，。；！？]|$)/g, '')
+    .replace(/[，、；]\s*(?:因此|所以|因而)\s*([。；！？]?)$/u, '$1')
     .replace(/^[，、；\s]+/, '')
     .trim();
   return { text: out, removed };
