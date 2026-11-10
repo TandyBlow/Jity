@@ -146,6 +146,18 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   const lines: string[] = [];
 
   if (view) lines.push(`视角人物：${view}。只写${view}看得见、听得见、知道的事。`);
+  // The scene's spine goes first: a 1.7B model given a long mood brief and
+  // a fact list at the bottom writes the mood and skips the move (real run:
+  // 169 chars, fact_omitted twice). The settled change is the first thing it
+  // reads, phrased as the action the scene is built on.
+  if (projected.required.length) {
+    const spine = projected.required.map((fact) => fact.kind === 'moved'
+      ? `${fact.name}从${fact.from}走到${fact.to}`
+      : `${fact.name}办完了「${'goal' in fact ? fact.goal : ''}」这件事`).join('；');
+    lines.push(`【这一幕的骨架】${spine}。先用一句把这个动作写清楚（谁、从哪、到哪），再写他在这之后看见、听见和想到的。`);
+  } else {
+    lines.push('【这一幕的骨架】这一小段时间没有外部事件：没有人到来或离开，没有人完成任务。写视角人物此刻在一个地方待着的一小段。');
+  }
   // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
   // 她 for a male character in prose the grader accepted. `names` avoids that;
   // `model` keeps ordinary Chinese pronouns (53 of lane 01's 71 gold scenes
@@ -212,22 +224,6 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   if (uniqueNames.length) {
     lines.push(`【可用名字】${uniqueNames.join('、')}。`);
     lines.push('不要引入清单之外的新人物、新地点、新物件，也不要替别人做他这一回合没做的动作。');
-  }
-
-  if (projected.required.length) {
-    lines.push('这一小段时间里发生的事（必须写进正文，不能添加别的事件）：');
-    for (const fact of projected.required) {
-      if (fact.kind === 'moved') lines.push(`- ${fact.name}从${fact.from}移动到${fact.to}。`);
-      else if (fact.kind === 'task_achieved') lines.push(`- ${fact.name}达成了任务「${fact.goal}」。`);
-    }
-    if (projected.required.some((fact) => fact.kind === 'moved')) {
-      lines.push('移动要用一句明确写出人名和两个地点，不要只用「他走过去」代替。');
-    }
-    if (projected.required.some((fact) => fact.kind === 'task_achieved')) {
-      lines.push('任务完成要让人看得出是这件事办完了，不要写出答案或下一件事。');
-    }
-  } else {
-    lines.push('这一小段时间里没有外部事件：没有人到来或离开，没有人完成任务，世界状态不变。');
   }
 
   const time = policy.time ?? null;
