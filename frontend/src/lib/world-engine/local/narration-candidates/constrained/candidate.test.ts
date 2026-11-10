@@ -508,6 +508,37 @@ describe('scene hints on a facts-only packet (06 adapter shape)', () => {
   });
 });
 
+describe('06 adapter call shape, end to end', () => {
+  it('takes facts + hints + results and keeps every settled change', async () => {
+    const packet = {
+      anchor: { worldId: 'world_test', pointId: 'p06', version: 2, stateDigest: 'digest', previousPointId: 'p05' },
+      facts: [
+        { id: 'a:move', actorId: 'lu', name: '路明非', kind: 'moved' as const, fromId: 'corridor', from: '走廊', toId: 'shed', to: '器材棚' },
+        { id: 'a:task', actorId: 'lu', name: '路明非', kind: 'task_achieved' as const, taskId: 't1', goal: '把护目镜领到手' },
+        { id: 'a:sanity', actorId: 'lu', name: '路明非', kind: 'sanity_changed' as const, from: 70, to: 74 },
+        { id: 'a:at:fingel', actorId: 'fingel', name: '芬格尔', kind: 'at' as const, locationId: 'shed', location: '器材棚' },
+      ],
+    };
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: { ...packet, timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } } },
+      inputText: '我领了护目镜',
+      priorText: null,
+      policy: {
+        mode: 'program', viewpointId: 'lu', minChars: 40, maxChars: 500,
+        resultsText: '秦越说担架在器材笼门口。',
+        scene: { placeNote: '器材棚：领用台在门内右侧。', presentNotes: { 芬格尔: '手指在机身上敲了两下。' } },
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.composers.every((composer) => composer === 'program')).toBe(true);
+    for (const text of ['器材棚', '把护目镜领到手', '秦越说担架在器材笼门口', '芬格尔']) {
+      expect(result.text).toContain(text);
+    }
+    expect(result.text).toMatch(/好了一些|稳了|松|舒展|缓/u);
+  });
+});
+
 describe('settled descriptions', () => {
   it('keeps a semicolon rule list whole instead of cutting it at the first rule', async () => {
     const { packet } = await fixture();
