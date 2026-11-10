@@ -117,14 +117,27 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
   for (const subject of eventSubjects) {
     const facts = bySubject.get(subject)!;
     const name = 'name' in facts[0] ? facts[0].name : scene.viewpoint.name;
-    push({
-      id: `event:${subject}`,
-      kind: 'event',
-      subject: { id: subject, name, viewpoint: subject === scene.viewpoint.id },
-      factIds: facts.map((fact) => fact.id),
-      details: facts.flatMap(factDetails),
-      mustMention: [name],
-    });
+    const viewpoint = subject === scene.viewpoint.id;
+    const subjectRef = { id: subject, name, viewpoint };
+    // Split one busy actor into small beats so a writer that drops one fact
+    // only loses that beat, not the whole turn's wording. Order inside a turn:
+    // what is visible -> what was done -> what changed inside.
+    const groups: { suffix: string; facts: SceneFact[] }[] = [
+      { suffix: 'look', facts: facts.filter((fact) => fact.kind === 'appearance_changed') },
+      { suffix: 'did', facts: facts.filter((fact) => fact.kind === 'task_achieved' || fact.kind === 'subtask_added') },
+      { suffix: 'inside', facts: facts.filter((fact) => fact.kind === 'personality_changed' || fact.kind === 'sanity_changed') },
+    ];
+    for (const group of groups) {
+      if (!group.facts.length) continue;
+      push({
+        id: `event:${subject}:${group.suffix}`,
+        kind: 'event',
+        subject: subjectRef,
+        factIds: group.facts.map((fact) => fact.id),
+        details: group.facts.flatMap(factDetails),
+        mustMention: [name],
+      });
+    }
   }
 
   // 5. Scene texture: existing objects. Optional facts only; never a new prop.

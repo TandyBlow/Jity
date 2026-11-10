@@ -83,7 +83,7 @@ const result = await generateCandidate({
   priorText,                 // 上一回合被接受的正文
   signal, onProgress,
   policy: {
-    mode: 'program' | 'model' | 'auto',
+    mode: 'program' | 'model' | 'auto',   // 默认 program：不显式要模型就不调用模型
     sanityStyle: 'direction' | 'number',   // 页面若仍要过旧门禁，用 number
     knowledge: { discoveredItemIds, visitedLocationIds, metCharacterIds },
     resultsText,                            // 本回合结算结果原话
@@ -109,8 +109,11 @@ const result = await generateCandidate({
 - `node frontend/scripts/candidate-constrained/run-sweep.mjs`：自由一日世界 12 个连续点位（移动、任务完成、子任务、人格、精神、外貌、物品易手、房间变化、纯隐藏改动、纯时间、纯结算原话），12/12 `accepted`。
 - 把 07 的语言层注入同一个入口（`--composer <07 的 prose-composer/index.ts>`）：上述 6 个场景与 12 个点位同样全部 `accepted`，07 写的段直接通过本线的分段门禁；07 尚未实现 `kind:'result'` 段（结算原话）时，该段由本线程序写，不丢内容。
 - 连续回合（短场景起点→移动→时间流逝）：没有逐字重复的句子；`repetitionVsPrior` 在 40–50 字短回合为 0.56/0.34，在长回合为 0.10/0.18。
+- 真实浏览器程序模式（09 的 runner + 07 的 stub 装载器，Edge，无模型）：公开短场景 3 个点、自由一日 3 个点全部 `accepted`，页面内 5–17 ms / 首段 3–11 ms。
 - `npx vitest run src/lib/world-engine/local/narration-candidates/constrained --maxWorkers=1`：15 个测试，含真实状态内核点位、方向反写、没登记的人名、已知物品再发现、模型失败换程序写同一段、07 composer 注入。
 - `npx tsc -p tsconfig.world-contract.json --noEmit` 与 eslint 无错误。
+
+真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 5–17 ms、首段 3–11 ms，`strategyVersion=constrained-candidate-v1.1`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
 
 真实浏览器证据（09 的共用入口，05:43Z，qwen2.5-1.5b-instruct，CPU）：
 
@@ -119,7 +122,7 @@ const result = await generateCandidate({
 未验证 / 已知限制：
 
 - **model 模式（真实模型逐段写）尚未在浏览器里跑完**：共享推理租约从 05:59Z 起由 06-recovery 持有，且其会话仍在执行一个 25 分钟上限的真实回合，不是残留锁；本线按公约不删别线的锁。model 模式目前只有脚本引擎测试证明「每段一次调用、失败重写同一段、超出回合预算就换程序写」的流程成立。
-- 模型每回合最多 6 次顺序调用；0.5B 模型在 CPU 上的实际首段/整段耗时必须等真实运行才能给数，不能拿本文的毫秒数代替。
+- 模型每回合最多 6 段顺序调用（`maxBeats` 默认在 model 模式取 6、程序模式取 10）；0.5B 模型在 CPU 上的实际首段/整段耗时必须等真实运行才能给数，不能拿本文的毫秒数代替。`turnTimeoutMs`（默认 180 s）用完后剩余段由程序写，不会把整回合拖过等待上限。
 - 程序版句子模板有限，同一段连续多回合会换说法但不是无限多样；`avoidOpenings` 只能避开重复开头。
 - 人格/外貌的「撤销」事实（`removed`）只用被替换的旧句说明，没有独立的否认证词。
 - 事实包模式（没有完整状态）没有地点细节和在场人物，正文明显更薄。

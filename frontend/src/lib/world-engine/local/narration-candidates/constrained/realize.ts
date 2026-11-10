@@ -123,6 +123,17 @@ export function createRealizerContext(
   return { scene, priorText, used: new Set(), sanityStyle, avoidOpenings: [] };
 }
 
+/** Register already-final text (a retry or another writer's accepted beat) so
+ * later beats do not repeat it and position claims stay consistent. */
+const SENTENCE_ENDS = new RegExp('[' + [0x3002, 0xff01, 0xff1f, 0x0a].map((code) => String.fromCharCode(code)).join('') + ']+', 'u');
+
+export function absorbText(ctx: RealizerContext, text: string): void {
+  for (const part of text.split(SENTENCE_ENDS)) {
+    const core = stripEnd(part);
+    if (core) ctx.used.add(core);
+  }
+}
+
 export function realizeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   const facts = beat.factIds
     .map((id) => ctx.scene.facts.find((fact) => fact.id === id))
@@ -142,7 +153,11 @@ function remember(ctx: RealizerContext, sentence: string): string {
 }
 
 function acceptable(ctx: RealizerContext, sentence: string): boolean {
-  if (ctx.used.has(stripEnd(sentence))) return false;
+  const core = stripEnd(sentence);
+  if (ctx.used.has(core)) return false;
+  // A sentence the player read last turn may not come back verbatim; the
+  // bigram check alone is weak against a long previous text.
+  if (core && ctx.priorText?.includes(core)) return false;
   if (ctx.avoidOpenings.some((opening) => opening && stripEnd(sentence).startsWith(stripEnd(opening)))) return false;
   if (ctx.priorText && overlaps(sentence, ctx.priorText) > 0.55) return false;
   return true;
@@ -156,7 +171,18 @@ function choose(ctx: RealizerContext, seed: number, salt: string, variants: stri
     const candidate = clean[(start + offset) % clean.length];
     if (acceptable(ctx, candidate)) return `${candidate}。`;
   }
-  return `${clean[start]}。`;
+  // Every variant collides with the previous turn (a repeated one-minute
+  // point, for instance). Prefer the least similar one instead of repeating
+  // the same sentence verbatim.
+  let best = clean[start];
+  let bestScore = Number.POSITIVE_INFINITY;
+  for (const candidate of clean) {
+    if (ctx.used.has(candidate)) continue;
+    if (ctx.priorText?.includes(candidate)) continue;
+    const score = ctx.priorText ? overlaps(candidate, ctx.priorText) : 0;
+    if (score < bestScore) { best = candidate; bestScore = score; }
+  }
+  return `${best}。`;
 }
 
 function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
@@ -169,9 +195,14 @@ function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
       `${label}过去了`,
       `过了${label}`,
       `${label}之后`,
+      `又过了${label}`,
+      `${label}的时间过去`,
     ])));
   }
-  const detail = sentenceClause(scene.place.note, 48);
+  const detailText = sentenceClause(scene.place.note, 48);
+  // A settled room description is reused only on the turn it becomes visible;
+  // repeating it verbatim every round is the "same paragraph again" failure.
+  const detail = detailText && ctx.priorText?.includes(detailText) ? '' : detailText;
   const place = scene.place.name || scene.viewpoint.location;
   const viewpoint = scene.viewpoint.name;
   const viewpointMoved = scene.facts.some((fact) => fact.kind === 'move' && fact.viewpoint);
@@ -182,12 +213,13 @@ function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
     if (detail.includes(place)) variants.push(detail);
     else {
       variants.push(`${place}里，${detail}`);
-      variants.push(`${place}。${detail}`);
+      variants.push(`${place}里，${detail.replace(/[。！？]+$/u, '')}`);
     }
   }
   // Only assert a standing position when the point itself says the viewpoint
-  // is here (a move beat follows otherwise and would be told backwards).
-  if (scene.facts.some((fact) => fact.kind === 'at' && fact.entityId === scene.viewpoint.id)) {
+  // is here AND the room has no settled description to open with (a move beat
+  // follows otherwise and would be told backwards).
+  if (!variants.length && scene.facts.some((fact) => fact.kind === 'at' && fact.entityId === scene.viewpoint.id)) {
     variants.push(`${viewpoint}还在${place}`);
     variants.push(`${viewpoint}站在${place}`);
   }
@@ -349,10 +381,11 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   const { scene } = ctx;
   const place = scene.place.name || scene.viewpoint.location;
   const paragraphs: string[] = [];
-  const alreadySaid = (name: string): boolean => [...ctx.used].some((used) => used.includes(name));
+  const alreadySaid = (name: string, note = ''): boolean => [...ctx.used].some((used) => used.includes(name))
+    || Boolean(note && ctx.priorText?.includes(sentenceClause(note, 56)));
   // A present character gives the room a witness instead of a list of props.
   const person = beat.subject === null
-    ? scene.present.find((entry) => !beat.mustMention.includes(entry.name) && !alreadySaid(entry.name))
+    ? scene.present.find((entry) => !beat.mustMention.includes(entry.name) && !alreadySaid(entry.name, entry.note))
     : undefined;
   if (person) {
     const detail = clause(person.note, 22);
@@ -366,16 +399,16 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   }
   for (const fact of facts) {
     if (fact.kind === 'item_present') {
-      const detail = sentenceClause(fact.note, 56);
+      const detail = ctx.priorText?.includes(sentenceClause(fact.note, 56)) ? '' : sentenceClause(fact.note, 56);
       paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${fact.id}`, detail ? [
-        `${fact.name}还在${fact.container}。${detail}`,
-        `${fact.name}留在原处，${detail}`,
+        `${fact.name}还在原处。${detail}`,
+        `${fact.name}没有挪动，${detail}`,
       ] : [
-        `${fact.name}还在${fact.container}`,
-        `${fact.name}留在${fact.container}`,
+        `${fact.name}还在原处`,
+        `${fact.name}仍在${fact.container}`,
       ])));
     } else if (fact.kind === 'item_discovered') {
-      const detail = sentenceClause(fact.note, 56);
+      const detail = ctx.priorText?.includes(sentenceClause(fact.note, 56)) ? '' : sentenceClause(fact.note, 56);
       paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${fact.id}`, detail ? [
         `${fact.name}就在${fact.container}。${detail}`,
         `${fact.container}里，${fact.name}还在原处；${detail}`,
@@ -385,17 +418,15 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
       ])));
     }
   }
-  // No item change this point: one existing object carries the room instead.
-  if (!facts.length && person === undefined) {
-    const object = scene.objects.find((entry) => entry.note && !alreadySaid(entry.name));
-    if (object) {
-      const detail = clause(object.note, 24);
-      if (detail) {
-        paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${object.id}:note`, [
-          `${object.name}在${place}，${detail}`,
-          `${place}里，${object.name}还在原处；${detail}`,
-        ])));
-      }
+  // No item change this point: existing room objects carry the scene instead.
+  if (!facts.length) {
+    for (const object of scene.objects.filter((entry) => entry.note && !alreadySaid(entry.name, entry.note)).slice(0, 2)) {
+      const detail = sentenceClause(object.note, 56);
+      if (!detail) continue;
+      paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${object.id}:note`, [
+        `${object.name}在${place}，${detail}`,
+        `${place}里，${object.name}还在原处；${detail}`,
+      ])));
     }
   }
   return paragraphs.filter(Boolean).join(PARA_BREAK);
@@ -406,18 +437,19 @@ function closeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   const name = scene.viewpoint.name;
   const person = scene.present[0]?.name;
   const place = scene.place.name || scene.viewpoint.location;
+  const alreadyHere = [...ctx.used].some((used) => used.includes(name) && (used.includes('在') || used.includes('留')));
   const variants = [
     `${name}没有马上再动`,
     `${name}把视线收回来`,
-    `${name}在原地站了一会儿`,
+    `${name}待了一会儿`,
     `${name}没有再往前`,
-    `${name}站着没动`,
+    `${name}没有作声`,
   ];
   if (person) {
     variants.push(`${person}也没有动`);
-    variants.push(`${person}还站在那里`);
+    variants.push(`${person}那边没有动静`);
   }
-  if (scene.timeOnly) {
+  if (scene.timeOnly && !alreadyHere) {
     variants.push(`${name}留在${place}`);
   }
   return remember(ctx, choose(ctx, beat.seed, 'close', variants));

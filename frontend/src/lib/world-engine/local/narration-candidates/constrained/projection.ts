@@ -447,6 +447,7 @@ export function projectConstrainedScene(
   const quotes = new Set<string>();
   for (const person of present) { names.add(person.name); if (person.note) details.add(person.note); }
   for (const object of objects) { items.add(object.name); if (object.note) details.add(object.note); }
+
   for (const fact of facts) {
     // Hidden changes are evidence only: they may not license a name, quote or
     // detail the viewpoint could not perceive.
@@ -507,6 +508,9 @@ export function projectConstrainedScene(
 
   const placeName = locationName(state, roomAfter);
   const placeNote = options.scene?.placeNote ?? locationNote(state, roomAfter);
+  // The settled room description is licensed material: it may name a
+  // neighbouring place ("走廊通往门厅") without that being an invented move.
+  if (placeNote) details.add(placeNote);
   const presentWithHints: ScenePerson[] = present.map((person) => ({
     ...person,
     note: options.scene?.presentNotes?.[person.id] ?? person.note,
@@ -543,7 +547,7 @@ export function projectConstrainedScene(
       names: [...names].sort((a, b) => a.localeCompare(b, 'zh')),
       locations: [...locations].sort((a, b) => a.localeCompare(b, 'zh')),
       items: [...items].sort((a, b) => a.localeCompare(b, 'zh')),
-      details: [...details],
+      details: [...expandedDetails(details)],
       quotes: [...quotes],
     },
     knowledge,
@@ -555,6 +559,19 @@ export function projectConstrainedScene(
   };
 
   return { scene, base: buildBasePacket(scene) };
+}
+
+/** Notes are emitted clause by clause, so a cut prefix must stay licensed:
+ * add every comma/period segment of a settled description next to the whole. */
+function expandedDetails(details: Set<string>): Set<string> {
+  const out = new Set<string>();
+  for (const detail of details) {
+    out.add(detail);
+    for (const part of detail.split(new RegExp('[，。；：、\n]+', 'u'))) {
+      if ([...part.trim()].length >= 2) out.add(part.trim());
+    }
+  }
+  return out;
 }
 
 function clampSentences(text: string, maxSentences: number, maxChars: number): string {
@@ -619,6 +636,14 @@ export function projectFromFactsPacket(
   if (advance && advance.duration.amount > 0) {
     facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
   }
+  // The viewpoint's own position is a licensed fact, not a change: without it
+  // the opening cannot say where the player is.
+  if (anchorFact?.kind === 'at') {
+    facts.push({
+      id: `${options.idPrefix ?? 'facts'}:at:viewpoint`, kind: 'at', mandatory: false, visibility: 'scene',
+      entityId: anchorFact.actorId, name: anchorFact.name, locationId: anchorFact.locationId, location: anchorFact.location,
+    });
+  }
   for (const fact of packet.facts) {
     if (fact.kind === 'at' && fact.name === viewpointName) continue;
     if (fact.kind === 'at') {
@@ -642,12 +667,24 @@ export function projectFromFactsPacket(
   // Present characters come from the packet's own at-facts (the shared driver
   // emits one per character in the room). They are licensed presence, not a
   // change.
+  const hints = options.scene ?? null;
   const present: ScenePerson[] = [];
   for (const fact of packet.facts) {
     if (fact.kind !== 'at' || fact.name === viewpointName) continue;
     if (present.some((person) => person.id === fact.actorId)) continue;
-    present.push({ id: fact.actorId, name: fact.name, note: '', viewpoint: false });
+    present.push({
+      id: fact.actorId, name: fact.name,
+      note: hints?.presentNotes?.[fact.name] ?? '', viewpoint: false,
+    });
   }
+  // The caller's already-settled scene hints carry room objects the fact packet
+  // does not list. They are descriptions, not new facts.
+  const objects: SceneObject[] = Object.entries(hints?.objectNotes ?? {})
+    .filter(([name, note]) => Boolean(name && note))
+    .map(([name, note]) => ({ id: `object:${name}`, name, note }));
+  const rawPlaceNote = hints?.placeNote ?? '';
+  const prefix = `${location}：`;
+  const placeNote = rawPlaceNote.startsWith(prefix) ? rawPlaceNote.slice(prefix.length) : rawPlaceNote;
   const scene: SceneSkeleton = {
     anchor: packet.anchor,
     viewpoint: {
@@ -656,21 +693,27 @@ export function projectFromFactsPacket(
       note: '', personality: '', sanity: 0,
     },
     time: advance,
-    place: { id: '', name: location, note: '', parentName: null },
+    place: { id: '', name: location, note: placeNote, parentName: null },
     present,
-    objects: [],
+    objects,
     facts,
     licensed: {
-      names: [...new Set(packet.facts.map((fact) => fact.name))],
+      names: [...new Set([...packet.facts.map((fact) => fact.name), ...present.map((person) => person.name)])],
       locations: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'moved' ? [fact.from, fact.to] : fact.kind === 'at' ? [fact.location] : []))],
-      items: [], details: [], quotes: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []))],
+      items: objects.map((object) => object.name),
+      details: [...expandedDetails(new Set([
+        placeNote,
+        ...present.map((person) => person.note),
+        ...objects.map((object) => object.note),
+      ].filter(Boolean)))],
+      quotes: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []))],
     },
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },
     priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
     resultsText: options.resultsText ?? null,
     worldNames: { characters: [], locations: [], items: [] },
-    hasSceneMaterial: present.length > 0,
+    hasSceneMaterial: present.length > 0 || objects.length > 0,
     timeOnly: !facts.some((fact) => fact.kind !== 'time' && fact.kind !== 'at'),
   };
   return { scene, base: packet };

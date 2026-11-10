@@ -11,7 +11,7 @@ import type { CommittedRead } from '../../../runtime/committed-narration';
 import { isAbortError } from '../../../runtime/engine';
 import { planBeats } from './beats';
 import { composeBeatWithModel } from './compose';
-import { createRealizerContext, realizeBeat } from './realize';
+import { absorbText, createRealizerContext, realizeBeat } from './realize';
 import {
   projectConstrainedScene, projectFromFactsPacket, SceneProjectionError,
 } from './projection';
@@ -21,7 +21,7 @@ import type {
   ComposeBeatResult, GenerateCandidateInput, SceneSkeleton,
 } from './types';
 
-export const STRATEGY_VERSION = 'constrained-candidate-v1';
+export const STRATEGY_VERSION = 'constrained-candidate-v1.2';
 
 const now = (): number => performance.now();
 
@@ -43,6 +43,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   try {
     const projected = project(input, {
       viewpointId: policy.viewpointId,
+      scene: policy.scene,
       knowledge: policy.knowledge,
       resultsText: policy.resultsText,
       priorText,
@@ -75,10 +76,17 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
   const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(100, 36 + changeCount * 8));
   const maxChars = policy.maxChars ?? 1400;
+  // Program is the default: a caller that did not ask for model writing gets
+  // deterministic prose and no model calls. Model/auto must be explicit.
+  const modelRequested = policy.mode === 'model' || policy.mode === 'auto'
+    ? policy.enableModel !== false
+    : false;
   const planStarted = now();
   const plan = planBeats(scene, {
     narrateHiddenDeltas: policy.narrateHiddenDeltas === true,
-    maxBeats: policy.maxBeats,
+    // Model mode spends one call per beat: keep the plan short. Program mode
+    // can afford the extra beats that keep each settled change separate.
+    maxBeats: policy.maxBeats ?? (modelRequested ? 6 : 10),
     seed: policy.seed,
     minChars: 18,
     maxChars: 150,
@@ -94,9 +102,6 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     forbiddenKnowledge: policy.forbiddenKnowledge ?? [],
   };
 
-  const modelRequested = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
-    ? policy.enableModel !== false
-    : false;
   const deadline = started + Math.max(5_000, policy.turnTimeoutMs ?? 180_000);
   let modelBudgetSpent = false;
   const modelBudget = (): { enabled: boolean; timeoutMs: number } => {
@@ -136,6 +141,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       emit,
       addVerifyMs: (ms) => { verifyMs += ms; },
     });
+    absorbText(ctx, outcome.evidence.text);
     beatsEvidence.push(outcome.evidence);
     composers.push(outcome.composer);
     beatTexts.push({ beat, text: outcome.evidence.text });
@@ -176,6 +182,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
         text = realizeBeat(bumped, retryCtx);
       }
       target.text = text;
+      absorbText(ctx, text);
       const evidence = beatsEvidence.find((entry) => entry.beatId === target.beat.id);
       if (evidence) {
         evidence.text = text;
