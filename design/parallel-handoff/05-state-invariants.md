@@ -534,3 +534,9 @@ null, and the map is saved/restored. `history.ts` then shows A and C with their
 own sentences and B as unfinished; older saves with unequal counts show blank
 labels rather than a wrong sentence. 06 implemented the equivalent at `101bb3d2`; do not apply v4 on top. the v2 disposable session
 test passed at the older tree, so current 06 still needs to run it.
+
+## Ten turns with a persisted midpoint restore
+
+`6908ccf0` runs five turns, closes the writer, restores from the same store,
+runs five more, and verifies the saved version-10 chain. The bridge is now
+15 tests. This is CPU continuity, not a product/model acceptance.
