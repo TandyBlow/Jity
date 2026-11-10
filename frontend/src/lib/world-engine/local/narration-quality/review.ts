@@ -878,6 +878,88 @@ export function reviewNarration(args: {
     }
   }
 
+  // ---------------------------------------------------- route-batch bindings
+  // 01's independent review of the 2026-11-10 prompt-route batch found classes
+  // this checker had not covered. Each is a comparison against a settled line
+  // (appearance, place, item or prior text), not a word ban.
+  {
+    const appearances = Object.fromEntries(Object.entries(projection.people).map(([name, person]) => [
+      name,
+      [...person.appearanceBefore, ...person.appearanceAfter].join('｜'),
+    ]));
+    const looks = Object.values(appearances).join('｜');
+    // A hair colour belongs to the person whose settled look names it.
+    const hairOwners = new Map<string, string>();
+    for (const [name, look] of Object.entries(appearances)) {
+      for (const colour of ['红发', '银发', '金发', '白发']) {
+        if (look.includes(colour) && !hairOwners.has(colour)) hairOwners.set(colour, name);
+      }
+    }
+    const tiedHair = looks.includes('束在脑后');
+    const chestGoggles = /护目镜[^｜]{0,12}胸前|胸前[^｜]{0,12}护目镜/u.test(looks);
+    const world = [
+      ...Object.values(projection.places).map((place) => place.description.join('｜')),
+      ...Object.values(projection.items).map((item) => item.descriptions.join('｜')),
+    ].join('｜');
+    const stoppedWater = world.includes('停水');
+    const down = /([一-鿿]{2,8})[^一-鿿]{0,3}已放下/u.exec(world);
+    const downThing = down ? down[1].replace(/^.*[【\s]/u, '') : null;
+    const prior = (ctx.options.priorTexts ?? []).join('｜');
+    const distant = Object.keys(projection.people).filter((name) => `${appearances[name]}｜${prior}`.includes('不远处'));
+    for (const sentence of sentences) {
+      const narration = sentence.narration;
+      for (const [colour, owner] of hairOwners) {
+        const colourAt = narration.indexOf(colour);
+        if (colourAt < 0) continue;
+        // 「诺诺的红发」 names the owner in the possessive; any other named
+        // person in the sentence is a misattribution.
+        const before = narration.slice(Math.max(0, colourAt - 10), colourAt);
+        // 诺诺的红发 / 诺诺发间晃动的红发: the owner is the possessive.
+        if (before.includes(owner) && /(的|发间|发上|发梢|头发|红发)$/u.test(before)) continue;
+        const hits = nameHits(narration, names, Object.keys(projection.people));
+        const wrong = hits.find((hit) => hit.name !== owner);
+        if (wrong) {
+          findings.push(finding(ctx, 'fact.actor_swap', sentence.text,
+            `${colour} belongs to ${owner}, not ${wrong.name}`, [], []));
+        }
+      }
+      if (tiedHair && /(发圈|红发|发丝|长发)[^。！？]{0,6}(垂落|垂下|轻垂|散开|披散)/u.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          'the settled hair is tied (束在脑后), not loose', [], []));
+      }
+      if (chestGoggles && /(镜片后|戴着护目镜|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          'the goggles are settled on the chest, not over the eyes', [], []));
+      }
+      if (stoppedWater && /(水花|水面|水声|水珠|喷泉[^。！？]{0,4}(喷|涌|冒))/u.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          'the pool is settled 停水; water contradicts it', [], []));
+      }
+      if (downThing && downThing.length >= 2 && new RegExp(`${escapeRegExp(downThing)}[^。！？]{0,10}(吹起|飘起|扬起|卷起|抬起)`, 'u').test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${downThing} is settled 已放下; lifting it again is a state change`, [], []));
+      }
+      for (const itemName of Object.keys(projection.items)) {
+        const at = narration.indexOf(itemName);
+        if (at < 0) continue;
+        // The item must be the clause subject, not the object of a person's
+        // verb: 「把铁皮还书箱抱在怀里」 is the person holding the box.
+        const clause = clauseAt(narration, at).text;
+        if (!clause.trim().startsWith(itemName)) continue;
+        const after = clause.slice(clause.indexOf(itemName) + itemName.length, clause.indexOf(itemName) + itemName.length + 12);
+        if (/(站了一会儿|站在原地|走了过来|走过去|再动|动了|转身|抬头|低头)/u.test(after)) {
+          findings.push(finding(ctx, 'fact.item_actor', sentence.text,
+            `${itemName} is an object, not an actor`, [], []));
+        }
+      }
+      for (const name of distant) {
+        const moved = new RegExp(`${escapeRegExp(name)}[^。！？]{0,8}(身后|背后)`, 'u').exec(narration);
+        if (moved) findings.push(finding(ctx, 'fact.false_position', sentence.text,
+          `${name} is settled 不远处, not 身后`, [prior.slice(0, 40)], []));
+      }
+    }
+  }
+
   // ---------------------------------------------------------------- items
   const itemStateCovered = new Set<string>();
   const reportedSounds = new Set<string>();
@@ -1200,6 +1282,9 @@ export function reviewNarration(args: {
     for (const sound of soundForms) {
       if (!narration.includes(sound)) continue;
       if (negatedAt(narration, sound)) continue;
+      // 「等那串脚步声远了」 is a sound receding after the fact, not a new sound
+      // the viewpoint hears now (the human 71-row that carried it is gold).
+      if (/等[^，。；]{0,12}(?:声音|脚步声|动静|响动)[^，。；]{0,4}(?:远|停|消失)/u.test(narration)) continue;
       if (ctx.stateLicensed(sound)) continue;
       // A footstep needs a mover named in this sentence, not merely a move
       // somewhere in the point: the text may still put that mover elsewhere.

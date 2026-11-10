@@ -1155,9 +1155,9 @@ anchors.append(
         "input": rows_move02["02-move-171"]["input"],
         "text": rows_move02["02-move-171"]["text"],
         "options": {"minChars": 1},
-        "expect": {"fact": [], "style": [], "review": [],
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
                    "forbid": ["fact.gender"],
-                   "notes": "After a perception verb the pronoun is the perceived person, not the perceiver; no recorded female visible, so it must stay review."},
+                   "notes": "After a perception verb the pronoun is the perceived person, not the perceiver; no recorded female visible, so it must stay review. The same text rewrites the settled tied hair as 发圈垂落, which is a real state contradiction."},
     },
 )
 
@@ -1483,6 +1483,60 @@ anchors.append(
                    "notes": "The muzzle is settled down; the hair tying and the rope lowering are re-enactments (review)."},
     },
 )
+
+
+# The 2026-11-10 prompt-route hour: seven frozen cases, text replayed through
+# the independent checker. The beat packet is converted to the DatasetInput
+# shape so the checker sees the same settled lines the prose saw.
+route_batch = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/batch-1.json", encoding="utf-8"))
+route_rows = {run["id"].replace("::prose", ""): run for run in route_batch.get("runs") or [] if run.get("text")}
+route_alias = {"free-day-root-160": "free-day-root-scenario-160", "free-day-move-160": "free-day-move-scenario-160"}
+route_keep = ["free-day-root-160", "free-day-quiet-minute", "free-day-quiet-minute-action", "free-day-move-160",
+              "free-day-dense-point", "free-day-continuation-page", "unseen-archive-page"]
+route_facts = {
+    "free-day-root-160": ["fact.actor_swap", "fact.state_contradiction"],
+    "free-day-quiet-minute": ["fact.state_contradiction"],
+    "free-day-quiet-minute-action": [],
+    "free-day-move-160": ["fact.actor_swap", "fact.state_contradiction"],
+    "free-day-dense-point": ["fact.state_contradiction", "fact.sound_added"],
+    "free-day-continuation-page": ["fact.state_contradiction", "fact.false_position"],
+    "unseen-archive-page": ["fact.object_added"],
+}
+route_notes = {
+    "free-day-root-160": "红发 is 诺诺's; 镜片后 with goggles on the chest; 诺诺 发圈垂落 against the tied hair.",
+    "free-day-quiet-minute": "红发轻垂/发圈 against the tied hair; the rope re-lowered is a separate class.",
+    "free-day-quiet-minute-action": "The read action is narrated; the added wind/bell/red shadow is not yet covered by the checker.",
+    "free-day-move-160": "红发 on 路明非; 发圈垂落 against the tied hair.",
+    "free-day-dense-point": "Water in the 停水 pool; an added sound.",
+    "free-day-continuation-page": "诺诺 发圈垂落; she is settled 不远处 but written 身后.",
+    "unseen-archive-page": "An added object on the desk.",
+}
+route_labels = {"free-day-quiet-minute": "一分钟", "free-day-quiet-minute-action": "一分钟",
+                "free-day-dense-point": "两分钟", "unseen-archive-page": "三分钟"}
+for case_id in route_keep:
+    fixture = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/fixtures/" + route_alias.get(case_id, case_id) + ".json", encoding="utf-8"))
+    scene = fixture["scene"]
+    viewpoint = fixture["viewpoint"]["name"] if isinstance(fixture.get("viewpoint"), dict) else (fixture.get("viewpoint") or "路明非")
+    present = [person for person in scene.get("present") or [] if isinstance(person, dict) and person.get("name")]
+    people = {person["name"]: {"位置": scene["location"], "精神值": 0, "外貌": [person.get("note", "")], "个性": [], "任务": {"小任务": []}} for person in present}
+    if viewpoint not in people:
+        people[viewpoint] = {"位置": scene["location"], "精神值": 0, "外貌": [], "个性": [], "任务": {"小任务": []}}
+    route_items = {}
+    for item in list(scene.get("objects") or []) + list(scene.get("inventory") or []):
+        if isinstance(item, dict) and item.get("name"):
+            route_items[item["name"]] = {"位置": scene["location"], "外貌": [item.get("note", "")]}
+    anchors.append({
+        "id": "neg/route/" + case_id,
+        "source": "prompt-route hour batch-1 (" + case_id + "::prose), text replayed through the independent checker",
+        "input": {
+            "视角": "主角视角（" + viewpoint + "）",
+            "上回合状态": {"地点": {scene["location"]: {"位于": None, "外貌": scene.get("placeNotes") or []}}, "人物": people, "物品": route_items},
+            "本回合变化": {"时间推进": route_labels.get(case_id, ""), "变化": {}},
+        },
+        "text": route_rows[case_id]["text"],
+        "options": {"minChars": 1, "priorTexts": [fixture["priorText"]] if fixture.get("priorText") else None},
+        "expect": {"fact": route_facts[case_id], "style": [], "review": [], "notes": route_notes[case_id]},
+    })
 
 os.makedirs(OUT, exist_ok=True)
 batch = {
