@@ -3,6 +3,7 @@
  * The product integration imports only `createNarrationRunner` (and, for an
  * internal QA run, nothing else). Everything below it is candidate adaptation.
  */
+export { createChatTemplatedEngine, chatTemplate, stripChatTemplate } from './engine-template';
 export { createNarrationRunner, SHIPPED_CANDIDATES, internalCandidateOverride } from './runner';
 export { TRAINED_CANDIDATE } from './trained';
 export { CONSTRAINED_CANDIDATE } from './constrained';

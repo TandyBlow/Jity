@@ -20,6 +20,7 @@ import type {
   NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration, ProgramFallback,
 } from './types';
 import { prepareNarration } from './projection';
+import { createChatTemplatedEngine } from './engine-template';
 import { TRAINED_CANDIDATE } from './trained';
 import { CONSTRAINED_CANDIDATE } from './constrained';
 
@@ -43,6 +44,11 @@ function summarize(result: CandidateNarrationResult): string {
 
 export function createNarrationRunner(options: NarrationRunnerOptions): NarrationRunner {
   const candidates = options.candidates ?? SHIPPED_CANDIDATES;
+  // A chat model needs the same wrapper the in-model writer applies. The
+  // decorator only changes prompt/stop, never identity or abort.
+  const engine = options.engineTemplate === 'chatml'
+    ? createChatTemplatedEngine(options.engine)
+    : options.engine;
   const requested = internalCandidateOverride() ?? options.candidate ?? 'auto';
   const productDefault = candidates.find((candidate) => candidate.productDefault)?.id ?? null;
   const limits = {
@@ -82,7 +88,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
       const candidate = candidates.find((entry) => entry.id === 'constrained') ?? CONSTRAINED_CANDIDATE;
       try {
         const result = await candidate.run({
-          engine: options.engine, point, prepared,
+          engine, point, prepared,
           policy: { mode: 'program' },
         });
         if (!result.accepted || result.text.trim().length === 0) return null;
@@ -127,7 +133,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
         let result: CandidateNarrationResult;
         try {
           result = await candidate.run({
-            engine: options.engine, point, prepared, onProgress,
+            engine, point, prepared, onProgress,
             ...(candidate.route === 'constrained'
               ? { policy: { mode: options.constrainedMode ?? 'program' } }
               : candidate.route === 'trained'

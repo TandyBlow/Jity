@@ -52,6 +52,7 @@ const config = {
   timeoutMs: Number(flag('--timeout-ms', '120000')),
   deadlineMs: Number(flag('--deadline-ms', '420000')),
   projectionOnly: process.argv.includes('--projection-only'),
+  template: flag('--template', 'none'),
   results: (() => {
     const index = process.argv.indexOf('--results');
     return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : null;
@@ -68,6 +69,7 @@ const evidence = {
     model: config.model,
     modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
+    template: config.template,
     threads: config.threads, gpu: config.gpu, channel: config.channel,
   },
   device: { cpu: cpus()[0]?.model, logicalCpus: cpus().length, platform: process.platform },
@@ -187,7 +189,7 @@ try {
         complete: async () => { throw new Error('program mode must not call the engine'); },
         dispose: async () => undefined,
       };
-      const runner = createNarrationRunner({ engine: dummy, candidate: 'constrained', constrainedMode: 'program', minChars: config.minChars });
+      const runner = createNarrationRunner({ engine: dummy, candidate: 'constrained', constrainedMode: 'program', minChars: config.minChars, engineTemplate: config.template });
       const started = performance.now();
       const run = await runner.generate(point, () => undefined);
       return {
@@ -217,6 +219,7 @@ try {
     const started = performance.now();
     const runner = createNarrationRunner({
       engine, candidate: config.candidate,
+      engineTemplate: config.template,
       ...(config.candidate === 'constrained' ? { constrainedMode: config.mode } : {}),
       ...(config.candidate === 'trained' ? { trainedMode: config.mode } : {}),
       temperature: 0.45, retryTemperature: 0.3,
@@ -256,7 +259,7 @@ try {
     model: config.model, threads: config.threads, gpu: config.gpu, candidate: config.candidate,
     projectionOnly: config.projectionOnly, mode: config.mode,
     maxTokens: config.maxTokens, minChars: config.minChars, targetChars: config.targetChars,
-    timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs, results: config.results,
+    timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs, results: config.results, template: config.template,
   });
   evidence.status = config.projectionOnly ? 'PROJECTION_ONLY' : result.run.kind === 'adopted' ? 'ACCEPTED' : 'REJECTED';
   evidence.result = result;

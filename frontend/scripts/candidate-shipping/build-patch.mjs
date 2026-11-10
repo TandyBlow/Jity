@@ -91,6 +91,7 @@ const TRANSFORMS = [
       '      : createNarrationRunner({',
       '        engine: this.narrationEngine,',
       "        candidate: options.narrationCandidate ?? 'auto',",
+      "        engineTemplate: options.narrationMode === 'instruct' ? 'chatml' : 'none',",
       '        temperature: options.narrationTemperature,',
       '        maxTokens: options.narrationMaxTokens,',
       '        timeoutMs: options.narrationTimeoutMs,',

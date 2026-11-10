@@ -6,6 +6,7 @@ import { TRAINED_CANDIDATE } from './trained';
 import { createNarrationRunner, SHIPPED_CANDIDATES } from './runner';
 import { CONSTRAINED_CANDIDATE } from './constrained';
 import { prepareNarration } from './projection';
+import { chatTemplate, createChatTemplatedEngine, stripChatTemplate } from './engine-template';
 import type { NarrationCandidate, NarrationPoint } from './types';
 
 const TIME: TimeAdvance = { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } };
@@ -289,5 +290,69 @@ describe('constrained (C route) candidate', () => {
     expect(CONSTRAINED_CANDIDATE.availability(point(), withoutScene)).toEqual({
       available: false, reason: 'facts_packet_without_scene',
     });
+  });
+});
+
+describe('chat template adapter for the page engine', () => {
+  it('wraps the prompt exactly like the in-model writer and adds the stop token', async () => {
+    const seen: { prompt: string; stop: string[] | undefined }[] = [];
+    const inner: InferenceEngine = {
+      info: { backend: 'test', modelId: 'chat' },
+      load: async () => undefined,
+      complete: async (prompt, options) => {
+        seen.push({ prompt, stop: options?.stop });
+        return '正文。';
+      },
+      dispose: async () => undefined,
+    };
+    const engine = createChatTemplatedEngine(inner);
+    expect(await engine.complete('写一段。', { temperature: 0.4 })).toBe('正文。');
+    expect(engine.info.modelId).toBe('chat');
+    expect(seen[0].prompt).toBe(chatTemplate('写一段。'));
+    expect(seen[0].prompt.startsWith('<|im_start|>user@写一段。<|im_end|>@<|im_start|>assistant@'.replaceAll('@', String.fromCharCode(10)))).toBe(true);
+    expect(seen[0].stop).toContain('<|im_end|>');
+  });
+
+  it('strips streamed template artefacts so progress stays prose', async () => {
+    const inner: InferenceEngine = {
+      info: { backend: 'test', modelId: 'chat' },
+      load: async () => undefined,
+      complete: async (_prompt, options) => {
+        options?.onProgress?.({ raw: '<|im_start|>assistant@风从巷口@'.replaceAll('@', String.fromCharCode(10)), elapsedMs: 1 });
+        return '风从巷口吹过来。';
+      },
+      dispose: async () => undefined,
+    };
+    const progress: string[] = [];
+    await createChatTemplatedEngine(inner).complete('写。', {
+      onProgress: (event) => progress.push(event.raw),
+    });
+    expect(progress).toEqual(['风从巷口' + String.fromCharCode(10)]);
+    expect(stripChatTemplate('<|im_end|>')).toBe('');
+  });
+
+  it('sends the decorated engine to the candidate only when asked', async () => {
+    const prompts: string[] = [];
+    const engine: InferenceEngine = {
+      info: { backend: 'test', modelId: 'chat' },
+      load: async () => undefined,
+      complete: async (prompt) => { prompts.push(prompt); return '走廊里，灯影晃了一下。'; },
+      dispose: async () => undefined,
+    };
+    const candidate = fakeCandidate({
+      run: async ({ engine: inner }) => {
+        await inner.complete('写一段。');
+        return {
+          candidateId: 'trained', route: 'trained', text: '', accepted: false, grade: 'candidate_unverified',
+          status: 'rejected', reason: 'fixture', issues: [], attempts: 1, promptChars: 5,
+          timings: { totalMs: 1, attemptMs: [1], firstTokenMs: null }, strategyVersion: 'fixture', allFellBack: false,
+        };
+      },
+      productDefault: false,
+    });
+    await createNarrationRunner({ engine, candidate: 'trained', candidates: [candidate] }).generate(settledPoint());
+    expect(prompts[0]).toBe('写一段。');
+    await createNarrationRunner({ engine, candidate: 'trained', candidates: [candidate], engineTemplate: 'chatml' }).generate(settledPoint());
+    expect(prompts[1]).toBe(chatTemplate('写一段。'));
   });
 });

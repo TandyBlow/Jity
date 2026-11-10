@@ -166,6 +166,10 @@ export interface NarrationRunnerOptions {
   /** Trained beats route only: `beats` (default) writes one committed fact at a
    * time; `scene` asks for the whole scene from the serialized input. Internal. */
   trainedMode?: 'beats' | 'scene';
+  /** How the candidate's plain-text prompts reach this engine. `chatml` wraps
+   * each prompt like the page's in-model writer when the loaded model is a chat
+   * model; `none` (default) passes prompts through unchanged. Internal. */
+  engineTemplate?: 'none' | 'chatml';
   /** Internal selection. `auto` uses product-default candidates only. */
   candidate?: NarrationCandidate['id'] | 'auto' | 'builtin';
   /** Test seam: replace the shipped list. Never set by the page. */
