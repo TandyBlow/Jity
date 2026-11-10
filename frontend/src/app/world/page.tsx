@@ -89,16 +89,28 @@ interface StatusView {
  * 生成候选；重试注入判分器反馈与更高温度。输出交回 rule-session 的
  * checkFactNarration 把关，失败由其重生成/回退模板。 */
 const polishEngines = new Map<string, Promise<RuleNarrationPolisher>>();
-function polishEngine(modelUrl: string): Promise<RuleNarrationPolisher> {
-  let engine = polishEngines.get(modelUrl);
+function polishEngine(modelUrl: string, mode: 'strict' | 'novel'): Promise<RuleNarrationPolisher> {
+  const cacheKey = `${mode}:${modelUrl}`;
+  let engine = polishEngines.get(cacheKey);
   if (!engine) {
     engine = (async () => {
-      const [{ WllamaInferenceEngine }, { buildTaskPrompt }] = await Promise.all([
+      const [{ WllamaInferenceEngine }, { buildTaskPrompt }, { buildNovelNarrationPrompt }] = await Promise.all([
         import('@/lib/world-engine/runtime/wllama-engine'),
         import('@/lib/world-engine/runtime/prompts'),
+        import('@/lib/world-engine/runtime/novel-narration'),
       ]);
-      const wllama = new WllamaInferenceEngine({ modelUrl, contextSize: 2048 });
-      return async (input, _packet, focused, attempt) => {
+      const wllama = new WllamaInferenceEngine({ modelUrl, contextSize: mode === 'novel' ? 4096 : 2048, preferWebGPU: mode === 'novel', requireWebGPU: mode === 'novel' });
+      return async (input, packet, focused, attempt) => {
+        if (mode === 'novel') {
+          const prompt = buildNovelNarrationPrompt(input, packet, attempt);
+          await wllama.load();
+          const prose = (await wllama.complete(prompt, {
+            maxTokens: 512, temperature: attempt.index === 1 ? 0.35 : 0.55,
+            cachePrompt: false, timeoutMs: 110_000,
+          })).trim();
+          if (!prose) throw new Error('叙事输出为空');
+          return { text: prose, mode: 'novel' as const };
+        }
         // 共享 prompts.ts / focused-input.ts 保持确定性（B3 eval 回放依赖）；
         // 页面实验在提交给引擎前收窄输入：每条事实只展示首个短语（判分器
         // 仍接受任意已登记变体）。实测 0.5B/0.6B 模型在展示两个变体时必然
@@ -132,8 +144,8 @@ function polishEngine(modelUrl: string): Promise<RuleNarrationPolisher> {
         return text;
       };
     })();
-    engine.catch(() => polishEngines.delete(modelUrl)); // 失败的加载可重试
-    polishEngines.set(modelUrl, engine);
+    engine.catch(() => polishEngines.delete(cacheKey)); // 失败的加载可重试
+    polishEngines.set(cacheKey, engine);
   }
   return engine;
 }
@@ -157,6 +169,7 @@ export default function WorldPage() {
   /** 隔离自检的持久告警：boot 成功会清空 note，这条必须活到重载/关闭。 */
   const [isoWarning, setIsoWarning] = useState('');
   const [polishOn, setPolishOn] = useState(false);
+  const [polishMode, setPolishMode] = useState<'strict' | 'novel'>('novel');
   const [polishModel, setPolishModel] = useState(DEFAULT_POLISH_MODEL);
   const [dropNextArmed, setDropNextArmed] = useState(false);
   const activeRef = useRef<ActiveSession | null>(null);
@@ -168,8 +181,10 @@ export default function WorldPage() {
   const generationRef = useRef(0);
   const disposedRef = useRef(false);
   const polishOnRef = useRef(false);
+  const polishModeRef = useRef<'strict' | 'novel'>('novel');
   const polishModelRef = useRef(DEFAULT_POLISH_MODEL);
   polishOnRef.current = polishOn;
+  polishModeRef.current = polishMode;
   polishModelRef.current = polishModel;
 
   const persistLease = (grant: LeaseGrant | null) => {
@@ -192,7 +207,7 @@ export default function WorldPage() {
       timer = setTimeout(() => reject(new Error(`润色尝试超过 ${deadlineMs / 1000}s 未完成（加载或生成挂起）`)), deadlineMs);
     });
     try {
-      const generate = async () => (await polishEngine(polishModelRef.current))(input, packet, focused, attempt);
+      const generate = async () => (await polishEngine(polishModelRef.current, polishModeRef.current))(input, packet, focused, attempt);
       return await Promise.race([generate(), deadline]);
     } finally {
       clearTimeout(timer);
@@ -578,12 +593,18 @@ export default function WorldPage() {
       </section>
 
       <section className="rounded border border-zinc-200 p-3">
-        <h2 className="mb-2 text-xs font-semibold text-zinc-500">叙事（默认模板；模型叙事为可选实验）</h2>
+        <h2 className="mb-2 text-xs font-semibold text-zinc-500">叙事（模型生成；生成失败时使用已提交事实模板）</h2>
         <div className="mb-3 flex flex-wrap items-center gap-3 text-xs">
           <label className="flex items-center gap-1">
             <input type="checkbox" checked={polishOn} onChange={(event) => setPolishOn(event.target.checked)} disabled={busy} />
-            模型叙事（实验：模型为主，判分门控，失败保持模板）
+            模型叙事（失败回退事实模板）
           </label>
+          <select className="rounded border border-zinc-300 px-2 py-0.5" value={polishMode}
+            onChange={(event) => setPolishMode(event.target.value as 'strict' | 'novel')} disabled={busy}
+            aria-label="叙事模式">
+            <option value="novel">小说叙事</option>
+            <option value="strict">事实短句（旧模式）</option>
+          </select>
           <input className="w-64 rounded border border-zinc-300 px-2 py-0.5 font-mono text-[11px]" value={polishModel}
             onChange={(event) => setPolishModel(event.target.value)} disabled={busy} aria-label="润色模型路径" />
           <label className="flex items-center gap-1">

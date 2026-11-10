@@ -15,6 +15,10 @@ export interface WllamaEngineOptions {
   modelUrl?: string;
   contextSize?: number;
   numThreads?: number;
+  /** Try WebGPU for the narrative mode. If unavailable, retry with WASM CPU. */
+  preferWebGPU?: boolean;
+  /** For long novel prompts, fail quickly instead of blocking the page on slow CPU. */
+  requireWebGPU?: boolean;
 }
 
 export class WllamaInferenceEngine implements InferenceEngine {
@@ -57,18 +61,32 @@ export class WllamaInferenceEngine implements InferenceEngine {
     if (options?.signal?.aborted) onCallerAbort();
     else options?.signal?.addEventListener('abort', onCallerAbort, { once: true });
     try {
-      const instance = await this.factory();
+      let instance = await this.factory();
       const modelUrl = options?.modelUrl ?? this.options.modelUrl;
       if (!modelUrl) throw new Error('wllama engine needs a modelUrl');
-      await instance.loadModelFromUrl(modelUrl, {
+      const load = (layers: number) => instance.loadModelFromUrl(modelUrl, {
         n_ctx: this.options.contextSize ?? 4096,
-        n_gpu_layers: 0,
+        n_gpu_layers: layers,
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       });
+      const gpuSupported = this.options.preferWebGPU === true && instance.isSupportWebGPU();
+      if (this.options.requireWebGPU && !gpuSupported) throw new Error('WebGPU unavailable for novel narration');
+      if (gpuSupported) {
+        try {
+          await load(99999);
+        } catch (error) {
+          if (controller.signal.aborted || this.disposed || this.options.requireWebGPU) throw error;
+          // GPU initialization can leave a partly constructed model.
+          await instance.exit();
+          instance = await this.factory();
+          await load(0);
+        }
+      } else {
+        await load(0);
+      }
       if (this.disposed) {
-        // Dispose landed mid-load: clean up immediately and register
-        // nothing — the produced instance must never resurrect.
+        // Preserve the existing cancellation semantics for late load completion.
         await instance.exit();
         return;
       }
