@@ -18,20 +18,21 @@
 2. `results('g1', input)` 读取 `groupId/members/workingState`，把每条冻结行动和骰点回执写进提示词。模型返回：
    - `judgments`：甲的 `effects` 必须写 `{targetId:'b', reacted:false}`，因为 admitted=false；乙的 effects 为空。
    - `facts`：一条共享事实可以同时归属 a、b；每个成员至少被一条事实归属。
-   - 校验通过后得到 `{a:'甲乙都……', b:'乙没有反应……'}`；校验不通过先带错误反馈重试一次。
+   - 校验通过后得到 `{a:'甲乙都……', b:'乙没有反应……'}`；校验不通过先带错误反馈重试一次。effects 只能覆盖该成员判定里声明的 target；给未声明 target 写 effect 是错误，重试仍错则整点不提交（不再编造"本组结算未能确认新的结果"）。
 3. `updates('g1', input)` 没有 `stage`，按固定顺序执行六个阶段：
    1. `position`：扫描所有人物和物品的当前位置；模型只列移动的实体（如 a→远处、tool→盒子）；本地状态内核先验证最终位置图无环、槽位和相对位置合法。
    2. `appearance`：扫描地点、物品、人物的当前外貌；提示词已包含第 1 步后的位置；`add/remove/replace/keep` 必须覆盖被操作实体的全部有效记录。
-   3. `tasks`：列出全人物全部任务（包括已完成和没有任务的人物）；只允许 pending→achieved，已完成任务输出 achieved 也不会产生 delta。覆盖 evidence 的 `taskCoverageIds` 是完整人物表。
+   3. `tasks`：列出全人物全部任务（包括已完成和没有任务的人物）；模型必须为每个有任务的人物给一条决定，`achieved` 只列本轮新达成的任务 id，其余任务由这条人物决定声明保持原状。已完成任务不会被改回，重复列出也不产生 delta。程序不把缺失的任务行默认填成 pending；缺整位人物是覆盖失败。evidence 的 `taskCoverageIds` 是完整人物表，`taskScope` 记录 `mode=per_character_decision`、人物数、任务行数和 `assertedUnchanged` 行数。
    4. `subtasks`：只允许挂在已有任务下，负责人等于父任务负责人；新任务一律 pending，ID 由程序分配；超过预算（默认 8）整段失败，不截断。
    5. `personality`：只有本轮有新任务达成才执行；扫描完整人物表（包括 off 这种不在场人物）；每个角色都必须给 keep/add/remove/replace，且有效记录必须被覆盖。
-   6. `sanity`：只为第 5 步实际发生个性变化的人物生成 0–100 整数；人物集合必须与个性变化集合完全一致；非法输出回退到当前理智值并记录 `fallback:true`，不会夹取或编造。
+   6. `sanity`：只为第 5 步实际发生个性变化的人物生成 0–100 整数；人物集合必须与个性变化集合完全一致。修复重试后仍非法的答案不再回退成"当前理智值"混进提交：整次 updates 返回 `value:null`，共同点不提交，evidence 保留失败阶段、原始输出和逐次调用。
 4. 合并调用返回六个 `UpdatesCall`；控制器用现有 `checkUpdatesStages`、`assembleCandidates`、`preview_point` 逐阶段应用并最终提交。拆分调用（`input.stage`）只返回当前阶段的一个 `UpdatesCall`，后续阶段的输入是控制器已经应用前序阶段后的 `workingState`。
 5. `continuation('r1', input)` 先让模型提出“大概率发生且与主角相关”的候选行动，再让模型逐条判断 `likely` 和 `related`：
    - 两者都为 true 的候选才进入 `candidateCharacterIds`，返回 `kind:'continue'` 和新的 `nextRoundId`。
    - 没有候选，或全部不是 likely+related，返回普通 `kind:'handback'`。
    - 连续两轮没有任何实体变化（只有时间推进也算无进展），或同一组候选连续三轮重复，策略返回 handback，并把 `no_progress`/`repeated_candidate` 写进 evidence。
    - 模型调用失败、输出结构错误、head 对不上：返回 `value:null` 和错误，**不返回 handback**。接入方必须抛错/停止，不能把异常当交还。
+   - 人物引用可以写唯一全名或 id；程序把唯一全名解析成 id。未知 id、占位符 `id`、未声明的 effect target 都会触发一次带具体原因的修复重试；重试仍失败就中止该点。不会把写错的名字默认到某个实体。
    - 默认 `continuationPolicy.maxAutoContinuations = null`，不存在“默认 0 次”或“只允许 1 次”的静默关闭。
 
 ## 导出 API

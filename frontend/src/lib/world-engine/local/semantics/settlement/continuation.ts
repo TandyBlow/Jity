@@ -11,7 +11,7 @@ import type {
   ContinuationPolicyOptions, ModelCallEvidence, SettlementConclusion, SettlementEvidence,
   SettlementOptions, SettlementOutcome,
 } from './types';
-import { asRecord, asString, errorText, hasRoundProgress, isRecord, normalizeChangeText, toJson } from './support';
+import { asRecord, asString, errorText, hasRoundProgress, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
 import { describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
 
 interface RoundPoint {
@@ -194,10 +194,10 @@ export class ContinuationRunner {
         timeoutMs: 60_000,
         maxPromptChars: 8000,
         jsonSchema: JUDGMENTS_SCHEMA,
-        validate: (value) => readJudgments(value, candidates),
+        validate: (value) => readJudgments(value, candidates, workingState),
       });
       calls = [...calls, ...judgment.calls];
-      const judgments = readJudgments(judgment.value, candidates);
+      const judgments = readJudgments(judgment.value, candidates, workingState);
       const accepted = acceptedCandidates(candidates, judgments);
       if (!accepted.length) {
         return this.handback(key, calls, started, {
@@ -403,7 +403,7 @@ function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): 
     `同地点人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
     `本轮状态变化：\n${changes}`,
     `当前时间：${state.time.dateTime}`,
-    `输出 {"candidates":[{"characterId":"人物id","text":"一句话行动"}]}，最多 ${maxCandidates} 条；没有合适的人就返回空数组。`,
+    `输出 {"candidates":[{"characterId":"${visible[0] ?? '人物id'}","text":"一句话行动"}]}，最多 ${maxCandidates} 条；characterId 用括号里的真实 id 或人物全名，不要写占位符；没有合适的人就返回空数组。`,
   ].join('\n');
 }
 
@@ -430,9 +430,10 @@ function readCandidates(value: unknown, state: WorldState, maxCandidates: number
   const inScene = new Set(protagonistRoom);
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('candidate must be an object');
-    const characterId = asString(raw.characterId);
+    const rawCharacterId = asString(raw.characterId);
     const text = asString(raw.text);
-    if (!characterId || !state.characters[characterId]) throw new Error(`unknown continuation character ${characterId || '?'}`);
+    const characterId = resolveCharacterId(state, rawCharacterId);
+    if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', visibleCharacters(state, state.protagonistId).find((id) => id !== state.protagonistId)));
     if (!text) throw new Error(`empty continuation text for ${characterId}`);
     const key = `${characterId}:${normalizeChangeText(text)}`;
     if (seen.has(key)) throw new Error(`duplicate continuation candidate ${characterId}`);
@@ -466,7 +467,7 @@ function buildJudgmentPrompt(input: ContinuationInput, candidates: Candidate[]):
   ].join('\n');
 }
 
-function readJudgments(value: unknown, candidates: Candidate[]): Record<string, { likely: boolean; related: boolean; reason: string }> {
+function readJudgments(value: unknown, candidates: Candidate[], state: WorldState): Record<string, { likely: boolean; related: boolean; reason: string }> {
   const rows = asRecord(value).judgments;
   if (!Array.isArray(rows)) throw new Error('judgments must be an array');
   const expected = new Map(candidates.map((candidate) => [candidateKey(candidate), candidate]));
@@ -477,7 +478,8 @@ function readJudgments(value: unknown, candidates: Candidate[]): Record<string, 
     if (!isRecord(raw)) throw new Error('judgment must be an object');
     const candidateId = asString(raw.candidateId);
     const candidate = candidateId ? byCandidateId.get(candidateId) : undefined;
-    const characterId = asString(raw.characterId);
+    const rawCharacterId = asString(raw.characterId);
+    const characterId = rawCharacterId ? (resolveCharacterId(state, rawCharacterId) ?? rawCharacterId) : '';
     const text = asString(raw.text);
     const key = candidate ? candidateKey(candidate) : `${characterId}:${normalizeChangeText(text)}`;
     if (!expected.has(key)) throw new Error(`judgment for unknown candidate ${candidateId || key || '?'}`);

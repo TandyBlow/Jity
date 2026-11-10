@@ -94,7 +94,7 @@ export function checkRun(input, options = {}) {
       if (call.error) soft.push(`${where} updates/${call.key}: error ${call.error}`);
     }
     for (const call of results) {
-      if (call.fallback) soft.push(`${where} results/${call.key}: conservative fallback (${call.error ?? 'no error text'})`);
+      if (call.fallback) soft.push(`${where} results/${call.key}: failed, point aborted (${call.error ?? 'no error text'})`);
     }
     const decision = sub.continuationDecision ?? 'handback';
     if (decision === 'continue' && !continuation.length) hard.push(`${where}: decision is continue but no continuation call ran`);

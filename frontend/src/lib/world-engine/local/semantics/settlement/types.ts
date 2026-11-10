@@ -68,8 +68,9 @@ export interface SettlementEvidence {
 }
 
 /** value=null means no candidate may be committed (hard input/protocol/model
- * failure). results/updates may return a conservative no-change candidate with
- * fallback=true and an error; continuation never converts failure to handback. */
+ * failure). results and updates abort the point after a failed repair instead
+ * of inventing a conservative result or committing empty stage deltas;
+ * continuation never converts a failure into a handback. */
 export interface SettlementOutcome<T> {
   value: T | null;
   raw: string;

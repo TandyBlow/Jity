@@ -49,10 +49,16 @@ export interface PortCallRecord {
   /** Updates stages in the order this task ran them (merged or split). */
   stages?: string[];
   /** How many characters the stage answers covered. The full cast is a product
-   * requirement, and this is the lightweight proof 09 can read from the page. */
-  coverage?: { tasks: number; personality: number };
+   * requirement, and this is the lightweight proof 09 can read from the page.
+   * `taskRows` is the full-world task-row count, never a scene-only subset. */
+  coverage?: { tasks: number; personality: number; taskRows?: number; mode?: string };
   /** Model time per updates stage, for finding which stage made a turn slow. */
   stageMs?: Record<string, number>;
+  /** Failed calls keep the raw model output (bounded) and each attempt's time
+   * and error, so a placeholder/unknown-reference repair is auditable. */
+  raw?: string;
+  rawChars?: number;
+  attempts?: { ms: number; error?: string; rawChars: number }[];
 }
 
 export interface PortSubmission {
@@ -131,11 +137,23 @@ export function createSettlementModelPort(
       }
       if (Object.keys(stageMs).length) record.stageMs = stageMs;
     }
-    if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds)) {
+    const scope = (outcome.evidence.detail as { taskScope?: { taskRows?: unknown; mode?: unknown } } | null)?.taskScope;
+    if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds) || scope) {
       record.coverage = {
         tasks: detail?.taskCoverageIds?.length ?? 0,
         personality: detail?.personalityCoverageIds?.length ?? 0,
+        ...(Number.isFinite(Number(scope?.taskRows)) ? { taskRows: Number(scope?.taskRows) } : {}),
+        ...(typeof scope?.mode === 'string' ? { mode: scope.mode } : {}),
       };
+    }
+    if (outcome.error) {
+      record.raw = outcome.evidence.raw.slice(0, 4000);
+      record.rawChars = outcome.evidence.raw.length;
+      record.attempts = outcome.evidence.calls.map((call) => ({
+        ms: Math.round(call.ms),
+        error: call.error,
+        rawChars: call.raw.length,
+      }));
     }
     calls.push(record);
     if (submission) {
