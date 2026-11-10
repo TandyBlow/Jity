@@ -12,11 +12,11 @@
  *   currentQuote / sourceRefs / note
  */
 
-import { splitSentences } from './review';
+import { reviewNarration, splitSentences } from './review';
 import { projectScene, type DatasetInput } from './scene';
 
 export type SequenceStatus = 'pass' | 'not_applicable' | 'undetermined' | 'conflict';
-export type SequenceCheck = 'presence' | 'task' | 'item_knowledge' | 'event_time';
+export type SequenceCheck = 'presence' | 'task' | 'item_knowledge' | 'event_time' | 'repetition';
 
 export interface TurnRecord {
   /** Stable group id, e.g. the session id. */
@@ -140,7 +140,26 @@ export function reviewSequence(turns: TurnRecord[]): SequenceReport {
       throw new Error(`duplicate turn ${record.turn} in ${record.groupId}`);
     }
     const projection = projectScene(record.input);
-    const sentences = splitSentences(record.segments?.length ? record.segments.map((s) => s.text).join('\n') : record.text);
+    const fullText = record.segments?.length ? record.segments.map((s) => s.text).join('\n') : record.text;
+    const sentences = splitSentences(fullText);
+    const priorTexts = ordered.slice(0, index).map((entry) => entry.text).filter(Boolean).slice(-2);
+
+    // Cross-turn repetition: reuse the per-turn checker's echo patterns rather
+    // than growing a second lexicon here.
+    if (priorTexts.length) {
+      const single = reviewNarration({ id: `${record.groupId}#${record.turn}`, input: record.input, text: fullText, options: { priorTexts } });
+      for (const finding of single.findings) {
+        if (finding.kind !== 'style.echo_prior' && finding.kind !== 'style.repeated_opening') continue;
+        findings.push({
+          groupId, turn: record.turn, check: 'repetition', status: 'conflict',
+          conflictsWithTurn: ordered[index - 1]?.turn ?? null,
+          earlierQuote: quote(priorTexts[priorTexts.length - 1]),
+          currentQuote: quote(finding.sentence),
+          sourceRefs: ['priorTexts', `style:${finding.kind}`],
+          note: finding.detail,
+        });
+      }
+    }
     const people = settledPeople(record.input);
 
     // ------------------------------------------------------------ presence

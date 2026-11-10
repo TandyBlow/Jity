@@ -84,6 +84,15 @@ describe('reviewSequence', () => {
     expect(report.findings.some((f) => f.check === 'event_time' && f.status === 'conflict')).toBe(true);
   });
 
+  it('flags a repeated turn opening as a repetition conflict', () => {
+    const opening = '两分钟过去，甲站在院子当中，听着墙外没有变化的风声。';
+    const report = reviewSequence([
+      turn(1, baseInput, opening),
+      turn(2, { ...baseInput, 本回合变化: { 时间推进: '3 分钟', 变化: {} } }, opening + '三分钟过去，墙外仍旧没有动静。'),
+    ]);
+    expect(report.findings.some((f) => f.check === 'repetition' && f.status === 'conflict')).toBe(true);
+  });
+
   it('marks a stated time with no settled advance as undetermined, not pass', () => {
     const noTime = {
       视角: '主角视角（甲）',
