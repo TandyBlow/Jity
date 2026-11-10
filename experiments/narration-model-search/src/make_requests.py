@@ -258,6 +258,22 @@ def main() -> int:
             "gpu": 1,
             "cost": "existing authorised cluster resources only",
         },
+        "runRecipe": [
+            "create <scratch>/11-model-search/models/ and download every models[] entry there; "
+            "verify byte size and sha256 before loading",
+            "upload experiments/narration-model-search/ and 01's shared package; run "
+            "src/verify_preflight.py --model-id <id> --path <file> --smoke-json <saved response> for each candidate",
+            "for each candidate, run one llama-server and 12 cases: python -X utf8 src/screen.py "
+            "--prompts <upload>/evidence/prompts-dev-v1/prompts.jsonl --prompt-manifest "
+            "<upload>/evidence/prompts-dev-v1/prompts.manifest.json --model-id <id> "
+            "--model-path <file> --expect-sha256 <sha> --llama-server <build>/llama-server --ngl 99 "
+            "--out <out>/<id>",
+            "run the qwen3-1.7b-instruct baseline the same way (existing HPC copy if present); "
+            "run product-narr-qwen25-1.5b only if 10 already has it, otherwise record it as skipped",
+            "python -X utf8 src/collect.py --run <out>/<candidate> ... --out-dir <out>/summary",
+            "fetch every <out>/<arm>/*.json, run-manifest.json, llama-server.log, and summary/",
+        ],
+        "outputLayout": "<out>/<modelId>/<caseId>.json plus run-manifest.json and llama-server.log; <out>/summary/{summary.json,summary.md}",
         "deliverBack": [
             "per-case JSON from screen.py",
             "run-manifest.json per model (load time, server log, model sha)",
