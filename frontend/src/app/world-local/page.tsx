@@ -14,7 +14,7 @@ import type { Id, InitialTemplate, WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
-const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
+const NARRATION_MODEL = '/models/Qwen3-1.7B-Q4_K_M.gguf';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
@@ -164,6 +164,8 @@ export default function WorldLocalPage() {
           },
           onNarrationDebug: (debug) => { (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug; },
           onNarrationProgress: (progress) => {
+            const globals = globalThis as unknown as { __worldFirstTextAt?: number };
+            if (!globals.__worldFirstTextAt) globals.__worldFirstTextAt = Date.now();
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, text })));
@@ -211,6 +213,9 @@ export default function WorldLocalPage() {
     const text = input.trim();
     if (!session || !text || busy) return;
     setBusy(true); setError(null); setWarning(null); setPhase('thinking');
+    const globals = globalThis as unknown as { __worldTurnStartedAt?: number; __worldFirstTextAt?: number };
+    globals.__worldTurnStartedAt = Date.now();
+    globals.__worldFirstTextAt = undefined;
     const key = Date.now();
     setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null }]);
     setMessage('正在判断行动、结算并写正文…');

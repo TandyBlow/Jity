@@ -610,11 +610,23 @@ function bindNarrationAttributes(text: string, after: WorldState, view: Id): str
  * is dialogue: an invented line puts words in a character's mouth, which is a
  * fact the settlement never produced, so quoted speech must already exist in
  * the grounded draft. */
+const CLAIM_WORDS = [
+  '血', '肿', '伤', '裂', '骨折', '断', '湿', '破', '碎', '烫', '淤',
+  '触', '摸', '碰', '扶', '抱', '拉', '推', '拽', '按住', '捂住', '抓住',
+  '掏出', '拿出', '收进', '塞进', '递给', '接过', '放下', '举起', '打开', '关上',
+  '解开', '系上', '拔出', '插回', '拧', '撬', '踢', '打', '开枪',
+];
+
 function supportNarration(text: string, draft: string): string {
   const kept: string[] = [];
   for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
     const sentence = raw.trim();
     if (!sentence || [...sentence].length < 4) continue;
+    // Effect words are claims, not style. If the settlement never mentions
+    // blood, a wound, a hand closing on someone or an object changing hands,
+    // the sentence is inventing a physical change and cannot be shown.
+    const claimed = CLAIM_WORDS.filter((word) => sentence.includes(word) && !draft.includes(word));
+    if (claimed.length) continue;
     const opened = /[「『“]/u.test(sentence);
     const closed = /[」』”]/u.test(sentence);
     // A sentence that carries any quote mark is dialogue being written by the

@@ -42,11 +42,17 @@ for (const input of inputs) {
     return text !== previous && /本轮已交还|本轮完成|本轮停止|加载失败|Error/.test(text) && !/结算中…/.test(text.split('本轮')[0] ?? '');
   }, before, { timeout: 300_000 });
   const turnMs = Date.now() - t0;
+  // First readable text is a separate budget from the finished round: the
+  // player may read a settled paragraph long before the round closes.
+  const firstTextMs = await page.evaluate(() => {
+    const stamped = globalThis.__worldFirstTextAt;
+    return typeof stamped === 'number' ? Math.round(stamped - globalThis.__worldTurnStartedAt) : null;
+  });
   const now = await page.evaluate(() => document.body.innerText);
   const body = now.split('Ctrl/⌘ + Enter 提交')[0];
   const paragraph = body.split('行动').pop()?.trim() ?? '';
   const debug = await page.evaluate(() => globalThis.__worldDebug ?? null);
-  turns.push({ input, turnMs, text: paragraph.slice(-900), debug, warning: /叙事事实校验未通过/.test(now) ? now.split('叙事事实校验未通过：')[1]?.split('\n')[0] : null });
+  turns.push({ input, turnMs, firstTextMs, text: paragraph.slice(-900), debug, warning: /叙事事实校验未通过/.test(now) ? now.split('叙事事实校验未通过：')[1]?.split('\n')[0] : null });
   prose = now;
 }
 
