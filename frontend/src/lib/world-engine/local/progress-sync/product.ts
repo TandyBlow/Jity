@@ -297,6 +297,16 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       }
       const remote = { headSnapshotId: head.headSnapshotId, revision: head.revision };
       if (!local) return { relation: remote.headSnapshotId ? 'remote-ahead' : 'unknown', localRevision: null, baseSnapshotId: base, remote };
+      // A queued upload is local work the server has not seen yet. Without it,
+      // a device that saved offline while the tab was closed would read
+      // "in-sync" (or "remote-ahead") and the page would never offer a choice.
+      const queued = await client.pending().catch(() => 0);
+      const withQueue = (relation: SyncRelation): SyncRelation => {
+        if (!queued) return relation;
+        if (relation === 'in-sync') return 'local-ahead';
+        if (relation === 'remote-ahead') return 'diverged';
+        return relation;
+      };
       if (!base) {
         if (!remote.headSnapshotId) {
           return { relation: 'local-ahead', localRevision: null, baseSnapshotId: null, remote };
@@ -315,7 +325,9 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
           return { relation: 'diverged', localRevision: null, baseSnapshotId: null, remote };
         }
       }
-      if (remote.headSnapshotId === base) return { relation: 'in-sync', localRevision: null, baseSnapshotId: base, remote };
+      if (remote.headSnapshotId === base) {
+        return { relation: withQueue('in-sync'), localRevision: null, baseSnapshotId: base, remote };
+      }
       try {
         const graph = await client.peekGraph(worldId);
         if (!remote.headSnapshotId) {
@@ -323,7 +335,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
         }
         const comparison = compareLineage(base, remote.headSnapshotId, graph.nodes);
         if (comparison.leftIsAncestorOfRight) {
-          return { relation: 'remote-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+          return { relation: withQueue('remote-ahead'), localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
         }
         if (comparison.rightIsAncestorOfLeft) {
           return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
