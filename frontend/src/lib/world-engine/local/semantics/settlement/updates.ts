@@ -938,7 +938,7 @@ function readSubtaskProposals(
   if (!Array.isArray(rows)) throw new Error('subtasks must be an array');
   if (rows.length > maxNewTasks) throw new Error(`subtask_budget_exceeded:${rows.length}>${maxNewTasks}`);
   const index = taskIndex(state);
-  const used = allKnownTaskIds(state);
+  const used = new Set<Id>([...allKnownTaskIds(state), ...allEntityIds(state)]);
   const usedGoals = new Set<string>();
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const raw of rows) {
