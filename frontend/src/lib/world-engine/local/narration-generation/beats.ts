@@ -22,7 +22,7 @@ import type { TimeAdvance } from '../../types';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import { factPhrases } from '../../runtime/committed-narration';
 import type { BeatSceneContext, NarrationLedger, NarrationPolicy } from './types';
-import { ownerOf } from './scene-prompt';
+import { BACKGROUND_RULES, ownerOf } from './scene-prompt';
 
 export type BeatKind = 'scene' | 'fact' | 'time';
 
@@ -245,6 +245,7 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
   lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   lines.push('不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。');
+  lines.push(...BACKGROUND_RULES);
   const extra = policy.instruction?.trim();
   if (extra) lines.push(extra);
   lines.push('正文：');

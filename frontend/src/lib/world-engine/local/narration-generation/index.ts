@@ -399,9 +399,13 @@ async function writeBeat(
     // reaches the fact beats instead of stalling the point. Fact/time beats
     // keep the caller's full budget.
     const isSceneBeat = beat.kind === 'scene';
+    // A quiet point has no fact beats to carry the scene, so the opening beat
+    // IS the scene: a 90-token cap produced 81-character answers (rejected
+    // against a 120-char floor). A mandatory scene beat gets the full budget;
+    // an optional atmosphere beat stays short so it cannot eat the point.
     const beatTokens = isSceneBeat
-      ? Math.min(policy.maxTokens ?? 160, 90)
-      : beat.kind === 'time' ? Math.min(policy.maxTokens ?? 160, 48) : (policy.maxTokens ?? 160);
+      ? (beat.mandatory ? Math.min(policy.maxTokens ?? 160, 220) : Math.min(policy.maxTokens ?? 160, 90))
+      : beat.kind === 'time' ? Math.min(policy.maxTokens ?? 160, 120) : (policy.maxTokens ?? 160);
     const beatRemaining = isSceneBeat ? Math.min(remaining, 45_000) : remaining;
     const result = await runAttempt({
       engine: input.engine,

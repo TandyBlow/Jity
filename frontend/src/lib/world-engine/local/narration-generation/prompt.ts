@@ -8,6 +8,7 @@
  * `policy.composePrompt` replaces this entirely.
  */
 import type { ComposePromptArgs, NarrationPolicy } from './types';
+import { BACKGROUND_RULES } from './scene-prompt';
 
 const BODY_MARKERS = ['【正文】', '\n正文：', '\n正文:', '【叙事】'] as const;
 
@@ -63,6 +64,7 @@ export function writingContract(policy: NarrationPolicy): string {
     '不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起），人物保持原本的姿态。',
     '不要把状态清单念一遍：不写“精神值”“未完成”“任务”“视角”这些字样，用动作、环境和对话表现。',
     '不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。',
+    ...BACKGROUND_RULES,
     '时间推进要落在一句话里（例如“十分钟过去”），不要写日期，不要写别的时长。',
     '结尾停在这一刻，不要总结、不要“这一天就这样过去”这类收束，最后一句要与上一回合的结尾不同。',
     '不写标题，不解释写法，直接写正文。',

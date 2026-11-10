@@ -10,7 +10,8 @@ import {
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
 import { buildBeatPrompt, planBeats } from './beats';
-import { renderProseFactsPrompt } from './scene-prompt';
+import { BACKGROUND_RULES, renderProseFactsPrompt } from './scene-prompt';
+import { composeNarrationPrompt } from './prompt';
 import { buildLedger } from './ledger';
 import { missingRequired, projectProseFacts } from './scene-prompt';
 
@@ -1307,5 +1308,37 @@ describe('paragraph provenance: a partly program-written scene is not model pros
     expect(result.segments).toEqual([{ beatId: 'scene', kind: 'scene', source: 'model', text: result.text }]);
     expect(result.mixed).toBe(false);
     expect(result.beatCounts).toEqual({ model: 1, fallback: 0, skipped: 0 });
+  });
+});
+
+describe('background is not an event: the rules that failed the first real run', () => {
+  const rules = () => BACKGROUND_RULES.join('\n');
+
+  test('the shared rule set names all four observed failures', () => {
+    const text = rules();
+    expect(text).toContain('不要把它们的变成这一回合的新动作、新声音、新气味或新物件'.replace('它们的', '它们'));
+    expect(text).toContain('没有 X');
+    expect(text).toContain('不会发出声音、不会说话');
+    expect(text).toContain('听见枪声会缩肩');
+    expect(text).toContain('枪口压向地面就不要再抬起');
+  });
+
+  test('all three prompt shapes carry the same rule set', () => {
+    const scene = renderProseFactsPrompt({ committed: packet(povAt), policy: basePolicy, scene: { location: '走廊' }, priorTail: null });
+    const serialized = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, basePolicy);
+    const beat = buildBeatPrompt({
+      beat: planBeats({ committed: packet(povAt), ledger: buildLedger(packet(povAt), '【正文】', null, basePolicy), policy: basePolicy, scene: { location: '走廊' } })[0],
+      ledger: buildLedger(packet(povAt), '【正文】', null, basePolicy), policy: basePolicy,
+      scene: { location: '走廊' }, written: [],
+    });
+    for (const prompt of [scene, serialized, beat]) expect(prompt).toContain('不会发出声音、不会说话');
+  });
+
+  test('a mandatory opening beat gets a real budget; an optional one stays short', () => {
+    const ledger = buildLedger(packet(povAt), '【正文】', null, basePolicy);
+    const quiet = planBeats({ committed: packet(povAt), ledger, policy: basePolicy, scene: { location: '走廊' } });
+    expect(quiet[0].mandatory).toBe(true);
+    const withFacts = planBeats({ committed: packet(moved), ledger: buildLedger(packet(moved), '【正文】', null, basePolicy), policy: basePolicy, scene: { location: '走廊' } });
+    expect(withFacts[0].mandatory).toBe(false);
   });
 });

@@ -61,6 +61,18 @@ export function projectProseFacts(committed: CommittedNarration): ProseProjectio
 
 /** The system turn. Lane 08's rules, plus one line per defect human review
  * found in texts the automatic grader accepted. */
+/** Background is not an event. The first three-arm run wrote a card that
+ * spoke, a conditional trait as a present gunshot and a denied hit mark as a
+ * shrapnel wound, in all three shapes. These lines name the rule once so the
+ * whole-scene, serialized and beat prompts cannot drift apart. */
+export const BACKGROUND_RULES = [
+  '【背景】里的人物外貌、地点描写、物品状态和性格倾向只是背景：不要把它们变成这一回合的新动作、新声音、新气味或新物件。',
+  '说明里写「没有 X」的，正文不要出现 X（例：背心「没有演习弹痕」，就不写被弹片击中的痕迹）。',
+  '牌子、纸、告示上的字只是字，不会发出声音、不会说话；人物读过它，不等于它现在在提醒人。',
+  '性格倾向要带条件：写「听见枪声会缩肩」不等于这一回合有枪声；没有已结算的触发事件，不要写这个反应，也不要写出触发它的声音。',
+  '静物的朝向和开合保持不变（枪口压向地面就不要再抬起，盒盖紧闭就不要推开），除非本回合有对应事实。',
+];
+
 export const NARRATOR_SYSTEM_PROMPT = [
   '你是一位中文小说作者，为文字冒险游戏写这一段叙事正文。',
   '只输出正文，不要解释、不要列点、不要标题、不要用「玩家」「系统」这类游戏术语。',
@@ -74,6 +86,7 @@ export const NARRATOR_SYSTEM_PROMPT = [
   '不要把状态逐条念出来：不写「精神值」「任务」「未完成」这些字样，也不要用一句话复述场景说明。',
   '不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。',
   '结尾停在这一刻，不要总结、不要陈词滥调的收束，也不要重复上一回合最后一句。',
+  ...BACKGROUND_RULES,
 ].join('\n');
 
 const UNIT_CN: Record<TimeAdvance['duration']['unit'], string> = {
