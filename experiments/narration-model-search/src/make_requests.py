@@ -25,6 +25,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 OUT = pathlib.Path("D:/others/Jity/.local/parallel-local-game/results/product/hpc-requests")
 CANDIDATES = ROOT / "models/candidates.json"
+DEV_PACKAGE = pathlib.Path("D:/others/Jity/.local/parallel-local-game/results/quality/dev-package-v1")
 
 
 def sha(path: pathlib.Path) -> str:
@@ -266,6 +267,51 @@ def main() -> int:
             "browser's wllama build are a known limitation; lane 09's browser run is authoritative.",
         ],
     }
+
+    # 10's queue policy lists required fields. Keep the rich request bodies and
+    # add the same facts in that flat envelope so the request cannot be refused
+    # for a missing hash or an unnamed output directory.
+    code_hashes = {name: sha(ROOT / "src" / name) for name in
+                   ("screen.py", "collect.py", "make_review_input.py", "build_prompts.py")}
+    data_hashes = {
+        "manifest.json": sha(DEV_PACKAGE / "manifest.json"),
+        "cases.jsonl": sha(DEV_PACKAGE / "cases.jsonl"),
+        "prompts.jsonl": sha(prompts_dir / "prompts.jsonl"),
+        "prompts.manifest.json": sha(prompts_dir / "prompts.manifest.json"),
+    }
+    model_source = [{
+        "id": row["id"],
+        "repo": row["gguf"]["repo"],
+        "revision": row["gguf"]["revision"],
+        "file": row["gguf"]["file"],
+        "bytes": row["gguf"]["bytes"],
+        "sha256": row["gguf"]["lfsSha256"],
+        "license": row["license"]["spdx"],
+    } for row in passing]
+    for request, output_dir, purpose, questions in (
+        (preflight, "results/product/hpc-results/11-model-search-preflight-001/",
+         "Download, hash, read GGUF metadata and smoke-load five candidate GGUFs. No dev-package generation, no quality judgement.",
+         ["Is llama-server present or buildable on the cluster, and which llama.cpp commit results?",
+          "Does each GGUF load, and does Qwen3.5-2B load through the text-only qwen35 path?",
+          "Does the server accept per-request chat_template_kwargs (Hunyuan/Qwen3.5 need enable_thinking=false)?"]),
+        (quality, "results/product/hpc-results/11-model-search-batch-2-subset12/",
+         "Offline 12/15-subset comparison of five candidate GGUFs against the Qwen3-1.7B baseline (and the product LoRA if present).",
+         ["Is the product LoRA GGUF available to 10? If not, skip that reference arm and say so.",
+          "Did every arm use its own GGUF template through llama-server --jinja, with the pinned sampling?",
+          "Which cases failed to load or produced an empty/truncated response?"]),
+    ):
+        request["lane"] = "11-model-search"
+        request["id"] = request["requestId"]
+        request["purpose"] = purpose
+        request["preregistrationPath"] = str(pinned_preregistration)
+        request["preregistrationSha256"] = sha(pinned_preregistration)
+        request["inputOrDataSha256"] = data_hashes
+        request["rubricSha256"] = sha(DEV_PACKAGE / "RUBRIC.md")
+        request["codeSha256"] = code_hashes
+        request["modelSource"] = model_source
+        request["estimatedResources"] = request.get("resourceEstimate")
+        request["outputDir"] = output_dir
+        request["openQuestions"] = questions
 
     OUT.mkdir(parents=True, exist_ok=True)
     for name, obj in (("11-model-search-preflight-001.json", preflight),
