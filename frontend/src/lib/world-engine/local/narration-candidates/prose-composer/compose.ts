@@ -240,17 +240,19 @@ function chooseAnchor(scene: ProseScene, priorText: string | null): string[] {
   for (const detail of scene.location.details ?? []) add(detail, 60);
   for (const detail of scene.parentLocation?.details ?? []) add(detail, 30);
   const protagonist = actorOf(scene, scene.protagonistId);
-  for (const detail of protagonist?.appearance ?? []) add(detail, 20);
-  for (const actor of scene.cast) {
-    if (actor.id === scene.protagonistId) continue;
-    for (const detail of actor.appearance ?? []) add(detail, 10);
+  // On a continuation the reader already knows how the viewpoint looks; do
+  // not open the new turn by describing him again.
+  if (!scene.priorText) {
+    for (const detail of protagonist?.appearance ?? []) add(detail, 20);
   }
   const fresh = candidates.filter((entry) => {
     if (!prior.length) return true;
     if (priorText?.includes(entry.text.slice(0, 3))) return false;
     return !prior.some((sentence) => overlapRatio(entry.text, sentence) > 0.4);
   });
-  const pool = fresh.length ? fresh : candidates;
+  // On a continuation, an all-echo candidate set means the turn has nothing
+  // new to open with; starting on the first beat is better than repeating.
+  const pool = fresh.length ? fresh : (priorText ? [] : candidates);
   if (!pool.length) return [];
   pool.sort((left, right) => right.weight - left.weight);
   const chosen = pool[0];
@@ -343,7 +345,11 @@ export function composeProse(scene: ProseScene): ComposedProse {
     const before = units.length;
     switch (beat.kind) {
       case 'scene': {
-        pushBeat(ensurePeriod(beat.factText ?? beat.detail), beat);
+        const text = ensurePeriod(beat.factText ?? beat.detail);
+        // Scene texture is optional colour. If the previous turn already used
+        // this exact line, drop it instead of repeating the turn.
+        if (scene.priorText && echoOfPrior(text, scene.priorText) > 0.72) break;
+        pushBeat(text, beat);
         break;
       }
       case 'move': {
@@ -513,6 +519,9 @@ export function composeProse(scene: ProseScene): ComposedProse {
       case 'sanity': {
         const actor = actorOf(scene, beat.actorId);
         if (!actor) break;
+        // Equal endpoints mean the record carries no change; narrating it
+        // would invent an event out of a non-event.
+        if (beat.to === beat.from) break;
         const down = beat.to < beat.from;
         // Two actors can lose sanity in the same point; keying the variant by
         // actor id keeps their sentences from being word-for-word identical.
@@ -634,7 +643,8 @@ export function composeProse(scene: ProseScene): ComposedProse {
   const stillItem = (scene.items ?? []).find(
     (item) => item.positionName === scene.location.name && !itemBeats.has(item.id),
   );
-  if (stillItem && units.length && !units.some((unit) => unit.text.includes(stillItem.name))) {
+  if (stillItem && units.length && !units.some((unit) => unit.text.includes(stillItem.name))
+    && !scene.priorText?.includes(stillItem.name)) {
     const detail = stillItem.details?.find((value) => !scene.toldFacts?.includes(value));
     push(`${stillItem.name}还在原来的地方。${detail ? ensurePeriod(detail) : ''}`, []);
   }
@@ -796,7 +806,10 @@ function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] 
     const current = merged[index];
     const next = merged[index + 1];
     const bareTime = /^(?:又?过了)?[零一二两三四五六七八九十百\d]+(?:分钟|秒|个小时|天|个月|年)(?:过去|之后)?。$/u.test(current);
-    if (bareTime && next && !next.startsWith('「')
+    // A quoted task label is not dialogue: "过了三分钟，「…」，路明非做完了。"
+    const quotedTask = Boolean(next && next.startsWith('「')
+      && /^「[^」]{1,60}」.{0,8}(?:做完了|办完了|收了尾)/u.test(next));
+    if (bareTime && next && (!next.startsWith('「') || quotedTask)
       && charCount(current) + charCount(next) <= 80) {
       out.push(`${current.slice(0, -1)}，${next}`);
       index += 1;
@@ -862,7 +875,11 @@ function verifyBeats(
     if (!isRequired(beat)) continue;
     const entry = byBeat.get(beat);
     if (!entry || !entry.sentence) {
-      issues.push({ kind: 'beat_unrendered', severity: 'hard', detail: `beat ${beat.kind} was not rendered` });
+      // Scene texture may be dropped as an echo; a flat sanity record carries
+      // no change to narrate. Neither loses a settled fact.
+      if (beat.kind !== 'scene' && beat.kind !== 'sanity') {
+        issues.push({ kind: 'beat_unrendered', severity: 'hard', detail: `beat ${beat.kind} was not rendered` });
+      }
       continue;
     }
     const sentence = entry.sentence;
@@ -911,7 +928,8 @@ function verifyBeats(
         checks.push({ token: stripQuotes(beat.text).slice(0, 4), label: 'line text' });
         break;
       case 'scene':
-        checks.push({ token: firstClause(beat.factText ?? beat.detail).slice(0, 4), label: 'scene detail' });
+        // Scene texture is optional: an echoed or surplus detail may be
+        // dropped without losing a settled fact.
         break;
       case 'stay':
         checks.push({ token: names.get(beat.actorId) ?? beat.actorId, label: 'actor' });

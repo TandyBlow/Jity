@@ -100,7 +100,6 @@ describe("beat text against lane 04's gate vocabulary", () => {
   // this test is the place that fails first instead of a silent beat fallback.
   const DOWN = ['沉', '紧', '往下', '发凉', '收紧', '坠', '缩'];
   const UP = ['松', '顺', '稳', '回暖', '舒', '缓', '放平'];
-  const FLAT = ['没有变', '照旧'];
 
   function sanityScene(from: number, to: number, id: string): ComposeBeatRequestLike {
     const req = request('event', ['s1']);
@@ -113,14 +112,14 @@ describe("beat text against lane 04's gate vocabulary", () => {
     return req;
   }
 
-  it('uses a cue lane 04 recognises for down, up and flat', () => {
+  it('uses a cue lane 04 recognises for down and up, and says nothing for a flat record', () => {
     for (const id of ['lu', 'fingel']) {
       const down = composeConstrainedBeat(sanityScene(50, 44, id)).text;
       expect(DOWN.some((cue) => down.includes(cue))).toBe(true);
       const up = composeConstrainedBeat(sanityScene(44, 50, id)).text;
       expect(UP.some((cue) => up.includes(cue))).toBe(true);
-      const flat = composeConstrainedBeat(sanityScene(50, 50, id)).text;
-      expect(FLAT.some((cue) => flat.includes(cue))).toBe(true);
+      // Equal endpoints carry no change; a sentence here would invent an event.
+      expect(composeConstrainedBeat(sanityScene(50, 50, id)).text).toBe('');
     }
   });
 

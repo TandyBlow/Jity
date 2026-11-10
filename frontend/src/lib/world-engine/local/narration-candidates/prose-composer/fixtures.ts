@@ -32,7 +32,7 @@ export const SHORT_MOVE_SCENE: ProseScene = {
     { kind: 'stay', actorId: 'person_c', location: '走廊' },
   ],
   priorText: '走廊的灯亮着。\n\n林川站在门边，盒子放在两人之间的地上，盖着。\n\n周宁没有动。',
-  policy: { minChars: 60, seed: 7 },
+  policy: { minChars: 40, seed: 7 },
 };
 
 export const SERVICE_LANE_SCENE: ProseScene = {

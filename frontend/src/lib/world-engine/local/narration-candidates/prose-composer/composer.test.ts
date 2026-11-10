@@ -22,8 +22,9 @@ describe('composeProse facts and direction', () => {
     expect(result.accepted).toBe(true);
     expect(result.text).toContain('林川');
     expect(result.text).toContain('周宁');
-    expect(result.text).toContain('盒子');
     expect(result.text).not.toMatch(/打开|开盖|盒盖打开/u);
+    // The box was already described last turn; this turn must not restate it.
+    expect(result.text).not.toContain('盒子');
     const moveSentence = sentences(result.text).find((sentence) => sentence.includes('林川') && sentence.includes('门厅'));
     expect(moveSentence).toBeTruthy();
     expect(moveSentence!.indexOf('走廊')).toBeLessThan(moveSentence!.indexOf('门厅'));
@@ -222,6 +223,40 @@ describe('validateScene and generateCandidate', () => {
       },
     });
     expect(result.text).toContain('过了五分钟，林川从走廊');
+  });
+
+  it('joins a time line to a quoted task sentence, but not to dialogue', () => {
+    const base = {
+      ...SHORT_MOVE_SCENE,
+      policy: { minChars: 20, requireTime: true },
+      priorText: null,
+    };
+    const task = generateCandidate({
+      policy: {
+        scene: {
+          ...base,
+          beats: [
+            { kind: 'time', amount: 3, unit: 'minute' },
+            { kind: 'task', actorId: 'person_a', label: '问清局势', scope: 'sub' },
+          ],
+        },
+      },
+    });
+    expect(task.text).toContain('过了三分钟，林川');
+    expect(task.text).toContain('「问清局势」');
+    const talk = generateCandidate({
+      policy: {
+        scene: {
+          ...base,
+          beats: [
+            { kind: 'time', amount: 3, unit: 'minute' },
+            { kind: 'line', speakerId: 'person_a', text: '我回来了。' },
+          ],
+        },
+      },
+    });
+    expect(talk.text).toContain('过了三分钟。');
+    expect(talk.text).toContain('「我回来了。」');
   });
 
   it('builds a sparse but truthful scene from committed facts', () => {

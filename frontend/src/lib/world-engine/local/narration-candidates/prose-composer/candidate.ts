@@ -12,7 +12,7 @@
  */
 
 import { composeProse, PROSE_STRATEGY_VERSION } from './compose';
-import { sceneFromCommitted, type CommittedLike } from './from-committed';
+import { sceneFromCommitted, sceneFromGrounding, type CommittedLike, type SceneGroundingLike } from './from-committed';
 import type { ComposedProse, ProseIssue, ProseScene } from './types';
 
 export const CANDIDATE_STRATEGY_VERSION = PROSE_STRATEGY_VERSION;
@@ -153,12 +153,27 @@ function timingsFor(composed: ComposedProse['timings'], elapsedMs: number): Cand
 export function generateCandidate(args: GenerateCandidateArgs): CandidateResult {
   const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const policy = args.policy ?? {};
-  let scene: ProseScene | null = policy.scene ?? null;
+  const provided = policy.scene as unknown;
+  const isProseScene = Boolean(provided && typeof provided === 'object' && 'protagonistId' in provided);
+  const isGrounding = Boolean(provided && typeof provided === 'object'
+    && 'location' in provided && 'present' in provided
+    && typeof (provided as { location?: unknown }).location === 'string');
+  let scene: ProseScene | null = isProseScene ? provided as ProseScene : null;
   let sparse = false;
   const issues: CandidateIssue[] = [];
 
   if (!scene && args.committed) {
-    const adapted = sceneFromCommitted(args.committed, {
+    const adapted = isGrounding
+      ? sceneFromGrounding(provided as SceneGroundingLike, args.committed, {
+        viewpoint: policy.viewpoint ?? null,
+        priorText: args.priorText ?? null,
+        seed: policy.seed,
+        minChars: policy.minChars,
+        state: args.state ?? args.committed.state ?? null,
+        delta: args.delta ?? null,
+        timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
+      })
+      : sceneFromCommitted(args.committed, {
       viewpoint: policy.viewpoint ?? null,
       priorText: args.priorText ?? null,
       seed: policy.seed,

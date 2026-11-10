@@ -37,6 +37,7 @@ export interface CommittedLike {
   /** The shared browser driver attaches the same settled read to the packet. */
   state?: WorldStateLike | null;
   beforeState?: WorldStateLike | null;
+  entityDeltas?: Record<string, { positionSet?: unknown; appearanceChanges?: unknown[] }>;
 }
 
 export interface ChangeLike {
@@ -173,7 +174,10 @@ function clause(text: string | undefined, max = 40): string {
   return (comma >= 8 && comma <= max ? clean.slice(0, comma) : clean.slice(0, max)).replace(/[，、]+$/u, '');
 }
 
-function sceneTexture(scene: ProseScene): ProseBeat[] {
+function sceneTexture(
+  scene: ProseScene,
+  changedItems: Set<string> = new Set(),
+): ProseBeat[] {
   const beats: ProseBeat[] = [];
   const seed = scene.seed ?? 0;
   for (const actor of scene.cast) {
@@ -188,6 +192,9 @@ function sceneTexture(scene: ProseScene): ProseBeat[] {
     beats.push({ kind: 'scene', detail: forms[hash32(`${seed}|${actor.id}|near`) % forms.length] });
   }
   for (const item of (scene.items ?? []).slice(0, 2)) {
+    // On a continuation the room was already described; only repeat an object
+    // when this turn actually changed it.
+    if (scene.priorText && !changedItems.has(item.id)) continue;
     const detail = clause(item.details?.[0]);
     beats.push({
       kind: 'item', itemId: item.id, container: scene.location.name,
@@ -247,7 +254,10 @@ export function sceneFromCommitted(
     const placeLine = clause(enriched.scene.location.details?.[0], 44);
     // The place is the anchor: it must stay ahead of the presence texture.
     if (placeLine) beats.unshift({ kind: 'scene', detail: placeLine });
-    enriched.scene.beats = [...beats, ...sceneTexture(enriched.scene)];
+    const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
+      .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
+      .map(([id]) => id));
+    enriched.scene.beats = [...beats, ...sceneTexture(enriched.scene, changedItems)];
     return enriched;
   }
   let locationName: string | undefined;
@@ -300,6 +310,80 @@ export function sceneFromCommitted(
     seed: policy.seed,
   };
   return { scene, sparse: true };
+}
+
+/** The shared browser driver's `scene` is a grounding, not a ProseScene:
+ * location name, place notes, present people, room objects and inventory. */
+export interface SceneGroundingLike {
+  location: string;
+  placeNotes?: string[];
+  present?: { id: string; name: string; note?: string }[];
+  objects?: { id: string; name: string; note?: string }[];
+  inventory?: { id: string; name: string; note?: string }[];
+  exits?: string[];
+}
+
+/** Build the composer scene from the driver's grounding. Facts still come
+ * from the committed packet; the grounding supplies scene material. */
+export function sceneFromGrounding(
+  grounding: SceneGroundingLike,
+  committed: CommittedLike,
+  policy: CommittedAdapterPolicy = {},
+): AdaptedScene {
+  const stateRead = policy.state ?? null;
+  const protagonistId = policy.viewpoint?.id
+    ?? stateRead?.protagonistId
+    ?? committed.facts?.[0]?.actorId
+    ?? 'protagonist';
+  const protagonistName = policy.viewpoint?.name
+    ?? (stateRead ? entityName(stateRead, 'characters', protagonistId) : committed.facts?.[0]?.name)
+    ?? protagonistId;
+  const cast: ProseActor[] = (grounding.present ?? []).map((person) => ({
+    id: person.id,
+    name: person.name,
+    appearance: person.note ? [person.note] : [],
+    isProtagonist: person.id === protagonistId,
+  }));
+  if (!cast.some((actor) => actor.id === protagonistId)) {
+    const appearance = stateRead
+      ? appearanceText(stateRead.characters[protagonistId]?.appearanceChanges,
+        stateRead.initial.characters[protagonistId]?.initialAppearance)
+      : '';
+    cast.unshift({
+      id: protagonistId, name: protagonistName,
+      appearance: appearance ? [appearance] : [], isProtagonist: true,
+    });
+  }
+  const here = grounding.location;
+  const items: ProseItem[] = (grounding.objects ?? []).map((item) => ({
+    id: item.id, name: item.name,
+    details: item.note ? [item.note] : [],
+    positionName: here,
+  }));
+  const scene: ProseScene = {
+    worldId: committed.anchor?.worldId ?? stateRead?.worldId,
+    pointId: committed.anchor?.pointId,
+    protagonistId,
+    location: { name: here, details: grounding.placeNotes ?? [] },
+    cast,
+    items,
+    beats: [],
+    priorText: policy.priorText ?? null,
+    policy: { minChars: policy.minChars ?? 60, requireTime: true },
+    seed: policy.seed,
+  };
+  const beats = beatsFromFacts(committed.facts ?? [], protagonistId);
+  const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
+  if (advance?.duration && advance.duration.amount > 0) {
+    beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
+  }
+  const placeLine = clause(scene.location.details?.[0], 44);
+  if (placeLine) beats.unshift({ kind: 'scene', detail: placeLine });
+  const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
+    .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
+    .map(([id]) => id));
+  scene.beats = [...beats, ...sceneTexture(scene, changedItems)];
+  return { scene, sparse: false };
 }
 
 export type { WorldStateLike as WorldState };
