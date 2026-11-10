@@ -4,6 +4,8 @@
 
 当前产品叙事模型是 Qwen2.5-1.5B 叙事 LoRA，历史基线是 Qwen3-1.7B。需要找这两者之外、能在同一个 Edge+wllama 运行时（浏览器 Blob 总容量上限约 2 GB）加载、中文小说叙事可能更好的 GGUF。不能按榜单或参数量猜正文质量；必须用 01/10 的同一公开冻结开发包、同条件采样、01 的 rubric 比较。
 
+**当前状态（2026-11-10）**：准备已完成，`results/11-model-search/waiting.json` 记录了等待项；preflight 与 12 例质量批次请求已 ready，10 尚未登记领取；01 的包仍是 `20da8db9…`，三个 case 未修。没有任何模型正文或质量结论。
+
 ## 本轮实际交付
 
 1. **官方来源与文件证据**：`experiments/narration-model-search/sources/capture_hf.py` 抓 8 个候选的 HF API、模型卡、config、tokenizer_config（含 chat template）、generation_config、LICENSE；`sources/hf/capture.json` 记录每个 URL、pinned revision、字节数、sha256；GGUF 文件记录 size + LFS sha256。
