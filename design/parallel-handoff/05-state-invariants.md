@@ -172,11 +172,12 @@ worktree:
   - calls `pointContinuityIssues(record.state, point)` before `applyPoint` in
     `handleCommitPoint` and refuses with `request_malformed`.
   - **Dependency:** merge `local/state-invariants/index.ts` first.
-- `results/product/evidence/05-kernel/patches/06-page-snapshot-hook.patch`
-  - exposes a read-only `window.__worldSnapshot()` returning a detached
-    `structuredClone`, so 09 can capture the real `LocalGameSnapshot` after
-    each turn. It applies to 06's older page; 06 must re-base it on current
-    `d0dfe99a`, which already has `__worldRestore` but not `__worldSnapshot`.
+- `results/product/evidence/05-kernel/patches/06-page-restore-and-hook.patch`
+  - combined page patch for 06's current `d0dfe99a`: a detached
+    `window.__worldSnapshot()` (`structuredClone`), a synchronous submit lock,
+    `entriesTotal` based on committed player points, and `overallRestored`.
+    Apply-check and disposable typecheck pass. The separate component patches
+    are under `patches/superseded/`.
 - `results/product/evidence/05-kernel/patches/06-state-apply-guards.patch`
   - `state.ts` fix, not just a verifier: reject a second appearance change with
     the same id, a second added task with the same id, and task ids/owners/
@@ -184,9 +185,6 @@ worktree:
     tree; 42 state/transport/guard tests pass. 06 must confirm the shared-file
     ownership before applying. 04's smaller legacy `state.ts` needs its own
     patch if it still uses that path.
-- `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
-  - closes the same-tick page submit gap with a synchronous ref; checked
-    against the observed current page.
 - `results/product/evidence/05-kernel/patches/04-schedule-location-appearance.patch`
   - `inputIds` also registers `state.locations[*].appearanceChanges` ids and
     their `supersedes` ids. 06's current tree already contains the equivalent
