@@ -6,7 +6,7 @@ import { legacyNarrationInput } from '../prompt';
 import { SHORT_STATE } from '../../runtime/b3-short-samples';
 import type { WorldState } from '../../types';
 import {
-  NARRATION_STRATEGY_VERSION, dropDuplicateSentences, generateCommittedNarration, sanitizeNarration,
+  NARRATION_STRATEGY_VERSION, dropDuplicateSentences, generateCommittedNarration, sanitizeNarration, trimEchoedEnding,
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
 import { planBeats } from './beats';
@@ -1142,5 +1142,50 @@ describe('scene prompt: contract and prose-facts shape', () => {
     expect(projected.positions).toEqual([{ name: '周宁', location: '走廊' }]);
     expect(missingRequired(projected.required, '林川从走廊走到门厅。')).toEqual([]);
     expect(missingRequired(projected.required, '林川走了过去。')).toHaveLength(1);
+  });
+});
+
+describe('assembly hygiene: a scene must not end on the previous turn’s sentence', () => {
+  const PRIOR = '门厅的灯灭了一半。林川数着脚步往前走。他没有再说话。';
+
+  test('the echoed closing sentence is dropped when it carries no settled fact', async () => {
+    const draft = '走廊的灯还亮着。林川从走廊走到门厅，脚步压得很低。他没有再说话。';
+    const engine = new ScriptedEngine([{ kind: 'text', text: draft }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: PRIOR,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(result.text).not.toContain('他没有再说话');
+    expect(result.assembly?.droppedSentences).toContain('他没有再说话。');
+    expect(result.text).toContain('林川从走廊走到门厅');
+  });
+
+  test('a closing sentence that carries the settled fact is never dropped', async () => {
+    const draft = '走廊的灯还亮着。周宁留在走廊，没有跟上去。林川从走廊走到了门厅。';
+    const engine = new ScriptedEngine([{ kind: 'text', text: draft }]);
+    const prior = '上一回合结束。林川从走廊走到了门厅。';
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: prior,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(result.text).toContain('林川从走廊走到了门厅');
+  });
+
+  test('a new closing sentence is kept as written', async () => {
+    const draft = '走廊的灯还亮着。林川从走廊走到门厅，在门口停住。风从楼梯口灌进来。';
+    const engine = new ScriptedEngine([{ kind: 'text', text: draft }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: PRIOR,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(result.text).toBe(draft);
+    expect(result.assembly?.droppedSentences ?? []).toEqual([]);
+  });
+
+  test('the trim stops before the scene falls under the length floor', () => {
+    const short = '他站着。他没有再说话。';
+    const trimmed = trimEchoedEnding(short, PRIOR, { minChars: 60 });
+    expect(trimmed.dropped).toEqual([]);
+    expect(trimmed.text).toBe(short);
   });
 });
