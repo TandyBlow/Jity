@@ -92,6 +92,14 @@ export function allTasks(state: WorldState): { ownerId: Id; task: Task }[] {
   return rows;
 }
 
+/** Short, stable task keys for prompts and answers. The program owns the
+ * mapping; the model never repeats long record ids for every task. */
+export function taskKeyIndex(state: WorldState): Map<Id, string> {
+  const keys = new Map<Id, string>();
+  allTasks(state).forEach(({ task }, index) => keys.set(task.id, `t${index + 1}`));
+  return keys;
+}
+
 export function taskIndex(state: WorldState): Map<Id, { ownerId: Id; task: Task }> {
   const index = new Map<Id, { ownerId: Id; task: Task }>();
   for (const row of allTasks(state)) index.set(row.task.id, row);
@@ -158,7 +166,7 @@ export function appearanceLine(state: WorldState, entityId: Id, options: { compa
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
 
-export function taskLine(state: WorldState, ownerId: Id): string {
+export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>): string {
   const name = state.initial.characters[ownerId]?.name ?? ownerId;
   const position = containerLabel(state, ownerId);
   const initial = state.initial.characters[ownerId];
@@ -169,7 +177,7 @@ export function taskLine(state: WorldState, ownerId: Id): string {
   const tasks = Object.values(state.characters[ownerId]?.tasks ?? {});
   const prefix = `- ${name}（id=${ownerId}）位置=${position}；外貌=${appearance}；个性=${personality}`;
   if (!tasks.length) return `${prefix}：无任务`;
-  const rows = tasks.map((task) => `${task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
+  const rows = tasks.map((task) => `${keys?.get(task.id) ?? task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
   return `${prefix}：${rows.join('；')}`;
 }
 

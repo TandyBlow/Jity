@@ -718,3 +718,20 @@ describe('bounded task-id contract', () => {
     expect(outcome.error).toContain('task character coverage incomplete: 2/3; missing off');
   });
 });
+
+describe('compact task keys', () => {
+  it('prints t1..tN and expands a short key back to the real task id', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ decisions: [
+      { characterId: 'a', achieved: ['t1'] },
+      { characterId: 'b', achieved: [] },
+      { characterId: 'off', achieved: [] },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
+    expect(engine.prompts[0]).toContain('t1：拿到工具');
+    expect(engine.prompts[0]).not.toContain('a1：拿到工具');
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.tasksAchieved).toEqual(['a1']);
+    expect((outcome.evidence.detail as { taskScope: { rejectedTaskIds: unknown[] } }).taskScope.rejectedTaskIds).toEqual([]);
+  });
+});
