@@ -1280,3 +1280,32 @@ describe('pronoun policy: names by default, model pronouns on request', () => {
     expect(prompt).toContain('不要写上面没有写过的姿势');
   });
 });
+
+describe('paragraph provenance: a partly program-written scene is not model prose', () => {
+  test('beats report segments, counts and mixed when some paragraphs fell back', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '走廊的灯还亮着。' },
+      { kind: 'throw', error: new Error('boom') },
+      { kind: 'throw', error: new Error('boom') },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, mode: 'beats', beatAttempts: 1 },
+    });
+    expect(result.segments.length).toBe(result.beats.length);
+    expect(result.beatCounts.model + result.beatCounts.fallback + result.beatCounts.skipped).toBe(result.beats.length);
+    expect(result.segments.every((segment) => ['model', 'fallback', 'skipped'].includes(segment.source))).toBe(true);
+    if (result.beatCounts.fallback > 0 && result.beatCounts.model > 0) expect(result.mixed).toBe(true);
+  });
+
+  test('a whole-scene answer is one model segment when accepted, never mixed', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '走廊的灯还亮着。林川从走廊走到门厅，在门口停住。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(result.segments).toEqual([{ beatId: 'scene', kind: 'scene', source: 'model', text: result.text }]);
+    expect(result.mixed).toBe(false);
+    expect(result.beatCounts).toEqual({ model: 1, fallback: 0, skipped: 0 });
+  });
+});

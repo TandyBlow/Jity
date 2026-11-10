@@ -622,6 +622,15 @@ async function generateBeatNarration(
     attemptIndex: attempts.length ? Math.max(0, attemptCount - 1) : null,
     beats: evidence,
     assembly,
+    segments: evidence.map((beat) => ({
+      beatId: beat.beatId, kind: beat.kind, source: beat.source, text: beat.text,
+    })),
+    beatCounts: {
+      model: evidence.filter((beat) => beat.source === 'model').length,
+      fallback: evidence.filter((beat) => beat.source === 'fallback').length,
+      skipped: evidence.filter((beat) => beat.source === 'skipped').length,
+    },
+    mixed: evidence.some((beat) => beat.source === 'model') && evidence.some((beat) => beat.source !== 'model'),
     display: lastDisplay ?? {
       status: displayStatus,
       attempt: Math.max(0, attemptCount - 1),
@@ -801,6 +810,11 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     attemptIndex,
     beats: [],
     assembly: sceneAssembly,
+    // A whole-scene answer is one paragraph, written by the model when the
+    // attempt was accepted; the program never fills part of it.
+    segments: text ? [{ beatId: 'scene', kind: 'scene', source: status === 'accepted' ? 'model' : 'skipped', text }] : [],
+    beatCounts: { model: status === 'accepted' ? 1 : 0, fallback: 0, skipped: status === 'accepted' ? 0 : 1 },
+    mixed: false,
     display: progress.last as NarrationDisplayState,
   };
 }

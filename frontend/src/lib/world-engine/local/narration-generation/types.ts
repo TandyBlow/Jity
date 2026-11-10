@@ -270,8 +270,22 @@ export interface GeneratedNarration {
   beats: NarrationBeatEvidence[];
   /** Program-side assembly edits in beat mode. */
   assembly: NarrationAssembly;
+  /** Per-paragraph provenance in the shape lane 04's constrained candidate
+   * uses, so one adapter can treat both candidates the same way. A scene with
+   * some model paragraphs and some fallback paragraphs must not be reported as
+   * fully model-written. */
+  segments: NarrationSegment[];
+  beatCounts: { model: number; fallback: number; skipped: number };
+  mixed: boolean;
   /** Last display state emitted to `onProgress`. */
   display: NarrationDisplayState;
+}
+
+export interface NarrationSegment {
+  beatId: string;
+  kind: string;
+  source: 'model' | 'fallback' | 'skipped';
+  text: string;
 }
 
 export interface GenerateCommittedNarrationInput {
