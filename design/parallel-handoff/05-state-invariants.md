@@ -91,12 +91,12 @@ acceptance.
    archive. The earlier `localStorage.removeItem(SAVE_KEY)` path is gone. The
    old patch is under `patches/superseded/` and must not be applied.
 
-5. **Mid-turn work is now saved by the page.** At the observed current page
-   hash, the page creates a durable store and passes it through
-   `LocalGameSession.open`; its `save` callback is only a fallback when
-   `store.durable` is false. 06's `CheckpointingTransport` saves every transport
-   write, including the work snapshot. 09 still has to confirm refresh/restore
-   on the real page.
+5. **Mid-turn work is saved when the IndexedDB store is durable.** At the
+   observed current page hash, the page creates a durable store and passes it
+   through `LocalGameSession.open`; `refresh` calls `session.flushPersistence`.
+   The page `save` callback still returns early when `transport.work` is set, so
+   the legacy localStorage fallback only stores settled points. 09 must confirm
+   refresh/restore on a normal IndexedDB-capable browser.
 
 6. **Room appearance change is stopped on the second turn.** 04's real-kernel
    repro shows `dangling_updates_refs:[{stage:appearance,entity:corridor,
