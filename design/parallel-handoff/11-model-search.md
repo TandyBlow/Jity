@@ -4,7 +4,7 @@
 
 当前产品叙事模型是 Qwen2.5-1.5B 叙事 LoRA，历史基线是 Qwen3-1.7B。需要找这两者之外、能在同一个 Edge+wllama 运行时（浏览器 Blob 总容量上限约 2 GB）加载、中文小说叙事可能更好的 GGUF。不能按榜单或参数量猜正文质量；必须用 01/10 的同一公开冻结开发包、同条件采样、01 的 rubric 比较。
 
-**当前状态（2026-11-10）**：准备已完成，`results/11-model-search/waiting.json` 记录了等待项；preflight 与 12 例质量批次请求已 ready，10 尚未登记领取；01 的包仍是 `20da8db9…`，三个 case 未修。没有任何模型正文或质量结论。
+**当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器（selftest 14/14），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight 与 12 例质量批次仍 ready，10 尚未登记领取；01 的包仍是 `20da8db9…`，三个 case 未修。没有任何模型正文、语义或质量结论。
 
 ## 本轮实际交付
 
