@@ -864,6 +864,29 @@ describe('createProductSync', () => {
     expect((await a.read(kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'A的另一份'));
   });
 
+  it('push uploads a save the caller already stored, without a second local write', async () => {
+    const server = new FakeProgressServer();
+    const store = new ProductStore();
+    const sync = createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    // The page saved through 06's repository first (one local revision).
+    await store.save('w1', snapshot(1));
+    expect(store.saves).toBe(1);
+
+    const pushed = await sync.push(snapshot(1), { requestId: 'push-1' });
+    expect(pushed.outcome?.status).toBe('synced');
+    expect(store.saves).toBe(1);
+    expect(server.worlds.get('w1')!.revision).toBe(1);
+  });
+
   it('a head store survives malformed storage without breaking saves', async () => {
     const storage = new MemoryStorage();
     storage.setItem('jity.progress-sync.heads.v1', '{not json');

@@ -116,6 +116,9 @@ export interface ProductSync<P> {
   readonly worldId: string;
   /** Local save first; remote upload best-effort. Never throws for network. */
   save(snapshot: P, options?: { requestId?: string; localOnly?: boolean }): Promise<ProductSaveResult<P>>;
+  /** Upload a snapshot the caller already saved locally (06's repository).
+   * Keeps one durable record instead of writing it twice. */
+  push(snapshot: P, options?: { requestId?: string }): Promise<ProductSaveResult<P>>;
   /** Local save if present, else the remote head. A conflict is returned, not merged. */
   restore(): Promise<ProductRestoreResult<P>>;
   /** Retry queued uploads. Safe to call on every reconnect and page load. */
@@ -166,6 +169,16 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
         localOnly: saveOptions.localOnly,
       });
       return { localSaved, outcome };
+    },
+    async push(snapshot, pushOptions = {}) {
+      if (!baseUrl) {
+        return { localSaved: false, outcome: null, note: 'progress service is not configured; nothing to upload' };
+      }
+      const outcome = await client.save(worldId, snapshot, {
+        requestId: pushOptions.requestId,
+        skipLocal: true,
+      });
+      return { localSaved: false, outcome };
     },
     async restore() {
       const local = await client.loadLocal(worldId);

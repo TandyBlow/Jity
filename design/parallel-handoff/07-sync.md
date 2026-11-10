@@ -100,6 +100,55 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 
 ## 接线
 
+### 给 06：产品接入（2026-11-10 组织调整后）
+
+06 的集成树里已有一份**旧版** `local/progress-sync/`（除换行外与旧提交相同）。
+需要合入的提交：`b4c9ea5b`（`goal/local-07-sync`），它只改
+`frontend/src/lib/world-engine/local/progress-sync/`，不改页面、会话、prompt
+或任何共享文件。新增的是 `product.ts` 与 `reconnect-chain.test.ts`。
+
+产品接线只需要一个对象和四个调用点，不需要页面自己拼协议：
+
+```ts
+import { createProductSync } from '@/lib/world-engine/local/progress-sync';
+
+const sync = createProductSync<LocalGameSnapshot>({
+  store: progressStore,          // 06 的 LocalProgressStore（结构类型，无需改它）
+  worldId,
+  baseUrl: process.env.NEXT_PUBLIC_PROGRESS_URL ?? '',   // 空 = 只存本地
+  token,                         // 可选
+  storage: window.localStorage,  // 离线队列 + 上次已知远端 head
+});
+```
+
+1. **每次 06 自己把进度写进 IndexedDB 之后**调 `sync.push(snapshot)`。
+   不要再让适配层写第二遍本地记录：`push` 只上传，`save` 才是“本地+上传”
+   （如果页面还没自己保存，就用 `save`）。返回 `synced | queued | conflict`；
+   `queued` 表示已经本地存好，重连后 `flush` 会补传。
+2. **开局恢复**：先读 06 的本地记录；本地没有才 `await sync.restore()`
+   （它会拉远端 head 并写回本地）。`restore().conflict` 出现时不要自动选，
+   把两份分支交给玩家。
+3. **冲突 UI**：`conflict.branches` 是两条叶子，`conflict.remote` 是远端 head。
+   玩家点选后调 `sync.choose('keep-remote' | 'keep-local-fork', conflict)`；
+   两个副本都留在服务端，之后仍可用 `sync.read(snapshotId)` 读回。
+4. **重连/页面回到前台**：`await sync.flush()`。同一次离线期间的多次保存会按
+   顺序作为**后代链**上传（父节点指向前一条上传），不会并发拿同一个旧 head。
+   第二次 flush 幂等，不新增快照。
+
+服务端两种跑法，二选一：
+
+- 嵌进现有后端：`app.include_router(local_progress_router)`（单独前缀
+  `/local-progress`，与游戏路由无关）；
+- 独立进程：`cd backend && python -m uvicorn
+  app.services.local_progress.standalone:app --port 8010`，页面 baseUrl 指到
+  `http://127.0.0.1:8010`，CORS 用 `LOCAL_PROGRESS_CORS_ORIGINS` 配置。
+
+服务端**只**存 JSON、内容摘要、父链、requestId 幂等记录和 head/revision。
+它不 import world engine、不校验 `WorldState`、不掷骰、不调模型。
+
+### 早期接线说明（仍适用，但 `createProductSync` 已封装）
+
+
 主 agent / 集成方需要做的只有：
 
 1. 在 `backend/app/main.py` 增加：
@@ -133,15 +182,19 @@ python -X utf8 -m pytest -q tests/test_local_progress_sync.py
 
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
-./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/progress-sync.test.ts --maxWorkers=1
-# 19 passed：客户端 CAS、离线队列/多离线保存链、丢响应幂等、分叉/选择、
-# 双设备、队列冲突两种显式选择及依赖 rebase、web storage 队列、lineage 比较。
+./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
+# 25 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
+# 保存链、丢响应幂等、分叉/选择、双设备、队列冲突两种显式选择及依赖 rebase、
+# web storage 队列、lineage 比较、product 适配器、push 不重复写本地、head 恢复。
+PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret   ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
+# 28 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
+# 以及离线两次保存→重连只上传后代链→第二次 flush 幂等→另一设备取回。
 
 ./node_modules/.bin/eslint src/lib/world-engine/local/progress-sync scripts/parallel-sync
 # 0 errors
 ```
 
-真实服务验证（本机 2026-10-28）：
+真实服务验证（2026-11-10 复跑，真实 HTTP、临时 SQLite）：
 
 ```bash
 cd backend
@@ -154,15 +207,19 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 
 PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
   ./frontend/node_modules/.bin/vitest run \
-  src/lib/world-engine/local/progress-sync/real-server.test.ts --maxWorkers=1
-# 1 passed：真实 HTTP 下两个客户端 save→pull→CAS 冲突→fork→选择→恢复。
+  src/lib/world-engine/local/progress-sync/real-server.test.ts \
+  src/lib/world-engine/local/progress-sync/reconnect-chain.test.ts --maxWorkers=1
+# 3 passed：真实 HTTP 下两个客户端 save→pull→CAS 冲突→fork→选择→恢复，
+# 以及离线链上传与分叉保留两副本。
 ```
 
 ## 限制
 
 - 未修改页面、`session.ts`、`app/main.py` 或共享数据库；页面接入需要按上面
-  的接线步骤完成，主集成方负责。
-- 未做真实模型/GPU/浏览器页面运行；本线不涉及推理，相关能力未验证。
+  的接线步骤完成，06 负责。本线没有在真实 `/world-local` 页面上跑过同步，
+  双设备/断网/刷新的真实页面证据要由 09 在 06 接线后采集。
+- 未做真实模型/GPU 运行；本线不涉及推理，相关能力未验证。页面用 stub loader
+  跑的成文证据只是程序路径，不能当作模型正文或产品质量通过。
 - token 是全局 Bearer，不是每用户授权；世界 ID 由调用方生成。
 - graph 一次返回一个世界全部节点，默认上限 5000；未做分页。
 - 队列默认内存；提供 `createWebStorageQueueStore`，页面可选择用
