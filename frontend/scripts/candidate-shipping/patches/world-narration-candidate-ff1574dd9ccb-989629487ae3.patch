@@ -176,7 +176,7 @@ new file mode 100644
 +export type {
 +  CandidateAvailability, CandidateIssueSummary, CandidateNarrationResult, CandidateRunArgs,
 +  NarrationCandidate, NarrationPoint, NarrationProgress, NarrationRunResult, NarrationRunner,
-+  NarrationRunnerOptions, PreparedNarration,
++  NarrationRunnerOptions, PreparedNarration, ProgramFallback,
 +} from './types';
 
 diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts b/frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts
@@ -470,7 +470,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
-@@ -0,0 +1,157 @@
+@@ -0,0 +1,185 @@
 +/** Narration candidate selection for the product page.
 + *
 + * The page sees ONE decision: did a candidate accept a scene for this point?
@@ -490,7 +490,7 @@ new file mode 100644
 + */
 +import type {
 +  CandidateNarrationResult, NarrationCandidate, NarrationPoint, NarrationProgress,
-+  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration,
++  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration, ProgramFallback,
 +} from './types';
 +import { prepareNarration } from './projection';
 +import { TRAINED_CANDIDATE } from './trained';
@@ -540,6 +540,34 @@ new file mode 100644
 +      requested,
 +      available: candidates.map((candidate) => candidate.id),
 +      productDefault,
++    },
++    async generateProgram(point: NarrationPoint): Promise<ProgramFallback | null> {
++      // The in-model writer already tried and failed before this is called, so
++      // the world-opening guard does not apply: a readable program scene is
++      // better than the terse factual draft, and it is labelled as a downgrade.
++      if (!point.after) return null;
++      let prepared: PreparedNarration;
++      try {
++        prepared = prepareNarration(point, limits);
++      } catch {
++        return null;
++      }
++      const candidate = candidates.find((entry) => entry.id === 'constrained') ?? CONSTRAINED_CANDIDATE;
++      try {
++        const result = await candidate.run({
++          engine: options.engine, point, prepared,
++          policy: { mode: 'program' },
++        });
++        if (!result.accepted || result.text.trim().length === 0) return null;
++        return {
++          text: result.text,
++          strategyVersion: result.strategyVersion,
++          timings: result.timings,
++          issues: result.issues,
++        };
++      } catch {
++        return null;
++      }
 +    },
 +    async generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult> {
 +      const plan = ordered();
@@ -753,7 +781,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
-@@ -0,0 +1,189 @@
+@@ -0,0 +1,200 @@
 +/** Product-facing contracts for narration candidate selection.
 + *
 + * One settled point goes in; one submitted narration goes out. The selection
@@ -936,10 +964,21 @@ new file mode 100644
 +  targetChars?: number;
 +}
 +
++export interface ProgramFallback {
++  text: string;
++  strategyVersion: string;
++  timings: CandidateNarrationResult['timings'];
++  issues: CandidateIssueSummary[];
++}
++
 +export interface NarrationRunner {
 +  /** Selection actually in force, for QA scripts and console diagnostics. */
 +  readonly selection: { requested: string; available: string[]; productDefault: string | null };
 +  generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult>;
++  /** Labelled program fallback for a round the in-model writer could not accept.
++   * It never calls a model, never replaces accepted prose, and returns null when
++   * the constrained candidate cannot write this point. */
++  generateProgram(point: NarrationPoint): Promise<ProgramFallback | null>;
 +}
 +
 +export type { NarrationIssue };
@@ -3686,7 +3725,7 @@ new file mode 100644
 +}
 
 diff --git a/frontend/src/lib/world-engine/local/game-model.ts b/frontend/src/lib/world-engine/local/game-model.ts
-index d7798f6..15d83a0 100644
+index d7798f6..5da8b01 100644
 --- a/frontend/src/lib/world-engine/local/game-model.ts
 +++ b/frontend/src/lib/world-engine/local/game-model.ts
 @@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
@@ -3748,10 +3787,41 @@ index d7798f6..15d83a0 100644
      const started = performance.now();
      const before = data.before ?? null;
      const delta = data.delta ?? {};
-@@ -346,6 +370,43 @@ export class LocalGameModel implements WorldModelPort {
-     return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
-   }
- 
+@@ -340,10 +364,68 @@ export class LocalGameModel implements WorldModelPort {
+       ...finalAlignment.violations.map((entry) => entry.kind),
+       'low_support',
+     ])].filter(Boolean).join(',');
+-    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
+-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: brief.prompt.length });
+-    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: accepted ? 'stop' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
+-    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
++    // The in-model writer could not accept this round. Replace its terse
++    // factual draft with the constrained candidate + lane 07 composer, which
++    // writes verified prose from the same sealed facts. It is still a
++    // program, so the page labels it as a downgrade; accepted model prose
++    // above is never touched.
++    let finalText = text;
++    let programFallback = false;
++    if (!accepted && this.narrationRunner) {
++      const program = await this.narrationRunner.generateProgram({
++        pointId,
++        before: data.before ?? null,
++        delta: data.delta ?? {},
++        after,
++        playerInput: this.lastPlayerInput,
++        settledResults: this.lastResultsText ? [this.lastResultsText] : [],
++        priorText: this.lastAcceptedNarration,
++        recentEvents: this.recentEvents,
++      });
++      if (program) { finalText = program.text; programFallback = true; }
++    }
++    const finalReason = programFallback ? '程序按已结算事实成文' : reason;
++    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
++    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });
++    this.options.onNarrationComplete?.({ pointId, raw: finalText, completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
++    return { value: finalText as unknown as Json, raw: finalText, ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason };
++  }
++
 +  /** Candidate path. Only a verified scene (`kind: 'adopted'`) becomes this
 +   * point's narration; every other outcome logs an internal reason and returns
 +   * null, so the in-model writer below keeps producing the honestly-labelled
@@ -3787,8 +3857,6 @@ index d7798f6..15d83a0 100644
 +    });
 +    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });
 +    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
-+  }
-+
+   }
+ 
    private fallback(task: ModelTask, key: Id): Json {
-     if (task === 'action') return { kind: 'skip' };
-     if (task === 'targets') return { targets: [] };

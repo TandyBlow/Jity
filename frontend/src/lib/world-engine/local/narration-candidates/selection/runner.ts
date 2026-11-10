@@ -17,7 +17,7 @@
  */
 import type {
   CandidateNarrationResult, NarrationCandidate, NarrationPoint, NarrationProgress,
-  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration,
+  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration, ProgramFallback,
 } from './types';
 import { prepareNarration } from './projection';
 import { TRAINED_CANDIDATE } from './trained';
@@ -67,6 +67,34 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
       requested,
       available: candidates.map((candidate) => candidate.id),
       productDefault,
+    },
+    async generateProgram(point: NarrationPoint): Promise<ProgramFallback | null> {
+      // The in-model writer already tried and failed before this is called, so
+      // the world-opening guard does not apply: a readable program scene is
+      // better than the terse factual draft, and it is labelled as a downgrade.
+      if (!point.after) return null;
+      let prepared: PreparedNarration;
+      try {
+        prepared = prepareNarration(point, limits);
+      } catch {
+        return null;
+      }
+      const candidate = candidates.find((entry) => entry.id === 'constrained') ?? CONSTRAINED_CANDIDATE;
+      try {
+        const result = await candidate.run({
+          engine: options.engine, point, prepared,
+          policy: { mode: 'program' },
+        });
+        if (!result.accepted || result.text.trim().length === 0) return null;
+        return {
+          text: result.text,
+          strategyVersion: result.strategyVersion,
+          timings: result.timings,
+          issues: result.issues,
+        };
+      } catch {
+        return null;
+      }
     },
     async generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult> {
       const plan = ordered();

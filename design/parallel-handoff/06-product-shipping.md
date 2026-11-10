@@ -45,7 +45,7 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-989629487ae3.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
@@ -54,7 +54,7 @@ frontend/scripts/candidate-shipping/patches/manifest.json
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-989629487ae3.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -98,7 +98,7 @@ const result = await runner.generate(point, (state) => {/* 真实增量 */});
 | 开局 + 第一轮 | B（内部 `trained`） | 开局段落拒绝：`too_short+all_beats_fell_back` | 原位模型正文（标注 `movement_without_fact,low_support`） | 整轮 503.8 s |
 | 开局 + 第一轮 | C v1.1 程序（内部 `constrained`） | 开局点 `root_point` 让位；回合点接受 | 0.1 s 程序正文 + 降级标注 | 整轮 110.9 s |
 | 开局 + 第一轮 | C v1.3 + 04 realizer（旧补丁） | 开局点让位；回合点接受，含结算结果原句 | 0.1 s 程序正文，标注降级 | 整轮 118.0 s |
-| 开局 + 第一轮 | C + 07 composer（补丁 `b57a30a`） | 合成器逐段成文，18 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
+| 开局 + 第一轮 | C + 07 composer（补丁 `9896294`） | 合成器逐段成文，20 项接线检查通过；页面整轮待资源锁窗口 | 合成器正文（示例见下） | 程序侧 <0.1 s |
 
 C v1.3 页面正文（`results/06-recovery/product-turn-constrained-v13.json`）：
 
@@ -141,6 +141,7 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 证据文件：
 
 - `results/06-recovery/real-candidate-composer-program.json`：04 骨架 + 07 composer，真实点位 125 字、28 ms、未调用模型。
+- 默认 `auto` 的降级路径也接上了这套合成器：模型正文被自己的校验拒绝时，补丁调用 `runner.generateProgram()` 用已结算事实写一段程序正文并标注降级；模型正文被接受时不会替换。接线检查里这条路径输出 60+ 字、`fallback: true`、`error: 程序按已结算事实成文`、无引擎调用。
 - `results/06-recovery/real-candidate-constrained-program-v13.json`：C v1.3（04 realizer）真实点位，171 字、23 ms。
 - `results/06-recovery/real-candidate-trained-scene.json`：B scene 模式，226 字但 `fact_omitted+time_missing` 拒绝。
 - `results/06-recovery/real-candidate-trained-scene-instructed.json`：B scene + 移动/时间约束，233 字但 `fact_movement_claimed+time_missing` 拒绝，并含编造动作。

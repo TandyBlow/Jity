@@ -247,6 +247,23 @@ describe('constrained (C route) candidate', () => {
     }
   });
 
+  it('writes a labelled program fallback even when the candidate declines the opening', async () => {
+    let calls = 0;
+    const root: NarrationPoint = {
+      pointId: 'root', before: null,
+      delta: { entityDeltas: {} },
+      after: tinyWorld(),
+      playerInput: '我站在大厅门口。',
+    };
+    const runner = createNarrationRunner({ engine: fakeEngine(undefined, () => { calls += 1; }), candidate: 'constrained', minChars: 20 });
+    const fallback = await runner.generateProgram(root);
+    expect(fallback).not.toBeNull();
+    expect(fallback?.text.length).toBeGreaterThan(0);
+    expect(fallback?.issues.every((issue) => issue.severity !== 'hard')).toBe(true);
+    // The fallback is a program writer: no model call, even at the opening.
+    expect(calls).toBe(0);
+  });
+
   it('declares itself unavailable for the world-opening point', () => {
     const prepared = prepareNarration(point());
     expect(CONSTRAINED_CANDIDATE.availability({ ...point(), before: null }, prepared)).toEqual({

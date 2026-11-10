@@ -165,6 +165,10 @@ try {
   const auto = await makeModel('auto').run();
   check('auto: no product-default candidate -> no candidate call', candidateCalls.length === 0, candidateCalls.length);
   check('auto: in-model writer produces the text', engineCalls.length === 1, engineCalls.length);
+  check("auto: the writer's rejected draft is replaced, not submitted", auto.value !== '风从走廊尽头吹过来，灯影在墙上晃了一下。', auto.value);
+  check('auto: the labelled program fallback writes readable prose',
+    typeof auto.value === 'string' && auto.value.length >= 40
+      && auto.events.tasks.some((task) => task.task === 'narration' && task.fallback === true && /程序/.test(task.error ?? '')), auto.value);
 
   // 5. the real constrained candidate (04 skeleton + 07 composer) writes real
   //    prose through the patched model with no engine call, labelled downgrade.

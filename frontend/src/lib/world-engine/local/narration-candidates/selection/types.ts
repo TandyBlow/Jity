@@ -180,10 +180,21 @@ export interface NarrationRunnerOptions {
   targetChars?: number;
 }
 
+export interface ProgramFallback {
+  text: string;
+  strategyVersion: string;
+  timings: CandidateNarrationResult['timings'];
+  issues: CandidateIssueSummary[];
+}
+
 export interface NarrationRunner {
   /** Selection actually in force, for QA scripts and console diagnostics. */
   readonly selection: { requested: string; available: string[]; productDefault: string | null };
   generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult>;
+  /** Labelled program fallback for a round the in-model writer could not accept.
+   * It never calls a model, never replaces accepted prose, and returns null when
+   * the constrained candidate cannot write this point. */
+  generateProgram(point: NarrationPoint): Promise<ProgramFallback | null>;
 }
 
 export type { NarrationIssue };

@@ -144,6 +144,58 @@ const TRANSFORMS = [
       '',
     ].join('\n'),
   },
+  {
+    id: 'narration-program-fallback',
+    anchor: "    ])].filter(Boolean).join(',');\n",
+    insert: [
+      '    // The in-model writer could not accept this round. Replace its terse',
+      '    // factual draft with the constrained candidate + lane 07 composer, which',
+      '    // writes verified prose from the same sealed facts. It is still a',
+      '    // program, so the page labels it as a downgrade; accepted model prose',
+      '    // above is never touched.',
+      '    let finalText = text;',
+      '    let programFallback = false;',
+      '    if (!accepted && this.narrationRunner) {',
+      '      const program = await this.narrationRunner.generateProgram({',
+      '        pointId,',
+      '        before: data.before ?? null,',
+      '        delta: data.delta ?? {},',
+      '        after,',
+      '        playerInput: this.lastPlayerInput,',
+      '        settledResults: this.lastResultsText ? [this.lastResultsText] : [],',
+      '        priorText: this.lastAcceptedNarration,',
+      '        recentEvents: this.recentEvents,',
+      '      });',
+      '      if (program) { finalText = program.text; programFallback = true; }',
+      '    }',
+      "    const finalReason = programFallback ? '程序按已结算事实成文' : reason;",
+      '',
+    ].join('\n'),
+  },
+  {
+    id: 'narration-final-text-debug',
+    replaceMode: true,
+    anchor: 'supported, text, violations',
+    replace: 'supported, text: finalText, violations',
+  },
+  {
+    id: 'narration-final-text-task',
+    replaceMode: true,
+    anchor: "this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: brief.prompt.length });\n",
+    replace: "this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });\n",
+  },
+  {
+    id: 'narration-final-text-complete',
+    replaceMode: true,
+    anchor: "this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: accepted ? 'stop' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });\n",
+    replace: "this.options.onNarrationComplete?.({ pointId, raw: finalText, completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });\n",
+  },
+  {
+    id: 'narration-final-text-return',
+    replaceMode: true,
+    anchor: 'return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };\n',
+    replace: 'return { value: finalText as unknown as Json, raw: finalText, ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason };\n',
+  },
 ];
 
 function mustReplace(text, transform) {
@@ -151,8 +203,8 @@ function mustReplace(text, transform) {
   if (count !== 1) {
     throw new Error(`transform ${transform.id}: anchor occurs ${count} times (expected 1) in the live file`);
   }
-  const at = text.indexOf(transform.anchor) + transform.anchor.length;
-  return text.slice(0, at) + transform.insert + text.slice(at);
+  const at = text.indexOf(transform.anchor);
+  return text.slice(0, at) + (transform.replace ?? (transform.anchor + transform.insert)) + text.slice(at + transform.anchor.length);
 }
 
 function readTarget(relativePath) {

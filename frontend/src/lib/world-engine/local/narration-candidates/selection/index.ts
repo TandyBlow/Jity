@@ -12,5 +12,5 @@ export {
 export type {
   CandidateAvailability, CandidateIssueSummary, CandidateNarrationResult, CandidateRunArgs,
   NarrationCandidate, NarrationPoint, NarrationProgress, NarrationRunResult, NarrationRunner,
-  NarrationRunnerOptions, PreparedNarration,
+  NarrationRunnerOptions, PreparedNarration, ProgramFallback,
 } from './types';
