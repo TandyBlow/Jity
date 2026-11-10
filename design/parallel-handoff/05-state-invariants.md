@@ -238,6 +238,13 @@ internal "未成功触发骰点" field language and repeated scene text. 06 415c
 keeps the player point source and labels both program points per point; 05
 rejects the turn. This is not a state-kernel failure.
 
+## 2603: results completion-only, no point
+
+Run `2026-11-10T2155-228b` at 06 `26035d97`: results returned only a
+completion claim twice, 04 rejected both, no updates or point committed, and
+the page showed a recoverable empty turn. No state changed; no snapshot exists.
+This is upstream results/semantics, not a state-kernel failure.
+
 ## 3-turn d101: turn 1 valid, turn 2 infra-invalid
 
 Run `2026-11-10T2137-ac7c` at 06 `d1019f09`: turn 1 is a valid model/state
