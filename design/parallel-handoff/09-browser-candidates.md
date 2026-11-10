@@ -217,6 +217,15 @@ generateCandidate({
 - task：rejected 156 字，66.3 s，首可读 22.0 s，2 次调用；hard `omitted_fact`，任务达成/个性/精神值三条一条没写。
 - 注意：task 的 `priorText` 是 null，因为 move 被拒、`accepted` 映射里没有它。队列新增 `--continuation displayed`：接页面实际显示的正文（含回退），并在 `input.priorSource` 记录 `accepted` / `displayed_fallback`；连续回合的产品行为要用它测，否则中间一轮被拒就会让下一轮失去上文。
 
+## 5.10 02 v4 的 free-day 链（2026-11-10 10:54–10:59 UTC）
+
+0.5B narration、320 token beat、`--continuation displayed`、同进程引擎复用（加载 10.6 s）：
+
+- open：0 字 rejected，21.2 s，两次调用 `finishReason=length`，一条 beat 都没自然结束 → `empty_narration` + `all_beats_fell_back`。
+- move：56 字 rejected，123.4 s，8 次调用，hard `fact_actor_swap`×2 + `too_short`；两个移动事实句都对，但第一行「「站住！」林亦舟叫道。」是编的对白。
+- task：**accepted 102 字**，127.0 s，10 次调用。这是目前唯一把任务达成（"把「向诺诺问清……保持中立」做完了"）、个性变化、精神值 43→48、三分钟全部写出的候选；代价是任务目标原句、数值直报，以及同样的编造对白。
+- 结论：02 v4 在事实覆盖上前进了一步（task 三条齐全），但可读性仍差；open 的 beat 在 320 token 内不收尾是 0 字的主因，需要候选侧加 stop/上限。
+
 ## 6. 待办与判断
 
 - A：03 的 1.5B 真机首段 18.3 s，但第一人称 3 处、重复衣着段；需要候选侧改成第三人称并补必写事实。08 自己的 1.5B dev 3 点也全 rejected（root 幻觉、move 截断/新增事件、continuation 无事实移动）。A 仍无 accepted 正文。
