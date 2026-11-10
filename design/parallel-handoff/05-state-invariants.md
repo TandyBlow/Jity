@@ -145,9 +145,10 @@ Both patches are checked with `git apply --check` in a read-only 06 worktree:
 - `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
   - closes the same-tick page submit gap with a synchronous ref; checked
     against the observed current page.
-- `results/product/evidence/05-kernel/patches/06-schedule-location-appearance.patch`
+- `results/product/evidence/05-kernel/patches/04-schedule-location-appearance.patch`
   - `inputIds` also registers `state.locations[*].appearanceChanges` ids and
-    their `supersedes` ids. Checked against both 06 and 04 trees.
+    their `supersedes` ids. 06's current tree already contains the equivalent
+    block; this patch is for 04's current tree, which still lacks it.
   - Validated in a disposable copy of 04's tree: without the patch the first
     run stops with `dangling_updates_refs ... change_7`; with it the run reaches
     `world_complete` and commits the room changes. 04's current test also has a
