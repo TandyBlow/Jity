@@ -11,6 +11,7 @@
  * instead of inside the writer.
  */
 import { composeProse } from './compose';
+import { hash32 } from './support';
 import type {
   ProseActor, ProseBeat, ProseItem, ProseScene,
 } from './types';
@@ -393,14 +394,31 @@ function sceneBeats(request: ComposeBeatRequestLike, scene: ProseScene, facts: B
     return beats;
   }
   // close: a grounded micro-action, no new event or prop.
+  //
+  // The closer must not become a house stamp repeated at the end of every
+  // turn ("没有马上再动/也没有动"). Choose from several equally unsupported
+  // shapes, salt it by this beat, and drop any shape the previous turn already
+  // used, so consecutive turns do not end on the same sentence.
   const name = request.scene.viewpoint.name;
   const presentName = request.scene.present
     .map((person) => person.name)
     .find((personName) => personName && personName !== name);
+  const prior = text(request.prior) || '';
+  const variants = [
+    `${name}没有马上再动。`,
+    `${name}把视线收回来。`,
+    `${name}在原地站了一会儿。`,
+    `${name}没有再往前。`,
+    `${name}没有作声。`,
+  ];
   if (presentName) {
-    return [{ kind: 'action', actorId: scene.protagonistId, text: `${name}没有马上再动，${presentName}也没有动。` }];
+    variants.push(`${presentName}那边没有动静。`);
+    variants.push(`${name}停了一下，${presentName}也没有动。`);
   }
-  return [{ kind: 'action', actorId: scene.protagonistId, text: `${name}没有马上再动。` }];
+  const fresh = variants.filter((variant) => !prior.includes(variant));
+  const pool = fresh.length ? fresh : variants;
+  const picked = pool[hash32(`${request.beat.id}|${request.beat.seed ?? 0}|close`) % pool.length];
+  return [{ kind: 'action', actorId: scene.protagonistId, text: picked }];
 }
 
 /** Build the internal whole-scene shape for one 04 beat. Exported for tests

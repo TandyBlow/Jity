@@ -1,0 +1,67 @@
+{
+  "lane": "09-ui",
+  "kind": "browser-candidate-runs",
+  "updatedAt": "2026-11-10T07:18:28.511Z",
+  "purpose": "Real browser output for narration candidates. Text and prompts are evidence for the owning team; no machine score is a quality verdict.",
+  "runner": {
+    "script": "frontend/scripts/quality-candidates/run-browser-candidates.mjs",
+    "driver": "frontend/src/lib/world-engine/local/narration-candidates/browser-driver/index.ts",
+    "command": "C:\\nvm4w\\nodejs\\node.exe D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\scripts\\quality-candidates\\run-browser-candidates.mjs --lane 07-prose --purpose final inspect after 6/6 page evidence --candidate 07-prose=D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts --inspect --out D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/artifacts/prose-composer/inspect-07.json",
+    "lane": "09-ui",
+    "aliasSrc": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\09-ui\\frontend\\src"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20,
+    "platform": "win32",
+    "browser": "157.0.4341.42",
+    "crossOriginIsolated": true,
+    "webgpuAvailable": true
+  },
+  "models": {},
+  "candidates": {
+    "07-prose": {
+      "id": "07-prose",
+      "owner": "07-prose",
+      "module": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+      "moduleSha256": "7f3e0a6c180f7ccb60b5e9528e8668b65fb9201256dedeeb97e16464ac163030",
+      "source": {
+        "commit": "e6b3ec010c075a867d53b11555e4386318cd8bc3",
+        "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/07-sync",
+        "dirty": false
+      },
+      "exportName": "generateCandidate",
+      "modelUrl": "/models/qwen25-0.5b-narration-Q4_K_M.gguf",
+      "loader": null,
+      "notes": null,
+      "firstSeenAt": "2026-11-10T06:29:35.806Z",
+      "inspect": {
+        "candidateId": "07-prose",
+        "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/07-sync/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+        "usedExport": "generateCandidate",
+        "moduleExports": [
+          "CANDIDATE_STRATEGY_VERSION",
+          "PROSE_STRATEGY_VERSION",
+          "buildLicense",
+          "composeConstrainedBeat",
+          "composeProse",
+          "createBeatComposer",
+          "echoOfPrior",
+          "generateCandidate",
+          "guardSentence",
+          "sceneFromBeatRequest",
+          "sceneFromCommitted",
+          "validateScene"
+        ],
+        "hasDocumentedExport": true
+      },
+      "inspectedAt": "2026-11-10T07:18:25.660Z",
+      "latest": {}
+    }
+  },
+  "runs": [],
+  "failures": [],
+  "notices": [],
+  "probes": []
+}

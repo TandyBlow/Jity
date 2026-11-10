@@ -231,7 +231,16 @@ function chooseAnchor(scene: ProseScene, priorText: string | null): string[] {
     candidates.push({ text: anchorClause(text), weight });
   };
   for (const beat of scene.beats) {
-    if (beat.kind === 'scene') add(beat.detail, 100);
+    if (beat.kind === 'scene') {
+      // Who is standing nearby is texture, not the opening. The place note (or
+      // a changed object) should lead; otherwise the turn opens with what is
+      // effectively a state list entry.
+      const presenceOnly = /^(?:身边还有|不远处是|近处还有|旁边是)/u.test(beat.detail);
+      // On a continuation the place line is usually the echoed one; opening the
+      // new turn with "who is nearby" instead would be a state-list opener.
+      if (presenceOnly && priorText) continue;
+      add(beat.detail, presenceOnly ? 35 : 100);
+    }
     // An item change is this turn's event; it is rendered as a beat, not as a
     // scene opening. Only an unchanged item may serve as the anchor.
     if (beat.kind === 'item' && beat.change === undefined) add(beat.detail ?? beat.note, 90);
@@ -287,8 +296,11 @@ export function composeProse(scene: ProseScene): ComposedProse {
     && (scene.beats ?? []).some((beat) => beat.kind === 'line' || beat.kind === 'action')
     ? null
     : anchorPool[0] ?? null;
+  // The anchor is a truncated clause, so match the beat by its clause too;
+  // otherwise the same sentence is printed once as the opening and again as
+  // its own paragraph.
   const anchorBeat = (scene.beats ?? []).find((beat) =>
-    beat.kind === 'scene' && beat.detail === anchor);
+    beat.kind === 'scene' && anchor !== null && anchorClause(beat.detail) === anchor);
   let body = (scene.beats ?? []).filter((beat) => beat !== anchorBeat);
   // A stay beat only matters as contrast to someone else moving. It is placed
   // after that movement and dropped when the "only one remains" line will say
@@ -433,7 +445,14 @@ export function composeProse(scene: ProseScene): ComposedProse {
         else if (detail) sentence = ensurePeriod(detail);
         else sentence = `${item.name}动过了。`;
         pushBeat(sentence, beat);
-        if (policy.allowMinorAction !== false && detail && minorLooks === 0 && rng() < 0.35) {
+        // A "look at the thing" line after the thing was just described reads
+        // as filler, and repeating it every turn is the kind of house stamp
+        // the product complains about. Only add it when the item line itself
+        // does not already name the item in the same turn.
+        const alreadyNamed = units.some((unit) => unit.text.includes(item.name))
+          || (scene.priorText?.includes(item.name) ?? false);
+        if (policy.allowMinorAction !== false && detail && minorLooks === 0
+          && !alreadyNamed && rng() < 0.35) {
           const protagonist = actorOf(scene, scene.protagonistId);
           if (protagonist && protagonist.id !== beat.itemId) {
             const look = templates.pick('item-look', [
@@ -632,22 +651,10 @@ export function composeProse(scene: ProseScene): ComposedProse {
     }
   }
 
-  // A visible, unchanged item is a true state fact and gives a quiet scene a
-  // concrete anchor without inventing anything.
+  // No extra "still there" object line is appended here. A settled object is
+  // already offered as texture by the scene builder; a second one would be the
+  // inventory tone, and repeating it every turn is a house stamp.
   if (!beatOnly) {
-  const itemBeats = new Set(
-    (scene.beats ?? [])
-      .filter((beat) => beat.kind === 'item')
-      .map((beat) => (beat as { itemId: string }).itemId),
-  );
-  const stillItem = (scene.items ?? []).find(
-    (item) => item.positionName === scene.location.name && !itemBeats.has(item.id),
-  );
-  if (stillItem && units.length && !units.some((unit) => unit.text.includes(stillItem.name))
-    && !scene.priorText?.includes(stillItem.name)) {
-    const detail = stillItem.details?.find((value) => !scene.toldFacts?.includes(value));
-    push(`${stillItem.name}还在原来的地方。${detail ? ensurePeriod(detail) : ''}`, []);
-  }
 
   // If only one cast member remains in the scene, say so once. This is a
   // consequence of the supplied moves, not an assumption about off-screen NPCs.

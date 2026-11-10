@@ -63,6 +63,16 @@ export interface SelectHeadResult extends HeadState {
   idempotent: boolean;
 }
 
+/** Last known remote head, persisted by the product next to the local save.
+ *
+ * Without this, a reload forgets which snapshot the local save descends from,
+ * so the first save after a reload would claim an empty world (expectedHead
+ * null, revision 0) and collide with its own history. */
+export interface HeadStateStore {
+  load(worldId: WorldId): Promise<HeadState | null>;
+  save(worldId: WorldId, head: HeadState): Promise<void>;
+}
+
 /** 06 owns the local repository. The sync client consumes these two calls and
  * never writes that repository's files directly. */
 export interface LocalSnapshotStore<P = unknown> {
