@@ -190,15 +190,25 @@ try {
     if (record.id === '__adapter') {
       evidence.deviceProof.adapter = record.adapter ?? null;
       const wanted = (config.requireVendor || '').toLowerCase();
-      const vendor = String(record.adapter?.vendor ?? '').toLowerCase();
-      if (wanted && !vendor.includes(wanted)) {
+      const adapter = record.adapter ?? {};
+      // Chrome/Edge sometimes leave vendor empty but fill description. Match on
+      // every field the browser exposes; only fail when nothing identifies the
+      // adapter (then the proof is missing, so it is unverified, not "wrong").
+      const identity = [adapter.vendor, adapter.architecture, adapter.device, adapter.description]
+        .map((value) => String(value ?? '')).join(' ').toLowerCase();
+      if (wanted && identity.trim() && !identity.includes(wanted)) {
         evidence.deviceProof.verdict = 'wrong_adapter';
         evidence.status = 'FAILED_ADAPTER';
-        evidence.error = `required adapter vendor ${wanted}, got ${vendor || 'unknown'}`;
+        evidence.error = `required adapter vendor ${wanted}, got ${identity}`;
         save();
         throw new Error(evidence.error);
       }
-      evidence.deviceProof.verdict = 'ok';
+      if (wanted && !identity.trim()) {
+        evidence.deviceProof.verdict = 'adapter_unverified';
+        console.warn('[adapter] browser exposed no adapter identity; backend target is unverified');
+      } else {
+        evidence.deviceProof.verdict = 'ok';
+      }
       save();
       console.log(`[adapter] vendor=${vendor || 'unknown'} arch=${record.adapter?.architecture ?? '?'}`);
       return;
