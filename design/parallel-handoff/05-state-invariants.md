@@ -238,6 +238,13 @@ internal "未成功触发骰点" field language and repeated scene text. 06 415c
 keeps the player point source and labels both program points per point; 05
 rejects the turn. This is not a state-kernel failure.
 
+## dfde: the 2603 results failure repeats
+
+Run `2026-11-10T2210-414a` at 06 `dfdedb18`: results returned only a completion
+claim again; no point committed, input retained as one unfinished entry, and
+all tasks pending. No full snapshot. This is upstream results, not state, and
+predates the 04 `b2e1dab2`/`59bc749f` merge.
+
 ## 2603: results completion-only, no point
 
 Run `2026-11-10T2155-228b` at 06 `26035d97`: results returned only a
