@@ -324,7 +324,21 @@ node scripts/quality-candidates/run-browser-candidates.mjs   --candidate 10-beat
 2. 199 行冻结场景没有进这一臂：它们的正文有对白、也没逐条覆盖草稿事实，混进来会教模型
    “不用管草稿”。它们仍留在场景臂和冻结 split 里。
 
-## 9.1 HPC 台账与轮询纪律
+## 9.1 设备实测与训练精度
+
+- `hpc/gpu_probe.py` 在真实分配到的卡上量：卡型号/显存/驱动、`torch.cuda.is_bf16_supported()`、
+  fp16 前向是否可用、单实例 tokens/s、显存占用。训练用 bf16 的限制**不能**直接推到推理上：
+  V100（sm_70）没有 bf16 张量核，但 fp16 有；所以推理与训练都要各自实测，不能靠名字推断。
+- `train/train_beats.py` 新增 `--precision auto|bf16|fp16|fp32`。fp16 时 LoRA 主权重留 fp32，
+  前后向走 autocast + GradScaler，报里记 `precision/ampEnabled/device`。这样 V100 也能训练，
+  不必把 1.5B 塞进 CPU 队列几小时。
+- 251505 第一次探测卡在 `from_pretrained`：没传 `local_files_only=True`，分词器去连外网，集群
+  无外网就干等约 5 分钟。已取消重提 251507（带 `local_files_only=True`）。训练脚本早就带了这个
+  参数，所以训练作业没有这个毛病。
+- `hpc/finalize_run.py`：一条命令走完 取报告+适配器 → 合并 → Q4_K_M → dev 筛查 → 生成候选记录
+  （含哈希与“loss 不等于正文质量”的说明）。
+
+## 9.2 HPC 台账与轮询纪律
 
 `results/product/hpc-queue.json` 是唯一台账：作业用途/状态/分区/输出目录/数据哈希/取消原因，
 GPU 与吞吐取不到就写 unknown。远程 `sleep` 属于同步等待、会堵住 agent 窗口，已停用；轮询改成
