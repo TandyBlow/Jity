@@ -388,6 +388,94 @@ describe('ProgressSyncClient', () => {
     expect(server.worlds.get('w1')!.revision).toBe(1);
   });
 
+  it('chains multiple offline saves instead of sending them all against the same stale head', async () => {
+    const server = new FakeProgressServer();
+    const { client } = makeClient(server);
+    server.offline = true;
+
+    const first = await client.save('w1', snapshot(1, '离线第一步'), { requestId: 'off-1' });
+    const second = await client.save('w1', snapshot(2, '离线第二步'), { requestId: 'off-2' });
+    expect(first.status).toBe('queued');
+    expect(second.status).toBe('queued');
+    if (second.status !== 'queued') throw new Error('expected queued');
+    expect(second.reason).toBe('queued_behind');
+    expect(await client.pending()).toBe(2);
+    expect(server.worlds.get('w1')).toBeUndefined();
+
+    server.offline = false;
+    const flushed = await client.flush();
+    expect(flushed.uploaded).toHaveLength(2);
+    expect(flushed.conflicts).toHaveLength(0);
+    expect(await client.pending()).toBe(0);
+    expect(server.worlds.get('w1')!.revision).toBe(2);
+    expect(server.worlds.get('w1')!.nodes.size).toBe(2);
+    const recovered = await client.pullLatest('w1');
+    expect(recovered.snapshot?.payload).toEqual(snapshot(2, '离线第二步'));
+    expect(recovered.snapshot?.parentSnapshotIds).toEqual([flushed.uploaded[0].snapshotId]);
+  });
+
+  it('chains a queued save behind a possibly-applied upload without resending a stale body', async () => {
+    const server = new FakeProgressServer();
+    const { client } = makeClient(server);
+    server.loseNextUploadResponse = true;
+
+    const first = await client.save('w1', snapshot(1, '响应丢失'), { requestId: 'lost-then-queued' });
+    expect(first.status).toBe('queued');
+    expect(server.worlds.get('w1')!.revision).toBe(1);
+
+    const second = await client.save('w1', snapshot(2, '后续离线'), { requestId: 'behind-lost' });
+    expect(second.status).toBe('queued');
+    if (second.status !== 'queued') throw new Error('expected queued');
+    expect(second.reason).toBe('queued_behind');
+    // The second body was never sent.
+    expect(server.calls.filter((call) => call.method === 'POST')).toHaveLength(1);
+
+    const flushed = await client.flush();
+    expect(flushed.uploaded).toHaveLength(2);
+    expect(flushed.uploaded[0].idempotent).toBe(true);
+    expect(server.worlds.get('w1')!.revision).toBe(2);
+    expect(flushed.uploaded[1].headSnapshotId).toBe(flushed.uploaded[1].snapshotId);
+    expect((await client.pullLatest('w1')).snapshot?.payload).toEqual(snapshot(2, '后续离线'));
+  });
+
+  it('rebases dependent offline saves after an explicit fork choice', async () => {
+    const server = new FakeProgressServer();
+    const deviceA = makeClient(server);
+    const root = await deviceA.client.save('w1', snapshot(1, 'root'), { requestId: 'a1' });
+    if (root.status !== 'synced') throw new Error('root failed');
+
+    const deviceB = makeClient(server);
+    await deviceB.client.head('w1');
+    server.offline = true;
+    const b1 = await deviceB.client.save('w1', snapshot(2, 'B1'), { requestId: 'b1' });
+    const b2 = await deviceB.client.save('w1', snapshot(3, 'B2'), { requestId: 'b2' });
+    expect(b1.status).toBe('queued');
+    expect(b2.status).toBe('queued');
+
+    server.offline = false;
+    const advanced = await deviceA.client.save('w1', snapshot(2, 'A2'), { requestId: 'a2' });
+    if (advanced.status !== 'synced') throw new Error('advance failed');
+
+    const flushed = await deviceB.client.flush();
+    expect(flushed.conflicts).toHaveLength(1);
+    expect(flushed.conflicts[0].requestId).toBe('b1');
+    expect(flushed.failures.some((failure) => failure.code === 'dependency_missing')).toBe(true);
+    expect(flushed.remaining).toBe(2);
+
+    const resolved = await deviceB.client.resolveQueuedConflict('b1', 'keep-local-fork');
+    expect(resolved.status).toBe('local-fork');
+    const secondFlush = await deviceB.client.flush();
+    expect(secondFlush.uploaded).toHaveLength(1);
+    expect(secondFlush.uploaded[0].headSnapshotId).toBe(secondFlush.uploaded[0].snapshotId);
+    expect(await deviceB.client.pending()).toBe(0);
+
+    const graph = await deviceB.client.graph('w1');
+    expect(graph.headSnapshotId).toBe(secondFlush.uploaded[0].snapshotId);
+    expect(graph.branches).toEqual([secondFlush.uploaded[0].snapshotId, advanced.upload.snapshotId].sort());
+    expect((await deviceB.client.read('w1', advanced.upload.snapshotId)).payload).toEqual(snapshot(2, 'A2'));
+    expect((await deviceB.client.pullLatest('w1')).snapshot?.payload).toEqual(snapshot(3, 'B2'));
+  });
+
   it('retries a lost response idempotently instead of creating a second revision', async () => {
     const server = new FakeProgressServer();
     const { client } = makeClient(server);

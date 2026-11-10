@@ -195,6 +195,24 @@ export class ProgressSyncClient<P = unknown> {
     const localSaved = await this.saveLocal(worldId, payload);
     if (options.localOnly) return { status: 'local-only', localSaved, request };
 
+    // Do not send a newer save ahead of an older unsynced save for the same
+    // world. The later payload is complete state, but ordering still matters
+    // for CAS; it is queued behind the earlier request and rebased at flush.
+    const pending = await this.lastQueued(worldId);
+    if (pending) {
+      await this.enqueue(worldId, request, {
+        previousRequestId: pending.request.activate && activate ? pending.request.requestId : null,
+        sent: false,
+      });
+      return {
+        status: 'queued',
+        localSaved,
+        request,
+        reason: 'queued_behind',
+        message: 'queued behind an earlier unsynced save; call flush() after reconnecting',
+      };
+    }
+
     try {
       const upload = await this.withRetry(() => this.postUpload(worldId, request));
       return { status: 'synced', localSaved, upload };
@@ -203,7 +221,7 @@ export class ProgressSyncClient<P = unknown> {
         return { status: 'conflict', localSaved, conflict: error as ProgressConflictErrorType<P> };
       }
       if (error instanceof ProgressSyncError && error.retryable) {
-        await this.enqueue(worldId, request);
+        await this.enqueue(worldId, request, { sent: true });
         return {
           status: 'queued',
           localSaved,
@@ -297,6 +315,7 @@ export class ProgressSyncClient<P = unknown> {
     const uploaded: UploadResult[] = [];
     const conflicts: FlushConflict<P>[] = [];
     const failures: FlushOutcome<P>['failures'] = [];
+    const resolved = new Map<string, UploadResult>();
     let offline = false;
 
     for (const item of items) {
@@ -304,9 +323,37 @@ export class ProgressSyncClient<P = unknown> {
         remaining.push(item);
         continue;
       }
-      const request = item.request as UploadRequest<P>;
+      let request = item.request as UploadRequest<P>;
+      if (item.previousRequestId) {
+        if (item.sent !== false) {
+          failures.push({
+            requestId: request.requestId,
+            code: 'dependency_not_rewritable',
+            message: 'a queued request that may already have reached the server cannot be rebased',
+          });
+          remaining.push(item);
+          continue;
+        }
+        const previous = resolved.get(item.previousRequestId);
+        if (!previous) {
+          failures.push({
+            requestId: request.requestId,
+            code: 'dependency_missing',
+            message: `earlier queued request ${item.previousRequestId} has not been resolved`,
+          });
+          remaining.push(item);
+          continue;
+        }
+        // This body was never sent (sent=false), so replacing its stale CAS
+        // values with the predecessor's result cannot break idempotency.
+        request = this.rebaseRequest(request, previous);
+        item.request = request as UploadRequest;
+        item.previousRequestId = null;
+        item.sent = false;
+      }
       try {
         const result = await this.withRetry(() => this.postUpload(item.worldId, request));
+        resolved.set(item.request.requestId, result);
         uploaded.push(result);
       } catch (error) {
         if (error instanceof ProgressConflictError) {
@@ -325,6 +372,17 @@ export class ProgressSyncClient<P = unknown> {
           remaining.push(item);
         }
       }
+    }
+
+    // If the connection dropped before a chained item was attempted, still
+    // persist the rebase so the next flush does not lose the predecessor link.
+    for (const item of remaining) {
+      if (!item.previousRequestId) continue;
+      const previous = resolved.get(item.previousRequestId);
+      if (!previous) continue;
+      item.request = this.rebaseRequest(item.request as UploadRequest<P>, previous) as UploadRequest;
+      item.previousRequestId = null;
+      item.sent = false;
     }
 
     await this.persistQueue(remaining);
@@ -356,7 +414,17 @@ export class ProgressSyncClient<P = unknown> {
       item.request as UploadRequest<P>,
     );
     const result = await this.resolveConflict(conflict, choice);
-    await this.dropQueued(requestId);
+    const after = await this.loadQueue();
+    const next = after.filter((entry) => entry.request.requestId !== requestId);
+    if (choice === 'keep-local-fork' && result.head.headSnapshotId) {
+      for (const entry of next) {
+        if (entry.previousRequestId !== requestId) continue;
+        entry.request = this.rebaseRequest(entry.request as UploadRequest<P>, result.head) as UploadRequest;
+        entry.previousRequestId = null;
+        entry.sent = false;
+      }
+    }
+    await this.persistQueue(next);
     return result;
   }
 
@@ -600,15 +668,43 @@ export class ProgressSyncClient<P = unknown> {
     }
   }
 
-  private async enqueue(worldId: WorldId, request: UploadRequest<P>): Promise<void> {
+  private async enqueue(
+    worldId: WorldId,
+    request: UploadRequest<P>,
+    options: { previousRequestId?: string | null; sent: boolean },
+  ): Promise<void> {
     const items = await this.loadQueue();
     if (items.some((item) => item.request.requestId === request.requestId)) return;
     const next = [...items, {
       worldId,
       request: request as UploadRequest,
+      previousRequestId: options.previousRequestId ?? null,
+      sent: options.sent,
       attempts: 0,
       createdAt: new Date(this.now()).toISOString(),
     }];
     await this.persistQueue(next);
+  }
+
+  private async lastQueued(worldId: WorldId): Promise<QueuedUpload | null> {
+    const items = await this.loadQueue();
+    for (let index = items.length - 1; index >= 0; index -= 1) {
+      if (items[index].worldId === worldId) return items[index];
+    }
+    return null;
+  }
+
+  /** Replace stale CAS values with the previous queued upload's result. */
+  private rebaseRequest(
+    request: UploadRequest<P>,
+    previous: Pick<HeadState, 'headSnapshotId' | 'revision'>,
+  ): UploadRequest<P> {
+    if (!request.activate) return request;
+    return {
+      ...request,
+      expectedHead: previous.headSnapshotId,
+      expectedRevision: previous.revision,
+      parentSnapshotIds: previous.headSnapshotId ? [previous.headSnapshotId] : [],
+    };
   }
 }

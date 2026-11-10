@@ -73,6 +73,11 @@ export interface LocalSnapshotStore<P = unknown> {
 export interface QueuedUpload<P = unknown> {
   worldId: WorldId;
   request: UploadRequest<P>;
+  /** Set when this save was made while an earlier save for the same world was
+   * still queued. The flush rebases it onto the earlier upload's result. */
+  previousRequestId?: string | null;
+  /** false means this exact body was never sent, so rebasing is safe. */
+  sent?: boolean;
   attempts: number;
   createdAt: string;
 }
@@ -87,7 +92,7 @@ export type ConflictChoice = 'keep-remote' | 'keep-local-fork';
 export type SaveOutcome<P = unknown> =
   | { status: 'synced'; localSaved: boolean; upload: UploadResult }
   | { status: 'local-only'; localSaved: boolean; request: UploadRequest<P> }
-  | { status: 'queued'; localSaved: boolean; request: UploadRequest<P>; reason: 'offline' | 'server_error'; message: string }
+  | { status: 'queued'; localSaved: boolean; request: UploadRequest<P>; reason: 'offline' | 'server_error' | 'queued_behind'; message: string }
   | { status: 'conflict'; localSaved: boolean; conflict: ProgressConflictError<P> };
 
 export interface FlushConflict<P = unknown> {

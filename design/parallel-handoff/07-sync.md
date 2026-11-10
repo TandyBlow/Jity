@@ -72,7 +72,9 @@ ProgressSyncClient<P>
   saveLocal(worldId, payload): Promise<boolean>       // 只写 06 的本地仓库
   loadLocal(worldId): Promise<P | null>
   save(worldId, payload, options?): Promise<SaveOutcome<P>>
-      // 先本地保存；在线则 CAS 上传；断网/5xx 入队；409 返回 conflict
+      // 先本地保存；在线则 CAS 上传；断网/5xx 入队；409 返回 conflict。
+      // 同一世界已有未同步保存时，新保存直接排在队尾，flush 时按序 rebase，
+      // 不会让多条离线保存都拿同一个旧 head 去 CAS。
   uploadCAS(worldId, payload, options): Promise<UploadResult>
   fork(worldId, payload, options): Promise<UploadResult>
   selectBranch(worldId, snapshotId, options?): Promise<SelectHeadResult>
@@ -132,8 +134,8 @@ python -X utf8 -m pytest -q tests/test_local_progress_sync.py
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/progress-sync.test.ts --maxWorkers=1
-# 16 passed：客户端 CAS、离线队列、丢响应幂等、分叉/选择、双设备、
-# 队列冲突两种显式选择、web storage 队列、lineage 比较。
+# 19 passed：客户端 CAS、离线队列/多离线保存链、丢响应幂等、分叉/选择、
+# 双设备、队列冲突两种显式选择及依赖 rebase、web storage 队列、lineage 比较。
 
 ./node_modules/.bin/eslint src/lib/world-engine/local/progress-sync scripts/parallel-sync
 # 0 errors
@@ -167,4 +169,7 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
   `localStorage` 持久化。队列存储失败时保留内存队列并暴露
   `queuePersistenceError`，不阻塞本地保存。
 - 队列冲突不会自动丢弃或自动合并，必须由玩家显式选择；这是产品约束。
+- 同一世界的多条离线保存会按顺序排队并在 flush 时 rebase；如果玩家对前一条
+  选择 `keep-remote` 丢弃了本地基线，后续依赖它的保存不会自动合并到远端，
+  会以 `dependency_missing` 留在队列，需另行选择或 `dropQueued`。
 - 没有压缩、加密、服务端 GC/备份；幂等记录按 30 天惰性清理。
