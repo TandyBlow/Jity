@@ -269,7 +269,7 @@ function project(
       : null;
     return projectConstrainedScene(after, before, options);
   }
-  return projectFromFactsPacket(packet, options);
+  return projectFromFactsPacket(packet, { ...options, timeAdvance: packet.timeAdvance ?? null });
 }
 
 interface WriteBeatArgs {

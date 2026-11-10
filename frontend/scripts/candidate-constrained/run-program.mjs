@@ -292,7 +292,7 @@ try {
   const factsOnlyBase = complex.basePacket ?? { anchor: complexPacket.anchor, facts: [] };
   const factsOnly = await generateCandidate({
     engine: noopEngine,
-    committed: { ...factsOnlyBase, inputText: '我把护目镜推到额头上，问秦越担架在哪一侧。', priorText: simple.text },
+    committed: { ...factsOnlyBase, timeAdvance: complexPacket.timeAdvance, inputText: '我把护目镜推到额头上，问秦越担架在哪一侧。', priorText: simple.text },
     policy: { mode: 'program', composer },
   });
   runs.push({ id: 'facts-only', input: '我把护目镜推到额头上，问秦越担架在哪一侧。', prior: simple.text, result: factsOnly });

@@ -31,6 +31,8 @@ export interface ProjectSceneOptions {
   resultsText?: string | null;
   priorText?: string | null;
   inputText?: string | null;
+  /** Facts-only packets still carry the point's time advance. */
+  timeAdvance?: TimeAdvance | null;
   /** Prefix for fact ids; keeps two projections of the same point distinct. */
   idPrefix?: string;
 }
@@ -613,6 +615,10 @@ export function projectFromFactsPacket(
   const location = atFact?.kind === 'at' ? atFact.location : movedFact?.kind === 'moved' ? movedFact.to : '';
   if (!location) throw new SceneProjectionError('facts_packet_without_scene', 'needs an at-fact or a moved-fact for the viewpoint');
   const facts: SceneFact[] = [];
+  const advance = options.timeAdvance ?? null;
+  if (advance && advance.duration.amount > 0) {
+    facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
+  }
   for (const fact of packet.facts) {
     if (fact.kind === 'at' && fact.name === viewpointName) continue;
     if (fact.kind === 'at') {
@@ -649,7 +655,7 @@ export function projectFromFactsPacket(
       name: viewpointName, locationId: anchorFact?.kind === 'at' ? anchorFact.locationId : '', location,
       note: '', personality: '', sanity: 0,
     },
-    time: options.priorText != null ? null : null,
+    time: advance,
     place: { id: '', name: location, note: '', parentName: null },
     present,
     objects: [],
