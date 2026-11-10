@@ -155,14 +155,27 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
       ? `已知性别：${known.join('、')}。可以用「他」「她」指代这些人；没有列出性别的人仍然只用名字或省略主语。`
       : '称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
   }
+  // Minimal background: one short clause per place/person/object. The real
+  // runs used long static notes as material for new events, so the default
+  // keeps only what is needed to place the scene; `full` is opt-in.
+  const minimal = (policy.backgroundDetail ?? 'minimal') === 'minimal';
+  const trimNote = (note: string | undefined, limit: number): string | null => {
+    const clean = (note ?? '').replace(/[。.]+$/u, '').trim();
+    if (!clean) return null;
+    const clause = minimal ? clean.split(/[，,；;]/u)[0] : clean;
+    const max = minimal ? Math.min(limit, 30) : limit;
+    return clause.length > max ? `${clause.slice(0, max)}…` : clause;
+  };
   if (scene?.location) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2).map((note) => note.trim()).join(' ');
+    const notes = minimal
+      ? [trimNote((scene.placeNotes ?? [])[0], 30)].filter(Boolean).join('')
+      : (scene.placeNotes ?? []).slice(0, 2).map((note) => note.trim()).join(' ');
     lines.push(`【地点】${scene.location}${notes ? `：${notes}` : ''}`);
   }
   if (present.length) {
     lines.push('【在场】');
     for (const person of present) {
-      const note = person.note?.trim();
+      const note = trimNote(person.note, 70);
       lines.push(`- ${person.name}${note ? `：${note}` : ''}`);
     }
   }
@@ -174,7 +187,7 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     for (const object of held) {
       const owner = ownerOf(object.name);
       const note = object.note?.trim();
-      const short = note && note.length > 60 ? `${note.slice(0, 60)}…` : note;
+      const short = trimNote(object.note, 60);
       lines.push(`- ${object.name}${owner ? `（属于${owner}）` : ''}${short ? `：${short}` : ''}`);
     }
   }

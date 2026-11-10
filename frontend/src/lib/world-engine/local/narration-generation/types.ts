@@ -132,6 +132,12 @@ export interface NarrationPolicy {
   /** How many paragraphs the whole-scene answer should use. Defaults to one:
    * lane 01's 71 human short scenes are all single-paragraph (61-158 chars). */
   paragraphs?: number;
+  /** How much background detail the whole-scene prompt carries. `minimal`
+   * (default) keeps one short clause per place/person/object: the real runs
+   * turned long static notes into new events (a rule board that speaks, wind
+   * from a hairstyle, the smell of exercise rounds). `full` keeps the notes as
+   * written, for callers that have a checker strong enough to hold them. */
+  backgroundDetail?: 'full' | 'minimal';
   /** Explicit gender per character name, e.g. { '路明非': 'male' }. Only used
    * with `pronouns: 'map'`. The world state has no gender field, so this map
    * must come from an evidence-backed source (lane 05's character notes), not

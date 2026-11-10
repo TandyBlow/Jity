@@ -1510,3 +1510,32 @@ describe('the scene path rejects an invented sound instead of passing it through
     expect(engine.calls[1].prompt).toContain('硝烟');
   });
 });
+
+describe('minimal background keeps static notes from becoming material', () => {
+  test('place, person and object notes are cut to their first short clause', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(povAt), policy: basePolicy,
+      scene: {
+        location: '走廊',
+        placeNotes: ['走廊尽头有一扇窗，窗上结着水汽；窗台摆着一盆枯死的兰花'],
+        present: [{ name: '林川', note: '穿灰外套，袖口磨破；左手一直插在口袋里' }],
+        objects: [{ name: '盒子', note: '盒盖关闭，上面落了灰；钥匙在周宁那里' }],
+      },
+      priorTail: null,
+    });
+    expect(prompt).toContain('走廊尽头有一扇窗');
+    expect(prompt).not.toContain('兰花');
+    expect(prompt).toContain('穿灰外套');
+    expect(prompt).not.toContain('口袋里');
+    expect(prompt).not.toContain('钥匙在周宁那里');
+  });
+
+  test('full detail is still available when the caller asks for it', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(povAt), policy: { ...basePolicy, backgroundDetail: 'full' },
+      scene: { location: '走廊', placeNotes: ['走廊尽头有一扇窗，窗上结着水汽；窗台摆着一盆枯死的兰花'] },
+      priorTail: null,
+    });
+    expect(prompt).toContain('兰花');
+  });
+});
