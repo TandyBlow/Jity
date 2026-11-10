@@ -347,3 +347,13 @@ committed. Reload then failed to become ready in 240 s and showed a blank page.
 No `__worldSnapshot` exists, so 05 cannot replay 1701; atomicity (no point, state
 unchanged) is all that can be asserted. The 1646 archive is the evidence for the
 first full-cast task pass.
+
+## Task-decision evidence (05 39135066)
+
+`verifyTaskDecisionEvidence` reads 04's real updates ledger (14 characters, 73
+rows): it rejects incomplete character coverage or a shrunk row scope and shows
+rejected task ids as warnings. On archived 09 1646 the first updates call passes
+14/14, 73 rows, assertedUnchanged=73; the later time_scan call covers 0/14, so
+the record correctly fails. This is not a state replay; there is no snapshot in
+that archive. The detailed review is
+`results/product/evidence/05-kernel/verification-09-1646-task-coverage.json`.
