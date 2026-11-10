@@ -165,6 +165,20 @@ console 里与 backend 相关的行、host 侧 nvidia-smi 采样。**不要用
 脚本：`frontend/scripts/candidate-model/probe-models.mjs`（每个模型一个共享输入）
 和 `run-a-candidate.mjs`（一次加载跑多个点，含连续回合）。
 
+**和 09 共用一个已加载模型**：09 的共享队列已经登记了 `08-runtime` 候选，命令是
+
+```bash
+cd D:/others/Jity/.local/parallel-local-game/worktrees/09-ui/frontend
+node scripts/quality-candidates/run-browser-candidates.mjs   --lane 08-runtime --purpose "A candidate free-day text"   --candidate 08-runtime=D:/others/Jity/.local/parallel-local-game/worktrees/08-runtime/frontend/src/lib/world-engine/local/narration-candidates/model-runtime/index.ts   --owner 08-runtime=08-runtime   --candidate-model 08-runtime=/models/Qwen3-1.7B-Q4_K_M.gguf   --candidate-model-id 08-runtime=qwen3-1.7b-q4km   --set free-day --only free-day-open,free-day-move --gpu   --out D:/others/Jity/.local/parallel-local-game/results/quality/browser-09.json
+```
+
+`--gpu` 必须显式给，09 默认是 CPU；CPU 上 1.5B 跑 1400 字输入会在 150 s 超时。
+`--candidate-model-id` 让本线按 catalog 识别模板，否则只有模型文件名可用于猜。
+同一次运行里同模型只加载一次；09 记录 `inputText/committed/scene/policy` 和我的
+`rawAttempts`，可直接对照。
+
+本线自己的脚本：
+
 ```bash
 cd frontend
 # 本机推理是独占资源：先取锁，finally 释放
@@ -220,6 +234,14 @@ npx eslint src/lib/world-engine/local/narration-candidates scripts/candidate-mod
 - 训练过的叙事权重（qwen25-0.5b/1.5b narration）不在 A 组候选内，模板由 02/10
   提供，不能套本文件的 instruct 模板。
 - 事实核对用既有 `alignNarration`；文风和可读性仍是人读项，不是机器分数。
+- 实测到 `alignNarration` 的一个误报：把「把盒子换到另一只手上」判成
+  `movement_without_fact`（句子里出现地点名「走廊」+ 动词「换到」）。这个文件
+  不归本线管，未改；出现这类句子时会多一次修复调用，主 agent 可让拥有者收紧
+  移动动词表。
+- 超时后引擎可能已经硬停 worker（09 的一次 CPU 运行就是这样）。候选现在把超时
+  当终止态返回 `status:'timeout'`，不再拿死引擎重试；**下一个点之前要重新
+  `await engine.load()`**（带模型 URL 的加载是 memoized，未停时是空操作）。页面
+  若要自动恢复，可在 `status==='timeout'` 后调一次 `load()`。
 
 ## 8. 主 agent 需要改的几行
 
