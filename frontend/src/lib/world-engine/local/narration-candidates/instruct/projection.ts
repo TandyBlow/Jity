@@ -256,7 +256,13 @@ function fromState(inputs: ProjectionInputs, state: WorldState): SceneProjection
         name: state.initial.characters[id]?.name ?? id,
         location: locationName(state, roomOf(state, id)),
       })),
-      visibleEntities: policy?.visibleEntities ?? visibleItems(state, viewId).map((item) => item.name),
+      // Items in the room plus what the visible people are carrying/wearing:
+      // those are visible on the person even though they are not listed as
+      // separate room props.
+      visibleEntities: policy?.visibleEntities ?? [
+        ...visibleItems(state, viewId).map((item) => item.name),
+        ...present.flatMap((id) => carriedBy(state, id)),
+      ],
       licensedEvents: policy?.licensedEvents ?? [],
       forbiddenKnowledge: policy?.forbiddenKnowledge ?? [],
     },
