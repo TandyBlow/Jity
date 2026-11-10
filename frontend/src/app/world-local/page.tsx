@@ -59,6 +59,16 @@ interface WorldTurnRecord {
   points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft' }>;
   /** Per-point narration provenance in this turn (player point first). */
   narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
+  /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
+   * the driver starts narrating that committed point (no transport timestamp
+   * exists); narrationStartedAtMs is the first narration progress callback. */
+  clocks?: {
+    inputAtMs: number; inputAt: string;
+    pointCommittedAtMs: number | null;
+    narrationStartedAtMs: number | null;
+    firstReadableAtMs: number | null;
+    firstReadableSource: 'model' | 'program' | 'mixed' | 'draft' | null;
+  };
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
   /** Settlement ledger for this turn (results/updates/continuation calls,
    * six-stage coverage/stageMs, policy stops). Attached when the submission
@@ -637,6 +647,15 @@ export default function WorldLocalPage() {
             (w.__worldCandidate ??= []).push(record);
           },
           onNarrationProgress: (progress) => {
+            const startRecord = turnRecordRef.current;
+            if (startRecord?.clocks && startRecord.clocks.narrationStartedAtMs == null) {
+              const at = Math.round(performance.now() - submittedAtRef.current);
+              startRecord.clocks.narrationStartedAtMs = at;
+              // The driver narrates the committed head point; no separate
+              // commit timestamp exists in the transport, so this is the
+              // earliest clock the page can honestly attribute to it.
+              startRecord.clocks.pointCommittedAtMs = at;
+            }
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
             // Draft only: recorded separately from the accepted, fact-checked text.
@@ -668,6 +687,11 @@ export default function WorldLocalPage() {
               return;
             }
             narrationSourcesRef.current[progress.pointId] = { source };
+            const clocks = turnRecordRef.current?.clocks;
+            if (clocks && clocks.firstReadableAtMs == null) {
+              clocks.firstReadableAtMs = atMs;
+              clocks.firstReadableSource = source;
+            }
             const record = turnRecordRef.current;
             if (record) {
               // One turn can narrate several points (player point, then automatic
@@ -903,6 +927,10 @@ export default function WorldLocalPage() {
       narrationModel: narrationArm.current.model ?? DEFAULT_NARRATION_MODEL,
       promptShape: narrationArm.current.shape ?? (narrationArm.current.mode === 'scene' ? 'prose-facts' : null),
       engines,
+      clocks: {
+        inputAtMs: 0, inputAt: new Date().toISOString(),
+        pointCommittedAtMs: null, narrationStartedAtMs: null, firstReadableAtMs: null, firstReadableSource: null,
+      },
     };
     turnRecordRef.current = record;
     const w = window as unknown as { __worldTurns?: WorldTurnRecord[] };
@@ -1118,7 +1146,24 @@ export default function WorldLocalPage() {
                     {entry.acceptedMs == null && entry.mixedMs != null ? ` · 模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s（部分降级）` : ''}
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
+                  {entry.points && entry.points.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {entry.points.map((part) => (
+                        <div key={part.pointId}>
+                          <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{part.text}</div>
+                          <div style={{ fontSize: 11, color: part.source === 'model' ? '#6b7a5a' : '#a2762a', marginTop: 2 }}>
+                            {part.source === 'model' ? '模型正文（候选自检通过，未经独立复核）'
+                              : part.source === 'program' ? '程序按已结算事实成文（降级）'
+                                : part.source === 'mixed' ? '模型句与程序句混合（部分降级）'
+                                  : part.source === 'draft' ? '未通过自检的草稿，不是正文'
+                                    : '来源未记录'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
+                  )}
                   {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
                   {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
                   {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
