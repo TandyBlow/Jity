@@ -395,7 +395,7 @@ try {
       input: turn.input,
       purpose: turn.purpose ?? null,
       before: beforeState,
-      timings: { waitMs: null, firstStageMs: null, firstTokenMs: null, firstReadableMs: null, doneMs: null },
+      timings: { waitMs: null, firstStageMs: null, firstTokenMs: null, firstReadableMs: null, firstVisibleDraftMs: null, doneMs: null },
       stages: [],
       text: null,
       note: null,
@@ -540,9 +540,10 @@ try {
         const looksLikeProse = earlyText.length >= 8
           && !/^(结算中|正在写正文|判断|牵连|本组|未能|无法|Error)/.test(earlyText)
           && !/结算|判断牵连|模型|回退/.test(earlyText.slice(0, 24));
-        if (looksLikeProse && firstReadableAt === null) {
-          firstReadableAt = Date.now() - submitAt;
-          entry.timings.firstReadableMs = firstReadableAt;
+        if (looksLikeProse && entry.timings.firstVisibleDraftMs === null) {
+          // Visible draft text is not a qualified first segment; keep the clock
+          // under its own name and never label it readable.
+          entry.timings.firstVisibleDraftMs = Date.now() - submitAt;
           entry.firstReadableSample = earlyText.slice(0, 120);
         }
         if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)) {
@@ -593,8 +594,8 @@ try {
       }, beforeCount);
       entry.text = afterInfo.text || null;
       // No visible prose means there is no first-readable time at all.
+      entry.timings.firstReadableMs = null;
       if (!entry.text || entry.text.trim().length < 8) {
-        entry.timings.firstReadableMs = null;
         entry.problems.push('no_readable_prose');
       }
       entry.inputLine = afterInfo.input || null;
@@ -677,7 +678,7 @@ try {
       entry.textSource = entry.product?.source ?? (entry.note ? 'program' : (entry.text ? 'unknown_or_draft' : 'none'));
       // A draft becomes visible when narration starts writing; it is not a
       // qualified first segment. Keep the two clocks apart.
-      entry.firstVisibleDraftMs = entry.textSource === 'draft' ? entry.timings.firstReadableMs : null;
+      entry.firstVisibleDraftMs = entry.textSource === 'draft' ? (entry.timings.firstVisibleDraftMs ?? null) : null;
       entry.acceptedFirstReadableMs = entry.product?.acceptedMs ?? null;
       entry.modelId = entry.product?.modelId ?? null;
       if (entry.note) entry.problems.push('program_fallback_labelled');
@@ -697,7 +698,7 @@ try {
       const stageText = entry.stages.map((stage) => stage.label).join('|');
       entry.stageSequence = stageText;
       if (!/正在写正文/.test(stageText)) entry.problems.push('no_streaming_stage_observed');
-      if (entry.timings.firstReadableMs === null) entry.problems.push('no_readable_text_observed');
+      if ((entry.product?.acceptedMs ?? null) === null) entry.problems.push('no_readable_text_observed');
       if (entry.timings.doneMs > 300000) entry.problems.push('over_300s');
       const product = entry.product;
       if (!product) entry.problems.push('no_product_turn_evidence');
@@ -742,7 +743,7 @@ try {
       save();
       console.log(`[refresh-after ${entry.id}] restored=${entry.refreshAfter.restored} history ${entry.refreshAfter.beforeHistory}->${entry.refreshAfter.afterHistory}`);
     }
-    console.log(`[turn ${entry.turn}] ${entry.id} chars=${entry.shownChars ?? 0} wait=${entry.timings.doneMs ?? '?'}ms firstReadable=${entry.timings.firstReadableMs ?? '?'}ms problems=${entry.problems.join(',') || 'none'}`);
+    console.log(`[turn ${entry.turn}] ${entry.id} chars=${entry.shownChars ?? 0} wait=${entry.timings.doneMs ?? '?'}ms draft=${entry.timings.firstVisibleDraftMs ?? '-'}ms accepted=${entry.product?.acceptedMs ?? '-'}ms problems=${entry.problems.join(',') || 'none'}`);
     if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
   }
 
@@ -886,7 +887,9 @@ try {
     turns: evidence.turns.length,
     turnsWithText: evidence.turns.filter((turn) => turn.text).length,
     turnsWithFallbackNote: evidence.turns.filter((turn) => turn.note).length,
-    turnsOver60sFirstReadable: evidence.turns.filter((turn) => (turn.timings.firstReadableMs ?? 0) > 60000).length,
+    // Qualified first readable = accepted model text, never a UI stage or draft.
+    turnsOver60sAccepted: evidence.turns.filter((turn) => (turn.product?.acceptedMs ?? Infinity) > 60000).length,
+    draftsVisible: evidence.turns.filter((turn) => (turn.firstVisibleDraftMs ?? null) !== null).length,
     turnsOver300s: evidence.turns.filter((turn) => (turn.timings.doneMs ?? 0) > 300000).length,
     turnsWithEmptyText: evidence.turns.filter((turn) => !turn.text).length,
     turnsEchoingInput: evidence.turns.filter((turn) => turn.problems.includes('echoes_player_input')).length,
