@@ -138,6 +138,14 @@ stop.
    `promptTokens`, `cachedPromptTokens`, `abortCause`, `abortRequestedMs`,
    `stoppedMs`, `hardStopped`, `outcome`.
 
+7. `LocalGameModel.narration` currently fabricates a `CompletionEvidence` with
+   `firstTokenMs: null` for `onNarrationComplete`. To preserve the runtime
+   timings end to end, pass `onCompletion: (evidence) => { completion =
+   evidence; }` to the narration `complete` call and forward the measured
+   fields (at least `firstTokenMs`, `usage`, `timings`) while keeping the
+   validation verdict as `finishReason`. This is a main-owned-file change; the
+   engine already emits the real values.
+
 ## Verification
 
 Mock tests (Node, fake wllama; no GPU/speed claim):
@@ -186,19 +194,29 @@ Raw report: `D:/others/Jity/.local/parallel-local-game/worktrees/08-runtime/.loc
 source digests, model/bundle/wasm hashes and the git status; `source.head` is
 `91136ede` and only the untracked private goal doc appears in `git status`.
 
+Real hard-stop run bound to `3fee94c7` (`--hard-stop`, report
+`.local/parallel-runtime/measure-hardstop.json`): a second engine with
+`abortGraceMs: 0` was aborted 10 ms into a long generation; the worker was
+terminated, `completion.hardStopped` is true, `stoppedMs` 0.69 ms,
+`runtime.loaded` false and `modelId` null. Reload took 17.0 s; the recovery
+generation produced 17 characters with first readable at 912 ms. This is the
+real-device proof of the termination path, not only the native cooperative
+cancel (which still stops in ~5 ms and keeps the model loaded).
+
 ## Limitations / follow-ups
 
 - The probe measures first network acquisition (no-store) plus direct-blob
   compile; it does not measure a warm page reload with HTTP/OPFS cache. The page
   currently uses `directBlob`, so a refresh re-fetches the GGUF; separating
   "first fetch" from "cached start" remains a page-level task.
-- Two models are loaded sequentially by the page; the observed 43 s is one
-  model on this run, not the whole page budget. The deadline is not a hard
-  wall: native cancel can only act at the next result chunk (496 ms here).
-- Hard stop drops the loaded model; its worker-termination path and reload are
-  covered by fake-runner tests. The probe has an opt-in `--hard-stop` scenario
-  for a real termination run, but the cited default run did not execute it
-  (the scenario was added after that run).
+- Two models are loaded sequentially by the page; observed single-model loads
+  were 14.3–43.2 s across runs, not the whole page budget. The deadline is not
+  a hard wall: native cancel can only act at the next result chunk (517 ms in
+  the final run).
+- Hard stop drops the loaded model and costs a full reload (17.0 s in the
+  real hard-stop run); a page must show a reload state or use the model-port
+  path, which reloads automatically. The native cooperative cancel is much
+  cheaper and is the normal path.
 - The page/game-model are not wired in this lane. `LocalGameModel` calls
   `complete` without a signal for most tasks (especially narration), so the
   page must use `cancelActive()` for the stop button (or thread a signal
