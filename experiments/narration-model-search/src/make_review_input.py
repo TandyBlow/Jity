@@ -89,7 +89,12 @@ def main() -> int:
         text = record.get("text") or ""
         if not text.strip():
             problems.append({"caseId": case_id, "problem": "empty text"})
-        rows.append({"id": case_id, "input": case["input"], "text": text})
+        rows.append({
+            "id": case_id,
+            "input": case["input"],
+            "text": text,
+            "textSource": "model" if text.strip() and not record.get("error") else "unknown",
+        })
 
     args.out.mkdir(parents=True, exist_ok=True)
     rows_path = args.out / "review-rows.jsonl"
