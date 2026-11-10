@@ -47,7 +47,6 @@ function actor(id: string, extra: { gender?: 'male' | 'female' | 'unknown'; refe
 
 const LANE = location('lane');
 const SHED = location('shed');
-const RALLY = location('red_rally');
 
 /** 1. Standing in the service lane while Nono gives the briefing. */
 const briefing: ProseScene = {

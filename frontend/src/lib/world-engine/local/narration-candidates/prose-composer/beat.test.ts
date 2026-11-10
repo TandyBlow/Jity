@@ -94,6 +94,51 @@ describe('04 beat adapter', () => {
   });
 });
 
+describe("beat text against lane 04's gate vocabulary", () => {
+  // Lane 04 verifies a sanity change by direction cues, not by the composer's
+  // own claim. The lists are copied from its `verify.ts`; if 04 changes them,
+  // this test is the place that fails first instead of a silent beat fallback.
+  const DOWN = ['沉', '紧', '往下', '发凉', '收紧', '坠', '缩'];
+  const UP = ['松', '顺', '稳', '回暖', '舒', '缓', '放平'];
+  const FLAT = ['没有变', '照旧'];
+
+  function sanityScene(from: number, to: number, id: string): ComposeBeatRequestLike {
+    const req = request('event', ['s1']);
+    req.scene.facts = [{
+      id: 's1', kind: 'sanity_changed', mandatory: true, visibility: 'scene',
+      ownerId: id, name: id === 'lu' ? '路明非' : '芬格尔', from, to,
+    }];
+    req.beat.id = `event:${id}`;
+    req.beat.seed = id === 'lu' ? 73 : 91;
+    return req;
+  }
+
+  it('uses a cue lane 04 recognises for down, up and flat', () => {
+    for (const id of ['lu', 'fingel']) {
+      const down = composeConstrainedBeat(sanityScene(50, 44, id)).text;
+      expect(DOWN.some((cue) => down.includes(cue))).toBe(true);
+      const up = composeConstrainedBeat(sanityScene(44, 50, id)).text;
+      expect(UP.some((cue) => up.includes(cue))).toBe(true);
+      const flat = composeConstrainedBeat(sanityScene(50, 50, id)).text;
+      expect(FLAT.some((cue) => flat.includes(cue))).toBe(true);
+    }
+  });
+
+  it('names the task owner next to the goal text, never a bare pronoun', () => {
+    const result = composeConstrainedBeat(request('event', ['k1']));
+    const sentence = result.text.split('。').find((part) => part.includes(goal)) ?? '';
+    expect(sentence).toContain('路明非');
+    expect(sentence.startsWith('他')).toBe(false);
+    expect(sentence).toContain('「');
+  });
+
+  it('varies the same sanity beat between two actors', () => {
+    const lu = composeConstrainedBeat(sanityScene(50, 44, 'lu')).text;
+    const fingel = composeConstrainedBeat(sanityScene(50, 44, 'fingel')).text;
+    expect(lu).not.toBe(fingel);
+  });
+});
+
 describe('beat composer contract', () => {
   it('reports source=program, attempts=1 and never fakes progress', async () => {
     const composer = createBeatComposer();

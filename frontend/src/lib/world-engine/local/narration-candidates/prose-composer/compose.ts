@@ -6,14 +6,13 @@
  * as the ending instead of adding a stock conclusion.
  */
 
-import { buildLicense, echoOfPrior, guardParagraph, type LicenseBook } from './guard';
+import { buildLicense, echoOfPrior, guardParagraph } from './guard';
 import {
   charCount, clampInt, createRandom, ensurePeriod, fillSlots, firstClause, hash32,
   lastSentence, normalizeClause, overlapRatio, splitSentences, stripQuotes,
 } from './support';
 import type {
-  ComposeTimings, ComposedProse, ProseActor, ProseBeat, ProseIssue, ProseItem, ProseScene,
-  RenderedBeat,
+  ComposedProse, ProseActor, ProseBeat, ProseIssue, ProseItem, ProseScene, RenderedBeat,
 } from './types';
 
 export const PROSE_STRATEGY_VERSION = 'prose-composer-v1';
@@ -111,12 +110,6 @@ class TemplateBag {
 interface Unit {
   text: string;
   beats: ProseBeat[];
-}
-
-interface Plan {
-  anchor: string[];
-  units: Unit[];
-  required: ProseBeat[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -331,7 +324,6 @@ export function composeProse(scene: ProseScene): ComposedProse {
 
   let lastSpeaker: string | null = null;
   let lastQuestion = false;
-  let dialogueCount = 0;
 
   for (let index = 0; index < body.length; index += 1) {
     const beat = body[index];
@@ -437,7 +429,6 @@ export function composeProse(scene: ProseScene): ComposedProse {
         if (beat.factText) {
           pushBeat(ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId)), beat);
         } else {
-          const subject = refs.subject(actor.id);
           const name = refs.name(actor.id);
           const label = beat.label;
           // Always the full name: a pronoun right after another speaker's line
@@ -506,19 +497,25 @@ export function composeProse(scene: ProseScene): ComposedProse {
         const actor = actorOf(scene, beat.actorId);
         if (!actor) break;
         const down = beat.to < beat.from;
+        // Two actors can lose sanity in the same point; keying the variant by
+        // actor id keeps their sentences from being word-for-word identical.
+        const variants = down
+          ? [
+            `${refs.subject(actor.id)}的呼吸紧了一下。`,
+            `${refs.subject(actor.id)}把手指收紧了。`,
+            `${refs.subject(actor.id)}把话咽了回去，喉咙发紧。`,
+          ]
+          : beat.to > beat.from
+            ? [
+              `${refs.subject(actor.id)}松了口气。`,
+              `${refs.subject(actor.id)}的呼吸稳下来。`,
+              `${refs.subject(actor.id)}的肩膀松了些。`,
+            ]
+            : [`${refs.subject(actor.id)}照旧。`];
+        const salt = hash32(`${scene.seed ?? 0}|${beat.actorId}|${down ? 'down' : beat.to > beat.from ? 'up' : 'flat'}`);
         const sentence = beat.factText
           ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId))
-          : down
-            ? templates.pick('sanity-down', [
-              `${refs.subject(actor.id)}的呼吸紧了一下。`,
-              `${refs.subject(actor.id)}把手指收紧了。`,
-            ])
-            : beat.to > beat.from
-              ? templates.pick('sanity-up', [
-                `${refs.subject(actor.id)}松了口气。`,
-                `${refs.subject(actor.id)}的呼吸稳下来。`,
-              ])
-              : `${refs.subject(actor.id)}照旧。`;
+          : variants[salt % variants.length];
         pushBeat(sentence, beat);
         break;
       }
@@ -566,7 +563,6 @@ export function composeProse(scene: ProseScene): ComposedProse {
         pushBeat(paragraph, beat);
         lastSpeaker = beat.speakerId;
         lastQuestion = question;
-        dialogueCount += 1;
         break;
       }
       case 'silence': {
@@ -639,7 +635,13 @@ export function composeProse(scene: ProseScene): ComposedProse {
       units.length = 0;
       units.push(...keep);
     }
-    const onlyLine = `${scene.location.name}里只剩${only.name}一个人。`;
+    const named = `${scene.location.name}里只剩${only.name}一个人。`;
+    // Do not name the place twice in a row: if the previous paragraph already
+    // said it (e.g. "她出了西侧服务巷"), the shorter line reads better.
+    const lastText = units[units.length - 1]?.text ?? '';
+    const onlyLine = lastText.includes(scene.location.name)
+      ? `${only.name}一个人留在原地。`
+      : named;
     const alreadySaid = units.some((unit) => unit.text.includes(onlyLine.slice(0, 6)))
       || (scene.priorText?.includes(onlyLine.slice(0, 6)) ?? false);
     if (!alreadySaid) push(onlyLine, []);
@@ -655,7 +657,6 @@ export function composeProse(scene: ProseScene): ComposedProse {
   const planMs = bodyStart - planStart;
 
   // Guard every paragraph, then merge the survivors.
-  const guardMs = nowMs();
   const kept: string[] = [];
   for (const unit of units) {
     const { clean, findings } = guardParagraph(unit.text, license);
@@ -693,7 +694,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
   const merged = mergeShortNarration(paragraphs, scene);
   const text = merged.join('\n\n');
   const verifyMs = nowMs();
-  const factIssues = verifyBeats(scene, body, rendered, text);
+  const factIssues = verifyBeats(scene, body, rendered);
   issues.push(...factIssues);
   const quiet = (scene.beats ?? []).every((beat) => beat.kind === 'noChange' || beat.kind === 'time'
     || beat.kind === 'stay' || beat.kind === 'silence');
@@ -738,10 +739,7 @@ function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] 
       && !previous.startsWith('「') && !paragraph.startsWith('「')
       && charCount(previous) + charCount(paragraph) <= 76
       && countSentences(previous) + countSentences(paragraph) <= 3
-      && (startsWithPronoun(paragraph) || startsWithPlace(paragraph))
-      // Two sentences that both name the same place read as a stutter when
-      // they share a paragraph; keep them as two beats of information.
-      && !placeNames.some((name) => previous.includes(name) && paragraph.includes(name));
+      && (startsWithPronoun(paragraph) || startsWithPlace(paragraph));
     if (canMerge) {
       merged[merged.length - 1] = previous + paragraph;
       merges += 1;
@@ -799,7 +797,6 @@ function verifyBeats(
   scene: ProseScene,
   beats: ProseBeat[],
   rendered: RenderedBeat[],
-  text: string,
 ): ProseIssue[] {
   const issues: ProseIssue[] = [];
   const byBeat = new Map(rendered.map((entry) => [entry.beat, entry]));

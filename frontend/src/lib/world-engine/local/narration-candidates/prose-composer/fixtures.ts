@@ -7,8 +7,6 @@
 
 import type { ProseScene } from './types';
 
-const position = { containerId: 'corridor', slotId: null, relativeTo: null };
-
 export const SHORT_MOVE_SCENE: ProseScene = {
   worldId: 'world_short',
   pointId: 'point_short_move',
