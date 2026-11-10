@@ -57,13 +57,13 @@ nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 
 TRAIN_SBATCH = """#!/bin/bash
 #SBATCH --job-name=narr_train
-#SBATCH --partition=gpu
+#SBATCH --partition=__PARTITION__
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:1
-#SBATCH --time=02:00:00
-#SBATCH --mem=48G
+#SBATCH --cpus-per-task=__CPUS__
+__GRES__
+#SBATCH --time=__TIME__
+#SBATCH --mem=__MEM__
 #SBATCH --output=train_%j.out
 #SBATCH --error=train_%j.err
 
@@ -75,8 +75,9 @@ export TOKENIZERS_PARALLELISM=false
 export NARR_ROOT="$HOME/beats_v1"
 PY="${PY:-$HOME/miniconda3/envs/crf/bin/python}"
 echo "node=$(hostname) start=$(date) config=$CONFIG out=$OUT"
-nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
-"$PY" -X utf8 train/train_beats.py --config "configs/$CONFIG" --out "runs/$OUT" \
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null || echo "cpu-only node"
+DEV="${DEVICE:-cuda}"
+"$PY" -X utf8 train/train_beats.py --device "$DEV" --config "configs/$CONFIG" --out "runs/$OUT" \
   --resume "${RESUME:-}" --epochs "${EPOCHS:-0}" --sample-n "${SAMPLE_N:-3}"
 """
 
@@ -89,6 +90,13 @@ def load_base():
 
 def hpc():
     return load_base().Hpc()
+
+
+def render_train(partition: str, cpus: str, gres: str, time: str, mem: str) -> str:
+    text = TRAIN_SBATCH.replace("__PARTITION__", partition).replace("__CPUS__", str(cpus))
+    text = text.replace("__GRES__", f"#SBATCH --gres={gres}" if gres else "# no gres")
+    text = text.replace("__TIME__", time).replace("__MEM__", mem)
+    return text
 
 
 def write_remote(h, text: str, name: str) -> None:
@@ -115,11 +123,26 @@ def deploy(h) -> None:
         os.path.join(V2, "configs", "qwen05b-mix-v1.json"):
             f"{REMOTE}/configs/qwen05b-mix-v1.json",
         os.path.join(V2, "data", "train-v2.jsonl"): f"{REMOTE}/data/train-v2.jsonl",
+        os.path.join(V2, "data", "train-v3.jsonl"): f"{REMOTE}/data/train-v3.jsonl",
+        os.path.join(V2, "configs", "qwen05b-beat-v1.json"):
+            f"{REMOTE}/configs/qwen05b-beat-v1.json",
+        os.path.join(V2, "configs", "qwen15b-beat-v1.json"):
+            f"{REMOTE}/configs/qwen15b-beat-v1.json",
+        os.path.join(V2, "configs", "qwen15b-beat-v2.json"):
+            f"{REMOTE}/configs/qwen15b-beat-v2.json",
+        os.path.join(V2, "configs", "qwen15b-beat-v3.json"):
+            f"{REMOTE}/configs/qwen15b-beat-v3.json",
+        os.path.join(V2, "configs", "qwen15b-draft-v1.json"):
+            f"{REMOTE}/configs/qwen15b-draft-v1.json",
+        os.path.join(V2, "data", "train-draft-v1.jsonl"):
+            f"{REMOTE}/data/train-draft-v1.jsonl",
+        os.path.join(V2, "data", "train-v5.jsonl"): f"{REMOTE}/data/train-v5.jsonl",
+        os.path.join(V2, "data", "train-v4.jsonl"): f"{REMOTE}/data/train-v4.jsonl",
     }
     for local, remote in files.items():
         h.put(local, remote)
     write_remote(h, SBATCH, "run_teacher.sh")
-    write_remote(h, TRAIN_SBATCH, "run_train.sh")
+    write_remote(h, render_train("gpu", "8", "gpu:1", "02:00:00", "48G"), "run_train.sh")
     h.do(f"chmod +x ~/{REMOTE}/run_teacher.sh ~/{REMOTE}/run_train.sh", show=False)
 
 
@@ -141,7 +164,9 @@ def submit(h, args) -> str:
 
 def submit_train(h, args) -> str:
     env = (f"CONFIG={args.config} OUT={args.run} RESUME={args.resume} "
-           f"EPOCHS={args.epochs} SAMPLE_N={args.sample_n}")
+           f"EPOCHS={args.epochs} SAMPLE_N={args.sample_n} "
+           f"DEVICE={args.device} NARR_PARTITION={args.partition} NARR_CPUS={args.cpus} "
+           f"NARR_GRES={args.gres} NARR_TIME={args.time} NARR_MEM={args.mem}")
     out, err, rc = h.do(f"cd ~/{REMOTE} && {env} sbatch run_train.sh", show=True)
     match = re.search(r"(\d+)", out)
     if not match:
@@ -192,6 +217,12 @@ def main() -> int:
     parser.add_argument("--resume", default="")
     parser.add_argument("--epochs", default="0")
     parser.add_argument("--sample-n", default="3")
+    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--partition", default="gpu")
+    parser.add_argument("--cpus", default="8")
+    parser.add_argument("--gres", default="gpu:1")
+    parser.add_argument("--time", default="02:00:00")
+    parser.add_argument("--mem", default="48G")
     args = parser.parse_args()
     h = hpc()
     try:
@@ -202,6 +233,9 @@ def main() -> int:
             submit(h, args)
         elif args.action == "submit-train":
             deploy(h)
+            write_remote(h, render_train(args.partition, args.cpus, args.gres,
+                                         args.time, args.mem), "run_train.sh")
+            h.do(f"chmod +x ~/{REMOTE}/run_train.sh", show=False)
             submit_train(h, args)
         elif args.action == "poll":
             poll(h, args.job)
