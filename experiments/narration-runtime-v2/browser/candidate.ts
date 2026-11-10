@@ -38,6 +38,10 @@ const WRITING = {
 
 const DONE = /(查清|找到|找着|查完|问清|完成|做完|搞定|办完|了结|核对完|比对完|确认|合上|放回|收好|对上|交出去|拿到|记下)/;
 const MOVE = /(走到|走向|走进|走入|走上|走进来|进来|出去|回到|退到|退回|往.{0,6}走|下楼|上楼|转向|挪到|跨进|跨出|退开|离开|移到|过来|过去)/;
+const CN_AMOUNT = { 1: '一', 2: '两', 3: '三', 4: '四', 5: '五', 6: '六', 7: '七',
+  8: '八', 9: '九', 10: '十', 15: '十五', 20: '二十', 30: '三十', 45: '四十五',
+  60: '六十' };
+
 const STOP = new Set(['这个', '那个', '一件', '事情', '自己', '已经', '没有', '什么', '一直',
   '一个', '的是', '了的', '里的', '把', '了', '的', '在', '和', '与',
   '上', '下', '里', '个', '这', '那', '他', '她', '它', '们', '就', '也']);
@@ -98,6 +102,7 @@ function beatPrompt(scene, beat) {
   const [exampleFact, exampleText] = EXAMPLES[beat.kind];
   lines.push(`【示例】事实：${exampleFact}。正文：${exampleText}`);
   lines.push(`【写法】一到两句。${WRITING[beat.kind]}`);
+  lines.push('【要求】不要写“空气”“气氛”“显得”“仿佛”“似乎”“某种”这类空话，不解释情绪。');
   lines.push('【正文】');
   return lines.join('');
 }
@@ -105,7 +110,7 @@ function beatPrompt(scene, beat) {
 function check(beat, text) {
   const issues = [];
   const named = text.includes(beat.subject);
-  if (!named) issues.push('subject_missing');
+  if (!named && beat.kind !== 'time') issues.push('subject_missing');
   if (beat.kind === 'moved') {
     if (!text.includes(beat.from)) issues.push('origin_missing');
     if (!text.includes(beat.to)) issues.push('target_missing');
@@ -124,19 +129,23 @@ function check(beat, text) {
       if (!(beat.to > beat.from ? up : down)) issues.push('direction_missing');
     }
   } else if (beat.kind === 'time') {
-    if (!text.includes(String(beat.amount))) issues.push('amount_missing');
+    const cn = CN_AMOUNT[beat.amount] ?? '';
+    if (!text.includes(String(beat.amount)) && !(cn && text.includes(cn))) {
+      issues.push('amount_missing');
+    }
   }
   if (text.length > 120) issues.push('too_long');
   if (text.includes('\n')) issues.push('multiple_paragraphs');
   return issues;
 }
 
-function fallbackSentence(beat) {
+function fallbackSentence(beat, scene) {
   if (beat.kind === 'moved') return `${beat.subject}从${beat.from}走到${beat.to}。`;
   if (beat.kind === 'task_achieved') return `${beat.subject}把这件事做完了：${beat.goal}。`;
   if (beat.kind === 'personality_changed') return `${beat.subject}没有退，按新下的决心把这一步走完。`;
   if (beat.kind === 'sanity_changed') return `${beat.subject}缓了一会儿，精神值${beat.to}。`;
-  return `${beat.time}过去，屋子里没有别的声音。`;
+  const where = scene?.location ?? '屋子里';
+  return `${beat.time}过去，${where}里没有别的声音。`;
 }
 
 function toBeats(committed, delta, scene) {
@@ -204,7 +213,7 @@ export async function generateCandidate(args) {
       let raw = '';
       try {
         raw = await args.engine.complete(asked, {
-          maxTokens: 96,
+          maxTokens: 80,
           temperature: attempt === 0 ? 0.6 : 0.3,
           signal: args.signal,
         });
@@ -226,7 +235,7 @@ export async function generateCandidate(args) {
     }
     if (!chosen) {
       accepted = false;
-      chosen = fallbackSentence(beat);
+      chosen = fallbackSentence(beat, scene);
       issues.push(`${beat.id}: template_fallback`);
     }
     sentences.push(chosen);
