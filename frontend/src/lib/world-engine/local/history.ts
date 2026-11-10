@@ -37,7 +37,8 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
   };
   const allPoints = Object.values(record.points ?? {}).sort((a, b) => a.sequence - b.sequence);
   const points = allPoints.filter((point) => point.trigger === 'player');
-  const entries: RestoredTurn[] = points.map((point, index) => {
+
+  const entryFor = (point: { id: string; sequence: number }, index: number): RestoredTurn => {
     // A turn owns its player point plus every automatic point up to the next
     // player point. Joining their committed narrations keeps the whole turn.
     const start = allPoints.findIndex((row) => row.id === point.id);
@@ -75,7 +76,28 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
       ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null,
       restored: true as const,
     };
-  });
+  };
+
+  // When the save has a command->point map, a failed command keeps its own
+  // empty slot instead of borrowing the next command's prose.
+  const commandPointIds = Array.isArray(snapshot.commandPointIds) && snapshot.commandPointIds.length === snapshot.commands.length
+    ? snapshot.commandPointIds : null;
+  if (commandPointIds) {
+    const byId = new Map(allPoints.map((point) => [point.id, point]));
+    return commandPointIds.map((id, index) => {
+      const point = id ? byId.get(id) : undefined;
+      if (!point) {
+        return {
+          key: -1 - index, input: snapshot.commands[index] ?? '', text: '',
+          note: '这一句没有结算成功；已结算的部分仍然保留，可以重试。', unfinished: true,
+          ms: null, draftMs: null, acceptedMs: null, programMs: null, mixedMs: null, restored: true as const,
+        };
+      }
+      return entryFor(point, index);
+    });
+  }
+
+  const entries: RestoredTurn[] = points.map((point, index) => entryFor(point, index));
   // A submitted command with no committed point is an unfinished turn. It must
   // still be visible after a reload (and must never be shown as prose): the
   // player can see that the sentence was not lost, and retry it.

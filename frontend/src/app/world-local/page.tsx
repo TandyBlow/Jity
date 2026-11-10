@@ -521,7 +521,10 @@ export default function WorldLocalPage() {
     setView(viewOf(state));
     // Full committed record for independent state review (05) and replay: the
     // visible view alone cannot prove which task deltas reached the save.
-    (window as unknown as { __worldSnapshot?: unknown }).__worldSnapshot = session.snapshot;
+    // A getter, not a captured object: a driver that reads it after a turn must
+    // see the current record, not the restore-time snapshot.
+    (window as unknown as { __worldSnapshot?: unknown }).__worldSnapshot =
+      () => structuredClone(sessionRef.current?.snapshot ?? session.snapshot);
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
     // A conflict-blocked session can leave flushPersistence waiting on its own

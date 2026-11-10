@@ -31,6 +31,9 @@ export interface LocalGameSnapshot {
   checkpoint?: LocalSchedulerCheckpoint;
   /** pointId → narration provenance. Never changes the committed text. */
   narrationSources?: Record<string, NarrationSourceNote>;
+  /** Command index → committed player point id (null when that command never
+   * committed). Optional for older saves; history falls back to counting. */
+  commandPointIds?: (string | null)[];
 }
 
 export type LocalPersistenceState = 'off' | 'saving' | 'saved' | 'error' | 'conflict' | 'lease_lost';
@@ -113,6 +116,10 @@ export class LocalGameSession {
   private readonly gate: CancelGate;
   private readonly driver: ControllerDriver;
   private readonly commands: string[];
+  /** Command index -> committed player point id (null when the command never
+   * committed). Persisted so history never pairs a failed command with the
+   * next command's prose. */
+  private commandPointIds: (string | null)[];
   private readonly storage: LocalProgressStore | null;
   private readonly sessionId: string;
   private readonly leaseTtlMs: number;
@@ -143,6 +150,7 @@ export class LocalGameSession {
     this.transport = transport;
     this.options = options;
     this.commands = commands;
+    this.commandPointIds = [];
     this.storage = options.storage ?? null;
     this.sessionId = options.sessionId;
     this.leaseTtlMs = options.leaseTtlMs ?? DEFAULT_LEASE_TTL_MS;
@@ -238,6 +246,10 @@ export class LocalGameSession {
       // Provenance saved with the previous page must survive a reload: the
       // in-memory source ref is empty on a fresh page.
       session.restoredSources = restoredSources;
+      const savedIds = snapshot.commandPointIds;
+      if (Array.isArray(savedIds) && savedIds.length === session.commands.length) {
+        session.commandPointIds = savedIds.map((id) => (typeof id === 'string' ? id : null));
+      }
       // The resume's own allocation is a write like any other: checkpoint it so
       // the rebuilt identity survives another refresh.
       session.revision = stored?.revision ?? 0;
@@ -290,6 +302,7 @@ export class LocalGameSession {
     // not store.
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
     return snapshot;
   }
 
@@ -321,9 +334,22 @@ export class LocalGameSession {
           ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
         ],
       }, clear);
+      const beforePoints = new Set(Object.keys(record.points));
       this.commands.push(text);
+      this.commandPointIds.push(null);
       await this.persistCommands();
-      return await this.drive();
+      try {
+        return await this.drive();
+      } finally {
+        // Even a stopped turn can have committed its player point; the map is
+        // read from the record, never inferred from the status.
+        const points = Object.values(this.transport.snapshot().points);
+        const committed = points
+          .filter((point) => point.trigger === 'player' && !beforePoints.has(point.id))
+          .sort((a, b) => a.sequence - b.sequence)[0];
+        this.commandPointIds[this.commandPointIds.length - 1] = committed?.id ?? null;
+        await this.persistCommands().catch(() => undefined);
+      }
     } finally {
       this.submitLock = false;
     }
@@ -401,6 +427,7 @@ export class LocalGameSession {
     if (checkpoint) snapshot.checkpoint = checkpoint;
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
     return snapshot;
   }
 

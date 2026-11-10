@@ -77,6 +77,29 @@ describe('restoredEntries', () => {
     expect(entries[2].note).toContain('没有完成');
   });
 
+  it('keeps a failed command in its own slot instead of borrowing the next prose', () => {
+    const withMap = {
+      commands: ['我先看规则牌。', '我没走成。', '我退到巷口。'],
+      commandPointIds: ['p1', null, 'p3'],
+      narrationSources: { p1: { source: 'model' }, p3: { source: 'model' } },
+      transport: {
+        points: {
+          p1: { id: 'p1', sequence: 1, trigger: 'player' },
+          p3: { id: 'p3', sequence: 3, trigger: 'player' },
+        },
+        narrations: {
+          p1: { status: 'ready', text: '绳已经放下。' },
+          p3: { status: 'ready', text: '他退回巷口。' },
+        },
+      },
+    } as unknown as LocalGameSnapshot;
+    const entries = restoredEntries(withMap);
+    expect(entries.map((entry) => entry.input)).toEqual(['我先看规则牌。', '我没走成。', '我退到巷口。']);
+    expect(entries[1].text).toBe('');
+    expect(entries[1].unfinished).toBe(true);
+    expect(entries[2].text).toBe('他退回巷口。');
+  });
+
   it('returns an empty history for an empty save instead of inventing turns', () => {
     expect(restoredEntries({ commands: [], transport: {} } as unknown as LocalGameSnapshot)).toEqual([]);
   });
