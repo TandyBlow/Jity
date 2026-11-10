@@ -15,6 +15,7 @@ import type { InitialState, InitialTemplate, Json, WorldState } from '../../type
 import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createSettlementModelPort } from './index';
+import { createSettlementHandlers } from '../semantics/settlement/index';
 import { taskKeyIndex } from '../semantics/settlement/support';
 
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
@@ -75,6 +76,42 @@ function engineFor(state: WorldState, seen: string[]): InferenceEngine {
     },
   };
 }
+
+describe('real product world task-truth regression', () => {
+  it('aborts the 17:37 all-cast no-support answer for the walk/read-sign action', async () => {
+    const { state } = loadWorld();
+    const beforeLu = Object.fromEntries(Object.entries(state.characters.lu.tasks).map(([id, task]) => [id, task.status]));
+    const allCast = Object.fromEntries(Object.entries(state.characters)
+      .map(([ownerId, character]) => [ownerId, Object.values(character.tasks)])
+      .filter(([, tasks]) => tasks.length > 0)
+      .map(([ownerId, tasks]) => [ownerId, (tasks as { id: string }[]).map((task) => ({ taskId: task.id }))]));
+    const answer = JSON.stringify({
+      unchanged: [],
+      achieved: Object.entries(allCast).map(([characterId, tasks]) => ({ characterId, tasks })),
+    });
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: '17-37-all-cast-no-support' },
+      async load() {},
+      async dispose() {},
+      async complete() { return answer; },
+    };
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1#tasks', {
+      groupId: 'g1',
+      mode: 'group',
+      stage: 'tasks',
+      results: { lu: '路明非沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('task_support_incomplete');
+    // The abort leaves every task exactly as it was: no new achievement, no
+    // pending row flipped to achieved.
+    for (const [taskId, status] of Object.entries(beforeLu)) {
+      expect(state.characters.lu.tasks[taskId].status).toBe(status);
+    }
+  });
+});
 
 describe('real product world through the real kernel', () => {
   it('decides and commits the full cast, including an off-screen owner', async () => {

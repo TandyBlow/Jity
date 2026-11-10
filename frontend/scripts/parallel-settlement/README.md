@@ -6,13 +6,13 @@
 node frontend/scripts/parallel-settlement/run-focused.mjs
 ```
 
-测试文件：`frontend/src/lib/world-engine/local/semantics/settlement/settlement.test.ts`（语义单元）与 `settlement-integration.test.ts`（真实 controller + 本地 transport 接线）。
+测试文件：`frontend/src/lib/world-engine/local/semantics/settlement/settlement.test.ts`（语义单元）、`settlement-integration.test.ts`（真实 controller + 本地 transport 接线），以及 `frontend/src/lib/world-engine/local/turn-execution/real-world.test.ts`（真实 14 人/73 任务世界 + 17:37 无依据全达成回放）。
 
 覆盖：
 
 - 共同结果：多名成员共享事实、逐成员事实归属、未准入骰点不得写成目标反应；未声明 target 的 effect 会触发一次具名修复，修复仍失败就中止整点，不再编造“保守结果”。
-- 六阶段：位置→外貌→任务→新增小任务→个性→理智的顺序；人物/物品移动；任务阶段改为“每个有任务的人物一条决定”，全部 73 行仍在提示词里，缺整位人物是覆盖失败而不是默认 pending；个性阶段仍覆盖全人物；已完成任务不重做；个性变化与理智一一配对；任何阶段修复失败都会中止整次 updates，不提交部分六阶段。
-- 时间扫描：跳过位置/外貌模型调用，仍扫描全部任务；没有个性变化就不写理智。
+- 六阶段：位置→外貌→任务→新增小任务→个性→理智的顺序；人物/物品移动；任务阶段改为“每个有任务的人物一条决定”，但提示只列本轮受影响人物（事实 actor/事实提到的实体/已确认场景/直接位置外貌变化/明确时间条件/全局事实）；全量 14 人/73 行由程序 `taskScope` 审计，未列出的行保留并记 no-dependency basis，不默认 pending 也不算模型已判断；全局事实展开全部，场外被事实点名的人物仍进入；缺整位受影响人物是覆盖失败；个性扫描触发任务所有者+事实/场景参与者，程序审计全 14；已完成任务不重做；个性变化与理智一一配对；任何阶段修复失败都会中止整次 updates，不提交部分六阶段。
+- 时间扫描：跳过位置/外貌模型调用；任务提示只列有时间条件或全局触发的任务，其余由程序审计；没有个性变化就不写理智。
 - 拆分阶段：返回单个 `UpdatesCall`；后序阶段从已应用的工作态读取；同批任务达成触发个性阶段。
 - 继续判断：likely+related 才继续；无候选交还；连续无状态进展或重复候选按策略交还；模型异常返回失败而不是交还；默认没有 0 次调用上限。
 - 接线：脚本化 engine 经 `createSettlementHandlers` 驱动真实 `ControllerDriver` + `LocalWorldTransport`，results/updates/continuation 的输出形状被 controller 接受并提交一个完整回合。
@@ -23,7 +23,7 @@ node frontend/scripts/parallel-settlement/run-focused.mjs
 cd frontend && node scripts/parallel-settlement/prompt-size.mjs
 ```
 
-同一冻结世界、输入和代码版本下运行；root 已实跑约 1 秒，当前最大 4374 **字符**（不是 token），43 项聚焦测试 1.50 秒通过。脚本故意让每个模型调用失败以取出真实提示词，所以：
+同一冻结世界、输入和代码版本下运行；root 已实跑约 1 秒，当前最大 4374 **字符**（不是 token）；root 当时 43 项聚焦测试 1.50 秒通过（本次新增召回/真实 raw 回放后以 `run-focused.mjs` 的实际输出为准，不重复跑同一基线）。脚本故意让每个模型调用失败以取出真实提示词，所以：
 
 - 报告的是 `chars`，不是 token；没有分词器，禁止用 chars 除以 tok/s 报真实耗时。
 - 失败会触发现有修复重试，`promptChars` 里包含这些**探针诱发的重试**；它不是成功产品的真实调用次数。

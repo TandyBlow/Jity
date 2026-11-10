@@ -548,6 +548,44 @@ describe('affected-dependency projection', () => {
     expect(engine.prompts[0]).not.toContain('id=off');
   });
 
+  it('includes an off-screen task whose goal names a fact entity (indirect dependency)', async () => {
+    const indirect = world();
+    indirect.characters.off.tasks.off1.goal = '把工具收进盒子';
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '甲把工具推进盒子。' }) as Record<string, unknown>), workingState: indirect } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('id=off');
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[]; unaffectedTaskIds: string[] } };
+    expect(detail.taskScope.affectedTaskIds).toContain('off1');
+    expect(detail.taskScope.unaffectedTaskIds).not.toContain('off1');
+  });
+
+  it('includes an off-screen time-condition task when the fact states elapsed time', async () => {
+    const timeWorld = world();
+    timeWorld.characters.off.tasks.off1.goal = '在天亮前回来';
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b', 'off'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '几分钟后，甲把工具推进盒子。' }) as Record<string, unknown>), workingState: timeWorld } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('id=off');
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[] } };
+    expect(detail.taskScope.affectedTaskIds).toContain('off1');
+  });
+
+  it('includes the family closure of an affected parent task', async () => {
+    const family = world();
+    family.characters.a.tasks.a3 = { id: 'a3', ownerId: 'a', parentTaskId: 'a1', goal: '打开工具盒', status: 'pending' };
+    const engine = new ScriptedEngine([JSON.stringify({ unchanged: ['a', 'b'], achieved: [] })]);
+    const input = { ...(partialInput('tasks', { a: '甲把工具推进盒子。' }) as Record<string, unknown>), workingState: family } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#tasks', input);
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { taskScope: { affectedTaskIds: string[]; unaffectedTaskIds: string[]; taskRows: number } };
+    expect(detail.taskScope.affectedTaskIds).toContain('a3');
+    expect(detail.taskScope.unaffectedTaskIds).not.toContain('a3');
+    expect(detail.taskScope.taskRows).toBe(5);
+  });
+
   it('projects position and appearance to actors, scene and fact entities', async () => {
     const positionEngine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
     const position = await createSettlementHandlers({ engine: positionEngine }).updates('g1#position', partialInput('position', { a: '甲把工具推进盒子。' }));
