@@ -1,0 +1,87 @@
+{
+  "format": "narration-quality-scenes-v1",
+  "worldFamily": "tide-watch-1998",
+  "counts": {
+    "rows": 11,
+    "sequences": 3,
+    "turns": {
+      "tide-watch-duty": 5,
+      "tide-watch-pier": 3,
+      "tide-watch-radio": 3
+    },
+    "train": 8,
+    "dev": 3,
+    "targetChars": {
+      "min": 168,
+      "max": 296,
+      "mean": 238.3
+    },
+    "categories": {
+      "appearance_change": 3,
+      "continuity_no_rediscovery": 3,
+      "emotion_after_task": 2,
+      "item_move": 6,
+      "movement": 4,
+      "multi_actor": 4,
+      "no_change": 1,
+      "opposite_moves": 1,
+      "personality_change": 4,
+      "return": 1,
+      "separation": 1,
+      "task_added": 2,
+      "task_complete": 5,
+      "time_only": 1
+    }
+  },
+  "sources": {
+    "world": {
+      "path": "world/tide-watch.json",
+      "sha256": "c674bad0159690af7f226cc2f49781f84db950e72cb2518ff22449b7177d74e8"
+    },
+    "sequences": [
+      {
+        "path": "sequences/tide-watch-duty.json",
+        "sha256": "16450bd2a12d1cc534a2ab78ab8c2744663062bfe1f6c2f1c1fcaff3cb8ad613"
+      },
+      {
+        "path": "sequences/tide-watch-pier.json",
+        "sha256": "9638a42e153a611d2cc79f54e2828f4b8575f54b25341abb1019c618619a2b5d"
+      },
+      {
+        "path": "sequences/tide-watch-radio.json",
+        "sha256": "ebfd93ba6da32fd51c92b01485a0c5a9263020fca648268bb4ed1b6de21c4b93"
+      }
+    ]
+  },
+  "outputs": {
+    "rows": {
+      "path": "generated/rows.jsonl",
+      "sha256": "d23e0688e147fa120919be36d290c72bdd09d0a6a954849638ec12cbe52feee8"
+    },
+    "rowsXy": {
+      "path": "generated/rows-xy.jsonl",
+      "sha256": "6c0d75a841b9ef7dc7570040ffe8cbb723019794fdad63425ed64516d7bf9da7"
+    }
+  },
+  "checks": {
+    "factCheck": "pass",
+    "checkedRows": 11,
+    "failures": {},
+    "externalVerifier": {
+      "source": "lane 02 narration-generation/verify.ts + ledger.ts + runtime/narration-alignment.ts + committed-narration.ts",
+      "commit": "211fd463f2e9369172511873aafef922352b3aad",
+      "method": "temporary read-only copy of the four verifier files; each row's five-key input and projected facts fed to buildLedger + verifyNarration; copies deleted after the run",
+      "rows": 11,
+      "rowsWithHardIssues": 0,
+      "mandatoryFactsExpressed": "23/23",
+      "softUnverifiedSentences": "expected: most scene sentences bind no single committed fact",
+      "verdict": "mechanical hard-issue check only; not a quality score"
+    }
+  },
+  "notes": [
+    "Material is authored dev-world supervision, not a browser run or an independent holdout.",
+    "Each branch starts from an explicit authored snapshot (branch premise); turns inside a branch are continuous and must be used in order.",
+    "The input uses the five-key projection (视角/上回合状态/本回合变化/本回合状态) of the trained narration rows.",
+    "Sanity deltas are deliberately absent in this batch: the current alignment grader requires explicit from/to numerals for a sanity change, which would turn the prose into a state recital. Emotional change is carried by personality text instead."
+  ]
+}
