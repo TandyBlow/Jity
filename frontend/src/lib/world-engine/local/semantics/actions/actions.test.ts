@@ -96,7 +96,10 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(codes(result)).not.toContain('model_skip');
     // The task and the scene are in the prompt: no name/interaction gate ran.
     expect(engine.prompts[0]).toContain('task_ally_watch');
-    expect(engine.prompts[0]).toContain('我靠在墙边喘口气。');
+    // The player's sentence is not quoted to an NPC (the 16:46 product run
+    // copied it as nono's action); the same-room line points at the events.
+    expect(engine.prompts[0]).not.toContain('我靠在墙边喘口气。');
+    expect(engine.prompts[0]).toContain('主角也在同一地点');
     expect(engine.prompts[0]).toContain('守住大厅木门');
     expect(engine.prompts[0]).toContain('老周');
     codecAccepts(result);

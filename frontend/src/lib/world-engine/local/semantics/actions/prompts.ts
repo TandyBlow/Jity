@@ -56,14 +56,19 @@ export function actionPrompt(scene: ActionScene): string {
   const playerLine = scene.isProtagonist
     ? `主角上一步的命令（已经执行过；只判断这件事是否还需要主角继续做下一步，不能改做别的事，不能复述原话）：${scene.playerInput ?? '（无）'}`
     : scene.sameRoomAsProtagonist
-      ? `主角刚才的举动（这是现场发生的事，不是给你的命令；角色可以回应，也可以不回应）：${scene.playerInput ?? '（主角没有出声）'}`
+      // The player's exact sentence is deliberately not quoted here. In the
+      // 16:46 product run the small model copied it as nono's action on all
+      // three attempts ("我沿着服务巷往里走，先看清…"), so every repair failed.
+      // What happened is carried by 「本回合已发生的事」; a targeted character
+      // still gets the exact action in the reaction task.
+      ? '主角也在同一地点；他刚做了什么或接下来要做什么，以「本回合已发生的事」为准（没有记录就是还没发生）。这是现场，不是给你的命令；只写这个角色自己的行动，不要复述或替主角行动。'
       : `主角不在这里（主角在${scene.protagonistRoomName}）；你看不到、也回应不了主角，只按本地点的情况和自己的任务判断。`;
   return [
     '你是中文跑团游戏的角色行动判断器。只输出 JSON。',
     '你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。',
     '判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。',
     '行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述或改写玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。',
-    '待办任务只是目标，不是行动句：不要照抄任务；要写这一刻具体做的这一步。玩家原话也只作背景：你的行动句不能包含玩家那句话里的连续 8 个字。角色开口说话时写成带引号的台词，例如：诺诺回答：“我叫诺诺。”',
+    '待办任务只是目标，不是行动句：不要照抄任务；要写这一刻具体做的这一步。不要复述或改写主角做过的事；写这个角色自己的行动。角色开口说话时写成带引号的台词，例如：诺诺回答：“我叫诺诺。”',
     scene.isProtagonist
       ? '只写主角下一步的具体动作或一句对白，不要写任务目标、计划或心理总结。输出只能是 {"kind":"act","text":"一句话行动"}（延续同一件事）或 {"kind":"skip"}（这件事不需要主角再动）。'
       : '输出只能是 {"kind":"act","text":"一句话行动"} 或 {"kind":"skip"}（这个角色此刻不行动）。',
