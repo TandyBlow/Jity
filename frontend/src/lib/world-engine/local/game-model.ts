@@ -42,7 +42,10 @@ export interface GameModelOptions {
   constrainedMode?: 'program' | 'model';
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
-  onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
+  /** `fallback` is true when the shown text came from the program composer (a
+   * labelled downgrade) rather than verified model prose. The page must not
+   * count a fallback as the turn's readable-text timing. */
+  onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean; source: 'model' | 'program' | 'draft' }) => void;
   /** Test/evaluation hook: exposes the draft, raw model text and each repair
    * stage. Never used to make a product decision. */
   onNarrationDebug?: (debug: { pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string; violations: string[]; attempts: number[] }) => void;
@@ -473,7 +476,9 @@ export class LocalGameModel implements WorldModelPort {
     const finalReason = programFallback ? '程序按已结算事实成文' : reason;
     this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
     this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });
-    this.options.onNarrationComplete?.({ pointId, raw: finalText, completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
+    this.options.onNarrationComplete?.({ pointId, raw: finalText, fallback: !accepted || programFallback,
+      source: accepted ? 'model' : programFallback ? 'program' : 'draft',
+      completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
     return { value: finalText as unknown as Json, raw: finalText, ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason };
   }
 
@@ -510,7 +515,8 @@ export class LocalGameModel implements WorldModelPort {
       raw: result.text,
       promptChars: result.promptChars,
     });
-    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });
+    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion,
+      fallback: program, source: program ? 'program' : 'model' });
     return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: program };
   }
 

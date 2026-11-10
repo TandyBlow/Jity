@@ -28,9 +28,13 @@ interface TurnEntry {
    * shown for reading, but it is NOT the acceptance number: a draft is not
    * fact-checked yet and can still be replaced or cancelled. */
   draftMs: number | null;
-  /** Wall time from submit to the fact-verified text that was committed to the
-   * page. This is the only "readable" number used for product acceptance. */
+  /** Wall time from submit to the fact-verified MODEL text that was committed
+   * to the page. This is the only "readable" number used for product acceptance.
+   * Program-composed prose and unverified drafts never fill it. */
   acceptedMs: number | null;
+  /** Wall time to a program-composed passage (settled facts only). It is read-
+   * able text, but it is a labelled downgrade, so it is reported separately. */
+  programMs: number | null;
   cancelled?: boolean;
 }
 
@@ -241,10 +245,18 @@ export default function WorldLocalPage() {
           },
           onNarrationComplete: (progress) => {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
-            const acceptedMs = Math.round(performance.now() - submittedAtRef.current);
-            setEntries((list) => updateLast(list, (entry) => ({
-              ...entry, text, acceptedMs, ms: acceptedMs,
-            })));
+            const atMs = Math.round(performance.now() - submittedAtRef.current);
+            // Only a stop-finish narration is fact/style-verified model prose.
+            // 'program' is the labelled downgrade and 'drafted' was never
+            // accepted; neither may fill the readable-text timing.
+            const source = progress.source ?? (progress.fallback ? 'program' : 'draft');
+            setEntries((list) => updateLast(list, (entry) => (
+              source === 'model'
+                ? { ...entry, text, acceptedMs: atMs, ms: atMs }
+                : source === 'program'
+                  ? { ...entry, text, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
+                  : { ...entry, text }
+            )));
             setPhase('ready');
           },
         });
@@ -325,7 +337,7 @@ export default function WorldLocalPage() {
     const key = Date.now();
     const submittedAt = performance.now();
     submittedAtRef.current = submittedAt;
-    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null }]);
+    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null, programMs: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
     modelRef.current?.beginTurn();
@@ -431,8 +443,9 @@ export default function WorldLocalPage() {
                 <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
                   <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>
                     你：{entry.input}
-                    {entry.acceptedMs != null ? ` · 可读正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（已核对）` : ''}
-                    {entry.acceptedMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
+                    {entry.acceptedMs != null ? ` · 模型正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（已核对）` : ''}
+                    {entry.acceptedMs == null && entry.programMs != null ? ` · 程序成文 ${(entry.programMs / 1000).toFixed(1)}s（降级）` : ''}
+                    {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
                   <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>
                   {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
