@@ -3,7 +3,7 @@
   "kind": "full-scene-continuous-narration-supervision",
   "updatedAt": "2026-11-10",
   "status": "first-batch-ready",
-  "summary": "首批可用的完整场景与连续回合材料：自带开发世界里 3 条序列 / 11 个回合，正文 168-296 字。每回合都有完整五键输入、合法上一回合正文、必须落实的事实、允许细节、视角边界和禁止补写项。覆盖多角色同场、同一场不同任务、任务完成后的情绪/个性变化、物品转移与外貌增删，以及后一回合不重新发现前一回合已经发生的事。11 行全部通过构建器事实检查和 02 线提交 211fd463 的真实校验器（0 个 hard issue，23/23 强制事实落实）。这是监督材料，不是模型、不是浏览器记录、不是独立终验集，也不是质量评分。",
+  "summary": "首批可用的完整场景与连续回合材料：自带开发世界里 3 条序列 / 11 个回合，正文 168-296 字；另有 3 行冻结 train 行的忠实改写，正文 174-188 字。每回合都有完整五键输入、合法上一回合正文、必须落实的事实、允许细节、视角边界和禁止补写项。覆盖多角色同场、同一场不同任务、任务完成后的情绪/个性变化、物品转移与外貌增删，以及后一回合不重新发现前一回合已经发生的事。主材料 11 行、改写 3 行都通过构建器事实检查和 02 线提交 211fd463 的真实校验器（0 个 hard issue，主材料 23/23 强制事实落实）。这是监督材料，不是模型、不是浏览器记录、不是独立终验集，也不是质量评分。",
   "corpus": {
     "rowsFile": "experiments/narration-quality/corpus-scenes/generated/rows.jsonl",
     "rowsXyFile": "experiments/narration-quality/corpus-scenes/generated/rows-xy.jsonl",
@@ -15,7 +15,9 @@
     "preview": "experiments/narration-quality/corpus-scenes/generated/preview.md",
     "readme": "experiments/narration-quality/corpus-scenes/README.md",
     "rowCount": 11,
-    "sequenceCount": 3
+    "sequenceCount": 3,
+    "rewriteRowsFile": "experiments/narration-quality/corpus-scenes/rewrites/generated/rows.jsonl",
+    "rewriteRowsCommit": "46cc5375dc54ec018315f14b3b7660a73672d13e"
   },
   "branch": "goal/local-05-kernel",
   "worktree": "D:/others/Jity/.local/parallel-local-game/worktrees/05-kernel",
@@ -278,7 +280,8 @@
     "beats": "if beat targets are needed, select facts from requiredFacts and write new beat text; do not mechanically split targetText into one fact per sentence",
     "style": "styleReferenceIds point to old long rows; borrow rhythm/dialogue density/reactions, not events",
     "split": "tide-watch-radio is dev; keep it out of training; the dev split is new-world, not the old library dev/test",
-    "isolation": "no candidate weights and no model outputs here; do not cite this file as model quality evidence"
+    "isolation": "no candidate weights and no model outputs here; do not cite this file as model quality evidence",
+    "rewriteBatch": "rewrites/generated/rows-xy.jsonl is a separate 3-row batch of frozen train inputs with faithful, fact-checkable targets; use it for in-distribution repair. Do not mix its sourceRowId with the new dev-world rows."
   },
   "forLane02": {
     "use": "test multi-actor scenes, per-turn continuity and post-task personality change; compare generated text against requiredFacts, licensedDetails and knowledgeBoundary",
@@ -287,9 +290,13 @@
       "the actor name must be in the same sentence as the task goal or personality text",
       "a task goal containing a location name can be misread as another present character standing there; this batch keeps location names out of goals",
       "personality text containing another roster character name can be read as an actor swap; this batch keeps other names out of personality text",
-      "the grader has no item facts; an item-transfer clause using 到+地点 can be misread as an uncommitted character movement; this batch phrases item transfers without that pattern"
+      "the grader has no item facts; an item-transfer clause using 到+地点 can be misread as an uncommitted character movement; this batch phrases item transfers without that pattern",
+      "a frozen task goal containing 那一天/十年前 is parsed as a duration (1 day / 10 years) and rejects a faithful target as wrong_time; row-0002/0003 are blocked by this",
+      "compound Chinese durations such as 二十四分钟/十八分钟 are parsed as 4/8 minutes; use 24 分钟/18 分钟",
+      "a location name followed by 到 within a few characters (书架高到天花板) can be read as a movement claim"
     ],
-    "failureReport": "send the raw input, generated text, issue type and candidate identity back to 05; do not replace a failed scene with a rule template and call it accepted"
+    "failureReport": "send the raw input, generated text, issue type and candidate identity back to 05; do not replace a failed scene with a rule template and call it accepted",
+    "rewriteBatch": "3 frozen train rows are rewritten faithfully; use them to check whether a candidate can state movement, two same-scene tasks and a personality change without the old y's invented past. They pass verifier 211fd463."
   },
   "forLane03": {
     "use": "fact-settled full-scene reference for local instruct-model candidates: check omissions, actor swaps, reversed moves, invented events, missing time and post-task emotion",
@@ -305,7 +312,9 @@
     "no whole-item appearance/disappearance; only item transfers and appearance add/remove",
     "branch premises are authored setup, not browser records; no page E2E, no GPU, no real model output",
     "external check used committed verifier 211fd463; if lane 02 changes verify.ts, rerun the check",
-    "no self-score or quality acceptance claim; final acceptance still requires user play-test and reading"
+    "no self-score or quality acceptance claim; final acceptance still requires user play-test and reading",
+    "the 3 rewrites cover only movement/task/separation, two same-scene tasks, and task+personality; they do not cover item appearance or multi-turn continuity",
+    "row-0002/row-0003 faithful rewrites are withheld because the current grader's date-word duration parsing rejects them; this is a gate issue for 02, not a prose gap"
   ],
   "notify": [
     "10-training",
@@ -313,5 +322,84 @@
     "03-actions",
     "04-settlement"
   ],
-  "notification": "results/quality/team-05-kernel.json is the shared handoff. Lane 10 can consume generated/rows-xy.jsonl immediately; lane 02 can use generated/rows.jsonl as a fact-bound reference and report real failures; 03/04 can use the same rows as full-scene comparison material."
+  "notification": "results/quality/team-05-kernel.json is the shared handoff. Lane 10 can consume generated/rows-xy.jsonl immediately; lane 02 can use generated/rows.jsonl as a fact-bound reference and report real failures; 03/04 can use the same rows as full-scene comparison material.",
+  "rewriteBatch": {
+    "rowsFile": "experiments/narration-quality/corpus-scenes/rewrites/generated/rows.jsonl",
+    "rowsXyFile": "experiments/narration-quality/corpus-scenes/rewrites/generated/rows-xy.jsonl",
+    "rowsCommit": "46cc5375dc54ec018315f14b3b7660a73672d13e",
+    "builder": "experiments/narration-quality/corpus-scenes/rewrites/build_rewrites.py",
+    "manifest": "experiments/narration-quality/corpus-scenes/rewrites/generated/manifest.json",
+    "preview": "experiments/narration-quality/corpus-scenes/rewrites/generated/preview.md",
+    "rowCount": 3,
+    "sourceRowIds": [
+      "row-0164",
+      "row-0188",
+      "row-0181"
+    ],
+    "sourceSplit": "train",
+    "datasetCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
+    "inputPreserved": true,
+    "oldTargetsUsedAsFactSource": false,
+    "targetChars": [
+      174,
+      188,
+      186
+    ],
+    "originalTargetChars": [
+      515,
+      592,
+      470
+    ],
+    "verification": {
+      "buildCommand": "python -X utf8 experiments/narration-quality/corpus-scenes/rewrites/build_rewrites.py",
+      "buildResult": "3 rows; frozen input canonical SHA-256 checked; all in train split; fact check pass",
+      "externalVerifier": {
+        "sourceCommit": "211fd463f2e9369172511873aafef922352b3aad",
+        "rows": 3,
+        "rowsWithHardIssues": 0,
+        "mandatoryFactsExpressed": "all mandatory facts in 3/3 rows"
+      }
+    },
+    "firstRows": [
+      {
+        "id": "rewrite-0164-copy-check",
+        "sourceRowId": "row-0164",
+        "categories": [
+          "movement",
+          "task_complete",
+          "separation"
+        ],
+        "targetChars": 174,
+        "targetText": "二层走廊的地板在脚下响。温暮蹲在尽头，把抄本和原本摊在膝上，一页一页对过去。\n温暮说：「把抄本和原本对一遍，算是完成了。」\n柏清和站在走廊另一头，问有没有对不上的地方。\n「有，但我先记着。」温暮把抄本合上。\n柏清和没再追问，把原本留在她手边，转身往借阅台去。地板在他脚下响了两声，声音一路下了楼梯。\n七分钟过去，温暮还蹲在原处，手指压着抄本的封角。"
+      },
+      {
+        "id": "rewrite-0188-two-cover-tasks",
+        "sourceRowId": "row-0188",
+        "categories": [
+          "task_complete",
+          "task_added",
+          "multi_actor",
+          "same_scene_tasks"
+        ],
+        "targetChars": 188,
+        "targetText": "报刊库的抽屉很涩。柏书言拉开最下面一格，合订本按年份排在铁柜里。\n柏书言说：「查清那一批封面是从哪本书上撕的，算是完成了。」\n苏既明从另一只抽屉前抬起头，说查清那批封面的来路，也完成了。\n两个人在铁柜前对看了一眼。柏书言把抄下来的那份签字从袖口里抽出来，说接下来得把抄下来的那份签字交出去。\n苏既明点了点头，没有问交给谁。\n24 分钟过去，报刊库里只剩合订本被推回铁柜的声音。"
+      },
+      {
+        "id": "rewrite-0181-shelf-check",
+        "sourceRowId": "row-0181",
+        "categories": [
+          "task_complete",
+          "personality_change",
+          "multi_actor"
+        ],
+        "targetChars": 186,
+        "targetText": "二层西侧书架很高，几乎碰着天花板。周既白把那张纸摊在手里，按索书号一格一格找过去。\n周既白说：「按那张纸上的索书号把十一本找齐，算是完成了。」\n柏清和从书架另一头探过头来，问是不是都对上了。\n「对上了。」周既白把最后一本推到标签朝外。\n周既白停了一下，说决定这一排自己一排一排核。\n柏清和没接话，只把手里那本归回原位。\n18 分钟过去，书架间的过道里只剩书脊被推正的轻响。"
+      }
+    ],
+    "notes": [
+      "Only targetText changes; input is the frozen x and sourceRowId is the old row id.",
+      "The old long y is style reference only, not a fact source.",
+      "row-0002/row-0003 faithful rewrites were attempted but not shipped: their task goals contain 那一天/十年前, which the current grader parses as 1 day / 10 years and would reject as wrong_time."
+    ]
+  }
 }
