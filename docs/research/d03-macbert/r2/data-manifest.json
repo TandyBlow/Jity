@@ -1,0 +1,50 @@
+{
+  "datasetSha256": "13ddb20f40564c476ae9a55699270203732a27a1d53a8a21c3d1b51853dac5cd",
+  "author": "assistant",
+  "humanReviewedCount": 0,
+  "historicalDataImported": false,
+  "groups": {
+    "train": [
+      "r2:back",
+      "r2:badge",
+      "r2:comb",
+      "r2:drawing",
+      "r2:flashlight",
+      "r2:forehead",
+      "r2:handshake",
+      "r2:lunchbox",
+      "r2:map",
+      "r2:notebook",
+      "r2:pencil",
+      "r2:racket",
+      "r2:scarf",
+      "r2:ticket",
+      "r2:water",
+      "r2:wrist"
+    ],
+    "development": [
+      "r2:flowerpot",
+      "r2:shoulder",
+      "r2:sleeve",
+      "r2:towel"
+    ],
+    "test": [
+      "r2:bottle",
+      "r2:glove",
+      "r2:puzzle",
+      "r2:watch"
+    ]
+  },
+  "scenes": 144,
+  "pairs": 384,
+  "totalCharacters": [
+    2,
+    3
+  ],
+  "grouping": "all variants of a mechanism in one split",
+  "limitations": [
+    "Shared templates across groups; held-out mechanisms are not independent natural-game validation.",
+    "Direct recipients and explicit ownership only; no remote or uncertain causal paths.",
+    "This is a new easier dataset, not a controlled comparison isolating character count."
+  ]
+}

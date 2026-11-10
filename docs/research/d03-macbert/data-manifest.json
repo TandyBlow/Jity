@@ -1,0 +1,71 @@
+{
+  "datasetSha256": "27cfc2ef863a98350148db83329767ac372bf28efe1c71571de3dcfdfe2c63bb",
+  "author": "assistant",
+  "humanReviewedCount": 0,
+  "historicalDataImported": false,
+  "groups": {
+    "train": [
+      "alarm",
+      "blanket",
+      "boat",
+      "bridge",
+      "cable",
+      "cart",
+      "coat",
+      "curtain",
+      "door",
+      "gesture",
+      "ice",
+      "insult",
+      "ladder",
+      "lift",
+      "lock",
+      "network",
+      "paint",
+      "parcel",
+      "phone",
+      "request",
+      "seat",
+      "shelf",
+      "shield",
+      "sign",
+      "smoke",
+      "stretcher",
+      "tent",
+      "train",
+      "trap",
+      "umbrella",
+      "warning",
+      "watergate"
+    ],
+    "development": [
+      "bag",
+      "coin",
+      "food",
+      "heater",
+      "medicine",
+      "radio",
+      "vent",
+      "whisper"
+    ],
+    "test": [
+      "conveyor",
+      "cup",
+      "flood",
+      "lamp",
+      "letter",
+      "magnet",
+      "rope",
+      "valve"
+    ]
+  },
+  "scenes": 96,
+  "pairs": 384,
+  "limitations": [
+    "Artificial matched positive/empty pairs; not representative game prevalence.",
+    "Held-out scenes share author and construction method; not independent validation.",
+    "World text is authored in full; no projection of production state is validated.",
+    "Hearing an actual utterance counts as informational exposure; mental unexpressed intent does not.",
+    "Only the current frozen source is labeled; no speculative future reaction chain."
+  ]
+}

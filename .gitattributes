@@ -22,3 +22,10 @@ artifacts/world-components-logic/** text eol=lf
 
 # Compressed synthetic supervision and provenance are byte-addressed.
 experiments/world-components-logic/**/*.gz -text
+
+# D03 datasets, scripts and evidence are hashed byte-for-byte on Windows too.
+experiments/d03-macbert/** text eol=lf
+docs/research/d03-macbert/** text eol=lf
+scripts/hybrid/** text eol=lf
+.github/workflows/api-d03-windows.yml text eol=lf
+DEVELOPMENT_WINDOWS.md text eol=lf

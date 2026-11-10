@@ -153,3 +153,15 @@ artifacts/benchmark/minirbt-h256-snapshot/
 /artifacts/world-components-logic/qwen-short/
 /artifacts/world-components-logic/short-semantics/
 /retraining-output/
+
+# Source-only API + D03 handoff: generated models and environments never ship.
+.venv-d03/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
+*.bin
+*.h5
+*.msgpack

@@ -1,0 +1,34 @@
+{
+  "model": "hfl/chinese-macbert-base",
+  "revision": "a986e004d2a7f2a1c2f5a3edef4e20604a974ed1",
+  "files": {
+    "config.json": {
+      "sha256": "648c8a2b51c12551f94bae19a66c21a59c9bd8aa0ebb99f2a0af7236cdb99daa",
+      "bytes": 659
+    },
+    "pytorch_model.bin": {
+      "sha256": "db0506d985574b80c33eec1cf13bd4c130585568753175871095ca13dbad9e23",
+      "bytes": 411582858
+    },
+    "tokenizer.json": {
+      "sha256": "53ff61207898738bbdc000f38abebef01041c8d23b6270c11855fc692d0a3ad6",
+      "bytes": 268961
+    },
+    "tokenizer_config.json": {
+      "sha256": "61785aeaba176fba6d6489f27dccfd2ddee6aee2af0e590451cab7d8b57e0874",
+      "bytes": 19
+    },
+    "special_tokens_map.json": {
+      "sha256": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3",
+      "bytes": 112
+    },
+    "added_tokens.json": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    "vocab.txt": {
+      "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+      "bytes": 109540
+    }
+  }
+}

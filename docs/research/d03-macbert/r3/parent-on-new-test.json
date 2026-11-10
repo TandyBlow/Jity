@@ -1,0 +1,353 @@
+[
+  {
+    "sceneId": "r3:tablet:0:0",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27",
+      "p46"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9644034504890442,
+      "p13": 0.04138290509581566,
+      "p46": 0.06633030623197556
+    },
+    "rosterMs": 36.94700000050943
+  },
+  {
+    "sceneId": "r3:tablet:0:1",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27",
+      "p46"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9641010165214539,
+      "p13": 0.06413841247558594,
+      "p46": 0.21523915231227875
+    },
+    "rosterMs": 32.94883300259244
+  },
+  {
+    "sceneId": "r3:tablet:0:2",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27",
+      "p46"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9619813561439514,
+      "p13": 0.0350068025290966,
+      "p46": 0.04921044781804085
+    },
+    "rosterMs": 35.21466600068379
+  },
+  {
+    "sceneId": "r3:tablet:1:0",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9623792767524719,
+      "p13": 0.3339329957962036,
+      "p46": 0.04835885390639305
+    },
+    "rosterMs": 33.55537499737693
+  },
+  {
+    "sceneId": "r3:tablet:1:1",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9604922533035278,
+      "p13": 0.2103087306022644,
+      "p46": 0.06580794602632523
+    },
+    "rosterMs": 39.36125000473112
+  },
+  {
+    "sceneId": "r3:tablet:1:2",
+    "sourceGroup": "r3:tablet",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "ownership",
+    "scores": {
+      "p27": 0.9613204002380371,
+      "p13": 0.14510120451450348,
+      "p46": 0.04920036345720291
+    },
+    "rosterMs": 35.10133300005691
+  },
+  {
+    "sceneId": "r3:latter:0:0",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p71"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.43227970600128174,
+      "p27": 0.6201427578926086,
+      "p88": 0.22757820785045624
+    },
+    "rosterMs": 35.5849169936846
+  },
+  {
+    "sceneId": "r3:latter:0:1",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p71"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.0882645770907402,
+      "p27": 0.0770021453499794,
+      "p88": 0.038157958537340164
+    },
+    "rosterMs": 38.67358300340129
+  },
+  {
+    "sceneId": "r3:latter:0:2",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p71"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.178634911775589,
+      "p27": 0.2253524363040924,
+      "p88": 0.20726150274276733
+    },
+    "rosterMs": 36.42437500093365
+  },
+  {
+    "sceneId": "r3:latter:1:0",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.3739023208618164,
+      "p27": 0.5658398866653442,
+      "p88": 0.1958853304386139
+    },
+    "rosterMs": 40.742541998042725
+  },
+  {
+    "sceneId": "r3:latter:1:1",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.07517781853675842,
+      "p27": 0.07472289353609085,
+      "p88": 0.0359223410487175
+    },
+    "rosterMs": 38.49758300202666
+  },
+  {
+    "sceneId": "r3:latter:1:2",
+    "sourceGroup": "r3:latter",
+    "targetIds": [
+      "p27"
+    ],
+    "characterCount": 3,
+    "category": "reference",
+    "scores": {
+      "p71": 0.19598336517810822,
+      "p27": 0.1933295875787735,
+      "p88": 0.18843473494052887
+    },
+    "rosterMs": 40.20575000322424
+  },
+  {
+    "sceneId": "r3:not_blue:0:0",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p88"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.11205774545669556,
+      "p88": 0.058281756937503815,
+      "p46": 0.04125764220952988
+    },
+    "rosterMs": 39.17262500181096
+  },
+  {
+    "sceneId": "r3:not_blue:0:1",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p88"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.5012826919555664,
+      "p88": 0.2654626965522766,
+      "p46": 0.0786505937576294
+    },
+    "rosterMs": 39.74766699684551
+  },
+  {
+    "sceneId": "r3:not_blue:0:2",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p88"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.28566089272499084,
+      "p88": 0.2057582288980484,
+      "p46": 0.058822475373744965
+    },
+    "rosterMs": 41.2422079971293
+  },
+  {
+    "sceneId": "r3:not_blue:1:0",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.12950536608695984,
+      "p88": 0.0626433715224266,
+      "p46": 0.042725857347249985
+    },
+    "rosterMs": 37.67295899888268
+  },
+  {
+    "sceneId": "r3:not_blue:1:1",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.5493940114974976,
+      "p88": 0.2912304103374481,
+      "p46": 0.08759699761867523
+    },
+    "rosterMs": 38.83454099559458
+  },
+  {
+    "sceneId": "r3:not_blue:1:2",
+    "sourceGroup": "r3:not_blue",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 3,
+    "category": "condition",
+    "scores": {
+      "p13": 0.2751759886741638,
+      "p88": 0.2099977731704712,
+      "p46": 0.05750054121017456
+    },
+    "rosterMs": 38.368583998817485
+  },
+  {
+    "sceneId": "r3:glass:0:0",
+    "sourceGroup": "r3:glass",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.9169720411300659,
+      "p13": 0.06273946911096573
+    },
+    "rosterMs": 29.309208002814557
+  },
+  {
+    "sceneId": "r3:glass:0:1",
+    "sourceGroup": "r3:glass",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.8965103626251221,
+      "p13": 0.03989509865641594
+    },
+    "rosterMs": 26.424499999848194
+  },
+  {
+    "sceneId": "r3:glass:0:2",
+    "sourceGroup": "r3:glass",
+    "targetIds": [
+      "p13"
+    ],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.8610605001449585,
+      "p13": 0.048566531389951706
+    },
+    "rosterMs": 29.630624994751997
+  },
+  {
+    "sceneId": "r3:glass:1:0",
+    "sourceGroup": "r3:glass",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.25216004252433777,
+      "p13": 0.02482595667243004
+    },
+    "rosterMs": 28.088999999454245
+  },
+  {
+    "sceneId": "r3:glass:1:1",
+    "sourceGroup": "r3:glass",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.11061020940542221,
+      "p13": 0.02245078980922699
+    },
+    "rosterMs": 29.4443750026403
+  },
+  {
+    "sceneId": "r3:glass:1:2",
+    "sourceGroup": "r3:glass",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "isolation",
+    "scores": {
+      "p27": 0.22773051261901855,
+      "p13": 0.030021388083696365
+    },
+    "rosterMs": 29.737624994595535
+  }
+]

@@ -1,0 +1,342 @@
+[
+  {
+    "sceneId": "r2:watch:2:one",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p28": 0.0011971383355557919,
+      "p11": 0.9986569881439209
+    },
+    "rosterMs": 33.09083299973281
+  },
+  {
+    "sceneId": "r2:watch:2:none",
+    "sourceGroup": "r2:watch",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p53": 0.0011919906828552485,
+      "p28": 0.0010982025414705276
+    },
+    "rosterMs": 29.89158299897099
+  },
+  {
+    "sceneId": "r2:watch:3:first",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.0011728995013982058,
+      "p11": 0.0012053708778694272,
+      "p53": 0.9986159801483154
+    },
+    "rosterMs": 44.62983400298981
+  },
+  {
+    "sceneId": "r2:watch:3:second",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.9986833930015564,
+      "p76": 0.0012033283710479736,
+      "p53": 0.0014351679710671306
+    },
+    "rosterMs": 43.96070800430607
+  },
+  {
+    "sceneId": "r2:watch:3:both",
+    "sourceGroup": "r2:watch",
+    "targetIds": [
+      "p11",
+      "p76"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.0012024501338601112,
+      "p11": 0.9986401200294495,
+      "p76": 0.9986785054206848
+    },
+    "rosterMs": 45.67783299717121
+  },
+  {
+    "sceneId": "r2:watch:3:none",
+    "sourceGroup": "r2:watch",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.001128900796175003,
+      "p53": 0.0011638059513643384,
+      "p94": 0.0011154563399031758
+    },
+    "rosterMs": 43.585166000411846
+  },
+  {
+    "sceneId": "r2:glove:2:one",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p53": 0.0011719887843355536,
+      "p11": 0.9986635446548462
+    },
+    "rosterMs": 29.56354199704947
+  },
+  {
+    "sceneId": "r2:glove:2:none",
+    "sourceGroup": "r2:glove",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p76": 0.0011666608043015003,
+      "p53": 0.0011293499264866114
+    },
+    "rosterMs": 27.17212499555899
+  },
+  {
+    "sceneId": "r2:glove:3:first",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.001227271743118763,
+      "p76": 0.001138341031037271,
+      "p94": 0.9986585378646851
+    },
+    "rosterMs": 41.655499997432344
+  },
+  {
+    "sceneId": "r2:glove:3:second",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p76": 0.0011549592018127441,
+      "p11": 0.0012397115351632237,
+      "p94": 0.9986360669136047
+    },
+    "rosterMs": 41.29174999980023
+  },
+  {
+    "sceneId": "r2:glove:3:both",
+    "sourceGroup": "r2:glove",
+    "targetIds": [
+      "p94",
+      "p28"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p53": 0.0012191138230264187,
+      "p94": 0.9987015724182129,
+      "p28": 0.9987056255340576
+    },
+    "rosterMs": 42.35562500252854
+  },
+  {
+    "sceneId": "r2:glove:3:none",
+    "sourceGroup": "r2:glove",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p76": 0.0011315644951537251,
+      "p11": 0.001146353897638619,
+      "p94": 0.0010969265131279826
+    },
+    "rosterMs": 42.75645899906522
+  },
+  {
+    "sceneId": "r2:bottle:2:one",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p76"
+    ],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.001147634000517428,
+      "p76": 0.9985729455947876
+    },
+    "rosterMs": 28.770874996553175
+  },
+  {
+    "sceneId": "r2:bottle:2:none",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.00111953925807029,
+      "p76": 0.0011569153284654021
+    },
+    "rosterMs": 30.78891699988162
+  },
+  {
+    "sceneId": "r2:bottle:3:first",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p76"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p28": 0.0013446894008666277,
+      "p76": 0.9987154006958008,
+      "p94": 0.001125092850998044
+    },
+    "rosterMs": 45.98058400006266
+  },
+  {
+    "sceneId": "r2:bottle:3:second",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.0011267102090641856,
+      "p11": 0.998704195022583,
+      "p53": 0.0015905351610854268
+    },
+    "rosterMs": 46.581624999816995
+  },
+  {
+    "sceneId": "r2:bottle:3:both",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [
+      "p11",
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.9987239241600037,
+      "p53": 0.9987795948982239,
+      "p76": 0.0011955485679209232
+    },
+    "rosterMs": 117.7274169967859
+  },
+  {
+    "sceneId": "r2:bottle:3:none",
+    "sourceGroup": "r2:bottle",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.0011608884669840336,
+      "p53": 0.0011325448285788298,
+      "p28": 0.001199071411974728
+    },
+    "rosterMs": 47.98462499456946
+  },
+  {
+    "sceneId": "r2:puzzle:2:one",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p11"
+    ],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p11": 0.9986709356307983,
+      "p76": 0.0011594458483159542
+    },
+    "rosterMs": 27.680167004291434
+  },
+  {
+    "sceneId": "r2:puzzle:2:none",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [],
+    "characterCount": 2,
+    "category": "r2_regression",
+    "scores": {
+      "p53": 0.0011478482047095895,
+      "p11": 0.0011640582233667374
+    },
+    "rosterMs": 89.25166600238299
+  },
+  {
+    "sceneId": "r2:puzzle:3:first",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p28"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p94": 0.0012145373038947582,
+      "p28": 0.9987279772758484,
+      "p11": 0.0010808634106069803
+    },
+    "rosterMs": 43.69149999547517
+  },
+  {
+    "sceneId": "r2:puzzle:3:second",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p53"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p28": 0.0014241636963561177,
+      "p94": 0.0011802819790318608,
+      "p53": 0.9987465143203735
+    },
+    "rosterMs": 45.874333001847845
+  },
+  {
+    "sceneId": "r2:puzzle:3:both",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [
+      "p76",
+      "p94"
+    ],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p28": 0.0012168249813839793,
+      "p94": 0.998816967010498,
+      "p76": 0.99869304895401
+    },
+    "rosterMs": 49.04558300040662
+  },
+  {
+    "sceneId": "r2:puzzle:3:none",
+    "sourceGroup": "r2:puzzle",
+    "targetIds": [],
+    "characterCount": 3,
+    "category": "r2_regression",
+    "scores": {
+      "p76": 0.0011238042498007417,
+      "p94": 0.0012319309171289206,
+      "p11": 0.0011129450285807252
+    },
+    "rosterMs": 45.13099999894621
+  }
+]

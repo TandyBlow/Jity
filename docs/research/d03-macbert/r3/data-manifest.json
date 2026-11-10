@@ -1,0 +1,76 @@
+{
+  "datasetSha256": "01bedaa68bfb2e69f807d0d76e2f3f385ccb55b1548e7ac827b8c1d32f859a83",
+  "humanReviewedCount": 0,
+  "author": "assistant",
+  "r2DatasetSha256": "13ddb20f40564c476ae9a55699270203732a27a1d53a8a21c3d1b51853dac5cd",
+  "r2TrainReplayScenes": 96,
+  "newScenes": 144,
+  "groups": {
+    "train": [
+      "r2:back",
+      "r2:badge",
+      "r2:comb",
+      "r2:drawing",
+      "r2:flashlight",
+      "r2:forehead",
+      "r2:handshake",
+      "r2:lunchbox",
+      "r2:map",
+      "r2:notebook",
+      "r2:pencil",
+      "r2:racket",
+      "r2:scarf",
+      "r2:ticket",
+      "r2:water",
+      "r2:wrist",
+      "r3:camera",
+      "r3:cancelled",
+      "r3:dry",
+      "r3:empty_hands",
+      "r3:fan",
+      "r3:hat_owner",
+      "r3:heated_pad",
+      "r3:left_person",
+      "r3:music",
+      "r3:own_ref",
+      "r3:permission",
+      "r3:scent",
+      "r3:seedbox",
+      "r3:speaker",
+      "r3:umbrella_loan",
+      "r3:violin"
+    ],
+    "development": [
+      "r3:green",
+      "r3:red_sleeve",
+      "r3:rope_barrier",
+      "r3:toolbox"
+    ],
+    "test": [
+      "r3:glass",
+      "r3:latter",
+      "r3:not_blue",
+      "r3:tablet"
+    ]
+  },
+  "counts": {
+    "train": {
+      "scenes": 192,
+      "pairs": 508
+    },
+    "development": {
+      "scenes": 24,
+      "pairs": 66
+    },
+    "test": {
+      "scenes": 24,
+      "pairs": 66
+    }
+  },
+  "limitations": [
+    "Shared author and contrast/paraphrase construction, not independent natural-game validation.",
+    "Only four new held-out source groups; paraphrases do not multiply independent evidence.",
+    "Owned property and current borrower/use are both targets when both are affected.",
+    "Known unmet condition means no physical action; unknown future dice never appear."
+  ]
+}

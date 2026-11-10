@@ -1,0 +1,7 @@
+{
+  "actorId": "actor",
+  "characters": [{"id": "actor", "name": "林安"}, {"id": "owner", "name": "陈青"}, {"id": "borrower", "name": "何川"}],
+  "world": "何川正用陈青借给他的平板记账。林安站在一旁。平板仍属于陈青。",
+  "alreadyActedIds": ["owner"],
+  "request": "林安想取回这台平板，请提出一个明确的行动尝试。"
+}

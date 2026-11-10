@@ -1,0 +1,557 @@
+[
+  {
+    "sceneId": "r3:latter:0:0",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：拍一下后者的肩。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出陶安、程禾，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p71"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "程禾"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "陶安"
+    ],
+    "scores": {
+      "p71": 0.9870668053627014,
+      "p27": 0.9933852553367615,
+      "p88": 0.001222327584400773
+    }
+  },
+  {
+    "sceneId": "r3:latter:0:1",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：伸手轻拍记录中后一个人的肩膀。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出陶安、程禾，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p71"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "程禾"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "陶安"
+    ],
+    "scores": {
+      "p71": 0.9605066776275635,
+      "p27": 0.9818066358566284,
+      "p88": 0.001249463646672666
+    }
+  },
+  {
+    "sceneId": "r3:latter:0:2",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：在后者肩头轻轻拍了一下。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出陶安、程禾，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p71"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "程禾"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "陶安"
+    ],
+    "scores": {
+      "p71": 0.9724761843681335,
+      "p27": 0.9832231402397156,
+      "p88": 0.001187065034173429
+    }
+  },
+  {
+    "sceneId": "r3:latter:1:0",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：拍一下后者的肩。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出程禾、陶安，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p27"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "陶安"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "程禾"
+    ],
+    "scores": {
+      "p71": 0.9881237149238586,
+      "p27": 0.9925540089607239,
+      "p88": 0.0012187991524115205
+    }
+  },
+  {
+    "sceneId": "r3:latter:1:1",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：伸手轻拍记录中后一个人的肩膀。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出程禾、陶安，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p27"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "陶安"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "程禾"
+    ],
+    "scores": {
+      "p71": 0.9669709205627441,
+      "p27": 0.9787411093711853,
+      "p88": 0.0012470352230593562
+    }
+  },
+  {
+    "sceneId": "r3:latter:1:2",
+    "sourceGroup": "r3:latter",
+    "category": "reference",
+    "input": {
+      "action": "赵澄采取行动：在后者肩头轻轻拍了一下。",
+      "actorId": "p88",
+      "alreadyActedIds": [
+        "p27"
+      ],
+      "characters": [
+        {
+          "id": "p71",
+          "name": "程禾"
+        },
+        {
+          "id": "p27",
+          "name": "陶安"
+        },
+        {
+          "id": "p88",
+          "name": "赵澄"
+        }
+      ],
+      "world": "记录依次列出程禾、陶安，两人站在空地上。“后者”指这份记录中的第二个人。"
+    },
+    "targetIds": [
+      "p27"
+    ],
+    "predictedIds": [
+      "p27",
+      "p71"
+    ],
+    "expectedNames": [
+      "陶安"
+    ],
+    "predictedNames": [
+      "陶安",
+      "程禾"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "程禾"
+    ],
+    "scores": {
+      "p71": 0.9734908938407898,
+      "p27": 0.9813820123672485,
+      "p88": 0.001186079578474164
+    }
+  },
+  {
+    "sceneId": "r3:not_blue:0:0",
+    "sourceGroup": "r3:not_blue",
+    "category": "condition",
+    "input": {
+      "action": "梁青采取行动：把贴纸贴在没有戴蓝色手环的人的袖子上。",
+      "actorId": "p46",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p13",
+          "name": "孟秋"
+        },
+        {
+          "id": "p88",
+          "name": "韩松"
+        },
+        {
+          "id": "p46",
+          "name": "梁青"
+        }
+      ],
+      "world": "孟秋戴蓝色手环，韩松戴白色手环；没有其他手环。"
+    },
+    "targetIds": [
+      "p88"
+    ],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [
+      "韩松"
+    ],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [
+      "韩松"
+    ],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p13": 0.9848430156707764,
+      "p88": 0.007705062162131071,
+      "p46": 0.0012444948079064488
+    }
+  },
+  {
+    "sceneId": "r3:not_blue:0:1",
+    "sourceGroup": "r3:not_blue",
+    "category": "condition",
+    "input": {
+      "action": "梁青采取行动：只给非蓝色手环者的衣袖贴一枚标记。",
+      "actorId": "p46",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p13",
+          "name": "孟秋"
+        },
+        {
+          "id": "p88",
+          "name": "韩松"
+        },
+        {
+          "id": "p46",
+          "name": "梁青"
+        }
+      ],
+      "world": "孟秋戴蓝色手环，韩松戴白色手环；没有其他手环。"
+    },
+    "targetIds": [
+      "p88"
+    ],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [
+      "韩松"
+    ],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [
+      "韩松"
+    ],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p13": 0.9839205145835876,
+      "p88": 0.008071698248386383,
+      "p46": 0.0011994735104963183
+    }
+  },
+  {
+    "sceneId": "r3:not_blue:0:2",
+    "sourceGroup": "r3:not_blue",
+    "category": "condition",
+    "input": {
+      "action": "梁青采取行动：略过蓝手环，把贴纸贴给另一人的袖口。",
+      "actorId": "p46",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p13",
+          "name": "孟秋"
+        },
+        {
+          "id": "p88",
+          "name": "韩松"
+        },
+        {
+          "id": "p46",
+          "name": "梁青"
+        }
+      ],
+      "world": "孟秋戴蓝色手环，韩松戴白色手环；没有其他手环。"
+    },
+    "targetIds": [
+      "p88"
+    ],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [
+      "韩松"
+    ],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [
+      "韩松"
+    ],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p13": 0.9900162816047668,
+      "p88": 0.008976100943982601,
+      "p46": 0.0011979812989011407
+    }
+  },
+  {
+    "sceneId": "r3:glass:1:0",
+    "sourceGroup": "r3:glass",
+    "category": "isolation",
+    "input": {
+      "action": "程禾采取行动：打开朝向隔板的亮灯。",
+      "actorId": "p27",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p27",
+          "name": "程禾"
+        },
+        {
+          "id": "p13",
+          "name": "孟秋"
+        }
+      ],
+      "world": "孟秋站在程禾的灯前，隔板是完全不透光的板，孟秋在板后；热和声音也不会传到孟秋那里。"
+    },
+    "targetIds": [],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p27": 0.0011812893208116293,
+      "p13": 0.9793609976768494
+    }
+  },
+  {
+    "sceneId": "r3:glass:1:1",
+    "sourceGroup": "r3:glass",
+    "category": "isolation",
+    "input": {
+      "action": "程禾采取行动：点亮面朝隔板的灯。",
+      "actorId": "p27",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p27",
+          "name": "程禾"
+        },
+        {
+          "id": "p13",
+          "name": "孟秋"
+        }
+      ],
+      "world": "孟秋站在程禾的灯前，隔板是完全不透光的板，孟秋在板后；热和声音也不会传到孟秋那里。"
+    },
+    "targetIds": [],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p27": 0.0011963170254603028,
+      "p13": 0.9661986231803894
+    }
+  },
+  {
+    "sceneId": "r3:glass:1:2",
+    "sourceGroup": "r3:glass",
+    "category": "isolation",
+    "input": {
+      "action": "程禾采取行动：开启这盏灯，让灯光照向隔板。",
+      "actorId": "p27",
+      "alreadyActedIds": [],
+      "characters": [
+        {
+          "id": "p27",
+          "name": "程禾"
+        },
+        {
+          "id": "p13",
+          "name": "孟秋"
+        }
+      ],
+      "world": "孟秋站在程禾的灯前，隔板是完全不透光的板，孟秋在板后；热和声音也不会传到孟秋那里。"
+    },
+    "targetIds": [],
+    "predictedIds": [
+      "p13"
+    ],
+    "expectedNames": [],
+    "predictedNames": [
+      "孟秋"
+    ],
+    "missedNames": [],
+    "extraNames": [
+      "孟秋"
+    ],
+    "scores": {
+      "p27": 0.0011914122151210904,
+      "p13": 0.9664223790168762
+    }
+  }
+]

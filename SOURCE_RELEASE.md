@@ -1,0 +1,13 @@
+# Source-only release record
+
+- Branch: `codex/api-small-model-windows-20261110`
+- Base: `51bd76e97a8892a6ff012a2ebea57476deb22d4b` (clean D source release; no withdrawn weight-archive ancestry added).
+- Active architecture: API for other semantic tasks, D03 MacBERT is the only small-model candidate.
+- D03 source/evidence: original R1/R2/R3 data and reports copied without modifying recorded bytes. R3 is NOT quality-approved.
+- New portable entry: CPU default, explicit CUDA/MPS, UTF-8, repository-relative paths, teammate-owned R2 checkpoint identity for R3.
+- Local checks: original 9 data/metric tests + 4 portable tests + 4 API contract tests passed. Portable tests include the actual 8-epoch entry with a randomly initialized tiny CPU model, in addition to save/reload equality. This is engineering validation, not real MacBERT training or semantic validation.
+- No live API calls were made for this release. API tests use controlled fixtures.
+- CI: `.github/workflows/api-d03-windows.yml` runs on Windows and Linux after push, with no private API keys, no MacBERT download, and no full-model retraining. The actual GitHub run is the authority for CI status.
+- Scope limits: no complete Windows/CUDA MacBERT retraining, browser integration, production state writes or full-chain latency acceptance is claimed.
+- Publish audit: `scripts/hybrid/check_release.py` rejects model extensions, LFS pointers, files over 2 MiB, possible credentials and Windows-incompatible paths. Historical existing text evidence below this bound remains in the D baseline.
+- All weights, checkpoints, caches and local environments remain outside the tracked release.

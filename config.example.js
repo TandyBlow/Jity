@@ -1,8 +1,8 @@
 const CONFIG = {
   // ===== API Keys =====
   // 使用前请替换为你自己的 API Key
-  DEEPSEEK_API_KEY: "sk-your-deepseek-api-key",
-  SILICONFLOW_API_KEY: "sk-your-siliconflow-api-key",
+  DEEPSEEK_API_KEY: "",
+  SILICONFLOW_API_KEY: "",
 
   // ===== 模型配置 =====
   LLM_MODEL: "deepseek-v4-flash",
