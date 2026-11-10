@@ -252,6 +252,20 @@ into the per-submission ledger it already exposes on `window.__worldSubmission`
 Without this, 09 cannot distinguish "no NPC acted because the model judged
 skip" from "the program skipped the scene".
 
+**e. `app/world-local/page.tsx`** — after `await session.submit(...)`, put the
+round order and positions into the submission record so 09 can verify R06 from
+`window.__worldSubmission` without parsing IndexedDB:
+
+```ts
+const transport = session.snapshot.transport;
+submission.roundOrder = transport.round?.order ?? null;
+submission.roundTrigger = transport.round?.trigger ?? null;
+submission.actedIds = transport.round?.actedIds ?? [];
+submission.positions = Object.fromEntries(
+  Object.entries(transport.state.characters).map(([id, c]) => [id, c.position.containerId]),
+);
+```
+
 ## Open trade-offs (not silently decided here)
 
 1. **Off-screen actors.** `offscreenPolicy: 'skip'` means a character outside the
