@@ -693,7 +693,13 @@ try {
           }
           return value;
         };
-        return { count: list.length, tail: trim(list.slice(-6)) };
+        return {
+          count: list.length,
+          tail: list.slice(-6).map((record) => ({
+            ...trim({ ...record, detail: undefined }),
+            detail: record?.detail ? JSON.stringify(record.detail).slice(0, 16000) : null,
+          })),
+        };
       }).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.narrationRejections = entry.console
