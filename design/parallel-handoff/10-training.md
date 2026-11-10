@@ -34,9 +34,11 @@ serializer 的逐字节输出必须保留给旧权重；新格式另立版本。
 - `experiments/narration-runtime-v2/golden/vectors.jsonl`
 - `experiments/narration-runtime-v2/golden/manifest.json`
 
-每条成功向量有 `projection` 和 `expected.bytesUtf8Hex / sha256 / segments`。浏览器 serializer
-必须比较 UTF-8 字节，失败用例在相同 `stage` 返回相同 `errorCode`。向量里没有目标正文，不要
-从 golden 找 `y`。
+每条成功向量有 `projection` 和 `expected.bytesUtf8Hex / sha256 / segments`。这里的
+`projection` 是源 X 的四字段（`视角/上回合状态/本回合变化/本回合状态`），不是 01 运行时的
+`beforeState/delta/resultState` 包装；01 要么直接调用 Python 参考，要么先做字段映射再比字节。
+浏览器 serializer 必须比较 UTF-8 字节，失败用例在相同 `stage` 返回相同 `errorCode`。向量里没有
+目标正文，不要从 golden 找 `y`。
 
 实际句式摘要：
 
