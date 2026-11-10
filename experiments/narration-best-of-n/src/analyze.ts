@@ -21,6 +21,7 @@ import {
   buildDiversityReport, profileSample, selectCandidate, textMetrics,
 } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
 import type { CandidateSample } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
+import { combinations } from './arms';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const EXP = resolve(HERE, '..');
@@ -161,6 +162,37 @@ function classify(seed: number, report: CheckerReport, text: string): {
   };
 }
 
+interface ArmTrial {
+  selectedId: string | null;
+  selectedSeed: number | null;
+  selectedFactQualified: boolean;
+  selectedPass: boolean;
+  selectedCoverage: number;
+  selectedRepetition: number;
+  selectedPriorEcho: number;
+  decision: ReturnType<typeof selectCandidate>;
+  callIds: string[];
+  callWallMs: number;
+  checkerMs: number;
+  selectionMs: number;
+}
+
+interface ArmSummary {
+  arm: 1 | 2 | 4;
+  /** Every size-N subset of the six seeds is one trial, not a seed prefix. */
+  trialCount: number;
+  trials: ArmTrial[];
+  selectedFactQualifiedRate: number;
+  selectedPassRate: number;
+  meanSelectedCoverage: number;
+  meanSelectedRepetition: number;
+  meanSelectedPriorEcho: number;
+  meanCallWallMs: number;
+  meanCheckerMs: number;
+  meanSelectionMs: number;
+  totalCalls: number;
+}
+
 interface CaseAnalysis {
   caseId: string;
   category: string;
@@ -191,21 +223,7 @@ interface CaseAnalysis {
   diversity: ReturnType<typeof buildDiversityReport>;
   diversityGate: boolean;
   assessments: Assessment[];
-  arms: Array<{
-    arm: 1 | 2 | 4;
-    selectedId: string | null;
-    selectedSeed: number | null;
-    selectedFactQualified: boolean;
-    selectedPass: boolean;
-    selectedCoverage: number;
-    selectedRepetition: number;
-    selectedPriorEcho: number;
-    decision: ReturnType<typeof selectCandidate>;
-    callIds: string[];
-    callWallMs: number;
-    checkerMs: number;
-    selectionMs: number;
-  }>;
+  arms: ArmSummary[];
   stopSignals: string[];
 }
 
@@ -399,13 +417,17 @@ async function main(): Promise<void> {
   }
 
   const armSummary = [1, 2, 4].map((arm) => {
-    const trials = cases.map((entry) => entry.arms.find((candidate) => candidate.arm === arm)).filter(Boolean) as CaseAnalysis['arms'];
+    const perCase = cases
+      .map((entry) => entry.arms.find((candidate) => candidate.arm === arm))
+      .filter((value): value is ArmSummary => Boolean(value));
+    const trials = perCase.flatMap((summary) => summary.trials);
     const count = trials.length;
-    const rate = (predicate: (value: CaseAnalysis['arms'][number]) => boolean): number =>
+    const rate = (predicate: (value: ArmTrial) => boolean): number =>
       count === 0 ? 0 : trials.filter(predicate).length / count;
     return {
       arm,
-      trials: count,
+      trialCount: count,
+      trials,
       selectedFactQualifiedRate: rate((trial) => trial.selectedFactQualified),
       selectedPassRate: rate((trial) => trial.selectedPass),
       meanSelectedCoverage: count === 0 ? 0 : trials.reduce((sum, trial) => sum + trial.selectedCoverage, 0) / count,
@@ -451,7 +473,10 @@ async function main(): Promise<void> {
     humanReview: { status: 'pending', reason: 'no real human reading has happened yet' },
     reviewKindOfThisFile: 'request_not_a_review',
     cases: cases.map((entry) => {
-      const selectedIds = new Set(entry.arms.map((arm) => arm.selectedId).filter((value): value is string => Boolean(value)));
+      const selectedIds = new Set(
+        entry.arms.flatMap((arm) => arm.trials.map((trial) => trial.selectedId))
+          .filter((value): value is string => Boolean(value)),
+      );
       const qualifiedUnselected = entry.samples
         .filter((sample) => sample.checker.factQualified && !selectedIds.has(sample.id))
         .sort((a, b) => a.textSha256.localeCompare(b.textSha256))[0];
@@ -510,6 +535,13 @@ async function main(): Promise<void> {
       note: 'mechanical fact/style/review screen; not a human and not an independent sign-off',
     },
     modules: moduleHashes,
+    analysisPlan: {
+      path: 'analysis-addendum-arms.md',
+      sha256: sha256(readFileSync(join(EXP, 'analysis-addendum-arms.md'))),
+      armTrials: 'all_size_n_subsets',
+      definedBeforeArmResults: true,
+      note: 'every C(6,N) subset is one trial; no seed-prefix arm',
+    },
     rawInventory,
     evidence,
     findingTotals,
@@ -532,21 +564,29 @@ async function main(): Promise<void> {
       findingCounts: findingCountsOf(entry.samples),
       arms: entry.arms.map((arm) => ({
         arm: arm.arm,
-        selectedId: arm.selectedId,
-        selectedSeed: arm.selectedSeed,
-        selectedFactQualified: arm.selectedFactQualified,
-        selectedPass: arm.selectedPass,
-        selectedCoverage: arm.selectedCoverage,
-        selectedRepetition: arm.selectedRepetition,
-        selectedPriorEcho: arm.selectedPriorEcho,
-        callIds: arm.callIds,
-        callWallMs: arm.callWallMs,
-        checkerMs: arm.checkerMs,
-        selectionMs: arm.selectionMs,
-        rejected: arm.decision.rejected,
-        ranking: arm.decision.ranking,
-        verdict: arm.decision.verdict,
-        reason: arm.decision.reason,
+        trialCount: arm.trialCount,
+        selectedFactQualifiedRate: arm.selectedFactQualifiedRate,
+        selectedPassRate: arm.selectedPassRate,
+        meanSelectedCoverage: arm.meanSelectedCoverage,
+        meanSelectedRepetition: arm.meanSelectedRepetition,
+        meanCallWallMs: arm.meanCallWallMs,
+        trials: arm.trials.map((trial) => ({
+          selectedId: trial.selectedId,
+          selectedSeed: trial.selectedSeed,
+          selectedFactQualified: trial.selectedFactQualified,
+          selectedPass: trial.selectedPass,
+          selectedCoverage: trial.selectedCoverage,
+          selectedRepetition: trial.selectedRepetition,
+          selectedPriorEcho: trial.selectedPriorEcho,
+          callIds: trial.callIds,
+          callWallMs: trial.callWallMs,
+          checkerMs: trial.checkerMs,
+          selectionMs: trial.selectionMs,
+          rejected: trial.decision.rejected,
+          ranking: trial.decision.ranking,
+          verdict: trial.decision.verdict,
+          reason: trial.decision.reason,
+        })),
       })),
       stopSignals: entry.stopSignals,
     })),
@@ -604,47 +644,76 @@ function findingCountsOf(samples: CaseAnalysis['samples']): Record<string, numbe
   return counts;
 }
 
+function summarizeArm(arm: 1 | 2 | 4, trials: ArmTrial[]): ArmSummary {
+  const count = trials.length;
+  const mean = (pick: (trial: ArmTrial) => number): number =>
+    count === 0 ? 0 : trials.reduce((sum, trial) => sum + pick(trial), 0) / count;
+  const rate = (predicate: (trial: ArmTrial) => boolean): number =>
+    count === 0 ? 0 : trials.filter(predicate).length / count;
+  return {
+    arm,
+    trialCount: count,
+    trials,
+    selectedFactQualifiedRate: rate((trial) => trial.selectedFactQualified),
+    selectedPassRate: rate((trial) => trial.selectedPass),
+    meanSelectedCoverage: mean((trial) => trial.selectedCoverage),
+    meanSelectedRepetition: mean((trial) => trial.selectedRepetition),
+    meanSelectedPriorEcho: mean((trial) => trial.selectedPriorEcho),
+    meanCallWallMs: mean((trial) => trial.callWallMs),
+    meanCheckerMs: mean((trial) => trial.checkerMs),
+    meanSelectionMs: mean((trial) => trial.selectionMs),
+    totalCalls: count * arm,
+  };
+}
+
 function computeArms(
   samples: CaseAnalysis['samples'],
   assessments: Assessment[],
   expectedRow: ExpectedRow,
-): CaseAnalysis['arms'] {
-  const arms: CaseAnalysis['arms'] = [];
+): ArmSummary[] {
+  const arms: ArmSummary[] = [];
+  // Every size-N subset is one trial. Using only the first N seeds would make
+  // N=1 always seed 17 and N=4 always the same four seeds, so a benefit could
+  // be seed order rather than the extra candidates.
   for (const arm of [1, 2, 4] as const) {
-    const windowSamples = samples.slice(0, arm);
-    const selectionStarted = nowMs();
-    const decision = selectCandidate({
-      candidates: windowSamples.map((sample) => ({ id: sample.id, seed: sample.seed, text: sample.text, status: sample.status as CandidateSample['status'] })),
-      assessments,
-      options: {
-        priorText: expectedRow.priorTexts.join('\n') || null,
-        licensedEntities: expectedRow.licensedEntities,
-      },
+    const trials: ArmTrial[] = combinations(samples, arm).map((subset) => {
+      const selectionStarted = nowMs();
+      const decision = selectCandidate({
+        candidates: subset.map((sample) => ({
+          id: sample.id, seed: sample.seed, text: sample.text,
+          status: sample.status as CandidateSample['status'],
+        })),
+        assessments,
+        options: {
+          priorText: expectedRow.priorTexts.join('\n') || null,
+          licensedEntities: expectedRow.licensedEntities,
+        },
+      });
+      const selectionMs = nowMs() - selectionStarted;
+      const selected = subset.find((sample) => sample.id === decision.selectedId) ?? null;
+      const selectedRank = decision.ranking.find((entry) => entry.id === decision.selectedId);
+      return {
+        selectedId: decision.selectedId,
+        selectedSeed: selected?.seed ?? null,
+        selectedFactQualified: Boolean(selected?.checker.factQualified),
+        selectedPass: selected?.checker.decision === 'pass',
+        selectedCoverage: !selectedRank
+          ? 0
+          : selectedRank.mandatoryTotal === 0
+            ? 1
+            : selectedRank.mandatoryCovered / selectedRank.mandatoryTotal,
+        selectedRepetition: selectedRank
+          ? selectedRank.metrics.repeatedSentenceRatio + selectedRank.metrics.repeatedClauseRatio + selectedRank.metrics.emptySentenceRatio
+          : 1,
+        selectedPriorEcho: selectedRank?.metrics.priorEcho ?? 0,
+        decision,
+        callIds: subset.map((sample) => sample.id),
+        callWallMs: subset.reduce((sum, sample) => sum + (sample.timings?.totalMs ?? 0), 0),
+        checkerMs: subset.reduce((sum, sample) => sum + sample.checker.elapsedMs, 0),
+        selectionMs,
+      };
     });
-    const selectionMs = nowMs() - selectionStarted;
-    const selected = samples.find((sample) => sample.id === decision.selectedId) ?? null;
-    const selectedRank = decision.ranking.find((entry) => entry.id === decision.selectedId);
-    arms.push({
-      arm,
-      selectedId: decision.selectedId,
-      selectedSeed: selected?.seed ?? null,
-      selectedFactQualified: Boolean(selected?.checker.factQualified),
-      selectedPass: selected?.checker.decision === 'pass',
-      selectedCoverage: !selectedRank
-        ? 0
-        : selectedRank.mandatoryTotal === 0
-          ? 1
-          : selectedRank.mandatoryCovered / selectedRank.mandatoryTotal,
-      selectedRepetition: selectedRank
-        ? selectedRank.metrics.repeatedSentenceRatio + selectedRank.metrics.repeatedClauseRatio + selectedRank.metrics.emptySentenceRatio
-        : 1,
-      selectedPriorEcho: selectedRank?.metrics.priorEcho ?? 0,
-      decision,
-      callIds: windowSamples.map((sample) => sample.id),
-      callWallMs: windowSamples.reduce((sum, sample) => sum + (sample.timings?.totalMs ?? 0), 0),
-      checkerMs: windowSamples.reduce((sum, sample) => sum + sample.checker.elapsedMs, 0),
-      selectionMs,
-    });
+    arms.push(summarizeArm(arm, trials));
   }
   return arms;
 }
@@ -705,10 +774,12 @@ function renderMarkdown(report: Record<string, unknown>, cases: CaseAnalysis[]):
   lines.push('| arm | trials | 选中事实合格率 | 选中可读合格率 | 平均覆盖 | 平均重复 | 平均调用墙钟 ms |');
   lines.push('|---|---|---|---|---|---|---|');
   for (const arm of report.armSummary as Array<Record<string, number>>) {
-    lines.push(`| N=${arm.arm} | ${arm.trials} | ${(arm.selectedFactQualifiedRate * 100).toFixed(0)}% | `
+    lines.push(`| N=${arm.arm} | ${arm.trialCount} | ${(arm.selectedFactQualifiedRate * 100).toFixed(0)}% | `
       + `${(arm.selectedPassRate * 100).toFixed(0)}% | ${arm.meanSelectedCoverage.toFixed(2)} | `
       + `${arm.meanSelectedRepetition.toFixed(2)} | ${Math.round(arm.meanCallWallMs)} |`);
   }
+  lines.push('');
+  lines.push('每个 N arm 评估全部 C(6,N) 子集，不用种子前缀；补充定义见 `analysis-addendum-arms.md`。');
   lines.push('');
   lines.push('## 停止/收益');
   lines.push('');

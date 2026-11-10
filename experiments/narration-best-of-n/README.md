@@ -53,6 +53,7 @@ The package is public development regression material, never a final holdout.
 | `preregistration.sha256` | hash of the exact preregistration bytes |
 | `preregistration.v2.json` / `.sha256` | v2 template-test preregistration, frozen before any v2 output |
 | `cause-analysis-b01.md` | b01 evidence, hypotheses and next step |
+| `analysis-addendum-arms.md` / `.sha256` | all-subset N-arm definition, frozen before any arm result |
 | `configs/b01.json` | first batch: one long dialogue case, 6 seeds |
 | `configs/b01-template-v2.json` | same batch with the fixed writing instruction only |
 | `configs/b02-generalization.json` | same-condition coverage batch (blocked on b01 analysis) |
@@ -61,6 +62,7 @@ The package is public development regression material, never a final holdout.
 | `src/generate_hpc.py` | dumb HPC runner: prompt in, raw text + timings + env out |
 | `src/analyze.ts` | 01 checker + diversity + arm comparison + evidence report |
 | `src/compare-b01-v2.ts` | side-by-side v1/v2 report; never pools the two prompts |
+| `src/arms.ts` / `src/arms.test.ts` | all size-N subsets; C(6,1)=6, C(6,2)=15, C(6,4)=15 |
 | `data/<batch>/` | generated request/expected files (committed) |
 | `results/<batch>/` | raw outputs, env, report (committed) |
 
