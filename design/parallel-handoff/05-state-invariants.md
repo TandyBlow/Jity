@@ -102,9 +102,9 @@ acceptance.
    repro shows `dangling_updates_refs:[{stage:appearance,entity:corridor,
    kind:change,id:change_7}]` because `schedule.ts::inputIds` registers item and
    character appearance ids but not `state.locations[*].appearanceChanges`.
-   Patch: `results/product/evidence/05-kernel/patches/06-schedule-location-appearance.patch`.
-   05 did not edit `schedule.ts`; 06 confirms, then 04 promotes its
-   `it.fails` test.
+   06's current `schedule.ts` already contains the location block; 04's current
+   tree still needs `04-schedule-location-appearance.patch`, then 04 promotes
+   its `it.fails` test (with the first-turn assertion caveat below).
 
 7. **Same-tick page double-submit can still duplicate the visible input.**
    The page's guard is the asynchronous React `busy` state; two submit calls in
@@ -121,6 +121,10 @@ acceptance.
    policy stop is explicit, not a fabricated handback. 09 must still verify the
    real page's continuation behaviour.
 
+8. 09's F1 (`/world-local` lacked COOP/COEP) is fixed in 06's current tree:
+   `next.config.ts` sends the headers for `/world-local` and
+   `/world-local/:path*`; the old 05 patch is under `patches/merged/`.
+
 ## Merge bundle
 
 `results/product/evidence/05-kernel/patches/06-merge-state-invariants.patch`
@@ -131,7 +135,8 @@ the page snapshot hook.
 
 ## Patches for 06 (not applied by 05)
 
-Both patches are checked with `git apply --check` in a read-only 06 worktree:
+The active patches are checked with `git apply --check` in a read-only 06
+worktree:
 
 - `results/product/evidence/05-kernel/patches/06-transport-invariants.patch`
   - imports `verifyWorldRecord`, `RecordInvariantError`,
