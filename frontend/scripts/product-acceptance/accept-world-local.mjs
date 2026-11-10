@@ -99,9 +99,10 @@ const evidence = {
     edgeVersion: null,
     launchArgs: null,
     coopCoepShim: has('--header-shim'),
+    saveServiceBlocked: has('--block-api'),
     candidateInjection: false,
     storageReset: fresh,
-    note: 'headers are added to the document response only because the page does not send them; recorded as a harness condition',
+    note: '--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence',
   },
   environment: { userAgent: null, crossOriginIsolated: null, adapter: null, ggmlConsole: [] },
   modelRequests: [],
@@ -167,6 +168,12 @@ try {
     }
   });
 
+  if (has('--block-api')) {
+    // "Server only stores progress": with that service down the game must keep
+    // playing locally. Every API call is refused and the run is labelled.
+    await page.route('**/api/**', (route) => route.abort('failed'));
+  }
+
   if (has('--header-shim')) {
     await page.route('**/world-local*', async (route) => {
       const response = await route.fetch();
@@ -223,6 +230,15 @@ try {
   const readyText = evidence.readyText ?? '';
   evidence.restored = /已恢复本地存档/.test(readyText);
   if (/加载失败|Error/.test(readyText)) noteFailure('ready', 'page reported a load error', readyText.slice(0, 400));
+  const modelGets = evidence.modelRequests.filter((request) => /\/models\/.*\.gguf/.test(request.url));
+  evidence.models = {
+    requests: modelGets.length,
+    ok: modelGets.filter((request) => request.status === 200).length,
+    failed: modelGets.filter((request) => request.status !== 200).map((request) => ({ url: request.url, status: request.status })),
+  };
+  if (modelGets.length === 0) noteFailure('models', 'the page requested no model file: it cannot have loaded a local model');
+  const failedModels = evidence.models.failed;
+  if (failedModels.length) noteFailure('models', `model request(s) failed: ${failedModels.map((entry) => `${entry.status} ${entry.url}`).join(', ')}`);
   save();
 
   const entryCount = () => page.evaluate(() => document.querySelectorAll('article').length);
@@ -374,6 +390,20 @@ try {
       entry.message = afterInfo.message;
       entry.timings.doneMs = Date.now() - timer.submittedAtMs;
       entry.after = await snapshot();
+      // The page already exposes its narration debug object; the driver only
+      // reads it. Absence is recorded, never filled in by the harness.
+      entry.narrationDebug = await page.evaluate(() => {
+        const debug = globalThis.__worldDebug;
+        if (!debug || typeof debug !== 'object') return null;
+        return {
+          violations: Array.isArray(debug.violations) ? debug.violations.slice(0, 20) : null,
+          attempts: Array.isArray(debug.attempts) ? debug.attempts.map((attempt) => (Array.isArray(attempt) ? attempt.length : attempt)) : null,
+          rawChars: typeof debug.raw === 'string' ? debug.raw.length : null,
+          cleanedChars: typeof debug.cleaned === 'string' ? debug.cleaned.length : null,
+          prunedChars: typeof debug.pruned === 'string' ? debug.pruned.length : null,
+          supportedChars: typeof debug.supported === 'string' ? debug.supported.length : null,
+        };
+      }).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.shownChars = (entry.text ?? '').length;
       if (!entry.text) entry.problems.push('empty_text');
