@@ -334,3 +334,16 @@ ids (e.g. `task_doctor_flag` does not exist) and 04 rejected them; it stopped
 after `waitMs=323418`, committed no point, and wrote no prose. This is a
 model-output reference failure in the time-scan task call, not a state-kernel
 failure; the first call is evidence that the full-cast skeleton can work.
+
+
+## Latest 1701 run (2026-11-11T01:12Z)
+
+09 archived the 1646 run (`09-one-legal-turn-1646-81d5507a.json`) and kept the
+1701 run. 1701 at product `a5ca28d7`/page `4d05a899`: full-cast task stage
+passed 14/14/73 on the first updates call; the automatic time_scan then hit
+fabricated `task_<character>_flag` ids and stopped, or the second phase produced
+a 49-char draft (`wrong_person,low_support`) while `historyDelta=0`; no point was
+committed. Reload then failed to become ready in 240 s and showed a blank page.
+No `__worldSnapshot` exists, so 05 cannot replay 1701; atomicity (no point, state
+unchanged) is all that can be asserted. The 1646 archive is the evidence for the
+first full-cast task pass.
