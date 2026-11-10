@@ -239,7 +239,8 @@ try {
   }
 
   // WebGPU identity is read from the page itself, before any model load.
-  await page.goto(`${base}/world-local`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  const query = flag('--query', '');
+  await page.goto(`${base}/world-local${query ? `?${query.replace(/^\?/, '')}` : ''}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
   evidence.environment.crossOriginIsolated = await page.evaluate(() => globalThis.crossOriginIsolated === true);
   evidence.environment.adapter = await page.evaluate(async () => {
     try {
@@ -344,6 +345,7 @@ try {
     } : null;
   }).catch(() => null);
   evidence.jsHeapAtReady = await heap();
+  evidence.arm = await page.evaluate(() => globalThis.__worldArm ?? null).catch(() => null);
   evidence.readyText = (await page.evaluate(() => document.body.innerText)).slice(0, 600);
   const readyText = evidence.readyText ?? '';
   evidence.restored = /已恢复本地存档/.test(readyText);
