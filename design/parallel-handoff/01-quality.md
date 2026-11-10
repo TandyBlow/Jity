@@ -147,3 +147,5 @@
 **02 复跑 `quiet-minute-4`（2026-11-11）**：147 字、accepted、24.0 s、首字 8.2 s，在 02 `28f30c7e` 上。01 检查器判 1 条硬事实：`诺诺一步步走近`（无结算 move，`fact.event_added`）；`钟声` 判 review（远处地标氛围，不是事实），`泥土味` review，`用发圈束住红发` review（静态外貌演成动作）。同一输入的三次复跑：-2 时间缺失+脚步声、-3 红发垂落、-4 诺诺走近；各剩 1 条。已发 `results/quality/answers-01-to-02-quiet-minute.md`。06 当前 build 只合到 `beb09bb4`，还没 vendor `1c826929`/`28f30c7e`。
 
 **6bd3 中止的可能原因（2026-11-11）**：09 driver 没有 lease 接管逻辑；页面 `page.tsx:1096-1099` 有「在这个标签页接管」，`takeOverLease()` 会 `store.takeoverLease` 后 reload。6bd3 两次都在开场后、玩家回合前停住，疑似旧 lease 未接管。已写入 `results/product/browser-requests/01-input-to-09-f15d-next-run.json` 的 `leasePointer`；09 应先点接管再提交。
+
+**1562 run（19:38）失败原因不是叙事质量（2026-11-11）**：`09-one-legal-turn-1562.json`（runId 1938-1fdc）开场 narration 899 ms 就 `fallback=true`，页面报 `model shard 1/1 fetch failed (/models/Qwen3-0.6B-Q4_K_M.gguf)`，语义模型没加载 → 结算没完成 → 玩家回合 `submit_refused`，无正文。arm 本身正确（qwen3-1.7b b139949c）。模型文件在 `public/models` 里存在（396 MB），所以这是**静态服务/加载时**问题，不是模型缺失或正文问题。同文件还有 `1562-preflight-invalid`（旧的 build marker 检查），也不是产品回合。06 已冻结 `21c34d67`（page sha 3b33fccb, build wvno…, pid 11316, 19:39），下一次 run 应在这个 build 上；在这之前 1562/6bd3 都不能当产品证据。
