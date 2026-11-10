@@ -40,11 +40,19 @@ export function summarizeTurn(turn) {
       })).filter((entry) => TASKS.has(entry.task))
     : (turn.console ?? []).map(parseTaskLine).filter((entry) => entry && TASKS.has(entry.task));
   const round = turn.roundOrder ?? turn.submission?.roundOrder ?? turn.product?.roundOrder ?? null;
+  // The page logs one [world-local task] action line per frozen slot, in the
+  // order the controller visits them (offscreen skips are synchronous but still
+  // awaited). Until the page records round.order, this sequence is the
+  // observable order: a sanity order is not lexicographic.
+  const observedOrder = [...new Set(tasks.filter((entry) => entry.task === 'action').map((entry) => entry.key))];
+  const isAlphabetical = observedOrder.length > 2 && observedOrder.join(',') === [...observedOrder].sort().join(',');
   const texts = tasks.map((entry) => entry.raw ?? '').join('\n');
   return {
     turn: turn.turn ?? null,
     input: turn.input ?? null,
     roundOrder: round,
+    observedOrder,
+    observedOrderLooksAlphabetical: isAlphabetical,
     roundTrigger: turn.roundTrigger ?? turn.product?.roundTrigger ?? null,
     tasks,
     // source=program is a program decision even when fallback=false; only a
@@ -125,6 +133,7 @@ if (process.argv.includes('--self-test')) {
     modelAnswers: 6,
     fallbacks: 1,
     orderRecorded: true,
+    observedOrder: ['nono', 'fingel'],
   };
   const actual = {
     turns: report.totals.turns,
@@ -132,6 +141,7 @@ if (process.argv.includes('--self-test')) {
     modelAnswers: report.totals.modelAnswers,
     fallbacks: report.totals.fallbacks,
     orderRecorded: report.orderRecorded,
+    observedOrder: report.turns[0].observedOrder,
   };
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
     console.error('self-test failed', { actual, expected });
