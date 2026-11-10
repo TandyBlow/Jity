@@ -12,7 +12,7 @@
 //
 // The patch edits only `game-model.ts` and adds the selection module; the page
 // needs no change. Prerequisites: lane 02's beats commit (211fd463 / 92c2d95e)
-// and lane 04's constrained candidate (05aa9562) must be in the target tree,
+// and lane 04's constrained candidate (11e7433b) must be in the target tree,
 // because the adapters import their modules.
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -242,7 +242,7 @@ const header = [
   '# Inputs (sha256) — regenerate when the live files change:',
   `#   ${GAME_MODEL}  ${sha256(live.bytes)}`,
   '# Prerequisites: lane 02 beats commits 211fd463 / 92c2d95e and lane 04',
-  '# constrained candidate 05aa9562. New module files are additions from lane 06.',
+  '# constrained candidate 11e7433b. New module files are additions from lane 06.',
   '#',
   '# Default `auto` selects the constrained program candidate (C): fact-grounded,',
   '# instant, and labelled by the page as a downgrade. To evaluate the committed-',
@@ -284,7 +284,7 @@ const entry = {
   pageChanges: [],
   prerequisites: [
     'lane 02 commits 211fd463 + 92c2d95e (narration-generation beats, short-scene acceptance) must be present',
-    'lane 04 commit 05aa9562 (constrained candidate, facts-only scene hints) must be present',
+    'lane 04 commit 11e7433b (constrained candidate, facts-only scene hints) must be present',
     'no page.tsx change: selection stays internal and the page keeps its callbacks',
   ],
   applyCheck: check,

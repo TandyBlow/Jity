@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-10T07:57:04.391Z",
+  "updatedAt": "2026-11-10T08:06:00.073Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-ff1574dd9ccb-d3b548032b52.patch",
-      "patchSha256": "d3b548032b523620f8598ac1bf1c91fe08d07222294498306d6b60af86b7cafc",
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-b8c2122b2a0a.patch",
+      "patchSha256": "b8c2122b2a0a986c48ed709fe42746880e465bdecb87e0fddfd2ead0af8d0bc7",
       "patchBytes": 48366,
-      "generatedAt": "2026-11-10T07:57:04.388Z",
+      "generatedAt": "2026-11-10T08:06:00.069Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
@@ -53,7 +53,7 @@
       "pageChanges": [],
       "prerequisites": [
         "lane 02 commits 211fd463 + 92c2d95e (narration-generation beats, short-scene acceptance) must be present",
-        "lane 04 commit 05aa9562 (constrained candidate, facts-only scene hints) must be present",
+        "lane 04 commit 11e7433b (constrained candidate, facts-only scene hints) must be present",
         "no page.tsx change: selection stays internal and the page keeps its callbacks"
       ],
       "applyCheck": {
@@ -159,6 +159,18 @@
         }
       ],
       "retiredAt": "2026-11-10T07:57:04.391Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-d3b548032b52.patch",
+      "patchSha256": "d3b548032b523620f8598ac1bf1c91fe08d07222294498306d6b60af86b7cafc",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:06:00.073Z",
       "reason": "superseded"
     }
   ]
