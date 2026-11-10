@@ -972,8 +972,12 @@ function buildTasksPrompt(ctx: StageContext): string {
   const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
   const now = ctx.state.time.dateTime;
   const required = [...new Set(allTasks(ctx.state).map((row) => row.ownerId))].sort();
-  const sample = required[0];
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
+  // A 0.6B copies the example verbatim; a one-row example made it answer for a
+  // single character. The skeleton names every required character, so copying
+  // it still produces full coverage.
+  const skeleton = required.map((id) => `{"characterId":"${id}","achieved":[]}`).join(',');
+  const exampleId = required[0] ?? '人物id';
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
@@ -988,7 +992,7 @@ function buildTasksPrompt(ctx: StageContext): string {
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
-    `输出 {"decisions":[{"characterId":"${sample ?? '人物id'}","achieved":[]}]}。`,
+    `输出 {"decisions":[${skeleton}]}（每个人物一条，achieved 只填本轮新达成的任务 id；没有就保留空数组）。示例 id 用 ${exampleId}。`,
   ].join('\n');
 }
 
@@ -1110,6 +1114,10 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     const row = index.get(taskId);
     return row ? `- ${row.ownerId}：${row.task.id} ${row.task.goal}` : `- ${taskId}`;
   });
+  const skeleton = roster(ctx.state).map((id) => {
+    const records = activeRecords(ctx.state, 'personality', id).filter((record) => record.active).map((record) => `"${record.id}"`).join(',');
+    return `{"entityId":"${id}","op":"keep","recordIds":[${records}],"text":null}`;
+  }).join(',');
   return [
     '你是中文跑团游戏中的人物个性变化判断器。只输出 JSON，不要解释。',
     '本轮有新任务达成。请扫描所有人物（包括不在场人物），判断他们的个性是否因这些达成或当前处境发生变化。',
@@ -1125,11 +1133,12 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"operations":[{"entityId":"${roster(ctx.state)[0] ?? '人物id'}","op":"keep|add|remove|replace","recordIds":[],"text":null}]}；entityId 用真实 id 或人物全名。`,
+    `输出 {"operations":[${skeleton}]}（每个人物一条；默认 keep 并带上该人物全部有效记录 id；只有本轮真的变化才改 op/text；entityId 用真实 id 或人物全名）。`,
   ].filter(Boolean).join('\n');
 }
 
 function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
+  const skeleton = owners.map((id) => `{"characterId":"${id}","value":${ctx.state.characters[id]?.sanity ?? 50}}`).join(',');
   return [
     '你是中文跑团游戏中的人物理智重算器。只输出 JSON，不要解释。',
     '下面这些人物在本轮发生了有效个性变化。请根据他们变化后的当前个性，重新给出 0-100 的整数理智值。',
@@ -1139,7 +1148,7 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     `本组结算结果：${resultText(ctx.results) || '（无）'}`,
     ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"sanity":[{"characterId":"${owners[0]}","value":整数}]}；characterId 用真实 id 或人物全名。`,
+    `输出 {"sanity":[${skeleton}]}（只为上面每个人物各一条，value 为 0-100 整数；characterId 用真实 id 或人物全名）。`,
   ].join('\n');
 }
 
