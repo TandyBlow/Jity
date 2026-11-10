@@ -1,0 +1,42 @@
+# 01-input verification 2026-11-10T03:27:56Z
+
+## node/tsc
+v22.20.0
+tsc: pass
+
+## eslint
+eslint: pass
+
+## vitest
+
+ RUN  v5.0.1 D:/others/Jity/.local/parallel-local-game/worktrees/01-input/frontend
+
+
+ Test Files  6 passed (6)
+      Tests  46 passed (46)
+   Start at  11:28:04
+   Duration  2.22s (import 46%, tests 26%, transform 26%, worker 2%)
+
+    Isolate  6 workers spawned · ~143ms startup each (spawn + environment, per file)
+             at least ~714ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+## vitest verbose (live dataset block)
+
+ RUN  v5.0.1 D:/others/Jity/.local/parallel-local-game/worktrees/01-input/frontend
+
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > reproduces the frozen Python bytes for all representative rows 24ms
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > has a manifest for every source row 0ms
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > squashes only the old time-advance space and keeps the rest lossless 0ms
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > live narration dataset bytes > matches every stored xProse and the manifest hashes 66ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:28:19
+   Duration  899ms (import 53%, transform 32%, tests 15%, worker 1%)
+
+
+## legacy golden rebuild (Python oracle)
+D:\others\Jity\.local\parallel-local-game\worktrees\01-input\frontend\src\lib\world-engine\local\narration-input\goldens\legacy-rows-v1.json: 90048 bytes
+D:\others\Jity\.local\parallel-local-game\worktrees\01-input\frontend\src\lib\world-engine\local\narration-input\goldens\legacy-rows-v1-manifest.json: 28736 bytes
+rows=199 golden=30 commit=1ab6ca791f97529a7bffed1f4837bf81a28badcb
