@@ -115,3 +115,5 @@
 **17:37 回合（0b69aaa8）**：`results/quality/findings-09-1737-turn.md`。updates 133.6 s（position 11.7 / appearance 27.8 / tasks 40.5 / subtasks 18.9 / personality 34.6）；narration 56.9 s 被拒；**程序兜底自己被拒**（`fact_time_wrong×2 + too_long`）；玩家看到的 568 字草稿后半段是 14 个角色逐条"完成了「任务目标」"——来源是 `game-model.ts` 的 `factualNarration` 遍历全部 `entityDeltas`，没有按视角/在场过滤。action nono 三连 `action_is_task_goal` 修复失败。已写进给 04/06 的请求（追加七）。
 
 **10 回合暂不接受（2026-11-11）**：17:37 回合（0b69aaa8）超时 330 s、无合格正文，但重载后 `committedEntries=1`、`headPointId=point_round_3_1`、historyCount 0→1、任务列表少了一条——结算点被提交、正文没有。08 的复核请求成立。已发 `results/product/browser-requests/01-input-ten-turn-hold.json`：10 回合验收在 06 证明每轮提交载荷（pointId/digest/实体变化/history 条目/textSource/acceptedMs 或"无正文"标记/回滚状态）之前不予接受。
+
+**06 provenance / 篇幅契约（2026-11-11）**：`results/quality/review-06-20261111-provenance.md`。c02f527a 的 draft/program 标注与 17:37 证据一致；但 02 的 `7f8e102f` 无变化回合提示 84～120 字，06 接受门槛仍是 140 字（`game-model.ts:416/511`），prose-facts 路径下无变化回合必被拒。需要 06 把门槛写进 policy、02 从 policy 派生，不能两边硬编码。04/03 的修复只能由真实回合验证。
