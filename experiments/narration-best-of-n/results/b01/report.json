@@ -1,6 +1,6 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T15:21:41.909Z",
+  "createdAt": "2026-11-10T15:38:24.305Z",
   "batches": [
     "b01"
   ],
@@ -76,7 +76,7 @@
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
     "select": "b2e2dba44c76d3ac80daced0869a77c1aa6f241ef91ac5c46cd0c706f1c7fa5c",
-    "analyzer": "97c2f7ce25bad7abe4b939aac62b2564c8613187070dfff0de4d6a3e48b57bfb"
+    "analyzer": "fd45a6475f8b65cd8bfc0515145b0dd5447dd4e7c0f2becd9b1a0147285fede9"
   },
   "analysisPlan": {
     "path": "analysis-addendum-arms.md",
@@ -281,6 +281,11 @@
             "reviewIssueKinds": [
               "review.micro_action"
             ],
+            "viewpointGuard": {
+              "flagged": false,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": []
+            },
             "counts": {
               "fact": 2,
               "style": 0,
@@ -341,7 +346,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 9.69240000000002
+            "elapsedMs": 8.13519999999994
           },
           "metrics": {
             "chars": 52,
@@ -383,6 +388,11 @@
             "reviewIssueKinds": [
               "review.micro_action"
             ],
+            "viewpointGuard": {
+              "flagged": false,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": []
+            },
             "counts": {
               "fact": 2,
               "style": 0,
@@ -443,7 +453,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.7770000000000437
+            "elapsedMs": 0.7206999999999653
           },
           "metrics": {
             "chars": 20,
@@ -486,6 +496,11 @@
               "review.micro_action",
               "review.tone"
             ],
+            "viewpointGuard": {
+              "flagged": false,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": []
+            },
             "counts": {
               "fact": 2,
               "style": 0,
@@ -553,7 +568,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.4362999999999602
+            "elapsedMs": 1.070799999999963
           },
           "metrics": {
             "chars": 62,
@@ -598,6 +613,11 @@
               "review.pronoun",
               "review.micro_action"
             ],
+            "viewpointGuard": {
+              "flagged": false,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": []
+            },
             "counts": {
               "fact": 2,
               "style": 0,
@@ -668,7 +688,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.1254000000000133
+            "elapsedMs": 0.8727999999999838
           },
           "metrics": {
             "chars": 94,
@@ -710,6 +730,11 @@
             "reviewIssueKinds": [
               "review.micro_action"
             ],
+            "viewpointGuard": {
+              "flagged": false,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": []
+            },
             "counts": {
               "fact": 2,
               "style": 0,
@@ -770,7 +795,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.4451999999999998
+            "elapsedMs": 0.39390000000003056
           },
           "metrics": {
             "chars": 50,
@@ -801,9 +826,11 @@
           "checker": {
             "decision": "fail",
             "factQualified": false,
-            "perspectiveQualified": true,
+            "perspectiveQualified": false,
             "qualifiedForSelection": false,
-            "perspectiveIssueKinds": [],
+            "perspectiveIssueKinds": [
+              "lane12.first_person_narration"
+            ],
             "factIssueKinds": [
               "fact.time_missing",
               "fact.move_omitted",
@@ -813,6 +840,13 @@
             "reviewIssueKinds": [
               "review.micro_action"
             ],
+            "viewpointGuard": {
+              "flagged": true,
+              "viewpoint": "主角视角（温执）；只表达已结算的世界事实",
+              "sentences": [
+                "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。"
+              ]
+            },
             "counts": {
               "fact": 3,
               "style": 0,
@@ -885,7 +919,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.1913000000000693
+            "elapsedMs": 0.22519999999997253
           },
           "metrics": {
             "chars": 22,

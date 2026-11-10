@@ -22,6 +22,7 @@ import {
 } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
 import type { CandidateSample } from '../../../frontend/src/lib/world-engine/local/narration-candidates/best-of-n';
 import { combinations } from './arms';
+import { firstPersonNarration } from './viewpoint';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const EXP = resolve(HERE, '..');
@@ -244,6 +245,7 @@ interface CaseAnalysis {
       perspectiveQualified: boolean;
       qualifiedForSelection: boolean;
       perspectiveIssueKinds: string[];
+      viewpointGuard: ReturnType<typeof firstPersonNarration>;
       counts: Record<string, number>;
       mandatoryCovered: number;
       mandatoryTotal: number;
@@ -361,6 +363,12 @@ async function main(): Promise<void> {
           throw new Error(`checker count mismatch ${caseId}:s${seed}`);
         }
         const classified = classify(seed, report, row.text);
+        const viewpointGuard = firstPersonNarration(expectedRow.input, row.text);
+        const perspectiveIssueKinds = [...new Set([
+          ...classified.perspectiveIssueKinds,
+          ...(viewpointGuard.flagged ? ['lane12.first_person_narration'] : []),
+        ])];
+        const perspectiveQualified = perspectiveIssueKinds.length === 0;
         const mandatoryCovered = report.mandatory.filter((entry) => entry.expressed).length;
         samples.push({
           id: `${caseId}:s${seed}`,
@@ -373,6 +381,10 @@ async function main(): Promise<void> {
           timings: row.timings ?? null,
           checker: {
             ...classified,
+            perspectiveQualified,
+            qualifiedForSelection: classified.factQualified && perspectiveQualified,
+            perspectiveIssueKinds,
+            viewpointGuard,
             counts: report.counts,
             mandatoryCovered,
             mandatoryTotal: report.mandatory.length,

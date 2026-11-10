@@ -68,6 +68,7 @@ The package is public development regression material, never a final holdout.
 | `src/ingest_result.py` | copy one fetched HPC result into `results/<batch>`, verify record hashes and call count; no network |
 | `src/arms.ts` / `src/arms.test.ts` | all size-N subsets; C(6,1)=6, C(6,2)=15, C(6,4)=15 |
 | `src/check-current.ts` | N=1 diagnostic: re-judge the six frozen b01 texts with 01's current checker; no model/N, does not replace the pinned report |
+| `src/viewpoint.ts` / `.test.ts` | narrow N=1 guard: first-person narration outside quotes when the settled viewpoint is a named third person |
 | `data/<batch>/` | generated request/expected files (committed) |
 | `results/<batch>/` | raw outputs, env, report (committed) |
 
