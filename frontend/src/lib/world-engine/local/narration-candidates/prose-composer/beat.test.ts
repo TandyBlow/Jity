@@ -91,6 +91,18 @@ describe('04 beat adapter', () => {
     expect(next.text.length).toBeGreaterThan(0);
   });
 
+  it('never emits the retired house-stamp closer over many beats', () => {
+    const seen = new Set<string>();
+    for (let index = 0; index < 24; index += 1) {
+      const beat = request('close', [], ['芬格尔']);
+      beat.beat.id = `close-${index}`;
+      beat.beat.seed = index;
+      seen.add(composeConstrainedBeat(beat).text);
+    }
+    expect([...seen].some((text) => text.includes('没有马上再动'))).toBe(false);
+    expect(seen.size).toBeGreaterThan(1);
+  });
+
   it('maps a future action or dialogue fact when lane 04 supplies one', () => {
     const scene = request('event', ['a1', 'l1']);
     scene.scene.facts.push(

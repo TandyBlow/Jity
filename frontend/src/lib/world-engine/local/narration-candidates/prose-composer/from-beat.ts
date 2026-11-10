@@ -405,7 +405,7 @@ function sceneBeats(request: ComposeBeatRequestLike, scene: ProseScene, facts: B
     .find((personName) => personName && personName !== name);
   const prior = text(request.prior) || '';
   const variants = [
-    `${name}没有马上再动。`,
+    `${name}没有再挪步。`,
     `${name}把视线收回来。`,
     `${name}在原地站了一会儿。`,
     `${name}没有再往前。`,
