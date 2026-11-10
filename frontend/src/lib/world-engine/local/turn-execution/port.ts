@@ -46,6 +46,8 @@ export interface PortCallRecord {
   /** Calls the model actually made, including validation retries. */
   calls: number;
   evidenceCalls: number;
+  /** Updates stages in the order this task ran them (merged or split). */
+  stages?: string[];
 }
 
 export interface PortSubmission {
@@ -109,6 +111,10 @@ export function createSettlementModelPort(
       calls: outcome.evidence.calls.length,
       evidenceCalls: outcome.evidence.calls.filter((call) => !call.error).length,
     };
+    const detail = outcome.evidence.detail as { stages?: { stage?: string }[] } | null;
+    if (Array.isArray(detail?.stages)) {
+      record.stages = detail.stages.map((row) => String(row.stage));
+    }
     calls.push(record);
     if (submission) {
       submission.calls.push(record);

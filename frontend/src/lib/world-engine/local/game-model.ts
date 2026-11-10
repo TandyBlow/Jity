@@ -95,9 +95,6 @@ export class LocalGameModel implements WorldModelPort {
     this.settlement = createSettlementModelPort(semanticEngine, {
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
-      maxPromptChars: 11_000,
-      sceneScope: true,
-      mergedStages: true,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

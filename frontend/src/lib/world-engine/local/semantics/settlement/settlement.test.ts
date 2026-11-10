@@ -26,7 +26,7 @@ class ScriptedEngine implements InferenceEngine {
   async dispose(): Promise<void> {}
 }
 
-function world(options: { a1Achieved?: boolean } = {}): WorldState {
+function world(options: { a1Achieved?: boolean; farOnly?: boolean } = {}): WorldState {
   const initial: InitialState = {
     engineVersion: 'world-engine-v1',
     schemaVersion: 1,
@@ -51,7 +51,7 @@ function world(options: { a1Achieved?: boolean } = {}): WorldState {
         },
       },
       b: {
-        id: 'b', name: '乙', initialPosition: { containerId: 'room' },
+        id: 'b', name: '乙', initialPosition: { containerId: options.farOnly ? 'far' : 'room' },
         initialAppearance: '站在门边。', initialPersonality: '直率。', initialSanity: 55,
         tasks: { b1: { id: 'b1', ownerId: 'b', parentTaskId: null, goal: '协助甲', status: 'pending' } },
       },
@@ -100,9 +100,11 @@ function continuationInput(roundChanges: Json[], roundId = 'r1', headPointId = '
   } as unknown as Json;
 }
 
-const continueProposal = (text = '甲继续向前走。') => JSON.stringify({ candidates: [{ characterId: 'a', text }] });
-const continueJudgment = (text = '甲继续向前走。') => JSON.stringify({
-  judgments: [{ characterId: 'a', text, likely: true, related: true, reason: '主角自己的下一步。' }],
+// Automatic rounds may only carry a same-scene character other than the
+// protagonist: the player owns the protagonist's next action.
+const continueProposal = (text = '乙继续向前走。') => JSON.stringify({ candidates: [{ characterId: 'b', text }] });
+const continueJudgment = (text = '乙继续向前走。') => JSON.stringify({
+  judgments: [{ characterId: 'b', text, likely: true, related: true, reason: '与主角眼前这件事直接相关。' }],
 });
 
 describe('common-group results', () => {
@@ -344,7 +346,7 @@ describe('continuation', () => {
     const outcome = await handlers.continuation('r1', continuationInput(progress()));
     expect(outcome.value).toEqual({
       kind: 'continue', closedBy: 'model', cancelReason: null,
-      candidateCharacterIds: ['a'], nextRoundId: expect.any(String),
+      candidateCharacterIds: ['b'], nextRoundId: expect.any(String),
     });
     expect((outcome.value as { nextRoundId: string }).nextRoundId).not.toBe('r1');
     expect((outcome.evidence.detail as { decision: string }).decision).toBe('continue');
@@ -371,9 +373,9 @@ describe('continuation', () => {
 
   it('does not use a default call cap: three progressing chains all continue', async () => {
     const engine = new ScriptedEngine([
-      continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
-      continueProposal('甲推开门。'), continueJudgment('甲推开门。'),
-      continueProposal('甲走进门里。'), continueJudgment('甲走进门里。'),
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
+      continueProposal('乙推开门。'), continueJudgment('乙推开门。'),
+      continueProposal('乙走进门里。'), continueJudgment('乙走进门里。'),
     ]);
     const handlers = createSettlementHandlers({ engine });
     const outcomes = [];
@@ -387,8 +389,8 @@ describe('continuation', () => {
 
   it('stops a no-progress chain as a policy stop, never as a model handback', async () => {
     const engine = new ScriptedEngine([
-      continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
-      continueProposal('甲停下来听。'), continueJudgment('甲停下来听。'),
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
+      continueProposal('乙停下来听。'), continueJudgment('乙停下来听。'),
     ]);
     const handlers = createSettlementHandlers({ engine });
     const first = await handlers.continuation('r1', continuationInput([]));
@@ -406,9 +408,9 @@ describe('continuation', () => {
 
   it('hands back when the same candidate repeats after two progressing rounds', async () => {
     const engine = new ScriptedEngine([
-      continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
-      continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
-      continueProposal('甲继续向前走。'), continueJudgment('甲继续向前走。'),
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
+      continueProposal('乙继续向前走。'), continueJudgment('乙继续向前走。'),
     ]);
     const handlers = createSettlementHandlers({ engine });
     const first = await handlers.continuation('r1', continuationInput(progress(59)));
@@ -433,6 +435,31 @@ describe('continuation', () => {
     expect(detail.policy.reason).toBe('safety_cap');
     // The model still ran: the cap is a program stop, not a skipped judgement.
     expect(engine.prompts).toHaveLength(2);
+  });
+
+  it('drops a protagonist candidate: the player owns the protagonist action', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ candidates: [{ characterId: 'a', text: '甲自己继续向前走。' }] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.continuation('r1', continuationInput(progress()));
+    expect(outcome.value).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    const detail = outcome.evidence.detail as { reason: string; rejectedCandidates: { reason: string }[] };
+    expect(detail.reason).toBe('no_eligible_candidate');
+    expect(detail.rejectedCandidates[0].reason).toBe('protagonist_action_belongs_to_player');
+    // The judgment call is not spent on an ineligible candidate.
+    expect(engine.prompts).toHaveLength(1);
+    expect(engine.prompts[0]).toContain('主角自己的下一步由玩家决定');
+  });
+
+  it('drops a candidate who is outside the protagonist scene', async () => {
+    const packet = continuationInput(progress());
+    (packet as unknown as { workingState: ReturnType<typeof world> }).workingState = world({ farOnly: true });
+    const engine = new ScriptedEngine([JSON.stringify({ candidates: [{ characterId: 'b', text: '乙在远处继续向前走。' }] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.continuation('r1', packet);
+    expect(outcome.value).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    const detail = outcome.evidence.detail as { reason: string; rejectedCandidates: { reason: string }[] };
+    expect(detail.reason).toBe('no_eligible_candidate');
+    expect(detail.rejectedCandidates[0].reason).toBe('character_outside_protagonist_scene');
   });
 
   it('surfaces a model failure as no candidate, never as a handback', async () => {

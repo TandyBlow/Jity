@@ -267,53 +267,35 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
   if (!Array.isArray(answer.facts) || answer.facts.length === 0) throw new Error('facts must be a non-empty array');
   const memberById = new Map(members.map((member) => [member.memberId, member]));
   const seen = new Set<Id>();
-  const tolerated: string[] = [];
   for (const rawJudgment of answer.judgments) {
     if (!isRecord(rawJudgment)) throw new Error('judgment must be an object');
     const memberId = asString(rawJudgment.memberId);
-    const member = memberById.get(memberId)
-      // A 0.6B model sometimes echoes a display name or a mangled id. A row
-      // that cannot be attributed is dropped; it never invalidates the whole
-      // joint settlement, which would cost the round a readable result.
-      ?? members.find((candidate) => {
-        const display = state.initial.characters[candidate.memberId]?.name;
-        const offered = typeof rawJudgment.name === 'string' ? rawJudgment.name : asString(rawJudgment.memberId);
-        return Boolean(display && offered && (offered === display || offered.includes(display) || display.includes(offered)));
-      });
-    if (!member) { tolerated.push(`unknown_member:${memberId || '?'}`); continue; }
-    const resolvedId = member.memberId;
-    if (seen.has(resolvedId)) { tolerated.push(`duplicate_member:${resolvedId}`); continue; }
-    seen.add(resolvedId);
+    const member = memberById.get(memberId);
+    if (!member) throw new Error(`judgment for unknown member ${memberId || '?'}`);
+    if (seen.has(memberId)) throw new Error(`duplicate judgment for ${memberId}`);
+    seen.add(memberId);
     const label = asString(rawJudgment.label);
-    if (!LABELS.has(label)) throw new Error(`invalid label for ${resolvedId}: ${label}`);
-    if (typeof rawJudgment.reason !== 'string') throw new Error(`missing reason for ${resolvedId}`);
-    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${resolvedId}`);
+    if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
+    if (typeof rawJudgment.reason !== 'string') throw new Error(`missing reason for ${memberId}`);
+    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${memberId}`);
     const expected = new Map(member.rolls.map((roll) => [roll.targetId, roll.admitted]));
     const effectIds = new Set<Id>();
     for (const rawEffect of rawJudgment.effects) {
-      if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${resolvedId}`);
+      if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${memberId}`);
       const targetId = asString(rawEffect.targetId);
-      // A small model sometimes lists an item or a bystander as an "effect"
-      // target. Those are not roll targets, so they cannot gate a reaction:
-      // drop the line instead of throwing away the whole joint settlement.
-      if (!expected.has(targetId)) continue;
+      if (!expected.has(targetId)) throw new Error(`effect for undeclared target ${targetId || '?'}`);
       if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
       effectIds.add(targetId);
       if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
       if (rawEffect.reacted !== expected.get(targetId)) {
-        throw new Error(`reacted=${rawEffect.reacted} contradicts admitted=${expected.get(targetId)} for ${resolvedId}->${targetId}`);
+        throw new Error(`reacted=${rawEffect.reacted} contradicts admitted=${expected.get(targetId)} for ${memberId}->${targetId}`);
       }
     }
     for (const targetId of expected.keys()) {
-      // An un-admitted roll needs no reaction; a missing line already means
-      // "no reaction" and cannot contradict the dice.
-      if (expected.get(targetId) === true && !effectIds.has(targetId)) {
-        throw new Error(`missing effect for admitted target ${resolvedId}->${targetId}`);
-      }
+      if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
     }
   }
-  // A member without a judgment keeps the protagonist's stated result as its
-  // own text; the group settlement still stands.
+  for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);
   const factRecipients = new Set<Id>();
   const knownNumbers = knownDigitRuns(state, members);
   for (const rawFact of answer.facts) {
@@ -327,12 +309,11 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
     if (!recipientIds.length) throw new Error('fact must name at least one member');
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
     for (const recipient of recipientIds) {
-      if (!memberById.has(recipient)) { tolerated.push(`fact_unknown_member:${recipient}`); continue; }
+      if (!memberById.has(recipient)) throw new Error(`fact names unknown member ${recipient}`);
       factRecipients.add(recipient);
     }
   }
-  for (const member of members) if (!factRecipients.has(member.memberId)) tolerated.push(`no_fact_for:${member.memberId}`);
-  if (tolerated.length) (answer as { tolerated?: string[] }).tolerated = tolerated;
+  for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
 }
 
 function normalizeResults(answer: ResultsAnswer, members: GroupMember[]): Record<Id, string> {

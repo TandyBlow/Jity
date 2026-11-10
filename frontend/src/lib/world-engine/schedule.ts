@@ -1037,6 +1037,12 @@ function inputIds(memory: ControllerMemory): { taskIds: Set<Id>; changeIds: Set<
     for (const item of Object.values(state.items)) {
       for (const change of item.appearanceChanges) { changeIds.add(change.id); for (const id of change.supersedes) changeIds.add(id); }
     }
+    // Room appearance changes are settled like any other appearance change;
+    // omitting locations here made the stage guard call their ids dangling and
+    // stopped the round on the second room change.
+    for (const location of Object.values(state.locations)) {
+      for (const change of location.appearanceChanges) { changeIds.add(change.id); for (const id of change.supersedes) changeIds.add(id); }
+    }
     for (const character of Object.values(state.characters)) {
       for (const task of Object.keys(character.tasks)) taskIds.add(task);
       for (const change of character.appearanceChanges) { changeIds.add(change.id); for (const id of change.supersedes) changeIds.add(id); }
