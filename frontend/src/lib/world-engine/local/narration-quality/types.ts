@@ -32,6 +32,7 @@ export type FindingKind =
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'
   | 'fact.wrong_place'
+  | 'fact.time_added'
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
   | 'fact.sound_added'
@@ -61,6 +62,7 @@ export type FindingKind =
   | 'style.truncated'
   | 'style.premature_closure'
   | 'style.meta'
+  | 'style.placeholder'
   // Undecidable.
   | 'review.unbound'
   | 'review.pronoun'

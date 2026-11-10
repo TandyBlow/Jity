@@ -389,6 +389,13 @@ export function reviewNarration(args: {
   const timeExpressed = timeMinutes !== null && forms.includes(timeMinutes);
 
   // ---------------------------------------------------------------- time
+  if (timeMinutes === null) {
+    const passage = /(?:(?:一|两|二|三|四|五|六|七|八|九|十|几|半)[^，。；]{0,3}(?:分钟|小时|秒)(?:过去|之后|后|里|以后)|(?:过了|又过了|过去)[^，。；]{0,6}(?:分钟|小时|秒))/u.exec(text);
+    if (passage) {
+      findings.push(finding(ctx, 'fact.time_added', sentences[0]?.text ?? text,
+        `time passes in the prose (${passage[0]}) but the point settles no time advance`, []));
+    }
+  }
   if (timeMinutes !== null) {
     if (!timeExpressed) {
       findings.push(finding(ctx, 'fact.time_missing', sentences[0]?.text ?? text,
@@ -937,6 +944,13 @@ export function reviewNarration(args: {
       for (const [personName, person] of Object.entries(projection.people)) {
         const settledPlace = person.positionAfter ?? person.positionBefore;
         if (!settledPlace) continue;
+        const direction = /(?:在|站在|走到|来到|到了)(东|西|南|北)侧/u.exec(narration);
+        if (direction && /^[东西南北中]/u.test(settledPlace) && settledPlace[0] !== direction[1]
+          && actorOf(direction.index, direction[0].length) === personName) {
+          findings.push(finding(ctx, 'fact.wrong_place', sentence.text,
+            `${personName} is settled at ${settledPlace}; the prose puts them on the ${direction[1]} side`, [settledPlace], []));
+          continue;
+        }
         for (const place of placeNames) {
           if (place === settledPlace) continue;
           const claim = new RegExp(`(在|站在|坐在|蹲在|靠在|留在|待在|回到|来到|走进|走回|进了)${place}`, 'u').exec(narration);
@@ -1098,9 +1112,14 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'style.roster_recital', sentence.text,
         `recites ${new Set(people).size} people in one place statement`, []));
     }
-    if (/这一回合|本回合|回合结算|系统|状态已|按已结算/u.test(sentence.text)) {
+    if (/这一回合|本回合|回合结算|本组结算|结算未能确认|未能确认新的结果|系统|状态已|按已结算|程序成文|降级成文/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.meta', sentence.text, 'meta/game-system wording inside prose', []));
     }
+  }
+  const bare = text.replace(/[\s。．，,、；;：:！!？?…·.．"“”‘’]/gu, '');
+  if (charCount > 0 && bare.length === 0) {
+    findings.push(finding(ctx, 'style.placeholder', sentences[0]?.text ?? text,
+      'the text carries no words: only punctuation or an ellipsis was shown', []));
   }
   const last = sentences.at(-1)?.text.trim() ?? '';
   if (charCount >= 40 && !TERMINAL_PUNCTUATION.test(last)) {

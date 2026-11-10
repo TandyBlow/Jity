@@ -672,3 +672,42 @@ anchors += [
                    "notes": "An empty hand handles a gun twice; a corridor footstep has no move fact."},
     },
 ]
+
+anchors += [
+    {
+        "id": "neg/10turn-program-fallback",
+        "source": "results/product/evidence/09-product-10turn.json turn 1, source=program, the settlement failed and no time advance was committed",
+        "input": arms_scene,
+        "text": "一分钟过去，路明非还在西侧服务巷。\n\n西侧服务巷里，巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n路明非：本组结算未能确认新的结果。\n\n路明非在原地站了一会儿。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.time_added"], "style": ["style.meta"],
+                   "notes": "A minute passes with no settled advance, and the settlement failure line is shown as prose. The standing micro-action must stay unflagged."},
+    },
+    {
+        "id": "neg/10turn-ellipsis",
+        "source": "results/product/evidence/09-product-10turn.json turn 2, shown text is a single ellipsis after a timeout",
+        "input": arms_scene,
+        "text": "…",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": ["style.placeholder"],
+                   "notes": "No words were shown; this is a placeholder, not a scene."},
+    },
+    {
+        "id": "pos/allowed-micro-action",
+        "source": "allowed polish: a posture change that alters no settled state",
+        "input": arms_scene,
+        "text": "路明非在原地站了一会儿。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Standing still changes no settled state; it must not be rejected as a new event."},
+    },
+    {
+        "id": "pos/allowed-dialogue",
+        "source": "allowed polish: short dialogue with no settled content",
+        "input": arms_scene,
+        "text": "「走吧。」诺诺说。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Dialogue wording is allowed; only invented content needs reading."},
+    },
+]
