@@ -75,6 +75,8 @@ export interface CommittedAdapterPolicy {
   state?: WorldStateLike | null;
   timeAdvance?: CommittedLike['timeAdvance'];
   delta?: { timeAdvance?: CommittedLike['timeAdvance'] } | null;
+  /** Session transcript, when the caller has it. */
+  avoidText?: string | null;
 }
 
 export interface AdaptedScene {
@@ -180,6 +182,7 @@ function sceneTexture(
   mentioned: { ids: Set<string>; names: Set<string> } = { ids: new Set(), names: new Set() },
   arrivedHere = false,
   quietTurn = false,
+  avoid = '',
 ): ProseBeat[] {
   const beats: ProseBeat[] = [];
   const seed = scene.seed ?? 0;
@@ -190,13 +193,14 @@ function sceneTexture(
   // standing there is the state-list tone; only a turn that arrives somewhere
   // new earns a look around.
   if (scene.priorText && !arrivedHere) {
-    // A turn with nothing but the clock moving may hold one settled object:
-    // that is the quiet scene, and it is still a true fact, not filler.
-    return itemsTexture(scene, changedItems, quietTurn);
+    // A turn with nothing but the clock moving may hold one settled object the
+    // reader has not seen: a true fact, not a repeat and not filler.
+    return itemsTexture(scene, changedItems, quietTurn, avoid);
   }
   const people = scene.cast
     .filter((actor) => actor.id !== scene.protagonistId
-      && !mentioned.ids.has(actor.id) && !mentioned.names.has(actor.name))
+      && !mentioned.ids.has(actor.id) && !mentioned.names.has(actor.name)
+      && !(avoid && avoid.includes(actor.name)))
     .map((actor) => ({ name: actor.name, detail: clause(actor.appearance?.[0], 28) }))
     .filter((person) => person.detail)
     .slice(0, 3);
@@ -214,16 +218,22 @@ function sceneTexture(
     const rest = people.slice(1).map((person) => `${person.name}，${person.detail}`).join('；');
     beats.push({ kind: 'scene', detail: `${lead}；${rest}。` });
   }
-  return [...beats, ...itemsTexture(scene, changedItems)];
+  return [...beats, ...itemsTexture(scene, changedItems, quietTurn, avoid)];
 }
 
 /** Objects: a quiet turn may mention ONE settled object; a continuation only an
  * object this turn actually changed. Two "still there" lines in a row are the
  * inventory tone again. */
-function itemsTexture(scene: ProseScene, changedItems: Set<string>, quietTurn = true): ProseBeat[] {
+function itemsTexture(
+  scene: ProseScene,
+  changedItems: Set<string>,
+  quietTurn = true,
+  avoid = '',
+): ProseBeat[] {
   const beats: ProseBeat[] = [];
   const changed = (scene.items ?? []).filter((item) => changedItems.has(item.id));
-  const unchanged = (scene.items ?? []).filter((item) => !changedItems.has(item.id));
+  const unseen = (item: { name: string }) => !avoid || !avoid.includes(item.name);
+  const unchanged = (scene.items ?? []).filter((item) => !changedItems.has(item.id) && unseen(item));
   const chosen = changed.length
     ? changed.slice(0, scene.priorText ? 1 : 2)
     : (scene.priorText ? (quietTurn ? unchanged.slice(0, 1) : []) : unchanged.slice(0, 1));
@@ -328,9 +338,13 @@ export function sceneFromCommitted(
     const arrivedHere = beats.some((beat) => beat.kind === 'move'
       && beat.actorId === enriched.scene.protagonistId && beat.to === enriched.scene.location.name);
     const quietTurn = beats.every((beat) => beat.kind === 'time' || beat.kind === 'scene');
+    const avoid = [policy.priorText ?? '', policy.avoidText ?? ''].filter(Boolean).join(' ');
     enriched.scene.beats = [
       ...beats,
-      ...sceneTexture(enriched.scene, changedItems, mentionedByBeats(beats, enriched.scene), arrivedHere, quietTurn),
+      ...sceneTexture(
+        enriched.scene, changedItems, mentionedByBeats(beats, enriched.scene),
+        arrivedHere, quietTurn, avoid,
+      ),
     ];
     return enriched;
   }
@@ -469,9 +483,10 @@ export function sceneFromGrounding(
   const arrivedHere = beats.some((beat) => beat.kind === 'move'
     && beat.actorId === protagonistId && beat.to === scene.location.name);
   const quietTurn = beats.every((beat) => beat.kind === 'time' || beat.kind === 'scene');
+  const avoid = [policy.priorText ?? '', policy.avoidText ?? ''].filter(Boolean).join(' ');
   scene.beats = [
     ...beats,
-    ...sceneTexture(scene, changedItems, mentionedByBeats(beats, scene), arrivedHere, quietTurn),
+    ...sceneTexture(scene, changedItems, mentionedByBeats(beats, scene), arrivedHere, quietTurn, avoid),
   ];
   return { scene, sparse: false };
 }

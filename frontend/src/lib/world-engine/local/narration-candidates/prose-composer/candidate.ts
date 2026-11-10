@@ -32,6 +32,9 @@ export interface CandidatePolicy {
   seed?: number;
   /** When only committed facts exist, identify the viewpoint. */
   viewpoint?: { id?: string; name: string } | null;
+  /** Everything the player has already read this session, when the caller has
+   * it. Static scene texture found here is not restated. */
+  avoidText?: string | null;
   [key: string]: unknown;
 }
 
@@ -167,6 +170,7 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
       ? sceneFromGrounding(provided as SceneGroundingLike, args.committed, {
         viewpoint: policy.viewpoint ?? null,
         priorText: args.priorText ?? null,
+        avoidText: policy.avoidText ?? null,
         seed: policy.seed,
         minChars: policy.minChars,
         state: args.state ?? args.committed.state ?? null,
@@ -176,6 +180,7 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
       : sceneFromCommitted(args.committed, {
       viewpoint: policy.viewpoint ?? null,
       priorText: args.priorText ?? null,
+      avoidText: policy.avoidText ?? null,
       seed: policy.seed,
       minChars: policy.minChars,
       state: args.state ?? args.committed.state ?? null,
@@ -230,6 +235,9 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
   }
 
   if (args.priorText && !scene.priorText) scene = { ...scene, priorText: args.priorText };
+  if (policy.avoidText && !scene.policy?.avoidText) {
+    scene = { ...scene, policy: { ...(scene.policy ?? {}), avoidText: policy.avoidText } };
+  }
   if (policy.minChars !== undefined) {
     scene = { ...scene, policy: { ...(scene.policy ?? {}), minChars: policy.minChars } };
   }

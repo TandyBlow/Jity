@@ -106,6 +106,9 @@ export interface ProsePolicy {
   /** Render only the supplied beats; no scene anchor, post-pass or paragraph
    * merging. Used by lane 04's per-beat composer contract. */
   beatOnly?: boolean;
+  /** Everything the player has already read this session. Static scene
+   * texture found here is never restated. */
+  avoidText?: string | null;
 }
 
 export interface ProseScene {
@@ -122,6 +125,10 @@ export interface ProseScene {
   /** Previous accepted prose. Used only to avoid repeating its openings and
    * sentences; facts already told there should not be supplied as beats. */
   priorText?: string | null;
+  /** Everything the player has already read this session, when the caller has
+   * it (06 keeps the transcript). Static scene texture that appears here is
+   * never restated; without it the composer only knows the previous turn. */
+  avoidText?: string | null;
   /** Short human labels for facts already told, to avoid restating them. */
   toldFacts?: string[];
   policy?: ProsePolicy;

@@ -288,14 +288,34 @@ export function composeProse(scene: ProseScene): ComposedProse {
   const templates = new TemplateBag(rng);
   const license = buildLicense(scene);
   const beatOnly = policy.beatOnly === true;
-  const anchorPool = beatOnly ? [] : chooseAnchor(scene, scene.priorText ?? null);
+  // Static texture already read this session must not come back. `priorText` is
+  // one turn; `avoidText` is the session transcript when the caller has it.
+  const seenText = [scene.priorText, policy.avoidText ?? scene.avoidText]
+    .filter((part): part is string => Boolean(part))
+    .join(String.fromCharCode(10));
+  if (typeof process !== 'undefined' && process.env?.PROSE_DEBUG_BEATS) {
+    console.error('DEBUG scene beats', JSON.stringify(scene.beats.map((b) => ({ k: b.kind, id: (b as { itemId?: string }).itemId, d: (b as { detail?: string }).detail }))));
+  }
+  const anchorScene: ProseScene = { ...scene, priorText: seenText || scene.priorText || null };
+  const anchorPool = beatOnly ? [] : chooseAnchor(anchorScene, seenText || null);
   const protagonistAppearance = actorOf(scene, scene.protagonistId)?.appearance ?? [];
   const appearanceOnly = anchorPool[0] !== undefined
     && protagonistAppearance.some((detail) => anchorClause(detail) === anchorPool[0]);
-  const anchor = !beatOnly && scene.priorText && appearanceOnly
+  let anchor = !beatOnly && scene.priorText && appearanceOnly
     && (scene.beats ?? []).some((beat) => beat.kind === 'line' || beat.kind === 'action')
     ? null
     : anchorPool[0] ?? null;
+  if (anchor) {
+    // An item beat prints its own detail; using the same detail as the anchor
+    // would say it twice in one turn.
+    const itemText = (beat: { detail?: string; note?: string; factText?: string }) =>
+      [beat.detail, beat.note, beat.factText].filter(Boolean).join(' ');
+    const itemBeatOwnsIt = (scene.beats ?? []).some((beat) => beat.kind === 'item'
+      && itemText(beat as { detail?: string; note?: string; factText?: string }).includes(anchor as string));
+    // Anything the reader already has may not come back as the opening.
+    const seenAlready = Boolean(seenText) && echoOfPrior(anchor, seenText) > 0.6;
+    if (itemBeatOwnsIt || seenAlready) anchor = null;
+  }
   // The anchor is a truncated clause, so match the beat by its clause too;
   // otherwise the same sentence is printed once as the opening and again as
   // its own paragraph.
@@ -358,9 +378,9 @@ export function composeProse(scene: ProseScene): ComposedProse {
     switch (beat.kind) {
       case 'scene': {
         const text = ensurePeriod(beat.factText ?? beat.detail);
-        // Scene texture is optional colour. If the previous turn already used
-        // this exact line, drop it instead of repeating the turn.
-        if (scene.priorText && echoOfPrior(text, scene.priorText) > 0.72) break;
+        // Scene texture is optional colour. If the reader has already had this
+        // exact line, drop it instead of stamping it again.
+        if (seenText && echoOfPrior(text, seenText) > 0.72) break;
         pushBeat(text, beat);
         break;
       }
@@ -444,6 +464,10 @@ export function composeProse(scene: ProseScene): ComposedProse {
         } else if (beat.change === 'removed' && !detail) sentence = `${item.name}已经不是先前那样。`;
         else if (detail) sentence = ensurePeriod(detail);
         else sentence = `${item.name}动过了。`;
+        // An unchanged object is static texture. Once the reader has had that
+        // sentence, repeating it every quiet turn is a house stamp.
+        const staticItem = beat.change === undefined && !beat.factText && !beat.discovered;
+        if (staticItem && seenText && echoOfPrior(sentence, seenText) > 0.72) break;
         pushBeat(sentence, beat);
         // A "look at the thing" line after the thing was just described reads
         // as filler, and repeating it every turn is the kind of house stamp
@@ -626,7 +650,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
           const amount = numberToChinese(beat.amount);
           const unit = unitName(beat.unit ?? 'minute');
           const forms = [`过了${amount}${unit}。`, `${amount}${unit}过去。`, `${amount}${unit}之后。`];
-          exact = forms[hash32(`${scene.seed ?? 0}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
+          exact = forms[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
         }
         pushBeat(exact ?? '过了一会儿。', beat);
         break;
@@ -737,7 +761,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
   issues.push(...factIssues);
   const quiet = (scene.beats ?? []).every((beat) => beat.kind === 'noChange' || beat.kind === 'time'
     || beat.kind === 'stay' || beat.kind === 'silence');
-  const minChars = clampInt(policy.minChars ?? 60, quiet ? 16 : 24, 4000);
+  const minChars = clampInt(policy.minChars ?? 60, quiet ? 8 : 12, 4000);
   if (!beatOnly && charCount(text) < minChars) {
     issues.push({ kind: 'too_short', severity: 'hard', detail: `${charCount(text)} < ${minChars}` });
   }
