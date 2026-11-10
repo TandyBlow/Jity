@@ -133,6 +133,28 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('drops a completion claim from a result fact and keeps the action result', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲确认了状态。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙留在房间。', effects: [] },
+      ],
+      facts: [
+        { text: '甲确认故障短讯机与乙的联络状态，且未被阻止或阻碍，行动成功完成。', memberIds: ['a'] },
+        { text: '乙留在房间里。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toBe('甲确认故障短讯机与乙的联络状态，且未被阻止或阻碍。');
+    expect(outcome.value!.a).not.toContain('行动成功完成');
+    const detail = outcome.evidence.detail as { sanitizedFacts: { memberIds: string[]; original: string; text: string; removed: string[] }[] };
+    expect(detail.sanitizedFacts).toHaveLength(1);
+    expect(detail.sanitizedFacts[0]?.memberIds).toEqual(['a']);
+    expect(detail.sanitizedFacts[0]?.removed).toContain('行动成功完成');
+    expect(detail.sanitizedFacts[0]?.text).not.toContain('行动成功完成');
+  });
+
   it('rejects a denied roll narrated as a reaction and retries with feedback', async () => {
     const state = world();
     const input = {

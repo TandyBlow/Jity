@@ -174,6 +174,82 @@ describe('21c3 trace replay (CPU)', () => {
     expect(projection.unaffectedAppearance.map((row) => row.id)).not.toContain('red_band_nono');
   });
 
+  it('sanitizes the b7cd result fact so a pending task cannot read as finished', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'achieved', reason: '诺诺确认了联络状态。', effects: [] }],
+      facts: [{ text: '诺诺确认了故障短讯机与凯撒的联络状态是否正常，且未被阻止或阻碍，行动成功完成。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺确认故障短讯机状态。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.nono).toBe('诺诺确认了故障短讯机与凯撒的联络状态是否正常，且未被阻止或阻碍。');
+    expect(outcome.value!.nono).not.toContain('行动成功完成');
+    const detail = outcome.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
+    expect(detail.sanitizedFacts[0]?.removed).toContain('行动成功完成');
+  });
+
+  it('sanitizes the 21c3 fact that said 任务完成 while every task row was pending', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'achieved', reason: '诺诺检查了故障短讯机状态。', effects: [] }],
+      facts: [{ text: '诺诺确认任务完成并检查故障短讯机状态，成功执行行动。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺检查故障短讯机。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value!.nono).toBe('诺诺确认并检查故障短讯机状态。');
+    for (const task of Object.values(state.characters.nono.tasks)) expect(task.status).toBe('pending');
+  });
+
+  it('drops the b7cd auto1 position answer that only echoed lu lane', async () => {
+    const { state } = loadWorld();
+    const afterFirst = projectStage(state, 'position', {
+      lu: { positionSet: { containerId: 'lane', slotId: null, relativeTo: null } },
+    });
+    const raw = JSON.stringify({ changes: [{ entityId: 'lu', containerId: 'lane', slotId: null, relativeTo: null }] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.updates('g1#position', {
+      groupId: 'g1', mode: 'group', stage: 'position',
+      results: { lu: readSignFact }, workingState: afterFirst,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as { changes: Record<string, unknown> }).changes).toEqual({});
+    const detail = outcome.evidence.detail as { stageDetail: { droppedNoopEntityIds?: string[] } };
+    expect(detail.stageDetail.droppedNoopEntityIds).toEqual(['lu']);
+  });
+
+  it('stops the b7cd identical nono candidate after the first accepted auto round', async () => {
+    const { state } = loadWorld();
+    const text = '让红方的旗台行动有可执行的掩护，而不把路明非当诱';
+    const proposal = JSON.stringify({ candidates: [{ characterId: 'nono', text }] });
+    const judgment = JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: text }] });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([proposal, judgment, proposal, judgment]) });
+    const roundChanges = (pointId: string): Json[] => [{
+      pointId,
+      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+      entityDeltas: { lu: { positionSet: { containerId: 'lane', slotId: null, relativeTo: null } } },
+    }];
+    const input = (roundId: string, pointId: string) => ({
+      round: { roundId, trigger: 'automatic', conclusion: null },
+      head: { pointId },
+      workingState: state,
+      roundChanges: roundChanges(pointId),
+    }) as unknown as Json;
+    const first = await handlers.continuation('round_3', input('round_3', 'p1'));
+    expect((first.value as { kind: string }).kind).toBe('continue');
+    const second = await handlers.continuation('round_auto_1', input('round_auto_1', 'p2'));
+    expect(second.value).toBeNull();
+    expect(second.error).toBe('continuation_policy_repeated_candidate');
+  });
+
   it('keeps the 21c3 all-pending task answer as no task change', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({ unchanged: ['fingel', 'lu', 'nono'], achieved: [], subtasks: [] });

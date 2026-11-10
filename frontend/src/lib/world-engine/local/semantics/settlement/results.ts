@@ -43,9 +43,20 @@ interface Fact {
   memberIds: Id[];
 }
 
+interface SanitizedFact {
+  memberIds: Id[];
+  original: string;
+  text: string;
+  removed: string[];
+}
+
 interface ResultsAnswer {
   judgments: Judgment[];
   facts: Fact[];
+  /** A result fact may not assert task/success completion; the action label is
+   * the result. Removed claims stay in evidence so the fallback composer can
+   * never turn a pending task row into "行动成功完成". */
+  sanitized?: SanitizedFact[];
   /** Extra judgments for people outside the frozen group. They may describe
    * what the model saw, but they never settle a non-member; they are kept in
    * evidence and dropped from the committed result. */
@@ -128,6 +139,7 @@ export async function runResults(
       memberIds: members.map((member) => member.memberId),
       rollReceiptCount: members.reduce((sum, member) => sum + member.rolls.length, 0),
       factCount: parsedAnswer.facts.length,
+      sanitizedFacts: parsedAnswer.sanitized ?? [],
       memberFactCoverage: members.map((member) => ({
         memberId: member.memberId,
         factCount: parsedAnswer.facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
@@ -263,7 +275,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
-    '- facts 只写这次行动的直接结果，不判断任务是否完成，不写“任务要求/任务达成/奖励”这类任务结论。',
+    '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
     `本组：${groupId}`,
     '成员：',
     ...memberLines,
@@ -343,11 +355,14 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const factRecipients = new Set<Id>();
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
+  const sanitized: SanitizedFact[] = [];
   for (const rawFact of answer.facts) {
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
-    const text = asString(rawFact.text);
-    if (!text) throw new Error('fact text must be non-empty');
-    for (const number of text.match(/\d+/g) ?? []) {
+    const original = asString(rawFact.text);
+    if (!original) throw new Error('fact text must be non-empty');
+    const cleaned = sanitizeFactText(original);
+    if (!cleaned.text) throw new Error(`fact only asserted completion, no action result left: ${original}`);
+    for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
     }
     const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
@@ -360,10 +375,46 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
     for (const recipient of recipientIds) factRecipients.add(recipient);
-    facts.push({ text, memberIds: recipientIds });
+    facts.push({ text: cleaned.text, memberIds: recipientIds });
+    if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
   for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
-  return dropped.length ? { judgments, facts, dropped } : { judgments, facts };
+  return {
+    judgments, facts, dropped,
+    ...(sanitized.length ? { sanitized } : {}),
+  };
+}
+
+const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
+  { pattern: /行动成功完成/g, label: '行动成功完成' },
+  { pattern: /成功完成行动/g, label: '成功完成行动' },
+  { pattern: /成功执行行动/g, label: '成功执行行动' },
+  { pattern: /成功完成任务/g, label: '成功完成任务' },
+  { pattern: /完成了任务/g, label: '完成了任务' },
+  { pattern: /任务完成/g, label: '任务完成' },
+  { pattern: /任务达成/g, label: '任务达成' },
+  { pattern: /目标达成/g, label: '目标达成' },
+  { pattern: /成功完成/g, label: '成功完成' },
+];
+
+/** Completion/task claims are not action facts. Keep the observable result and
+ * drop only the claim, so the later composer cannot say a pending task finished. */
+function sanitizeFactText(text: string): { text: string; removed: string[] } {
+  let out = text;
+  const removed: string[] = [];
+  for (const { pattern, label } of COMPLETION_CLAIMS) {
+    const matches = out.match(pattern);
+    if (!matches) continue;
+    removed.push(...matches.map(() => label));
+    out = out.replace(pattern, '');
+  }
+  out = out
+    .replace(/，\s*(?=[，。；！？]|$)/g, '')
+    .replace(/、\s*(?=[，。；！？]|$)/g, '')
+    .replace(/；\s*(?=[，。；！？]|$)/g, '')
+    .replace(/^[，、；\s]+/, '')
+    .trim();
+  return { text: out, removed };
 }
 
 function normalizeResults(answer: ResultsAnswer, members: GroupMember[]): Record<Id, string> {
