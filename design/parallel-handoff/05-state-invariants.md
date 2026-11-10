@@ -132,6 +132,10 @@ Both patches are checked with `git apply --check` in a read-only 06 worktree:
   - calls `pointContinuityIssues(record.state, point)` before `applyPoint` in
     `handleCommitPoint` and refuses with `request_malformed`.
   - **Dependency:** merge `local/state-invariants/index.ts` first.
+- `results/product/evidence/05-kernel/patches/06-page-snapshot-hook.patch`
+  - exposes a read-only `window.__worldSnapshot()` so 09 can capture the real
+    `LocalGameSnapshot` after each turn; without it 09 can only check visible
+    summaries, not replay S0+delta.
 - `results/product/evidence/05-kernel/patches/06-state-apply-guards.patch`
   - `state.ts` fix, not just a verifier: reject a second appearance change with
     the same id and a second added task with the same id. Applied in a
