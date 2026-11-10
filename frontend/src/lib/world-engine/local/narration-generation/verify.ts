@@ -431,6 +431,24 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
+  // The declared action may settle no state row (a read, a look). Its absence
+  // is the «omitted player action» defect the product listed; there is no fact
+  // to check against, so compare the action's own wording and note it softly.
+  {
+    const action = (policy.scene?.previousAction ?? '').trim();
+    if (action.length >= 6) {
+      const grams = new Set<string>();
+      const cleaned = action.replace(/^我(?!们)/u, '').replace(/[。！？!?，,、；;：:\s]+/gu, '');
+      for (let i = 0; i + 2 <= cleaned.length; i += 1) grams.add(cleaned.slice(i, i + 2));
+      const body = text.replace(/[。！？!?，,、；;：:\s]+/gu, '');
+      let shared = 0;
+      for (const gram of grams) if (body.includes(gram)) shared += 1;
+      if (grams.size && shared === 0) {
+        issues.push(soft('unverified_sentence', attempt, 'the declared action is not written anywhere', undefined));
+      }
+    }
+  }
+
   const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < Math.round(minChars * 0.67)) {
     issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));

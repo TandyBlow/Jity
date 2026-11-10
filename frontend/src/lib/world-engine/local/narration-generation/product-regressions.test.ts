@@ -468,3 +468,31 @@ describe('product regressions: the player action the state has no row for', () =
     expect(prompt).toContain('至少写出他做了这件事');
   });
 });
+
+describe('product regressions: the declared action is missing from the prose', () => {
+  test('a passage that only describes scenery is noted', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '风从巷口吹过，黄黑绳轻轻晃动。一分钟过去，他没有动。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const notes = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(notes.some((issue) => /declared action is not written/u.test(issue.detail ?? ''))).toBe(true);
+  });
+
+  test('a passage that writes the walk and the board is not noted', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非沿着服务巷往里走，看清了墙上的演习规则牌。一分钟过去，他没有动。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const notes = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(notes.some((issue) => /declared action is not written/u.test(issue.detail ?? ''))).toBe(false);
+  });
+});
