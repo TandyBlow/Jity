@@ -216,6 +216,15 @@ above. These are the only product-tree edits this lane is asking for.
 
 with `import { roundOrder } from './action-execution/order';` at the top.
 
+**a′ (alternative placement).** The same rule can be frozen where the round is
+created instead of where the slot order is listed: `handleStartAdvance` already
+validates the full roster and writes
+`record.round = { roundId, trigger: 'player', order: [...request.order], … }`
+(line ~442). Replacing `[...request.order]` with `roundOrder(record.state)`
+there makes the player round sanity-ordered, and `session.ts`'s sorted list
+only allocates slots. Either placement is correct; the executed order must not
+stay alphabetical.
+
 **b. `local/transport.ts`** (currently line 744, inside `handleConclude`,
 `kind === 'continue'`):
 
