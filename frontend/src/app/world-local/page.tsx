@@ -54,6 +54,8 @@ interface WorldTurnRecord {
    * realizations. Never counted as fully model-written. */
   mixedMs: number | null;
   segments?: Array<{ id: string; source: string }>;
+  /** Per-point narration provenance in this turn (player point first). */
+  narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
   /** Settlement ledger for this turn (results/updates/continuation calls,
    * six-stage coverage/stageMs, policy stops). Attached when the submission
@@ -659,11 +661,20 @@ export default function WorldLocalPage() {
             narrationSourcesRef.current[progress.pointId] = { source };
             const record = turnRecordRef.current;
             if (record) {
-              record.source = source;
-              record.segments = progress.segments?.map((segment) => ({ id: segment.id, source: segment.source }));
-              if (source === 'model') record.acceptedMs = atMs;
-              else if (source === 'program') record.programMs = atMs;
-              else if (source === 'mixed') record.mixedMs = atMs;
+              // One turn can narrate several points (player point, then automatic
+              // rounds). Each gets its own provenance record; the turn-level
+              // fields keep the FIRST point's numbers, so later auto prose can
+              // neither replace the player point's accepted timing nor relabel it
+              // as draft.
+              record.narrations = record.narrations ?? [];
+              record.narrations.push({ pointId: progress.pointId, source, atMs });
+              if (record.source == null) {
+                record.source = source;
+                record.segments = progress.segments?.map((segment) => ({ id: segment.id, source: segment.source }));
+              }
+              if (source === 'model') record.acceptedMs = record.acceptedMs ?? atMs;
+              else if (source === 'program') record.programMs = record.programMs ?? atMs;
+              else if (source === 'mixed') record.mixedMs = record.mixedMs ?? atMs;
             }
             setEntries((list) => updateLast(list, (entry) => (
               source === 'model'
@@ -926,6 +937,15 @@ export default function WorldLocalPage() {
     } catch (e) {
       console.error(e);
       const raw = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+      // The failure may come from a later automatic round after the player's
+      // point committed. Refresh from the save first, so the committed view,
+      // history count and entries are what the snapshot actually holds instead
+      // of the pre-commit state the submit closure saw.
+      try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after failure failed', refreshError); }
+      setEntries((list) => {
+        const rebuilt = restoredEntries(session.snapshot);
+        return rebuilt.length > list.length ? rebuilt : list;
+      });
       // A submit can fail after its point was already committed: the player's
       // round settles and narrates, then an automatic follow-up round fails.
       // That committed prose must stay visible; wiping it and calling the whole
