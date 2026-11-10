@@ -56,6 +56,7 @@ const config = {
   system: option('--system', ''),
   inputWorktree: option('--input-worktree', 'D:/others/Jity/.local/parallel-local-game/worktrees/01-input'),
   scenarioFile: option('--scenario-file', ''),
+  scenarioFiles: option('--scenario-files', ''),
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
@@ -72,6 +73,12 @@ const config = {
   withDev: process.argv.includes('--with-dev'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+// One model load can answer several known-defect scenarios: --scenario-files
+// takes a comma-separated list and the page loops them in a single session.
+if (config.scenarioFiles) {
+  config.scenarioList = config.scenarioFiles.split(',').map((entry) => entry.trim()).filter(Boolean)
+    .map((file) => JSON.parse(readFileSync(resolve(file), 'utf8')));
+}
 if (config.scenarioFile) {
   config.scenario = JSON.parse(readFileSync(config.scenarioFile, 'utf8'));
   const scenario = config.scenario;
@@ -478,6 +485,20 @@ try {
     })();
 
     const scenarios = [];
+    if (config.scenarioList) {
+      for (const s of config.scenarioList) {
+        scenarios.push({
+          id: s.id, note: s.note ?? 'caller-supplied scenario',
+          before: null, after: null,
+          delta: { timeAdvance: s.time ?? null, entityDeltas: {} },
+          time: s.time ?? null,
+          committed: s.committed, inputText: s.inputText,
+          view: s.viewpoint?.id ?? s.policy?.viewpoint?.id,
+          policy: s.policy, scene: s.scene ?? null,
+          continuation: false,
+        });
+      }
+    }
     if (config.scenario) {
       const s = config.scenario;
       scenarios.push({

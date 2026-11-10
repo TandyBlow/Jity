@@ -380,6 +380,19 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
       const clause = sentence.split(/[，,；;]/u).find((part) => HAND.test(part)) ?? sentence;
       held = clause.slice(0, 24);
     }
+    // The same object cannot be in a hand and hanging at the waist. 09's e9a5
+    // turn wrote «她手中的短枪还挂在腰间» in one sentence.
+    const WEAR = /(挂在|系在|插在|别在|放在|贴在)(腰间|腰上|背上|肩上|墙上|桌上|地上)/u;
+    for (const sentence of sentences) {
+      const inHand = /(?:手中|手里|手上)的?([一-龥]{2,4}?)(?=[还正已就，。；、]|$)/u.exec(sentence);
+      if (!inHand) continue;
+      const wear = WEAR.exec(sentence);
+      if (!wear || wear.index < inHand.index) continue;
+      const noun = inHand[1];
+      if (sentence.lastIndexOf(noun, wear.index) < 0) continue;
+      issues.push(hard('self_contradiction', attempt,
+        `text says ${noun} is in the hand and also ${wear[1]}${wear[2]}`, sentence));
+    }
   }
 
   const minChars = policy.minChars ?? 60;
@@ -404,6 +417,27 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // undefined so a long scene is not rejected for being long.
   if (policy.beatMaxChars !== undefined && chars > policy.beatMaxChars) {
     issues.push(hard('too_long', attempt, `${chars} > ${policy.beatMaxChars} characters`));
+  }
+
+  // A verbatim sentence carried over from the previous passage is an echo even
+  // when the whole-passage bigram overlap stays under the threshold: one reused
+  // closing line in a short scene scores 0.34. The page showed the same closing
+  // beat twice across turns; this is the sentence-level form of that defect.
+  // maxPriorOverlap = 1 is the caller saying echo is allowed here (beat
+  // assembly removes duplicates itself), so the sentence rule respects it.
+  if (priorText && (policy.maxPriorOverlap ?? 0.55) < 1) {
+    const normalizeSentence = (value: string) => value.replace(/[\s，。！？!?；;、]/gu, '');
+    // Only the previous closing and opening lines are echoes: a state sentence
+    // repeated in the middle («红发用发圈束在脑后») is the same true fact, and
+    // 09's b7cd run was failed for exactly that on a later point.
+    const priorParts = priorText.split(/[。！？!?\n]+/u).map(normalizeSentence).filter((entry) => entry.length >= 8);
+    const priorSentences = new Set([priorParts[0], priorParts[priorParts.length - 1]].filter(Boolean) as string[]);
+    for (const sentence of sentences) {
+      const key = normalizeSentence(sentence);
+      if (key.length < 8 || !priorSentences.has(key)) continue;
+      issues.push(hard('echo_prior', attempt, 'sentence repeats the previous passage verbatim', sentence));
+      break;
+    }
   }
 
   const maxOverlap = policy.maxPriorOverlap ?? 0.55;
@@ -508,6 +542,15 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // A distant landmark is background, not an event: the page's own roster
     // carries places the scene input does not spell out, and failing a scene
     // for naming 钟楼 while standing in the alley is a false rejection.
+    // A visible object of the scene is background too: the projector put it in
+    // front of the viewpoint, so naming it cannot be a new world fact even when
+    // the serialized text does not spell out where it lies. 09's 21c3 turn was
+    // rejected for «诺诺的红色识别带», an item worn by a present character.
+    const sceneNames = (policy.scene?.objects ?? []).map((object) => object.name);
+    if (sceneNames.includes(name)) {
+      issues.push(soft('unverified_sentence', attempt, `visible object ${name} named in passing`, undefined));
+      continue;
+    }
     if ((policy.locations ?? []).includes(name)) {
       issues.push(soft('unverified_sentence', attempt, `distant place ${name} named in passing`, undefined));
       continue;

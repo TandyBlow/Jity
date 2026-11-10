@@ -92,6 +92,10 @@ export const NARRATOR_SYSTEM_PROMPT = [
   '给出的方向、地点、时长、数量要写准；同义改写可以，反转或换人不行。',
   '不要把状态逐条念出来：不写「精神值」「任务」「未完成」这些字样，也不要用一句话复述场景说明。',
   '不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。',
+  // Measured in the known-defect batch: accepted drafts added rain on the hair,
+  // fallen leaves, a paper with writing, and the viewpoint touching another
+  // character. Those are new world facts, not polish.
+  '这一回合里只做简报写过的事：不要碰触在场的人，也不要添新的小物件（纸片、落叶、雨水、灰尘之类）。',
   '结尾停在这一刻，不要总结、不要陈词滥调的收束，也不要重复上一回合最后一句。',
   ...BACKGROUND_RULES,
 ].join('\n');
@@ -162,7 +166,7 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     const how = hasMove && hasTask
       ? '先用一句把移动写清楚（谁、从哪、到哪），再用一句让人看出那件事办完了；'
       : hasMove
-        ? '先用一句把移动写清楚（谁、从哪、到哪）；'
+        ? '先用一句把移动写清楚（谁、从哪、到哪），移动的人要写出名字，不要只用「他」；'
         : '先用一句写出这件事的结果（例如「比对完了」「对上了」「查清了」），不能只写还在看、还在翻、还在想，也不要写出答案或下一件事；';
     lines.push(`【这一幕的骨架】${spine}。${how}再写这一刻的场面。`);
   } else {

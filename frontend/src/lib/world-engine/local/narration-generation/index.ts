@@ -951,7 +951,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // short can still assert an invented sound, and the evidence must say so.
     if (result.attempt.cleaned) {
       const markIssues = appearanceViolations(result.attempt.cleaned, input.inputText);
-      const invented = markIssues.length ? [] : senseViolations(result.attempt.cleaned, input.inputText, {
+      const invented = senseViolations(result.attempt.cleaned, input.inputText, {
         staticNames: staticNamesOf(input.policy),
         movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
       });

@@ -1,0 +1,233 @@
+/** Public development regressions taken from real product runs.
+ *
+ * Each case is a sentence or a passage that the product actually produced or
+ * accepted, with the settled facts of that turn. The test asserts what the
+ * generator must do with it. They are not a quality verdict: 01 still reads the
+ * prose. They exist so a fix cannot quietly regress.
+ *
+ * Sources:
+ * - results/product/evidence/09-one-legal-turn-f15d.json (185-character
+ *   accepted page text: signboard sound, goggles in hand then empty hands,
+ *   invented marks, smell)
+ * - results/product/evidence/09-one-legal-turn-21c3.json (fallback that claims a
+ *   completed task while the state says pending)
+ * - results/quality/free-day-quiet-minute.json (the settled shape of the f15d
+ *   turn: one minute, no entity deltas, two people in 西侧服务巷)
+ * - results/quality/free-day-move-page.json (a settled move the passage must
+ *   write)
+ */
+import { describe, expect, test } from 'vitest';
+import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
+import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
+import { generateCommittedNarration } from './index';
+import type { NarrationPolicy } from './types';
+
+type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
+
+class ScriptedEngine implements InferenceEngine {
+  readonly info = { backend: 'scripted', modelId: 'scripted-regression' };
+  readonly calls: { prompt: string; options: CompleteOptions }[] = [];
+  constructor(private readonly steps: Step[]) {}
+  async load(): Promise<void> {}
+  async dispose(): Promise<void> {}
+  async complete(prompt: string, options: CompleteOptions = {}): Promise<string> {
+    const step = this.steps[Math.min(this.calls.length, this.steps.length - 1)];
+    this.calls.push({ prompt, options });
+    if (step.kind === 'throw') throw step.error;
+    options.onProgress?.({ raw: step.text.slice(0, 12), elapsedMs: 1 });
+    options.onProgress?.({ raw: step.text, elapsedMs: 2 });
+    return step.text;
+  }
+}
+
+/** The settled facts of 09 f15d point_round_3_1: one minute, nobody moved,
+ * nobody finished a task. */
+const quietFacts: NarrationFact[] = [
+  { id: 'lu:at', actorId: 'lu', name: '路明非', kind: 'at', locationId: 'lane', location: '西侧服务巷' },
+  { id: 'nono:at', actorId: 'nono', name: '诺诺', kind: 'at', locationId: 'lane', location: '西侧服务巷' },
+];
+const quiet: CommittedNarration = {
+  anchor: { worldId: 'world_dragon_raja_free_day', pointId: 'point_round_3_1', version: 1, stateDigest: 'digest', previousPointId: 'root' },
+  facts: quietFacts,
+};
+
+/** The serialized input the page built for that point, trimmed to the lines
+ * these regressions depend on. Positions come from the world state. */
+const quietInput = [
+  '【地点】西侧服务巷：巷口的黄黑绳已放下，进入即算踏入演习区',
+  '【人物】路明非：在西侧服务巷，精神值43。诺诺：在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂。',
+  '【物品】演习规则牌（墙上）：牌面写明 使用弗里嘉演习弹',
+  '路明非的护目镜（挂在胸前）：镜片无裂纹',
+  '路明非的演习背心（穿在身上）：前襟完好',
+  '【变化】时间推进：一分钟。',
+].join('\n');
+
+const quietPolicy: NarrationPolicy = {
+  mode: 'scene',
+  minChars: 20,
+  targetChars: 200,
+  paragraphs: 1,
+  viewpoint: { id: 'lu', name: '路明非' },
+  roster: ['路明非', '诺诺'],
+  locations: ['西侧服务巷', '中央庭院', '西回廊'],
+  knownEntities: ['路明非', '诺诺', '西侧服务巷', '演习规则牌', '路明非的护目镜', '路明非的演习背心'],
+  time: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+  requireTime: true,
+  scene: {
+    location: '西侧服务巷',
+    placeNotes: ['巷口的黄黑绳已放下'],
+    present: [{ name: '诺诺', note: '红发用发圈束在脑后' }],
+    objects: [{ name: '演习规则牌', note: '牌面写明：使用弗里嘉演习弹' }],
+  },
+  writingContract: false,
+};
+
+/** The 185 characters 09 adopted on the real page (f15d). */
+const F15D_PASSAGE = '路明非望着远处的钟楼，耳边传来风声拂过巷口的声响。他手中的护目镜微微晃动，镜片上映出诺诺的侧脸，她身上的红痕在阳光下泛着微光。'
+  + '诺诺的短枪枪口压向地面，枪身上黄色的演习标记闪烁着。路明非注意到，诺诺的发圈在风中轻轻摆动，红发间夹杂着细小的尘埃。'
+  + '空气中弥漫着泥土与金属混合的气味，远处传来演习规则牌的声响，提醒着他们时间已到。一分钟过去，他依旧站在原地，手中没有拿任何东西。';
+
+const issuesOf = async (text: string, steps: Step[] = [{ kind: 'text', text }, { kind: 'text', text }]) => {
+  const engine = new ScriptedEngine(steps);
+  const result = await generateCommittedNarration({
+    engine, committed: quiet, inputText: quietInput, priorText: null, policy: quietPolicy,
+  });
+  return { result, kinds: result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => `${issue.severity}:${issue.kind}`)) };
+};
+
+describe('product regressions: the sounds and hands of the f15d turn', () => {
+  test('a signboard does not make a sound, and the passage does not pass', async () => {
+    const { kinds } = await issuesOf(F15D_PASSAGE);
+    expect(kinds).toContain('hard:unlicensed_sense');
+  });
+
+  test('the goggles hang on the chest, so a hand on them is an invented action', async () => {
+    const { kinds } = await issuesOf('路明非把护目镜拿在手里，镜片上映出巷口的灯。');
+    expect(kinds).toContain('hard:unlicensed_action');
+  });
+
+  // Caveat: 诺诺's world state does carry «右袖的红痕» in her appearance. The
+  // check below only fires when the *input* omits the mark, so this fixture is a
+  // missing-brief case, not proof that the f15d page text invented the mark.
+  test('a mark on a person that the input never states is an invented appearance', async () => {
+    const { kinds } = await issuesOf('诺诺站在巷口，她右袖的红痕在阳光下泛着微光。');
+    expect(kinds).toContain('hard:unlicensed_appearance');
+  });
+
+  test('a hand that was filled cannot be empty later in the same passage', async () => {
+    const { kinds } = await issuesOf('他手中的护目镜微微晃动。一分钟过去，他依旧站在原地，手中没有拿任何东西。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('a quiet minute keeps the time sentence, even when the draft leaves it out', async () => {
+    const draft = '路明非站在西侧服务巷，看着诺诺用发圈束住红发。他没说话，只是望着巷口。';
+    const { result } = await issuesOf(draft, [
+      { kind: 'text', text: draft },
+      { kind: 'text', text: '一分钟过去。' },
+    ]);
+    expect(result.text).toContain('一分钟过去');
+    expect(result.accepted).toBe(true);
+  });
+});
+
+describe('product regressions: the outcome must be written', () => {
+  const moveFact: NarrationFact = {
+    id: 'lu:move', actorId: 'lu', name: '路明非', kind: 'moved',
+    fromId: 'lane', from: '西侧服务巷', toId: 'yard', to: '中央庭院',
+  };
+  const movedFacts: NarrationFact[] = [moveFact, quietFacts[1]];
+
+  test('a passage that stays in the alley omits the settled move and is rejected', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '路明非站在西侧服务巷，看着诺诺用发圈束住红发。风从巷口吹过。' },
+      { kind: 'text', text: '路明非站在西侧服务巷，看着诺诺用发圈束住红发。风从巷口吹过。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: quiet.anchor, facts: movedFacts },
+      inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'fact_omitted')).toBe(true);
+    expect(result.accepted).toBe(false);
+  });
+
+  test('the same input with the move written is accepted', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '一分钟过去，路明非从西侧服务巷走到中央庭院，脚下慢了半拍。诺诺留在巷口，没有跟上来。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: { anchor: quiet.anchor, facts: movedFacts },
+      inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    expect(result.accepted).toBe(true);
+  });
+});
+
+describe('product regressions: the previous ending must not come back', () => {
+  const prior = '路明非站在西侧服务巷，风从巷口吹过，黄黑绳轻轻晃动。他把手插进兜里，没有再看诺诺。';
+
+  test('a draft that repeats the previous closing sentence is rejected', async () => {
+    const repeated = '诺诺先开了口，声音很轻。他把手插进兜里，没有再看诺诺。';
+    const engine = new ScriptedEngine([{ kind: 'text', text: repeated }, { kind: 'text', text: repeated }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    const kinds = result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => issue.kind));
+    expect(kinds).toContain('echo_prior');
+  });
+});
+
+describe('product regressions: a worn item of a present character', () => {
+  // 09 21c3 rejected a model passage for «诺诺的红色识别带» with
+  // unprojected_entity, although the band is worn by a character in the scene.
+  test('naming a visible object of the scene is background, not a new entity', async () => {
+    const policy: NarrationPolicy = {
+      ...quietPolicy,
+      knownEntities: [...(quietPolicy.knownEntities ?? []), '诺诺的红色识别带'],
+      scene: { ...quietPolicy.scene!, objects: [...(quietPolicy.scene?.objects ?? []), { name: '诺诺的红色识别带' }] },
+    };
+    const text = '诺诺站在巷口，红色识别带缠在左臂，她没有说话。一分钟过去，路明非还站在原地。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy,
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard'));
+    expect(hard.map((issue) => issue.kind)).not.toContain('unlicensed_entity');
+  });
+});
+
+describe('product regressions: what counts as a repeated ending', () => {
+  const prior = '诺诺站在巷口，红发用发圈束在脑后。路明非把手插进兜里，没有再看诺诺。';
+
+  test('a state sentence repeated in the middle is the same true fact', async () => {
+    const text = '红发用发圈束在脑后。诺诺站在巷口，没有动。一分钟过去，风停了。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    const kinds = result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => issue.kind));
+    expect(kinds).not.toContain('echo_prior');
+  });
+
+  test('the previous closing sentence repeated verbatim is an echo', async () => {
+    const text = '诺诺先开了口，声音很轻，巷口很静。路明非把手插进兜里，没有再看诺诺。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: prior, policy: quietPolicy,
+    });
+    const kinds = result.rawAttempts.flatMap((attempt) => attempt.issues.map((issue) => issue.kind));
+    expect(kinds).toContain('echo_prior');
+  });
+});
+
+describe('product regressions: an object cannot be in a hand and hanging on the body', () => {
+  // 09 e9a5 (page bdac63ec) wrote «她手中的短枪还挂在腰间» inside one sentence.
+  test('a gun in the hand and at the waist in one sentence is a contradiction', async () => {
+    const text = '诺诺站在不远处，她手中的短枪还挂在腰间，黄色的演习标记在阳光下闪烁。一分钟过去，路明非还站在原地。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null, policy: quietPolicy,
+    });
+    const hard = result.rawAttempts.flatMap((attempt) => attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind));
+    expect(hard).toContain('self_contradiction');
+  });
+});
