@@ -288,12 +288,24 @@ try {
   }
   const textareaVisible = await page.waitForSelector('textarea', { timeout: 60000 }).then(() => true).catch(() => false);
   evidence.textareaVisible = textareaVisible;
+  // The product page publishes its own restore/debug globals. A page without
+  // them is another tree on the same port, which has happened repeatedly.
+  evidence.productIdentity = await page.evaluate(() => ({
+    worldRestore: typeof globalThis.__worldRestore !== 'undefined',
+    worldTurns: typeof globalThis.__worldTurns !== 'undefined',
+  })).catch(() => null);
   if (!textareaVisible) {
     noteFailure('page', 'the page rendered no textarea: cannot play');
     evidence.status = 'FAILED';
     evidence.finishedAt = new Date().toISOString();
     save();
     throw new Error('textarea_missing');
+  }
+  if (!evidence.productIdentity?.worldTurns && !process.argv.includes('--allow-unknown-page')) {
+    noteFailure('page', 'the served page lacks 06 product globals (__worldTurns); wrong tree on this port');
+    evidence.status = 'FAILED';
+    save();
+    throw new Error('wrong_product_page');
   }
 
   const readyStarted = Date.now();
