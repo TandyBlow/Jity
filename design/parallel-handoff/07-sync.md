@@ -122,7 +122,13 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 | `createProductSync({ writeLocal: true })` | 会写 store | 只有这一种会覆盖本地记录；产品不用它 |
 
 拿 06 的真实存储实现跑过（`frontend/scripts/parallel-sync/session-owned-store-check.ts`，
-内存后端，和 IndexedDB 同一套 `store.ts` 代码）：
+内存后端，和 IndexedDB 同一套 `store.ts` 代码）。在 07 的 `frontend/` 下运行：
+
+```bash
+PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=<token> \nLANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti \n  ./scripts/parallel-sync/session-owned-store-check.ts
+```
+
+不带 `PROGRESS_SYNC_URL` 时只跑离线两种模式（也会复现旧行为和修复后的对比）：
 
 - 会话先存一份带 2 条正文历史的快照（revision 1）；
 - 页面回调按它的写法调 `sync.save(snapshot)`；
