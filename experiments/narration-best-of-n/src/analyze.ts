@@ -340,6 +340,13 @@ async function main(): Promise<void> {
     }
   }
 
+  const findingTotals: Record<string, number> = {};
+  for (const entry of cases) {
+    for (const [kind, count] of Object.entries(findingCountsOf(entry.samples))) {
+      findingTotals[kind] = (findingTotals[kind] ?? 0) + count;
+    }
+  }
+
   const casesWithDiversityGate = cases.filter((entry) => entry.diversityGate).length;
   const zeroQualifiedCases = cases.filter((entry) => entry.samples.every((sample) => !sample.checker.factQualified)).length;
   // Preregistered gate: best-of-2/4 is only tested after at least two cases
@@ -476,6 +483,7 @@ async function main(): Promise<void> {
     },
     modules: moduleHashes,
     rawInventory,
+    findingTotals,
     env: envs,
     plans: batchPlans,
     cases: cases.map((entry) => ({
@@ -492,6 +500,7 @@ async function main(): Promise<void> {
         pairs: entry.diversity.pairs,
       },
       diversityGate: entry.diversityGate,
+      findingCounts: findingCountsOf(entry.samples),
       arms: entry.arms.map((arm) => ({
         arm: arm.arm,
         selectedId: arm.selectedId,
@@ -556,6 +565,16 @@ async function main(): Promise<void> {
   }, null, 2));
 }
 
+function findingCountsOf(samples: CaseAnalysis['samples']): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const sample of samples) {
+    for (const finding of sample.checker.findings) {
+      counts[finding.kind] = (counts[finding.kind] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
 function computeArms(
   samples: CaseAnalysis['samples'],
   assessments: Assessment[],
@@ -616,6 +635,14 @@ function renderMarkdown(report: Record<string, unknown>, cases: CaseAnalysis[]):
   for (const entry of cases) {
     lines.push(`| ${entry.caseId} | ${entry.diversity.effectiveRepetition.toFixed(3)} | ${entry.diversity.clusters.length} | `
       + `${entry.diversity.qualifiedCount} | ${entry.diversity.qualifiedDistinctClusters} | ${entry.diversityGate} |`);
+  }
+  lines.push('');
+  lines.push('## 发现分类总计（机械检查器）');
+  lines.push('');
+  lines.push('| kind | count |');
+  lines.push('|---|---|');
+  for (const [kind, count] of Object.entries((report.findingTotals as Record<string, number>) ?? {}).sort()) {
+    lines.push(`| ${kind} | ${count} |`);
   }
   lines.push('');
   lines.push('## 六个原始样本');
