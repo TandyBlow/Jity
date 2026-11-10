@@ -1,0 +1,110 @@
+{
+  "note": "Two frozen train rows rewritten to faithful targets. Inputs are the original x, byte-for-byte; only targetText changes. The old long y is not a fact source.",
+  "datasetCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
+  "sourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+  "splitsFile": "experiments/world-components/narration-dataset-v1/splits/v1.json",
+  "rows": [
+    {
+      "id": "rewrite-0164-copy-check",
+      "sourceRowId": "row-0164",
+      "worldFamily": "library-upper-corridor",
+      "categories": [
+        "movement",
+        "task_complete",
+        "separation"
+      ],
+      "targetText": "二层走廊的地板在脚下响。温暮蹲在尽头，把抄本和原本摊在膝上，一页一页对过去。\n温暮说：「把抄本和原本对一遍，算是完成了。」\n柏清和站在走廊另一头，问有没有对不上的地方。\n「有，但我先记着。」温暮把抄本合上。\n柏清和没再追问，把原本留在她手边，转身往借阅台去。地板在他脚下响了两声，声音一路下了楼梯。\n七分钟过去，温暮还蹲在原处，手指压着抄本的封角。",
+      "licensedDetails": [
+        "二层走廊外貌：地板踩上去会响，尽头那盏灯长期不亮",
+        "借阅台外貌：硬木台面，边角包着铜皮，抽屉上着锁",
+        "柏清和个性：原本他带在身上三个月",
+        "温暮个性：抄本和原本分开看；各走各的她也不怕",
+        "温暮小任务：把抄本和原本对一遍"
+      ],
+      "knowledgeBoundary": "温暮在二层走廊，能看到柏清和离开；不知道原本接下来会被放到哪里，也没有数出对不上的页数。",
+      "forbiddenInventions": [
+        "二十七页",
+        "四处错误",
+        "多抄的六个字",
+        "长桌区的回忆",
+        "走廊的灯亮着",
+        "柏清和把原本带到别处之后的事"
+      ],
+      "styleReferenceIds": [
+        "row-0164",
+        "row-0119",
+        "row-0019"
+      ],
+      "rewriteReason": "原 y 补了二十七页、四处错误、多抄六个字和长桌区回忆，没有写出七分钟和柏清和去借阅台；本版只用输入的已结算事实。",
+      "notes": "主角留在二层走廊；另一人离场去借阅台，方向写清，不补他在楼下的新事件。"
+    },
+    {
+      "id": "rewrite-0188-two-cover-tasks",
+      "sourceRowId": "row-0188",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "task_added",
+        "multi_actor",
+        "same_scene_tasks"
+      ],
+      "targetText": "报刊库的抽屉很涩。柏书言拉开最下面一格，合订本按年份排在铁柜里。\n柏书言说：「查清那一批封面是从哪本书上撕的，算是完成了。」\n苏既明从另一只抽屉前抬起头，说查清那批封面的来路，也完成了。\n两个人在铁柜前对看了一眼。柏书言把抄下来的那份签字从袖口里抽出来，说接下来得把抄下来的那份签字交出去。\n苏既明点了点头，没有问交给谁。\n24 分钟过去，报刊库里只剩合订本被推回铁柜的声音。",
+      "licensedDetails": [
+        "报刊库外貌：合订本按年份排在铁柜里，抽屉很涩",
+        "柏书言个性：抄过一遍的东西他记得；六年在等有人来问",
+        "苏既明个性：扉页上的印子他要对；查完了就该有个说法",
+        "柏书言小任务：查清那一批封面是从哪本书上撕的",
+        "苏既明小任务：查清那批封面的来路"
+      ],
+      "knowledgeBoundary": "两人都在报刊库，柏书言是视角；只写两件任务已完成和柏书言的新任务，不交代放火的人、不补签字内容、不写窗外天气。",
+      "forbiddenInventions": [
+        "七九年的合订本",
+        "配电间接线",
+        "六年前那一晚的放火细节",
+        "签字被烧掉",
+        "开着的窗",
+        "火灾凶手"
+      ],
+      "styleReferenceIds": [
+        "row-0188",
+        "row-0164",
+        "row-0019"
+      ],
+      "rewriteReason": "原 y 补了七九年合订本、配电间、六年前放火细节和窗外风，没有把两件任务的完成说清；本版只写输入的两次任务完成和一次新任务。",
+      "notes": "同场两人各完成一件任务；两人的任务都不含日期词，避免被时长解析误判。"
+    },
+    {
+      "id": "rewrite-0181-shelf-check",
+      "sourceRowId": "row-0181",
+      "worldFamily": "library-upper-corridor",
+      "categories": [
+        "task_complete",
+        "personality_change",
+        "multi_actor"
+      ],
+      "targetText": "二层西侧书架很高，几乎碰着天花板。周既白把那张纸摊在手里，按索书号一格一格找过去。\n周既白说：「按那张纸上的索书号把十一本找齐，算是完成了。」\n柏清和从书架另一头探过头来，问是不是都对上了。\n「对上了。」周既白把最后一本推到标签朝外。\n周既白停了一下，说决定这一排自己一排一排核。\n柏清和没接话，只把手里那本归回原位。\n18 分钟过去，书架间的过道里只剩书脊被推正的轻响。",
+      "licensedDetails": [
+        "二层西侧书架外貌：书架高到天花板，索书号标签翘起了边",
+        "周既白个性：空了的位置她不填；两个人核快一半",
+        "柏清和个性：书他一本本归位",
+        "周既白小任务：按那张纸上的索书号把十一本找齐"
+      ],
+      "knowledgeBoundary": "周既白在二层西侧书架，能看到柏清和在同一排；不知道那十一本为什么缺、也不补母亲的旧事。",
+      "forbiddenInventions": [
+        "凳子",
+        "第七个位置",
+        "馆藏印",
+        "扉页上的方框",
+        "磨印的人",
+        "母亲改名的答案"
+      ],
+      "styleReferenceIds": [
+        "row-0181",
+        "row-0164",
+        "row-0019"
+      ],
+      "rewriteReason": "原 y 补了凳子、馆藏印、磨印的人和母亲旧事，没有把任务完成与新增个性写清；本版只写输入的已结算事实。",
+      "notes": "无人物移动；主角完成找书并新增“自己一排一排核”的个性。"
+    }
+  ]
+}

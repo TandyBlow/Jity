@@ -1,0 +1,57 @@
+{
+  "format": "narration-quality-scenes-rewrites-v1",
+  "datasetCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
+  "sourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+  "splitsFile": "experiments/world-components/narration-dataset-v1/splits/v1.json",
+  "counts": {
+    "rows": 3,
+    "train": 3,
+    "originalTargetChars": [
+      515,
+      592,
+      470
+    ],
+    "targetChars": [
+      174,
+      188,
+      186
+    ]
+  },
+  "sources": {
+    "targets": {
+      "path": "rewrites/targets.json",
+      "sha256": "e03b726cd58ce942b98d543de5403869222271a8c54cf3f37d65abcb736f9285"
+    },
+    "frozenRows": {
+      "path": "D:/others/Jity/.local/parallel-local-game/worktrees/05-kernel/experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+      "sha256": "b1c5bcbfedde869d83edb864b844ec0063c26bd4f4b33277f35ba490a7e0274e"
+    }
+  },
+  "outputs": {
+    "rows": {
+      "path": "rewrites/generated/rows.jsonl",
+      "sha256": "3c144fc410793b6ef0d320efd0f1a6f93bef52a0bd72c3fa4ffe5693431b9eb0"
+    },
+    "rowsXy": {
+      "path": "rewrites/generated/rows-xy.jsonl",
+      "sha256": "b03072f959a9a3dd949caba07392fb0c4b5f8b8bd01e7be2136e73ca3e05c8bb"
+    }
+  },
+  "checks": {
+    "factCheck": "pass",
+    "failures": {},
+    "frozenInput": "canonical JSON SHA-256 recorded per row; script re-reads the frozen x and refuses a changed copy",
+    "split": "all source rows are train; no dev/test row is used"
+  },
+  "externalVerifier": {
+    "sourceCommit": "211fd463f2e9369172511873aafef922352b3aad",
+    "rows": 3,
+    "rowsWithHardIssues": 0,
+    "note": "lane 02 verifyNarration temporary copy; mechanical hard-issue check only"
+  },
+  "notes": [
+    "The old long y is style reference only and is not a fact source.",
+    "Only targetText changes; input is the frozen x.",
+    "No new world, no old-row edits, no split edits."
+  ]
+}

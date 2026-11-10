@@ -17,7 +17,7 @@
 | `experiments/narration-quality/corpus-scenes/generated/preview.md` | 逐回合人工阅读稿 |
 | `results/quality/team-05-kernel.json` | 给 10/02/03/04 的共享登记 |
 
-本批 3 条序列：值班室 5 回合、栈桥 3 回合、电报间 3 回合（dev）。正文 168–296 字，平均约 240 字。
+本批 3 条序列：值班室 5 回合、栈桥 3 回合、电报间 3 回合（dev），正文 168–296 字，平均约 240 字；另有 3 行旧 train 行的忠实改写，正文 177–187 字。
 
 ## 这份材料是什么，不是什么
 
@@ -48,12 +48,25 @@
 - `requiredFacts` 是人工指定的最小事实集；`licensedDetails` 是允许但不强制的细节；`forbiddenInventions` 是本回合明确禁止的补写。不要把这些字段当模型输入。
 - 候选模型若只能写逐事实短句，可先用这批材料判断它是否具备多角色同场和连续回合能力，再决定是否投入更长场景。
 
+## 旧行改写（3 行）
+
+`experiments/narration-quality/corpus-scenes/rewrites/` 里有 3 行冻结 train 行的忠实改写：`row-0164`（移动 + 任务 + 7 分钟）、`row-0188`（同场两人各完成一件任务 + 新任务 + 24 分钟）、`row-0181`（找齐十一本 + 新增个性 + 18 分钟）。`input` 是原 `x` 原样，`sourceRowId` 保留旧行 id，旧 `y` 只作风格参考、不作事实来源。3 行都通过 02 线校验器 `211fd463` 的硬错误检查。
+
+改写时确认了校验器三个误判，02 需要知道：
+
+1. 任务目标含“那一天”“十年前”时，时长解析会把它当成 1 天 / 10 年，和本回合时长冲突。`row-0002`/`row-0003` 因此没有 ship 忠实改写。
+2. 复合中文时长“二十四分钟”“十八分钟”会被解析成 4 / 8 分钟；本批改用 `24 分钟`、`18 分钟`。
+3. 地点名后紧跟“到”会被当成移动，例如“书架高到天花板”；本批改写避开这种句式。
+
+这三条是校验器边界，不是正文事实问题；在修正前不要把 `row-0002`/`row-0003` 的忠实改写当作 02 可接受样本。
+
 ## 校验
 
 1. 重建：`python -X utf8 experiments/narration-quality/corpus-scenes/build_corpus.py`，11 行，事实检查全部通过。
 2. 本线测试：`cd frontend && npx vitest run src/lib/world-engine/local/state.test.ts src/lib/world-engine/local/canonical.test.ts src/lib/world-engine/local/world-loader.test.ts src/lib/world-engine/local/local-transport.test.ts --maxWorkers=1`，内核/transport/loader 不受本批影响。
-3. 外部校验：用 02 线提交 `211fd463` 的 `verifyNarration` 临时拷贝逐行跑，11/11 无 hard issue，23/23 强制事实落实，无重复句/小句，无上一回合回声（bigram 0.08–0.14）。拷贝跑完删除，未改 02 工作树。
+3. 外部校验：用 02 线提交 `211fd463` 的 `verifyNarration` 临时拷贝逐行跑，主材料 11/11、改写 3/3 无 hard issue，主材料 23/23 强制事实落实，无重复句/小句，无上一回合回声（bigram 0.08–0.14）。拷贝跑完删除，未改 02 工作树。
 4. 类型检查：`cd frontend && npx tsc --noEmit -p tsconfig.world-contract.json` 与 `npx tsc --noEmit -p tsconfig.json`。
+5. 改写构建：`python -X utf8 experiments/narration-quality/corpus-scenes/rewrites/build_rewrites.py`，3 行，冻结输入哈希核对通过。
 
 ## 限制与下一步
 
