@@ -102,10 +102,22 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 
 ### 给 06：产品接入（2026-11-10 组织调整后）
 
-06 的集成树里已有一份**旧版** `local/progress-sync/`（除换行外与旧提交相同）。
-需要合入的提交：`b4c9ea5b`（`goal/local-07-sync`），它只改
-`frontend/src/lib/world-engine/local/progress-sync/`，不改页面、会话、prompt
-或任何共享文件。新增的是 `product.ts` 与 `reconnect-chain.test.ts`。
+06 的集成树里已有一份**旧版** `local/progress-sync/`（除换行外与旧提交相同），
+已合入 `b4c9ea5b`。本线之后又加了只读 `status()`、`flush().conflictList`、
+`peekHead/peekGraph`、`policy.avoidText`（成文侧）和 `product-wiring.test.ts`，
+最新提交是 `557da221`；这些是增量，60 行内可逐个看。
+
+06 在 `d293b3e2` 的接线是 `createProductSync({store, worldId, baseUrl})` +
+开局 `flush()` + 保存时 `sync.save(snapshot)`。这套接线**缺三样东西**，都已用
+测试固定下来（`product-wiring.test.ts`，3 个用例）：
+
+1. **没有传 `storage`**：离线队列和“上次已知远端 head”只在内存里。断网保存后
+   刷新，队列为空、base 为 null，这一笔再也传不上去；重连时还会把已有世界当
+   新世界。传入 `storage: window.localStorage` 后，同样的刷新仍能看到 1 条待传。
+2. **没有开局 `restore()`**：B 设备没有本地存档时不会去拉远端 head，因此
+   “换设备继续”不成立。
+3. **没有冲突选择界面**：保存冲突时页面只显示一句提示，玩家看不到两个副本，
+   也没有调用 `choose()`。
 
 产品接线只需要一个对象和四个调用点，不需要页面自己拼协议：
 
@@ -135,7 +147,10 @@ const sync = createProductSync<LocalGameSnapshot>({
    顺序作为**后代链**上传（父节点指向前一条上传），不会并发拿同一个旧 head。
    第二次 flush 幂等，不新增快照。`flush().conflictList` 里是真正的冲突对象，
    页面要拿它让玩家选择，不能只看 `conflicts` 计数。
-5. **判断要不要提示玩家**：`await sync.status()` 只读，返回
+5. **保存冲突时**：`sync.save()`/`sync.flush()` 的 `conflictList` 里是完整冲突
+   对象；用 `sync.read(branchId)` 读出两份正文给玩家看，玩家选择后才
+   `sync.choose(...)`。这一步现在是缺的。
+6. **判断要不要提示玩家**：`await sync.status()` 只读，返回
    `in-sync | remote-ahead | local-ahead | diverged | local-only | unknown`，
    另带 `remote`、`baseSnapshotId`、`branches`。它不会因为读了一次 head 就把
    自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
@@ -189,11 +204,11 @@ python -X utf8 -m pytest -q tests/test_local_progress_sync.py
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 27 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
+# 30 passed（无服务时 real-server 两个文件 skip）：客户端 CAS、离线队列/多离线
 # 保存链、丢响应幂等、分叉/选择、双设备、队列冲突两种显式选择及依赖 rebase、
 # web storage 队列、lineage 比较、product 适配器、push 不重复写本地、head 恢复。
 PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret   ./node_modules/.bin/vitest run src/lib/world-engine/local/progress-sync/ --maxWorkers=1
-# 30 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
+# 33 passed：再加真实 HTTP 的两个客户端 save→冲突→fork→选择→恢复，
 # 以及离线两次保存→重连只上传后代链→第二次 flush 幂等→另一设备取回。
 
 ./node_modules/.bin/eslint src/lib/world-engine/local/progress-sync scripts/parallel-sync
