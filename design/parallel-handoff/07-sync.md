@@ -105,11 +105,15 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 06 的集成树里已有一份**旧版** `local/progress-sync/`（除换行外与旧提交相同），
 已合入 `b4c9ea5b`。本线之后又加了只读 `status()`、`flush().conflictList`、
 `peekHead/peekGraph`、`policy.avoidText`（成文侧）和 `product-wiring.test.ts`，
-最新提交是 `557da221`；这些是增量，60 行内可逐个看。
+最新提交是 `267646de`（含 04 在真实页面撞到的双写修复），其后是真实服务回归测试。
 
 06 在 `d293b3e2` 的接线是 `createProductSync({store, worldId, baseUrl})` +
-开局 `flush()` + 保存时 `sync.save(snapshot)`。这套接线**缺三样东西**，都已用
-测试固定下来（`product-wiring.test.ts`，3 个用例）：
+开局 `flush()` + 保存时 `sync.save(snapshot)`。**双写问题已在适配层默认值里修掉**
+（`267646de`）：`save()` 现在默认只上传，不写 06 的存储；所以 06 升到这个提交后，
+保存路径不需要改代码，会话仍然是唯一写入者。`writeLocal: true` 只给没有会话
+写入者的调用方用。
+
+这套接线仍**缺三样东西**，都已用测试固定下来（`product-wiring.test.ts`，3 个用例）：
 
 1. **没有传 `storage`**：离线队列和“上次已知远端 head”只在内存里。断网保存后
    刷新，队列为空、base 为 null，这一笔再也传不上去；重连时还会把已有世界当
@@ -133,16 +137,19 @@ const sync = createProductSync<LocalGameSnapshot>({
 });
 ```
 
-1. **每次 06 自己把进度写进 IndexedDB 之后**调 `sync.push(snapshot)`。
-   不要再让适配层写第二遍本地记录：`push` 只上传，`save` 才是“本地+上传”
-   （如果页面还没自己保存，就用 `save`）。返回 `synced | queued | conflict`；
-   `queued` 表示已经本地存好，重连后 `flush` 会补传。
-2. **开局恢复**：先读 06 的本地记录；本地没有才 `await sync.restore()`
-   （它会拉远端 head 并写回本地）。`restore().conflict` 出现时不要自动选，
-   把两份分支交给玩家。
+1. **每次 06 自己把进度写进 IndexedDB 之后**调 `sync.push(snapshot)`（或保持现有
+   `sync.save(snapshot)`，默认行为一样：只上传）。**会话是唯一写入者**：06 的
+   store 用 revision 校验，适配层再写一次会把 revision 推到会话后面，会话下一次
+   保存就抛 `progress_conflict`，第一次玩家提交在被调模型前就被拒（04 的真实页面
+   就是这样撞到的）。返回 `synced | queued | conflict`；`queued` 表示重连后
+   `flush` 会补传。
+2. **开局恢复**：先读 06 的本地记录；本地没有才 `await sync.restore()`。
+   默认**不写** 06 的存储，只把远端快照返回给页面/会话来打开（`source:
+   'remote'`）。`restore().conflict` 出现时不要自动选，把两份分支交给玩家。
 3. **冲突 UI**：`conflict.branches` 是两条叶子，`conflict.remote` 是远端 head。
    玩家点选后调 `sync.choose('keep-remote' | 'keep-local-fork', conflict)`；
-   两个副本都留在服务端，之后仍可用 `sync.read(snapshotId)` 读回。
+   返回值里的 `snapshot` 由页面交给会话打开（默认不写存储）。两个副本都留在
+   服务端，之后仍可用 `sync.read(snapshotId)` 读回。
 4. **重连/页面回到前台**：`await sync.flush()`。同一次离线期间的多次保存会按
    顺序作为**后代链**上传（父节点指向前一条上传），不会并发拿同一个旧 head。
    第二次 flush 幂等，不新增快照。`flush().conflictList` 里是真正的冲突对象，
@@ -180,7 +187,8 @@ syncRef.current = sync;
 // 1) 没有本地存档时，先拉远端 head；有本地存档时不覆盖本地
 const restored = await sync.restore();
 if (restored.source === 'remote' && restored.snapshot) {
-  await store.save(world.worldId, restored.snapshot);   // 或者走 session.open
+  // 让会话打开这份快照（会话是唯一写入者）；不要直接 store.save
+  await session.openSnapshot(restored.snapshot);
 }
 if (restored.conflict) showConflict(restored.conflict); // 两份都读出来给玩家
 

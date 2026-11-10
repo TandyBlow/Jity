@@ -19,7 +19,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { MemoryQueueStore, ProgressSyncClient, type HeadStateStore, type LocalSnapshotStore } from './index';
+import {
+  MemoryQueueStore, ProgressSyncClient, createProductSync,
+  type HeadStateStore, type LocalSnapshotStore,
+} from './index';
 
 const baseUrl = process.env.PROGRESS_SYNC_URL;
 const token = process.env.PROGRESS_SYNC_TOKEN;
@@ -170,5 +173,49 @@ describe.skipIf(!baseUrl)('real progress-sync service: offline reconnect', () =>
     expect(selected.headSnapshotId).toBe((fromA as { upload: { snapshotId: string } }).upload.snapshotId);
     expect(selected.nodes).toHaveLength(3);
     expect((await b.read(worldId, kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'B-fork'));
+  });
+
+  it('lets a session-owned, revision-checked store stay the only writer', async () => {
+    const worldId = `owned_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    // 06's durable store checks the revision the session holds. A second writer
+    // moves it behind the session and the session's next save fails as a
+    // conflict before any model call, which is exactly what 04 hit on the page.
+    const records = new Map<string, { snapshot: unknown; revision: number }>();
+    const store = {
+      records,
+      async load(id: string) {
+        return records.get(id) ?? null;
+      },
+      async save(id: string, payload: unknown, options?: { expectedRevision?: number }) {
+        const current = records.get(id);
+        const expected = options?.expectedRevision;
+        if (expected !== undefined && current && current.revision !== expected) {
+          throw new Error('revision_conflict');
+        }
+        const next = { snapshot: structuredClone(payload), revision: (current?.revision ?? 0) + 1 };
+        records.set(id, next);
+        return { revision: next.revision };
+      },
+    };
+    const sync = createProductSync<unknown>({
+      store,
+      worldId,
+      baseUrl,
+      token,
+      storage: null,
+      retry: { attempts: 2, baseDelayMs: 10 },
+      sleep: async () => undefined,
+    });
+
+    // The session saves with the revision it owns, then asks for an upload.
+    await store.save(worldId, snapshot(1, 'session-write'), { expectedRevision: 0 });
+    const uploaded = await sync.save(snapshot(1, 'session-write'), { requestId: `owned-${worldId}-1` });
+    expect(uploaded.localSaved).toBe(false);
+    expect(uploaded.outcome?.status).toBe('synced');
+    expect(records.get(worldId)?.revision).toBe(1);
+
+    // The session keeps saving against its own revision, with no conflict.
+    await expect(store.save(worldId, snapshot(2, 'session-continues'), { expectedRevision: 1 }))
+      .resolves.toBeTruthy();
   });
 });
