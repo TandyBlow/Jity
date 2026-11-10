@@ -183,12 +183,16 @@ a different engine.
    submission. Dispose engines at the end and check
    `workersCreated === workersExited`.
 6. Long-session growth (the 10→20-turn requirement): on the product page read
-   `window.__worldTurns`. A healthy 10- or 20-turn run has, per engine,
-   `loadCount === 1`, `workersCreated === 1`, `workersExited === 0`,
-   `generations === turns`, and `cachedModelBytes` constant. If a turn hard
-   stopped, expect `loadCount`/`workersCreated` to increase by exactly one and
-   the reload evidence `fromCache: true, fetchMs: 0`; any other growth is a
-   leak/reload bug, not a quality result. Record the per-turn
+   `window.__worldTurns`. Within one page segment, a healthy run has, per
+   engine, `loadCount === 1`, `workersCreated === 1`, `workersExited === 0`,
+   `generations === turns`, and `cachedModelBytes` constant. A deliberate
+   refresh (the 10-turn script refreshes after t6) starts a **new page**: it
+   legitimately creates one new load/worker for each engine and resets the
+   window counters; record the pre-refresh and post-refresh segments
+   separately, and do not count that new load as a leak. If a turn hard
+   stopped inside a segment, expect `loadCount`/`workersCreated` to increase by
+   exactly one and the reload evidence `fromCache: true, fetchMs: 0`; any other
+   growth is a leak/reload bug, not a quality result. Record the per-turn
    `acceptedMs`/`draftMs`/`programMs`, the stop latency, and (if exposed)
    `promptTokens` vs `contextSize`; a prompt near the context limit needs a
    larger context or trimming, not a model change.
