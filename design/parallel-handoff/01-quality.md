@@ -229,3 +229,4 @@
 - constrained 448e（2026-11-10T2341-711c，head 448e1dd0）：首次 model 正文 485 字/249.5 s；整段状态复述+重复、规则牌在地面、护目镜当行动者、`未看到规则牌` 面板。模型文本，非通过。
 - 01 checker 第二遍：`neg/route/448e-recital`（92 锚点）；修 `发圈…识别带`、`而非戴在眼前` 两处误报；全套/human-71/final-v1 全绿。
 - 448e 出处更正：09 index 记 2/4 beats model + 2/4 program fallback = **mixed**，不是 source=model；整段不可记 model。
+- 448e per-beat：open model / scene program / result program（缺 result fact）/ close model = 2/4+2/4；`beatCounts` 写 model:1/program:0 自相矛盾；result 的 program 文本是 `诺诺：…未看到规则牌…` 面板。
