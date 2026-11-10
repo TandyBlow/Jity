@@ -102,6 +102,18 @@ Runtime states and what the page should do:
   with one load they stay at 1/0, and `dispose()` brings them to 1/1.
 - `generations` counts model calls served by this engine, so a 10-turn log
   can show `generations: 10, loadCount: 1`.
+- The engine holds no conversation state: the caller passes the full message
+  list on every `chat()`. After a reload the KV cache is empty and the first
+  call re-prefills; the page must keep the transcript, not assume the engine
+  remembers the previous turn.
+- Cold-start budget: the product target is submission-to-first-readable
+  <= 60 s. The measured free-day opening was 39 s load + 15-27 s to first
+  readable, i.e. 54-66 s if the load is inside the first submission. The page
+  must start `ensureLoaded()` when the world opens (before the player submits)
+  and show load progress; otherwise a cold free-day turn is at/over the
+  budget. This is a page/06 requirement; the runtime exposes the split. The
+  load itself is not shortened by the engine beyond the direct-blob path and
+  the `loadTimeoutMs` bound.
 
 ## 02/06 integration entry points
 
