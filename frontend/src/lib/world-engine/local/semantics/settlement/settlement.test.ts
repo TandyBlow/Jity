@@ -153,6 +153,24 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('does not put pending task goals into the results prompt', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲把工具推向乙。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[0]).toContain('乙伸手接住工具');
+    expect(engine.prompts[0]).not.toContain('协助甲');
+    expect(engine.prompts[0]).not.toContain('待办=');
+  });
+
   it('drops a completion claim from a result fact and keeps the action result', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [

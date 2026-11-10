@@ -11,6 +11,13 @@ import {
 } from './support';
 import { describeCharacter, describeItem, sameRoomItems, visibleCharacters } from '../../prompt';
 
+/** Results decide what the frozen action did, not whether a task goal is
+ * already true. Pending goals in the scene line prime the model to write
+ * “成功完成…任务” as a fact (d101); keep the scene but drop that待办 suffix. */
+function describeResultCharacter(state: WorldState, id: Id): string {
+  return describeCharacter(state, id, false).replace(/；待办=.*$/u, '');
+}
+
 interface RollReceipt {
   targetId: Id;
   rollId: Id;
@@ -259,7 +266,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     for (const roll of member.rolls) sceneIds.add(roll.targetId);
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
-    .map((id) => state.characters[id] ? describeCharacter(state, id, false) : describeItem(state, id));
+    .map((id) => state.characters[id] ? describeResultCharacter(state, id) : describeItem(state, id));
   const exampleMember = members[0];
   const exampleTarget = exampleMember.rolls[0]?.targetId;
   const exampleEffects = exampleTarget ? `[{"targetId":"${exampleTarget}","reacted":true或false}]` : '[]';
