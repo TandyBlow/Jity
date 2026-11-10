@@ -78,7 +78,14 @@ if (integrationUrl && !base.startsWith(integrationUrl.replace(/\/$/, '')) && !ba
 }
 
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+const runId = `${new Date().toISOString().replace(/[:.]/g, '').slice(0, 15)}-${Math.random().toString(16).slice(2, 6)}`;
+// Two runs must never share a path: the 15:57 base report was lost that way.
+const evidenceFile = existsSync(out) && !process.argv.includes('--resume')
+  ? out.replace(/\.json$/, `-${runId}.json`)
+  : out;
 const evidence = {
+  runId,
+  outFile: evidenceFile,
   kind: '09-product-acceptance',
   intent,
   harness: { selfTest },
@@ -126,9 +133,9 @@ function sha256(text) {
 function save() {
   evidence.updatedAt = new Date().toISOString();
   mkdirSync(dirname(out), { recursive: true });
-  const tmp = `${out}.tmp-${process.pid}`;
+  const tmp = `${evidenceFile}.tmp-${process.pid}`;
   writeFileSync(tmp, JSON.stringify(evidence, null, 2));
-  renameSync(tmp, out);
+  renameSync(tmp, evidenceFile);
 }
 
 function noteFailure(scope, message, detail = null) {
@@ -300,6 +307,7 @@ try {
     noteFailure('ready', `page did not become ready in ${readyTimeoutMs} ms`, String(error).slice(0, 400));
   }
   evidence.readyMs = Date.now() - readyStarted;
+  evidence.jsHeapAtReady = await heap();
   evidence.readyText = (await page.evaluate(() => document.body.innerText)).slice(0, 600);
   const readyText = evidence.readyText ?? '';
   evidence.restored = /已恢复本地存档/.test(readyText);
@@ -316,6 +324,14 @@ try {
   save();
 
   const entryCount = () => page.evaluate(() => document.querySelectorAll('article').length);
+  const heap = async () => page.evaluate(() => {
+    const memory = performance.memory;
+    return memory ? {
+      usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize,
+      jsHeapSizeLimit: memory.jsHeapSizeLimit,
+      label: 'JS heap, not GPU VRAM',
+    } : null;
+  }).catch(() => null);
   const snapshot = async () => page.evaluate(() => {
     const read = (label) => {
       const nodes = [...document.querySelectorAll('aside div')];
@@ -557,6 +573,7 @@ try {
       entry.message = afterInfo.message;
       entry.timings.doneMs = Date.now() - timer.submittedAtMs;
       entry.after = await snapshot();
+      entry.jsHeap = await heap();
       const loadCounts = (entry.product?.engines ?? []).map((engine) => `${engine.label}:${engine.loadCount}/${engine.workersCreated}/${engine.generations}`);
       entry.engineCounters = loadCounts;
       entry.warmTurn = entry.turn > 1;
