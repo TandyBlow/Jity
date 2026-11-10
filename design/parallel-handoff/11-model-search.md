@@ -4,7 +4,7 @@
 
 当前产品叙事模型是 Qwen2.5-1.5B 叙事 LoRA，历史基线是 Qwen3-1.7B。需要找这两者之外、能在同一个 Edge+wllama 运行时（浏览器 Blob 总容量上限约 2 GB）加载、中文小说叙事可能更好的 GGUF。不能按榜单或参数量猜正文质量；必须用 01/10 的同一公开冻结开发包、同条件采样、01 的 rubric 比较。
 
-**当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器和两例真实状态语义探针（selftest 17/17；frozen prompt pack 已生成），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight、15 例质量批次和一个独立语义探针请求仍 ready，10 尚未登记领取；01 已发布 v1.1：`d6c7e766…`，15/15 可序列化，三个旧 delta 形状已规范化。没有任何模型正文、语义或质量结论。
+**当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器和两例真实状态语义探针（selftest 18/18；frozen prompt pack 已生成），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight、15 例质量批次和一个独立语义探针请求仍 ready，10 尚未登记领取；01 已发布 v1.1：`d6c7e766…`，15/15 可序列化，三个旧 delta 形状已规范化。没有任何模型正文、语义或质量结论。
 
 ## 本轮实际交付
 
@@ -54,7 +54,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 17/17 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、15 例完整包冻结、collect 重复统计且无 pass、review 输入拼接 15 例且无声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例 + 73 任务/14 人物覆盖尺度 + --expected 拒绝照抄空骨架、prepare_semantic_prompts 冻结门、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 18/18 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、15 例完整包冻结、collect 重复统计且无 pass、review 输入拼接 15 例且无声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例 + 73 任务/14 人物覆盖尺度 + --expected 拒绝照抄空骨架 + 历史 1/14 输出被拒、prepare_semantic_prompts 冻结门、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 模型路线决策规则（restart 2026-11-10）
 

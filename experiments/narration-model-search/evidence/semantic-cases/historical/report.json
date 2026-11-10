@@ -1,0 +1,30 @@
+{
+ "note": "structured semantic checks only; no prose quality and no product acceptance",
+ "pack": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\semantic-probes\\tasks-73-release.pack.jsonl",
+ "runDir": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\semantic-cases\\historical",
+ "cases": 2,
+ "expectedChecked": true,
+ "passed": 0,
+ "reports": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "kind": "tasks",
+   "ok": false,
+   "errors": [
+    "tasks: character coverage 1/14; missing ['chu', 'doctor', 'fingel', 'lin', 'lu', 'manstein', 'nono', 'qin', 'shen', 'su', 'tang', 'tomiyama', 'zhou']"
+   ],
+   "warnings": [],
+   "chars": 54,
+   "textSha256": "c8a6cdad3777c78ae177688b1ad0ad34be01e988114fc0e231ef1358f8eadce9"
+  },
+  {
+   "caseId": "tasks-free-day-real-73-one-achieved",
+   "kind": "tasks",
+   "ok": false,
+   "errors": [
+    "missing output file tasks-free-day-real-73-one-achieved.json"
+   ],
+   "warnings": []
+  }
+ ]
+}

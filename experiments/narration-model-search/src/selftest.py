@@ -363,6 +363,19 @@ def main() -> int:
         check("semantic_validate --expected accepts the achieved task and rejects copying the skeleton",
               False, "missing positive case")
 
+    historical = ROOT / "evidence/semantic-cases/historical"
+    if (historical / "tasks-free-day-real-73-no-change.json").exists():
+        proc = run(["src/semantic_validate.py", "--pack", str(ROOT / "semantic-probes/tasks-73-release.pack.jsonl"),
+                    "--run-dir", str(historical), "--out", str(historical / "report.json"), "--expected"])
+        report = json.loads((historical / "report.json").read_text(encoding="utf-8"))
+        first = report["reports"][0]
+        check("the historical 1/14 page output is rejected by the corrected contract",
+              proc.returncode == 2 and any("coverage 1/14" in error for error in first["errors"]),
+              f"exit={proc.returncode} errors={len(first['errors'])}")
+    else:
+        check("the historical 1/14 page output is rejected by the corrected contract", False,
+              "missing historical output")
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v2-full15/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v2-full15/prompts.manifest.json")])

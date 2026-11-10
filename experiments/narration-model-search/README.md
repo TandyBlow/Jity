@@ -31,7 +31,7 @@
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
 | `src/wllama_features.py` | 无 | `models/wllama-features.json`（wasm 里的模型源码路径 + tensor 名） | 11/08 |
-| `src/selftest.py` | 无 | 17 项 PASS/FAIL | 11/06 复核 |
+| `src/selftest.py` | 无 | 18 项 PASS/FAIL | 11/06 复核 |
 
 示例：
 
@@ -58,7 +58,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 17/17 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、15 例完整包冻结、collect 重复统计且无 pass、review 输入拼接 15 例且无声明排除、GGUF 模板预演（5 个候选）、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 18/18 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、15 例完整包冻结、collect 重复统计且无 pass、review 输入拼接 15 例且无声明排除、GGUF 模板预演（5 个候选）、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 限制与未验证
 

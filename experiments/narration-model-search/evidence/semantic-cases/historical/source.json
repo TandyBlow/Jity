@@ -1,0 +1,6 @@
+{
+ "source": "results/product/evidence/06-to-04-tasks-coverage.json",
+ "error": "task character coverage incomplete: 1/14",
+ "rawText": "{\"decisions\":[{\"characterId\":\"caesar\",\"achieved\":[]}]}",
+ "note": "historical 0.6B output; one caesar decision only"
+}
