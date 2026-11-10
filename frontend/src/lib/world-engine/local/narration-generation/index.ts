@@ -964,6 +964,20 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
           detail: `${borrowed.noun} belongs to another character (${borrowed.sentence})`, sentence: borrowed.sentence,
         });
       }
+      // A wall prop in a hand is a new fact. 09 batch-5 wrote «演习规则牌在他
+      // 手中，牌面写着…»; the fixture's input puts the board on the wall.
+      for (const object of input.policy?.scene?.objects ?? []) {
+        const name = object.name;
+        if (!name || !result.attempt.cleaned.includes(name)) continue;
+        if (input.inputText.includes(`${name}在`) || input.inputText.includes(`（${name}`)) continue;
+        const at = result.attempt.cleaned.indexOf(name);
+        const around = result.attempt.cleaned.slice(Math.max(0, at - 8), at + name.length + 8);
+        if (!/(手中|手里|手上)/u.test(around)) continue;
+        result.attempt.issues.push({
+          kind: 'unverified_sentence', severity: 'soft', attempt: result.attempt.attempt,
+          detail: `scene prop ${name} appears in a hand`, sentence: result.attempt.cleaned.slice(Math.max(0, at - 12), at + name.length),
+        });
+      }
       const ownedMarks = markIssues.filter((issue) => !issue.borrowed);
       if (ownedMarks.length) {
         result.attempt.accepted = false;

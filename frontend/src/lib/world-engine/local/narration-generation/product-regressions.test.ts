@@ -264,3 +264,19 @@ describe('product regressions: a mark that belongs to another character', () => 
     expect(issues.some((issue) => issue.severity === 'soft' && /belongs to another character/u.test(issue.detail ?? ''))).toBe(true);
   });
 });
+
+describe('product regressions: a wall prop in a hand', () => {
+  // 09 batch-5 move scene: «演习规则牌在他手中，牌面写着…» while the fixture puts
+  // the board on the wall.
+  test('a scene prop in a hand is a soft note', async () => {
+    const text = '路明非站在中央庭院，看着巷口的黄黑绳。他镜片无裂纹，确认它还在。演习规则牌在他手中，牌面写着「使用弗里嘉演习弹」。一分钟过去，他没有动。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    // The move fixture's input names the board without a place, like the page.
+    const input = quietInput.replace('演习规则牌（墙上）', '演习规则牌');
+    const result = await generateCommittedNarration({
+      engine, committed: quiet, inputText: input, priorText: null, policy: quietPolicy,
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => /scene prop 演习规则牌 appears in a hand/u.test(issue.detail ?? ''))).toBe(true);
+  });
+});
