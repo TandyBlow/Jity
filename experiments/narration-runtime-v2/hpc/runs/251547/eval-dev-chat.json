@@ -4,8 +4,8 @@
  "data": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\data\\train-page-v3.jsonl",
  "split": "dev",
  "rows": 6,
- "passed": 2,
- "passRate": 0.333,
+ "passed": 1,
+ "passRate": 0.167,
  "temperature": 0.5,
  "maxNew": 220,
  "servedBy": "llama-server /v1/chat/completions (chat template applied, CPU -ngl 0)",
@@ -21,7 +21,8 @@
     "秦既白鞋面有一层土，袖口沾了机油。"
    ],
    "issues": [
-    "missing_draft:2"
+    "missing_draft:2",
+    "dialogue_added"
    ],
    "ok": false,
    "seconds": 6.48
@@ -35,7 +36,8 @@
     "温照围巾洗得发白，袖口沾了墨。"
    ],
    "issues": [
-    "missing_draft:1"
+    "missing_draft:1",
+    "dialogue_added"
    ],
    "ok": false,
    "seconds": 4.52
@@ -73,7 +75,7 @@
    "issues": [
     "dialogue_added"
    ],
-   "ok": true,
+   "ok": false,
    "seconds": 4.94
   },
   {
@@ -85,7 +87,8 @@
     "黎既白头发用一根木簪别着，围巾洗得发白。"
    ],
    "issues": [
-    "missing_draft:1"
+    "missing_draft:1",
+    "dialogue_added"
    ],
    "ok": false,
    "seconds": 5.2

@@ -158,6 +158,11 @@ def deploy(h) -> None:
         os.path.join(HERE, "gpu_probe.py"): f"{REMOTE}/hpc/gpu_probe.py",
         os.path.join(HERE, "batch_screen.py"): f"{REMOTE}/hpc/batch_screen.py",
         os.path.join(HERE, "probe_adapter.py"): f"{REMOTE}/hpc/probe_adapter.py",
+        os.path.join(HERE, "model_server.py"): f"{REMOTE}/hpc/model_server.py",
+        os.path.join(V2, "configs", "qwen15b-page-v3.json"): f"{REMOTE}/configs/qwen15b-page-v3.json",
+        os.path.join(V2, "configs", "qwen15b-page-v5-repair.json"): f"{REMOTE}/configs/qwen15b-page-v5-repair.json",
+        os.path.join(V2, "data", "train-page-v5.jsonl"): f"{REMOTE}/data/train-page-v5.jsonl",
+        os.path.join(V2, "data", "splits-page-v5.json"): f"{REMOTE}/data/splits-page-v5.json",
         os.path.join(V2, "data", "train-v4.jsonl"): f"{REMOTE}/data/train-v4.jsonl",
     }
     for local, remote in files.items():
@@ -189,6 +194,12 @@ def submit_train(h, args) -> str:
            f"DEVICE={args.device} NARR_PARTITION={args.partition} NARR_CPUS={args.cpus} "
            f"NARR_GRES={args.gres} NARR_TIME={args.time} NARR_MEM={args.mem} "
            f"PREC={getattr(args, 'precision', 'auto')}")
+    # Fail before sbatch: a missing config or data file costs a queue wait and a
+    # FAILED job that looks like a training problem.
+    check = h.do(f"cd ~/{REMOTE} && test -f configs/{args.config} && echo config-ok; "
+                 f"test -f $(python -c \"import json;print(json.load(open('configs/{args.config}'))['data']['file'])\") "
+                 f"&& echo data-ok", show=False)[0]
+    print(check.strip())
     out, err, rc = h.do(f"cd ~/{REMOTE} && {env} sbatch run_train.sh", show=True)
     match = re.search(r"(\d+)", out)
     if not match:
