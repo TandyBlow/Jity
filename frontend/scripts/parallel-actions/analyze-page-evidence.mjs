@@ -55,9 +55,11 @@ export function summarizeTurn(turn) {
     observedOrderLooksAlphabetical: isAlphabetical,
     roundTrigger: turn.roundTrigger ?? turn.product?.roundTrigger ?? null,
     tasks,
-    // source=program is a program decision even when fallback=false; only a
-    // source=model (or, without source, fallback=false) is a model answer.
-    modelCalls: tasks.filter((entry) => (entry.source ? entry.source === 'model' : entry.fallback === false)).length,
+    // source is authoritative when present. Without it (the page at 13:21Z),
+    // a fallback=false line can still be a program decision: offscreen skips
+    // and the frozen protagonist log at 0-2 ms with no model call. Count a
+    // model answer only when it took longer than 2 ms, and say so.
+    modelCalls: tasks.filter((entry) => (entry.source ? entry.source === 'model' : entry.fallback === false && (entry.ms ?? 0) > 2)).length,
     fallbacks: tasks.filter((entry) => entry.fallback === true).length,
     errors: tasks.filter((entry) => entry.error).map((entry) => entry.error),
     // Program lines the page prints when a group member does not act.
@@ -130,7 +132,7 @@ if (process.argv.includes('--self-test')) {
   const expected = {
     turns: 3,
     actionFamilyCalls: 8,
-    modelAnswers: 6,
+    modelAnswers: 5,
     fallbacks: 1,
     orderRecorded: true,
     observedOrder: ['nono', 'fingel'],
