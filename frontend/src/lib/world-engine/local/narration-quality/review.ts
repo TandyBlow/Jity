@@ -170,6 +170,18 @@ interface PronounBinding {
 function pronounBindings(sentences: SentenceParts[], names: readonly string[], people: readonly string[] = names, genders?: Record<string, 'male' | 'female'>, visible: readonly string[] = people): PronounBinding[] {
   const bindings: PronounBinding[] = [];
   let subject: string | null = null;
+  // A person named in this or the previous sentence is a possible antecedent
+  // even when the settled position says the viewpoint cannot see them: the
+  // prose itself just named them, so a gender verdict would punish the wrong
+  // thing (the separate visibility question stays a review item).
+  const namedNear = new Map<number, Set<string>>();
+  sentences.forEach((sentence, index) => {
+    const namesHere = new Set<string>([
+      ...nameHits(sentence.narration, names, people).map((hit) => hit.name),
+      ...(index > 0 ? nameHits(sentences[index - 1].narration, names, people).map((hit) => hit.name) : []),
+    ]);
+    namedNear.set(index, namesHere);
+  });
   sentences.forEach((sentence, sentenceIndex) => {
     const narration = sentence.narration;
     const hits = nameHits(narration, names, people);
@@ -200,7 +212,7 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
         // scene, the prose may mean that person (e.g. "诺诺的发圈…他没说话"
         // is the male viewpoint). Keep it ambiguous instead of blaming 诺诺.
         const alternativeOfGender = (name: string) => people.find((candidate) => candidate !== name
-          && visible.includes(candidate)
+          && (visible.includes(candidate) || namedNear.get(sentenceIndex)?.has(candidate))
           && (genders?.[candidate] === gender || genders?.[candidate] === undefined));
         const previousName = previousNames[0]?.name ?? null;
         const previousGender = previousName ? genders?.[previousName] : undefined;
@@ -250,6 +262,13 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
         }
         if (candidates.length === 1) {
           const only = candidates[0];
+          // "路明非注意到她脚边的演习规则牌" — after a perception verb the
+          // pronoun is the perceived person, not the perceiver; without a
+          // recorded candidate of that gender this needs reading.
+          if (only === subject && /(看见|看到|注意到|看着|盯着|望向|望见|听见|听到|察觉|发现)(了|着)?$/u.test(clause)) {
+            bindings.push({ pronoun, gender, antecedent: null, candidates, strength: 'ambiguous', index, sentence: sentenceIndex });
+            continue;
+          }
           const onlyGender = genders?.[only];
           if (onlyGender === gender) {
             bindings.push({ pronoun, gender, antecedent: only, candidates, strength: 'strong', index, sentence: sentenceIndex });

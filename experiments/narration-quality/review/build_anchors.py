@@ -1146,6 +1146,21 @@ anchors.append(
     },
 )
 
+
+rows_move02 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-02move.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "pos/02-move-perception-pronoun",
+        "source": "02 Qwen3 spine move (171 chars, accepted by 02): 路明非注意到她脚边的演习规则牌",
+        "input": rows_move02["02-move-171"]["input"],
+        "text": rows_move02["02-move-171"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [],
+                   "forbid": ["fact.gender"],
+                   "notes": "After a perception verb the pronoun is the perceived person, not the perceiver; no recorded female visible, so it must stay review."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
