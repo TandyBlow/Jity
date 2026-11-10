@@ -35,6 +35,7 @@ const samples = await load('frontend/src/lib/world-engine/runtime/b3-short-sampl
 const LocalGameSession = sessionModule.LocalGameSession as {
   create(template: unknown, model: unknown, options: Record<string, unknown>): Promise<SessionLike>;
   open(store: unknown, world: Record<string, unknown>, model: unknown): Promise<{ session: SessionLike; created: boolean }>;
+  restore(snapshot: unknown, model: unknown, options: Record<string, unknown>): Promise<SessionLike>;
 };
 const createLocalProgressStore = storeModule.createLocalProgressStore as (backend: unknown) => StoreLike;
 const MemoryProgressBackend = memoryModule.MemoryProgressBackend as new () => unknown;
@@ -189,3 +190,39 @@ if (!uploadedB.outcome.upload.parentSnapshotIds.includes(aSnapshotId)) {
 const bAfter = history(opened.session.snapshot);
 if (bAfter.commands.length !== aHistory.commands.length + 1) throw new Error('B lost history when adding a turn');
 console.log('OK: B restored A\'s world with its prose, and B\'s new turn descends from A\'s snapshot');
+
+// --- device C: the other documented way to open a remote copy ---
+// LocalGameSession.restore(snapshot) without writing the store first: the
+// session starts at revision 0 and its first save creates revision 1.
+const storeC = createLocalProgressStore(new MemoryProgressBackend());
+const syncC = createProductSync<unknown>({
+  store: adapter(storeC), worldId: sessionA.worldId, baseUrl, token, storage: null,
+  retry: { attempts: 2, baseDelayMs: 50 }, sleep: async () => undefined,
+});
+const latest = await syncC.restore();
+if (latest.source !== 'remote' || !latest.snapshot) throw new Error('C could not read the remote head');
+const sessionC = await LocalGameSession.restore(latest.snapshot, scriptedModel(), {
+  storage: storeC, sessionId: 'device_c', leaseHeartbeat: false,
+});
+const cBefore = history(sessionC.snapshot);
+if (JSON.stringify(cBefore.prose) !== JSON.stringify(bAfter.prose)) {
+  throw new Error('C opened a different prose history than the remote head');
+}
+const uploadedC = await syncC.save(sessionC.snapshot, { requestId: `two-device-c-${sessionA.worldId}` });
+if (uploadedC.outcome?.status !== 'synced') throw new Error(`C upload failed: ${uploadedC.outcome?.status}`);
+const recordC = await storeC.load(sessionA.worldId);
+console.log(JSON.stringify({
+  c: {
+    revision: recordC?.metadata.revision ?? null,
+    commands: cBefore.commands,
+    parentIncludesB: uploadedC.outcome.upload.parentSnapshotIds.includes(uploadedB.outcome.upload.snapshotId),
+  },
+}, null, 2));
+if (!uploadedC.outcome.upload.parentSnapshotIds.includes(uploadedB.outcome.upload.snapshotId)) {
+  throw new Error('C upload does not descend from B');
+}
+// The session has not saved yet (restore only sets revision 0 and the sync
+// call is upload-only), so the store is empty or holds revision 1 from the
+// session's own first save; either way it must not claim a higher revision.
+if (recordC && recordC.metadata.revision !== 1) throw new Error('C store revision is not the first save');
+console.log('OK: C opened the same remote snapshot directly without a store write, kept the history and chained onto B');
