@@ -1,0 +1,245 @@
+<!doctype html>
+<!-- c9 browser T5 runtime probe.
+     One page, one browser process. It measures, in this order:
+       1. cold start: ort module import, tokenizer bytes + load, encoder
+          session, decoder session — each stage timed separately
+       2. first inference on a registered case (nothing warm yet)
+       3. the same case again (warm)
+       4. one case with the per-step macrotask yield switched off, to price
+          the yield itself
+       5. all seven registered cases, warm
+       6. cancellation: abort at a timer and abort at a step boundary
+       7. release of both sessions, with memory sampled at each boundary
+     It writes window.__C9_RESULT__ once. It does not judge output quality;
+     token parity against the offline reference is the only correctness gate
+     and is compared outside this page. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>c9 T5 browser runtime probe</title>
+<style>body{font:13px ui-monospace,monospace;margin:1.2rem}pre{white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="status">loading…</div>
+<div id="mem"></div>
+<pre id="out"></pre>
+<script type="module">
+const status = (t) => { document.getElementById("status").textContent = t; };
+const memEl = document.getElementById("mem");
+const result = {
+  adapter: null,
+  environment: {},
+  memory: { samples: [] },
+  stages: null,
+  cold: null,
+  warm: null,
+  noYield: null,
+  cases: [],
+  cancel: {},
+  released: null,
+};
+
+// Expensive cross-origin-isolated memory accounting forces a full GC and
+// took ~18 s per call on this machine, so it runs only in the dedicated
+// memory pass (?mem=1). The cheap JS-heap read is always taken.
+const QS = new URLSearchParams(location.search);
+const DEEP_MEM = QS.has("mem");
+result.environment.graphVariant = QS.get("variant") || "fp32";
+result.environment.deepMemory = DEEP_MEM;
+
+async function sampleMemory(label) {
+  const s = { label, atMs: +performance.now().toFixed(1) };
+  if (performance.memory) {
+    s.jsHeapUsedBytes = performance.memory.usedJSHeapSize;
+    s.jsHeapTotalBytes = performance.memory.totalJSHeapSize;
+  }
+  if (DEEP_MEM && typeof performance.measureUserAgentSpecificMemory === "function") {
+    try {
+      // cross-origin-isolated only; may take ~100ms and forces GC
+      const m = await performance.measureUserAgentSpecificMemory();
+      s.isolatedBytes = m.bytes;
+    } catch (e) {
+      s.isolatedError = String(e && e.name || e);
+    }
+  }
+  result.memory.samples.push(s);
+  memEl.textContent = result.memory.samples
+    .map((x) => `${x.label}: heap=${x.jsHeapUsedBytes ?? "?"} iso=${x.isolatedBytes ?? "-"}`)
+    .join(" | ");
+  return s;
+}
+
+function finish(payload) {
+  window.__C9_RESULT__ = payload;
+  document.getElementById("out").textContent = JSON.stringify(payload, null, 1);
+  status("done");
+}
+
+try {
+  result.environment.userAgent = navigator.userAgent;
+  result.environment.hardwareConcurrency = navigator.hardwareConcurrency;
+  result.environment.crossOriginIsolated = self.crossOriginIsolated;
+  result.environment.preciseMemory = !!(performance.memory);
+  result.environment.measureUserAgentSpecificMemory =
+    typeof performance.measureUserAgentSpecificMemory === "function";
+
+  const { T5Browser, createTokenizer, ADAPTER_ID, LOOP_SOURCE_SHA256 } =
+    await import("/app/t5_adapter.mjs");
+  result.adapter = { id: ADAPTER_ID, loopSourceSha256: LOOP_SOURCE_SHA256 };
+
+  const fixture = await (await fetch("/fixtures/probe_inputs.json")).json();
+  const cases = fixture.cases;
+  result.fixture = { purpose: fixture.purpose, count: cases.length,
+                     names: cases.map((c) => c.name) };
+
+  const config = await (await fetch("/graphs/config.json")).json();
+  result.config = { num_heads: config.num_heads, d_kv: config.d_kv,
+                    num_layers: config.num_layers,
+                    num_decoder_layers: config.num_decoder_layers,
+                    vocab_size: config.vocab_size,
+                    eos_token_id: config.eos_token_id,
+                    pad_token_id: config.pad_token_id };
+
+  await sampleMemory("before-create");
+  status("creating sessions…");
+  const tCreate = performance.now();
+  const tTok = performance.now();
+  const tokenizer = await createTokenizer({
+    spBundleUrl: "/sp/index.js",
+    modelBytesUrl: "/graphs/spiece.model",
+  });
+  const tokenizerWallMs = +(performance.now() - tTok).toFixed(1);
+  const t5 = await T5Browser.create({
+    ortBundleUrl: "/ort/ort.bundle.min.mjs",
+    wasmPaths: "/ort/",
+    graphDir: "/graphs",
+    heads: config.num_heads,
+    dKv: config.d_kv,
+    tokenizer,
+  });
+  result.stages = { tokenizer: tokenizer.stages, tokenizerWallMs,
+                    ...t5.stages,
+                    measuredCreateMs: +(performance.now() - tCreate).toFixed(1) };
+  await sampleMemory("after-create");
+
+  // tokenizer parity is a precondition for everything else
+  result.tokenizer = cases.map((c) => {
+    const ids = t5.encode(c.renderText);
+    const firstDiff = ids.findIndex((x, i) => c.inputIds[i] !== x);
+    return { name: c.name, matchesBakedIds: firstDiff === -1 &&
+             ids.length === c.inputIds.length,
+             firstDiff, tokens: ids.length };
+  });
+
+  // 1. cold inference: nothing has been run in this process yet
+  status("cold inference…");
+  const cold = await t5.generate(cases[0].renderText);
+  result.cold = { name: cases[0].name, ids: cold.ids, text: cold.text,
+                  status: cold.status, finishReason: cold.finishReason,
+                  timings: cold.timings, inputTokens: cold.inputTokens };
+
+  // 2. warm inference, same input (session + wasm memory hot)
+  status("warm inference…");
+  const warm = await t5.generate(cases[0].renderText);
+  result.warm = { name: cases[0].name, ids: warm.ids,
+                  status: warm.status, finishReason: warm.finishReason,
+                  timings: warm.timings, sameIdsAsCold:
+                  JSON.stringify(warm.ids) === JSON.stringify(cold.ids) };
+  await sampleMemory("after-warm");
+
+  // 3. price of the per-step yield (cancellation needs it; keep the number)
+  status("yield-cost run…");
+  const noYield = await t5.generate(cases[0].renderText, { macrotaskYield: false });
+  result.noYield = { name: cases[0].name, timings: noYield.timings,
+                     sameIdsAsCold: JSON.stringify(noYield.ids) === JSON.stringify(cold.ids) };
+
+  // 4. all registered cases
+  for (let i = 0; i < cases.length; i++) {
+    const c = cases[i];
+    status(`case ${i + 1}/${cases.length} ${c.name}`);
+    const g = await t5.generate(c.renderText);
+    result.cases.push({
+      name: c.name, scope: c.scope,
+      ids: g.ids, text: g.text, inputTokens: g.inputTokens,
+      status: g.status, finishReason: g.finishReason,
+      timings: g.timings,
+      tokenMatchVsBakedReference:
+        JSON.stringify(g.ids) === JSON.stringify(c.referenceIds),
+    });
+    await sampleMemory(`case-${c.name}`);
+  }
+
+  // 5. cancellation. The number that matters is (signal issued) ->
+  // (AbortError reached the caller): a step already inside ORT cannot be
+  // interrupted, so latency = remaining part of the in-flight step + the
+  // macrotask yield + the abort check.
+  status("cancel: timer…");
+  const ctrl = new AbortController();
+  const tStart0 = performance.now();
+  let abortIssuedAt0 = null;
+  setTimeout(() => { abortIssuedAt0 = performance.now(); ctrl.abort(); }, 120);
+  try {
+    const g = await t5.generate(cases[3].renderText, { signal: ctrl.signal });
+    result.cancel.timerAbort = { threw: false, steps: g.timings.steps,
+                                 wallMs: +(performance.now() - tStart0).toFixed(0) };
+  } catch (e) {
+    const thrownAt = performance.now();
+    result.cancel.timerAbort = { threw: true, name: e.name,
+      completedSteps: e.detail ? e.detail.completedSteps : null,
+      runWallMs: +(thrownAt - tStart0).toFixed(0),
+      abortIssuedAtMs: abortIssuedAt0 ? +abortIssuedAt0.toFixed(1) : null,
+      abortObservedAtMs: e.detail ? +e.detail.abortObservedAt.toFixed(1) : null,
+      // the honest latency: from the abort() call to the exception
+      issueToThrowMs: abortIssuedAt0 ? +(thrownAt - abortIssuedAt0).toFixed(1) : null,
+      stepEndOffsetsMs: e.detail ? e.detail.stepEndOffsetsMs : null,
+      returnedPartialText: false };
+  }
+
+  status("cancel: step boundary…");
+  const ctrl2 = new AbortController();
+  let stepsSeen = 0;
+  let abortIssuedAt2 = null;
+  const tCancel2 = performance.now();
+  try {
+    const g = await t5.generate(cases[3].renderText, {
+      signal: ctrl2.signal,
+      onStep: (step) => { stepsSeen = step + 1;
+        if (step + 1 === 5) { abortIssuedAt2 = performance.now(); ctrl2.abort(); } },
+    });
+    result.cancel.stepAbort = { threw: false, steps: g.timings.steps,
+                                wallMs: +(performance.now() - tCancel2).toFixed(0) };
+  } catch (e) {
+    const thrownAt = performance.now();
+    result.cancel.stepAbort = { threw: true, name: e.name,
+      completedSteps: e.detail ? e.detail.completedSteps : null,
+      stepsSeen, runWallMs: +(thrownAt - tCancel2).toFixed(0),
+      abortIssuedAtMs: abortIssuedAt2 ? +abortIssuedAt2.toFixed(1) : null,
+      abortObservedAtMs: e.detail ? +e.detail.abortObservedAt.toFixed(1) : null,
+      issueToThrowMs: abortIssuedAt2 ? +(thrownAt - abortIssuedAt2).toFixed(1) : null,
+      stepEndOffsetsMs: e.detail ? e.detail.stepEndOffsetsMs : null,
+      returnedPartialText: false };
+  }
+
+  // 6. is the session still usable after a cancelled generation?
+  status("post-cancel reuse…");
+  const after = await t5.generate(cases[0].renderText);
+  result.cancel.reuseAfterAbort = {
+    sameIdsAsCold: JSON.stringify(after.ids) === JSON.stringify(cold.ids),
+    timings: after.timings };
+
+  // 7. release + memory
+  await sampleMemory("before-release");
+  t5.release();
+  await new Promise((r) => setTimeout(r, 300));
+  await sampleMemory("after-release");
+  result.released = true;
+
+  result.ok = true;
+  finish(result);
+} catch (e) {
+  result.ok = false;
+  result.fatal = { name: e && e.name, message: String(e && e.message || e),
+                   stack: e && e.stack ? String(e.stack).slice(0, 2000) : null };
+  finish(result);
+}
+</script>
+</body>
+</html>
