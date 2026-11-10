@@ -19,6 +19,7 @@ import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
 import { renderProseFactsPrompt } from './scene-prompt';
+import { senseViolations } from './licensed-sense';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 import { verifyNarration } from './verify';
 import {
@@ -729,6 +730,23 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
       onProgress: emit,
     });
     attempts.push(result.attempt);
+    // A sound or smell with no settled source asserts something that did not
+    // happen. The real runs invented wind, footsteps and the smell of exercise
+    // rounds in texts the general gate accepted, so this narrow class is checked
+    // here, before the retry decision, and the guidance names the sentence.
+    if (result.attempt.accepted) {
+      const invented = senseViolations(result.attempt.cleaned, input.inputText, {
+        movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
+      });
+      if (invented.length) {
+        result.attempt.accepted = false;
+        result.attempt.issues.push({
+          kind: 'unlicensed_sense', severity: 'hard', attempt: result.attempt.attempt,
+          detail: invented.map((item) => `${item.noun}（${item.sentence}）`).join('；'),
+          sentence: invented[0].sentence,
+        });
+      }
+    }
     if (result.deadlineHit || result.attempt.timedOut) deadlineExceeded = true;
     if (result.attempt.accepted || result.attempt.cancelled || result.attempt.timedOut) break;
     const hardIssues = result.attempt.issues.filter((issue) => issue.severity === 'hard');
@@ -738,6 +756,26 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
       maxTokens = Math.min(ceiling, Math.max(maxTokens + 160, Math.round(maxTokens * 1.5)));
     }
     if (nowMs() - callStarted >= deadlineMs) { deadlineExceeded = true; break; }
+  }
+
+  // A sound or smell with no settled source is not a style flourish: it
+  // asserts something that did not happen. The three real runs invented wind,
+  // footsteps and the smell of exercise rounds in texts the general gate
+  // accepted, so the scene path checks this one narrow class itself and fails
+  // the draft instead of presenting it as narration.
+  for (const attempt of attempts) {
+    if (!attempt.accepted || (attempt.issues ?? []).some((issue) => issue.severity === 'hard')) continue;
+    const invented = senseViolations(attempt.cleaned, input.inputText, {
+      movedNames: input.committed.facts.filter((fact) => fact.kind === 'moved').map((fact) => fact.name),
+    });
+    if (!invented.length) continue;
+    const detail = invented.map((item) => `${item.noun}（${item.sentence}）`).join('；');
+    attempt.issues.push({
+      kind: 'unlicensed_sense', severity: 'hard', attempt: attempt.attempt,
+      detail: `sound or smell with no settled source: ${detail}`,
+      sentence: invented[0].sentence,
+    });
+    attempt.accepted = false;
   }
 
   const acceptedAttempt = attempts.find((attempt) => attempt.accepted) ?? null;

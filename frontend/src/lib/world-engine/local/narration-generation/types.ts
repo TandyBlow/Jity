@@ -30,6 +30,9 @@ export type NarrationIssueKind =
   | 'echo_prior' | 'loop_repeated_sentence' | 'loop_repeated_clause'
   /** Viewpoint / knowledge boundary. */
   | 'perspective_leak' | 'knowledge_leak' | 'unlicensed_entity'
+  /** A sound or smell with no settled source (02's narrow generation check;
+   * the shared grader treats the same sentence as unverified by design). */
+  | 'unlicensed_sense'
   /** The model copied the instructions instead of writing prose. */
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */

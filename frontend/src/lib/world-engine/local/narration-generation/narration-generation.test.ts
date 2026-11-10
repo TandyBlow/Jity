@@ -1482,3 +1482,31 @@ describe('closed name list: a countable constraint instead of a general ban', ()
     expect(prompt).toContain('清单之外的人名、物名、声音、气味都不要写');
   });
 });
+
+describe('the scene path rejects an invented sound instead of passing it through', () => {
+  test('an unlicensed smell fails the draft even when every fact is present', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从走廊走到门厅，空气里有硝烟味。周宁留在走廊。' },
+      { kind: 'text', text: '林川从走廊走到门厅，在门口停住。周宁留在走廊。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'unlicensed_sense' && issue.severity === 'hard')).toBe(true);
+    expect(result.accepted).toBe(true);
+    expect(result.text).not.toContain('硝烟');
+  });
+
+  test('the retry prompt names the offending sentence', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '林川从走廊走到门厅，空气里有硝烟味。周宁留在走廊。' },
+      { kind: 'text', text: '林川从走廊走到门厅，在门口停住。周宁留在走廊。' },
+    ]);
+    await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false },
+    });
+    expect(engine.calls[1].prompt).toContain('硝烟');
+  });
+});
