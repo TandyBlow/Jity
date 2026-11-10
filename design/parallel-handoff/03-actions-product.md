@@ -201,6 +201,55 @@ composition decision (commit `54f630ca`, "let consumed action opportunities skip
 without an input binding"): a consumed opportunity skips, it is never
 adjudicated.
 
+## 06 minimal patch list (current tree, `2333d880`)
+
+Line numbers are from `2333d880`; the semantic direction is in sections 1–4
+above. These are the only product-tree edits this lane is asking for.
+
+**a. `local/session.ts`** (currently line 290):
+
+```ts
+-      const plan = record.initial.characters;
+-      const order = Object.keys(plan).sort();
++      const order = roundOrder(record.state);
+```
+
+with `import { roundOrder } from './action-execution/order';` at the top.
+
+**b. `local/transport.ts`** (currently line 744, inside `handleConclude`,
+`kind === 'continue'`):
+
+```ts
+-    record.round = { roundId: conclusion.nextRoundId, trigger: 'automatic', order: [...candidates], cursor: 0, actedIds: [], visitedIds: [], conclusion: null };
++    record.round = { roundId: conclusion.nextRoundId, trigger: 'automatic', order: orderSubset(record.state, candidates), cursor: 0, actedIds: [], visitedIds: [], conclusion: null };
+```
+
+with `import { orderSubset } from '../action-execution/order';`.
+
+**c. `local/semantics/actions/index.ts` + `types.ts` + tests**: cherry-pick
+`33697da8` (a consumed protagonist opportunity is a program skip). This matters
+now that 06 routes continuation through 04's port: an automatic round can
+revisit the protagonist's slot with the old command text still bound to the
+same advance, and the pre-fix handler asks the model to continue it.
+
+**d. `local/game-model.ts`** `reportAction` (line ~202): add the source so the
+submission log can tell a model answer from a program decision:
+
+```ts
+ this.options.onTask?.(result.task, result.key, {
+-  ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
++  ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw, source: result.source,
+ });
+```
+
+and add `source?: 'model' | 'program' | 'fallback';` to `GameModelOptions.onTask`'s
+detail type (optional; the settlement port callers ignore it). Then the page can
+push `{task, key, ms, fallback, source, error}` for `action`/`targets`/`reaction`
+into the per-submission ledger it already exposes on `window.__worldSubmission`
+(06's `2333d880` ledger currently accounts only results/updates/continuation).
+Without this, 09 cannot distinguish "no NPC acted because the model judged
+skip" from "the program skipped the scene".
+
 ## Open trade-offs (not silently decided here)
 
 1. **Off-screen actors.** `offscreenPolicy: 'skip'` means a character outside the
