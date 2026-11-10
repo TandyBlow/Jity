@@ -319,7 +319,7 @@ def main() -> int:
                 encoding="utf-8")
             proc = run(["src/semantic_validate.py", "--pack", str(pack_path),
                         "--run-dir", str(run_dir), "--out", str(tmp_path / "report.json")])
-            ok = proc.returncode == 2 and real["promptChars"] >= 6000
+            ok = proc.returncode == 2 and 6000 <= real["promptChars"] <= 11000
             detail = f"exit={proc.returncode} chars={real['promptChars']}"
             if ok:
                 report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
