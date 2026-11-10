@@ -240,6 +240,33 @@ with `turn_in_progress` and 0 model calls, but the page stayed
 runtime; 04/03 own the settlement/action failures and 06 owns the visible stop
 and retry path. The runtime load/worker contract held.
 
+## First valid product runtime evidence (2026-11-10T16:46Z)
+
+The 06 page at `81d5507a` / page sha `f861ace9` on `:3241` produced the first
+valid product-environment turn (`09-one-legal-turn.json`, runId
+`2026-11-10T1646-8c64`):
+
+- actual page console: `ggml_webgpu: adapter_info: vendor_id: 0 | vendor:
+  nvidia | architecture: lovelace`; `crossOriginIsolated` true;
+- page ready 102,137 ms, down from 142 s when the StrictMode probe mount loaded
+  both models twice; the 200 ms gate now leaves one visible round;
+- semantic: load 19,938 ms (fetch 11,591 + compile 8,344), loadCount 1,
+  workers 1/0, 17 generations; narration: load 31,037 ms (fetch 22,202 +
+  compile 8,743), loadCount 1, workers 1/0, 4 generations;
+- `lastGeneration` gave the prefill/decode split: semantic prompt 3,701
+  tokens/16.24 s, predicted 11/1.70 s, firstReadable 18.62 s, 8 chunks;
+  narration prompt 104 (+216 cached)/0.56 s, predicted 143/17.44 s,
+  firstReadable 1.45 s, 144 chunks;
+- JS heap 11.47 MB at ready, 13.42 MB after the turn; label it page JS heap,
+  not GPU VRAM.
+
+The turn itself failed content, not runtime: 04 updates accepted the group
+round but later rejected an invented task id (`task_doctor_flag`; allowed
+`task_doctor_prepare`) after 93 s; 03 nono actions fell back after repair
+failure; 02 narration used the program fallback. No accepted prose, 323 s.
+The runtime stayed at one load/worker and no hang. This is runtime evidence,
+not product acceptance.
+
 ## 02/06 integration entry points
 
 - 06 per-engine generation timing: include `engine.runtime.lastGeneration` in
