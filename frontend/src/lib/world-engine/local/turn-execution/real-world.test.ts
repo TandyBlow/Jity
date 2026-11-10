@@ -209,6 +209,25 @@ describe('21c3 trace replay (CPU)', () => {
     for (const task of Object.values(state.characters.nono.tasks)) expect(task.status).toBe('pending');
   });
 
+  it('sanitizes the exact e9a5 third-paragraph fact with its speaker label', async () => {
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'achieved', reason: '诺诺检查了故障短讯机状态。', effects: [] }],
+      facts: [{ text: '诺诺：确认任务完成并检查故障短讯机状态，成功执行行动。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw]) });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'nono', actionText: '诺诺检查故障短讯机。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value!.nono).toBe('诺诺：确认并检查故障短讯机状态。');
+    expect(outcome.value!.nono).not.toContain('任务完成');
+    expect(outcome.value!.nono).not.toContain('成功执行行动');
+    const detail = outcome.evidence.detail as { sanitizedFacts: { removed: string[] }[] };
+    expect(detail.sanitizedFacts[0]?.removed).toEqual(expect.arrayContaining(['任务完成', '成功执行行动']));
+  });
+
   it('drops the b7cd auto1 position answer that only echoed lu lane', async () => {
     const { state } = loadWorld();
     const afterFirst = projectStage(state, 'position', {
