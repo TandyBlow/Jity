@@ -101,11 +101,19 @@ function resilientEngine(url: string, contextSize: number, label: string): Produ
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
   let loadingEngine: WllamaInferenceEngine | null = null;
+  /** Set by dispose(). A load that was already in flight may still land (for
+   * example the CPU fallback after a real GPU failure); a closed port must
+   * dispose that engine instead of adopting a worker nobody owns. */
+  let closed = false;
   let loading: Promise<WllamaInferenceEngine> | null = null;
   const ensure = async (): Promise<WllamaInferenceEngine> => {
     if (current) return current;
     if (!loading) {
-      loading = loadEngine(url, contextSize, (engine) => { loadingEngine = engine; }).then((engine) => {
+      loading = loadEngine(url, contextSize, (engine) => {
+        if (closed) { void engine.dispose().catch(() => undefined); return; }
+        loadingEngine = engine;
+      }).then((engine) => {
+        if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
         loading = null;
@@ -126,6 +134,7 @@ function resilientEngine(url: string, contextSize: number, label: string): Produ
     get info() { return { backend: current?.info.backend ?? 'wllama', modelId: current?.info.modelId ?? null }; },
     load: async () => { await ensure(); },
     dispose: async () => {
+      closed = true;
       const inFlight = loadingEngine;
       loadingEngine = null;
       if (current) await drop(current);
