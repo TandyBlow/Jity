@@ -903,6 +903,50 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.past_added', sentence.text,
         `passive past event ${passive[0]} has no settled basis`, [], []));
     }
+    // A person claimed at a settled place that is not where they stand.
+    {
+      const placeNames = Object.keys(projection.places).sort((a, b) => b.length - a.length);
+      const peopleNames = Object.keys(projection.people);
+      const actorOf = (claimIndex: number, markerLength: number): string | null => {
+        const window = narration.slice(Math.max(0, claimIndex - 12), claimIndex + markerLength);
+        let best: { name: string; at: number } | null = null;
+        for (const candidate of peopleNames) {
+          const at = window.lastIndexOf(candidate);
+          if (at >= 0 && (!best || at >= best.at)) best = { name: candidate, at };
+        }
+        if (best) return best.name;
+        if (projection.viewpoint && /(他|她|自己)/u.test(window)) return projection.viewpoint;
+        return null;
+      };
+      for (const [personName, person] of Object.entries(projection.people)) {
+        const settledPlace = person.positionAfter ?? person.positionBefore;
+        if (!settledPlace) continue;
+        for (const place of placeNames) {
+          if (place === settledPlace) continue;
+          const claim = new RegExp(`(在|站在|坐在|蹲在|靠在|留在|待在|回到|来到|走进|走回|进了)${place}`, 'u').exec(narration);
+          if (!claim) continue;
+          // 「浮标还搁在工具棚」 is an object state, not a person standing there.
+          if (claim[1] === '在' && /[搁放挂摆压贴插藏塞停摊晾悬留]/u.test(narration[claim.index - 1] ?? '')) continue;
+          // A gaze or an object reaching a place is not the person standing there.
+          if (/(视线|目光|眼神|余光|影子|声音|脚步声|手|脚)$/u.test(narration.slice(Math.max(0, claim.index - 3), claim.index))) continue;
+          if (actorOf(claim.index, claim[1].length) !== personName) continue;
+          if (projection.moves.some((move) => move.kind === 'person' && move.name === personName && move.to === place)) continue;
+          const departing = /(从|离开|走出|下去|上来)/u.test(narration);
+          if (departing && projection.moves.some((move) => move.kind === 'person' && move.name === personName && move.from === place)) continue;
+          const settledInside = settledPlace.startsWith(place) && settledPlace !== place;
+          if (settledInside) {
+            findings.push(finding(ctx, 'fact.wrong_place', sentence.text,
+              `${personName} is settled inside ${settledPlace}; the prose puts them at the outer ${place}`, [settledPlace], []));
+            break;
+          }
+          if (!place.startsWith(settledPlace)) {
+            findings.push(finding(ctx, 'fact.wrong_place', sentence.text,
+              `${personName} is settled at ${settledPlace}; the prose puts them at ${place}`, [settledPlace], []));
+            break;
+          }
+        }
+      }
+    }
     // A body mark (red weal, blood, bruise) on a named body part must exist in
     // the settled appearance; otherwise it is a new physical fact.
     for (const [personName, person] of Object.entries(projection.people)) {

@@ -31,6 +31,7 @@ export type FindingKind =
   | 'fact.gender'
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'
+  | 'fact.wrong_place'
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
   | 'fact.sound_added'
