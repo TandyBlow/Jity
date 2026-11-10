@@ -64,7 +64,10 @@ interface WorldTurnRecord {
    * at submit so one evidence file cannot mix two arms unknowingly. */
   narrationModel: string | null;
   promptShape: string | null;
-  engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number }>;
+  engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number; contextSize?: number }>;
+  /** Last generation evidence per engine: prompt tokens vs context size tells a
+   * context overflow apart from a model failure. */
+  generations?: GenerationNote[];
 }
 
 interface TurnEntry {
@@ -108,10 +111,25 @@ function viewOf(state: WorldState): ViewState {
   };
 }
 
+/** Runtime generation evidence per engine, so 09 can distinguish a context
+ * overflow from a model failure without reading worker internals. Bounded. */
+type GenerationNote = { engine: string; promptTokens: number | null; contextSize: number; wallMs: number; finishReason: string | null; at: number };
+function recordGeneration(note: GenerationNote): void {
+  const w = globalThis as unknown as { __worldGenerations?: GenerationNote[] };
+  (w.__worldGenerations ??= []).push(note);
+  if (w.__worldGenerations.length > 200) w.__worldGenerations.splice(0, w.__worldGenerations.length - 200);
+}
+function lastGeneration(engine: string): GenerationNote | null {
+  const list = (globalThis as unknown as { __worldGenerations?: GenerationNote[] }).__worldGenerations ?? [];
+  for (let i = list.length - 1; i >= 0; i -= 1) if (list[i].engine === engine) return list[i];
+  return null;
+}
+
 async function loadEngine(
   url: string,
   contextSize = 8192,
   expectedBytes?: number,
+  label = 'engine',
   /** Hand the constructed engine out before the load starts, so the stop
    * button can reach a cold load that has no `current` engine yet. */
   onEngine?: (engine: WllamaInferenceEngine) => void,
@@ -119,7 +137,14 @@ async function loadEngine(
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
   // must not leave the first player turn waiting forever.
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, ...(expectedBytes ? { expectedBytes } : {}) });
+  const onEvidence = (record: { kind?: string; promptTokens?: number | null; contextSize?: number; wallMs?: number; finishReason?: string | null }) => {
+    if (record.kind !== 'generation') return;
+    recordGeneration({
+      engine: label, promptTokens: record.promptTokens ?? null, contextSize: record.contextSize ?? contextSize,
+      wallMs: record.wallMs ?? 0, finishReason: record.finishReason ?? null, at: Date.now(),
+    });
+  };
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
@@ -128,7 +153,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, ...(expectedBytes ? { expectedBytes } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
@@ -138,7 +163,7 @@ async function loadEngine(
 function engineCounters(label: string, engine: ProductEnginePort | null): WorldTurnRecord['engines'][number] | null {
   const runtime = engine?.runtime?.();
   if (!runtime) return null;
-  return { label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited, generations: runtime.generations };
+  return { label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited, generations: runtime.generations, contextSize: runtime.contextSize };
 }
 
 /** A model port that survives a hard-stopped generation. wllama terminates the
@@ -147,7 +172,10 @@ function engineCounters(label: string, engine: ProductEnginePort | null): WorldT
 interface ProductEnginePort extends InferenceEngine {
   /** Forwarded to the real runtime so the stop button can cancel a cold load. */
   cancelActive(): number;
-  runtime(): { needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number } | null;
+  runtime(): {
+    needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number;
+    contextSize?: number; modelId?: string | null;
+  } | null;
 }
 
 function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number): ProductEnginePort {
@@ -163,7 +191,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
   const ensure = async (): Promise<WllamaInferenceEngine> => {
     if (current) return current;
     if (!loading) {
-      loading = loadEngine(url, contextSize, expectedBytes, (engine) => {
+      loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
       }).then((engine) => {
@@ -562,6 +590,8 @@ export default function WorldLocalPage() {
         live.engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
           .filter((entry): entry is NonNullable<typeof entry> => entry != null);
         live.modelId = narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? live.modelId;
+        live.generations = [lastGeneration('semantic'), lastGeneration('narration')]
+          .filter((note): note is GenerationNote => note != null);
       }
       const submission = modelRef.current?.endSubmission() ?? null;
       if (submission && turnRecordRef.current) turnRecordRef.current.submission = submission;

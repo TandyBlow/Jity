@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
     return [
       { source: "/benchmark", headers: isolation },
       { source: "/world", headers: isolation },
+      // The product page runs wllama in the browser. Without these headers
+      // crossOriginIsolated is false and the engine falls back to one thread,
+      // which makes every six-stage prompt slow enough to look like a semantic
+      // timeout. 09 checks crossOriginIsolated===true before a real run.
+      { source: "/world-local", headers: isolation },
+      { source: "/world-local/:path*", headers: isolation },
     ];
   },
 };
