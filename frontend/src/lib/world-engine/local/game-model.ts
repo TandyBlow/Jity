@@ -406,7 +406,9 @@ export class LocalGameModel implements WorldModelPort {
       if (!candidate.validation.ok) return false;
       const audit = proseAudit(candidate.supported, protagonistName);
       const grounding = groundingRatio(candidate.supported, sceneNamesList);
-      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2 && [...candidate.supported].length >= 100;
+      // The narration contract is 160–240 chars; a supported scene shorter than
+      // 140 is a short summary, not the contracted paragraph.
+      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2 && [...candidate.supported].length >= 140;
     };
 
     const evaluate = (raw: string) => {

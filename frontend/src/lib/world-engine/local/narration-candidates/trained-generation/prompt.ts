@@ -52,10 +52,10 @@ export function insertBeforeBody(inputText: string, block: string): string {
  * Chinese and cannot be wrong about gender. */
 export function writingContract(policy: NarrationPolicy): string {
   const view = policy.viewpoint?.name;
-  const target = clampInt(policy.targetChars ?? 240, 60, 600);
+  const target = clampInt(policy.targetChars ?? 200, 60, 600);
   return [
     '【写法】',
-    `第三人称，只写${view ? `${view}看得见、听得见的东西` : '主角看得见、听得见的东西'}；写成一个连贯的短场景，约${target}字，可分两到三段。`,
+    `第三人称，只写${view ? `${view}看得见、听得见的东西` : '主角看得见、听得见的东西'}；写成一个连贯的短场景，160 到 240 字（目标约${target}字），分两到三段。`,
     '只写上面已经结算的内容：不要新增人物、物品、地点、事件、往事、承诺或数字。',
     '只写上面写过的声音、气味和物件；没写过的脚步声、枪声、风声、气味、心跳都不要补。',
     '称呼人物时用名字或省略主语，不要用他/她指代人物，避免写错性别。',

@@ -356,8 +356,11 @@ async function openWithLease(
   world: { worldId: string; template: Parameters<typeof LocalGameSession.create>[0] },
   model: LocalGameModel,
   alive: () => boolean,
-  attempts = 6,
-  delayMs = 1500,
+  attempts = 20,
+  // The writer lease lives 30 s and a page that is being reloaded may not have
+  // released it yet (its flush can still be running). Wait past that TTL before
+  // telling the player another tab owns the save.
+  delayMs = 2000,
 ): Promise<LocalGameSession> {
   const takeoverId = (() => {
     try { return sessionStorage.getItem(LEASE_TAKEOVER_KEY); } catch { return null; }
@@ -557,6 +560,19 @@ export default function WorldLocalPage() {
             }
             setStage(STAGE_LABEL[task] ?? task);
             if (task === 'narration') setStage('');
+            // A driver that times out mid-turn must still see the engines that
+            // actually ran. The finally block only runs when submit settles.
+            {
+              const liveRecord = turnRecordRef.current;
+              if (liveRecord) {
+                liveRecord.engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
+                  .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+                (window as unknown as { __worldLive?: unknown }).__worldLive = {
+                  turn: liveRecord.index, at: Date.now(), engines: liveRecord.engines,
+                  modelId: liveRecord.modelId, generations: liveRecord.generations ?? null,
+                };
+              }
+            }
             if (task !== 'narration') return;
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
@@ -649,7 +665,7 @@ export default function WorldLocalPage() {
             leaseWorldRef.current = world.worldId;
             setLeaseBlocked(true);
             setPhase('error');
-            setError('另一个标签页正在使用这个存档。可以等它释放后继续，或在这个标签页接管。');
+            setError('加载失败：另一个标签页（或刚刚关闭的页面）仍持有存档写入权。存档没有被改动，可以重试，或在这个标签页接管。');
             return;
           }
           console.error('[world-local] saved progress could not be opened', openError);
