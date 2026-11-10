@@ -1,0 +1,228 @@
+{
+  "batch": 1,
+  "createdAt": "2026-11-10T05:27:28Z",
+  "status": "first-batch-ready",
+  "rowsFile": "rows.jsonl",
+  "rowCount": 17,
+  "source": {
+    "dataset": "narration-dataset-v1",
+    "sourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
+    "sourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
+    "splitsUsed": [
+      "train"
+    ],
+    "devOrTestUsed": false,
+    "oldRowsModified": false
+  },
+  "consumableFields": [
+    "input",
+    "targetText"
+  ],
+  "metadataFieldsNotForModelInput": [
+    "sourceRowId",
+    "sourceEvidence",
+    "sourceSplit",
+    "sourceInputSha256",
+    "targetChars",
+    "requiredFacts",
+    "licensedDetails",
+    "knowledgeBoundary",
+    "forbiddenInventions",
+    "styleReferenceIds",
+    "notes",
+    "reviewState"
+  ],
+  "worldFamilies": {
+    "library-basement": 3,
+    "library-courtyard": 2,
+    "library-lending": 2,
+    "library-news": 7,
+    "library-upper-corridor": 1,
+    "library-utilities": 2
+  },
+  "categories": {
+    "appearance_change": 1,
+    "item_change": 4,
+    "location_change": 3,
+    "movement": 3,
+    "no_change": 1,
+    "personality_change": 1,
+    "sanity_change": 6,
+    "secret_reveal": 1,
+    "separation": 3,
+    "task_added": 2,
+    "task_complete": 4
+  },
+  "targetLength": {
+    "min": 76,
+    "max": 106,
+    "mean": 90.6
+  },
+  "rows": [
+    {
+      "id": "short-0008-binding-no-change",
+      "sourceRowId": "row-0008",
+      "worldFamily": "library-basement",
+      "categories": [
+        "no_change"
+      ],
+      "targetChars": 79
+    },
+    {
+      "id": "short-0050-backdoor-lock",
+      "sourceRowId": "row-0050",
+      "worldFamily": "library-lending",
+      "categories": [
+        "item_change",
+        "task_complete"
+      ],
+      "targetChars": 76
+    },
+    {
+      "id": "short-0055-reading-room-reveal",
+      "sourceRowId": "row-0055",
+      "worldFamily": "library-news",
+      "categories": [
+        "personality_change",
+        "secret_reveal"
+      ],
+      "targetChars": 103
+    },
+    {
+      "id": "short-0063-stack-room-rope",
+      "sourceRowId": "row-0063",
+      "worldFamily": "library-basement",
+      "categories": [
+        "location_change",
+        "item_change"
+      ],
+      "targetChars": 81
+    },
+    {
+      "id": "short-0060-corridor-glasses",
+      "sourceRowId": "row-0060",
+      "worldFamily": "library-upper-corridor",
+      "categories": [
+        "appearance_change",
+        "sanity_change"
+      ],
+      "targetChars": 78
+    },
+    {
+      "id": "short-0078-courtyard-drop",
+      "sourceRowId": "row-0078",
+      "worldFamily": "library-courtyard",
+      "categories": [
+        "sanity_change"
+      ],
+      "targetChars": 89
+    },
+    {
+      "id": "short-0098-newsroom-cup",
+      "sourceRowId": "row-0098",
+      "worldFamily": "library-news",
+      "categories": [
+        "item_change",
+        "location_change"
+      ],
+      "targetChars": 98
+    },
+    {
+      "id": "short-0100-desk-swap",
+      "sourceRowId": "row-0100",
+      "worldFamily": "library-lending",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "targetChars": 78
+    },
+    {
+      "id": "short-0101-power-room-doubt",
+      "sourceRowId": "row-0101",
+      "worldFamily": "library-utilities",
+      "categories": [
+        "sanity_change"
+      ],
+      "targetChars": 81
+    },
+    {
+      "id": "short-0121-newspaper-clip",
+      "sourceRowId": "row-0121",
+      "worldFamily": "library-news",
+      "categories": [
+        "item_change"
+      ],
+      "targetChars": 100
+    },
+    {
+      "id": "short-0152-archive-two-tasks",
+      "sourceRowId": "row-0152",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "sanity_change"
+      ],
+      "targetChars": 83
+    },
+    {
+      "id": "short-0169-archive-fire-answer",
+      "sourceRowId": "row-0169",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete"
+      ],
+      "targetChars": 104
+    },
+    {
+      "id": "short-0182-corridor-separation",
+      "sourceRowId": "row-0182",
+      "worldFamily": "library-news",
+      "categories": [
+        "movement",
+        "separation",
+        "sanity_change"
+      ],
+      "targetChars": 98
+    },
+    {
+      "id": "short-0188-archive-two-cover-tasks",
+      "sourceRowId": "row-0188",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "task_added"
+      ],
+      "targetChars": 106
+    },
+    {
+      "id": "short-0194-power-room-fear",
+      "sourceRowId": "row-0194",
+      "worldFamily": "library-utilities",
+      "categories": [
+        "sanity_change"
+      ],
+      "targetChars": 89
+    },
+    {
+      "id": "short-0197-basement-dehumidifier",
+      "sourceRowId": "row-0197",
+      "worldFamily": "library-basement",
+      "categories": [
+        "location_change"
+      ],
+      "targetChars": 96
+    },
+    {
+      "id": "short-0199-rooftop-third-name",
+      "sourceRowId": "row-0199",
+      "worldFamily": "library-courtyard",
+      "categories": [
+        "movement",
+        "separation",
+        "task_added"
+      ],
+      "targetChars": 102
+    }
+  ]
+}
