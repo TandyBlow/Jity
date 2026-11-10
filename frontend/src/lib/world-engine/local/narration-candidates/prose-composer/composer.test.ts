@@ -208,6 +208,22 @@ describe('validateScene and generateCandidate', () => {
     expect(result.text).not.toContain('桌子');
   });
 
+  it('joins a bare time line to the next action instead of leaving it alone', () => {
+    const result = generateCandidate({
+      policy: {
+        scene: {
+          ...SHORT_MOVE_SCENE,
+          beats: [
+            { kind: 'time', amount: 5, unit: 'minute' },
+            { kind: 'move', actorId: 'person_a', from: '走廊', to: '门厅' },
+          ],
+          policy: { minChars: 20, requireTime: true },
+        },
+      },
+    });
+    expect(result.text).toContain('过了五分钟，林川从走廊');
+  });
+
   it('builds a sparse but truthful scene from committed facts', () => {
     const result = generateCandidate({
       committed: {

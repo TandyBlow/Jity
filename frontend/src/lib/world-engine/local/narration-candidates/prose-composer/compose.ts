@@ -789,7 +789,22 @@ function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] 
       merged.push(paragraph);
     }
   }
-  return merged;
+  // A bare time line reads better as the start of the next action than as its
+  // own paragraph: "过了五分钟，路明非走进器材棚。"
+  const out: string[] = [];
+  for (let index = 0; index < merged.length; index += 1) {
+    const current = merged[index];
+    const next = merged[index + 1];
+    const bareTime = /^(?:又?过了)?[零一二两三四五六七八九十百\d]+(?:分钟|秒|个小时|天|个月|年)(?:过去|之后)?。$/u.test(current);
+    if (bareTime && next && !next.startsWith('「')
+      && charCount(current) + charCount(next) <= 80) {
+      out.push(`${current.slice(0, -1)}，${next}`);
+      index += 1;
+    } else {
+      out.push(current);
+    }
+  }
+  return out;
 }
 function nameMap(scene: ProseScene): Map<string, string> {
   return new Map(scene.cast.map((actor) => [actor.id, actor.name]));
