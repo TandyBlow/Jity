@@ -179,3 +179,9 @@
 
 - 该 run 不是“捕获时 IN_PROGRESS”就结束：最终 `status: FAILED`；reload 75.7 s 到 `ready`，但 `restored: false`；`failures` 与 `finishes` 均为空；turn 的 problems 全是程序回退（`no_accepted_model_text`、`draft_only_not_accepted`、`program_only_not_model_text`）。正文逐句问题不变，见 `results/quality/findings-415c.md`。
 - 06 新 build `6eb46279`（`75b8Fn_WPEskCyw5AK_HO`，pid 30692）已合入 04 `09eb0331`/`ebbd21f5`、02 `6ea8b727`，并新增 `c3dc20b6` 逐段来源标签与调度时钟；下一轮 09 跑这个 build。
+
+### 415c 检查器扩展（11cb8ce3）
+
+- `fact.action_omitted`：输入明确写了「往里走 / 看清规则牌」，正文只有物品「还在」和「站了一会儿」，走/看都不出现，真实状态 review-run 首句报 `fact.action_omitted`。
+- `fact.item_actor` 覆盖“已结算配饰”（护目镜挂在胸前），保留“他戴上护目镜站起身”这类 worn/handling 守卫，并排除「伸手够得到」习语（human dr-0012 曾误报）。
+- 415c 三个锚点改用真实状态输入/action；81 锚点；human-71 71/0、final-v1 6/0。
