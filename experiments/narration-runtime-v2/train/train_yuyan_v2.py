@@ -114,6 +114,7 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=0)
     parser.add_argument("--lr", type=float, default=0.0)
     parser.add_argument("--mode", default="")
+    parser.add_argument("--device", default="cuda", choices=("cuda", "cpu"))
     args = parser.parse_args()
 
     with io.open(args.config, encoding="utf-8") as handle:
@@ -129,10 +130,10 @@ def main() -> int:
     os.makedirs(out_dir, exist_ok=True)
 
     source = load_source_module()
-    device = "cuda"
-    if not torch.cuda.is_available():
-        raise SystemExit("no CUDA device; this trainer is meant for the GPU node")
-    device_name = torch.cuda.get_device_name(0)
+    device = args.device
+    if device == "cuda" and not torch.cuda.is_available():
+        raise SystemExit("no CUDA device; use --device cpu only for a tiny smoke test")
+    device_name = torch.cuda.get_device_name(0) if device == "cuda" else "cpu"
 
     # ---- identities -----------------------------------------------------
     if not os.path.exists(data_path):
@@ -210,7 +211,7 @@ def main() -> int:
     seed = int(config.get("seed", 20261109))
     torch.manual_seed(seed)
     random.seed(seed)
-    if torch.cuda.is_available():
+    if device == "cuda":
         torch.cuda.manual_seed_all(seed)
 
     # ---- model ----------------------------------------------------------
@@ -283,7 +284,7 @@ def main() -> int:
         history = state.get("history", [])
         torch.set_rng_state(state["torchRng"])
         random.setstate(state["pythonRng"])
-        if torch.cuda.is_available() and state.get("cudaRng"):
+        if device == "cuda" and state.get("cudaRng"):
             torch.cuda.set_rng_state_all(state["cudaRng"])
         print(f"resumed from {resume_path} at epoch {start_epoch}", flush=True)
 
@@ -348,7 +349,7 @@ def main() -> int:
                       "test": len(test_rows), "trainableParams": trainable_params,
                       "params": params, "dataSha256": data_sha, "baseSha256": base_sha,
                       "dictSha256": dict_sha, "seed": seed, "mode": mode,
-                      "maxLen": max_len}), ensure_ascii=False, flush=True)
+                      "maxLen": max_len}, ensure_ascii=False), flush=True)
 
     for epoch in range(start_epoch, max_epochs + 1):
         epoch_started = time.time()
@@ -385,11 +386,12 @@ def main() -> int:
             if len(batch_ids) == batch_size:
                 flush()
         flush()
-        dev_loss, dev_rows = evaluate(dev_rows)
+        dev_loss, dev_per_row_epoch = evaluate(dev_rows)
         entry = {"epoch": epoch, "loss": round(total / max(steps, 1), 4),
-                 "devLoss": dev_loss, "devPerRow": dev_rows,
+                 "devLoss": dev_loss, "devPerRow": dev_per_row_epoch,
                  "elapsedSec": round(time.time() - epoch_started, 1),
-                 "peakAllocatedMb": round(torch.cuda.max_memory_allocated() / 2**20)}
+                 "peakAllocatedMb": (round(torch.cuda.max_memory_allocated() / 2**20)
+                                     if device == "cuda" else None)}
         history.append(entry)
         if dev_loss < best["devLoss"]:
             best = {"devLoss": dev_loss, "epoch": epoch,
@@ -409,7 +411,7 @@ def main() -> int:
             "history": history,
             "torchRng": torch.get_rng_state(),
             "pythonRng": random.getstate(),
-            "cudaRng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+            "cudaRng": torch.cuda.get_rng_state_all() if device == "cuda" else None,
             "configSha256": config_sha,
             "dataSha256": data_sha,
             "baseSha256": base_sha,
