@@ -747,7 +747,7 @@
           "位置": "器材棚"
         }
       },
-      "targetText": "十二分钟过去，秦越把钥匙从腰环上解下来，插进器材笼的挂锁。锁梁弹开，他抽掉插销，把笼门推到一边；折叠担架从笼里搬出来，靠在领用台边，帆布和锁脚都扣得稳。笼里只剩折叠梯和那卷安全绳，网眼后面的东西看得清清楚楚。领用台上夹着的簿子摊开着，笔尖还没干，担架那一栏空着，他先没有落笔。",
+      "targetText": "十二分钟过去，秦越把钥匙从腰环上解下来，插进器材笼的挂锁。锁梁弹开，他抽掉插销，把笼门推到一边；折叠担架从笼里搬出来，放在领用台边，帆布和锁脚都扣得稳。笼里只剩折叠梯和那卷安全绳，网眼后面的东西看得清清楚楚。领用台上夹着的簿子摊开着，笔尖还没干，担架那一栏空着，他先没有落笔。",
       "categories": [
         "item_change",
         "movement"
@@ -1123,7 +1123,7 @@
           "位置": "中央庭院"
         }
       },
-      "targetText": "六分钟过去，凯撒从红方集结点走进庭院，绕过喷泉池沿，在倒放的长椅后蹲下。池底的残水没有干，靠钟楼一侧的池沿缺口露在外面。红方信号旗还折在他左手边，杆脚的接口没有磕碰。唐骁守着东侧那段射界，回头看了一眼，没有说话；长椅的一条腿断着，两个人都没有再往上面站。",
+      "targetText": "六分钟过去，凯撒从红方集结点走进庭院，绕过喷泉池沿，停在倒放的长椅后。池底的残水没有干，靠钟楼一侧的池沿缺口露在外面。红方信号旗还折在他左手边，杆脚的接口没有磕碰。唐骁守着东侧那段射界，回头看了一眼，没有说话；长椅的一条腿断着，谁也没有去动它。",
       "categories": [
         "movement",
         "separation"
@@ -1175,6 +1175,340 @@
         "row-0182"
       ],
       "notes": "移动 + 另一人留在原处；只写走到长椅后，不写进攻结果。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0015-move-without-posture",
+      "slug": "move-without-posture",
+      "sourceRowId": "authored:dragon-raja-free-day#move-without-posture",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "5 分钟",
+      "delta": {
+        "路明非": {
+          "位置": "器材棚"
+        }
+      },
+      "afterOverride": {
+        "诺诺": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "五分钟过去，路明非从低墙后走到器材棚门口，跨过门槛，停在领用台和器材笼之间。推拉门在他身后敞着；诺诺没有跟进来，服务巷里没有第二道脚步。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "5 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "路明非",
+          "from": "西侧服务巷",
+          "to": "器材棚"
+        },
+        {
+          "kind": "position",
+          "actor": "诺诺",
+          "location": "西侧服务巷",
+          "note": "另一人没有跟进"
+        }
+      ],
+      "licensedDetails": [
+        "器材棚的推拉门、领用台、器材笼（地点外貌）",
+        "低墙（服务巷外貌）",
+        "跨门槛、停在两件器材之间（移动的路径和终点）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己走进器材棚",
+          "诺诺没有跟进来",
+          "身后没有第二道脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺的打算",
+          "器材棚里未看见的物品",
+          "任何未结算的战术信息"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写站、坐、蹲、靠等没有结算的姿势",
+        "不得让两人说话或承诺",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0100"
+      ],
+      "notes": "移动 + 分开，正文完全不写姿势词；只写跨门槛和停下的位置。用于对照 04 的“路明非站在西侧服务巷”姿势误加。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0016-two-people-clear-subjects",
+      "slug": "two-people-clear-subjects",
+      "sourceRowId": "authored:dragon-raja-free-day#two-people-clear-subjects",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "4 分钟",
+      "delta": {
+        "诺诺": {
+          "新增个性": [
+            "先看清身边的人，再转向别处"
+          ]
+        },
+        "路明非": {
+          "精神值": 39
+        }
+      },
+      "targetText": "四分钟过去，诺诺先低头看了看路明非的手，又抬眼看了看他的脸，自己才转向巷口。路明非的呼吸短了一下，手指在背心前襟上收紧，又慢慢松开；他没有动，也没有出声。",
+      "categories": [
+        "personality_change",
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "4 分钟"
+        },
+        {
+          "kind": "personality_change",
+          "owner": "诺诺",
+          "add": "先看清身边的人，再转向别处"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "路明非",
+          "from": 43,
+          "to": 39
+        }
+      ],
+      "licensedDetails": [
+        "服务巷低墙和巷口（地点外貌）",
+        "路明非的背心前襟（物品外貌）",
+        "低头看手、抬眼、转向巷口（表现新个性的动作）",
+        "呼吸变短、手指收紧又松开（精神下降的可观察表现）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "诺诺先看自己再看巷口的顺序",
+          "自己的呼吸和手",
+          "巷口的方向"
+        ],
+        "mustNotReveal": [
+          "诺诺的内心理由",
+          "她看见了什么",
+          "任何未结算的威胁"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让诺诺说话或承诺",
+        "不得写枪声、人影或新事件",
+        "不得把精神下降写成伤势"
+      ],
+      "styleReferenceIds": [
+        "row-0182",
+        "row-0194"
+      ],
+      "notes": "两个同地点人物，每句都用名字开头，避免“还有诺诺”式指代混淆；个性用动作表现，精神只用可观察反应。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0017-chu-checks-hatch",
+      "slug": "chu-checks-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#chu-checks-hatch",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "chu",
+      "locations": [
+        "campus",
+        "tower",
+        "landing",
+        "foyer"
+      ],
+      "characters": [
+        "chu"
+      ],
+      "items": [
+        "hatch_door",
+        "foyer_table"
+      ],
+      "taskGoals": [
+        "task_chu_hatch"
+      ],
+      "time": "11 分钟",
+      "delta": {
+        "楚子航": {
+          "位置": "钟楼门厅",
+          "完成任务": [
+            "检查钟楼地下检修门的门闩，不能把地下路线当成不存在"
+          ]
+        }
+      },
+      "targetText": "十一分钟过去，楚子航从二层平台下来，穿过门厅，在钟楼地下检修门前停下。铁门关着，内侧门闩插在槽里；他从外面推了两下，门没有动。他把手收回来，没有去撬门缝。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "11 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "楚子航",
+          "from": "钟楼二层平台",
+          "to": "钟楼门厅"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "楚子航",
+          "goal": "检查钟楼地下检修门的门闩，不能把地下路线当成不存在"
+        }
+      ],
+      "licensedDetails": [
+        "地下检修门、门闩、门厅翻倒的长桌（地点/物品外貌）",
+        "下楼梯、穿门厅、推门两下（完成检查的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "楚子航",
+        "canKnow": [
+          "自己从平台下到门厅",
+          "门闩插在槽里、外面推不开",
+          "自己没有撬门"
+        ],
+        "mustNotReveal": [
+          "地下通道通向哪里以外的路线判断",
+          "路明非是否会走地下",
+          "其他人的计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写门闩被打开或地下通道可通行",
+        "不得写派人守门或新的战术决定",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0199"
+      ],
+      "notes": "移动 + 任务完成；只写检查结果（门闩插着、外面推不开），不给“地下路线能不能走”的答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0018-fingel-tells-hatch",
+      "slug": "fingel-tells-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#fingel-tells-hatch",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "fingel",
+      "locations": [
+        "campus",
+        "west",
+        "shed",
+        "lane"
+      ],
+      "characters": [
+        "fingel",
+        "lu"
+      ],
+      "items": [
+        "camera"
+      ],
+      "taskGoals": [
+        "task_fingel_map"
+      ],
+      "time": "8 分钟",
+      "delta": {
+        "芬格尔": {
+          "位置": "西侧服务巷",
+          "完成任务": [
+            "把检修门从里面插闩这件事告诉准备走地下路线的人"
+          ]
+        }
+      },
+      "afterOverride": {
+        "路明非": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "八分钟过去，芬格尔从器材棚出来，沿服务巷走到低墙边，把检修门的事说给路明非听：地下那条通道通到钟楼地下门，门闩在钟楼里面插着，从通道这头推不开。他说完就停住，没有拍胸口保证别的；路明非还留在低墙后，黄黑绳垂在巷口。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "8 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "芬格尔",
+          "from": "器材棚",
+          "to": "西侧服务巷"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "芬格尔",
+          "goal": "把检修门从里面插闩这件事告诉准备走地下路线的人"
+        },
+        {
+          "kind": "position",
+          "actor": "路明非",
+          "location": "西侧服务巷",
+          "note": "听的人没有离开"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷低墙、黄黑绳（地点外貌）",
+        "芬格尔的旧相机挂在脖子上（物品外貌）",
+        "走到低墙边、把门闩的事说完就停住（完成任务的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "芬格尔",
+        "canKnow": [
+          "自己知道的检修通道和门闩位置",
+          "自己说了什么",
+          "路明非在低墙后"
+        ],
+        "mustNotReveal": [
+          "路明非会不会走地下",
+          "钟楼里的布防",
+          "其他人的计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让路明非回答或决定路线",
+        "不得写门闩被打开",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0188"
+      ],
+      "notes": "移动 + 任务完成；把已知的门闩事实说清，但不替路明非做路线决定。",
       "reviewState": "manually-read-input-and-target"
     }
   ]

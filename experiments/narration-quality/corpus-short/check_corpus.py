@@ -17,6 +17,7 @@ import hashlib
 import io
 import json
 import pathlib
+import re
 import sys
 from collections import Counter
 
@@ -31,6 +32,9 @@ AUTHORED_WORLD_SHA256 = "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a
 WORKTREE_ROOT = pathlib.Path(__file__).resolve().parent.parents[2]
 MIN_CHARS = 60
 MAX_CHARS = 160
+POSTURE_PATTERN = re.compile(
+    r"(站在|站着|坐着|蹲在|蹲下|蹲着|躺在|躺着|跪着|靠在|靠着|坐下|站起|起身)"
+)
 KNOWN_CATEGORIES = {
     "no_change",
     "movement",
@@ -53,6 +57,35 @@ def canonical(obj: object) -> str:
 def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
+
+
+def load_world_names(world_path: pathlib.Path) -> set[str]:
+    world = json.load(io.open(world_path, encoding="utf-8"))
+    initial = world["initial"]
+    names: set[str] = set()
+    for section in ("locations", "characters", "items"):
+        for entry in initial[section].values():
+            name = entry.get("name")
+            if name:
+                names.add(name)
+    return names
+
+
+def check_no_posture(errors: list[str], label: str, record: dict[str, object]) -> None:
+    match = POSTURE_PATTERN.search(record["targetText"])
+    if match:
+        fail(errors, f"{label}: targetText claims an unsettled posture: {match.group(0)!r}")
+
+
+def check_authored_entities(
+    errors: list[str], label: str, record: dict[str, object], world_names: set[str]
+) -> None:
+    licensed = json.dumps(record["input"], ensure_ascii=False)
+    for name in sorted(world_names, key=len, reverse=True):
+        if name in licensed:
+            continue
+        if name in record["targetText"]:
+            fail(errors, f"{label}: entity {name!r} appears in targetText but is not licensed by the input")
 
 
 def task_by_goal(tasks: dict[str, object], goal: str) -> dict[str, object] | None:
@@ -141,6 +174,7 @@ def main() -> int:
     if world_sha != AUTHORED_WORLD_SHA256:
         print(f"authored world SHA mismatch: {world_sha}", file=sys.stderr)
         return 2
+    world_names = load_world_names(world_path)
 
     raw = rows_path.read_text(encoding="utf-8")
     if "\r" in raw:
@@ -231,6 +265,7 @@ def main() -> int:
             if "variant" in record and record["variant"] not in ("sanity-literal",):
                 fail(errors, f"{label}: unknown authored variant {record['variant']!r}")
             check_authored_state(errors, label, record)
+            check_authored_entities(errors, label, record, world_names)
         else:
             frozen_count += 1
             if source_id not in source_rows:
@@ -288,6 +323,8 @@ def main() -> int:
                 fail(errors, f"{label}: knowledgeBoundary missing {key}")
         if not record["forbiddenInventions"]:
             fail(errors, f"{label}: forbiddenInventions is empty")
+
+        check_no_posture(errors, label, record)
 
         cats = set(record["categories"])
         unknown = cats - KNOWN_CATEGORIES

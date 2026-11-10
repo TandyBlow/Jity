@@ -1,20 +1,19 @@
 {
-  "batch": 3,
-  "createdAt": "2026-11-10T07:10:00Z",
-  "status": "batch-3-ready",
+  "batch": 4,
+  "createdAt": "2026-11-10T07:45:00Z",
+  "status": "batch-4-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 39,
+  "rowCount": 44,
   "rowKinds": {
     "frozen-input": 21,
     "derived-time-contrast": 1,
-    "frozen-input-long-target": 3,
-    "authored-product-world": 14
+    "frozen-input-long-target": 4,
+    "authored-product-world": 18
   },
   "source": {
     "frozenDataset": "narration-dataset-v1",
     "frozenSourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
     "frozenSourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
-    "frozenRows": 25,
     "splitsUsed": [
       "train"
     ],
@@ -29,7 +28,7 @@
     "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
     "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
     "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
-    "authoredRows": 14,
+    "authoredRows": 18,
     "premise": "initial snapshot; each row is one authored turn, not a browser session"
   },
   "consumableFields": [
@@ -52,37 +51,89 @@
     "variant"
   ],
   "worldFamilies": {
-    "dragon-raja-free-day": 14,
+    "dragon-raja-free-day": 18,
     "library-basement": 4,
     "library-courtyard": 2,
     "library-lending": 2,
     "library-news": 13,
     "library-upper-corridor": 1,
-    "library-utilities": 3
+    "library-utilities": 4
   },
   "categories": {
-    "appearance_change": 5,
+    "appearance_change": 6,
     "item_change": 9,
     "location_change": 6,
-    "movement": 8,
+    "movement": 11,
     "no_change": 3,
-    "personality_change": 3,
-    "sanity_change": 9,
+    "personality_change": 5,
+    "sanity_change": 11,
     "secret_reveal": 1,
-    "separation": 6,
+    "separation": 7,
     "task_added": 4,
-    "task_complete": 11
+    "task_complete": 14
   },
   "targetLength": {
     "min": 60,
-    "max": 138,
-    "mean": 89.8,
+    "max": 149,
+    "mean": 90.0,
     "buckets": {
-      "120-160": 8,
-      "60-79": 15,
+      "120-160": 9,
+      "60-79": 19,
       "80-119": 16
     }
   },
+  "qualityGates": {
+    "posture": "targetText may not claim an unsettled posture (站/坐/蹲/躺/跪/靠/起身); added after browser run 04 produced “路明非站在西侧服务巷”",
+    "licensedEntities": "authored rows may not use a world entity name that is absent from the row input; added after browser run 04 emitted “跨溪小桥” unlicensed",
+    "inputHash": "frozen rows must match the source x byte for byte; the derived row may differ only in time advance",
+    "stateConsistency": "authored delta must be reflected in the row after-state"
+  },
+  "failureDrivenRows": [
+    {
+      "failure": "09/02 elapsed-two-minutes still opened the box",
+      "rows": [
+        "short-0008-two-minute-no-change",
+        "dr-0001-no-change-lane"
+      ]
+    },
+    {
+      "failure": "02 move-direction produced 11 characters",
+      "rows": [
+        "dr-0015-move-without-posture",
+        "dr-0011-su-report-bridge"
+      ]
+    },
+    {
+      "failure": "04 realizer wrote a standing claim and mixed two people",
+      "rows": [
+        "dr-0015-move-without-posture",
+        "dr-0016-two-people-clear-subjects"
+      ]
+    },
+    {
+      "failure": "04 realizer added an unlicensed place",
+      "rows": [
+        "dr-0015-move-without-posture",
+        "dr-0017-chu-checks-hatch"
+      ]
+    },
+    {
+      "failure": "task completion that must not answer the question",
+      "rows": [
+        "short-long-0117-two-tasks-and-relief",
+        "short-long-0132-cover-row-and-dust",
+        "dr-0008-task-added-lu",
+        "dr-0017-chu-checks-hatch"
+      ]
+    },
+    {
+      "failure": "pronoun or reference confusion with two people present",
+      "rows": [
+        "dr-0016-two-people-clear-subjects",
+        "dr-0002-move-nono-to-shed"
+      ]
+    }
+  ],
   "rows": [
     {
       "id": "short-0008-binding-no-change",
@@ -128,7 +179,7 @@
         "location_change",
         "item_change"
       ],
-      "targetChars": 80,
+      "targetChars": 81,
       "variant": null
     },
     {
@@ -140,7 +191,7 @@
         "appearance_change",
         "sanity_change"
       ],
-      "targetChars": 80,
+      "targetChars": 79,
       "variant": null
     },
     {
@@ -209,7 +260,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 88,
+      "targetChars": 82,
       "variant": null
     },
     {
@@ -267,7 +318,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 96,
+      "targetChars": 93,
       "variant": null
     },
     {
@@ -280,7 +331,7 @@
         "separation",
         "task_added"
       ],
-      "targetChars": 102,
+      "targetChars": 101,
       "variant": null
     },
     {
@@ -291,7 +342,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 64,
+      "targetChars": 63,
       "variant": null
     },
     {
@@ -302,7 +353,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 75,
+      "targetChars": 74,
       "variant": null
     },
     {
@@ -313,7 +364,7 @@
       "categories": [
         "location_change"
       ],
-      "targetChars": 62,
+      "targetChars": 61,
       "variant": null
     },
     {
@@ -374,6 +425,20 @@
         "personality_change"
       ],
       "targetChars": 120,
+      "variant": null
+    },
+    {
+      "id": "short-long-0137-pipe-and-note",
+      "sourceRowId": "row-0137",
+      "kind": "frozen-input-long-target",
+      "worldFamily": "library-utilities",
+      "categories": [
+        "task_complete",
+        "sanity_change",
+        "appearance_change",
+        "personality_change"
+      ],
+      "targetChars": 149,
       "variant": null
     },
     {
@@ -536,7 +601,55 @@
         "movement",
         "separation"
       ],
-      "targetChars": 127,
+      "targetChars": 122,
+      "variant": null
+    },
+    {
+      "id": "dr-0015-move-without-posture",
+      "sourceRowId": "authored:dragon-raja-free-day#move-without-posture",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "targetChars": 68,
+      "variant": null
+    },
+    {
+      "id": "dr-0016-two-people-clear-subjects",
+      "sourceRowId": "authored:dragon-raja-free-day#two-people-clear-subjects",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "personality_change",
+        "sanity_change"
+      ],
+      "targetChars": 77,
+      "variant": null
+    },
+    {
+      "id": "dr-0017-chu-checks-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#chu-checks-hatch",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "targetChars": 77,
+      "variant": null
+    },
+    {
+      "id": "dr-0018-fingel-tells-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#fingel-tells-hatch",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "targetChars": 107,
       "variant": null
     }
   ]

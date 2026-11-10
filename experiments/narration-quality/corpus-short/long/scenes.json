@@ -187,6 +187,76 @@
       ],
       "notes": "任务完成 + 两条旧个性解除 + 一条新个性；新个性逐字写出，不解释缺页内容。",
       "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short-long-0137-pipe-and-note",
+      "sourceRowId": "row-0137",
+      "worldFamily": "library-utilities",
+      "categories": [
+        "task_complete",
+        "sanity_change",
+        "appearance_change",
+        "personality_change"
+      ],
+      "targetText": "十四分钟过去，苏既白从水槽底下抽出那截锈管，把新管子接上去，扳手在接口上又紧了半圈。手掌压出一道红印，他甩了甩手，拧开龙头试水，下水比先前快，才把扳手放回水槽边上。茶水间的水壶底结着水垢，窗台上的搪瓷杯排成一排。黎既白把抹布搭回钩上，看见压在库里的条子，才没有再问；苏既白出了一口气，肩膀也松下来。",
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "14 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "苏既白",
+          "goal": "把水槽底下那一截锈管换掉"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "苏既白",
+          "from": 52,
+          "to": 61
+        },
+        {
+          "kind": "appearance_change",
+          "entity": "苏既白",
+          "add": "手掌上有一道扳手压出的红印"
+        },
+        {
+          "kind": "personality_change",
+          "owner": "苏既白",
+          "add": "拿库房的东西都写条子压在库里"
+        }
+      ],
+      "licensedDetails": [
+        "水槽下水慢、水壶水垢、窗台搪瓷杯（地点外貌）",
+        "扳手压出的红印（已结算外貌）",
+        "抽管、接管、紧扳手、试水、把扳手放回水槽边（完成任务的合理动作）",
+        "黎既白的抹布（人物原有动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏既白",
+        "canKnow": [
+          "自己换掉的锈管和试水结果",
+          "手掌上的红印",
+          "自己写了条子压在库里",
+          "黎既白在旁边的可见反应"
+        ],
+        "mustNotReveal": [
+          "纸条上写了什么以外的库房秘密",
+          "医书典当的往事",
+          "黎既白兄长的下落"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写医书、典当或兄长线索",
+        "不得新增人物、物品、事件",
+        "不得把新个性写成对别人的承诺"
+      ],
+      "styleReferenceIds": [
+        "row-0057",
+        "row-0098"
+      ],
+      "notes": "任务完成 + 精神上升 + 新外貌 + 新个性；用试水和肩膀松表现精神，条子只写“压在库里”，不写内容。",
+      "reviewState": "manually-read-input-and-target"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # 01 线：短场景事实监督（第一至三批）
 
-状态：**batch 3 ready**。39 行人手写的 60–138 字短场景，已提交到本线分支，可直接消费。材料提交：`f98c096be957373faacf9a95f0d12782ab69f0a8`。
+状态：**batch 4 ready**。44 行人手写的 60–149 字短场景，已提交到本线分支，可直接消费。材料提交见下一次提交（本文件同批）。
 
 这不是模型、不是候选权重、不是自动评测报告，也不替代训练脚本或最终验收。它是给叙事训练/浏览器路线用的**正文监督**：输入是已经结算的世界变化，正文要像小说，但关键事实一个不漏、输入没有的东西一个不加。
 
@@ -8,10 +8,10 @@
 
 | 路径 | 内容 |
 |---|---|
-| `experiments/narration-quality/corpus-short/rows.jsonl` | 39 行主材料：完整 `input`、`targetText`、检查元数据 |
-| `experiments/narration-quality/corpus-short/rows-authored.jsonl` | 14 行产品世界行，单独一份便于核对 |
+| `experiments/narration-quality/corpus-short/rows.jsonl` | 44 行主材料：完整 `input`、`targetText`、检查元数据 |
+| `experiments/narration-quality/corpus-short/rows-authored.jsonl` | 18 行产品世界行，单独一份便于核对 |
 | `experiments/narration-quality/corpus-short/authored/` | 产品世界的 14 个场景定义与生成脚本（世界文件初始快照 + 一个 authored 变化） |
-| `experiments/narration-quality/corpus-short/long/` | 3 行 120–160 字长正文的定义与写回脚本（冻结 `x` 原样） |
+| `experiments/narration-quality/corpus-short/long/` | 4 行 120–160 字长正文的定义与写回脚本（冻结 `x` 原样） |
 | `experiments/narration-quality/corpus-short/index.json` | 批次索引、来源、行类型、世界族/类别/长度统计 |
 | `experiments/narration-quality/corpus-short/review.md` | 逐行人工阅读记录（变化落实、边界、字数） |
 | `experiments/narration-quality/corpus-short/check_corpus.py` | 结构检查：冻结输入原样、authored 来源/SHA、authored 变化与结果状态一致、train-only、长度/字段 |
@@ -20,10 +20,10 @@
 
 ## 来源与隔离
 
-- 25 行旧材料来自 `narration-dataset-v1` 的 `rows-xy.jsonl`，源提交 `1ab6ca791f97529a7bffed1f4837bf81a28badcb`：21 行原样短场景 + 3 行另外选行（`row-0117`/`0132`/`0183`）的 120–137 字长正文 + 1 行时间派生。
+- 26 行旧材料来自 `narration-dataset-v1` 的 `rows-xy.jsonl`，源提交 `1ab6ca791f97529a7bffed1f4837bf81a28badcb`：21 行原样短场景 + 4 行另外选行（`row-0117`/`0132`/`0137`/`0183`）的 120–149 字长正文 + 1 行时间派生。
 - 只用 **train**。没有用 dev/test；旧 199 行和 `splits/v1.json` 未修改。
-- `input` 是旧行 `x` 的原样拷贝；每行有 `sourceInputSha256`，检查脚本会重算。3 行长正文只是给另外三行冻结 `x` 写更长的目标，输入没有改。
-- 14 行产品材料来自 `frontend/public/worlds/dragon-raja-free-day.world.json` 的初始快照，源提交 `865ae64e0901a70c3db4f1d0eb2af60268943c53`，世界文件 SHA-256 `0a8b63be…`。每行只落一个 authored 的本回合变化；不是浏览器会话，不声称前几回合发生过。人物、地点、物品、任务全部来自该世界文件。
+- `input` 是旧行 `x` 的原样拷贝；每行有 `sourceInputSha256`，检查脚本会重算。4 行长正文只是给另外四行冻结 `x` 写更长的目标，输入没有改。
+- 18 行产品材料来自 `frontend/public/worlds/dragon-raja-free-day.world.json` 的初始快照，源提交 `865ae64e0901a70c3db4f1d0eb2af60268943c53`，世界文件 SHA-256 `0a8b63be…`。每行只落一个 authored 的本回合变化；不是浏览器会话，不声称前几回合发生过。人物、地点、物品、任务全部来自该世界文件。
 - 旧长 `y` 只做文风参考，不做事实来源。已发现长 `y` 与 `本回合变化` 不一致的行（`row-0182`、`row-0199`），正文按变化写，不按长 `y` 搬事件。
 - **1 行派生对照**：`short-0008-two-minute-no-change` 以 `row-0008` 为底，只把 `本回合变化.时间推进` 从 20 分钟改成 2 分钟，其余输入和状态不变；`sourceEvidence.derived=true`、`baseRowId=row-0008`，并写明 derivation。它只训练“两分钟过去、没有新事件”，不是旧 199 行中的冻结行；检查脚本会验证相对底行只改了时间。
 
@@ -60,9 +60,9 @@
 
 ## 覆盖
 
-39 行，正文 60–138 字（15 行 60–79、16 行 80–119、8 行 120–160）。其中 4 行（`row-0138`/`row-0161`/`row-0175`/`row-0178`）是只写已结算地点/外貌、不写事件的 strict 场景，对应 02 `req-02-02` 的“只实现已结算变化加至多一个许可外貌细节”；1 行 2 分钟无变化对照，来自 09 真实运行里 `elapsed-two-minutes` 仍让模型开盒子的失败。
+44 行，正文 60–149 字（19 行 60–79、16 行 80–119、9 行 120–160）。其中 4 行（`row-0138`/`row-0161`/`row-0175`/`row-0178`）是只写已结算地点/外貌、不写事件的 strict 场景，对应 02 `req-02-02` 的“只实现已结算变化加至多一个许可外貌细节”；1 行 2 分钟无变化对照，来自 09 真实运行里 `elapsed-two-minutes` 仍让模型开盒子的失败。
 
-一行可能覆盖多类，所以下表行数合计大于 39。
+一行可能覆盖多类，所以下表行数合计大于 44。
 
 | 类型 | 行数 | 具体 |
 |---|---:|---|
@@ -79,8 +79,8 @@
 
 ## 给 10：怎么直接消费
 
-- 把 `input` + `targetText` 作为 **`yShort`** 样本；正文是 60–138 字，不是 20–60 字的单事实 beat。
-- 产品 14 行（`dr-*`）是卡塞尔学院自由一日世界，可直接补产品实体；不要再只学旧图书馆的映射。
+- 把 `input` + `targetText` 作为 **`yShort`** 样本；正文是 60–149 字，不是 20–60 字的单事实 beat。
+- 产品 18 行（`dr-*`）是卡塞尔学院自由一日世界，可直接补产品实体；不要再只学旧图书馆的映射。
 - 8 行 120–160 字可直接用于“更长但仍只含 2–3 个事实”的目标；不要用它们去凑密集多事实。
 - 如果 `qwen25-beat-v1` 需要 beat：从 `requiredFacts` 拆，但 beat 文本要另写；不要机械切 `targetText`。
 - `styleReferenceIds` 指向旧长文；只借节奏、对白密度、人物反应，不搬事件。
@@ -94,6 +94,18 @@
 - 对照 `requiredFacts` 看关键动作/结果；对照 `knowledgeBoundary`/`forbiddenInventions` 看有没有替角色说出不知道的秘密、有没有补重大往事/线索。
 - 改述可以，事实和边界不能破；`targetText` 只是一种实现，不是必须逐字复现。
 - 真实生成失败时，把输入、生成文本和错误类型（漏事实/捏造/指代/文风）交给 01，下一批按同类补；不要用规则模板替换失败样本然后宣称达标。
+
+## 按真实失败补的行
+
+| 真实失败 | 证据 | 对应材料 |
+|---|---|---|
+| 无变化却开盒子/写古董 | `results/quality/beat-qwen25-1.5b-instruct.json` `elapsed-two-minutes` | `short-0008-two-minute-no-change`、`dr-0001-no-change-lane` |
+| 移动只写 11 个字，像电报 | 同上 `move-direction` | `dr-0015-move-without-posture`、`dr-0011-su-report-bridge` |
+| 程序 realizer 写“站在某地” | `results/quality/browser-09.json` 04-settlement 通知 | `dr-0015`（全文无姿势词），检查脚本新增姿势词硬检查 |
+| 同地点另一人的句子被误判成视角人物的 at 事实 | 同上 actor swap | `dr-0016-two-people-clear-subjects`（每句用名字开头）、`dr-0002` |
+| realizer 写输入没有的“跨溪小桥” | 同上 `unlicensed_entity` | `dr-0017-chu-checks-hatch`，检查脚本新增“实体必须在输入里出现”检查 |
+| 任务完成但必须不说出答案 | `row-0050`/`row-0152`/`row-0169`/`row-0188` 的旧失败，02 的 `req-02-02` | `short-long-0117`、`short-long-0132`、`dr-0008`、`dr-0017`、`dr-0018` |
+| 两人同场时指代/主语混淆 | 02 的指代问题、09 的 actor swap | `dr-0016`、`dr-0002`、`dr-0007` |
 
 ## 人工检查证据
 
@@ -111,14 +123,14 @@
 python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 ```
 
-当前输出：39 行；长度 60–138（15 行 60–79、16 行 80–119、8 行 120–160）；25 行旧材料（21 行冻结输入逐行一致 + 3 行同冻结输入的长正文 + 1 行派生对照只改时间）+ 14 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性通过。语义检查是人工的，脚本不替代。
+当前输出：44 行；长度 60–149（19 行 60–79、16 行 80–119、9 行 120–160）；26 行旧材料（21 行冻结输入逐行一致 + 4 行同冻结输入的长正文 + 1 行派生对照只改时间）+ 18 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性、姿势词和未授权实体检查通过。语义检查是人工的，脚本不替代。
 
 ## 已知限制
 
 - 没有 GPU 生成/训练；正文是人手写的监督材料。
 - 没有自动语义评分；`requiredFacts` 是清单，不是完整逻辑。
-- 39 行，旧馆 25 行 + 产品世界 14 行；产品行只来自一个初始快照，不是全人物、全地点、全类别平衡采样。
-- 长度已补到 60–138，但 140–160 字的上端只有 1 行，且长场景都是两三个事实，不是密集多事实。
+- 44 行，旧馆 26 行 + 产品世界 18 行；产品行只来自一个初始快照，不是全人物、全地点、全类别平衡采样。
+- 长度已补到 60–149，但 140–160 字只有 2 行，且长场景都是两三个事实，不是密集多事实。
 - 少量空间具体化（杯口朝向、门虚掩、风）是有依据的细微细节，不是已结算事实；如果训练侧要求更严，可逐行删。
 - 旧长 `y` 有事实错误，未作为事实来源；本批不修改旧数据，也不重新划分。
 - 产品行是 authored 开发材料，不是浏览器记录；`dr-0009` 是数字对齐变体，不是主正文。
@@ -133,6 +145,6 @@ python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 2. 140–160 字、仍只含 2–3 个事实的场景；
 3. 同一世界族的连续两回合（01 只做短场景，完整场景/连续回合仍归 05）；
 4. 真实模型最容易错的“两人分开/任务完成但不说答案/秘密只说出一层”；
-5. 10 明确要的 120 行目标：本批 39 行，剩余按真实失败补，不虚报数量。
+5. 10 明确要的 120 行目标：本批 44 行，剩余按真实失败补，不虚报数量。
 
 继续只用 train 或另立有来源的开发世界材料；不碰 dev/test，不改旧 199 行。
