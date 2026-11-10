@@ -23,6 +23,16 @@ const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
+/** Per-turn evidence record, mirrored on window.__worldTurns so an automated
+ * acceptance run reads timings from the product instead of scraping DOM text. */
+interface WorldTurnRecord {
+  index: number; input: string;
+  acceptedMs: number | null; draftMs: number | null; programMs: number | null;
+  cancelled: boolean; source: 'model' | 'program' | 'draft' | null;
+  modelId: string | null;
+  engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number }>;
+}
+
 interface TurnEntry {
   key: number; input: string; text: string; note: string | null; ms: number | null;
   /** Wall time from submit to the first streamed character. A draft stream is
@@ -85,6 +95,12 @@ async function loadEngine(
     await cpu.ensureLoaded();
     return cpu;
   }
+}
+
+function engineCounters(label: string, engine: ProductEnginePort | null): WorldTurnRecord['engines'][number] | null {
+  const runtime = engine?.runtime?.();
+  if (!runtime) return null;
+  return { label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited, generations: runtime.generations };
 }
 
 /** A model port that survives a hard-stopped generation. wllama terminates the
@@ -175,6 +191,9 @@ export default function WorldLocalPage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
   const [entries, setEntries] = useState<TurnEntry[]>([]);
+  /** The current turn's evidence record; the same object lives in the window
+   * array, so later callbacks update it in place. */
+  const turnRecordRef = useRef<WorldTurnRecord | null>(null);
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
    * the submit closure, so the origin lives in a ref. */
   const submittedAtRef = useRef(0);
@@ -290,6 +309,8 @@ export default function WorldLocalPage() {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
             // Draft only: recorded separately from the accepted, fact-checked text.
             const draftMs = Math.round(performance.now() - submittedAtRef.current);
+            const record = turnRecordRef.current;
+            if (record && record.draftMs == null) record.draftMs = draftMs;
             setEntries((list) => updateLast(list, (entry) => ({
               ...entry, text, draftMs: entry.draftMs ?? draftMs,
             })));
@@ -301,6 +322,12 @@ export default function WorldLocalPage() {
             // 'program' is the labelled downgrade and 'drafted' was never
             // accepted; neither may fill the readable-text timing.
             const source = progress.source ?? (progress.fallback ? 'program' : 'draft');
+            const record = turnRecordRef.current;
+            if (record) {
+              record.source = source;
+              if (source === 'model') record.acceptedMs = atMs;
+              else if (source === 'program') record.programMs = atMs;
+            }
             setEntries((list) => updateLast(list, (entry) => (
               source === 'model'
                 ? { ...entry, text, acceptedMs: atMs, ms: atMs }
@@ -410,6 +437,17 @@ export default function WorldLocalPage() {
     const key = Date.now();
     const submittedAt = performance.now();
     submittedAtRef.current = submittedAt;
+    const engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
+      .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+    const record: WorldTurnRecord = {
+      index: ((window as unknown as { __worldTurns?: WorldTurnRecord[] }).__worldTurns?.length ?? 0) + 1,
+      input: text, acceptedMs: null, draftMs: null, programMs: null, cancelled: false, source: null,
+      modelId: narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? null,
+      engines,
+    };
+    turnRecordRef.current = record;
+    const w = window as unknown as { __worldTurns?: WorldTurnRecord[] };
+    (w.__worldTurns ??= []).push(record);
     setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null, programMs: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
@@ -428,6 +466,12 @@ export default function WorldLocalPage() {
       setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
       setPhase('error');
     } finally {
+      const live = turnRecordRef.current;
+      if (live) {
+        live.engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
+          .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+        live.modelId = narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? live.modelId;
+      }
       const submission = modelRef.current?.endSubmission() ?? null;
       if (submission) {
         console.info('[world-local submission]', JSON.stringify({
@@ -459,9 +503,13 @@ export default function WorldLocalPage() {
     }
     // A cancelled draft is not a committed turn: keep the text visible for
     // diagnosis but label it and drop any accepted timing.
-    setEntries((list) => updateLast(list, (entry) => (entry.acceptedMs == null && entry.text
+    setEntries((list) => updateLast(list, (entry) => {
+      const live = turnRecordRef.current;
+      if (live && live.acceptedMs == null) live.cancelled = true;
+      return entry.acceptedMs == null && entry.text
       ? { ...entry, cancelled: true, ms: null, note: entry.note ?? '本轮已取消，正文草稿未通过核对。' }
-      : entry)));
+      : entry;
+    }));
     try {
       const status = await session.cancel('player_cancelled');
       console.info('[world-local] cancel status', status);
