@@ -55,6 +55,8 @@ dependencies are untouched.
 new WllamaInferenceEngine({
   modelUrl, contextSize, numThreads, nGpuLayers, useCache, directBlob,
   abortGraceMs?: number,            // default 2500; 0 = terminate on abort at once
+  loadTimeoutMs?: number,           // default 120000; timeout exits the landing worker
+  expectedBytes?: number | number[],// per-shard fetched size check before wllama
   onEvidence?: (record: ModelLoadEvidence | GenerationEvidence) => void,
 });
 engine.load({ signal?, modelUrl? }): Promise<void>;   // unchanged contract
@@ -164,8 +166,11 @@ a different engine.
 1. Resolve the model path, file size and SHA-256; confirm the declared catalog
    entry/template. A mismatch is a request failure, not a quality result.
 2. `await engine.ensureLoaded()` with the load budget (120 s default; the page
-   currently sets 180 s). On failure: `dispose()` the engine, release the
-   lease in `finally`, record the failure; do not enter generation.
+   now sets 120 s). Pass `expectedBytes` for the known file/shard sizes so a
+   truncated fetch fails before wllama parses it. On failure: `dispose()` the
+   engine, release the lease in `finally`, record the failure; do not enter
+   generation. The full SHA-256 check stays on the host/queue side (09 hashes
+   the served file); hashing 1.1 GB in the page would double the read.
 3. Generation: pass a deadline/signal; `complete`/`chat` before ready throw
    immediately instead of waiting. Cancellation settles only after the device
    stops (or the worker is terminated).

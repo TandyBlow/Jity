@@ -339,6 +339,27 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(await engine.complete('P')).toBe('ok');
   });
 
+  test('a truncated fetch is rejected by the expected size before wllama sees it', async () => {
+    const fake = fakeWllama();
+    vi.stubGlobal('fetch', async () => new Response(new Blob([new Uint8Array([1, 2, 3, 4])])));
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: true, expectedBytes: 9 },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/size 4, expected 9/);
+    expect(fake.calls.blobs).toHaveLength(0); // never reached loadModel
+    expect(fake.calls.exits).toBe(1);
+    expect(engine.runtime).toMatchObject({ loaded: false, workersCreated: 1, workersExited: 1 });
+  });
+
+  test('the expected size applies per shard', async () => {
+    const fake = fakeWllama();
+    const urls = ['/models/m-00001-of-00002.gguf', '/models/m-00002-of-00002.gguf'];
+    vi.stubGlobal('fetch', async (url: string) => new Response(new Blob([new Uint8Array(url.includes('-00001-of-') ? 6 : 4)])));
+    const engine = new WllamaInferenceEngine({ modelUrls: urls, directBlob: true, expectedBytes: [6, 5] },
+      async () => fake.instance);
+    await expect(engine.load()).rejects.toThrow(/model shard 2\/2 fetch failed .*size 4, expected 5/);
+    expect(fake.calls.exits).toBe(1);
+  });
+
   test('a failing second shard names the shard and exits the landing worker', async () => {
     const fake = fakeWllama();
     const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];

@@ -64,6 +64,11 @@ export interface WllamaEngineOptions {
    * 120000 ms. A timeout aborts the load and exits the landing worker, so a
    * page can retry instead of showing a frozen first turn forever. */
   loadTimeoutMs?: number;
+  /** Expected fetched size(s) in bytes, one per shard. A truncated or wrong
+   * file is rejected before it reaches wllama instead of failing deep inside
+   * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
+   * is the cheap size check the page can do itself. */
+  expectedBytes?: number | number[];
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -311,11 +316,18 @@ export class WllamaInferenceEngine implements InferenceEngine {
       if (directBlob) {
         const fetchStarted = performance.now();
         const blobs: Blob[] = [];
+        const expected = this.options.expectedBytes === undefined
+          ? null
+          : Array.isArray(this.options.expectedBytes) ? this.options.expectedBytes : [this.options.expectedBytes];
         for (const [index, url] of modelUrls.entries()) {
           try {
             const response = await fetch(url, { signal: controller.signal });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            blobs.push(await response.blob());
+            const blob = await response.blob();
+            if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
+              throw new Error(`size ${blob.size}, expected ${expected[index]}`);
+            }
+            blobs.push(blob);
           } catch (error) {
             // Keep an abort as an abort (the catch path classifies by signal),
             // but name the exact shard for a real fetch/body failure: a 2.5 GB
