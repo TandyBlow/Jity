@@ -374,11 +374,16 @@ function readCandidates(value: unknown, state: WorldState, maxCandidates: number
   if (rows.length > maxCandidates) throw new Error(`candidate_budget_exceeded:${rows.length}>${maxCandidates}`);
   const seen = new Set<string>();
   const candidates: Candidate[] = [];
+  const byName = new Map(Object.values(state.initial.characters).map((entity) => [entity.name, entity.id]));
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('candidate must be an object');
-    const characterId = asString(raw.characterId);
+    const stated = asString(raw.characterId);
+    // A small model sometimes answers with a display name or a stray token.
+    // A named character resolves to its id; an unregistered candidate is
+    // dropped (it can never be committed), not treated as a broken round.
+    const characterId = state.characters[stated] ? stated : byName.get(stated) ?? '';
     const text = asString(raw.text);
-    if (!characterId || !state.characters[characterId]) throw new Error(`unknown continuation character ${characterId || '?'}`);
+    if (!characterId) continue;
     if (!text) throw new Error(`empty continuation text for ${characterId}`);
     const key = `${characterId}:${normalizeChangeText(text)}`;
     if (seen.has(key)) throw new Error(`duplicate continuation candidate ${characterId}`);

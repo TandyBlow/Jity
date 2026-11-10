@@ -283,7 +283,10 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
     for (const rawEffect of rawJudgment.effects) {
       if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${memberId}`);
       const targetId = asString(rawEffect.targetId);
-      if (!expected.has(targetId)) throw new Error(`effect for undeclared target ${targetId || '?'}`);
+      // A small model sometimes lists an item or a bystander as an "effect"
+      // target. Those are not roll targets, so they cannot gate a reaction:
+      // drop the line instead of throwing away the whole joint settlement.
+      if (!expected.has(targetId)) continue;
       if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
       effectIds.add(targetId);
       if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
@@ -292,7 +295,11 @@ function validateResultsAnswer(value: unknown, members: GroupMember[], state: Wo
       }
     }
     for (const targetId of expected.keys()) {
-      if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
+      // An un-admitted roll needs no reaction; a missing line already means
+      // "no reaction" and cannot contradict the dice.
+      if (expected.get(targetId) === true && !effectIds.has(targetId)) {
+        throw new Error(`missing effect for admitted target ${memberId}->${targetId}`);
+      }
     }
   }
   for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);

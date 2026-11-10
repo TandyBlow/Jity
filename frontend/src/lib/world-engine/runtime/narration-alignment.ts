@@ -351,7 +351,11 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     const WEAK_SIGNATURE = new Set<NarrationFact['kind']>(['at']);
     let swappedOut = false;
     for (const fact of packet.facts) {
-      if (bound.includes(fact) && WEAK_SIGNATURE.has(fact.kind)) continue;
+      // A bare location is never an actor-swap signature: another character
+      // standing in the same room is a bystander, not a reassignment of the
+      // protagonist's position. Only strong payloads (moved/sanity/task) can
+      // be swapped between actors.
+      if (WEAK_SIGNATURE.has(fact.kind)) continue;
       const swapped = clauses.find((clause) => signature(fact, clause)
         && [...names].some((name) => bareOf(clause).includes(name) && name !== fact.name));
       if (swapped) {

@@ -16,7 +16,7 @@ import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, Settleme
 import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
-  isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
+  isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove, scopedState,
   positionFromRow, projectStage, roster, sameChangeText, taskIndex, taskLine, toJson,
 } from './support';
 import type { SettlementStage } from './support';
@@ -33,6 +33,8 @@ interface UpdatesInput {
 interface StageContext {
   engine: InferenceEngine;
   state: WorldState;
+  /** The state the stages judge: the full world, or the protagonist's scene. */
+  scope: WorldState;
   results: Record<Id, string>;
   mode: 'group' | 'time_scan';
   newAchieved: Set<Id>;
@@ -214,6 +216,7 @@ export class UpdatesRunner {
     const ctx: StageContext = {
       engine: this.engine,
       state: parsed.workingState,
+      scope: this.options.sceneScope ? scopedState(parsed.workingState, parsed.workingState.protagonistId) : parsed.workingState,
       results: parsed.results,
       mode: parsed.mode,
       newAchieved: effectiveNew,
@@ -235,11 +238,11 @@ export class UpdatesRunner {
       return this.finish(key, value, [outcome], started, {
         mode: ctx.mode,
         sanityBasis,
-        taskCoverageIds: roster(ctx.state),
+        taskCoverageIds: roster(ctx.scope),
         personalityCoverageIds: stage === 'tasks'
-          ? (achievedFromChanges(changes).size > 0 ? roster(ctx.state) : [])
+          ? (achievedFromChanges(changes).size > 0 ? roster(ctx.scope) : [])
           : stage === 'personality' && Object.keys(changes).length > 0
-            ? roster(ctx.state)
+            ? roster(ctx.scope)
             : [],
       });
     }
@@ -252,6 +255,7 @@ export class UpdatesRunner {
       const stageCtx: StageContext = {
         ...ctx,
         state: view,
+        scope: this.options.sceneScope ? scopedState(view, view.protagonistId) : view,
         newAchieved,
         recoveredAchieved: new Set<Id>(),
         personalityOwners: mergedPersonalityOwners,
@@ -272,7 +276,7 @@ export class UpdatesRunner {
       if (currentStage === 'tasks') newAchieved = achievedFromChanges(changes);
       if (currentStage === 'personality') mergedPersonalityOwners = new Set(Object.keys(changes));
     }
-    const taskCoverageIds = roster(ctx.state);
+    const taskCoverageIds = roster(ctx.scope);
     const personalityCoverageIds = newAchieved.size > 0 ? taskCoverageIds : [];
     const detail = {
       mode: ctx.mode,
@@ -429,11 +433,11 @@ function parseUpdatesInput(input: Json): UpdatesInput | { error: string } {
 }
 
 async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = movableIds(ctx.state);
+  const scanned = movableIds(ctx.scope);
   if (ctx.mode === 'time_scan') {
     return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildPositionPrompt(ctx.state, ctx.results);
+  const prompt = buildPositionPrompt(ctx.scope, ctx.results);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 240),
@@ -441,10 +445,10 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: POSITION_SCHEMA,
-      validate: (value) => validatePositionAnswer(value, ctx.state),
+      validate: (value) => validatePositionAnswer(value, ctx.scope),
     });
-    const changes = readPositionChanges(answer.value, ctx.state);
-    projectStage(ctx.state, 'position', changes);
+    const changes = readPositionChanges(answer.value, ctx.scope);
+    projectStage(ctx.scope, 'position', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
@@ -457,11 +461,11 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = allEntityIds(ctx.state);
+  const scanned = allEntityIds(ctx.scope);
   if (ctx.mode === 'time_scan') {
     return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance');
+  const prompt = buildDescriptionPrompt(ctx.scope, ctx.results, 'appearance');
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 420),
@@ -469,10 +473,10 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false),
+      validate: (value) => readDescriptionOperations(value, ctx.scope, 'appearance', ctx.allocator, false),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false);
-    projectStage(ctx.state, 'appearance', changes);
+    const changes = readDescriptionOperations(answer.value, ctx.scope, 'appearance', ctx.allocator, false);
+    projectStage(ctx.scope, 'appearance', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
@@ -485,8 +489,8 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
-  const rows = allTasks(ctx.state);
-  const characters = roster(ctx.state);
+  const rows = allTasks(ctx.scope);
+  const characters = roster(ctx.scope);
   if (!rows.length) {
     return { changes: {}, detail: { taskCoverageIds: characters, decidedTaskIds: [], skipped: 'no_tasks' }, fallback: false, calls: [] };
   }
@@ -506,14 +510,15 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state),
+      validate: (value) => readTaskDecisions(value, ctx.scope),
     });
-    const changes = readTaskDecisions(answer.value, ctx.state);
+    const changes = readTaskDecisions(answer.value, ctx.scope);
     return {
       changes,
       detail: {
         taskCoverageIds: characters,
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
+        decisionCoverage: taskDecisionCoverage(),
         newlyAchievedTaskIds: [...achievedFromChanges(changes)].sort(),
       },
       fallback: false,
@@ -525,8 +530,8 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
-  const rows = allTasks(ctx.state);
-  const characters = roster(ctx.state);
+  const rows = allTasks(ctx.scope);
+  const characters = roster(ctx.scope);
   if (!rows.length) {
     return { changes: {}, detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_parent_tasks' }, fallback: false, calls: [] };
   }
@@ -538,9 +543,9 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: SUBTASKS_SCHEMA,
-      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8),
+      validate: (value) => readSubtaskProposals(value, ctx.scope, ctx.allocator, ctx.options.maxNewTasks ?? 8),
     });
-    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8);
+    const changes = readSubtaskProposals(answer.value, ctx.scope, ctx.allocator, ctx.options.maxNewTasks ?? 8);
     return {
       changes,
       detail: {
@@ -557,7 +562,7 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
-  const characters = roster(ctx.state);
+  const characters = roster(ctx.scope);
   const triggerIds = ctx.newAchieved.size > 0 ? [...ctx.newAchieved] : [...ctx.recoveredAchieved];
   if (!triggerIds.length) {
     return {
@@ -575,9 +580,9 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true),
+      validate: (value) => readDescriptionOperations(value, ctx.scope, 'personality', ctx.allocator, true),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true);
+    const changes = readDescriptionOperations(answer.value, ctx.scope, 'personality', ctx.allocator, true);
     return {
       changes,
       detail: {
@@ -595,7 +600,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
 }
 
 async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
-  const owners = [...ctx.personalityOwners].filter((id) => Boolean(ctx.state.characters[id])).sort();
+  const owners = [...ctx.personalityOwners].filter((id) => Boolean(ctx.scope.characters[id])).sort();
   if (!owners.length) {
     return { changes: {}, detail: { owners: [], skipped: 'no_personality_change' }, fallback: false, calls: [] };
   }
@@ -623,7 +628,7 @@ async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
     // that keeps the current value is legal and visible; it never invents a
     // psychological change.
     const changes: Record<Id, Partial<EntityDelta>> = {};
-    for (const owner of owners) changes[owner] = { sanitySet: ctx.state.characters[owner].sanity };
+    for (const owner of owners) changes[owner] = { sanitySet: ctx.scope.characters[owner].sanity };
     const calls = error instanceof JsonCallError ? error.calls : [];
     return {
       changes,
@@ -864,8 +869,8 @@ function readDescriptionOperations(
 }
 
 function buildTasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
-  const now = ctx.state.time.dateTime;
+  const rows = roster(ctx.scope).map((id) => taskLine(ctx.scope, id));
+  const now = ctx.scope.time.dateTime;
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成）。请逐个判断当前状态：pending 或 achieved。',
@@ -881,6 +886,17 @@ function buildTasksPrompt(ctx: StageContext): string {
     '输出 {"decisions":[{"characterId":"人物id","taskId":"任务id","label":"pending|achieved"}]}。',
   ].join('\n');
 }
+
+let lastTaskCoverage: { decided: number; total: number } = { decided: 0, total: 0 };
+
+function recordTaskCoverage(decided: number, total: number): void {
+  lastTaskCoverage = { decided, total };
+}
+
+export function taskDecisionCoverage(): { decided: number; total: number } {
+  return lastTaskCoverage;
+}
+
 
 function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partial<EntityDelta>> {
   const decisions = asRecord(value).decisions;
@@ -906,14 +922,18 @@ function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partia
       achieved.set(characterId, list);
     }
   }
-  if (seen.size !== rows.length) throw new Error(`task decision coverage incomplete: ${seen.size}/${rows.length}`);
+  // A small model often answers only the tasks it thinks changed. Silence is
+  // not evidence of completion: undecided tasks keep their current status,
+  // and the coverage gap is recorded in evidence instead of rejecting the
+  // whole stage (which threw away the tasks that were judged correctly).
+  recordTaskCoverage(seen.size, rows.length);
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const [ownerId, taskIds] of achieved) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   return changes;
 }
 
 function buildSubtasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
+  const rows = roster(ctx.scope).map((id) => taskLine(ctx.scope, id));
   return [
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
     '根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。',
@@ -967,7 +987,7 @@ function readSubtaskProposals(
 }
 
 function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: boolean): string {
-  const index = taskIndex(ctx.state);
+  const index = taskIndex(ctx.scope);
   const triggerLines = triggerIds.map((taskId) => {
     const row = index.get(taskId);
     return row ? `- ${row.ownerId}：${row.task.id} ${row.task.goal}` : `- ${taskId}`;
@@ -986,7 +1006,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     '触发任务：',
     ...triggerLines,
     '人物个性：',
-    ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
+    ...roster(ctx.scope).map((id) => `- ${personalityLine(ctx.scope, id)}`),
     '输出 {"operations":[{"entityId":"人物id","op":"keep|add|remove|replace","recordIds":[],"text":null}]}。',
   ].filter(Boolean).join('\n');
 }
@@ -1000,7 +1020,7 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 理智必须是 0 到 100 的整数；不要用小数、布尔或字符串。',
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     `本组结算结果：${resultText(ctx.results) || '（无）'}`,
-    ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
+    ...owners.map((id) => `- ${personalityLine(ctx.scope, id)}`),
     '输出 {"sanity":[{"characterId":"人物id","value":整数}]}。',
   ].join('\n');
 }

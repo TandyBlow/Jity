@@ -45,15 +45,26 @@ for (const input of inputs) {
   const now = await page.evaluate(() => document.body.innerText);
   const body = now.split('Ctrl/⌘ + Enter 提交')[0];
   const paragraph = body.split('行动').pop()?.trim() ?? '';
-  turns.push({ input, turnMs, text: paragraph.slice(-900), warning: /叙事事实校验未通过/.test(now) ? now.split('叙事事实校验未通过：')[1]?.split('\n')[0] : null });
+  const debug = await page.evaluate(() => globalThis.__worldDebug ?? null);
+  turns.push({ input, turnMs, text: paragraph.slice(-900), debug, warning: /叙事事实校验未通过/.test(now) ? now.split('叙事事实校验未通过：')[1]?.split('\n')[0] : null });
   prose = now;
 }
 
 const savedBefore = await page.evaluate(() => localStorage.getItem('jity.world.local.snapshot.v1'));
-await page.reload({ waitUntil: 'domcontentloaded' });
-await page.waitForFunction(() => /本地世界已就绪|已恢复本地存档/.test(document.body.innerText), null, { timeout: 240_000 });
-const afterReload = await page.evaluate(() => document.body.innerText);
-const savedAfter = await page.evaluate(() => localStorage.getItem('jity.world.local.snapshot.v1'));
+mkdirSync(dirname(out), { recursive: true });
+writeFileSync(out, JSON.stringify({ ok: turns.length === inputs.length, readyMs, turns, restored: false, snapshotBytes: savedBefore?.length ?? 0, logs: logs.slice(-40) }, null, 2));
+let afterReload = '';
+let savedAfter = null;
+let reloadError = null;
+try {
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => /本地世界已就绪|已恢复本地存档/.test(document.body.innerText), null, { timeout: 300_000 });
+  afterReload = await page.evaluate(() => document.body.innerText);
+  savedAfter = await page.evaluate(() => localStorage.getItem('jity.world.local.snapshot.v1'));
+} catch (error) {
+  reloadError = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  try { afterReload = await page.evaluate(() => document.body.innerText); } catch {}
+}
 
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify({
@@ -62,6 +73,7 @@ writeFileSync(out, JSON.stringify({
   wallMs: Date.now() - started,
   turns,
   restored: /已恢复本地存档/.test(afterReload),
+  reloadError,
   snapshotBytes: savedAfter?.length ?? 0,
   snapshotStable: savedBefore === savedAfter,
   finalText: afterReload.slice(0, 1200),

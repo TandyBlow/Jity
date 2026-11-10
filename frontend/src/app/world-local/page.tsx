@@ -6,6 +6,7 @@
  * localStorage. The server, if present, is never called. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine';
+import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
@@ -41,7 +42,7 @@ function viewOf(state: WorldState): ViewState {
   };
 }
 
-async function loadEngine(url: string, contextSize = 6144): Promise<WllamaInferenceEngine> {
+async function loadEngine(url: string, contextSize = 8192): Promise<WllamaInferenceEngine> {
   const engine = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize, nGpuLayers: 99999 });
   try { await engine.load(); return engine; } catch (gpuError) {
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
@@ -49,6 +50,54 @@ async function loadEngine(url: string, contextSize = 6144): Promise<WllamaInfere
     await cpu.load();
     return cpu;
   }
+}
+
+/** A model port that survives a hard-stopped generation. wllama terminates the
+ * worker when an abort does not settle in time, which unloads the model; the
+ * game must reload it instead of failing every later turn of the session. */
+function resilientEngine(url: string, contextSize: number, label: string): InferenceEngine {
+  let current: WllamaInferenceEngine | null = null;
+  let loading: Promise<WllamaInferenceEngine> | null = null;
+  const ensure = async (): Promise<WllamaInferenceEngine> => {
+    if (current) return current;
+    if (!loading) {
+      loading = loadEngine(url, contextSize).then((engine) => {
+        current = engine;
+        loading = null;
+        return engine;
+      }, (error) => {
+        loading = null;
+        throw error;
+      });
+    }
+    return loading;
+  };
+  const drop = async (engine: WllamaInferenceEngine) => {
+    if (current === engine) current = null;
+    try { await engine.dispose(); } catch { /* the worker may already be gone */ }
+  };
+  return {
+    get info() { return { backend: current?.info.backend ?? 'wllama', modelId: current?.info.modelId ?? null }; },
+    load: async () => { await ensure(); },
+    dispose: async () => { if (current) await drop(current); },
+    complete: async (prompt, options) => {
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const engine = await ensure();
+        try {
+          return await engine.complete(prompt, options);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          if (attempt === 0 && /not loaded/i.test(message)) {
+            console.warn(`[world-local] ${label} engine was unloaded; reloading once`, message);
+            await drop(engine);
+            continue;
+          }
+          throw error;
+        }
+      }
+      throw new Error(`${label} engine could not be reloaded`);
+    },
+  };
 }
 
 export default function WorldLocalPage() {
@@ -63,8 +112,8 @@ export default function WorldLocalPage() {
   const [history, setHistory] = useState<string[]>([]);
   const [stage, setStage] = useState<string>('');
   const sessionRef = useRef<LocalGameSession | null>(null);
-  const semanticRef = useRef<WllamaInferenceEngine | null>(null);
-  const narrationRef = useRef<WllamaInferenceEngine | null>(null);
+  const semanticRef = useRef<InferenceEngine | null>(null);
+  const narrationRef = useRef<InferenceEngine | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
 
   const save = useCallback((snapshot: LocalGameSnapshot) => {
@@ -90,18 +139,22 @@ export default function WorldLocalPage() {
       try {
         const world = await (await fetch('/worlds/dragon-raja-free-day.world.json')).json() as { worldId: Id; initial: InitialTemplate };
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
-        const semantic = await loadEngine(SEMANTIC_MODEL);
+        const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic');
+        await semantic.load();
         if (!alive) { await semantic.dispose(); return; }
         semanticRef.current = semantic;
         setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
-        const narration = await loadEngine(NARRATION_MODEL, 3072);
+        const narration = resilientEngine(NARRATION_MODEL, 3072, 'narration');
+        await narration.load();
         if (!alive) { await narration.dispose(); return; }
         narrationRef.current = narration;
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
-          narrationMaxTokens: 220,
+          narrationMaxTokens: 240,
+          narrationTemperature: 0.45,
           maxAutoContinuations: 0,
+          maxAutonomousActors: 0,
           onTask: (task, key, detail) => {
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
             setStage(STAGE_LABEL[task] ?? task);
@@ -109,6 +162,7 @@ export default function WorldLocalPage() {
             if (task !== 'narration') return;
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
+          onNarrationDebug: (debug) => { (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug; },
           onNarrationProgress: (progress) => {
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));

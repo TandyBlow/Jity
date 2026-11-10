@@ -336,3 +336,40 @@ export function changeFromRow(id: Id, row: Record<string, unknown>): Change | nu
   if (text == null && supersedes.length === 0) return null;
   return { id, text, supersedes };
 }
+
+
+/** Scene scope for a single player point: the protagonist, everyone standing
+ * in the same innermost location, the items in that location, and whatever
+ * those characters carry. Locations stay complete because they are the
+ * container vocabulary a moved entity may reference. Off-screen characters
+ * keep their state; they are simply not re-judged by this point's six-stage
+ * scan, which keeps a 14-actor world inside a small model's prompt budget.
+ */
+export function scopedState(state: WorldState, view: Id): WorldState {
+  const room = (id: Id): Id | null => {
+    let current: Id | null = id;
+    const seen = new Set<Id>();
+    while (current && !state.locations[current]) {
+      if (seen.has(current)) return null;
+      seen.add(current);
+      const character: WorldState['characters'][Id] | undefined = state.characters[current];
+      const item: WorldState['items'][Id] | undefined = state.items[current];
+      current = character ? character.position.containerId : item ? item.position.containerId : null;
+    }
+    return current;
+  };
+  const viewRoom = room(view);
+  const inScope = new Set<Id>([view]);
+  for (const id of Object.keys(state.characters)) if (room(id) === viewRoom) inScope.add(id);
+  for (const id of Object.keys(state.items)) {
+    const holder = state.items[id].position.containerId;
+    const place = room(id);
+    if (place === viewRoom) inScope.add(id);
+    else if (inScope.has(holder)) inScope.add(id);
+  }
+  const characters: WorldState['characters'] = {};
+  for (const id of inScope) if (state.characters[id]) characters[id] = state.characters[id];
+  const items: WorldState['items'] = {};
+  for (const id of Object.keys(state.items)) if (inScope.has(id)) items[id] = state.items[id];
+  return { ...state, characters, items };
+}
