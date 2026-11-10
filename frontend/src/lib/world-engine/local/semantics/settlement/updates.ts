@@ -1109,18 +1109,19 @@ function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead 
 }
 
 function buildSubtasksPrompt(ctx: StageContext): string {
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
+  const keys = taskKeyIndex(ctx.state);
+  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id, keys));
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
     '根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。',
     '规则：',
-    '- 小任务必须挂在已有任务下，parentTaskId 必须是下面出现的任务 id；负责人必须是父任务的负责人。',
+    '- 小任务必须挂在已有任务下，parentTaskId 用下面行首的任务编号（t1、t2…）；负责人必须是父任务的负责人。',
     '- 新任务一律 pending，不要输出 status 或 ownerId；没有就输出空数组。',
     '- 不要为了凑数量新增任务；只有结算结果确实产生了新的具体目标时才新增。',
     '人物和任务：',
     ...rows,
-    '输出 {"subtasks":[{"parentTaskId":"任务id","goal":"一句话具体目标"}]}。',
+    '输出 {"subtasks":[{"parentTaskId":"t1","goal":"一句话具体目标"}]}。',
   ].join('\n');
 }
 
@@ -1134,12 +1135,17 @@ function readSubtaskProposals(
   if (!Array.isArray(rows)) throw new Error('subtasks must be an array');
   if (rows.length > maxNewTasks) throw new Error(`subtask_budget_exceeded:${rows.length}>${maxNewTasks}`);
   const index = taskIndex(state);
+  const keys = taskKeyIndex(state);
+  const realByKey = new Map([...keys].map(([id, key]) => [key, id]));
   const used = new Set<Id>([...allKnownTaskIds(state), ...allEntityIds(state)]);
   const usedGoals = new Set<string>();
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('subtask must be an object');
-    const parentTaskId = asString(raw.parentTaskId);
+    const rawParent = asString(raw.parentTaskId);
+    const keyedParent = /^t\d+$/.test(rawParent) ? realByKey.get(rawParent) : undefined;
+    if (/^t\d+$/.test(rawParent) && !keyedParent) throw new Error(`unknown_task_key:${rawParent}`);
+    const parentTaskId = keyedParent ?? rawParent;
     if (isPlaceholderId(parentTaskId)) throw new Error(referenceError(state, parentTaskId, 'task', rows[0]?.task.id));
     const parent = index.get(parentTaskId);
     if (!parent) throw new Error(referenceError(state, parentTaskId, 'task', allTasks(state)[0]?.task.id));

@@ -735,3 +735,17 @@ describe('compact task keys', () => {
     expect((outcome.evidence.detail as { taskScope: { rejectedTaskIds: unknown[] } }).taskScope.rejectedTaskIds).toEqual([]);
   });
 });
+
+describe('compact subtask parent keys', () => {
+  it('expands a short parent key and rejects an unknown key', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ subtasks: [
+      { parentTaskId: 't1', goal: '查看工具上的刻痕' },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g1#subtasks', updatesInput(world(), 'subtasks'));
+    expect(outcome.value).not.toBeNull();
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.subtasksAdded?.[0]?.parentTaskId).toBe('a1');
+    expect(engine.prompts[0]).toContain('t1：拿到工具');
+  });
+});
