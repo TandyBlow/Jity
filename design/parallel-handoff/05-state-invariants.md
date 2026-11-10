@@ -250,6 +250,11 @@ settlement.
 - `verifySnapshotSequence` (new in `369b9be9`) checks a turn-ordered series of
   full snapshots for version/points regression, a missing previous head, and a
   changed stored digest. The 09 test now accepts `snapshotAfter`/`snapshotBefore`.
+- `verifyDisplayHistory` (new in `28883301`) counts committed player points and
+  ready narration, errors when the command list is shorter than that history,
+  and warns when commands outrun points (failed/cancelled inputs are retained
+  for resume) or a point has no narration. The 09 evidence test prints these
+  `display:*` issues and fails on the error case.
 - Character gender evidence is delivered as
   `results/product/evidence/05-kernel/character-gender-evidence.json`: five
   characters have a direct, uniquely bound pronoun in the current world file
