@@ -21,6 +21,8 @@ export type NarrationIssueKind =
   /** A settled change that the prose never expresses. */
   | 'fact_omitted'
   | 'time_missing'
+  /** The same elapsed time written twice in one passage. */
+  | 'time_duplicate'
   /** Fabricated continuity: a promise or a past event with no committed or
    * previously accepted source. */
   | 'promise_without_fact' | 'past_without_fact'
@@ -68,6 +70,8 @@ export interface BeatSceneContext {
   present?: { name: string; note?: string }[];
   /** Visible objects, with an optional visible detail. */
   objects?: { name: string; note?: string }[];
+  /** What the viewpoint carries, with the settled detail (e.g. 挂在胸前). */
+  inventory?: { name: string; note?: string }[];
   /** One line summarising what the viewpoint was doing before this point. */
   previousAction?: string;
 }

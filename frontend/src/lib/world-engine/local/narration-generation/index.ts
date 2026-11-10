@@ -90,6 +90,8 @@ export function sanitizeNarration(raw: string): string {
 interface RunAttemptArgs {
   engine: InferenceEngine;
   prompt: string;
+  /** The serialized input for this attempt (scene input or beat input). */
+  inputText: string;
   attempt: number;
   committed: CommittedNarration;
   ledger: NarrationLedger;
@@ -191,6 +193,7 @@ async function runAttempt(args: RunAttemptArgs): Promise<RunAttemptResult> {
   const verified = verifyNarration({
     text: cleaned, finishReason, committed: args.committed, ledger: args.ledger,
     policy: args.policy, priorText: args.priorText, attempt: args.attempt,
+    inputText: args.inputText,
     promptEchoMarkers: args.echoMarkers ?? promptEchoMarkers(args.prompt, args.policy, args.guidance),
   });
   issueList.push(...verified.issues);
@@ -419,6 +422,7 @@ async function writeBeat(
     const result = await runAttempt({
       engine: input.engine,
       prompt,
+      inputText: input.inputText,
       attempt: attemptNumber,
       committed,
       ledger: scopedLedger,
@@ -598,6 +602,7 @@ async function generateBeatNarration(
   const runFinalVerify = (text: string) => verifyNarration({
     text, finishReason: 'stop', committed: input.committed, ledger, policy: finalPolicy,
     priorText, attempt: Math.max(0, attemptCount - 1), promptEchoMarkers: [],
+    inputText: input.inputText,
   });
   let final = assembled ? runFinalVerify(assembled) : null;
 
@@ -969,6 +974,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const result = await runAttempt({
       engine: input.engine,
       prompt,
+      inputText: baseInput,
       attempt,
       committed: input.committed,
       ledger,
@@ -1109,6 +1115,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const check = verifyNarration({
       text: repaired, finishReason: 'stop', committed: input.committed, ledger, policy,
       priorText, attempt: attempt.attempt, promptEchoMarkers: [],
+      inputText: input.inputText,
     });
     const remainingHard = check.issues.filter((issue) => issue.severity === 'hard');
     if (remainingHard.length) continue;
@@ -1160,6 +1167,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const check = verifyNarration({
       text: appended, finishReason: 'stop', committed: input.committed, ledger, policy,
       priorText, attempt: attempt.attempt, promptEchoMarkers: [],
+      inputText: input.inputText,
     });
     if (check.issues.some((issue) => issue.severity === 'hard')) continue;
     attempt.repairedIssues = [...(attempt.issues ?? [])];
@@ -1204,6 +1212,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
       const recheck = verifyNarration({
         text: trimmed.text, finishReason: 'stop', committed: input.committed, ledger, policy,
         priorText, attempt: 0, promptEchoMarkers: [],
+        inputText: input.inputText,
       });
       if (recheck.issues.every((issue) => issue.severity !== 'hard')) {
         text = trimmed.text;

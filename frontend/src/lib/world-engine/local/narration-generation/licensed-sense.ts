@@ -179,3 +179,62 @@ export function senseViolations(text: string, inputText: string, options: SenseO
   }
   return found;
 }
+
+/** Attributes that belong to one settled person, and settled looks that the
+ * prose must not re-describe as another state. 01's independent review of the
+ * 2026-11-10 prompt-route batch found three recurring classes in text the
+ * automatic verifier accepted:
+ *   - «路明非站在西侧服务巷，红发在风中晃动» (红发 is 诺诺's settled look)
+ *   - «诺诺蹲在墙角，发圈垂落» (settled: 红发用发圈束在脑后)
+ *   - «镜片后的眼睛微微发亮» (goggles settled 挂在胸前, not worn)
+ * Each is a binding error against the serialized input, not a style opinion. */
+export interface SettledViolation {
+  sentence: string;
+  detail: string;
+}
+
+const HAIR_COLOR_NOUNS = ['红发', '银发', '金发', '白发'] as const;
+
+export function settledAppearanceViolations(
+  text: string, inputText: string, names: readonly string[] = [],
+  inventory: readonly { name: string; note?: string }[] = [],
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  // Some settled lines live in the scene packet, not the serialized input
+  // (09 dense: «路明非的护目镜：挂在胸前» only in scene.inventory).
+  const settledText = [inputText, ...inventory.map((item) => `${item.name}：${item.note ?? ''}`)].join(String.fromCharCode(10));
+  const inputLines = settledText.split(new RegExp('\r?\n', 'u'));
+  const ownerOf = (noun: string): string | null => {
+    let best: { name: string; distance: number } | null = null;
+    for (const line of inputLines) {
+      if (!line.includes(noun)) continue;
+      const here = nearestName(line, noun, names);
+      if (here && here.distance < (best?.distance ?? Number.POSITIVE_INFINITY)) best = here;
+    }
+    return best?.name ?? null;
+  };
+  for (const sentence of sentencesOf(text)) {
+    for (const noun of HAIR_COLOR_NOUNS) {
+      if (!sentence.includes(noun)) continue;
+      const owner = ownerOf(noun);
+      if (!owner) continue;
+      const here = nearestName(sentence, noun, names);
+      if (here && here.name !== owner) {
+        found.push({ sentence, detail: `${noun} belongs to ${owner}, not ${here.name}` });
+      }
+    }
+    // The settled hair is tied: rewriting it loose changes how the person looks.
+    if (settledText.includes('束在脑后')) {
+      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,6}(垂落|垂下|轻垂|散开|披散)/u.exec(sentence);
+      if (loose) found.push({ sentence, detail: `the settled hair is tied (${loose[0]})` });
+    }
+    // Goggles settled on the chest are not worn over the eyes.
+    const chest = new RegExp('(挂在胸前|胸前挂着|胸前[^\\n]{0,6}护目镜|护目镜[^\\n]{0,6}胸前)', 'u').test(settledText);
+    if (chest && settledText.includes('护目镜')) {
+      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
+        found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
+      }
+    }
+  }
+  return found;
+}

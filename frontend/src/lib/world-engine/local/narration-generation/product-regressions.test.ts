@@ -527,3 +527,30 @@ describe('product regressions: one writing contract in prose-facts', () => {
     expect(engine.calls[0].prompt).toContain('【写法】');
   });
 });
+
+describe('product regressions: the 2026-11-10 route batch (01 review)', () => {
+  test("another person's settled hair colour is not the viewpoint's", async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷，红发在风中晃动。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the settled tied hair is not rewritten as loose', async () => {
+    const { kinds } = await issuesOf('诺诺蹲在墙角，发圈垂落，红发轻垂。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('goggles settled on the chest are not worn over the eyes', async () => {
+    const { kinds } = await issuesOf('路明非低头，镜片后的眼睛微微发亮。一分钟过去。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+
+  test('the same elapsed time in Chinese and Arabic is a duplicate', async () => {
+    const { kinds } = await issuesOf('一分钟过去，他翻完登记簿。1分钟过去，他站在原地。');
+    expect(kinds).toContain('hard:time_duplicate');
+  });
+
+  test('a Chinese-only duration is not a duplicate', async () => {
+    const { kinds } = await issuesOf('一分钟过去，他翻完登记簿。他站在原地。');
+    expect(kinds).not.toContain('hard:time_duplicate');
+  });
+});

@@ -18,6 +18,7 @@ import { factPhrases } from '../../runtime/committed-narration';
 import { alignNarration, numbersIn, type AlignmentResult } from '../../runtime/narration-alignment';
 import type { NarrationIssue, NarrationIssueKind, NarrationLedger, NarrationMetrics, NarrationPolicy } from './types';
 import { PAST_MARKERS, PROMISE_VERBS } from './ledger';
+import { settledAppearanceViolations } from './licensed-sense';
 
 const ALIGNMENT_KINDS: Record<string, NarrationIssueKind> = {
   actor_swap: 'fact_actor_swap',
@@ -55,6 +56,9 @@ export interface VerifyInput {
   attempt: number;
   /** Strings that prove the model copied instructions into the prose. */
   promptEchoMarkers?: string[];
+  /** The serialized input the model was given. Needed where a check compares
+   * the prose with a settled line (hair, worn items) rather than with a fact. */
+  inputText?: string;
 }
 
 export interface VerifyOutput {
@@ -128,6 +132,7 @@ function goalKeyTerms(goal: string): string[] {
 
 export function verifyNarration(input: VerifyInput): VerifyOutput {
   const { text, ledger, policy, attempt, finishReason, priorText } = input;
+  const inputText = input.inputText ?? '';
   const issues: NarrationIssue[] = [];
   const chars = charsOf(text);
   const sentences = sentencesOf(text);
@@ -392,6 +397,35 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
       if (sentence.lastIndexOf(noun, wear.index) < 0) continue;
       issues.push(hard('self_contradiction', attempt,
         `text says ${noun} is in the hand and also ${wear[1]}${wear[2]}`, sentence));
+    }
+  }
+
+  // 01's independent read of the 2026-11-10 route batch found three bindings the
+  // automatic verifier missed: another person's settled hair colour on the
+  // viewpoint, tied hair rewritten as loose, and goggles settled on the chest
+  // treated as worn. Each is a contradiction with the serialized input.
+  {
+    const names = policy.roster ?? policy.scene?.present?.map((person) => person.name) ?? [];
+    for (const violation of settledAppearanceViolations(text, inputText, names.filter(Boolean), policy.scene?.inventory ?? [])) {
+      issues.push(hard('self_contradiction', attempt, violation.detail, violation.sentence));
+    }
+  }
+
+  // The same elapsed time written twice in one passage (Chinese and Arabic) is
+  // a reading defect the route batch showed: «三分钟过去…3分钟过去».
+  {
+    const duration = ledger.time?.duration;
+    if (duration) {
+      const CN = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
+      const unit = ({ second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' } as Record<string, string>)[duration.unit] ?? '';
+      const cn = Number.isInteger(duration.amount) && duration.amount >= 0 && duration.amount <= 10 ? CN[duration.amount] : null;
+      if (unit && cn) {
+        const chinese = text.includes(`${cn}${unit}`);
+        const arabic = text.includes(`${duration.amount}${unit}`);
+        if (chinese && arabic) {
+          issues.push(hard('time_duplicate', attempt, `both 「${cn}${unit}」 and 「${duration.amount}${unit}」 are written`));
+        }
+      }
     }
   }
 
