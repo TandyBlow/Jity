@@ -399,7 +399,7 @@ const sync = createProductSync<LocalGameSnapshot>({
 ### 合并到 06 的树：在临时克隆里验证过（2026-11-10）
 
 在 `.tmp/06-merge-check` 里 `git clone --shared` 了 06 的 `cef95c7e`，打上
-`design/parallel-handoff/07-sync-for-06.patch`（`84d932cf..ed089ccc`）：
+`design/parallel-handoff/07-sync-for-06.patch`（`84d932cf..c4510286`，897 行）：
 
 - `git apply` 干净；
 - 06 自己的 `tsc -p tsconfig.json --noEmit`：0 错误；
