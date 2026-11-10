@@ -1,0 +1,180 @@
+{
+  "kept": 31,
+  "beats": 368,
+  "perKind": {
+    "moved": {
+      "candidates": 28,
+      "kept": 2
+    },
+    "task_achieved": {
+      "candidates": 24,
+      "kept": 8
+    },
+    "personality_changed": {
+      "candidates": 26,
+      "kept": 6
+    },
+    "sanity_changed": {
+      "candidates": 15,
+      "kept": 15
+    }
+  },
+  "rejectedExamples": [
+    {
+      "id": "lib-row-0133-move-江既白",
+      "text": "江既白深吸一口气，脚步轻响着踏过走廊的木板，每一步都仿佛在回响着过去的脚步声。走廊尽头，一盏昏黄的灯泡悬挂在半空，光线微弱，显得更加幽暗。",
+      "issues": [
+        "origin_missing",
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0133-move-江既白",
+      "text": "江既白踏着吱呀作响的地板，从二层走廊走向借阅台，每一步都像是在黑暗中摸索前行。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0170-move-方望舒",
+      "text": "方望舒收起手中的书，脚步轻盈地踏出借阅台，每一步都踩在硬木台面上轻微的凹痕中。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0170-move-方望舒",
+      "text": "方望舒把脚步放缓，从借阅台边沿踱步走向门口，鞋底蹭过硬木地板时留下淡淡的回响。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0012-move-温执",
+      "text": "温执从借阅台的硬木台面走过，每一步都伴随着轻微的吱嘎声，靴子在磨砂的地面上留下几道清晰的痕迹。抽屉上的铜皮在昏暗的灯光下泛着幽光。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0012-move-温执",
+      "text": "温执提起借书卡，从借阅台边沿跨过，靴底在硬木地面上留下轻微的声响。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0016-move-韩清和",
+      "text": "韩清和从门卫岗亭走出，踏上一片斑驳的石板路。老旧电暖器散发出微弱的热量，玻璃上的值班表微微泛黄。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0016-move-韩清和",
+      "text": "韩清和把肩膀压低，从门卫岗亭走出，脚下的水泥地散发出一股陈旧的气味。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "world-su-move-campus",
+      "text": "苏茜抬手拂过东回廊的帆布遮光帘，轻轻一拉，帘子滑落，露出了窗外的微光。她沿着墙边缓步而行，脚步轻盈，每一步都落在了那层薄薄的尘土之上，仿佛生怕惊扰了这里的宁静。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "world-su-move-campus",
+      "text": "苏茜推开东回廊南端的门，门轴吱呀一声轻响。她低头穿过门缝，靴子踏过地上的灰尘，留下淡淡的痕迹。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0022-move-黎停云",
+      "text": "黎停云把脚步放得极轻，从一层走廊的尽头走过来，靴子踏在剥落的墙皮上，发出细微的沙沙声。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0022-move-黎停云",
+      "text": "黎停云紧握着钥匙串，从一层走廊缓缓走向值班室，每一步都踏在发出轻微嘎吱声的瓷砖上。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0155-move-周书言",
+      "text": "周书言深吸一口气，从东侧回廊走向庭院，每一步都踏在已磨损的青石板上，发出轻微的回响。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0155-move-周书言",
+      "text": "周书言伸手摸向墙壁，沿着东侧回廊走向庭院。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "world-fingel-move-west",
+      "text": "芬格尔深吸一口气，推开器材棚的推拉门，走了进去。阳光透过缝隙洒在地面上，形成斑驳的光影。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "world-fingel-move-west",
+      "text": "芬格尔深吸一口气，从器材棚内走出，推拉门在身后缓缓合拢，发出轻微的吱呀声。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0076-move-柏清和",
+      "text": "柏清和踩着老旧的石板路，每一步都踏出轻微的回响。对面是一排关了门的铺子，窗户上蒙着厚厚的尘土。",
+      "issues": [
+        "origin_missing",
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0076-move-柏清和",
+      "text": "柏清和沿着二层走廊缓缓走出，街灯的光芒在昏黄中显得格外柔和。他的脚步轻巧而坚定，每一步都踏在硬质的地面上，发出轻微的回声。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0005-move-苏照",
+      "text": "苏照从窗边的雾气中走出，走向水槽前。水槽上方的瓷砖泛着微微的光泽，偶尔滴落的水珠在灯光下闪烁。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0005-move-苏照",
+      "text": "苏照深吸一口气，从窗边走向水槽前，指尖拂过冰冷的瓷砖边缘。",
+      "issues": [
+        "no_movement_verb"
+      ]
+    }
+  ]
+}
