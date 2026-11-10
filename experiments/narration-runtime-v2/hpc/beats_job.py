@@ -136,6 +136,12 @@ def deploy(h) -> None:
             f"{REMOTE}/configs/qwen15b-draft-v1.json",
         os.path.join(V2, "data", "train-draft-v1.jsonl"):
             f"{REMOTE}/data/train-draft-v1.jsonl",
+        os.path.join(V2, "data", "train-page-v1.jsonl"):
+            f"{REMOTE}/data/train-page-v1.jsonl",
+        os.path.join(V2, "data", "splits-page-v1.json"):
+            f"{REMOTE}/data/splits-page-v1.json",
+        os.path.join(V2, "configs", "qwen15b-page-v1.json"):
+            f"{REMOTE}/configs/qwen15b-page-v1.json",
         os.path.join(V2, "data", "train-v5.jsonl"): f"{REMOTE}/data/train-v5.jsonl",
         os.path.join(V2, "data", "train-v4.jsonl"): f"{REMOTE}/data/train-v4.jsonl",
     }
