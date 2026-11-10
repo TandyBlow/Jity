@@ -26,8 +26,8 @@ try {
   const { generateCandidate } = await vite.ssrLoadModule('/src/lib/world-engine/local/narration-candidates/constrained/index.ts');
   let composer = null;
   if (composerPath) {
-    const module = await vite.ssrLoadModule(`/@fs/${composerPath.split(String.fromCharCode(92)).join('/')}`);
-    const factory = module.createBeatComposer ?? module.default;
+    const composerModule = await vite.ssrLoadModule(`/@fs/${composerPath.split(String.fromCharCode(92)).join('/')}`);
+    const factory = composerModule.createBeatComposer ?? composerModule.default;
     if (typeof factory !== 'function') throw new Error(`--composer ${composerPath} exports no createBeatComposer()`);
     composer = factory();
   }
