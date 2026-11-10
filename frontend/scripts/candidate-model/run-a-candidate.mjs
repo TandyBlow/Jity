@@ -54,6 +54,13 @@ const config = {
     'D:/others/Jity/.local/models',
   ],
 };
+// An absolute path is converted here, not by the shell: Git Bash rewrites
+// arguments that start with '/@fs/' into a Windows path (and mangles the drive
+// colon), which made a 03 run fail before the model was even called.
+if (config.entry && /^[A-Za-z]:[\/]/.test(config.entry)) {
+  config.entry = '/@fs/' + config.entry.split(String.fromCharCode(92)).join('/');
+}
+
 const sha256File = (file) => new Promise((done, fail) => {
   const hash = createHash('sha256');
   createReadStream(file).on('data', (chunk) => hash.update(chunk)).on('end', () => done(hash.digest('hex'))).on('error', fail);
