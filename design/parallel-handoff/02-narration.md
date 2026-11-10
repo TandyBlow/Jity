@@ -646,3 +646,14 @@ QUALITY-PRIORITY 之后，主线从「加检查」改为「产出可读正文」
 诚实边界：source=model 不等于质量通过；这一段仍有「诺诺一步步走近」（第三方移动无依据），
 已把原句交 01 定口径；「钟声」「泥土味」是否可接受也待 01 判定。页面仍要 vendor 28f30c7e，
 否则跑的还是旧副本（旧副本里没有骨架、安静回合、外观与时长修复）。
+
+## 3.18 21c3 追踪与公开回归（2026-11-11 04:0x，commit b0bad8bd）
+
+三次拒绝分属三方：我的 `loop_repeated_clause`、06 的 `validateNarration` 的
+`unprojected_entity:诺诺的红色识别带`、以及程序兜底的 `task_without_fact`。
+前两项已在 b0bad8bd 处理（两次回声只记 soft；场景可见物件算背景）；第三项是 04/06 的数据：
+结果阶段说任务完成、更新阶段 `achieved:[]`，兜底正文复述了结果那句。
+
+新增 `product-regressions.test.ts`：9 个来自 f15d/21c3 原文的公开回归，离线可跑。
+给 06 的整合包：`02-narration-vendor-head-b0bad8bd.patch`（git apply --check 通过）。
+给 09 的 L3 批量：`02-narration-known-defect-batch.json`（三个已知缺陷输入、同一模型一次加载）。
