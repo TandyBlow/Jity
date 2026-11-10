@@ -16,6 +16,9 @@
 export const SENSE_NOUNS = [
   '枪声', '脚步声', '风声', '心跳声', '回声', '铃声', '钟声', '水滴声', '摩擦声', '声响', '响声',
   '硝烟', '气味', '香味', '木香', '血腥味', '臭味',
+  // Light and air where the input says nothing about them. Measured against
+  // the 71 reference scenes: none of these appears without its input saying so.
+  '风中', '风里', '阳光', '月光', '灯光',
 ] as const;
 
 export interface SenseViolation {

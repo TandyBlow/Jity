@@ -14,7 +14,7 @@
 // Sitting is left out on purpose: two of the 71 reference scenes sit down
   // without stating it, and a seat in the input is enough to make it true.
 export const POSTURE_VERBS = ['蹲下', '蹲在', '靠在', '靠墙', '站起', '躺下'] as const;
-export const HAND_VERBS = ['握着', '握住', '握着', '拿着', '捏着', '攥着', '收起', '揣进', '摸向'] as const;
+export const HAND_VERBS = ['握着', '握住', '拿着', '捏着', '攥着', '收起', '揣进', '摸向', '摸了摸', '摸着'] as const;
 
 export interface ActionViolation {
   sentence: string;
