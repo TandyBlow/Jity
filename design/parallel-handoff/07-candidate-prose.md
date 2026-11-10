@@ -200,6 +200,32 @@ grounding 输入下的地板是 30 字，而不是 60 字；否则两个合法�
 cd <09 worktree>/frontend && node scripts/quality-candidates/run-browser-candidates.mjs   --lane 07-prose --candidate 07-prose=<07 worktree>/frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts   --candidate-loader "07-prose=<07 worktree>/frontend/scripts/candidate-prose/stub-engine-loader.ts::loadCandidateModel"   --candidate-model-id 07-prose=none --set free-day --max-runs 3 --no-lease   --model /models/stub.gguf --model-dir <dir with stub.gguf>   --out <07 worktree>/artifacts/prose-composer/browser-07.json
 ```
 
+### 复跑（2026-11-10，04 `f97c90bc` + 任务句地点锚点）
+
+04 的事实包改成 `{anchor, facts}` 之后，01 的检查器也收紧了：只有任务+时间的
+回合，句子被剥掉人名和 goal 后只剩“三分钟过去/做完了”，重新被判
+`style.status_panel`。改法是：整段口里每一条任务句都先用一句未读过的地点细节
+开头（同一条叙述里已经当过纹理的细节不重复用）；04 的逐 beat 口保持“主语在
+最前”的契约，不受影响。
+
+同输入复跑：
+
+- `review-01-gate.ts`：10 回合 **0/10 regenerate**，任务回合
+  （turn 2）从 `hold_for_review` 变成 `accept_as_model_prose`，0 条事实发现；
+- `chain-10.ts`（20 回合）：20/20 accepted，逐字重复 0，20 个收尾互不相同；
+- `sweep-free-day.ts`：14/14，全部 beat 由本 composer 产出；
+- 09 共享页面 `--set free-day` 3/3、`--set short` 3/3 accepted，
+  `browser-07-after.json` / `browser-07-after-short.json` 已按本轮重跑
+  （program-only stub，证据里仍是 `no model`）。
+
+free-day-task 现在是 80 字：
+
+```text
+三分钟过去，第三根廊柱脚下有一条折断的蓝布带，「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」，路明非做完了。
+
+路明非不再等别人替他决定，愿意先迈出一步。
+```
+
 ### 04 逐 beat 全流程（14/14 accepted）
 
 `scripts/candidate-prose/sweep-free-day.ts` 用 04 的真实内核和
@@ -312,10 +338,11 @@ dataset 行（视角/上回合状态/本回合变化/本回合状态），用 01
   没有漏移动/时间/任务/个性/精神，没有方向反转）；
 - 门槛判定是 `hold_for_review` 而不是 `regenerate`：程序正文会复述已结算事实，01 的
   `fallbackSuspicion` 会因此要求人工确认来源，这是对的——它本来就不该被当模型正文；
-- 唯一被标 `style.status_panel` 的是“只有个性变化”的回合。第一次只加地点名不够：
-  01 会把地点名一起当名字剥掉；改成“时间 + 一句有主谓的地点细节 + 个性句”同一句后，
-  0/10 regenerate。试过按每个逗号切地点细节，会切出“但要同时暴露给两边的窗口”这种
-  残句，已回退成只取每句地点描写的第一个分句。
+- “只有个性变化”和“只有任务达成”两类回合都会被判 `style.status_panel`。第一次只加
+  地点名不够：01 会把地点名一起当名字剥掉；改成“时间 + 一句有主谓的地点细节 +
+  个性/任务句”同一句后，0/10 regenerate。试过按每个逗号切地点细节，会切出
+  “但要同时暴露给两边的窗口”这种残句，已回退成只取每句地点描写的第一个分句；
+  同一段叙述里已经当过纹理的细节也会被排除，避免一句话印两遍。
 
 这是自动检查，不是人工复核，也不是产品质量通过。
 
@@ -331,6 +358,7 @@ dataset 行（视角/上回合状态/本回合变化/本回合状态），用 01
 | 无意义填充 | `还在原来的地方` 追加行、`看了一眼X` | 两者都删除；短回合宁短不凑 |
 | 同一句被印两遍 | 截断后的场景锚点与原文各出现一次 | 锚点按截断子句匹配源 beat，只出现一次 |
 | 续写回合重开场景 | 每回合都用地点说明开头 | 续写时地点句若与上一回合重合，就改用事实拍开头 |
+| 任务句像状态栏 | “过了三分钟，「goal」，X 做完了。” 只报告已结算字段 | 整段口先在任务句前放一句未读过的地点细节；逐 beat 口保持主语最前 |
 
 同一三个 free-day 输入、同一顺序（open → move → task，后者以前者正文为
 `priorText`）经 09 的共享运行器实跑：
