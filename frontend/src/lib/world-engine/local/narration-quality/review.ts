@@ -183,8 +183,18 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
         ) + 1;
         const clause = narration.slice(clauseStart, index);
         const local = nameHits(clause, names);
+        // The clause immediately before this one, to find the real antecedent.
+        const beforeStart = narration.lastIndexOf('，', clauseStart - 2) + 1;
+        const previousClause = clauseStart > 0 ? narration.slice(Math.max(0, beforeStart), clauseStart - 1) : '';
+        const previousNames = nameHits(previousClause, names);
         const direct = local.length === 1 && clause.trimEnd().endsWith(local[0].name)
           && clause.trimEnd().length - clause.indexOf(local[0].name) <= 2;
+        if (index === clauseStart && previousNames.length === 1) {
+          // "周宁把袖子卷起，他……" — the only person in the previous clause is
+          // the antecedent, so the registry can judge the pronoun directly.
+          bindings.push({ pronoun, gender, antecedent: previousNames[0].name, candidates: [previousNames[0].name], strength: 'strong', index, sentence: sentenceIndex });
+          continue;
+        }
         if (index === clauseStart && subject) {
           // A clause-initial pronoun continues the tracked subject — unless
           // the registry says that subject cannot be the referent and another
@@ -667,6 +677,11 @@ export function reviewNarration(args: {
     for (const noun of INVENTABLE_OBJECTS) {
       if (!narration.includes(noun)) continue;
       if (projection.sourceText.includes(noun)) continue;
+      // A compound whose head noun is settled ("箱子" when the state says 箱)
+      // is the same object, not an invention.
+      const head = [...noun].slice(0, 2).join('');
+      const headLicensed = [...head].length === 2 && projection.sourceText.includes(head);
+      if (headLicensed) continue;
       const index = narration.indexOf(noun);
       if (negatedAt(narration, noun)) continue;
       if (/(?:像|仿佛|如同|似的)[^。]{0,4}$/u.test(narration.slice(0, index))) {
@@ -678,6 +693,13 @@ export function reviewNarration(args: {
       const handled = ITEM_HANDLING_VERBS.some((verb) => window.includes(verb))
         || ITEM_STATE_VERBS.some((verb) => window.includes(verb));
       const containerClaim = /(?:里面|里|中|内)(?:是|放着|装着|有|多出|躺着)/u.test(window);
+      const rootChar = [...noun][0] ?? '';
+      const rootLicensed = rootChar.length === 1 && projection.sourceText.includes(rootChar);
+      if ((handled || containerClaim) && rootLicensed) {
+        findings.push(finding(ctx, 'review.object_added', sentence.text,
+          `${noun} may be a renamed settled object (the state has ${rootChar}); needs reading`, [], []));
+        continue;
+      }
       if (handled || containerClaim) {
         findings.push(finding(ctx, 'fact.object_added', sentence.text,
           `${noun} is not in the settled state and is ${handled ? 'handled' : 'claimed as container content'}`,
@@ -776,8 +798,16 @@ export function reviewNarration(args: {
       if (!narration.includes(sound)) continue;
       if (negatedAt(narration, sound)) continue;
       if (projection.sourceText.includes(sound)) continue;
-      const moverHere = projection.moves.some((move) => move.kind === 'person' && narration.includes(move.name));
+      // A footstep needs a mover named in this sentence, not merely a move
+      // somewhere in the point: the text may still put that mover elsewhere.
+      const movedHere = MOVE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb));
+      const moverHere = movedHere && projection.moves.some((move) => move.kind === 'person' && narration.includes(move.name));
       if (sound === '脚步声' && moverHere) continue;
+      // Ambient sounds of a settled action (a door the text says opened, an
+      // object the text says was handled) are licensed by that action.
+      const actionHere = ITEM_STATE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
+        || MOVE_VERBS.some((verb) => narration.includes(verb) && moverHere);
+      if (actionHere && sound !== '脚步声') continue;
       findings.push(finding(ctx, 'fact.sound_added', sentence.text,
         `${sound} has no settled source`, [], []));
     }
