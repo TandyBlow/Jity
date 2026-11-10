@@ -543,7 +543,18 @@ export function composeProse(scene: ProseScene): ComposedProse {
         const named = filled.startsWith(refs.name(actor.id)) || /^[他她]/u.test(filled)
           ? filled
           : `${refs.name(actor.id)}${filled}`;
-        pushBeat(ensurePeriod(named), beat);
+        // A paragraph that is only the settled personality sentence reads like
+        // a status panel (01's complaint). When nothing else happened, the
+        // place is a licensed anchor that keeps it in the scene. Stuffing a
+        // second scenery clause here was tried and read worse than the panel
+        // ("但要同时暴露给两边的窗口，路明非..."), so the place alone is used.
+        const mentalOnly = body.every((entry) => entry.kind === 'time' || entry.kind === 'scene'
+          || entry.kind === 'personality' || entry.kind === 'sanity');
+        const place = scene.location.name;
+        const anchored = mentalOnly && place && !named.startsWith(place)
+          ? `${place}里，${named}`
+          : named;
+        pushBeat(ensurePeriod(anchored), beat);
         break;
       }
       case 'appearance': {
@@ -593,9 +604,13 @@ export function composeProse(scene: ProseScene): ComposedProse {
             ]
             : [`${refs.subject(actor.id)}照旧。`];
         const salt = hash32(`${scene.seed ?? 0}|${beat.actorId}|${down ? 'down' : beat.to > beat.from ? 'up' : 'flat'}`);
+        // The same cue at two points reads as a stamp; drop anything the
+        // session already read before picking.
+        const fresh = seenText ? variants.filter((variant) => !seenText.includes(variant)) : variants;
+        const pool = fresh.length ? fresh : variants;
         const sentence = beat.factText
           ? ensurePeriod(fillSlots(beat.factText, nameMap(scene), beat.actorId))
-          : variants[salt % variants.length];
+          : pool[salt % pool.length];
         pushBeat(sentence, beat);
         break;
       }

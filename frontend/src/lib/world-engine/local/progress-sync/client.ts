@@ -321,17 +321,27 @@ export class ProgressSyncClient<P = unknown> {
   }
 
   /** Two-device recovery: read the active head and write it into 06's store. */
-  async pullLatest(worldId: WorldId): Promise<PullResult<P>> {
+  async pullLatest(worldId: WorldId, options: { saveLocal?: boolean } = {}): Promise<PullResult<P>> {
     const head = await this.head(worldId);
     if (!head.headSnapshotId) return { head, snapshot: null, localSaved: false };
     const snapshot = await this.read(worldId, head.headSnapshotId);
-    const localSaved = await this.saveLocal(worldId, snapshot.payload);
+    // A product whose session owns the durable store must not have a second
+    // writer; it reads the remote copy and opens it itself.
+    const localSaved = options.saveLocal === false
+      ? false
+      : await this.saveLocal(worldId, snapshot.payload);
     return { head, snapshot, localSaved };
   }
 
-  async pullSnapshot(worldId: WorldId, snapshotId: SnapshotId): Promise<PullResult<P>> {
+  async pullSnapshot(
+    worldId: WorldId,
+    snapshotId: SnapshotId,
+    options: { saveLocal?: boolean } = {},
+  ): Promise<PullResult<P>> {
     const snapshot = await this.read(worldId, snapshotId);
-    const localSaved = await this.saveLocal(worldId, snapshot.payload);
+    const localSaved = options.saveLocal === false
+      ? false
+      : await this.saveLocal(worldId, snapshot.payload);
     return { head: this.known.get(worldId) ?? { worldId, headSnapshotId: null, revision: 0 }, snapshot, localSaved };
   }
 
@@ -468,9 +478,10 @@ export class ProgressSyncClient<P = unknown> {
   async resolveConflict(
     conflict: ProgressConflictErrorType<P>,
     choice: ConflictChoice,
+    options: { saveLocal?: boolean } = {},
   ): Promise<ResolveResult<P>> {
     if (choice === 'keep-remote') {
-      const pulled = await this.pullLatest(conflict.worldId);
+      const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
       return {
         status: 'remote',
         head: pulled.head,
@@ -502,7 +513,7 @@ export class ProgressSyncClient<P = unknown> {
         activate: true,
         requestId: this.childRequestId(request.requestId, 'fork'),
       });
-      const pulled = await this.pullLatest(conflict.worldId);
+      const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
       return {
         status: 'local-fork',
         head: pulled.head,
@@ -524,7 +535,7 @@ export class ProgressSyncClient<P = unknown> {
       expectedRevision: fork.revision,
       requestId: this.childRequestId(request.requestId, 'select'),
     });
-    const pulled = await this.pullLatest(conflict.worldId);
+    const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
     return {
       status: 'local-fork',
       head: pulled.head,

@@ -18,7 +18,7 @@ export interface CommittedFactLike {
   id: string;
   actorId: string;
   name: string;
-  kind: 'at' | 'moved' | 'sanity' | 'sanity_changed' | 'task_achieved' | 'personality_changed';
+  kind: 'at' | 'moved' | 'sanity' | 'sanity_changed' | 'task_achieved' | 'personality_changed' | 'appearance_changed';
   location?: string;
   from?: string;
   to?: string;
@@ -51,6 +51,8 @@ export interface EntityReadLike {
   id?: string;
   position?: { containerId?: string } | null;
   appearanceChanges?: ChangeLike[];
+  personalityChanges?: ChangeLike[];
+  sanity?: number;
 }
 
 /** The subset of WorldState the adapter reads. Structural on purpose: no
@@ -75,6 +77,10 @@ export interface CommittedAdapterPolicy {
   state?: WorldStateLike | null;
   timeAdvance?: CommittedLike['timeAdvance'];
   delta?: { timeAdvance?: CommittedLike['timeAdvance'] } | null;
+  /** The settled read before the point, when the caller has it. Changes the
+   * committed packet leaves out (sanity, appearance, personality) are read from
+   * this pair instead of being lost. */
+  beforeState?: WorldStateLike | null;
   /** Session transcript, when the caller has it. */
   avoidText?: string | null;
 }
@@ -351,6 +357,53 @@ function beatsFromFacts(facts: CommittedFactLike[], protagonistId: string, looku
   return beats;
 }
 
+/** Settled changes the committed packet does not carry as facts.
+ *
+ * 04's packet carries moves, tasks and personality, but a real point can also
+ * settle sanity and appearance. Those two only exist in the before/after state
+ * read, so the adapter diffs them. Nothing is invented: a value is narrated
+ * only when the two reads disagree and the packet did not already say it.
+ */
+function changeBeatsFromStateDiff(
+  before: WorldStateLike | null,
+  after: WorldStateLike,
+  facts: CommittedFactLike[],
+  scene: ProseScene,
+): ProseBeat[] {
+  if (!before) return [];
+  const beats: ProseBeat[] = [];
+  const bare = (text: string | undefined) => (text ?? '').replace(/[。！？…\s]+$/u, '');
+  const factText = facts
+    .filter((fact) => fact.kind === 'personality_changed' || fact.kind === 'appearance_changed')
+    .map((fact) => `${fact.actorId}|${bare(fact.text)}`);
+  const characterIds = new Set(scene.cast.map((actor) => actor.id));
+  for (const [id, live] of Object.entries(after.characters ?? {})) {
+    const previous = before.characters?.[id];
+    if (!previous || !characterIds.has(id)) continue;
+    const name = after.initial.characters[id]?.name ?? id;
+    if (typeof previous.sanity === 'number' && typeof live.sanity === 'number'
+      && previous.sanity !== live.sanity
+      && !facts.some((fact) => fact.kind === 'sanity_changed' && fact.actorId === id)) {
+      beats.push({ kind: 'sanity', actorId: id, from: previous.sanity, to: live.sanity });
+    }
+    const priorIds = new Set((previous.appearanceChanges ?? []).map((change) => change.id));
+    for (const change of live.appearanceChanges ?? []) {
+      if (priorIds.has(change.id)) continue;
+      const text = change.text?.trim();
+      if (!text || factText.some((entry) => entry === `${id}|${bare(text)}`)) continue;
+      beats.push({ kind: 'appearance', subjectName: name, text, factText: text });
+    }
+    const priorPersonality = new Set((previous.personalityChanges ?? []).map((change) => change.id));
+    for (const change of live.personalityChanges ?? []) {
+      if (priorPersonality.has(change.id)) continue;
+      const text = change.text?.trim();
+      if (!text || factText.some((entry) => entry === `${id}|${bare(text)}`)) continue;
+      beats.push({ kind: 'personality', actorId: id, text });
+    }
+  }
+  return beats;
+}
+
 export function sceneFromCommitted(
   committed: CommittedLike,
   policy: CommittedAdapterPolicy = {},
@@ -365,9 +418,11 @@ export function sceneFromCommitted(
   const protagonistName = names.get(protagonistId) ?? policy.viewpoint?.name ?? protagonistId;
   const stateRead = policy.state ?? null;
   const enriched = stateRead ? sceneFromState(committed, stateRead, policy) : null;
-  if (enriched) {
+  const read = stateRead as WorldStateLike | null;
+  if (enriched && read) {
     const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
-    const beats = beatsFromFacts(facts, enriched.scene.protagonistId, factLookup(enriched.scene, stateRead));
+    const beats = beatsFromFacts(facts, enriched.scene.protagonistId, factLookup(enriched.scene, read));
+    if (policy.beforeState) beats.push(...changeBeatsFromStateDiff(policy.beforeState, read, facts, enriched.scene));
     if (advance?.duration && advance.duration.amount > 0) {
       beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
     }

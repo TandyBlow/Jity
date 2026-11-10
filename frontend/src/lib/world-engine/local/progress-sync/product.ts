@@ -6,9 +6,15 @@
  * state:
  *
  *   const sync = createProductSync({ store, worldId, baseUrl, token });
- *   await sync.save(snapshot);          // local first, remote best-effort
- *   await sync.restore();               // local save, else pull the remote head
+ *   await sync.push(snapshot);          // the session already wrote the store
+ *   await sync.restore();               // local save, else read the remote head
  *   await sync.flush();                 // after reconnect
+ *
+ * The product's session is the only writer of the durable store. Writing it a
+ * second time from here is a real bug: 06's store checks a revision, so the
+ * extra write moves the revision behind the session and the session's next save
+ * fails as a conflict. `save()` therefore uploads only by default; set
+ * `writeLocal: true` only for a caller that has no session writer.
  *
  * The snapshot stays the product's opaque `LocalGameSnapshot`; nothing here
  * reads or reinterprets world state, and no game fact is computed on a server.
@@ -85,6 +91,10 @@ export interface ProductSyncOptions<P> {
   token?: string | null;
   /** Browser storage for the offline queue and the last known head. */
   storage?: StorageLike | null;
+  /** Write the durable store from this adapter too. False by default because
+   * the product's session owns it and checks its revision; a second write
+   * breaks the session's next save. */
+  writeLocal?: boolean;
   fetchImpl?: typeof fetch;
   queueKey?: string;
   headKey?: string;
@@ -137,8 +147,9 @@ export interface ProductFlushResult<P = unknown> {
 export interface ProductSync<P> {
   readonly client: ProgressSyncClient<P>;
   readonly worldId: string;
-  /** Local save first; remote upload best-effort. Never throws for network. */
-  save(snapshot: P, options?: { requestId?: string; localOnly?: boolean }): Promise<ProductSaveResult<P>>;
+  /** Upload a snapshot after the session saved it (or, with `writeLocal`,
+   * save it here first). Never throws for network problems. */
+  save(snapshot: P, options?: { requestId?: string; localOnly?: boolean; localAlreadySaved?: boolean }): Promise<ProductSaveResult<P>>;
   /** Upload a snapshot the caller already saved locally (06's repository).
    * Keeps one durable record instead of writing it twice. */
   push(snapshot: P, options?: { requestId?: string }): Promise<ProductSaveResult<P>>;
@@ -185,13 +196,18 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
     client,
     worldId,
     async save(snapshot, saveOptions = {}) {
-      const localSaved = await client.saveLocal(worldId, snapshot);
+      // The session writes the durable store. Writing it here too moves the
+      // stored revision behind the session and its next save fails as a
+      // conflict, before any model call.
+      const writeLocal = options.writeLocal === true && saveOptions.localAlreadySaved !== true;
+      const localSaved = writeLocal ? await client.saveLocal(worldId, snapshot) : false;
       if (!baseUrl) {
-        return { localSaved, outcome: null, note: 'progress service is not configured; saved locally only' };
+        return { localSaved, outcome: null, note: 'progress service is not configured; nothing to upload' };
       }
       const outcome = await client.save(worldId, snapshot, {
         requestId: saveOptions.requestId,
         localOnly: saveOptions.localOnly,
+        skipLocal: !writeLocal,
       });
       return { localSaved, outcome };
     },
@@ -219,7 +235,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
         return { source: 'local', snapshot: local };
       }
       try {
-        const pulled = await client.pullLatest(worldId);
+        const pulled = await client.pullLatest(worldId, { saveLocal: options.writeLocal === true });
         return {
           source: pulled.snapshot ? 'remote' : 'none',
           snapshot: pulled.snapshot ? pulled.snapshot.payload : null,
@@ -316,7 +332,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       }
     },
     choose(choice, conflict) {
-      return client.resolveConflict(conflict, choice);
+      return client.resolveConflict(conflict, choice, { saveLocal: options.writeLocal === true });
     },
     pending() {
       return client.pending();

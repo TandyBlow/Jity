@@ -12,7 +12,10 @@
  */
 
 import { composeProse, PROSE_STRATEGY_VERSION } from './compose';
-import { sceneFromCommitted, sceneFromGrounding, type CommittedLike, type SceneGroundingLike } from './from-committed';
+import {
+  sceneFromCommitted, sceneFromGrounding,
+  type CommittedLike, type SceneGroundingLike, type WorldStateLike,
+} from './from-committed';
 import type { ComposedProse, ProseIssue, ProseScene } from './types';
 
 export const CANDIDATE_STRATEGY_VERSION = PROSE_STRATEGY_VERSION;
@@ -174,6 +177,9 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
         seed: policy.seed,
         minChars: policy.minChars,
         state: args.state ?? args.committed.state ?? null,
+        beforeState: args.beforeState
+          ?? (args.committed as { beforeState?: WorldStateLike } | null)?.beforeState
+          ?? null,
         delta: args.delta ?? null,
         timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
       })
@@ -184,6 +190,9 @@ export function generateCandidate(args: GenerateCandidateArgs): CandidateResult 
       seed: policy.seed,
       minChars: policy.minChars,
       state: args.state ?? args.committed.state ?? null,
+      beforeState: args.beforeState
+          ?? (args.committed as { beforeState?: WorldStateLike } | null)?.beforeState
+          ?? null,
       timeAdvance: args.committed.timeAdvance ?? args.delta?.timeAdvance ?? null,
       delta: args.delta ?? null,
     });

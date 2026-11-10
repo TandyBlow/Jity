@@ -57,6 +57,7 @@ describe('product wiring survives a reload only with browser storage', () => {
       store,
       worldId: 'w1',
       baseUrl: 'http://127.0.0.1:9/local-progress',
+      writeLocal: true,
       fetchImpl: offlineFetch,
       sleep: async () => undefined,
     });
@@ -89,6 +90,7 @@ describe('product wiring survives a reload only with browser storage', () => {
       store,
       worldId: 'w1',
       baseUrl: 'http://127.0.0.1:9/local-progress',
+      writeLocal: true,
       storage,
       fetchImpl: flakyFetch,
       sleep: async () => undefined,
