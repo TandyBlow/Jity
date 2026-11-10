@@ -1211,6 +1211,46 @@ anchors.append(
 )
 
 
+run_95 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-95dc.json", encoding="utf-8"))
+n95 = run_95["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e95 = {}
+b7_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+for key, value in n95.items():
+    e95["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else "auto1")] = value.get("text") or ""
+anchors.append(
+    {
+        "id": "neg/95dc-point-program",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the program fallback uses the goggles as the actor and prints «为false»",
+        "input": b7_inputs["f15d-point"],
+        "text": e95["point"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": ["style.status_panel"], "review": [],
+                   "notes": "The item-actor nonsense «护目镜在原地站了一会儿» is a manual finding; the checker does not yet flag an item as a person actor."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/95dc-auto1-mark-time",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the auto-1 model text gives 路明非 the nono's right-sleeve red mark and skips the minute",
+        "input": b7_inputs["f15d-point"],
+        "text": e95["auto1"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.time_missing", "fact.body_mark_added"], "style": [], "review": [],
+                   "notes": "The nono's look carries the right-sleeve red mark; the lu's does not."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/95dc-root-dialogue",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the opening invents «这里……没人在。» and re-ties the settled hair",
+        "input": b7_inputs["f15d-opening"],
+        "text": e95["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [],
+                   "notes": "The invented dialogue and the hair re-enactment are review items; the root is not displayed."},
+    },
+)
+
 run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
 e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
 e9 = {}

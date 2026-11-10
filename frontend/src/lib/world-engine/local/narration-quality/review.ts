@@ -1371,7 +1371,7 @@ export function reviewNarration(args: {
           : lookMatch(person) || bound(personName);
       if (!eligible) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
-      const body = /(手背|手心|手指|手腕|手臂|胳膊|大臂|小臂|右臂|左臂|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
+      const body = /(手背|手心|手指|手腕|手臂|胳膊|大臂|小臂|右臂|左臂|袖口|衣袖|衣角|袖子|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
       if (!body) continue;
       // 「右袖的红痕」 must not be read as a mark on the 左臂 named earlier.
       const sideBefore = /([左右])(?:袖|臂|手|腿|脚)[^。；，]{0,4}$/u.exec(narration.slice(Math.max(0, mark.index - 8), mark.index));
