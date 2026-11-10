@@ -72,14 +72,22 @@ def main() -> int:
     registry = json.loads(CANDIDATES.read_text(encoding="utf-8"))
     passing = [row for row in registry["candidates"] if row["preInferenceGate"]["passed"]]
     prompts_dir = ROOT / "evidence/prompts-dev-v1"
-    quality_ready = False
-    quality_blocked = (
-        "3/15 dev cases use non-canonical 05 delta shapes and the reference serializer "
-        "yuyan-prose-result-v2 refuses them; reported to 01 in "
-        "results/11-model-search/requests/01-dev-package-canonical-delta.json. "
-        "11 will not hand-edit 05's facts into a different shape."
-    )
     pinned_preregistration = ROOT / "preregistration.v1.json"
+    pinned_status = None
+    if pinned_preregistration.exists():
+        try:
+            pinned_status = json.loads(pinned_preregistration.read_text(encoding="utf-8")).get("status")
+        except ValueError:
+            pinned_status = None
+    quality_ready = bool(pinned_status and pinned_status.startswith("pinned"))
+    quality_blocked = (
+        "None for the declared 12-case subset: preregistration.v1.json is pinned and the subset "
+        "was declared before any model output. The full 10/15 gate still needs 01 to fix "
+        "tide-continuity-tide-duty-t2/t3 and fixture-goggles-transfer "
+        "(proposal: results/11-model-search/requests/01-case-fix-proposal.json)."
+        if quality_ready else
+        "No pinned preregistration: run finalize/pin before submitting."
+    )
     preregistration_path = pinned_preregistration if pinned_preregistration.exists() else ROOT / "preregistration.draft.json"
 
     preflight = {
@@ -175,6 +183,9 @@ def main() -> int:
         "to": "10-training",
         "requestedAt": now(),
         "kind": "frozen-prompt-batch",
+        "batchId": "batch-1-subset12",
+        "subsetOnly": True,
+        "qualityGateClaim": "none: 12/15 declared subset; the 10/15 gate needs all 15",
         "readyToSubmit": quality_ready,
         "submitCondition": "01 either fixes the three cases the reference serializer refuses, or "
                            "explicitly acknowledges the declared 12-case subset; 11 then re-pins the "
@@ -183,7 +194,7 @@ def main() -> int:
         "preregistration": {
             "path": str(preregistration_path),
             "sha256": sha(preregistration_path),
-            "status": "pinned" if preregistration_path.name == "preregistration.v1.json" else "draft",
+            "status": pinned_status or "draft",
         },
         "prompts": {
             "subset12": {"path": str(prompts_dir / "prompts.jsonl"), "sha256": sha(prompts_dir / "prompts.jsonl")},
@@ -235,6 +246,8 @@ def main() -> int:
         ],
         "hardConstraints": [
             "Run only after readyToSubmit=true and the preregistration pin matches the prompt manifest.",
+            "This is the declared 12/15 subset. Keep every output; if 01 later fixes the other 3, "
+            "run a new batch and do not merge old/new into a 15-case claim.",
             "Do not change sampling, max tokens, stop strings or prompts; any change is a new batch id.",
             "Do not skip a case; if a prompt file is missing or a call errors, report it.",
             "Do not judge quality; lane 01 reviews the raw texts.",
