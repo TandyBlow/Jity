@@ -291,6 +291,19 @@ const sync = createProductSync<LocalGameSnapshot>({
    自己当成已同步；`remote-ahead` 时页面应提示“另一台设备有新进度”，
    `diverged` 时提示选择，不要自动覆盖。
 
+### 09 排页面之前先跑这个只读检查
+
+`frontend/scripts/parallel-sync/page-wiring-audit.ts` 读 06 的 `page.tsx`（不写），逐条打印
+接线前提和命中行号，四条必需项缺一条就退出码 1：
+
+```
+LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/page-wiring-audit.ts
+```
+
+2026-11-10 的实测：`createProductSync` 在 `page.tsx:525`；`storage`、`restore`、`choose`
+都还没有，结论 NOT READY。`avoidText` 只作提示，不拦页面——产品正文走 02 的模型，07 的
+composer 只在降级时用它。等 06 接线后这里应变成 READY，再用 09 的浏览器证据。
+
 ### 给 06 的最小改动清单（页面不动归属，只贴做法）
 
 现在 `page.tsx` 里的这一段：
