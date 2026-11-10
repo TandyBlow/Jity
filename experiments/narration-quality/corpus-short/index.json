@@ -1,7 +1,7 @@
 {
-  "batch": 8,
+  "batch": 9,
   "createdAt": "2026-11-10T09:55:00Z",
-  "status": "batch-8-ready",
+  "status": "batch-9-ready",
   "rowsFile": "rows.jsonl",
   "rowCount": 71,
   "rowKinds": {
@@ -75,12 +75,12 @@
   },
   "targetLength": {
     "min": 61,
-    "max": 152,
-    "mean": 95.0,
+    "max": 158,
+    "mean": 95.5,
     "buckets": {
-      "120-160": 7,
-      "60-79": 15,
-      "80-119": 49
+      "120-160": 6,
+      "60-79": 14,
+      "80-119": 51
     }
   },
   "qualityGates": {
@@ -232,7 +232,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 83
+      "targetChars": 89
     },
     {
       "id": "short-0101-power-room-doubt",
@@ -513,7 +513,7 @@
         "appearance_change",
         "location_change"
       ],
-      "targetChars": 98
+      "targetChars": 101
     },
     {
       "id": "short2-0119-guard-records-and-shelves",
@@ -649,7 +649,7 @@
         "movement",
         "location_change"
       ],
-      "targetChars": 88
+      "targetChars": 100
     },
     {
       "id": "short2-0039-three-people-and-a-confession",
@@ -660,7 +660,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 99
+      "targetChars": 92
     },
     {
       "id": "short2-0058-light-and-tea-stain",
@@ -683,7 +683,7 @@
         "location_change",
         "sanity_change"
       ],
-      "targetChars": 88
+      "targetChars": 99
     },
     {
       "id": "short2-0042-mailbox-and-relief",
@@ -739,7 +739,7 @@
         "item_change",
         "appearance_change"
       ],
-      "targetChars": 79
+      "targetChars": 81
     },
     {
       "id": "dr-0004-appearance-fingel",
@@ -759,7 +759,7 @@
       "categories": [
         "personality_change"
       ],
-      "targetChars": 75
+      "targetChars": 76
     },
     {
       "id": "dr-0006-sanity-lu",
@@ -780,7 +780,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 69
+      "targetChars": 77
     },
     {
       "id": "dr-0008-task-added-lu",
@@ -845,7 +845,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 103
+      "targetChars": 104
     },
     {
       "id": "dr-0015-move-without-posture",
@@ -889,7 +889,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 121
+      "targetChars": 119
     },
     {
       "id": "dr-0019-tomiyama-shen-symptom",
@@ -900,7 +900,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 152
+      "targetChars": 158
     },
     {
       "id": "dr-0020-su-checks-magazine",
@@ -937,8 +937,17 @@
       "beats": 84,
       "facts": 84,
       "problems": [],
-      "corpusSha256": "7689218665fca9ff1c7935a4810d5839d870cd5179be89e250b08783a7683862",
+      "corpusSha256": "b108813aabe9c64bce859ea907439cf0adaa03988a53547f28076564c5e64cde",
       "note": "19 rows have no mandatory fact, so beatCount 0 is expected; the other 52 rows bound every fact."
+    },
+    "lane02Compat": {
+      "harness": "02-narration frontend/src/lib/world-engine/local/narration-generation/corpus-compat.test.ts",
+      "rows": 71,
+      "hardFailures": 0,
+      "softByKind": {
+        "unverified_sentence": 187
+      },
+      "note": "current 02 verifyNarration; soft flags are reactions/micro-details for human review, not omissions"
     }
   }
 }
