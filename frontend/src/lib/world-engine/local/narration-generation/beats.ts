@@ -174,7 +174,10 @@ export function planBeats(input: {
       id: 'time',
       kind: 'time',
       fact: null,
-      directive: `时间过去了${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}。用一句写这段时间是怎么过去的，不要写新的动作或事件。`,
+      // Four attempts in the first real run wrote atmosphere but never the
+      // duration, so the beat fell back to the program sentence. Naming the
+      // opening clause is a form constraint: the duration itself is settled.
+      directive: `时间过去了${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}。先写一句带着「${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}」的时间句（例如「${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}过去」），再写这段时间里场景怎么过去；不要写新的动作、事件或回忆。`,
       anchors: [`${duration.amount}${UNIT_CN[duration.unit]}`, `${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}`],
       licensed: [],
       fallback: 'time-sentence',

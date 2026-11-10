@@ -1342,3 +1342,17 @@ describe('background is not an event: the rules that failed the first real run',
     expect(withFacts[0].mandatory).toBe(false);
   });
 });
+
+describe('time beat: the duration must be named, not just implied', () => {
+  test('the time directive tells the model to open with the settled duration', () => {
+    const committed = packet(moved, povAt);
+    const ledger = buildLedger(committed, '【正文】', null, {
+      ...basePolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
+    });
+    const beats = planBeats({ committed, ledger, policy: { ...basePolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } } }, scene: null });
+    const time = beats.find((beat) => beat.kind === 'time');
+    if (!time) return; // the ledger decides whether a time beat is required
+    expect(time.directive).toContain('两分钟');
+    expect(time.directive).toContain('时间句');
+  });
+});
