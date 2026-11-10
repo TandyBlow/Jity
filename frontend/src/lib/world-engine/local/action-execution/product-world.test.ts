@@ -7,6 +7,9 @@ import type { InitialTemplate, Json } from '../../types';
 import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createActionExecutionModel } from './port';
+import { createActionHandlers } from '../semantics/actions';
+import { checkActionText } from '../semantics/actions/checks';
+import { sharedSubsequence, skeleton } from '../semantics/actions/text';
 import { buildScene } from '../semantics/actions/scene';
 import { targetsPrompt } from '../semantics/actions/prompts';
 import { roundOrder } from './order';
@@ -20,6 +23,69 @@ function loadProductWorld(): { initial: InitialTemplate; state: ReturnType<typeo
   const state = buildInitialState({ ...structuredClone(raw.initial), worldId: raw.worldId });
   return { initial, state };
 }
+
+describe('task-goal classifier on the shipped world', () => {
+  it('accepts a concrete task-driven action and still rejects a verbatim goal', () => {
+    const { state } = loadProductWorld();
+    const scene = buildScene(state, 'nono');
+    const options = { maxActionChars: 120, maxReactionChars: 200, maxTargets: 4 };
+    // The classifier flags an action when >=85% of the ACTION's characters
+    // are a subsequence of a registered goal. A concrete step that uses the
+    // task vocabulary but is longer than the goal is not a copy (0.84 here);
+    // a shortened goal restatement is (1.0). This is the boundary the 0b69
+    // diagnosis depends on: the model was emitting goal fragments, so the
+    // fix is the prompt/repair, not loosening the guard.
+    const goal = '确认西回廊的蓝方伤员是否需要真正的医护帮助';
+    const concrete = '诺诺蹲下确认西回廊的蓝方伤员，是否需要真正的医护帮助。';
+    expect(sharedSubsequence(skeleton(concrete), skeleton(goal)).coverage).toBeLessThan(0.85);
+    const concreteIssues = checkActionText(concrete, scene, state, options).issues;
+    expect(concreteIssues.filter((issue) => issue.code === 'action_is_task_goal')).toHaveLength(0);
+    const fragment = '确认西回廊的蓝方伤员是否需要医护帮助。';
+    expect(sharedSubsequence(skeleton(fragment), skeleton(goal)).coverage).toBeGreaterThanOrEqual(0.85);
+    const fragmentIssues = checkActionText(fragment, scene, state, options).issues;
+    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
+    // A verbatim goal is still caught.
+    const verbatim = '确认西回廊的蓝方伤员是否需要真正的医护帮助。';
+    const copyIssues = checkActionText(verbatim, scene, state, options).issues;
+    expect(copyIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
+  });
+});
+
+describe('the real 17:01Z nono prompt on the shipped world', () => {
+  it('carries no player sentence and no echo event', async () => {
+    const { state } = loadProductWorld();
+    const prompts: string[] = [];
+    const engine = {
+      info: { backend: 'fake', modelId: 'fake' },
+      async load() {},
+      async dispose() {},
+      async complete(prompt: string): Promise<string> { prompts.push(prompt); return '{"kind":"skip"}'; },
+    };
+    const handlers = createActionHandlers({ engine, options: {
+      recentEvents: () => [
+        // The 17:01Z firstReadableSample shape: the player's action with one
+        // name substituted, then a scene line that must survive.
+        '路明非沿着服务巷往里走，先看清墙上的演习规则牌。路明非成功看清墙上的演习规则牌并准备行动，符合行动要求。',
+        '西侧服务巷里，巷口的黄黑绳已放下，墙角留下新鲜的演习弹红痕。',
+      ],
+    } });
+    const text = '我沿着服务巷往里走，先看清墙上的演习规则牌。';
+    const result = await handlers.action('nono', {
+      advance: { inputText: text, intentStatus: 'pending' },
+      workingState: state,
+    } as unknown as Json);
+    expect(result.value).toEqual({ kind: 'skip' });
+    const prompt = prompts[0]!;
+    expect(prompt).toContain('诺诺');
+    expect(prompt).toContain('主角也在同一地点');
+    expect(prompt).not.toContain('我沿着服务巷往里走');
+    expect(prompt).not.toContain('路明非沿着服务巷往里走');
+    expect(prompt).toContain('黄黑绳');
+    // One NPC action prompt on the real 14-character world stays small; this
+    // is the 03 side of the 04/03 prefill question.
+    expect(prompt.length).toBeLessThan(4000);
+  });
+});
 
 describe('joint-group input coverage on the shipped world', () => {
   it('the targets prompt for a question to 诺诺 lists her as a visible candidate', () => {
