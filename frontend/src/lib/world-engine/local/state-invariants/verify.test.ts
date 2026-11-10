@@ -351,8 +351,8 @@ describe('visible acceptance summary', () => {
     expect(report.ok).toBe(false);
     const codes = report.errors.map((item) => item.code);
     expect(codes).toContain('history_text_missing');
-    expect(codes).toContain('history_missing_command');
     expect(codes).toContain('evidence_shape');
+    expect(report.warnings.map((item) => item.code)).toContain('history_delta');
     expect(report.errors.some((item) => item.detail.includes('draft'))).toBe(true);
   });
 

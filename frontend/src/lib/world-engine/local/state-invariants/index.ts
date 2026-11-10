@@ -1015,7 +1015,11 @@ export function verifyDisplayedCommit(entries: unknown[]): {
       add(errors, 'history_text_missing', `${label}: displayed text has no accepted model text (source ${source || 'unknown'})`);
     }
     if (historyDelta === 0) {
-      add(errors, 'history_missing_command', `${label}: displayed text but history delta is 0; no committed player point`);
+      // A draft-narration point can be committed without increasing the
+      // accepted-history count. Do not turn this ambiguous display fact into a
+      // claim that no point exists; the draft/accepted checks above are the
+      // decisive ones.
+      add(warnings, 'history_delta', `${label}: displayed text but history delta is 0`);
     }
     if (!hasSubmission) {
       add(errors, 'evidence_shape', `${label}: displayed text without a submission record`);
