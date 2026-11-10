@@ -189,10 +189,9 @@ describe('real recovery session continuity', () => {
     expect(entries[0].points?.find((point: { pointId: string }) => point.pointId === 'point_round_3_1')?.source).toBe('program');
   });
 
-  // KNOWN 06 BUG: snapshotForPersist reads only the live source ref, so the
-  // first write after restore drops restoredSources. Flip to it() when 06
-  // merges 06-session-persist-restored-sources.patch.
-  it.fails('keeps restored narration sources in the next persisted snapshot', async () => {
+  // 06 d1019f09 merges restoredSources into snapshotForPersist, so the first
+  // write after restore keeps the saved source labels.
+  it('keeps restored narration sources in the next persisted snapshot', async () => {
     const sources = { p1: { source: 'model' as const } };
     let persisted: LocalGameSnapshot | null = null;
     const session = await LocalGameSession.create(template(), scriptedModel([]), {
