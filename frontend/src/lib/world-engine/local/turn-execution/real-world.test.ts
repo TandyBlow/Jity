@@ -262,6 +262,27 @@ describe('21c3 trace replay (CPU)', () => {
     expect(projection.unaffectedAppearance.map((row) => row.id)).not.toContain('red_band_nono');
   });
 
+  it('aborts the d101 completion fact even when the second repair uses an ASCII period', async () => {
+    const { state } = loadWorld();
+    const answer = (period: string): string => JSON.stringify({
+      judgments: [
+        { memberId: 'lu', label: 'achieved', reason: '路明非成功完成自己的参赛选择并完成任务，符合规则要求' + period, effects: [] },
+        { memberId: 'nono', label: 'partial', reason: '诺诺询问了路明非的参赛意愿。', effects: [] },
+      ],
+      facts: [{ text: '路明非成功完成自己的参赛选择并完成任务，符合规则要求' + period, memberIds: ['lu'] }],
+    });
+    const engine = scriptedEngine([answer('。'), answer('.')]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'lu', actionText: '路明非看规则牌。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('fact only asserted completion');
+    expect(outcome.evidence.calls).toHaveLength(2);
+  });
+
   it('sanitizes the b7cd result fact so a pending task cannot read as finished', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
