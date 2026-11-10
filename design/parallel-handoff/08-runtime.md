@@ -150,6 +150,31 @@ real load/generation with adapter and timings.
 load/cancel/timing contract above, and does not take the 4060 ahead of the
 product queue.
 
+**Hard constraints for 11 model search** (checked before any 09 request):
+GGUF readable by llama.cpp/wllama 3.8.1, a usable chat template (or an explicit
+known template id), a license compatible with the product, and either a single
+file under the browser's ~2 GiB whole-file fetch limit or a real
+`llama-gguf-split` split. 11's 1.5 GB single-file gate is stricter than the
+runtime cap; the measured 1.7B Q4 is 1.11 GB. The runtime does not accept
+safetensors, custom kernels, or a model that needs a different engine.
+
+**Queue/acceptance contract for 09** (one run, one request):
+1. Resolve the model path, file size and SHA-256; confirm the declared catalog
+   entry/template. A mismatch is a request failure, not a quality result.
+2. `await engine.ensureLoaded()` with the load budget (120 s default; the page
+   currently sets 180 s). On failure: `dispose()` the engine, release the
+   lease in `finally`, record the failure; do not enter generation.
+3. Generation: pass a deadline/signal; `complete`/`chat` before ready throw
+   immediately instead of waiting. Cancellation settles only after the device
+   stops (or the worker is terminated).
+4. After a timeout/cancel hard stop: at most one explicit `ensureLoaded()` for
+   the next request, same URL. No automatic reload loop, no silent weight
+   switch.
+5. Report `acceptedReadableMs` (fact-verified) separately from
+   `firstReadableMs` (draft), plus load / first token / per-turn / whole
+   submission. Dispose engines at the end and check
+   `workersCreated === workersExited`.
+
 ## 02/06 integration entry points
 
 - 06 product page / game-model: construct one engine and call
