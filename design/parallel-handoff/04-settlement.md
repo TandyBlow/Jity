@@ -267,3 +267,20 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 还没有在新 06 build 上的真实页面运行；真实调用数、prefill token、首次合格正文时间必须由 09 实测。
 - 不做“必降 25 秒”的承诺；没有改 timeout，也没有用空结果避开判断。
 - 10.4M MiniRBT encoder 尚未部署；旧 N2/N5 头不能直接当 position/tasks 通用能力。若投影后仍有具体分类缺口（例如“这条事实是否影响该任务”的召回不足），再由 04 给 06 具体模型/数据/最小验证路径。
+
+## 2026-11-11 续推根因修复（`aec9e622`）
+
+本轮不是继续调 `repeatRounds`，而是修三个被 e9a5/95dc 真实轨迹暴露的根因：
+
+1. **任务目标不是可执行行动。** e9a5/95dc 的 `nono` 候选是任务目标原句（或模型截断的前缀）：“让红方的旗台行动有可执行的掩护，而不把路明非当诱…”。`readCandidates` 现在把它记为 `abstract_task_goal`，在第一组结算后直接产生可见的 `continuation_policy_abstract_task_goal` 停止，不再花第二次 judgment，也不再开第二组。这个停止是程序停止，不是 `closedBy:'model'` 交还。
+2. **已消费的候选身份跨轮保留。** 策略按“人物 id + 规范化行动文本”记录本 submission 已接受的候选；`A -> B -> A` 和 `A -> A` 一样在第三次观察停止。`beginSubmission()` 调 `continuation.reset()` 并清空行动/事实消费集，所以下一回合可以合法重复上一回合做过的动作。
+3. **进展按真实世界算。** 端口在回合第一组 `results` 前保存 `before` 状态，在 `continuation` 前保存 `after` 状态，比较 `stateDigest`、时间、已结算事实和行动文本；重复写同一个 `positionSet` 不再刷新 no-progress。阅读这类“没有状态变化但有新动作/新事实”的合法行动仍算进展；玩家自己的回合不计入自动回合的 no-progress streak；时间推进、屏幕外任务变化、任务依据变化都算真实变化。
+
+保留的边界：
+
+- `continuationPolicy.maxAutoContinuations` 仍是 `null`，没有默认 1 次上限；`repeatRounds` 只作为没有消费身份时的次级安全网，设为 2。
+- 没有跳过任何更新阶段或世界依赖；没有程序名字过滤；没有把策略停止伪装成交还。
+- 21c3/95dc 的真实 14/73 世界回放改成“抽象目标在 judgment 前停止”；原来“第一次 continue、第二次 repeated”的断言不再成立，因为第一次就不该继续。
+- 这轮只改 04 的语义/端口和离线测试；06 仍负责首段已提交点、段落来源、页面显示策略停止。06 下一冻结头需要包含 `aec9e622`，否则 e9a5/95dc 的续推缺陷仍会复现。
+
+验证：`node scripts/parallel-settlement/run-focused.mjs` → **74 passed | 1 expected fail**；`npx tsc -p tsconfig.world-contract.json --noEmit` 通过。全量前端 `npx vitest run --maxWorkers=1` 为 722 passed、1 expected fail，剩余 14 个失败是工作树已有的 `styles.test.ts` 和 wllama URL mock 环境问题，不在本线文件。
