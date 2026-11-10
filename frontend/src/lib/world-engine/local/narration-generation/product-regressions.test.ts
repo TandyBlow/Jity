@@ -106,6 +106,9 @@ describe('product regressions: the sounds and hands of the f15d turn', () => {
     expect(kinds).toContain('hard:unlicensed_action');
   });
 
+  // Caveat: 诺诺's world state does carry «右袖的红痕» in her appearance. The
+  // check below only fires when the *input* omits the mark, so this fixture is a
+  // missing-brief case, not proof that the f15d page text invented the mark.
   test('a mark on a person that the input never states is an invented appearance', async () => {
     const { kinds } = await issuesOf('诺诺站在巷口，她右袖的红痕在阳光下泛着微光。');
     expect(kinds).toContain('hard:unlicensed_appearance');
