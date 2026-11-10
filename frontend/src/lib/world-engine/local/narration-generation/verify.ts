@@ -431,7 +431,14 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   const repeatedClauses = [...clauseCount.entries()].filter(([entry, count]) => count >= 2
     && !repeatedSentences.some(([sentence]) => sentence.includes(entry)));
   for (const [entry, count] of repeatedClauses) {
-    issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    // Two occurrences in a long page passage is a style flaw; three is a loop.
+    // The page's trained candidate was rejected twice for a 2x clause and the
+    // turn fell back to program text, which is a worse outcome than the echo.
+    if (count >= 3) {
+      issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    } else {
+      issues.push(soft('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
+    }
   }
 
   // Item-state changes the point did not settle. The upstream event list is

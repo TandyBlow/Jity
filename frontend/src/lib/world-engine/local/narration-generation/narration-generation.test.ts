@@ -1718,16 +1718,25 @@ describe('a completed task may be paraphrased', () => {
 });
 
 describe('a clause said twice in one passage is an echo', () => {
-  test('the same five-character clause twice is a hard loop', () => {
-    const text = '林川把簿子合上，三分钟过去，屋里静下来。他抬头看窗外，三分钟过去，光移动了一点。';
+  const run = (text: string) => {
     const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
     const committed = { facts: [{ id: 'a:t', actorId: 'a', name: '林川', kind: 'task_achieved', goal: '比对簿子' }] } as never;
     return generateCommittedNarration({
       engine, committed, inputText: '【正文】', priorText: null,
       policy: { ...basePolicy, writingContract: false, minChars: 10 },
-    }).then((result) => {
-      expect(result.rawAttempts[0].issues.some((issue) => issue.kind === 'loop_repeated_clause')).toBe(true);
     });
+  };
+
+  test('twice is a note that does not fail the passage', async () => {
+    const result = await run('林川把簿子合上，三分钟过去，屋里静下来。他抬头看窗外，三分钟过去，光移动了一点。');
+    const echo = result.rawAttempts[0].issues.find((issue) => issue.kind === 'loop_repeated_clause');
+    expect(echo?.severity).toBe('soft');
+  });
+
+  test('three times is a loop', async () => {
+    const result = await run('林川把簿子合上，三分钟过去，屋里静下来。他抬头看窗外，三分钟过去，光移动了一点。又过了一会儿，三分钟过去。');
+    const echo = result.rawAttempts[0].issues.find((issue) => issue.kind === 'loop_repeated_clause');
+    expect(echo?.severity).toBe('hard');
   });
 });
 
