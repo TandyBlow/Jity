@@ -8,7 +8,8 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyTaskCoverage, verifyVisibleAcceptance,
+  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyTaskCoverage, verifyTaskDecisionEvidence,
+  verifyVisibleAcceptance,
   verifySnapshotSequence, verifyWorldRecord, type WorldRecordLike,
 } from './index';
 import { restoreVerified, verifyBeforeRestore } from './guarded-restore';
@@ -294,6 +295,20 @@ describe('visible acceptance summary', () => {
     const bad = verifyTaskCoverage(tampered);
     expect(bad.ok).toBe(false);
     expect(bad.errors.map((item) => item.code)).toContain('task_regressed');
+  });
+
+  it('checks the real full-world task decision ledger shape', () => {
+    const full = {
+      tasks: 14, taskRows: 73, mode: 'per_character_decision',
+      achievedByCharacter: [], assertedUnchanged: 73,
+    };
+    expect(verifyTaskDecisionEvidence(full).ok).toBe(true);
+    expect(verifyTaskDecisionEvidence({ ...full, tasks: 1 }).errors.map((item) => item.code)).toContain('task_coverage');
+    expect(verifyTaskDecisionEvidence({ ...full, taskRows: 12 }).errors.map((item) => item.code)).toContain('task_coverage');
+    expect(verifyTaskDecisionEvidence({ ...full, excluded: ['onstage_only'] }).errors.map((item) => item.code)).toContain('task_coverage');
+    const rejected = verifyTaskDecisionEvidence({ ...full, rejectedTaskIds: [{ characterId: 'doctor', taskId: 'task_doctor_flag' }] });
+    expect(rejected.errors).toEqual([]);
+    expect(rejected.warnings.map((item) => item.code)).toContain('task_unknown');
   });
 
   it('does not call a retained failed input a committed history', async () => {

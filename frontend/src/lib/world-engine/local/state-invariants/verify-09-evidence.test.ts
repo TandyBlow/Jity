@@ -13,7 +13,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  verifyDisplayHistory, verifySessionSnapshot, verifyTaskCoverage, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
+  verifyDisplayHistory, verifySessionSnapshot, verifyTaskCoverage, verifyTaskDecisionEvidence,
+  verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
 } from './index';
 
 const evidencePath = process.env.WORLD_STATE_EVIDENCE;
@@ -70,6 +71,26 @@ function addDisplayReport(entry: unknown, report: InvariantReport): InvariantRep
   return report;
 }
 
+function addTaskDecisionReport(entry: unknown, report: InvariantReport): InvariantReport {
+  if (!entry || typeof entry !== 'object') return report;
+  const turn = entry as Record<string, unknown>;
+  const submission = turn.submission ?? (turn.product && typeof turn.product === 'object'
+    ? (turn.product as Record<string, unknown>).submission : null);
+  const calls = submission && typeof submission === 'object'
+    ? (submission as Record<string, unknown>).calls : null;
+  if (!Array.isArray(calls)) return report;
+  for (const call of calls) {
+    if (!call || typeof call !== 'object') continue;
+    const record = call as Record<string, unknown>;
+    if (record.task !== 'updates' || record.coverage == null) continue;
+    const coverage = verifyTaskDecisionEvidence(record.coverage);
+    for (const error of coverage.errors) report.errors.push({ ...error, detail: `task-decision: ${error.detail}` });
+    for (const warning of coverage.warnings) report.warnings.push({ ...warning, detail: `task-decision: ${warning.detail}` });
+  }
+  report.ok = report.errors.length === 0;
+  return report;
+}
+
 async function verifyDocument(document: unknown): Promise<{ label: string; report: InvariantReport }[]> {
   const entries = entriesOf(document);
   const results: { label: string; report: InvariantReport }[] = [];
@@ -92,18 +113,27 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
     const report = await verifyTurnEntry(entry);
     if (report.errors.length === 0 && report.points === 0 && report.replayDigest == null) {
       // A snapshot envelope was not present; try the envelope itself.
-      const fallback = addDisplayReport(entry, await verifySessionSnapshot(entry));
+      const fallback = addTaskDecisionReport(entry, addDisplayReport(entry, await verifySessionSnapshot(entry)));
       results.push({ label: labelFor(entry, index), report: fallback });
     } else {
-      results.push({ label: labelFor(entry, index), report: addDisplayReport(entry, report) });
+      results.push({ label: labelFor(entry, index), report: addTaskDecisionReport(entry, addDisplayReport(entry, report)) });
     }
   }
   if (visibleOnly.length > 0) {
     const visible = verifyVisibleAcceptance(visibleOnly);
+    for (const entry of visibleOnly) {
+      const empty: InvariantReport = {
+        ok: true, worldId: null, version: null, points: 0, headPointId: null,
+        rootDigest: null, headDigest: null, replayDigest: null, errors: [], warnings: [],
+      };
+      const task = addTaskDecisionReport(entry, empty);
+      visible.errors.push(...task.errors);
+      visible.warnings.push(...task.warnings);
+    }
     results.push({
       label: 'visible-summary',
       report: {
-        ok: visible.ok,
+        ok: visible.errors.length === 0,
         worldId: null,
         version: null,
         points: 0,

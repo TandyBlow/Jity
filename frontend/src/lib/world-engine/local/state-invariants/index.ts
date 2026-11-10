@@ -40,6 +40,7 @@ export type InvariantCode =
   | 'task_duplicate_add'
   | 'task_regressed'
   | 'task_hierarchy'
+  | 'task_coverage'
   | 'change_duplicate'
   | 'position_invalid'
   | 'head_mismatch'
@@ -856,6 +857,84 @@ export function verifyTaskCoverage(recordValue: WorldRecordLike | unknown): Task
         report.warnings.push(issue('task_unknown', `${characterId}.${taskId} belongs to a character absent from the initial world`));
       }
     }
+  }
+  report.ok = report.errors.length === 0;
+  return report;
+}
+
+export interface TaskDecisionEvidenceReport {
+  ok: boolean;
+  characters: number | null;
+  taskRows: number | null;
+  assertedUnchanged: number | null;
+  achieved: number;
+  rejected: string[];
+  errors: InvariantIssue[];
+  warnings: InvariantIssue[];
+}
+
+/** Read-only check of 04's task-decision coverage ledger.
+ *
+ * This does not invent state or re-run the model. It checks that a real
+ * settlement call reported every required character and every 73-row task
+ * scope, that no row was excluded, and that the unchanged + achieved counts
+ * account for the scope. Unknown/rejected task ids are warnings: 04 may keep
+ * valid decisions while rejecting a hallucinated id, but the rejection must
+ * remain visible rather than being silently treated as pending. */
+export function verifyTaskDecisionEvidence(
+  value: unknown,
+  expected: { characters: number; tasks: number } = { characters: 14, tasks: 73 },
+): TaskDecisionEvidenceReport {
+  const report: TaskDecisionEvidenceReport = {
+    ok: false, characters: null, taskRows: null, assertedUnchanged: null, achieved: 0, rejected: [],
+    errors: [], warnings: [],
+  };
+  const outer = isRecord(value) ? value : null;
+  const coverage = outer && isRecord(outer.coverage) ? outer.coverage : outer;
+  if (!coverage) {
+    report.errors.push(issue('evidence_shape', 'task coverage evidence must be an object'));
+    return report;
+  }
+  const num = (raw: unknown): number | null => (typeof raw === 'number' && Number.isInteger(raw) && raw >= 0 ? raw : null);
+  report.characters = num(coverage.tasks) ?? num(coverage.characters) ?? num(coverage.taskCoverageIds);
+  report.taskRows = num(coverage.taskRows);
+  report.assertedUnchanged = num(coverage.assertedUnchanged);
+  const achievedByCharacter = Array.isArray(coverage.achievedByCharacter) ? coverage.achievedByCharacter : [];
+  const achievedIds = new Set<string>();
+  const achievedCharacters = new Set<string>();
+  for (const entry of achievedByCharacter) {
+    if (!isRecord(entry) || !Array.isArray(entry.taskIds)) continue;
+    if (typeof entry.characterId === 'string' && entry.taskIds.length) achievedCharacters.add(entry.characterId);
+    for (const taskId of entry.taskIds) if (typeof taskId === 'string') achievedIds.add(`${String(entry.characterId)}:${taskId}`);
+  }
+  report.achieved = achievedIds.size;
+  if (Array.isArray(coverage.rejectedTaskIds)) {
+    report.rejected = coverage.rejectedTaskIds.map((item) => isRecord(item) ? `${String(item.characterId)}:${String(item.taskId)}` : String(item));
+  }
+  if (coverage.mode && coverage.mode !== 'per_character_decision') {
+    report.errors.push(issue('task_coverage', `unexpected task decision mode ${String(coverage.mode)}`));
+  }
+  if (report.characters !== expected.characters) {
+    report.errors.push(issue('task_coverage', `task decisions cover ${String(report.characters)}/${expected.characters} characters`));
+  }
+  if (report.taskRows !== expected.tasks) {
+    report.errors.push(issue('task_coverage', `task scope has ${String(report.taskRows)}/${expected.tasks} rows`));
+  }
+  if (Array.isArray(coverage.excluded) && coverage.excluded.length) {
+    report.errors.push(issue('task_coverage', `task scope excludes ${coverage.excluded.length} entries; full-world coverage requires none`));
+  }
+  if (coverage.taskCoverageIds !== undefined) {
+    const ids = Array.isArray(coverage.taskCoverageIds) ? coverage.taskCoverageIds : [];
+    if (ids.length !== expected.characters) report.errors.push(issue('task_coverage', `taskCoverageIds has ${ids.length}/${expected.characters} characters`));
+  }
+  if (report.assertedUnchanged != null && report.taskRows != null && report.assertedUnchanged + report.achieved !== report.taskRows) {
+    report.errors.push(issue('task_coverage', `assertedUnchanged ${report.assertedUnchanged} + achieved ${report.achieved} != taskRows ${report.taskRows}`));
+  }
+  if (report.assertedUnchanged == null && report.taskRows != null) {
+    report.warnings.push(issue('task_coverage', 'assertedUnchanged is missing; cannot prove unchanged rows'));
+  }
+  if (report.rejected.length) {
+    report.warnings.push(issue('task_unknown', `rejected ${report.rejected.length} task ids; valid decisions were kept but rejected ids cannot count as decided`));
   }
   report.ok = report.errors.length === 0;
   return report;
