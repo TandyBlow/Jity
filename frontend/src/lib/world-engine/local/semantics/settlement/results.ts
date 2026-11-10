@@ -364,13 +364,16 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const actionHint = members
+    .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
+    .join('；');
   for (const rawFact of answer.facts) {
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
     const original = asString(rawFact.text);
     if (!original) throw new Error('fact text must be non-empty');
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
-      throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}`);
+      throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
@@ -401,7 +404,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     if (recipientIds.some((recipient) => {
       const name = state.initial.characters[recipient]?.name;
       return Boolean(name) && nameOnly === String(name).replace(FACT_PUNCTUATION, '');
-    })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}`);
+    })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });

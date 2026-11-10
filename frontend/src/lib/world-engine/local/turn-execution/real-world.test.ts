@@ -280,6 +280,7 @@ describe('21c3 trace replay (CPU)', () => {
     } as unknown as Json);
     expect(outcome.value).toBeNull();
     expect(outcome.error).toContain('fact only asserted completion');
+    expect(outcome.error).toContain('路明非看规则牌');
     expect(outcome.evidence.calls).toHaveLength(2);
   });
 
