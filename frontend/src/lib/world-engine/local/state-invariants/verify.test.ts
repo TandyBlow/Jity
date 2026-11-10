@@ -166,6 +166,18 @@ describe('completion and discovery monotonicity', () => {
     expect(report.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['task_duplicate_add', 'task_regressed']));
   });
 
+  it('detects a repeated location appearance id before it can duplicate a room discovery', () => {
+    const s0 = fixtureState();
+    const p1 = point(s0, 1, {
+      room_a: { entityId: 'room_a', appearanceChanges: [{ id: 'ch_room', text: '墙上多了一道新划痕。', supersedes: [] }] },
+    });
+    const s1 = applyPoint(s0, p1);
+    const p2 = point(s1, 2, {
+      room_a: { entityId: 'room_a', appearanceChanges: [{ id: 'ch_room', text: '墙上多了一道新划痕。', supersedes: [] }] },
+    });
+    expect(pointContinuityIssues(s1, p2).map((item) => item.code)).toContain('change_duplicate');
+  });
+
   it('detects a repeated description-change id that would duplicate a discovery', () => {
     const s0 = fixtureState();
     const p1 = point(s0, 1, {
