@@ -134,11 +134,14 @@ function scriptedEngine(reply: (prompt: string) => string, progress = true): { e
     async dispose() {},
     async complete(prompt, options) {
       prompts.push(prompt);
+      // One scripted reply per call: evaluating the script three times made
+      // attempt-sensitive scripts advance on every progress event.
+      const text = reply(prompt);
       if (progress) {
-        options?.onProgress?.({ raw: reply(prompt).slice(0, 6), elapsedMs: 1 });
-        options?.onProgress?.({ raw: reply(prompt), elapsedMs: 2 });
+        options?.onProgress?.({ raw: text.slice(0, 6), elapsedMs: 1 });
+        options?.onProgress?.({ raw: text, elapsedMs: 2 });
       }
-      return reply(prompt);
+      return text;
     },
   };
   return { engine, prompts };
@@ -154,12 +157,12 @@ function modelReplyForPrompt(prompt: string): string {
   if (factLine(prompt, '路明非从值班室到后院')) lines.push('路明非离开值班室，走进后院。');
   if (factLine(prompt, '诺诺从值班室到后院')) lines.push('诺诺从值班室走进后院。');
   if (factLine(prompt, '白瓷杯从值班室到后院')) lines.push('白瓷杯从值班室被移到后院。');
-  if (factLine(prompt, '路明非完成了一项任务')) lines.push('路明非完成了「把登记簿翻到最后一页」。');
-  if (factLine(prompt, '路明非新增一条待办')) lines.push('路明非给自己记下一条：把登记簿最后一页的数字抄给门口的人。');
-  if (factLine(prompt, '路明非的个性发生了变化')) lines.push('路明非的性子变了一点：说话前先看一眼对方的鞋，再决定要不要开玩笑。');
+  if (factLine(prompt, '把登记簿翻到最后一页')) lines.push('路明非完成了「把登记簿翻到最后一页」。');
+  if (factLine(prompt, '路明非接下来还有一件事')) lines.push('接下来，路明非还要把登记簿最后一页的数字抄给门口的人。');
+  if (factLine(prompt, '路明非现在说话前先看一眼对方的鞋')) lines.push('路明非现在说话前先看一眼对方的鞋，再决定要不要开玩笑。');
   if (factLine(prompt, '路明非的精神状态下降')) lines.push('路明非的喉咙紧了一下。');
   if (factLine(prompt, '诺诺的精神状态下降')) lines.push('诺诺的肩膀往下收了收。');
-  if (factLine(prompt, '路明非的外貌出现新描述')) lines.push('路明非身上，袖口沾了雨水，右手一直按着口袋。');
+  if (factLine(prompt, '路明非现在袖口沾了雨水')) lines.push('路明非现在袖口沾了雨水，右手一直按着口袋。');
   if (factLine(prompt, '白瓷杯现在在后院')) lines.push('白瓷杯就在后院。');
   if (factLine(prompt, '木箱现在在后院')) lines.push('木箱就在后院。箱盖裂了一道缝。');
   if (factLine(prompt, '本段只做场景过渡')) lines.push('路明非没有马上再动。');
@@ -385,6 +388,62 @@ describe('generateCandidate model mode', () => {
     expect(prompts.some((prompt) => prompt.includes('不要新增人物、地点、物品'))).toBe(true);
     expect(progress.length).toBeGreaterThan(0);
     expect(result.text).toContain('路明非离开值班室，走进后院');
+  });
+
+  it('rejects an action the model invented and tells it not to add one', async () => {
+    const { packet } = await fixture();
+    let moveCalls = 0;
+    const { engine, prompts } = scriptedEngine((prompt) => {
+      if (!factLine(prompt, '路明非从值班室到后院')) return modelReplyForPrompt(prompt);
+      moveCalls += 1;
+      // First draft invents an action that no settled fact contains.
+      return moveCalls === 1
+        ? '路明非离开值班室，走进后院。诺诺推开门，先一步跳下台阶。'
+        : modelReplyForPrompt(prompt);
+    });
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '', policy: { mode: 'model' },
+    });
+    expect(result.accepted).toBe(true);
+    const moveBeat = result.rawAttempts.find((beat) => beat.beatId.startsWith('move:lu'));
+    expect(moveBeat?.rejected?.some((draft) => draft.issues.some((issue) => issue.kind === 'unlicensed_event'))).toBe(true);
+    expect(prompts.some((prompt) => prompt.includes('不要补写没有结算的新动作'))).toBe(true);
+    expect(moveBeat?.source).toBe('model');
+    expect(result.text).not.toContain('跳下台阶');
+  });
+
+  it('names the missing time when a model draft skips it, then accepts the rewrite', async () => {
+    const { packet } = await fixture();
+    let openCalls = 0;
+    const { engine, prompts } = scriptedEngine((prompt) => {
+      if (!factLine(prompt, '时间过去 2分钟')) return modelReplyForPrompt(prompt);
+      openCalls += 1;
+      return openCalls === 1 ? '值班室的门半开着。' : modelReplyForPrompt(prompt);
+    });
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '', policy: { mode: 'model' },
+    });
+    expect(result.accepted).toBe(true);
+    expect(prompts.some((prompt) => prompt.includes('必须写出已经过去的时间'))).toBe(true);
+    expect(result.text).toContain('两分钟');
+  });
+
+  it('asks for a different opening frame when the draft repeats the last one', async () => {
+    const { packet } = await fixture();
+    const repeated = '两分钟过去了。值班室的窗帘没有动。';
+    const { engine, prompts } = scriptedEngine((prompt) => {
+      if (!factLine(prompt, '时间过去 2分钟')) return modelReplyForPrompt(prompt);
+      // Both drafts reuse the previous turn's opening; the second is accepted
+      // because a repeated opening is a soft style issue, not a fact error.
+      return repeated;
+    });
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '',
+      priorText: '两分钟过去了。走廊里没有人。',
+      policy: { mode: 'model' },
+    });
+    expect(result.accepted).toBe(true);
+    expect(prompts.some((prompt) => prompt.includes('换一个开头'))).toBe(true);
   });
 
   it('rejects reversed direction, retries with feedback, then falls back to the program', async () => {

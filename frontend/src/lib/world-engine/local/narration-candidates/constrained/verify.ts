@@ -150,6 +150,16 @@ export function verifyText(text: string, options: VerifyOptions): {
         break;
       }
     }
+    // A model can avoid verbatim repetition while still reusing the same
+    // opening frame every turn. That is a soft issue: it asks for one rewrite
+    // with an explicit instruction, but it does not by itself reject the turn.
+    const priorOpenings = sentences(options.priorText)
+      .map((part) => [...stripEnd(part)].slice(0, 6).join(''))
+      .filter((part) => [...part].length >= 6);
+    const first = [...stripEnd(parts[0] ?? '')].slice(0, 6).join('');
+    if (first.length >= 6 && priorOpenings.includes(first)) {
+      issues.push({ kind: 'opening_repeat', severity: 'soft', beatId: null, detail: `same opening as last turn: ${first}`, sentence: parts[0] });
+    }
   }
 
   for (const violation of alignment.violations) {

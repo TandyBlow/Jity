@@ -189,7 +189,7 @@ export type CandidateIssueKind =
   | 'fact_time_wrong' | 'task_without_fact' | 'movement_without_fact'
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
   | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
-  | 'repeated_sentence' | 'echo_prior' | 'engine_error' | 'cancelled'
+  | 'repeated_sentence' | 'echo_prior' | 'opening_repeat' | 'engine_error' | 'cancelled'
   | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing';
 
 export interface CandidateIssue {
@@ -210,6 +210,9 @@ export interface BeatEvidence {
   attempts: number;
   ms: number;
   issues: CandidateIssue[];
+  /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
+   * turn shows what the model actually produced, not only the accepted text. */
+  rejected?: { attempt: number; text: string; issues: CandidateIssue[] }[];
 }
 
 export interface CandidateTimings {

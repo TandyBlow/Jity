@@ -31,17 +31,17 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'move':
       return `${fact.name}从${fact.from}到${fact.to}（方向必须是从到；${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
     case 'task_achieved':
-      return `${fact.name}完成了一项任务，目标原文是「${fact.goal}」（正文要让人读到这件事已经做到）`;
+      return `「${fact.goal}」这件事，${fact.name}已经办完了（目标原话要出现，完成的意思要读得出来）`;
     case 'subtask_added':
-      return `${fact.name}新增一条待办：「${fact.goal}」（只是新目标，没有完成）`;
+      return `${fact.name}接下来还有一件事：${fact.goal}（这是新目标，还没有完成）`;
     case 'personality_changed':
       return fact.removed
-        ? `${fact.name}不再有原来那一点个性：${fact.supersededTexts.join('；')}`
-        : `${fact.name}的个性发生了变化，变化原文是「${fact.text}」`;
+        ? `${fact.name}现在不再${fact.supersededTexts.join('；')}`
+        : `${fact.name}现在${fact.text}（直接写成人物当下的样子，不要写“个性变化”之类的说明）`;
     case 'appearance_changed':
       return fact.removed
-        ? `${fact.name}原来的样子不再成立：${fact.supersededTexts.join('；')}`
-        : `${fact.name}的外貌出现新描述：「${fact.text}」`;
+        ? `${fact.name}现在不再是${fact.supersededTexts.join('；')}`
+        : `${fact.name}现在${fact.text}（直接写看到的样子）`;
     case 'sanity_changed':
       return sanityStyle === 'number'
         ? `${fact.name}的精神数值从 ${fact.from} 变成 ${fact.to}（正文必须写出数值变化）`
@@ -51,7 +51,7 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'item_discovered':
       return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
     case 'result':
-      return `本段的结算结果原文是「${fact.text}」（可以换措辞，但不能改变其中的人和事）`;
+      return `结算原话：「${fact.text}」（可以换措辞，但不能改变其中的人和事）`;
     case 'at':
       return `${fact.name}在${fact.location}`;
     default:
@@ -103,6 +103,7 @@ export function buildBeatPrompt(
     '要求：',
     `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
     '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
     '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
     options.instruction ? `- ${options.instruction}` : '',

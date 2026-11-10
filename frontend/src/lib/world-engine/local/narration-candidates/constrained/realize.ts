@@ -326,16 +326,20 @@ function eventBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
       // product's alignment gate binds a task fact by exactly that pair, so a
       // paraphrase that drops the goal would erase the fact. The frames below
       // vary the sentence around those two required pieces.
-      push(choose(ctx, beat.seed, `${fact.id}`, [
-        `「${fact.goal}」这件事，${fact.name}办完了`,
-        `「${fact.goal}」有了结果，${fact.name}这边也算办完了`,
+      // The alignment gate starts its scope at the clause naming the actor, so
+      // the goal has to follow the name; a sentence that opens with the quoted
+      // goal and names the actor afterwards does not bind the task fact.
+      const variants = [
         `${fact.name}完成了「${fact.goal}」`,
-      ]));
+        `${fact.name}这边，「${fact.goal}」这件事办完了`,
+      ];
+      if (!/^[把将]/u.test(fact.goal)) variants.push(`${fact.name}把「${fact.goal}」办完了`);
+      push(choose(ctx, beat.seed, `${fact.id}`, variants));
     }
     if (fact.kind === 'subtask_added') {
       push(choose(ctx, beat.seed, `${fact.id}`, [
-        `还有一件事没完：${fact.goal}`,
-        `接下来，${fact.name}要${fact.goal}`,
+        `${fact.name}接下来还有一件事：${fact.goal}`,
+        `${fact.name}还得${fact.goal}`,
         `${fact.name}把下一件事记在心里：${fact.goal}`,
       ]));
     }

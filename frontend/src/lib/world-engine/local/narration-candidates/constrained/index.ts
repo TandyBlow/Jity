@@ -264,6 +264,38 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   };
 }
 
+
+/** Turn the verifier's findings into one instruction the small model can act
+ * on. Only the failing pieces are named: a generic "write it again" makes the
+ * model rewrite the same mistake. */
+function feedbackFor(issueList: CandidateIssue[]): string {
+  const hints: string[] = [];
+  const missing = issueList.filter((issue) => issue.kind === 'fact_missing').map((issue) => issue.detail);
+  for (const detail of missing) {
+    const kind = String(detail).split(':')[0];
+    if (kind === 'move') hints.push('这一段必须写出人物从哪个地点到了哪个地点，方向不能反');
+    else if (kind === 'time') hints.push('这一段必须写出已经过去的时间');
+    else if (kind === 'task_achieved') hints.push('这一段必须写出已完成的那件事（目标原话和完成）');
+    else if (kind === 'subtask_added') hints.push('这一段必须写出新增的下一步');
+    else if (kind === 'personality_changed') hints.push('这一段必须写出人物的个性变化原句');
+    else if (kind === 'sanity_changed') hints.push('这一段必须写出精神变化的方向');
+    else if (kind === 'appearance_changed') hints.push('这一段必须写出已经结算的外貌变化');
+    else hints.push('这一段漏掉了已结算的事实');
+  }
+  if (issueList.some((issue) => issue.kind === 'unlicensed_event' || issue.kind === 'movement_without_fact' || issue.kind === 'task_without_fact')) {
+    hints.push('不要补写没有结算的新动作、新对话或新事件');
+  }
+  if (issueList.some((issue) => issue.kind === 'unlicensed_entity' || issue.kind === 'fact_wrong_number')) {
+    hints.push('不要写没有登记的人名、地名、物品或数字');
+  }
+  if (issueList.some((issue) => issue.kind === 'opening_repeat')) {
+    hints.push('换一个开头，不要和上一回合第一句同起手');
+  }
+  if (issueList.some((issue) => issue.kind === 'prompt_echo')) hints.push('不要复述提示词或写说明');
+  if (issueList.some((issue) => issue.kind === 'echo_prior')) hints.push('不要重复上一回合的原句，可以换说法');
+  return `上一稿没有写清：${[...new Set(hints)].join('；') || '事实或措辞不合要求'}。请只重写这一段。`;
+}
+
 function project(
   input: GenerateCandidateInput,
   options: Parameters<typeof projectConstrainedScene>[2],
@@ -358,6 +390,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
   if (modelEnabled && args.modelBudget().enabled) {
     modelAttempted = true;
     const maxAttempts = Math.max(1, Math.min(2, policy.model?.maxAttempts ?? 2));
+    const rejected: { attempt: number; text: string; issues: CandidateIssue[] }[] = [];
     let feedback: string | null = null;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       const at = started();
@@ -378,17 +411,25 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
         const checkStarted = now();
         const beatIssues = verifyBeatText(result.text, beat, verifyOptions);
         args.addVerifyMs(now() - checkStarted);
-        if (!beatIssues.some((issue) => issue.severity === 'hard')) {
+        const hard = beatIssues.some((issue) => issue.severity === 'hard');
+        // A repeated opening frame is soft: it earns one rewrite in which the
+        // model is told to change the opening, but a second draft with the same
+        // frame is accepted rather than thrown away.
+        const openingRepeat = beatIssues.some((issue) => issue.kind === 'opening_repeat');
+        const retryOpening = openingRepeat && attempt < maxAttempts;
+        if (!hard && !retryOpening) {
           return {
             composer: 'model',
             evidence: {
               beatId: beat.id, kind: beat.kind, source: 'model', text: result.text,
               prompt: result.prompt, raw: result.raw, attempts: attempt, ms: result.ms, issues: beatIssues,
+              ...(rejected.length ? { rejected } : {}),
             },
           };
         }
+        rejected.push({ attempt, text: result.text, issues: beatIssues });
         issues.push(...beatIssues);
-        feedback = `上一稿没有写清：${beatIssues.filter((issue) => issue.kind === 'fact_missing').map((issue) => issue.detail).join('；') || '事实或措辞不合要求'}。请重写这一段。`;
+        feedback = feedbackFor(beatIssues);
       } catch (error) {
         if (isAbortError(error)) throw error;
         issues.push({ kind: 'engine_error', severity: 'soft', beatId: beat.id, detail: errorText(error) });
