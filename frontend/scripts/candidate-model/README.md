@@ -61,3 +61,17 @@ reports, separately:
 `backend: 'webgpu'` means the engine loaded with `n_gpu_layers=99999` after
 the WebGPU attempt succeeded. It is not a claim about layer placement; the
 GPU-memory sample and the CPU comparison are the supporting evidence.
+
+## 先确认是哪个 GPU（不加载模型）
+
+```bash
+python ../../.local/parallel-local-game/resource_lease.py acquire --lane 08-runtime --purpose "adapter probe"
+node scripts/candidate-model/probe-adapter.mjs --out ../.local/candidate-model/adapter.json
+python ../../.local/parallel-local-game/resource_lease.py release --lane 08-runtime
+```
+
+连续启动两次浏览器：一次 `--force_high_performance_gpu`，一次
+`--force_low_power_gpu`，各打印 `requestAdapter()` / `requestAdapter({powerPreference:
+'high-performance'})` 的 vendor/architecture/limits。`backend:'webgpu'` 只说明
+WebGPU 路径可用；到底是独显还是核显，看这里的 vendor，以及运行日志里的
+`ggml_webgpu: adapter_info:`。
