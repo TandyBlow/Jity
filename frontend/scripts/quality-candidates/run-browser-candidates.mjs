@@ -692,6 +692,25 @@ try {
             // their candidate between scenarios, and a long queue must not
             // attribute later bytes to an earlier run.
             run.moduleSha256 = sha256File(candidate.file);
+            // A single-run re-run recipe: enough to reproduce this exact
+            // input/model/policy without the whole queue invocation.
+            run.reproduce = {
+              candidate: `${candidate.id}=${candidate.file}`,
+              exportName: candidate.exportName,
+              modelUrl: config.noEngine ? null : candidate.modelUrl,
+              modelDir: config.noEngine ? null : config.modelDir,
+              loader: candidate.loader ? `${candidate.id}=${candidate.loader.file}::${candidate.loader.exportName}` : null,
+              loaderModelId: candidate.loader?.modelId ?? null,
+              policy: candidatePolicies[candidate.id] ?? null,
+              policyNote: 'only the candidate-specific overrides; the rest is the scenario default in input.policy',
+              set: config.set,
+              only: scenario.id,
+              gpu: config.gpu,
+              threads: config.threads,
+              maxTokens: config.maxTokens,
+              hardTimeoutMs: config.hardTimeoutMs,
+              out: config.out,
+            };
             run.engine = loaded.value;
             run.evidenceFile = config.out;
             evidence.runs.push(run);
