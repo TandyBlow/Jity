@@ -406,6 +406,25 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     issues.push(hard('too_long', attempt, `${chars} > ${policy.beatMaxChars} characters`));
   }
 
+  // A verbatim sentence carried over from the previous passage is an echo even
+  // when the whole-passage bigram overlap stays under the threshold: one reused
+  // closing line in a short scene scores 0.34. The page showed the same closing
+  // beat twice across turns; this is the sentence-level form of that defect.
+  // maxPriorOverlap = 1 is the caller saying echo is allowed here (beat
+  // assembly removes duplicates itself), so the sentence rule respects it.
+  if (priorText && (policy.maxPriorOverlap ?? 0.55) < 1) {
+    const normalizeSentence = (value: string) => value.replace(/[\s，。！？!?；;、]/gu, '');
+    const priorSentences = new Set(
+      priorText.split(/[。！？!?\n]+/u).map(normalizeSentence).filter((entry) => entry.length >= 8),
+    );
+    for (const sentence of sentences) {
+      const key = normalizeSentence(sentence);
+      if (key.length < 8 || !priorSentences.has(key)) continue;
+      issues.push(hard('echo_prior', attempt, 'sentence repeats the previous passage verbatim', sentence));
+      break;
+    }
+  }
+
   const maxOverlap = policy.maxPriorOverlap ?? 0.55;
   if (alignment?.repetition != null && alignment.repetition > maxOverlap) {
     issues.push(hard('echo_prior', attempt, `bigram overlap ${alignment.repetition.toFixed(2)} > ${maxOverlap}`));
