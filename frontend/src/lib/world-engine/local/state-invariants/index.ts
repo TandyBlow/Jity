@@ -500,6 +500,9 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
       break;
     }
     checkTaskMonotonicity(before, after, point.id, report.errors);
+    if (after.time.instantOrdinal < before.time.instantOrdinal) {
+      report.errors.push(issue('time_invalid', `time moved backwards: ${before.time.instantOrdinal} -> ${after.time.instantOrdinal}`, point.id));
+    }
     const digest = await stateDigest(after);
     const stored = stateEntries[point.id];
     if (!isRecord(stored)) {
