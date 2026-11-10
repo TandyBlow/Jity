@@ -505,3 +505,51 @@ def test_saved_progress_survives_a_store_restart(tmp_path):
         )
         assert restored.status_code == 200
         assert restored.json()["payload"] == payload(1, "重启前。")
+
+
+def test_read_refuses_a_snapshot_that_no_longer_matches_its_digest(tmp_path):
+    """The server stores bytes; if those bytes change under it (corruption or a
+    manual edit), it must say so instead of serving a different world."""
+    import sqlite3
+
+    path = tmp_path / "progress.sqlite3"
+    with TestClient(make_app(path)) as client:
+        created = start(client, payload(0, "原始内容。"))
+        assert client.get(f"/local-progress/worlds/w1/snapshots/{created['snapshotId']}").status_code == 200
+
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            "UPDATE progress_snapshots SET payload_json = ? WHERE snapshot_id = ?",
+            (json.dumps(payload(0, "被改过的内容。"), ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+             created["snapshotId"]),
+        )
+        connection.commit()
+
+    with TestClient(make_app(path)) as client:
+        response = client.get(f"/local-progress/worlds/w1/snapshots/{created['snapshotId']}")
+        assert response.status_code == 500
+        assert response.json()["detail"]["code"] == "snapshot_corrupt"
+        # The head still points at the node; the read itself refuses to serve it.
+        head = client.get("/local-progress/worlds/w1/head")
+        assert head.status_code == 200
+        assert head.json()["headSnapshotId"] == created["snapshotId"]
+
+
+def test_read_refuses_a_snapshot_whose_digest_or_size_was_edited(tmp_path):
+    import sqlite3
+
+    path = tmp_path / "progress.sqlite3"
+    with TestClient(make_app(path)) as client:
+        created = start(client, payload(0, "原始内容。"))
+
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            "UPDATE progress_snapshots SET content_digest = ? WHERE snapshot_id = ?",
+            ("0" * 64, created["snapshotId"]),
+        )
+        connection.commit()
+
+    with TestClient(make_app(path)) as client:
+        response = client.get(f"/local-progress/worlds/w1/snapshots/{created['snapshotId']}")
+        assert response.status_code == 500
+        assert response.json()["detail"]["code"] == "snapshot_corrupt"

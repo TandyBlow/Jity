@@ -223,6 +223,25 @@ class LocalProgressStore:
             ).fetchone()
             if row is None:
                 raise ProgressError("snapshot_not_found", 404, f"snapshot {snapshot_id} is not stored")
+            # The server must never hand back bytes that differ from the
+            # recorded identity: a corrupted or edited row would silently
+            # change the player's world. Recompute the canonical digest instead
+            # of trusting the stored columns.
+            try:
+                stored_payload = json.loads(row["payload_json"])
+            except (TypeError, ValueError) as exc:
+                raise ProgressError(
+                    "snapshot_corrupt",
+                    500,
+                    f"snapshot {snapshot_id} payload is not valid JSON",
+                ) from exc
+            _canonical, digest, size_bytes = content_identity(stored_payload)
+            if digest != row["content_digest"] or size_bytes != row["size_bytes"]:
+                raise ProgressError(
+                    "snapshot_corrupt",
+                    500,
+                    f"snapshot {snapshot_id} does not match its recorded content identity",
+                )
             return _snapshot_response(row)
 
     def graph(self, world_id: str) -> dict[str, Any]:
