@@ -140,6 +140,18 @@ writer. Commit `10c1407a` added the path and a test. The old 05 patch is under
 commit; the failed `bc005e51` run is not acceptance evidence. This was a
 state/persistence failure, not a narration-quality finding.
 
+## Current blockers and patches (2026-11-10T21:2x local)
+
+- `/world-local` on 06 returned HTTP 500 at 21:15 local; 09's queue is blocked
+  on 200 + textarea. 06 must restart/fix the dev server before the rerun.
+- `06-transport-invariants.patch` (sha256 `3cfb90b5…`) regenerated for 06's
+  LF transport; apply-check ok. It guards `commit` with continuity checks and
+  `restore` with the full record verifier.
+- `06-page-snapshot-hook.patch` (sha256 `38a1ab63…`) now returns
+  `structuredClone(snapshot)`, a detached copy; apply-check ok.
+- `06-merge-state-invariants.patch` remains `44081b89…`; merge first, then
+  transport/hook.
+
 ## Merge bundle
 
 `results/product/evidence/05-kernel/patches/06-merge-state-invariants.patch`
