@@ -82,6 +82,23 @@ const checks: Check[] = [
     fix: '04. when flush() reports a conflict, show both copies and let the player choose(); never pick for them',
   },
   {
+    id: 'unavailable-is-not-empty',
+    // Informational guard: an unreadable head must not silently become a new
+    // world; it may warn-and-start, but the code must name the branch.
+    required: false,
+    ok: /unavailable|ProgressUnavailable/u.test(source),
+    where: find((line) => /unavailable|ProgressUnavailable/u.test(line))?.toString() ?? 'missing',
+    fix: '06 (info). distinguish an unreadable remote head from an empty one (warn/retry or warn-and-start, never a silent new world)',
+  },
+  {
+    id: 'sync-state-visible',
+    // Informational: the player should see offline/queued/conflict state.
+    required: false,
+    ok: /\{syncLabel &&/u.test(source),
+    where: find((line) => /\{syncLabel &&/u.test(line))?.toString() ?? 'missing',
+    fix: '07 (info). render syncLabel near the storage warning so offline/queued state is visible',
+  },
+  {
     id: 'avoid-text-from-transcript',
     // Informational: the product narration arm is 02's model, not 07's
     // composer, so this does not gate the page. The composer uses it whenever
