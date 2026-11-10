@@ -109,9 +109,13 @@ export function ownerOf(name: string): string | null {
 }
 
 function paragraphsOf(policy: NarrationPolicy): { count: number; min: number; max: number } {
-  const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 240)));
+  // Lane 01's 71 human short scenes are 61-158 chars and ALL single paragraph
+  // (median 97). A 240-char, 2-3 paragraph default asked for a shape the
+  // reference style never uses; the extra room is where filler appeared.
+  const max = Math.max(60, Math.min(600, Math.round(policy.targetChars ?? 160)));
   const min = Math.max(40, Math.min(max, Math.round(policy.minChars ?? Math.round(max * 0.7))));
-  return { count: max >= 320 ? 3 : 2, min, max };
+  const count = policy.paragraphs ?? (max > 300 ? 2 : 1);
+  return { count: Math.max(1, Math.min(3, Math.round(count))), min, max };
 }
 
 export interface ProseUserArgs {
@@ -227,7 +231,9 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   lines.push('除了上面列出的，这一小段时间里没有别的事件：人物位置和物品都保持原样。');
 
   const { count, min, max } = paragraphsOf(policy);
-  lines.push(`要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
+  lines.push(count === 1
+    ? `要求：写成一段，合计 ${min}～${max} 字，直接给正文，不要小标题，不要解释。`
+    : `要求：写成 ${count} 段，合计 ${min}～${max} 字，段与段之间空一行，直接给正文，不要小标题，不要解释。`);
   lines.push('用具体的动作、环境和对话推进，不要把上面的清单逐条翻译成句子；场景说明只用来了解环境，不要整句照抄。');
   lines.push('视角人物只拿自己的物品，不要替别人做动作，也不要改变别人手里东西的位置。');
   // The opening is as reusable as the ending: a model that starts every scene

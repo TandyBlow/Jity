@@ -1449,3 +1449,21 @@ describe('serialized scene: the settled duration is named in the contract', () =
     expect(prompt).toContain('时间推进要落在一句话里');
   });
 });
+
+describe('length and paragraph shape follow the reference corpus', () => {
+  test('the default scene is one paragraph of 100-160 characters', () => {
+    const prompt = renderProseFactsPrompt({ committed: packet(moved, povAt), policy: { ...basePolicy, minChars: 100, targetChars: undefined }, scene: { location: '走廊' }, priorTail: null });
+    expect(prompt).toContain('写成一段');
+    expect(prompt).toContain('100～160 字');
+  });
+
+  test('an explicit paragraph count is still honoured', () => {
+    const prompt = renderProseFactsPrompt({ committed: packet(moved, povAt), policy: { ...basePolicy, minChars: 100, targetChars: 200, paragraphs: 3 }, scene: { location: '走廊' }, priorTail: null });
+    expect(prompt).toContain('写成 3 段');
+  });
+
+  test('the serialized contract asks for one paragraph by default', () => {
+    const prompt = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, { ...basePolicy, targetChars: undefined });
+    expect(prompt).toContain('写成一段');
+  });
+});

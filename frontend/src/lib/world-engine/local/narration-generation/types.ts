@@ -126,6 +126,9 @@ export interface NarrationPolicy {
    * `model` lets the model choose pronouns like ordinary Chinese prose (53 of
    * lane 01's 71 gold scenes use 他/她), at the cost of that gender risk. */
   pronouns?: 'names' | 'model' | 'map';
+  /** How many paragraphs the whole-scene answer should use. Defaults to one:
+   * lane 01's 71 human short scenes are all single-paragraph (61-158 chars). */
+  paragraphs?: number;
   /** Explicit gender per character name, e.g. { '路明非': 'male' }. Only used
    * with `pronouns: 'map'`. The world state has no gender field, so this map
    * must come from an evidence-backed source (lane 05's character notes), not
