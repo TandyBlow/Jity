@@ -1,0 +1,161 @@
+{
+  "schema": "jity-d02-r0-engineering-smoke-v1",
+  "status": "engineering_smoke_only",
+  "qualityClaim": false,
+  "humanReviewUsed": false,
+  "sealedUsed": false,
+  "baseModel": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c",
+  "encoderLayers": [
+    0,
+    1
+  ],
+  "encoderHashBefore": "0d2d067f368ac1db3f0468312947687c38009911bef8ff984c7853d4615d5a9b",
+  "encoderHashAfter": "0d2d067f368ac1db3f0468312947687c38009911bef8ff984c7853d4615d5a9b",
+  "encoderUnchanged": true,
+  "trainSamples": 96,
+  "trainSplitOnly": true,
+  "entityClasses": 59,
+  "steps": 8,
+  "batchSize": 8,
+  "headsChanged": true,
+  "headDelta": {
+    "mention.weight": 7.631561279296875,
+    "mention.bias": 0.03222727030515671,
+    "role.weight": 15.029800415039062,
+    "role.bias": 0.07277239114046097,
+    "entity.weight": 151.6178741455078,
+    "entity.bias": 0.5397905707359314,
+    "expression.weight": 14.770448684692383,
+    "expression.bias": 0.05804631859064102
+  },
+  "history": [
+    {
+      "step": 1,
+      "mentionAcc": 0.21666666865348816,
+      "roleAcc": 0.380952388048172,
+      "entityAcc": 0.0,
+      "expressionAcc": 0.0,
+      "mentionLoss": 1.3432762622833252,
+      "roleLoss": 0.8135460019111633,
+      "entityLoss": 4.049816131591797,
+      "expressionLoss": 2.0434632301330566,
+      "totalLoss": 8.250101089477539
+    },
+    {
+      "step": 2,
+      "mentionAcc": 0.3913043439388275,
+      "roleAcc": 0.5099999904632568,
+      "entityAcc": 0.05882352963089943,
+      "expressionAcc": 0.0,
+      "mentionLoss": 1.0632984638214111,
+      "roleLoss": 0.7005243897438049,
+      "entityLoss": 4.047041416168213,
+      "expressionLoss": 1.4378736019134521,
+      "totalLoss": 7.2487382888793945
+    },
+    {
+      "step": 3,
+      "mentionAcc": 0.4488188922405243,
+      "roleAcc": 0.699999988079071,
+      "entityAcc": 0.10000000149011612,
+      "expressionAcc": 0.75,
+      "mentionLoss": 0.9872108101844788,
+      "roleLoss": 0.595373272895813,
+      "entityLoss": 3.655244827270508,
+      "expressionLoss": 1.1837489604949951,
+      "totalLoss": 6.421578407287598
+    },
+    {
+      "step": 4,
+      "mentionAcc": 0.6017699241638184,
+      "roleAcc": 0.75789475440979,
+      "entityAcc": 0.23529411852359772,
+      "expressionAcc": 0.875,
+      "mentionLoss": 0.8724308609962463,
+      "roleLoss": 0.5395113229751587,
+      "entityLoss": 3.140239953994751,
+      "expressionLoss": 0.7185318470001221,
+      "totalLoss": 5.270713806152344
+    },
+    {
+      "step": 5,
+      "mentionAcc": 0.529411792755127,
+      "roleAcc": 0.8173912763595581,
+      "entityAcc": 0.2857142984867096,
+      "expressionAcc": 1.0,
+      "mentionLoss": 0.9108734726905823,
+      "roleLoss": 0.4753601551055908,
+      "entityLoss": 3.181682825088501,
+      "expressionLoss": 0.25515395402908325,
+      "totalLoss": 4.823070526123047
+    },
+    {
+      "step": 6,
+      "mentionAcc": 0.6532257795333862,
+      "roleAcc": 0.8090909123420715,
+      "entityAcc": 0.30000001192092896,
+      "expressionAcc": 0.875,
+      "mentionLoss": 0.7884104251861572,
+      "roleLoss": 0.45891183614730835,
+      "entityLoss": 2.9337353706359863,
+      "expressionLoss": 0.4710964560508728,
+      "totalLoss": 4.652154445648193
+    },
+    {
+      "step": 7,
+      "mentionAcc": 0.5789473652839661,
+      "roleAcc": 0.7809523940086365,
+      "entityAcc": 0.3499999940395355,
+      "expressionAcc": 0.75,
+      "mentionLoss": 0.8140199780464172,
+      "roleLoss": 0.4302960932254791,
+      "entityLoss": 2.8900341987609863,
+      "expressionLoss": 0.8071187138557434,
+      "totalLoss": 4.941469192504883
+    },
+    {
+      "step": 8,
+      "mentionAcc": 0.6060606241226196,
+      "roleAcc": 0.8181818127632141,
+      "entityAcc": 0.4000000059604645,
+      "expressionAcc": 0.5,
+      "mentionLoss": 0.7633489370346069,
+      "roleLoss": 0.41706863045692444,
+      "entityLoss": 2.877737522125244,
+      "expressionLoss": 1.5210124254226685,
+      "totalLoss": 5.579167366027832
+    }
+  ],
+  "lastStats": {
+    "mentionAcc": 0.6060606241226196,
+    "roleAcc": 0.8181818127632141,
+    "entityAcc": 0.4000000059604645,
+    "expressionAcc": 0.5,
+    "mentionLoss": 0.7633489370346069,
+    "roleLoss": 0.41706863045692444,
+    "entityLoss": 2.877737522125244,
+    "expressionLoss": 1.5210124254226685,
+    "totalLoss": 5.579167366027832
+  },
+  "reloadLoss": 3.3330399990081787,
+  "reloadStats": {
+    "mentionAcc": 0.6499999761581421,
+    "roleAcc": 0.8380952477455139,
+    "entityAcc": 0.4761904776096344,
+    "expressionAcc": 1.0,
+    "mentionLoss": 0.7402174472808838,
+    "roleLoss": 0.4094725251197815,
+    "entityLoss": 2.0989720821380615,
+    "expressionLoss": 0.0843779668211937,
+    "totalLoss": 3.3330399990081787
+  },
+  "elapsedSeconds": 0.498,
+  "processWallSeconds": 1.186,
+  "artifactSha256": "5fb8f6349fdf8bddcb05f4541c64daeabce13bcd5de61c15358412bbdd77469f",
+  "notes": [
+    "M1 uses token mention BIO, 5-role BCE and entity classification over worldId:entityId; span offsets and expression issue spans are not evaluated.",
+    "M2 uses only the 5-way expression label; issue span/scope heads are not implemented in this smoke.",
+    "No development or sealed sample was read; no quality or A/B/C claim is possible.",
+    "heads.pt is local-only and not committed; this record is an engineering smoke, not a trained provider."
+  ]
+}

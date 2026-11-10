@@ -181,6 +181,19 @@ M2 的 `attempt` 标签不能证明工具可用、行动合理或需求已覆盖
 
 该结果只支持一个结论：**单次 API 检查不能直接当作 B 臂或金标准**，必须先冻结提示、词表和一次修复规则，再做公平比较。它不证明小模型能力，也不证明 B 臂失败。
 
+### 8.2 R0 工程试跑（不是质量实验）
+
+用户明确选择“授权 R0 工程试跑”后，执行了一次 **engineering smoke**：
+
+- 基座：MiniRBT-H256 本地权重第 0、1 层，冻结 fp32，CPU；WordPiece 本地分词。
+- 数据：scale-v2 `train` 96 条；不读 development／sealed。
+- 新头：M1 token mention BIO＋5 角色＋实体分类；M2 仅 5 类整段分类（**没有 issue span/scope 头**）。
+- 8 步、batch 8：训练集 loss 8.25 → 5.58；编码器哈希前后一致，新头全部参数变化；重载同一 batch loss 3.33。
+- 主流程约 0.5s、进程墙钟约 1.2s；不是正式训练耗时。
+- 头文件 `heads.pt` 只留本地，不入库；记录与限制见 [R0 工程试跑](../../../artifacts/world-components-logic/d02-checkers/r0-smoke/README.md)。
+
+这些数字来自 96 条训练样本的同一批前向，**不能当验证、泛化或模型能力成绩**；也没有生成 provider、没有接生产、没有写世界。正式 R0 仍需使用项目冻结的训练器实现完整 M1/M2 头，并在 development 上评估。
+
 ## 9. 验收提案（尚未取得）
 
 | 项目 | 建议标准 |
