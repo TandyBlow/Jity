@@ -166,7 +166,9 @@ def main() -> int:
         if keep < 64:
             return None
         if len(prompt_ids) > keep:
-            prompt_ids = prompt_ids[-keep:]
+            raise SystemExit(
+                f"{row['id']}: prompt {len(prompt_ids)} + target {len(target_ids)} "
+                f"exceeds maxSeqLen {max_len}; refusing silent truncation")
         prompt_len = len(prompt_ids)
         labels = [-100] * prompt_len + target_ids
         return prompt_ids + target_ids, labels, {
