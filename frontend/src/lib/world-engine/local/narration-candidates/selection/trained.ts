@@ -12,8 +12,10 @@
  * least one accepted narration; the selection layer never promotes a candidate
  * on unit-test evidence alone.
  */
-import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../trained-generation';
-import type { NarrationIssue } from '../trained-generation/types';
+// The product uses lane 02's current strategy module directly (one source of
+// truth with their measured arm), not a vendored copy.
+import { generateCandidate, NARRATION_STRATEGY_VERSION } from '../../narration-generation';
+import type { NarrationIssue } from '../../narration-generation/types';
 import type { CandidateNarrationResult, NarrationCandidate } from './types';
 
 const hardKinds = (issues: NarrationIssue[]): string[] =>
@@ -25,7 +27,7 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
   version: `trained-beats:${NARRATION_STRATEGY_VERSION}`,
   label: '02-narration · committed-fact beats',
   requires: {
-    modules: ['local/narration-candidates/trained-generation', 'local/narration-input'],
+    modules: ['local/narration-generation', 'local/narration-input'],
     template: 'engine chat template (no manual ChatML wrap)',
   },
   productDefault: false,
@@ -47,6 +49,9 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       }),
       policy: {
         ...prepared.policy,
+        // Variable-length contract: a short complete scene is allowed; the floor
+        // only rejects a near-empty answer.
+        minChars: 20,
         mode: runPolicy?.sceneMode === 'scene' ? 'scene' : 'beats',
         scene: prepared.scene,
         // Whole-scene prose on the deployable instruct model uses the
@@ -68,13 +73,15 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       severity: issue.severity,
       attempt: issue.attempt,
     }));
-    const allFellBack = result.beats.length > 0 && result.beats.every((beat) => beat.source !== 'model');
-    // Per-beat provenance: a scene with some model sentences and some program
-    // fallbacks must not be presented as fully model-written.
-    const modelBeats = result.beats.filter((beat) => beat.source === 'model').length;
-    const programBeats = result.beats.filter((beat) => beat.source === 'fallback').length;
+    const modelBeats = result.beatCounts.model;
+    const programBeats = result.beatCounts.fallback;
+    const allFellBack = result.segments.length > 0 && result.segments.every((segment) => segment.source !== 'model');
+    // A scene with some model sentences and some program fallbacks must not be
+    // presented as fully model-written.
     const mixed = result.accepted && modelBeats > 0 && programBeats > 0;
-    const segments = result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source, text: beat.text }));
+    const segments = result.segments.length
+      ? result.segments.map((segment) => ({ id: segment.beatId, kind: segment.kind, source: segment.source === 'fallback' ? 'program' : segment.source, text: segment.text }))
+      : result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source === 'fallback' ? 'program' : beat.source, text: beat.text }));
     const hard = hardKinds(result.issues);
     const reason = result.accepted
       ? null
