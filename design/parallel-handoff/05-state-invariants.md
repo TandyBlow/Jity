@@ -357,3 +357,16 @@ rejected task ids as warnings. On archived 09 1646 the first updates call passes
 the record correctly fails. This is not a state replay; there is no snapshot in
 that archive. The detailed review is
 `results/product/evidence/05-kernel/verification-09-1646-task-coverage.json`.
+
+## Reload entry pairing (05 f3dac9a8 patch)
+
+The current 06 history pairs commands to points by array index. When a failed
+command sits between two successes (commands A,B,C; points A,C), C is labelled
+with B's sentence. The count-safe fallback only avoids a wrong tail label; it
+does not recover the exact mapping. `06-command-point-map.patch` adds optional
+`snapshot.commandPointIds` aligned with `commands`: a successful submit binds
+the committed player point to its command, a failed/cancelled command stays
+null, and the map is saved/restored. `history.ts` then shows A and C with their
+own sentences and B as unfinished; older saves with unequal counts show blank
+labels rather than a wrong sentence. The product and test patch apply at 06
+`5c07d84c`; the disposable session test (submit, snapshot, restore) passes.
