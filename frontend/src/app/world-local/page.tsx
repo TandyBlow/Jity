@@ -64,7 +64,11 @@ interface WorldTurnRecord {
    * at submit so one evidence file cannot mix two arms unknowingly. */
   narrationModel: string | null;
   promptShape: string | null;
-  engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number; contextSize?: number }>;
+  engines: Array<{
+    label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number;
+    contextSize?: number; lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
+    lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
+  }>;
   /** Last generation evidence per engine: prompt tokens vs context size tells a
    * context overflow apart from a model failure. */
   generations?: GenerationNote[];
@@ -166,7 +170,12 @@ async function loadEngine(
 function engineCounters(label: string, engine: ProductEnginePort | null): WorldTurnRecord['engines'][number] | null {
   const runtime = engine?.runtime?.();
   if (!runtime) return null;
-  return { label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited, generations: runtime.generations, contextSize: runtime.contextSize };
+  return {
+    label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited,
+    generations: runtime.generations, contextSize: runtime.contextSize,
+    lastLoadMs: runtime.lastLoadMs ?? null, lastLoadFetchMs: runtime.lastLoadFetchMs ?? null,
+    lastLoadCompileMs: runtime.lastLoadCompileMs ?? null, lastLoadFromCache: runtime.lastLoadFromCache ?? null,
+  };
 }
 
 /** A model port that survives a hard-stopped generation. wllama terminates the
@@ -178,6 +187,8 @@ interface ProductEnginePort extends InferenceEngine {
   runtime(): {
     needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number;
     contextSize?: number; modelId?: string | null;
+    lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
+    lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
   } | null;
 }
 

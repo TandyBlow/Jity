@@ -136,6 +136,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
    * different model. */
   private cachedBlobs: Blob[] | null = null;
   private cachedIdentity: string | null = null;
+  /** Timings of the last successful load. The page exposes per-engine load
+   * duration next to generation timings, so 09 can separate cold model load
+   * from per-turn prefill/decode without parsing console output. */
+  private lastLoadTiming: { totalMs: number; fetchMs: number | null; compileMs: number | null; fromCache: boolean } | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -175,6 +179,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
     /** True when a hard-stop reload can reuse the already fetched bytes. */
     cachedModel: boolean;
     cachedModelBytes: number;
+    lastLoadMs: number | null;
+    lastLoadFetchMs: number | null;
+    lastLoadCompileMs: number | null;
+    lastLoadFromCache: boolean | null;
   } {
     return {
       backend: this.info.backend,
@@ -194,6 +202,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
       lastModelUrls: this.lastModelUrls ? [...this.lastModelUrls] : null,
       cachedModel: this.cachedBlobs !== null,
       cachedModelBytes: this.cachedBlobs?.reduce((sum, blob) => sum + blob.size, 0) ?? 0,
+      lastLoadMs: this.lastLoadTiming?.totalMs ?? null,
+      lastLoadFetchMs: this.lastLoadTiming?.fetchMs ?? null,
+      lastLoadCompileMs: this.lastLoadTiming?.compileMs ?? null,
+      lastLoadFromCache: this.lastLoadTiming?.fromCache ?? null,
     };
   }
 
@@ -431,6 +443,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
       callerSignal?.removeEventListener('abort', onCallerAbort);
       if (this.loadAbort === controller) this.loadAbort = null;
       if (this.loadingUrl === modelUrls.join('|')) this.loadingUrl = null;
+      const totalMs = performance.now() - started;
+      if (outcome === 'loaded') {
+        this.lastLoadTiming = { totalMs, fetchMs, compileMs, fromCache };
+      }
       this.emit({
         kind: 'load',
         modelUrl: modelUrls[0]!,
@@ -443,7 +459,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
         directBlob,
         fetchMs,
         compileMs,
-        totalMs: performance.now() - started,
+        totalMs,
         loadTimeoutMs,
         fromCache,
         outcome,

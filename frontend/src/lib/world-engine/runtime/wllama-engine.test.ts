@@ -682,7 +682,8 @@ describe('WllamaInferenceEngine option mapping', () => {
     });
     await engine.load();
     expect(fetched).toHaveLength(1);
-    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4 });
+    expect(engine.runtime).toMatchObject({ cachedModel: true, cachedModelBytes: 4, lastLoadFromCache: false });
+    expect(engine.runtime.lastLoadMs).toBeGreaterThan(0);
 
     await expect(engine.complete('P', { timeoutMs: 10, maxTokens: 1 })).rejects.toBeInstanceOf(IncompleteGenerationError);
     expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, cachedModel: true });
@@ -690,7 +691,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     await engine.ensureLoaded();
     expect(fetched).toHaveLength(1); // the Blob was reused, not fetched again
     expect(fakes[1]!.calls.blobs).toHaveLength(1);
-    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true });
+    expect(engine.runtime).toMatchObject({ loaded: true, loadCount: 2, cachedModel: true, lastLoadFromCache: true, lastLoadFetchMs: 0 });
     expect(evidence.at(-1)).toMatchObject({ outcome: 'loaded', fromCache: true, fetchMs: 0 });
     expect(await engine.complete('P')).toBe('ok');
   });
@@ -729,12 +730,12 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(engine.runtime).toMatchObject({ cachedModel: false, cachedModelBytes: 0 });
   });
 
-  test('one worker serves many turns without growth, and dispose closes exactly that worker', async () => {
+  test('one worker serves 20 turns without growth, and dispose closes exactly that worker', async () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
     await engine.load();
-    for (let turn = 0; turn < 6; turn += 1) expect(await engine.complete(`turn ${turn}`)).toBe('ok');
-    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 0, generations: 6, loadCount: 1 });
+    for (let turn = 0; turn < 20; turn += 1) expect(await engine.complete(`turn ${turn}`)).toBe('ok');
+    expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 0, generations: 20, loadCount: 1 });
     await engine.dispose();
     expect(engine.runtime).toMatchObject({ workersCreated: 1, workersExited: 1, disposed: true, needsReload: false, loaded: false });
     expect(fake.calls.exits).toBe(1);

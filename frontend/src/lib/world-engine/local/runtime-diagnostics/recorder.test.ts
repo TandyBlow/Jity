@@ -38,7 +38,7 @@ describe('timingStats', () => {
 describe('RuntimeDiagnostics', () => {
   test('summarises loads, generations, cancellations and queue into one snapshot', () => {
     const diagnostics = new RuntimeDiagnostics();
-    diagnostics.record(load());
+    diagnostics.record(load({ fromCache: true }));
     diagnostics.record(load({ outcome: 'failed', modelId: null, totalMs: 50, compileMs: null, fetchMs: null, error: 'boom' }));
     diagnostics.record(generation());
     diagnostics.record(generation({ outcome: 'timeout', finishReason: 'timeout', abortCause: 'timeout',
@@ -49,7 +49,7 @@ describe('RuntimeDiagnostics', () => {
     diagnostics.record(queue({ state: 'resolved' }));
 
     const summary = diagnostics.summary();
-    expect(summary.loads).toMatchObject({ count: 2, loaded: 1, failed: 1, lastModelId: null, lastContextSize: 4096 });
+    expect(summary.loads).toMatchObject({ count: 2, loaded: 1, failed: 1, cached: 1, lastModelId: null, lastContextSize: 4096 });
     expect(summary.loads.total.p50Ms).toBe(50); // nearest rank over [50,500]
     expect(summary.generations).toMatchObject({
       count: 3, completed: 1, timeout: 1, aborted: 1, hardStops: 1, meanCacheHitRatio: 0.1,

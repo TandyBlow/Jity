@@ -104,6 +104,8 @@ export interface RuntimeDiagnosticsSummary {
     aborted: number;
     discarded: number;
     timeout: number;
+    /** Loads that reused cached weights (hard-stop reload, no refetch). */
+    cached: number;
     lastModelId: string | null;
     lastContextSize: number | null;
     total: TimingStats;

@@ -34,7 +34,8 @@ dependencies are untouched.
    loaded. It now rejects with an explicit configuration error (same URL stays
    idempotent); concurrent loads of different URLs are rejected too. Load
    evidence records `modelId`, URL, context size, GPU layers, threads,
-   OPFS/direct-blob mode, fetch/compile/total timings and outcome.
+   OPFS/direct-blob mode, fetch/compile/total timings, `fromCache` (a
+   hard-stop reload reused the fetched Blob, so fetchMs is 0) and outcome.
 5. **The queue had no non-terminal stop and no abort timing.** Added
    `cancelPending()` (reject queued, abort running, keep the queue usable),
    queue evidence (`queued/started/resolved/rejected/aborted-running/stopped/
@@ -181,9 +182,71 @@ a different engine.
    `firstReadableMs` (draft), plus load / first token / per-turn / whole
    submission. Dispose engines at the end and check
    `workersCreated === workersExited`.
+6. Long-session growth (the 10→20-turn requirement): on the product page read
+   `window.__worldTurns`. Within one page segment, a healthy run has, per
+   engine, `loadCount === 1`, `workersCreated === 1`, `workersExited === 0`,
+   `generations === turns`, and `cachedModelBytes` constant. A deliberate
+   refresh (the 10-turn script refreshes after t6) starts a **new page**: it
+   legitimately creates one new load/worker for each engine and resets the
+   window counters; record the pre-refresh and post-refresh segments
+   separately, and do not count that new load as a leak. If a turn hard
+   stopped inside a segment, expect `loadCount`/`workersCreated` to increase by
+   exactly one and the reload evidence `fromCache: true, fetchMs: 0`; any other
+   growth is a leak/reload bug, not a quality result. Record the per-turn
+   `acceptedMs`/`draftMs`/`programMs`, the stop latency, and (if exposed)
+   `promptTokens` vs `contextSize`; a prompt near the context limit needs a
+   larger context or trimming, not a model change.
+7. Readiness: before the first submission the page must be `ready` and both
+   engines `loaded` (the submit button is disabled while loading). A
+   `complete`/`chat` before load must reject immediately; it must never wait
+   for the 120 s load deadline (the `complete-before-ready` check proves this).
+8. Server readiness: Next dev returns **500 Internal Server Error on every
+   route while it is still starting/compiling** after a clean `.next` (observed
+   13:02–13:17, then 200 after `Ready in 7.7 s` and `Compiled / in 55.3 s`).
+   Wait for `GET /world-local` to return 200 and a textarea to render before
+   launching the browser; a run against the 500 is an invalid startup record,
+   not a product result. A `next build` sharing `.next` with the live dev
+   server can also corrupt it; stop/clean/restart after a build.
+9. Fresh-run isolation: clearing only `localStorage` is not a fresh run. The
+   page persists through IndexedDB (and may use Cache Storage/OPFS); a stale
+   record makes the first save stop with `progress_conflict`. The runner must
+   delete every IndexedDB database plus Cache Storage/OPFS and assert they are
+   empty before loading the page. A stop must also end the turn visibly: clear
+   the busy/stage state and show a message, or the acceptance waits until its
+   whole-turn timeout even though the turn ended in 168 ms (observed in the
+   first official 10-turn attempt; neither engine had failed).
+
+## Load-timing reconciliation (2026-11-10)
+
+The same 1.7B has recorded loads of 174.5 s (02 probe, no adapter proof,
+no fetch/compile split), 44.7 s (08 candidate, NVIDIA proof, no split) and
+70.0 s (09 runtime, NVIDIA proof, fetch 52.6 + compile 17.3). Same sha256,
+context 4096, ngl 99999, threads 6. The 174.5 s is **not** a valid NVIDIA
+cold-load fact; the 44.7 vs 70 gap is not attributed because 08's split is
+missing. Full table and unknowns: `results/quality/load-reconciliation-08.md`.
+Use the existing candidate runner with `--load-only` for one split load
+(no generation, no new runner): `results/product/browser-requests/08-runtime-load-reconcile.json`.
+Cold-load differences do not prove hot-generation failure.
+
+### 10-turn runtime observation (2026-11-10T13:34Z)
+
+`results/product/evidence/09-product-10turn.json` FAILED on content/lifecycle,
+not on loading: both engines held `loadCount=1`, `workersCreated=1`,
+`workersExited=0` across t1/t2; no hard stop, reload or worker leak. t1 took
+272 s and made 14 semantic + 4 narration calls before a labelled program
+fallback (undeclared target / unknown id / coverage); t2 then stopped in 158 ms
+with `turn_in_progress` and 0 model calls, but the page stayed
+`结算中：继续判断` for the 330 s harness timeout. Do not attribute these to the
+runtime; 04/03 own the settlement/action failures and 06 owns the visible stop
+and retry path. The runtime load/worker contract held.
 
 ## 02/06 integration entry points
 
+- 06 per-engine load timing: include `lastLoadMs`, `lastLoadFetchMs`,
+  `lastLoadCompileMs`, `lastLoadFromCache` from `engine.runtime` in
+  `window.__worldTurns[i].engines`. The page-level ready time mixes page boot,
+  two model loads and StrictMode; 09 needs the per-engine split to separate
+  cold load from per-turn prefill/decode.
 - 06 product page / game-model: construct one engine and call
   `await engine.ensureLoaded()` at session start, `engine.chat(messages, {signal,
   timeoutMs, maxTokens, temperature, onProgress})` per narration call,
@@ -248,6 +311,7 @@ queue.stats;                                // NEW
 new RuntimeDiagnostics({ limit?: number });
 diagnostics.record / onLoad / onGeneration / onQueue; // bound handlers
 diagnostics.summary(); diagnostics.snapshot(); diagnostics.toJSON();
+// summary.loads.cached counts hard-stop reloads that reused the fetched Blob.
 new StageTimer(now?);
 timer.mark(stage, detail?); timer.tick(); timer.maxGapMs; timer.snapshot();
 ```
@@ -303,7 +367,11 @@ stop.
 
    **Cached weights.** The engine keeps the fetched model Blob(s) and feeds the
    same bytes to the new worker on reload (`runtime.cachedModel`,
-   `runtime.cachedModelBytes`; load evidence `fromCache: true`, `fetchMs: 0`).
+   `runtime.cachedModelBytes`, `runtime.lastLoadFromCache`; load evidence
+   `fromCache: true`, `fetchMs: 0`). The last successful load split is exposed
+   as `runtime.lastLoadMs`, `lastLoadFetchMs`, `lastLoadCompileMs`; the page
+   should put these in `window.__worldTurns[i].engines` so 09 can separate
+   cold load from generation time.
    This is not an optimization detail; the real browser rejected a second
    1.1 GB fetch immediately after a hard stop with `TypeError: Failed to fetch`
    because the first Blob was still in the browser's Blob store, whose

@@ -47,6 +47,7 @@ const config = {
   context: Number(option('--context', '0')),
   forceCpu: process.argv.includes('--force-cpu'),
   lowPowerGpu: process.argv.includes('--low-power-gpu'),
+  loadOnly: process.argv.includes('--load-only'),
   out: resolve(frontend, option('--out', '../../results/quality/a-candidate-run.json')),
   modelsDirs: options('--models-dir').length > 0 ? options('--models-dir') : [
     'D:/others/Jity/.local/world-narration-worktree/frontend/public/models',
@@ -199,14 +200,21 @@ try {
     });
     window.__candidateRun = { engine: result.engine, spec };
     return { backend: result.backend, fallback: result.fallback, attempts: result.attempts, loadMs: performance.now() - started,
-      webgpuAvailable: webgpuAvailable(), adapterInfo, runtime: result.engine.runtime };
+      webgpuAvailable: webgpuAvailable(), adapterInfo, runtime: result.engine.runtime,
+      // fetchMs/compileMs/totalMs and the actual URL: needed to reconcile the
+      // 44.7 s and 70 s loads on the same model; the adapter line is separate.
+      evidence: result.evidence };
   }, config);
   report.load = loaded;
+  report.loadEvidence = loaded.evidence ?? [];
   report.adapterInfo = loaded.adapterInfo ?? null;
   save();
-  console.log(`[run] ${config.model} backend=${loaded.backend} load=${Math.round(loaded.loadMs)}ms`);
+  console.log(`[run] ${config.model} backend=${loaded.backend} load=${Math.round(loaded.loadMs)}ms`
+    + ` fetch=${Math.round(loaded.evidence?.[0]?.fetchMs ?? -1)}ms compile=${Math.round(loaded.evidence?.[0]?.compileMs ?? -1)}ms`
+    + ` cached=${loaded.evidence?.[0]?.fromCache === true}`);
 
   const points = await page.evaluate(async (config) => {
+    if (config.loadOnly) return [];
     const { projectCommittedNarration } = await import('/src/lib/world-engine/runtime/committed-narration.ts');
     const { legacyNarrationInput } = await import('/src/lib/world-engine/local/prompt.ts');
     const { SHORT_STATE } = await import('/src/lib/world-engine/runtime/b3-short-samples.ts');
@@ -381,6 +389,7 @@ try {
   const completed = points.filter((point) => !point.error);
   const accepted = completed.filter((point) => point.accepted);
   report.summary = {
+    loadOnly: config.loadOnly,
     points: completed.length,
     errors: points.length - completed.length,
     accepted: accepted.length,
