@@ -376,6 +376,23 @@ describe('visible acceptance summary', () => {
     expect(report.errors.some((item) => item.detail.includes('draft'))).toBe(true);
   });
 
+  it('rejects a program fallback and a slow accepted turn', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '程序按已结算事实写出的正文。',
+      textSource: 'program',
+      historyDelta: 1,
+      product: { source: 'program', acceptedMs: 193_860, draftMs: 90_013 },
+      timings: { doneMs: 292_849, firstReadableMs: null },
+      problems: ['program_fallback_labelled', 'program_text_not_model', 'source_program', 'accepted_over_60s'],
+      submission: { inputText: '我沿着服务巷往里走。' },
+    }]);
+    expect(report.ok).toBe(false);
+    expect(report.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['evidence_shape']));
+    expect(report.errors.some((item) => item.detail.includes('program fallback'))).toBe(true);
+    expect(report.errors.some((item) => item.detail.includes('first accepted text'))).toBe(true);
+  });
+
   it('accepts a committed turn with accepted text and a history delta', () => {
     const report = verifyDisplayedCommit([{
       turn: 1,

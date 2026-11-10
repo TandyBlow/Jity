@@ -6,12 +6,15 @@
  * The session is constructed and driven exactly as the product does; every
  * checkpoint is replayed by the read-only invariant verifier before the next
  * turn. This file does not modify 06's tree or page. */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { WorldModelPort } from '../../../../06-recovery/frontend/src/lib/world-engine/controller';
 import type { ModelTask } from '../../../../06-recovery/frontend/src/lib/world-engine/schedule';
 import type { InitialTemplate, Json } from '../../../../06-recovery/frontend/src/lib/world-engine/types';
 import { SHORT_STATE } from '../../../../06-recovery/frontend/src/lib/world-engine/runtime/b3-short-samples';
 import { LocalGameSession } from '../../../../06-recovery/frontend/src/lib/world-engine/local/session';
+import { restoredEntries } from '../../../../06-recovery/frontend/src/lib/world-engine/local/history';
 import {
   createLocalProgressStore, MemoryProgressBackend, ProgressConflictError,
 } from '../../../../06-recovery/frontend/src/lib/world-engine/local/persistence';
@@ -174,6 +177,28 @@ describe('real recovery session continuity', () => {
     expect(record.rolls[rollKeys[0]].result).toBe(rollBefore.result);
     const report = await verifyWorldRecord(record);
     expect(report.ok, JSON.stringify(report.errors)).toBe(true);
+  });
+
+  it('rebuilds the b7cd turn from all three committed points, player first', () => {
+    // Read-only comparison requested by 06: use its current restoredEntries
+    // implementation on the real post-reload snapshot. b7cd predates 679f979c,
+    // so this snapshot has no narrationSources; the point order and text join
+    // are still checkable. New snapshots add the source labels.
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-b7cd.json'), 'utf8'));
+    const snapshot = evidence.refreshRestore.snapshotAfterReload;
+    const entries = restoredEntries(snapshot);
+    expect(entries).toHaveLength(1);
+    expect(entries[0].input).toBe('我沿着服务巷往里走，先看清墙上的演习规则牌。');
+    expect(entries[0].points?.map((point: { pointId: string }) => point.pointId)).toEqual([
+      'point_round_3_1', 'point_round_auto_mwb49dw4_1_1', 'point_round_auto_mwb4avcm_2_1',
+    ]);
+    expect(entries[0].text).toContain('一分钟过去，路明非还在西侧服务巷。');
+    expect(entries[0].text.indexOf('一分钟过去，路明非还在西侧服务巷。')).toBeLessThan(
+      entries[0].text.indexOf('一分钟之后。'),
+    );
+    expect(entries[0].source).toBeUndefined();
+    expect(entries[0].note).toBeNull();
   });
 
   it('shows the recovery gap: session restore accepts a tampered state that the invariant gate rejects', async () => {

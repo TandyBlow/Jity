@@ -1087,8 +1087,13 @@ export function verifyDisplayedCommit(entries: unknown[]): {
     if (source === 'draft' || problems.includes('draft_only_not_accepted')) {
       add(errors, 'evidence_shape', `${label}: displayed text is a draft, not a committed turn`);
     }
+    if (source === 'program' || problems.includes('program_fallback_labelled') || problems.includes('program_only_not_model_text')) {
+      add(errors, 'evidence_shape', `${label}: displayed text is a program fallback, not model prose`);
+    }
     if (acceptedMs == null) {
       add(errors, 'history_text_missing', `${label}: displayed text has no accepted model text (source ${source || 'unknown'})`);
+    } else if (acceptedMs > 60_000) {
+      add(errors, 'evidence_shape', `${label}: first accepted text at ${Math.round(acceptedMs / 1000)}s (>60s)`);
     }
     if (historyDelta === 0) {
       // A draft-narration point can be committed without increasing the
