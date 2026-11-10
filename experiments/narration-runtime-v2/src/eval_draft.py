@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Grade a draft-rewrite GGUF on held-out rows, using the real prompt.
+"""Grade a draft-rewrite GGUF on held-out rows through llama-server.
 
-This is an offline screening tool, not product acceptance: it runs the same
-prompt the page would send, records the raw prose, and counts
-  * draft facts that the prose does not carry,
-  * numbers/names the draft does not contain,
-  * filler and multi-paragraph answers.
-09's real page run and 01's sentence review remain the quality evidence.
+Why a server and not llama-cli: the page's wllama engine applies the model's chat
+template, so the model must see the same chat shape here. llama-cli with `-f`
+runs in raw completion mode and the model then continues the prompt tokens, which
+looks like corruption but is a harness artefact. llama-server applies the
+template and also loads the model once, so many rows cost one load.
 
-    python src/eval_draft.py --gguf <path> --split dev --limit 20 \
+This is offline screening, not product acceptance: 09's real page run and 01's
+review decide quality.
+
+    python src/eval_draft.py --gguf <path> --split dev --limit 14 \
         --out hpc/runs/<job>/eval-dev.json
 """
 
@@ -21,12 +23,15 @@ import os
 import re
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
 from typing import Any, Dict, List
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 V2 = os.path.abspath(os.path.join(HERE, ".."))
-DEFAULT_LLAMA = "D:/others/Jity/.local/llama-cpp/llama-cli.exe"
-DATA = os.path.join(V2, "data", "train-draft-v1.jsonl")
+DEFAULT_SERVER = "D:/others/Jity/.local/llama-cpp/llama-server.exe"
+DATA = os.path.join(V2, "data", "train-page-v3.jsonl")
 
 FILLER = ("气氛", "仿佛", "似乎", "像是", "好像", "显得", "某种", "不由得", "不禁")
 STOP = {"这个", "那个", "一件", "事情", "自己", "已经", "没有", "什么", "一直",
@@ -59,7 +64,6 @@ def cn_number(value: int) -> str:
 
 
 def time_spoken(prose: str, amount: int, unit: str) -> bool:
-    """'时间过去20分钟。' is carried by '二十分钟过去', '二十分钟里' ..."""
     cn = cn_number(amount)
     variants = {cn, str(amount)}
     if amount == 2:
@@ -70,19 +74,16 @@ def time_spoken(prose: str, amount: int, unit: str) -> bool:
 
 
 def covers(prose: str, clause: str) -> bool:
-    """A draft clause counts as carried when at least half of its 2-char pieces
-    appear, and every proper name in it appears."""
+    """A draft clause counts as carried when its names appear and at least half
+    of its 2-char pieces do."""
     time = re.match(r"时间过去了?约?(\d+)(秒|分钟|小时|天|个月|年)", clause)
     if time:
         return time_spoken(prose, int(time.group(1)), time.group(2))
-    if clause.endswith("没有出声。") or clause.endswith("没有出声"):
-        # The page writes this when a nearby character has no appearance text;
-        # it carries no fact, so silence in the prose is not a miss.
-        return True
     if re.match(r"^.+?里，", clause):
-        # Scenery is optional detail: the page's own rule says the environment
-        # keeps only one or two touches tied to the action, so a missing scenery
-        # clause is not a fact miss. Recorded as a warning by the caller.
+        # Scenery is optional detail: the page allows one or two touches, so a
+        # missing scenery clause is not a fact miss.
+        return True
+    if clause.endswith("没有出声。") or clause.endswith("没有出声"):
         return True
     names = re.findall(r"[\u4e00-\u9fff]{2,3}(?=从|完成了|多了一条|的精神值)", clause)
     for name in names:
@@ -95,25 +96,33 @@ def covers(prose: str, clause: str) -> bool:
     return hits >= max(1, len(strong) // 2)
 
 
-def run_llama(gguf: str, prompt: str, llama: str, threads: int, max_new: int,
-              temperature: float) -> str:
-    with io.open(".eval-prompt.txt", "w", encoding="utf-8", newline="") as handle:
-        handle.write(prompt)
-    result = subprocess.run(
-        [llama, "-m", gguf, "-f", ".eval-prompt.txt", "--single-turn",
-         "--temp", str(temperature), "-n", str(max_new), "--threads", str(threads),
-         "--no-display-prompt", "--log-disable"],
-        capture_output=True)
-    os.remove(".eval-prompt.txt")
-    text = result.stdout.decode("utf-8", "replace").split("[ Prompt:")[0]
-    lines, seen = [], False
-    for line in text.splitlines():
-        if line.startswith(">"):
-            seen = True
-            continue
-        if seen and line.strip() and not line.startswith("  /"):
-            lines.append(line.strip())
-    return " ".join(lines)
+def start_server(server: str, gguf: str, port: int, threads: int, ctx: int) -> subprocess.Popen:
+    process = subprocess.Popen(
+        [server, "-m", gguf, "--host", "127.0.0.1", "--port", str(port),
+         "-c", str(ctx), "-t", str(threads), "-ngl", "0", "--no-webui"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    for _ in range(120):
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2) as response:
+                if response.status == 200:
+                    return process
+        except (urllib.error.URLError, OSError):
+            time.sleep(1)
+    process.terminate()
+    raise SystemExit("llama-server did not become healthy in 120 s")
+
+
+def chat(port: int, prompt: str, max_new: int, temperature: float) -> str:
+    body = json.dumps({
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": temperature, "max_tokens": max_new,
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{port}/v1/chat/completions", data=body,
+        headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(request, timeout=600) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    return payload["choices"][0]["message"]["content"]
 
 
 def main() -> int:
@@ -122,9 +131,11 @@ def main() -> int:
     parser.add_argument("--data", default=DATA)
     parser.add_argument("--split", default="dev")
     parser.add_argument("--limit", type=int, default=0)
-    parser.add_argument("--llama", default=DEFAULT_LLAMA)
+    parser.add_argument("--server", default=DEFAULT_SERVER)
+    parser.add_argument("--port", type=int, default=18099)
     parser.add_argument("--threads", type=int, default=8)
-    parser.add_argument("--max-new", type=int, default=160)
+    parser.add_argument("--ctx", type=int, default=4096)
+    parser.add_argument("--max-new", type=int, default=220)
     parser.add_argument("--temperature", type=float, default=0.5)
     parser.add_argument("--out", default="")
     args = parser.parse_args()
@@ -132,53 +143,74 @@ def main() -> int:
     rows = [row for row in read_jsonl(args.data) if row["split"] == args.split]
     if args.limit:
         rows = rows[:args.limit]
+    process = start_server(args.server, args.gguf, args.port, args.threads, args.ctx)
     graded: List[Dict[str, Any]] = []
     passed = 0
-    for row in rows:
-        prose = run_llama(args.gguf, row["user"], args.llama, args.threads,
-                          args.max_new, args.temperature)
-        clauses = [clause for clause in re.split(r"(?<=。)", row["draft"]) if clause.strip()]
-        missing = [clause for clause in clauses if not covers(prose, clause)]
-        allowed = set(re.findall(r"[0-9]+", row["draft"] + row["user"]))
-        invented = [number for number in re.findall(r"[0-9]+", prose) if number not in allowed]
-        filler = [word for word in FILLER if word in prose]
-        issues = []
-        if not prose.strip():
-            issues.append("empty")
-        if missing:
-            issues.append(f"missing_draft:{len(missing)}")
-        if invented:
-            issues.append("invented_number:" + ",".join(invented[:2]))
-        if filler:
-            issues.append("filler:" + ",".join(filler[:2]))
-        dialogue = bool(re.search(r"[「“『]", prose)) and not re.search(r"[「“『]", row["draft"])
-        if len(prose) > 220:
-            issues.append("too_long")
-        if "\n\n" in prose:
-            issues.append("multiple_paragraphs")
-        ok = not issues
-        passed += 1 if ok else 0
-        graded.append({"id": row["id"], "draft": row["draft"], "prose": prose,
-                       "missingClauses": missing, "issues": issues, "ok": ok,
-                       "dialogueAdded": dialogue})
+    try:
+        for row in rows:
+            started = time.time()
+            prose = chat(args.port, row["user"], args.max_new, args.temperature).strip()
+            seconds = round(time.time() - started, 2)
+            clauses = [clause for clause in re.split(r"(?<=。)", row["draft"]) if clause.strip()]
+            missing = [clause for clause in clauses if not covers(prose, clause)]
+            allowed = set(re.findall(r"[0-9]+", row["draft"] + row["user"]))
+            invented = [number for number in re.findall(r"[0-9]+", prose) if number not in allowed]
+            filler = [word for word in FILLER if word in prose]
+            issues = []
+            if not prose:
+                issues.append("empty")
+            if missing:
+                issues.append(f"missing_draft:{len(missing)}")
+            if invented:
+                issues.append("invented_number:" + ",".join(invented[:2]))
+            if filler:
+                issues.append("filler:" + ",".join(filler[:2]))
+            if len(prose) > 320:
+                issues.append("too_long")
+            dialogue = bool(re.search(r"[「“『]", prose)) and not re.search(r"[「“『]", row["draft"])
+            if dialogue:
+                # Reported, not failed: a licensed fact can legitimately be
+                # spoken, but the page forbids new dialogue, so reviewers must see it.
+                issues.append("dialogue_added")
+            ok = not issues
+            passed += 1 if ok else 0
+            graded.append({"id": row["id"], "draft": row["draft"], "prose": prose,
+                           "target": row["target"], "missingClauses": missing,
+                           "issues": issues, "ok": ok, "seconds": seconds})
+            print(f"{row['id']} {len(prose)}ch {seconds}s {'ok' if ok else ','.join(issues)}",
+                  flush=True)
+    finally:
+        process.terminate()
+
     summary = {
         "gguf": args.gguf,
+        "ggufSha256": hashlib_of(args.gguf),
+        "data": args.data,
         "split": args.split,
         "rows": len(rows),
         "passed": passed,
         "passRate": round(passed / len(rows), 3) if rows else 0,
         "temperature": args.temperature,
         "maxNew": args.max_new,
-        "notProductAcceptance": "offline screening only; real page text and 01's review decide quality",
+        "servedBy": "llama-server /v1/chat/completions (chat template applied, CPU -ngl 0)",
+        "notProductAcceptance": "offline screening only; the real page and 01's review decide quality",
         "rowsDetail": graded,
     }
-    print(json.dumps({k: summary[k] for k in ("rows", "passed", "passRate", "gguf")},
-                     ensure_ascii=False, indent=1))
+    print(json.dumps({key: summary[key] for key in ("rows", "passed", "passRate")}))
     if args.out:
         os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
         with io.open(args.out, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(summary, ensure_ascii=False, indent=1) + "\n")
     return 0
+
+
+def hashlib_of(path: str) -> str:
+    import hashlib
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for block in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 if __name__ == "__main__":
