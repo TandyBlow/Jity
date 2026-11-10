@@ -19,6 +19,7 @@ import { createRequire } from 'node:module';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
+import { acquireLease } from './lease.mjs';
 
 const require = createRequire(resolve('package.json'));
 const { chromium } = require('@playwright/test');
@@ -113,6 +114,10 @@ function assetMiddleware() {
     next();
   };
 }
+
+// The runtime harness loads a real model; reserve the GPU first.
+const lease = acquireLease({ purpose: `09 runtime checks ${outPath}` });
+evidence.lease = lease.record;
 
 const server = await createServer({
   root: frontend,
@@ -492,4 +497,5 @@ try {
 } finally {
   await browser?.close();
   await server.close();
+  lease.release();
 }

@@ -29,6 +29,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { acquireLease } from './lease.mjs';
 
 const require = createRequire(resolve('package.json'));
 const { chromium } = require('@playwright/test');
@@ -143,6 +144,10 @@ function noteFailure(scope, message, detail = null) {
   evidence.failures.push({ at: new Date().toISOString(), scope, message, detail });
   save();
 }
+
+// Reserve the GPU before any model can load; a status check is not a lock.
+const lease = acquireLease({ purpose: `09 acceptance ${intent} ${base}` });
+evidence.lease = lease.record;
 
 const browser = await chromium.launch({
   headless: !has('--headed'),
@@ -945,4 +950,5 @@ try {
   process.exitCode = 1;
 } finally {
   await browser.close();
+  lease.release();
 }
