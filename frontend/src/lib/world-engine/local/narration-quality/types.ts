@@ -73,6 +73,7 @@ export type FindingKind =
   | 'review.trait_as_event'
   | 'review.unseen_entity'
   | 'review.possession'
+  | 'review.promise_in_dialogue'
   | 'review.natural_sanity'
   | 'review.tone';
 

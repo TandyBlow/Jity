@@ -1226,6 +1226,15 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'review.possession', sentence.text,
         'a hand holds something, but the point settles no object for it', []));
     }
+    // A promise or a future arrangement inside dialogue is a new commitment,
+    // not wording: the reader will expect it to happen.
+    for (const quote of sentence.quotes) {
+      if (/(?:明天|后天|今晚|等我|我会|我保证|一定|回头|下次)/u.test(quote) && /(?:去|来|找|见|给|带|送|等)/u.test(quote)) {
+        findings.push(finding(ctx, 'review.promise_in_dialogue', sentence.text,
+          `dialogue makes an arrangement (${quote.slice(0, 16)}) that no settled fact supports`, []));
+        break;
+      }
+    }
     for (const quote of sentence.quotes) {
       if (projection.sourceText.includes(quote)) continue;
       if (quote.length < 2) continue;

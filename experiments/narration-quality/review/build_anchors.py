@@ -765,6 +765,19 @@ anchors += [
     },
 ]
 
+
+anchors += [
+    {
+        "id": "neg/lora-scene",
+        "source": "results/02-narration/real-lora-free-day-arms.json free-day-root::scene (1.5B v2 template, rejected, 513 chars)",
+        "input": arms_scene,
+        "text": "西侧服务巷里，路明非站在巷口。他把胸前的护目镜摘下来，挂在脖子上的小钩子上，又重新挂回了胸口。镜片是干净的，没有裂纹，他很满意地笑了笑。诺诺从后门走了进来，手里拿着一个装着短枪的袋子。「你先走吧。」他说。「我先走。」「现在怎么走？「从这儿绕过去。」路明非把头伸出去，「右手边是正门，左手边是服务巷。要过这儿时，记得往墙根儿退两步。墙后面有人在等你。」「你是第九个了？」诺诺问。「第九个。」他把手里的东西递过去，「这个是短枪，别对准人。」「我知道。」「还有别的？」「没有了。」路明非说。他把那张纸条从口袋里抽出来，塞进衣兜。「你什么时候想好啦？」诺诺问。「今天。」他说，「明天我去找你们队长。」「为什么是我？」「因为我的腿不听使唤。」他笑了一下，声音有些轻。「那你笑得出来。」「能笑就得撑住。」路明非把纸条重新插回口袋，然后往前走了一步。「诺诺，你刚才说的那句‘我不会替别人跑’，我记下了。」诺诺停了下来。「什么意思？」「意思是，你不能替我跑。」他解释道，「你要是能跑，早就跑了。」诺诺看了他一会儿，没有再说话。她把短枪插回袋子，走到门口，又回头。「那你明天还来吗？」路明非问。「来。」她说，「明天你在哪儿见着了就往哪儿走吧。」",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [],
+                   "notes": "The only hard fact is the invented note prop; the 12 dialogue turns and the next-day promise are review-level, which is why the gate must hold rather than accept."},
+    },
+]
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
