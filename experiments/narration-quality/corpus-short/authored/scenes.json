@@ -711,6 +711,471 @@
       ],
       "notes": "锁定数字的对齐器变体，不是主正文；与 dr-0006 同一状态变化，给需要 from/to 数字的检查使用。",
       "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0010-cage-stretcher",
+      "slug": "cage-stretcher",
+      "sourceRowId": "authored:dragon-raja-free-day#cage-stretcher",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "qin",
+      "locations": [
+        "campus",
+        "west",
+        "shed",
+        "cage"
+      ],
+      "characters": [
+        "qin"
+      ],
+      "items": [
+        "cage_lock",
+        "stretcher",
+        "supply_counter",
+        "checkout_book"
+      ],
+      "time": "12 分钟",
+      "delta": {
+        "器材笼挂锁": {
+          "解除外貌": [
+            "挂锁扣住笼门插销，锁眼朝外，锁梁完整"
+          ],
+          "新增外貌": [
+            "锁梁开着，插销抽在一边"
+          ]
+        },
+        "折叠担架": {
+          "位置": "器材棚"
+        }
+      },
+      "targetText": "十二分钟过去，秦越把钥匙从腰环上解下来，插进器材笼的挂锁。锁梁弹开，他抽掉插销，把笼门推到一边；折叠担架从笼里搬出来，靠在领用台边，帆布和锁脚都扣得稳。笼里只剩折叠梯和那卷安全绳，网眼后面的东西看得清清楚楚。领用台上夹着的簿子摊开着，笔尖还没干，担架那一栏空着，他先没有落笔。",
+      "categories": [
+        "item_change",
+        "movement"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "12 分钟"
+        },
+        {
+          "kind": "item_state",
+          "item": "器材笼挂锁",
+          "from": "锁梁完整、插销扣住",
+          "to": "锁梁开着，插销抽在一边"
+        },
+        {
+          "kind": "item_move",
+          "item": "折叠担架",
+          "from": "器材笼内",
+          "to": "器材棚"
+        }
+      ],
+      "licensedDetails": [
+        "器材笼的铁网、折叠梯和安全绳（地点外貌）",
+        "领用台、领用簿和未干的笔尖（物品外貌）",
+        "解钥匙、开锁、抽插销、搬担架（完成物品移动的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "秦越",
+        "canKnow": [
+          "自己开锁和搬担架的动作",
+          "器材笼里剩下的物品",
+          "领用簿上空着的担架栏"
+        ],
+        "mustNotReveal": [
+          "谁需要担架、伤情如何",
+          "钥匙以后会不会交给别人",
+          "芬格尔的打算"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写林亦舟或任何人已经到场",
+        "不得写领用簿已经签好",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0063"
+      ],
+      "notes": "物品移动 + 挂锁外貌；担架搬到器材棚，但领用簿没有落笔，不提前写登记。",
+      "reviewState": "manually-read-input-and-target",
+      "beforeOverrides": {
+        "items": {
+          "cage_lock": {
+            "位置": "器材棚",
+            "外貌": [
+              "挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+              "器材笼钥匙能开"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dr-0011-su-report-bridge",
+      "slug": "su-report-bridge",
+      "sourceRowId": "authored:dragon-raja-free-day#su-report-bridge",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "su",
+      "locations": [
+        "campus",
+        "east_arcade",
+        "bridge",
+        "tower",
+        "lower_stairs",
+        "landing"
+      ],
+      "characters": [
+        "su",
+        "chu"
+      ],
+      "items": [
+        "rifle_su",
+        "radio_su"
+      ],
+      "time": "9 分钟",
+      "delta": {
+        "苏茜": {
+          "位置": "钟楼二层平台",
+          "完成任务": [
+            "向楚子航报告跨溪小桥的实际人员和松动护栏"
+          ]
+        }
+      },
+      "afterOverride": {
+        "楚子航": {
+          "位置": "钟楼二层平台"
+        }
+      },
+      "targetText": "九分钟过去，苏茜从东回廊北口的廊口出去，上了跨溪小桥。桥中段的护栏一推就晃，两枚螺母退在外面；她扶着桥面慢慢过去，从钟楼东侧进门，沿下层楼梯上到二层平台，向楚子航报告桥上没有人、小桥还能通行，也报告了松动的护栏。楚子航没有离开窗口，只把蓝方短讯机往腰侧按了按。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "9 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "苏茜",
+          "from": "东回廊",
+          "to": "钟楼二层平台"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "苏茜",
+          "goal": "向楚子航报告跨溪小桥的实际人员和松动护栏"
+        },
+        {
+          "kind": "position",
+          "actor": "楚子航",
+          "location": "钟楼二层平台",
+          "note": "接收报告的人没有离开"
+        }
+      ],
+      "licensedDetails": [
+        "跨溪小桥松动的护栏和退出的螺母（地点外貌）",
+        "东回廊北口、钟楼东侧、下层楼梯（地点连通）",
+        "楚子航把短讯机按向腰侧（人物原有物品的细微动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏茜",
+        "canKnow": [
+          "自己走过的路线",
+          "桥面还能通行",
+          "护栏松动的事实",
+          "楚子航在窗口"
+        ],
+        "mustNotReveal": [
+          "桥上的其他人（输入没有）",
+          "楚子航的战术决定",
+          "林亦舟的伤情"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写桥上有人或有人受伤",
+        "不得写楚子航下令或做出决定",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0100"
+      ],
+      "notes": "移动 + 任务完成；移动经过的中间地点都来自地点连通，报告只说通行和护栏，不给战术答案。",
+      "reviewState": "manually-read-input-and-target",
+      "taskGoals": [
+        "task_su_report"
+      ]
+    },
+    {
+      "id": "dr-0012-doctor-bed-ready",
+      "slug": "doctor-bed-ready",
+      "sourceRowId": "authored:dragon-raja-free-day#doctor-bed-ready",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "doctor",
+      "locations": [
+        "campus",
+        "annex",
+        "aid"
+      ],
+      "characters": [
+        "doctor"
+      ],
+      "items": [
+        "empty_bed",
+        "medical_case",
+        "triage_clipboard"
+      ],
+      "time": "16 分钟",
+      "delta": {
+        "顾岚": {
+          "完成任务": [
+            "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+          ]
+        },
+        "医护空床": {
+          "新增外貌": [
+            "床尾朝门口挪开半步，担架能直接靠到床边"
+          ]
+        }
+      },
+      "targetText": "十六分钟过去，顾岚把空床的制动轮又检查了一遍，把床尾朝门口挪开半步，担架进来能直接靠到床边。床单没有褶，屏风也拉到了不挡路的一侧。医护箱盖敞着，冷敷袋、弹力绷带和检查手套都在箱里，伸手就够得到。门口登记夹的两栏还空着，她把笔搁回夹子上，没有先写谁的名字。",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "16 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "顾岚",
+          "goal": "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+        },
+        {
+          "kind": "item_state",
+          "item": "医护空床",
+          "add": "床尾朝门口挪开半步，担架能直接靠到床边"
+        }
+      ],
+      "licensedDetails": [
+        "医护箱里敞着的冷敷袋、绷带和手套（物品外貌）",
+        "伤情登记夹的两栏（物品外貌）",
+        "检查制动轮、挪床尾、拉屏风（完成任务的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "顾岚",
+        "canKnow": [
+          "自己挪开的床和检查过的制动轮",
+          "医护箱里有什么",
+          "登记夹还是空的"
+        ],
+        "mustNotReveal": [
+          "谁受伤、伤得多重",
+          "林亦舟会不会来",
+          "曼施坦因的停赛决定"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写伤者到场、登记或治疗",
+        "不得写冷敷袋已经启用",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0197"
+      ],
+      "notes": "任务完成 + 空床外貌；只准备床位，不写伤者到达，也不写登记内容。",
+      "reviewState": "manually-read-input-and-target",
+      "taskGoals": [
+        "task_doctor_prepare"
+      ]
+    },
+    {
+      "id": "dr-0013-tang-reload",
+      "slug": "tang-reload",
+      "sourceRowId": "authored:dragon-raja-free-day#tang-reload",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "tang",
+      "locations": [
+        "campus",
+        "yard"
+      ],
+      "characters": [
+        "tang"
+      ],
+      "items": [
+        "rifle_tang",
+        "tang_magazine",
+        "bench_cover"
+      ],
+      "time": "7 分钟",
+      "delta": {
+        "唐骁": {
+          "完成任务": [
+            "在再次探身前更换空弹匣，不把空枪当成掩护火力"
+          ]
+        },
+        "唐骁的演习枪": {
+          "解除外貌": [
+            "枪机停在后位，当前没有弹匣",
+            "换入可用弹匣前无法射击"
+          ],
+          "新增外貌": [
+            "弹匣装好，枪机复位"
+          ]
+        }
+      },
+      "targetText": "七分钟过去，唐骁把枪托从肩上卸下来，从腰侧摸出那只缠红胶带的满弹匣，推进空仓，卡榫合住以后又用掌根顶了一下。他把枪机推回原位，试了试保险，才重新把枪托抵回肩窝。倒放的长椅横在他和喷泉之间，断腿压在石地上；庭院里没有新的射线，他也没有急着探身。",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "7 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "唐骁",
+          "goal": "在再次探身前更换空弹匣，不把空枪当成掩护火力"
+        },
+        {
+          "kind": "item_state",
+          "item": "唐骁的演习枪",
+          "from": "枪机停在后位、没有弹匣",
+          "to": "弹匣装好，枪机复位"
+        }
+      ],
+      "licensedDetails": [
+        "缠红胶带的满弹匣（物品外貌）",
+        "倒放长椅和断腿（地点外貌）",
+        "卸枪托、推弹匣、顶卡榫、试保险（换弹匣的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "唐骁",
+        "canKnow": [
+          "自己换上的弹匣和枪机状态",
+          "眼前长椅和喷泉的位置",
+          "庭院里有没有新的射线"
+        ],
+        "mustNotReveal": [
+          "凯撒的进攻计划",
+          "对方窗口里有没有人",
+          "任何未结算的命中或伤情"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写开火、命中或压制成功",
+        "不得写换弹匣之外的物品变化",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0178"
+      ],
+      "notes": "任务完成 + 枪械外貌；换弹匣后没有开火，也没有写压制结果。",
+      "reviewState": "manually-read-input-and-target",
+      "beforeOverrides": {
+        "items": {
+          "rifle_tang": {
+            "位置": "唐骁",
+            "外貌": [
+              "枪机停在后位，当前没有弹匣",
+              "换入可用弹匣前无法射击"
+            ]
+          }
+        }
+      },
+      "taskGoals": [
+        "task_tang_ammo"
+      ]
+    },
+    {
+      "id": "dr-0014-caesar-to-yard",
+      "slug": "caesar-to-yard",
+      "sourceRowId": "authored:dragon-raja-free-day#caesar-to-yard",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "caesar",
+      "locations": [
+        "campus",
+        "red_rally",
+        "yard",
+        "fountain"
+      ],
+      "characters": [
+        "caesar",
+        "tang"
+      ],
+      "items": [
+        "red_flag",
+        "caesar_map"
+      ],
+      "time": "6 分钟",
+      "delta": {
+        "凯撒": {
+          "位置": "中央庭院"
+        }
+      },
+      "afterOverride": {
+        "唐骁": {
+          "位置": "中央庭院"
+        }
+      },
+      "targetText": "六分钟过去，凯撒从红方集结点走进庭院，绕过喷泉池沿，在倒放的长椅后蹲下。池底的残水没有干，靠钟楼一侧的池沿缺口露在外面。红方信号旗还折在他左手边，杆脚的接口没有磕碰。唐骁守着东侧那段射界，回头看了一眼，没有说话；长椅的一条腿断着，两个人都没有再往上面站。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "6 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "凯撒",
+          "from": "红方集结点",
+          "to": "中央庭院"
+        },
+        {
+          "kind": "position",
+          "actor": "唐骁",
+          "location": "中央庭院",
+          "note": "另一名在场者仍在原处"
+        }
+      ],
+      "licensedDetails": [
+        "喷泉池底的残水、钟楼一侧的池沿缺口（地点外貌）",
+        "倒放长椅和断腿（地点外貌）",
+        "红方信号旗折在左手边（物品外貌）",
+        "回头看一眼、没有再站上长椅（合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "凯撒",
+        "canKnow": [
+          "自己走进庭院的路线",
+          "喷泉和长椅的状态",
+          "唐骁在附近的可见位置",
+          "自己手里的信号旗"
+        ],
+        "mustNotReveal": [
+          "唐骁的判断或汇报内容",
+          "蓝方窗口里的人员",
+          "任何未结算的战术结果"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写交火、命中或夺旗",
+        "不得让唐骁报告火力位置",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0182"
+      ],
+      "notes": "移动 + 另一人留在原处；只写走到长椅后，不写进攻结果。",
+      "reviewState": "manually-read-input-and-target"
     }
   ]
 }

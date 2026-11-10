@@ -309,6 +309,10 @@ def main() -> int:
     derived_count = sum(1 for r in records if r.get("sourceEvidence", {}).get("derived") is True)
     print(f"derived rows: {derived_count}")
     print(f"length: min={min(lengths) if lengths else 0} max={max(lengths) if lengths else 0}")
+    length_buckets: Counter[str] = Counter(
+        "60-79" if n < 80 else "80-119" if n < 120 else "120-160" for n in lengths
+    )
+    print("length buckets:", dict(sorted(length_buckets.items())))
     print("world families:", dict(sorted(family_counts.items())))
     print("categories:", dict(sorted(category_counts.items())))
     if errors:

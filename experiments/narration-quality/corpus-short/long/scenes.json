@@ -1,0 +1,192 @@
+{
+  "note": "Hand-written longer targets for frozen train rows. The input stays byte-identical to the frozen x; only targetText and audit metadata are new. These rows exist because the first batch topped out at 106 characters and the training side asked for 120-160 character scenes that still carry only two or three settled facts.",
+  "rows": [
+    {
+      "id": "short-long-0117-two-tasks-and-relief",
+      "sourceRowId": "row-0117",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "task_added",
+        "sanity_change"
+      ],
+      "targetText": "二十四分钟过去，秦既明把手里那本按年份排好的合订本合上，说十年前那场火是谁放的，他查清了；十月十七日那三天为什么闭馆，也查清了。他没有说出名字，只把手从封皮上收回来，袖口的墨蹭在桌沿。温照的呼吸慢慢匀下来，肩膀也松了。秦既明把查到的几件事按日子列开，准备分三份写清楚存起来。",
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "24 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "秦既明",
+          "goal": "查清十年前那场火灾是谁放的火"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "秦既明",
+          "goal": "查清十月十七日那三天的闭馆通告"
+        },
+        {
+          "kind": "task_added",
+          "owner": "秦既明",
+          "goal": "把查到的事分三份写清楚存起来"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "温照",
+          "from": 53,
+          "to": 58
+        }
+      ],
+      "licensedDetails": [
+        "合订本、铁柜抽屉（地点/物品外貌）",
+        "把几件事按日子列开（新增任务的合理动作）",
+        "温照肩膀松下、呼吸变匀（精神上升的可观察表现）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "秦既明",
+        "canKnow": [
+          "自己查清的两件事",
+          "自己准备分三份写下来的打算",
+          "温照在旁边的可见反应"
+        ],
+        "mustNotReveal": [
+          "放火的人是谁",
+          "闭馆通告上的具体内容",
+          "温照的内心判断"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写出火灾责任人姓名或纵火细节",
+        "不得写通告原文、七九年报纸或新线索",
+        "不得新增人物、物品、对话"
+      ],
+      "styleReferenceIds": [
+        "row-0152",
+        "row-0169"
+      ],
+      "notes": "两项任务完成 + 一项新增 + 一人精神上升；只报“查清”，不给答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short-long-0132-cover-row-and-dust",
+      "sourceRowId": "row-0132",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "item_change",
+        "appearance_change"
+      ],
+      "targetText": "十六分钟过去，柏书言把这一排封面朝里压着的合订本一本本抽出来，翻正，再按年份推回铁柜。抽屉很涩，最后一本推进去时卡了一下，他又抽出来重推。手掌在封面上按了一下，才松手。苏既明没有动手，只把借书卡一张张翻过去，翻到最后几张，手指上沾了一点灰，他也没擦。",
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "16 分钟"
+        },
+        {
+          "kind": "item_state",
+          "item": "合订本",
+          "remove": [
+            "封面被翻过来压在底下",
+            "扉页有一块水泡过的淡印"
+          ]
+        },
+        {
+          "kind": "task_complete",
+          "owner": "柏书言",
+          "goal": "把这一排封面被翻过去的书都翻正"
+        },
+        {
+          "kind": "appearance_change",
+          "entity": "苏既明",
+          "add": "手指上沾了一点灰"
+        }
+      ],
+      "licensedDetails": [
+        "铁柜抽屉的涩感（地点外貌）",
+        "抽书、翻正、按年份推回（完成任务的合理动作）",
+        "翻借书卡（苏既明原有动作习惯）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "柏书言",
+        "canKnow": [
+          "自己翻正了哪一排书",
+          "苏既明在旁边的可见动作和手指",
+          "合订本封面现在的朝向"
+        ],
+        "mustNotReveal": [
+          "水印或扉页印子的来历",
+          "苏既明翻卡时看到了什么",
+          "火灾答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写扉页印子的含义、水印内容或新线索",
+        "不得让苏既明说出发现",
+        "不得新增人物、物品或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0121"
+      ],
+      "notes": "完成“把封面翻正”的任务，同时写苏既明手指沾灰；不解释水印，不给火灾答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "short-long-0183-page-count-and-new-trait",
+      "sourceRowId": "row-0183",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "personality_change"
+      ],
+      "targetText": "十九分钟过去，秦暮把三本簿子并排摊在长条桌上，一页一页对过去，缺的页数对出来了。她原先要重认的那些手抖的字，这会儿不用再认；后补的页也不必再挑。合上簿子时，桌上的旧报纸味还压着，长条桌一直排到窗前。她说补页的人当时有人在等，这件事她记住了。",
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "19 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "秦暮",
+          "goal": "把三本簿子缺的页数对出来"
+        },
+        {
+          "kind": "personality_change",
+          "owner": "秦暮",
+          "remove": [
+            "手抖过的字她要重认",
+            "后补的页她一眼看得出来"
+          ],
+          "add": "补页的人当时有人在等，这件事她记住了"
+        }
+      ],
+      "licensedDetails": [
+        "长条桌和旧报纸的气味（地点外貌）",
+        "三本簿子并排摊开、逐页对（完成任务的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "秦暮",
+        "canKnow": [
+          "自己对出来的缺页数",
+          "自己记住了补页的人当时有人在等",
+          "簿子在桌上的样子"
+        ],
+        "mustNotReveal": [
+          "族谱被谁抄走",
+          "缺页的具体年份和内容",
+          "温知微的内心判断"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写缺页的年份、内容或抄写者",
+        "不得新增人物、物品、对话",
+        "不得让温知微给出答案"
+      ],
+      "styleReferenceIds": [
+        "row-0188"
+      ],
+      "notes": "任务完成 + 两条旧个性解除 + 一条新个性；新个性逐字写出，不解释缺页内容。",
+      "reviewState": "manually-read-input-and-target"
+    }
+  ]
+}

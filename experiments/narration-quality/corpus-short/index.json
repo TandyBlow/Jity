@@ -1,14 +1,20 @@
 {
-  "batch": 2,
-  "createdAt": "2026-11-10T06:30:00Z",
-  "status": "second-batch-ready",
+  "batch": 3,
+  "createdAt": "2026-11-10T07:10:00Z",
+  "status": "batch-3-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 31,
+  "rowCount": 39,
+  "rowKinds": {
+    "frozen-input": 21,
+    "derived-time-contrast": 1,
+    "frozen-input-long-target": 3,
+    "authored-product-world": 14
+  },
   "source": {
     "frozenDataset": "narration-dataset-v1",
     "frozenSourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
     "frozenSourceFile": "experiments/world-components/narration-dataset-v1/rows-xy.jsonl",
-    "frozenRows": 22,
+    "frozenRows": 25,
     "splitsUsed": [
       "train"
     ],
@@ -23,7 +29,7 @@
     "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
     "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
     "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
-    "authoredRows": 9,
+    "authoredRows": 14,
     "premise": "initial snapshot; each row is one authored turn, not a browser session"
   },
   "consumableFields": [
@@ -46,175 +52,181 @@
     "variant"
   ],
   "worldFamilies": {
-    "dragon-raja-free-day": 9,
+    "dragon-raja-free-day": 14,
     "library-basement": 4,
     "library-courtyard": 2,
     "library-lending": 2,
-    "library-news": 10,
+    "library-news": 13,
     "library-upper-corridor": 1,
     "library-utilities": 3
   },
   "categories": {
-    "appearance_change": 4,
-    "item_change": 5,
+    "appearance_change": 5,
+    "item_change": 9,
     "location_change": 6,
-    "movement": 5,
+    "movement": 8,
     "no_change": 3,
-    "personality_change": 2,
-    "sanity_change": 8,
+    "personality_change": 3,
+    "sanity_change": 9,
     "secret_reveal": 1,
-    "separation": 5,
-    "task_added": 3,
-    "task_complete": 5
+    "separation": 6,
+    "task_added": 4,
+    "task_complete": 11
   },
   "targetLength": {
     "min": 60,
-    "max": 106,
-    "mean": 79.9
+    "max": 138,
+    "mean": 89.8,
+    "buckets": {
+      "120-160": 8,
+      "60-79": 15,
+      "80-119": 16
+    }
   },
   "rows": [
     {
       "id": "short-0008-binding-no-change",
       "sourceRowId": "row-0008",
+      "kind": "frozen-input",
       "worldFamily": "library-basement",
       "categories": [
         "no_change"
       ],
       "targetChars": 87,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0050-backdoor-lock",
       "sourceRowId": "row-0050",
+      "kind": "frozen-input",
       "worldFamily": "library-lending",
       "categories": [
         "item_change",
         "task_complete"
       ],
       "targetChars": 84,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0055-reading-room-reveal",
       "sourceRowId": "row-0055",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "personality_change",
         "secret_reveal"
       ],
       "targetChars": 103,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0063-stack-room-rope",
       "sourceRowId": "row-0063",
+      "kind": "frozen-input",
       "worldFamily": "library-basement",
       "categories": [
         "location_change",
         "item_change"
       ],
       "targetChars": 80,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0060-corridor-glasses",
       "sourceRowId": "row-0060",
+      "kind": "frozen-input",
       "worldFamily": "library-upper-corridor",
       "categories": [
         "appearance_change",
         "sanity_change"
       ],
       "targetChars": 80,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0078-courtyard-drop",
       "sourceRowId": "row-0078",
+      "kind": "frozen-input",
       "worldFamily": "library-courtyard",
       "categories": [
         "sanity_change"
       ],
       "targetChars": 89,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0098-newsroom-cup",
       "sourceRowId": "row-0098",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "item_change",
         "location_change"
       ],
       "targetChars": 98,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0100-desk-swap",
       "sourceRowId": "row-0100",
+      "kind": "frozen-input",
       "worldFamily": "library-lending",
       "categories": [
         "movement",
         "separation"
       ],
       "targetChars": 78,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0101-power-room-doubt",
       "sourceRowId": "row-0101",
+      "kind": "frozen-input",
       "worldFamily": "library-utilities",
       "categories": [
         "sanity_change"
       ],
       "targetChars": 81,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0121-newspaper-clip",
       "sourceRowId": "row-0121",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "item_change"
       ],
       "targetChars": 100,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0152-archive-two-tasks",
       "sourceRowId": "row-0152",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "task_complete",
         "sanity_change"
       ],
       "targetChars": 88,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0169-archive-fire-answer",
       "sourceRowId": "row-0169",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "task_complete"
       ],
       "targetChars": 104,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0182-corridor-separation",
       "sourceRowId": "row-0182",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "movement",
@@ -222,46 +234,46 @@
         "sanity_change"
       ],
       "targetChars": 98,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0188-archive-two-cover-tasks",
       "sourceRowId": "row-0188",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "task_complete",
         "task_added"
       ],
       "targetChars": 106,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0194-power-room-fear",
       "sourceRowId": "row-0194",
+      "kind": "frozen-input",
       "worldFamily": "library-utilities",
       "categories": [
         "sanity_change"
       ],
       "targetChars": 89,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0197-basement-dehumidifier",
       "sourceRowId": "row-0197",
+      "kind": "frozen-input",
       "worldFamily": "library-basement",
       "categories": [
         "location_change"
       ],
       "targetChars": 96,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0199-rooftop-third-name",
       "sourceRowId": "row-0199",
+      "kind": "frozen-input",
       "worldFamily": "library-courtyard",
       "categories": [
         "movement",
@@ -269,90 +281,128 @@
         "task_added"
       ],
       "targetChars": 102,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0138-empty-slots",
       "sourceRowId": "row-0138",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "location_change"
       ],
       "targetChars": 64,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0161-damp-plant",
       "sourceRowId": "row-0161",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "location_change"
       ],
       "targetChars": 75,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0175-window-rustle",
       "sourceRowId": "row-0175",
+      "kind": "frozen-input",
       "worldFamily": "library-news",
       "categories": [
         "location_change"
       ],
       "targetChars": 62,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0178-dirty-hands",
       "sourceRowId": "row-0178",
+      "kind": "frozen-input",
       "worldFamily": "library-utilities",
       "categories": [
         "appearance_change"
       ],
       "targetChars": 63,
-      "authored": false,
-      "derived": false
+      "variant": null
     },
     {
       "id": "short-0008-two-minute-no-change",
       "sourceRowId": "row-0008",
+      "kind": "derived-time-contrast",
       "worldFamily": "library-basement",
       "categories": [
         "no_change"
       ],
       "targetChars": 66,
-      "authored": false,
-      "derived": true
+      "variant": null
+    },
+    {
+      "id": "short-long-0117-two-tasks-and-relief",
+      "sourceRowId": "row-0117",
+      "kind": "frozen-input-long-target",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "task_added",
+        "sanity_change"
+      ],
+      "targetChars": 137,
+      "variant": null
+    },
+    {
+      "id": "short-long-0132-cover-row-and-dust",
+      "sourceRowId": "row-0132",
+      "kind": "frozen-input-long-target",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "item_change",
+        "appearance_change"
+      ],
+      "targetChars": 125,
+      "variant": null
+    },
+    {
+      "id": "short-long-0183-page-count-and-new-trait",
+      "sourceRowId": "row-0183",
+      "kind": "frozen-input-long-target",
+      "worldFamily": "library-news",
+      "categories": [
+        "task_complete",
+        "personality_change"
+      ],
+      "targetChars": 120,
+      "variant": null
     },
     {
       "id": "dr-0001-no-change-lane",
       "sourceRowId": "authored:dragon-raja-free-day#no-change-lane",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "no_change"
       ],
       "targetChars": 62,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0002-move-nono-to-shed",
       "sourceRowId": "authored:dragon-raja-free-day#move-nono-to-shed",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "movement",
         "separation"
       ],
       "targetChars": 65,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0003-task-goggles",
       "sourceRowId": "authored:dragon-raja-free-day#task-goggles",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "task_complete",
@@ -360,76 +410,134 @@
         "appearance_change"
       ],
       "targetChars": 60,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0004-appearance-fingel",
       "sourceRowId": "authored:dragon-raja-free-day#appearance-fingel",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "appearance_change"
       ],
       "targetChars": 69,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0005-personality-nono",
       "sourceRowId": "authored:dragon-raja-free-day#personality-nono",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "personality_change"
       ],
       "targetChars": 64,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0006-sanity-lu",
       "sourceRowId": "authored:dragon-raja-free-day#sanity-lu",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "sanity_change"
       ],
       "targetChars": 64,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0007-separation-lu-shed",
       "sourceRowId": "authored:dragon-raja-free-day#separation-lu-shed",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "movement",
         "separation"
       ],
       "targetChars": 71,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0008-task-added-lu",
       "sourceRowId": "authored:dragon-raja-free-day#task-added-lu",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "task_added"
       ],
       "targetChars": 66,
-      "authored": true,
-      "derived": false
+      "variant": null
     },
     {
       "id": "dr-0009-sanity-literal",
       "sourceRowId": "authored:dragon-raja-free-day#sanity-literal",
+      "kind": "authored-product-world",
       "worldFamily": "dragon-raja-free-day",
       "categories": [
         "sanity_change"
       ],
       "targetChars": 63,
-      "authored": true,
-      "derived": false,
       "variant": "sanity-literal"
+    },
+    {
+      "id": "dr-0010-cage-stretcher",
+      "sourceRowId": "authored:dragon-raja-free-day#cage-stretcher",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "item_change",
+        "movement"
+      ],
+      "targetChars": 138,
+      "variant": null
+    },
+    {
+      "id": "dr-0011-su-report-bridge",
+      "sourceRowId": "authored:dragon-raja-free-day#su-report-bridge",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "targetChars": 130,
+      "variant": null
+    },
+    {
+      "id": "dr-0012-doctor-bed-ready",
+      "sourceRowId": "authored:dragon-raja-free-day#doctor-bed-ready",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "targetChars": 127,
+      "variant": null
+    },
+    {
+      "id": "dr-0013-tang-reload",
+      "sourceRowId": "authored:dragon-raja-free-day#tang-reload",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "targetChars": 121,
+      "variant": null
+    },
+    {
+      "id": "dr-0014-caesar-to-yard",
+      "sourceRowId": "authored:dragon-raja-free-day#caesar-to-yard",
+      "kind": "authored-product-world",
+      "worldFamily": "dragon-raja-free-day",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "targetChars": 127,
+      "variant": null
     }
   ]
 }
