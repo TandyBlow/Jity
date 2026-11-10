@@ -130,6 +130,16 @@ export interface CandidateIssue {
 }
 
 export interface CandidateAttempt {
+  /** 1-based, matching 09's attempt table. */
+  attempt?: number;
+  /** Raw model output before thinking/template cleanup. */
+  raw?: string;
+  /** Cleaned prose (same as `text`); 09 reads this name. */
+  cleaned?: string;
+  finishReason?: string | null;
+  error?: string | null;
+  durationMs?: number;
+  firstTokenMs?: number | null;
   index: number;
   prompt: string;
   promptChars: number;

@@ -39,7 +39,7 @@ export function renderNarrationUser(
       lines.push('每条移动事实都要用一句明确写出人名和两个地点，不要只用「他走过来」代替。');
     }
   } else {
-    lines.push('这一小段时间里没有实体变化。不要写任何移动、任务达成或新的动作。');
+    lines.push('这一小段时间里没有实体变化。视角人物停在原地：不要走向、靠近、离开或转向任何地点，也不要写任务达成或新的动作。');
   }
   const time = normalizeTime(policy.time);
   if (time) {
@@ -130,12 +130,19 @@ function renderScene(scene: CandidateScene | null): string[] {
   const lines: string[] = [];
   const place = scene.placeNotes?.filter(Boolean).join(' ') ?? '';
   lines.push(`场景：${scene.location}${place ? `。${place}` : ''}`);
+  // Long appearance notes are quoted verbatim by 1.5B/1.7B ("红发用发圈束在脑后，
+  // 红色识别带缠在左臂…"). The first two clauses carry the visible detail; the
+  // rest is state that belongs to the world, not to this passage.
+  const clip = (note: string) => {
+    const clauses = note.split(/[；;]/).map((part) => part.trim()).filter(Boolean).slice(0, 2).join('；');
+    return [...clauses].length > 64 ? `${[...clauses].slice(0, 64).join('')}…` : clauses;
+  };
   if (scene.present?.length) {
-    const people = scene.present.map((entry) => (entry.note ? `${entry.name}（${entry.note}）` : entry.name));
+    const people = scene.present.map((entry) => (entry.note ? `${entry.name}（${clip(entry.note)}）` : entry.name));
     lines.push(`在场人物：${people.join('；')}。`);
   }
   if (scene.objects?.length) {
-    const objects = scene.objects.map((entry) => (entry.note ? `${entry.name}（${entry.note}）` : entry.name));
+    const objects = scene.objects.map((entry) => (entry.note ? `${entry.name}（${clip(entry.note)}）` : entry.name));
     lines.push(`在场物品：${objects.join('；')}。`);
   }
   return lines;

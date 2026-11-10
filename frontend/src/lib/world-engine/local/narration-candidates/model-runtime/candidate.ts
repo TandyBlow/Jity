@@ -237,9 +237,11 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     const repair = index > 0 && best ? repairNote(best.issues, best.text) : '';
     const userText = repair ? `${baseUser}\n\n${repair}` : baseUser;
     let display = '';
+    let attemptFirstTokenMs: number | null = null;
     const filter = new ThinkingFilter();
     const onChunk = (raw: string) => {
       if (firstProgressMs === null) firstProgressMs = performance.now() - started;
+      if (attemptFirstTokenMs === null && raw.trim()) attemptFirstTokenMs = performance.now() - attemptStarted;
       const added = filter.push(raw.slice(display.length));
       display = raw;
       if (!added) return;
@@ -247,6 +249,7 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       args.onProgress?.({ text: filter.text, status: 'streaming', verified: false, elapsedMs: performance.now() - started });
     };
     let text = '';
+    let rawText = '';
     let completion: CompletionEvidence | null = null;
     let truncated = false;
     let failed = false;
@@ -257,7 +260,8 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
       if (tail) {
         if (firstReadableMs === null && tail.trim().length > 0) firstReadableMs = performance.now() - started;
       }
-      text = cleanNarration(result.text || filter.text);
+      rawText = result.text || filter.text;
+      text = cleanNarration(rawText);
       completion = result.completion;
       truncated = result.truncated;
       failed = result.failed;
@@ -278,7 +282,12 @@ export async function generateCandidate(args: CandidateArgs, options: GenerateCa
     const attemptMs = performance.now() - attemptStarted;
     perAttemptMs.push(attemptMs);
     attempts.push({
-      index, prompt: userText, promptChars: userText.length, text, completion,
+      index, attempt: index + 1, prompt: userText, promptChars: userText.length, text, completion,
+      raw: rawText || text, cleaned: text,
+      finishReason: completion?.finishReason ?? null,
+      error: failed ? terminalError : null,
+      durationMs: performance.now() - attemptStarted,
+      firstTokenMs: attemptFirstTokenMs,
       verification, accepted, issueKinds: issues.map((issue) => issue.kind),
       temperature: index === 0 ? temperature : REPAIR_TEMPERATURE,
     });

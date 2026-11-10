@@ -109,6 +109,15 @@ describe('prose projection', () => {
       .toEqual([{ name: '周宁', location: '门厅' }, { name: '林川', location: '门厅' }]);
   });
 
+  test('scene notes are clipped to two visible clauses', () => {
+    const note = '红发用发圈束在脑后；红色识别带缠在左臂；右袖有红痕；手里短枪枪口压向地面';
+    const text = renderNarrationUser(movePacket(), '', {
+      scene: { location: '门厅', present: [{ name: '周宁', note }] },
+    });
+    expect(text).toContain('红发用发圈束在脑后；红色识别带缠在左臂');
+    expect(text).not.toContain('手里短枪枪口压向地面');
+  });
+
   test('a world-sized knownEntities list is reduced to the scene names', () => {
     const text = renderNarrationUser(movePacket(), '', {
       scene: { location: '门厅', present: [{ name: '林川' }, { name: '周宁' }], objects: [{ name: '盒子' }] },
@@ -183,7 +192,7 @@ describe('prompt rendering', () => {
   test('an empty delta explicitly forbids inventing changes', () => {
     const text = renderNarrationUser({ anchor: ANCHOR, facts: [] }, '', { time: { amount: 5, unit: 'minute' } });
     expect(text).toContain('这一小段时间里没有实体变化');
-    expect(text).toContain('不要写任何移动、任务达成或新的动作');
+    expect(text).toContain('视角人物停在原地');
     expect(text).toContain('5分钟');
   });
 
