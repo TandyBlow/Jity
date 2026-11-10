@@ -48,6 +48,9 @@ export interface PortCallRecord {
   evidenceCalls: number;
   /** Updates stages in the order this task ran them (merged or split). */
   stages?: string[];
+  /** How many characters the stage answers covered. The full cast is a product
+   * requirement, and this is the lightweight proof 09 can read from the page. */
+  coverage?: { tasks: number; personality: number };
 }
 
 export interface PortSubmission {
@@ -111,9 +114,19 @@ export function createSettlementModelPort(
       calls: outcome.evidence.calls.length,
       evidenceCalls: outcome.evidence.calls.filter((call) => !call.error).length,
     };
-    const detail = outcome.evidence.detail as { stages?: { stage?: string }[] } | null;
+    const detail = outcome.evidence.detail as {
+      stages?: { stage?: string }[];
+      taskCoverageIds?: unknown[];
+      personalityCoverageIds?: unknown[];
+    } | null;
     if (Array.isArray(detail?.stages)) {
       record.stages = detail.stages.map((row) => String(row.stage));
+    }
+    if (Array.isArray(detail?.taskCoverageIds) || Array.isArray(detail?.personalityCoverageIds)) {
+      record.coverage = {
+        tasks: detail?.taskCoverageIds?.length ?? 0,
+        personality: detail?.personalityCoverageIds?.length ?? 0,
+      };
     }
     calls.push(record);
     if (submission) {

@@ -264,6 +264,56 @@ describe('turn execution through the real kernel', () => {
     expect(consumed.every((call) => call.actor === 'person_c' || call.text === '我打开盒盖。')).toBe(true);
   });
 
+  it('runs a multi-round chain, consumes the command once, and stops on no progress', async () => {
+    const brain = brainState({
+      placement: { person_c: 'corridor', person_a: 'corridor' },
+      taskAchieved: false,
+      continuations: [
+        { candidates: [{ characterId: 'person_a', text: '林川朝盒盖那边走了一步。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川又往前挪了半步。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川伸手碰了碰盒沿。' }] },
+        { candidates: [{ characterId: 'person_a', text: '林川低头看了看盒子。' }] },
+      ],
+    });
+    const initial = initialState(brain);
+    const order = Object.keys(initial.characters).sort();
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const { model, settlement } = driverFor(initial, brain);
+    const memory = initialMemory('test_chain', 'holder_chain');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: '我打开盒盖。', order };
+    memory.allocPlan = {
+      allocationKey: 'test_chain_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const driver = new ControllerDriver({ transport, model }, memory);
+    settlement.beginSubmission('我打开盒盖。');
+    await expect(driver.run()).rejects.toThrow(/continuation_policy_no_progress/u);
+    const submission = settlement.endSubmission()!;
+    // Two rounds produced no committed change (the player's own round and the
+    // first automatic round), which is the designed no-progress stop: the chain
+    // ends after the second observation, not at a default call cap.
+    expect(submission.continuationCalls).toBe(2);
+    expect(submission.continuationDecision).toBe('policy_stop');
+    expect(submission.stops).toContain('continuation:continuation_policy_no_progress');
+    expect(submission.updatesCalls).toBeGreaterThanOrEqual(2);
+    // The player command is executable exactly once; later rounds see it as
+    // history and the action lane decides from state instead.
+    const executedPlayerCommand = brain.seenInputs.filter((call) => call.text === '我打开盒盖。' && call.intentStatus === 'pending');
+    expect(executedPlayerCommand.length).toBeGreaterThan(0);
+    expect(brain.seenInputs.some((call) => call.intentStatus === 'consumed')).toBe(true);
+    const snapshot = transport.snapshot();
+    expect(snapshot.version).toBe(2);
+    expect(snapshot.round?.trigger).toBe('automatic');
+    expect(snapshot.round?.conclusion).toBeNull();
+    // A policy stop never rewrites committed state.
+    expect(snapshot.state.characters.person_a.tasks.task_watch?.status).toBe('pending');
+  });
+
   // Shared bug fixed by 06 (schedule.ts `inputIds`): the working state's
   // location appearanceChanges are now registered as known change ids, so a
   // second change to the same room is a normal replacement instead of a
