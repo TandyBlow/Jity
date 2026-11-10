@@ -1467,3 +1467,18 @@ describe('length and paragraph shape follow the reference corpus', () => {
     expect(prompt).toContain('写成一段');
   });
 });
+
+describe('closed name list: a countable constraint instead of a general ban', () => {
+  test('the list includes the viewpoint, present people, held objects and known places', () => {
+    const prompt = renderProseFactsPrompt({
+      committed: packet(povAt), policy: { ...basePolicy, knownPositions: [{ name: '周宁', location: '走廊' }] },
+      scene: { location: '走廊', present: [{ name: '林川' }], objects: [{ name: '林川的盒子' }] },
+      priorTail: null,
+    });
+    expect(prompt).toContain('【可用名字】');
+    expect(prompt).toContain('周宁'); // viewpoint
+    expect(prompt).toContain('林川'); // present
+    expect(prompt).toContain('林川的盒子'); // held object
+    expect(prompt).toContain('清单之外的人名、物名、声音、气味都不要写');
+  });
+});

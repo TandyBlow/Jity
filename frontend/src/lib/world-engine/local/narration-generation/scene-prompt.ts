@@ -179,6 +179,22 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     }
   }
 
+  // A closed list of names is a stronger constraint than a general "do not
+  // invent": the model can check each noun against it. Built only from what
+  // the caller already licensed, so nothing new is introduced here.
+  const allowedNames = [
+    ...(view ? [view] : []),
+    ...present.map((person) => person.name),
+    ...held.map((object) => object.name),
+    ...(scene?.location ? [scene.location] : []),
+    ...(policy.knownPositions ?? []).map((position) => position.location),
+  ].filter(Boolean);
+  const uniqueNames = [...new Set(allowedNames)];
+  if (uniqueNames.length) {
+    lines.push(`【可用名字】这一回合只允许出现这些人和物的名字：${uniqueNames.join('、')}。`);
+    lines.push('清单之外的人名、物名、声音、气味都不要写；需要指代时用上面的名字或省略主语。');
+  }
+
   if (projected.required.length) {
     lines.push('这一小段时间里发生的事（必须写进正文，不能添加别的事件）：');
     for (const fact of projected.required) {
