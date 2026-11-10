@@ -313,34 +313,40 @@ def main() -> int:
             check_authored_entities(errors, label, record, world_names)
         else:
             frozen_count += 1
-            if source_id not in source_rows:
-                fail(errors, f"{label}: sourceRowId {source_id} not in frozen rows")
-                continue
-            if split_of.get(source_id) != "train" or record["sourceSplit"] != "train":
-                fail(errors, f"{label}: split must be train, got {split_of.get(source_id)!r}/{record['sourceSplit']!r}")
-            if evidence.get("rowId") != source_id:
-                fail(errors, f"{label}: sourceEvidence.rowId != sourceRowId")
-            if evidence.get("split") != "train":
-                fail(errors, f"{label}: sourceEvidence.split must be train")
-            if evidence.get("sourceCommit") != SOURCE_COMMIT:
-                fail(errors, f"{label}: sourceEvidence.sourceCommit mismatch")
-
-            source_input = source_rows[source_id]["x"]
             derived = evidence.get("derived") is True
             if derived:
-                if evidence.get("baseRowId") != source_id:
-                    fail(errors, f"{label}: derived row baseRowId must equal sourceRowId")
+                base_id = evidence.get("baseRowId")
+                if source_id != f"derived:{base_id}":
+                    fail(errors, f"{label}: derived sourceRowId must be derived:<baseRowId>")
+                if base_id not in source_rows:
+                    fail(errors, f"{label}: derived baseRowId {base_id} not in frozen rows")
+                    continue
+                if record["sourceSplit"] != "train" or split_of.get(base_id) != "train":
+                    fail(errors, f"{label}: derived split must be train")
                 if not evidence.get("derivation"):
                     fail(errors, f"{label}: derived row needs a derivation note")
+                source_input = source_rows[base_id]["x"]
                 expected_input = copy.deepcopy(source_input)
                 expected_input["本回合变化"]["时间推进"] = record["input"]["本回合变化"]["时间推进"]
                 if record["input"] != expected_input:
                     fail(errors, f"{label}: derived input must differ from the base only in time advance")
                 expected_hash = hashlib.sha256(canonical(record["input"]).encode("utf-8")).hexdigest()
             else:
-                if record["input"] != source_input:
+                if source_id not in source_rows:
+                    fail(errors, f"{label}: sourceRowId {source_id} not in frozen rows")
+                    continue
+                if split_of.get(source_id) != "train" or record["sourceSplit"] != "train":
+                    fail(errors, f"{label}: split must be train, got {split_of.get(source_id)!r}/{record['sourceSplit']!r}")
+                if evidence.get("rowId") != source_id:
+                    fail(errors, f"{label}: sourceEvidence.rowId != sourceRowId")
+                expected_input = source_rows[source_id]["x"]
+                if record["input"] != expected_input:
                     fail(errors, f"{label}: input differs from frozen x")
-                expected_hash = hashlib.sha256(canonical(source_input).encode("utf-8")).hexdigest()
+                expected_hash = hashlib.sha256(canonical(expected_input).encode("utf-8")).hexdigest()
+            if evidence.get("split") != "train":
+                fail(errors, f"{label}: sourceEvidence.split must be train")
+            if evidence.get("sourceCommit") != SOURCE_COMMIT:
+                fail(errors, f"{label}: sourceEvidence.sourceCommit mismatch")
         if record["sourceInputSha256"] != expected_hash:
             fail(errors, f"{label}: sourceInputSha256 mismatch")
 

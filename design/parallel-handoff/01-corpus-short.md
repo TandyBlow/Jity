@@ -26,7 +26,7 @@
 - `input` 是旧行 `x` 的原样拷贝；每行有 `sourceInputSha256`，检查脚本会重算。4 行长正文只是给另外四行冻结 `x` 写更长的目标，25 行 `short2-*` 是另外 25 行冻结 `x` 的短正文，输入都没有改。
 - 19 行产品材料来自 `frontend/public/worlds/dragon-raja-free-day.world.json` 的初始快照，源提交 `865ae64e0901a70c3db4f1d0eb2af60268943c53`，世界文件 SHA-256 `0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a`。每行只落一个 authored 的本回合变化；不是浏览器会话，不声称前几回合发生过。人物、地点、物品、任务全部来自该世界文件，检查脚本会验证正文里出现的世界实体名都在本行输入里。
 - 旧长 `y` 只做文风参考，不做事实来源。已发现长 `y` 与 `本回合变化` 不一致的行（`row-0182`、`row-0199`），正文按变化写，不按长 `y` 搬事件。
-- **1 行派生对照**：`short-0008-two-minute-no-change` 以 `row-0008` 为底，只把 `本回合变化.时间推进` 从 20 分钟改成 2 分钟，其余输入和状态不变；`sourceEvidence.derived=true`、`baseRowId=row-0008`，并写明 derivation。它只训练“两分钟过去、没有新事件”，不是旧 199 行中的冻结行；检查脚本会验证相对底行只改了时间。
+- **1 行派生对照**：`short-0008-two-minute-no-change` 以 `row-0008` 为底，只把 `本回合变化.时间推进` 从 20 分钟改成 2 分钟，其余输入和状态不变；`sourceRowId=derived:row-0008`、`sourceEvidence.derived=true`、`baseRowId=row-0008`，并写明 derivation。它的 `sourceRowId` 故意不写成 `row-0008`，这样 10 线按 `sourceRowId` join `rows-v2` 时会自然跳过它，不需要额外分支。它只训练“两分钟过去、没有新事件”，不是旧 199 行中的冻结行；检查脚本会验证相对底行只改了时间。
 
 ## 一行结构
 
@@ -90,7 +90,7 @@
 - 如果 `qwen25-beat-v1` 需要 beat：从 `requiredFacts` 拆，但 beat 文本要另写；不要机械切 `targetText`。本批现在能按事实绑定，已经具备切 beat 的条件。
 - `styleReferenceIds` 指向旧长文；只借节奏、对白密度、人物反应，不搬事件。
 - 本批没有连续回合；`sequenceId`/`turnIndex` 为 `null`，不要当连续序列。
-- 导入时注意三类来源：① 22 行首批 + 4 行 `short-long-*` + 25 行 `short2-*` 都是冻结 `x`，可与 `rows-v2` 的 `xProse` 逐字节对照（`short-0008-two-minute-no-change` 除外，只差时间）；② `dr-*` 产品行没有对应的 `rows-v2` 源，不能做“等于冻结 `xProse`”的断言，需要按世界文件 SHA 单独登记；③ 产品行和派生行不能按 `sourceRowId` join `rows_v2`，导入脚本要显式跳过或按 `id` 单独处理。
+- 导入时注意三类来源：① 22 行首批 + 4 行 `short-long-*` + 25 行 `short2-*` 都是冻结 `x`，可与 `rows-v2` 的 `xProse` 逐字节对照（`short-0008-two-minute-no-change` 的 `sourceRowId` 是 `derived:row-0008`，按 id 查不到，正好跳过；不要把它当成缺失）；② `dr-*` 产品行没有对应的 `rows-v2` 源，不能做“等于冻结 `xProse`”的断言，需要按世界文件 SHA 单独登记；③ 产品行不能按 `sourceRowId` join `rows_v2`，导入脚本要显式跳过或按 `id` 单独处理。
 - 70 行里有 7 行 120–152 字；如果 `yShort` 只想要 60–120，按 `targetChars` 过滤即可，不要机械截断。
 
 ## 给 02：怎么当参照
@@ -132,6 +132,8 @@ python -X utf8 experiments/narration-quality/corpus-short/check_corpus.py
 ```
 
 当前输出：70 行；长度 61–152（14 行 60–79、49 行 80–119、7 行 120–160）；51 行旧材料（22 行首批 + 4 行同冻结输入的长正文 + 25 行同冻结输入的短正文，含 1 行派生对照只改时间）+ 19 行产品世界 authored；全部标 train；世界文件 SHA、行哈希、authored 变化与结果状态一致性、姿势词（输入有依据除外）、未授权实体、事件动词、时间推进和 `requiredFacts` 检查通过。语义检查是人工的，脚本不替代。
+
+10 线 `import_short_corpus.py` 的只读副本（`/tmp`，不改 10 线工作树）已经跑过本批：70 行、84 条 beat、84 条强制事实、`problems: []`；其中 18 行本来就没有强制事实（无变化/纯外貌/纯物品），所以 `beatCount=0`，其余 52 行每条事实都切出了 beat。语料文件的 SHA-256 是 `b6709d8ce74492220499e29f929bcc1923171c2d3317bb87642275087207bc22`。
 
 ## 已知限制
 

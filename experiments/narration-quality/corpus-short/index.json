@@ -372,7 +372,7 @@
     },
     {
       "id": "short-0008-two-minute-no-change",
-      "sourceRowId": "row-0008",
+      "sourceRowId": "derived:row-0008",
       "kind": "derived-time-contrast",
       "worldFamily": "library-basement",
       "categories": [
@@ -920,6 +920,15 @@
     "rowsFullyBound": 70,
     "serializer": "lane-10 projection_v2 + v2_render",
     "serializedRows": 70,
-    "onlyDifference": "short-0008-two-minute-no-change differs from row-0008 xProse only in the time advance"
+    "onlyDifference": "short-0008-two-minute-no-change differs from row-0008 xProse only in the time advance",
+    "lane10Importer": {
+      "script": "10-training experiments/narration-runtime-v2/src/import_short_corpus.py (read-only /tmp copy)",
+      "rows": 70,
+      "beats": 84,
+      "facts": 84,
+      "problems": [],
+      "corpusSha256": "b6709d8ce74492220499e29f929bcc1923171c2d3317bb87642275087207bc22",
+      "note": "18 rows have no mandatory fact, so beatCount 0 is expected; the other 52 rows bound every fact."
+    }
   }
 }

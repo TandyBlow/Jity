@@ -25,7 +25,7 @@ def canonical(obj: object) -> str:
 
 def main() -> int:
     spec = json.load(io.open(SPEC_PATH, encoding="utf-8"))
-    texts = {entry["id"]: entry["targetText"] for entry in spec["rows"]}
+    texts = {entry["id"]: entry for entry in spec["rows"]}
     if len(texts) != len(spec["rows"]):
         raise SystemExit("duplicate id in first/scenes.json")
 
@@ -41,7 +41,13 @@ def main() -> int:
             digest = hashlib.sha256(canonical(row["input"]).encode("utf-8")).hexdigest()
             if digest != row["sourceInputSha256"]:
                 raise SystemExit(f"{rid}: frozen input hash changed")
-            text = texts[rid]
+            entry = texts[rid]
+            text = entry["targetText"]
+            override = entry.get("sourceRowId")
+            if override:
+                if not (override.startswith("row-") or override.startswith("derived:row-")):
+                    raise SystemExit(f"{rid}: unexpected sourceRowId override {override!r}")
+                row["sourceRowId"] = override
             if not 60 <= len(text) <= 160:
                 raise SystemExit(f"{rid}: {len(text)} chars is outside 60-160")
             row["targetText"] = text
