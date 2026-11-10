@@ -78,6 +78,10 @@ describe('the real 17:01Z nono prompt on the shipped world', () => {
     const prompt = prompts[0]!;
     expect(prompt).toContain('诺诺');
     expect(prompt).toContain('主角也在同一地点');
+    // The task-goal fix is in the same prompt: a measurable 8-char rule and a
+    // concrete transformation example, because the 0b69 model copied a goal.
+    expect(prompt).toContain('连续 8 个字');
+    expect(prompt).toContain('确认对方是否需要医护帮助');
     expect(prompt).not.toContain('我沿着服务巷往里走');
     expect(prompt).not.toContain('路明非沿着服务巷往里走');
     expect(prompt).toContain('黄黑绳');

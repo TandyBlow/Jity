@@ -305,6 +305,10 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(result.attempts).toBe(2);
     expect(codes(result)).toContain('action_is_task_goal');
     expect(result.value).toEqual({ kind: 'act', text: '阿宁走到门后，把门闩扣上。' });
+    // The repair names the matched goal and the measurable 8-char rule; the
+    // 0b69 run failed twice because the old repair only said 'do not copy'.
+    expect(engine.prompts[1]).toContain(goal);
+    expect(engine.prompts[1]).toContain('连续 8 个字');
     codecAccepts(result);
   });
 
