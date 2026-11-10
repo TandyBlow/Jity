@@ -59,10 +59,13 @@ const checks: Check[] = [
   },
   {
     id: 'storage-passed',
-    required: true,
+    // Informational since the adapter defaults to window.localStorage in a
+    // browser; passing it explicitly is still clearer and survives future
+    // storage changes (e.g. a test shim).
+    required: false,
     ok: Boolean(syncCall && /storage\s*:/u.test(syncCall.text)),
     where: syncCall ? `page.tsx:${syncCall.line}` : 'missing',
-    fix: '02. pass storage: window.localStorage so the offline queue and last known head survive a reload',
+    fix: '02 (info). storage: window.localStorage is now the browser default; pass it explicitly if the page swaps stores',
   },
   {
     id: 'restore-on-open',
