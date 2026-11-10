@@ -193,25 +193,25 @@ describe('real recovery session continuity', () => {
   // write after restore keeps the saved source labels.
   it('keeps restored narration sources in the next persisted snapshot', async () => {
     const sources = { p1: { source: 'model' as const } };
-    let persisted: LocalGameSnapshot | null = null;
+    const persisted: { current: LocalGameSnapshot | null } = { current: null };
     const session = await LocalGameSession.create(template(), scriptedModel([]), {
       roll: () => 13,
       narrationSourceOf: () => sources,
-      onPersist: (snapshot) => { persisted = snapshot; },
+      onPersist: (snapshot) => { persisted.current = snapshot; },
     });
     await session.start();
     await session.submit('我打开盒盖。');
-    expect(persisted?.narrationSources?.p1?.source).toBe('model');
+    expect(persisted.current?.narrationSources?.p1?.source).toBe('model');
 
-    let next: LocalGameSnapshot | null = null;
-    const restored = await LocalGameSession.restore(persisted, scriptedModel([]), {
+    const next: { current: LocalGameSnapshot | null } = { current: null };
+    const restored = await LocalGameSession.restore(persisted.current!, scriptedModel([]), {
       leaseHeartbeat: false,
       narrationSourceOf: () => undefined,
-      onPersist: (snapshot) => { next = snapshot; },
+      onPersist: (snapshot) => { next.current = snapshot; },
     });
     await restored.start();
     await restored.submit('我退回走廊。');
-    expect(next?.narrationSources?.p1?.source).toBe('model');
+    expect(next.current?.narrationSources?.p1?.source).toBe('model');
   });
 
   it('restores the real 415c snapshot and preserves its state and sources', async () => {
