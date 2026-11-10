@@ -204,3 +204,26 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 
 - 语义参考：`origin/codex/d-training-source-20261110` 提交 `51bd76e97a8892a6ff012a2ebea57476deb22d4b`，`experiments/world-components-logic/short_settlement.py`（D05/D06 六阶段、共同结果）、`short_lifecycle.py`（D07 继续判断）、`tests/test_short_settlement.py`。本线按浏览器契约重写为 TypeScript，没有引入 Python 运行时依赖。
 - 设计：`design/browser-world-state-workflow.md` §6.1–6.3（共同组、结果、六阶段）、§8.1（自动推进）；`design/world-engine-reports/full-design-implementation-direction.md` R09/R10。
+
+## 当前真实调用的耗时分解（2026-11-10）
+
+16:46 的真实页面运行（head `81d5507a`，`:3241`）第一次通过了 `results` 和整组 `updates`，但随后自动回合超时。逐阶段 ledger：
+
+| 阶段 | 模型时间 | 调用数 | 结果 |
+|---|---:|---:|---|
+| position | 9.6 s | 1 | 通过 |
+| appearance | 26.0 s | 1 | 通过 |
+| tasks | 77.3 s | 2 | 第一次被拒后重试，最终 14/14、73 任务全空 |
+| subtasks | 15.3 s | 1 | 通过 |
+| personality / sanity | 0 | 0 | 无新任务达成，跳过 |
+
+所以“14 条任务 JSON 本身要 77 秒”不成立；**tasks 的主要成本是那次重试**。17:01 的运行（head `a5ca28d7`，含 unknown-task 容错）整组 `updates` 142.2 s，但页面在 330 s 超时前没有把 submission 附到记录上，逐阶段耗时无法回收；下一次真实页面运行会在打开期间记录 `stageMs`（`onTask` 现在带 `stageMs/stages`）。
+
+当前改动（`117befcf`、`a58beae4`、`7fe515bc`）：
+
+- 未知/占位/他人任务 id 按条拒绝并写入 `taskScope.rejectedTaskIds`，同一答案里的合法决定保留；人物覆盖仍是硬要求，不默认场外 pending，也不额外花一次调用。
+- 六个阶段提示的开头改成完全相同的“当前时间 + 本组结算结果”块；wllama 的 `cache_prompt` 可以复用这段前缀，后面的阶段不再重复预填同一份结果。
+- 任务提示输出稳定短键 `t1..t73`，程序展开回真实任务 id；完整 14 人物、73 任务行仍在提示里。
+- `updates` 的 `onTask` 详情带 `stageMs/stages`，即使整轮超时也能在页面日志里定位阶段成本。
+
+尚未证明：共享前缀在真实 wllama 调用中命中多少 token、短键是否减少输出、以及消除重试后 tasks 的真实耗时。需要下一次真实页面运行；在拿到 `stageMs` 之前不宣称时延已达标。
