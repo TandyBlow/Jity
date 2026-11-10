@@ -1021,6 +1021,9 @@ export function reviewNarration(args: {
       const movedHere = MOVE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb));
       const moverHere = movedHere && projection.moves.some((move) => move.kind === 'person' && narration.includes(move.name));
       if (sound === '脚步声' && moverHere) continue;
+      // Laughter needs someone the viewpoint can see; 孩童的笑声 with no child
+      // in the scene is an invented source.
+      if (sound === '笑声' && projection.visibleNames.some((name) => narration.includes(name))) continue;
       // Ambient sounds of a settled action (a door the text says opened, an
       // object the text says was handled) are licensed by that action.
       const actionHere = ITEM_STATE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
@@ -1193,6 +1196,20 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.body_mark_added', sentence.text,
         `${personName}: ${body[1]} has ${mark[1]} in the prose but not in the settled appearance`, [settled.slice(0, 40)], []));
       break;
+    }
+    // Hair settled tied up (束在脑后) cannot hang loose (垂落/披散) in the
+    // same turn; the string is part of the settled appearance.
+    {
+      for (const [personName, person] of Object.entries(projection.people)) {
+        const tied = [...person.appearanceAfter, ...person.appearanceBefore]
+          .find((look) => /(束|扎|盘)[^。]{0,3}(脑后|头上|发髻)/u.test(look));
+        if (!tied) continue;
+        if (!refersTo(sentence.text, sentences.indexOf(sentence), personName)) continue;
+        if (!/(垂落|披散|散开|垂在肩|散在肩|披在肩)/u.test(narration)) continue;
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${personName}: the hair is settled tied up, but the prose lets it hang loose`, [tied.slice(0, 40)], []));
+        break;
+      }
     }
     // Goggles settled on the chest cannot be worn on the eyes in the same turn
     // unless the point completed the "put them on" task.

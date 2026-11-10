@@ -1028,6 +1028,31 @@ anchors.append(
     },
 )
 
+
+rows_cont = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-cont.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-cont-laughter-past",
+        "source": "02 Qwen3-1.7B continuation run (162 chars, rejected by 02): children's laughter and a war memory",
+        "input": rows_cont["q3-cont-1"]["input"],
+        "text": rows_cont["q3-cont-1"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.past_added", "fact.sound_added"], "style": [], "review": [],
+                   "notes": "孩童的笑声 has no child in the scene; 曾经被战火灼伤 is an unsettled past event."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/q3-cont-hair",
+        "source": "02 Qwen3-1.7B continuation runs 2/3 (156/134 chars): 诺诺's tied hair hangs loose",
+        "input": rows_cont["q3-cont-2"]["input"],
+        "text": rows_cont["q3-cont-2"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "Red hair is settled 束在脑后; 红发垂落 is a state change."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
