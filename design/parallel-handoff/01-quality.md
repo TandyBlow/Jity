@@ -211,3 +211,4 @@
 - prompt-route hour 独立复核（7 case）：全部有硬/重大无据错误（路明非红发×2、诺诺束发变散×3、无据风声/声音×5、新/移动物件×4、状态清单），6/7 自动 accepted 不是质量；71 字两例也因事实失败。**建议 no-go**：当前 prompt 不作为主路线，停止串行 prompt 补丁，保留 7 例作回归，转向已结算事实结构+模型正文。见 `decision.md`/`review/`。
 - 102f（run 2026-11-10T2230-7ddd，head 102fdf1a，build 9B4it4o6pdxfJIWYX5UiH）**FAILED**：page `0d72d63d` ≠ frozen `07690eb4`；0.6B shard fetch 失败（4-12 ms）；0 字/749 ms，未进正文。03ec 同类 setup 失败；06/09 修页面冻结与 0.6B shard，不当作正文样本。
 - a178（run 2026-11-10T2236-fb80，head a178ef78，build dT9HKlAA54xSfOhfsk1nS）第 1 回合：95 字 model、129.3 s；首次把走/看规则牌写进正文，绳保持已放下；但时间缺失、加阳光、袖口负细节、墙面/弹痕位置泛化。不是质量通过。
+- a178 结束 **COMPLETED**（22:41:10Z）但仅 1 回合；1 回合完成不等于 3/10/20 验收或产品通过。
