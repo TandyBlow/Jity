@@ -68,10 +68,12 @@ cherry-pick is conflict-free. Run `npx tsc --noEmit -p tsconfig.json`,
 and the action suite after it; the round test uses the current
 `LocalWorldTransport` snapshot shapes (`state`, `rolls`, `points`).
 
-> **Blocking review finding**: 06's `game-model.ts:171-189` still skips an NPC
-> when the player's sentence does not contain their name
-> (`scene_budget_unnamed`). That runs *before* the handlers and defeats R06.
-> Evidence, cost check and the exact deletion are in
+> **Blocking review findings (06's files)**: (1) `app/world-local/page.tsx:204`
+> still passes `maxAutonomousActors: 0`, the exact defect this lane exists to
+> remove — every non-protagonist is skipped before any model judgement; (2)
+> `local/game-model.ts:171-189` also skips an NPC whose name is not in the
+> player's sentence (`scene_budget_unnamed`). Even with a positive budget the
+> name gate keeps the old rule. Evidence, cost check and exact patches are in
 > `results/product/reviews/03-actions-game-model-name-gate.md`.
 
 ## Wiring (06-owned files)
