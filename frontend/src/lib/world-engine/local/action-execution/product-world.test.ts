@@ -105,6 +105,26 @@ describe('joint-group input coverage on the shipped world', () => {
     // 路明非's own goggles and the lane's rules board are in the scene list.
     expect(prompt).toContain('路明非的护目镜');
     expect(prompt).toContain('演习规则牌');
+    // The example follows the named action, not a generic visible candidate.
+    expect(prompt).toContain('{"targets":[{"targetId":"nono"}]}');
+  });
+
+  it('the solo 17:37Z action gets the empty-targets example, not a phantom candidate', () => {
+    const { state } = loadProductWorld();
+    const scene = buildScene(state, 'lu');
+    const prompt = targetsPrompt(scene, '我沿着服务巷往里走，先看清墙上的演习规则牌。', 2);
+    // The 17:37Z run selected an unmentioned target here and needed a repair.
+    expect(prompt).toContain('没有点名或指代在场的人');
+    expect(prompt).toContain('{"targets":[]}');
+    expect(prompt).not.toContain('"targetId"');
+  });
+
+  it('an anaphoric action keeps a real-id example so the model can pick the referent', () => {
+    const { state } = loadProductWorld();
+    const scene = buildScene(state, 'lu');
+    const prompt = targetsPrompt(scene, '我把护目镜递给他。', 2);
+    expect(prompt).toContain('行动用了指代');
+    expect(prompt).toContain('"targetId":"nono"');
   });
 });
 

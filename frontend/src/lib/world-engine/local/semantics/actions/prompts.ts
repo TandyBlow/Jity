@@ -12,7 +12,8 @@
  *  - the output contract matches structured-output.ts exactly;
  *  - reaction is a TEXT task: no JSON contract (it poisons small-model prose).
  */
-import type { ActionScene, SceneCharacter } from './scene';
+import { findMentions, type ActionScene, type SceneCharacter } from './scene';
+import { hasAnaphora } from './text';
 
 function clip(text: string, max: number): string {
   const chars = [...text.trim()];
@@ -92,10 +93,27 @@ export function targetsPrompt(scene: ActionScene, actionText: string, maxTargets
     '指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。',
     '行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动里明确点名、要求其回应的人通常都要列入；行动只写移动、观察或对物品操作时，返回空数组。',
     '不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。',
-    // Show a real registered id, never a literal like "id"/"角色id": a small
-    // model copies the example and the id then fails to resolve (the 13:21Z
-    // run produced a literal `id` in the updates output).
-    `最多 ${maxTargets} 人。输出 {"targets":[{"targetId":"${(candidates.find((character) => character.id !== scene.actor.id) ?? candidates[0])?.id ?? scene.actor.id}"}]}；没有就是 {"targets":[]}。`,
+    // The example follows the action. A non-empty example with a real visible
+    // id made the small model select that character even for a solo move: the
+    // 17:37Z run's first targets attempt on 我沿着服务巷往里走… chose an
+    // unmentioned target (target_unmentioned) and needed a 7.3 s repair. For
+    // an action with no name/anaphor the example is the empty answer. The id
+    // is always a real registered id, never a literal like "id"/"角色id"
+    // (the 13:21Z run produced a literal `id`).
+    (() => {
+      const mentionedIds = new Set(findMentions(actionText, scene.names)
+        .filter((mention) => mention.entry.kind === 'character')
+        .map((mention) => mention.entry.id));
+      const named = candidates.filter((character) => character.id !== scene.actor.id && mentionedIds.has(character.id));
+      const fallback = candidates.find((character) => character.id !== scene.actor.id) ?? candidates[0];
+      if (named.length) {
+        return `最多 ${maxTargets} 人。行动点名了${named[0]!.name}：输出 {"targets":[{"targetId":"${named[0]!.id}"}]}；没有就是 {"targets":[]}。`;
+      }
+      if (hasAnaphora(actionText)) {
+        return `最多 ${maxTargets} 人。行动用了指代；按现场判断指谁，例如可见的${fallback?.name ?? scene.actorName}：输出 {"targets":[{"targetId":"${fallback?.id ?? scene.actor.id}"}]}；判断没人被触及就是 {"targets":[]}。`;
+      }
+      return `最多 ${maxTargets} 人。这条行动没有点名或指代在场的人：只是移动、观察或对物品操作时输出 {"targets":[]}；不要为了填满例子选人。`;
+    })(),
     '',
     `【行动者】${characterLine(scene.actor, false)}`,
     `【行动】${clip(actionText, 160)}`,
