@@ -34,6 +34,10 @@ const pool = await runCandidatePool(
 // 2. Qualification comes from the caller's checker; this module never judges.
 const assessments = verified.map((entry) => ({
   id: entry.id, qualified: entry.hardIssues.length === 0,
+  // Explicit viewpoint verdict from the same checker. false is never adopted,
+  // even when the fact screen is clean.
+  perspectiveQualified: entry.viewpointIssues.length === 0,
+  perspectiveIssueKinds: entry.viewpointIssues,
   hardIssueKinds: entry.hardIssues, mandatoryCovered: entry.covered, mandatoryTotal: entry.required,
 }));
 
@@ -49,8 +53,10 @@ const diversity = buildDiversityReport({ profiles, qualifiedIds: assessments.fil
 const decision = selectCandidate({ candidates: pool.samples, assessments, options: { licensedEntities, priorText } });
 ```
 
-`selectCandidate` order: qualified > coverage > in-text repetition > prior
-echo > seed. Character count and a model self-score are not in the comparator.
+`selectCandidate` order: fact-qualified > explicit viewpoint-qualified >
+coverage > in-text repetition > prior echo > seed. A `perspectiveQualified:
+false` candidate is rejected as `not_perspective_qualified`; a missing field
+means the caller did not separate that dimension, not that it passed. Character count and a model self-score are not in the comparator.
 `qualified: null` is never adopted by default; pass `allowProvisional: true`
 only for offline arm comparisons and the decision is labelled `provisional`.
 
