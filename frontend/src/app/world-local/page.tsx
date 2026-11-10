@@ -253,14 +253,16 @@ export default function WorldLocalPage() {
         const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
         const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic');
+        // The stop button must reach a cold load. The ref is set before the
+        // await so cancelTurn is never blind during the first 30-60 s.
+        semanticRef.current = semantic;
         await semantic.load();
         if (!alive) { await semantic.dispose(); return; }
-        semanticRef.current = semantic;
         setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
         const narration = resilientEngine(NARRATION_MODEL, 3072, 'narration');
+        narrationRef.current = narration;
         await narration.load();
         if (!alive) { await narration.dispose(); return; }
-        narrationRef.current = narration;
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
@@ -365,7 +367,21 @@ export default function WorldLocalPage() {
         setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
       }
     })();
-    return () => { alive = false; clearInterval(ticker); };
+    return () => {
+      alive = false;
+      clearInterval(ticker);
+      // A SPA route change unmounts this page; both workers must exit here
+      // instead of living until the tab closes. Best effort, then log counters.
+      const engines = [semanticRef.current, narrationRef.current];
+      semanticRef.current = null;
+      narrationRef.current = null;
+      // Read the counters before dispose clears the port's engine; the log then
+      // shows whether every created worker exited (no leak on route change).
+      const before = engines.map((engine, index) => ({ index, runtime: engine?.runtime?.() ?? null }));
+      void Promise.allSettled(engines.map((engine) => engine?.dispose())).then(() => {
+        for (const entry of before) console.info('[world-local] worker counters before dispose', entry.index, JSON.stringify(entry.runtime));
+      });
+    };
   }, [refresh]);
 
   // Flush the queued save when the tab is hidden or closed, so a refresh after
