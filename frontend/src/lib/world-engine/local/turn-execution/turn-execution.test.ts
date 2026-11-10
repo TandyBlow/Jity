@@ -241,6 +241,9 @@ describe('turn execution through the real kernel', () => {
     const cast = Object.keys(initial.characters).length;
     expect(full?.coverage).toMatchObject({ tasks: cast, personality: cast, mode: 'per_character_decision' });
     expect(full?.coverage?.taskRows).toBeGreaterThan(0);
+    // The semantic decision is in the ledger, not only the row count.
+    expect(full?.coverage?.achievedByCharacter).toEqual([{ characterId: 'person_a', taskIds: ['task_watch'] }]);
+    expect(full?.coverage?.assertedUnchanged).toBeGreaterThanOrEqual(0);
     expect(Object.keys(full?.stageMs ?? {})).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
     expect(Object.values(full?.stageMs ?? {}).every((ms) => Number.isFinite(ms) && ms >= 0)).toBe(true);
     expect(submission?.continuationCalls).toBe(1);
