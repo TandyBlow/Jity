@@ -10,6 +10,9 @@ import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
+import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
+import { stateDigest } from '@/lib/world-engine/local/state';
+import { STATIC_WORLD_ASSET, STATIC_WORLD_REGISTRATION } from '@/lib/world-engine/local/static-world-registration';
 import type { Id, InitialTemplate, WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
@@ -43,11 +46,15 @@ function viewOf(state: WorldState): ViewState {
 }
 
 async function loadEngine(url: string, contextSize = 8192): Promise<WllamaInferenceEngine> {
-  const engine = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize, nGpuLayers: 99999 });
-  try { await engine.load(); return engine; } catch (gpuError) {
+  const modelUrl = new URL(url, window.location.href).href;
+  // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
+  // must not leave the first player turn waiting forever.
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 180_000 });
+  try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
-    const cpu = new WllamaInferenceEngine({ modelUrl: new URL(url, window.location.href).href, contextSize, nGpuLayers: 0 });
-    await cpu.load();
+    await engine.dispose().catch(() => undefined);
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 180_000 });
+    await cpu.ensureLoaded();
     return cpu;
   }
 }
@@ -55,7 +62,13 @@ async function loadEngine(url: string, contextSize = 8192): Promise<WllamaInfere
 /** A model port that survives a hard-stopped generation. wllama terminates the
  * worker when an abort does not settle in time, which unloads the model; the
  * game must reload it instead of failing every later turn of the session. */
-function resilientEngine(url: string, contextSize: number, label: string): InferenceEngine {
+interface ProductEnginePort extends InferenceEngine {
+  /** Forwarded to the real runtime so the stop button can cancel a cold load. */
+  cancelActive(): number;
+  runtime(): { needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number } | null;
+}
+
+function resilientEngine(url: string, contextSize: number, label: string): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   let loading: Promise<WllamaInferenceEngine> | null = null;
   const ensure = async (): Promise<WllamaInferenceEngine> => {
@@ -80,9 +93,20 @@ function resilientEngine(url: string, contextSize: number, label: string): Infer
     get info() { return { backend: current?.info.backend ?? 'wllama', modelId: current?.info.modelId ?? null }; },
     load: async () => { await ensure(); },
     dispose: async () => { if (current) await drop(current); },
+    // The stop button reaches the real runtime through this port, so a cold
+    // load can be cancelled before the first turn ever starts.
+    cancelActive: () => current?.cancelActive() ?? 0,
+    runtime: () => current?.runtime ?? null,
     complete: async (prompt, options) => {
       for (let attempt = 0; attempt < 2; attempt += 1) {
         const engine = await ensure();
+        // After a hard stop the worker is gone but the same weights can be
+        // reloaded. Reload instead of constructing a second runtime or
+        // switching models.
+        if (engine.runtime.needsReload) {
+          console.warn(`[world-local] ${label} worker exited; reloading the same weights`);
+          await engine.ensureLoaded();
+        }
         try {
           return await engine.complete(prompt, options);
         } catch (error) {
@@ -112,8 +136,8 @@ export default function WorldLocalPage() {
   const [history, setHistory] = useState<string[]>([]);
   const [stage, setStage] = useState<string>('');
   const sessionRef = useRef<LocalGameSession | null>(null);
-  const semanticRef = useRef<InferenceEngine | null>(null);
-  const narrationRef = useRef<InferenceEngine | null>(null);
+  const semanticRef = useRef<ProductEnginePort | null>(null);
+  const narrationRef = useRef<ProductEnginePort | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
 
   const save = useCallback((snapshot: LocalGameSnapshot) => {
@@ -125,6 +149,16 @@ export default function WorldLocalPage() {
     const session = sessionRef.current;
     if (!session) return;
     const state = await session.state();
+    // Independent check: the state the page is about to render must hash to the
+    // digest the transport recorded for the head point. A mismatch means the
+    // in-memory state and the committed record disagree; refuse to continue
+    // rather than play on a silently diverged world.
+    const snapshot = session.snapshot;
+    const expected = snapshot.transport.pointStates[snapshot.transport.headPointId]?.stateDigest ?? null;
+    const actual = await stateDigest(state);
+    if (expected && actual !== expected) {
+      throw new Error(`state_digest_mismatch: head=${snapshot.transport.headPointId} expected=${expected.slice(0, 12)} actual=${actual.slice(0, 12)}`);
+    }
     setView(viewOf(state));
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
@@ -137,7 +171,13 @@ export default function WorldLocalPage() {
     let alive = true;
     (async () => {
       try {
-        const world = await (await fetch('/worlds/dragon-raja-free-day.world.json')).json() as { worldId: Id; initial: InitialTemplate };
+        // The static world is verified, not merely parsed: asset hash, initial
+        // digest, canonical state digest and S0 equality must all match the
+        // registration, or the game refuses to start.
+        const assetUrl = new URL(STATIC_WORLD_ASSET, window.location.href).href;
+        const assetResponse = await fetch(assetUrl, { cache: 'no-store' });
+        if (!assetResponse.ok) throw new StaticWorldError('file_hash', `world asset HTTP ${assetResponse.status}`);
+        const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
         const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic');
         await semantic.load();
@@ -185,11 +225,11 @@ export default function WorldLocalPage() {
           } catch (restoreError) {
             console.warn('[world-local] restore failed; starting new world', restoreError);
             localStorage.removeItem(SAVE_KEY);
-            session = await LocalGameSession.create(world.initial, model, { worldId: world.worldId });
+            session = await LocalGameSession.create(world.template, model, { worldId: world.worldId });
             await session.start();
           }
         } else {
-          session = await LocalGameSession.create(world.initial, model, { worldId: world.worldId });
+          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId });
           await session.start();
         }
         sessionRef.current = session;
@@ -215,6 +255,7 @@ export default function WorldLocalPage() {
     setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
+    modelRef.current?.beginTurn();
     modelRef.current?.resetAutoContinuations();
     save(session.snapshot);
     try {
@@ -230,6 +271,32 @@ export default function WorldLocalPage() {
       setBusy(false);
     }
   }, [busy, input, refresh, save]);
+
+  const cancelTurn = useCallback(async () => {
+    const session = sessionRef.current;
+    if (!session) return;
+    setMessage('正在取消本轮…');
+    // Stop the device work first (including a cold load), then let the
+    // controller conclude the round. The cancel gate discards any answer that
+    // still arrives; the engine stays usable for the next turn.
+    modelRef.current?.abortTurn();
+    for (const engine of [semanticRef.current, narrationRef.current]) {
+      const typed = engine as unknown as { cancelActive?: () => number } | null;
+      try { typed?.cancelActive?.(); } catch { /* best effort: signal already aborts */ }
+    }
+    try {
+      const status = await session.cancel('player_cancelled');
+      console.info('[world-local] cancel status', status);
+      await refresh();
+      setMessage('本轮已取消。可以重新输入行动。');
+    } catch (e) {
+      console.error(e);
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    } finally {
+      setPhase('ready');
+      setBusy(false);
+    }
+  }, [refresh]);
 
   const reset = useCallback(async () => {
     if (!confirm('清除本地存档并重新开始？')) return;
@@ -252,7 +319,10 @@ export default function WorldLocalPage() {
           <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 18, minHeight: 280 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7b6d59', marginBottom: 10 }}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
-              <span>{phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}</span>
+              <span>
+                {phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}
+                {busy && <button onClick={cancelTurn} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消本轮</button>}
+              </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? '正在加载本地模型，第一次会久一些。' : '等待输入…'}</div>}

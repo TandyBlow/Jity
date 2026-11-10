@@ -50,6 +50,10 @@ interface Generated { value: Json; raw: string; ms: number; fallback: boolean; e
 export class LocalGameModel implements WorldModelPort {
   private readonly engine: InferenceEngine;
   private readonly narrationEngine: InferenceEngine;
+  /** One abort scope per player turn. Every engine port created here attaches
+   * this signal, so a cancel stops the device work instead of only discarding
+   * the answer the controller's cancel gate would have refused. */
+  private turnAbort: AbortController | null = null;
   private readonly options: GameModelOptions;
   private roundCounter = 0;
   private lastPlayerInput = '';
@@ -60,10 +64,24 @@ export class LocalGameModel implements WorldModelPort {
   private readonly actionHandlers;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
-    this.engine = engine;
-    this.narrationEngine = options.narrationEngine ?? engine;
+    // The handlers below keep their own engine references, so they get the
+    // same abort-scoped port as the direct calls in this class.
+    const scoped = (inner: InferenceEngine): InferenceEngine => ({
+      get info() { return inner.info; },
+      load: (loadOptions) => inner.load(loadOptions),
+      dispose: () => inner.dispose(),
+      complete: (prompt, completeOptions) => {
+        const signal = completeOptions?.signal ?? this.turnAbort?.signal;
+        if (signal?.aborted) return Promise.reject(new DOMException('Aborted', 'AbortError'));
+        return inner.complete(prompt, signal ? { ...completeOptions, signal } : completeOptions);
+      },
+    });
+    const semanticEngine = scoped(engine);
+    const narrationPort = scoped(options.narrationEngine ?? engine);
+    this.engine = semanticEngine;
+    this.narrationEngine = narrationPort;
     this.options = options;
-    this.settlement = createSettlementHandlers({ engine, options: {
+    this.settlement = createSettlementHandlers({ engine: semanticEngine, options: {
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
       maxPromptChars: 11_000,
@@ -71,7 +89,7 @@ export class LocalGameModel implements WorldModelPort {
       mergedStages: true,
       continuation: this.options.maxAutoContinuations == null ? continuationPolicy : { ...continuationPolicy, maxAutoContinuations: this.options.maxAutoContinuations },
     } });
-    this.actionHandlers = createActionHandlers({ engine, options: {
+    this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
         ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
@@ -80,6 +98,15 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   get info() { return this.engine.info; }
+
+  /** Open a fresh abort scope at the start of a player turn. */
+  beginTurn(): void { this.turnAbort = new AbortController(); }
+
+  /** Abort in-flight inference for the current turn. The controller's cancel
+   * command still owns the state conclusion; this only stops device work. The
+   * aborted scope stays in place so a late task cannot start a fresh generation
+   * after the cancel; `beginTurn()` opens the next scope. */
+  abortTurn(): void { this.turnAbort?.abort(); }
 
   resetAutoContinuations(): void { this.autoContinuations = 0; this.settlement.resetContinuation(); }
 
