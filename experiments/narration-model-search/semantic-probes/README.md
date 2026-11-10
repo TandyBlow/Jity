@@ -19,6 +19,7 @@
 - 真实 pack：待 03/04 提供（见 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）。
 - 合成自检：在 `src/selftest.py` 里，覆盖四类错误的正/负例；它不是候选结果。
 - `fixtures/free-day-73-tasks.json`：从 06 当前 `dragon-raja-free-day.world.json` 的 initial 状态导出的紧凑夹具（14 人物、73 任务、source sha256 在文件内）；自检用 14 人物全覆盖和 12/14 两种输出验证覆盖尺度。
+- `evidence/semantic-cases/tasks-free-day-real-73-no-change.json`：从 06 真实 turn-15 状态生成的 73 任务草稿案例。实际提示词 **6109 字符**，14 个有任务人物；结算结果只是“向西回廊移动”，所以提议的 expected 是 14 条空决定。全 14 条通过校验，12/14 被拒（缺 `tomiyama`、`zhou`）。它**不是冻结案例**，`correctedContract` 仍为 false，冻结器会拒绝；等 03/04 确认提示词和期望后再冻结。
 
 ## pack 格式（JSONL，每行一例）
 

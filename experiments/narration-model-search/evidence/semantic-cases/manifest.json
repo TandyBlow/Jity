@@ -1,0 +1,17 @@
+{
+ "kind": "real-state-semantic-case-draft",
+ "status": "draft; awaiting 03/04 confirmation; not frozen and not a model result",
+ "caseId": "tasks-free-day-real-73-no-change",
+ "source": "..\\..\\..\\06-recovery\\artifacts\\local-game\\local-turn-15blora.json",
+ "sourceSha256": "33010db02d5ff6488dece53c8b04cc63287379cb27da56de9ef03e54cd071aa9",
+ "sourceStateCharacterCount": 14,
+ "sourceStateTaskCount": 73,
+ "promptChars": 6109,
+ "expectedDecisions": 14,
+ "expectedAllEmpty": true,
+ "caseSha256": "a84fcd266bca2d918020b4155ab887a0ac4f53c431eb048a6577cdde1203a339",
+ "packSha256": "9c0bda9cbe26c71a849c446ed5ba442fec56fb1ef2da699211c80ba48ead751e",
+ "contractCommit": "d051c149605f44688578f26e92df44753fefbe20",
+ "freezeRefused": true,
+ "note": "The settled result is a move only, so the proposed expected decisions are all empty. 03/04 must confirm or replace both the prompt and the expectation before any frozen run."
+}

@@ -1,0 +1,18 @@
+{
+ "note": "structured semantic checks only; no prose quality and no product acceptance",
+ "pack": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.pack.jsonl",
+ "runDir": "evidence\\semantic-cases\\tmp-valid",
+ "cases": 1,
+ "passed": 1,
+ "reports": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "kind": "tasks",
+   "ok": true,
+   "errors": [],
+   "warnings": [],
+   "chars": 596,
+   "textSha256": "bca6bc10daf950b70e831c88c171392c894636e6ec2abe9b82ebe8e7caab6d53"
+  }
+ ]
+}

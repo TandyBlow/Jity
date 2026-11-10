@@ -1,0 +1,20 @@
+{
+ "note": "structured semantic checks only; no prose quality and no product acceptance",
+ "pack": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.pack.jsonl",
+ "runDir": "evidence\\semantic-cases\\tmp-short",
+ "cases": 1,
+ "passed": 0,
+ "reports": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "kind": "tasks",
+   "ok": false,
+   "errors": [
+    "tasks: character coverage 12/14; missing ['tomiyama', 'zhou']"
+   ],
+   "warnings": [],
+   "chars": 510,
+   "textSha256": "20f8d37e7d8690723d76e534c0856274c9873c64bda10c9bc695643e453e4b67"
+  }
+ ]
+}

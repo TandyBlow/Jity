@@ -1,0 +1,21 @@
+{
+ "kind": "structured-semantic-prompts",
+ "frozen": false,
+ "frozenAt": null,
+ "pack": "evidence\\semantic-cases\\tasks-free-day-real-73-no-change.pack.jsonl",
+ "packSha256": "7bd430c4f460c1d55804c99ab7dd1bbb60352e4f265b02abeed53727ba629bb3",
+ "contractCommits": [
+  "c4a78f90"
+ ],
+ "promptCount": 1,
+ "sampling": {
+  "temperature": 0.0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokens": 520,
+  "contextSize": 8192,
+  "stop": []
+ },
+ "note": "system/user are the corrected 03/04 production prompts; this is a structural capability probe, not the narration quality gate"
+}
