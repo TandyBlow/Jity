@@ -217,6 +217,11 @@ return { value: text as unknown as Json, raw: text, ms: result.timings.totalMs, 
 
 ## 验证
 
+复用来源：`runtime/committed-narration.ts`、`runtime/narration-alignment.ts`、
+`runtime/engine.ts`、`local/prompt.ts`、`runtime/b3-short-samples.ts` 都直接来自本工作树
+基线 `865ae64e`，没有从其他分支复制实现。真实模型是用户提供的本地 GGUF，不提交；
+证据只记录文件路径与 SHA-256。
+
 ### CPU（本线必跑）
 
 ```
