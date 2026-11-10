@@ -227,3 +227,43 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - `updates` 的 `onTask` 详情带 `stageMs/stages`，即使整轮超时也能在页面日志里定位阶段成本。
 
 尚未证明：共享前缀在真实 wllama 调用中命中多少 token、短键是否减少输出、以及消除重试后 tasks 的真实耗时。需要下一次真实页面运行；在拿到 `stageMs` 之前不宣称时延已达标。
+
+## 2026-11-11 影响集投影（`c2d422e9`）
+
+`SEMANTIC-PATH-CORRECTION-20261111.md` 之后，任务/外貌/位置不再每次把整个世界重新预填给模型、再让它逐人声明“没变”。覆盖仍是程序审计义务；模型只判断本轮可能受影响的部分。
+
+`projection.ts` 的 `projectPoint(state, baseline, results, priorChanges, mode)` 生成：
+
+- `actors`：已结算事实的 `memberIds`（场外也能进来；不再强制主角）。
+- `factEntities`：事实文本里提到的角色、物品、地点（先按 id/名称召回，作为候选，不是完整否定证据）。
+- `sceneLocations/sceneCharacters/sceneItems`：`actors` 当前所在地点及其内容（地点引用链会穿过容器）。
+- `changedEntities`：baseline 与当前状态的直接位置/外貌差异，加上本批前序阶段已应用的变化。
+- `timeAffected`：`mode='time_scan'` 或事实里明确出现时间词；只有目标也含时间条件的任务才因此进入影响集。
+- `global`：事实里出现全城/所有人/广播/演习区等全局词；此时所有任务和实体都进入影响集，不缩范围。
+
+影响任务 = 上述人物/场景/实体/时间/全局命中的任务；按人物决策粒度把同一人物的全部任务纳入；父/子任务做 family 闭包。未命中的任务/实体不写状态，记录 `unaffectedTasks`/`unaffectedAppearance`/`unaffectedMovable` 的 no-dependency basis。
+
+阶段行为：
+
+- `tasks` 提示只列受影响人物及其任务，仍要求这些人物每人一条决定；未列出的由程序保留。`taskScope` 记录 `mode:'affected_projection'`、全量 `characters/taskRows`、`affectedCharacters`、`affectedTaskIds`、`unaffectedCharacters`、`unaffectedTaskIds`、`unaffectedBasis`。全量 14/73 仍在审计里。
+- `position`/`appearance` 提示只列受影响实体；容器目录仍列全（移动目的地需要），但不要求模型逐容器判断。`positionScope`/`appearanceScope` 记录受影响/未受影响。
+- `subtasks` 复用任务的受影响人物；任务答案携带的 subtasks 仍走合并缓存。
+- `personality` 只扫触发任务的所有者 + 事实/场景参与者；`personalityScope` 记录全量人物和未受影响者。sanity 仍只重算真的发生个性变化的人。
+- 投影集之外的 position/appearance/personality 操作直接丢弃，不写状态；任务 id 投影集之外按条拒绝。丢弃/拒绝保留在阶段 evidence 里，不被当成“已判断没变”。
+
+真实世界 fixture 的提示大小（同一输入、脚本化 engine 测得）：
+
+| 阶段 | 之前 | 之后 |
+|---|---:|---:|
+| tasks | 4940 | 3262 |
+| appearance | 7906 | 1162 |
+| personality | 全 14 人 | 1036 |
+| position | 6708 | 3850（实体行收敛，容器目录仍全） |
+
+测试：`settlement` + `turn-execution` + `constrained` 共 82 passed | 1 expected fail；`tsc -p tsconfig.world-contract.json --noEmit` 通过；`check-run.mjs --self-test` 通过。`check-run` 对 `affected_projection` 校验 `affectedCharacters + unaffectedCharacters.length == tasks`、`affectedTaskIds + unaffectedTaskIds.length == taskRows`、两组任务 id 不重叠。
+
+未验证/不宣称：
+
+- 还没有在新 06 build 上的真实页面运行；真实调用数、prefill token、首次合格正文时间必须由 09 实测。
+- 不做“必降 25 秒”的承诺；没有改 timeout，也没有用空结果避开判断。
+- 10.4M MiniRBT encoder 尚未部署；旧 N2/N5 头不能直接当 position/tasks 通用能力。若投影后仍有具体分类缺口（例如“这条事实是否影响该任务”的召回不足），再由 04 给 06 具体模型/数据/最小验证路径。
