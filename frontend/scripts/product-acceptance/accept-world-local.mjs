@@ -664,6 +664,14 @@ try {
       entry.shownChars = (entry.text ?? '').length;
       // Full per-call evidence (semantic + narration) before any reload can
       // clear the page globals.
+      // Action-family evidence (targets / roll / reaction) is produced before
+      // updates; keep it even when the settlement later aborts.
+      entry.actions = await page.evaluate(() => {
+        const turns = globalThis.__worldTurns;
+        const record = Array.isArray(turns) ? turns.at(-1) : null;
+        const actions = record?.actions;
+        return Array.isArray(actions) ? actions.slice(-40) : (actions ?? null);
+      }).catch(() => null);
       entry.live = await page.evaluate(() => {
         const live = globalThis.__worldLive;
         return live && typeof live === 'object' ? live : null;
