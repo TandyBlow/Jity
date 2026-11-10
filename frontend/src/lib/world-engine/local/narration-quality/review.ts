@@ -1462,7 +1462,9 @@ export function reviewNarration(args: {
     if (options.action) {
       const ACTION_VERBS = ['走', '跑', '看', '读', '找', '问', '说', '听', '拿', '放', '推', '拉', '扶', '翻', '摸', '闻', '蹲', '坐', '躺', '爬', '跳', '转身', '伸手', '点头', '摇头', '开口', '叫', '喊'];
       const verbs = ACTION_VERBS.filter((verb) => options.action!.includes(verb));
-      if (verbs.length && !verbs.some((verb) => text.includes(verb)) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
+      const actionObject = /[一-龥]{1,2}(?:规则牌|登记簿|牌|簿|册|图|枪|绳|带|镜|门|墙|桌|台|架|箱|包|杯|书|纸|信|灯|钟|窗|柜)/u.exec(options.action)?.[0];
+      const objectSeen = !actionObject || text.includes(actionObject);
+      if (verbs.length && (!verbs.some((verb) => text.includes(verb)) || !objectSeen) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
         findings.push(finding(ctx, 'fact.action_omitted', sentences[0]?.text ?? text,
           `the input action «${options.action.slice(0, 40)}» is not narrated; none of its verbs (${verbs.join('/')}) appears`, [options.action.slice(0, 60)], []));
       }

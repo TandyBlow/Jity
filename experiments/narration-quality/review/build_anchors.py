@@ -1347,6 +1347,26 @@ anchors.append(
     },
 )
 
+
+# The 3-turn product run (09-product-03turn-d101): the new build dropped the
+# dice sentence, but the legacy point still re-lowers the rope the state has
+# already down and never walks in or reads the sign.
+d101_3turn_review = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/d101-3turn-review-run.json", encoding="utf-8"))}
+d101_3turn = json.load(io.open(WT + "/../../results/product/evidence/09-product-03turn-d101.json", encoding="utf-8"))
+t1 = d101_3turn["turns"][0]
+anchor_point = next(iter(t1["snapshotAfterTurn"]["transport"]["narrations"].values()))
+anchors.append(
+    {
+        "id": "neg/d101-3turn-turn1",
+        "source": "09 3-turn product run 2026-11-10T2137-ac7c, turn 1: rope already down re-lowered; walk/read sign missing",
+        "input": d101_3turn_review["point"]["input"],
+        "text": anchor_point["text"] if isinstance(anchor_point, dict) else t1["text"],
+        "options": {"minChars": 1, "action": t1["input"]},
+        "expect": {"fact": ["fact.state_contradiction", "fact.action_omitted"], "style": [], "review": [],
+                   "notes": "State: 黄黑绳已放下; input walks in and reads the 规则牌; text re-lowers the rope and never walks in/reads."},
+    },
+)
+
 run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
 e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
 e9 = {}

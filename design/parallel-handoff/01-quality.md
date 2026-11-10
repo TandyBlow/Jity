@@ -190,3 +190,5 @@
 
 - 03ec（run 2026-11-10T2125-9cc3，head d1019f09）：结算 `group_10` results 调 `Qwen3-0.6B-Q4_K_M.gguf` 分片失败，页面 0 正文，回合没进正文；reload 停在 `reloading`、`restored: false`。不是质量样本；04 `9cb1110d` 未合入，continuation 未检验。
 - 09 解码对比（08 runtime `220dca43`）：CPU 1.49 tok/s（80 tok/52.9 s），GPU 12.38 tok/s（72 tok/5.74 s），8.3x 解码；warm-up 报 IncompleteGenerationError、prompt 已缓存（cache 29/new 1）、冷加载 37/42 s，只能作指示性证据，不能当 100-token 冷 prefill 结论。
+
+- 3-turn d101 第 1 回合（run 2026-11-10T2137-ac7c，build Cmw9eBTeAolws1QtBVTG9）：06 的骰子句已消失；但状态「黄黑绳已放下」正文又「被放下」，输入往里走/看规则牌未叙事，诺诺「站在他身旁」与状态器材棚门外不符，钟声/镜片无裂纹无依据；首可读 127.4 s；continuation `continuation_policy_abstract_task_goal` -> settlement_failed。锚点 `neg/d101-3turn-turn1`，84。
