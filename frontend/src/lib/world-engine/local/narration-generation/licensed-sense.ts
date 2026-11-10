@@ -13,12 +13,21 @@
  *   sentence («除湿机的声音» is fine when the input mentions 除湿机);
  * - it does not judge actions, dialogue, posture or style.
  */
-export const SENSE_NOUNS = [
-  '枪声', '脚步声', '风声', '心跳声', '回声', '铃声', '钟声', '水滴声', '摩擦声', '声响', '响声',
-  '硝烟', '气味', '香味', '木香', '血腥味', '臭味',
-  // Light and air where the input says nothing about them. Measured against
-  // the 71 reference scenes: none of these appears without its input saying so.
-  '风中', '风里', '阳光', '月光', '灯光',
+/** Sounds and smells that imply a specific event. The 71 reference scenes do
+ * add ambient wind, light and generic smells on their own (3 rows invent wind,
+ * 1 light, 7 a generic 声音), so those are not defects. What the human scenes
+ * never do is assert an event-sound or a gore/explosion smell the input does
+ * not have: a gunshot, footsteps, a bell, blood, cordite. Those are the ones
+ * this list keeps. */
+export const EVENT_SENSE_NOUNS = [
+  '枪声', '脚步声', '心跳声', '回声', '铃声', '钟声', '水滴声', '摩擦声', '响声', '声响',
+  '硝烟', '血腥味',
+] as const;
+
+/** Ambient senses: allowed as style, reported only as a soft observation. */
+export const AMBIENT_SENSE_NOUNS = [
+  '风声', '风中', '风里', '风', '阳光', '月光', '灯光', '光',
+  '气味', '香味', '木香', '臭味',
 ] as const;
 
 export interface SenseViolation {
@@ -47,14 +56,21 @@ export function senseViolations(text: string, inputText: string, options: SenseO
   const found: SenseViolation[] = [];
   const sources = licensedSources(inputText);
   for (const sentence of sentencesOf(text)) {
-    for (const noun of SENSE_NOUNS) {
+    for (const noun of EVENT_SENSE_NOUNS) {
       if (!sentence.includes(noun)) continue;
       // The noun itself is in the input (e.g. the notes mention 声音).
       if (inputText.includes(noun)) continue;
-      // A licensed source named in the same sentence («除湿机的声音»).
-      const head = noun.replace(/(声|味)$/u, '');
-      const sourced = sources.some((source) => source.length >= 2
-        && (sentence.includes(source) && (source.includes(head) || head.includes(source))));
+      // A licensed source that the input itself says is making a noise:
+      // «除湿机一直响着» licenses «除湿机的声音», but a name merely standing in
+      // the same sentence does not (that loophole let «风» through when 诺诺
+      // happened to be named in it).
+      const sourced = sources.some((source) => {
+        if (source.length < 2 || !sentence.includes(source)) return false;
+        const at = inputText.indexOf(source);
+        if (at < 0) return false;
+        const near = inputText.slice(Math.max(0, at - 20), at + source.length + 20);
+        return /响|嗡|鸣|滴|沙沙|吱|呼呼/u.test(near);
+      });
       if (sourced) continue;
       // A committed move licenses that person's own footsteps.
       // Any committed move in this point makes footsteps a consequence of the

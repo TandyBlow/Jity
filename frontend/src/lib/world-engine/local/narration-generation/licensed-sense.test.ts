@@ -21,6 +21,10 @@ describe('unlicensed sense nouns', () => {
     expect(found.some((item) => item.noun === '硝烟')).toBe(true);
   });
 
+  test('ambient wind and light are style, not a defect', () => {
+    expect(senseViolations('风从走廊那头吹过来，灯还亮着。', INPUT)).toEqual([]);
+  });
+
   test('a sense noun that the input itself uses is licensed', () => {
     const input = `${INPUT}走廊里有一阵风声。`;
     expect(senseViolations('风从走廊尽头钻进来，就是那阵风声。', input)).toEqual([]);
