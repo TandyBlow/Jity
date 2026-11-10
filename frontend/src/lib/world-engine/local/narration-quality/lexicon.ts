@@ -50,6 +50,9 @@ export const SOUND_WORDS = [
   '哨声', '哨音', '号声', '警笛',
 ] as const;
 
+/** Speech that is narrated without quotes; wording is allowed, the event needs reading. */
+export const SPEECH_VERBS_UNQUOTED = ['交谈', '说话', '低声说', '开口', '应声', '回答', '问道', '嘟囔', '压低声音', '念叨'] as const;
+
 /** Handling that implies the person had the object, without a holding verb. */
 export const HANDLING_VERBS = ['放在', '放进', '放到', '塞进', '收进', '收好', '别在', '挂在', '揣进', '插在', '压在'] as const;
 

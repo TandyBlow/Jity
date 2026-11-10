@@ -711,3 +711,24 @@ anchors += [
                    "notes": "Dialogue wording is allowed; only invented content needs reading."},
     },
 ]
+
+anchors += [
+    {
+        "id": "neg/qwen3b-move-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json move-direction::prose, auto-accepted",
+        "input": {"视角": "主角视角（周宁）", "上回合状态": {"地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}, "门厅": {"位于": None, "外貌": []}}, "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"大任务": None, "小任务": []}}, "林川": {"位置": "走廊", "精神值": 40, "外貌": ["穿灰衣"], "个性": ["寡言"], "任务": {"大任务": None, "小任务": []}}}, "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}}}, "本回合变化": {"变化": {"林川": {"位置": "门厅"}}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "空气中弥漫着淡淡的木香，混合着一丝若有若无的潮湿。\n\n他靠在墙上，手指无意识地摩挲着盒子边缘，耳边是林川低声交谈的声音。\n\n远处传来轻微的响动，像是风拂过树叶，又像是某种未知的声响。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Allowed polish (leaning, touching the lid) plus an invented conversation, which is review-level speech, not a fact error."},
+    },
+    {
+        "id": "pos/qwen3b-elapsed-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json elapsed-two-minutes::prose, auto-accepted; 10 called it the cleanest arm",
+        "input": {"视角": "主角视角（周宁）", "上回合状态": {"地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}, "门厅": {"位于": None, "外貌": []}}, "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"大任务": None, "小任务": []}}}, "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}}}, "本回合变化": {"时间推进": "2 分钟", "变化": {}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "周宁盯着前方的盒子，盒盖依旧紧闭。走廊里只有风声，吹动着他的衣角。他没有说话，只是盯着那块木头，仿佛在等待什么。两分钟过去，他依旧站在原地，手中只握着自己的物品，没有移动。空气中有一丝潮湿的气味，混着淡淡的木香。他没有拿起盒子，也没有放下它。此刻，他只看见盒子，听见风声，和自己。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Time is stated and nothing contradicts the state; the ungrounded held object is a review item, so the text is not fact-broken but not proven clean either."},
+    },
+]

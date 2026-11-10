@@ -12,7 +12,7 @@ import { projectScene, parseMinutes } from './scene';
 import {
   BODY_ACTIONS, BODY_REACTION, CHANGE_MARKERS, CLOSURE, COMPLETION_VERBS, EVENT_VERBS, FAREWELL,
   FIELD_WORDS, HOLD_MARKERS, INTERIOR, ITEM_STATE_VERBS, MOVE_VERBS, NEGATION,
-  HANDLING_VERBS, INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
+  HANDLING_VERBS, INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, SPEECH_VERBS_UNQUOTED, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
   SOUND_WORDS, TERMINAL_PUNCTUATION,
 } from './lexicon';
 import type { Finding, FindingKind, MandatoryReview, ReviewOptions, ReviewReport, SentenceReview } from './types';
@@ -772,6 +772,9 @@ export function reviewNarration(args: {
       // Only a settled item can be contradicted. An invented prop (a key that
       // was never in the state) is a micro-detail for review, not a fact error.
       if (ITEM_HANDLING_VERBS.includes(verb as typeof ITEM_HANDLING_VERBS[number])) {
+        const handler = nameHits(clause, names, Object.keys(projection.people)).length > 0
+          || /(他|她|手|指尖|指头)/u.test(clause);
+        if (!handler) continue;
         findings.push(finding(ctx, 'review.micro_action', sentence.text,
           `${object}: ${verb} moves the object between hands; no settled state is contradicted`, [], [`item:${object}`]));
         continue;
@@ -834,6 +837,11 @@ export function reviewNarration(args: {
       if (!narration.includes(verb)) continue;
       if (verbLicensed(verb, ctx, narration)) continue;
       if (ctx.stateLicensed(verb)) continue;
+      // Only a person or a reaching body part can handle something; 照在盒盖上
+      // is not someone touching the lid.
+      const handlingActor = nameHits(narration, names, Object.keys(projection.people)).length > 0
+        || /(他|她|手|指尖|指头)/u.test(narration);
+      if (!handlingActor) continue;
       findings.push(finding(ctx, 'review.micro_action', sentence.text,
         `physical handling (${verb}) with no settled fact; allowed as a micro-action when it changes no settled state`, [], []));
     }
@@ -910,6 +918,9 @@ export function reviewNarration(args: {
         if (/(没有|没|未|别|再|先|像|仿佛|似乎|要)$/u.test(before)) continue;
         const distance = Math.abs(verbIndex - (objectIndex + objectName.length));
         if (distance > 8 && Math.abs(verbIndex - objectIndex) > 8) continue;
+        // A comma or a quote between them means another clause owns the verb.
+        const between = narration.slice(Math.min(objectIndex + objectName.length, verbIndex), Math.max(objectIndex, verbIndex));
+        if (/[，。；、」「]/u.test(between)) continue;
         spoken = verb;
         break;
       }
@@ -1168,6 +1179,18 @@ export function reviewNarration(args: {
     if (posture && boundFacts.length) {
       findings.push(finding(ctx, 'review.micro_action', sentence.text,
         `posture (${posture}) is not settled; allowed as a micro-action but not as state`, []));
+    }
+    // Unquoted speech is an event, not just wording: the reader needs a basis.
+    const unquoted = hasAny(narration, SPEECH_VERBS_UNQUOTED);
+    if (unquoted && !negatedAt(narration, unquoted) && !sentence.quotes.length) {
+      findings.push(finding(ctx, 'review.speech_act', sentence.text,
+        `narrated speech (${unquoted}) with no settled dialogue; the event and wording need reading`, []));
+    }
+    // Something is held, but the point gives no object for it.
+    if (!boundFacts.length && /(?:手中|手里|掌心)[^，。]{0,4}(?:握着|拿着|攥着|端着|提着)/u.test(narration)
+      && ![...ctx.holders.holders.values()].some((holder) => holder !== 'scene')) {
+      findings.push(finding(ctx, 'review.possession', sentence.text,
+        'a hand holds something, but the point settles no object for it', []));
     }
     for (const quote of sentence.quotes) {
       if (projection.sourceText.includes(quote)) continue;
