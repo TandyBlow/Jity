@@ -315,6 +315,25 @@ describe('generateCandidate', () => {
     expect(result.accepted).toBe(true);
   });
 
+  test('an opening point (no change yet) asks for a scene, not a fact recital', async () => {
+    const opening: CommittedNarration = {
+      anchor: ANCHOR,
+      facts: [
+        { id: 'a:position', actorId: 'char_lin', name: '林川', kind: 'at', locationId: 'corridor', location: '走廊' },
+        { id: 'b:position', actorId: 'char_zhou', name: '周宁', kind: 'at', locationId: 'corridor', location: '走廊' },
+        { id: 'b:sanity', actorId: 'char_zhou', name: '周宁', kind: 'sanity', value: 10 },
+      ],
+    };
+    const { engine, calls } = fakeEngine(['走廊尽头的灯闪了一下，周宁把盒盖按紧。']);
+    const result = await generateCandidate(args({ engine, committed: opening, policy: { ...args().policy, time: null, minChars: 5 } }), { spec: SPEC });
+    const prompt = calls[0]!.messages?.[1]!.content ?? '';
+    expect(prompt).toContain('这一小段时间里没有实体变化');
+    expect(prompt).not.toContain('本回合已发生');
+    expect(prompt).not.toContain('精神值');
+    expect(prompt).toContain('周宁在走廊');
+    expect(result.accepted).toBe(true);
+  });
+
   test('an engine deadline is terminal: no second call into a stopped worker', async () => {
     const { IncompleteGenerationError } = await import('../../../runtime/engine');
     let calls = 0;
