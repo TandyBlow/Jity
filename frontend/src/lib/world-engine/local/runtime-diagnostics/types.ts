@@ -26,6 +26,8 @@ export interface ModelLoadEvidence {
   directBlob: boolean;
   /** Time spent obtaining the bytes (fetch + blob). Null when OPFS served. */
   fetchMs: number | null;
+  /** True when a hard-stop reload reused the previously fetched Blob. */
+  fromCache?: boolean;
   /** Time spent inside wllama loadModel/loadModelFromUrl (parse + compile). */
   compileMs: number | null;
   totalMs: number;

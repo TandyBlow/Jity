@@ -127,6 +127,15 @@ export class WllamaInferenceEngine implements InferenceEngine {
   /** Last model a load was attempted for. Survives a hard stop, so the next
    * request reloads the same weights instead of erroring on a missing url. */
   private lastModelUrls: string[] | null = null;
+  /** The fetched bytes of the currently loaded model. A hard stop keeps the
+   * Blob alive so a reload can feed the same bytes to a new worker. Refetching
+   * 1.1 GB immediately after a hard stop failed in the real browser: the old
+   * Blob was still in the browser's Blob store and the second allocation hit
+   * its ~2 GB aggregate cap. Reusing one Blob avoids that second allocation
+   * and turns recovery into a compile-only reload. Cleared on dispose or a
+   * different model. */
+  private cachedBlobs: Blob[] | null = null;
+  private cachedIdentity: string | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -163,6 +172,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
     needsReload: boolean;
     lastModelUrl: string | null;
     lastModelUrls: string[] | null;
+    /** True when a hard-stop reload can reuse the already fetched bytes. */
+    cachedModel: boolean;
+    cachedModelBytes: number;
   } {
     return {
       backend: this.info.backend,
@@ -179,7 +191,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
       disposed: this.disposed,
       needsReload: !this.disposed && this.instance === null && this.lastModelUrls !== null,
       lastModelUrl: this.lastModelUrls?.[0] ?? null,
-      lastModelUrls: this.lastModelUrls,
+      lastModelUrls: this.lastModelUrls ? [...this.lastModelUrls] : null,
+      cachedModel: this.cachedBlobs !== null,
+      cachedModelBytes: this.cachedBlobs?.reduce((sum, blob) => sum + blob.size, 0) ?? 0,
     };
   }
 
@@ -274,6 +288,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
 
   private async doLoad(modelUrls: string[], callerSignal?: AbortSignal): Promise<void> {
     const started = performance.now();
+    const identity = modelUrls.join('|');
     this.lastModelUrls = modelUrls;
     const controller = new AbortController();
     this.loadAbort = controller;
@@ -281,6 +296,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     if (!Number.isFinite(loadTimeoutMs) || loadTimeoutMs <= 0) throw new Error('loadTimeoutMs must be positive and finite');
     let timedOut = false;
     let instance: Wllama | null = null;
+    let cacheAfterLoad: Blob[] | null = null;
     const deadline = setTimeout(() => {
       timedOut = true;
       controller.abort();
@@ -298,6 +314,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     const directBlob = this.options.directBlob ?? (typeof location !== 'undefined');
     let fetchMs: number | null = null;
     let compileMs: number | null = null;
+    let fromCache = false;
     let outcome: ModelLoadEvidence['outcome'] = 'failed';
     let failure: unknown = null;
     try {
@@ -314,33 +331,52 @@ export class WllamaInferenceEngine implements InferenceEngine {
         signal: controller.signal,
       };
       if (directBlob) {
-        const fetchStarted = performance.now();
-        const blobs: Blob[] = [];
-        const expected = this.options.expectedBytes === undefined
-          ? null
-          : Array.isArray(this.options.expectedBytes) ? this.options.expectedBytes : [this.options.expectedBytes];
-        for (const [index, url] of modelUrls.entries()) {
-          try {
-            const response = await fetch(url, { signal: controller.signal });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const blob = await response.blob();
-            if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
-              throw new Error(`size ${blob.size}, expected ${expected[index]}`);
+        let blobs: Blob[];
+        if (this.cachedBlobs && this.cachedIdentity === identity) {
+          // Same weights, already fetched: reuse the Blob instead of allocating
+          // a second 1.1 GB Blob immediately after a hard stop (the browser's
+          // Blob store rejects that aggregate in the real browser).
+          blobs = this.cachedBlobs;
+          fetchMs = 0;
+          fromCache = true;
+        } else {
+          const fetchStarted = performance.now();
+          blobs = [];
+          const expected = this.options.expectedBytes === undefined
+            ? null
+            : Array.isArray(this.options.expectedBytes) ? this.options.expectedBytes : [this.options.expectedBytes];
+          for (const [index, url] of modelUrls.entries()) {
+            try {
+              const response = await fetch(url, { signal: controller.signal });
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const blob = await response.blob();
+              if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
+                throw new Error(`size ${blob.size}, expected ${expected[index]}`);
+              }
+              blobs.push(blob);
+            } catch (error) {
+              // Keep an abort as an abort (the catch path classifies by signal),
+              // but name the exact shard for a real fetch/body failure: a 2.5 GB
+              // split otherwise reports only "Failed to fetch".
+              if (controller.signal.aborted) throw error;
+              const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+              throw new Error(`model shard ${index + 1}/${modelUrls.length} fetch failed (${url}): ${reason}`);
             }
-            blobs.push(blob);
-          } catch (error) {
-            // Keep an abort as an abort (the catch path classifies by signal),
-            // but name the exact shard for a real fetch/body failure: a 2.5 GB
-            // split otherwise reports only "Failed to fetch".
-            if (controller.signal.aborted) throw error;
-            const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-            throw new Error(`model shard ${index + 1}/${modelUrls.length} fetch failed (${url}): ${reason}`);
           }
+          fetchMs = performance.now() - fetchStarted;
         }
-        fetchMs = performance.now() - fetchStarted;
         const loadStarted = performance.now();
-        await instance.loadModel(blobs, params);
+        try {
+          await instance.loadModel(blobs, params);
+        } catch (error) {
+          // A cached Blob can fail if the browser evicted it; drop the cache so
+          // a caller retry refetches instead of replaying the same bad bytes.
+          this.cachedBlobs = null;
+          this.cachedIdentity = null;
+          throw error;
+        }
         compileMs = performance.now() - loadStarted;
+        cacheAfterLoad = blobs;
       } else {
         if (modelUrls.length > 1) {
           throw new Error('split models need the directBlob path; wllama 3.8.1 loadModelFromUrl takes one url');
@@ -356,6 +392,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
         throw abortError();
       }
       this.instance = instance;
+      if (cacheAfterLoad) {
+        this.cachedBlobs = cacheAfterLoad;
+        this.cachedIdentity = identity;
+      }
       this.loadedIdentity = { modelUrls, identity: modelUrls.join('|'), contextSize: this.contextSize, gpuLayers: this.gpuLayers };
       this.info.modelId = decodeURIComponent(modelUrls[0]!.split('/').pop() ?? modelUrls[0]!);
       this.loadCount += 1;
@@ -398,6 +438,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
         compileMs,
         totalMs: performance.now() - started,
         loadTimeoutMs,
+        fromCache,
         outcome,
         ...(failure !== null && outcome !== 'loaded' ? { error: errorText(failure) } : {}),
         at: performance.now(),
@@ -667,6 +708,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
     this.instance = null;
     this.loadedIdentity = null;
     this.info.modelId = null;
+    this.cachedBlobs = null;
+    this.cachedIdentity = null;
     const inFlight = this.loading;
     this.loading = null;
     this.loadingUrl = null;

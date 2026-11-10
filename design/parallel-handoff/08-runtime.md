@@ -301,6 +301,27 @@ stop.
    a url also falls back to the last attempted model, so a per-call url is not
    lost after a hard stop.
 
+   **Cached weights.** The engine keeps the fetched model Blob(s) and feeds the
+   same bytes to the new worker on reload (`runtime.cachedModel`,
+   `runtime.cachedModelBytes`; load evidence `fromCache: true`, `fetchMs: 0`).
+   This is not an optimization detail; the real browser rejected a second
+   1.1 GB fetch immediately after a hard stop with `TypeError: Failed to fetch`
+   because the first Blob was still in the browser's Blob store, whose
+   aggregate cap is about 2 GB (the same cap that closed the 4B path). A cached
+   reload is compile-only and does not allocate a second Blob. `dispose()`
+   clears the cache. `loadModel` failure on a cached Blob drops the cache, so a
+   caller retry refetches for real.
+
+   Consequence for sizing: all cached model bytes of the page count against
+   that aggregate cap (0.6B + 1.5B ≈ 1.4 GB; fine). Do not keep a second large
+   model cached, and keep total cached bytes well under 2 GB.
+
+   Hard-stop checkpoint for 09 (not a new sweep; run when the shared queue has
+   room): fresh page, load 1.7B, force `abortGraceMs 0` plus a short timeout,
+   then `ensureLoaded()`. Expect `loadCount` 1→2, `fromCache: true`,
+   `fetchMs: 0`, `cachedModelBytes` equal to the model size, and a working next
+   generation.
+
 6. `onCompletion` still receives `CompletionEvidence`. To read the new fields,
    import `GenerationEvidence` and cast (they are present at runtime):
    `firstChunkMs`, `firstReadableMs`, `maxStreamGapMs`, `streamChunks`,
@@ -382,10 +403,11 @@ cancel (which still stops in ~5 ms and keeps the model loaded).
   were 14.3–43.2 s across runs, not the whole page budget. The deadline is not
   a hard wall: native cancel can only act at the next result chunk (517 ms in
   the final run).
-- Hard stop drops the loaded model and costs a full reload (17.0 s in the
-  real hard-stop run); a page must show a reload state or use the model-port
-  path, which reloads automatically. The native cooperative cancel is much
-  cheaper and is the normal path.
+- Hard stop drops the loaded model and costs a compile-only reload (no refetch
+  now that the fetched Blob is cached); a page must show a reload state or use
+  the model-port path, which reloads automatically. The native cooperative
+  cancel is much cheaper and is the normal path. Browser proof of the cached
+  hard-stop reload is still pending 09 (see the checkpoint above).
 - The page/game-model are not wired in this lane. `LocalGameModel` calls
   `complete` without a signal for most tasks (especially narration), so the
   page must use `cancelActive()` for the stop button (or thread a signal

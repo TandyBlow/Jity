@@ -11,7 +11,7 @@ import { chromium } from '@playwright/test';
 import { sendGguf } from './gguf-server.mjs';
 
 const option = (flag, fallback) => (process.argv.includes(flag) ? process.argv[process.argv.indexOf(flag) + 1] : fallback);
-const dir = resolve(option('--dir', '.local/models/qwen3-4b-split'));
+const dir = resolve(option('--dir', resolve(import.meta.dirname, '../../../.local/models/qwen3-4b-split')));
 const mode = option('--mode', 'blob');
 const channel = option('--channel', 'msedge');
 const outPath = option('--out', null);
