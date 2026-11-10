@@ -399,8 +399,8 @@ export class LocalGameSession {
     const snapshot: LocalGameSnapshot = { transport: record, commands: [...this.commands] };
     const checkpoint = this.currentCheckpoint();
     if (checkpoint) snapshot.checkpoint = checkpoint;
-    const sources = this.options.narrationSourceOf?.();
-    if (sources && Object.keys(sources).length) snapshot.narrationSources = { ...sources };
+    const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
+    if (Object.keys(sources).length) snapshot.narrationSources = sources;
     return snapshot;
   }
 
