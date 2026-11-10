@@ -206,3 +206,4 @@
 - 校准：`allowedEvents` 是策略（`licensedEvents`），`[]` 不是禁单；已存在的发圈整理/绳子垂着晃动是 review，只有明确的「被放下」再演是硬矛盾。01 修正 spine：`演习规则牌` 在 `可用名字`/`licensedEntities`，问题是位置（review）；`银质手链` 才是新物件。prompt 冲突（细微动作 vs 禁蹲下/坐/靠/站；2 段 vs 1 段；代词规则重复）已交 02 做 composer 定点修正。
 - 02 `c5fa1823`/当前 `scene-prompt.ts`：姿势禁单与 2 段/1 段冲突已修；声明行动不再预置手部动作；代词规则仍推两遍（223/231）。`演习规则牌` 是 licensed、`银质手链` 不是，两个检查要分开。
 - dfde（run 2026-11-10T2210-414a，head dfdedb18，build PR70dLlINuWjz8cXgKyoV）重复 2603：第 1 回合 0 字，results 被 `fact only asserted completion` 中止；构建不含 04 `1f65b0b2`。两次独立真实运行，非偶发。
+- 04 `b2e1dab2`/`c2c8484b`：results 提示加具体走/看行动例；repair 错误带冻结成员行动并要求直接可见结果。repair 改善，但 mixed 答案 drop/retry 仍未实现，06 未构建。
