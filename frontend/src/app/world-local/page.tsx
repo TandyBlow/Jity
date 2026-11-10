@@ -593,6 +593,9 @@ export default function WorldLocalPage() {
           narrationCandidate: candidate as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
           ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
+          // The fact-structure candidate writes one verified beat per model
+          // call; `beats` means model prose per beat (not the program realizer).
+          ...(candidate === 'constrained' ? { constrainedMode: 'model' as const } : {}),
           narrationMaxTokens: 200,
           narrationTemperature: 0.45,
           onTask: (task, key, detail) => {
