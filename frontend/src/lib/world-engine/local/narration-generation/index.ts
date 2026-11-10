@@ -18,6 +18,7 @@ import { factPhrases, type CommittedNarration } from '../../runtime/committed-na
 import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
+import { renderProseFactsPrompt } from './scene-prompt';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 import { verifyNarration } from './verify';
 import {
@@ -30,7 +31,10 @@ import {
 export * from './types';
 export { buildLedger } from './ledger';
 export { buildRevisionGuidance } from './guidance';
-export { composeNarrationPrompt, insertBeforeBody } from './prompt';
+export { composeNarrationPrompt, insertBeforeBody, writingContract } from './prompt';
+export {
+  NARRATOR_SYSTEM_PROMPT, ownerOf, projectProseFacts, renderProseFactsPrompt, renderProseFactsUser,
+} from './scene-prompt';
 export { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
 export { verifyNarration } from './verify';
 export {
@@ -39,6 +43,11 @@ export {
 } from './trained-input';
 
 const nowMs = (): number => performance.now();
+/** Last non-empty sentence of a previously accepted scene. */
+const lastSentence = (text: string): string | null => {
+  const parts = text.split(/[。！？\n]+/u).map((part) => part.trim()).filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : null;
+};
 const charsOf = (text: string): number => [...text].length;
 const clampInt = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, Math.round(Number.isFinite(value) ? value : min)));
@@ -593,8 +602,21 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     if (input.signal?.aborted) break;
     const remaining = deadlineMs - (nowMs() - callStarted);
     if (remaining <= 0) { deadlineExceeded = true; break; }
+    // The deployable instruct model was measured on a closed-book turn, not on
+    // lane 01's state record. `prose-facts` renders the same committed packet
+    // in that shape; `serialized` keeps the training shape for fine-tuned
+    // checkpoints. Guidance and the previous draft are appended by the same
+    // composer, so a repair never loses the licensed material.
+    const baseInput = policy.promptShape === 'prose-facts'
+      ? renderProseFactsPrompt({
+        committed: input.committed,
+        policy,
+        scene: policy.scene ?? null,
+        priorTail: priorText ? lastSentence(priorText) : null,
+      })
+      : input.inputText;
     const prompt = composeNarrationPrompt({
-      inputText: input.inputText,
+      inputText: baseInput,
       attempt,
       guidance,
       previousDraft,

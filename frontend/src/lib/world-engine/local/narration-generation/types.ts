@@ -120,6 +120,15 @@ export interface NarrationPolicy {
   /** Full prompt override. The default only inserts guidance before the body
    * marker; it never re-serializes facts. */
   composePrompt?: (args: ComposePromptArgs) => string;
+  /** How the whole-scene prompt is built: `serialized` (default) continues the
+   * caller's lane-01 serialization — the training shape for fine-tuned
+   * checkpoints; `prose-facts` renders the same packet as a closed-book turn
+   * for instruct models (see scene-prompt.ts). */
+  promptShape?: 'serialized' | 'prose-facts';
+  /** Insert the scene-mode writing contract (see prompt.ts). Default true for
+   * whole-scene mode; tests that measure the caller's serialization alone set
+   * it to false. */
+  writingContract?: boolean;
   /** 'beats' writes the scene one committed beat at a time (small models);
    * 'scene' asks for the whole scene in one call. Defaults to 'beats' when
    * `scene` is supplied, otherwise 'scene'. */

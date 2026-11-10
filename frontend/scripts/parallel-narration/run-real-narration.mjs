@@ -40,7 +40,11 @@ const config = {
   maxTokens: Number(option('--max-tokens', '200')),
   maxAttempts: Number(option('--max-attempts', '2')),
   minChars: Number(option('--min-chars', '80')),
-  mode: option('--mode', 'beats'),
+  // One or more arms measured in the same browser session (one model load).
+  //   scene  — whole scene from lane 01's serialized input + writing contract
+  //   prose  — whole scene rendered as the lane-08 reference closed-book turn
+  //   beats  — one committed thing per call (lane 02 strategy)
+  modes: (option('--modes', option('--mode', 'beats'))).split(',').map((value) => value.trim()).filter(Boolean),
   // scene mode only: which prompt shape the weights were trained on
   template: option('--template', 'legacy'),
   // The B-scene candidate was trained with a separate system turn. The page
@@ -80,7 +84,7 @@ const evidence = {
   config: {
     model: config.model, modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
-    mode: config.mode, template: config.template, set: config.set,
+    modes: config.modes, template: config.template, set: config.set,
     system: config.system || null,
     threads: config.numThreads, gpu: config.gpu, maxTokens: config.maxTokens,
     maxAttempts: config.maxAttempts, minChars: config.minChars,
@@ -466,7 +470,7 @@ try {
         ?? projectCommittedNarration(scenario.after, scenario.before ?? null);
       const view = scenario.view ?? scenario.after.state.protagonistId;
       const inputText = scenario.inputText ?? await (async () => {
-        if (config.mode === 'beats' || config.template === 'legacy') {
+        if (config.modes.includes('beats') || config.template === 'legacy') {
           return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
         }
         if (config.template === 'v2') {
@@ -498,24 +502,33 @@ try {
         }
         return renderTrainedRawPrompt(trained);
       })();
+      for (const mode of config.modes) {
       const streamed = [];
+      let firstTextMs = null;
       let progressEvents = 0;
       const started = performance.now();
       const generated = await generateCommittedNarration({
         engine, committed, inputText, priorText,
         onProgress: (state) => {
           progressEvents += 1;
+          if (firstTextMs === null && state.text.trim().length >= 20) firstTextMs = performance.now() - started;
           streamed.push({ status: state.status, chars: [...state.text].length, verified: state.verified });
         },
         policy: scenario.policy ? {
           ...scenario.policy,
-          mode: config.mode,
-          scene: config.mode === 'beats' ? (scenario.scene ?? null) : null,
+          // CLI knobs win over the fixture's defaults so one command measures
+          // the same input under an explicit decoder/length setting.
+          maxTokens: config.maxTokens,
+          minChars: config.minChars,
+          mode: mode === 'beats' ? 'beats' : 'scene',
+          ...(mode === 'prose' ? { promptShape: 'prose-facts' } : {}),
+          scene: mode === 'beats' ? (scenario.scene ?? null) : (scenario.scene ?? null),
           time: scenario.time,
           ...(config.instruction ? { instruction: config.instruction } : {}),
         } : {
-          mode: config.mode,
-          scene: config.mode === 'beats' ? sceneFrom(scenario.after.state, view) : null,
+          mode: mode === 'beats' ? 'beats' : 'scene',
+          ...(mode === 'prose' ? { promptShape: 'prose-facts' } : {}),
+          scene: sceneFrom(scenario.after.state, view),
           viewpoint: { id: view, name: scenario.after.state.initial.characters[view].name },
           roster: Object.values(scenario.after.state.initial.characters).map((entity) => entity.name),
           locations: Object.values(scenario.after.state.initial.locations).map((entity) => entity.name),
@@ -539,11 +552,11 @@ try {
       const wallMs = performance.now() - started;
       scenario.text = generated.accepted ? generated.text : null;
       const record = {
-        id: scenario.id, note: scenario.note,
+        id: `${scenario.id}::${mode}`, mode, note: scenario.note,
         inputChars: inputText.length, inputText,
         accepted: generated.accepted, status: generated.status, strategyVersion: generated.strategyVersion,
         text: generated.text, chars: [...generated.text].length,
-        wallMs, timings: generated.timings, metrics: generated.metrics,
+        wallMs, firstTextMs, timings: generated.timings, metrics: generated.metrics,
         ledger: {
           mandatory: generated.ledger.mandatory.map((fact) => ({ id: fact.id, kind: fact.kind })),
           optional: generated.ledger.optional.length,
@@ -582,9 +595,10 @@ try {
         })),
       };
       runs.push(record);
-      console.log(`[narration] ${scenario.id}: accepted=${generated.accepted} status=${generated.status} `
+      console.log(`[narration] ${scenario.id} [${mode}]: accepted=${generated.accepted} status=${generated.status} `
         + `chars=${record.chars} wallMs=${Math.round(wallMs)} attempts=${generated.rawAttempts.length} `
         + `beats=${(generated.beats ?? []).map((beat) => beat.source).join(',')}`);
+      }
     }
     const info = engine.info;
     const diagnostics = engine.diagnostics;

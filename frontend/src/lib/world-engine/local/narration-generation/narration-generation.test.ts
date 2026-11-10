@@ -10,6 +10,7 @@ import {
   type NarrationDisplayState, type NarrationPolicy,
 } from './index';
 import { planBeats } from './beats';
+import { missingRequired, projectProseFacts } from './scene-prompt';
 
 // ---------------------------------------------------------------------------
 // Scripted engine: real interface, canned outputs. Progress is emitted in
@@ -97,7 +98,7 @@ describe('committed narration strategy: fact direction and bounded repair', () =
     const states: NarrationDisplayState[] = [];
     const result = await generateCommittedNarration({
       engine, committed: packet(moved, povAt, povSanity), inputText: '【正文】', priorText: null,
-      onProgress: (state) => states.push(state), policy: basePolicy,
+      onProgress: (state) => states.push(state), policy: { ...basePolicy, writingContract: false },
     });
     expect(result.accepted).toBe(true);
     expect(result.status).toBe('accepted');
@@ -121,7 +122,7 @@ describe('committed narration strategy: fact direction and bounded repair', () =
     const reversed = '林川从门厅回到走廊。周宁留在走廊。';
     const engine = new ScriptedEngine([{ kind: 'text', text: reversed }, { kind: 'text', text: ACCEPTED }]);
     const result = await generateCommittedNarration({
-      engine, committed: packet(moved, povAt), inputText: '【视角】周宁\n【正文】', priorText: null, policy: basePolicy,
+      engine, committed: packet(moved, povAt), inputText: '【视角】周宁\n【正文】', priorText: null, policy: { ...basePolicy, writingContract: false },
     });
     expect(result.accepted).toBe(true);
     expect(engine.calls).toHaveLength(2);
@@ -564,7 +565,7 @@ describe('committed narration strategy: wiring shape', () => {
     const engine = new ScriptedEngine([{ kind: 'text', text: '周宁从走廊走到门厅，脚步很轻。林川留在走廊，没有跟上去。' }]);
     const result = await generateCommittedNarration({
       engine, committed, inputText, priorText: null,
-      policy: { minChars: 20, roster: ['林川', '周宁'], locations: ['走廊', '门厅'], viewpoint: { id: 'person_c', name: '周宁' } },
+      policy: { minChars: 20, roster: ['林川', '周宁'], locations: ['走廊', '门厅'], viewpoint: { id: 'person_c', name: '周宁' }, writingContract: false },
     });
     expect(result.accepted).toBe(true);
     expect(engine.calls[0].prompt).toBe(inputText);
@@ -1055,5 +1056,91 @@ describe('sanitizeNarration', () => {
   test('strips wrappers but leaves the prose', () => {
     expect(sanitizeNarration('```\n【正文】\n**走廊**很安静。\n```')).toBe('走廊很安静。');
     expect(sanitizeNarration('正文：他推门进去。')).toBe('他推门进去。');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Whole-scene prompt shapes for the deployable instruct model
+// ---------------------------------------------------------------------------
+
+describe('scene prompt: contract and prose-facts shape', () => {
+  test('the scene contract is inserted before the body marker and can be disabled', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: ACCEPTED }]);
+    await generateCommittedNarration({
+      engine, committed: packet(moved, povAt), inputText: '【视角】周宁\n【正文】', priorText: null, policy: basePolicy,
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('【写法】');
+    expect(prompt).toContain('不要用他/她指代人物');
+    expect(prompt).toContain('不要写日期');
+    expect(prompt.endsWith('【正文】')).toBe(true);
+  });
+
+  test('prose-facts renders the same packet as a closed-book turn without state labels', async () => {
+    const time = { boundary: 'elapsed' as const, duration: { amount: 4, unit: 'minute' as const } };
+    const task: NarrationFact = {
+      id: 'person_a:task', actorId: 'person_a', name: '林川', kind: 'task_achieved',
+      taskId: 'task_a', goal: '把门修好',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '走廊的灯还亮着。四分钟过去，林川从走廊走到门厅，在门厅站住，把「把门修好」这件事办完了。周宁留在走廊，没有跟上去。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(moved, povAt, task), inputText: '【视角】周宁【地点】走廊【人物】林川…【正文】',
+      priorText: null,
+      policy: {
+        ...basePolicy, mode: 'scene', promptShape: 'prose-facts', writingContract: false, time, requireTime: true,
+        scene: {
+          location: '走廊',
+          placeNotes: ['灯管有一支在闪。'],
+          present: [{ name: '林川', note: '袖口沾了墨' }],
+          objects: [{ name: '林川的护目镜', note: '镜带松着' }],
+        },
+      },
+    });
+    const prompt = engine.calls[0].prompt;
+    // The serialized state record is not the prompt any more.
+    expect(prompt).not.toContain('【人物】林川…');
+    expect(prompt).toContain('视角人物：周宁');
+    expect(prompt).toContain('林川从走廊移动到门厅');
+    expect(prompt).toContain('林川达成了任务「把门修好」');
+    expect(prompt).toContain('四分钟');
+    expect(prompt).toContain('林川的护目镜（属于林川）');
+    expect(prompt).toContain('此刻的站位');
+    expect(prompt).toContain('周宁在走廊');
+    // Standing sanity/at facts are not recited as numbers.
+    expect(prompt).not.toContain('精神值43');
+    expect(prompt).not.toContain('【变化】');
+    expect(result.issues.filter((issue) => issue.severity === 'hard')).toEqual([]);
+  });
+
+  test('a personality change is a behaviour hint, not quoted text', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_1', text: '答应陪林川去门厅',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '走廊的灯还亮着。周宁这次没有把话推回去，只点了点头，跟着走了两步。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, promptShape: 'prose-facts', minChars: 10 },
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('性情有了变化');
+    expect(prompt).toContain('不要照抄这句话');
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+  });
+
+  test('the required-fact check names only a settled move or task', () => {
+    const at: NarrationFact = {
+      id: 'person_c:position', actorId: 'person_c', name: '周宁', kind: 'at',
+      locationId: 'loc_hall', location: '走廊',
+    };
+    const projected = projectProseFacts(packet(at, moved));
+    expect(projected.required.map((fact) => fact.kind)).toEqual(['moved']);
+    expect(projected.positions).toEqual([{ name: '周宁', location: '走廊' }]);
+    expect(missingRequired(projected.required, '林川从走廊走到门厅。')).toEqual([]);
+    expect(missingRequired(projected.required, '林川走了过去。')).toHaveLength(1);
   });
 });
