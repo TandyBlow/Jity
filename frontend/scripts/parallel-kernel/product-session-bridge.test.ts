@@ -184,8 +184,8 @@ describe('real recovery session continuity', () => {
       resolve('../../../results/product/evidence/09-one-legal-turn-95dc.json'), 'utf8'));
     const entries = restoredEntries(evidence.refreshRestore.snapshotAfterReload);
     expect(entries).toHaveLength(1);
-    expect(entries[0].source).toBe('mixed');
-    expect(entries[0].note).toContain('混有程序');
+    expect(entries[0].source).toBe('program');
+    expect(entries[0].note).toContain('程序');
     expect(entries[0].points?.find((point: { pointId: string }) => point.pointId === 'point_round_3_1')?.source).toBe('program');
   });
 
@@ -215,7 +215,7 @@ describe('real recovery session continuity', () => {
     expect(next?.narrationSources?.p1?.source).toBe('model');
   });
 
-  it('labels the e9a5 turn as a draft from its saved per-point sources', () => {
+  it('keeps the e9a5 player source and flags the later draft paragraph', () => {
     const evidence = JSON.parse(readFileSync(
       resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
     const entries = restoredEntries(evidence.turns[0].snapshotAfterTurn);
@@ -223,7 +223,8 @@ describe('real recovery session continuity', () => {
     expect(entries[0].points?.map((point: { pointId: string }) => point.pointId)).toEqual([
       'point_round_3_1', 'point_round_auto_mwb4vrek_1_1', 'point_round_auto_mwb4xjvx_2_1',
     ]);
-    expect(entries[0].source).toBe('draft');
+    expect(entries[0].source).toBe('model');
+    expect(entries[0].points?.map((point: { source?: string }) => point.source)).toContain('draft');
     expect(entries[0].note).toContain('草稿');
   });
 
