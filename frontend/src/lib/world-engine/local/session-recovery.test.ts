@@ -381,6 +381,50 @@ describe('LocalGameSession durability', () => {
     expect(session.snapshot.commands).toEqual(['我打开盒盖。', '我退回走廊。']);
   });
 
+  it('keeps the abandoned round usable after a refresh (cancel then restore)', async () => {
+    const backend = new MemoryProgressBackend();
+    const clock = { value: 600_000 };
+    const store = createLocalProgressStore(backend, { now: () => clock.value });
+    const log: string[] = [];
+    let release!: () => void;
+    const blocked = new Promise<void>((resolve) => { release = resolve; });
+    const model = scriptedModel(log, { blockOn: (task, key) => (task === 'action' && key === 'person_c' ? blocked : null) });
+    const session = await LocalGameSession.create(template(), model, {
+      storage: store, sessionId: 'tab_a', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
+    });
+    await session.start();
+    const turn = session.submit('我打开盒盖。');
+    await waitFor(() => log.includes('action:person_c'));
+    const cancelled = session.cancel('player_abort');
+    release();
+    expect((await cancelled).kind).not.toBe('error');
+    await turn;
+    await session.close();
+
+    // The cancelled round is a durable, complete fact: a refresh restores it
+    // and a new turn starts from it without replaying the abandoned one.
+    clock.value += 5_000;
+    const restored = await LocalGameSession.restoreFromStore(store, session.worldId, scriptedModel([]), {
+      sessionId: 'tab_b', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
+    });
+    expect(restored).not.toBeNull();
+    const saved = await store.load(session.worldId);
+    expect(saved!.metadata.phase).toBe('complete');
+    expect(saved!.metadata.hasWork).toBe(false);
+    const boot = await restored!.start();
+    expect(boot.kind).not.toBe('error');
+    expect(restored!.snapshot.transport.round?.conclusion).toEqual({ kind: 'handback', closedBy: 'cancel', cancelReason: 'player_abort' });
+    const next = await restored!.submit('我退回走廊。');
+    expect(next.kind).not.toBe('error');
+    const record = restored!.snapshot.transport;
+    const points = Object.values(record.points);
+    expect(record.version).toBe(1);
+    expect(points).toHaveLength(1);
+    expect(points[0].roundId).toBe(record.round?.roundId);
+    expect(record.round?.conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    expect(restored!.commandsPlayed).toEqual(['我打开盒盖。', '我退回走廊。']);
+  });
+
   it('pauses mid-turn, restores paused, then resumes the same frozen work', async () => {
     const backend = new MemoryProgressBackend();
     const clock = { value: 400_000 };
