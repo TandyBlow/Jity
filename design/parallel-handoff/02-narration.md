@@ -258,7 +258,7 @@ const result = await generateCommittedNarration({
     // 主树当前导出了 EVENT_VERBS；若该导出被撤回，先删掉这一行（更保守）。
     licensedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     time: data.delta?.timeAdvance ?? null,
-    minChars: 120,
+    minChars: 60,   // 01 的短场景 60–149 字；不要用 120 把忠实的短场景判短
     maxAttempts: 2,
     maxTokens: this.options.narrationMaxTokens ?? 380,
     maxTokensCeiling: 700,

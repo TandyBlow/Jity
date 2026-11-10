@@ -197,7 +197,7 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
   }
 
-  const minChars = policy.minChars ?? 120;
+  const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < minChars) issues.push(hard('too_short', attempt, `${chars} < ${minChars} characters`));
   if (finishReason === 'length') {
     issues.push(hard('truncated', attempt, 'generation stopped at the token limit'));

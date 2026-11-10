@@ -469,7 +469,7 @@ async function generateBeatNarration(
     assembled = deduped.text;
   }
 
-  const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 120 };
+  const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 60 };
   const runFinalVerify = (text: string) => verifyNarration({
     text, finishReason: 'stop', committed: input.committed, ledger, policy: finalPolicy,
     priorText, attempt: Math.max(0, attemptCount - 1), promptEchoMarkers: [],

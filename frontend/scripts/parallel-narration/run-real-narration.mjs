@@ -49,11 +49,29 @@ const config = {
   // integration request is in results/quality/integration-02.json.
   system: option('--system', ''),
   inputWorktree: option('--input-worktree', 'D:/others/Jity/.local/parallel-local-game/worktrees/01-input'),
+  scenarioFile: option('--scenario-file', ''),
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+if (config.scenarioFile) {
+  config.scenario = JSON.parse(readFileSync(config.scenarioFile, 'utf8'));
+  const scenario = config.scenario;
+  const missing = [];
+  if (!scenario.inputText) missing.push('inputText');
+  if (!scenario.committed?.facts) missing.push('committed.facts');
+  if (!scenario.policy?.viewpoint?.name) missing.push('policy.viewpoint.name');
+  if (!scenario.policy?.knownEntities?.length) missing.push('policy.knownEntities');
+  if (missing.length) {
+    console.error(`scenario file ${config.scenarioFile} is missing: ${missing.join(', ')}`);
+    process.exit(2);
+  }
+  console.log(`[scenario] ${scenario.id}: inputChars=${scenario.inputText.length} `
+    + `facts=${scenario.committed.facts.length} scene=${scenario.scene ? 'yes' : 'no'} `
+    + `viewpoint=${scenario.viewpoint?.name ?? scenario.policy.viewpoint.name}`);
+  if (process.argv.includes('--check-scenario')) process.exit(0);
+}
 const modelFile = resolve(config.modelDir, basename(config.model));
 const evidence = {
   status: 'IN_PROGRESS',
@@ -379,6 +397,19 @@ try {
     })();
 
     const scenarios = [];
+    if (config.scenario) {
+      const s = config.scenario;
+      scenarios.push({
+        id: s.id, note: s.note ?? 'caller-supplied scenario',
+        before: null, after: null,
+        delta: { timeAdvance: s.time ?? null, entityDeltas: {} },
+        time: s.time ?? null,
+        committed: s.committed, inputText: s.inputText,
+        view: s.viewpoint?.id ?? s.policy?.viewpoint?.id,
+        policy: s.policy, scene: s.scene ?? null,
+        continuation: false,
+      });
+    }
     const addDev = () => {
       scenarios.push({
         id: 'root-scene', before: null, after: devReader.root,
@@ -414,9 +445,11 @@ try {
         note: 'Second turn of the dev world: previous accepted prose is passed as priorText.',
       });
     };
-    if (config.set === 'dev' || config.set === 'all') addDev();
-    if (config.set === 'unseen' || config.set === 'all') addUnseen();
-    if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    if (!config.scenario) {
+      if (config.set === 'dev' || config.set === 'all') addDev();
+      if (config.set === 'unseen' || config.set === 'all') addUnseen();
+      if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    }
 
     const runs = [];
     // Only a continuation scenario receives the previous scene. Reusing it
@@ -429,9 +462,10 @@ try {
     }
     for (const scenario of scenarios) {
       const priorText = priorFor.get(scenario.id) ?? null;
-      const committed = projectCommittedNarration(scenario.after, scenario.before ?? null);
-      const view = scenario.after.state.protagonistId;
-      const inputText = await (async () => {
+      const committed = scenario.committed
+        ?? projectCommittedNarration(scenario.after, scenario.before ?? null);
+      const view = scenario.view ?? scenario.after.state.protagonistId;
+      const inputText = scenario.inputText ?? await (async () => {
         if (config.mode === 'beats' || config.template === 'legacy') {
           return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
         }
@@ -473,7 +507,13 @@ try {
           progressEvents += 1;
           streamed.push({ status: state.status, chars: [...state.text].length, verified: state.verified });
         },
-        policy: {
+        policy: scenario.policy ? {
+          ...scenario.policy,
+          mode: config.mode,
+          scene: config.mode === 'beats' ? (scenario.scene ?? null) : null,
+          time: scenario.time,
+          ...(config.instruction ? { instruction: config.instruction } : {}),
+        } : {
           mode: config.mode,
           scene: config.mode === 'beats' ? sceneFrom(scenario.after.state, view) : null,
           viewpoint: { id: view, name: scenario.after.state.initial.characters[view].name },
