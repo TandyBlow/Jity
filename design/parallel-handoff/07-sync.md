@@ -190,6 +190,22 @@ LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti ./scripts/parallel-sync/s
 - 关闭旧标签页、用同一个 store 新开一个 session：`commandsPlayed` 仍是 `["我打开盒盖。"]`，
   1 个 player 点、1 条 `ready` 正文，正文与刷新前逐字相同，没有半结算的 work。
 
+### 第二个会让页面卡住的 06 侧问题：失败的回合不会被收尾（2026-11-10）
+
+`frontend/scripts/parallel-sync/failed-turn-advance-repro.ts`，06 head `c1027684`：
+
+- 模型在 `results` 抛错，异常从 `submit()` 抛出；
+- session 留下 `advance`（`intentStatus: 'pending'`，输入文字还在）、`work` 未结算、失败那句
+  已进 `commands`；
+- 页面 catch 写“本回合没有完成”，但因为 `commandsPlayed` 变了，不把输入还给玩家，也
+  不调用 `start()`；
+- 下一次提交被拒 `turn_in_progress`；手动 `start()` 却能把这一回合正常做完
+  （2 个点、正文 ready）。
+
+也就是说：页面说失败，session 其实还能完成；而且不重新打开页面就无法继续或重试。
+和上面的“刷新后不规划”叠在一起，失败回合 + 刷新会让这个世界彻底走不动。已按同样格式
+告诉 06；这属于 session/page，不是 07 修的。
+
 ### 十回合存储验收（2026-11-10）
 
 `frontend/scripts/parallel-sync/ten-turn-sync-check.ts`，06 的真实 session + 真实服务：
