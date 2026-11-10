@@ -1105,8 +1105,8 @@ describe('scene prompt: contract and prose-facts shape', () => {
     // The serialized state record is not the prompt any more.
     expect(prompt).not.toContain('【人物】林川…');
     expect(prompt).toContain('视角人物：周宁');
-    expect(prompt).toContain('林川从走廊移动到门厅');
-    expect(prompt).toContain('林川达成了任务「把门修好」');
+    expect(prompt).toContain('林川从走廊走到门厅');
+    expect(prompt).toContain('林川办完了「把门修好」');
     expect(prompt).toContain('四分钟');
     expect(prompt).toContain('林川的护目镜（属于林川）');
     expect(prompt).toContain('此刻的站位');
@@ -1277,7 +1277,7 @@ describe('pronoun policy: names by default, model pronouns on request', () => {
       scene: { location: '走廊' }, priorTail: null,
     });
     expect(prompt).not.toContain('不要用「他」「她」');
-    expect(prompt).toContain('林川从走廊移动到门厅');
+    expect(prompt).toContain('林川从走廊走到门厅');
     expect(prompt).toContain('不替别人做他没做的动作');
   });
 });
