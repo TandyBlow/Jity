@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { isAbortError } from './engine';
-import { SerialInferenceQueue } from './inference-queue';
+import { SerialInferenceQueue, type QueueTiming } from './inference-queue';
+import type { QueueEvidence } from '../local/runtime-diagnostics/types';
 
 function deferred<T = string>() {
   let resolve!: (value: T) => void;
@@ -175,5 +176,80 @@ describe('SerialInferenceQueue', () => {
     expect(result.timing.queuedMs).toBeGreaterThan(0); // waited behind the first call
     expect(result.timing.runMs).toBeGreaterThanOrEqual(25);
     expect(result.timing.totalMs).toBeGreaterThanOrEqual(result.timing.queuedMs + result.timing.runMs - 1);
+  });
+
+  test('cancelPending stops queued and running work, keeps the caller timing, and the queue stays usable', async () => {
+    const events: QueueEvidence[] = [];
+    const queue = new SerialInferenceQueue((event) => events.push(event));
+    const log: string[] = [];
+    const a = step(log, 'a');
+    const b = step(log, 'b');
+    const c = step(log, 'c');
+    const first = queue.run({ label: 'a', start: a.start });
+    const second = queue.run({ label: 'b', start: b.start });
+    const stop = new Error('player cancelled the round');
+    queue.cancelPending(stop);
+    const firstError = await first.catch((error) => error);
+    const secondError = await second.catch((error) => error);
+    expect(firstError).toBe(stop);
+    expect(secondError).toBe(stop);
+    expect((firstError as { timing?: QueueTiming }).timing?.runMs).toBeGreaterThanOrEqual(0);
+    expect((secondError as { timing?: QueueTiming }).timing?.queuedMs).toBeGreaterThanOrEqual(0);
+    expect(log).toEqual(['a', 'a:aborted']); // b never touched the engine
+    expect(queue.runningLabel).toBe('a'); // the device slot stays held
+
+    const third = queue.run({ label: 'c', start: c.start });
+    a.gate.resolve('late value after cancel');
+    await c.started; // only after the engine actually stopped
+    c.gate.resolve('vc');
+    expect((await third).value).toBe('vc');
+    expect(queue.depth).toBe(0);
+    expect(queue.stats).toMatchObject({ enqueued: 3, started: 2, abortedRunning: 1, abortedQueued: 1, resolved: 1, cancelled: 2 });
+    expect(events.map((event) => event.state)).toEqual(expect.arrayContaining([
+      'queued', 'started', 'aborted-running', 'aborted-queued', 'stopped', 'resolved',
+    ]));
+    const stopped = events.find((event) => event.state === 'stopped')!;
+    expect(stopped.stoppedAfterAbortMs).toBeGreaterThanOrEqual(0);
+  });
+
+  test('a caller abort rejection carries its queue timing and emits aborted-running then stopped', async () => {
+    const events: QueueEvidence[] = [];
+    const queue = new SerialInferenceQueue((event) => events.push(event));
+    const log: string[] = [];
+    const a = step(log, 'a');
+    const b = step(log, 'b');
+    const controller = new AbortController();
+    const first = queue.run({ label: 'a', start: a.start, signal: controller.signal });
+    const second = queue.run({ label: 'b', start: b.start });
+    controller.abort();
+    const error = await first.catch((caught) => caught);
+    expect(isAbortError(error)).toBe(true);
+    expect((error as { timing?: QueueTiming }).timing).toMatchObject({ runMs: expect.any(Number), totalMs: expect.any(Number) });
+    expect(events.filter((event) => event.state === 'aborted-running')).toHaveLength(1);
+    expect(events.filter((event) => event.state === 'stopped')).toHaveLength(0); // the device is still working
+    a.gate.resolve('late');
+    await b.started;
+    expect(events.filter((event) => event.state === 'stopped')).toHaveLength(1);
+    b.gate.resolve('vb');
+    await second;
+    expect(queue.stats).toMatchObject({ enqueued: 2, started: 2, resolved: 1, abortedRunning: 1, rejected: 0 });
+  });
+
+  test('dispose is idempotent and emits exactly one disposed event', () => {
+    const events: QueueEvidence[] = [];
+    const queue = new SerialInferenceQueue((event) => events.push(event));
+    queue.dispose();
+    queue.dispose();
+    expect(events.filter((event) => event.state === 'disposed')).toHaveLength(1);
+    expect(queue.stats.disposed).toBe(1);
+  });
+
+  test('a throwing evidence observer never breaks serialization', async () => {
+    const queue = new SerialInferenceQueue(() => { throw new Error('observer bug'); });
+    const log: string[] = [];
+    const a = step(log, 'a');
+    const first = queue.run({ label: 'a', start: a.start });
+    a.gate.resolve('va');
+    expect((await first).value).toBe('va');
   });
 });
