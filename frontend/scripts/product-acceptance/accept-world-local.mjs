@@ -467,6 +467,8 @@ try {
             done: /本轮完成|本轮已交还|本轮停止/.test(bodyText),
             doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? ''),
             failed: /Error|加载失败/.test(bodyText),
+            failureNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('这一回合的结算没有完成')) ?? ''),
+            turnNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('本回合没有完成：')) ?? ''),
           };
         }, beforeCount);
         if (sample.count <= beforeCount && !sample.failed) {
@@ -500,6 +502,14 @@ try {
         // page shows 本轮停止 and no narration will ever stream. Waiting out the
         // full turn budget would misreport a 300 s timeout.
         if (sample.done && /本轮停止/.test(sample.doneText ?? '')) break;
+        // A recoverable settlement failure is a stopped turn too: the page keeps
+        // the history and asks for a retry, so waiting 330 s would misreport it
+        // as a timeout and as empty prose.
+        if (sample.failureNote || sample.turnNote) {
+          entry.failureNote = sample.failureNote || sample.turnNote;
+          entry.stoppedEarly = 'settlement_not_completed';
+          break;
+        }
         if (sample.failed) {
           entry.problems.push('page_error');
           break;
@@ -519,7 +529,7 @@ try {
         const last = articles.at(-1);
         const text = last?.querySelector('div[style*="pre-wrap"]')?.textContent ?? '';
         const input = last?.querySelector('div')?.textContent ?? '';
-        const noteNode = [...(last?.querySelectorAll('div') ?? [])].find((node) => node.textContent?.startsWith('正文已按已结算事实修正'));
+        const noteNode = [...(last?.querySelectorAll('div') ?? [])].find((node) => /^(正文已按已结算事实修正|本回合没有完成：)/.test(node.textContent ?? ''));
         return {
           count: articles.length,
           text,
@@ -537,6 +547,11 @@ try {
       }
       entry.inputLine = afterInfo.input || null;
       entry.note = afterInfo.note;
+      if (entry.note?.startsWith('本回合没有完成：')) {
+        entry.failureNote = entry.note;
+        entry.stoppedEarly = entry.stoppedEarly ?? 'settlement_not_completed';
+        entry.problems.push('settlement_failed_recoverable');
+      }
       entry.message = afterInfo.message;
       entry.timings.doneMs = Date.now() - timer.submittedAtMs;
       entry.after = await snapshot();
