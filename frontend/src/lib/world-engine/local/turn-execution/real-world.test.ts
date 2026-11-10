@@ -17,6 +17,7 @@ import { LocalWorldTransport } from '../transport';
 import { createSettlementModelPort } from './index';
 import { createSettlementHandlers } from '../semantics/settlement/index';
 import { projectStage, taskKeyIndex } from '../semantics/settlement/support';
+import { projectPoint } from '../semantics/settlement/projection';
 
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
   const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
@@ -162,6 +163,15 @@ describe('21c3 trace replay (CPU)', () => {
     const second = await handlers.continuation('round_auto_1', input('round_auto_1', 'p2'));
     expect(second.value).toBeNull();
     expect(second.error).toBe('continuation_policy_repeated_candidate');
+  });
+
+  it('includes the visible nono held item in the affected appearance scope', () => {
+    const { state } = loadWorld();
+    const projection = projectPoint(state, state, { lu: readSignFact }, {}, 'group');
+    expect(projection.sceneCharacters).toContain('nono');
+    expect(projection.sceneItems).toContain('red_band_nono');
+    expect(projection.affectedAppearance).toContain('red_band_nono');
+    expect(projection.unaffectedAppearance.map((row) => row.id)).not.toContain('red_band_nono');
   });
 
   it('keeps the 21c3 all-pending task answer as no task change', async () => {

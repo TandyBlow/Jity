@@ -24,7 +24,7 @@ node frontend/scripts/parallel-settlement/run-focused.mjs
 cd frontend && node scripts/parallel-settlement/prompt-size.mjs
 ```
 
-同一冻结世界、输入和代码版本下运行；root 已实跑约 1 秒，当前最大 4374 **字符**（不是 token）；root 当时 43 项聚焦测试 1.50 秒通过（本次新增召回/真实 raw 回放后以 `run-focused.mjs` 的实际输出为准，不重复跑同一基线）。脚本故意让每个模型调用失败以取出真实提示词，所以：
+同一冻结世界、输入和代码版本下运行；root 已实跑约 1 秒，root 当时最大 4374 **字符**；本线加入在场人物持有物召回后重跑，当前最大 4656 **字符**（都是字符，不是 token），本次聚焦 59 通过 | 1 预期失败约 3 秒（以 `run-focused.mjs` 实际输出为准，不重复跑 root 基线）。脚本故意让每个模型调用失败以取出真实提示词，所以：
 
 - 报告的是 `chars`，不是 token；没有分词器，禁止用 chars 除以 tok/s 报真实耗时。
 - 失败会触发现有修复重试，`promptChars` 里包含这些**探针诱发的重试**；它不是成功产品的真实调用次数。
