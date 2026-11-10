@@ -121,6 +121,14 @@ acceptance.
    policy stop is explicit, not a fabricated handback. 09 must still verify the
    real page's continuation behaviour.
 
+## Merge bundle
+
+`results/product/evidence/05-kernel/patches/06-merge-state-invariants.patch`
+adds the whole verifier module, the 06-session bridge test/config and this
+handoff to 06 without touching existing 06 sources; `git apply --check` passes
+on the current 06 tree. After it lands, 06 still needs the transport guard and
+the page snapshot hook.
+
 ## Patches for 06 (not applied by 05)
 
 Both patches are checked with `git apply --check` in a read-only 06 worktree:
