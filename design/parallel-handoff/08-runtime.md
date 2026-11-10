@@ -242,11 +242,31 @@ and retry path. The runtime load/worker contract held.
 
 ## 02/06 integration entry points
 
+- 06 per-engine generation timing: include `engine.runtime.lastGeneration` in
+  `window.__worldTurns[i].engines` too. It carries `outcome`, `wallMs`,
+  `firstTokenMs`, `firstReadableMs` (first non-whitespace fragment),
+  `streamChunks`, `maxStreamGapMs`, `promptTokens`, `cachedPromptTokens`,
+  `timings` (wllama `prompt_ms`/`predicted_ms`/`prompt_n`/`predicted_n`),
+  `hardStopped` and `stoppedMs`, without the raw text. That gives 09 the
+  prefill/decode split and streaming proof; the page's older `onEvidence`
+  record only keeps promptTokens and wallMs.
 - 06 per-engine load timing: include `lastLoadMs`, `lastLoadFetchMs`,
   `lastLoadCompileMs`, `lastLoadFromCache` from `engine.runtime` in
   `window.__worldTurns[i].engines`. The page-level ready time mixes page boot,
   two model loads and StrictMode; 09 needs the per-engine split to separate
   cold load from per-turn prefill/decode.
+- Dev ready was ~142 s twice while per-engine loads summed 102 s then 61 s.
+  That was StrictMode: the first mount started both loads, cleanup disposed
+  them, the second mount started both again, and `__worldTurns` only saw the
+  last engines. 06's `42712bc9` now restores state/history before the load and
+  gates the cold load behind a 200 ms timer that the probe mount's cleanup
+  cancels; verify the next ready reflects one round, not 142 s. Do not report
+  the old dev ready as one model load.
+- 94.9 s is one specified cold-load measurement (1.7B, load-only, NVIDIA
+  proof), not a universal load time. The same product 1.5B narration measured
+  38.1 s and 79.6 s in two runs. Use per-engine `lastLoad*` and observed
+  ranges; prioritize same-instance reload/cache/restore lifecycle over another
+  model sweep.
 - 06 product page / game-model: construct one engine and call
   `await engine.ensureLoaded()` at session start, `engine.chat(messages, {signal,
   timeoutMs, maxTokens, temperature, onProgress})` per narration call,

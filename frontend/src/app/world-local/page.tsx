@@ -71,6 +71,17 @@ interface WorldTurnRecord {
     label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number;
     contextSize?: number; lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
+    /** Full runtime record of the last generation (engine.runtime().lastGeneration):
+     * outcome, first token/readable, stream chunks/gap, prompt+completion tokens,
+     * wllama prefill/decode timings, hard stop. No raw text. */
+    lastGeneration?: {
+      outcome: 'completed' | 'incomplete' | 'aborted' | 'timeout' | 'error'; finishReason: string | null; wallMs: number;
+      firstChunkMs: number | null; firstTokenMs: number | null; firstReadableMs: number | null;
+      maxStreamGapMs: number; streamChunks: number;
+      promptTokens: number | null; cachedPromptTokens: number | null;
+      timings?: { prompt_ms: number; predicted_ms: number; cache_n: number; prompt_n: number; predicted_n: number } | null;
+      hardStopped: boolean; stoppedMs: number | null; abortCause: 'caller' | 'timeout' | 'dispose' | null;
+    } | null;
   }>;
   /** Last generation evidence per engine: prompt tokens vs context size tells a
    * context overflow apart from a model failure. */
@@ -236,6 +247,10 @@ function engineCounters(label: string, engine: ProductEnginePort | null): WorldT
     generations: runtime.generations, contextSize: runtime.contextSize,
     lastLoadMs: runtime.lastLoadMs ?? null, lastLoadFetchMs: runtime.lastLoadFetchMs ?? null,
     lastLoadCompileMs: runtime.lastLoadCompileMs ?? null, lastLoadFromCache: runtime.lastLoadFromCache ?? null,
+    // Full engine record for the last generation: prefill (timings.prompt_ms/
+    // prompt_n) vs decode (predicted_ms/predicted_n), streaming proof and cancel
+    // latency. No raw text; the turn record keeps accepted prose separately.
+    lastGeneration: runtime.lastGeneration ?? null,
   };
 }
 
@@ -250,6 +265,7 @@ interface ProductEnginePort extends InferenceEngine {
     contextSize?: number; modelId?: string | null;
     lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
+    lastGeneration?: WorldTurnRecord['engines'][number]['lastGeneration'];
   } | null;
 }
 

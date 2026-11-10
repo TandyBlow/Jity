@@ -140,6 +140,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
    * duration next to generation timings, so 09 can separate cold model load
    * from per-turn prefill/decode without parsing console output. */
   private lastLoadTiming: { totalMs: number; fetchMs: number | null; compileMs: number | null; fromCache: boolean } | null = null;
+  /** Last generation evidence, exposed as a summary so the product page can
+   * publish prefill/decode and first-readable timings for 09 without wiring a
+   * second onEvidence callback. The raw text is intentionally not copied. */
+  private lastGeneration: GenerationEvidence | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -183,6 +187,22 @@ export class WllamaInferenceEngine implements InferenceEngine {
     lastLoadFetchMs: number | null;
     lastLoadCompileMs: number | null;
     lastLoadFromCache: boolean | null;
+    lastGeneration: {
+      outcome: GenerationEvidence['outcome'];
+      finishReason: string | null;
+      wallMs: number;
+      firstChunkMs: number | null;
+      firstTokenMs: number | null;
+      firstReadableMs: number | null;
+      maxStreamGapMs: number;
+      streamChunks: number;
+      promptTokens: number | null;
+      cachedPromptTokens: number | null;
+      timings: GenerationEvidence['timings'] | null;
+      hardStopped: boolean;
+      stoppedMs: number | null;
+      abortCause: AbortCause | null;
+    } | null;
   } {
     return {
       backend: this.info.backend,
@@ -206,6 +226,22 @@ export class WllamaInferenceEngine implements InferenceEngine {
       lastLoadFetchMs: this.lastLoadTiming?.fetchMs ?? null,
       lastLoadCompileMs: this.lastLoadTiming?.compileMs ?? null,
       lastLoadFromCache: this.lastLoadTiming?.fromCache ?? null,
+      lastGeneration: this.lastGeneration === null ? null : {
+        outcome: this.lastGeneration.outcome,
+        finishReason: this.lastGeneration.finishReason,
+        wallMs: this.lastGeneration.wallMs,
+        firstChunkMs: this.lastGeneration.firstChunkMs,
+        firstTokenMs: this.lastGeneration.firstTokenMs,
+        firstReadableMs: this.lastGeneration.firstReadableMs,
+        maxStreamGapMs: this.lastGeneration.maxStreamGapMs,
+        streamChunks: this.lastGeneration.streamChunks,
+        promptTokens: this.lastGeneration.promptTokens,
+        cachedPromptTokens: this.lastGeneration.cachedPromptTokens,
+        timings: this.lastGeneration.timings ?? null,
+        hardStopped: this.lastGeneration.hardStopped,
+        stoppedMs: this.lastGeneration.stoppedMs,
+        abortCause: this.lastGeneration.abortCause,
+      },
     };
   }
 
@@ -640,6 +676,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       evidence.abortRequestedMs = call.abortRequestedAt === null ? null : call.abortRequestedAt - started;
       evidence.hardStopped = call.hardStopped;
       evidence.at = performance.now();
+      this.lastGeneration = evidence;
       this.emit(evidence);
       try {
         options?.onCompletion?.(evidence);
