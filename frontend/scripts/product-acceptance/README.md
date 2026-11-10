@@ -34,6 +34,16 @@ node scripts/product-acceptance/accept-world-local.mjs \
 
 每回合记录：输入、提交→首个阶段→首个可读正文→完成的时间、阶段序列、页面正文、降级标注、侧栏状态（精神值/地点/附近/任务）、历史次数、存档长度、控制台模型/GPU 行；回合结束自动落盘。最后做刷新恢复核对与取消控件检查。
 
+## 指定叙事分支（arm）跑一回合
+
+```bash
+node scripts/product-acceptance/accept-world-local.mjs   --base http://127.0.0.1:3241   --turns ../../../results/product/evidence/09-turns-01-legal.json   --query 'narrationModel=qwen3-1.7b&narrationCandidate=constrained&narrationMode=beats'   --expect-page-sha <served-page-sha> --fresh   --out ../../../results/product/evidence/09-<name>.json
+```
+
+`--query` 让页面按该候选/模式运行，`__worldArm` 会原样记入证据；`--expect-page-sha` 在 06 中途重建时直接中止（记 INVALID，不算产品结果）；`--fresh` 清空 IndexedDB/Cache/OPFS。驱动在启动浏览器前自动执行 `resource_lease.py acquire`（holderPid=驱动进程），`finally` 清理浏览器后按 token 释放；锁被别人占用时立即退出，不加载模型。
+
+`__worldCandidate` 的每条记录（grade/segments/composers/detail.beats/issues）随回合保存；beats 模式下 `composers` 出现 `program+model-failed` 表示该 beat 的模型调用失败并退回程序成文，`detail.beats` 里有具体失败原因。
+
 ## 预检（不跑整局）
 
 ```bash
@@ -53,4 +63,4 @@ node scripts/product-acceptance/browser-queue.mjs --claim <itemId> --pid $$
 node scripts/product-acceptance/browser-queue.mjs --finish <itemId> --status completed --evidence <path>
 ```
 
-优先级：产品阻断/取消恢复 > 十/二十回合回归 > 已有候选针对性修复 > 新候选首验；同优先级先到先处理。`resource_lease.py` 仍是兼容锁，执行前获取、`finally` 释放；等锁期间继续写代码和证据，不空转。
+优先级：产品阻断/取消恢复 > 十/二十回合回归 > 已有候选针对性修复 > 新候选首验；同优先级先到先处理。`resource_lease.py` 是强制独占锁：`acquire` 在模型加载前、`release` 在浏览器清理后，失败即不启动；等锁期间继续写代码和证据，不空转。
