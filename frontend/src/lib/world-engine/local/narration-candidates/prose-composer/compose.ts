@@ -336,6 +336,7 @@ export function composeProse(scene: ProseScene): ComposedProse {
 
   let lastSpeaker: string | null = null;
   let lastQuestion = false;
+  let minorLooks = 0;
 
   for (let index = 0; index < body.length; index += 1) {
     const beat = body[index];
@@ -426,11 +427,15 @@ export function composeProse(scene: ProseScene): ComposedProse {
         else if (detail) sentence = ensurePeriod(detail);
         else sentence = `${item.name}动过了。`;
         pushBeat(sentence, beat);
-        if (policy.allowMinorAction !== false && detail && rng() < 0.35) {
+        if (policy.allowMinorAction !== false && detail && minorLooks === 0 && rng() < 0.35) {
           const protagonist = actorOf(scene, scene.protagonistId);
           if (protagonist && protagonist.id !== beat.itemId) {
-            const look = `${refs.subject(protagonist.id)}又看了一眼${item.name}。`;
+            const look = templates.pick('item-look', [
+              `${refs.subject(protagonist.id)}看了一眼${item.name}。`,
+              `${refs.subject(protagonist.id)}把目光落到${item.name}上。`,
+            ]);
             push(look, []);
+            minorLooks += 1;
           }
         }
         break;

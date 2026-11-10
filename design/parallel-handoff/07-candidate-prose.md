@@ -65,7 +65,9 @@ const { text } = composeConstrainedBeat({ beat, scene, prior });
 ```ts
 const out = generateCandidate({
   engine,                 // 收下但不使用
-  committed,             // 02 的 {anchor, facts}
+  committed,             // 02/运行器的 {anchor, facts}（可带 state/timeAdvance）
+  state, beforeState,    // 可选：共享运行器已经传的已结算读；只作场景材料
+  delta,                 // 可选：{timeAdvance}，作为时间事实
   priorText,
   policy: { scene },      // 04 的整段骨架，优先于 committed
 });
@@ -77,6 +79,19 @@ out.timings; out.strategyVersion;
 02 的循环不需要读它们也能工作。没有 `policy.scene` 时，会用 02 的事实包
 拼一个 `sparse: true` 的骨架（地点外观、对白、物品细节不可得），并在
 `issues` 里明说，不假装信息完整。
+
+如果调用方还能给出本轮已结算的 `state`（共享浏览器运行器就是这样：
+`{engine, committed, state, before, delta, inputText, priorText, policy,
+signal, onProgress}`），整段口会**只把 state 当场景材料**用：
+
+- 地点名、地点外观、父地点；
+- 在场人物的名字和已结算外貌；
+- 房间里的物品和它们的外观；
+- `delta.timeAdvance` 或 `committed.timeAdvance` 作为时间事实。
+
+事实仍然只来自 `committed.facts`，不会从 state 里另行推断。这样页面不需要
+04 的逐 beat 计划也能得到带场景的正文；`sparse` 会变成 `false`。逐 beat 口
+（04 的 `policy.composer`）不走这条路径，它直接用 04 的 `SceneSkeleton`。
 
 ## beat 的字段约定
 
@@ -206,6 +221,35 @@ node scripts/quality-candidates/run-browser-candidates.mjs \
 
 这证明共享页面运行器能在真实 Edge 里导入本模块并认出文档化的
 `generateCandidate` 导出；真正逐点出正文仍要走 04 注入 composer 的那条路径。
+
+整段口接 04 的 facts + 真实 state 的一段（器材棚，移动 + 任务 + 个性 + 精神），
+实际输出 285 字，`sparse=false`、`issues=[]`：
+
+```text
+推拉门可回服务巷。
+
+过了五分钟。
+
+路明非从西侧服务巷走进器材棚。
+
+「把胸前护目镜戴好并确认镜片没有裂纹」这件事，路明非收了尾。
+
+路明非不再把选择推给别人。
+
+身边还有芬格尔，头盔歪扣着，食指蹭了油。
+
+近处还有秦越，灰色器材背心套在校服外，胸前挂着领用牌。
+
+开盖演习弹药箱还在器材棚。箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹；黄色封套上写明不得与实弹混用。
+
+路明非看了一眼开盖演习弹药箱。
+
+器材领用台还在器材棚。台上夹着领用簿，笔尖尚湿；台下留有放备用护具的位置。
+
+器材笼挂锁还在原来的地方。挂锁扣住笼门插销，锁眼朝外，锁梁完整；器材笼钥匙能开。
+```
+
+复现：`LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/sample-committed-state.ts`
 
 耗时：整段 0.7–5.3 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
 按 `QUALITY-TEAMS.md` 的口径，首段和整段都远在 60 s / 300 s 以内，
