@@ -170,8 +170,9 @@ checkpoint 的快照上传后读回，`toEqual` 完全一致。
 所以按现有代码，**同步不会改正文历史**。2→0 最可能不是渲染丢字段，而是那一轮保存
 根本没落盘：04 的证据里第一次提交就被 `progress_conflict` 拒了（`resultsCalls: 0`），
 没有持久记录，刷新自然没有条目。双写已经在 `2b96e783` 从适配层默认值里去掉，06 升到
-这个提交后，页面保存路径不用改代码；仍要补的是 `storage: window.localStorage`
-（离线队列和已知 head）以及 `restore()`/冲突选择。
+这个提交后，页面保存路径不用改代码；浏览器里队列和已知 head 现在默认用
+`window.localStorage`（`storage: null` 才是只放内存），仍要补的是 `restore()`
+和冲突选择。
 
 ### 用 06 自己的 session + store 走一遍“一回合 → 页面保存 → 刷新”（2026-11-10）
 
@@ -244,11 +245,11 @@ PROGRESS_SYNC_URL=http://127.0.0.1:8010 PROGRESS_SYNC_TOKEN=secret LANE06_ROOT=.
 保存路径不需要改代码，会话仍然是唯一写入者。`writeLocal: true` 只给没有会话
 写入者的调用方用。
 
-这套接线仍**缺三样东西**，都已用测试固定下来（`product-wiring.test.ts`，3 个用例）：
+这套接线仍**缺三样东西**，测试固定了前两样的后果（`product-wiring.test.ts`）：
 
-1. **没有传 `storage`**：离线队列和“上次已知远端 head”只在内存里。断网保存后
-   刷新，队列为空、base 为 null，这一笔再也传不上去；重连时还会把已有世界当
-   新世界。传入 `storage: window.localStorage` 后，同样的刷新仍能看到 1 条待传。
+1. ~~没有传 `storage`~~：已从适配层补上默认值——浏览器里自动用
+   `window.localStorage`，`storage: null` 才表示只放内存。显式传仍然更清楚，但不再是
+   页面必须做的事。
 2. **没有开局 `restore()`**：B 设备没有本地存档时不会去拉远端 head，因此
    “换设备继续”不成立。
 3. **没有冲突选择界面**：保存冲突时页面只显示一句提示，玩家看不到两个副本，
