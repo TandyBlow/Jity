@@ -570,8 +570,6 @@ def expected_for(codes, label):
 SPECIAL_TAG_BY_CODE = {
     'alias_requires_review': 'alias',
     'reference_requires_review': 'pronoun_ellipsis',
-    'unresolved_role_tool': 'unknown_entity',
-    'unresolved_role_object': 'ambiguous_entity',
     'unresolved_role_subject': 'implicit_subject',
     'diagnostic_role_requires_review': 'diagnostic_role_only',
     'role_type_mismatch': 'type_mismatch',
@@ -592,6 +590,11 @@ def tags_for(suffix, bindings, codes, label):
         for code in codes:
             if code in SPECIAL_TAG_BY_CODE:
                 tags.add(SPECIAL_TAG_BY_CODE[code])
+    for spec in bindings:
+        if spec['status'] == 'unknown_entity':
+            tags.add('unknown_entity')
+        elif spec['status'] == 'ambiguous':
+            tags.add('ambiguous_entity')
     if suffix == 'role':
         roles = {role for spec in bindings for role in spec['roles']}
         if 'recipient' in roles:
@@ -708,7 +711,7 @@ def build(output=ROOT, include_natural=True):
             'expressionAudit': built['expressionAudit'],
             'expected': {'m1': expected[0], 'm2': expected[1],
                          'combined': expected[2]},
-            'tags': case['tags'] + [case['kind']],
+            'tags': sorted(set(case['tags'] + [case['kind']])),
             'annotationStatus': 'assistant_draft_pending_human',
             'reviewNote': '规则试验稿；不是人审金标准，不得用于训练或验收。',
         })

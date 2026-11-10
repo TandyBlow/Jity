@@ -22,9 +22,9 @@ class ScaleDataTests(unittest.TestCase):
 
     def test_counts_splits_and_group_discipline(self):
         self.assertEqual(self.manifest['groupCount'], 40)
-        self.assertEqual(self.manifest['sampleCount'], 400)
+        self.assertEqual(self.manifest['sampleCount'], 480)
         self.assertEqual(self.manifest['splitCounts'],
-                         {'train': 240, 'development': 40, 'calibration': 40, 'sealed': 80})
+                         {'train': 288, 'development': 48, 'calibration': 48, 'sealed': 96})
         self.assertEqual(self.manifest['sealedUse'], 'unopened_pending_final_freeze')
         self.assertFalse(self.manifest['trainingAuthorized'])
         seen, by_split = {}, defaultdict(set)
@@ -34,13 +34,14 @@ class ScaleDataTests(unittest.TestCase):
         self.assertEqual({k: len(v) for k, v in by_split.items()},
                          {'train': 24, 'development': 4, 'calibration': 4, 'sealed': 8})
 
-    def test_ten_variants_per_group(self):
+    def test_twelve_variants_per_group(self):
         variants = defaultdict(set)
         for row in self.rows:
             variants[row['scenarioGroup']].add(row['sampleId'].split(':', 1)[1])
         self.assertEqual(len(variants), 40)
         expected = {'clean', 'actor-swap', 'result', 'special', 'role',
-                    'multi', 'condition', 'quote', 'result2', 'actor-pronoun'}
+                    'multi', 'condition', 'quote', 'result2', 'actor-pronoun',
+                    'unknown-object', 'ambiguous-object'}
         for group, names in variants.items():
             self.assertEqual(names, expected, group)
 

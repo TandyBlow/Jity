@@ -1,10 +1,10 @@
 {
   "schema": "jity-d02-human-review-packet-v1",
-  "createdAt": "2026-11-10T05:04:50.312409+00:00",
+  "createdAt": "2026-11-10T05:10:09.885604+00:00",
   "batchName": "pilot-v1",
   "batch": {
-    "samplesSha256": "b9df65bb350d6135da7a40bdc84e763db9f290765572a32d5a4ef7443d58eb48",
-    "manifestSha256": "12b2ef17aaea3b2abcb8f49d22759b66b81150249de91e05a1cd29b1b8c6bc23",
+    "samplesSha256": "77d9755de561451f98fcd74a38bbd350ef4fbc57fd9fe3bf3ea14aaec976bed5",
+    "manifestSha256": "fdfd636bdb5c520e61c293cd37e9b18a7d1635b013fff0d8ed596892622c76c4",
     "worldsSha256": "4cdf23ba202157e977ab627b28c53b54fdb50e9a63eb9267eab1a434469b91f2",
     "sampleCount": 120,
     "groupCount": 20
@@ -176,9 +176,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -348,8 +348,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -528,8 +527,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -683,7 +682,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "alias",
           "special"
         ]
@@ -854,8 +852,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "recipient",
+          "role",
           "role_or_scope"
         ]
       },
@@ -1025,9 +1023,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -1181,8 +1179,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -1361,8 +1358,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -1531,7 +1528,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "special"
         ]
       },
@@ -1701,8 +1697,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "recipient",
+          "role",
           "role_or_scope"
         ]
       },
@@ -1873,9 +1869,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -2045,8 +2041,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -2225,8 +2220,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -2396,8 +2391,7 @@
         },
         "tags": [
           "special",
-          "unknown_entity",
-          "special"
+          "unknown_entity"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -2566,8 +2560,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "destination",
+          "role",
           "role_or_scope"
         ]
       },
@@ -2722,9 +2716,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -2878,8 +2872,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -3042,8 +3035,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -3195,7 +3188,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "diagnostic_role_only",
           "special"
         ]
@@ -3342,8 +3334,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "implicit_subject",
+          "role",
           "role_or_scope"
         ]
       },
@@ -3514,9 +3506,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -3686,8 +3678,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -3866,8 +3857,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -4037,7 +4028,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "pronoun_ellipsis",
           "special"
         ]
@@ -4206,8 +4196,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -4376,9 +4366,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -4546,8 +4536,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -4724,8 +4713,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -4893,7 +4882,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "pronoun_ellipsis",
           "special"
         ]
@@ -5060,8 +5048,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -5230,9 +5218,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -5400,8 +5388,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -5578,8 +5565,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -5757,7 +5744,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "special"
         ]
       },
@@ -5925,8 +5911,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "destination",
+          "role",
           "role_or_scope"
         ]
       },
@@ -6095,9 +6081,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -6265,8 +6251,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -6443,8 +6428,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -6599,7 +6584,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "ambiguous_entity",
           "special"
         ]
@@ -6750,8 +6734,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -6920,9 +6904,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -7090,8 +7074,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -7268,8 +7251,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -7431,7 +7414,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "quote_success",
           "special"
         ]
@@ -7600,8 +7582,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "recipient",
+          "role",
           "role_or_scope"
         ]
       },
@@ -7770,9 +7752,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -7940,8 +7922,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -8118,8 +8099,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -8274,7 +8255,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "ambiguous_entity",
           "special"
         ]
@@ -8441,8 +8421,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -8599,9 +8579,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -8757,8 +8737,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -8923,8 +8902,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -9064,7 +9043,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "pronoun_ellipsis",
           "special"
         ]
@@ -9221,8 +9199,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "recipient",
+          "role",
           "role_or_scope"
         ]
       },
@@ -9379,9 +9357,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -9537,8 +9515,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -9703,8 +9680,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -9924,7 +9901,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "special"
         ]
       },
@@ -10080,8 +10056,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "destination",
+          "role",
           "role_or_scope"
         ]
       },
@@ -10238,9 +10214,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -10396,8 +10372,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -10562,8 +10537,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -10713,7 +10688,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "negation",
           "non_action",
           "special"
@@ -10871,8 +10845,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "destination",
+          "role",
           "role_or_scope"
         ]
       },
@@ -11029,9 +11003,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -11187,8 +11161,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -11353,8 +11326,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -11510,8 +11483,7 @@
         },
         "tags": [
           "special",
-          "unknown_entity",
-          "special"
+          "unknown_entity"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -11667,9 +11639,9 @@
         },
         "tags": [
           "role",
+          "role_or_scope",
           "tool_role",
-          "type_mismatch",
-          "role_or_scope"
+          "type_mismatch"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -11825,9 +11797,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -11983,8 +11955,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -12149,8 +12120,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -12316,7 +12287,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "condition_success",
           "special"
         ]
@@ -12472,8 +12442,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "joint_subject",
+          "role",
           "role_or_scope"
         ]
       },
@@ -12637,9 +12607,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -12802,8 +12772,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -12975,8 +12944,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -13133,7 +13102,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "special"
         ]
       },
@@ -13294,8 +13262,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -13459,9 +13427,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -13624,8 +13592,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -13797,8 +13764,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -13945,7 +13912,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "pronoun_ellipsis",
           "special"
         ]
@@ -14110,8 +14076,8 @@
         },
         "tags": [
           "role",
-          "tool_role",
-          "role_or_scope"
+          "role_or_scope",
+          "tool_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -14274,9 +14240,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -14439,8 +14405,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -14612,8 +14577,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -14770,7 +14735,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "hypothesis_success",
           "special"
         ]
@@ -14916,8 +14880,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "diagnostic_role",
+          "role",
           "role_or_scope"
         ]
       },
@@ -15065,9 +15029,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -15214,8 +15178,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -15371,8 +15334,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -15544,7 +15507,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "background_success",
           "special"
         ]
@@ -15708,8 +15670,8 @@
           "abstain": null
         },
         "tags": [
-          "role",
           "recipient",
+          "role",
           "role_or_scope"
         ]
       },
@@ -15857,9 +15819,9 @@
         },
         "tags": [
           "clean",
+          "clean_attempt",
           "explicit_name",
-          "no_result_claim",
-          "clean_attempt"
+          "no_result_claim"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -16006,8 +15968,7 @@
         },
         "tags": [
           "actor_mismatch",
-          "same_role",
-          "actor_mismatch"
+          "same_role"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"
@@ -16163,8 +16124,8 @@
           "abstain": null
         },
         "tags": [
-          "result_assertion",
           "late_error",
+          "result_assertion",
           "unsettled_result"
         ]
       },
@@ -16321,7 +16282,6 @@
           "abstain": null
         },
         "tags": [
-          "special",
           "non_action",
           "special"
         ]
@@ -16486,9 +16446,9 @@
         },
         "tags": [
           "role",
+          "role_or_scope",
           "tool_role",
-          "type_mismatch",
-          "role_or_scope"
+          "type_mismatch"
         ]
       },
       "annotationStatus": "assistant_draft_pending_human"

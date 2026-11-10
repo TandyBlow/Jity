@@ -155,12 +155,12 @@ M2 的 `attempt` 标签不能证明工具可用、行动合理或需求已覆盖
 
 ### 7.1 首批扩样 scale-v2
 
-- 40 个场景组、400 条针对性样本，训练／开发／校准／封存为 240/40/40/80（60%/10%/10%/20%）。
-- 每组 10 条：5 条原有变体＋multi／condition／quote／result2／actor-pronoun，共 400 条；全部为助手草稿，人审 0。
-- 当前分布：预期接受 197 条、升级 203 条；主体错位 40、未结算结果 80、代词 47。
-- 未知实体 5、歧义 4、别名 5、诊断角色 10、类型错误 5、非行动 2，**尚未达到每类 ≥30 的验收分母**；后续需要定向补充，不能拿 400 条总数掩盖类别不足。
-- `sealed` 80 条尚未被 API 检查打开，保持未读；在规则冻结前不得查看或调参。
-- 扩样审阅页：`artifacts/world-components-logic/d02-checkers/scale-v2-review.html`；生成命令 `python3 d02_review.py build --batch scale-v2`。
+- 40 个场景组、480 条针对性样本，训练／开发／校准／封存为 288/48/48/96（60%/10%/10%/20%）。
+- 每组 12 条：5 条原有变体＋multi／condition／quote／result2／actor-pronoun／unknown-object／ambiguous-object，共 480 条；全部为助手草稿，人审 0。
+- 当前分布：预期接受 197 条、升级 283 条；主体错位 40、未结算结果 80、代词 87、未知实体 47、歧义 42。
+- 别名 5、诊断角色 10、类型错误 5、非行动 2，**尚未达到每类 ≥30 的验收分母**；后续需要定向补充，不能拿 400 条总数掩盖类别不足。
+- `sealed` 96 条尚未被 API 检查打开，保持未读；在规则冻结前不得查看或调参。
+- 扩样审阅页：`artifacts/world-components-logic/d02-checkers/scale-v2-review.html`；生成命令 `python3 d02_review.py build --batch scale-v2`。助手审查发现与剩余风险见 [scale-v2 助手审查](../../../artifacts/world-components-logic/d02-checkers/scale-v2-assistant-review.md)；它是助手审查，不是人审。
 
 ## 8. API 代理实验
 

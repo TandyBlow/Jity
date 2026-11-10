@@ -460,28 +460,33 @@ def apply_entities():
 
 
 def extra_cases(group):
-    """Three generated scope cases that do not change the core role bindings."""
+    """Generated multi/condition/quote/result/pronoun scope cases."""
     world = WORLDS[group['world']]
     actor = group['actor']
     actor_name = world['entities'][actor]['name']
     core_text, core_bindings = group['core']
+    multi_bindings = [B(actor_name, ['subject'], actor, occurrence=0)] + copy.deepcopy(core_bindings)
+    for row in multi_bindings[1:]:
+        if row['entityId'] == actor:
+            row['occurrence'] += 1
+    condition_text = '如果四周安全，' + core_text.replace(actor_name, actor_name + '就', 1)
+    quote = quote_case(group, world, actor, actor_name, core_bindings)
     return [
-        dict(suffix='multi', kind='multi_step', text='四周很安静，' + core_text,
-             bindings=copy.deepcopy(core_bindings), label='attempt', exprIssues=[],
+        dict(suffix='multi', kind='multi_step',
+             text=actor_name + '先观察四周。\n' + core_text,
+             bindings=multi_bindings, label='attempt', exprIssues=[],
              expected=('accept', 'accept', 'accept'),
              mustCodes=[], tags=['scale_extra', 'multi_step']),
-        dict(suffix='condition', kind='condition', text='如果四周安全，' + core_text,
+        dict(suffix='condition', kind='condition', text=condition_text,
              bindings=copy.deepcopy(core_bindings), label='attempt',
              exprIssues=[E('condition_scope', '四周安全', 'condition', False)],
              expected=('accept', 'accept', 'accept'),
              mustCodes=[], tags=['scale_extra', 'condition']),
-        dict(suffix='quote', kind='quote',
-             text=actor_name + '喊道：“我已经完成了。”',
-             bindings=[B(actor_name, ['subject'], actor)],
-             label='attempt',
-             exprIssues=[E('success_word_in_quote', '我已经完成了', 'quote', False)],
+        dict(suffix='quote', kind='quote', text=quote['text'],
+             bindings=quote['bindings'], label='attempt',
+             exprIssues=[E('success_word_in_quote', quote['surface'], 'quote', False)],
              expected=('accept', 'accept', 'accept'),
-             mustCodes=[], tags=['scale_extra', 'quote']),
+             mustCodes=[], tags=['scale_extra', 'quote_success']),
         dict(suffix='result2', kind='unsettled_result',
              text=core_text.rstrip('。') + '，事情已经办妥了。',
              bindings=copy.deepcopy(core_bindings), label='mixed',
@@ -496,7 +501,48 @@ def extra_cases(group):
              expected=('upgrade', 'accept', 'upgrade'),
              mustCodes=['reference_requires_review'],
              tags=['scale_extra', 'pronoun_ellipsis']),
+        dict(suffix='unknown-object', kind='unknown_entity',
+             text=actor_name + '拿起黑匣子。',
+             bindings=[B(actor_name, ['subject'], actor),
+                       B('黑匣子', ['object'], status='unknown_entity')],
+             label='attempt', exprIssues=[],
+             expected=('upgrade', 'accept', 'upgrade'),
+             mustCodes=['unresolved_role_object'],
+             tags=['scale_extra', 'unknown_entity']),
+        dict(suffix='ambiguous-object', kind='ambiguous_entity',
+             text=actor_name + '拿起它。',
+             bindings=[B(actor_name, ['subject'], actor),
+                       B('它', ['object'], status='ambiguous', basis='pronoun',
+                         candidates=ambiguous_candidates(world))],
+             label='attempt', exprIssues=[],
+             expected=('upgrade', 'accept', 'upgrade'),
+             mustCodes=['unresolved_role_object'],
+             tags=['scale_extra', 'ambiguous_entity', 'pronoun_ellipsis']),
     ]
+
+
+def ambiguous_candidates(world):
+    items = sorted(key for key, value in world['entities'].items()
+                   if value['type'] == 'item')
+    if len(items) < 2:
+        raise ValueError('ambiguous case needs two registered items')
+    return items[:2]
+
+
+def quote_case(group, world, actor, actor_name, bindings):
+    """Quote a result about the core object when one exists, else a generic result."""
+    for row in bindings:
+        if 'object' in row['roles'] and row.get('entityId'):
+            entity = world['entities'][row['entityId']]
+            if entity['type'] == 'item':
+                surface = '我已经处理好了' + entity['name']
+                return {'text': actor_name + '喊道：“' + surface + '！”',
+                        'surface': surface,
+                        'bindings': [B(actor_name, ['subject'], actor),
+                                     B(entity['name'], ['object'], row['entityId'])]}
+    surface = '我已经完成了'
+    return {'text': actor_name + '喊道：“' + surface + '！”', 'surface': surface,
+            'bindings': [B(actor_name, ['subject'], actor)]}
 
 
 def actor_pronoun_bindings(bindings, actor_name, actor):
@@ -551,7 +597,7 @@ def build(output=ROOT):
             'roleAudit': built['roleAudit'],
             'expressionAudit': built['expressionAudit'],
             'expected': {'m1': expected[0], 'm2': expected[1], 'combined': expected[2]},
-            'tags': case['tags'] + [case['kind']],
+            'tags': sorted(set(case['tags'] + [case['kind']])),
             'annotationStatus': 'assistant_draft_pending_human',
             'reviewNote': 'scale-v2 助手草稿；不是人审、不是训练集、不是封存成绩。',
         })
@@ -582,7 +628,7 @@ def build(output=ROOT):
                 'roleAudit': built['roleAudit'],
                 'expressionAudit': built['expressionAudit'],
                 'expected': {'m1': expected[0], 'm2': expected[1], 'combined': expected[2]},
-                'tags': case['tags'] + [case['kind']],
+                'tags': sorted(set(case['tags'] + [case['kind']])),
                 'annotationStatus': 'assistant_draft_pending_human',
                 'reviewNote': 'scale-v2 助手草稿；生成的作用域变体，不是人审。',
             })
@@ -600,6 +646,11 @@ def build(output=ROOT):
         'batch': 'scale-v2',
         'annotationStatus': 'assistant_draft_pending_human',
         'humanReview': {'status': 'pending', 'reviewedSamples': 0},
+        'assistantAudit': {
+            'status': 'completed', 'samples': len(samples),
+            'humanReview': 'pending',
+            'report': 'artifacts/world-components-logic/d02-checkers/scale-v2-assistant-review.md',
+        },
         'trainingAuthorized': False,
         'sealedUse': 'unopened_pending_final_freeze',
         'groupCount': len(all_groups),
