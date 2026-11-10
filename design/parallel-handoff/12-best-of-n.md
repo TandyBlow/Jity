@@ -11,7 +11,18 @@
 
 本线没有先实现 best-of-4 产品路径。先冻结预注册与采样器，再做真实生成和多样性分析。
 
-## 2. 已交付（当前 HEAD `d7ca960ba2e6faf1e865f185698820772c67900c`（模块与预注册在 `adb54647`，可移植 pack 覆盖在 `4dcee4c5`，N-arm 门在 `d7ca960b`））
+## 1.1 b01 已有真实结果（负面，保留）
+
+HPC 作业 251512（V100-SXM2-32GB，fp16，hpcgpu01）完成了 6 次真实生成：
+
+- 6 份正文 22–104 字，全部在 240 token 上限前自行停止；
+- 按 01 rubric/机械检查器：**0/6 事实合格**；6/6 漏“4 分钟时间推进”和黎知微的个性变化，1/6 还漏移动并用第一人称“我”；
+- 6 份聚成 4 簇，`1 - 4/6 = 0.333`；但预注册明确：无事实合格候选不叫收益，本批不扩大 N；
+- 76 s 作业墙钟里有一次 44 s 的调用间空档，raw 的 `totalMs` 不含它；runner 已把 nvidia-smi 限制为 2 s 并记录 `gapBeforeMs/runWallMs`，不能把空档伪装成 GPU 计算。
+
+原因分析见 `experiments/narration-best-of-n/cause-analysis-b01.md`：最可能的 H1 是状态视图提示词从未要求写正文，模型把输入当摘要任务。已冻结 `preregistration.v2`（SHA-256 `ea077908…`），只加一段固定写作指令，同 case/模型/种子/采样/上限/rubric；请求在 `results/product/hpc-requests/12-best-of-n-b01-v2.json`，尚无 v2 输出。
+
+## 2. 已交付（当前 HEAD `1c8a8e59849b461df38f09519b9608c51db4d5cb`（模块与 v1 预注册在 `adb54647`，b01 结果与 v2 预注册在 `1c8a8e59`））
 
 ### 2.1 产品候选模块（新目录，未接页面）
 
