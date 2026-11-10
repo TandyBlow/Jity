@@ -8,6 +8,8 @@ import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createActionExecutionModel } from './port';
 import { createActionHandlers } from '../semantics/actions';
+import { checkActionText } from '../semantics/actions/checks';
+import { sharedSubsequence, skeleton } from '../semantics/actions/text';
 import { buildScene } from '../semantics/actions/scene';
 import { targetsPrompt } from '../semantics/actions/prompts';
 import { roundOrder } from './order';
@@ -21,6 +23,33 @@ function loadProductWorld(): { initial: InitialTemplate; state: ReturnType<typeo
   const state = buildInitialState({ ...structuredClone(raw.initial), worldId: raw.worldId });
   return { initial, state };
 }
+
+describe('task-goal classifier on the shipped world', () => {
+  it('accepts a concrete task-driven action and still rejects a verbatim goal', () => {
+    const { state } = loadProductWorld();
+    const scene = buildScene(state, 'nono');
+    const options = { maxActionChars: 120, maxReactionChars: 200, maxTargets: 4 };
+    // The classifier flags an action when >=85% of the ACTION's characters
+    // are a subsequence of a registered goal. A concrete step that uses the
+    // task vocabulary but is longer than the goal is not a copy (0.84 here);
+    // a shortened goal restatement is (1.0). This is the boundary the 0b69
+    // diagnosis depends on: the model was emitting goal fragments, so the
+    // fix is the prompt/repair, not loosening the guard.
+    const goal = '确认西回廊的蓝方伤员是否需要真正的医护帮助';
+    const concrete = '诺诺蹲下确认西回廊的蓝方伤员，是否需要真正的医护帮助。';
+    expect(sharedSubsequence(skeleton(concrete), skeleton(goal)).coverage).toBeLessThan(0.85);
+    const concreteIssues = checkActionText(concrete, scene, state, options).issues;
+    expect(concreteIssues.filter((issue) => issue.code === 'action_is_task_goal')).toHaveLength(0);
+    const fragment = '确认西回廊的蓝方伤员是否需要医护帮助。';
+    expect(sharedSubsequence(skeleton(fragment), skeleton(goal)).coverage).toBeGreaterThanOrEqual(0.85);
+    const fragmentIssues = checkActionText(fragment, scene, state, options).issues;
+    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
+    // A verbatim goal is still caught.
+    const verbatim = '确认西回廊的蓝方伤员是否需要真正的医护帮助。';
+    const copyIssues = checkActionText(verbatim, scene, state, options).issues;
+    expect(copyIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
+  });
+});
 
 describe('the real 17:01Z nono prompt on the shipped world', () => {
   it('carries no player sentence and no echo event', async () => {

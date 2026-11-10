@@ -115,7 +115,7 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
   const goal = taskGoalCopy(value, allGoals(state));
   if (goal) {
     push(issue('action_is_task_goal', 'error', `行动句照抄了待办任务目标：“${goal}”；这不是这一刻的具体行动`, { detail: goal }),
-      '不要照抄待办任务；写这个角色此刻具体做的这一步');
+      `不要照抄待办任务；把“${goal}”变成${scene.actorName}此刻做的第一步（动词+对象），不要出现目标里的连续 8 个字`);
   }
   if (firstPersonOutsideQuotes(value)) {
     push(issue('action_first_person', 'error', '行动用了第一人称“我”；行动句必须是关于该角色的第三人称描述',
