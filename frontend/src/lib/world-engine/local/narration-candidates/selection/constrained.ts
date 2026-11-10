@@ -148,6 +148,18 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         unverifiedSentences: result.verification.unverifiedSentences,
         hiddenFactIds: result.verification.hiddenFactIds,
         plan: result.plan?.beats.map((beat) => ({ id: beat.id, kind: beat.kind, factIds: beat.factIds })) ?? null,
+        // Per-beat evidence for the owning lanes: which composer wrote it, and
+        // for failed model beats the text and the exact hard checks. Without
+        // this, "program+model-failed" hides whether the model was off topic,
+        // too long, or simply dropped the time sentence.
+        beats: result.rawAttempts.map((beat) => ({
+          beatId: beat.beatId,
+          kind: beat.kind,
+          source: beat.source,
+          ms: Math.round(beat.ms),
+          text: beat.text,
+          issues: beat.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity, detail: issue.detail ?? null, sentence: issue.sentence ?? null })),
+        })),
       },
     };
   },
