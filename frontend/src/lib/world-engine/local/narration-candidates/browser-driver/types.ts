@@ -63,6 +63,17 @@ export interface CandidateScenario {
   continuesFrom: string | null;
 }
 
+/** A candidate-owned model loader. Team A's runtime loads the checkpoint with
+ * its real chat template; without this the shared loader's plain `complete()`
+ * would silently use a fallback prompt and misrepresent the template. */
+export interface EngineLoaderSpec {
+  moduleUrl: string;
+  exportName: string;
+  /** Catalog id understood by the loader's `modelSpec(id)` when it has one. */
+  modelId?: string;
+  modelRoot?: string;
+}
+
 export interface CandidateSpec {
   /** Team-facing id, e.g. `02-narration`, `03-actions`. */
   id: string;
@@ -77,6 +88,7 @@ export interface CandidateSpec {
   /** Candidate-specific policies are not invented here; only the caller's
    * numeric knobs are forwarded. */
   notes?: string;
+  loader?: EngineLoaderSpec | null;
 }
 
 export interface GeneratorTimings {
@@ -112,6 +124,10 @@ export interface ProgressEvent {
 export interface GenerateCandidateArgs {
   engine: InferenceEngine;
   committed: CommittedNarration;
+  /** The settled after state and its delta, same reads the packet came from. */
+  state?: WorldState;
+  before?: WorldState | null;
+  delta?: { timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, import('../../../types').EntityDelta> };
   inputText: string;
   priorText: string | null;
   onProgress?: (state: ProgressEvent) => void;
@@ -158,6 +174,9 @@ export interface RunEvidence {
     scene: SceneGrounding;
     policy: Record<string, unknown>;
     priorText: string | null;
+    /** Extra read-only fields attached to `committed` for state-projecting
+     * candidates; the fact packet itself is unchanged. */
+    committedExtras: string[];
   };
   /** What the candidate returned, after contract validation. */
   result: {
@@ -184,6 +203,10 @@ export interface RunEvidence {
     firstReadableAtMs: number | null;
     tail: ProgressEvent[];
   };
+  /** Whether the shared engine still holds a loaded model after this run.
+   * False means the candidate's own timeout hard-stopped the worker; the next
+   * candidate must reload first. */
+  engineAfter: { alive: boolean; modelId: string | null };
   contract: { ok: boolean; missing: string[]; notes: string[] };
   error: string | null;
 }
@@ -196,4 +219,13 @@ export interface EngineEvidence {
   webgpuAvailable: boolean;
   gpuRequested: boolean;
   backendNote: string;
+  /** Set when a candidate-owned loader produced the engine. */
+  loader?: {
+    moduleUrl: string;
+    exportName: string;
+    modelId: string | null;
+    backend: string | null;
+    fallback: unknown;
+    attempts: unknown;
+  } | null;
 }

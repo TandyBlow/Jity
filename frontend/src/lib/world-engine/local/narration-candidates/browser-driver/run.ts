@@ -22,6 +22,10 @@ interface EngineSlot {
   engine: InferenceEngine;
   evidence: EngineEvidence;
   dispose: () => Promise<void>;
+  /** A hard-stopped worker drops the loaded model (08's abort path nulls
+   * `info.modelId` and `instance`). A reused dead engine would make the next
+   * candidate fail for a reason that belongs to the previous one. */
+  dead: boolean;
 }
 
 interface DriverState {
@@ -94,19 +98,72 @@ export interface LoadConfig {
   gpu: boolean;
   /** Reuse an already-loaded engine for the same URL (default true). */
   reuse: boolean;
+  /** Candidate-owned loader; when present it builds the engine so the real
+   * chat template is used. */
+  loader?: import('./types').EngineLoaderSpec | null;
+}
+
+/** Engine slots are keyed by model AND loader: an engine built by team A's
+ * loader is not the same engine as the shared wllama one. */
+function engineKey(modelUrl: string, loader?: import('./types').EngineLoaderSpec | null): string {
+  return loader ? `${modelUrl}::${loader.moduleUrl}::${loader.exportName}::${loader.modelId ?? ''}` : modelUrl;
 }
 
 /** Load one model, or return the cached slot when the queue already loaded it.
  * `coldStart` tells the evidence whether this run paid the load. */
 export async function loadEngine(config: LoadConfig): Promise<EngineEvidence & { coldStart: boolean }> {
   const store = state();
-  const cached = store.engines.get(config.modelUrl);
-  if (cached && config.reuse) return { ...cached.evidence, coldStart: false };
+  const key = engineKey(config.modelUrl, config.loader);
+  const cached = store.engines.get(key);
+  if (cached && config.reuse && !cached.dead) return { ...cached.evidence, coldStart: false };
+  let reloadReason: string | null = null;
   if (cached) {
-    await cached.dispose();
-    store.engines.delete(config.modelUrl);
+    reloadReason = cached.dead ? 'engine_dead_after_previous_run' : 'reuse_disabled';
+    await cached.dispose().catch(() => undefined);
+    store.engines.delete(key);
   }
   const webgpuAvailable = typeof navigator !== 'undefined' && 'gpu' in navigator;
+  if (config.loader) {
+    const mod = await import(/* @vite-ignore */ config.loader.moduleUrl) as Record<string, unknown>;
+    const load = mod[config.loader.exportName];
+    if (typeof load !== 'function') throw new Error(`engine_loader_missing:${config.loader.exportName}`);
+    const specFactory = mod.modelSpec;
+    const spec = typeof specFactory === 'function' && config.loader.modelId
+      ? (specFactory as (id: string) => unknown)(config.loader.modelId)
+      : null;
+    const started = performance.now();
+    const loaded = await (load as (spec: unknown, options: Record<string, unknown>) => Promise<Record<string, unknown>>)(spec, {
+      modelRoot: config.loader.modelRoot ?? '/models',
+      preferGpu: config.gpu,
+      forceCpu: !config.gpu,
+      contextSize: config.contextSize,
+      numThreads: config.threads,
+    });
+    const loadMs = typeof loaded.loadMs === 'number' ? loaded.loadMs : performance.now() - started;
+    const engine = loaded.engine as InferenceEngine;
+    if (!engine) throw new Error('engine_loader_returned_no_engine');
+    const diagnostics = engine instanceof WllamaInferenceEngine ? engine.diagnostics : null;
+    const backend = typeof loaded.backend === 'string' ? loaded.backend : 'unknown';
+    const evidence: EngineEvidence = {
+      modelUrl: config.modelUrl,
+      loadMs,
+      info: { backend: engine.info.backend, modelId: engine.info.modelId },
+      diagnostics,
+      webgpuAvailable,
+      gpuRequested: config.gpu,
+      backendNote: `${backend} backend reported by the candidate loader; requested gpu=${config.gpu}`,
+      loader: {
+        moduleUrl: config.loader.moduleUrl,
+        exportName: config.loader.exportName,
+        modelId: config.loader.modelId ?? null,
+        backend,
+        fallback: loaded.fallback ?? null,
+        attempts: loaded.attempts ?? null,
+      },
+    };
+    store.engines.set(key, { engine, evidence, dispose: () => engine.dispose(), dead: false });
+    return { ...evidence, coldStart: true, reloadReason } as EngineEvidence & { coldStart: boolean; reloadReason: string | null };
+  }
   const engine = new WllamaInferenceEngine({
     modelUrl: new URL(config.modelUrl, location.href).href,
     contextSize: config.contextSize,
@@ -128,8 +185,8 @@ export async function loadEngine(config: LoadConfig): Promise<EngineEvidence & {
       ? (webgpuAvailable ? 'WebGPU layers requested; backend not independently verified' : 'WebGPU requested but navigator.gpu is unavailable; wllama will fall back')
       : 'CPU-only by explicit request (nGpuLayers=0); no WebGPU claim',
   };
-  store.engines.set(config.modelUrl, { engine, evidence, dispose: () => engine.dispose() });
-  return { ...evidence, coldStart: true };
+  store.engines.set(key, { engine, evidence, dispose: () => engine.dispose(), dead: false });
+  return { ...evidence, coldStart: true, reloadReason } as EngineEvidence & { coldStart: boolean; reloadReason: string | null };
 }
 
 /** Register an already-built engine for a model URL. The wllama loader is the
@@ -146,7 +203,7 @@ export function attachEngine(modelUrl: string, engine: InferenceEngine, evidence
     gpuRequested: evidence?.gpuRequested ?? false,
     backendNote: evidence?.backendNote ?? 'injected engine (no loader evidence)',
   };
-  store.engines.set(modelUrl, { engine, evidence: resolved, dispose: () => engine.dispose() });
+  store.engines.set(modelUrl, { engine, evidence: resolved, dispose: () => engine.dispose(), dead: false });
   return resolved;
 }
 
@@ -285,7 +342,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   const scenario = store.scenarios.get(config.scenarioId);
   if (!scenario) throw new Error(`scenario_not_prepared:${config.scenarioId}`);
   const modelUrl = candidate.modelUrl ?? '';
-  const slot = store.engines.get(modelUrl);
+  const slot = store.engines.get(engineKey(modelUrl, candidate.loader));
   if (!slot) throw new Error(`engine_not_loaded_for:${modelUrl || 'unset'}`);
 
   const mod = await importCandidate(candidate);
@@ -293,6 +350,16 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
 
   const continuationKey = scenario.continuesFrom ? `${candidate.id}::${scenario.continuesFrom}` : null;
   const priorText = continuationKey ? store.accepted.get(continuationKey) ?? null : null;
+  // Candidates that project from state (C's constrained entry) receive the
+  // settled before/after alongside the fact packet. The packet stays the
+  // authority; these are the same reads it was derived from.
+  const committedForCandidate = {
+    ...structuredClone(scenario.committed),
+    state: structuredClone(scenario.after),
+    beforeState: scenario.before ? structuredClone(scenario.before) : null,
+    timeAdvance: scenario.delta.timeAdvance,
+    entityDeltas: structuredClone(scenario.delta.entityDeltas),
+  };
   const progress: (ProgressEvent & { atMs?: number })[] = [];
   const startedAt = new Date().toISOString();
   const started = performance.now();
@@ -304,7 +371,12 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
   try {
     rawResult = await fn({
       engine: slot.engine,
-      committed: structuredClone(scenario.committed),
+      committed: committedForCandidate,
+      // The same settled read is offered in the shapes teams already use
+      // (03 takes state/before/delta; 02/04/08 read committed/inputText).
+      state: structuredClone(scenario.after),
+      before: scenario.before ? structuredClone(scenario.before) : null,
+      delta: structuredClone({ timeAdvance: scenario.delta.timeAdvance, entityDeltas: scenario.delta.entityDeltas }),
       inputText: scenario.inputText,
       priorText,
       policy: structuredClone({
@@ -328,6 +400,14 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
     clearTimeout(timer);
   }
   const wallMs = performance.now() - started;
+
+  // Duck-typed liveness: both the shared adapter and candidate-owned engines
+  // keep `instance` and null it on a hard stop / dispose. Missing field means
+  // an injected engine, which has no such lifecycle.
+  const rawEngine = slot.engine as unknown as { instance?: unknown };
+  const hasInstanceField = 'instance' in rawEngine;
+  const engineAlive = hasInstanceField ? rawEngine.instance != null : true;
+  if (!engineAlive) slot.dead = true;
 
   const contract = validateCandidateResult(rawResult);
   const result = contract.result;
@@ -357,6 +437,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       scene: scenario.scene,
       policy: scenario.policy,
       priorText,
+      committedExtras: ['state', 'beforeState', 'timeAdvance', 'entityDeltas'],
     },
     result: {
       text,
@@ -379,6 +460,7 @@ export async function runOne(config: RunOneConfig): Promise<RunEvidence> {
       firstReadableAtMs: firstReadableAt(progress),
       tail: progress.slice(-6).map((event) => ({ ...event, atMs: undefined })),
     },
+    engineAfter: { alive: engineAlive, modelId: slot.engine.info.modelId },
     contract: {
       ok: contract.ok && error === null,
       missing: contract.missing,

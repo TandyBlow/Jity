@@ -74,6 +74,7 @@ const config = {
   maxRuns: value('--max-runs') ? Number(value('--max-runs')) : null,
   repeat: Math.max(1, Number(value('--repeat', '1'))),
   noLease: flag('--no-lease'),
+  leaseWaitSeconds: Number(value('--lease-wait-seconds', '0')),
   dry: flag('--dry'),
   inspect: flag('--inspect'),
   quiet: flag('--quiet'),
@@ -85,7 +86,22 @@ const config = {
   exports: pairs(values('--candidate-export')),
   notes: pairs(values('--candidate-note')),
   policies: pairs(values('--candidate-policy')),
+  loaders: pairs(values('--candidate-loader')),
+  loaderModelIds: pairs(values('--candidate-model-id')),
+  engineLoader: value('--engine-loader'),
+  engineModelId: value('--engine-model-id'),
 };
+
+/** `<path>::<export>` or `<path>` (default export name loadCandidateModel). */
+function parseLoader(spec) {
+  if (!spec) return null;
+  const at = spec.lastIndexOf('::');
+  const file = isAbsolute(spec.slice(0, at > 0 ? at : spec.length))
+    ? spec.slice(0, at > 0 ? at : spec.length)
+    : resolve(frontend, spec.slice(0, at > 0 ? at : spec.length));
+  if (!existsSync(file)) fail(`engine loader module missing: ${file}`);
+  return { file, moduleUrl: moduleUrlFor(file), exportName: at > 0 ? spec.slice(at + 2) : 'loadCandidateModel' };
+}
 
 // Candidate-specific policy overrides (e.g. 02's mode=beats). Parsed once so a
 // typo fails before any model is loaded.
@@ -114,6 +130,7 @@ const candidates = Object.entries(config.candidateSpecs).map(([id, modulePath]) 
   const file = isAbsolute(modulePath) ? modulePath : resolve(frontend, modulePath);
   if (!existsSync(file)) fail(`candidate module missing for ${id}: ${file}`);
   const model = config.models[id] ?? config.model;
+  const loader = parseLoader(config.loaders[id] ?? config.engineLoader);
   return {
     id,
     owner: config.owners[id] ?? id,
@@ -122,6 +139,13 @@ const candidates = Object.entries(config.candidateSpecs).map(([id, modulePath]) 
     modelUrl: model.startsWith('/models/') ? model : `/models/${basename(model)}`,
     exportName: config.exports[id] ?? 'generateCandidate',
     notes: config.notes[id] ?? null,
+    loader: loader ? {
+      moduleUrl: loader.moduleUrl,
+      exportName: loader.exportName,
+      modelId: config.loaderModelIds[id] ?? config.engineModelId ?? undefined,
+      modelRoot: '/models',
+      file: loader.file,
+    } : null,
   };
 });
 
@@ -136,8 +160,9 @@ function moduleUrlFor(file) {
  * must be readable by the dev server; nothing is copied. */
 function allowedDirectories(candidateList) {
   const dirs = new Set([frontend, config.modelDir, config.aliasSrc, ...config.allowDirs.map((dir) => resolve(dir))]);
-  for (const candidate of candidateList) {
-    let dir = dirname(candidate.file);
+  const files = [...candidateList.map((candidate) => candidate.file), ...candidateList.map((candidate) => candidate.loader?.file).filter(Boolean)];
+  for (const file of files) {
+    let dir = dirname(file);
     dirs.add(dir);
     for (let depth = 0; depth < 6 && dir !== dirname(dir); depth += 1) {
       const parent = dirname(dir);
@@ -260,6 +285,7 @@ function registerCandidate(candidate, extra = {}) {
     source: sourceInfo(candidate.file),
     exportName: extra.exportName ?? candidate.exportName,
     modelUrl: candidate.modelUrl,
+    loader: candidate.loader ?? null,
     notes: candidate.notes,
     firstSeenAt: existing.firstSeenAt ?? new Date().toISOString(),
     ...extra,
@@ -292,16 +318,23 @@ function recordFailure(candidateId, scenarioId, error, extra = {}) {
 
 let leaseHeld = false;
 
-function acquireLease() {
-  const result = spawnSync('python', [leaseScript, 'acquire', '--lane', config.lane, '--purpose', config.purpose], { encoding: 'utf8' });
-  if (result.status === 0) {
-    leaseHeld = true;
-    console.log(`[lease] acquired for ${config.lane}: ${config.purpose}`);
-    return true;
+async function acquireLease() {
+  const deadline = Date.now() + Math.max(0, config.leaseWaitSeconds) * 1000;
+  for (;;) {
+    const result = spawnSync('python', [leaseScript, 'acquire', '--lane', config.lane, '--purpose', config.purpose], { encoding: 'utf8' });
+    if (result.status === 0) {
+      leaseHeld = true;
+      console.log(`[lease] acquired for ${config.lane}: ${config.purpose}`);
+      return true;
+    }
+    const holder = (result.stdout || result.stderr || '').trim();
+    if (Date.now() >= deadline) {
+      console.log(`[lease] busy: ${holder || `exit ${result.status}`}`);
+      return false;
+    }
+    console.log(`[lease] busy, waiting: ${holder}`);
+    await new Promise((resolve) => setTimeout(resolve, 20_000));
   }
-  const holder = (result.stdout || result.stderr || '').trim();
-  console.log(`[lease] busy: ${holder || `exit ${result.status}`}`);
-  return false;
 }
 
 function releaseLease() {
@@ -371,6 +404,7 @@ try {
       exportName: candidate.exportName,
       modelUrl: candidate.modelUrl,
       notes: candidate.notes,
+      loader: candidate.loader,
     })),
   });
   if (!prepared.ok) fail(prepared.error ?? 'prepare failed');
@@ -380,7 +414,7 @@ try {
     for (const candidate of candidates) {
       const inspected = await call('inspect', {
         id: candidate.id, owner: candidate.owner, moduleUrl: candidate.moduleUrl,
-        exportName: candidate.exportName, modelUrl: candidate.modelUrl, notes: candidate.notes,
+        exportName: candidate.exportName, modelUrl: candidate.modelUrl, notes: candidate.notes, loader: candidate.loader,
       });
       if (!inspected.ok) {
         recordFailure(candidate.id, '*', `import_failed: ${inspected.error}`);
@@ -398,20 +432,30 @@ try {
       console.log(`[input] ${scenario.id}: ${scenario.inputChars} chars, viewpoint ${scenario.identity.viewpointName}, change=${scenario.identity.changeKinds.join(',') || 'none'}, present=${scenario.scenePresent}`);
     }
 
-    const modelOrder = [...new Set(candidates.map((candidate) => candidate.modelUrl))];
+    const keyOf = (candidate) => `${candidate.modelUrl}::${candidate.loader?.moduleUrl ?? ''}::${candidate.loader?.modelId ?? ''}`;
+    const modelOrder = [...new Set(candidates.map(keyOf))];
     let totalRuns = 0;
     let skippedForLease = false;
-    for (const modelUrl of modelOrder) {
-      const group = candidates.filter((candidate) => candidate.modelUrl === modelUrl);
-      if (!config.noLease && !leaseHeld && !acquireLease()) { skippedForLease = true; break; }
+    for (const engineKey of modelOrder) {
+      const group = candidates.filter((candidate) => keyOf(candidate) === engineKey);
+      const modelUrl = group[0].modelUrl;
+      const loader = group[0].loader;
+      if (!config.noLease && !leaseHeld && !(await acquireLease())) { skippedForLease = true; break; }
       const loaded = await call('loadEngine', {
-        modelUrl, contextSize: config.contextSize, threads: config.threads, gpu: config.gpu, reuse: true,
+        modelUrl,
+        contextSize: config.contextSize,
+        threads: config.threads,
+        gpu: config.gpu,
+        reuse: true,
+        loader: loader ? { moduleUrl: loader.moduleUrl, exportName: loader.exportName, modelId: loader.modelId, modelRoot: loader.modelRoot } : null,
       });
       if (!loaded.ok) {
         recordFailure(group[0].id, '*', `engine_load_failed: ${loaded.error}`);
         continue;
       }
-      console.log(`[engine] ${modelUrl} ${loaded.value.coldStart ? `loaded in ${Math.round(loaded.value.loadMs)}ms` : 'reused'} backend=${loaded.value.info.backend} threads=${loaded.value.diagnostics?.numThreads ?? '?'} gpuRequested=${loaded.value.gpuRequested} webgpuAvailable=${loaded.value.webgpuAvailable}`);
+      const reloadNote = loaded.value.reloadReason ? ` reload=${loaded.value.reloadReason}` : '';
+      console.log(`[engine] ${modelUrl} ${loaded.value.coldStart ? `loaded in ${Math.round(loaded.value.loadMs)}ms` : 'reused'} backend=${loaded.value.info.backend} threads=${loaded.value.diagnostics?.numThreads ?? '?'} gpuRequested=${loaded.value.gpuRequested} webgpuAvailable=${loaded.value.webgpuAvailable}${reloadNote}`);
+      if (loaded.value.reloadReason) recordFailure(group[0].id, '*', `engine_reload:${loaded.value.reloadReason}`, { afterRun: true });
       for (const candidate of group) {
         registerCandidate(candidate, { engine: loaded.value, queuedAt: new Date().toISOString() });
         for (let repeat = 0; repeat < config.repeat; repeat += 1) {
@@ -442,7 +486,10 @@ try {
             }
             saveEvidence();
             const status = run.result.accepted ? 'accepted' : 'rejected';
-            console.log(`[run] ${candidate.id} ${scenario.id} repeat=${repeat + 1} ${status} chars=${run.result.chars} wall=${Math.round(run.wallMs)}ms attempts=${run.result.attempts.length}`);
+            console.log(`[run] ${candidate.id} ${scenario.id} repeat=${repeat + 1} ${status} chars=${run.result.chars} wall=${Math.round(run.wallMs)}ms attempts=${run.result.attempts.length} firstReadable=${run.progress.firstReadableAtMs == null ? 'none' : `${Math.round(run.progress.firstReadableAtMs)}ms`} engineAlive=${run.engineAfter.alive}`);
+            if (!run.engineAfter.alive) {
+              recordFailure(candidate.id, scenario.id, 'engine_dead_after_run', { runId: run.runId });
+            }
             if (!config.quiet) {
               const preview = run.result.paragraphs[0] ?? '(no text)';
               console.log(`[text] ${preview.slice(0, 160)}${preview.length > 160 ? '…' : ''}`);

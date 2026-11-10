@@ -214,6 +214,7 @@ export async function scenarioFromProjection(args: {
     scene,
     policy: {
       viewpoint: { id: viewpoint, name: nameOf(args.after, viewpoint) },
+      viewpointId: viewpoint,
       roster: Object.values(args.after.initial.characters).map((entity) => entity.name),
       locations: Object.keys(args.after.initial.locations).map((id) => nameOf(args.after, id)),
       knownPositions,
