@@ -200,3 +200,4 @@
 - 02 `418e83df`：dense-point-4 的水声/没有声音矛盾已由 `hard:self_contradiction` 覆盖（测试逐字用原文）；但雨和「他没有移动」仍未覆盖，01 的 rain/move 判据保留。
 - 04 `ab242e32`/`6afa8e39`：结算正文剥离骰点/骰子/判定/布尔值，机制-only 事实中止；源修复，但不在 3-turn 的 `5d4c26f6`。06 `58beddad` 已合 02 `418e83df` 与 04 `aa9622a3`，`ab242e32` 待合。
 - 06 将 `09-product-03turn-d101.json` 标为 invalid（21:47Z 重启时第 2 回合仍在跑；第 2 回合此前已 330 s 超时）；3-turn 不作为产品证据。06 新构建 `101bb3d2` ready。
+- 06 `101bb3d2` 修失败命令历史槽位（`commandPointIds`，对应 3-turn 第 2 回合显示第 1 回合正文的类），`26035d97` 取消失败后的残留 advance；待下一次 09 验证。
