@@ -32,6 +32,7 @@ AUTHORED_WORLD_SHA256 = "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a
 WORKTREE_ROOT = pathlib.Path(__file__).resolve().parent.parents[2]
 MIN_CHARS = 60
 MAX_CHARS = 160
+CHINESE_DIGITS = "零一二三四五六七八九"
 POSTURE_PATTERN = re.compile(
     r"(站在|站着|坐着|蹲在|蹲下|蹲着|躺在|躺着|跪着|靠在|靠着|坐下|站起|起身)"
 )
@@ -57,6 +58,28 @@ def canonical(obj: object) -> str:
 def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
+
+
+def chinese_minutes(count: int) -> str:
+    if count < 10:
+        return ("两" if count == 2 else CHINESE_DIGITS[count]) + "分钟"
+    if count < 20:
+        suffix = CHINESE_DIGITS[count % 10] if count % 10 else ""
+        return "十" + suffix + "分钟"
+    tens, ones = divmod(count, 10)
+    suffix = CHINESE_DIGITS[ones] if ones else ""
+    return CHINESE_DIGITS[tens] + "十" + suffix + "分钟"
+
+
+def check_time_stated(errors: list[str], label: str, record: dict[str, object]) -> None:
+    advance = record["input"]["本回合变化"]["时间推进"]
+    match = re.match(r"(\d+)\s*分钟", advance)
+    if not match:
+        fail(errors, f"{label}: unreadable time advance {advance!r}")
+        return
+    phrase = chinese_minutes(int(match.group(1)))
+    if phrase not in record["targetText"]:
+        fail(errors, f"{label}: targetText does not state the time advance {phrase!r}")
 
 
 def load_world_names(world_path: pathlib.Path) -> set[str]:
@@ -329,6 +352,7 @@ def main() -> int:
             fail(errors, f"{label}: forbiddenInventions is empty")
 
         check_no_posture(errors, label, record)
+        check_time_stated(errors, label, record)
 
         cats = set(record["categories"])
         unknown = cats - KNOWN_CATEGORIES

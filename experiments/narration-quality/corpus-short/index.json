@@ -74,20 +74,21 @@
     "task_complete": 28
   },
   "targetLength": {
-    "min": 60,
-    "max": 149,
-    "mean": 90.0,
+    "min": 61,
+    "max": 157,
+    "mean": 93.4,
     "buckets": {
-      "120-160": 9,
-      "60-79": 21,
-      "80-119": 41
+      "120-160": 8,
+      "60-79": 18,
+      "80-119": 45
     }
   },
   "qualityGates": {
     "posture": "targetText may not claim a posture that is absent from the input; licensed postures such as 沈澄 sitting are allowed",
     "licensedEntities": "authored rows may not use a world entity name that is absent from the row input",
     "inputHash": "frozen rows must match the source x byte for byte; the derived row may differ only in time advance",
-    "stateConsistency": "authored delta must be reflected in the row after-state"
+    "stateConsistency": "authored delta must be reflected in the row after-state",
+    "time": "targetText must state the Chinese form of the time advance"
   },
   "failureDrivenRows": [
     {
@@ -409,7 +410,7 @@
         "task_added",
         "sanity_change"
       ],
-      "targetChars": 137,
+      "targetChars": 140,
       "variant": null
     },
     {
@@ -422,7 +423,7 @@
         "item_change",
         "appearance_change"
       ],
-      "targetChars": 125,
+      "targetChars": 127,
       "variant": null
     },
     {
@@ -434,7 +435,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 120,
+      "targetChars": 116,
       "variant": null
     },
     {
@@ -448,7 +449,7 @@
         "appearance_change",
         "personality_change"
       ],
-      "targetChars": 149,
+      "targetChars": 157,
       "variant": null
     },
     {
@@ -460,7 +461,7 @@
         "appearance_change",
         "location_change"
       ],
-      "targetChars": 80,
+      "targetChars": 72,
       "variant": null
     },
     {
@@ -472,7 +473,7 @@
         "appearance_change",
         "item_change"
       ],
-      "targetChars": 70,
+      "targetChars": 66,
       "variant": null
     },
     {
@@ -484,7 +485,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 84,
+      "targetChars": 95,
       "variant": null
     },
     {
@@ -496,7 +497,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 90,
+      "targetChars": 98,
       "variant": null
     },
     {
@@ -507,7 +508,7 @@
       "categories": [
         "personality_change"
       ],
-      "targetChars": 98,
+      "targetChars": 83,
       "variant": null
     },
     {
@@ -519,7 +520,7 @@
         "task_added",
         "sanity_change"
       ],
-      "targetChars": 100,
+      "targetChars": 107,
       "variant": null
     },
     {
@@ -530,7 +531,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 108,
+      "targetChars": 109,
       "variant": null
     },
     {
@@ -543,7 +544,7 @@
         "appearance_change",
         "location_change"
       ],
-      "targetChars": 93,
+      "targetChars": 104,
       "variant": null
     },
     {
@@ -556,7 +557,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 86,
+      "targetChars": 90,
       "variant": null
     },
     {
@@ -581,7 +582,7 @@
         "task_complete",
         "secret_reveal"
       ],
-      "targetChars": 98,
+      "targetChars": 99,
       "variant": null
     },
     {
@@ -592,7 +593,7 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 86,
+      "targetChars": 90,
       "variant": null
     },
     {
@@ -603,7 +604,7 @@
       "categories": [
         "item_change"
       ],
-      "targetChars": 89,
+      "targetChars": 103,
       "variant": null
     },
     {
@@ -614,7 +615,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 91,
+      "targetChars": 105,
       "variant": null
     },
     {
@@ -626,7 +627,7 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 99,
+      "targetChars": 113,
       "variant": null
     },
     {
@@ -638,7 +639,7 @@
         "task_complete",
         "task_added"
       ],
-      "targetChars": 94,
+      "targetChars": 110,
       "variant": null
     },
     {
@@ -651,7 +652,7 @@
         "task_complete",
         "personality_change"
       ],
-      "targetChars": 83,
+      "targetChars": 100,
       "variant": null
     },
     {
@@ -664,7 +665,7 @@
         "personality_change",
         "task_added"
       ],
-      "targetChars": 91,
+      "targetChars": 107,
       "variant": null
     },
     {
@@ -677,7 +678,7 @@
         "item_change",
         "location_change"
       ],
-      "targetChars": 87,
+      "targetChars": 98,
       "variant": null
     },
     {
@@ -691,7 +692,7 @@
         "movement",
         "location_change"
       ],
-      "targetChars": 98,
+      "targetChars": 110,
       "variant": null
     },
     {
@@ -703,7 +704,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 88,
+      "targetChars": 87,
       "variant": null
     },
     {
@@ -753,7 +754,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 80,
+      "targetChars": 98,
       "variant": null
     },
     {
@@ -776,7 +777,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 65,
+      "targetChars": 75,
       "variant": null
     },
     {
@@ -789,7 +790,7 @@
         "item_change",
         "appearance_change"
       ],
-      "targetChars": 60,
+      "targetChars": 68,
       "variant": null
     },
     {
@@ -800,7 +801,7 @@
       "categories": [
         "appearance_change"
       ],
-      "targetChars": 69,
+      "targetChars": 70,
       "variant": null
     },
     {
@@ -834,7 +835,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 71,
+      "targetChars": 69,
       "variant": null
     },
     {
@@ -845,7 +846,7 @@
       "categories": [
         "task_added"
       ],
-      "targetChars": 66,
+      "targetChars": 81,
       "variant": null
     },
     {
@@ -868,7 +869,7 @@
         "item_change",
         "movement"
       ],
-      "targetChars": 138,
+      "targetChars": 128,
       "variant": null
     },
     {
@@ -880,7 +881,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 130,
+      "targetChars": 122,
       "variant": null
     },
     {
@@ -892,7 +893,7 @@
         "task_complete",
         "item_change"
       ],
-      "targetChars": 127,
+      "targetChars": 123,
       "variant": null
     },
     {
@@ -904,7 +905,7 @@
         "task_complete",
         "item_change"
       ],
-      "targetChars": 121,
+      "targetChars": 108,
       "variant": null
     },
     {
@@ -916,7 +917,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 122,
+      "targetChars": 100,
       "variant": null
     },
     {
@@ -928,7 +929,7 @@
         "movement",
         "separation"
       ],
-      "targetChars": 68,
+      "targetChars": 80,
       "variant": null
     },
     {
@@ -940,7 +941,7 @@
         "personality_change",
         "sanity_change"
       ],
-      "targetChars": 77,
+      "targetChars": 98,
       "variant": null
     },
     {
@@ -952,7 +953,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 77,
+      "targetChars": 91,
       "variant": null
     },
     {
@@ -964,7 +965,7 @@
         "movement",
         "task_complete"
       ],
-      "targetChars": 107,
+      "targetChars": 127,
       "variant": null
     },
     {
@@ -976,7 +977,7 @@
         "task_complete",
         "sanity_change"
       ],
-      "targetChars": 104,
+      "targetChars": 125,
       "variant": null
     },
     {
@@ -987,7 +988,7 @@
       "categories": [
         "task_complete"
       ],
-      "targetChars": 80,
+      "targetChars": 98,
       "variant": null
     }
   ]
