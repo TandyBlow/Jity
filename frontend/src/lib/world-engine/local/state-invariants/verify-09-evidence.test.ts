@@ -12,7 +12,9 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { verifySessionSnapshot, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport } from './index';
+import {
+  verifyDisplayHistory, verifySessionSnapshot, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
+} from './index';
 
 const evidencePath = process.env.WORLD_STATE_EVIDENCE;
 
@@ -46,6 +48,22 @@ function labelFor(document: unknown, index: number): string {
   return `entry-${index + 1}`;
 }
 
+function snapshotValue(entry: unknown): unknown | null {
+  if (!entry || typeof entry !== 'object') return null;
+  const record = entry as Record<string, unknown>;
+  return record.snapshot ?? record.snapshotAfter ?? record.snapshotBefore ?? record.transport ?? record.record ?? null;
+}
+
+function addDisplayReport(entry: unknown, report: InvariantReport): InvariantReport {
+  const snapshot = snapshotValue(entry);
+  if (snapshot == null) return report;
+  const display = verifyDisplayHistory(snapshot);
+  for (const error of display.errors) report.errors.push({ ...error, detail: `display: ${error.detail}` });
+  for (const warning of display.warnings) report.warnings.push({ ...warning, detail: `display: ${warning.detail}` });
+  report.ok = report.errors.length === 0;
+  return report;
+}
+
 async function verifyDocument(document: unknown): Promise<{ label: string; report: InvariantReport }[]> {
   const entries = entriesOf(document);
   const results: { label: string; report: InvariantReport }[] = [];
@@ -68,10 +86,10 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
     const report = await verifyTurnEntry(entry);
     if (report.errors.length === 0 && report.points === 0 && report.replayDigest == null) {
       // A snapshot envelope was not present; try the envelope itself.
-      const fallback = await verifySessionSnapshot(entry);
+      const fallback = addDisplayReport(entry, await verifySessionSnapshot(entry));
       results.push({ label: labelFor(entry, index), report: fallback });
     } else {
-      results.push({ label: labelFor(entry, index), report });
+      results.push({ label: labelFor(entry, index), report: addDisplayReport(entry, report) });
     }
   }
   if (visibleOnly.length > 0) {

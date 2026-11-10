@@ -721,11 +721,13 @@ export function verifyDisplayHistory(value: unknown): DisplayHistoryReport {
   if (commands !== undefined && (!isStringArray(commands) || commands.some((command) => !command.trim()))) {
     report.errors.push(issue('commands_invalid', 'commands must be a list of non-blank strings'));
   }
-  const commandCount = isStringArray(commands) ? commands.length : 0;
-  if (commandCount < playerPoints.length) {
-    report.errors.push(issue('history_missing_command', `snapshot has ${playerPoints.length} player points but only ${commandCount} commands`));
-  } else if (commandCount > playerPoints.length) {
-    report.warnings.push(issue('history_missing_command', `snapshot has ${commandCount} commands for ${playerPoints.length} committed player points; failed/cancelled inputs may be retained for resume`));
+  if (commands !== undefined) {
+    const commandCount = isStringArray(commands) ? commands.length : 0;
+    if (commandCount < playerPoints.length) {
+      report.errors.push(issue('history_missing_command', `snapshot has ${playerPoints.length} player points but only ${commandCount} commands`));
+    } else if (commandCount > playerPoints.length) {
+      report.warnings.push(issue('history_missing_command', `snapshot has ${commandCount} commands for ${playerPoints.length} committed player points; failed/cancelled inputs may be retained for resume`));
+    }
   }
   const narrations = isRecord(record.narrations) ? record.narrations : null;
   for (const point of playerPoints) {
