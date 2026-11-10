@@ -80,6 +80,14 @@ test is frozen and waiting for the HPC owner; see
 `experiments/narration-best-of-n/cause-analysis-b01.md` and
 `design/parallel-handoff/12-best-of-n.md`.
 
+## Selection is not the display gate
+
+`selectCandidate` only chooses a candidate to submit. The caller must still run
+01's `reviewNarration` + `gateNarration` on the selected text before the page
+shows it as model prose. `hold_for_review` must stay labelled; `regenerate` and
+program fallback must not be presented as model prose. A fact-clean selected
+text with review/style findings is not a pass.
+
 ## Not a product verdict
 
 Passing unit tests or producing diverse candidates does not make a product
