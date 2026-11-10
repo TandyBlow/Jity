@@ -334,6 +334,21 @@ describe('generateCandidate program mode', () => {
     expect(result.segments.every((segment) => segment.source === 'program')).toBe(true);
   });
 
+  it('does not repeat the e9a5 player ending in the next constrained point', async () => {
+    const { packet } = await productWorldFixture();
+    const priorText = '路明非站在西侧服务巷口，看着黄黑绳缓缓放下。风掠过巷口，带起一阵潮湿的泥土味，他忽然想起什么，却只在心里嘀咕了一句。他望着诺诺站在不远处，红发用发圈束在脑后，目光平静。他注意到她手中的演习短枪，枪上有黄色演习标记。一分钟过去，他依旧站在原地，呼吸平稳，目光落在路明非的护目镜和演习背心上，没有动弹。';
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: { ...packet, priorText },
+      inputText: '',
+      policy: { mode: 'program' },
+    });
+    expect(result.accepted).toBe(true);
+    const closing = result.text.split(String.fromCharCode(10, 10)).filter(Boolean).slice(-1)[0] ?? '';
+    expect(closing).not.toContain('没有动弹');
+    expect(result.text).not.toContain('目光落在路明非的护目镜和演习背心上，没有动弹。');
+  });
+
   it('works from a facts-only packet with no full state', async () => {
     const { packet } = await fixture();
     const full = await generateCandidate({
