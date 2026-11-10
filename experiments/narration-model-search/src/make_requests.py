@@ -134,6 +134,16 @@ def main() -> int:
             ],
             "summary": "one JSON per model plus one summary JSON under the lane-10 results area; tell 11 the paths",
         },
+        "environmentPlan": {
+            "existingBuild": "first check for an existing llama-server (and llama-gguf) on the cluster; "
+                             "record its version/commit and use it if it loads the models",
+            "ifMissing": "build ggml-org/llama.cpp from a pinned release tag with cmake; CPU build is "
+                         "enough for this preflight, CUDA is preferable for the quality batch; record "
+                         "the exact tag/commit",
+            "whyNotTransformers": "the offline batch must apply the GGUF's own chat template through "
+                                  "llama-server --jinja; a transformers run would be a different "
+                                  "template path and is not comparable to the browser run",
+        },
         "resourceEstimate": {
             "downloadBytes": sum(row["gguf"]["bytes"] for row in passing),
             "downloadBytesHuman": "~4.4 GB",
@@ -203,6 +213,8 @@ def main() -> int:
             "sampling": {"temperature": 0.0, "top_k": 1, "top_p": 1.0, "seed": 42,
                          "max_tokens": 320, "context": 8192},
             "perModelOneServer": True,
+            "cpuFallback": "if no GPU is free, CPU with -t <cores> is acceptable for the batch; record "
+                           "the actual tok/s so the browser-latency decision is not based on GPU numbers alone",
             "templateKwargsFallback": "llama-server must accept per-request chat_template_kwargs "
                                       "(Hunyuan needs enable_thinking=false). If this build does not, "
                                       "stop and report the version; do not run Hunyuan with thinking on.",
