@@ -124,9 +124,19 @@ function main(): void {
   const rightQualified = rightCase.samples.filter((sample) => sample.checker.factQualified).length;
   const rightDistinct = rightCase.diversity.qualifiedDistinctClusters ?? 0;
   const v2Gate = rightQualified >= 2 && rightDistinct >= 2;
-  const wall = (report: ReportView): number | null => {
+  const wall = (report: ReportView, reportPath: string): number | null => {
     const env = Object.values(report.env)[0];
-    return typeof env?.runWallMs === 'number' ? env.runWallMs : null;
+    if (typeof env?.runWallMs === 'number') return env.runWallMs;
+    const recordPath = join(dirname(reportPath), 'hpc-record.json');
+    if (existsSync(recordPath)) {
+      const record = JSON.parse(readFileSync(recordPath, 'utf8')) as {
+        calls?: { totalWallSeconds?: number };
+      };
+      if (typeof record.calls?.totalWallSeconds === 'number') {
+        return record.calls.totalWallSeconds * 1000;
+      }
+    }
+    return null;
   };
 
   const result = {
@@ -143,7 +153,7 @@ function main(): void {
       qualifiedCount: leftCase.diversity.qualifiedCount,
       qualifiedDistinctClusters: leftCase.diversity.qualifiedDistinctClusters,
       findingCounts: leftCase.findingCounts,
-      runWallMs: wall(left),
+      runWallMs: wall(left, leftPath),
     },
     right: {
       report: rightPath,
@@ -156,7 +166,7 @@ function main(): void {
       qualifiedCount: rightCase.diversity.qualifiedCount,
       qualifiedDistinctClusters: rightCase.diversity.qualifiedDistinctClusters,
       findingCounts: rightCase.findingCounts,
-      runWallMs: wall(right),
+      runWallMs: wall(right, rightPath),
     },
     delta: {
       qualifiedCount: (rightCase.diversity.qualifiedCount ?? 0) - (leftCase.diversity.qualifiedCount ?? 0),
