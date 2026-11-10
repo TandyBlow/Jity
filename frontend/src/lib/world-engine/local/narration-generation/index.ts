@@ -771,6 +771,21 @@ export function contradictionTarget(text: string): { sentence: string; lines: st
   return null;
 }
 
+/** Wording for a sentence that re-enacts a state the input gives as complete.
+ * Exported so the regression can check the instruction without a model call. */
+export function stateRepairLines(act: { sentence: string; word: string; object?: string }): { sentence: string; lines: string[] } {
+  return { sentence: act.sentence, lines: [
+    // The input already gives this as true; writing the change again is an
+    // event the settlement never produced (the rope that is already down being
+    // lowered once more).
+    `下面这句把一件已经完成的事又演了一遍（状态里是「${act.object ?? ''}${act.word}」）：`,
+    `原句：${act.sentence}`,
+    '',
+    '只重写这一句：把它当成早就如此的状态来写，不要再写它正在发生；保留这句里其它已经发生的事，不要新增动作、人物或物品。',
+    '只输出重写后的这一句，不要解释。',
+  ] };
+}
+
 async function repairSentences(args: {
   engine: InferenceEngine;
   text: string;
@@ -825,11 +840,12 @@ async function repairSentences(args: {
       ] };
     }
     if (!target && acts.length) {
-      target = { sentence: acts[0].sentence, lines: [
+      const act = acts[0];
+      target = { sentence: act.sentence, lines: act.kind === 'state' ? stateRepairLines(act).lines : [
         '下面这句里写了没有发生的姿势或手上的动作：',
-        `原句：${acts[0].sentence}`,
+        `原句：${act.sentence}`,
         '',
-        `只重写这一句：删掉「${acts[0].word}」这个动作（${acts[0].object ? '以及摆弄' + acts[0].object + '的部分' : '如果它只是被这个人拿在手里'}），保留这句里其它已经发生的事，不要新增动作、人物或物品。`,
+        `只重写这一句：删掉「${act.word}」这个动作（${act.object ? '以及摆弄' + act.object + '的部分' : '如果它只是被这个人拿在手里'}），保留这句里其它已经发生的事，不要新增动作、人物或物品。`,
         '只输出重写后的这一句，不要解释。',
       ] };
     }

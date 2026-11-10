@@ -19,7 +19,7 @@
 import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
-import { contradictionTarget, generateCommittedNarration } from './index';
+import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -423,5 +423,28 @@ describe('product regressions: a repeated closing line', () => {
     expect(result.accepted).toBe(true);
     expect(result.assembly.droppedSentences).toContain('路明非把手插进兜里，没有再看诺诺。');
     expect(result.text).not.toContain('没有再看诺诺');
+  });
+});
+
+describe('product regressions: the rope that is already down', () => {
+  // 09 f15d/e9a5 opened with «路明非站在西侧服务巷口，看着黄黑绳缓缓放下» while
+  // the input says «巷口的黄黑绳已放下».
+  test('re-enacting a state the input gives as already true is an action', async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷口，看着黄黑绳缓缓放下。一分钟过去，他没有动。');
+    expect(kinds).toContain('hard:unlicensed_action');
+  });
+
+  test('restating the same state is not an action', async () => {
+    const { kinds } = await issuesOf('路明非站在西侧服务巷口，黄黑绳已放下。一分钟过去，他没有动。');
+    expect(kinds).not.toContain('hard:unlicensed_action');
+  });
+});
+
+describe('product regressions: repair wording for a re-enacted state', () => {
+  test('the repair asks for a state, not for deleting the object', () => {
+    const target = stateRepairLines({ sentence: '路明非站在西侧服务巷口，看着黄黑绳缓缓放下', word: '放下', object: '黄黑绳' });
+    expect(target).not.toBeNull();
+    expect(target!.lines.join(String.fromCharCode(10))).toContain('当成早就如此的状态来写');
+    expect(target!.sentence).toContain('缓缓放下');
   });
 });
