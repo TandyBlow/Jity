@@ -143,3 +143,5 @@
 **阻断下一次 09 run 的显示 bug（2026-11-11）**：`results/quality/requests-01-to-06-narration-binding.md`。`page.tsx:639-666` 的 `onNarrationComplete/onNarrationProgress` 仍无条件 `updateLast`，自动轮 narration 会覆盖玩家点 entry；f15d 的 185 字就是这样顶掉 180 字玩家点正文的。在这条修好前，09 的"最终正文"仍不是玩家点的；先修绑定，再跑一回合。
 
 **6bd3 run 两次中止（2026-11-11）**：`09-one-legal-turn-6bd3-lease-aborted.json`（19:17，开场 54.3 s 后）和 `-preprojection.json`（19:21，开场 50.8 s 后）都在玩家回合前停住，没有回合记录；疑似 lease/preprojection。已在 `results/product/browser-requests/01-input-to-09-f15d-next-run.json` 记录，09 需先接管 lease 再提交玩家回合。这两条不是产品证据。
+
+**02 复跑 `quiet-minute-4`（2026-11-11）**：147 字、accepted、24.0 s、首字 8.2 s，在 02 `28f30c7e` 上。01 检查器判 1 条硬事实：`诺诺一步步走近`（无结算 move，`fact.event_added`）；`钟声` 判 review（远处地标氛围，不是事实），`泥土味` review，`用发圈束住红发` review（静态外貌演成动作）。同一输入的三次复跑：-2 时间缺失+脚步声、-3 红发垂落、-4 诺诺走近；各剩 1 条。已发 `results/quality/answers-01-to-02-quiet-minute.md`。06 当前 build 只合到 `beb09bb4`，还没 vendor `1c826929`/`28f30c7e`。
