@@ -75,10 +75,15 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
   const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(100, 36 + changeCount * 8));
   const maxChars = policy.maxChars ?? 1400;
+  const modelRequested = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
+    ? policy.enableModel !== false
+    : false;
   const planStarted = now();
   const plan = planBeats(scene, {
     narrateHiddenDeltas: policy.narrateHiddenDeltas === true,
-    maxBeats: policy.maxBeats,
+    // Model mode spends one call per beat: keep the plan short. Program mode
+    // can afford the extra beats that keep each settled change separate.
+    maxBeats: policy.maxBeats ?? (modelRequested ? 6 : 10),
     seed: policy.seed,
     minChars: 18,
     maxChars: 150,
@@ -94,9 +99,6 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     forbiddenKnowledge: policy.forbiddenKnowledge ?? [],
   };
 
-  const modelRequested = policy.mode === 'model' || (policy.mode == null || policy.mode === 'auto')
-    ? policy.enableModel !== false
-    : false;
   const deadline = started + Math.max(5_000, policy.turnTimeoutMs ?? 180_000);
   let modelBudgetSpent = false;
   const modelBudget = (): { enabled: boolean; timeoutMs: number } => {

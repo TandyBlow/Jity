@@ -368,11 +368,11 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
     if (fact.kind === 'item_present') {
       const detail = sentenceClause(fact.note, 56);
       paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${fact.id}`, detail ? [
-        `${fact.name}还在${fact.container}。${detail}`,
-        `${fact.name}留在原处，${detail}`,
+        `${fact.name}还在原处。${detail}`,
+        `${fact.name}没有挪动，${detail}`,
       ] : [
-        `${fact.name}还在${fact.container}`,
-        `${fact.name}留在${fact.container}`,
+        `${fact.name}还在原处`,
+        `${fact.name}仍在${fact.container}`,
       ])));
     } else if (fact.kind === 'item_discovered') {
       const detail = sentenceClause(fact.note, 56);
