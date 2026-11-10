@@ -790,6 +790,77 @@ export async function verifyTurnEntry(entry: unknown): Promise<InvariantReport> 
  * contain a full transport record, so this is not a replay: it only checks
  * monotonic history/task continuity and the refresh marker. A full snapshot is
  * still required for the S0+delta invariant checks. */
+export interface TaskCoverageReport {
+  ok: boolean;
+  initialCharacters: number;
+  initialTasks: number;
+  characters: number;
+  tasks: number;
+  achieved: number;
+  errors: InvariantIssue[];
+  warnings: InvariantIssue[];
+}
+
+/** Read-only full-world task coverage check.
+ *
+ * A real turn may add a subtask, but it must not drop an initial character or
+ * an initial task, and an achieved task must stay achieved. This checks the
+ * stored world, not the model's task prompt: it cannot prove the settlement
+ * considered every task, but it proves a later snapshot did not silently erase
+ * the off-stage rows. */
+export function verifyTaskCoverage(recordValue: WorldRecordLike | unknown): TaskCoverageReport {
+  const report: TaskCoverageReport = {
+    ok: false, initialCharacters: 0, initialTasks: 0, characters: 0, tasks: 0, achieved: 0,
+    errors: [], warnings: [],
+  };
+  const record = isRecord(recordValue) ? recordValue : null;
+  const initial = record && isRecord(record.initial) ? record.initial : null;
+  const state = record && isRecord(record.state) ? record.state : null;
+  if (!initial || !isRecord(initial.characters) || !state || !isRecord(state.characters)) {
+    report.errors.push(issue('evidence_shape', 'record must carry initial.characters and state.characters'));
+    return report;
+  }
+  const initialCharacters = initial.characters;
+  const currentCharacters = state.characters;
+  report.initialCharacters = Object.keys(initialCharacters).length;
+  report.characters = Object.keys(currentCharacters).length;
+  for (const [characterId, initialCharacter] of Object.entries(initialCharacters)) {
+    if (!isRecord(initialCharacter)) continue;
+    const initialTasks = isRecord(initialCharacter.tasks) ? initialCharacter.tasks : {};
+    const currentCharacter = currentCharacters[characterId];
+    if (!isRecord(currentCharacter)) {
+      report.errors.push(issue('task_hierarchy', `${characterId} disappeared from the stored character registry`));
+      continue;
+    }
+    const currentTasks = isRecord(currentCharacter.tasks) ? currentCharacter.tasks : {};
+    for (const [taskId, initialTask] of Object.entries(initialTasks)) {
+      report.initialTasks += 1;
+      if (!isRecord(initialTask)) continue;
+      const currentTask = currentTasks[taskId];
+      if (!isRecord(currentTask)) {
+        report.errors.push(issue('task_regressed', `${characterId}.${taskId} is missing from the stored task set`));
+        continue;
+      }
+      if (initialTask.status === 'achieved' && currentTask.status !== 'achieved') {
+        report.errors.push(issue('task_regressed', `${characterId}.${taskId} moved from achieved to ${String(currentTask.status)}`));
+      }
+    }
+  }
+  for (const [characterId, currentCharacter] of Object.entries(currentCharacters)) {
+    if (!isRecord(currentCharacter) || !isRecord(currentCharacter.tasks)) continue;
+    for (const [taskId, task] of Object.entries(currentCharacter.tasks)) {
+      if (!isRecord(task)) continue;
+      report.tasks += 1;
+      if (task.status === 'achieved') report.achieved += 1;
+      if (!initialCharacters[characterId]) {
+        report.warnings.push(issue('task_unknown', `${characterId}.${taskId} belongs to a character absent from the initial world`));
+      }
+    }
+  }
+  report.ok = report.errors.length === 0;
+  return report;
+}
+
 export interface VisibleStateLike {
   historyCount?: unknown;
   place?: unknown;

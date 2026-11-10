@@ -13,7 +13,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  verifyDisplayHistory, verifySessionSnapshot, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
+  verifyDisplayHistory, verifySessionSnapshot, verifyTaskCoverage, verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
 } from './index';
 
 const evidencePath = process.env.WORLD_STATE_EVIDENCE;
@@ -60,6 +60,12 @@ function addDisplayReport(entry: unknown, report: InvariantReport): InvariantRep
   const display = verifyDisplayHistory(snapshot);
   for (const error of display.errors) report.errors.push({ ...error, detail: `display: ${error.detail}` });
   for (const warning of display.warnings) report.warnings.push({ ...warning, detail: `display: ${warning.detail}` });
+  const record = snapshot && typeof snapshot === 'object' && 'transport' in snapshot
+    ? (snapshot as { transport?: unknown }).transport
+    : snapshot;
+  const coverage = verifyTaskCoverage(record);
+  for (const error of coverage.errors) report.errors.push({ ...error, detail: `task-coverage: ${error.detail}` });
+  for (const warning of coverage.warnings) report.warnings.push({ ...warning, detail: `task-coverage: ${warning.detail}` });
   report.ok = report.errors.length === 0;
   return report;
 }

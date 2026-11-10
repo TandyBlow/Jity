@@ -8,7 +8,7 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyVisibleAcceptance,
+  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyTaskCoverage, verifyVisibleAcceptance,
   verifySnapshotSequence, verifyWorldRecord, type WorldRecordLike,
 } from './index';
 import { restoreVerified, verifyBeforeRestore } from './guarded-restore';
@@ -274,6 +274,26 @@ describe('visible acceptance summary', () => {
     expect(forward.errors).toEqual([]);
     const backward = await verifySnapshotSequence([{ transport: second }, { transport: first }]);
     expect(backward.errors.map((item) => item.code)).toEqual(expect.arrayContaining(['version_regressed', 'points_regressed']));
+  });
+
+  it('keeps every initial task and character and rejects a removed task row', async () => {
+    const world = JSON.parse(readFileSync(resolve('public/worlds/dragon-raja-free-day.world.json'), 'utf8'));
+    const transport = await LocalWorldTransport.create(world.initial as InitialState, { worldId: world.initial.worldId, roll: () => 13 });
+    const record = transport.snapshot() as unknown as WorldRecordLike & Record<string, unknown>;
+    const coverage = verifyTaskCoverage(record);
+    expect(coverage.ok, JSON.stringify(coverage.errors)).toBe(true);
+    expect(coverage.initialCharacters).toBe(14);
+    expect(coverage.initialTasks).toBe(73);
+    expect(coverage.achieved).toBeLessThanOrEqual(coverage.tasks);
+
+    const tampered = structuredClone(record) as WorldRecordLike & Record<string, unknown>;
+    const state = tampered.state as WorldState;
+    const tasks = Object.keys(state.characters.lu.tasks);
+    expect(tasks.length).toBeGreaterThan(0);
+    delete state.characters.lu.tasks[tasks[0]];
+    const bad = verifyTaskCoverage(tampered);
+    expect(bad.ok).toBe(false);
+    expect(bad.errors.map((item) => item.code)).toContain('task_regressed');
   });
 
   it('does not call a retained failed input a committed history', async () => {
