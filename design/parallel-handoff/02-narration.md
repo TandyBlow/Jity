@@ -149,9 +149,10 @@ const result = await generateCommittedNarration({
   inputText: brief.prompt,                    // 现有 legacy/instruct 序列化器
   priorText: this.lastAcceptedNarration,
   // signal: this.narrationSignal,            // 主 agent 若已有取消信号则传入
+  // 现有 onNarrationProgress 只有 {pointId, raw, elapsedMs}；先按这个形状接。
+  // 若要把“未核验/已接受”显示状态带到页面，再给该选项加 status/verified 两个字段。
   onProgress: (state) => this.options.onNarrationProgress?.({
     pointId, raw: state.text, elapsedMs: state.elapsedMs,
-    status: state.status, verified: state.verified,
   }),
   policy: {
     viewpoint: { id: view, name: after.initial.characters[view]?.name ?? view },
@@ -167,6 +168,7 @@ const result = await generateCommittedNarration({
       ...Object.values(after.initial.items).map((entity) => entity.name),
     ],
     visibleEntities: sameRoomItems(after, view).map((id) => after.initial.items[id]?.name ?? id),
+    // 主树当前导出了 EVENT_VERBS；若该导出被撤回，先删掉这一行（更保守）。
     licensedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     time: data.delta?.timeAdvance ?? null,
     minChars: 120,
