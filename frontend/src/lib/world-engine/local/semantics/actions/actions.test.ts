@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { decodeTaskOutput } from '../../../runtime/structured-output';
 import type { Json, WorldState } from '../../../types';
-import { createActionHandlers, buildScene, type HandlerResult } from './index';
+import { createActionHandlers, createActionModelPort, buildScene, type HandlerResult } from './index';
 import { buildTestWorld, withPosition } from './fixtures';
 
 type Reply = string | Error | ((prompt: string, call: number) => string);
@@ -504,5 +504,20 @@ describe('reaction: causal link, attribution and player agency', () => {
     expect(result.value).toBe('阿宁的反应慢了半拍。');
     expect(codes(result)).toContain('repair_failed');
     codecAccepts(result);
+  });
+});
+
+describe('model-port adapter', () => {
+  it('serves the three action tasks and refuses to impersonate other tasks', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine(['{"kind":"skip"}']);
+    const port = createActionModelPort(engine);
+    const value = await port.generate('action', 'ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
+
+    expect(value).toEqual({ kind: 'skip' });
+    expect(port.evidence).toHaveLength(1);
+    expect(port.evidence[0].task).toBe('action');
+    await expect(port.generate('results', 'g1', { workingState: state } as unknown as Json))
+      .rejects.toThrow(/unsupported_action_port_task:results/);
   });
 });
