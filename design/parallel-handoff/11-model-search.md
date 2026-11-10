@@ -6,7 +6,7 @@
 
 **09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。详细分析：`experiments/narration-model-search/results/real-page-81d5507a.json`。
 
-**当前状态（2026-11-11，QUALITY-PRIORITY 后）**：10 已通过 `requestsReceived` 接受 preflight（旧文件 sha `729a…`，含 hf-mirror 与 251643 自建 llama.cpp 两项偏差）和旧质量请求（sha `aed5…`，12 例/84 calls）；正在处理 251643 工具构建。01 已发布 v1.1（`d6c7e766…`，15/15 可序列化），因此旧 84-call 请求必须由 **当前 15 例/105-call** 替换：`11-model-search-quality-002-full15.json`（sha 见协调文件）。preflight 当前文件 sha `af55…`，模型集未变，10 的已接受两项偏差仍有效，不重复下载。语义探针请求 `11-model-search-semantic-001.json`（2 case × 6 模型，12 calls）尚未被 10 登记，待工具构建后执行。没有任何候选正文、语义或质量结论。
+**当前状态（2026-11-11，QUALITY-PRIORITY 后）**：10 已通过 `requestsReceived` 接受 preflight（旧文件 sha `729a…`，含 hf-mirror 与 251643 自建 llama.cpp 两项偏差）和旧质量请求（sha `aed5…`，12 例/84 calls）；正在处理 251643 工具构建。01 已发布 v1.1（`d6c7e766…`，15/15 可序列化），因此旧 84-call 请求必须由 **当前 15 例/105-call** 替换：`11-model-search-quality-002-full15.json`（sha256 `eba04151…`，105 calls）。preflight 当前文件 sha `af55…`，模型集未变，10 的已接受两项偏差仍有效，不重复下载。语义探针请求 `11-model-search-semantic-001.json`（2 case × 6 模型，12 calls）尚未被 10 登记，待工具构建后执行。没有任何候选正文、语义或质量结论。
 
 ## 251643 工具链修正（2026-11-11，必须先做）
 
@@ -19,7 +19,7 @@
 cmake --build build -j 24 --target llama-server llama-cli llama-quantize
 ```
 
-构建后记录 `llama-server --version`、vendor commit、二进制 sha256；用 `--jinja` 分别加载 Qwen3.5-2B 和一个 qwen2 模型，确认 `chat_template_kwargs` 可用。请求文件里的 `toolchain` 块与协调文件给出同样的 SHA/参数。
+构建后记录 `llama-server --version`、vendor commit、二进制 sha256；用 `--jinja` 分别加载 Qwen3.5-2B 和一个 qwen2 模型，确认 `chat_template_kwargs` 可用。请求文件里的 `toolchain` 块与 `results/product/hpc-requests/11-model-search-reconciliation-20261111.md` 给出同样的 SHA/参数。
 
 ## 本轮实际交付
 
