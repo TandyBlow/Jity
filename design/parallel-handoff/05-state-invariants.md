@@ -246,7 +246,9 @@ Run `2026-11-10T2129-cad9` at 06 `d1019f09`, page `84dcce4f`, produced one
 version-1 player point. Both root and player sources are `model`; reload is
 stable and keeps labels; the point chain/digests and 73-row task coverage pass.
 The player paragraph is accepted model prose, `programFallback=false`; the page
-note only reports a later automatic round that did not finish.
+note only reports a later automatic round that did not finish. The prose still
+invents a dice pickup/throw absent from the settled items; 06 5d4c26f6 adds the
+gate, so this is a provenance failure, not a saved-state change.
 
 `acceptedMs=137786` (>60s), total 144.1s. 05 rejects only that gate. 09 currently
 turns any note into `program_fallback_labelled`; `patches/09-note-not-program.patch`
