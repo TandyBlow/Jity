@@ -13,7 +13,7 @@ import type { InitialTemplate, Json } from '../../../../06-recovery/frontend/src
 import { SHORT_STATE } from '../../../../06-recovery/frontend/src/lib/world-engine/runtime/b3-short-samples';
 import { LocalGameSession } from '../../../../06-recovery/frontend/src/lib/world-engine/local/session';
 import {
-  createLocalProgressStore, MemoryProgressBackend,
+  createLocalProgressStore, MemoryProgressBackend, ProgressConflictError,
 } from '../../../../06-recovery/frontend/src/lib/world-engine/local/persistence';
 import { verifyWorldRecord } from '../../src/lib/world-engine/local/state-invariants/index';
 
@@ -114,6 +114,29 @@ describe('real recovery session continuity', () => {
     expect(session.commandsPlayed).toHaveLength(20);
     expect(session.snapshot.transport.advance).toBeNull();
   }, 60_000);
+
+  it('rejects a stale fork save without overwriting the committed head', async () => {
+    const store = createLocalProgressStore(new MemoryProgressBackend(), { now: () => 1_000 });
+    const session = await LocalGameSession.create(template(), scriptedModel([]), {
+      storage: store, sessionId: 'tab_a', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
+    });
+    await session.start();
+    await session.submit('我打开盒盖。');
+    const worldId = session.worldId;
+    const base = await store.load(worldId);
+    expect(base).not.toBeNull();
+    const revision = base!.metadata.revision;
+    const fork = structuredClone(base!.snapshot);
+    // A second writer saw the old revision and tries to save its own branch.
+    await expect(store.save(worldId, fork, { expectedRevision: revision, writerId: 'tab_fork' }))
+      .resolves.toMatchObject({ revision: revision + 1 });
+    await expect(store.save(worldId, structuredClone(base!.snapshot), { expectedRevision: revision, writerId: 'tab_fork_2' }))
+      .rejects.toBeInstanceOf(ProgressConflictError);
+    const loaded = await store.load(worldId);
+    expect(loaded?.metadata.revision).toBe(revision + 1);
+    const report = await verifyWorldRecord(loaded!.snapshot.transport);
+    expect(report.ok, JSON.stringify(report.errors)).toBe(true);
+  }, 30_000);
 
   it('checkpoints mid-settlement, restores it, and finishes without rerolling or duplicating the point', async () => {
     const backend = new MemoryProgressBackend();
