@@ -202,3 +202,4 @@
 - 06 将 `09-product-03turn-d101.json` 标为 invalid（21:47Z 重启时第 2 回合仍在跑；第 2 回合此前已 330 s 超时）；3-turn 不作为产品证据。06 新构建 `101bb3d2` ready。
 - 06 `101bb3d2` 修失败命令历史槽位（`commandPointIds`，对应 3-turn 第 2 回合显示第 1 回合正文的类），`26035d97` 取消失败后的残留 advance；待下一次 09 验证。
 - 2603（run 2026-11-10T2155-228b，head 26035d97）：第 1 回合 0 字、`submit_refused`/`settlement_failed_recoverable`；results 1 次调用被 04 `ab242e32` 的「fact only asserted completion」中止。拒绝假完成任务是对的，但整回合中止太大；04 应丢事实/重试，06 应区分结算失败与无正文回合。见 `findings-09-2603.md`。
+- 02 `6bc2a3e6`+`c0d0ad7d`/`eff602f2`：已完成的绳再演一遍记 unlicensed_action（测试是 `缓缓放下`）；场景提示带玩家声明的行动，漏写记 note。04 `1f65b0b2` 去掉 results 提示里的 pending task goals。均未进 06 构建；3-turn 原文 `望着…被放下` 需在下个构建复核。
