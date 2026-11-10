@@ -307,7 +307,11 @@ try {
     const hits = [];
     for (const chunk of [...new Set(chunks)]) {
       const body = await page.request.get(`${base}${chunk}`, { timeout: 30000 }).then((r) => r.text()).catch(() => '');
-      const markers = ['per_character_decision', '__worldRestore'].filter((marker) => body.includes(marker));
+      // Identity markers are the product globals that survive internal
+      // refactors; a literal settlement string can legitimately disappear (the
+      // affected projection removed per_character_decision).
+      const markers = ['__worldRestore', '__worldSnapshot', '__worldArm', '__worldLive', '__worldGenerations']
+        .filter((marker) => body.includes(marker));
       if (markers.length) hits.push({ chunk, markers });
     }
     return { chunks: new Set(chunks).size, markerChunks: hits };
@@ -317,9 +321,9 @@ try {
     .then(() => true).catch(() => false);
   evidence.productIdentity = { ...identity, globalsReady, globalsWaitMs: Date.now() - globalsWaitStarted };
   const seenMarkers = new Set(identity.markerChunks.flatMap((hit) => hit.markers));
-  const buildIsCurrent = seenMarkers.has('per_character_decision') && seenMarkers.has('__worldRestore');
+  const buildIsCurrent = seenMarkers.has('__worldRestore') && (seenMarkers.has('__worldSnapshot') || seenMarkers.has('__worldArm'));
   if (!buildIsCurrent && !process.argv.includes('--allow-unknown-page')) {
-    noteFailure('page', `the served build is not current: markers ${[...seenMarkers].join(',') || 'none'}; need per_character_decision + mount __worldRestore`);
+    noteFailure('page', `the served build is not current: markers ${[...seenMarkers].join(',') || 'none'}; need the product globals __worldRestore plus __worldSnapshot/__worldArm`);
     evidence.status = 'FAILED';
     save();
     throw new Error('wrong_product_page');
