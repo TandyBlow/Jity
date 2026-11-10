@@ -202,7 +202,7 @@ chain still passes.
 after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
 `restoredSources` in the public getter; the 05 bridge restores the live
 snapshot; 06 415ccbe0 keeps the player entry source `model` and labels the later
-auto point `draft` per point (11 bridge tests pass + 1 expected fail). `snapshotForPersist`
+auto point `draft` per point (12 bridge tests pass + 1 expected fail). `snapshotForPersist`
 still reads only the live ref; 05 sent a one-line merge patch
 `patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
 after restore can otherwise drop older labels.
@@ -225,6 +225,20 @@ prose, so the player still sees it.
 `snapshotForPersist` still reads only the live source ref; 05 patch
 `06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending; the
 bridge expected-fail test pins the next-write source loss.
+
+## 415c: both points program; state/recovery pass
+
+Run `2026-11-10T2055-3e8a` at 06 `415ccbe0`, page `bdac63ec`, is version 2
+with player and automatic points both `program`. Reload is stable 1 entry /
+history 1 and keeps `narrationSources`; the full chain, digest and visible
+summary pass. The updates ledger keeps `task_lu_match` pending even though the
+raw results call contains a completion sentence.
+
+The product fails on display: no accepted model text (`acceptedMs=null`), total
+240.5s, first visible draft 93.2s, both paragraphs are program fallbacks with
+internal "未成功触发骰点" field language and repeated scene text. 06 415cc
+keeps the player point source and labels both program points per point; 05
+rejects the turn. This is not a state-kernel failure.
 
 ## Real 09 run found a sync-ownership conflict
 
