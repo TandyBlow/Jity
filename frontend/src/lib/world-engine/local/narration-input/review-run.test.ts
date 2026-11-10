@@ -42,19 +42,20 @@ describe.skipIf(!evidencePath)('09 state review', () => {
     const autoKeys = keys.filter((key) => key.startsWith('point_round_auto'));
     const rootText = narrations[rootKey].text;
     const pointText = narrations[pointKey].text;
-    const rowFor = (id: string, before: WorldState, after: WorldState, delta: Record<string, unknown>, text: string, priors: string[]) => {
+    const action = typeof turn.input === 'string' ? turn.input : undefined;
+    const rowFor = (id: string, before: WorldState, after: WorldState, delta: Record<string, unknown>, text: string, priors: string[], actionText?: string) => {
       const timeAdvance = { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } };
       const projected = projectNarrationInput({ before, after, delta: delta as never, timeAdvance, viewpointId: after.protagonistId });
       const legacy = renderLegacyInput(projected.projection);
       const input = parseLegacyInput(legacy);
       if (!input) throw new Error('legacy input did not round-trip');
-      const report = reviewNarration({ id, input, text, options: { genders: genderOptions(), priorTexts: priors } });
+      const report = reviewNarration({ id, input, text, options: { genders: genderOptions(), priorTexts: priors, action: actionText } });
       return { id, input, report };
     };
     const beforePoint = buildBefore(final);
     const pointDelta = { lu: { entityId: 'lu', positionSet: final.characters.lu.position } };
     const pointAfter = { ...final, time: { ...final.time, dateTime: '2009-10-17T15:21:00' } };
-    const rows = [rowFor('point', beforePoint, pointAfter, pointDelta, pointText, [rootText])];
+    const rows = [rowFor('point', beforePoint, pointAfter, pointDelta, pointText, [rootText], action)];
     let before = pointAfter;
     const priors = [rootText, pointText];
     for (const [index, key] of autoKeys.entries()) {

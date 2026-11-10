@@ -29,6 +29,7 @@ export type FindingKind =
   | 'fact.false_position'
   | 'fact.item_misattribution'
   | 'fact.item_actor'
+  | 'fact.action_omitted'
   | 'fact.gender'
   | 'fact.state_contradiction'
   | 'fact.body_mark_added'
@@ -196,6 +197,9 @@ export interface ReviewOptions {
   maxChars?: number;
   /** Strings the viewpoint must not reveal. */
   mustNotReveal?: string[];
+  /** The turn's stated player action; the prose must narrate its core verbs,
+   * not replace it with a state recital (415c point). */
+  action?: string;
   /** Entities the viewpoint cannot know about yet. */
   unseenEntities?: string[];
 }

@@ -1257,15 +1257,19 @@ n415 = run_415["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
 e415 = {}
 for key, value in n415.items():
     e415["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else "auto")] = value.get("text") or ""
+# The real settled inputs of the 415c points (built by review-run.test.ts from
+# the run snapshot); the f15d inputs were a different state and hid the action
+# and accessory rules.
+rr415 = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/415c-review-run.json", encoding="utf-8"))}
 b415_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
 anchors.append(
     {
         "id": "neg/415c-point-program",
-        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the player point is a program recital; the goggles stand and 诺诺 speaks a dice result",
-        "input": b415_inputs["f15d-point"],
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the player point is a program recital; the goggles stand, 诺诺 speaks a dice result, and the move/read never happens",
+        "input": rr415["point"]["input"],
         "text": e415["point"],
-        "options": {"minChars": 1},
-        "expect": {"fact": ["fact.item_actor"], "style": ["style.status_panel"], "review": [],
+        "options": {"minChars": 1, "action": run_415["turns"][0]["input"]},
+        "expect": {"fact": ["fact.item_actor", "fact.action_omitted"], "style": ["style.status_panel"], "review": [],
                    "notes": "The player's «往里走 / 看清规则牌» is not narrated; the place/诺诺 blocks are state recitals."},
     },
 )
@@ -1273,7 +1277,7 @@ anchors.append(
     {
         "id": "neg/415c-auto-echo",
         "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the automatic nono point repeats the point's setting/status lines and never narrates the nono action",
-        "input": b415_inputs["f15d-point"],
+        "input": rr415["auto1"]["input"],
         "text": e415["auto"],
         "options": {"minChars": 1, "priorTexts": [e415["point"]]},
         "expect": {"fact": [], "style": ["style.echo_prior", "style.status_panel"], "review": [],

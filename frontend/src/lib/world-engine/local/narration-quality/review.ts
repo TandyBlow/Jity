@@ -1392,22 +1392,46 @@ export function reviewNarration(args: {
       break;
     }
     // An item cannot stand, walk, turn, look, or speak. The page program wrote
-    // «路明非的护目镜在原地站了一会儿» (95dc); the item's holder is the actor,
-    // and an item is not one.
+    // «路明非的护目镜在原地站了一会儿» (95dc) and again in the 415c point while
+    // the goggles were settled as a worn accessory (护目镜挂在胸前); the item's
+    // holder is the actor, and an item is not one. The item set includes the
+    // settled accessories, not only the 物品 collection. The guard covers the
+    // item as the object of a holding/wearing/handling verb (他戴上护目镜站起身)
+    // or the hand (手里): the item is not the actor, the person is.
     {
-      const held = /(戴上|戴着|戴好|摘下|取下|摘掉|拿起|举起|握着|拿着|捏着|端着|提着|背上|挎着|抱着|捧着|递给|接过|透过|隔着|借着|顺着|沿着|穿上|穿着|套上|套着|系上|系着|挂在|别在|绑在)/u;
-      for (const [itemName, item] of Object.entries(projection.items)) {
+      const heldInHand = /(戴上|戴着|戴好|摘下|取下|摘掉|拿起|举起|握着|拿着|捏着|端着|提着|攥着|托着|捧着|抱着|拎着|抓住|握住|提起|端起|拎起|背上|挎着|递给|接过|穿上|穿着|套上|套着|系上|系着|挂在|别在|绑在|手里|手中)/u;
+      const settledLook = Object.values(projection.people)
+        .flatMap((person) => [...person.appearanceAfter, ...person.appearanceBefore])
+        .join('｜');
+      const accessories = ACCESSORY_NOUNS.filter((noun) => settledLook.includes(noun));
+      const itemNames = [...Object.keys(projection.items), ...accessories];
+      for (const itemName of itemNames) {
         if (itemName.length < 2 || !narration.includes(itemName)) continue;
+        const item = projection.items[itemName];
         const acting = new RegExp(`${escapeRegExp(itemName)}[^，。；]{0,8}(?:站着|站了|站在|走到|走了|走向|来到|转身|伸手|坐下|躺下|低头|抬头|看向|望着|听到|听见|说道|开口|笑|点头|摇头|起身)`, 'u');
         const hit = acting.exec(narration);
         if (!hit) continue;
         const before = narration.slice(Math.max(0, hit.index - 10), hit.index);
-        if (held.test(before) || held.test(narration.slice(0, hit.index))) continue;
+        if (heldInHand.test(before) || heldInHand.test(narration.slice(0, hit.index))) continue;
         if (/(?:里|中|内)(?:传来|说|响|播|放)/u.test(narration.slice(hit.index + itemName.length, hit.index + itemName.length + 6))) continue;
+        // «伸手够得到» is a reachability idiom, not the item reaching (human dr-0012).
+        if (/(?:够得到|够得着|伸手可及|唾手可得)/u.test(narration.slice(hit.index, hit.index + itemName.length + 12))) continue;
         if (/(?:仿佛|像是|如同|好似|宛如|好像)/u.test(narration)) continue;
         findings.push(finding(ctx, 'fact.item_actor', sentence.text,
-          `${itemName} is settled as an item (${item.positionAfter ?? item.positionBefore ?? "in place"}), but the prose makes it act`, [sentence.text], []));
+          `${itemName} is settled as an item (${item ? item.positionAfter ?? item.positionBefore ?? "in place" : "worn by a person"}), but the prose makes it act`, [sentence.text], []));
         break;
+      }
+    }
+    // The player's action must be narrated: the prose cannot replace it with a
+    // state recital (415c point: «我沿着服务巷往里走，先看清墙上的演习规则牌»
+    // while the text only says the goggles «还在» and «站了一会儿»). Judge the
+    // action's own core verbs; the settled state does not stand in for the act.
+    if (options.action) {
+      const ACTION_VERBS = ['走', '跑', '看', '读', '找', '问', '说', '听', '拿', '放', '推', '拉', '扶', '翻', '摸', '闻', '蹲', '坐', '躺', '爬', '跳', '转身', '伸手', '点头', '摇头', '开口', '叫', '喊'];
+      const verbs = ACTION_VERBS.filter((verb) => options.action!.includes(verb));
+      if (verbs.length && !verbs.some((verb) => text.includes(verb)) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
+        findings.push(finding(ctx, 'fact.action_omitted', sentences[0]?.text ?? text,
+          `the input action «${options.action.slice(0, 40)}» is not narrated; none of its verbs (${verbs.join('/')}) appears`, [options.action.slice(0, 60)], []));
       }
     }
     // Hair settled tied up (束在脑后) cannot hang loose (垂落/披散) in the
