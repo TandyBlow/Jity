@@ -156,9 +156,42 @@ out.timings; out.strategyVersion;
 cd frontend
 ./node_modules/.bin/jiti ./scripts/candidate-prose/compose-samples.ts
 LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/run-04-beats.ts
+LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/sweep-free-day.ts
 ./node_modules/.bin/vitest run src/lib/world-engine/local/narration-candidates/prose-composer/ --maxWorkers=1
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit
 ```
+
+`sweep-free-day.ts` 在公开世界的 8 个真实点位上各跑一遍 04 全流程
+（移动到器材棚、两人同时移动、任务完成+精神下降、外貌+个性、物品转移、
+新增待办、纯时间流逝、带上一轮正文的续写）。当前 8/8 都是
+`accepted`，每个 beat 都来自本 composer，没有回退到 04 自己的 realizer。
+其中两段：
+
+```text
+过了一分钟，路明非还在西侧服务巷。
+
+西侧服务巷里，巷口的黄黑绳已放下，进入即算踏入演习区。
+
+诺诺从西侧服务巷走到红方集结点，芬格尔从器材棚走进西侧服务巷。
+
+身边还有芬格尔，头盔歪扣着，食指蹭了油；旧相机挂在脖子上，左臂没有阵营布带。
+
+路明非没有马上再动，芬格尔也没有动。
+```
+
+```text
+过了一分钟，路明非还在西侧服务巷。
+
+赛区路线图还在西侧服务巷，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态。
+```
+
+这两段暴露过的两个坑已经修掉，代码里保留了注释：
+
+1. 场景纹理不能写“某人也在地点”，否则 04 的旧对齐门槛会把它读成
+   对主角位置事实的冒名（actor swap）。改用“身边还有某人，……”。
+2. 物品说明只有在整段（含物品名）都被 04 的 license 覆盖时才能用。
+   路线图这类会列出别的房间的说明，要么连名带注一起许可，要么不用；
+   不能用半段无主语的“图上画出……”。
 
 耗时：整段 0.7–4.8 ms，单 beat 0.15–1.1 ms（含进程内首次 JIT 抖动）。
 按 `QUALITY-TEAMS.md` 的口径，首段和整段都远在 60 s / 300 s 以内，
@@ -179,6 +212,8 @@ LANE04_ROOT=../04-settlement ./node_modules/.bin/jiti ./scripts/candidate-prose/
 5. 段落合并是启发式（短句、代词/地点开头才并段）。遇到特别长的许可细节，
    仍可能出现一段景物描写偏密。
 6. 没有做风格评分器，也没有对训练范文做句子级检索；只吸收节奏和结构。
+7. 一个点位里出现两个以上“同一事实类别”的纹理（两件物品、两个在场人物）
+   时，只按 04 的 beat 预算展开；不会主动挑最有戏的一件。
 
 ## 下一步（按优先级）
 

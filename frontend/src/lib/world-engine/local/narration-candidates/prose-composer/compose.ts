@@ -739,7 +739,10 @@ function mergeShortNarration(paragraphs: string[], scene: ProseScene): string[] 
       && !previous.startsWith('「') && !paragraph.startsWith('「')
       && charCount(previous) + charCount(paragraph) <= 76
       && countSentences(previous) + countSentences(paragraph) <= 3
-      && (startsWithPronoun(paragraph) || startsWithPlace(paragraph));
+      && (startsWithPronoun(paragraph) || startsWithPlace(paragraph))
+      // "还在西侧服务巷。" followed by "西侧服务巷里，…" is a stutter; keep the
+      // place named once and let the detail stand as its own beat.
+      && !placeNames.some((name) => previous.includes(name) && paragraph.startsWith(name));
     if (canMerge) {
       merged[merged.length - 1] = previous + paragraph;
       merges += 1;

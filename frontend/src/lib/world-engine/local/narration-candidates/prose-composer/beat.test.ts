@@ -132,10 +132,62 @@ describe("beat text against lane 04's gate vocabulary", () => {
     expect(sentence).toContain('「');
   });
 
+  it('keeps the subject when a task goal itself starts with 把', () => {
+    const req = request('event', ['k2']);
+    req.scene.facts.push({
+      id: 'k2', kind: 'task_achieved', mandatory: true, visibility: 'scene',
+      ownerId: 'lu', name: '路明非', goal: '把护目镜的带子在手腕上绕好',
+    });
+    const result = composeConstrainedBeat(req);
+    expect(result.text.startsWith('路明非')).toBe(true);
+    expect(result.text).toContain('「把护目镜的带子在手腕上绕好」');
+  });
+
   it('varies the same sanity beat between two actors', () => {
     const lu = composeConstrainedBeat(sanityScene(50, 44, 'lu')).text;
     const fingel = composeConstrainedBeat(sanityScene(50, 44, 'fingel')).text;
     expect(lu).not.toBe(fingel);
+  });
+});
+
+describe("scene texture stays inside lane 04's license and grammar", () => {
+  function textureScene(): ComposeBeatRequestLike {
+    const req = request('scene', []);
+    req.scene.place = { id: 'lane', name: '西侧服务巷', note: '', parentName: null };
+    req.scene.present = [
+      { id: 'lu', name: '路明非', note: '', viewpoint: true },
+      { id: 'nono', name: '诺诺', note: '红发用发圈束在脑后。' },
+    ];
+    req.scene.objects = [];
+    req.scene.licensed = {
+      names: ['路明非', '诺诺'], locations: ['西侧服务巷'], items: ['西侧路线图'],
+      details: [], quotes: [],
+    };
+    req.scene.worldNames = { characters: ['路明非', '诺诺'], locations: ['西侧服务巷', '庭院'], items: ['西侧路线图'] };
+    return req;
+  }
+
+  it('names a present person without claiming a position (actor-swap trap)', () => {
+    const result = composeConstrainedBeat(textureScene());
+    expect(result.text).toContain('身边还有诺诺');
+    expect(result.text).not.toContain('诺诺也在');
+    expect(result.text).not.toContain('西侧服务巷');
+  });
+
+  it('uses an object note only when its names are licensed', () => {
+    const unlicensed = textureScene();
+    unlicensed.scene.present = [{ id: 'lu', name: '路明非', note: '', viewpoint: true }];
+    unlicensed.scene.objects = [{ id: 'map', name: '西侧路线图', note: '图上画出庭院与钟楼。' }];
+    unlicensed.scene.place = { id: 'lane', name: '西侧服务巷', note: '', parentName: null };
+    expect(composeConstrainedBeat(unlicensed).text).not.toContain('庭院');
+
+    const licensed = textureScene();
+    licensed.scene.present = [{ id: 'lu', name: '路明非', note: '', viewpoint: true }];
+    licensed.scene.objects = [{ id: 'map', name: '西侧路线图', note: '图上画出庭院与钟楼。' }];
+    licensed.scene.licensed!.details = ['图上画出庭院与钟楼。'];
+    const result = composeConstrainedBeat(licensed);
+    expect(result.text).toContain('西侧路线图还在西侧服务巷');
+    expect(result.text).toContain('庭院');
   });
 });
 

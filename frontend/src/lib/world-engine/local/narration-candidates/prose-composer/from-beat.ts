@@ -49,6 +49,9 @@ export interface SceneSkeletonLike {
     details?: string[];
     quotes?: string[];
   };
+  /** Every registered name in the world; used only to reject a note that would
+   * introduce a room the route did not license. */
+  worldNames?: { characters?: string[]; locations?: string[]; items?: string[] };
   priorText?: string | null;
 }
 
@@ -97,6 +100,43 @@ function placeDetail(place: string, detail: string): string {
   const clean = clipDetail(detail);
   if (!clean) return '';
   return clean.startsWith(place) ? clean : `${place}里，${clean}`;
+}
+
+/** True when every world name inside `text` is covered by the route's license
+ * book. Used before quoting a settled note as a scene beat. */
+function licensedText(scene: SceneSkeletonLike, text: string): boolean {
+  if (!text) return false;
+  const licensed = scene.licensed;
+  if (!licensed) return false;
+  const allowed = [licensed.names, licensed.locations, licensed.items, licensed.details, licensed.quotes]
+    .flatMap((list) => list ?? [])
+    .filter(Boolean)
+    .sort((left, right) => right.length - left.length);
+  const mask = new Array<boolean>(text.length).fill(false);
+  for (const span of allowed) {
+    let from = 0;
+    while (from <= text.length) {
+      const at = text.indexOf(span, from);
+      if (at < 0) break;
+      for (let index = at; index < at + span.length; index += 1) mask[index] = true;
+      from = at + 1;
+    }
+  }
+  const names = [
+    ...(scene.worldNames?.characters ?? []),
+    ...(scene.worldNames?.locations ?? []),
+    ...(scene.worldNames?.items ?? []),
+  ].sort((left, right) => right.length - left.length);
+  for (const name of names) {
+    let from = 0;
+    while (from <= text.length) {
+      const at = text.indexOf(name, from);
+      if (at < 0) break;
+      if (!mask[at] || !mask[at + name.length - 1]) return false;
+      from = at + 1;
+    }
+  }
+  return true;
 }
 
 function clipDetail(detail: string, max = 52): string {
@@ -319,18 +359,34 @@ function sceneBeats(request: ComposeBeatRequestLike, scene: ProseScene, facts: B
   if (beat.kind === 'scene') {
     const beats = facts.flatMap((fact) => factToBeats(fact, scene));
     if (!beats.length) {
-      const person = request.scene.present.find((entry) => entry.id !== scene.protagonistId && text(entry.note));
+      // Texture only from material the route already licensed. An object note
+      // may name other rooms (a map lists the whole campus), which the route's
+      // license check would reject; a person's settled appearance does not.
+      const person = request.scene.present.find((entry) => entry.id !== scene.protagonistId
+        && text(entry.note) && licensedText(request.scene, text(entry.note)));
       if (person) {
+        // No stance in the location: the route's base grader would read
+        // "某人也在<地点>" as a position claim and flag an actor swap with the
+        // viewpoint's own at-fact.
         beats.push({
           kind: 'scene',
-          detail: `${person.name}还在${request.scene.place.name}，${clipDetail(text(person.note))}`,
+          detail: `身边还有${person.name}，${clipDetail(text(person.note))}`,
         });
       } else {
-        const object = request.scene.objects.find((entry) => text(entry.note));
+        // Name the object when the route licensed it, otherwise fall back to a
+        // licensed detail. A map note that lists other rooms is only usable
+        // when the whole note is licensed.
+        const object = request.scene.objects.find((entry) => text(entry.note)
+          && licensedText(request.scene, `${entry.name}${text(entry.note)}`));
+        const detail = [text(request.scene.place.note), ...(request.scene.licensed?.details ?? [])]
+          .find((entry) => entry && licensedText(request.scene, entry));
         if (object) {
-          beats.push({ kind: 'scene', detail: clipDetail(`${object.name}在${request.scene.place.name}，${text(object.note)}`) });
-        } else if (text(request.scene.place.note)) {
-          beats.push({ kind: 'scene', detail: placeDetail(request.scene.place.name, text(request.scene.place.note)) });
+          beats.push({
+            kind: 'scene',
+            detail: `${object.name}还在${request.scene.place.name}，${clipDetail(text(object.note))}`,
+          });
+        } else if (detail) {
+          beats.push({ kind: 'scene', detail: clipDetail(detail) });
         }
       }
     }
@@ -446,11 +502,12 @@ function joinEventParagraphs(paragraphs: string[], subjectName: string, presentN
       continue;
     }
     const TASK_ISH = /^(?:完成了「|记下一条：|还有下一件事)/u;
-    const clauses = rest.map((part, index) => {
-      if (index === 0) return part;
-      const stripped = part.startsWith(group.lead) ? part.slice(group.lead.length) : part;
-      return stripped.startsWith('的') ? stripped.slice(1) : stripped;
-    });
+    // Keep the possessive 的: every clause after the first becomes a new
+    // sentence with the subject re-attached, and "路明非呼吸紧了一下" would
+    // lose the relation the settled fact stated.
+    const clauses = rest.map((part, index) => (
+      index > 0 && part.startsWith(group.lead) ? part.slice(group.lead.length) : part
+    ));
     // Task and subtask belong to one turn ("完成了X，记下一条Y"). A personality
     // change or a sanity beat is its own sentence, prefixed with the subject so
     // the reader never sees a sentence that starts with a bare verb.

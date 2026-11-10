@@ -206,6 +206,16 @@ describe('composeProse style mechanics', () => {
     }
   });
 
+  it('does not merge a place-stance line into a place-detail line', () => {
+    const scene: ProseScene = {
+      ...clone(SHORT_MOVE_SCENE),
+      location: { name: '西侧服务巷', details: ['巷口的黄黑绳已放下。'] },
+      beats: [{ kind: 'stay', actorId: 'person_c', location: '西侧服务巷' }],
+    };
+    const result = composeProse(scene);
+    expect(result.text).not.toMatch(/还在西侧服务巷。\s*西侧服务巷里/u);
+  });
+
   it('places a stay beat after the movement it contrasts with', () => {
     const scene: ProseScene = {
       ...clone(SHORT_MOVE_SCENE),
