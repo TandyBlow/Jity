@@ -674,6 +674,7 @@ export default function WorldLocalPage() {
         setMessage('上一回合还在结算，等它结束再提交这一句。');
         return;
       }
+      if (status.kind === 'stop') setMessage(`本轮停止：${status.reason}`);
       if (status.kind === 'stop' && status.reason === 'progress_conflict') {
         // The stored record was written by another writer/session. Play cannot
         // continue on a record whose revision the session does not own; the
@@ -693,6 +694,10 @@ export default function WorldLocalPage() {
         : raw;
       setError(message);
       setPhase('error');
+      // The turn is over. Say so in the same words a completed turn uses, so
+      // the player (and an automated reader) never waits on a turn that already
+      // stopped with a settlement failure.
+      setMessage('本轮停止：结算没有完成，可以重试。');
       // A failed turn is not a paragraph. Label the entry, never show "…" as
       // story text; if nothing was committed, give the sentence back so the
       // player can decide whether to retry.

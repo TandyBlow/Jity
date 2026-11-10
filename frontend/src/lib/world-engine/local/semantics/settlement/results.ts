@@ -46,6 +46,10 @@ interface Fact {
 interface ResultsAnswer {
   judgments: Judgment[];
   facts: Fact[];
+  /** Extra judgments for people outside the frozen group. They may describe
+   * what the model saw, but they never settle a non-member; they are kept in
+   * evidence and dropped from the committed result. */
+  dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -129,6 +133,7 @@ export async function runResults(
         factCount: parsedAnswer.facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
       })),
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+      droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -256,11 +261,12 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- effects 必须恰好覆盖该成员判定里列出的每个目标各一条，不多不少；不要把判定之外的人物写进 effects。',
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
-    '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员。',
+    '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
+    '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
     `本组：${groupId}`,
     '成员：',
     ...memberLines,
-    '场景：',
+    '场景（只用于写事实；不是本组成员，不要给场景人物写 judgment 或 effect）：',
     ...scene,
     '输出格式（示例里的 id 都是本组真实 id；没有判定目标的成员 effects 写 []）：',
     `{"judgments":[{"memberId":"${exampleMember.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${exampleEffects}}],"facts":[{"text":"结果事实","memberIds":["${exampleMember.memberId}"]}]}`,
@@ -278,19 +284,29 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const memberById = new Map(members.map((member) => [member.memberId, member]));
   const seen = new Set<Id>();
   const judgments: Judgment[] = [];
+  const dropped: NonNullable<ResultsAnswer['dropped']> = [];
   for (const rawJudgment of answer.judgments) {
     if (!isRecord(rawJudgment)) throw new Error('judgment must be an object');
     const rawMemberId = asString(rawJudgment.memberId);
     const memberId = resolveCharacterId(state, rawMemberId);
     if (!memberId) throw new Error(referenceError(state, rawMemberId, 'character', members[0]?.memberId));
     const member = memberById.get(memberId);
-    if (!member) throw new Error(`judgment for non-member ${rawMemberId}${memberId !== rawMemberId ? ` (${memberId})` : ''}; 本组只有 ${members.map((row) => row.memberId).join(',')}`);
+    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${rawMemberId || memberId}`);
+    if (!member) {
+      // A scene bystander is not part of the freeze. An observation with no
+      // effect is noise that must not fail the turn; an effect would settle a
+      // person the dice never covered, so that stays an error.
+      if (rawJudgment.effects.length) {
+        throw new Error(`judgment for non-member ${rawMemberId}${memberId !== rawMemberId ? ` (${memberId})` : ''}; 未冻结人物不能写 effect；本组只有 ${members.map((row) => row.memberId).join(',')}`);
+      }
+      dropped.push({ memberId, label: asString(rawJudgment.label), reason: 'not_a_group_member' });
+      continue;
+    }
     if (seen.has(memberId)) throw new Error(`duplicate judgment for ${memberId}`);
     seen.add(memberId);
     const label = asString(rawJudgment.label);
     if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
     if (typeof rawJudgment.reason !== 'string') throw new Error(`missing reason for ${memberId}`);
-    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${memberId}`);
     const expected = new Map(member.rolls.map((roll) => [roll.targetId, roll.admitted]));
     const effectIds = new Set<Id>();
     const effects: Judgment['effects'] = [];
@@ -338,7 +354,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     const recipientIds = rawRecipients.map((raw) => {
       const id = resolveCharacterId(state, raw);
       if (!id) throw new Error(referenceError(state, raw, 'character', members[0]?.memberId));
-      if (!memberById.has(id)) throw new Error(`fact names non-member ${raw}${id !== raw ? ` (${id})` : ''}`);
+      if (!memberById.has(id)) throw new Error(`fact names non-member ${raw}${id !== raw ? ` (${id})` : ''}; facts 的 memberIds 只能填本组成员 ${members.map((row) => row.memberId).join(',')}`);
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
@@ -346,7 +362,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     facts.push({ text, memberIds: recipientIds });
   }
   for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
-  return { judgments, facts };
+  return dropped.length ? { judgments, facts, dropped } : { judgments, facts };
 }
 
 function normalizeResults(answer: ResultsAnswer, members: GroupMember[]): Record<Id, string> {
