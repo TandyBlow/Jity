@@ -4,7 +4,7 @@
 
 Role: `state-kernel-long-continuity`. Task:
 `D:\others\Jity\.local\parallel-local-game\tasks\product-05-state.md`
-(sha256 `d91f6f69dfc436532e11f45f2894a3fdc8feba2a6655dde17aa50aec4ac25e7c`).
+(sha256 `d91f6f69dfc436532e11f45f2894a3fdc8feba2a6655dde17aa50aec4ac25e7c`; current execution status below).
 
 This lane keeps the existing kernel and does **not** create a second world
 protocol. It owns the read-only verifier under
@@ -46,11 +46,11 @@ read-only here. No product acceptance is claimed.
 
 ```text
 npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
-→ 2 files passed, 1 skipped; 29 tests passed, 1 skipped
+→ 2 files passed, 1 skipped; 30 tests passed, 1 skipped
 npx vitest run src/lib/world-engine/local --maxWorkers=1
-→ 6 files passed, 1 skipped; 112 tests passed, 1 skipped
+→ 6 files passed, 1 skipped; 113 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 8 bridge tests passed (requires the sibling 06 worktree)
+→ 1 file, 10 bridge tests passed (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -184,6 +184,28 @@ the displayed task sentence is not in any updates ledger (`achievedByCharacter:
 and accepted>60s in `verifyDisplayedCommit`; the old verifier incorrectly
 accepted b7cd. Full snapshot chain remains valid.
 
+## e9a5: state/recovery pass; display joins a draft point
+
+Run `2026-11-10T2016-5758` at 06 `e9a51950`, page `bdac63ec`, is COMPLETED
+but not accepted. The save is version 3 with one player point and two automatic
+points; reload is stable at 1 entry / history 1 and all restore booleans are
+true. The root/player/auto-1 narrations are model; the last auto point is
+draft. The displayed turn joins all three paragraphs; the third contains the
+task sentence, while every updates ledger has `achievedByCharacter: []` and
+`task_lu_match` stays pending.
+
+The turn fails `acceptedMs=113267` (>60s), `doneMs=301346` (>300s), program
+fallback and the joined draft. 05 51eb0bfa rejects all four; full snapshot
+chain still passes.
+
+`snapshotAfterTurn.narrationSources` has the draft label, but the public
+after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
+`restoredSources` in the public getter; the 05 bridge restores the live
+snapshot and gets the draft label (10 bridge tests pass). `snapshotForPersist`
+still reads only the live ref; 05 sent a one-line merge patch
+`patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
+after restore can otherwise drop older labels.
+
 ## Real 09 run found a sync-ownership conflict
 
 The first real 10-turn page run (`results/product/evidence/09-product-10turn.json`,
@@ -203,6 +225,8 @@ state/persistence failure, not a narration-quality finding.
 
 - `/world-local` on 06 returned HTTP 500 at 21:15 local; 09's queue is blocked
   on 200 + textarea. 06 must restart/fix the dev server before the rerun.
+- `06-session-persist-restored-sources.patch` (`3fbe8f77…`): merge saved
+  provenance into `snapshotForPersist` as well as the public getter.
 - `09-call-live-snapshot.patch` (sha256 `c6da6119…`) is the active 09 driver
   patch: call a function `__worldSnapshot`, wait for the submission ledger, and
   record `snapshotSettled`.
