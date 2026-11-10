@@ -139,6 +139,7 @@ python -X utf8 src/build_golden.py
 python -X utf8 src/check_golden.py
 
 # 训练前 CPU 预检（不会加载权重）
+# 下面这条在 HPC 登录节点跑（基座在 ~/narr_rows），不占 GPU
 python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
 ```
 

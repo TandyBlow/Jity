@@ -51,7 +51,7 @@ serializer 的逐字节输出必须保留给旧权重；新格式另立版本。
 - 普通空格/制表/全角空格删除并记账；CR/LF/NBSP 等拒绝；OOV 拒绝。
 - 非 BMP 排序金标：`阿 < ！ < 𠀀`；JS 默认 UTF-16 排序会不同。
 
-## 4. 验证（CPU，已完成）
+## 4. 验证（本地 CPU；标注 HPC 登录节点的除外）
 
 实际运行：
 
@@ -64,6 +64,9 @@ python -X utf8 src/build_golden.py
 python -X utf8 src/check_golden.py
 python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
 ```
+
+最后一条 `preflight_v2.py --config configs/yuyan-lora-v2.json` 在 HPC 登录节点运行，
+因为基座/tokenizer 在 `~/narr_rows`；它不占 GPU。其余命令本地 CPU 可跑。
 
 结果：
 
