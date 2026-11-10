@@ -234,8 +234,21 @@ describe.skipIf(!baseUrl)('real progress-sync service: offline reconnect', () =>
       },
       commands: entries,
     });
+    // The product store returns a record; keep the payload here instead.
+    const productStore = () => {
+      const values = new Map<string, unknown>();
+      return {
+        values,
+        async load(id: string) {
+          return values.has(id) ? { snapshot: values.get(id) } : null;
+        },
+        async save(id: string, payload: unknown) {
+          values.set(id, structuredClone(payload));
+        },
+      };
+    };
     const a = createProductSync<unknown>({
-      store: new MemoryLocalStore(), worldId, baseUrl, token, storage: null,
+      store: productStore(), worldId, baseUrl, token, storage: null,
       retry: { attempts: 2, baseDelayMs: 10 }, sleep: async () => undefined,
     });
     const first = await a.save(history(['第一回合', '第二回合']), { requestId: `cont-a-${worldId}` });
@@ -245,7 +258,7 @@ describe.skipIf(!baseUrl)('real progress-sync service: offline reconnect', () =>
     // one turn and saves. The result must be a child of A's snapshot and keep
     // both earlier entries.
     const b = createProductSync<unknown>({
-      store: new MemoryLocalStore(), worldId, baseUrl, token, storage: null,
+      store: productStore(), worldId, baseUrl, token, storage: null,
       retry: { attempts: 2, baseDelayMs: 10 }, sleep: async () => undefined,
     });
     const restored = await b.restore();

@@ -346,6 +346,12 @@ export function composeProse(scene: ProseScene): ComposedProse {
   }
   const units: Unit[] = [];
   const rendered: RenderedBeat[] = [];
+  // A turn whose only settled change is a mental one; used to fold the
+  // clock and the place into the same sentence instead of a status line.
+  const mentalOnly = body.every((entry) => entry.kind === 'time' || entry.kind === 'scene'
+    || entry.kind === 'personality' || entry.kind === 'sanity');
+  const hasPersonality = body.some((entry) => entry.kind === 'personality');
+  let pendingTime: { beat: ProseBeat; clause: string } | null = null;
 
   const push = (text: string, beats: ProseBeat[] = []): void => {
     const clean = text.trim();
@@ -551,6 +557,28 @@ export function composeProse(scene: ProseScene): ComposedProse {
         const mentalOnly = body.every((entry) => entry.kind === 'time' || entry.kind === 'scene'
           || entry.kind === 'personality' || entry.kind === 'sanity');
         const place = scene.location.name;
+        if (mentalOnly && pendingTime) {
+          // 01's reviewer strips names (place names included), the goal and the
+          // personality text; a bare place name therefore still reads as a
+          // status panel. A licensed place clause keeps real scene content in
+          // the same sentence. Only the first clause of each detail sentence is
+          // used: splitting on every comma produced fragments like
+          // "但要同时暴露给两边的窗口" that read worse than the panel.
+          const clauses = (scene.location.details ?? [])
+            .flatMap((detail) => detail.split('。'))
+            .map((sentence) => sentence.split(/[，；]/u)[0]?.trim() ?? '')
+            .filter((clause) => charCount(clause) >= 6 && charCount(clause) <= 24);
+          const freshClauses = seenText ? clauses.filter((clause) => !seenText.includes(clause)) : clauses;
+          const pool = freshClauses.length ? freshClauses : clauses;
+          const clause = pool.length
+            ? pool[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|mental`) % pool.length]
+            : '';
+          const lead = `${pendingTime.clause}${clause ? `，${clause}` : place ? `，${place}里` : ''}`;
+          pushBeat(ensurePeriod(`${lead}，${named}`), beat);
+          record(pendingTime.beat, units.length - 1, ensurePeriod(lead));
+          pendingTime = null;
+          break;
+        }
         const anchored = mentalOnly && place && !named.startsWith(place)
           ? `${place}里，${named}`
           : named;
@@ -680,6 +708,12 @@ export function composeProse(scene: ProseScene): ComposedProse {
             `又过了${amount}${unit}。`, `${amount}${unit}过去了。`, `再过${amount}${unit}。`,
           ];
           exact = forms[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
+        }
+        if (mentalOnly && hasPersonality) {
+          // The personality sentence will carry the clock, so the turn is one
+          // sentence with a place instead of "time。 place，status。".
+          pendingTime = { beat, clause: (exact ?? '过了一会儿。').replace(/[。！？]$/u, '') };
+          break;
         }
         pushBeat(exact ?? '过了一会儿。', beat);
         break;
