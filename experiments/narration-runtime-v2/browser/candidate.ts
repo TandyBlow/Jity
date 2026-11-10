@@ -191,9 +191,15 @@ export async function generateCandidate(args) {
     if (args.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
     const prompt = beatPrompt(scene, beat);
     let chosen = null;
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      const asked = attempt === 0 ? prompt
-        : `${prompt}【纠正】上一句没有守住事实；主语必须是${beat.subject}，事实是：${beat.phrase}。`;
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const correction = attempt === 0 ? '' : attempt === 1
+        ? `【纠正】上一句没有守住事实；主语必须是${beat.subject}，事实是：${beat.phrase}。`
+        : (beat.kind === 'task_achieved'
+          ? `【纠正】把「${beat.goal}」这几个字原样写进句子，再写完成它的最后一个动作。`
+          : beat.kind === 'personality_changed'
+            ? `【纠正】把「${beat.text}」这几个字原样写进句子，用动作带出来。`
+            : `【纠正】只写这一句事实：${beat.phrase}。主语是${beat.subject}。`);
+      const asked = prompt + correction;
       const before = performance.now();
       let raw = '';
       try {

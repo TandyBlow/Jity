@@ -1,0 +1,82 @@
+{
+  "runId": "qwen15b-beat-v2",
+  "backend": "hf-causal-lora",
+  "base": {
+    "path": "/home/student/t330034047/qwen15b",
+    "sha256": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee"
+  },
+  "tokenizer": {
+    "path": "/home/student/t330034047/qwen15b",
+    "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+  },
+  "data": {
+    "mix": "data/train-v4.jsonl",
+    "mixSha256": "ae2c7ed823108460095a73a855c5948651d102c238a3a9d28103a7fc00e3cb8b",
+    "beats": null,
+    "beatsSha256": null,
+    "scenes": null,
+    "scenesSha256": null
+  },
+  "seed": 20261110,
+  "template": {
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "chatTemplate": "tokenizer.apply_chat_template(add_generation_prompt=True)",
+    "responseMask": "assistant-only"
+  },
+  "counts": {
+    "train": 514,
+    "dev": 97,
+    "test": 50
+  },
+  "hyper": {
+    "epochs": 3,
+    "lr": 0.00015,
+    "batch": 1,
+    "gradAccum": 4,
+    "maxLen": 2560,
+    "gradClip": 1.0,
+    "weightDecay": 0.0,
+    "sampleMaxNew": 120,
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targetModules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "trainLoss": 1.2286,
+      "devLoss": 1.9735,
+      "steps": 514,
+      "seconds": 114.6
+    },
+    {
+      "epoch": 2,
+      "trainLoss": 0.6111,
+      "devLoss": 1.8922,
+      "steps": 514,
+      "seconds": 226.3
+    },
+    {
+      "epoch": 3,
+      "trainLoss": 0.4518,
+      "devLoss": 1.898,
+      "steps": 514,
+      "seconds": 379.8
+    }
+  ],
+  "best": {
+    "epoch": 2,
+    "devLoss": 1.8922
+  }
+}
