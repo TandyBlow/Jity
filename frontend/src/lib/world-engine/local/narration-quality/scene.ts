@@ -188,6 +188,9 @@ function statusMap(person: PersonBlock | undefined): Map<string, string | null> 
 function isWithin(place: string | null, root: string | null, places: SceneProjection['places']): boolean {
   if (!place || !root) return false;
   if (place === root) return true;
+  // Slots inside the same place are positions, not separate rooms: someone at
+  // slot_entry can see the viewpoint at slot_wall in the same 巷.
+  if (place.split('/')[0] === root.split('/')[0]) return true;
   let cursor = places[place]?.parent ?? null;
   let guard = 0;
   while (cursor && guard < 12) {

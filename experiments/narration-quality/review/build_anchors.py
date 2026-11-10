@@ -1094,6 +1094,44 @@ anchors.append(
     },
 )
 
+
+rows_unseen = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-unseen2.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/unseen-archive-knife",
+        "source": "02 Qwen3 unseen-archive-2 (174 chars): a 裁纸刀 not in the settled state",
+        "input": rows_unseen["unseen-2"]["input"],
+        "text": rows_unseen["unseen-2"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "notes": "The settled items are the three ledgers and the abacus; 裁纸刀 is handled but invented."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/unseen-archive-inner-self",
+        "source": "02 Qwen3 unseen-archive-1 (186 chars): 自己 in the viewpoint's interiority",
+        "input": rows_unseen["unseen-1"]["input"],
+        "text": rows_unseen["unseen-1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "forbid": ["fact.viewpoint_interiority"],
+                   "notes": "而自己却在心里嘀咕 is 黎含章's own interiority, not 赵掌柜's; the knife is still invented."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/unseen-archive-paper-sound",
+        "source": "02 Qwen3 unseen-archive-2: paper friction has the settled ledger as its source",
+        "input": rows_unseen["unseen-2"]["input"],
+        "text": rows_unseen["unseen-2"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "forbid": ["fact.sound_added"],
+                   "notes": "纸张摩擦的声响 is the ledger's paper, present in the same sentence."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

@@ -173,7 +173,7 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
   sentences.forEach((sentence, sentenceIndex) => {
     const narration = sentence.narration;
     const hits = nameHits(narration, names, people);
-    if (hits[0]?.name) subject = hits[0].name;
+    if (hits.length) subject = hits[hits.length - 1].name;
     for (const pronoun of PRONOUNS) {
       const gender = pronoun.startsWith('她') ? 'female' : 'male';
       let start = 0;
@@ -188,7 +188,7 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
           narration.lastIndexOf('：', index),
         ) + 1;
         const clause = narration.slice(clauseStart, index);
-        const local = nameHits(clause, names);
+        const local = nameHits(clause, names, people);
         // The clause immediately before this one, to find the real antecedent.
         const beforeStart = narration.lastIndexOf('，', clauseStart - 2) + 1;
         const previousClause = clauseStart > 0 ? narration.slice(Math.max(0, beforeStart), clauseStart - 1) : '';
@@ -223,6 +223,7 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
           // person in the scene can. Then it is genuinely ambiguous.
           const subjectGender = genders?.[subject];
           const alternative = people.find((name) => name !== subject
+            && visible.includes(name)
             && (genders?.[name] === gender || genders?.[name] === undefined));
           if (subjectGender && subjectGender !== gender && alternative) {
             bindings.push({ pronoun, gender, antecedent: null, candidates: [subject, alternative], strength: 'ambiguous', index, sentence: sentenceIndex });
@@ -245,6 +246,28 @@ function pronounBindings(sentences: SentenceParts[], names: readonly string[], p
         // A scene with exactly one person has exactly one possible referent.
         if (!subject && people.length === 1) {
           bindings.push({ pronoun, gender, antecedent: people[0], candidates, strength: 'strong', index, sentence: sentenceIndex });
+          continue;
+        }
+        if (candidates.length === 1) {
+          const only = candidates[0];
+          const onlyGender = genders?.[only];
+          if (onlyGender === gender) {
+            bindings.push({ pronoun, gender, antecedent: only, candidates, strength: 'strong', index, sentence: sentenceIndex });
+            continue;
+          }
+          if (onlyGender && onlyGender !== gender) {
+            const alt = alternativeOfGender(only);
+            if (alt) {
+              bindings.push({ pronoun, gender, antecedent: null,
+                candidates: [only, alt], strength: 'ambiguous', index, sentence: sentenceIndex });
+            } else {
+              // The only person in the scene cannot match the pronoun: a hard error.
+              bindings.push({ pronoun, gender, antecedent: only, candidates, strength: 'strong', index, sentence: sentenceIndex });
+            }
+            continue;
+          }
+          // The only candidate's gender is not recorded; the binding needs reading.
+          bindings.push({ pronoun, gender, antecedent: null, candidates, strength: 'ambiguous', index, sentence: sentenceIndex });
           continue;
         }
         bindings.push({
@@ -894,6 +917,20 @@ export function reviewNarration(args: {
         `${person.name}'s settled appearance says the hand is empty, but the prose has ${prop} in it`,
         [emptyHand], [`item:${prop}`]));
     }
+    // A handled tool whose name is not settled (裁纸刀 cutting a ledger) is an
+    // invented object even though no fixed noun list knows it.
+    for (const match of narration.matchAll(/([一-龥]{1,3}(?:刀|剪|锥|钳|锤|棍|棒))/gu)) {
+      const tool = match[1];
+      if (projection.sourceText.includes(tool) || ctx.stateLicensed(tool)) continue;
+      if (negatedAt(narration, tool)) continue;
+      const head = [...tool].slice(0, 2).join('');
+      if ([...head].length === 2 && projection.sourceText.includes(head)) continue;
+      const at = match.index ?? 0;
+      const window = narration.slice(Math.max(0, at - 6), at + tool.length + 6);
+      if (!/(用|拿|握|捏|放|碰|磕|划|切|割|递|收|别|插|执|持)/u.test(window)) continue;
+      findings.push(finding(ctx, 'fact.object_added', sentence.text,
+        `${tool} is not in the settled state but is handled`, [], []));
+    }
     // Invented concrete objects: absent from the input, yet handled or claimed
     // as the contents of a settled container.
     for (const noun of INVENTABLE_OBJECTS) {
@@ -1030,6 +1067,11 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'review.micro_action', sentence.text,
         `physical handling (${verb}) with no settled fact; allowed as a micro-action when it changes no settled state`, [], []));
     }
+    const settledObjects = [
+      ...Object.keys(projection.items ?? {}),
+      ...Object.keys(projection.places ?? {}),
+      ...(projection.people ? Object.keys(projection.people) : []),
+    ];
     const soundForms = [
       ...SOUND_WORDS.filter((sound) => narration.includes(sound)),
       ...[...narration.matchAll(/(?:摩擦|撞击|碎裂|爆裂|沙沙|嗡嗡|低语|呼喊)的(?:声响|声音|动静)/gu)].map((match) => match[0]),
@@ -1052,6 +1094,11 @@ export function reviewNarration(args: {
         || HANDLING_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb))
         || MOVE_VERBS.some((verb) => narration.includes(verb) && moverHere);
       if (actionHere && sound !== '脚步声') continue;
+      // A contact sound of a settled object (paper rubbing in the ledger book
+      // lying on the table) has a physical source in the scene.
+      const contact = /^(摩擦|撞击|碎裂|爆裂)/u.test(sound)
+        || /(摩擦|撞击|碎裂|爆裂)的(声响|声音|动静)/u.test(sound);
+      if (contact && settledObjects.some((name) => narration.includes(name))) continue;
       if (reportedSounds.has(sound)) continue;
       reportedSounds.add(sound);
       findings.push(finding(ctx, 'fact.sound_added', sentence.text,
@@ -1374,6 +1421,9 @@ export function reviewNarration(args: {
         const scope = next === undefined ? tail : tail.slice(0, next);
         const interior = hasAny(scope, INTERIOR);
         if (interior && new RegExp(`(?:不知道|没|未|不曾)[^，。]{0,3}${escapeRegExp(interior)}`, 'u').test(scope)) continue;
+        // "而自己却在心里嘀咕" — 自己 is the viewpoint, so its interiority is legal.
+        const ownAt = scope.indexOf('自己');
+        if (ownAt >= 0 && interior && scope.indexOf(interior) > ownAt) continue;
         if (interior) {
           findings.push(finding(ctx, 'fact.viewpoint_interiority', sentence.text,
             `${hit.name} is narrated with interiority (${interior}) outside ${projection.viewpoint}'s viewpoint`,
@@ -1413,9 +1463,15 @@ export function reviewNarration(args: {
     set.add(binding.gender);
     genderByAntecedent.set(antecedent, set);
     const registered = options.genders?.[antecedent];
+    // 他们/她们 are plural and do not tell us an individual's gender.
+    if (binding.pronoun === '他们' || binding.pronoun === '她们') continue;
+    // "「你先走吧。」他说" — a bare speech attribution can belong to any speaker
+    // in the scene; a gender mismatch is a review item, not a hard fact.
+    const speechOnly = /^[「『“"]?[^，。]{0,6}[，。]?(他|她)(说|问|答|道|笑|喊|叫)/u.test(sentence.text);
     if (registered && registered !== binding.gender) {
-      findings.push(finding(ctx, 'fact.gender', sentence.text,
-        `${antecedent} is referred to as ${binding.pronoun} but the reviewed registry says ${registered === 'male' ? 'male' : 'female'}`,
+      const kind = speechOnly ? 'review.pronoun' : 'fact.gender';
+      findings.push(finding(ctx, kind, sentence.text,
+        `${antecedent} is referred to as ${binding.pronoun} but the reviewed registry says ${registered === 'male' ? 'male' : 'female'}${speechOnly ? '; a speech attribution needs reading' : ''}`,
         [`registry: ${antecedent}=${registered}`]));
     }
   }
