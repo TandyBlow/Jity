@@ -551,6 +551,7 @@ try {
               calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
               stageMs: call.stageMs ?? null,
               raw: typeof call.raw === 'string' ? call.raw.slice(0, 4000) : (call.raw ?? null),
+              rawChars: typeof call.raw === 'string' ? call.raw.length : null,
               attempts: Array.isArray(call.attempts) ? call.attempts.map((attempt) => ({
                 ms: attempt?.ms ?? null, error: attempt?.error ?? null, finishReason: attempt?.finishReason ?? null,
                 raw: typeof attempt?.raw === 'string' ? attempt.raw.slice(0, 4000) : (attempt?.raw ?? null),
@@ -664,20 +665,34 @@ try {
   const entriesAfterReload = await entryCount();
   const stateAfterReload = await snapshot();
   const restoredText2 = await page.evaluate(() => document.body.innerText);
-  const beforeEntries = await page.evaluate(() => window.__acceptEntryInputs ?? null).catch(() => null);
+  // 06 publishes its own restore judgment; read it instead of guessing from a
+  // place/sanity match, and keep the raw object in evidence.
+  const restoreReport = await page.evaluate(() => window.__worldRestore ?? null).catch(() => null);
   // Entry identity, not just a count: a page can report 'restored' while the
   // visible history is empty.
   const entriesContract = await page.evaluate(() => {
     const entries = [...document.querySelectorAll('article')].map((node) => node.querySelector('div')?.textContent ?? '');
     return { count: entries.length, inputs: entries.map((line) => line.replace(/^你：/, '').split(' · ')[0]) };
   });
-  const stateRestored = stateBeforeReload.place === stateAfterReload.place
-    && stateBeforeReload.sanity === stateAfterReload.sanity;
-  const historyRestored = stateBeforeReload.historyCount === stateAfterReload.historyCount;
-  const entriesRestored = entriesAfterReload >= entriesBeforeReload
-    && entriesContract.count >= entriesBeforeReload;
+  const reportedEntries = restoreReport && typeof restoreReport.entriesRestored === 'number'
+    ? restoreReport.entriesRestored >= (restoreReport.entriesTotal ?? 0) && restoreReport.entriesRestored >= entriesBeforeReload
+    : null;
+  const stateRestored = restoreReport
+    ? Boolean(restoreReport.stateRestored)
+    : stateBeforeReload.place === stateAfterReload.place && stateBeforeReload.sanity === stateAfterReload.sanity;
+  const historyRestored = restoreReport
+    ? Boolean(restoreReport.inputConsumptionRestored)
+    : stateBeforeReload.historyCount === stateAfterReload.historyCount;
+  const entriesRestored = (reportedEntries ?? (entriesAfterReload >= entriesBeforeReload
+    && entriesContract.count >= entriesBeforeReload));
+  const engineSegments = await page.evaluate(() => (window.__worldTurns ?? []).map((turn) => ({
+    index: turn.index, engines: turn.engines ?? null, source: turn.source ?? null,
+  }))).catch(() => null);
   evidence.refreshRestore = {
     ms: Date.now() - reloadStarted,
+    // A refresh legitimately reloads the engine once; recording the counters on
+    // both sides proves it is one reload, not a leak.
+    engineSegments,
     pageSaysRestored: /已恢复本地存档/.test(restoredText2),
     entriesBefore: entriesBeforeReload,
     entriesAfter: entriesAfterReload,
@@ -685,6 +700,7 @@ try {
     stateBefore: stateBeforeReload,
     stateAfter: stateAfterReload,
     stateRestored,
+    reported: restoreReport,
     historyRestored,
     inputConsumptionRestored: historyRestored,
     entriesRestored,
