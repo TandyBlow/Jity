@@ -223,7 +223,7 @@ def main() -> int:
                 "top_k": sampling["topK"],
                 "top_p": sampling["topP"],
                 "seed": sampling["seed"],
-                "max_tokens": sampling["maxTokens"],
+                "max_tokens": int(prompt.get("maxTokens") or sampling["maxTokens"]),
                 "stop": sampling["stop"],
                 "stream": False,
                 "cache_prompt": False,

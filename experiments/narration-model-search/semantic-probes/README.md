@@ -46,6 +46,16 @@
 
 所有 kind 都拒绝 `id`、`人物id`、`<...>` 等占位符；`allowUniqueNames` 只允许唯一全名映射到 id，并记录 warning。
 
+## 冻结成 screen.py 可跑的提示词
+
+03/04 的修正版 pack 每例必须带 `system`、`user`、`correctedContract: true`、`contractCommit`，然后：
+
+```bash
+python -X utf8 src/prepare_semantic_prompts.py --pack semantic-probes/pack.jsonl   --out-dir evidence/semantic-prompts-v1 --frozen
+```
+
+缺 `correctedContract`/`contractCommit` 时脚本拒绝冻结；这是为了防止把旧的 73 行 echo 提示词当成修正契约。冻结后由 10 用 `screen.py` 跑，11 用 `semantic_validate.py` 验。
+
 ## 运行
 
 ```bash

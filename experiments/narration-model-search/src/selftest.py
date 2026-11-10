@@ -181,6 +181,29 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = pathlib.Path(tmp)
+        good = {
+            "caseId": "semantic-1", "system": "系统", "user": "任务一",
+            "input": {"a": 1}, "maxTokens": 420,
+            "correctedContract": True, "contractCommit": "selftest",
+        }
+        (tmp_path / "good.jsonl").write_text(json.dumps(good, ensure_ascii=False) + "\n", encoding="utf-8")
+        prepared = run(["src/prepare_semantic_prompts.py", "--pack", str(tmp_path / "good.jsonl"),
+                        "--out-dir", str(tmp_path / "prompts"), "--frozen"])
+        (tmp_path / "bad.jsonl").write_text(json.dumps({"caseId": "bad", "system": "系统",
+                                                        "user": "人物id"}, ensure_ascii=False) + "\n",
+                                           encoding="utf-8")
+        refused = run(["src/prepare_semantic_prompts.py", "--pack", str(tmp_path / "bad.jsonl"),
+                       "--out-dir", str(tmp_path / "bad-prompts"), "--frozen"])
+        ok = prepared.returncode == 0 and refused.returncode == 2
+        detail = f"prepared={prepared.returncode} refused={refused.returncode}"
+        if ok:
+            manifest = json.loads((tmp_path / "prompts/prompts.manifest.json").read_text(encoding="utf-8"))
+            ok = manifest["promptCount"] == 1 and manifest["frozen"] is True
+            detail = f"prompts={manifest['promptCount']} frozen={manifest['frozen']}"
+        check("prepare_semantic_prompts freezes only corrected-contract packs", ok, detail)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = pathlib.Path(tmp)
         pack = [
             {"caseId": "tasks-ok", "kind": "tasks", "allowedIds": ["char_a", "char_b", "t1", "t2"],
              "allowUniqueNames": True, "nameToId": {"乙": "char_b"},

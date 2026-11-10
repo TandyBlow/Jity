@@ -25,6 +25,7 @@
 | `src/screen.py` | prompts + prompt manifest + 模型路径/期望 sha | 每 case JSON + `run-manifest.json` | 10（HPC） |
 | `src/collect.py` | run 目录 | `summary.json`、`summary.md`（无质量结论） | 11/01 |
 | `src/make_review_input.py` | cases + run + prompt manifest | `review-rows.jsonl` + `review.manifest.json`（01 复核输入） | 11/01 |
+| `src/prepare_semantic_prompts.py` | 修正版语义 pack（system/user/maxTokens） | 冻结的 `prompts.jsonl` + manifest（拒绝未声明 correctedContract 的 pack） | 11/10 |
 | `src/semantic_validate.py` | 结构化语义 pack + 每例模型 JSON | 引用/占位符/覆盖/续写角色的逐例报告（不评文风） | 11/10 |
 | `src/verify_preflight.py` | 模型文件 + 期望 hash/架构 + 可选 smoke JSON | 通过/拒绝的 JSON（大小、sha256、GGUF 架构、模板哈希） | 10/11 |
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
@@ -53,11 +54,11 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-09 的真实回合有 `results` 未声明 target、`updates` 字面量 `id`、任务覆盖 12/73、`continuation` 用显示名四类错误。11 增加了独立的语义校验器和 pack 格式（`semantic-probes/README.md`），但**没有**用旧的 73 行 echo 提示词冻结探针：04 已改成每个有任务的人物一条决定并解析唯一全名，真实案例要等 03/04 的修正版契约。合成自检覆盖四类错误的正/负例；没有候选语义结果。
+09 的真实回合有 `results` 未声明 target、`updates` 字面量 `id`、任务覆盖 12/73、`continuation` 用显示名四类错误。11 增加了独立的语义校验器和 pack 格式（`semantic-probes/README.md`），但**没有**用旧的 73 行 echo 提示词冻结探针：04 已改成每个有任务的人物一条决定并解析唯一全名，真实案例要等 03/04 的修正版契约；`prepare_semantic_prompts.py` 只在 pack 每例声明 `correctedContract:true` + `contractCommit` 时才会冻结，防止把旧的 73 行 echo 提示词带上 HPC。合成自检覆盖四类错误的正/负例；没有候选语义结果。
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 13/13 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 14/14 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 限制与未验证
 

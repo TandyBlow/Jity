@@ -33,6 +33,7 @@
 | `src/gguf_probe.py` | GGUF 路径 | 架构/量化/tensor 类型/模板哈希 | 10/08 |
 | `src/remote_gguf_head.py` | 候选 id | `models/remote-heads/<id>.json` + 模板原文（Range 读取，不下载整文件） | 11/10 |
 | `src/wllama_features.py` | 无 | `models/wllama-features.json`（wasm 模型源码/tensor 名） | 11/08 |
+| `src/prepare_semantic_prompts.py` | 修正版语义 pack | 冻结 prompts + manifest；拒绝未声明 correctedContract 的 pack | 11/10 |
 | `src/semantic_validate.py` | pack + 每例模型 JSON | 引用/占位符/覆盖/续写角色报告 | 11/10 |
 | `src/selftest.py` | 无 | 13 项 PASS/FAIL | 11/06 复核 |
 
@@ -53,7 +54,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 13/13 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 14/14 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例、prepare_semantic_prompts 冻结门、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 模型路线决策规则（restart 2026-11-10）
 
@@ -63,7 +64,7 @@ python -X utf8 src/screen.py \
 
 ## 结构化语义探针
 
-真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接；11 的职责是排除引用/协议/覆盖组织缺陷后，再用修正版契约测候选的结构化能力。当前已交付 `src/semantic_validate.py` 和 pack 格式（`semantic-probes/README.md`），真实 pack 待 03/04 提供（`results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）；没有候选语义结果。
+真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接；11 的职责是排除引用/协议/覆盖组织缺陷后，再用修正版契约测候选的结构化能力。当前已交付 `src/semantic_validate.py` 和 pack 格式（`semantic-probes/README.md`），真实 pack 待 03/04 提供；`prepare_semantic_prompts.py` 要求每例 `correctedContract:true` + `contractCommit` 才能 `--frozen`（`results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）；没有候选语义结果。
 
 ## 限制与未验证
 

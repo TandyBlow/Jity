@@ -276,7 +276,7 @@ def main() -> int:
     # for a missing hash or an unnamed output directory.
     code_hashes = {name: sha(ROOT / "src" / name) for name in
                    ("screen.py", "collect.py", "make_review_input.py", "build_prompts.py",
-                    "semantic_validate.py")}
+                    "semantic_validate.py", "prepare_semantic_prompts.py")}
     data_hashes = {
         "manifest.json": sha(DEV_PACKAGE / "manifest.json"),
         "cases.jsonl": sha(DEV_PACKAGE / "cases.jsonl"),
@@ -289,7 +289,8 @@ def main() -> int:
     except (OSError, subprocess.CalledProcessError):
         commit = "unknown"
     script_paths = ("screen.py", "collect.py", "make_review_input.py",
-                    "verify_preflight.py", "build_prompts.py", "semantic_validate.py")
+                    "verify_preflight.py", "build_prompts.py", "semantic_validate.py",
+                    "prepare_semantic_prompts.py")
     scripts = [{"path": f"experiments/narration-model-search/src/{name}",
                 "sha256": sha(ROOT / "src" / name)} for name in script_paths]
     shared_package = {
