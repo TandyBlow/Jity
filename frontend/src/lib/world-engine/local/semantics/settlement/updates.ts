@@ -572,7 +572,8 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       jsonSchema: TASKS_SCHEMA,
       validate: (value) => readTaskDecisions(value, ctx.state),
     });
-    const changes = readTaskDecisions(answer.value, ctx.state);
+    const read = readTaskDecisions(answer.value, ctx.state);
+    const changes = read.changes;
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
       .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
@@ -586,6 +587,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           assertedUnchanged: rows.length - newlyAchieved.length,
           achievedByCharacter,
           emptyCharacters: taskScope.characters - achievedByCharacter.length,
+          rejectedTaskIds: read.rejected,
         },
         decidedTaskIds: rows.map(({ task }) => task.id).sort(),
         newlyAchievedTaskIds: newlyAchieved.sort(),
@@ -605,6 +607,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
 function taskScopeFor(state: WorldState): {
   mode: string; characters: number; taskRows: number; excluded: string[];
   achievedByCharacter: { characterId: Id; taskIds: Id[] }[];
+  rejectedTaskIds: { characterId: Id; taskId: string; reason: string }[];
 } {
   const rows = allTasks(state);
   return {
@@ -613,6 +616,7 @@ function taskScopeFor(state: WorldState): {
     taskRows: rows.length,
     excluded: [],
     achievedByCharacter: [],
+    rejectedTaskIds: [],
   };
 }
 
@@ -999,6 +1003,7 @@ function buildTasksPrompt(ctx: StageContext): string {
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
     '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
+    '- taskId 必须逐字复制该人物行里已有的任务 id，不能自己造 id；不确定就留空，不要写近似的名字。',
     `当前世界时间：${now}`,
     `结算结果：${resultText(ctx.results) || '（无）'}`,
     '人物和任务：',
@@ -1012,7 +1017,17 @@ function buildTasksPrompt(ctx: StageContext): string {
  * character is a hard coverage failure (retry, then abort the point); a missing
  * task row is not silently filled as pending because the character decision
  * itself asserts "none of my other tasks changed". */
-function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partial<EntityDelta>> {
+interface TaskDecisionRead {
+  changes: Record<Id, Partial<EntityDelta>>;
+  rejected: { characterId: Id; taskId: string; reason: string }[];
+}
+
+/** One decision per character covers all of that character's tasks. Character
+ * coverage is hard (retry, then abort). A task id that does not exist, is a
+ * placeholder, or belongs to another character is rejected per entry and kept
+ * in evidence: it cannot become state, but it must not erase the other valid
+ * decisions or turn a typo into an aborted point. */
+function readTaskDecisions(value: unknown, state: WorldState): TaskDecisionRead {
   const decisions = asRecord(value).decisions;
   if (!Array.isArray(decisions)) throw new Error('decisions must be an array');
   const rows = allTasks(state);
@@ -1025,6 +1040,7 @@ function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partia
   }
   const required = [...ownerTasks.keys()].sort();
   const byCharacter = new Map<Id, Id[]>();
+  const rejected: TaskDecisionRead['rejected'] = [];
   for (const raw of decisions) {
     if (!isRecord(raw)) throw new Error('decision must be an object');
     const rawCharacterId = asString(raw.characterId);
@@ -1034,20 +1050,22 @@ function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partia
     if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
     const achieved = raw.achieved.map((item) => asString(item));
     if (!ownerTasks.has(characterId)) {
-      if (achieved.length) throw new Error(`character ${characterId} has no tasks; achieved must be empty`);
+      for (const taskId of achieved) rejected.push({ characterId, taskId, reason: 'character_has_no_tasks' });
       continue;
     }
     if (byCharacter.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
-    const own = ownerTasks.get(characterId)!;
     const seen = new Set<Id>();
     const list: Id[] = [];
     for (const taskId of achieved) {
-      if (!taskId) throw new Error(`empty task id for ${characterId}`);
-      if (isPlaceholderId(taskId)) throw new Error(referenceError(state, taskId, 'task', [...own][0]));
-      if (!byTask.has(taskId)) throw new Error(referenceError(state, taskId, 'task', [...own][0]));
+      if (!taskId) { rejected.push({ characterId, taskId, reason: 'empty_task_id' }); continue; }
+      if (isPlaceholderId(taskId)) { rejected.push({ characterId, taskId, reason: 'placeholder_task_id' }); continue; }
+      if (!byTask.has(taskId)) { rejected.push({ characterId, taskId, reason: 'unknown_task_id' }); continue; }
       const row = byTask.get(taskId)!;
-      if (row.ownerId !== characterId) throw new Error(`task ${taskId} belongs to ${row.ownerId}, not ${characterId}`);
-      if (seen.has(taskId)) throw new Error(`duplicate task ${taskId} under ${characterId}`);
+      if (row.ownerId !== characterId) {
+        rejected.push({ characterId, taskId, reason: `task_belongs_to_${row.ownerId}` });
+        continue;
+      }
+      if (seen.has(taskId)) { rejected.push({ characterId, taskId, reason: 'duplicate_task_id' }); continue; }
       seen.add(taskId);
       if (row.task.status === 'achieved') continue;
       list.push(taskId);
@@ -1062,7 +1080,7 @@ function readTaskDecisions(value: unknown, state: WorldState): Record<Id, Partia
   for (const [ownerId, taskIds] of byCharacter) {
     if (taskIds.length) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   }
-  return changes;
+  return { changes, rejected };
 }
 
 function buildSubtasksPrompt(ctx: StageContext): string {
