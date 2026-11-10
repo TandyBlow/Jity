@@ -1,0 +1,115 @@
+{
+ "preregistrationVersion": "narration-model-search-prereg-v3",
+ "owner": "11-model-search",
+ "status": "pinned-full-15",
+ "createdAt": "2026-11-10T17:05:00Z",
+ "supersedes": {
+  "path": "preregistration.v2.json",
+  "sha256": "b6e2caf46a3f0b7410eabd02e7c1a7267d58c4f4d3cdfc7fe3ab0015b028e5f8",
+  "reason": "01 published dev-package-v1.1; all 15 cases serialize, so the 12/15 subset is withdrawn before any model output"
+ },
+ "scope": "Offline model comparison for narration on the ONE shared public development package. Development data only; never independent final acceptance. No product-quality claim is made here.",
+ "devPackage": {
+  "owner": "01-input",
+  "version": "v1.1",
+  "packageStatus": "public_development_regression_not_final",
+  "note": "01 changed only old delta shapes; facts/references/priorTexts unchanged. Full 15/15; no subset.",
+  "manifestPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\manifest.json",
+  "manifestSha256": "d6c7e76604fc45cb01dca06ed340ff39dbcbe309a5ff8fba3a971e09f4182677",
+  "casesPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\cases.jsonl",
+  "casesSha256": "38db9adee44a0794e4ddbf57b387f780519db5798c4760cd89e31c16e96a6920",
+  "rubricPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\RUBRIC.md",
+  "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+  "changes": "results/quality/dev-package-v1/CHANGES-v1.1.md",
+  "changesSha256": "9df04e39355aa58a08b4c46734c2dad52db2d13d80b5c26d9bc698f91f1f081e",
+  "frozenForDevelopment": true,
+  "finalAcceptance": false,
+  "finalForBatch": true,
+  "finalityNote": "Development package only; never independent final acceptance."
+ },
+ "condition": {
+  "promptTemplateId": "narration-trained-instruct-whole-scene-v1",
+  "serializer": "yuyan-prose-result-v2 (experiments/narration-runtime-v2/src/v2_render.py)",
+  "serializerSha256": "5b550bb3c8d7e5e0c5a4f26fa2507f82044a2eea9af86b5d13de6bd94c54132a",
+  "chatWrapper": "lane 10 chatml-instruct-v1: system text + 【已结算输入】 + serialized input + 请写出这一回合的正文。",
+  "chatWrapperSource": "experiments/narration-runtime-v2/configs/hf-instruct.template.json",
+  "chatWrapperSha256": "1c91bd6dbb1d7aa50be0d967f92854e9ecf721f8155f68856419d56132cee8ba",
+  "templateApplication": "each model's own GGUF chat template via llama-server --jinja; the model never receives a hand-pasted ChatML string",
+  "whitespaceRule": "delete space/tab/U+3000 exactly like the browser path; every removal recorded in the prompt ledger",
+  "sampling": {
+   "temperature": 0.0,
+   "topK": 1,
+   "topP": 1.0,
+   "seed": 42,
+   "maxTokens": 320,
+   "contextSize": 8192,
+   "stop": [
+    "<|im_end|>",
+    "<|endoftext|>"
+   ],
+   "stream": false
+  },
+  "promptCount": 15,
+  "subsetPolicy": "Full 15/15. The 12/15 subset is withdrawn; no case is excluded.",
+  "limitations": [
+   "Whole-scene condition, not the product's current beat-scoped prompt (02's strategy). It is a model-comparison condition only; promotion still runs the real product page via 09.",
+   "Case priorTexts are used by the checker for echo detection, not inserted into the prompt. Cross-turn context is 04/07's scope."
+  ],
+  "subsetCoverage": {
+   "includedCases": 15,
+   "totalCases": 15,
+   "categoriesIncluded": {
+    "no_change": 1,
+    "move_direction": 1,
+    "task_time": 1,
+    "multi_person_reference": 1,
+    "sanity": 1,
+    "appearance_item": 1,
+    "dialogue": 1,
+    "gender_pronoun": 1,
+    "time_only_derived": 1,
+    "task_sanity": 1,
+    "long_text": 1,
+    "continuity": 3,
+    "item_transfer_fixture": 1
+   },
+   "missingCategories": [],
+   "warning": "none: all 15 cases are in the batch; item_transfer_fixture and all three continuity cases are included."
+  },
+  "candidateCount": 5,
+  "prompts": {
+   "path": "evidence\\prompts-dev-v2-full15\\prompts.jsonl",
+   "sha256": "5e43db937dfa3586fd890e3dc430647884c996f35d8c49dabd519ea85162b88d",
+   "manifest": "evidence\\prompts-dev-v2-full15\\prompts.manifest.json",
+   "manifestSha256": "feee54c0bfd971c9075b383311bb8e9ff77907a05863574432e181166d5c8a2b",
+   "frozen": true,
+   "promptCount": 15,
+   "subset": {
+    "declared": false
+   }
+  }
+ },
+ "batch": {
+  "batchId": "batch-3-full15",
+  "arms": 7,
+  "callsTotal": 105,
+  "armsDetail": "5 candidates + qwen3-1.7b-instruct baseline + product-narr-qwen25-1.5b reference if available",
+  "frozenBeforeOutput": true
+ },
+ "qualityGate": {
+  "owner": "01-input",
+  "lane11DoesNotScore": true,
+  "rubricRule": "results/quality/dev-package-v1/RUBRIC.md §6: >=10/15 no hard errors, style_fail <=3, no unfounded event/person/item, and >=2 cases improve over the Qwen3-1.7B baseline under the same condition",
+  "note": "11 supplies raw texts and mechanical summaries; only 01 decides pass/style_fail/fail."
+ },
+ "changeLog": [
+  "v1: first pin on the 15-case package while 3 cases were non-serializable; declared 12/15 subset.",
+  "v2: added Qwen3.5-2B as the fifth candidate; still 12/15.",
+  "v3: 01 v1.1 fixes the three delta shapes; full 15/15 prompts rebuilt; subset withdrawn. No model output exists for v1/v2, so nothing is merged."
+ ],
+ "limits": [
+  "Development data only; no product acceptance.",
+  "Offline llama-server GGUF-template rendering is not the browser wllama path; 09 is authoritative.",
+  "The positive semantic case is not part of this prose batch."
+ ]
+}

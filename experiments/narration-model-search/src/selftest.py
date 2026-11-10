@@ -78,23 +78,21 @@ def main() -> int:
         tampered_manifest_sha = __import__("hashlib").sha256((copied / "manifest.json").read_bytes()).hexdigest()
         tampered = run(["src/build_prompts.py", "--manifest", str(copied / "manifest.json"),
                         "--expect-manifest-sha256", tampered_manifest_sha,
-                        "--out-dir", str(pathlib.Path(tmp) / "out2"), "--declare-subset",
-                        str(ROOT / "subset-declaration.json"), "--skip-serializer-errors"])
+                        "--out-dir", str(pathlib.Path(tmp) / "out2")])
         check("build_prompts refuses a tampered cases file", tampered.returncode == 2, f"exit={tampered.returncode}")
 
     with tempfile.TemporaryDirectory() as tmp:
         out_dir = pathlib.Path(tmp) / "pinned"
         real = run(["src/build_prompts.py", "--manifest", str(DEV / "manifest.json"),
                     "--expect-manifest-sha256", manifest_sha,
-                    "--out-dir", str(out_dir),
-                    "--declare-subset", str(ROOT / "subset-declaration.json"), "--skip-serializer-errors"])
+                    "--out-dir", str(out_dir)])
         ok = real.returncode == 0
         count = None
         if ok:
             out_manifest = json.loads((out_dir / "prompts.manifest.json").read_text(encoding="utf-8"))
             count = out_manifest["promptCount"]
-            ok = count == 12 and out_manifest["frozen"] is True
-        check("build_prompts pins the 12-case declared subset", ok, f"prompts={count}")
+            ok = count == 15 and out_manifest["frozen"] is True
+        check("build_prompts pins all 15 cases of package v1.1", ok, f"prompts={count}")
 
     with tempfile.TemporaryDirectory() as tmp:
         run_dir = pathlib.Path(tmp) / "fake-run"
@@ -122,7 +120,7 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as tmp:
         prompts = [json.loads(line) for line in
-                   (ROOT / "evidence/prompts-dev-v1/prompts.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+                   (ROOT / "evidence/prompts-dev-v2-full15/prompts.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
         run_dir = pathlib.Path(tmp) / "run"
         run_dir.mkdir()
         for prompt in prompts:
@@ -133,15 +131,15 @@ def main() -> int:
         review = run(["src/make_review_input.py",
                       "--cases", str(DEV / "cases.jsonl"),
                       "--run", str(run_dir),
-                      "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json"),
+                      "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v2-full15/prompts.manifest.json"),
                       "--out", str(pathlib.Path(tmp) / "review")])
         ok = review.returncode == 0
         detail = ""
         if ok:
             manifest = json.loads((pathlib.Path(tmp) / "review/review.manifest.json").read_text(encoding="utf-8"))
-            ok = manifest["rows"] == 12 and not manifest["problems"] and len(manifest["declaredExcluded"]) == 3
+            ok = manifest["rows"] == 15 and not manifest["problems"] and len(manifest["declaredExcluded"]) == 0
             detail = f"rows={manifest['rows']} excluded={len(manifest['declaredExcluded'])}"
-        check("review input joins 12 outputs and lists 3 declared exclusions", ok, detail)
+        check("review input joins all 15 outputs with no declared exclusions", ok, detail)
 
     preview_path = ROOT / "evidence/template-previews/preview.manifest.json"
     if preview_path.exists():
@@ -366,8 +364,8 @@ def main() -> int:
               False, "missing positive case")
 
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
-                "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
-                "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])
+                "--prompts", str(ROOT / "evidence/prompts-dev-v2-full15/prompts.jsonl"),
+                "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v2-full15/prompts.manifest.json")])
     ok = plan.returncode == 0 and '"modelId": "qwen25-1.5b-instruct"' in plan.stdout
     check("screen --dry-run prints a plan without a server", ok, f"exit={plan.returncode}")
 

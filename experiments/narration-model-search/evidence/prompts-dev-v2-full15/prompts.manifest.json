@@ -1,0 +1,57 @@
+{
+ "templateId": "narration-trained-instruct-whole-scene-v1",
+ "createdAt": "2026-11-10T16:56:43.287566+00:00",
+ "frozen": true,
+ "publishable": true,
+ "frozenReason": null,
+ "devPackage": {
+  "owner": "01-input",
+  "manifestPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\manifest.json",
+  "manifestSha256": "d6c7e76604fc45cb01dca06ed340ff39dbcbe309a5ff8fba3a971e09f4182677",
+  "casesPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\cases.jsonl",
+  "casesSha256": "38db9adee44a0794e4ddbf57b387f780519db5798c4760cd89e31c16e96a6920",
+  "caseCount": 15,
+  "rubricPath": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\quality\\dev-package-v1\\RUBRIC.md",
+  "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+  "status": "public_development_regression_not_final"
+ },
+ "serializer": {
+  "version": "yuyan-prose-result-v2",
+  "projectionVersion": "narration-result-view-v2",
+  "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-runtime-v2\\src\\v2_render.py",
+  "sha256": "5b550bb3c8d7e5e0c5a4f26fa2507f82044a2eea9af86b5d13de6bd94c54132a"
+ },
+ "chatTemplate": {
+  "trainingConfig": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-runtime-v2\\configs\\hf-instruct.template.json",
+  "sha256": "1c91bd6dbb1d7aa50be0d967f92854e9ecf721f8155f68856419d56132cee8ba",
+  "system": "你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。",
+  "userPrefix": "【已结算输入】\n",
+  "userSuffix": "\n请写出这一回合的正文。",
+  "application": "the model's own GGUF chat template is applied by llama-server --jinja to [system, user]"
+ },
+ "sampling": {
+  "temperature": 0.0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokens": 320,
+  "contextSize": 8192,
+  "stop": [
+   "<|im_end|>",
+   "<|endoftext|>"
+  ],
+  "stream": false
+ },
+ "whitespaceRule": "delete space / tab / U+3000, recorded per field in whitespace-ledger.jsonl",
+ "promptCount": 15,
+ "subset": {
+  "declared": false
+ },
+ "skippedCases": [],
+ "promptsSha256": "5e43db937dfa3586fd890e3dc430647884c996f35d8c49dabd519ea85162b88d",
+ "ledgerSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "limitations": [
+  "The prompt carries the settled input only; case priorTexts are used by the checker for echo detection, not inserted into the prompt. Cross-turn context is lane 04/07's scope.",
+  "The product currently wraps narrations in beat-scoped prompts (02's strategy). This frozen condition is whole-scene and is a model-comparison condition only; promotion still runs through the real product page and lane 09."
+ ]
+}

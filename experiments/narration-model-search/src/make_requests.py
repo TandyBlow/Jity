@@ -74,11 +74,11 @@ def model_entry(candidate: dict) -> dict:
 def main() -> int:
     registry = json.loads(CANDIDATES.read_text(encoding="utf-8"))
     passing = [row for row in registry["candidates"] if row["preInferenceGate"]["passed"]]
-    prompts_dir = ROOT / "evidence/prompts-dev-v1"
+    prompts_dir = ROOT / "evidence/prompts-dev-v2-full15"
     prompt_manifest = json.loads((prompts_dir / "prompts.manifest.json").read_text(encoding="utf-8"))
     prompt_count = int(prompt_manifest.get("promptCount") or 0)
     arm_count = len(passing) + 2
-    pinned_preregistration = ROOT / "preregistration.v2.json"
+    pinned_preregistration = ROOT / "preregistration.v3.json"
     if not pinned_preregistration.exists():
         pinned_preregistration = ROOT / "preregistration.v1.json"
     pinned_status = None
@@ -89,12 +89,10 @@ def main() -> int:
             pinned_status = None
     quality_ready = bool(pinned_status and pinned_status.startswith("pinned"))
     pinned_doc = json.loads(pinned_preregistration.read_text(encoding="utf-8")) if pinned_preregistration.exists() else {}
-    batch_id = pinned_doc.get("batchId") or "batch-1-subset12"
+    batch_id = pinned_doc.get("batchId") or "batch-3-full15"
     quality_blocked = (
-        "None for the declared 12-case subset: preregistration.v1.json is pinned and the subset "
-        "was declared before any model output. The full 10/15 gate still needs 01 to fix "
-        "tide-continuity-tide-duty-t2/t3 and fixture-goggles-transfer "
-        "(proposal: results/11-model-search/requests/01-case-fix-proposal.json)."
+        "None: 01 published dev-package-v1.1 with all 15 cases serializable; this is the full "
+        "15-case batch. Lane 11 still does not score; 01 owns RUBRIC review."
         if quality_ready else
         "No pinned preregistration: run finalize/pin before submitting."
     )
@@ -199,15 +197,14 @@ def main() -> int:
         "to": "10-training",
         "requestedAt": now(),
         "kind": "frozen-prompt-batch",
-        "priority": "below current product blockers; 84 short calls with one load per arm, "
+        "priority": "below current product blockers; 105 short calls with one load per arm, "
                     "no training, can share a GPU window",
         "batchId": batch_id,
-        "subsetOnly": True,
-        "qualityGateClaim": "none: 12/15 declared subset; the 10/15 gate needs all 15",
+        "subsetOnly": False,
+        "qualityGateClaim": "full 15-case RUBRIC gate is available; lane 11 will not score it and 01 owns the review",
         "readyToSubmit": quality_ready,
-        "submitCondition": "Ready for the declared 12/15 subset. The full 15-case gate needs 01 to fix "
-                           "the three serializer-refused cases; 11 then builds a new batch, never merges "
-                           "old and new outputs into a 15-case claim.",
+        "submitCondition": "Ready for all 15 cases: 01's v1.1 package serializes 15/15 and the frozen "
+                           "prompts are rebuilt from it. Do not mix any old 12-case output into this batch.",
         "blockedBy": quality_blocked,
         "preregistration": {
             "path": str(preregistration_path),
@@ -215,9 +212,9 @@ def main() -> int:
             "status": pinned_status or "draft",
         },
         "prompts": {
-            "subset12": {"path": str(prompts_dir / "prompts.jsonl"), "sha256": sha(prompts_dir / "prompts.jsonl")},
+            "full15": {"path": str(prompts_dir / "prompts.jsonl"), "sha256": sha(prompts_dir / "prompts.jsonl"), "promptCount": prompt_count},
             "manifest": {"path": str(prompts_dir / "prompts.manifest.json"), "sha256": sha(prompts_dir / "prompts.manifest.json")},
-            "subsetDeclaration": {"path": str(ROOT / "subset-declaration.json"), "sha256": sha(ROOT / "subset-declaration.json")},
+
         },
         "models": [model_entry(row) for row in passing],
         "baselineArms": [
@@ -263,9 +260,9 @@ def main() -> int:
             "verify byte size and sha256 before loading",
             "upload experiments/narration-model-search/ and 01's shared package; run "
             "src/verify_preflight.py --model-id <id> --path <file> --smoke-json <saved response> for each candidate",
-            "for each candidate, run one llama-server and 12 cases: python -X utf8 src/screen.py "
-            "--prompts <upload>/evidence/prompts-dev-v1/prompts.jsonl --prompt-manifest "
-            "<upload>/evidence/prompts-dev-v1/prompts.manifest.json --model-id <id> "
+            "for each candidate, run one llama-server and 15 cases: python -X utf8 src/screen.py "
+            "--prompts <upload>/evidence/prompts-dev-v2-full15/prompts.jsonl --prompt-manifest "
+            "<upload>/evidence/prompts-dev-v2-full15/prompts.manifest.json --model-id <id> "
             "--model-path <file> --expect-sha256 <sha> --llama-server <build>/llama-server --ngl 99 "
             "--out <out>/<id>",
             "run the qwen3-1.7b-instruct baseline the same way (existing HPC copy if present); "
@@ -281,8 +278,8 @@ def main() -> int:
         ],
         "hardConstraints": [
             "Run only after readyToSubmit=true and the preregistration pin matches the prompt manifest.",
-            "This is the declared 12/15 subset. Keep every output; if 01 later fixes the other 3, "
-            "run a new batch and do not merge old/new into a 15-case claim.",
+            "This is the full 15-case batch on 01's v1.1 package. Keep every output; do not merge "
+            "any old 12-case output into this batch.",
             "Do not change sampling, max tokens, stop strings or prompts; any change is a new batch id.",
             "Do not skip a case; if a prompt file is missing or a call errors, report it.",
             "Do not judge quality; lane 01 reviews the raw texts.",
@@ -335,8 +332,8 @@ def main() -> int:
          ["Is llama-server present or buildable on the cluster, and which llama.cpp commit results?",
           "Does each GGUF load, and does Qwen3.5-2B load through the text-only qwen35 path?",
           "Does the server accept per-request chat_template_kwargs (Hunyuan/Qwen3.5 need enable_thinking=false)?"]),
-        (quality, "results/product/hpc-results/11-model-search-batch-2-subset12/",
-         "Offline 12/15-subset comparison of five candidate GGUFs against the Qwen3-1.7B baseline (and the product LoRA if present).",
+        (quality, "results/product/hpc-results/11-model-search-batch-3-full15/",
+         "Offline full 15-case comparison of five candidate GGUFs against the Qwen3-1.7B baseline (and the product LoRA if present).",
          ["Is the product LoRA GGUF available to 10? If not, skip that reference arm and say so.",
           "Did every arm use its own GGUF template through llama-server --jinja, with the pinned sampling?",
           "Which cases failed to load or produced an empty/truncated response?"]),

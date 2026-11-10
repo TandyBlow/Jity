@@ -1,0 +1,19 @@
+{
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["decisions"],
+ "properties": {
+  "decisions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["characterId", "achieved"],
+    "properties": {
+     "characterId": {"type": "string"},
+     "achieved": {"type": "array", "items": {"type": "string"}}
+    }
+   }
+  }
+ }
+}

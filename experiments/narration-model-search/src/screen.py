@@ -143,6 +143,8 @@ def main() -> int:
     parser.add_argument("--out", type=pathlib.Path, default=None)
     parser.add_argument("--load-timeout", type=float, default=600.0)
     parser.add_argument("--case-timeout", type=float, default=600.0)
+    parser.add_argument("--json-schema", default=None,
+                        help="optional JSON schema file; sent as response_format json_schema strict")
     parser.add_argument("--template-kwargs", default=None,
                         help="JSON for llama-server chat_template_kwargs; default: the candidate "
                              "row's chatTemplateKwargs (Hunyuan/Qwen3.5 need enable_thinking=false)")
@@ -189,6 +191,12 @@ def main() -> int:
     sampling = prompt_manifest["sampling"]
     template_kwargs = (json.loads(args.template_kwargs) if args.template_kwargs is not None
                        else (row or {}).get("chatTemplateKwargs") or {})
+    json_schema = None
+    json_schema_sha = None
+    if args.json_schema:
+        schema_path = pathlib.Path(args.json_schema)
+        json_schema_sha = sha256_file(schema_path)
+        json_schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
     model_sha = sha256_file(model_path)
     if args.expect_sha256 and model_sha.lower() != args.expect_sha256.lower():
@@ -215,10 +223,9 @@ def main() -> int:
         load_seconds = wait_health(port, process, args.load_timeout, log_path)
         for index, prompt in enumerate(prompts):
             payload = {
-                "messages": [
-                    {"role": "system", "content": prompt["system"]},
-                    {"role": "user", "content": prompt["user"]},
-                ],
+                "messages": ([{"role": "system", "content": prompt["system"]}]
+                             if prompt.get("system") else [])
+                            + [{"role": "user", "content": prompt["user"]}],
                 "temperature": sampling["temperature"],
                 "top_k": sampling["topK"],
                 "top_p": sampling["topP"],
@@ -228,6 +235,9 @@ def main() -> int:
                 "stream": False,
                 "cache_prompt": False,
                 **({"chat_template_kwargs": template_kwargs} if template_kwargs else {}),
+                **({"response_format": {"type": "json_schema", "json_schema": {
+                    "name": "task_output", "schema": json_schema, "strict": True}}}
+                   if json_schema is not None else {}),
             }
             started = time.monotonic()
             status, body = http_json(f"http://127.0.0.1:{port}/v1/chat/completions",
