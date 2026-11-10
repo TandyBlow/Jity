@@ -546,3 +546,9 @@ runs five more, and verifies the saved version-10 chain. The bridge is now
 Run `2026-11-10T2230-7ddd` raced the page change (`0d72d63d7a12` vs
 frozen `07690eb4`), the Qwen3 shard fetch failed, and reload was refused. No
 snapshot or point; not state or product evidence.
+
+## a178 accepted model turn
+
+Run `2026-11-10T2236-fb80` completed with model prose (129.3s), one point,
+all tasks pending and clean restore; no full snapshot because 09 still reads the
+function getter as a property. State/recovery pass, product acceptance not.
