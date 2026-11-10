@@ -148,6 +148,12 @@ def deploy(h) -> None:
             f"{REMOTE}/configs/qwen15b-page-v1.json",
         os.path.join(V2, "configs", "qwen15b-page-v2.json"):
             f"{REMOTE}/configs/qwen15b-page-v2.json",
+        os.path.join(V2, "configs", "qwen15b-page-v3.json"):
+            f"{REMOTE}/configs/qwen15b-page-v3.json",
+        os.path.join(V2, "data", "train-page-v3.jsonl"):
+            f"{REMOTE}/data/train-page-v3.jsonl",
+        os.path.join(V2, "data", "splits-page-v3.json"):
+            f"{REMOTE}/data/splits-page-v3.json",
         os.path.join(V2, "data", "train-v5.jsonl"): f"{REMOTE}/data/train-v5.jsonl",
         os.path.join(HERE, "gpu_probe.py"): f"{REMOTE}/hpc/gpu_probe.py",
         os.path.join(HERE, "batch_screen.py"): f"{REMOTE}/hpc/batch_screen.py",

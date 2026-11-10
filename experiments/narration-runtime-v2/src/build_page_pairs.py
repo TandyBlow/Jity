@@ -161,6 +161,33 @@ def group_split(key: str) -> str:
     return "train"
 
 
+SENTENCE = re.compile(r"(?<=[。！？])")
+SANITY_WORD = re.compile(r"(精神值|理智值|精神)")
+
+
+def clamp_to_draft(target: str, draft: str) -> str:
+    """Keep only sentences the draft can license.
+
+    The page's draft has no sanity line (`factualNarration` ignores sanity), while
+    the hand-written targets sometimes say '精神值从 51 掉到 46'. Training on that
+    teaches the model to invent numbers: the v2 adapter wrote '精神值从 53 升到 58'
+    on a draft that contained no such change. A sentence that mentions sanity, or
+    any number the draft does not contain, is dropped.
+    """
+    allowed = set(re.findall(r"[0-9]+", draft))
+    kept = []
+    for sentence in SENTENCE.split(target):
+        if not sentence.strip():
+            continue
+        if SANITY_WORD.search(sentence):
+            continue
+        numbers = set(re.findall(r"[0-9]+", sentence))
+        if numbers - allowed:
+            continue
+        kept.append(sentence)
+    return "".join(kept).strip()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=os.path.join(V2, "data", "train-page-v1.jsonl"))
@@ -169,6 +196,8 @@ def main() -> int:
     parser.add_argument("--scenes-weight", type=int, default=2)
     parser.add_argument("--include-scenes", dest="include_scenes", action="store_true", default=False)
     parser.add_argument("--exclude-scenes", dest="include_scenes", action="store_false")
+    parser.add_argument("--clamp-to-draft", action="store_true",
+                        help="drop target sentences the draft cannot license (sanity values, unknown numbers)")
     parser.add_argument("--include-05", action="store_true",
                         help="include 05's 11 hand-written tide scenes as longer targets")
     parser.add_argument("--rows05", default=os.path.join(
@@ -204,9 +233,14 @@ def main() -> int:
         key = group_key_for(row)
         split = group_split(key)
         groups[key] = split
+        target = row["target"]
+        if args.clamp_to_draft:
+            target = clamp_to_draft(target, draft)
+            if not target:
+                continue
         out.append({"id": row["id"], "split": split, "mode": "scene", "draft": draft,
                     "user": page_prompt(viewpoint_of(row["input"]), draft),
-                    "target": row["target"], "weight": args.short_weight,
+                    "target": target, "weight": args.short_weight,
                     "source": "short-01"})
 
     if args.include_05 and os.path.exists(args.rows05):
@@ -217,9 +251,14 @@ def main() -> int:
                 continue
             # 05's rows are one continuous sequence, so they stay in train and
             # never provide a dev or test sample.
+            target = row["targetText"]
+            if args.clamp_to_draft:
+                target = clamp_to_draft(target, draft)
+                if not target:
+                    continue
             out.append({"id": row["id"], "split": "train", "mode": "scene", "draft": draft,
                         "user": page_prompt(viewpoint_of(row["input"]), draft),
-                        "target": row["targetText"],
+                        "target": target,
                         "weight": max(1, args.short_weight // 2),
                         "source": "short-05"})
 
