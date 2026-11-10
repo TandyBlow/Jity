@@ -46,11 +46,11 @@ read-only here. No product acceptance is claimed.
 
 ```text
 npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
-→ 2 files passed, 1 skipped; 28 tests passed, 1 skipped
+→ 2 files passed, 1 skipped; 29 tests passed, 1 skipped
 npx vitest run src/lib/world-engine/local --maxWorkers=1
-→ 6 files passed, 1 skipped; 111 tests passed, 1 skipped
+→ 6 files passed, 1 skipped; 112 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 7 bridge tests passed (requires the sibling 06 worktree)
+→ 1 file, 8 bridge tests passed (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -157,6 +157,32 @@ The verifier now accepts the S0/root previous head (stored in `pointStates`, not
 `points`) and validates 04's `affected_projection` ledger only when the
 affected/unaffected task lists partition all 73 rows and the character counts
 cover 14. A missing non-root head or a shrunken task partition still fails.
+
+## b7cd: recovery fixed; display/program text still fails
+
+Run `2026-11-10T1958-5e35` at 06 `b7cd274a`, page `88677e6e`, has
+`snapshotAfterTurn` at version 3 and a stable reload at 1 entry / history 1
+(`stateRestored`, `entriesRestored`, `inputConsumptionRestored` and
+`overallRestored` all true). The 21c3 stale-live-view cause is fixed in a real
+run by 3f54eac0.
+
+The page still displayed only the last automatic point; the player point and
+first automatic point were not in the live `turn.text`. The saved snapshot has
+all three points and all four narrations ready, so this is a page-view issue,
+not a missing save. 06 e9a51950 appends live narration by point; it is newer
+than this run and not yet served.
+
+The b7cd snapshot predates 679f979c and has `narrationSources: null`. With 06
+current `restoredEntries`, the snapshot yields one turn entry containing all
+three point texts, player first; the 05 bridge test proves this (8/8). Without
+narrationSources that old snapshot cannot carry program/draft labels; a new run
+is needed to confirm the labels survive reload.
+
+The b7cd text is a product failure: `source=program`, `acceptedMs=193860`, and
+the displayed task sentence is not in any updates ledger (`achievedByCharacter:
+[]`; `task_lu_match` stays pending). 05 41ab01e8 now rejects program fallback
+and accepted>60s in `verifyDisplayedCommit`; the old verifier incorrectly
+accepted b7cd. Full snapshot chain remains valid.
 
 ## Real 09 run found a sync-ownership conflict
 
