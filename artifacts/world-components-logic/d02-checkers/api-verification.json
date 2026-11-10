@@ -1,0 +1,39 @@
+{
+  "schema": "jity-d02-api-verification-v1",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "keyHandling": "read only from backend/.env; masked in logs; not written to artifacts or Git",
+  "calls": [
+    {
+      "purpose": "minimal_ping",
+      "http": 200,
+      "content": "empty (max_tokens=8 consumed by reasoning)",
+      "usage": {"prompt_tokens": 41, "completion_tokens": 8, "total_tokens": 49},
+      "estimatedCny": 0.00009
+    },
+    {
+      "purpose": "minimal_ping_with_content_budget",
+      "http": 200,
+      "content": "OK",
+      "usage": {"prompt_tokens": 41, "completion_tokens": 15, "total_tokens": 56},
+      "estimatedCny": 0.0001
+    },
+    {
+      "purpose": "thinking_disabled_json_mode_probe",
+      "http": 200,
+      "content": "{\"ok\":true}",
+      "usage": {"prompt_tokens": 37, "completion_tokens": 6, "total_tokens": 43},
+      "estimatedCny": 0.00006
+    },
+    {
+      "purpose": "json_mode_without_json_word",
+      "http": 400,
+      "error": "Prompt must contain the word 'json' to use response_format json_object",
+      "usage": null,
+      "estimatedCny": 0
+    }
+  ],
+  "totalSuccessfulTokens": 148,
+  "estimatedCny": 0.00025,
+  "note": "The 400 request reported no usage. This file records only the pre-experiment interface check."
+}

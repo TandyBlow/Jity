@@ -1,0 +1,1844 @@
+{
+  "schema": "jity-d02-api-checker-run-v1",
+  "requests": 100,
+  "parsed": 98,
+  "exactDecision": 15,
+  "falseAccepts": 3,
+  "falseAcceptIds": [
+    "harbor-key:role",
+    "archive-cabinet:role",
+    "signal-radio:role"
+  ],
+  "spentCny": 0.491106,
+  "usage": {
+    "promptTokens": 92812,
+    "completionTokens": 30478,
+    "totalTokens": 123290
+  },
+  "latencyMs": [
+    0,
+    1045,
+    1047,
+    1169,
+    1293,
+    1297,
+    1319,
+    1332,
+    1339,
+    1351,
+    1393,
+    1405,
+    1406,
+    1415,
+    1418,
+    1429,
+    1432,
+    1433,
+    1437,
+    1440,
+    1459,
+    1461,
+    1462,
+    1469,
+    1471,
+    1475,
+    1499,
+    1519,
+    1536,
+    1543,
+    1549,
+    1559,
+    1568,
+    1571,
+    1573,
+    1576,
+    1582,
+    1585,
+    1595,
+    1601,
+    1607,
+    1635,
+    1636,
+    1656,
+    1666,
+    1667,
+    1669,
+    1671,
+    1671,
+    1677,
+    1677,
+    1679,
+    1688,
+    1693,
+    1709,
+    1726,
+    1747,
+    1749,
+    1769,
+    1774,
+    1783,
+    1789,
+    1801,
+    1801,
+    1803,
+    1820,
+    1828,
+    1864,
+    1873,
+    1887,
+    1893,
+    1914,
+    1938,
+    1948,
+    1960,
+    1961,
+    1963,
+    1974,
+    2005,
+    2030,
+    2064,
+    2098,
+    2143,
+    2154,
+    2178,
+    2179,
+    2191,
+    2195,
+    2211,
+    2219,
+    2258,
+    2315,
+    2321,
+    2325,
+    2393,
+    2395,
+    2409,
+    2582,
+    2639,
+    2746
+  ],
+  "results": [
+    {
+      "sampleId": "harbor-gate:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1393
+    },
+    {
+      "sampleId": "harbor-gate:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1873
+    },
+    {
+      "sampleId": "harbor-gate:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "mention_without_role",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2154
+    },
+    {
+      "sampleId": "harbor-gate:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "alias_requires_review"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1475
+    },
+    {
+      "sampleId": "harbor-gate:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1820
+    },
+    {
+      "sampleId": "harbor-crate:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1783
+    },
+    {
+      "sampleId": "harbor-crate:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1047
+    },
+    {
+      "sampleId": "harbor-crate:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "unresolved_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1864
+    },
+    {
+      "sampleId": "harbor-crate:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1462
+    },
+    {
+      "sampleId": "harbor-crate:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1801
+    },
+    {
+      "sampleId": "harbor-lamp:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1351
+    },
+    {
+      "sampleId": "harbor-lamp:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1938
+    },
+    {
+      "sampleId": "harbor-lamp:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2393
+    },
+    {
+      "sampleId": "harbor-lamp:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_name_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1319
+    },
+    {
+      "sampleId": "harbor-lamp:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1693
+    },
+    {
+      "sampleId": "harbor-wait:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1415
+    },
+    {
+      "sampleId": "harbor-wait:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "actor_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1543
+    },
+    {
+      "sampleId": "harbor-wait:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2098
+    },
+    {
+      "sampleId": "harbor-wait:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1636
+    },
+    {
+      "sampleId": "harbor-wait:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1601
+    },
+    {
+      "sampleId": "harbor-key:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1667
+    },
+    {
+      "sampleId": "harbor-key:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "actor_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1709
+    },
+    {
+      "sampleId": "harbor-key:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2064
+    },
+    {
+      "sampleId": "harbor-key:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1789
+    },
+    {
+      "sampleId": "harbor-key:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1339
+    },
+    {
+      "sampleId": "archive-badge:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1635
+    },
+    {
+      "sampleId": "archive-badge:actor-swap",
+      "status": "ok",
+      "parsed": false,
+      "decision": null,
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": null,
+      "error": "JSONDecodeError:Expecting ',' delimiter: line 1 column 856 (char 855)",
+      "finishReason": "stop",
+      "latencyMs": 1429
+    },
+    {
+      "sampleId": "archive-badge:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2409
+    },
+    {
+      "sampleId": "archive-badge:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1459
+    },
+    {
+      "sampleId": "archive-badge:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1726
+    },
+    {
+      "sampleId": "archive-ledger:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "unresolved_mention",
+        "unresolved_role_tool"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1433
+    },
+    {
+      "sampleId": "archive-ledger:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "actor_mismatch",
+        "unresolved_mention",
+        "unresolved_role_tool"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1961
+    },
+    {
+      "sampleId": "archive-ledger:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_action",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2143
+    },
+    {
+      "sampleId": "archive-ledger:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1293
+    },
+    {
+      "sampleId": "archive-ledger:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1406
+    },
+    {
+      "sampleId": "archive-cabinet:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1671
+    },
+    {
+      "sampleId": "archive-cabinet:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1963
+    },
+    {
+      "sampleId": "archive-cabinet:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_action",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1828
+    },
+    {
+      "sampleId": "archive-cabinet:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1573
+    },
+    {
+      "sampleId": "archive-cabinet:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1297
+    },
+    {
+      "sampleId": "archive-quote:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1585
+    },
+    {
+      "sampleId": "archive-quote:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1607
+    },
+    {
+      "sampleId": "archive-quote:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_attempt",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2195
+    },
+    {
+      "sampleId": "archive-quote:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "inconsistent_result_label"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1045
+    },
+    {
+      "sampleId": "archive-quote:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1571
+    },
+    {
+      "sampleId": "archive-ambig:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1677
+    },
+    {
+      "sampleId": "archive-ambig:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1559
+    },
+    {
+      "sampleId": "archive-ambig:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2005
+    },
+    {
+      "sampleId": "archive-ambig:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1769
+    },
+    {
+      "sampleId": "archive-ambig:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "unresolved_mention",
+        "unresolved_role_object"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1774
+    },
+    {
+      "sampleId": "workshop-bowl:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1499
+    },
+    {
+      "sampleId": "workshop-bowl:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1576
+    },
+    {
+      "sampleId": "workshop-bowl:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_attempt",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1914
+    },
+    {
+      "sampleId": "workshop-bowl:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "reference_requires_review"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1432
+    },
+    {
+      "sampleId": "workshop-bowl:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1418
+    },
+    {
+      "sampleId": "workshop-rod:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2315
+    },
+    {
+      "sampleId": "workshop-rod:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1893
+    },
+    {
+      "sampleId": "workshop-rod:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "mention_without_role",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2639
+    },
+    {
+      "sampleId": "workshop-rod:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "duplicate_mention_id"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2321
+    },
+    {
+      "sampleId": "workshop-rod:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1461
+    },
+    {
+      "sampleId": "workshop-cloth:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1974
+    },
+    {
+      "sampleId": "workshop-cloth:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1332
+    },
+    {
+      "sampleId": "workshop-cloth:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "surface_mismatch",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2191
+    },
+    {
+      "sampleId": "workshop-cloth:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1536
+    },
+    {
+      "sampleId": "workshop-cloth:role",
+      "status": "request_error",
+      "parsed": null,
+      "decision": null,
+      "expected": null,
+      "codes": null,
+      "error": "IncompleteRead",
+      "finishReason": null,
+      "latencyMs": null
+    },
+    {
+      "sampleId": "workshop-newentity:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2211
+    },
+    {
+      "sampleId": "workshop-newentity:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1803
+    },
+    {
+      "sampleId": "workshop-newentity:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "mention_without_role",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2582
+    },
+    {
+      "sampleId": "workshop-newentity:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1671
+    },
+    {
+      "sampleId": "workshop-newentity:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2325
+    },
+    {
+      "sampleId": "workshop-bench:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1666
+    },
+    {
+      "sampleId": "workshop-bench:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1471
+    },
+    {
+      "sampleId": "workshop-bench:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_action",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2179
+    },
+    {
+      "sampleId": "workshop-bench:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1887
+    },
+    {
+      "sampleId": "workshop-bench:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "joint_subject"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1595
+    },
+    {
+      "sampleId": "signal-radio:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1669
+    },
+    {
+      "sampleId": "signal-radio:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "actor_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1582
+    },
+    {
+      "sampleId": "signal-radio:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1960
+    },
+    {
+      "sampleId": "signal-radio:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1948
+    },
+    {
+      "sampleId": "signal-radio:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1549
+    },
+    {
+      "sampleId": "signal-cable:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1440
+    },
+    {
+      "sampleId": "signal-cable:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1469
+    },
+    {
+      "sampleId": "signal-cable:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "result_assertion_in_attempt",
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2178
+    },
+    {
+      "sampleId": "signal-cable:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1169
+    },
+    {
+      "sampleId": "signal-cable:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1679
+    },
+    {
+      "sampleId": "signal-gate:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2395
+    },
+    {
+      "sampleId": "signal-gate:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "mention_without_role"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2258
+    },
+    {
+      "sampleId": "signal-gate:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "mention_without_role",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2030
+    },
+    {
+      "sampleId": "signal-gate:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1519
+    },
+    {
+      "sampleId": "signal-gate:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1437
+    },
+    {
+      "sampleId": "signal-background:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1405
+    },
+    {
+      "sampleId": "signal-background:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1656
+    },
+    {
+      "sampleId": "signal-background:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "mention_without_role",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2746
+    },
+    {
+      "sampleId": "signal-background:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 2219
+    },
+    {
+      "sampleId": "signal-background:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1688
+    },
+    {
+      "sampleId": "signal-hope:clean",
+      "status": "ok",
+      "parsed": true,
+      "decision": "accept",
+      "expected": {
+        "m1": "accept",
+        "m2": "accept",
+        "combined": "accept"
+      },
+      "codes": [],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1568
+    },
+    {
+      "sampleId": "signal-hope:actor-swap",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "invalid_diagnostic_roles"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1749
+    },
+    {
+      "sampleId": "signal-hope:result",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "inconsistent_result_label",
+        "invalid_diagnostic_roles",
+        "unsettled_result_assertion"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1747
+    },
+    {
+      "sampleId": "signal-hope:special",
+      "status": "ok",
+      "parsed": true,
+      "decision": "incomplete",
+      "expected": {
+        "m1": "accept",
+        "m2": "upgrade",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "surface_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1677
+    },
+    {
+      "sampleId": "signal-hope:role",
+      "status": "ok",
+      "parsed": true,
+      "decision": "upgrade",
+      "expected": {
+        "m1": "upgrade",
+        "m2": "accept",
+        "combined": "upgrade"
+      },
+      "codes": [
+        "role_type_mismatch"
+      ],
+      "error": null,
+      "finishReason": "stop",
+      "latencyMs": 1801
+    }
+  ]
+}

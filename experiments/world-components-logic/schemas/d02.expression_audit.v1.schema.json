@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "d02.expression_audit.v1",
+  "title": "D02 M2 expression type audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "textSha256", "label", "issues", "abstain"],
+  "properties": {
+    "schema": {"const": "d02.expression_audit.v1"},
+    "textSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "label": {"enum": ["attempt", "result_assertion", "non_action", "mixed", "uncertain", null]},
+    "issues": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+    "abstain": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reason", "detail"],
+          "properties": {
+            "reason": {"enum": ["low_confidence", "ambiguous_input", "input_too_long", "out_of_support", "missing_context"]},
+            "detail": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "blocking", "scope"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[a-z][a-z0-9_]{2,63}$"},
+        "message": {"type": "string", "minLength": 1},
+        "blocking": {"type": "boolean"},
+        "stepId": {"type": "string"},
+        "start": {"type": "integer", "minimum": 0},
+        "end": {"type": "integer", "minimum": 1},
+        "scope": {"enum": ["main", "condition", "negation", "quote", "hypothesis", "background"]}
+      }
+    }
+  }
+}

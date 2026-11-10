@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "d02.role_audit.v1",
+  "title": "D02 M1 role and entity audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "textSha256", "steps", "issues"],
+  "properties": {
+    "schema": {"const": "d02.role_audit.v1"},
+    "textSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stepId", "mentions", "roleStatus"],
+        "properties": {
+          "stepId": {"type": "string", "minLength": 1},
+          "issues": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+          "mentions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mentionId", "start", "end", "surface", "roles", "status", "bindingBasis", "scope"],
+              "properties": {
+                "mentionId": {"type": "string", "minLength": 1},
+                "start": {"type": "integer", "minimum": 0},
+                "end": {"type": "integer", "minimum": 1},
+                "surface": {"type": "string", "minLength": 1},
+                "roles": {"type": "array", "uniqueItems": true, "items": {"enum": ["subject", "object", "tool", "recipient", "destination"]}},
+                "diagnosticRoles": {"type": "array", "uniqueItems": true, "items": {"enum": ["source", "static_location", "co_agent", "beneficiary", "possessor", "path", "topic"]}},
+                "status": {"enum": ["bound", "unknown_entity", "ambiguous", "insufficient"]},
+                "entityId": {"type": ["string", "null"]},
+                "candidates": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+                "bindingBasis": {"enum": ["name", "alias", "marker", "pronoun", "ellipsis", "context"]},
+                "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                "scope": {"enum": ["main", "condition", "negation", "quote", "hypothesis", "background"]},
+                "issueCodes": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          },
+          "roleStatus": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["subject", "object", "tool", "recipient", "destination"],
+            "properties": {
+              "subject": {"$ref": "#/$defs/roleSlot"},
+              "object": {"$ref": "#/$defs/roleSlot"},
+              "tool": {"$ref": "#/$defs/roleSlot"},
+              "recipient": {"$ref": "#/$defs/roleSlot"},
+              "destination": {"$ref": "#/$defs/roleSlot"}
+            }
+          }
+        }
+      }
+    },
+    "issues": {"type": "array", "items": {"$ref": "#/$defs/issue"}}
+  },
+  "$defs": {
+    "roleSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "mentionIds"],
+      "properties": {
+        "status": {"enum": ["absent", "bound", "unknown_entity", "ambiguous", "insufficient"]},
+        "mentionIds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "blocking"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[a-z][a-z0-9_]{2,63}$"},
+        "message": {"type": "string", "minLength": 1},
+        "blocking": {"type": "boolean"},
+        "stepId": {"type": "string"},
+        "start": {"type": "integer", "minimum": 0},
+        "end": {"type": "integer", "minimum": 1},
+        "scope": {"enum": ["main", "condition", "negation", "quote", "hypothesis", "background"]}
+      }
+    }
+  }
+}

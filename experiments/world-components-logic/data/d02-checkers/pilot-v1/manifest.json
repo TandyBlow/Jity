@@ -1,0 +1,51 @@
+{
+  "schema": "jity-d02-checker-pilot-manifest-v1",
+  "annotationStatus": "assistant_draft_pending_human",
+  "trainingAuthorized": false,
+  "sealedUse": "opened_by_pilot_api_proxy_not_reusable_as_sealed_test",
+  "groupCount": 20,
+  "sampleCount": 120,
+  "targetedCount": 100,
+  "naturalApiCount": 20,
+  "splitCounts": {
+    "train": 72,
+    "development": 12,
+    "calibration": 12,
+    "sealed": 24
+  },
+  "splits": {
+    "train": [
+      "archive-badge",
+      "archive-quote",
+      "harbor-crate",
+      "harbor-gate",
+      "harbor-key",
+      "harbor-lamp",
+      "harbor-wait",
+      "signal-cable",
+      "signal-radio",
+      "workshop-bowl",
+      "workshop-cloth",
+      "workshop-rod"
+    ],
+    "development": [
+      "archive-cabinet",
+      "archive-ledger"
+    ],
+    "calibration": [
+      "archive-ambig",
+      "signal-gate"
+    ],
+    "sealed": [
+      "signal-background",
+      "signal-hope",
+      "workshop-bench",
+      "workshop-newentity"
+    ]
+  },
+  "sha256": {
+    "worlds.json": "4cdf23ba202157e977ab627b28c53b54fdb50e9a63eb9267eab1a434469b91f2",
+    "scenarios.json": "6fb57ff5aaaffb699f272c8e81917856588d131efbea2a995dc66bbb3cc1f011",
+    "samples.jsonl": "7b1a7b107b1011d9e69fe2d497057be6496a27648d5ad8f37cda6bb3d2cba6d3"
+  }
+}

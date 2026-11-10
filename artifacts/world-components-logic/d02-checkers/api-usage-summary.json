@@ -1,0 +1,49 @@
+{
+  "schema": "jity-d02-api-usage-summary-v1",
+  "model": "deepseek-flash",
+  "mode": "thinking disabled for checker and generation (proxy)",
+  "budgetCny": 20.0,
+  "guardCny": 18.5,
+  "estimatedSpentCny": 0.643709,
+  "verification": {
+    "calls": 3,
+    "failedHttp400": 1,
+    "promptTokens": 119,
+    "completionTokens": 29,
+    "totalTokens": 148,
+    "estimatedCny": 0.00025,
+    "note": "three successful minimal calls plus one HTTP 400 with no reported usage; not in ledger"
+  },
+  "ledger": {
+    "api_checker": {
+      "calls": 152,
+      "prompt": 143545,
+      "completion": 55159,
+      "total": 198704,
+      "cny": 0.623103,
+      "ok": 151,
+      "errors": 1,
+      "latencyP50Ms": 1758,
+      "latencyP95Ms": 3935
+    },
+    "natural_generation": {
+      "calls": 20,
+      "prompt": 6182,
+      "completion": 873,
+      "total": 7055,
+      "cny": 0.020606,
+      "ok": 20,
+      "errors": 0,
+      "latencyP50Ms": 1158,
+      "latencyP95Ms": 1515
+    }
+  },
+  "total": {
+    "calls": 172,
+    "prompt": 149727,
+    "completion": 56032,
+    "total": 205759,
+    "cny": 0.643709
+  },
+  "note": "CNY is a conservative estimate from published peak USD prices and 7.1 CNY/USD, not a provider invoice. Includes 28 calls from an aborted rerun whose outputs were not used in metrics."
+}

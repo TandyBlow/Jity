@@ -1,0 +1,115 @@
+{
+  "schema": "jity-d02-proxy-api-checker-summary-v1",
+  "model": "deepseek-flash (proxy, non-thinking, one-shot checker)",
+  "notEvidenceFor": [
+    "trained M1/M2",
+    "production API version",
+    "A/B/C comparison"
+  ],
+  "runs": [
+    {
+      "run": "checker-targeted-r1.jsonl",
+      "source": "assistant_authored_targeted",
+      "requests": 100,
+      "status": {
+        "ok": 99,
+        "request_error": 1
+      },
+      "decisions": {
+        "incomplete": 77,
+        "upgrade": 14,
+        "accept": 7
+      },
+      "parsed": 98,
+      "exact": 15,
+      "expectedAccept": 39,
+      "expectedUpgrade": 61,
+      "trueAccept": 4,
+      "trueUpgrade": 11,
+      "falseAccepts": [
+        "harbor-key:role",
+        "archive-cabinet:role",
+        "signal-radio:role"
+      ],
+      "falseUpgrades": [
+        "archive-ledger:clean",
+        "archive-quote:special",
+        "signal-background:special"
+      ],
+      "incomplete": 77,
+      "malformed": [
+        {
+          "sampleId": "archive-badge:actor-swap",
+          "error": "JSONDecodeError:Expecting ',' delimiter: line 1 column 856 (char 855)"
+        },
+        {
+          "sampleId": "workshop-cloth:role",
+          "error": "IncompleteRead"
+        }
+      ],
+      "programCodes": {
+        "surface_mismatch": 51,
+        "inconsistent_result_label": 19,
+        "unsettled_result_assertion": 14,
+        "mention_without_role": 13,
+        "invalid_diagnostic_roles": 11,
+        "actor_mismatch": 4,
+        "unresolved_mention": 3,
+        "result_assertion_in_action": 3,
+        "result_assertion_in_attempt": 3,
+        "unresolved_role_tool": 2,
+        "alias_requires_review": 1,
+        "unresolved_result_assertion": 1,
+        "surface_name_mismatch": 1,
+        "unresolved_role_object": 1,
+        "reference_requires_review": 1,
+        "duplicate_mention_id": 1,
+        "joint_subject": 1,
+        "role_type_mismatch": 1
+      },
+      "usage": {
+        "prompt": 92812,
+        "completion": 30478,
+        "total": 123290
+      },
+      "estimatedCny": 0.4573621199999999,
+      "latencyP50Ms": 1677,
+      "latencyP95Ms": 2395
+    },
+    {
+      "run": "checker-natural-r1.jsonl",
+      "source": "api_first_output",
+      "requests": 20,
+      "status": {
+        "ok": 20
+      },
+      "decisions": {
+        "incomplete": 20
+      },
+      "parsed": 20,
+      "exact": 0,
+      "expectedAccept": 5,
+      "expectedUpgrade": 15,
+      "trueAccept": 0,
+      "trueUpgrade": 0,
+      "falseAccepts": [],
+      "falseUpgrades": [],
+      "incomplete": 20,
+      "malformed": [],
+      "programCodes": {
+        "surface_mismatch": 12,
+        "invalid_diagnostic_roles": 4,
+        "duplicate_mention_id": 3,
+        "role_status_mismatch": 1
+      },
+      "usage": {
+        "prompt": 20323,
+        "completion": 15478,
+        "total": 35801
+      },
+      "estimatedCny": 0.08758022,
+      "latencyP50Ms": 3519,
+      "latencyP95Ms": 5151
+    }
+  ]
+}
