@@ -330,6 +330,15 @@ export interface CandidateVerification {
   repetition: number | null;
 }
 
+/** One assembled paragraph and who wrote it. Program paragraphs are an
+ * explicit downgrade, not model prose; the page may label them per segment. */
+export interface BeatSegment {
+  beatId: string;
+  kind: BeatDirective['kind'];
+  source: BeatEvidence['source'];
+  text: string;
+}
+
 export interface CandidateResult {
   text: string;
   accepted: boolean;
@@ -344,6 +353,14 @@ export interface CandidateResult {
   plan: BeatPlan | null;
   /** Which composer wrote each beat, in order. */
   composers: string[];
+  /** Assembled paragraphs with their writer, so a mixed turn is never shown as
+   * wholly model-written. */
+  segments: BeatSegment[];
+  /** Beat provenance counts for one-line labelling. */
+  beatCounts: { model: number; program: number; external: number; fallback: number };
+  /** True when both a model/external writer and a program fallback wrote part of
+   * this text. `accepted` alone never means the whole text is model prose. */
+  mixed: boolean;
   /** Base fact packet for the legacy alignment gate (position/task/personality
    * facts only; sanity uses this route's direction rule). */
   basePacket: CommittedNarration | null;

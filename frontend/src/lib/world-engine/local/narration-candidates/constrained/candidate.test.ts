@@ -306,6 +306,65 @@ describe('generateCandidate program mode', () => {
   });
 });
 
+describe('beat provenance and cross-turn phrasing', () => {
+  it('labels every paragraph with the writer that produced it', async () => {
+    const { packet } = await fixture();
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我拿着杯子去后院。',
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.segments.length).toBeGreaterThan(0);
+    expect(result.segments.every((segment) => segment.text.trim().length > 0)).toBe(true);
+    expect(result.segments.every((segment) => ['program', 'model', 'external', 'fallback'].includes(segment.source))).toBe(true);
+    expect(result.beatCounts.program).toBe(result.segments.length);
+    expect(result.mixed).toBe(false);
+  });
+
+  it('writes task and personality facts as narration, not change reports', async () => {
+    const { packet } = await fixture();
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我拿着杯子去后院。',
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('把登记簿翻到最后一页');
+    expect(result.text).toMatch(/(办完|做完|完成|了结)/u);
+    expect(result.text).toContain('说话前先看一眼对方的鞋');
+    // The meta frames read like a state change log, not a scene.
+    expect(result.text).not.toContain('性子变了一点');
+    expect(result.text).not.toContain('身上多了一点变化');
+    expect(result.text).not.toContain('给自己记下一条');
+  });
+
+  it('does not reopen a turn with the same sentence the player just read', async () => {
+    const { packet } = await fixture();
+    const first = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我拿着杯子去后院。',
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    const opening = first.text.split(String.fromCharCode(10, 10))[0];
+    // Only the previous opening is given as history: repeating it is exactly
+    // the failure this rule targets, while the rest of the point stays the same.
+    const priorText = `${opening}。`;
+    const second = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: { ...packet, inputText: '', priorText },
+      inputText: '',
+      priorText,
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    expect(second.accepted).toBe(true);
+    expect(second.text.split(String.fromCharCode(10, 10))[0]).not.toBe(opening);
+  });
+});
+
 describe('generateCandidate model mode', () => {
   it('accepts per-beat model prose and reports real streaming progress', async () => {
     const { packet } = await fixture();
@@ -469,7 +528,6 @@ describe('facts-only packets (09 driver shape)', () => {
       priorText: null,
       policy: { mode: 'program' },
     });
-    if (!result.accepted) console.log(JSON.stringify({ text: result.text, issues: result.issues }, null, 2));
     expect(result.accepted).toBe(true);
     expect(result.text).toContain('诺诺');
     expect(result.text).toContain('把登记簿翻到最后一页');
@@ -553,7 +611,6 @@ describe('settled descriptions', () => {
       priorText: null,
       policy: { mode: 'program', viewpointId: 'lu' },
     });
-    if (!result.accepted) console.log(JSON.stringify({ text: result.text, issues: result.issues }, null, 2));
     expect(result.accepted).toBe(true);
     expect(result.text).toContain('离场要关灯');
   });

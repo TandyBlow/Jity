@@ -264,13 +264,13 @@ export function projectStage(state: WorldState, stage: SettlementStage, changes:
   const point = buildTimelinePoint({
     worldId: state.worldId,
     id: `local_${stage}_${++localPointSequence}`,
-    sequence: 0,
-    kind: 'normal',
+    sequence: 1,
+    kind: 'instant',
     previousPointId: 'local',
     roundId: 'local',
     advanceId: 'local',
     trigger: 'automatic',
-    linkedFromPointId: null,
+    linkedFromPointId: 'local',
     timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } },
     entityDeltas: deltas,
   });

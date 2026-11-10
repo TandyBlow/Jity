@@ -61,7 +61,8 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       timings: { totalMs: now() - started, planMs: 0, composeMs: 0, verifyMs: 0, beatsMs: [], firstTextMs: null },
       strategyVersion: STRATEGY_VERSION, status: 'error',
       verification: { ok: false, coverage: [], issues, unverifiedSentences: [], chars: 0, hiddenFactIds: [], repetition: null },
-      skeleton: null, plan: null, composers: [], basePacket: null,
+      skeleton: null, plan: null, composers: [], segments: [],
+      beatCounts: { model: 0, program: 0, external: 0, fallback: 0 }, mixed: false, basePacket: null,
       display: { text: '', status: 'rejected', verified: false, elapsedMs: now() - started, beatId: null },
     };
   }
@@ -208,6 +209,18 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     : null;
   const displayText = assembled;
   const status = cancelSeen ? 'cancelled' : accepted ? 'accepted' : 'rejected';
+  // Paragraph-level provenance: every beat keeps the writer that produced its
+  // final text, so a partly program-written turn is visible as such.
+  const segments = beatTexts.map(({ beat, text }, index) => ({
+    beatId: beat.id,
+    kind: beat.kind,
+    source: beatsEvidence[index]?.source ?? 'program',
+    text,
+  })).filter((segment) => Boolean(segment.text));
+  const beatCounts = { model: 0, program: 0, external: 0, fallback: 0 };
+  for (const segment of segments) beatCounts[segment.source] += 1;
+  const mixed = (beatCounts.model + beatCounts.external > 0)
+    && (beatCounts.program + beatCounts.fallback > 0);
   const display: CandidateProgress = {
     text: displayText,
     status: cancelSeen ? 'rejected' : accepted ? 'accepted' : 'rejected',
@@ -243,6 +256,9 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     skeleton: scene,
     plan,
     composers,
+    segments,
+    beatCounts,
+    mixed,
     basePacket: base,
     display,
   };
