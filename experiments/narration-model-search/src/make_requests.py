@@ -106,6 +106,14 @@ def main() -> int:
         "kind": "model-preflight",
         "readyToSubmit": True,
         "qualityBatch": False,
+        "toolchain": {
+            "job": "251643",
+            "problem": "llama-cpp-python 0.3.16 vendors llama.cpp 4227c9b (2025-08-14), which has no qwen35 architecture, and -DLLAMA_BUILD_EXAMPLES=OFF omits the llama-server target. Preflight would reject Qwen3.5-2B and may not produce the runner.",
+            "required": "llama-cpp-python 0.3.36 sdist sha256 832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e vendors llama.cpp 0c1e57098bba43ac29e6e3b677cdceebdd22334f (2026-10-01) with qwen35/qwen35moe, qwen2, internlm2, chatglm and hunyuan-dense.",
+            "cmakeFlags": ["-DGGML_CUDA=ON", "-DCMAKE_CUDA_ARCHITECTURES=70;89", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DLLAMA_BUILD_EXAMPLES=ON", "-DLLAMA_BUILD_SERVER=ON", "-DCMAKE_BUILD_TYPE=Release"],
+            "targets": ["llama-server", "llama-cli", "llama-quantize"],
+            "verify": ["record llama-server --version and the vendor git commit", "record the binary sha256", "load Qwen3.5-2B and one qwen2 model with --jinja", "confirm per-request chat_template_kwargs works for qwen35/hunyuan"],
+        },
         "priority": "parallel-safe offline preflight; no dev-package generation and no GPU required, "
                     "so it can run alongside the product blockers without delaying them",
         "parallelSafe": True,
@@ -192,7 +200,7 @@ def main() -> int:
     }
 
     quality = {
-        "requestId": "11-model-search-quality-001",
+        "requestId": "11-model-search-quality-002-full15",
         "from": "11-model-search",
         "to": "10-training",
         "requestedAt": now(),
@@ -200,8 +208,22 @@ def main() -> int:
         "priority": "below current product blockers; 105 short calls with one load per arm, "
                     "no training, can share a GPU window",
         "batchId": batch_id,
+        "supersedes": {
+            "requestId": "11-model-search-quality-001",
+            "acceptedSha256": "aed5d22c24dfba97fd437a47ac9ae346ce082020c98d292f8540e2815cce917f",
+            "acceptedAs": "12 cases, 84 calls (old dev subset)",
+            "currentFileSha256": "fb72c31bae386f9f5256a56bacda9c8c665c8ec4f462afa408f18dc8f6d3a8c4",
+            "reason": "01 published dev-package-v1.1 with all 15 cases serializable; this request is the 15-case/105-call replacement. Do not run the accepted 84-call request.",
+        },
         "subsetOnly": False,
         "qualityGateClaim": "full 15-case RUBRIC gate is available; lane 11 will not score it and 01 owns the review",
+        "toolchain": {
+            "job": "251643",
+            "required": "llama-cpp-python 0.3.36 sdist sha256 832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e vendors llama.cpp 0c1e57098bba43ac29e6e3b677cdceebdd22334f (2026-10-01), supports qwen35 and --jinja. 0.3.16/4227c9b has no qwen35.",
+            "cmakeFlags": ["-DGGML_CUDA=ON", "-DCMAKE_CUDA_ARCHITECTURES=70;89", "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DLLAMA_BUILD_EXAMPLES=ON", "-DLLAMA_BUILD_SERVER=ON", "-DCMAKE_BUILD_TYPE=Release"],
+            "targets": ["llama-server", "llama-cli", "llama-quantize"],
+            "doNotRun": "Do not start the old 84-call quality request; it lacks 3 cases and the v1.1 hashes.",
+        },
         "readyToSubmit": quality_ready,
         "submitCondition": "Ready for all 15 cases: 01's v1.1 package serializes 15/15 and the frozen "
                            "prompts are rebuilt from it. Do not mix any old 12-case output into this batch.",
@@ -256,6 +278,7 @@ def main() -> int:
             "cost": "existing authorised cluster resources only",
         },
         "runRecipe": [
+            "before the batch, load Qwen3.5-2B and one qwen2 candidate with the 0.3.36 llama-server and --jinja; record version and binary sha256. If qwen35 fails, stop the batch and report the log instead of silently dropping the model",
             "create <scratch>/11-model-search/models/ and download every models[] entry there; "
             "verify byte size and sha256 before loading",
             "upload experiments/narration-model-search/ and 01's shared package; run "
@@ -284,7 +307,8 @@ def main() -> int:
             "Do not skip a case; if a prompt file is missing or a call errors, report it.",
             "Do not judge quality; lane 01 reviews the raw texts.",
             "Keep all raw outputs, including failures and empty texts.",
-            "Record the exact llama.cpp version/commit. Template rendering differences from the "
+            "This is the 15-case/105-call request. Do not run the old 12-case/84-call request; do not merge old outputs.",
+            "Record the exact llama.cpp version/commit (must be 0c1e5709 or a newer one with qwen35). Template rendering differences from the "
             "browser's wllama build are a known limitation; lane 09's browser run is authoritative.",
         ],
     }
@@ -362,7 +386,7 @@ def main() -> int:
 
     OUT.mkdir(parents=True, exist_ok=True)
     for name, obj in (("11-model-search-preflight-001.json", preflight),
-                      ("11-model-search-quality-001.json", quality)):
+                      ("11-model-search-quality-002-full15.json", quality)):
         path = OUT / name
         tmp = path.with_suffix(".json.tmp")
         tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

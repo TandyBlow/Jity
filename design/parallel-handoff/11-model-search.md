@@ -6,7 +6,20 @@
 
 **09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。详细分析：`experiments/narration-model-search/results/real-page-81d5507a.json`。
 
-**当前状态（2026-11-10，充值恢复后）**：已读 `RESTART-AFTER-REVIEW.md`（sha256 `20238282…`）并登记 `results/product/acks/recharge-11-model-search.json`。新增结构化语义校验器/冻结器和两例真实状态语义探针（selftest 18/18；frozen prompt pack 已生成），真实语义案例请求在 `results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`；preflight、15 例质量批次和一个独立语义探针请求仍 ready，10 尚未登记领取；01 已发布 v1.1：`d6c7e766…`，15/15 可序列化，三个旧 delta 形状已规范化。没有任何模型正文、语义或质量结论。
+**当前状态（2026-11-11，QUALITY-PRIORITY 后）**：10 已通过 `requestsReceived` 接受 preflight（旧文件 sha `729a…`，含 hf-mirror 与 251643 自建 llama.cpp 两项偏差）和旧质量请求（sha `aed5…`，12 例/84 calls）；正在处理 251643 工具构建。01 已发布 v1.1（`d6c7e766…`，15/15 可序列化），因此旧 84-call 请求必须由 **当前 15 例/105-call** 替换：`11-model-search-quality-002-full15.json`（sha 见协调文件）。preflight 当前文件 sha `af55…`，模型集未变，10 的已接受两项偏差仍有效，不重复下载。语义探针请求 `11-model-search-semantic-001.json`（2 case × 6 模型，12 calls）尚未被 10 登记，待工具构建后执行。没有任何候选正文、语义或质量结论。
+
+## 251643 工具链修正（2026-11-11，必须先做）
+
+10 的 251643 构建计划使用 `llama-cpp-python==0.3.16`，其 vendor `llama.cpp` commit 是 `4227c9be4268ac844921b90f31595f81236bd317`（2025-08-14），**没有 `qwen35` 架构**；同时 `-DLLAMA_BUILD_EXAMPLES=OFF` 会排除 `llama-server` 目标。用它做 preflight 会直接拒绝 Qwen3.5-2B，也可能产不出 runner。
+
+应改用 `llama-cpp-python==0.3.36` sdist（sha256 `832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e`），其 vendor commit 为 `0c1e57098bba43ac29e6e3b677cdceebdd22334f`（2026-10-01），已包含 `qwen35`/`qwen35moe`，并同时支持本批的 `qwen2`、`internlm2`、`chatglm`、`hunyuan-dense`。CMake 必须显式打开 examples/server：
+
+```bash
+-DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES="70;89" -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=ON -DLLAMA_BUILD_SERVER=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j 24 --target llama-server llama-cli llama-quantize
+```
+
+构建后记录 `llama-server --version`、vendor commit、二进制 sha256；用 `--jinja` 分别加载 Qwen3.5-2B 和一个 qwen2 模型，确认 `chat_template_kwargs` 可用。请求文件里的 `toolchain` 块与协调文件给出同样的 SHA/参数。
 
 ## 本轮实际交付
 
@@ -16,7 +29,7 @@
 4. **冻结提示词**：`src/build_prompts.py` 校验 01 的 canonical 开发包（manifest/cases/rubric 三个哈希 + 每例 inputSha256），用训练同款 `yuyan-prose-result-v2` 序列化，空白按浏览器路径删除并记账，套 10 的 `chatml-instruct-v1` system/user。当前冻结 15/15 完整包（`evidence/prompts-dev-v2-full15/`，prompts sha256 `5e43db93…`），三个旧 delta 形状已由 01 v1.1 修正（`results/11-model-search/requests/01-dev-package-canonical-delta.json`），并用 `src/propose_case_fix.py` 在内存副本上验证了最小改写可行（`results/11-model-search/requests/01-case-fix-proposal.json`），没有改 01 的包；v1.1 由 01 发布。
 5. **批量执行器**：`src/screen.py` 启一个 `llama-server --jinja` 复用给全部 case；每个 case 保存请求体、原始响应、usage/timings、wall ms、finish_reason；每个模型保存 load 秒数、命令、server log tail、模型 sha256。**本线不运行它**；只在 10 的 HPC 上跑。
 6. **机械汇总与复核输入**：`src/collect.py` 输出字数/句数/段数/句内重复/子句重复/耗时/tok/s，明确不产出 pass/fail（事实与文风由 01 判）；`src/make_review_input.py` 把一次 run 按 case 拼成 01 的 `NARRATION_QUALITY_ROWS` JSONL，拒绝缺例/多例/inputSha256 不一致，声明的 3 个排除例单列。
-7. **HPC 请求**：`results/product/hpc-requests/11-model-search-preflight-001.json`（下载/哈希/GGUF 元数据/加载冒烟，明确非质量）；`11-model-search-quality-001.json`（`batch-3-full15`，`readyToSubmit:true`，完整 15 例包；11 不自评，01 按 RUBRIC 复核）。
+7. **HPC 请求**：`results/product/hpc-requests/11-model-search-preflight-001.json`（下载/哈希/GGUF 元数据/加载冒烟，明确非质量）；当前质量请求为 `11-model-search-quality-002-full15.json`（`batch-3-full15`，105 calls，完整 15 例包；11 不自评，01 按 RUBRIC 复核）。旧 `quality-001`（10 已接受的 12 例/84 calls，sha `aed5…`）已标为 superseded，不得再跑；当前 `quality-001` 文件仅作历史，`readyToSubmit:false`。
 8. **运行时预算**：按 08 的 Blob 总容量约 2 GB，把候选 + 页面语义模型（Qwen3-0.6B，396,705,472 B）一起检查；五个候选 1.38–1.68 GB（含语义模型）全通过（`models/candidates.json` 的 `runtimeBudget`）。
 9. **预注册**：`preregistration.draft.json` 冻结比较条件、基线、RUBRIC §6 晋级门（无硬错误 ≥10/15、文风不合格 ≤3、0 例无据实体、相对 Qwen3-1.7B 至少 2 例 fail→pass）、失败退出、资源估计。包/子集 pin 后升为 `preregistration.v1.json`；加入 Qwen3.5-2B 后升为 `preregistration.v2.json`；01 v1.1 后升为 `preregistration.v3.json`（`batch-3-full15`，完整 15/15）。
 
@@ -79,6 +92,6 @@ python -X utf8 src/screen.py \
 ## 主 agent 需要做的接线
 
 - **06/02/08**：先看 `models/candidates.json` 的候选与许可标记；没有质量结果前不要替换页面叙事模型。若 preflight/后续批次产出候选，接线点仍是 `NARRATION_MODEL`（`frontend/src/app/world-local/page.tsx`）和 02 的生成策略，由 06 合入；11 不写页面。
-- **10**：preflight 与 `batch-3-full15` 都已 ready；按请求里的 hash 下载/校验/加载冒烟，再跑 15 例 × 7 臂。product LoRA 若集群没有就跳过该参考臂并说明。
+- **10**：先按上面的 0.3.36 修正 251643，再对已接受 preflight 的模型集做下载/校验/加载冒烟；然后只跑 `quality-002-full15` 的 15 例 × 7 臂（105 calls），不要跑旧 84-call。product LoRA 若集群没有就跳过该参考臂并说明。
 - **09**：只在 11 报告某候选通过 RUBRIC §6 后，接 `/world-local` 做小验证；请求会带模型/模板/输入哈希与离线原始证据。不要为候选轮流占 4060。
 - **01**：三个无法序列化的 case 需要修（或明确把它们从包里排除并更新 manifest/RUBRIC）；它们涉及唯一的物品转交例和两条连续例。
