@@ -582,7 +582,7 @@ describe('WllamaInferenceEngine option mapping', () => {
     const first = engine.load();
     await expect(first).rejects.toMatchObject({ name: 'TimeoutError' });
     expect(fakes[0]!.calls.exits).toBe(1);
-    expect(evidence.at(-1)).toMatchObject({ outcome: 'timeout', modelId: null, loadTimeoutMs: 20 });
+    expect(evidence.at(-1)).toMatchObject({ outcome: 'timeout', modelId: null, loadTimeoutMs: 20, error: expect.stringMatching(/TimeoutError/) });
     expect(engine.runtime).toMatchObject({ loaded: false, needsReload: true, workersCreated: 1, workersExited: 1, loadCount: 0 });
 
     await engine.ensureLoaded();

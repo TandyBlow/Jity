@@ -363,6 +363,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       if (outcome === 'timeout') {
         const timeoutError = new Error(`model load timed out after ${loadTimeoutMs} ms`);
         timeoutError.name = 'TimeoutError';
+        failure = timeoutError; // evidence says timeout, not the abort that delivered it
         throw timeoutError;
       }
       throw error;
