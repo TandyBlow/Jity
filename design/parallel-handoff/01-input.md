@@ -103,6 +103,7 @@ const legacy = renderNarrationInput(out.projection, { model: 'legacy' });
 - 199 条训练投影：`goldens/runtime-v2/train-projections.jsonl`（`{id, x}`，来自
   `data/rows-v2.jsonl`）；`train-rows-index.json` 记录每行 v2 `xProse` 的
   SHA/字符/UTF-8 字节，以及旧 `xProseLegacy` 的 SHA/字符数。
+- 本地 `.gitattributes` 强制金标/词表用 LF，避免 Windows checkout 改写行尾后整文件哈希失效。
 - 源文件哈希：`source.json` 记录 `rows-v2.jsonl`、`rows-yuyan-v2.jsonl`、
   `golden/vectors.jsonl`、`data/manifest.json` 的登记值与实际值。
 - 旧格式：`goldens/legacy-rows-v1.json`（30 行）和

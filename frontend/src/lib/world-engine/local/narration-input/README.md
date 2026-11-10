@@ -75,6 +75,9 @@ that reference, not against a self-defined expectation:
   counts and legacy SHA/counts for all 199 rows, plus the source file hashes.
 - `goldens/runtime-v2/length-stats.json`: measured v2/legacy lengths.
 
+The `.gitattributes` in this directory forces LF on the golden and tokenizer
+files, so the recorded whole-file hashes survive checkout on any platform.
+
 Refresh the freeze from the lane-10 source (default path is the 10-training
 worktree; the source hash is checked before copying):
 
