@@ -502,6 +502,9 @@ export default function WorldLocalPage() {
       throw new Error(`state_digest_mismatch: head=${snapshot.transport.headPointId} expected=${expected.slice(0, 12)} actual=${actual.slice(0, 12)}`);
     }
     setView(viewOf(state));
+    // Full committed record for independent state review (05) and replay: the
+    // visible view alone cannot prove which task deltas reached the save.
+    (window as unknown as { __worldSnapshot?: unknown }).__worldSnapshot = session.snapshot;
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
     // A conflict-blocked session can leave flushPersistence waiting on its own
@@ -764,6 +767,7 @@ export default function WorldLocalPage() {
           entriesTotal: session.snapshot.commands.length,
           committedEntries: committedCount,
           unfinishedEntries: unfinishedCount,
+          narrationSources: session.snapshot.narrationSources ?? null,
           inputConsumptionRestored: context.world.advance.intentStatus !== 'pending',
           commandsPlayed: session.commandsPlayed,
           headPointId: session.snapshot.transport.headPointId,
