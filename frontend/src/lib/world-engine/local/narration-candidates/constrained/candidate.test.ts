@@ -109,6 +109,31 @@ async function productWorldFixture() {
   return { packet };
 }
 
+async function e9a5NoMoveFixture() {
+  const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
+  const world = JSON.parse(readFileSync(file, 'utf8'));
+  const state0 = buildInitialState(world.initial as InitialState);
+  // 95dc group_10/group_12: lu stays in lane, no entity is moved; only a
+  // minute passes. The bad page program treated the goggles as the mover.
+  const point: TimelinePoint = {
+    worldId: world.initial.worldId, id: 'e9a5_no_move', sequence: 1, kind: 'normal', previousPointId: 'root',
+    roundId: 'r1', advanceId: 'a1', trigger: 'player', linkedFromPointId: null,
+    timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+    entityDeltas: {},
+  };
+  const state1 = applyPoint(state0, point);
+  const digest = await stateDigest(state1);
+  const packet: CommittedScenePacket = {
+    anchor: { worldId: world.initial.worldId, pointId: point.id, version: 1, stateDigest: digest, previousPointId: 'root' },
+    state: state1,
+    beforeState: state0,
+    timeAdvance: point.timeAdvance,
+    entityDeltas: point.entityDeltas,
+    facts: [],
+  };
+  return { packet };
+}
+
 async function fixture() {
   const state0 = buildInitialState(initial());
   const point1: TimelinePoint = {
@@ -331,6 +356,24 @@ describe('generateCandidate program mode', () => {
     expect(result.text).toMatch(/一分钟/);
     expect(result.text).not.toContain('任务完成');
     expect(result.text).not.toContain('行动成功完成');
+    expect(result.segments.every((segment) => segment.source === 'program')).toBe(true);
+  });
+
+  it('writes a readable no-move 95dc point without making the goggles an actor', async () => {
+    const { packet } = await e9a5NoMoveFixture();
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我沿着服务巷往里走，先看清墙上的演习规则牌。',
+      policy: { mode: 'program' },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('西侧服务巷');
+    expect(result.text).toMatch(/一分钟/);
+    expect(result.text).not.toContain('护目镜还在');
+    expect(result.text).not.toContain('护目镜在原地');
+    expect(result.text).not.toContain('资格为false');
+    expect(result.text).not.toContain('任务完成');
     expect(result.segments.every((segment) => segment.source === 'program')).toBe(true);
   });
 
