@@ -1,0 +1,119 @@
+{
+  "schema": "jity-narration-golden-v2",
+  "createdAt": "2026-11-10T03:25:05.251077+00:00",
+  "dataManifest": "data\\manifest.json",
+  "dataManifestSha256": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+  "versions": {
+    "projectionVersion": "narration-result-view-v2",
+    "serializerVersion": "yuyan-prose-result-v2",
+    "legacyProjectionVersion": "narration-result-view-v1",
+    "legacySerializerVersion": "yuyan-prose-legacy-v1",
+    "modelTemplateVersion": "yuyan-raw-completion-v1",
+    "tokenizerHash": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "tokenizerStatus": "bound",
+    "whitespacePolicy": "remove-space-tab-fullwidth-and-record; reject-crlf-and-other-whitespace",
+    "listPunctuationPolicy": "strip-trailing-。；，",
+    "resultTypeOrder": [
+      "地点",
+      "人物",
+      "物品"
+    ],
+    "resultFieldOrder": {
+      "人物": [
+        "位置",
+        "精神值",
+        "外貌",
+        "个性",
+        "任务"
+      ],
+      "地点": [
+        "位于",
+        "外貌"
+      ],
+      "物品": [
+        "位置",
+        "外貌"
+      ]
+    },
+    "itemPositionSyntax": "物品（位于<位置>）"
+  },
+  "tokenizer": {
+    "name": "yuyan-char-v1",
+    "source": "hpc:~/narr_rows/dict.txt",
+    "path": "tokenizers/yuyan-v1/dict.txt",
+    "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "bytes": 119884,
+    "vocabSize": 13668,
+    "specialTokens": [
+      "<end>",
+      "<mask>",
+      "<sep>",
+      "<hold>"
+    ],
+    "hasSpaceToken": false,
+    "hasTabToken": false,
+    "hasNewlineToken": false
+  },
+  "cases": 49,
+  "byKind": {
+    "real": 20,
+    "synthetic": 16,
+    "negative": 13
+  },
+  "byExpectedStage": {
+    "ok": 36,
+    "build": 5,
+    "normalize": 6,
+    "tokenizer": 1,
+    "serialize": 1
+  },
+  "coverage": {
+    "item_position": 1,
+    "empty_result": 1,
+    "zero_sanity": 1,
+    "no_change": 1,
+    "task_hierarchy": 1,
+    "non_bmp_sort": 1,
+    "whitespace_removed": 1,
+    "whitespace_refused": 1,
+    "oov_refused": 1,
+    "unknown_entity_refused": 1,
+    "long_input": 1
+  },
+  "sourceRows": [
+    "row-0002",
+    "row-0003",
+    "row-0004",
+    "row-0005",
+    "row-0006",
+    "row-0007",
+    "row-0008",
+    "row-0009",
+    "row-0010",
+    "row-0011",
+    "row-0012",
+    "row-0016",
+    "row-0017",
+    "row-0018",
+    "row-0022",
+    "row-0028",
+    "row-0033",
+    "row-0053",
+    "row-0095",
+    "row-0132"
+  ],
+  "files": {
+    "vectors.jsonl": {
+      "bytes": 401209,
+      "sha256": "d699a69734127c4ea763c1ba53dca1f8c5669d955887c6830d97aa177a35b2fc",
+      "cases": 49
+    }
+  },
+  "howToUse": [
+    "Read vectors.jsonl one JSON object per line.",
+    "For expected.status == 'ok', feed projection to the browser serializer and compare the UTF-8 bytes with expected.bytesUtf8Hex / expected.sha256.",
+    "Compare segments by charStart/charEnd (Unicode code points, not UTF-16 units).",
+    "For expected.status == 'error', return the same errorCode at the same stage; do not fall back to a partial text.",
+    "The target narrative is deliberately absent from every vector; do not look for it."
+  ]
+}

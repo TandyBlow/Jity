@@ -1,28 +1,11 @@
-/** Test helpers. The row helper turns a stored dataset X into the same
- * projection shape the runtime produces; the tiny world exercises the real
- * state kernel instead of hand-written after states. */
+/** Test helpers: a stored row's four fields, and a tiny world driven through
+ * the real state kernel instead of hand-written after states. */
 import type { InitialState, TimeAdvance, TimelinePoint, WorldState, EntityDelta, Id } from '../../types';
 import { applyPoint, buildInitialState, buildTimelinePoint } from '../state';
-import { DEFAULT_NARRATION_PROJECTION_POLICY, type NarrationProjection } from './types';
+import type { NarrationProjection } from './types';
 
-export function projectionFromRowX(x: {
-  视角: string;
-  上回合状态: NarrationProjection['beforeState'];
-  本回合变化: NarrationProjection['delta'];
-  本回合状态: NarrationProjection['resultState'];
-}): NarrationProjection {
-  const match = /主角视角（(.+?)）/.exec(x.视角);
-  return {
-    projectionVersion: 'narration-projection-v1',
-    viewpoint: { id: 'row-viewpoint', name: match?.[1] ?? x.视角, text: x.视角 },
-    beforeState: x.上回合状态,
-    delta: x.本回合变化,
-    resultState: x.本回合状态,
-    policy: {
-      ...DEFAULT_NARRATION_PROJECTION_POLICY,
-      length: { ...DEFAULT_NARRATION_PROJECTION_POLICY.length },
-    },
-  };
+export function projectionFromRow(x: NarrationProjection): NarrationProjection {
+  return x;
 }
 
 export function tinyWorld(): WorldState {
@@ -37,6 +20,9 @@ export function tinyWorld(): WorldState {
       alcove: { id: 'alcove', name: '壁龛', parentLocationId: 'hall', initialAppearance: '壁龛里落着灰。', slots: [] },
       garden: { id: 'garden', name: '庭院', parentLocationId: null, initialAppearance: '庭院里下着雨。', slots: [] },
       cellar: { id: 'cellar', name: '地窖', parentLocationId: null, initialAppearance: '地窖里很暗。', slots: [] },
+      closet: { id: 'closet', name: '壁橱', parentLocationId: 'alcove', initialAppearance: '壁橱里挂着旧衣。', slots: [] },
+      tower: { id: 'tower', name: '塔楼', parentLocationId: 'garden', initialAppearance: '塔楼的门锁着。', slots: [] },
+      towerRoom: { id: 'towerRoom', name: '塔顶小屋', parentLocationId: 'tower', initialAppearance: '屋里落满灰。', slots: [] },
     },
     items: {
       lamp: { id: 'lamp', name: '铜灯', initialPosition: { containerId: 'hall', slotId: 'slot_front', relativeTo: null }, initialAppearance: '灯罩擦得很亮。', slots: [] },
@@ -77,7 +63,7 @@ export function tinyWorld(): WorldState {
         id: 'blank', name: '阿空', initialPosition: { containerId: 'cellar', slotId: null, relativeTo: null },
         initialAppearance: '', slots: [],
         initialPersonality: '', initialSanity: 20,
-        tasks: {},
+        tasks: { blank_root: { id: 'blank_root', ownerId: 'blank', parentTaskId: null, goal: '守住地窖', status: 'pending' } },
       },
     },
   };

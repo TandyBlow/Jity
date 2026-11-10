@@ -1,0 +1,28 @@
+{
+  "version": "narration-input-length-stats-v1",
+  "population": "lane-10 rows-v2.jsonl xProse (yuyan-prose-result-v2)",
+  "rowCount": 199,
+  "v2": {
+    "chars": {
+      "min": 197,
+      "p50": 420,
+      "p75": 487,
+      "max": 915
+    },
+    "utf8Bytes": {
+      "min": 575,
+      "p50": 1250,
+      "p75": 1441,
+      "max": 2731
+    }
+  },
+  "legacy": {
+    "chars": {
+      "min": 169,
+      "p50": 333,
+      "p75": 380,
+      "max": 741
+    }
+  },
+  "note": "Character counts are Unicode code points (Python len), not tokenizer tokens."
+}

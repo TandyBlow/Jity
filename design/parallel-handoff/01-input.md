@@ -1,139 +1,155 @@
-# 01-input handoff: WorldState → 叙事输入投影与序列化
+# 01-input handoff：与 10 线实际训练的 result-v2 对齐
 
-日期：2026-11-10。分支 `goal/local-01-input`，基线 `865ae64e0901a70c3db4f1d0eb2af60268943c53`。本线只改了自己独占的目录，未改 `local/prompt.ts`、`game-model.ts`、训练源数据或其他线文件。
+日期：2026-11-10。分支 `goal/local-01-input`，基线
+`865ae64e0901a70c3db4f1d0eb2af60268943c53`。只改本线独占目录；未改
+`local/prompt.ts`、`game-model.ts`、训练源数据或其他线文件。
 
-## 1. 解决的问题
+## 1. 问题与结论
 
-主树里未提交的 `legacyNarrationInput` 原型把真实 `WorldState` 直接拼成旧格式，存在四个会改变事实的偏差：
+10 线 completion.json 已登记两边都叫 `yuyan-prose-result-v2`，但 30 个共同行只有 1 个
+字节相同。根因不是“措辞差异”，而是两套不同格式共用了同一个版本名：
 
-1. **结束态冒充上回合态**：`【地点】【人物】【物品】` 用 `after` 渲染，导致输入里的“上回合状态”已经是本回合结束后的值。
-2. **同地点全部物品进入**：`sameRoomItems(after, view)` 把同房间所有物品塞进 `【物品】`；数据规则只收本回合变化的物品。
-3. **任意 slice**：物品 `slice(0,4)`、地点 `slice(0,6)` 静默丢实体，且没有省略记录。
-4. **中文 localeCompare**：`name.localeCompare(..., 'zh')` 按拼音/区域排序；Python 数据侧用码点排序，非 BMP 名字顺序会不同。
+- 10 线实际训练的是 `experiments/narration-runtime-v2` 的
+  `src/v2_render.py`（提交 `8f22a086a24f0b1ce030cbaa622862b2b3a16ddc`）：
+  - 物品状态行 `名称（位于<位置>）：<外貌>。`；
+  - 结果块字段用 `，` 分隔，外貌/个性不带方括号；
+  - 任务文本是 `任务<目标>（<状态>）`，**不**写“大任务/小任务/属于”标签；
+  - `精神值0`、`外貌（空）`、`个性（空）` 显式。
+- 01 旧草稿的 `result-v2` 是另一套：物品行漏位置、`外貌[...]`、字段用 `；`、任务带
+  `大任务《…》/小任务《…，属于…》`。它从未被训练过。
 
-另外补上了原型没有的：容器链到最内层地点的可见性、槽位不切场景、父子任务结果、0 值/空列表的显式结果、长度超限拒绝、旧 YuYan 词表/空白拒绝，以及旧结果块漏写的独立版本。
+本线已删除旧草稿格式，TS 适配器改为逐字节复现 10 线实际训练的 v2；旧格式保留为
+`yuyan-prose-legacy-v1`，两套格式不再共用版本名。无需另立 v2 新版本，因为不是重定义，
+而是采用 10 线已冻结并已训练的那一套。
 
-## 2. 实现与版本
+## 2. 版本与 tokenizer 绑定
+
+| 名称 | 值 | 用途 |
+|---|---|---|
+| projection | `narration-result-view-v2` | 四字段结构化投影 |
+| serializer | `yuyan-prose-result-v2` | 10 线实际训练格式 |
+| legacy projection | `narration-result-view-v1` | 仅历史登记；旧数据不再产出 |
+| legacy serializer | `yuyan-prose-legacy-v1` | 旧 YuYan 权重，逐字节冻结 |
+| model template | `yuyan-raw-completion-v1` | 原始 completion |
+| tokenizer | `yuyan-char-v1` | 字符级 |
+| tokenizer 文件 | `tokenizer/yuyan-v1/dict.txt` | 13,668 条 |
+| tokenizer SHA-256 | `20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4` | 与 10 线一致 |
+
+`yuyan-charset-v1.json` 由该 dict 精确派生（13,658 个单字符），导入时校验源哈希和
+词表大小。charset 不是另一份手写词表。
+
+## 3. 调用方式（主集成与 02 可直接用）
 
 目录：`frontend/src/lib/world-engine/local/narration-input/`。
 
-| 版本 | 用途 | 结果块 |
-|---|---|---|
-| `narration-projection-v1` | 结构化投影 | — |
-| `yuyan-prose-legacy-v1` | 现有 YuYan-700M 权重，逐字节兼容旧 199 行 | 无 |
-| `yuyan-prose-result-v2` | 修复后的新格式，另立版本 | 有 |
-
-两个序列化器共用同一个 projection。**不能**把 `result-v2` 的字符串喂给旧权重后声称同条件兼容。
-
-### 2.1 投影入口
-
-```ts
-projectNarrationInput({ before, after, delta, timeAdvance, viewpointId, policy? })
-  -> { projection, includedEntities, visibleEntities, omittedFields, version }
-```
-
-- `before`/`after`：已提交 `WorldState`；`delta`：该点的 `EntityDelta` 记录；`timeAdvance`：该点时间推进；`viewpointId`：视角人物 id。
-- `before` 必须是**上一个**已提交状态，不能传 `after` 顶替；根点没有上一状态时不要调用本入口伪造。
-- 取数规则按数据侧 README：所有变化实体进入；人物收主角及结束后同最内层地点的人；地点收这些人的变化前后位置、变化实体位置及各自一级上级；物品只收本回合变化的。
-- 可见性单独返回：`visibleEntities` 是结束后同最内层地点的全部人物/物品和地点祖先链；`includedEntities` 是真正写进输入的集合；两者不是同一个集合。
-- `omittedFields` 逐项记录未进入的实体/未变化的字段/理由（`item_not_changed`、`character_outside_scene`、`field_not_changed` 等），同房间未变化物品也会出现在这里，证明不是漏了。
-- 投影只含状态/变化/结果/视角元数据，不含 `叙事`、参考答案、rubric 或评测标签（有测试遍历键名）。
-
-### 2.2 旧格式序列化
-
-```ts
-const { text, utf8Sha256, serializerVersion } = renderLegacyInput(projection);
-```
-
-- 移植 `convert_yuyan.py::render_row`：`squash`、标题顺序、名字码点排序、列表 `、`/`；` 规则、任务大任务+小任务顺序、`时间推进<值>。`、`【正文】` 结尾。
-- 旧版没有结果块；`resultState` 不参与旧格式。
-- 输出前检查：任何空白（旧转换只删普通空格/制表符/全角空格的少数位置，其他空白会直接拒绝）、YuYan 词表外字符、长度超限，均抛 `NarrationInputError`，不静默截断或替换。
-- 除时间推进外，投影字段里出现空格会报 `whitespace`，不再悄悄 `squash` 掉任务目标等文本。
-
-### 2.3 新结果块序列化
-
-```ts
-const { text, utf8Sha256, serializerVersion } = renderResultInput(projection);
-```
-
-在 `【变化】` 与 `【正文】` 之间插入：
-
-```text
-【本回合状态】名称（类型）：位置…；精神值0；外貌[…、…]；个性[…]；任务大任务《…》（…）；小任务《…》（…，属于《…》）。
-```
-
-- 只含本回合变化的实体和变化的字段；字段缺失表示“本结果没携带该字段”，不表示删除或 0。
-- `精神值0`、`外貌[]`、`个性[]` 都显式写出。
-- 人物、物品的位置变化都会给出结算后的位置；物品位置不会被 `place_line` 漏掉。
-- 任务只含本回合完成/新增的任务；子任务带 `属于《父目标》`，保留父子关系。
-- 无变化时没有 `【本回合状态】`；此时 v2 文本与 legacy 完全相同。
-
-## 3. 主 agent 接线
-
-当前主树 `frontend/src/lib/world-engine/local/prompt.ts` 的 `legacyNarrationInput(before, delta, after, view)` 用原型拼接。建议只改它的函数体（或调用它的地方）：
-
 ```ts
 import {
-  projectNarrationInput, renderLegacyInput, renderResultInput,
+  buildNarrationInput, renderNarrationInput, projectNarrationInput,
 } from '../local/narration-input';
 
-const { projection } = projectNarrationInput({
-  before: stateBeforePoint,              // 上一个已提交 WorldState，不能是 after
-  after: stateAfterPoint,
-  delta: point.entityDeltas ?? {},
-  timeAdvance: point.timeAdvance,        // 不能省
+// 一次调用拿到投影 + 文本 + 字节身份：
+const out = buildNarrationInput({
+  before,                          // 上一个已提交 WorldState，不能是 after
+  after,
+  delta: point.entityDeltas,       // 该点 EntityDelta
+  timeAdvance: point.timeAdvance,  // 必填
   viewpointId: view,
 });
+out.rendered.text;                 // 喂模型的准确输入
+out.rendered.serializerVersion;    // 'yuyan-prose-result-v2'
+out.rendered.sha256;               // 精确 UTF-8 字节的 SHA-256
+out.rendered.bytesUtf8Hex;         // 同一字节
+out.rendered.segments;             // 块/实体/字段的字符偏移
+out.tasks;                         // 完整任务层级（结构化元数据）
+out.textCarryLimits;               // 文本无法携带的父子关系/深度
+out.omittedFields;                 // 未进入实体/字段及理由
 
-// 旧 YuYan 权重：
-const input = renderLegacyInput(projection);
-// 新 result-v2 权重：
-// const input = renderResultInput(projection);
-// await input.utf8Sha256 可记录哈希
+// 旧权重：
+const legacy = renderNarrationInput(out.projection, { model: 'legacy' });
 ```
 
-`frontend/scripts/parallel-input/wiring-example.ts` 是可直接复制的包装。需要删掉/停用原型里的 `sameRoomItems`、`slice(0,4)`、`slice(0,6)`、`localeCompare(..., 'zh')` 路径；新入口已经包含同地点不同槽位、容器链、变化物品和码点排序。
+- `renderNarrationInput` 默认 v2。传 `{ model: 'legacy' }` 才走旧格式。
+- `before` 必须是上一已提交状态；`after` 冒充 `before` 会让“上回合状态”错误。
+- `rendered.version` 带 `projectionVersion/serializerVersion/tokenizerName/tokenizerHash/
+  tokenizerVocabSize/tokenizerStatus`。
+- `limits: { maxChars, maxUtf8Bytes }` 超限抛 `input_too_long`，错误上下文带实际
+  `charCount` 和 `utf8Bytes`；不截断。
+- `wiring-example.ts`（`frontend/scripts/parallel-input/wiring-example.ts`）是可直接复制的包装。
 
-## 4. 验证
+## 4. 物品位置与任务层级
 
-实际执行（2026-11-10，本工作树）：
+**物品位置**：v2 物品行读 `位置`，输出 `名称（位于<位置>）：…`。row-0002 的
+`报架放大镜` 现在包含 `（位于报刊架后）`。旧 `placeLine` 读 `位于` 的丢失只在
+`yuyan-prose-legacy-v1` 路径保留，因为旧权重就是按那些字节训练的；不能把旧损失说成已修。
+
+**任务层级**：v2 文本只写 `任务<目标>（<状态>）`，按大任务在前、其余按状态列表平铺。
+父子关系和深度**不在文本里**，由 `ProjectionResult.tasks` 保留
+（`parentTaskId/parentGoal/depth`），并由 `textCarryLimits` 明确记录：
+
+- `task_parent_relation_not_in_v2_text`：非根任务的直接父目标不在该行文本；
+- `task_depth_not_in_v2_text`：深度 ≥2 的任务，文本无法表达它是孙任务。
+
+因此不会“静默丢层级”，也不会声称旧训练文本含层级。若产品要求文本显式写
+“大任务/小任务/属于”，那是 **另一个序列化格式**，必须与 10 线协商新版本并重建训练数据，
+不能改现有 v2 的字节。
+
+## 5. 金标来源与验证
+
+金标全部来自确定的参考实现，不按 TS 代码改预期：
+
+- 10 线冻结向量：`goldens/runtime-v2/vectors.jsonl`（49 条：20 真实、16 synthetic、
+  13 负例），原样复制自 `experiments/narration-runtime-v2/golden/vectors.jsonl`；
+  `golden-manifest.json` 的 SHA 与 10 线登记一致。
+- 199 条训练投影：`goldens/runtime-v2/train-projections.jsonl`（`{id, x}`，来自
+  `data/rows-v2.jsonl`）；`train-rows-index.json` 记录每行 v2 `xProse` 的
+  SHA/字符/UTF-8 字节，以及旧 `xProseLegacy` 的 SHA/字符数。
+- 源文件哈希：`source.json` 记录 `rows-v2.jsonl`、`rows-yuyan-v2.jsonl`、
+  `golden/vectors.jsonl`、`data/manifest.json` 的登记值与实际值。
+- 旧格式：`goldens/legacy-rows-v1.json`（30 行）和
+  `legacy-rows-v1-manifest.json`（199 行），来自原数据集提交
+  `1ab6ca791f97529a7bffed1f4837bf81a28badcb`。
+
+实际执行（本工作树，2026-11-10）：
 
 ```bash
 cd frontend
+npx vitest run src/lib/world-engine/local/narration-input --maxWorkers=1
 npx tsc --noEmit --target ES2020 --module esnext --moduleResolution bundler --strict \
   --skipLibCheck --resolveJsonModule --lib ES2020,DOM \
   src/lib/world-engine/local/narration-input/index.ts
 npx eslint src/lib/world-engine/local/narration-input --ext .ts
-npx vitest run src/lib/world-engine/local/narration-input --maxWorkers=1
 ```
 
-结果：TypeScript 无错误；ESLint 0 error/0 warning；6 个测试文件 47 个测试通过。关键证据：
+结果：
 
-- 真实 199 行逐字节：`legacy-golden.test.ts` 读取源数据 `rows-xy.jsonl` + `yuyan/rows-yuyan.jsonl`，对每一行用 TS 重渲染，与 Python 已存 `xProse` **逐字节相同**，并与 manifest 的 SHA/字符数/UTF-8 字节全部一致；同时核对源文件哈希。30 行代表性金标冻结在 `goldens/legacy-rows-v1.json`，199 行哈希在 `goldens/legacy-rows-v1-manifest.json`。
-- 旧结果块漏写：row-0008 无变化行 v2 无结果块；row-0095 的 `外貌[]` 在 v2 显式出现；row-0002 的物品移动/任务/位置在 v2 出现。
-- 真实自由一日世界：路明非/诺诺同在西侧服务巷不同槽位仍互见；同巷 7 件物品只有变化的护目镜进入输入，其余 6 件 `item_not_changed`；路明非移到钟楼后诺诺离开可见集但仍因未变化而不进入；开局空增量没有虚构物品集。
-- 合成边界：0 精神值、空外貌/个性、物品移动、父子/孙任务、非 BMP 名字码点排序、容器链、未知实体、after 不一致、空白、OOV、长度超限、结果字段类型错误。
-- v2 长度分布（199 行真实输入）：字符 min 197 / p50 427 / p75 501 / max 921；UTF-8 字节 min 575 / p50 1262 / p75 1479 / max 2741；记录在 `goldens/result-length-stats-v1.json`。这是字符/字节数，不是 tokenizer token 数。
+- 5 个测试文件、94 个测试通过。
+- 49/49 向量：v2 文本、UTF-8 hex、SHA、segments 全部逐字节相同；13 个负例的
+  `stage/errorCode/errorPath` 全部相同。
+- 199/199 训练行：v2 的 SHA/字符数/字节数与 10 线 `xProse` 全部相同；同一投影的
+  legacy 输出与 `xProseLegacy` 的 SHA/字符数全部相同；存在 10 线活数据时逐字节再对照。
+- 199/199 旧数据集行逐字节等于原 `xProse`；源文件哈希一致。
+- 真实自由一日世界：同巷不同槽位仍互见；同巷 7 件物品只有变化的护目镜进入；移动后
+  诺诺离开可见集；空增量不虚构物品集。
+- 边界：0 精神值、空外貌/个性、物品移动、任务层级、非 BMP 码点排序、容器链、未知实体、
+  after 不一致、纯删除无 supersede、多个任务根、任务环、换行/NBSP/OOV、长度超限。
 
-重新生成金标：
+刷新冻结：
 
 ```bash
 cd frontend
+python -X utf8 scripts/parallel-input/sync_v2_contract.py
 python -X utf8 scripts/parallel-input/build_legacy_goldens.py
-WRITE_RESULT_GOLDENS=1 npx vitest run src/lib/world-engine/local/narration-input/result-golden.test.ts
-WRITE_LENGTH_STATS=1 npx vitest run src/lib/world-engine/local/narration-input/length-stats.test.ts
 ```
 
-源材料：`D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1`，提交 `1ab6ca791f97529a7bffed1f4837bf81a28badcb`；`rows-xy.jsonl`、`yuyan/rows-yuyan.jsonl`、`convert_yuyan.py`、`rows_common.py`、`split_xy.py` 的 SHA-256 已写入金标 meta。YuYan 字符集来自 `D:/others/Jity/.local/yuyan/_vocab.json`（SHA-256 `c67c92370d90be7960e53b96dde940d334d5100d3d642478f2be0d2ebe5ac237`），派生文件为 `yuyan-charset-v1.json`。
+## 6. 限制与未做
 
-## 5. 限制与未做
-
-- **没有跑真实 GPU/模型生成**。本线只交付可调用输入适配与字节/结构验证；正文质量、整链等待和 35 次终验留给主集成与预约运行。不得把本线测试写成模型语义验收通过。
-- `yuyan-prose-result-v2` 没有已训练权重。格式已冻结、有 30 行样例金标，但质量未验证；不能拿旧权重跑 v2 后声称兼容。
-- 旧格式本身有损：物品行不写位置（`place_line` 只读 `位于`）、任务层级被压成一个大任务+小任务列表、没有结果块。`renderLegacyInput` 忠实复现这些损失，不宣称可通用反解析旧自然语言。
-- 旧格式只能表达一个大任务加一个小任务列表；一个角色有多个根任务时投影直接拒绝（`multiple_task_roots`），不会静默拍平或任选一个。
-- 位置文本会把容器/槽位标签一起写出（例如 `大厅（窗前）`、`路明非的身上（在西侧服务巷里）`），可见性判断本身只用最内层地点；如果主 agent 要求纯地点名，需要在投影策略里另立版本，不能直接改现有字节。
-- 地点只补一级上级（数据源规则），不展开全部祖先/同级。本版不提供运行时父层深度开关；如需更深父层，必须另立投影版本并重建对应训练输入。
-- `timeAdvance` 是必填；根点/无时间点没有伪造默认值。`before` 不能为空；不要用 after 冒充上一状态。
-- 字符集/空白拒绝是 YuYan 路径的约束；换 tokenizer 时传自己的 `charset`，不要删除检查假装通用。
-- 未实现真实 tokenizer 的 token 计数、长输入截断策略（策略是拒绝而不是截断）、开局专用投影扩展；这些需主集成按实际模型上下文决定。
+- 本线没有跑真实 GPU/浏览器生成；v2 权重属于 10 线，正文质量和延迟留给质量线与集成运行。
+  本线通过只证明输入格式/字节/错误类别一致，不证明叙事质量。
+- v2 文本任务层级是平铺的；层级只在 `tasks`/`textCarryLimits` 元数据。不要从文本“推断”
+  父子关系。
+- 旧格式有损（物品位置、任务层级、无结果块），忠实复现，不提供通用反解析。
+- 一个角色没有任务树或多个根任务时拒绝（`empty_tasks`/`multiple_task_roots`），不凭空
+  补层级。
+- 地点依赖只加“场景种子 + 一级父地点”（源数据规则）；更深的祖先策略需要新投影版本。
+- 只测字符数和 UTF-8 字节数，没有真实 tokenizer token 计数；长度上限由调用方按模型上下文给。
+- `renderNarrationInput` 对旧三字段投影会补空结果块以走 legacy；v2 仍要求四字段，缺字段报错。
