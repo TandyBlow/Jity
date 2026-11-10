@@ -972,8 +972,12 @@ function buildTasksPrompt(ctx: StageContext): string {
   const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
   const now = ctx.state.time.dateTime;
   const required = [...new Set(allTasks(ctx.state).map((row) => row.ownerId))].sort();
-  const sample = required[0];
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
+  // A 0.6B copies the example verbatim; a one-row example made it answer for a
+  // single character. The skeleton names every required character, so copying
+  // it still produces full coverage.
+  const skeleton = required.map((id) => `{"characterId":"${id}","achieved":[]}`).join(',');
+  const exampleId = required[0] ?? '人物id';
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
@@ -988,7 +992,7 @@ function buildTasksPrompt(ctx: StageContext): string {
     '人物和任务：',
     ...rows,
     `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
-    `输出 {"decisions":[{"characterId":"${sample ?? '人物id'}","achieved":[]}]}。`,
+    `输出 {"decisions":[${skeleton}]}（每个人物一条，achieved 只填本轮新达成的任务 id；没有就保留空数组）。示例 id 用 ${exampleId}。`,
   ].join('\n');
 }
 

@@ -499,6 +499,9 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(engine.prompts).toHaveLength(2);
     expect(engine.prompts[1]).toContain('task character coverage incomplete: 2/3; missing off');
     expect(engine.prompts[1]).toContain('必须为每个有任务的人物各写一条');
+    // The first prompt already carries a copyable row for every required
+    // character, so a format-copying model still answers all of them.
+    for (const id of ['a', 'b', 'off']) expect(engine.prompts[0]).toContain(`{\"characterId\":\"${id}\",\"achieved\":[]}`);
     const detail = outcome.evidence.detail as { taskScope: { mode: string; characters: number; taskRows: number; assertedUnchanged: number } };
     expect(detail.taskScope).toEqual({ mode: 'per_character_decision', characters: 3, taskRows: 4, assertedUnchanged: 2, excluded: [] });
   });
