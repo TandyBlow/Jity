@@ -13,7 +13,7 @@ import type { Id, InitialTemplate, WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
-const NARRATION_MODEL = '/models/qwen25-0.5b-instruct-lora-Q4_K_M.gguf';
+const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
@@ -61,6 +61,7 @@ export default function WorldLocalPage() {
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
+  const [stage, setStage] = useState<string>('');
   const sessionRef = useRef<LocalGameSession | null>(null);
   const semanticRef = useRef<WllamaInferenceEngine | null>(null);
   const narrationRef = useRef<WllamaInferenceEngine | null>(null);
@@ -92,17 +93,19 @@ export default function WorldLocalPage() {
         const semantic = await loadEngine(SEMANTIC_MODEL);
         if (!alive) { await semantic.dispose(); return; }
         semanticRef.current = semantic;
-        setMessage('正在加载叙事模型（Qwen2.5-0.5B LoRA）…');
+        setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
         const narration = await loadEngine(NARRATION_MODEL, 3072);
         if (!alive) { await narration.dispose(); return; }
         narrationRef.current = narration;
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
-          narrationMaxTokens: 340,
+          narrationMaxTokens: 220,
           maxAutoContinuations: 0,
           onTask: (task, key, detail) => {
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
+            setStage(STAGE_LABEL[task] ?? task);
+            if (task === 'narration') setStage('');
             if (task !== 'narration') return;
             setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
           },
@@ -195,7 +198,7 @@ export default function WorldLocalPage() {
           <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 18, minHeight: 280 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7b6d59', marginBottom: 10 }}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
-              <span>{phase === 'thinking' ? '结算中…' : phase === 'streaming' ? '正在写正文…' : message}</span>
+              <span>{phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? '正在加载本地模型，第一次会久一些。' : '等待输入…'}</div>}
@@ -254,3 +257,15 @@ function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry):
   copy[copy.length - 1] = update(copy[copy.length - 1]);
   return copy;
 }
+
+
+const STAGE_LABEL: Record<string, string> = {
+  targets: '判断牵连',
+  action: '角色行动',
+  reaction: '即时反应',
+  results: '结算',
+  updates: '状态更新',
+  continuation: '继续判断',
+  narration: '写正文',
+  pointPlan: '安排回合',
+};

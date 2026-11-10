@@ -205,6 +205,8 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   }
   const appearance = after.initial.locations[room]?.initialAppearance;
   sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 60)}` : ''}。`);
+  const props = sameRoomItems(after, view).slice(0, 3);
+  if (props.length) sentences.push(`这间屋子里的东西：${props.map((id) => after.initial.items[id]?.name ?? id).join('、')}。`);
   const others = visibleCharacters(after, view).filter((id) => id !== view);
   for (const id of others.slice(0, 3)) {
     const other = after.initial.characters[id];
@@ -223,8 +225,8 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   if (!others.length) sentences.push('房间里没有别人。');
   const brief = sentences.join('');
   const prompt = [
-    `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，250 到 350 字。`,
-    '要求：只写事实里有的人和事；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要加人物、地点、物品、事件或数字；短句，对白用「」，分 3 到 5 段。',
+    `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，180 到 260 字。`,
+    '要求：只写事实里有的人和事；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要加人物、地点、物品、事件或数字；短句，对白用「」，分 2 到 4 段。',
     '事实：',
     brief,
     '正文：',
