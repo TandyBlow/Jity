@@ -89,6 +89,21 @@ function clause(text: string, max = 30): string {
   return stripEnd(picked);
 }
 
+/** A complete settled sentence, shortened only at a comma and marked with an
+ * ellipsis when it does not fit. Cutting a rule list at a semicolon would read
+ * as if the rest of the rule did not exist. */
+function sentenceClause(text: string, max = 64): string {
+  const clean = text.replace(/\s+/gu, ' ').trim();
+  if (!clean) return '';
+  const end = clean.search(/[。！？!?]/u);
+  const sentence = end >= 0 ? clean.slice(0, end) : clean;
+  if ([...sentence].length <= max) return stripEnd(sentence);
+  const cut = [...sentence].slice(0, max).join('');
+  const comma = Math.max(cut.lastIndexOf('，'), cut.lastIndexOf('、'), cut.lastIndexOf('；'));
+  const kept = (comma > max * 0.4 ? cut.slice(0, comma) : cut).replace(/[，、；]+$/u, '');
+  return `${kept}……`;
+}
+
 export interface RealizerContext {
   scene: SceneSkeleton;
   priorText: string | null;
@@ -156,7 +171,7 @@ function openBeat(beat: BeatDirective, ctx: RealizerContext): string {
       `${label}之后`,
     ])));
   }
-  const detail = clause(scene.place.note, 26);
+  const detail = sentenceClause(scene.place.note, 48);
   const place = scene.place.name || scene.viewpoint.location;
   const viewpoint = scene.viewpoint.name;
   const viewpointMoved = scene.facts.some((fact) => fact.kind === 'move' && fact.viewpoint);
@@ -195,6 +210,13 @@ function moveVerb(fact: MoveFact, seed: number, salt: string): string {
 function moveSentence(fact: MoveFact, seed: number, salt: string, ctx: RealizerContext): string {
   const verb = moveVerb(fact, seed, salt);
   if (fact.entityKind === 'item') {
+    // An item leaving somebody's hands reads better than "从路明非移到".
+    if (ctx.scene.present.some((person) => person.id === fact.fromId) || fact.fromId === ctx.scene.viewpoint.id) {
+      return choose(ctx, seed, `${salt}:item`, [
+        `${fact.name}从${fact.from}身上${verb}${fact.to}`,
+        `${fact.name}离开${fact.from}的手边，${verb}${fact.to}`,
+      ]);
+    }
     return choose(ctx, seed, `${salt}:item`, [
       `${fact.name}从${fact.from}${verb}${fact.to}`,
       `${fact.name}被从${fact.from}${verb}${fact.to}`,
@@ -215,7 +237,7 @@ function moveBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext)
     paragraphs.push(remember(ctx, moveSentence(fact, beat.seed, `${beat.id}:${index}`, ctx)));
   }
   if (moves.some((fact) => fact.viewpoint) && ctx.scene.place.note) {
-    const detail = clause(ctx.scene.place.note, 24);
+    const detail = sentenceClause(ctx.scene.place.note, 48);
     const alreadySaid = [...ctx.used].some((used) => used.includes(stripEnd(detail)));
     // Keep the room's name on the detail so it cannot read as a stray sign.
     const placeName = ctx.scene.place.name || ctx.scene.viewpoint.location;
@@ -342,7 +364,7 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   }
   for (const fact of facts) {
     if (fact.kind === 'item_present') {
-      const detail = clause(fact.note, 24);
+      const detail = sentenceClause(fact.note, 56);
       paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${fact.id}`, detail ? [
         `${fact.name}还在${fact.container}。${detail}`,
         `${fact.name}留在原处，${detail}`,
@@ -351,7 +373,7 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
         `${fact.name}留在${fact.container}`,
       ])));
     } else if (fact.kind === 'item_discovered') {
-      const detail = clause(fact.note, 24);
+      const detail = sentenceClause(fact.note, 56);
       paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${fact.id}`, detail ? [
         `${fact.name}就在${fact.container}。${detail}`,
         `${fact.container}里，${fact.name}还在原处；${detail}`,

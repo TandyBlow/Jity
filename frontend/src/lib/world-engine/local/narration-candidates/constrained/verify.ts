@@ -118,6 +118,7 @@ export function verifyText(text: string, options: VerifyOptions): {
   const issues: CandidateIssue[] = [];
   const inScope = (fact: SceneFact): boolean => !options.factIds || options.factIds.includes(fact.id);
   const facts = scene.facts.filter((fact) => inScope(fact) && fact.visibility === 'scene');
+  const roster = new Set([...scene.licensed.names, ...scene.worldNames.characters]);
   const parts = sentences(text);
   const chars = [...text].length;
   const requireTime = options.requireTime === true;
@@ -158,10 +159,32 @@ export function verifyText(text: string, options: VerifyOptions): {
     if (violation.kind === 'actor_swap') {
       const id = /^payload of (\S+) attributed to/u.exec(violation.detail)?.[1];
       const fact = id ? base.facts.find((entry) => entry.id === id) : undefined;
-      if (fact?.kind === 'moved' && base.facts.some((other) => other.kind === 'moved'
-        && other.id !== fact.id && other.from === fact.from && other.to === fact.to
-        && violation.sentence.includes(other.name))) {
-        continue;
+      if (fact) {
+        // Two actors moving along the same route share one payload signature;
+        // the legacy grader then attributes the other actor's move to the
+        // named one. If the named actor has an identical committed move, this
+        // is not a swap.
+        if (fact.kind === 'moved' && base.facts.some((other) => other.kind === 'moved'
+          && other.id !== fact.id && other.from === fact.from && other.to === fact.to
+          && violation.sentence.includes(other.name))) {
+          continue;
+        }
+        const others = [...roster].filter((name) => name !== fact.name && violation.sentence.includes(name));
+        // A name that only occurs inside the fact's own name ("路明非的护目镜"
+        // contains 路明非) is not a second actor.
+        if (others.length && others.every((name) => fact.name.includes(name))) continue;
+        // A bystander's presence sentence ("唐骁也在中央庭院") shares the
+        // location payload of the viewpoint's at-fact. When that bystander has
+        // their own committed position for the same place, it is presence.
+        if (fact.kind === 'at' || fact.kind === 'moved') {
+          const target = fact.kind === 'at' ? fact.location : fact.to;
+          const licensedThere = others.some((name) => scene.facts.some((entry) => {
+            if (entry.visibility !== 'scene' || entry.kind === 'time') return false;
+            if (!('name' in entry) || entry.name !== name) return false;
+            return entry.kind === 'at' ? entry.location === target : entry.kind === 'move' ? entry.to === target : false;
+          }));
+          if (licensedThere) continue;
+        }
       }
     }
     // An event verb that only survives inside a settled description (a room
