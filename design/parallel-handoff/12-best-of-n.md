@@ -144,14 +144,19 @@ async run({ engine, prepared, point, policy }) {
   }));
   const decision = selectCandidate({ candidates: pool.samples, assessments,
     options: { priorText: point.priorText ?? null, licensedEntities: prepared.policy.visibleEntities ?? [] } });
-  // 只把 decision.selectedId 对应的、已通过检查的正文作为 candidate accepted；
+  // 01 的 gate 是显示前的最后一道，不由本模块替代：
+  const report = reviewNarration({ id: pointId, input: settledDataset, text: selectedText });
+  const gate = gateNarration(report, { textSource: 'model', minChars: 100, maxChars: 260 });
+  // 只有 gate.decision === 'accept_as_model_prose' 才能作为产品正文显示；
+  // hold_for_review 必须标“待复核”，regenerate/程序降级不能冒充模型正文。
+  // 同时落盘 raw/cleaned/pruned/shown 四层、report、gate.reasons 和耗时。
   // 其余候选、issues、耗时、rejected 全部放 detail 证据。
 }
 ```
 
 接的前提（缺一不接）：
 
-1. b01-template-v2 至少 2 份事实合格且 ≥2 个合格簇，b02-v2 至少 2 个 case 有 ≥2 份事实合格且不同质；
+1. b01-template-v2 至少 2 份事实合格且 ≥2 个合格簇，b02-v2 至少 2 个 case 有 ≥2 份事实合格且不同质；当前 v2 已撤回，b02-v2 未提交，所以这一条尚未满足；
 2. N=2 或 N=4 在相同条件下严格优于 N=1；
 3. 09 实测 N 方案仍满足 60 秒首可读/300 秒整回合；
 4. 用户可见文本只来自通过检查的候选，程序降级单独标记。
