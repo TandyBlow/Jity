@@ -187,6 +187,22 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
     lines.push('只写这一刻的一两件事：时间怎么过去，视角人物此刻在做什么（站着、等着、看着某处），'
       + '以及眼前一两样东西现在的样子。不要清点身边的物件，不要替在场的人拿东西、走动、说话或报时。');
   }
+  // What the player actually asked this turn. The projector's input is the
+  // settled state, which by definition has no row for a read or a look; the
+  // page's 09 d101 turn therefore narrated walking and checking the board only
+  // because the legacy writer got the action text, while the trained candidate
+  // saw nothing about it. Without this line a declared action that settles no
+  // state can only be omitted.
+  const action = (scene?.previousAction ?? '').trim()
+    .replace(/^我(?!们)/u, view ?? '他')
+    .replace(/[。！？!?]+$/u, '');
+  if (action) {
+    lines.push(`【玩家这一回合做的事】${action}。`);
+    lines.push(projected.required.length
+      ? '这件事如果已经写在骨架里，就按骨架写，不要再写一遍；骨架里没有的部分只写动作本身，不写结果。'
+      : '写这一回合时至少写出他做了这件事（往里走、看清墙上的东西、翻看手里的东西）；不要写这件事的结果，也不要写下一件事。');
+  }
+
   const time = policy.time ?? null;
   if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
     const amount = cnAmount(time.duration.amount);

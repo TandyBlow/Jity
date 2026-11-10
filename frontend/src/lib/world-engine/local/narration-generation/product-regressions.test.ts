@@ -448,3 +448,23 @@ describe('product regressions: repair wording for a re-enacted state', () => {
     expect(target!.sentence).toContain('缓缓放下');
   });
 });
+
+describe('product regressions: the player action the state has no row for', () => {
+  // 09 d101: the player walked into the lane and read the sign. Neither is a
+  // state delta, so the projector's facts cannot carry it; the trained
+  // candidate was never told, and only the legacy writer (which gets action
+  // text) wrote it.
+  test('the scene prompt names the declared action in third person', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '路明非沿着服务巷往里走，看清了墙上的演习规则牌。一分钟过去，他没有动。' }]);
+    await generateCommittedNarration({
+      engine, committed: quiet, inputText: quietInput, priorText: null,
+      policy: {
+        ...quietPolicy, promptShape: 'prose-facts',
+        scene: { ...quietPolicy.scene!, previousAction: '我沿着服务巷往里走，先看清墙上的演习规则牌。' },
+      },
+    });
+    const prompt = engine.calls[0].prompt;
+    expect(prompt).toContain('【玩家这一回合做的事】路明非沿着服务巷往里走，先看清墙上的演习规则牌。');
+    expect(prompt).toContain('至少写出他做了这件事');
+  });
+});
