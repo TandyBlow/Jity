@@ -41,6 +41,8 @@ const config = {
   maxAttempts: Number(option('--max-attempts', '2')),
   minChars: Number(option('--min-chars', '80')),
   mode: option('--mode', 'beats'),
+  // scene mode only: which prompt shape the weights were trained on
+  template: option('--template', 'legacy'),
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
@@ -54,7 +56,7 @@ const evidence = {
   config: {
     model: config.model, modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
-    mode: config.mode, set: config.set,
+    mode: config.mode, template: config.template, set: config.set,
     threads: config.numThreads, gpu: config.gpu, maxTokens: config.maxTokens,
     maxAttempts: config.maxAttempts, minChars: config.minChars,
     instruction: config.instruction || null,
@@ -134,6 +136,9 @@ try {
     if (!crossOriginIsolated) throw new Error('real narration run requires cross-origin isolation');
     const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
     const { generateCommittedNarration } = await import('/src/lib/world-engine/local/narration-generation/index.ts');
+    const {
+      renderTrainedRawPrompt, renderTrainedInstructUser, trainedSceneView, wrapChatml,
+    } = await import('/src/lib/world-engine/local/narration-generation/trained-input.ts');
     const { projectCommittedNarration } = await import('/src/lib/world-engine/runtime/committed-narration.ts');
     const { legacyNarrationInput } = await import('/src/lib/world-engine/local/prompt.ts');
     const { SHORT_STATE } = await import('/src/lib/world-engine/runtime/b3-short-samples.ts');
@@ -264,13 +269,17 @@ try {
       },
     };
     const unseenRoot = read('u_root', null, 0, unseenState, null, {});
+    // The committed-narration projector in this baseline refuses any change to
+    // state.items / state.locations (only character state may move), so the
+    // unseen point moves a character. Item moves are an upstream limitation,
+    // recorded in the handoff, not something this probe can work around.
     const unseenMove = (() => {
       const state = clone(unseenState);
-      state.items.ledger.position = position('storeroom');
+      state.characters.char_luo.position = position('landing');
       state.time = { ...state.time, dateTime: '2026-11-02T20:11:00' };
       return read('u_point_1', 'u_root', 1, state,
         { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
-        { ledger: { entityId: 'ledger', positionSet: position('storeroom') } });
+        { char_luo: { entityId: 'char_luo', positionSet: position('landing') } });
     })();
 
     const scenarios = [];
@@ -298,7 +307,7 @@ try {
         id: 'unseen-item-move', before: unseenRoot, after: unseenMove,
         delta: { timeAdvance: unseenMove.timeAdvance, entityDeltas: unseenMove.entityDeltas },
         time: unseenMove.timeAdvance,
-        note: 'Unseen world: 账本 moves 二楼平台→二楼库房 in one minute; POV 余晚 stays on the landing, 罗青 is in the storeroom.',
+        note: 'Unseen world: 罗青 moves 二楼库房→二楼平台 in one minute; POV 余晚 stays on the landing.',
       });
     };
     const addContinuation = () => {
@@ -314,11 +323,36 @@ try {
     if (config.set === 'continuation' || config.set === 'all') addContinuation();
 
     const runs = [];
-    let priorText = null;
+    // Only a continuation scenario receives the previous scene. Reusing it
+    // across unrelated worlds would compare prose that never shared context
+    // and report a false echo.
+    const priorFor = new Map();
+    for (let index = 1; index < scenarios.length; index += 1) {
+      const previous = scenarios[index - 1];
+      if (scenarios[index].continuation) priorFor.set(scenarios[index].id, previous.text ?? null);
+    }
     for (const scenario of scenarios) {
+      const priorText = priorFor.get(scenario.id) ?? null;
       const committed = projectCommittedNarration(scenario.after, scenario.before ?? null);
       const view = scenario.after.state.protagonistId;
-      const inputText = legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
+      const inputText = (() => {
+        if (config.mode === 'beats' || config.template === 'legacy') {
+          return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
+        }
+        const trained = trainedSceneView({
+          before: scenario.before?.state ?? null,
+          after: scenario.after.state,
+          delta: scenario.delta.entityDeltas,
+          timeAdvance: scenario.delta.timeAdvance,
+          viewpointId: view,
+        });
+        if (config.template === 'trained-instruct') {
+          const system = config.instruction || '你是叙事引擎。根据给定的世界状态写出这一回合的小说正文。'
+            + '只写已结算的事实，不新增人物、物品、事件、往事或承诺；对话用「」；直接输出正文，不写标题或说明。';
+          return wrapChatml(system, renderTrainedInstructUser(trained));
+        }
+        return renderTrainedRawPrompt(trained);
+      })();
       const streamed = [];
       let progressEvents = 0;
       const started = performance.now();
@@ -352,7 +386,7 @@ try {
         },
       });
       const wallMs = performance.now() - started;
-      if (generated.accepted) priorText = generated.text;
+      scenario.text = generated.accepted ? generated.text : null;
       const record = {
         id: scenario.id, note: scenario.note,
         inputChars: inputText.length, inputText,

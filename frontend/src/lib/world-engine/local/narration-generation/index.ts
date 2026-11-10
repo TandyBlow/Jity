@@ -384,7 +384,7 @@ async function writeBeat(
     };
   }
   if (beat.kind === 'time' && ledger.time) {
-    const text = timeFallbackSentence(ledger.time.duration);
+    const text = timeFallbackSentence(ledger.time.duration, input.priorText ?? null);
     return {
       evidence: {
         beatId: beat.id, kind: beat.kind, directive: beat.directive, text,
@@ -473,7 +473,9 @@ async function generateBeatNarration(
     const append: string[] = [];
     for (const issue of final.issues) {
       if (issue.severity !== 'hard') continue;
-      if (issue.kind === 'time_missing' && ledger.time) append.push(timeFallbackSentence(ledger.time.duration));
+      if (issue.kind === 'time_missing' && ledger.time) {
+        append.push(timeFallbackSentence(ledger.time.duration, priorText));
+      }
       if (issue.kind === 'fact_omitted') {
         const fact = ledger.mandatory.find((entry) => !issue.detail || issue.detail.includes(factPhrases(entry)[0]));
         if (fact) {
@@ -541,6 +543,13 @@ async function generateBeatNarration(
     } as NarrationDisplayState,
   };
 }
+
+/** Compatible entry named by QUALITY-TEAMS.md: same arguments, same return
+ * shape as `generateCommittedNarration`. Kept as a thin alias so integrators
+ * and candidate runners can use one name without a second implementation. */
+export const generateCandidate = (
+  input: GenerateCommittedNarrationInput,
+): Promise<GeneratedNarration> => generateCommittedNarration(input);
 
 export async function generateCommittedNarration(input: GenerateCommittedNarrationInput): Promise<GeneratedNarration> {
   if (!input.inputText.trim()) throw new Error('narration_input_empty: caller serialization produced no model input');

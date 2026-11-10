@@ -681,8 +681,8 @@ describe('beat mode', () => {
     });
     expect(result.accepted).toBe(true);
     expect(result.beats[0].source).toBe('fallback');
-    expect(result.beats[0].text).toBe('林川从走廊走到门厅。');
-    expect(result.text).toContain('林川从走廊走到门厅。');
+    expect(result.beats[0].text).toBe('林川从走廊走到了门厅。');
+    expect(result.text).toContain('林川从走廊走到了门厅。');
   });
 
   test('a scene written only from committed sentences is reported, not passed', async () => {
@@ -698,7 +698,7 @@ describe('beat mode', () => {
     });
     expect(result.accepted).toBe(false);
     expect(result.issues.some((issue) => issue.kind === 'all_beats_fell_back')).toBe(true);
-    expect(result.text).toBe('林川从走廊走到门厅。');
+    expect(result.text).toBe('林川从走廊走到了门厅。');
   });
 
   test('drops a duplicate sentence that repeats an earlier beat', async () => {
@@ -770,6 +770,44 @@ describe('beat mode', () => {
     // The cancelled beat never started, so no fake evidence row is added.
     expect(result.beats).toHaveLength(1);
     expect(result.beats[0].source).toBe('model');
+  });
+
+  test('a non-sanity numeral does not hide an invented event in the same sentence', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '周宁的心跳加速，盒子缓缓打开，里面是一张纸条。' },
+      { kind: 'text', text: '林川从走廊走到门厅。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 1, beatAttempts: 1 },
+    });
+    // 一张纸条 reads as sanity 1 to the grader; the false number is dropped,
+    // but 打开 must still be reported instead of disappearing with it.
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(true);
+    expect(result.beats[0].source).toBe('fallback');
+  });
+
+  test('the time sentence changes wording when the previous scene already used it', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '她站在原地。' },
+      { kind: 'text', text: '光从窗缝里进来。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(),
+      inputText: '【正文】',
+      priorText: '灯灭了一会儿。\n\n约两分钟过去了。',
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+        beatAttempts: 1,
+      },
+    });
+    expect(result.text).not.toContain('约两分钟过去了。');
+    expect(result.text).toMatch(/两分钟/);
+    expect(result.issues.some((issue) => issue.kind === 'echo_prior')).toBe(false);
   });
 
   test('planBeats orders location before movement and adds a time beat only when required', () => {

@@ -101,6 +101,12 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   if (!chars) issues.push(hard('empty_narration', attempt, 'empty or whitespace-only narration'));
 
   const sanitySentences: string[] = [];
+  // Sentences whose only alignment violation was a false-positive number
+  // («一张纸条» read as sanity 1). The alignment loop `continue`s after a
+  // number violation, so a real event verb in the same sentence is never
+  // checked; re-run those sentences with the fact packet stripped so only the
+  // event/state rules fire.
+  const recheckSentences: string[] = [];
   for (const violation of alignment?.violations ?? []) {
     // The base grader has no "player action licensed this verb" option. A
     // committed action like 推开 the door licenses exactly that verb for this
@@ -125,9 +131,28 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // sentence that also names a character («周宁接过来，是一本旧书») that is
     // not a sanity claim; only keep the violation when the sentence talks
     // about the stat or a change.
-    if (violation.kind === 'wrong_number' && !SANITY_CONTEXT.test(violation.sentence)) continue;
+    if (violation.kind === 'wrong_number' && !SANITY_CONTEXT.test(violation.sentence)) {
+      recheckSentences.push(violation.sentence);
+      continue;
+    }
     issues.push(hard(ALIGNMENT_KINDS[violation.kind] ?? 'fact_event_added', attempt, violation.detail, violation.sentence));
   }
+  // Second pass over the dismissed sentences: no facts means no numeric
+  // shortcut, so an event verb in them is reported instead of being lost.
+  for (const sentence of [...new Set(recheckSentences)]) {
+    const bare = alignNarration({ ...input.committed, facts: [] }, sentence, {
+      time: null, previousText: null, roster: policy.roster ?? ledger.actorNames,
+      locations: policy.locations, knownPositions: policy.knownPositions, requireTime: false,
+    });
+    for (const violation of bare.violations) {
+      if (violation.kind !== 'added_event') continue;
+      const verb = /event verb (\S+) has no committed fact/u.exec(violation.detail)?.[1];
+      if (verb && ledger.allowedEvents.includes(verb)) continue;
+      if (verb && new RegExp(`${NEGATION}\\s*${escapeRegExp(verb)}`, 'u').test(sentence)) continue;
+      issues.push(hard('fact_event_added', attempt, violation.detail, sentence));
+    }
+  }
+
   // Restore the numeric check the movement short-circuit skipped: a stat
   // transition must use the committed from/to (or the static value).
   for (const sentence of sanitySentences) {
