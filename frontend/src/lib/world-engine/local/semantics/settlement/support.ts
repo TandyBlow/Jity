@@ -5,7 +5,7 @@
  * controller's own preview_point calls applyPoint on the authoritative copy.
  */
 import type { Change, EntityDelta, Id, Json, Position, StoredChange, Task, WorldState } from '../../../types';
-import { applyPoint, buildTimelinePoint, clone } from '../../state';
+import { applyPoint, buildTimelinePoint, clone, stateDigest } from '../../state';
 import { activeText, locationName } from '../../prompt';
 
 export const SETTLEMENT_STAGES = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'] as const;
@@ -253,8 +253,83 @@ export function hasDeltaContent(delta: Partial<EntityDelta> | undefined): boolea
     || (delta.subtasksAdded?.length ?? 0) > 0;
 }
 
-export function hasRoundProgress(roundChanges: { entityDeltas?: Record<Id, EntityDelta> }[]): boolean {
+/** What a completed round actually did, not which fields the action answer
+ * happened to fill. A position assignment that equals the current state is not
+ * progress; a real minute, a new action, a new settled fact, or any committed
+ * state change is. The port computes this from the state before the round and
+ * the state after it; the continuation runner falls back to the old field test
+ * only for callers that do not have the state (unit fixtures). */
+export interface RoundProgressEvidence {
+  progress: boolean;
+  reason: 'state_changed' | 'time_advanced' | 'new_action' | 'new_settled_fact' | 'no_change';
+  stateChanged: boolean;
+  timeAdvanced: boolean;
+  newActionCount: number;
+  newSettledFactCount: number;
+  beforeDigest?: string;
+  afterDigest?: string;
+}
+
+export function hasRoundProgress(
+  roundChanges: { entityDeltas?: Record<Id, EntityDelta> }[],
+  evidence?: RoundProgressEvidence | null,
+): boolean {
+  if (evidence) return evidence.progress;
   return roundChanges.some((point) => Object.values(point.entityDeltas ?? {}).some((delta) => hasDeltaContent(delta)));
+}
+
+export interface RoundProgressComputation {
+  before: WorldState | null;
+  after: WorldState | null;
+  /** Settled result facts of the completed round. */
+  facts: string[];
+  /** Actions the action lane actually resolved this round. */
+  actions: string[];
+  /** Facts/actions already consumed earlier in this submission. */
+  knownFacts: ReadonlySet<string>;
+  knownActions: ReadonlySet<string>;
+  /** Explicit real time advance when the caller already knows it. */
+  timeAdvanced?: boolean;
+}
+
+export async function roundProgressFromState(input: RoundProgressComputation): Promise<{
+  evidence: RoundProgressEvidence;
+  newActions: string[];
+  newFacts: string[];
+}> {
+  const before = input.before;
+  const after = input.after;
+  const beforeDigest = before ? await stateDigest(before) : undefined;
+  const afterDigest = after ? await stateDigest(after) : undefined;
+  const stateChanged = Boolean(before && after && beforeDigest !== afterDigest);
+  const timeAdvanced = input.timeAdvanced === true
+    || Boolean(before && after && before.time.dateTime !== after.time.dateTime);
+  const newActions = [...new Set(input.actions.map(normalizeChangeText).filter((text) => text && !input.knownActions.has(text)))];
+  const newFacts = [...new Set(input.facts.map(normalizeChangeText).filter((text) => text && !input.knownFacts.has(text)))];
+  const progress = stateChanged || timeAdvanced || newActions.length > 0 || newFacts.length > 0;
+  const reason: RoundProgressEvidence['reason'] = stateChanged
+    ? 'state_changed'
+    : timeAdvanced
+      ? 'time_advanced'
+      : newActions.length
+        ? 'new_action'
+        : newFacts.length
+          ? 'new_settled_fact'
+          : 'no_change';
+  return {
+    evidence: {
+      progress,
+      reason,
+      stateChanged,
+      timeAdvanced,
+      newActionCount: newActions.length,
+      newSettledFactCount: newFacts.length,
+      ...(beforeDigest ? { beforeDigest } : {}),
+      ...(afterDigest ? { afterDigest } : {}),
+    },
+    newActions,
+    newFacts,
+  };
 }
 
 /** Local projection only: uses the same browser state kernel so an illegal

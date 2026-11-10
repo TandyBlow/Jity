@@ -16,7 +16,7 @@ import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createSettlementModelPort } from './index';
 import { createSettlementHandlers } from '../semantics/settlement/index';
-import { projectStage, taskKeyIndex } from '../semantics/settlement/support';
+import { projectStage, roundProgressFromState, taskKeyIndex } from '../semantics/settlement/support';
 import { projectPoint } from '../semantics/settlement/projection';
 
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
@@ -140,13 +140,11 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.stageDetail.rejectedPositionEntries).toHaveLength(1);
   });
 
-  it('stops the repeated 21c3 nono candidate after the first accepted auto round', async () => {
+  it('rejects the 21c3 nono task-goal restatement before judging or settling it', async () => {
     const { state } = loadWorld();
     const text = '让红方的旗台行动有可执行的掩护，而不把路明非当诱';
     const proposal = JSON.stringify({ candidates: [{ characterId: 'nono', text }] });
-    const judgment = JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: text }] });
-    const engine = scriptedEngine([proposal, judgment, proposal, judgment]);
-    const handlers = createSettlementHandlers({ engine });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([proposal]) });
     const roundChanges = (pointId: string): Json[] => [{
       pointId,
       timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
@@ -159,10 +157,79 @@ describe('21c3 trace replay (CPU)', () => {
       roundChanges: roundChanges(pointId),
     }) as unknown as Json;
     const first = await handlers.continuation('round_3', input('round_3', 'p1'));
-    expect((first.value as { kind: string }).kind).toBe('continue');
-    const second = await handlers.continuation('round_auto_1', input('round_auto_1', 'p2'));
-    expect(second.value).toBeNull();
-    expect(second.error).toBe('continuation_policy_repeated_candidate');
+    expect(first.value).toBeNull();
+    expect(first.error).toBe('continuation_policy_abstract_task_goal');
+    const detail = first.evidence.detail as {
+      decision: string;
+      policy: { reason: string };
+      rejectedCandidates: { reason: string; text: string }[];
+    };
+    expect(detail.decision).toBe('policy_stop');
+    expect(detail.policy.reason).toBe('abstract_task_goal');
+    expect(detail.rejectedCandidates[0]?.reason).toBe('abstract_task_goal');
+  });
+
+  it('counts a reading action/fact and a real state/time change, not a repeated position echo', async () => {
+    const { state } = loadWorld();
+    // loadWorld() strips worldId to feed InitialTemplate; the built state still
+    // needs a world id for a canonical digest.
+    state.worldId = 'dragon-raja-free-day';
+    state.initial = { ...state.initial, worldId: 'dragon-raja-free-day' };
+    const same = structuredClone(state);
+    const reading = await roundProgressFromState({
+      before: state,
+      after: same,
+      facts: ['路明非看清了演习规则板上的三条路线。'],
+      actions: ['路明非阅读演习规则板。'],
+      knownFacts: new Set<string>(),
+      knownActions: new Set<string>(),
+    });
+    expect(reading.evidence.progress).toBe(true);
+    expect(reading.evidence.reason).toBe('new_action');
+    expect(reading.newFacts).toHaveLength(1);
+    expect(reading.newActions).toHaveLength(1);
+
+    const repeated = await roundProgressFromState({
+      before: state,
+      after: same,
+      facts: ['路明非看清了演习规则板上的三条路线。'],
+      actions: ['路明非阅读演习规则板。'],
+      knownFacts: new Set(reading.newFacts),
+      knownActions: new Set(reading.newActions),
+    });
+    expect(repeated.evidence.progress).toBe(false);
+    expect(repeated.evidence.reason).toBe('no_change');
+
+    // The action lane re-sent the same position assignment with no action,
+    // fact, time or state change: this must not refresh the progress streak.
+    const echoed = await roundProgressFromState({
+      before: state,
+      after: same,
+      facts: [],
+      actions: ['路明非在西侧服务巷。'],
+      knownFacts: new Set<string>(),
+      knownActions: new Set(['路明非在西侧服务巷']),
+    });
+    expect(echoed.evidence.progress).toBe(false);
+
+    const later = structuredClone(state);
+    later.time = { ...later.time, dateTime: '2026-11-09T12:01:00' };
+    const time = await roundProgressFromState({
+      before: state, after: later, facts: [], actions: [],
+      knownFacts: new Set<string>(), knownActions: new Set<string>(),
+    });
+    expect(time.evidence.timeAdvanced).toBe(true);
+    expect(time.evidence.progress).toBe(true);
+
+    const offscreen = structuredClone(state);
+    const fingelTask = Object.keys(offscreen.characters.fingel.tasks)[0];
+    offscreen.characters.fingel.tasks[fingelTask].status = 'achieved';
+    const dependency = await roundProgressFromState({
+      before: state, after: offscreen, facts: [], actions: [],
+      knownFacts: new Set<string>(), knownActions: new Set<string>(),
+    });
+    expect(dependency.evidence.stateChanged).toBe(true);
+    expect(dependency.evidence.progress).toBe(true);
   });
 
   it('includes the visible nono held item in the affected appearance scope', () => {
@@ -294,12 +361,11 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.stageDetail.droppedNoopEntityIds).toEqual(['lu']);
   });
 
-  it('stops the b7cd identical nono candidate after the first accepted auto round', async () => {
+  it('rejects the b7cd nono task-goal restatement before judging or settling it', async () => {
     const { state } = loadWorld();
     const text = '让红方的旗台行动有可执行的掩护，而不把路明非当诱';
     const proposal = JSON.stringify({ candidates: [{ characterId: 'nono', text }] });
-    const judgment = JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: text }] });
-    const handlers = createSettlementHandlers({ engine: scriptedEngine([proposal, judgment, proposal, judgment]) });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([proposal]) });
     const roundChanges = (pointId: string): Json[] => [{
       pointId,
       timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
@@ -312,10 +378,16 @@ describe('21c3 trace replay (CPU)', () => {
       roundChanges: roundChanges(pointId),
     }) as unknown as Json;
     const first = await handlers.continuation('round_3', input('round_3', 'p1'));
-    expect((first.value as { kind: string }).kind).toBe('continue');
-    const second = await handlers.continuation('round_auto_1', input('round_auto_1', 'p2'));
-    expect(second.value).toBeNull();
-    expect(second.error).toBe('continuation_policy_repeated_candidate');
+    expect(first.value).toBeNull();
+    expect(first.error).toBe('continuation_policy_abstract_task_goal');
+    const detail = first.evidence.detail as {
+      decision: string;
+      policy: { reason: string };
+      rejectedCandidates: { reason: string; text: string }[];
+    };
+    expect(detail.decision).toBe('policy_stop');
+    expect(detail.policy.reason).toBe('abstract_task_goal');
+    expect(detail.rejectedCandidates[0]?.reason).toBe('abstract_task_goal');
   });
 
   it('keeps the 21c3 all-pending task answer as no task change', async () => {
