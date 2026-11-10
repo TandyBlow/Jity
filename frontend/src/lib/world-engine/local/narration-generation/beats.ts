@@ -239,6 +239,7 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   lines.push('【要求】写具体的动作或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
     + '不写“他心想”“似乎”“仿佛”“某种”；不要解释情绪；不要重复上面的说明；不要标题。');
   lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
+  lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   const extra = policy.instruction?.trim();
   if (extra) lines.push(extra);
   lines.push('正文：');
