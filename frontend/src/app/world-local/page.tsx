@@ -596,7 +596,10 @@ export default function WorldLocalPage() {
           // The fact-structure candidate writes one verified beat per model
           // call; `beats` means model prose per beat (not the program realizer).
           ...(candidate === 'constrained' ? { constrainedMode: 'model' as const } : {}),
-          narrationMaxTokens: 200,
+          // Per-beat budget: 200 tokens made every 1.7B beat end at the limit
+          // (8978 run); the beat prompt asks 2-6 sentences, so give it the same
+          // room as the scene arm.
+          narrationMaxTokens: candidate === 'constrained' ? 480 : 200,
           narrationTemperature: 0.45,
           onTask: (task, key, detail) => {
             // stageMs/stages arrive on the updates task detail: printing them
