@@ -739,6 +739,7 @@ try {
     save();
     if (turn.refreshAfter) {
       const before = await snapshot();
+      entry.snapshotBefore = await page.evaluate(() => globalThis.__worldSnapshot ?? null).catch(() => null);
       const startedReload = Date.now();
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForFunction(
