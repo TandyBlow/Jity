@@ -9,7 +9,7 @@
 
 - 已实现可执行策略 `generateCommittedNarration(...)`，接入现有
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
-- CPU 小测试 29 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/narration-generation.test.ts --maxWorkers=1`），
+- CPU 小测试 46 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
 - 真实浏览器模型（Edge headless + wllama）：三个叙事检查点各 3 个代表性点，共 18 次真实生成全部被拒（legacy v2 0/3，instruct v1 0/3，1.5B v2 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
@@ -91,6 +91,23 @@
 3. 句子里出现与理智无关的数字（`周宁接过来，是一本旧书`）不再当成理智数字错误；
    真正提到精神/理智/变化的数字错误仍保留。
 
+### 3.5 物品状态词与“假数字吞掉事件”
+
+上游判分器的事件动词表是有限的，模型会用同义词绕开（`盒子缓缓开启` 不在
+`打开/关上` 表里）；而句子里只要出现一个与理智无关的数字（`一张纸条` 的“一”），
+上游会先报 `wrong_number` 并跳过该句，后面的 `打开` 就再也查不到。真实 1.5B
+运行的 elapsed 场景曾因此被接受，正文里盒子被打开、出现古董。
+
+现在的处理：
+
+- 非理智语的 `wrong_number` 不再直接放过整句，而是把该句用**空事实包**重跑一次
+  事件检查；否定的动词（`没有打开`）仍不误报。
+- 调用方给出的可见物品（`policy.scene.objects` / `visibleEntities`）与“打开/开启/
+  掀开/拿出/取出/放进/递给/接过/放下/拿起/合上/锁上……”同句出现时，没有
+  `licensedEvents` 就记 `fact_event_added`。这覆盖了上游词表没有的 `开启`。
+- 新增回归测试直接使用 1.5B 那次被接受的原文；当前代码会把该拍拒掉，最终只剩
+  明确的时间兜底句，而不是模型编的古董。
+
 ### 4. 有界重试
 
 默认 `maxAttempts = 2`（可配 1–4）。第二稿的提示只在正文标记前加入：
@@ -109,6 +126,72 @@
 指标。整体 `timings.totalMs` 从调用开始算到返回，包含所有重试；`attemptsMs` 是各次
 之和。外部 `AbortSignal` 直接转发给 engine；端到端 `deadlineMs` 由本模块自己的
 计时器兜底。取消/超时不会重试，也不会把部分文本标成接受。
+
+## v3：按“已结算的一件事”分拍写（产品路径）
+
+一次生成整段场景在真实小模型上反复失败：模型会把输入里没有的动作、人物、往事写进去，
+同时漏掉本回合唯一真正发生的变化。原因不是中文不通顺，而是“整段场景”这个要求本身
+要求模型自己补连接动作，而连接动作就是编造。
+
+v3 因此改成**按拍写**：`policy.mode = 'beats'`（传了 `policy.scene` 时默认就是它）。
+
+1. `planBeats` 把已结算事实排成有序的拍：场景开场（如有场景上下文）、每个必述事实一拍、
+   需要报时间时加一拍。每拍写明“这一件”是什么、能出现哪些名字。
+2. 每拍只请求一到两句，提示里给视角、地点、在场人物、环境描述、上一句、这一件，
+   并禁止新增人物/物品/事件/往事/承诺/数字。
+3. 每拍单独校验（复用同一套 `verifyNarration`，只是把必述集合缩到这一拍）。不合格
+   只重写这一拍，最多 `beatAttempts` 次；仍不合格时，**事实拍**退回该事实的普通叙述句
+   （如“林川从走廊走到了门厅。”），场景拍直接跳过。整段场景因此不会因为一句坏话全废。
+4. 程序把拍拼成段落（一拍一段，和训练范文的节奏一致），去掉跨拍重复句，补上漏掉的
+   时间句/事实句，然后对整段再做一次完整校验。
+5. 流式是真实的：每拍内部照常转发 engine 的 token 回调，拍与拍之间也推进显示文本，
+   页面在第一个拍完成时就能读到第一段。
+
+如果所有拍都退回了事实句，结果标 `all_beats_fell_back` 并 `accepted: false`——那是
+事实句拼接，不是模型正文，不能当作通过。
+
+### 0.5B 场景候选（10 线 qwen05b-scene-v1）
+
+10 已登记 `D:/others/Jity/.local/models-narration/qwen05b-scene-v1/model-Q4_K_M.gguf`
+（SHA-256 `5a9879f1…`）。它用 Qwen2.5 ChatML：**独立 system 轮** + user=xProse
+（v2 或 legacy），assistant=正文。页面现有的 `WllamaInferenceEngine.complete`
+只发一条 user 消息，无法表达这个 system 轮；脚本里的 `ChatEngine` 可以，页面接线
+需要 08/06 增加 `completeChat(messages)` 或 `system` 选项。请求写在
+`results/quality/integration-02.json` 第 6 步。
+
+### 训练模板核对
+
+之前的真实探针（18 次全拒）喂的是 `legacyNarrationInput`：一行扁平状态加 `【正文】`。
+但浏览器里的两个权重都不是这个形状训练的：
+
+- 无指令臂：`【状态】<x 的 JSON>
+【视角】…
+【叙事】`（`qwen-train/train_qwen.py` 的
+  `INSTRUCTION = None` 分支）；
+- 指令臂：ChatML + `instruction.md` 系统提示 + 三段式用户输入。
+
+`trained-input.ts` 现在能从同一份只读状态重建这两种形状（`trainedSceneView` →
+`renderTrainedRawPrompt` / `renderTrainedInstructUser` / `wrapChatml`），场景模式可用
+`--template trained-raw|trained-instruct` 复现。这样“某个权重不行”的结论才是关于权重的结论。
+
+`probe-template.mjs` 走 `createCompletion`（绕过页面适配器必做的 ChatML 包装），用同一组
+事实喂四种形状，用来确认某个权重到底是哪种训练臂。
+
+### v3 新增 API
+
+```ts
+policy.mode?: 'scene' | 'beats';        // 传 scene 时默认 beats
+policy.scene?: BeatSceneContext | null; // 地点/环境/在场人物/可见物品，只读状态
+policy.beatAttempts?: number;           // 每拍重试次数，默认 2
+policy.beatMaxChars?: number;           // 单拍字数上限，默认 170
+
+// 返回新增：
+// beats: NarrationBeatEvidence[]  // 每拍的指令、文本、来源(model/fallback/skipped)、
+//                                 // 尝试次数、耗时、问题、完整 prompt 与 raw
+// assembly: { droppedSentences, appendedSentences }  // 程序拼装时删除/补上的句子
+
+export const generateCandidate = generateCommittedNarration; // QUALITY-TEAMS.md 的入口名
+```
 
 ## 导出 API
 
@@ -231,7 +314,7 @@ npx tsc -p tsconfig.world-contract.json
 npx eslint src/lib/world-engine/local/narration-generation
 ```
 
-29 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
+46 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
 整段拒绝返回最佳稿和全部问题；非视角心理泄露；POV 心理合法；隐藏知识；未许可实体；
 句内循环；跨回合回声；提前收尾；截断后提高 token 预算；elapsed 时间必述；玩家
 动作许可事件；复述指令；revise/regenerate 两种修复；外取消（无输出/带部分流式）；

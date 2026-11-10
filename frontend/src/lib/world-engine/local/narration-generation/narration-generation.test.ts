@@ -823,6 +823,39 @@ describe('beat mode', () => {
     expect(result.issues.some((issue) => issue.kind === 'echo_prior')).toBe(false);
   });
 
+  test('the 1.5B elapsed sample that used to pass is rejected for opening the box', async () => {
+    const atLin: NarrationFact = {
+      id: 'person_a:at', actorId: 'person_a', name: '林川', kind: 'at',
+      locationId: 'hall', location: '门厅',
+    };
+    const atZhou: NarrationFact = {
+      id: 'person_c:at', actorId: 'person_c', name: '周宁', kind: 'at',
+      locationId: 'corridor', location: '走廊',
+    };
+    const text = [
+      '光从盒子缝隙中透出，映在走廊的每一面墙壁上。声音是轻柔的铃声，偶尔几下脚步声在走廊尽头渐行渐远。',
+      '周宁的手指轻轻触碰盒盖，盒子缓缓开启，映入眼帘的是一块精致的古董，上面雕刻着精美的图案。',
+      '约两分钟过去了。',
+    ].join(String.fromCharCode(10, 10));
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(atLin, atZhou),
+      inputText: '【正文】',
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 1, beatAttempts: 1,
+        visibleEntities: ['盒子'],
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+      },
+    });
+    expect(result.accepted).toBe(false);
+    // The time beat is rejected for opening the box; the final scene is the
+    // explicit time fallback, not the model's invention.
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(true);
+    expect(result.text).not.toContain('盒子缓缓开启');
+    expect(result.text).toContain('两分钟');
+  });
+
   test('planBeats orders location before movement and adds a time beat only when required', () => {
     const beats = planBeats({
       committed: packet(moved, povAt),

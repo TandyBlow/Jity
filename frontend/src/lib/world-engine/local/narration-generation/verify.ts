@@ -241,6 +241,27 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     issues.push(hard('loop_repeated_clause', attempt, `clause repeated ${count}x`, entry.slice(0, 80)));
   }
 
+  // Item-state changes the point did not settle. The upstream event list is
+  // finite and misses synonyms a small model actually uses ("开启" for
+  // "打开"), so an object name next to an open/take/put verb is checked
+  // separately. `policy.scene.objects` is the caller's visible-object list;
+  // `licensedEvents` is the player's committed action, not a model guess.
+  const itemNames = [...new Set([
+    ...(policy.scene?.objects ?? []).map((object) => object.name),
+    ...(policy.visibleEntities ?? []),
+  ])].filter((name) => name.length >= 2);
+  if (itemNames.length) {
+    const ITEM_STATE = /(打开|开启|掀开|揭开|翻开|合上|盖上|锁上|拿出|取出|抽出|放进|塞进|递给|接过|放下|拿起|端起|推到|拉到|摔碎|撕开|点燃|熄灭)/u;
+    for (const sentence of sentences) {
+      const verb = ITEM_STATE.exec(sentence)?.[1];
+      if (!verb || ledger.allowedEvents.includes(verb)) continue;
+      const item = itemNames.find((name) => sentence.includes(name));
+      if (item) {
+        issues.push(hard('fact_event_added', attempt, `item ${item} changes state (${verb}) with no committed fact`, sentence));
+      }
+    }
+  }
+
   if (ledger.viewpoint) {
     const pov = ledger.viewpoint.name;
     const names = [...new Set([...(policy.roster ?? []), ...ledger.actorNames])].filter((name) => name !== pov && name.length >= 1);
