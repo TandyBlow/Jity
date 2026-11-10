@@ -124,6 +124,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             promptChars: result.promptChars,
             strategyVersion: result.strategyVersion,
             attempts: result.attempts,
+            detail: result.detail ?? null,
             completion: {
               raw: result.text,
               finishReason: 'stop',

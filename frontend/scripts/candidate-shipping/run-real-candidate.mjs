@@ -244,6 +244,7 @@ try {
         beats: run.kind === 'fallback' ? run.detail?.candidate?.beats ?? null : null,
         assembly: run.kind === 'fallback' ? run.detail?.candidate?.assembly ?? null : null,
         strategyVersion: run.kind === 'adopted' ? run.strategyVersion : run.detail?.strategyVersion ?? null,
+        detail: run.kind === 'adopted' ? run.detail ?? null : run.detail ?? null,
       },
     };
   }, {

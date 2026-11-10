@@ -45,7 +45,7 @@ controller 把已结算点组装成 `narration` 输入：
 补丁文件（内容寻址，不覆盖旧文件）：
 
 ```
-frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch
+frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch
 frontend/scripts/candidate-shipping/patches/manifest.json
 ```
 
@@ -54,7 +54,7 @@ frontend/scripts/candidate-shipping/patches/manifest.json
 应用（仓库根）：
 
 ```bash
-git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch
+git apply -p1 frontend/scripts/candidate-shipping/patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch
 ```
 
 页面侧完整调用示例（`page.tsx` 的模型构造；除第一行外都是现状）：
@@ -144,7 +144,8 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 - `results/06-recovery/real-candidate-trained-scene-instructed.json`：B scene + 移动/时间约束，233 字但 `fact_movement_claimed+time_missing` 拒绝，并含编造动作。
 - `results/06-recovery/real-candidate-15bnarr-v3.json`：B beats，拒绝。
 - `results/06-recovery/real-candidate-instruct15.json`：B + instruct 1.5B，104 字接受，434.6 s，含模型自加道具动作。
-- `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B，223 字，模型段与程序段混合，含编造动作。
+- `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B（160 token/段），223 字，模型段与程序段混合，含编造动作。
+- `results/06-recovery/real-candidate-constrained-model-narr-short.json`、`…-instruct-short.json`：把每段压到 60–80 token 后，模型段全部被 C 的逐段校验打回，整篇变成程序文本（composers 全为 `program+model-failed`）。
 - `results/06-recovery/product-turn*.json`：真实页面整轮（B 选择、C v1.1、C v1.2、C v1.3），含内部日志、页面正文、降级标注、快照字节数。
 - `results/06-recovery/wiring-check.json`：16 项接线检查。
 

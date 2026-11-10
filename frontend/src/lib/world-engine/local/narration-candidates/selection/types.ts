@@ -139,6 +139,8 @@ export type NarrationRunResult =
     promptChars: number;
     strategyVersion: string;
     attempts: number;
+    /** Candidate-specific evidence (composers, coverage, beat plan). */
+    detail?: Record<string, unknown> | null;
     completion: CompletionEvidence;
   }
   | {

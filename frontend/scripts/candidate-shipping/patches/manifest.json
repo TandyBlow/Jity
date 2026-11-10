@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-10T08:15:02.970Z",
+  "updatedAt": "2026-11-10T08:21:15.185Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch",
-      "patchSha256": "f84f58e055713a38f94b51876d5d4942f247b4b0cbf52283ce67c7c21f25bc44",
-      "patchBytes": 48822,
-      "generatedAt": "2026-11-10T08:15:02.966Z",
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch",
+      "patchSha256": "fa6fe7bf242ccb0d88103185eff2bd980cdc104fdb3d3081149b5c0e37374409",
+      "patchBytes": 48986,
+      "generatedAt": "2026-11-10T08:21:15.182Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
@@ -36,7 +36,7 @@
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts",
-          "sha256": "8dbf2274744081a426a5ef73e416dd53bd2b19aed6cf12dba0fa973247ccf755"
+          "sha256": "c9ecf1af8f8211a0056af676a18b3627dd9045080b67176a57c03cb37c7a751a"
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts",
@@ -44,7 +44,7 @@
         },
         {
           "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts",
-          "sha256": "2aea70db34406048e5d1753bc9e3e9db2675095f09303f7a4a7f770b1805efeb"
+          "sha256": "3bd9d1563680a022cfdb9ef30b05f4cba90baa037d5c3a98bc2c821a2df659fb"
         }
       ],
       "edits": [
@@ -183,6 +183,18 @@
         }
       ],
       "retiredAt": "2026-11-10T08:15:02.970Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch",
+      "patchSha256": "f84f58e055713a38f94b51876d5d4942f247b4b0cbf52283ce67c7c21f25bc44",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:21:15.185Z",
       "reason": "superseded"
     }
   ]

@@ -464,7 +464,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts
-@@ -0,0 +1,156 @@
+@@ -0,0 +1,157 @@
 +/** Narration candidate selection for the product page.
 + *
 + * The page sees ONE decision: did a candidate accept a scene for this point?
@@ -591,6 +591,7 @@ new file mode 100644
 +            promptChars: result.promptChars,
 +            strategyVersion: result.strategyVersion,
 +            attempts: result.attempts,
++            detail: result.detail ?? null,
 +            completion: {
 +              raw: result.text,
 +              finishReason: 'stop',
@@ -746,7 +747,7 @@ diff --git a/frontend/src/lib/world-engine/local/narration-candidates/selection/
 new file mode 100644
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,189 @@
 +/** Product-facing contracts for narration candidate selection.
 + *
 + * One settled point goes in; one submitted narration goes out. The selection
@@ -888,6 +889,8 @@ new file mode 100644
 +    promptChars: number;
 +    strategyVersion: string;
 +    attempts: number;
++    /** Candidate-specific evidence (composers, coverage, beat plan). */
++    detail?: Record<string, unknown> | null;
 +    completion: CompletionEvidence;
 +  }
 +  | {
