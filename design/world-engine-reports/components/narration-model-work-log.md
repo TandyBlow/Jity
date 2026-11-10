@@ -59,3 +59,45 @@ v8 已核对：同题格式配对、固定行 id/目标/划分、金标进入验
 - 在当前工作树重跑 `python -X utf8 scripts/build_free_day_world.py`，仍报 `ModuleNotFoundError: No module named 'app.services.world'`。该依赖尚未补齐；后续执行先按来源提交取所需状态构建/摘要代码及依赖并复测，不把文档核对通过当成素材在本工作树运行通过。
 
 后续执行从现有工作树与最新日志继续，不重建分支、不清理未知改动。优先完成真实可玩闭环并暴露实际生成效果，按 v10 的完整产品与质量要求持续推进。
+
+## 2026-11-10：浏览器本地闭环与两档叙事模型实测
+
+本轮在 `world-narration-model` 分支的工作树里跑通了「浏览器本地完整回合」，并把叙事模型从「格式兼容的旧 checkpoint」换成按同一输入格式训练的小模型。所有数字都来自真实 Edge + wllama + WebGPU（Intel iGPU），不是离线推理。
+
+### 已落地
+
+- `frontend/src/lib/world-engine/local/`：Python 状态内核的 TypeScript 移植（canonical 摘要、apply/preview/replay、时间推进）、v2 写入协议（lease、结算、提交、叙事认领）、`LocalGameSession`（复用真实 `ControllerDriver`）与 `LocalGameModel`（行动/目标/反应/结果/更新/继续/叙事七类任务）。
+- `frontend/src/app/world-local/page.tsx`：可直接游玩的页面。加载 `dragon-raja-free-day.world.json`，本地跑两个 GGUF；每回合结算后把快照写进 `localStorage`，刷新恢复；全程不调用任何游戏 API。
+- `wllama-engine.ts`：模型改为先 `fetch` 成 Blob 再交给 wllama（`directBlob` 默认 true），绕开 OPFS 配额错误；同时保留 `useCache` 开关。
+- `narration-alignment.ts`：新增 `knownPositions`（在场但本回合没动的人不算「无事实站位」）与 `allowedEvents`（玩家已声明的动作动词可以在正文里出现）。
+- `game-model.ts`：叙事改为句级修正——只删掉违反已结算事实的句子，保留其余文学正文；整段都不合格时才退回结算摘要。新增「不要复写事实清单」「不要写时间/地点/人物标题」「不要 Markdown」三项校验。
+- `run-page-play.mjs`：无头 Edge 连跑 5 次真实行动，逐回合记录耗时、正文与修正说明，并在最后刷新验证存档恢复。
+
+### 实测（同一台机器，WebGPU）
+
+| 项目 | 数值 |
+| --- | --- |
+| 页面就绪（0.6B 语义 + 0.5B/1.5B 叙事） | 31–48 s |
+| 单回合（结算 + 正文） | 33–60 s |
+| 五连玩 | 全部完成，刷新后 `restored=true`，快照 ~780 KB |
+| 0.6B 语义模型单任务 | 目标 5–6 s、结果 0–3 s、更新 10–15 s、继续 3–5 s |
+| 1.5B 指令模型写 250–350 字 | 15–34 s |
+| 0.5B LoRA 写 300–400 字 | 10–20 s |
+
+### 失败与据此做的改动
+
+- 1.5B 零样本会把提示里的「文风参考」和事实清单原样抄出来，5 个回合里 4 个被整段替换。删掉示例、把事实压成一段话后，抄袭消失但出现「时间：15:21 地点：西回廊」这类字段表 → 增加结构校验。
+- 0.5B LoRA（199 行手写正文，按同一格式）能通过事实门禁，但对话内容与场景无关、重复句子多，不能作为产品正文。
+- 旧的 0.5B「narration」checkpoint 只会续写 `【正文】` 旧格式，指令式输入下输出混乱；保留为对照，不进产品路径。
+- `factcheck_yuyan.py`：把事实门禁搬到数据集侧，逐句标注「新增事件 / 未投影人物 / 未完成却宣称完成 / 未验证数字」。199 行金标里只有 6 行整行通过，说明手写正文本身就大量越界——这也是旧模型学会编造的原因之一。
+
+### 数据与训练
+
+- `build_instruct_rows.py`：把 199 行投影成「紧凑事实 → 正文」，prompt 与浏览器端逐字一致；手写正文经门禁过滤后 191 行可用。
+- 7B 教师改写（Qwen2.5-7B-Instruct，4090D，5 批并发，473 s）产出 199 条，过滤后 197 条可用；两路合并成 `rows-v2.jsonl`（389 对）。
+- 0.5B LoRA（r16，2 万步以内）在 4090D 上 10 s/epoch；dev 在第 2 轮最低（2.52），之后过拟合。
+- 1.5B LoRA（r16，lr 1e-4，batch 4）40 s/epoch，dev 在第 4 轮最低（1.839），第 10 轮升到 2.359；采用第 4 轮权重。
+
+### 下一步
+
+把 1.5B LoRA 合成 GGUF Q4_K_M 后接进页面，用同一套五连玩脚本比较「事实门禁通过率、正文可读性、单回合耗时」；仍未通过时优先补数据（同一事实的多种写法），而不是继续放宽校验。

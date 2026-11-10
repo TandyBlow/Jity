@@ -84,7 +84,7 @@ const CHANGE_VERB = /(变|升|降|掉|减|增|恢复|回落|涨)/;
  * 背书，重复主语也不能豁免). 引用豁免只认与当前事实包冻结原文逐字一致的
  * 「」段（任务目标/人格文本）；其余引号内容照扫——四轮复核：给自己的
  * 捏造套引号不能借无条件剥引号逃过扫描（并「打开」门）。 */
-const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
+export const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
   '捡起', '拾起', '递给', '塞进', '敲门', '打开', '关上', '锁上', '躲到', '藏在', '翻过', '爬上', '跳下',
   '喊住', '大叫', '大喊', '呼喊', '点燃', '砸碎', '撕开'];
 
@@ -290,6 +290,9 @@ export interface AlignmentOptions {
   /** Positions that are already true in the projected scene but are not
    * required facts (e.g. a bystander who did not move this point). */
   knownPositions?: { name: string; location: string }[];
+  /** Event verbs licensed by the committed player action for this point. A
+   * player who declared “推开走廊的门” may be narrated doing it. */
+  allowedEvents?: string[];
   /** 是否把「未述时间」算作失败。默认 false：现有 renderCommittedNarration
    * 根本不写时间，把它并进事实错误会掩盖「模板缺时间」这个独立发现。
    * 三个臂都按同一口径判事实，时间覆盖由 harness 单独统计。 */
@@ -455,7 +458,8 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // («学生A打开门» — the actor's name was read as backing) and the fact's
     // own clause («推开门») escape, though no committed fact kind licenses an
     // event. Only quotes matching the packet's frozen text are exempt.
-    const event = EVENT_VERBS.find((verb) => maskFrozenQuotes(sentence).includes(verb));
+    const licensed = options.allowedEvents ?? [];
+    const event = EVENT_VERBS.find((verb) => !licensed.includes(verb) && maskFrozenQuotes(sentence).includes(verb));
     if (event) {
       violations.push({ kind: 'added_event', sentence, detail: `event verb ${event} has no committed fact` });
       continue;
