@@ -344,6 +344,27 @@ describe('beat provenance and cross-turn phrasing', () => {
     expect(result.text).not.toContain('给自己记下一条');
   });
 
+  it('does not close a turn with the same line the player just read', async () => {
+    const { packet } = await fixture();
+    const first = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '我拿着杯子去后院。',
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    const closing = first.text.split(String.fromCharCode(10, 10)).filter(Boolean).slice(-1)[0];
+    const priorText = `${closing}。`;
+    const second = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: { ...packet, inputText: '', priorText },
+      inputText: '',
+      priorText,
+      policy: { mode: 'program', knowledge: { discoveredItemIds: ['mug', 'crate'] } },
+    });
+    expect(second.accepted).toBe(true);
+    expect(second.text.split(String.fromCharCode(10, 10)).filter(Boolean).slice(-1)[0]).not.toBe(closing);
+  });
+
   it('does not reopen a turn with the same sentence the player just read', async () => {
     const { packet } = await fixture();
     const first = await generateCandidate({

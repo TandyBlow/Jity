@@ -18,3 +18,16 @@ node frontend/scripts/parallel-settlement/run-focused.mjs
 - 接线：脚本化 engine 经 `createSettlementHandlers` 驱动真实 `ControllerDriver` + `LocalWorldTransport`，results/updates/continuation 的输出形状被 controller 接受并提交一个完整回合。
 
 真实浏览器/模型推理未在本目录运行，需由主集成方在真实页面上复测。
+
+## 真实页面账本检查（09 证据只读复核）
+
+09 从 `/world-local` 收集到 `window.__worldSubmission` 之后，可以只读检查本线关心的不变量：
+
+```bash
+node scripts/parallel-settlement/check-run.mjs <09 的证据文件> --cast 14
+node scripts/parallel-settlement/check-run.mjs --self-test
+```
+
+接受的输入：单个提交对象、`{submissions:[...]}`、或 `{turns:[{submission:...}]}`。
+检查项：每个提交是否真的跑了 results / 六阶段；阶段是否按 位置→外貌→任务→新增小任务→个性→理智 且不重复；任务覆盖是否等于全人物数（默认 14，自由一日世界）；个性覆盖是否也为全人物；策略停止是否被误记成模型交还；整次提交起止时间是否存在。
+硬失败退出码为 1，软问题（回退、策略停止、缺计时）只记录不拦截。它不判断文风，也不替代 01/09 的验收。

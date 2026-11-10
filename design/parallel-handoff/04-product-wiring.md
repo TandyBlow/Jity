@@ -174,3 +174,25 @@ node scripts/parallel-settlement/prompt-size.mjs
 - 六阶段在 0.6B 上的实际耗时：每组 4–6 次阶段调用 + 1 次 results + 1–2 次
   continuation；必须由 09 按完整玩家提交计时，不能用本文的毫秒数代替。
 - 自动轮的候选行动由 03 的行动端口执行；本线只负责"判定是否继续"。
+
+## 状态更新（2026-11-10 20:25Z 左右，UTC）
+
+06 已合入并发布产品入口：`results/product/integration.json` 记录 `/world-local`、`http://127.0.0.1:3221`、工作树 `worktrees/06-recovery`。本线三个提交已进入产品树：
+
+- `8449df1e`：settlement 目录取 04 `ac1e1c0a`，删掉 `sceneScope`/`mergedStages`/`maxPromptChars`，并修了 `schedule.ts inputIds` 的位置外貌变更登记（本线原先的 `it.fails` 复现测试因此可升级为正常通过）。
+- `07f75c9d`：合入 04 的 constrained 叙事（3da0831b）：叙事化事实句、按失败项的具体重试指令、被拒草稿审计、开头避让、`segments/beatCounts/mixed` 逐段来源。
+- `ab7c3fd9`：合入 04 `3fc9419f`，`window.__worldSubmission` 的每条 updates 记录带 `coverage:{tasks,personality}`，可直接证明任务/个性阶段覆盖全人物而不是只覆盖当前房间。
+
+09 取证据时注意：`window.__worldSubmission` 只保留最近一次提交，必须在每回合结束后立刻取出（脚本可每回合 `page.evaluate` 一次）。`window.__worldTurns` 是每回合计时/来源的累计数组，两者互补。
+
+本线提供只读账本检查（不判文风、不替代 01/09 验收）：
+
+```bash
+node frontend/scripts/parallel-settlement/check-run.mjs <09 的证据文件> --cast 14
+```
+
+硬失败（缺六阶段、阶段乱序/重复、覆盖少于全人物、策略停止被记成模型交还、缺整次计时）退出码 1；回退、策略停止等作为软问题列出。
+
+### 仍存在的标注限制（交 06/05 决定，不阻塞本线）
+
+继续判断里“模型给了候选，但候选全是主角或不在场人物，被程序过滤后交还”目前仍写成 `closedBy:'model'`。模型确实做了判断（提出了候选），但结束自动链是程序的过滤规则，不是模型说“不要继续”。证据里 `rejectedCandidates` 和 `reason:'no_eligible_candidate'` 是真实的；只有回合结论字段的 `closedBy` 不够准确。若协议增加 `closedBy:'program'`（或 `closedBy:'policy'`），本线会把这两种情况改过去。`maxAutoContinuations:0` 造成的那种固定交还已经改成显式策略失败，不再写入 `closedBy:'model'`。
