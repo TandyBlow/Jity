@@ -661,10 +661,20 @@ try {
       }).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.shownChars = (entry.text ?? '').length;
+      // Full per-call evidence (semantic + narration) before any reload can
+      // clear the page globals.
+      entry.generations = await page.evaluate(() => {
+        const generations = globalThis.__worldGenerations;
+        return Array.isArray(generations) ? generations.slice(-200) : null;
+      }).catch(() => null);
       if (!entry.text) entry.problems.push('empty_text');
       if (afterInfo.count <= beforeCount) entry.problems.push('no_entry_added');
       if (/Error|加载失败/.test(afterInfo.body.slice(-1200))) entry.problems.push('error_visible');
       entry.textSource = entry.product?.source ?? (entry.note ? 'program' : (entry.text ? 'unknown_or_draft' : 'none'));
+      // A draft becomes visible when narration starts writing; it is not a
+      // qualified first segment. Keep the two clocks apart.
+      entry.firstVisibleDraftMs = entry.textSource === 'draft' ? entry.timings.firstReadableMs : null;
+      entry.acceptedFirstReadableMs = entry.product?.acceptedMs ?? null;
       entry.modelId = entry.product?.modelId ?? null;
       if (entry.note) entry.problems.push('program_fallback_labelled');
       if (entry.textSource === 'program') entry.problems.push('program_text_not_model');
