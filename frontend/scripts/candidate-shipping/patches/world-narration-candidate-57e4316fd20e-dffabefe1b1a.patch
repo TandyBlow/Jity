@@ -1,7 +1,7 @@
 # Narration candidate selection wiring (lane 06 shipping).
 #
 # Inputs (sha256) — regenerate when the live files change:
-#   frontend/src/lib/world-engine/local/game-model.ts  ee4c77aebefb22df0832231958ff2aa60711caca1a116be5f9a806fb82846c0b
+#   frontend/src/lib/world-engine/local/game-model.ts  57e4316fd20edf939131749a6f2016075e70506a6e464b3b6d803080a0a46f58
 # Prerequisites: lane 02 beats commits 211fd463 / 92c2d95e and lane 04
 # constrained candidate 11e7433b. New module files are additions from lane 06.
 #
@@ -8942,7 +8942,7 @@ new file mode 100644
 +}
 
 diff --git a/frontend/src/lib/world-engine/local/game-model.ts b/frontend/src/lib/world-engine/local/game-model.ts
-index 59a4d89..ec82670 100644
+index 60636bf..6271d35 100644
 --- a/frontend/src/lib/world-engine/local/game-model.ts
 +++ b/frontend/src/lib/world-engine/local/game-model.ts
 @@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
@@ -8994,7 +8994,7 @@ index 59a4d89..ec82670 100644
      this.settlement = createSettlementHandlers({ engine, options: {
        onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
        nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
-@@ -267,6 +288,10 @@ export class LocalGameModel implements WorldModelPort {
+@@ -276,6 +297,10 @@ export class LocalGameModel implements WorldModelPort {
      if (!after) throw new Error('narration without after state');
      const pointId = data.pointId ?? key;
      const view = after.protagonistId;
@@ -9005,16 +9005,16 @@ index 59a4d89..ec82670 100644
      const started = performance.now();
      const before = data.before ?? null;
      const delta = data.delta ?? {};
-@@ -371,6 +396,7 @@ export class LocalGameModel implements WorldModelPort {
-     const audit = proseAudit(safe, protagonistName);
-     const accepted = best.validation.ok && finalAlignment.ok && audit.ok;
+@@ -378,6 +403,7 @@ export class LocalGameModel implements WorldModelPort {
+     const accepted = best.validation.ok && finalAlignment.ok && audit.ok
+       && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 100;
      const text = accepted ? safe : draft;
 +    if (accepted) this.lastAcceptedNarration = text;
      const reason = accepted ? undefined : [...new Set([
        best.validation.reason,
        ...best.dropped.map((entry) => entry.reason),
-@@ -378,10 +404,69 @@ export class LocalGameModel implements WorldModelPort {
-       ...(repetition.length ? ['repetition'] : []),
+@@ -386,10 +412,69 @@ export class LocalGameModel implements WorldModelPort {
+       ...(grounding.ratio < 0.5 || grounding.count < 2 ? ['ungrounded'] : []),
        audit.reason ?? 'low_support',
      ])].filter(Boolean).join(',');
 -    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });

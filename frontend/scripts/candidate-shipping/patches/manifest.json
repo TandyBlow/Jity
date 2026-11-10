@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-11-10T10:20:42.512Z",
+  "updatedAt": "2026-11-10T10:57:54.729Z",
   "patches": [
     {
-      "patch": "patches/world-narration-candidate-ee4c77aebefb-b980c112fb0b.patch",
-      "patchSha256": "b980c112fb0ba6280b43235482ccde24d390b337b112c2160491cc6f01562e15",
-      "patchBytes": 412638,
-      "generatedAt": "2026-11-10T10:20:42.504Z",
+      "patch": "patches/world-narration-candidate-57e4316fd20e-dffabefe1b1a.patch",
+      "patchSha256": "dffabefe1b1a100838e7f77b9c7e5d14f67ca30c96af416363b8efaf77361e09",
+      "patchBytes": 412695,
+      "generatedAt": "2026-11-10T10:57:54.719Z",
       "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
       "inputs": [
         {
           "path": "frontend/src/lib/world-engine/local/game-model.ts",
-          "sha256": "ee4c77aebefb22df0832231958ff2aa60711caca1a116be5f9a806fb82846c0b"
+          "sha256": "57e4316fd20edf939131749a6f2016075e70506a6e464b3b6d803080a0a46f58"
         }
       ],
       "transforms": [
@@ -484,6 +484,18 @@
         }
       ],
       "retiredAt": "2026-11-10T10:20:42.512Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ee4c77aebefb-b980c112fb0b.patch",
+      "patchSha256": "b980c112fb0ba6280b43235482ccde24d390b337b112c2160491cc6f01562e15",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ee4c77aebefb22df0832231958ff2aa60711caca1a116be5f9a806fb82846c0b"
+        }
+      ],
+      "retiredAt": "2026-11-10T10:57:54.729Z",
       "reason": "stale_input"
     }
   ]
