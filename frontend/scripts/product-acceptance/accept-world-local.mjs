@@ -26,9 +26,9 @@
 
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
 
 const require = createRequire(resolve('package.json'));
 const { chromium } = require('@playwright/test');
@@ -48,6 +48,7 @@ const readyTimeoutMs = Number(flag('--ready-timeout-ms', '900000'));
 const intent = flag('--intent', '10-turn');
 const preflightOnly = has('--preflight');
 const qualityHandoff = flag('--quality-handoff', null);
+const selfTest = has('--harness-selftest');
 const keepStorage = has('--keep-storage') || has('--resume');
 const fresh = has('--fresh') || !has('--resume');
 const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
@@ -67,7 +68,7 @@ const integrationPath = resolve(here, '../../../../../results/product/integratio
 let integration = null;
 if (existsSync(integrationPath)) {
   integration = JSON.parse(readFileSync(integrationPath, 'utf8'));
-} else {
+} else if (!selfTest) {
   console.error(`[fail] ${integrationPath} is missing: 06 has not published the product tree/URL/model yet.`);
   process.exit(2);
 }
@@ -80,6 +81,7 @@ const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 const evidence = {
   kind: '09-product-acceptance',
   intent,
+  harness: { selfTest },
   status: 'IN_PROGRESS',
   startedAt: new Date().toISOString(),
   base,
@@ -96,6 +98,7 @@ const evidence = {
     : null,
   harness: {
     driver: 'scripts/product-acceptance/accept-world-local.mjs',
+    selfTest,
     driverSha256: sha256(readFileSync(new URL(import.meta.url), 'utf8')),
     edgeVersion: null,
     launchArgs: null,
@@ -105,6 +108,7 @@ const evidence = {
     storageReset: fresh,
     note: '--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence',
   },
+  productState: { gitHead: null, pageSha256: null, turnEvidenceAvailable: null },
   environment: { userAgent: null, crossOriginIsolated: null, adapter: null, ggmlConsole: [] },
   modelRequests: [],
   readyMs: null,
@@ -189,16 +193,41 @@ try {
     });
   }
 
+
+  // A fresh player must not inherit anything from an earlier run. The product
+  // persists in IndexedDB (writer lease + revision), so clearing localStorage
+  // alone leaves a stale lease/revision and the first save conflicts. Clear all
+  // origin storage on a same-origin blank document before the product boots.
   if (!keepStorage) {
-    // Clear only on the first navigation of this tab: a reload later in the run
-    // must read the product's own save, otherwise the restore check is a fake.
-    await context.addInitScript(() => {
+    await page.goto(`${base}/`, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => undefined);
+    evidence.freshReset = await page.evaluate(async () => {
+      const result = { localStorageKeys: 0, databases: [], caches: [], errors: [] };
+      try { result.localStorageKeys = localStorage.length; localStorage.clear(); } catch (error) { result.errors.push(`localStorage:${String(error)}`); }
       try {
-        if (sessionStorage.getItem('__acceptCleared') === '1') return;
-        localStorage.clear();
-        sessionStorage.setItem('__acceptCleared', '1');
-      } catch { /* ignore */ }
+        const databases = (await indexedDB.databases?.()) ?? [];
+        for (const db of databases) {
+          await new Promise((done) => {
+            const request = indexedDB.deleteDatabase(db.name);
+            request.onsuccess = request.onerror = request.onblocked = () => done(null);
+          });
+        }
+        result.databases = databases.map((db) => db.name);
+      } catch (error) { result.errors.push(`indexedDB:${String(error)}`); }
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+        result.caches = keys;
+      } catch (error) { result.errors.push(`cache:${String(error)}`); }
+      try { await navigator.storage?.getDirectory?.().then((root) => root?.remove?.()).catch(() => undefined); } catch { /* OPFS optional */ }
+      return result;
     });
+    evidence.freshReset.after = await page.evaluate(async () => ({
+      localStorageKeys: localStorage.length,
+      databases: ((await indexedDB.databases?.()) ?? []).map((db) => db.name),
+    }));
+    if (evidence.freshReset.after.databases.length > 0) {
+      noteFailure('fresh-reset', 'IndexedDB still has databases after delete', evidence.freshReset.after.databases);
+    }
   }
 
   // WebGPU identity is read from the page itself, before any model load.
@@ -221,6 +250,44 @@ try {
     }
   }).catch((error) => ({ available: false, error: String(error) }));
   save();
+
+  evidence.productState = await page.evaluate(() => ({
+    gitHead: null,
+    pageSha256: null,
+    turnEvidenceAvailable: Array.isArray(globalThis.__worldTurns),
+  })).catch(() => ({ turnEvidenceAvailable: false }));
+  try {
+    const rootDir = resolve(here, '../../../../..');
+    const declared = integration?.product?.worktree ?? 'worktrees/06-recovery';
+    const productWorktree = existsSync(resolve(declared, 'frontend'))
+      ? resolve(declared)
+      : resolve(rootDir, declared);
+    evidence.productState.worktree = productWorktree;
+    evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
+    evidence.productState.pageSha256 = sha256(readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8'));
+  } catch (error) {
+    evidence.productState.error = String(error).slice(0, 200);
+  }
+  const pageResponse = await page.request.get(`${base}/world-local`, { timeout: 30000 }).catch(() => null);
+  evidence.pageHttp = pageResponse ? pageResponse.status() : null;
+  if (!pageResponse || pageResponse.status() !== 200) {
+    noteFailure('page', `GET /world-local returned ${evidence.pageHttp ?? 'no response'}`);
+    evidence.status = 'FAILED';
+    evidence.finishedAt = new Date().toISOString();
+    save();
+    console.log(`[fail] page not served: ${evidence.pageHttp}`);
+    process.exitCode = 1;
+    throw new Error(`page_unavailable:${evidence.pageHttp ?? 'none'}`);
+  }
+  const textareaVisible = await page.waitForSelector('textarea', { timeout: 60000 }).then(() => true).catch(() => false);
+  evidence.textareaVisible = textareaVisible;
+  if (!textareaVisible) {
+    noteFailure('page', 'the page rendered no textarea: cannot play');
+    evidence.status = 'FAILED';
+    evidence.finishedAt = new Date().toISOString();
+    save();
+    throw new Error('textarea_missing');
+  }
 
   const readyStarted = Date.now();
   try {
@@ -306,6 +373,43 @@ try {
       // A mid-settlement refresh must restore the last complete settlement and
       // must not consume the same input twice. This is a product behaviour the
       // driver can only provoke, not fake: it reloads the real page.
+      if (turn.cancelAfterMs) {
+        await page.waitForTimeout(turn.cancelAfterMs);
+        const clicked = await page.evaluate(() => {
+          const button = [...document.querySelectorAll('button')].find((node) => /取消本轮|取消|停止/.test(node.textContent ?? ''));
+          if (!button) return false;
+          button.click();
+          return true;
+        });
+        // Wait for the page to leave the busy state.
+        const cancelDeadline = Date.now() + 60000;
+        while (Date.now() < cancelDeadline) {
+          const busy = await page.evaluate(() => /结算中|正在写正文|正在取消/.test(document.body.innerText));
+          if (!busy) break;
+          await page.waitForTimeout(200);
+        }
+        entry.cancelled = {
+          clicked,
+          ms: Date.now() - submitAt,
+          historyAfter: (await snapshot()).historyCount,
+          historyBefore: beforeState.historyCount,
+          text: (await page.evaluate(() => document.body.innerText)).slice(-800),
+          product: await page.evaluate(() => {
+            const turns = globalThis.__worldTurns;
+            const record = Array.isArray(turns) ? turns[turns.length - 1] : null;
+            return record ? { index: record.index, cancelled: record.cancelled ?? false, acceptedMs: record.acceptedMs ?? null, source: record.source ?? null } : null;
+          }).catch(() => null),
+        };
+        entry.timings.doneMs = Date.now() - submitAt;
+        if (!entry.cancelled.clicked) entry.problems.push('cancel_control_missing');
+        if (entry.cancelled.historyAfter !== entry.cancelled.historyBefore) entry.problems.push('cancel_consumed_input');
+        if (entry.cancelled.product && entry.cancelled.product.acceptedMs != null) entry.problems.push('cancel_committed_model_text');
+        evidence.turns.push(entry);
+        save();
+        console.log(`[turn ${entry.turn}] ${entry.id} cancelled clicked=${entry.cancelled.clicked} history=${entry.cancelled.historyBefore}->${entry.cancelled.historyAfter}`);
+        continue;
+      }
+
       if (turn.refreshMidSettleMs) {
         await page.waitForTimeout(turn.refreshMidSettleMs);
         const beforeState = await snapshot();
@@ -361,6 +465,7 @@ try {
             text,
             busy: /结算中|正在写正文/.test(bodyText),
             done: /本轮完成|本轮已交还|本轮停止/.test(bodyText),
+            doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? ''),
             failed: /Error|加载失败/.test(bodyText),
           };
         }, beforeCount);
@@ -378,6 +483,10 @@ try {
           entry.timings.firstReadableMs = firstReadableAt;
         }
         if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
+        // A submit can be refused synchronously (e.g. progress_conflict): the
+        // page shows 本轮停止 and no narration will ever stream. Waiting out the
+        // full turn budget would misreport a 300 s timeout.
+        if (sample.done && /本轮停止/.test(sample.doneText ?? '')) break;
         if (sample.failed) {
           entry.problems.push('page_error');
           break;
@@ -385,6 +494,11 @@ try {
         await page.waitForTimeout(settleDelayMs);
       }
       entry.timings.waitMs = Date.now() - submitAt;
+      entry.doneText = await page.evaluate(() => (document.body.innerText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? '')).catch(() => '');
+      if (/本轮停止/.test(entry.doneText)) {
+        entry.refused = { reason: entry.doneText.replace(/^本轮停止[:：]?/, '').trim(), ms: entry.timings.waitMs };
+        entry.problems.push(`submit_refused:${entry.refused.reason || 'unknown'}`);
+      }
       if (entry.timings.waitMs >= turnTimeoutMs) entry.problems.push('turn_timeout');
 
       const afterInfo = await page.evaluate((count) => {
@@ -410,6 +524,33 @@ try {
       entry.after = await snapshot();
       // The page already exposes its narration debug object; the driver only
       // reads it. Absence is recorded, never filled in by the harness.
+      entry.product = await page.evaluate(() => {
+        const turns = globalThis.__worldTurns;
+        if (!Array.isArray(turns) || turns.length === 0) return null;
+        const record = turns[turns.length - 1];
+        return {
+          index: record.index ?? null, input: record.input ?? null,
+          acceptedMs: record.acceptedMs ?? null, draftMs: record.draftMs ?? null, programMs: record.programMs ?? null,
+          cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
+          engines: Array.isArray(record.engines) ? record.engines : null,
+          submission: record.submission ? {
+            inputText: record.submission.inputText ?? null,
+            startedAtMs: record.submission.startedAtMs ?? null,
+            endedAtMs: record.submission.endedAtMs ?? null,
+            resultsCalls: record.submission.resultsCalls ?? null,
+            updatesCalls: record.submission.updatesCalls ?? null,
+            continuationCalls: record.submission.continuationCalls ?? null,
+            continuationDecision: record.submission.continuationDecision ?? null,
+            stops: record.submission.stops ?? null,
+            calls: (record.submission.calls ?? []).map((call) => ({
+              task: call.task, key: call.key, stage: call.stage ?? null, ms: call.ms ?? null,
+              promptChars: call.promptChars ?? null, fallback: Boolean(call.fallback), error: call.error ?? null,
+              calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
+            })),
+          } : null,
+        };
+      }).catch(() => null);
+      entry.submission = entry.product?.submission ?? null;
       entry.narrationDebug = await page.evaluate(() => {
         const debug = globalThis.__worldDebug;
         if (!debug || typeof debug !== 'object') return null;
@@ -441,7 +582,16 @@ try {
       if (!/正在写正文/.test(stageText)) entry.problems.push('no_streaming_stage_observed');
       if (entry.timings.firstReadableMs === null) entry.problems.push('no_readable_text_observed');
       if (entry.timings.doneMs > 300000) entry.problems.push('over_300s');
-      if (entry.timings.firstReadableMs !== null && entry.timings.firstReadableMs > 60000) entry.problems.push('first_readable_over_60s');
+      const product = entry.product;
+      if (!product) entry.problems.push('no_product_turn_evidence');
+      else {
+        if (product.source !== 'model') entry.problems.push(`source_${product.source ?? 'unknown'}`);
+        if (product.cancelled) entry.problems.push('cancelled');
+        if (product.acceptedMs == null) entry.problems.push('no_accepted_model_text');
+        if (product.acceptedMs != null && product.acceptedMs > 60000) entry.problems.push('accepted_over_60s');
+        if (product.draftMs != null && product.acceptedMs == null) entry.problems.push('draft_only_not_accepted');
+        if (product.programMs != null && product.acceptedMs == null) entry.problems.push('program_only_not_model_text');
+      }
       const beforeBodyLength = beforeBody.length;
       entry.bodyGrowth = afterInfo.body.length - beforeBodyLength;
     } catch (error) {
@@ -451,6 +601,30 @@ try {
 
     evidence.turns.push(entry);
     save();
+    if (turn.refreshAfter) {
+      const before = await snapshot();
+      const startedReload = Date.now();
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(
+        () => /本地世界已就绪|已恢复本地存档|加载失败|Error/.test(document.body.innerText),
+        null,
+        { timeout: readyTimeoutMs },
+      );
+      const after = await snapshot();
+      const restoredText = await page.evaluate(() => document.body.innerText);
+      entry.refreshAfter = {
+        ms: Date.now() - startedReload,
+        restored: /已恢复本地存档/.test(restoredText),
+        entriesAfter: await entryCount(),
+        beforeHistory: before.historyCount, afterHistory: after.historyCount,
+        samePlace: before.place === after.place, sameSanity: before.sanity === after.sanity,
+      };
+      if (!entry.refreshAfter.restored) entry.problems.push('refresh_after_not_restored');
+      if (entry.refreshAfter.beforeHistory !== entry.refreshAfter.afterHistory) entry.problems.push('history_changed_across_refresh');
+      if (!entry.refreshAfter.samePlace || !entry.refreshAfter.sameSanity) entry.problems.push('state_changed_across_refresh');
+      save();
+      console.log(`[refresh-after ${entry.id}] restored=${entry.refreshAfter.restored} history ${entry.refreshAfter.beforeHistory}->${entry.refreshAfter.afterHistory}`);
+    }
     console.log(`[turn ${entry.turn}] ${entry.id} chars=${entry.shownChars ?? 0} wait=${entry.timings.doneMs ?? '?'}ms firstReadable=${entry.timings.firstReadableMs ?? '?'}ms problems=${entry.problems.join(',') || 'none'}`);
     if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
   }
@@ -504,7 +678,7 @@ try {
   if (!evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control in the product page');
 
   }
-  evidence.status = evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED');
+  evidence.status = selfTest ? (evidence.failures.some((failure) => /models/.test(failure.scope)) && evidence.turns.every((turn) => turn.text) ? 'SELFTEST' : (evidence.failures.length && !selfTest ? 'FAILED' : 'SELFTEST')) : (evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
   evidence.finishedAt = new Date().toISOString();
   if (qualityHandoff) {
     // What 01 needs to review sentence by sentence: the input, the displayed
@@ -533,6 +707,7 @@ try {
     evidence.qualityHandoff = target;
     console.log(`[handoff] ${target}`);
   }
+  evidence.submissions = evidence.turns.map((turn) => turn.submission).filter(Boolean);
   evidence.summary = {
     turns: evidence.turns.length,
     turnsWithText: evidence.turns.filter((turn) => turn.text).length,
@@ -541,6 +716,12 @@ try {
     turnsOver300s: evidence.turns.filter((turn) => (turn.timings.doneMs ?? 0) > 300000).length,
     turnsWithEmptyText: evidence.turns.filter((turn) => !turn.text).length,
     turnsEchoingInput: evidence.turns.filter((turn) => turn.problems.includes('echoes_player_input')).length,
+    turnsWithSubmissionLedger: evidence.submissions.length,
+    submissionCalls: evidence.submissions.map((submission) => ({
+      turn: evidence.turns.find((turn) => turn.submission === submission)?.id ?? null,
+      results: submission.resultsCalls, updates: submission.updatesCalls,
+      continuation: submission.continuationCalls, stops: submission.stops,
+    })),
     distinctPlaces: [...new Set(evidence.turns.map((turn) => turn.after?.place).filter(Boolean))],
     distinctHistoryCounts: [...new Set(evidence.turns.map((turn) => turn.after?.historyCount).filter(Boolean))],
   };

@@ -58,6 +58,11 @@ function save(queue) {
   renameSync(tmp, queuePath);
 }
 
+function addOrphan(queue, entry) {
+  const exists = queue.orphanRequests.some((existing) => existing.file === entry.file && existing.error === entry.error);
+  if (!exists) queue.orphanRequests.push(entry);
+}
+
 function sync(queue) {
   if (!existsSync(requestsDir)) return queue;
   const seen = new Set(queue.items.map((item) => item.itemId));
@@ -67,24 +72,38 @@ function sync(queue) {
     try {
       request = JSON.parse(readFileSync(full, 'utf8'));
     } catch (error) {
-      queue.orphanRequests.push({ file, error: `unreadable: ${String(error).slice(0, 200)}`, at: new Date().toISOString() });
+      addOrphan(queue, { file, error: `unreadable: ${String(error).slice(0, 200)}`, at: new Date().toISOString() });
       continue;
     }
-    const lane = request.lane ?? request.requestedBy ?? file.split('-')[0];
+    const lane = request.lane ?? request.requestedBy ?? request.from ?? file.split('-')[0];
     const id = request.id ?? file.replace(/\.json$/, '');
     const itemId = `${lane}:${id}`;
     if (seen.has(itemId)) continue;
-    const missing = ['purpose', 'requestedAt'].filter((key) => !request[key]);
-    if (!request.purpose) {
-      queue.orphanRequests.push({ file, itemId, error: 'no purpose', at: new Date().toISOString() });
+    // Request files follow different lane-local schemas; the queue only needs a
+    // stable identity, a human purpose and an honest priority. Everything else
+    // is carried through untouched for the owner to see.
+    const purpose = request.purpose ?? request.request ?? request.summary ?? request.goal
+      ?? request.why ?? (Array.isArray(request.checks) ? request.checks[0]?.why : null) ?? request.kind ?? null;
+    const requestedAt = request.requestedAt ?? request.createdAt ?? request.at ?? null;
+    const rawPriority = String(request.priority ?? '').toLowerCase();
+    const priority = rawPriority.includes('p0') || rawPriority.includes('blocking') ? 'p0'
+      : rawPriority.includes('p1') ? 'p1'
+        : rawPriority.includes('p3') || rawPriority.includes('new candidate') ? 'p3' : 'p2';
+    if (!purpose) {
+      addOrphan(queue, { file, itemId, error: 'no purpose/request/summary field', at: new Date().toISOString() });
+      continue;
+    }
+    if (!requestedAt) {
+      addOrphan(queue, { file, itemId, error: 'no timestamp; queued only after the owner adds one', at: new Date().toISOString() });
       continue;
     }
     queue.items.push({
       itemId,
       lane,
       file,
-      purpose: request.purpose,
-      priority: (request.priority ?? 'p2').toLowerCase(),
+      purpose,
+      priority,
+      rawPriority: request.priority ?? null,
       model: request.model ?? null,
       modelSha256: request.modelSha256 ?? null,
       productCommit: request.productCommit ?? null,
@@ -92,9 +111,9 @@ function sync(queue) {
       inputs: request.inputs ?? null,
       questions: request.questions ?? null,
       status: 'requested',
-      requestedAt: request.requestedAt,
+      requestedAt,
       syncedAt: new Date().toISOString(),
-      missingFields: missing,
+      missingFields: [],
       claims: [],
       runs: [],
     });
@@ -120,8 +139,19 @@ const queue = load();
 if (has('--sync')) sync(queue);
 else if (!existsSync(queuePath)) sync(queue);
 
-const itemId = flag('--item') ?? flag('--claim') ?? flag('--finish');
-if (has('--claim')) {
+const itemId = flag('--item') ?? flag('--claim') ?? flag('--finish') ?? flag('--prioritize');
+if (has('--prioritize')) {
+  const item = queue.items.find((entry) => entry.itemId === itemId);
+  const priority = flag('--priority', 'p0').toLowerCase();
+  if (!item || !PRIORITY[priority] === undefined) {
+    console.error(`[fail] --prioritize needs a known itemId and --priority p0..p3`);
+    process.exit(2);
+  }
+  item.priorityHistory = [...(item.priorityHistory ?? []), { at: new Date().toISOString(), from: item.priority, to: priority, reason: flag('--reason', 'owner override') }];
+  item.priority = priority;
+  save(queue);
+  console.log(JSON.stringify({ itemId, priority, reason: flag('--reason', null) }, null, 2));
+} else if (has('--claim')) {
   const item = queue.items.find((entry) => entry.itemId === itemId);
   if (!item) {
     console.error(`[fail] unknown itemId ${itemId}; run --sync --list first`);
