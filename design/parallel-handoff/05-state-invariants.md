@@ -125,6 +125,21 @@ acceptance.
    `next.config.ts` sends the headers for `/world-local` and
    `/world-local/:path*`; the old 05 patch is under `patches/merged/`.
 
+## Real 09 run found a sync-ownership conflict
+
+The first real 10-turn page run (`results/product/evidence/09-product-10turn.json`,
+product head `bc005e51`) stopped turn 1 with `progress_conflict` after 330 s and
+committed no point. The page calls `sync.save(snapshot)`; the sync adapter writes
+the session-owned IndexedDB record without `expectedRevision`, bumping its
+revision, so the session's next checkpoint conflicts.
+
+Patch: `results/product/evidence/05-kernel/patches/06-sync-local-ownership.patch`.
+It adds `skipLocal` to the client/adapter and makes the page ask sync for the
+remote copy only; the session remains the sole local writer. Validated in a
+disposable current-06 source copy: the skipLocal regression test passes and 24
+progress-sync tests pass. 09 must rerun the same 10 inputs after 06/07 applies
+it. This is a state/persistence failure, not a narration-quality finding.
+
 ## Merge bundle
 
 `results/product/evidence/05-kernel/patches/06-merge-state-invariants.patch`
