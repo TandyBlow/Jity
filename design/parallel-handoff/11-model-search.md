@@ -6,7 +6,7 @@
 
 **09 真实回合（81d5507a，16:55 review）**：`updates` 的 `coverage.tasks=14`、`taskRows=73`、`mode=per_character_decision`，即 14 个决策 owner 全覆盖；`achievedByCharacter=[]`（这次输入是“看规则牌”，`task_lu_rules` 在初始状态已达成，所以新达成为空本身不能证明模型判断正确）。但后续 `time_scan` 又编了 `task_doctor_flag`，93 s 后失败，整回合 323 s 无正文。04 的 `117befcf` 已改成逐条拒绝未知/占位/他人任务 id 并保留有效决定，06 `a5ca28d7` 已合入；09 请求已改到该 head，并要求正面“戴护目镜”输入验证不是抄空骨架。不要把 `coverage.tasks=14` 误读成 14/73 任务行覆盖。详细分析：`experiments/narration-model-search/results/real-page-81d5507a.json`。
 
-**当前状态（2026-11-11，QUALITY-PRIORITY 后）**：10 在 17:32 的 `requestsReceived` 已接受当前 preflight `d38c6340…`、当前质量 `fb72c31b…`（15 例 × 7 臂 = **105 calls**）和语义 `2b5dfbab…`（2 例 × 6 模型 = **12 calls**）；preflight 的 hf-mirror 与自建 llama.cpp 两项偏差仍有效。251697 是当前构建作业；它必须从 `llama-cpp-python 0.3.16` 换到 `0.3.36`（vendor commit `0c1e5709…`），否则没有 `qwen35`，且若不开 `LLAMA_BUILD_TOOLS/SERVER` 会缺 `llama-server`。01 已发布 v1.1（`d6c7e766…`，15/15 可序列化）。12 例/84 calls 的旧质量副本作废，不得再跑；不存在第二个质量请求。没有任何候选正文、语义或质量结论。
+**当前状态（2026-11-11，QUALITY-PRIORITY 后）**：10 在 17:32 的 `requestsReceived` 已接受当前 preflight `d38c6340…`、当前质量 `fb72c31b…`（15 例 × 7 臂 = **105 calls**）和语义 `2b5dfbab…`（2 例 × 6 模型 = **12 calls**）；preflight 的 hf-mirror 与自建 llama.cpp 两项偏差仍有效。10 已在登录节点用 `llama-cpp-python 0.3.16` 建出 **CPU** `llama-server`，并在 18:03 提交 preflight 251776（0.3.16 的 CPU 服务）；0.3.16 没有 `qwen35`，所以 Qwen3.5-2B 这一步仍会失败。已提交 `toolchain-002` 和 `hpc/build_llamacpp_036.sbatch`：0.3.36（vendor `0c1e5709…`）、`LLAMA_BUILD_TOOLS/SERVER=ON`、`BUILD_SHARED_LIBS=OFF`、`-lstdc++fs`，先 CPU 构建。01 已发布 v1.1（`d6c7e766…`，15/15 可序列化）。12 例/84 calls 的旧质量副本作废，不得再跑；不存在第二个质量请求。没有任何候选正文、语义或质量结论。
 
 ## 251697 工具链修正（2026-11-11，必须先做）
 
@@ -15,11 +15,11 @@
 应改用 `llama-cpp-python==0.3.36` sdist（sha256 `832db0699007f1be95a7e41ef12e88926b02ba836461e36a36372db2760c1a2e`），其 vendor commit 为 `0c1e57098bba43ac29e6e3b677cdceebdd22334f`（2026-10-01），已包含 `qwen35`/`qwen35moe`，并同时支持本批的 `qwen2`、`internlm2`、`chatglm`、`hunyuan-dense`。CMake 必须显式打开 examples/server：
 
 ```bash
--DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES="70;89" -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=ON -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_COMMON=ON -DCMAKE_BUILD_TYPE=Release
+-DGGML_CUDA=OFF -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=ON -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_COMMON=ON -DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++fs -DCMAKE_SHARED_LINKER_FLAGS=-lstdc++fs -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j 24 --target llama-server llama-cli llama-quantize
 ```
 
-构建后记录 `llama-server --version`、vendor commit、二进制 sha256；用 `--jinja` 分别加载 Qwen3.5-2B 和一个 qwen2 模型，确认 `chat_template_kwargs` 可用。请求文件里的 `toolchain` 块与 `results/product/hpc-requests/11-model-search-reconciliation-20261111.md` 给出同样的 SHA/参数。
+可直接运行 `experiments/narration-model-search/hpc/build_llamacpp_036.sbatch`（CPU 分区）。构建后记录 `llama-server --version`、vendor commit、二进制 sha256；用 `--jinja` 分别加载 Qwen3.5-2B 和一个 qwen2 模型，确认 `chat_template_kwargs` 可用。请求文件 `results/product/hpc-requests/11-model-search-toolchain-002.json` 与 `11-model-search-reconciliation-20261111.md` 给出同样的 SHA/参数。
 
 ## 本轮实际交付
 
