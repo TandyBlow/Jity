@@ -143,13 +143,13 @@ cd frontend
 ```bash
 cd backend
 LOCAL_PROGRESS_DB=<temp>/progress.sqlite3 LOCAL_PROGRESS_TOKEN=smoke-token \
-  python -m uvicorn app.services.local_progress.standalone:app --port 8019
+  python -m uvicorn app.services.local_progress.standalone:app --port 18081
 # 另一终端：
-PROGRESS_SYNC_URL=http://127.0.0.1:8019 PROGRESS_SYNC_TOKEN=smoke-token \
+PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
   node frontend/scripts/parallel-sync/two-device-smoke.mjs
 # 输出 root / 幂等重放 / 409 / A 分支 / B 分叉 / 两叶可读 / 切 B。
 
-PROGRESS_SYNC_URL=http://127.0.0.1:8019 PROGRESS_SYNC_TOKEN=smoke-token \
+PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
   ./frontend/node_modules/.bin/vitest run \
   src/lib/world-engine/local/progress-sync/real-server.test.ts --maxWorkers=1
 # 1 passed：真实 HTTP 下两个客户端 save→pull→CAS 冲突→fork→选择→恢复。
