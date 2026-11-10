@@ -1,5 +1,5 @@
 diff --git a/frontend/src/app/world-local/page.tsx b/frontend/src/app/world-local/page.tsx
-index 68e82d8b..1b5500fa 100644
+index c2aa5a21..cb9eebad 100644
 --- a/frontend/src/app/world-local/page.tsx
 +++ b/frontend/src/app/world-local/page.tsx
 @@ -13,6 +13,7 @@ import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore
@@ -10,7 +10,7 @@ index 68e82d8b..1b5500fa 100644
  import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
  import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
  import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
-@@ -349,6 +350,15 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
+@@ -357,6 +358,15 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
   * took the lease, otherwise the fresh page would be blocked again. */
  const LEASE_TAKEOVER_KEY = 'jity.world.local.lease.takeover';
  
@@ -26,7 +26,7 @@ index 68e82d8b..1b5500fa 100644
  /** Open the saved session, waiting briefly when a just-unloaded page has not
   * released its lease yet. A held lease is never treated as a corrupt save. */
  async function openWithLease(
-@@ -356,12 +366,27 @@ async function openWithLease(
+@@ -364,12 +374,27 @@ async function openWithLease(
    world: { worldId: string; template: Parameters<typeof LocalGameSession.create>[0] },
    model: LocalGameModel,
    alive: () => boolean,
@@ -54,7 +54,7 @@ index 68e82d8b..1b5500fa 100644
    const takeoverId = (() => {
      try { return sessionStorage.getItem(LEASE_TAKEOVER_KEY); } catch { return null; }
    })();
-@@ -439,11 +464,51 @@ export default function WorldLocalPage() {
+@@ -447,11 +472,51 @@ export default function WorldLocalPage() {
    /** A live lease held by another tab (or by a reload that has not released
     * yet). The save is valid; it must never be archived or deleted for this. */
    const [leaseBlocked, setLeaseBlocked] = useState(false);
@@ -106,7 +106,7 @@ index 68e82d8b..1b5500fa 100644
    const save = useCallback((snapshot: LocalGameSnapshot) => {
      if (snapshot.transport.work) return; // never persist a half-settled point
      const sync = syncRef.current;
-@@ -453,6 +518,7 @@ export default function WorldLocalPage() {
+@@ -461,6 +526,7 @@ export default function WorldLocalPage() {
        // sync layer can never bump the revision behind the session's back.
        void sync.push(snapshot).then((result) => {
          const outcome = result.outcome;
@@ -114,7 +114,7 @@ index 68e82d8b..1b5500fa 100644
          setSyncLabel(outcome?.status === 'synced' ? '已同步'
            : outcome?.status === 'queued' ? '已存本地，等待联网同步'
            : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
-@@ -636,10 +702,13 @@ export default function WorldLocalPage() {
+@@ -663,10 +729,13 @@ export default function WorldLocalPage() {
          const store = await openLocalProgressStore();
          storeRef.current = store;
          const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
@@ -130,7 +130,7 @@ index 68e82d8b..1b5500fa 100644
              if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
            }).catch(() => undefined);
          }
-@@ -655,7 +724,7 @@ export default function WorldLocalPage() {
+@@ -682,7 +751,7 @@ export default function WorldLocalPage() {
          let session: LocalGameSession;
          let restored = false;
          try {
@@ -139,7 +139,7 @@ index 68e82d8b..1b5500fa 100644
            restored = session.commandsPlayed.length > 0 || session.snapshot.transport.headPointId !== session.snapshot.transport.rootPointId;
          } catch (openError) {
            if (openError instanceof SessionLeaseHeldError) {
-@@ -668,6 +737,14 @@ export default function WorldLocalPage() {
+@@ -695,6 +764,14 @@ export default function WorldLocalPage() {
              setError('加载失败：另一个标签页（或刚刚关闭的页面）仍持有存档写入权。存档没有被改动，可以重试，或在这个标签页接管。');
              return;
            }
@@ -154,7 +154,7 @@ index 68e82d8b..1b5500fa 100644
            console.error('[world-local] saved progress could not be opened', openError);
            const record = await store.load(world.worldId).catch(() => null);
            let archived = false;
-@@ -689,6 +766,7 @@ export default function WorldLocalPage() {
+@@ -716,6 +793,7 @@ export default function WorldLocalPage() {
            setWarning('旧存档无法恢复，已保留原始副本并开始新的一局。');
            session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store });
            await session.start();
@@ -162,7 +162,7 @@ index 68e82d8b..1b5500fa 100644
          }
          sessionRef.current = session;
          let restoredCount = 0;
-@@ -1026,6 +1104,13 @@ export default function WorldLocalPage() {
+@@ -1054,12 +1132,20 @@ export default function WorldLocalPage() {
              </div>
            </div>
  
@@ -176,3 +176,10 @@ index 68e82d8b..1b5500fa 100644
            {leaseBlocked && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>
              存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。
              <button onClick={() => window.location.reload()} style={{ marginLeft: 8, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>重试</button>
+             <button onClick={() => void takeOverLease()} style={{ marginLeft: 6, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>在这个标签页接管</button>
+           </div>}
+           {durable === false && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
++          {syncLabel && <div style={{ marginTop: 10, padding: '8px 10px', background: '#f3f7f2', border: '1px solid #c9d8c4', borderRadius: 6, fontSize: 12, color: '#4b6144' }}>{syncLabel}</div>}
+           {warning && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c', whiteSpace: 'pre-wrap' }}>{warning}</div>}
+           {error && <div style={{ marginTop: 10, padding: '8px 10px', background: '#ffe8e5', border: '1px solid #e7b1a9', borderRadius: 6, fontSize: 12, color: '#8b2a1e', whiteSpace: 'pre-wrap' }}>{error}</div>}
+ 
