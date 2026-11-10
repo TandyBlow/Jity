@@ -47,7 +47,9 @@ describe('composeProse facts and direction', () => {
     const result = composeProse(SHED_SCENE);
     expect(result.accepted).toBe(true);
     expect(result.text).toContain('电池盒的盖子已经打开，槽里换上了一节新电池');
-    expect(result.text).toContain('相机电池');
+    // Only the changed battery is described; the untouched one is neither
+    // restated nor turned into a second inventory line.
+    expect(result.text).not.toContain('包装还没拆');
     expect(result.text).not.toContain('钥匙');
     expect(result.text).not.toContain('雨');
   });

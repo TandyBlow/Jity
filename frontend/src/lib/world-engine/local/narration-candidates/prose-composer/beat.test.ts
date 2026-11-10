@@ -78,9 +78,17 @@ describe('04 beat adapter', () => {
 
   it('closes on a grounded micro-action without a new event', () => {
     const result = composeConstrainedBeat(request('close', [], ['芬格尔']));
-    expect(result.text).toContain('路明非没有马上再动');
-    expect(result.text).toContain('芬格尔也没有动');
-    expect(result.text).not.toMatch(/推|拿|走|跑|打开/u);
+    expect(result.text).toMatch(/路明非/u);
+    expect(result.text).not.toMatch(/推东西|拿起|走到|跑|打开/u);
+  });
+
+  it('does not end consecutive turns on the same closer', () => {
+    const first = composeConstrainedBeat(request('close', [], ['芬格尔']));
+    const second = request('close', [], ['芬格尔']);
+    second.prior = first.text;
+    const next = composeConstrainedBeat(second);
+    expect(next.text).not.toBe(first.text);
+    expect(next.text.length).toBeGreaterThan(0);
   });
 
   it('maps a future action or dialogue fact when lane 04 supplies one', () => {

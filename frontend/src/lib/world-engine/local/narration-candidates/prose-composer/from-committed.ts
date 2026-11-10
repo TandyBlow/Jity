@@ -177,24 +177,57 @@ function clause(text: string | undefined, max = 40): string {
 function sceneTexture(
   scene: ProseScene,
   changedItems: Set<string> = new Set(),
+  mentioned: { ids: Set<string>; names: Set<string> } = { ids: new Set(), names: new Set() },
+  arrivedHere = false,
+  quietTurn = false,
 ): ProseBeat[] {
   const beats: ProseBeat[] = [];
   const seed = scene.seed ?? 0;
-  for (const actor of scene.cast) {
-    if (actor.id === scene.protagonistId) continue;
-    const detail = clause(actor.appearance?.[0]);
-    if (!detail) continue;
-    const forms = [
-      `身边还有${actor.name}，${detail}。`,
-      `不远处是${actor.name}，${detail}。`,
-      `近处还有${actor.name}，${detail}。`,
-    ];
-    beats.push({ kind: 'scene', detail: forms[hash32(`${seed}|${actor.id}|near`) % forms.length] });
+  // Present people go into ONE paragraph. A separate "身边还有X" line per
+  // person is exactly the state-list tone: it reads as an inventory rather
+  // than as a scene.
+  // On a continuation the room was already seen. Re-listing everyone who is
+  // standing there is the state-list tone; only a turn that arrives somewhere
+  // new earns a look around.
+  if (scene.priorText && !arrivedHere) {
+    // A turn with nothing but the clock moving may hold one settled object:
+    // that is the quiet scene, and it is still a true fact, not filler.
+    return itemsTexture(scene, changedItems, quietTurn);
   }
-  for (const item of (scene.items ?? []).slice(0, 2)) {
-    // On a continuation the room was already described; only repeat an object
-    // when this turn actually changed it.
-    if (scene.priorText && !changedItems.has(item.id)) continue;
+  const people = scene.cast
+    .filter((actor) => actor.id !== scene.protagonistId
+      && !mentioned.ids.has(actor.id) && !mentioned.names.has(actor.name))
+    .map((actor) => ({ name: actor.name, detail: clause(actor.appearance?.[0], 28) }))
+    .filter((person) => person.detail)
+    .slice(0, 3);
+  if (people.length === 1) {
+    const forms = [
+      `身边还有${people[0].name}，${people[0].detail}。`,
+      `不远处是${people[0].name}，${people[0].detail}。`,
+      `近处还有${people[0].name}，${people[0].detail}。`,
+    ];
+    beats.push({ kind: 'scene', detail: forms[hash32(`${seed}|${people[0].name}|near`) % forms.length] });
+  } else if (people.length > 1) {
+    const lead = hash32(`${seed}|people|near`) % 2 === 0
+      ? `身边还有${people[0].name}，${people[0].detail}`
+      : `不远处是${people[0].name}，${people[0].detail}`;
+    const rest = people.slice(1).map((person) => `${person.name}，${person.detail}`).join('；');
+    beats.push({ kind: 'scene', detail: `${lead}；${rest}。` });
+  }
+  return [...beats, ...itemsTexture(scene, changedItems)];
+}
+
+/** Objects: a quiet turn may mention ONE settled object; a continuation only an
+ * object this turn actually changed. Two "still there" lines in a row are the
+ * inventory tone again. */
+function itemsTexture(scene: ProseScene, changedItems: Set<string>, quietTurn = true): ProseBeat[] {
+  const beats: ProseBeat[] = [];
+  const changed = (scene.items ?? []).filter((item) => changedItems.has(item.id));
+  const unchanged = (scene.items ?? []).filter((item) => !changedItems.has(item.id));
+  const chosen = changed.length
+    ? changed.slice(0, scene.priorText ? 1 : 2)
+    : (scene.priorText ? (quietTurn ? unchanged.slice(0, 1) : []) : unchanged.slice(0, 1));
+  for (const item of chosen) {
     const detail = clause(item.details?.[0]);
     beats.push({
       kind: 'item', itemId: item.id, container: scene.location.name,
@@ -202,6 +235,41 @@ function sceneTexture(
     });
   }
   return beats;
+}
+
+/** People the rendered fact beats already name. Repeating their appearance in
+ * the same turn is what makes prose read like a state dump: "诺诺从…来到…"
+ * followed by "身边还有诺诺，…". Returns ids and names, since appearance beats
+ * carry a name rather than an id. */
+function mentionedByBeats(beats: ProseBeat[], scene: ProseScene): { ids: Set<string>; names: Set<string> } {
+  const ids = new Set<string>();
+  const names = new Set<string>();
+  const addName = (name: string | undefined) => {
+    if (!name) return;
+    names.add(name);
+    const actor = scene.cast.find((entry) => entry.name === name);
+    if (actor) ids.add(actor.id);
+  };
+  for (const beat of beats) {
+    switch (beat.kind) {
+      case 'move': case 'stay': case 'leave': case 'arrive':
+      case 'task': case 'subtask': case 'sanity': case 'personality': case 'action': {
+        ids.add(beat.actorId);
+        const actor = scene.cast.find((entry) => entry.id === beat.actorId);
+        if (actor) names.add(actor.name);
+        break;
+      }
+      case 'line':
+        ids.add(beat.speakerId);
+        break;
+      case 'appearance':
+        addName((beat as { subjectName?: string }).subjectName);
+        break;
+      default:
+        break;
+    }
+  }
+  return { ids, names };
 }
 
 function beatsFromFacts(facts: CommittedFactLike[], protagonistId: string): ProseBeat[] {
@@ -257,7 +325,13 @@ export function sceneFromCommitted(
     const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
       .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
       .map(([id]) => id));
-    enriched.scene.beats = [...beats, ...sceneTexture(enriched.scene, changedItems)];
+    const arrivedHere = beats.some((beat) => beat.kind === 'move'
+      && beat.actorId === enriched.scene.protagonistId && beat.to === enriched.scene.location.name);
+    const quietTurn = beats.every((beat) => beat.kind === 'time' || beat.kind === 'scene');
+    enriched.scene.beats = [
+      ...beats,
+      ...sceneTexture(enriched.scene, changedItems, mentionedByBeats(beats, enriched.scene), arrivedHere, quietTurn),
+    ];
     return enriched;
   }
   let locationName: string | undefined;
@@ -376,9 +450,10 @@ export function sceneFromGrounding(
     items,
     beats: [],
     priorText: policy.priorText ?? null,
-    // The driver's short fixture can legitimately hold only a place note and
-    // one elapsed beat; a fixed 60-character floor would reject real prose.
-    policy: { minChars: policy.minChars ?? 30, requireTime: true },
+    // The floor is a broken-output check, not a length target: a real turn can
+    // legitimately carry only a place note and one elapsed beat, and padding it
+    // with filler to reach 60 characters is exactly what the product forbids.
+    policy: { minChars: policy.minChars ?? 12, requireTime: true },
     seed: policy.seed,
   };
   const beats = beatsFromFacts(committed.facts ?? [], protagonistId);
@@ -391,7 +466,13 @@ export function sceneFromGrounding(
   const changedItems = new Set(Object.entries(committed.entityDeltas ?? {})
     .filter(([, delta]) => Boolean(delta?.positionSet) || Boolean(delta?.appearanceChanges?.length))
     .map(([id]) => id));
-  scene.beats = [...beats, ...sceneTexture(scene, changedItems)];
+  const arrivedHere = beats.some((beat) => beat.kind === 'move'
+    && beat.actorId === protagonistId && beat.to === scene.location.name);
+  const quietTurn = beats.every((beat) => beat.kind === 'time' || beat.kind === 'scene');
+  scene.beats = [
+    ...beats,
+    ...sceneTexture(scene, changedItems, mentionedByBeats(beats, scene), arrivedHere, quietTurn),
+  ];
   return { scene, sparse: false };
 }
 
