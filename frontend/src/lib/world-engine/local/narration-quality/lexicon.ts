@@ -105,6 +105,17 @@ export const SANITY_UP = ['稳', '轻', '松', '暖', '亮', '快', '强', '舒'
 export const SANITY_DOWN = ['沉', '低', '乱', '紧', '冷', '抖', '弱', '慢', '重', '浅', '急', '暗', '退', '缩', '空', '木'] as const;
 
 /** Item-state verbs that change an object's state. */
+/** Concrete objects a narrator can invent. A noun here that is absent from the
+ * input is either a hard addition (handled inside, or claimed as container
+ * content) or a review item (inert detail or simile). */
+export const INVENTABLE_OBJECTS = [
+  '纸条', '古董', '雕像', '蜡烛', '信封', '照片', '药瓶', '绷带', '手帕', '钱包',
+  '硬币', '徽章', '名单', '笔记本', '日记', '手机', '手电', '水瓶', '毯子',
+  '绳子', '梯子', '箱子', '袋子', '背包', '帽子', '手套', '眼镜', '匕首',
+  '弹壳', '烟头', '酒瓶', '茶杯', '钥匙串', '花盆', '鸟笼', '画像', '碑',
+  '钟摆', '铃铛', '号角', '口哨', '拐杖', '担架轮', '门牌', '门闩',
+] as const;
+
 export const ITEM_STATE_VERBS = [
   '打开', '开启', '掀开', '揭开', '锁上', '摔碎', '撕开', '点燃', '熄灭',
   '吃掉', '喝掉', '递给', '交给', '拆开',

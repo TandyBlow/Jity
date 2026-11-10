@@ -32,6 +32,7 @@ export type FindingKind =
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
   | 'fact.sound_added'
+  | 'fact.object_added'
   | 'fact.past_added'
   | 'fact.promise_added'
   | 'fact.knowledge_leak'
@@ -61,6 +62,7 @@ export type FindingKind =
   | 'review.number'
   | 'review.speech_act'
   | 'review.micro_action'
+  | 'review.object_added'
   | 'review.natural_sanity'
   | 'review.tone';
 

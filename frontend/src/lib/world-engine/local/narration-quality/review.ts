@@ -12,7 +12,7 @@ import { projectScene, parseMinutes } from './scene';
 import {
   BODY_ACTIONS, BODY_REACTION, CHANGE_MARKERS, CLOSURE, COMPLETION_VERBS, EVENT_VERBS, FAREWELL,
   FIELD_WORDS, HOLD_MARKERS, INTERIOR, ITEM_STATE_VERBS, MOVE_VERBS, NEGATION,
-  ITEM_HANDLING_VERBS, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
+  INVENTABLE_OBJECTS, ITEM_HANDLING_VERBS, PAST_MARKERS, POSSESSION_VERBS, POSTURE, PROMISE_VERBS, SANITY_DOWN, SANITY_UP, SOFT_EVENT_VERBS,
   SOUND_WORDS, TERMINAL_PUNCTUATION,
 } from './lexicon';
 import type { Finding, FindingKind, MandatoryReview, ReviewOptions, ReviewReport, SentenceReview } from './types';
@@ -661,6 +661,31 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
         `${person.name}'s settled appearance says the hand is empty, but the prose has ${prop} in it`,
         [emptyHand], [`item:${prop}`]));
+    }
+    // Invented concrete objects: absent from the input, yet handled or claimed
+    // as the contents of a settled container.
+    for (const noun of INVENTABLE_OBJECTS) {
+      if (!narration.includes(noun)) continue;
+      if (projection.sourceText.includes(noun)) continue;
+      const index = narration.indexOf(noun);
+      if (negatedAt(narration, noun)) continue;
+      if (/(?:像|仿佛|如同|似的)[^。]{0,4}$/u.test(narration.slice(0, index))) {
+        findings.push(finding(ctx, 'review.object_added', sentence.text,
+          `${noun} appears only inside a simile; needs reading`, [], []));
+        continue;
+      }
+      const window = narration.slice(Math.max(0, index - 8), index + noun.length + 8);
+      const handled = ITEM_HANDLING_VERBS.some((verb) => window.includes(verb))
+        || ITEM_STATE_VERBS.some((verb) => window.includes(verb));
+      const containerClaim = /(?:里面|里|中|内)(?:是|放着|装着|有|多出|躺着)/u.test(window);
+      if (handled || containerClaim) {
+        findings.push(finding(ctx, 'fact.object_added', sentence.text,
+          `${noun} is not in the settled state and is ${handled ? 'handled' : 'claimed as container content'}`,
+          [], []));
+        continue;
+      }
+      findings.push(finding(ctx, 'review.object_added', sentence.text,
+        `${noun} is not in the settled state; inert detail needs reading`, [], []));
     }
     // Item state verbs on known objects need a settled item change.
     for (const verb of ITEM_STATE_VERBS) {

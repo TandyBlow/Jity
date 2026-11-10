@@ -277,7 +277,43 @@ PROGRAM_TEXT = "\n\n".join([
     "路明非在原地站了一会儿。",
 ])
 
+
 anchors = []
+
+# -------------------------------------------------- 1.5B accepted counterexample
+box_scene = {
+    "视角": "主角视角（周宁）",
+    "上回合状态": {
+        "地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}},
+        "人物": {"林川": {"位置": "走廊", "精神值": 10, "外貌": ["穿灰衣"],
+                          "任务": {"大任务": {"目标": "留在走廊守门，不碰盒子", "状态": "未完成"}, "小任务": []}},
+                 "周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "任务": {"大任务": {"目标": "无", "状态": "未完成"}, "小任务": []}}},
+        "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+anchors += [
+    {
+        "id": "neg/1.5b-accepted-elapsed",
+        "source": "results/quality/beat-qwen25-1.5b-instruct.json run elapsed-two-minutes, accepted=true by the old gate",
+        "input": box_scene,
+        "text": "光从盒子缝隙中透出，映在走廊的每一面墙壁上。声音是轻柔的铃声，偶尔几下脚步声在走廊尽头渐行渐远。周宁的手指轻轻触碰盒盖，盒子缓缓开启，映入眼帘的是一块精致的古董，上面雕刻着精美的图案。\n\n约两分钟过去了。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.event_added", "fact.sound_added", "fact.sound_added"], "style": [],
+                   "notes": "Closed box opens, two sounds and a new object appear; the time is stated, so this is a pure invention case."},
+    },
+    {
+        "id": "neg/1.5b-root-closed-box",
+        "source": "results/quality/beat-qwen25-1.5b-instruct.json run root-scene, rejected for length only",
+        "input": box_scene,
+        "text": "走廊明亮，周宁看着林川站在那里，林川的手按在盒盖上，盒子静静地悬在空中。周宁的心跳加速，盒子缓缓打开，里面是一张纸条。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.time_missing", "fact.object_added", "fact.event_added"], "style": [],
+                   "notes": "A closed box opens and holds a note that was never settled."},
+    },
+]
+
 # ------------------------------------------------------- 08 counterexamples
 gaze_scene = {
     "视角": "主角视角（周宁）",
