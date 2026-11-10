@@ -314,9 +314,25 @@ interface ReviewContext {
   projection: SceneProjection;
   options: ReviewOptions;
   holders: HolderMap;
+  /** True when a word appears in a settled, non-conditional description. A
+   * habitual trait ("听见远处枪声会下意识缩肩") does not license a current
+   * gunshot or a current shrug. */
+  stateLicensed: (word: string) => boolean;
   /** Sentence index currently being reviewed. */
   index: number;
 }
+
+/** Any string inside the point, for licence and trait checks. */
+function collectStrings(value: unknown, out: string[] = []): string[] {
+  if (typeof value === 'string') out.push(value);
+  else if (Array.isArray(value)) for (const entry of value) collectStrings(entry, out);
+  else if (value && typeof value === 'object') for (const entry of Object.values(value)) collectStrings(entry, out);
+  return out;
+}
+
+/** Conditional or habitual wording: a rule the character follows, not an event. */
+const CONDITIONAL = /(会|若|如果|一旦|一.{0,4}就|习惯|常常|总是|每次|每当|听见|听到)/u;
+const OBJECT_SPEAKER_NAMES: string[] = [];
 
 function finding(ctx: ReviewContext, kind: FindingKind, sentence: string, detail: string, basis: string[], factIds?: string[]): Finding {
   const severity = kind.startsWith('review.') ? 'review' : kind.startsWith('style.') ? 'style' : 'fact';
@@ -325,7 +341,7 @@ function finding(ctx: ReviewContext, kind: FindingKind, sentence: string, detail
 
 /** Is a verb licensed by the settled input or by a committed event? */
 function verbLicensed(verb: string, ctx: ReviewContext, sentence: string): boolean {
-  if (ctx.projection.sourceText.includes(verb)) return true;
+  if (ctx.stateLicensed(verb)) return true;
   if (negatedAt(sentence, verb)) return true;
   // A completed task is settled evidence that the action it names happened
   // (e.g. 「更换空弹匣」 for a reload).
@@ -360,7 +376,11 @@ export function reviewNarration(args: {
   const names = projection.names;
   const sentences = splitSentences(text);
   const findings: Finding[] = [];
-  const ctx: ReviewContext = { projection, options, holders: buildHolders(projection), index: 0 };
+  const settledStrings = collectStrings(input);
+  OBJECT_SPEAKER_NAMES.length = 0;
+  OBJECT_SPEAKER_NAMES.push(...Object.keys(projection.people));
+  const stateLicensed = (word: string): boolean => settledStrings.some((entry) => entry.includes(word) && !CONDITIONAL.test(entry));
+  const ctx: ReviewContext = { projection, options, holders: buildHolders(projection), stateLicensed, index: 0 };
   const sentenceReviews: SentenceReview[] = [];
 
   const charCount = [...text].length;
@@ -717,7 +737,7 @@ export function reviewNarration(args: {
       const object = [...ctx.holders.holders.keys()].find((entry) => clause.includes(entry))
         ?? PROPS.find((entry) => clause.includes(entry));
       if (!object) continue;
-      if (projection.sourceText.includes(verb)) {
+      if (ctx.stateLicensed(verb)) {
         itemStateCovered.add(object);
         continue;
       }
@@ -790,14 +810,14 @@ export function reviewNarration(args: {
     for (const verb of SOFT_EVENT_VERBS) {
       if (!narration.includes(verb)) continue;
       if (verbLicensed(verb, ctx, narration)) continue;
-      if (projection.sourceText.includes(verb)) continue;
+      if (ctx.stateLicensed(verb)) continue;
       findings.push(finding(ctx, 'review.micro_action', sentence.text,
         `physical handling (${verb}) with no settled fact; allowed as a micro-action when it changes no settled state`, [], []));
     }
     for (const sound of SOUND_WORDS) {
       if (!narration.includes(sound)) continue;
       if (negatedAt(narration, sound)) continue;
-      if (projection.sourceText.includes(sound)) continue;
+      if (ctx.stateLicensed(sound)) continue;
       // A footstep needs a mover named in this sentence, not merely a move
       // somewhere in the point: the text may still put that mover elsewhere.
       const movedHere = MOVE_VERBS.some((verb) => narration.includes(verb) && !negatedAt(narration, verb));
@@ -813,7 +833,7 @@ export function reviewNarration(args: {
     }
     for (const marker of PAST_MARKERS) {
       if (!narration.includes(marker)) continue;
-      if (projection.sourceText.includes(marker)) continue;
+      if (ctx.stateLicensed(marker)) continue;
       const comparesToChange = [...projection.appearanceAdded, ...projection.appearanceRemoved]
         .some((entry) => sharesRun(narration, entry.text, 4));
       if (comparesToChange) {
@@ -826,10 +846,90 @@ export function reviewNarration(args: {
     }
     for (const verb of PROMISE_VERBS) {
       if (!narration.includes(verb)) continue;
-      if (projection.sourceText.includes(verb)) continue;
+      if (ctx.stateLicensed(verb)) continue;
       if (negatedAt(narration, verb)) continue;
       findings.push(finding(ctx, 'fact.promise_added', sentence.text,
         `promise verb ${verb} has no settled basis`, [], []));
+    }
+    // A settled habit or conditional reaction is not a current event.
+    for (const entry of settledStrings) {
+      if (!CONDITIONAL.test(entry)) continue;
+      const reaction = /(?:会|就|便)([^，。；]{2,10})/u.exec(entry);
+      const trigger = /(?:听见|听到|看见|看到|遇到|若|如果)([^，。；]{2,10}?)(?:会|就|便)/u.exec(entry);
+      if (!reaction) continue;
+      const reactionText = reaction[1].trim();
+      const reactionVerb = reactionText.replace(/^(?:下意识|不自觉|忍不住|总是|常常)/u, '').slice(-3);
+      if (!reactionVerb || !narration.includes(reactionVerb)) continue;
+      const triggerWord = trigger ? trigger[1].replace(/[的地得].*$/u, '').trim().slice(-2) : '';
+      const triggerHere = !!triggerWord && narration.includes(triggerWord);
+      if (!triggerHere) {
+        findings.push(finding(ctx, 'review.trait_as_event', sentence.text,
+          `settled habit 「${entry}」 is written as a current reaction; trigger is missing, wording needs reading`, [entry], []));
+        continue;
+      }
+      findings.push(finding(ctx, 'fact.trait_as_event', sentence.text,
+        `settled habit 「${entry}」 is written as an event happening now (${triggerWord} + ${reactionVerb})`, [entry], []));
+    }
+    // A static object or place cannot speak or sound by itself.
+    const spokenObjects = new Set<string>();
+    const SPEECH = /(说|喊|叫|提醒|念|广播|发出|传来)/gu;
+    for (const [objectName, holder] of ctx.holders.holders) {
+      if (holder !== 'scene') continue;
+      const objectIndex = narration.indexOf(objectName);
+      if (objectIndex < 0) continue;
+      let spoken: string | null = null;
+      for (const match of narration.matchAll(SPEECH)) {
+        const verb = match[1];
+        const verbIndex = match.index ?? 0;
+        // A person in the same breath is the speaker, not the object.
+        const before = narration.slice(Math.max(0, verbIndex - 10), verbIndex);
+        if (OBJECT_SPEAKER_NAMES.some((name) => before.includes(name))) continue;
+        if (/(没有|没|未|别|再|先|像|仿佛|似乎|要)$/u.test(before)) continue;
+        const distance = Math.abs(verbIndex - (objectIndex + objectName.length));
+        if (distance > 8 && Math.abs(verbIndex - objectIndex) > 8) continue;
+        spoken = verb;
+        break;
+      }
+      if (!spoken) continue;
+      const identity = ctx.holders.basis.get(objectName) ?? objectName;
+      if (spokenObjects.has(identity)) continue;
+      spokenObjects.add(identity);
+      findings.push(finding(ctx, 'fact.object_speaks', sentence.text,
+        `${objectName} is a settled object and cannot ${spoken} by itself`, [identity], []));
+    }
+    // A passive past event ("被弹片击中") needs a settled basis.
+    const passive = /被[^，。；]{0,8}(击中|打中|撞到|推倒|割伤|压住|拖走)/u.exec(narration);
+    if (passive && !ctx.stateLicensed(passive[1])) {
+      findings.push(finding(ctx, 'fact.past_added', sentence.text,
+        `passive past event ${passive[0]} has no settled basis`, [], []));
+    }
+    // A settled appearance can be contradicted by its opposite direction.
+    const settledLooks = [
+      ...Object.values(projection.people).flatMap((person) => person.appearanceAfter),
+      ...Object.values(projection.items).flatMap((item) => item.descriptions),
+    ];
+    for (const look of settledLooks) {
+      if (!/枪口[^。]{0,4}(压向地面|朝下|向下|对着地面)/u.test(look)) continue;
+      if (!/(抬起|朝上|指向天空|指向屋顶)/u.test(narration)) continue;
+      findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+        `settled appearance says ${look.slice(0, 24)}; the prose turns the muzzle up`, [look], []));
+      break;
+    }
+    // A place the viewpoint cannot see (outside its own location) being looked at.
+    if (options.strict !== false) {
+      for (const place of Object.keys(projection.places)) {
+        if (!narration.includes(place)) continue;
+        const sight = /(望着|看着|看见|望向|望见|看向)[^，。]{0,6}$/u.test(narration.slice(0, narration.indexOf(place)));
+        if (!sight) continue;
+        const viewpointPlace = projection.viewpoint
+          ? projection.people[projection.viewpoint]?.positionAfter ?? projection.people[projection.viewpoint]?.positionBefore ?? null
+          : null;
+        const inside = viewpointPlace ? place === viewpointPlace || projection.places[place]?.parent === viewpointPlace : false;
+        if (inside) continue;
+        findings.push(finding(ctx, 'review.unseen_entity', sentence.text,
+          `${place} is outside the viewpoint's location; whether it is visible needs reading`, [], []));
+        break;
+      }
     }
     if (projection.viewpoint) {
       for (const hit of nameHits(narration, names, Object.keys(projection.people))) {

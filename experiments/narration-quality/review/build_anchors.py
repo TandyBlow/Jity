@@ -280,6 +280,59 @@ PROGRAM_TEXT = "\n\n".join([
 
 anchors = []
 
+# ------------------------------------------- Qwen3 1.7B product-case arms (02)
+arms_scene = {
+    "视角": "主角视角（路明非）",
+    "上回合状态": {
+        "地点": {"西侧服务巷": {"位于": "西侧器材区", "外貌": ["巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。"]},
+                 "西侧器材区": {"位于": "卡塞尔学院演习区", "外貌": ["器材棚、服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。"]}},
+        "人物": {
+            "路明非": {"位置": "西侧服务巷", "精神值": 43,
+                       "外貌": ["校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带"],
+                       "个性": ["听见远处枪声会下意识缩肩", "习惯先用一句玩笑替自己解围"],
+                       "任务": {"大任务": {"目标": "作出参赛选择", "状态": "未完成"}, "小任务": []}},
+            "诺诺": {"位置": "西侧服务巷", "精神值": 58,
+                     "外貌": ["红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面"],
+                     "个性": ["看人时比听解释更有耐心"], "任务": {"大任务": {"目标": "保障旗台行动", "状态": "未完成"}, "小任务": []}},
+        },
+        "物品": {"路明非的护目镜": {"位置": "路明非", "外貌": ["镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前"]},
+                 "赛区路线图": {"位置": "西侧服务巷", "外貌": ["图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路"]},
+                 "演习规则牌": {"位置": "西侧服务巷", "外貌": ["牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；退出者不得返场；15:45停赛"]}},
+    },
+    "本回合变化": {"变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+anchors += [
+    {
+        "id": "neg/qwen3-arm-scene",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::scene, auto-accepted=true",
+        "input": arms_scene,
+        "text": "路明非盯着墙上的赛区图，手指摩挲着镜片边缘。巷口的黄黑绳已放，空气中还残留着硝烟味。他摸了摸胸前的护目镜，镜片无裂纹，镜带松着。远处传来枪声，他下意识缩肩，但没说出口。诺诺在入口处，红发束在脑后，短枪枪口压向地面。他没说话，只是低头整理衣襟，膝盖沾了灰。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.trait_as_event"], "style": [],
+                   "notes": "A conditional trait (hearing gunfire, shrinking the shoulders) is turned into a current gunshot plus a current shrug."},
+    },
+    {
+        "id": "neg/qwen3-arm-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::prose, auto-accepted=true",
+        "input": arms_scene,
+        "text": "路明非望着远处的钟楼，风穿过巷子，带来一丝凉意。诺诺的红发在阳光下闪烁，她手中的短枪压在地面，枪口微微抬起。远处传来演习规则牌的声音，提醒着他们必须遵守规则。路明非注意到诺诺的红痕，那是她扶过弹着石墙时蹭上的，身上没有本场命中标记。空气中弥漫着演习弹的气味，路明非感受到脚下地面的温度，仿佛能触摸到那片被弹片击中的痕迹。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.state_contradiction", "fact.object_speaks", "fact.past_added"], "style": [],
+                   "notes": "The rule sign speaks, the held pistol lies on the ground with its muzzle up, and a fragment hit is invented."},
+    },
+    {
+        "id": "neg/qwen3-arm-beats",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::beats, rejected",
+        "input": arms_scene,
+        "text": "光从巷口斜斜洒来，映着诺诺发圈上的红光，右袖的红痕在光下泛着暗色。路明非伸手摸了摸手背，指尖触到那道浅浅的红痕，忽然想起刚才被弹片击中时，自己也摸到了类似的东西。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.past_added"], "style": [],
+                   "notes": "An invented fragment hit remembered as past; the protagonist has no such mark in the settled appearance."},
+    },
+]
+
+
 # -------------------------------------------------- 1.5B accepted counterexample
 box_scene = {
     "视角": "主角视角（周宁）",

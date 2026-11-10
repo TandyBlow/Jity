@@ -29,11 +29,14 @@ export type FindingKind =
   | 'fact.false_position'
   | 'fact.item_misattribution'
   | 'fact.gender'
+  | 'fact.state_contradiction'
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
   | 'fact.sound_added'
   | 'fact.object_added'
   | 'fact.past_added'
+  | 'fact.trait_as_event'
+  | 'fact.object_speaks'
   | 'fact.promise_added'
   | 'fact.knowledge_leak'
   | 'fact.viewpoint_interiority'
@@ -63,6 +66,8 @@ export type FindingKind =
   | 'review.speech_act'
   | 'review.micro_action'
   | 'review.object_added'
+  | 'review.trait_as_event'
+  | 'review.unseen_entity'
   | 'review.natural_sanity'
   | 'review.tone';
 
