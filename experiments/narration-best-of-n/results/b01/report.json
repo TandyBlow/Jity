@@ -1,6 +1,6 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T12:15:55.086Z",
+  "createdAt": "2026-11-10T12:23:52.289Z",
   "batches": [
     "b01"
   ],
@@ -17,15 +17,15 @@
       "gate.test.ts": "653ab580f3002d9e44553a60135b074350d683bcfd36a87bead691dda5d75bad",
       "gate.ts": "d2d7fe40ea0b3660f4ef1156f4277c9b86d61e3223ffe15bde0db89a26b1032e",
       "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
-      "lexicon.ts": "f016ec721783438dd4e48036bd29bbd1a4575841a84553aed041652ddc79b01e",
+      "lexicon.ts": "2116666ea7374f132bc34d24b8d96c2ac31ff8e5acc11306b855a472d13d75b9",
       "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
-      "review.ts": "a3f08eb5006048d7d4c2528510677a59bbaa2a1a4d28a59d7704a132a81d59e6",
+      "review.ts": "d0c52379f4bef833447ba52fdea079d8d5e8308d972ef1ef7bf015765aa36ed3",
       "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
       "sequence.test.ts": "78a1ce9c94e5c28f4d4d0aeceb96423f544b059b7bf4d25e7fd31af42106f393",
       "sequence.ts": "aa28181dd7cec65a85344912693bf422d421d7f3aa2fb148294d73a0505a19b0",
-      "types.ts": "05021b2105fbddc251dfc3cfe8f45d31cb7c032b539303e0e43f5890904ea242"
+      "types.ts": "318476e88645252ee0db5c4bf162a3f8428b2c763712c15489b200a74b5d8a78"
     },
-    "combinedSha256": "c363360ee1ce6fbb460be91bb461f700d9f81226253807ec2027b998744e4873",
+    "combinedSha256": "8c861e4fbfd0232be04c1074d4513dafc4c6f61c83fe68713b62e3bafc6ce343",
     "reviewKind": "mechanical_checker",
     "independent": false,
     "note": "mechanical fact/style/review screen; not a human and not an independent sign-off"
@@ -33,7 +33,7 @@
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
     "select": "88014ef747c5bbdb87a6dd4a535260650a821343b4d5f30d14b3ce84e556a69c",
-    "analyzer": "a665d4453e6fc34a95eef786ae99619a7cd92aef27bfc97e16f2b0e8649fe104"
+    "analyzer": "0fbe564ba586906171da94f47699722b9c3a002d590ad1e9781ecc88e7d88f0c"
   },
   "rawInventory": [
     {
@@ -49,6 +49,19 @@
         79,
         97
       ]
+    }
+  ],
+  "evidence": [
+    {
+      "batch": "b01",
+      "rawPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\raw.jsonl",
+      "rawSha256": "b2324fa56b90bd3371c140b4ecfeb687927beafcdb36d46dc0c9ff7e084c182c",
+      "envSha256": "eec9685ca3b6a5d23084ebdfd04523486c764ebe1c9ffd4111007bd51acefe54",
+      "recordPath": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\hpc-record.json",
+      "calls": 6,
+      "runWallMs": 76000,
+      "observedGaps": [],
+      "gapNote": "no gapBeforeMs field in this raw file; older runner or no measured gap"
     }
   ],
   "findingTotals": {
@@ -119,7 +132,7 @@
   "plans": {
     "b01": {
       "batchId": "b01",
-      "preparedAt": "2026-11-10T11:58:55.448Z",
+      "preparedAt": "2026-11-10T12:18:10.762Z",
       "pack": {
         "package": "narration-dev-package-v1",
         "caseCount": 15,
@@ -149,6 +162,8 @@
         "addGenerationPrompt": true,
         "note": "The shared pack input already is the 视角/上回合状态/本回合变化/本回合状态 view; the user turn is the trained instruct shape. requiredFacts/notes/reference are never in the prompt."
       },
+      "instruction": null,
+      "instructionSha256": null,
       "sampling": {
         "doSample": true,
         "temperature": 0.45,
@@ -168,7 +183,8 @@
           "category": "long_text",
           "inputSha256": "fa0b1b190be4b3b2eee9fcb0b92980b14b088d57d21ff9cce89b19a6f9b2bdeb",
           "userPromptSha256": "067918ae71b8cb306574e8cf63f3aa6c76eed5a1c1438b59745dc98303581000",
-          "userPromptChars": 896
+          "userPromptChars": 896,
+          "instructionSha256": null
         }
       ],
       "requestsSha256": "77251fb07437e02abf2a084057782b363807d4228f52aada293a583625ff6c7d",
@@ -270,7 +286,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 5.357000000000028
+            "elapsedMs": 6.805199999999957
           },
           "metrics": {
             "chars": 52,
@@ -369,7 +385,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.6060999999999694
+            "elapsedMs": 0.6753999999999678
           },
           "metrics": {
             "chars": 20,
@@ -476,7 +492,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.0264000000000237
+            "elapsedMs": 0.9639999999999986
           },
           "metrics": {
             "chars": 62,
@@ -586,7 +602,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.6512000000000171
+            "elapsedMs": 0.7720999999999663
           },
           "metrics": {
             "chars": 94,
@@ -685,7 +701,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.33080000000001064
+            "elapsedMs": 0.6546999999999912
           },
           "metrics": {
             "chars": 50,
@@ -797,7 +813,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.14370000000002392
+            "elapsedMs": 0.4119000000000028
           },
           "metrics": {
             "chars": 22,

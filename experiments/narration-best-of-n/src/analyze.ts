@@ -53,6 +53,9 @@ interface SampleRow {
   textSha256?: string;
   finishReason?: string;
   timings?: Record<string, number | null>;
+  startedAtMs?: number;
+  endedAtMs?: number;
+  gapBeforeMs?: number;
   inputSha256?: string;
 }
 
@@ -221,6 +224,7 @@ async function main(): Promise<void> {
   const cases: CaseAnalysis[] = [];
   const expectedById = new Map<string, ExpectedRow>();
   const rawInventory: Array<Record<string, unknown>> = [];
+  const evidence: Array<Record<string, unknown>> = [];
   const envs: Record<string, unknown> = {};
   const batchPlans: Record<string, unknown> = {};
 
@@ -235,6 +239,29 @@ async function main(): Promise<void> {
     const raw = loadJsonl<SampleRow>(rawPath);
     const plan = loadJson<Record<string, unknown>>(planPath);
     const env = existsSync(envPath) ? loadJson<Record<string, unknown>>(envPath) : { missing: true };
+    const recordPath = join(EXP, 'results', batch, 'hpc-record.json');
+    const record = existsSync(recordPath) ? loadJson<Record<string, unknown>>(recordPath) : null;
+    const gaps = raw
+      .filter((row) => typeof row.gapBeforeMs === 'number' && (row.gapBeforeMs ?? 0) > 0)
+      .map((row) => ({ callId: row.callId, gapBeforeMs: row.gapBeforeMs }));
+    const runWallMs = typeof env.runWallMs === 'number'
+      ? env.runWallMs
+      : record && typeof (record.calls as Record<string, unknown> | undefined)?.totalWallSeconds === 'number'
+        ? Number((record.calls as Record<string, number>).totalWallSeconds) * 1000
+        : null;
+    evidence.push({
+      batch,
+      rawPath,
+      rawSha256: sha256(readFileSync(rawPath)),
+      envSha256: existsSync(envPath) ? sha256(readFileSync(envPath)) : null,
+      recordPath: record ? recordPath : null,
+      calls: raw.length,
+      runWallMs,
+      observedGaps: gaps,
+      gapNote: gaps.length === 0
+        ? 'no gapBeforeMs field in this raw file; older runner or no measured gap'
+        : 'gaps are inter-call wall time outside timings.totalMs',
+    });
     batchPlans[batch] = plan;
     envs[batch] = env;
     if (env.partial === true) throw new Error(`batch ${batch} is partial; no analysis on a smoke run`);
@@ -484,6 +511,7 @@ async function main(): Promise<void> {
     },
     modules: moduleHashes,
     rawInventory,
+    evidence,
     findingTotals,
     env: envs,
     plans: batchPlans,
@@ -646,15 +674,26 @@ function renderMarkdown(report: Record<string, unknown>, cases: CaseAnalysis[]):
     lines.push(`| ${kind} | ${count} |`);
   }
   lines.push('');
+  lines.push('## 证据与整作业耗时');
+  lines.push('');
+  lines.push('| batch | calls | raw sha | run wall ms | observed gaps |');
+  lines.push('|---|---|---|---|---|');
+  for (const item of (report.evidence as Array<Record<string, unknown>>) ?? []) {
+    lines.push(`| ${item.batch} | ${item.calls} | \`${String(item.rawSha256).slice(0, 12)}\` | `
+      + `${item.runWallMs ?? 'unknown'} | ${(item.observedGaps as unknown[])?.length ?? 0} |`);
+  }
+  lines.push('');
+  lines.push('`observed gaps = 0` 也可能是旧 runner 没有记录 `gapBeforeMs`，不代表没有空档；b01 的 44 s 调用间空档见 `hpc-record.json` 与 `cause-analysis-b01.md`。');
+  lines.push('');
   lines.push('## 六个原始样本');
   for (const entry of cases) {
     lines.push('');
     lines.push(`### ${entry.caseId} (${entry.category})`);
     lines.push('');
-    lines.push('| seed | 判定 | 事实 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |');
-    lines.push('|---|---|---|---|---|---|---|---|---|');
+    lines.push('| seed | 判定 | 字数 | 事实 | 文风 | 待复核 | 必述覆盖 | 首 token ms | 总 ms | 文本 SHA |');
+    lines.push('|---|---|---|---|---|---|---|---|---|---|');
     for (const sample of entry.samples) {
-      lines.push(`| ${sample.seed} | ${sample.checker.decision} | ${sample.checker.counts.fact} | ${sample.checker.counts.style} | `
+      lines.push(`| ${sample.seed} | ${sample.checker.decision} | ${sample.metrics.chars} | ${sample.checker.counts.fact} | ${sample.checker.counts.style} | `
         + `${sample.checker.counts.review} | ${sample.checker.mandatoryCovered}/${sample.checker.mandatoryTotal} | `
         + `${sample.timings?.firstTokenMs ?? 'unknown'} | ${sample.timings?.totalMs == null ? 'unknown' : Math.round(sample.timings.totalMs)} | `
         + `\`${sample.textSha256.slice(0, 12)}\` |`);
