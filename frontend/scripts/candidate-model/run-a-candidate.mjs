@@ -44,6 +44,7 @@ const config = {
   threads: Number(option('--threads', '0')),
   context: Number(option('--context', '0')),
   forceCpu: process.argv.includes('--force-cpu'),
+  lowPowerGpu: process.argv.includes('--low-power-gpu'),
   out: resolve(frontend, option('--out', '../../results/quality/a-candidate-run.json')),
   modelsDirs: options('--models-dir').length > 0 ? options('--models-dir') : [
     'D:/others/Jity/.local/world-narration-worktree/frontend/public/models',
@@ -146,7 +147,11 @@ let browser;
 try {
   await server.listen();
   report.serverPort = server.httpServer.address().port;
-  browser = await chromium.launch({ headless: true, channel: config.channel, args: ['--enable-unsafe-webgpu'] });
+  // Chromium's GPU picker otherwise prefers the integrated adapter on a
+// hybrid-graphics laptop. The switch asks for the discrete GPU; the
+// adapter name is still recorded so a failed request is visible.
+  const gpuArgs = config.lowPowerGpu ? ['--force_low_power_gpu'] : ['--force_high_performance_gpu'];
+  browser = await chromium.launch({ headless: true, channel: config.channel, args: ['--enable-unsafe-webgpu', ...gpuArgs] });
   report.browser = browser.version();
   const page = await browser.newPage();
   page.on('pageerror', (error) => console.error('[pageerror]', error.message));
