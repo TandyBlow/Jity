@@ -1,6 +1,10 @@
 {
   "version": "best-of-n-analysis-v1",
-  "createdAt": "2026-11-10T15:38:24.305Z",
+  "createdAt": "2026-11-10T15:41:35.294Z",
+  "analysisNotes": [
+    "Post-prereg selector guard added after the b01 review: lane12.first_person_narration flags first-person narration outside quotes when the settled viewpoint is a named third-person character.",
+    "It changes perspectiveQualified for seed 97 only; factQualified, clusters and the 0/6 result are unchanged. It is a lane-12 adoption guard, not a change to 01 rubric."
+  ],
   "batches": [
     "b01"
   ],
@@ -76,7 +80,7 @@
   "modules": {
     "diversity": "9a47c8e36250f9ca68c22a1c5c3e54e6fc996f62fafdbe63a084c5efb3b219c6",
     "select": "b2e2dba44c76d3ac80daced0869a77c1aa6f241ef91ac5c46cd0c706f1c7fa5c",
-    "analyzer": "fd45a6475f8b65cd8bfc0515145b0dd5447dd4e7c0f2becd9b1a0147285fede9"
+    "analyzer": "8f766bc37a6e6dbaeb8e68c0db7005b375fdeea409bb26d82be331c21fb1bc21"
   },
   "analysisPlan": {
     "path": "analysis-addendum-arms.md",
@@ -346,7 +350,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 8.13519999999994
+            "elapsedMs": 11.77879999999999
           },
           "metrics": {
             "chars": 52,
@@ -453,7 +457,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.7206999999999653
+            "elapsedMs": 1.5481000000000336
           },
           "metrics": {
             "chars": 20,
@@ -568,7 +572,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 1.070799999999963
+            "elapsedMs": 2.167500000000018
           },
           "metrics": {
             "chars": 62,
@@ -688,7 +692,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.8727999999999838
+            "elapsedMs": 1.585800000000006
           },
           "metrics": {
             "chars": 94,
@@ -795,7 +799,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.39390000000003056
+            "elapsedMs": 0.7013000000000034
           },
           "metrics": {
             "chars": 50,
@@ -919,7 +923,7 @@
                 "form": "literal"
               }
             ],
-            "elapsedMs": 0.22519999999997253
+            "elapsedMs": 0.28300000000001546
           },
           "metrics": {
             "chars": 22,

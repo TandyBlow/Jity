@@ -582,6 +582,10 @@ async function main(): Promise<void> {
   const report = {
     version: 'best-of-n-analysis-v1',
     createdAt: nowIso(),
+    analysisNotes: [
+      'Post-prereg selector guard added after the b01 review: lane12.first_person_narration flags first-person narration outside quotes when the settled viewpoint is a named third-person character.',
+      'It changes perspectiveQualified for seed 97 only; factQualified, clusters and the 0/6 result are unchanged. It is a lane-12 adoption guard, not a change to 01 rubric.',
+    ],
     batches,
     preregistration: {
       file: prereg.file,
