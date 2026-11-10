@@ -297,6 +297,41 @@ def main() -> int:
         check("semantic_validate handles the real 73-task/14-character coverage scale", False,
               "missing fixture")
 
+    real_case_path = ROOT / "evidence/semantic-cases/tasks-free-day-real-73-no-change.json"
+    real_pack_path = ROOT / "evidence/semantic-cases/tasks-free-day-real-73-no-change.pack.jsonl"
+    if real_case_path.exists() and real_pack_path.exists():
+        real = json.loads(real_case_path.read_text(encoding="utf-8"))
+        valid = real["expected"]
+        short = {"decisions": valid["decisions"][:-2]}
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = pathlib.Path(tmp)
+            run_dir = tmp_path / "run"
+            run_dir.mkdir()
+            for name, value in (("valid", valid), ("short", short)):
+                (run_dir / f"{name}.json").write_text(
+                    json.dumps({"caseId": name, "text": json.dumps(value, ensure_ascii=False)},
+                               ensure_ascii=False), encoding="utf-8")
+            pack = json.loads(real_pack_path.read_text(encoding="utf-8").splitlines()[0])
+            pack_path = tmp_path / "pack.jsonl"
+            pack_path.write_text(
+                chr(10).join(json.dumps(dict(pack, caseId=name), ensure_ascii=False)
+                             for name in ("valid", "short")) + chr(10),
+                encoding="utf-8")
+            proc = run(["src/semantic_validate.py", "--pack", str(pack_path),
+                        "--run-dir", str(run_dir), "--out", str(tmp_path / "report.json")])
+            ok = proc.returncode == 2 and real["promptChars"] >= 6000
+            detail = f"exit={proc.returncode} chars={real['promptChars']}"
+            if ok:
+                report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+                by_id = {entry["caseId"]: entry for entry in report["reports"]}
+                ok = (by_id["valid"]["ok"] and not by_id["short"]["ok"]
+                      and any("coverage 12/14" in error for error in by_id["short"]["errors"]))
+                detail = f"valid={by_id['valid']['ok']} short={by_id['short']['ok']}"
+            check("the saved real-state 73-task case still accepts 14/14 and rejects 12/14", ok, detail)
+    else:
+        check("the saved real-state 73-task case still accepts 14/14 and rejects 12/14", False,
+              "missing real-state case")
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])

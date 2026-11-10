@@ -54,7 +54,7 @@ python -X utf8 src/screen.py \
 
 ## 验证（实际跑过）
 
-`python -X utf8 src/selftest.py` → 15/15 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例 + 73 任务/14 人物覆盖尺度、prepare_semantic_prompts 冻结门、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
+`python -X utf8 src/selftest.py` → 16/16 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例 + 73 任务/14 人物覆盖尺度、prepare_semantic_prompts 冻结门、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
 ## 模型路线决策规则（restart 2026-11-10）
 
