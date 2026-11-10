@@ -633,6 +633,15 @@ export function projectFromFactsPacket(
       // unchanged value: not a fact to narrate
     }
   }
+  // Present characters come from the packet's own at-facts (the shared driver
+  // emits one per character in the room). They are licensed presence, not a
+  // change.
+  const present: ScenePerson[] = [];
+  for (const fact of packet.facts) {
+    if (fact.kind !== 'at' || fact.name === viewpointName) continue;
+    if (present.some((person) => person.id === fact.actorId)) continue;
+    present.push({ id: fact.actorId, name: fact.name, note: '', viewpoint: false });
+  }
   const scene: SceneSkeleton = {
     anchor: packet.anchor,
     viewpoint: {
@@ -642,7 +651,7 @@ export function projectFromFactsPacket(
     },
     time: options.priorText != null ? null : null,
     place: { id: '', name: location, note: '', parentName: null },
-    present: [],
+    present,
     objects: [],
     facts,
     licensed: {
@@ -655,7 +664,7 @@ export function projectFromFactsPacket(
     inputText: options.inputText ?? null,
     resultsText: options.resultsText ?? null,
     worldNames: { characters: [], locations: [], items: [] },
-    hasSceneMaterial: false,
+    hasSceneMaterial: present.length > 0,
     timeOnly: !facts.some((fact) => fact.kind !== 'time' && fact.kind !== 'at'),
   };
   return { scene, base: packet };

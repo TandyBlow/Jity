@@ -351,16 +351,18 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   const paragraphs: string[] = [];
   const alreadySaid = (name: string): boolean => [...ctx.used].some((used) => used.includes(name));
   // A present character gives the room a witness instead of a list of props.
-  const person = scene.present.find((entry) => !beat.mustMention.includes(entry.name)
-    && entry.note && !alreadySaid(entry.name));
+  const person = beat.subject === null
+    ? scene.present.find((entry) => !beat.mustMention.includes(entry.name) && !alreadySaid(entry.name))
+    : undefined;
   if (person) {
     const detail = clause(person.note, 22);
-    if (detail) {
-      paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${person.id}:at`, [
-        `${person.name}也在${place}，${detail}`,
-        `${place}里还有${person.name}，${detail}`,
-      ])));
-    }
+    paragraphs.push(remember(ctx, choose(ctx, beat.seed, `${person.id}:at`, detail ? [
+      `${person.name}也在${place}，${detail}`,
+      `${place}里还有${person.name}，${detail}`,
+    ] : [
+      `${person.name}也在${place}`,
+      `${place}里还有${person.name}`,
+    ])));
   }
   for (const fact of facts) {
     if (fact.kind === 'item_present') {

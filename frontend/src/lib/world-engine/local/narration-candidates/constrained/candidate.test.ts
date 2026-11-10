@@ -452,6 +452,50 @@ describe('injected composer (lane 07 contract)', () => {
   });
 });
 
+describe('facts-only packets (09 driver shape)', () => {
+  it('accepts a presence sentence next to the viewpoint at-fact', async () => {
+    const packet = {
+      anchor: { worldId: 'world_test', pointId: 'p_facts', version: 1, stateDigest: 'digest', previousPointId: 'root' },
+      facts: [
+        { id: 'f:at:lu', actorId: 'lu', name: '路明非', kind: 'at' as const, locationId: 'room', location: '值班室' },
+        { id: 'f:at:nono', actorId: 'nono', name: '诺诺', kind: 'at' as const, locationId: 'room', location: '值班室' },
+        { id: 'f:task', actorId: 'lu', name: '路明非', kind: 'task_achieved' as const, taskId: 't1', goal: '把登记簿翻到最后一页' },
+      ],
+    };
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '',
+      priorText: null,
+      policy: { mode: 'program' },
+    });
+    if (!result.accepted) console.log(JSON.stringify({ text: result.text, issues: result.issues }, null, 2));
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('诺诺');
+    expect(result.text).toContain('把登记簿翻到最后一页');
+  });
+});
+
+describe('settled descriptions', () => {
+  it('keeps a semicolon rule list whole instead of cutting it at the first rule', async () => {
+    const { packet } = await fixture();
+    const broken = structuredClone(packet);
+    const rules = '墙上贴着值班规定：来人先登记；离场要关灯；钥匙放回抽屉；夜间不得留宿。';
+    broken.state!.initial.locations.yard.initialAppearance = rules;
+    broken.beforeState!.initial.locations.yard.initialAppearance = rules;
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: broken,
+      inputText: '',
+      priorText: null,
+      policy: { mode: 'program', viewpointId: 'lu' },
+    });
+    if (!result.accepted) console.log(JSON.stringify({ text: result.text, issues: result.issues }, null, 2));
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('离场要关灯');
+  });
+});
+
 describe('settled result line', () => {
   it('narrates the settlement result wording without inventing events', async () => {
     const { packet } = await fixture();
