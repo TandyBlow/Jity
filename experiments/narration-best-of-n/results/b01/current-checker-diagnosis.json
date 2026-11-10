@@ -1,6 +1,6 @@
 {
   "kind": "lane12-n1-current-checker-diagnosis",
-  "createdAt": "2026-11-10T15:27:42.119Z",
+  "createdAt": "2026-11-10T15:29:23.275Z",
   "diagnosticOnly": true,
   "doesNotReplacePinnedReport": true,
   "modelRerun": false,
@@ -11,7 +11,7 @@
     "pinnedReport": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\experiments\\narration-best-of-n\\results\\b01\\report.json",
     "pinnedCheckerCombinedSha256": "92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f",
     "currentChecker": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\frontend\\src\\lib\\world-engine\\local\\narration-quality",
-    "currentCheckerCombinedSha256": "8db1def676f311bdf2cabcb295c1efe23f1be9b75f6724a72580c039980de28c",
+    "currentCheckerCombinedSha256": "a7b12f8f87461c1c77c26d031bc64ddabd4c4b84954bfbd701f58bad00fe9eac",
     "currentCheckerFiles": {
       "anchors.test.ts": "79d97dad2248dd69d71dc6f844d82b2d025db3ba2c2775e3daa450c47184352b",
       "batch.test.ts": "4f07082ccba206ac66026a167313aff59c3f394c0a3fccc9f442fd9b89694990",
@@ -23,7 +23,7 @@
       "index.ts": "26e603f3e42cb4285bed3f45257679d5c4d8e30d373bfb8ea32fcc326af5c971",
       "lexicon.ts": "f08530591c48d77e0552684fc938de710cf2622f812f6b800ebcf4135faa9cd2",
       "review.test.ts": "60e8bbebc4d6aa5384fdb1a7456f3cec2295aa1e9a165c5ed9bafc92a13e1151",
-      "review.ts": "e211f4142cb07d7dc65411a32c963f44442269691f0d4918949e40619a8b9b57",
+      "review.ts": "f27b27e3a25fc70ce9a5f359f22372a8ea5fd1c77f7273fc18cd3bc703a7a45e",
       "scene.ts": "b61d5514c093517f978ed101668719e06c6c8a8163718e034ae38063907bc3f0",
       "sequence-batch.test.ts": "f2181ccd31a157df2e34b39602e58181ba705b7fd4b53ec219c7b5fdab0f6cdd",
       "sequence.test.ts": "e8b6220e042d266c0e2486adfb043a355d8b57d2861c60400c98959df4167828",

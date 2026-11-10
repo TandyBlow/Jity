@@ -1,7 +1,7 @@
 # b01 six frozen texts: 01 current-checker diagnosis
 
 - pinned checker: `92eccd94daa58ed9d075ce91d9be93ec96fc260fb9866b767b07700567219d5f`
-- current checker: `8db1def676f311bdf2cabcb295c1efe23f1be9b75f6724a72580c039980de28c`
+- current checker: `a7b12f8f87461c1c77c26d031bc64ddabd4c4b84954bfbd701f58bad00fe9eac`
 - model rerun: no; N expanded: no; diagnostic only, not a quality pass
 
 | seed | pinned | current | new kinds | gone kinds | coverage |
