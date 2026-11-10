@@ -496,9 +496,15 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     // A shorter name inside a licensed longer name is not a separate mention
     // (钟楼 vs 钟楼西门); prefer avoiding a false rejection.
     if ([...licensed].some((entry) => entry.includes(name))) continue;
-    if (text.includes(name)) {
-      issues.push(hard('unlicensed_entity', attempt, `${name} is in no committed fact or licensed context`));
+    if (!text.includes(name)) continue;
+    // A distant landmark is background, not an event: the page's own roster
+    // carries places the scene input does not spell out, and failing a scene
+    // for naming 钟楼 while standing in the alley is a false rejection.
+    if ((policy.locations ?? []).includes(name)) {
+      issues.push(soft('unverified_sentence', attempt, `distant place ${name} named in passing`, undefined));
+      continue;
     }
+    issues.push(hard('unlicensed_entity', attempt, `${name} is in no committed fact or licensed context`));
   }
 
   for (const marker of input.promptEchoMarkers ?? []) {
