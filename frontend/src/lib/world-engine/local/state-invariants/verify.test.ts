@@ -307,8 +307,7 @@ describe('visible acceptance summary', () => {
     expect(verifyTaskDecisionEvidence({ ...full, taskRows: 12 }).errors.map((item) => item.code)).toContain('task_coverage');
     expect(verifyTaskDecisionEvidence({ ...full, excluded: ['onstage_only'] }).errors.map((item) => item.code)).toContain('task_coverage');
     const rejected = verifyTaskDecisionEvidence({ ...full, rejectedTaskIds: [{ characterId: 'doctor', taskId: 'task_doctor_flag' }] });
-    expect(rejected.errors).toEqual([]);
-    expect(rejected.warnings.map((item) => item.code)).toContain('task_unknown');
+    expect(rejected.errors.map((item) => item.code)).toContain('task_coverage');
   });
 
   it('does not call a retained failed input a committed history', async () => {

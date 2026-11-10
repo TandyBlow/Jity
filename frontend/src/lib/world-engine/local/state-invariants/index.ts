@@ -878,9 +878,9 @@ export interface TaskDecisionEvidenceReport {
  * This does not invent state or re-run the model. It checks that a real
  * settlement call reported every required character and every 73-row task
  * scope, that no row was excluded, and that the unchanged + achieved counts
- * account for the scope. Unknown/rejected task ids are warnings: 04 may keep
- * valid decisions while rejecting a hallucinated id, but the rejection must
- * remain visible rather than being silently treated as pending. */
+ * account for the scope. Unknown/rejected task ids are errors: 04 may keep
+ * valid sibling decisions while rejecting a hallucinated id, but the rejected
+ * rows were not judged and full coverage cannot be claimed. */
 export function verifyTaskDecisionEvidence(
   value: unknown,
   expected: { characters: number; tasks: number } = { characters: 14, tasks: 73 },
@@ -934,7 +934,9 @@ export function verifyTaskDecisionEvidence(
     report.warnings.push(issue('task_coverage', 'assertedUnchanged is missing; cannot prove unchanged rows'));
   }
   if (report.rejected.length) {
-    report.warnings.push(issue('task_unknown', `rejected ${report.rejected.length} task ids; valid decisions were kept but rejected ids cannot count as decided`));
+    // A rejected id means that row was not actually judged. Dropping it may
+    // keep valid sibling decisions, but it cannot be called full coverage.
+    report.errors.push(issue('task_coverage', `rejected ${report.rejected.length} task ids; those rows are not decided`));
   }
   report.ok = report.errors.length === 0;
   return report;
