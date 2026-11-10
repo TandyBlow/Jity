@@ -50,7 +50,7 @@ npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
 npx vitest run src/lib/world-engine/local --maxWorkers=1
 → 6 files passed, 1 skipped; 113 tests passed, 1 skipped
 npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
-→ 1 file, 11 bridge tests passed + 1 expected fail (requires the sibling 06 worktree)
+→ 1 file, 14 bridge tests passed (requires the sibling 06 worktree)
 
 npx tsc --noEmit -p tsconfig.json
 npx tsc --noEmit -p tsconfig.world-contract.json
@@ -202,10 +202,9 @@ chain still passes.
 after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
 `restoredSources` in the public getter; the 05 bridge restores the live
 snapshot; 06 415ccbe0 keeps the player entry source `model` and labels the later
-auto point `draft` per point (13 bridge tests pass + 1 expected fail). `snapshotForPersist`
-still reads only the live ref; 05 sent a one-line merge patch
-`patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
-after restore can otherwise drop older labels.
+auto point `draft` per point. 06 d1019f09 merges `restoredSources` into
+`snapshotForPersist`; the bridge next-write test passes. A fresh product run
+still needs to confirm the served page path.
 
 ## 95dc: state/provenance pass; program player text still fails
 
@@ -223,8 +222,9 @@ model auto point is kept per point and the note says the turn contains program
 prose, so the player still sees it.
 
 `snapshotForPersist` still reads only the live source ref; 05 patch
-`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending; the
-bridge expected-fail test pins the next-write source loss.
+`06-session-persist-restored-sources.patch` (`3fbe8f77...`) is now merged in
+06 d1019f09; the next-write bridge test passes. A fresh product run still
+needs to confirm the served page path.
 
 ## 415c: both points program; state/recovery pass
 
