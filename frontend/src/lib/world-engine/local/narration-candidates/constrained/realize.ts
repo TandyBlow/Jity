@@ -120,7 +120,17 @@ export function createRealizerContext(
   priorText: string | null,
   sanityStyle: 'direction' | 'number',
 ): RealizerContext {
-  return { scene, priorText, used: new Set(), sanityStyle, avoidOpenings: [] };
+  // The first few characters of every sentence the player read last turn are
+  // openings this turn should not repeat. Exact-prefix avoidance is enough to
+  // break the "same paragraph again" pattern without forcing awkward wording:
+  // `choose` falls back to the least similar variant if everything collides.
+  const openings = (priorText ?? '')
+    .split(new RegExp('[' + [0x3002, 0xff01, 0xff1f, 0x0a].map((code) => String.fromCharCode(code)).join('') + ']+', 'u'))
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => [...line].slice(0, 6).join(''))
+    .filter((line) => [...line].length >= 4);
+  return { scene, priorText, used: new Set(), sanityStyle, avoidOpenings: [...new Set(openings)].slice(-24) };
 }
 
 /** Register already-final text (a retry or another writer's accepted beat) so
@@ -312,16 +322,25 @@ function eventBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   }
   for (const fact of facts) {
     if (fact.kind === 'task_achieved') {
-      push(choose(ctx, beat.seed, `${fact.id}`, [
-        `「${fact.goal}」这件事，到这里有了结果`,
+      // The settled goal text and a completion verb must both be present: the
+      // product's alignment gate binds a task fact by exactly that pair, so a
+      // paraphrase that drops the goal would erase the fact. The frames below
+      // vary the sentence around those two required pieces.
+      // The alignment gate starts its scope at the clause naming the actor, so
+      // the goal has to follow the name; a sentence that opens with the quoted
+      // goal and names the actor afterwards does not bind the task fact.
+      const variants = [
         `${fact.name}完成了「${fact.goal}」`,
-        `${fact.name}把「${fact.goal}」这件事做完了`,
-      ]));
+        `${fact.name}这边，「${fact.goal}」这件事办完了`,
+      ];
+      if (!/^[把将]/u.test(fact.goal)) variants.push(`${fact.name}把「${fact.goal}」办完了`);
+      push(choose(ctx, beat.seed, `${fact.id}`, variants));
     }
     if (fact.kind === 'subtask_added') {
       push(choose(ctx, beat.seed, `${fact.id}`, [
-        `${fact.name}给自己记下一条：${fact.goal}`,
-        `${fact.name}还有下一件事要做：${fact.goal}`,
+        `${fact.name}接下来还有一件事：${fact.goal}`,
+        `${fact.name}还得${fact.goal}`,
+        `${fact.name}把下一件事记在心里：${fact.goal}`,
       ]));
     }
   }
@@ -336,9 +355,12 @@ function eventBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
         // Name first and no comma before the frozen text: the legacy grader
         // binds a personality change within the name clause plus two clauses,
         // so the full text has to start in the name clause.
+        // The settled personality text is already a sentence about the
+        // character; prefixing the name reads as narration, while
+        // "X的性子变了一点：" reads as a change report.
         push(choose(ctx, beat.seed, `${fact.id}`, [
-          `${fact.name}的性子变了一点：${fact.text}`,
-          `${fact.name}身上多了一点变化：${fact.text}`,
+          `${fact.name}${fact.text}`,
+          `${fact.text.startsWith(fact.name) ? fact.text : `${fact.name}这边，${fact.text}`}`,
         ]));
       }
     }

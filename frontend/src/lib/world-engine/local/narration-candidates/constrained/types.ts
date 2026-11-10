@@ -189,7 +189,7 @@ export type CandidateIssueKind =
   | 'fact_time_wrong' | 'task_without_fact' | 'movement_without_fact'
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
   | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
-  | 'repeated_sentence' | 'echo_prior' | 'engine_error' | 'cancelled'
+  | 'repeated_sentence' | 'echo_prior' | 'opening_repeat' | 'engine_error' | 'cancelled'
   | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing';
 
 export interface CandidateIssue {
@@ -210,6 +210,9 @@ export interface BeatEvidence {
   attempts: number;
   ms: number;
   issues: CandidateIssue[];
+  /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
+   * turn shows what the model actually produced, not only the accepted text. */
+  rejected?: { attempt: number; text: string; issues: CandidateIssue[] }[];
 }
 
 export interface CandidateTimings {
@@ -330,6 +333,15 @@ export interface CandidateVerification {
   repetition: number | null;
 }
 
+/** One assembled paragraph and who wrote it. Program paragraphs are an
+ * explicit downgrade, not model prose; the page may label them per segment. */
+export interface BeatSegment {
+  beatId: string;
+  kind: BeatDirective['kind'];
+  source: BeatEvidence['source'];
+  text: string;
+}
+
 export interface CandidateResult {
   text: string;
   accepted: boolean;
@@ -344,6 +356,14 @@ export interface CandidateResult {
   plan: BeatPlan | null;
   /** Which composer wrote each beat, in order. */
   composers: string[];
+  /** Assembled paragraphs with their writer, so a mixed turn is never shown as
+   * wholly model-written. */
+  segments: BeatSegment[];
+  /** Beat provenance counts for one-line labelling. */
+  beatCounts: { model: number; program: number; external: number; fallback: number };
+  /** True when both a model/external writer and a program fallback wrote part of
+   * this text. `accepted` alone never means the whole text is model prose. */
+  mixed: boolean;
   /** Base fact packet for the legacy alignment gate (position/task/personality
    * facts only; sanity uses this route's direction rule). */
   basePacket: CommittedNarration | null;

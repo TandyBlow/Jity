@@ -10,6 +10,7 @@ import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
+import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -60,15 +61,27 @@ function viewOf(state: WorldState): ViewState {
   };
 }
 
-async function loadEngine(url: string, contextSize = 8192): Promise<WllamaInferenceEngine> {
+async function loadEngine(
+  url: string,
+  contextSize = 8192,
+  /** Hand the constructed engine out before the load starts, so the stop
+   * button can reach a cold load that has no `current` engine yet. */
+  onEngine?: (engine: WllamaInferenceEngine) => void,
+): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
   // must not leave the first player turn waiting forever.
   const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
+  onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
+    // A user cancel or dispose is not a GPU failure: retrying on CPU would
+    // start a second load after the player already stopped.
+    if (gpuError instanceof DOMException && gpuError.name === 'AbortError') throw gpuError;
+    if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
     const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
+    onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
   }
@@ -85,16 +98,21 @@ interface ProductEnginePort extends InferenceEngine {
 
 function resilientEngine(url: string, contextSize: number, label: string): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
+  /** The engine a cold load is currently using. It is not `current` until the
+   * load succeeds, but the stop button must still be able to cancel it. */
+  let loadingEngine: WllamaInferenceEngine | null = null;
   let loading: Promise<WllamaInferenceEngine> | null = null;
   const ensure = async (): Promise<WllamaInferenceEngine> => {
     if (current) return current;
     if (!loading) {
-      loading = loadEngine(url, contextSize).then((engine) => {
+      loading = loadEngine(url, contextSize, (engine) => { loadingEngine = engine; }).then((engine) => {
         current = engine;
+        loadingEngine = null;
         loading = null;
         return engine;
       }, (error) => {
         loading = null;
+        loadingEngine = null;
         throw error;
       });
     }
@@ -107,11 +125,16 @@ function resilientEngine(url: string, contextSize: number, label: string): Produ
   return {
     get info() { return { backend: current?.info.backend ?? 'wllama', modelId: current?.info.modelId ?? null }; },
     load: async () => { await ensure(); },
-    dispose: async () => { if (current) await drop(current); },
+    dispose: async () => {
+      const inFlight = loadingEngine;
+      loadingEngine = null;
+      if (current) await drop(current);
+      if (inFlight && inFlight !== current) { try { await inFlight.dispose(); } catch { /* already gone */ } }
+    },
     // The stop button reaches the real runtime through this port, so a cold
     // load can be cancelled before the first turn ever starts.
-    cancelActive: () => current?.cancelActive() ?? 0,
-    runtime: () => current?.runtime ?? null,
+    cancelActive: () => (current ?? loadingEngine)?.cancelActive() ?? 0,
+    runtime: () => (current ?? loadingEngine)?.runtime ?? null,
     complete: async (prompt, options) => {
       for (let attempt = 0; attempt < 2; attempt += 1) {
         const engine = await ensure();
@@ -162,6 +185,10 @@ export default function WorldLocalPage() {
   const narrationRef = useRef<ProductEnginePort | null>(null);
   const modelRef = useRef<LocalGameModel | null>(null);
   const storeRef = useRef<LocalProgressStore | null>(null);
+  /** Optional remote copy of the same opaque snapshot. Play never waits for it;
+   * the IndexedDB record is always written first. */
+  const syncRef = useRef<ProductSync<LocalGameSnapshot> | null>(null);
+  const [syncLabel, setSyncLabel] = useState<string | null>(null);
   const [durable, setDurable] = useState<boolean | null>(null);
 
   /** Fallback only: when the platform has no IndexedDB the session runs in
@@ -169,6 +196,19 @@ export default function WorldLocalPage() {
    * not a guaranteed loss. Durable sessions save through the store instead. */
   const save = useCallback((snapshot: LocalGameSnapshot) => {
     if (snapshot.transport.work) return; // never persist a half-settled point
+    const sync = syncRef.current;
+    if (sync) {
+      // Local first, remote best-effort; a network failure only queues.
+      void sync.save(snapshot).then((result) => {
+        const outcome = result.outcome;
+        setSyncLabel(outcome?.status === 'synced' ? '已同步'
+          : outcome?.status === 'queued' ? '已存本地，等待联网同步'
+          : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
+          : outcome?.status === 'local-only' ? '只存本地'
+          : result.note ?? null);
+      }).catch((e) => { console.warn('[world-local] sync save failed', e); });
+      return;
+    }
     if (storeRef.current?.durable) return;
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot)); } catch (e) { console.warn('[world-local] save failed', e); }
   }, []);
@@ -265,6 +305,14 @@ export default function WorldLocalPage() {
         // single-slot localStorage snapshot is migrated non-destructively.
         const store = await openLocalProgressStore();
         storeRef.current = store;
+        const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
+        if (store.durable) {
+          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase });
+          syncRef.current = sync;
+          void sync.flush().then((outcome) => {
+            if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
+          }).catch(() => undefined);
+        }
         setDurable(store.durable);
         if (!store.durable) {
           setWarning('浏览器没有提供 IndexedDB：本局进度只保存在内存里，刷新会丢失。');
