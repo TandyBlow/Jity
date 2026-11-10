@@ -360,6 +360,27 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // to be shorter when nothing big happened, as long as it still says what
   // changed. Below two thirds of the contract the text stops reading as prose,
   // and that stays hard; between there and the contract it is a soft note.
+  // A passage that says «他手中的护目镜…» and later «手中没有拿任何东西» is
+  // contradicting itself; the page's accepted 185-character turn did exactly
+  // that. This is not a fact check against the input — it needs no input at all.
+  {
+    const sentences = text.split(/(?<=[。！？!?])|\n+/u).map((sentence) => sentence.trim()).filter(Boolean);
+    const HAND = /(手中|手里|手上)/u;
+    const EMPTY = /(没有|没|空着|空空|什么也没有|什么也没拿)/u;
+    let held: string | null = null;
+    for (const sentence of sentences) {
+      if (!HAND.test(sentence)) continue;
+      if (EMPTY.test(sentence)) {
+        if (held) {
+          issues.push(hard('self_contradiction', attempt,
+            `text first says ${held} is in the hand, then says the hand is empty`, sentence));
+        }
+        continue;
+      }
+      held = sentence.slice(0, 40);
+    }
+  }
+
   const minChars = policy.minChars ?? 60;
   if (chars > 0 && chars < Math.round(minChars * 0.67)) {
     issues.push(hard('too_short', attempt, `${chars} < ${Math.round(minChars * 0.67)} characters`));

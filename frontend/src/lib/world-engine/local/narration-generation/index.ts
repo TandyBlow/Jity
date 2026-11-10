@@ -726,6 +726,30 @@ function staticNamesOf(policy: NarrationPolicy | undefined): string[] {
   return [...new Set(names)];
 }
 
+/** The sentence that denies what an earlier sentence in the same passage said
+ * about the subject's hands. */
+function contradictionTarget(text: string): { sentence: string; lines: string[] } | null {
+  const sentences = text.split(/(?<=[。！？!?])/u).map((entry) => entry.trim()).filter(Boolean);
+  const HAND = /(手中|手里|手上)/u;
+  const EMPTY = /(没有|没|空着|空空|什么也没有|什么也没拿)/u;
+  let held: string | null = null;
+  for (const sentence of sentences) {
+    if (!HAND.test(sentence)) continue;
+    if (EMPTY.test(sentence) && held) {
+      return { sentence, lines: [
+        '这一段前面写过手里有东西：',
+        `前句：${held}`,
+        `这句又说：${sentence}`,
+        '',
+        '只重写后一句：去掉「手里什么都没有」的意思，保留这句里其它已经发生的事，不要新增动作、人物或物品。',
+        '只输出重写后的这一句，不要解释。',
+      ] };
+    }
+    if (!EMPTY.test(sentence)) held = sentence;
+  }
+  return null;
+}
+
 async function repairSentences(args: {
   engine: InferenceEngine;
   text: string;
@@ -741,8 +765,9 @@ async function repairSentences(args: {
     const senses = senseViolations(text, args.inputText, { movedNames, staticNames: staticNamesOf(args.policy) });
     const acts = senses.length ? [] : actionViolations(text, args.inputText);
     const echo = senses.length || acts.length ? null : repeatTarget(text);
+    const contradiction = senses.length || acts.length || echo ? null : contradictionTarget(text);
     if (!senses.length && !acts.length && !echo) return text;
-    const target = echo ?? (senses.length
+    const target = contradiction ?? echo ?? (senses.length
       ? { sentence: senses[0].sentence, lines: [
         '下面这句里写了没有出现过的声音或气味：',
         `原句：${senses[0].sentence}`,
@@ -926,7 +951,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     // asked to say the second occurrence differently instead of dropping it.
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
       || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
-      || issue.kind === 'loop_repeated_clause');
+      || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,

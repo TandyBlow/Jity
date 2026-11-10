@@ -36,7 +36,7 @@ export type NarrationIssueKind =
   | 'unlicensed_sense'
   /** A posture or a hand on a thing the input never moved (02's narrow
    * generation check, same status as unlicensed_sense). */
-  | 'unlicensed_action'
+  | 'unlicensed_action' | 'self_contradiction'
   /** The model copied the instructions instead of writing prose. */
   | 'prompt_echo'
   /** Sentence that binds no fact and contradicts nothing: soft evidence only. */

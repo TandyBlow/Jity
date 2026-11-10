@@ -1788,3 +1788,16 @@ describe('a static prop does not speak', () => {
     expect(found).toEqual([]);
   });
 });
+
+describe('a passage that empties hands it filled', () => {
+  test('«he held the goggles» then «his hands were empty» is a contradiction', async () => {
+    const text = '路明非把护目镜拿在手中，镜片上映出巷口的光。一分钟过去，他依旧站在原地，手中没有拿任何东西。';
+    const engine = new ScriptedEngine([{ kind: 'text', text }, { kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(povAt), inputText: '【正文】', priorText: null,
+      policy: { ...basePolicy, writingContract: false, minChars: 10 },
+    });
+    const issues = result.rawAttempts.flatMap((attempt) => attempt.issues);
+    expect(issues.some((issue) => issue.kind === 'self_contradiction')).toBe(true);
+  });
+});
