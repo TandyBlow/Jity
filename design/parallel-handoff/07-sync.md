@@ -552,6 +552,25 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
 # 以及离线链上传与分叉保留两副本。
 ```
 
+### 给 06：页面补丁（2026-11-10，已验证，未写 06 的树）
+
+`design/parallel-handoff/07-page-restore-for-06.patch` 在 06 `81d5507a` 上、
+叠在同步补丁和 checkpoint 补丁之后应用：
+
+1. 本机没有存档时才向进度服务要远端 head；`restore()` 返回
+   `unavailable`（heads 读不到/断网）时显示重试提示，**不建新世界**；
+2. 远端有存档时用 `LocalGameSession.restore(remote.snapshot, model, { storage: store })`
+   打开，本地记录由会话自己的写入者保存；
+3. `push()` 报冲突时保留冲突对象，页面显示“保留这一台 / 改用另一台”两个按钮；
+   “改用另一台”会关掉当前会话、把选中的快照写进本地记录并刷新，
+   “保留这一台”调用 `choose('keep-local-fork')` 把本机副本设为同步主线。
+   两份副本在服务端都保留，页面不自动挑。
+
+验证：干净克隆 `81d5507a` 上三个补丁一起 `git apply` 干净，`tsc` 0 错误，
+本地引擎测试 489 passed | 1 skipped，`scripts/parallel-sync/page-wiring-audit.ts`
+对打补丁后的页面返回 **READY**（同步调用、开局恢复、显式选择三项 required 全过）。
+这是提给 06 的补丁，没有写入 06 工作树；真实页面还要 09 在 06 合入后跑。
+
 ## 限制
 
 - 未修改页面、`session.ts`、`app/main.py` 或共享数据库；页面接入需要按上面
