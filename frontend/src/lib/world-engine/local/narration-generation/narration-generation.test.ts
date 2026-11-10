@@ -1574,6 +1574,7 @@ describe('a quiet point asks only for licensed content', () => {
     expect(open.directive).not.toContain('写三到四句眼前的场景');
     expect(open.directive).not.toContain('小动作');
     expect(open.directive).toContain('不要写光、声音、气味');
+    expect(open.directive).toContain('一百字');
   });
 });
 

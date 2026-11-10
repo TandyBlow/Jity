@@ -142,7 +142,7 @@ export function planBeats(input: {
       // point has nothing settled, so the only licensed content is what stands
       // there: the place, who is present, and the state of the named objects.
       directive: quiet
-        ? `${parts.join('。')}。只写眼前静止的画面：${scene.location ? `这个地方现在的样子、` : ''}在场的人此刻保持的姿势、手边物品现在的状态。写到三句就停；不要写光、声音、气味，不要写任何新动作、对话或回忆。`
+        ? `${parts.join('。')}。只写眼前静止的画面：${scene.location ? `这个地方现在的样子、` : ''}在场的人此刻保持的姿势、手边物品现在的状态。写四到五句，合计一百字上下；不要写光、声音、气味，不要写任何新动作、对话或回忆。`
         : `${parts.join('。')}。写一到两句眼前已经存在的画面：这里现在的样子、手边物品的状态。不要写任何人走动、开门、递东西或说话，也不要写新出现的声音和气味。`,
       anchors: [],
       licensed: [
