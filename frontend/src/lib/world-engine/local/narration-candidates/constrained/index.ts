@@ -21,7 +21,7 @@ import type {
   ComposeBeatResult, GenerateCandidateInput, SceneSkeleton,
 } from './types';
 
-export const STRATEGY_VERSION = 'constrained-candidate-v1.1';
+export const STRATEGY_VERSION = 'constrained-candidate-v1.2';
 
 const now = (): number => performance.now();
 
@@ -43,6 +43,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   try {
     const projected = project(input, {
       viewpointId: policy.viewpointId,
+      scene: policy.scene,
       knowledge: policy.knowledge,
       resultsText: policy.resultsText,
       priorText,

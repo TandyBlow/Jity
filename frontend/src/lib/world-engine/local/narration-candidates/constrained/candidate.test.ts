@@ -476,6 +476,38 @@ describe('facts-only packets (09 driver shape)', () => {
   });
 });
 
+describe('scene hints on a facts-only packet (06 adapter shape)', () => {
+  it('uses the settled place note and object notes', async () => {
+    const packet = {
+      anchor: { worldId: 'world_test', pointId: 'p_hints', version: 2, stateDigest: 'digest', previousPointId: 'p1' },
+      facts: [
+        { id: 'h:at:lu', actorId: 'lu', name: '路明非', kind: 'at' as const, locationId: 'shed', location: '器材棚' },
+        { id: 'h:at:fingel', actorId: 'fingel', name: '芬格尔', kind: 'at' as const, locationId: 'shed', location: '器材棚' },
+      ],
+    };
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: packet,
+      inputText: '',
+      priorText: null,
+      policy: {
+        mode: 'program',
+        scene: {
+          placeNote: '器材棚：推拉门可回服务巷，领用台在门内右侧。',
+          presentNotes: { 芬格尔: '头发乱着，手指在机身上敲了两下。' },
+          objectNotes: { 折叠担架: '帆布与锁脚完好，展开后需两名搬运者。' },
+        },
+      },
+    });
+    if (!result.accepted) console.log(JSON.stringify({ text: result.text, issues: result.issues, plan: result.plan?.beats.map((b) => b.id), objects: result.skeleton?.objects, notes: result.skeleton?.place, beats: result.rawAttempts.map((b) => ({ id: b.beatId, text: b.text })) }, null, 2));
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('推拉门可回服务巷');
+    expect(result.text).toContain('头发乱着');
+    expect(result.text).toContain('帆布与锁脚完好');
+    expect(result.text).not.toMatch(/器材棚：/u);
+  });
+});
+
 describe('settled descriptions', () => {
   it('keeps a semicolon rule list whole instead of cutting it at the first rule', async () => {
     const { packet } = await fixture();
