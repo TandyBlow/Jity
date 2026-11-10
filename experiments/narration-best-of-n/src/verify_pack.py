@@ -61,7 +61,9 @@ def main() -> int:
 
     config_path = os.path.join(EXP, "configs", args.batch + ".json")
     config = load_json(config_path)
-    pack_root = config["sharedPack"]["root"]
+    # On HPC the shared package lives wherever 10 uploaded it; the hash pins
+    # still decide acceptance, so an env override cannot relax verification.
+    pack_root = os.environ.get("NARRATION_DEV_PACK_ROOT") or config["sharedPack"]["root"]
     manifest_path = os.path.join(pack_root, "manifest.json")
     cases_path = os.path.join(pack_root, "cases.jsonl")
     rubric_path = os.path.join(pack_root, "RUBRIC.md")
