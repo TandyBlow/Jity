@@ -135,6 +135,9 @@ export class LocalGameSession {
   /** Successful transport writes, used to notice a controller spin. */
   private writeCount = 0;
 
+  /** Provenance loaded from the saved snapshot; merged with the live source ref. */
+  private restoredSources: Record<string, NarrationSourceNote> = {};
+
   private constructor(transport: LocalWorldTransport, model: WorldModelPort, initial: InitialTemplate | null,
     commands: string[], options: ResolvedOptions, state?: ResumeServedState, memory?: ControllerMemory) {
     this.transport = transport;
@@ -184,6 +187,7 @@ export class LocalGameSession {
 
   static async restore(snapshot: LocalGameSnapshot, model: WorldModelPort, options: LocalGameOptions = {},
     progress?: { revision?: number; metadata?: ProgressMetadata | null }): Promise<LocalGameSession> {
+    const restoredSources = snapshot?.narrationSources ? { ...snapshot.narrationSources } : {};
     const record = snapshot?.transport;
     if (!record || typeof record.worldId !== 'string' || !record.state || !record.pointStates || !record.control) {
       throw new Error('local_restore_invalid_snapshot');
@@ -231,6 +235,9 @@ export class LocalGameSession {
       }
       session = new LocalGameSession(transport, model, null, [...(snapshot.commands ?? [])],
         { ...options, worldId, sessionId }, context, memory);
+      // Provenance saved with the previous page must survive a reload: the
+      // in-memory source ref is empty on a fresh page.
+      session.restoredSources = restoredSources;
       // The resume's own allocation is a write like any other: checkpoint it so
       // the rebuilt identity survives another refresh.
       session.revision = stored?.revision ?? 0;
@@ -281,8 +288,8 @@ export class LocalGameSession {
     // Provenance travels with every snapshot (public and persisted), otherwise
     // __worldSnapshot/restore lose the program/draft labels the transport does
     // not store.
-    const sources = this.options.narrationSourceOf?.();
-    if (sources && Object.keys(sources).length) snapshot.narrationSources = { ...sources };
+    const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
+    if (Object.keys(sources).length) snapshot.narrationSources = sources;
     return snapshot;
   }
 

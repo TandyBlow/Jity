@@ -234,6 +234,18 @@ describe('LocalGameSession durability', () => {
     expect(record.work).toBeNull();
     expect(record.narrations[record.headPointId].status).toBe('ready');
 
+    // Provenance saved with the snapshot must survive the reload: a fresh page
+    // has an empty in-memory source ref, so without this the restored program
+    // text would look like ordinary model prose.
+    const withSources = {
+      ...saved!.snapshot,
+      narrationSources: { [saved!.snapshot.transport.headPointId]: { source: 'program' as const } },
+    };
+    const sourcedSession = await LocalGameSession.restore(withSources, scriptedModel([]), { leaseHeartbeat: false });
+    expect(sourcedSession.snapshot.narrationSources).toEqual({
+      [saved!.snapshot.transport.headPointId]: { source: 'program' },
+    });
+
     // A raw snapshot without the scheduler hint is the legacy shape: the
     // open point is still rebuilt from the record and finishes identically.
     const legacy = { ...saved!.snapshot, checkpoint: undefined };
