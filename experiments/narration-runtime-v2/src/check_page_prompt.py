@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Check that the Python page-prompt port still equals the page's own output.
 
-`golden/page-prompt/ts-scene.txt` and `ts-repair.txt` were produced by calling
-the real `instructNarrationInput` from worktrees/06-recovery with vitest on
-2026-11-10 (draft in `draft.txt`, viewpoint 周叙白). If 06 changes prompt.ts,
-this check fails and the training data must be regenerated — the model is only
-valid for the prompt it was trained on.
+`golden/page-prompt/ts-scene.txt` and `ts-repair.txt` are captured from the real
+`instructNarrationInput` in worktrees/06-recovery by harness/page-prompts.mjs
+(capture.json records the source path, world and viewpoint). The viewpoint name
+only appears in the prompt head, so the capture uses the world's own protagonist.
+If 06 changes prompt.ts, re-capture and this check tells you whether the Python
+port still matches; the model is only valid for the prompt it was trained on.
 
     python src/check_page_prompt.py
 """
@@ -13,6 +14,7 @@ valid for the prompt it was trained on.
 from __future__ import annotations
 
 import io
+import json
 import os
 import sys
 
@@ -31,10 +33,13 @@ def read(name: str) -> str:
 
 def main() -> int:
     draft = read("draft.txt").strip("\n")
+    with io.open(os.path.join(GOLD, "capture.json"), encoding="utf-8") as handle:
+        capture = json.load(handle)
+    viewpoint = capture.get("viewpointName") or "周叙白"
     failures = []
     for mode, name in (("scene", "ts-scene.txt"), ("repair", "ts-repair.txt")):
         expected = read(name)
-        got = B.page_prompt("周叙白", draft, mode)
+        got = B.page_prompt(viewpoint, draft, mode)
         if expected.rstrip("\n") != got.rstrip("\n"):
             failures.append(mode)
             print(f"{mode}: MISMATCH")

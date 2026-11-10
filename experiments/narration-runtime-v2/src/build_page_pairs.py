@@ -42,7 +42,9 @@ UNIT = {"second": "秒", "minute": "分钟", "hour": "小时",
         "day": "天", "month": "个月", "year": "年"}
 
 # Verbatim from worktrees/06-recovery/frontend/src/lib/world-engine/local/prompt.ts
-REPAIR_HEAD = "你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 {name} 视角的小说正文，140 到 220 字。"
+# 06's 6a157cb5 unified both heads at 160-240 chars. Keep this in lockstep with
+# prompt.ts; check_page_prompt.py compares the rendered prompt byte for byte.
+REPAIR_HEAD = "你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 {name} 视角的小说正文，160 到 240 字。"
 SCENE_HEAD = "你是中文小说作者。请把下面这段已经结算的事实草稿改写成 {name} 视角的小说正文，160 到 240 字。"
 DRAFT_RULES = ("要求：只能使用草稿里明确写出的动作、位置、外观和结果；可以调整语序、连接词和短句节奏，"
                "但不得新增任何动作、对白、物品、人物、地点、数字、伤情、往事、心理活动或比喻；"

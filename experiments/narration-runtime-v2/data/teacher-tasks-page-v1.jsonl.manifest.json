@@ -1,0 +1,13 @@
+{
+ "out": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\data\\teacher-tasks-page-v1.jsonl",
+ "sha256": "474322d1da01dc7b516697cd6a475d16252f0672bbd8a8bf9898c0ba9e0cc490",
+ "rows": 221,
+ "split": "train",
+ "sources": {
+  "rows-v2": "a9b7ca0971c21b79b348c639a6819ffc2570767484fb28a6c3c99c6fa119fb55",
+  "short-01": "70f25a057b86bac6923f57257d3ac49f596e9458cfe5d604bbf0001380fe54f8"
+ },
+ "promptSource": "worktrees/06-recovery/frontend/src/lib/world-engine/local/prompt.ts",
+ "promptGolden": "golden/page-prompt/ts-repair.txt (check_page_prompt.py passes)",
+ "note": "teacher sees exactly the page's first-attempt prompt; no system turn, matching the page's single user message"
+}

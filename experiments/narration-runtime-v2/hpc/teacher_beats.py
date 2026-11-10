@@ -53,6 +53,9 @@ def main() -> int:
     parser.add_argument("--temperature", type=float, default=0.85)
     parser.add_argument("--top-p", type=float, default=0.92)
     parser.add_argument("--seed", type=int, default=20261110)
+    parser.add_argument("--no-system", action="store_true",
+                        help="send the prompt as a single user turn, exactly like the product page")
+    parser.add_argument("--system", default=SYSTEM)
     args = parser.parse_args()
 
     beats = read_jsonl(args.beats)
@@ -75,8 +78,8 @@ def main() -> int:
         chunk = beats[start:start + args.batch]
         prompts = []
         for beat in chunk:
-            messages = [{"role": "system", "content": SYSTEM},
-                        {"role": "user", "content": beat["prompt"]}]
+            messages = ([] if args.no_system else [{"role": "system", "content": args.system}])
+            messages.append({"role": "user", "content": beat["prompt"]})
             prompts.append(tokenizer.apply_chat_template(
                 messages, tokenize=False, add_generation_prompt=True))
         encoded = tokenizer(prompts, return_tensors="pt", padding=True,
