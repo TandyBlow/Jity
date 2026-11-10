@@ -21,7 +21,7 @@ import type {
   ComposeBeatResult, GenerateCandidateInput, SceneSkeleton,
 } from './types';
 
-export const STRATEGY_VERSION = 'constrained-candidate-v1.2';
+export const STRATEGY_VERSION = 'constrained-candidate-v1.3';
 
 const now = (): number => performance.now();
 

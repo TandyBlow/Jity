@@ -109,11 +109,11 @@ const result = await generateCandidate({
 - `node frontend/scripts/candidate-constrained/run-sweep.mjs`：自由一日世界 12 个连续点位（移动、任务完成、子任务、人格、精神、外貌、物品易手、房间变化、纯隐藏改动、纯时间、纯结算原话），12/12 `accepted`。
 - 把 07 的语言层注入同一个入口（`--composer <07 的 prose-composer/index.ts>`）：上述 6 个场景与 12 个点位同样全部 `accepted`，07 写的段直接通过本线的分段门禁；07 尚未实现 `kind:'result'` 段（结算原话）时，该段由本线程序写，不丢内容。
 - 连续回合（短场景起点→移动→时间流逝）：没有逐字重复的句子；`repetitionVsPrior` 在 40–50 字短回合为 0.56/0.34，在长回合为 0.10/0.18。
-- 真实浏览器程序模式（09 的 runner + 07 的 stub 装载器，Edge，无模型）：公开短场景 3 个点、自由一日 3 个点全部 `accepted`，页面内 5–17 ms / 首段 3–11 ms。
-- `npx vitest run src/lib/world-engine/local/narration-candidates/constrained --maxWorkers=1`：15 个测试，含真实状态内核点位、方向反写、没登记的人名、已知物品再发现、模型失败换程序写同一段、07 composer 注入。
+- 真实浏览器程序模式（09 的 runner + 07 的 stub 装载器，Edge，无模型）：公开短场景 3 个点、自由一日 3 个点全部 `accepted`，页面内 8–20 ms / 首段可读 8–20 ms。
+- `npx vitest run src/lib/world-engine/local/narration-candidates/constrained --maxWorkers=1`：26 个测试，含真实状态内核点位、方向反写、没登记的人名、已知物品再发现、模型失败换程序写同一段、07 composer 注入，以及 06 适配器的整条调用形状（事实包 + `policy.scene` + `resultsText`）。
 - `npx tsc -p tsconfig.world-contract.json --noEmit` 与 eslint 无错误。
 
-真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 5–17 ms、首段 3–11 ms，`strategyVersion=constrained-candidate-v1.1`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
+真实浏览器（09 的共用入口，程序模式，无模型）：公开短场景 3 个点 + 自由一日 3 个点（起点 / 移动 / 任务达成+人格+精神）6/6 `accepted`，页面内整回合 8–20 ms、首段可读 8–20 ms（模块内部首段 2–10 ms），`strategyVersion=constrained-candidate-v1.3`。用 07 的 stub 装载器占住引擎槽，证据里明确标注「program-only stub, no model」，不是模型运行，也不占共享推理租约。
 
 真实浏览器证据（09 的共用入口，05:43Z，qwen2.5-1.5b-instruct，CPU）：
 
@@ -125,11 +125,11 @@ const result = await generateCandidate({
 - 模型每回合最多 6 段顺序调用（`maxBeats` 默认在 model 模式取 6、程序模式取 10）；0.5B 模型在 CPU 上的实际首段/整段耗时必须等真实运行才能给数，不能拿本文的毫秒数代替。`turnTimeoutMs`（默认 180 s）用完后剩余段由程序写，不会把整回合拖过等待上限。
 - 程序版句子模板有限，同一段连续多回合会换说法但不是无限多样；`avoidOpenings` 只能避开重复开头。
 - 人格/外貌的「撤销」事实（`removed`）只用被替换的旧句说明，没有独立的否认证词。
-- 事实包模式（没有完整状态）没有地点细节和在场人物，正文明显更薄。
+- 事实包模式（没有完整状态）只能靠调用方给的 `policy.scene` 补地点/在场人物/物件细节；不给这些提示时正文会明显更薄。本线已按 06 的形状测过：给了 `placeNote`/`presentNotes`/`objectNotes` 就能写出完整场景，`resultsText` 也会变成必需的结算原话。
 - 本线程序版对同一房间的物件句仍可能连续以「中央庭院里，…」开头；连续回合的逐字重复已被门禁挡下，但句式变化有限，这正是 07 语言层要接的部分。
 
 ## 与 07 / 09 / 06 的接口
 
 - **07**：实现 `BeatComposer`（`(request, options) => {text, raw?, source:'model'|'external', ms?, attempts?}`），放进 `policy.composer` 即可；不需要 import 本线代码。规则：只写这一段、只用 `scene.licensed` 里的材料、必须表达 `beat.factIds`、流式必须是真的增量。
 - **09**：见 `results/quality/team-04-settlement.json` 的 `runEntry`，直接把它们已有的 `run-browser-candidates.mjs` 指向本模块、导出名 `generateCandidate`。
-- **06**：薄适配，把 `committed`（含 state/beforeState/timeAdvance/entityDeltas）、`inputText`、`priorText`、`policy` 传进来；页面可继续把 `basePacket` 交给 `alignNarration`，但 sanity 用 `policy.sanityStyle:'number'` 或从包中剔除。
+- **06**：薄适配，把 `committed`（含 state/beforeState/timeAdvance/entityDeltas，或只有 facts + `policy.scene`）、`inputText`、`priorText`、`policy` 传进来；页面可继续把 `basePacket` 交给 `alignNarration`，但 sanity 用 `policy.sanityStyle:'number'` 或从包中剔除。06 目前把可用提交钉在 `b18d36d7`，应改为本线 HEAD `4e0f5d26`：事实包 + 场景提示、切句授权、上一回合描写不复用、`resultsText` 成段，都是在其适配器形状上验证的。

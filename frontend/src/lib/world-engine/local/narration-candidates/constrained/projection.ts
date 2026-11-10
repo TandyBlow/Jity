@@ -636,6 +636,14 @@ export function projectFromFactsPacket(
   if (advance && advance.duration.amount > 0) {
     facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
   }
+  // The caller's settled answer (a question answered, a hand-off) must stay in
+  // the prose; it is quoted, not paraphrased.
+  if (options.resultsText && options.resultsText.trim()) {
+    facts.push({
+      id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
+      text: clampSentences(options.resultsText, 2, 130),
+    });
+  }
   // The viewpoint's own position is a licensed fact, not a change: without it
   // the opening cannot say where the player is.
   if (anchorFact?.kind === 'at') {
@@ -706,7 +714,10 @@ export function projectFromFactsPacket(
         ...present.map((person) => person.note),
         ...objects.map((object) => object.note),
       ].filter(Boolean)))],
-      quotes: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []))],
+      quotes: [...new Set([
+        ...packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []),
+        ...(options.resultsText ? [clampSentences(options.resultsText, 2, 130)] : []),
+      ])],
     },
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },
     priorText: options.priorText ?? null,
