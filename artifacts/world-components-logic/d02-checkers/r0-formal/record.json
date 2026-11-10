@@ -1,0 +1,2060 @@
+{
+  "schema": "jity-d02-r0-formal-dev-v1",
+  "status": "engineering_experimental",
+  "qualityClaim": false,
+  "humanReviewUsed": false,
+  "sealedUsed": false,
+  "baseModel": "/Users/davidz/.cache/jity-d-short-semantics-20261109/encoder/M01/446e1b4012b10946f479563005700c54c9db3f7c",
+  "encoderLayers": [
+    0,
+    1
+  ],
+  "encoderHashBefore": "0d2d067f368ac1db3f0468312947687c38009911bef8ff984c7853d4615d5a9b",
+  "encoderHashAfter": "0d2d067f368ac1db3f0468312947687c38009911bef8ff984c7853d4615d5a9b",
+  "encoderUnchanged": true,
+  "headsChanged": true,
+  "headDelta": {
+    "mention.weight": 86.74711608886719,
+    "mention.bias": 0.07299503684043884,
+    "role.weight": 141.00314331054688,
+    "role.bias": 0.23187880218029022,
+    "entity.weight": 1416.6776123046875,
+    "entity.bias": 0.15289273858070374,
+    "expression.weight": 82.87705993652344,
+    "expression.bias": 0.09642243385314941,
+    "issue.weight": 73.2968521118164,
+    "issue.bias": 0.08335292339324951,
+    "scope.weight": 63.28986358642578,
+    "scope.bias": 0.17839977145195007
+  },
+  "trainSamples": 288,
+  "devSamples": 48,
+  "trainGroups": [
+    "archive-badge",
+    "archive-card",
+    "archive-quote",
+    "archive-shelf",
+    "archive-wax",
+    "harbor-crate",
+    "harbor-dock",
+    "harbor-gate",
+    "harbor-key",
+    "harbor-lamp",
+    "harbor-lamp-oil",
+    "harbor-rope",
+    "harbor-wait",
+    "signal-antenna",
+    "signal-battery",
+    "signal-cable",
+    "signal-log",
+    "signal-radio",
+    "workshop-bowl",
+    "workshop-cloth",
+    "workshop-cut",
+    "workshop-dye",
+    "workshop-glue",
+    "workshop-rod"
+  ],
+  "devGroups": [
+    "archive-cabinet",
+    "archive-ledger",
+    "harbor-net",
+    "signal-lamp"
+  ],
+  "epochs": 20,
+  "batchSize": 16,
+  "history": [
+    {
+      "epoch": 1,
+      "trainLoss": 4.05751594569948
+    },
+    {
+      "epoch": 2,
+      "trainLoss": 1.607363720734914
+    },
+    {
+      "epoch": 3,
+      "trainLoss": 1.3151783612039354
+    },
+    {
+      "epoch": 4,
+      "trainLoss": 1.0098057521714106
+    },
+    {
+      "epoch": 5,
+      "trainLoss": 0.8917761147022247,
+      "dev": {
+        "samples": 48,
+        "m1": {
+          "spanPrecision": 0.6030534351145038,
+          "spanRecall": 0.6030534351145038,
+          "spanF1": 0.6030534351145038,
+          "matchedSpans": 79,
+          "goldSpans": 131,
+          "predictedSpans": 131,
+          "roleExact": 73,
+          "roleDenominator": 79,
+          "entityExact": 65,
+          "entityGoldTotal": 70,
+          "fullBindingExact": 73,
+          "fullBindingDenominator": 79,
+          "roleRecall": {
+            "subject": 0.9807692307692307,
+            "object": 0.4473684210526316,
+            "tool": 0.0,
+            "recipient": 0.5714285714285714,
+            "destination": 0.1111111111111111
+          },
+          "actorGoldSubject": 44,
+          "actorPredSubject": 45,
+          "actorFalseSubject": 1
+        },
+        "m2": {
+          "labelAccuracy": 0.8333333333333334,
+          "macroF1": 0.45454545454545453,
+          "labels": [
+            "attempt",
+            "mixed"
+          ],
+          "labelSupport": {
+            "attempt": 40,
+            "mixed": 8
+          },
+          "safeAttemptFalse": 8,
+          "nonAttemptGold": 8,
+          "issuePrecision": 0.3076923076923077,
+          "issueRecall": 0.21052631578947367,
+          "issueF1": 0.25,
+          "issueTp": 4,
+          "issueFp": 9,
+          "issueFn": 15,
+          "scopeAccuracy": 1.0,
+          "confusion": [
+            {
+              "gold": "attempt",
+              "predicted": "attempt",
+              "count": 40
+            },
+            {
+              "gold": "mixed",
+              "predicted": "attempt",
+              "count": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "epoch": 6,
+      "trainLoss": 0.9532326857248942
+    },
+    {
+      "epoch": 7,
+      "trainLoss": 0.8204316463735368
+    },
+    {
+      "epoch": 8,
+      "trainLoss": 0.7189048843251334
+    },
+    {
+      "epoch": 9,
+      "trainLoss": 0.689569267961714
+    },
+    {
+      "epoch": 10,
+      "trainLoss": 0.6936886194679472,
+      "dev": {
+        "samples": 48,
+        "m1": {
+          "spanPrecision": 0.5664335664335665,
+          "spanRecall": 0.6183206106870229,
+          "spanF1": 0.5912408759124088,
+          "matchedSpans": 81,
+          "goldSpans": 131,
+          "predictedSpans": 143,
+          "roleExact": 77,
+          "roleDenominator": 81,
+          "entityExact": 69,
+          "entityGoldTotal": 72,
+          "fullBindingExact": 77,
+          "fullBindingDenominator": 81,
+          "roleRecall": {
+            "subject": 0.9807692307692307,
+            "object": 0.5263157894736842,
+            "tool": 0.0,
+            "recipient": 0.5714285714285714,
+            "destination": 0.1111111111111111
+          },
+          "actorGoldSubject": 44,
+          "actorPredSubject": 45,
+          "actorFalseSubject": 1
+        },
+        "m2": {
+          "labelAccuracy": 0.8333333333333334,
+          "macroF1": 0.45454545454545453,
+          "labels": [
+            "attempt",
+            "mixed"
+          ],
+          "labelSupport": {
+            "attempt": 40,
+            "mixed": 8
+          },
+          "safeAttemptFalse": 8,
+          "nonAttemptGold": 8,
+          "issuePrecision": 0.6153846153846154,
+          "issueRecall": 0.42105263157894735,
+          "issueF1": 0.5,
+          "issueTp": 8,
+          "issueFp": 5,
+          "issueFn": 11,
+          "scopeAccuracy": 1.0,
+          "confusion": [
+            {
+              "gold": "attempt",
+              "predicted": "attempt",
+              "count": 40
+            },
+            {
+              "gold": "mixed",
+              "predicted": "attempt",
+              "count": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "epoch": 11,
+      "trainLoss": 0.6208776831626892
+    },
+    {
+      "epoch": 12,
+      "trainLoss": 0.612260220779313
+    },
+    {
+      "epoch": 13,
+      "trainLoss": 0.567487777935134
+    },
+    {
+      "epoch": 14,
+      "trainLoss": 0.5511606136957804
+    },
+    {
+      "epoch": 15,
+      "trainLoss": 0.49462506506178117,
+      "dev": {
+        "samples": 48,
+        "m1": {
+          "spanPrecision": 0.6115107913669064,
+          "spanRecall": 0.648854961832061,
+          "spanF1": 0.6296296296296297,
+          "matchedSpans": 85,
+          "goldSpans": 131,
+          "predictedSpans": 139,
+          "roleExact": 81,
+          "roleDenominator": 85,
+          "entityExact": 70,
+          "entityGoldTotal": 76,
+          "fullBindingExact": 78,
+          "fullBindingDenominator": 85,
+          "roleRecall": {
+            "subject": 1.0,
+            "object": 0.5,
+            "tool": 0.13043478260869565,
+            "recipient": 0.7142857142857143,
+            "destination": 0.1111111111111111
+          },
+          "actorGoldSubject": 44,
+          "actorPredSubject": 45,
+          "actorFalseSubject": 1
+        },
+        "m2": {
+          "labelAccuracy": 0.9166666666666666,
+          "macroF1": 0.8095238095238095,
+          "labels": [
+            "attempt",
+            "mixed"
+          ],
+          "labelSupport": {
+            "attempt": 40,
+            "mixed": 8
+          },
+          "safeAttemptFalse": 4,
+          "nonAttemptGold": 8,
+          "issuePrecision": 0.7142857142857143,
+          "issueRecall": 0.5263157894736842,
+          "issueF1": 0.6060606060606061,
+          "issueTp": 10,
+          "issueFp": 4,
+          "issueFn": 9,
+          "scopeAccuracy": 1.0,
+          "confusion": [
+            {
+              "gold": "attempt",
+              "predicted": "attempt",
+              "count": 40
+            },
+            {
+              "gold": "mixed",
+              "predicted": "attempt",
+              "count": 4
+            },
+            {
+              "gold": "mixed",
+              "predicted": "mixed",
+              "count": 4
+            }
+          ]
+        }
+      }
+    },
+    {
+      "epoch": 16,
+      "trainLoss": 0.5520199628339874
+    },
+    {
+      "epoch": 17,
+      "trainLoss": 0.6152474135160446
+    },
+    {
+      "epoch": 18,
+      "trainLoss": 0.5129722323682573
+    },
+    {
+      "epoch": 19,
+      "trainLoss": 0.40861377782291836
+    },
+    {
+      "epoch": 20,
+      "trainLoss": 0.41715114149782395,
+      "dev": {
+        "samples": 48,
+        "m1": {
+          "spanPrecision": 0.5804195804195804,
+          "spanRecall": 0.6335877862595419,
+          "spanF1": 0.6058394160583942,
+          "matchedSpans": 83,
+          "goldSpans": 131,
+          "predictedSpans": 143,
+          "roleExact": 80,
+          "roleDenominator": 83,
+          "entityExact": 69,
+          "entityGoldTotal": 74,
+          "fullBindingExact": 77,
+          "fullBindingDenominator": 83,
+          "roleRecall": {
+            "subject": 1.0,
+            "object": 0.5,
+            "tool": 0.13043478260869565,
+            "recipient": 0.5714285714285714,
+            "destination": 0.1111111111111111
+          },
+          "actorGoldSubject": 44,
+          "actorPredSubject": 45,
+          "actorFalseSubject": 1
+        },
+        "m2": {
+          "labelAccuracy": 0.9166666666666666,
+          "macroF1": 0.8095238095238095,
+          "labels": [
+            "attempt",
+            "mixed"
+          ],
+          "labelSupport": {
+            "attempt": 40,
+            "mixed": 8
+          },
+          "safeAttemptFalse": 4,
+          "nonAttemptGold": 8,
+          "issuePrecision": 0.7142857142857143,
+          "issueRecall": 0.5263157894736842,
+          "issueF1": 0.6060606060606061,
+          "issueTp": 10,
+          "issueFp": 4,
+          "issueFn": 9,
+          "scopeAccuracy": 1.0,
+          "confusion": [
+            {
+              "gold": "attempt",
+              "predicted": "attempt",
+              "count": 40
+            },
+            {
+              "gold": "mixed",
+              "predicted": "attempt",
+              "count": 4
+            },
+            {
+              "gold": "mixed",
+              "predicted": "mixed",
+              "count": 4
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "devMetrics": {
+    "samples": 48,
+    "m1": {
+      "spanPrecision": 0.5804195804195804,
+      "spanRecall": 0.6335877862595419,
+      "spanF1": 0.6058394160583942,
+      "matchedSpans": 83,
+      "goldSpans": 131,
+      "predictedSpans": 143,
+      "roleExact": 80,
+      "roleDenominator": 83,
+      "entityExact": 69,
+      "entityGoldTotal": 74,
+      "fullBindingExact": 77,
+      "fullBindingDenominator": 83,
+      "roleRecall": {
+        "subject": 1.0,
+        "object": 0.5,
+        "tool": 0.13043478260869565,
+        "recipient": 0.5714285714285714,
+        "destination": 0.1111111111111111
+      },
+      "actorGoldSubject": 44,
+      "actorPredSubject": 45,
+      "actorFalseSubject": 1
+    },
+    "m2": {
+      "labelAccuracy": 0.9166666666666666,
+      "macroF1": 0.8095238095238095,
+      "labels": [
+        "attempt",
+        "mixed"
+      ],
+      "labelSupport": {
+        "attempt": 40,
+        "mixed": 8
+      },
+      "safeAttemptFalse": 4,
+      "nonAttemptGold": 8,
+      "issuePrecision": 0.7142857142857143,
+      "issueRecall": 0.5263157894736842,
+      "issueF1": 0.6060606060606061,
+      "issueTp": 10,
+      "issueFp": 4,
+      "issueFn": 9,
+      "scopeAccuracy": 1.0,
+      "confusion": [
+        {
+          "gold": "attempt",
+          "predicted": "attempt",
+          "count": 40
+        },
+        {
+          "gold": "mixed",
+          "predicted": "attempt",
+          "count": 4
+        },
+        {
+          "gold": "mixed",
+          "predicted": "mixed",
+          "count": 4
+        }
+      ]
+    }
+  },
+  "elapsedSeconds": 5.692,
+  "headsSha256": "0b8d6dd3f786adfc002993cfe8a4cc9961e0a625a1f17199dbc85f55a4cd5973",
+  "entityNames": {
+    "archive-v1": [
+      "badge",
+      "cabinet",
+      "card",
+      "cart",
+      "desk",
+      "envelope",
+      "ledger",
+      "pen",
+      "room",
+      "shelf",
+      "stamp",
+      "stamp_old",
+      "wax",
+      "yu",
+      "zheng"
+    ],
+    "harbor-v1": [
+      "boat",
+      "crate",
+      "dock",
+      "door",
+      "key",
+      "lamp",
+      "lin",
+      "net",
+      "oil",
+      "rope",
+      "tape",
+      "twine",
+      "warehouse",
+      "water",
+      "xin",
+      "zhou"
+    ],
+    "signal-v1": [
+      "antenna",
+      "battery",
+      "bolt",
+      "cable",
+      "gate",
+      "lamp",
+      "log",
+      "pen",
+      "pin",
+      "radio",
+      "room",
+      "tower",
+      "wei",
+      "wrench",
+      "xie"
+    ],
+    "workshop-v1": [
+      "bench",
+      "bowl",
+      "brush",
+      "cloth",
+      "dye",
+      "glue",
+      "lian",
+      "paper",
+      "rack",
+      "rod",
+      "ruler",
+      "scissors",
+      "tang"
+    ]
+  },
+  "predictions": [
+    {
+      "sampleId": "archive-ledger:clean",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:actor-swap",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "zheng"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:result",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:special",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:role",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        },
+        {
+          "start": 10,
+          "end": 11,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:clean",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        },
+        {
+          "start": 10,
+          "end": 11,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:actor-swap",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "zheng"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        },
+        {
+          "start": 10,
+          "end": 11,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:result",
+      "label": "mixed",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        },
+        {
+          "start": 14,
+          "end": 15,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:special",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "shelf"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:role",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:clean",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 3,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 6,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "oil"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:actor-swap",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "zhou"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 6,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "oil"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:result",
+      "label": "mixed",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [],
+          "entity": "zhou"
+        },
+        {
+          "start": 9,
+          "end": 10,
+          "roles": [],
+          "entity": "oil"
+        },
+        {
+          "start": 10,
+          "end": 11,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:special",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 2,
+          "end": 3,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "zhou"
+        },
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 12,
+          "end": 13,
+          "roles": [
+            "object"
+          ],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:role",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [],
+          "entity": "oil"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [],
+          "entity": "zhou"
+        },
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "destination"
+          ],
+          "entity": "dock"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:clean",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 10,
+          "end": 12,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:actor-swap",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 10,
+          "end": 12,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:result",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 3,
+          "end": 5,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 10,
+          "end": 12,
+          "roles": [],
+          "entity": "radio"
+        },
+        {
+          "start": 13,
+          "end": 14,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": [
+        {
+          "start": 13,
+          "end": 18,
+          "scope": "main"
+        }
+      ]
+    },
+    {
+      "sampleId": "signal-lamp:special",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 11,
+          "end": 13,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": [
+        {
+          "start": 6,
+          "end": 9,
+          "scope": "quote"
+        }
+      ]
+    },
+    {
+      "sampleId": "signal-lamp:role",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 3,
+          "end": 5,
+          "roles": [],
+          "entity": "xie"
+        },
+        {
+          "start": 8,
+          "end": 11,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:multi",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 12,
+          "end": 13,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:condition",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "roles": [],
+          "entity": "yu"
+        }
+      ],
+      "issues": [
+        {
+          "start": 2,
+          "end": 6,
+          "scope": "condition"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-ledger:quote",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": [
+        {
+          "start": 6,
+          "end": 16,
+          "scope": "quote"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-ledger:result2",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": [
+        {
+          "start": 13,
+          "end": 20,
+          "scope": "main"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-ledger:actor-pronoun",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 1,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 2,
+          "end": 3,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:unknown-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-ledger:ambiguous-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "shelf"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:multi",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 6,
+          "end": 7,
+          "roles": [
+            "subject"
+          ],
+          "entity": "envelope"
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 12,
+          "end": 15,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:condition",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 11,
+          "end": 14,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": [
+        {
+          "start": 2,
+          "end": 6,
+          "scope": "condition"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-cabinet:quote",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": [
+        {
+          "start": 6,
+          "end": 16,
+          "scope": "quote"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-cabinet:result2",
+      "label": "mixed",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        }
+      ],
+      "issues": [
+        {
+          "start": 12,
+          "end": 19,
+          "scope": "main"
+        }
+      ]
+    },
+    {
+      "sampleId": "archive-cabinet:actor-pronoun",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 1,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 2,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "ledger"
+        },
+        {
+          "start": 9,
+          "end": 10,
+          "roles": [
+            "object"
+          ],
+          "entity": "zheng"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:unknown-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "yu"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "archive-cabinet:ambiguous-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "yu"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "shelf"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:multi",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 12,
+          "end": 13,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 15,
+          "end": 16,
+          "roles": [
+            "object"
+          ],
+          "entity": "oil"
+        },
+        {
+          "start": 16,
+          "end": 17,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:condition",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 11,
+          "end": 12,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 14,
+          "end": 15,
+          "roles": [
+            "object"
+          ],
+          "entity": "oil"
+        },
+        {
+          "start": 15,
+          "end": 16,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": [
+        {
+          "start": 2,
+          "end": 6,
+          "scope": "condition"
+        }
+      ]
+    },
+    {
+      "sampleId": "harbor-net:quote",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 13,
+          "end": 14,
+          "roles": [],
+          "entity": "oil"
+        },
+        {
+          "start": 14,
+          "end": 15,
+          "roles": [
+            "object"
+          ],
+          "entity": "zhou"
+        }
+      ],
+      "issues": [
+        {
+          "start": 6,
+          "end": 14,
+          "scope": "quote"
+        }
+      ]
+    },
+    {
+      "sampleId": "harbor-net:result2",
+      "label": "mixed",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 3,
+          "end": 4,
+          "roles": [
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [],
+          "entity": "zhou"
+        }
+      ],
+      "issues": [
+        {
+          "start": 9,
+          "end": 16,
+          "scope": "main"
+        }
+      ]
+    },
+    {
+      "sampleId": "harbor-net:actor-pronoun",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 1,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 2,
+          "end": 6,
+          "roles": [
+            "subject",
+            "object"
+          ],
+          "entity": "lamp"
+        },
+        {
+          "start": 6,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "zhou"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:unknown-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 4,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "key"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "harbor-net:ambiguous-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "lin"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "dock"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:multi",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 12,
+          "end": 14,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 14,
+          "end": 15,
+          "roles": [
+            "object"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 16,
+          "end": 18,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 19,
+          "end": 21,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:condition",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 7,
+          "end": 9,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 11,
+          "end": 13,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 13,
+          "end": 14,
+          "roles": [
+            "object"
+          ],
+          "entity": "wrench"
+        },
+        {
+          "start": 15,
+          "end": 17,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 18,
+          "end": 20,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": [
+        {
+          "start": 2,
+          "end": 6,
+          "scope": "condition"
+        }
+      ]
+    },
+    {
+      "sampleId": "signal-lamp:quote",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        }
+      ],
+      "issues": [
+        {
+          "start": 6,
+          "end": 9,
+          "scope": "quote"
+        }
+      ]
+    },
+    {
+      "sampleId": "signal-lamp:result2",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 10,
+          "end": 12,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": [
+        {
+          "start": 13,
+          "end": 20,
+          "scope": "main"
+        }
+      ]
+    },
+    {
+      "sampleId": "signal-lamp:actor-pronoun",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 1,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 2,
+          "end": 4,
+          "roles": [
+            "tool"
+          ],
+          "entity": "radio"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 6,
+          "end": 8,
+          "roles": [
+            "recipient"
+          ],
+          "entity": "xie"
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "roles": [],
+          "entity": "radio"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:unknown-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 4,
+          "end": 7,
+          "roles": [
+            "object"
+          ],
+          "entity": "cable"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "sampleId": "signal-lamp:ambiguous-object",
+      "label": "attempt",
+      "mentions": [
+        {
+          "start": 0,
+          "end": 2,
+          "roles": [
+            "subject"
+          ],
+          "entity": "wei"
+        },
+        {
+          "start": 4,
+          "end": 5,
+          "roles": [
+            "object"
+          ],
+          "entity": "xie"
+        }
+      ],
+      "issues": []
+    }
+  ],
+  "notes": [
+    "Only train/development scale-v2 samples; sealed untouched.",
+    "M2 issue span/scope is token BIO + scope at start; labels and scopes are evaluated on development.",
+    "No provider, production integration, or quality approval."
+  ]
+}

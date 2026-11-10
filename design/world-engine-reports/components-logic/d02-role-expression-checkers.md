@@ -194,6 +194,18 @@ M2 的 `attempt` 标签不能证明工具可用、行动合理或需求已覆盖
 
 这些数字来自 96 条训练样本的同一批前向，**不能当验证、泛化或模型能力成绩**；也没有生成 provider、没有接生产、没有写世界。正式 R0 仍需使用项目冻结的训练器实现完整 M1/M2 头，并在 development 上评估。
 
+### 8.3 正式 R0 与 development
+
+第一版正式头已实现并只在 development 上评估：
+
+- M1：token mention BIO＋5 角色＋候选实体 Bilinear；M2：5 类标签＋issue BIO＋起始 scope。
+- train 288 / dev 48，20 epochs，batch 16；sealed 未读。
+- M1：span F1 0.606；角色完全正确 80/83；实体 69/74；全绑定 77/83；tool 召回 0.130、destination 0.111。
+- M2：标签准确率 0.917（44/48），但 dev 只有 attempt/mixed；**4/8 条 mixed 被误判为 attempt**；issue F1 0.606；scope 1.0 仅基于 10 条匹配。
+- 没有 dev 五类宏平均；当前 M1/M2 都不能用于自动放行。
+
+详见 [正式 R0 与 development](../../../artifacts/world-components-logic/d02-checkers/r0-formal/README.md)。这些是工程实验结果，不是质量通过；下一步应修复 M1 角色召回与 dev 类别覆盖，再按同一数据/头/步数比较 R1/R2。
+
 ## 9. 验收提案（尚未取得）
 
 | 项目 | 建议标准 |
