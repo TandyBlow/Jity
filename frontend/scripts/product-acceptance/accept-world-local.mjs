@@ -307,6 +307,14 @@ try {
     noteFailure('ready', `page did not become ready in ${readyTimeoutMs} ms`, String(error).slice(0, 400));
   }
   evidence.readyMs = Date.now() - readyStarted;
+  const heap = async () => page.evaluate(() => {
+    const memory = performance.memory;
+    return memory ? {
+      usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize,
+      jsHeapSizeLimit: memory.jsHeapSizeLimit,
+      label: 'JS heap, not GPU VRAM',
+    } : null;
+  }).catch(() => null);
   evidence.jsHeapAtReady = await heap();
   evidence.readyText = (await page.evaluate(() => document.body.innerText)).slice(0, 600);
   const readyText = evidence.readyText ?? '';
@@ -324,14 +332,6 @@ try {
   save();
 
   const entryCount = () => page.evaluate(() => document.querySelectorAll('article').length);
-  const heap = async () => page.evaluate(() => {
-    const memory = performance.memory;
-    return memory ? {
-      usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize,
-      jsHeapSizeLimit: memory.jsHeapSizeLimit,
-      label: 'JS heap, not GPU VRAM',
-    } : null;
-  }).catch(() => null);
   const snapshot = async () => page.evaluate(() => {
     const read = (label) => {
       const nodes = [...document.querySelectorAll('aside div')];
