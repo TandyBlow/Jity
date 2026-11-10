@@ -19,12 +19,26 @@ import type { WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
-const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
-// Sizes of the exact files this product serves (measured on this machine).
-// A truncated fetch is rejected before wllama parses it; the full SHA-256 check
+// Sizes and hashes of the exact files this product serves (measured here). A
+// truncated fetch is rejected before wllama parses it; the full SHA-256 check
 // belongs to 09's host runner.
 const SEMANTIC_MODEL_BYTES = 396_705_472;
-const NARRATION_MODEL_BYTES = 986_048_096;
+
+/** Narration model variants the internal arm switch may select. The default is
+ * the shipped LoRA checkpoint; `qwen3-1.7b` is lane 02's prose-facts arm model.
+ * A variant is only a file the product serves, never a silent weight swap. */
+const NARRATION_MODELS = {
+  'qwen25-1.5b-narr': {
+    url: '/models/qwen25-1.5b-narr-Q4_K_M.gguf', bytes: 986_048_096, contextSize: 3072,
+    sha256: '6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b',
+  },
+  'qwen3-1.7b': {
+    url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
+    sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
+  },
+} as const;
+type NarrationModelKey = keyof typeof NARRATION_MODELS;
+const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen25-1.5b-narr';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
@@ -39,6 +53,10 @@ interface WorldTurnRecord {
   segments?: Array<{ id: string; source: string }>;
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
   modelId: string | null;
+  /** Requested narration variant and prompt shape, copied from window.__worldArm
+   * at submit so one evidence file cannot mix two arms unknowingly. */
+  narrationModel: string | null;
+  promptShape: string | null;
   engines: Array<{ label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number }>;
 }
 
@@ -208,10 +226,12 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
+    const modelParam = q.get('narrationModel');
+    const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' ? modelParam : undefined;
     const modeParam = q.get('narrationMode');
     const shapeParam = q.get('narrationShape');
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
@@ -220,6 +240,7 @@ export default function WorldLocalPage() {
       ...(candidate ? { candidate } : {}),
       ...(mode ? { mode } : {}),
       ...(shape ? { shape } : {}),
+      ...(model ? { model } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -307,6 +328,9 @@ export default function WorldLocalPage() {
         const assetResponse = await fetch(assetUrl, { cache: 'no-store' });
         if (!assetResponse.ok) throw new StaticWorldError('file_hash', `world asset HTTP ${assetResponse.status}`);
         const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
+        const arm = narrationArm.current;
+        const narrationKey: NarrationModelKey = arm.model ?? DEFAULT_NARRATION_MODEL;
+        const narrationSpec = NARRATION_MODELS[narrationKey];
         setMessage('正在加载语义模型（Qwen3-0.6B）…');
         const semantic = resilientEngine(SEMANTIC_MODEL, 8192, 'semantic', SEMANTIC_MODEL_BYTES);
         // The stop button must reach a cold load. The ref is set before the
@@ -314,15 +338,19 @@ export default function WorldLocalPage() {
         semanticRef.current = semantic;
         await semantic.load();
         if (!alive) { await semantic.dispose(); return; }
-        setMessage('正在加载叙事模型（Qwen2.5-1.5B LoRA）…');
-        const narration = resilientEngine(NARRATION_MODEL, 3072, 'narration', NARRATION_MODEL_BYTES);
+        setMessage(`正在加载叙事模型（${narrationKey}）…`);
+        const narration = resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
         narrationRef.current = narration;
         await narration.load();
         if (!alive) { await narration.dispose(); return; }
-        const arm = narrationArm.current;
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
-        // Arm identity is evidence: 09 records it next to every turn.
-        (window as unknown as { __worldArm?: unknown }).__worldArm = { candidate, mode: arm.mode ?? null, shape: arm.shape ?? null };
+        // Arm identity is evidence: 09 records it next to every turn, including
+        // the exact narration file and its hash so no run can silently swap weights.
+        (window as unknown as { __worldArm?: unknown }).__worldArm = {
+          candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
+          narrationModel: narrationKey, narrationFile: narrationSpec.url,
+          narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
+        };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
           narrationMode: 'instruct',
@@ -488,6 +516,8 @@ export default function WorldLocalPage() {
       index: ((window as unknown as { __worldTurns?: WorldTurnRecord[] }).__worldTurns?.length ?? 0) + 1,
       input: text, acceptedMs: null, draftMs: null, programMs: null, mixedMs: null, cancelled: false, source: null,
       modelId: narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? null,
+      narrationModel: narrationArm.current.model ?? DEFAULT_NARRATION_MODEL,
+      promptShape: narrationArm.current.shape ?? (narrationArm.current.mode === 'scene' ? 'prose-facts' : null),
       engines,
     };
     turnRecordRef.current = record;
