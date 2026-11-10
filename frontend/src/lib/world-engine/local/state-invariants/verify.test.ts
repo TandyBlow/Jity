@@ -8,7 +8,7 @@ import type { EntityDelta, InitialState, TimelinePoint, WorldState } from '../..
 import { applyPoint, buildInitialState, stateDigest } from '../state';
 import { LocalWorldTransport } from '../transport';
 import {
-  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyTaskCoverage, verifyTaskDecisionEvidence,
+  pointContinuityIssues, RecordInvariantError, verifyDisplayHistory, verifyDisplayedCommit, verifyTaskCoverage, verifyTaskDecisionEvidence,
   verifyVisibleAcceptance,
   verifySnapshotSequence, verifyWorldRecord, type WorldRecordLike,
 } from './index';
@@ -335,5 +335,38 @@ describe('visible acceptance summary', () => {
     ]);
     expect(result.errors).toEqual([]);
     expect(result.warnings.map((item) => item.code)).toContain('history_delta');
+  });
+
+  it('rejects a displayed draft with no committed point or accepted text', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '一段草稿正文。',
+      textSource: 'draft',
+      historyDelta: 0,
+      product: { source: 'draft', acceptedMs: null, draftMs: 176_322 },
+      timings: { doneMs: 330_053, firstReadableMs: 176_487 },
+      problems: ['draft_only_not_accepted', 'over_300s'],
+      submission: null,
+    }]);
+    expect(report.ok).toBe(false);
+    const codes = report.errors.map((item) => item.code);
+    expect(codes).toContain('history_text_missing');
+    expect(codes).toContain('history_missing_command');
+    expect(codes).toContain('evidence_shape');
+    expect(report.errors.some((item) => item.detail.includes('draft'))).toBe(true);
+  });
+
+  it('accepts a committed turn with accepted text and a history delta', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '已采纳的正文。',
+      textSource: 'accepted',
+      historyDelta: 1,
+      product: { source: 'accepted', acceptedMs: 42_000 },
+      timings: { doneMs: 42_000, firstReadableMs: 8_000 },
+      submission: { inputText: '我走过去。' },
+    }]);
+    expect(report.errors).toEqual([]);
+    expect(report.ok).toBe(true);
   });
 });

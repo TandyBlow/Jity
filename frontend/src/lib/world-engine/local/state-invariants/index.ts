@@ -975,6 +975,61 @@ function visibleTasks(value: unknown): Map<string, boolean> | null {
   return tasks;
 }
 
+
+/** Read-only check of what the page actually presented as a turn. A draft or
+ * a timed-out draft is not a committed turn even if the harness wrote text to
+ * its record. This does not replay state; it only rejects acceptance claims
+ * that the displayed evidence itself contradicts. */
+export function verifyDisplayedCommit(entries: unknown[]): {
+  ok: boolean; errors: InvariantIssue[]; warnings: InvariantIssue[];
+} {
+  const errors: InvariantIssue[] = [];
+  const warnings: InvariantIssue[] = [];
+  const add = (target: InvariantIssue[], code: InvariantCode, detail: string): void => {
+    if (!target.some((item) => item.code === code && item.detail === detail)) target.push(issue(code, detail));
+  };
+  const asRecord = (value: unknown): Record<string, unknown> | null => (isRecord(value) ? value : null);
+  const numberOrNull = (value: unknown): number | null => (typeof value === 'number' && Number.isFinite(value) ? value : null);
+  for (const raw of entries) {
+    const turn = asRecord(raw);
+    if (!turn) continue;
+    const text = typeof turn.text === 'string' ? turn.text.trim() : '';
+    const product = asRecord(turn.product);
+    const source = typeof turn.textSource === 'string'
+      ? turn.textSource : typeof product?.source === 'string' ? product.source : '';
+    const problems = Array.isArray(turn.problems) ? turn.problems.filter((item): item is string => typeof item === 'string') : [];
+    const timings = asRecord(turn.timings);
+    const doneMs = numberOrNull(timings?.doneMs);
+    const firstReadableMs = numberOrNull(timings?.firstReadableMs);
+    const historyDelta = numberOrNull(turn.historyDelta);
+    const acceptedMs = numberOrNull(product?.acceptedMs);
+    const hasSubmission = turn.submission != null;
+    const label = typeof turn.turn === 'number' ? `turn ${turn.turn}` : 'turn';
+    if (!text) {
+      continue;
+    }
+    if (source === 'draft' || problems.includes('draft_only_not_accepted')) {
+      add(errors, 'evidence_shape', `${label}: displayed text is a draft, not a committed turn`);
+    }
+    if (acceptedMs == null) {
+      add(errors, 'history_text_missing', `${label}: displayed text has no accepted model text (source ${source || 'unknown'})`);
+    }
+    if (historyDelta === 0) {
+      add(errors, 'history_missing_command', `${label}: displayed text but history delta is 0; no committed player point`);
+    }
+    if (!hasSubmission) {
+      add(errors, 'evidence_shape', `${label}: displayed text without a submission record`);
+    }
+    if (doneMs != null && doneMs > 300_000) {
+      add(errors, 'evidence_shape', `${label}: turn took ${Math.round(doneMs / 1000)}s (>300s)`);
+    }
+    if (firstReadableMs != null && firstReadableMs > 60_000) {
+      add(errors, 'evidence_shape', `${label}: first readable text at ${Math.round(firstReadableMs / 1000)}s (>60s)`);
+    }
+  }
+  return { ok: errors.length === 0, errors, warnings };
+}
+
 export function verifyVisibleAcceptance(entries: unknown[]): { ok: boolean; errors: InvariantIssue[]; warnings: InvariantIssue[] } {
   const errors: InvariantIssue[] = [];
   const warnings: InvariantIssue[] = [];

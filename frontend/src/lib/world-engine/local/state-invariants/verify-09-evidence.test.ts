@@ -13,7 +13,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  verifyDisplayHistory, verifySessionSnapshot, verifyTaskCoverage, verifyTaskDecisionEvidence,
+  verifyDisplayHistory, verifyDisplayedCommit, verifySessionSnapshot, verifyTaskCoverage, verifyTaskDecisionEvidence,
   verifyTurnEntry, verifyVisibleAcceptance, type InvariantReport,
 } from './index';
 
@@ -119,6 +119,23 @@ async function verifyDocument(document: unknown): Promise<{ label: string; repor
       results.push({ label: labelFor(entry, index), report: addTaskDecisionReport(entry, addDisplayReport(entry, report)) });
     }
   }
+  const displayed = verifyDisplayedCommit(entries);
+  results.push({
+    label: 'displayed-commit',
+    report: {
+      ok: displayed.ok,
+      worldId: null,
+      version: null,
+      points: 0,
+      headPointId: null,
+      rootDigest: null,
+      headDigest: null,
+      replayDigest: null,
+      errors: displayed.errors,
+      warnings: displayed.warnings,
+    },
+  });
+
   if (visibleOnly.length > 0) {
     const visible = verifyVisibleAcceptance(visibleOnly);
     for (const entry of visibleOnly) {
