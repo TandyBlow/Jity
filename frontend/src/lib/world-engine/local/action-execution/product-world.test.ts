@@ -7,6 +7,8 @@ import type { InitialTemplate, Json } from '../../types';
 import { buildInitialState } from '../state';
 import { LocalWorldTransport } from '../transport';
 import { createActionExecutionModel } from './port';
+import { buildScene } from '../semantics/actions/scene';
+import { targetsPrompt } from '../semantics/actions/prompts';
 import { roundOrder } from './order';
 
 /** The shipped free-day world, not a fixture: the action port must survive the
@@ -18,6 +20,27 @@ function loadProductWorld(): { initial: InitialTemplate; state: ReturnType<typeo
   const state = buildInitialState({ ...structuredClone(raw.initial), worldId: raw.worldId });
   return { initial, state };
 }
+
+describe('joint-group input coverage on the shipped world', () => {
+  it('the targets prompt for a question to 诺诺 lists her as a visible candidate', () => {
+    const { state } = loadProductWorld();
+    const scene = buildScene(state, 'lu');
+    expect(scene.isProtagonist).toBe(true);
+    expect(scene.visible.some((character) => character.id === 'nono')).toBe(true);
+    const text = '我把护目镜推上去，问诺诺：现在红蓝两方各在哪？';
+    const prompt = targetsPrompt(scene, text, 2);
+    // The model must be able to connect the named target to a registered id;
+    // the prompt carries her name, her id and the exact frozen action.
+    expect(prompt).toContain('诺诺（id=nono）');
+    // 诺诺 is visible, so she must not appear in the absent list (which marks
+    // each entry with its room: 「诺诺（id=nono）在…」).
+    expect(prompt).not.toContain('诺诺（id=nono）在');
+    expect(prompt).toContain(text);
+    // 路明非's own goggles and the lane's rules board are in the scene list.
+    expect(prompt).toContain('路明非的护目镜');
+    expect(prompt).toContain('演习规则牌');
+  });
+});
 
 describe('free-day product world through the action port', () => {
   it('orders by sanity and judges the same-room NPC from the real scene', async () => {

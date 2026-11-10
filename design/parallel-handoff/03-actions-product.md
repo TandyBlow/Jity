@@ -45,17 +45,36 @@ change.
 
 ## Merge
 
+06's tree (`e83af87a`) already imports `createActionHandlers` and routes
+`action`/`targets`/`reaction` through it, so the semantic handlers are wired.
+What is still missing is the new module and the latest handler rule:
+
 ```bash
 cd D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery
-git cherry-pick c217b007
+git cherry-pick c217b007 2ec616ab 3a9ad607 33697da8 f3a2634a 0551c6d5 26c099b2 a506c43f 6344478a 6ffb408d 4bfe9095 d82e4719 1a92c05e
 ```
 
-Dependency: `local/semantics/actions/**` already exists in 06's tree (identical
-`index/checks/prompts/types/text`; only `fixtures.ts` differs with slot support),
-so no other port of this module is needed. `frontend` typecheck and
+- `c217b007` adds `local/action-execution/**` (order + port + tests).
+- `2ec616ab` adds the shipped-free-day-world test.
+- `3a9ad607` is a handoff edit (no code).
+- `33697da8` changes `semantics/actions/index.ts` + `types.ts` + tests: a
+  consumed protagonist opportunity is a program skip, never a model
+  continuation.
+
+Dependency: 06's `local/semantics/actions/**` is byte-identical to the
+pre-`33697da8` copy (only `fixtures.ts` differs with slot support), so the
+cherry-pick is conflict-free. Run `npx tsc --noEmit -p tsconfig.json`,
 `npx vitest run src/lib/world-engine/local/action-execution --no-file-parallelism`
-must be run after the cherry-pick; the round test uses the current
+and the action suite after it; the round test uses the current
 `LocalWorldTransport` snapshot shapes (`state`, `rolls`, `points`).
+
+> **Blocking review findings (06's files)**: (1) `app/world-local/page.tsx:204`
+> still passes `maxAutonomousActors: 0`, the exact defect this lane exists to
+> remove — every non-protagonist is skipped before any model judgement; (2)
+> `local/game-model.ts:171-189` also skips an NPC whose name is not in the
+> player's sentence (`scene_budget_unnamed`). Even with a positive budget the
+> name gate keeps the old rule. Evidence, cost check and exact patches are in
+> `results/product/reviews/03-actions-game-model-name-gate.md`.
 
 ## Wiring (06-owned files)
 
@@ -76,7 +95,7 @@ is the committed S₀ value. No other line changes.
 `handleConclude`, `kind === 'continue'`:
 
 ```ts
-import { orderSubset } from '../action-execution/order';
+import { orderSubset } from './action-execution/order';
 
 record.round = {
   roundId: conclusion.nextRoundId, trigger: 'automatic',
@@ -90,22 +109,28 @@ orders them by current sanity (design §5.1: continue 在同一事务里按 Sₜ
 下一 round 顺序). Linked points never call either helper — they keep the stored
 `round.order`.
 
-### 3. `app/world-local/page.tsx` — delegate the three tasks
+### 3. `local/game-model.ts` — remove the name gate, not add another layer
+
+06 already delegates the three tasks to `createActionHandlers` (line ~191).
+No port composition is needed there. Delete the `scene_budget_unnamed` block
+instead; the handlers already scope to the protagonist's room and never write
+the player's character. If a crowd bound is ever needed, make it a
+deterministic same-room budget, not a name test.
+
+### 3b. Optional: `createActionExecutionModel` for other callers
+
+The port remains available for tests, probes or a caller that does not already
+have `LocalGameModel`:
 
 ```ts
 import { createActionExecutionModel } from '@/lib/world-engine/local/action-execution';
-
-const base = new LocalGameModel(semantic, { /* existing options */ });
-const model = createActionExecutionModel(base, semantic, {
-  onTask: baseOptions.onTask,          // same reporter the page already has
-  attempts: 2,                          // one repair, then explicit fallback
-  offscreenPolicy: 'skip',              // see the trade-off below
-  recentEvents: () => (base as { lastResultsText?: string }).lastResultsText
-    ? [String((base as { lastResultsText?: string }).lastResultsText)]
-    : [],
-});
-// use `model` for LocalGameSession.create/restore and modelRef
+const model = createActionExecutionModel(base, semantic, { attempts: 2, offscreenPolicy: 'skip' });
 ```
+
+`recentEvents` is optional and left unset here: `LocalGameModel.lastResultsText`
+is private, so wiring it would need a public getter on 06's file. The action
+prompt already carries the scene, the actor's tasks and the same-room people;
+recent events are a quality extra, not a requirement of the task contract.
 
 Keep `base` for every other task. The page's existing `onTask` labels the stage
 and marks narration fallbacks; action-family reports now also arrive there with
@@ -171,7 +196,86 @@ automatic round inherits `consumed` and cannot re-consume a player input.
 Before this, a consumed protagonist slot asked the model to "continue the same
 thing"; that could replay the old command in an automatic round or invent a new
 player action. The goal-copy guard tests were rewritten accordingly; an NPC
-still covers the all-character goal guard.
+still covers the all-character goal guard. This matches the earlier G5
+composition decision (commit `54f630ca`, "let consumed action opportunities skip
+without an input binding"): a consumed opportunity skips, it is never
+adjudicated.
+
+## 06 minimal patch list (current tree, `2333d880`)
+
+Line numbers are from `2333d880`; the semantic direction is in sections 1–4
+above. These are the only product-tree edits this lane is asking for.
+
+**a. `local/session.ts`** (currently line 290):
+
+```ts
+-      const plan = record.initial.characters;
+-      const order = Object.keys(plan).sort();
++      const order = roundOrder(record.state);
+```
+
+with `import { roundOrder } from './action-execution/order';` at the top.
+
+**a′ (alternative placement).** The same rule can be frozen where the round is
+created instead of where the slot order is listed: `handleStartAdvance` already
+validates the full roster and writes
+`record.round = { roundId, trigger: 'player', order: [...request.order], … }`
+(line ~442). Replacing `[...request.order]` with `roundOrder(record.state)`
+there makes the player round sanity-ordered, and `session.ts`'s sorted list
+only allocates slots. Either placement is correct; the executed order must not
+stay alphabetical.
+
+**b. `local/transport.ts`** (currently line 744, inside `handleConclude`,
+`kind === 'continue'`):
+
+```ts
+-    record.round = { roundId: conclusion.nextRoundId, trigger: 'automatic', order: [...candidates], cursor: 0, actedIds: [], visitedIds: [], conclusion: null };
++    record.round = { roundId: conclusion.nextRoundId, trigger: 'automatic', order: orderSubset(record.state, candidates), cursor: 0, actedIds: [], visitedIds: [], conclusion: null };
+```
+
+with `import { orderSubset } from './action-execution/order';`.
+
+**c. `local/semantics/actions/index.ts` + `types.ts` + tests**: cherry-pick
+`33697da8` (a consumed protagonist opportunity is a program skip). 04's
+continuation port rejects the protagonist as an automatic-round candidate
+(`protagonist_action_belongs_to_player`), so this is not an automatic-round bug
+today; it is the correctness guard for a multi-point player round, where a
+deferred protagonist slot would otherwise be model-written (and would replay
+the old command). It also matches the accepted G5 rule (`54f630ca`).
+
+**d. `local/game-model.ts`** `reportAction` (line ~202): add the source so the
+submission log can tell a model answer from a program decision:
+
+```ts
+ this.options.onTask?.(result.task, result.key, {
+-  ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
++  ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw, source: result.source,
+ });
+```
+
+and add `source?: 'model' | 'program' | 'fallback';` to `GameModelOptions.onTask`'s
+detail type (optional; the settlement port callers ignore it). Then the page can
+push `{task, key, ms, fallback, source, error}` for `action`/`targets`/`reaction`
+into the per-submission ledger it already exposes on `window.__worldSubmission`
+(06's `2333d880` ledger currently accounts only results/updates/continuation).
+Without this, 09 cannot distinguish "no NPC acted because the model judged
+skip" from "the program skipped the scene".
+
+**e. `app/world-local/page.tsx`** — the page already records action/targets/
+reaction in `window.__worldTurns[i].actions` (`671aabf3`), which is the right
+place; 04's `__worldSubmission` must stay the settlement account only. Extend
+the **turn record** (not the submission) with the frozen round after
+`await session.submit(...)`:
+
+```ts
+const transport = session.snapshot.transport;
+record.roundOrder = transport.round?.order ?? null;
+record.roundTrigger = transport.round?.trigger ?? null;
+record.actedIds = transport.round?.actedIds ?? [];
+record.positions = Object.fromEntries(
+  Object.entries(transport.state.characters).map(([id, c]) => [id, c.position.containerId]),
+);
+```
 
 ## Open trade-offs (not silently decided here)
 

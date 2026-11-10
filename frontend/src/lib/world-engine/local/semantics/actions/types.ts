@@ -32,6 +32,7 @@ export type ActionIssueCode =
   | 'action_too_long'
   | 'action_is_task_goal'
   | 'action_first_person'
+  | 'first_person_rewritten'
   | 'npc_repeats_player'
   | 'npc_quotes_player'
   | 'attribution_swap'

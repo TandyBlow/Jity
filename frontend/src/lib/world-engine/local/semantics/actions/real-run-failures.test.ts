@@ -50,6 +50,40 @@ function targets(state: WorldState, sourceId: string, actionText: string): Json 
 }
 const codes = (result: HandlerResult): string[] => result.issues.map((item) => item.code);
 
+describe('scene-word overlap is not an echo (13:21Z run)', () => {
+  it('accepts an action that only reuses registered scene names', async () => {
+    // The 13:21Z page run rejected 诺诺's action twice with npc_repeats_player
+    // and fell back to a skip. A sentence made of the scene's own names is not
+    // the player's sentence; only the predicate overlap can prove an echo.
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"诺诺看演习规则牌，又看西侧服务巷和路明非的护目镜。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('nono', action(base, 'nono', '演习规则牌，西侧服务巷，诺诺，路明非的护目镜。'));
+
+    expect(result.attempts).toBe(1);
+    expect(result.fallback).toBe(false);
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺看演习规则牌，又看西侧服务巷和路明非的护目镜。' });
+    const repeat = result.issues.find((item) => item.code === 'npc_repeats_player');
+    expect(repeat?.severity).toBe('warn');
+  });
+
+  it('keeps a paraphrased player sentence an error (run-1 A1)', () => {
+    // Covered by 'A1: the player action restated without its subject...' above;
+    // this asserts the same text still produces an ERROR, not the new warning.
+    return (async () => {
+      const engine = new ScriptedEngine([
+        '{"kind":"act","text":"靠在巷口墙边，确认护目镜是否起雾"}',
+        '{"kind":"act","text":"诺诺把故障短讯机举到耳边，试了试信号。"}',
+      ]);
+      const handlers = createActionHandlers({ engine });
+      const result = await handlers.action('nono', action(base, 'nono', '我靠在巷口墙边，先确认护目镜有没有起雾。'));
+      expect(result.attempts).toBe(2);
+      expect(result.issues.filter((item) => item.code === 'npc_repeats_player' && item.severity === 'error').length).toBeGreaterThan(0);
+    })();
+  });
+});
+
 describe('run-1 failures stay rejected', () => {
   it('A1: the player action restated without its subject is not the NPC action', async () => {
     const engine = new ScriptedEngine([

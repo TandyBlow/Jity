@@ -16,7 +16,7 @@ import type { Id, WorldState } from '../../../types';
 import type { SceneCharacter, ActionScene } from './scene';
 import { sceneMentions } from './scene';
 import {
-  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
+  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, rewriteClauseSpeaker, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
 } from './text';
 import type { ActionIssue } from './types';
 
@@ -89,7 +89,7 @@ export function stripOutputLabel(text: string): string {
  * checks that a player-authored command is allowed to fail (the player may
  * speak as themselves and may repeat yesterday's words). */
 export function checkActionText(text: string, scene: ActionScene, state: WorldState, options: CheckOptions): CheckResult<string> {
-  const value = stripOutputLabel(text).normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -99,6 +99,18 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
 
   if ([...value].length > options.maxActionChars) {
     push(issue('action_too_long', 'warn', `行动描述 ${[...value].length} 字，超过建议长度 ${options.maxActionChars}`));
+  }
+  // Person is a grammatical reference, not a semantic choice: the actor is
+  // known, so a clause-initial 我 is rewritten instead of burning a repair
+  // call (the 13:21Z run answered twice in first person and fell back to a
+  // skip). Mid-clause 我 is still an error below.
+  if (!scene.isProtagonist) {
+    const rewritten = rewriteClauseSpeaker(value, scene.actorName);
+    if (rewritten.count > 0) {
+      push(issue('first_person_rewritten', 'info',
+        `模型用了第一人称；程序把句首的“我”改成${scene.actorName}（原文：${value}）`, { detail: value }));
+      value = rewritten.text;
+    }
   }
   const goal = taskGoalCopy(value, allGoals(state));
   if (goal) {
@@ -131,9 +143,22 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       const mostlyPlayer = valueSkeleton.length >= 6 && subsequence.coverage >= 0.8;
       const containsPlayer = subsequence.length >= 8 && playerCoverage >= 0.7;
       if (mostlyPlayer || containsPlayer) {
-        push(issue('npc_repeats_player', 'error',
-          `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
-          { detail: value }), '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
+        // Shared scene words are not an echo. An NPC near the same person
+        // necessarily reuses "巷口"/"护目镜"; remove the registered names and
+        // ask how much of the PREDICATE is left in common. If almost nothing
+        // is left, the overlap is the scene, not the player's sentence: make
+        // it a warning and let the action stand. If the verb phrase still
+        // tracks the player's sentence (run-1 A1: 「靠在巷口墙边，确认护目镜
+        // 是否起雾」 vs 「我靠在巷口墙边，先确认护目镜有没有起雾」), it is a
+        // paraphrase and stays an error that triggers repair.
+        const lexicon = sceneLexicon(state);
+        const residual = sharedSubsequence(stripLexicon(valueSkeleton, lexicon), stripLexicon(playerSkeleton, lexicon));
+        const sceneOnly = residual.length <= 3;
+        push(issue('npc_repeats_player', sceneOnly ? 'warn' : 'error',
+          sceneOnly
+            ? `行动句与玩家原话共用了现场名词（覆盖 ${Math.round(playerCoverage * 100)}%），但没有复述玩家的动作；请确认这是角色自己的行动`
+            : `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
+          { detail: value }), sceneOnly ? undefined : '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
       }
     }
     for (const quote of longQuotes(value)) {
@@ -180,6 +205,24 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       `行动句提到不在本地点、也不在身上的物品：${names(mentions.absentItems)}`, { detail: names(mentions.absentItems) }));
   }
   return { value, issues, repairs };
+}
+
+/** Registered proper names that a scene sentence naturally reuses. Only names
+ * of two characters or more: single generic characters ("门", "墙") are part of
+ * the scene vocabulary, not an entity reference. */
+function sceneLexicon(state: WorldState): string[] {
+  const names: string[] = [];
+  const add = (name: string | undefined): void => { if (name && [...name].length >= 2) names.push(name); };
+  for (const id of Object.keys(state.initial.characters)) add(state.initial.characters[id]?.name);
+  for (const id of Object.keys(state.initial.items)) add(state.initial.items[id]?.name);
+  for (const id of Object.keys(state.initial.locations)) add(state.initial.locations[id]?.name);
+  return [...new Set(names)].sort((a, b) => [...b].length - [...a].length);
+}
+
+function stripLexicon(text: string, lexicon: string[]): string {
+  let out = text;
+  for (const word of lexicon) out = out.split(word).join('');
+  return out;
 }
 
 function characterNameIndex(state: WorldState): { byId: Map<Id, string>; byAlias: Map<string, Id> } {
@@ -293,7 +336,7 @@ export interface ReactionCheckContext {
 /** Reaction text → accepted reaction or a repair request. */
 export function checkReactionText(text: string, context: ReactionCheckContext, options: CheckOptions): CheckResult<string> {
   const { scene, state, source, sourceActionText } = context;
-  const value = stripOutputLabel(text).normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -302,6 +345,14 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
   };
   const memberName = scene.actorName;
   const sourceName = source.name;
+  // Same grammar fix as the action text: the member is known, so a
+  // clause-initial 我 is the member speaking, not a semantic choice.
+  const rewritten = rewriteClauseSpeaker(value, memberName);
+  if (rewritten.count > 0) {
+    push(issue('first_person_rewritten', 'info',
+      `模型用了第一人称；程序把句首的“我”改成${memberName}（原文：${value}）`, { detail: value }));
+    value = rewritten.text;
+  }
 
   const copiedGoal = taskGoalCopy(value, allGoals(state));
   if (copiedGoal) {

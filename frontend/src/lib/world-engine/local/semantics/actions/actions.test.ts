@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { decodeTaskOutput } from '../../../runtime/structured-output';
 import type { Json, WorldState } from '../../../types';
-import { createActionHandlers, createActionModelPort, buildScene, type HandlerResult } from './index';
+import { createActionHandlers, createActionModelPort, buildScene, targetsPrompt as targetsPromptForTest, type HandlerResult } from './index';
 import { buildTestWorld, withPosition } from './fixtures';
 
 type Reply = string | Error | ((prompt: string, call: number) => string);
@@ -49,6 +49,19 @@ function codecAccepts(result: HandlerResult): void {
   expect(() => decodeTaskOutput(result.task, raw)).not.toThrow();
 }
 
+describe('prompts do not offer a copyable fake id', () => {
+  it('shows a registered target id in the targets example', () => {
+    const state = buildTestWorld();
+    const scene = buildScene(state, 'hero');
+    const prompt = targetsPromptForTest(scene, '阿宁把木箱推到门边。', 2);
+    // A literal "角色id"/"id" in the example is what small models copy; the
+    // 13:21Z run produced the literal `id` in the updates output.
+    expect(prompt).toContain('"targetId":"ally"');
+    expect(prompt).not.toContain('角色id');
+    expect(prompt).not.toMatch(/"targetId":"id"/);
+  });
+});
+
 describe('scene derivation', () => {
   it('separates present, nested-location, absent and carried entities', () => {
     const state = buildTestWorld();
@@ -83,7 +96,10 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(codes(result)).not.toContain('model_skip');
     // The task and the scene are in the prompt: no name/interaction gate ran.
     expect(engine.prompts[0]).toContain('task_ally_watch');
-    expect(engine.prompts[0]).toContain('我靠在墙边喘口气。');
+    // The player's sentence is not quoted to an NPC (the 16:46 product run
+    // copied it as nono's action); the same-room line points at the events.
+    expect(engine.prompts[0]).not.toContain('我靠在墙边喘口气。');
+    expect(engine.prompts[0]).toContain('主角也在同一地点');
     expect(engine.prompts[0]).toContain('守住大厅木门');
     expect(engine.prompts[0]).toContain('老周');
     codecAccepts(result);
@@ -206,16 +222,47 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(String(reactionResult.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
   });
 
-  it('rejects first-person narration and repairs it', async () => {
+  it('rewrites a clause-initial first person in a reaction too', async () => {
     const state = buildTestWorld();
-    const engine = new ScriptedEngine(['{"kind":"act","text":"我退回门边，把门闩压紧。"}', '{"kind":"act","text":"阿宁退回门边，把门闩压紧。"}']);
+    const engine = new ScriptedEngine(['我按住门板，让路明非退到柜台后。']);
+    const result = await createActionHandlers({ engine }).reaction('hero', reactionInput(state, 'hero', 'ally', '路明非把木门推开，问阿宁还能不能走。'));
+
+    expect(result.attempts).toBe(1);
+    expect(String(result.value)).toBe('阿宁按住门板，让路明非退到柜台后。');
+    expect(codes(result)).toContain('first_person_rewritten');
+    expect(codes(result)).not.toContain('reaction_first_person');
+  });
+
+  it('rewrites a clause-initial first person instead of burning a repair', async () => {
+    const state = buildTestWorld();
+    // The 13:21Z run answered twice in first person and fell back to a skip.
+    // The actor is known, so the subject is a deterministic reference: rewrite
+    // it and keep the model's action, with the original recorded in the issue.
+    const engine = new ScriptedEngine(['{"kind":"act","text":"我退回门边，把门闩压紧。"}']);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
+
+    expect(result.attempts).toBe(1);
+    expect(codes(result)).not.toContain('action_first_person');
+    expect(codes(result)).toContain('first_person_rewritten');
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁退回门边，把门闩压紧。' });
+    const rewritten = result.issues.find((item) => item.code === 'first_person_rewritten');
+    expect(rewritten?.detail).toContain('我退回门边');
+    codecAccepts(result);
+  });
+
+  it('still rejects a mid-clause first person that means the player', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"老周把我推到门边，自己退开。"}',
+      '{"kind":"act","text":"阿宁把门闩压紧，退到门边。"}',
+    ]);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
 
     expect(result.attempts).toBe(2);
     expect(codes(result)).toContain('action_first_person');
-    expect(result.value).toEqual({ kind: 'act', text: '阿宁退回门边，把门闩压紧。' });
-    codecAccepts(result);
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁把门闩压紧，退到门边。' });
   });
 
   it('rejects an action that puts an absent character in the scene', async () => {

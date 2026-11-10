@@ -41,6 +41,28 @@ function delegate(log: string[]): { generate(task: ModelTask, key: string, input
 }
 
 describe('ActionExecutionModel port', () => {
+  it('drops an event that repeats the player sentence from an NPC action prompt', async () => {
+    const { engine, prompts } = fakeEngine({ action: ['{"kind":"act","text":"阿宁把门闩压紧，退到门边。"}'] });
+    const model = createActionExecutionModel(delegate([]), engine, {
+      recentEvents: () => [
+        // This is the shape the program narration had in the 16:46 product
+        // run: the player's action, one name substituted. The NPC copied it.
+        '路明非沿着巷口往里走，先看清墙上的演习规则牌。',
+        '巷口的黄黑绳已经放下，墙角有新鲜的演习弹红痕。',
+      ],
+    });
+    const input = {
+      actor: 'ally',
+      advance: { inputText: '我沿着巷口往里走，先看清墙上的演习规则牌。', intentStatus: 'pending' },
+      workingState: buildTestWorld(),
+    } as unknown as Json;
+    const value = await model.generate('action', 'ally', input);
+    expect(value).toMatchObject({ kind: 'act' });
+    const prompt = prompts.find((entry) => entry.task === 'action')!.prompt;
+    expect(prompt).not.toContain('路明非沿着巷口');
+    expect(prompt).toContain('黄黑绳');
+  });
+
   it('freezes the player text verbatim even when it matches no command list', async () => {
     const { engine, prompts } = fakeEngine({});
     const log: string[] = [];
@@ -70,8 +92,11 @@ describe('ActionExecutionModel port', () => {
     const prompt = prompts[0].prompt;
     expect(prompt).toContain('守住大厅木门');
     expect(prompt).toContain('被玩家点名不是行动前提');
-    // The player's move is scene context, not a command the NPC must repeat.
-    expect(prompt).toContain('我盯着巷口');
+    // The player's move is scene context, not a command the NPC must repeat;
+    // its exact sentence is deliberately not quoted (the 16:46 product run
+    // copied it as nono's action on every attempt).
+    expect(prompt).not.toContain('我盯着巷口');
+    expect(prompt).toContain('主角也在同一地点');
     expect(model.evidence[0].source).toBe('model');
     expect(await model.generate('results', 'g1', {} as Json)).toEqual({ delegated: 'results' });
   });
@@ -101,16 +126,16 @@ describe('ActionExecutionModel port', () => {
     expect(second.evidence.at(-1)!.fallback).toBe(true);
   });
 
-  it('rejects a reaction written in first person and keeps the source action out of it', async () => {
-    const bad = '我把门拉开，冲出去。';
-    const good = '阿宁按住门板，低声让路明非退到柜台后。';
-    const { engine } = fakeEngine({ reaction: [bad, good] });
+  it('rewrites a first-person reaction to the member instead of repairing it', async () => {
+    const { engine } = fakeEngine({ reaction: ['我把门拉开，冲出去。'] });
     const model = createActionExecutionModel(delegate([]), engine, { attempts: 2 });
     const input = { sourceId: 'hero', sourceActionText: '路明非把木门推开，问阿宁还能不能走。', memberId: 'ally', workingState: buildTestWorld() } as unknown as Json;
     const value = await model.generate('reaction', 'hero', input);
-    expect(String(value)).toBe(good);
-    const attempts = model.evidence.at(-1)!.calls;
-    expect(attempts).toHaveLength(2);
+    expect(String(value)).toBe('阿宁把门拉开，冲出去。');
+    const result = model.evidence.at(-1)!;
+    expect(result.calls).toHaveLength(1);
+    expect(result.issues.map((issue) => issue.code)).toContain('first_person_rewritten');
+    expect(result.issues.some((issue) => issue.code === 'reaction_first_person' && issue.severity === 'error')).toBe(false);
   });
 
   it('never lets the model write the protagonist as a reaction target', async () => {

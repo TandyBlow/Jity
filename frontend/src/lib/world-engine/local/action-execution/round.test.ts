@@ -151,4 +151,144 @@ describe('real round through the controller with the action-execution port', () 
     expect(commits[0].settlementGroups.map((group) => group.actorIds)).toEqual([['ally'], ['hero']]);
     expect(commits[0].settlementGroups[0].groupId).not.toBe(commits[0].settlementGroups[1].groupId);
   });
+
+  it('admits a later-acting target into the player group, rolls once and settles both with a reaction', async () => {
+    // 老周 is moved into the hall and has sanity 70, so 路明非 (60) acts
+    // before him: the player's action can admit him as a target instead of
+    // finding him "already acted".
+    const initial = template();
+    initial.characters.rival.initialPosition = { containerId: 'hall', slotId: null, relativeTo: null };
+    const order = roundOrder(buildTestWorld());
+    expect(order).toEqual(['servant', 'ally', 'hero', 'rival']);
+
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const captured: Captured[] = [];
+    const prompts: string[] = [];
+    const engine = {
+      info: { backend: 'fake', modelId: 'fake-joint' },
+      async load() {}, async dispose() {},
+      async complete(prompt: string): Promise<string> {
+        prompts.push(prompt);
+        if (prompt.includes('角色行动判断器')) {
+          return JSON.stringify({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
+        }
+        if (prompt.includes('牵连判断器')) {
+          return JSON.stringify({ targets: prompt.includes('抛给老周') ? [{ targetId: 'rival' }] : [] });
+        }
+        if (prompt.includes('反应生成器')) {
+          return '老周侧身接住短刀，掂了掂，退到墙边。';
+        }
+        throw new Error(`unexpected prompt: ${prompt.slice(0, 40)}`);
+      },
+    };
+    const port = createActionExecutionModel(settlementModel(captured), engine, { attempts: 1 });
+
+    const playerText = '我把短刀抛给老周，喊他接住。';
+    const memory = initialMemory('test_joint', 'holder_joint');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: playerText, order };
+    memory.allocPlan = {
+      allocationKey: 'test_joint_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const commits: RequestMap['commit_point'][] = [];
+    const observed = {
+      execute: async (operation: Parameters<typeof transport.execute>[0], request: never, scope: never) => {
+        if (operation === 'commit_point') commits.push(request as unknown as RequestMap['commit_point']);
+        return transport.execute(operation, request, scope);
+      },
+    } as unknown as typeof transport;
+    const driver = new ControllerDriver({ transport: observed, model: port }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+
+    const snapshot = transport.snapshot();
+    // The admitted target's own slot is consumed by the group: no separate
+    // action judgement for 老周.
+    expect(port.evidence.filter((entry) => entry.task === 'action').map((entry) => entry.key)).not.toContain('rival');
+    // One roll, admitted, for the player's target.
+    const roll = Object.values(snapshot.rolls ?? {}).find((entry) => entry.targetId === 'rival');
+    expect(roll).toMatchObject({ sourceId: 'hero', targetId: 'rival', eligible: true, admitted: true });
+    // The reaction is generated for that member.
+    const reaction = port.evidence.find((entry) => entry.task === 'reaction');
+    expect(reaction?.key).toBe('hero');
+    expect(reaction?.value).toBe('老周侧身接住短刀，掂了掂，退到墙边。');
+    // The joint group settles as one unit with both actors.
+    expect(commits).toHaveLength(1);
+    const joint = commits[0].settlementGroups.find((group) => group.actorIds.includes('hero'));
+    expect(joint?.actorIds.sort()).toEqual(['hero', 'rival']);
+    // The results input carries the declared roll for the source member.
+    const heroResults = captured.filter((entry) => entry.task === 'results').at(-1)!.input as {
+      members: { memberId: string; rollRefs: { targetId: string; admitted: boolean }[] }[];
+    };
+    const heroMember = heroResults.members.find((member) => member.memberId === 'hero');
+    expect(heroMember?.rollRefs).toEqual([expect.objectContaining({ targetId: 'rival', admitted: true })]);
+
+    // The joint-group inputs carry the frozen action, the declared target and
+    // the source action the reaction must answer; no prompt is a bare id.
+    const targetsPrompt = prompts.find((prompt) => prompt.includes('牵连判断器') && prompt.includes(playerText)) ?? '';
+    expect(targetsPrompt).toContain(playerText);
+    expect(targetsPrompt).toContain('老周');
+    const reactionPrompt = prompts.find((prompt) => prompt.includes('反应生成器')) ?? '';
+    expect(reactionPrompt).toContain(playerText);
+    expect(reactionPrompt).toContain('老周');
+    expect(reactionPrompt).toContain('路明非');
+  });
+
+  it('a forced reaction on the protagonist is a program line and the model never writes the player', async () => {
+    const initial = template();
+    const order = roundOrder(buildTestWorld());
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const captured: Captured[] = [];
+    const actionPrompts: string[] = [];
+    const engine = {
+      info: { backend: 'fake', modelId: 'fake-preempt' },
+      async load() {}, async dispose() {},
+      async complete(prompt: string): Promise<string> {
+        if (prompt.includes('角色行动判断器')) {
+          actionPrompts.push(prompt);
+          return JSON.stringify({ kind: 'act', text: '阿宁把门闩压上，转身挡在路明非面前。' });
+        }
+        if (prompt.includes('牵连判断器')) return JSON.stringify({ targets: [{ targetId: 'hero' }] });
+        if (prompt.includes('反应生成器')) throw new Error('the protagonist reaction must be program, not a model call');
+        throw new Error(`unexpected prompt: ${prompt.slice(0, 40)}`);
+      },
+    };
+    const port = createActionExecutionModel(settlementModel(captured), engine, { attempts: 1 });
+    const playerText = '我靠在墙边喘口气，等阿宁把门关好。';
+    const memory = initialMemory('test_preempt', 'holder_preempt');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: playerText, order };
+    memory.allocPlan = {
+      allocationKey: 'test_preempt_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const driver = new ControllerDriver({ transport, model: port }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+
+    const snapshot = transport.snapshot();
+    // 阿宁's action named the player and the roll admitted him; the reaction
+    // slot is a program non-action, never a model-written player line.
+    const reaction = port.evidence.find((entry) => entry.task === 'reaction');
+    expect(reaction?.source).toBe('program');
+    expect(reaction?.key).toBe('ally');
+    expect(String(reaction?.value)).toContain('路明非');
+    expect(port.evidence.some((entry) => entry.task === 'action' && entry.key === 'hero')).toBe(false);
+    // The forced reaction consumed the player's opportunity: his slot is in
+    // actedIds, so the command was never executed as a separate action.
+    expect(snapshot.round?.actedIds).toEqual(expect.arrayContaining(['hero']));
+    const roll = Object.values(snapshot.rolls ?? {}).find((entry) => entry.sourceId === 'ally' && entry.targetId === 'hero');
+    expect(roll).toMatchObject({ eligible: true, admitted: true });
+    // The protagonist never wrote an action prompt in this round.
+    expect(actionPrompts.some((prompt) => prompt.includes('本次判断的角色】路明非'))).toBe(false);
+  });
 });

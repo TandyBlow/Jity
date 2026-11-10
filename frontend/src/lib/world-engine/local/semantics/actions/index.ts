@@ -32,6 +32,7 @@ import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
+import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
 import type {
   ActionCallEvidence, ActionHandlerOptions, ActionHandlers, ActionIssue, ActionTask, HandlerResult,
@@ -189,10 +190,20 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     const offscreen = call.actor !== call.state.protagonistId
       && roomOf(call.state, call.actor) !== roomOf(call.state, call.state.protagonistId);
     const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'skip') === 'judge';
+    // A same-room NPC may see that the protagonist acted, but not the
+    // player's sentence: when a program/narration line repeats the command,
+    // the small model copied that line as its own action (16:46 run: nono
+    // repeated the player's walk/read on all three attempts). Events that
+    // share an 8-char span with the command are dropped for NPCs; the
+    // protagonist's own deferred action still receives every event.
+    const isNpc = call.actor !== call.state.protagonistId;
+    const events = judgeOffscreen
+      ? []
+      : (options.recentEvents?.() ?? []).filter((event) => !isNpc || !call.inputText || longestSharedSpan(event, call.inputText).length < 8);
     const scene = buildScene(call.state, call.actor, {
       playerInput: judgeOffscreen ? null : call.inputText,
       intentStatus: call.intentStatus,
-      events: judgeOffscreen ? [] : options.recentEvents?.() ?? [],
+      events,
       aliases: options.aliases,
     });
 
