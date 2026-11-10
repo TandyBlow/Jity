@@ -22,6 +22,20 @@ import { generateCandidate as generateConstrained } from '../constrained';
 // contract. It is used for the program route only; the model route keeps the
 // model writer.
 import { createBeatComposer } from '../prose-composer';
+
+/** Lane 07's composer writes scene/move/close beats, but it has no branch for
+ * 04's `result` beat and would fall through to a close texture. The settled
+ * result line is mandatory (lane 04 v1.3), so the adapter lets 04's own
+ * realizer write that one beat. */
+const composerWithResultBeat = (() => {
+  const composer = createBeatComposer();
+  const mixed = async (request: Parameters<typeof composer>[0], options?: Parameters<typeof composer>[1]) => {
+    if (request.beat.kind === 'result') throw new Error('result_beat_uses_04_realizer');
+    return composer(request, options);
+  };
+  Object.defineProperty(mixed, 'name', { value: 'prose-composer+04-result' });
+  return mixed;
+})();
 import type { CandidateNarrationResult, NarrationCandidate, PreparedNarration } from './types';
 
 /** `program+model-failed` is still program text: the model attempt failed its
@@ -98,7 +112,7 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         maxChars: 500,
         requireTime: prepared.policy.requireTime ?? false,
         sanityStyle: 'number',
-        ...(mode === 'program' ? { composer: createBeatComposer() } : {}),
+        ...(mode === 'program' ? { composer: composerWithResultBeat } : {}),
         model: {
           maxTokensPerBeat: prepared.policy.maxTokens ?? 160,
           temperature: prepared.policy.temperature ?? 0.45,

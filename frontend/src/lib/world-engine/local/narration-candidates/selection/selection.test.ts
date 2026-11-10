@@ -247,6 +247,18 @@ describe('constrained (C route) candidate', () => {
     }
   });
 
+  it('keeps the settled result line when lane 07 writes the other beats', async () => {
+    const withResult: NarrationPoint = { ...point(), settledResults: ['路明非：无判定。'] };
+    const runner = createNarrationRunner({ engine: fakeEngine(), candidate: 'constrained', minChars: 20 });
+    const result = await runner.generate(withResult);
+    expect(result.kind).toBe('adopted');
+    if (result.kind === 'adopted') {
+      expect(result.grade).toBe('program');
+      expect(result.text).toContain('路明非：无判定。');
+      expect(String(result.detail?.composers ?? '')).toContain('prose-composer');
+    }
+  });
+
   it('writes a labelled program fallback even when the candidate declines the opening', async () => {
     let calls = 0;
     const root: NarrationPoint = {

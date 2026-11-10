@@ -52,6 +52,10 @@ const config = {
   timeoutMs: Number(flag('--timeout-ms', '120000')),
   deadlineMs: Number(flag('--deadline-ms', '420000')),
   projectionOnly: process.argv.includes('--projection-only'),
+  results: (() => {
+    const index = process.argv.indexOf('--results');
+    return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : null;
+  })(),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const modelFile = resolve(config.modelDir, basename(config.model));
@@ -156,6 +160,7 @@ try {
       pointId: 'point_shipping_1', before: world, delta: { timeAdvance, entityDeltas }, after,
       playerInput: '我沿器材棚的推拉门进去，先看领用台，再确认器材笼的挂锁是不是还扣着。',
       priorText: null,
+      ...(config.results ? { settledResults: [config.results] } : {}),
     };
     const prepared = prepareNarration(point);
     const projection = {
@@ -196,7 +201,7 @@ try {
           textChars: (run.kind === 'adopted' ? run.text : run.detail?.text ?? '').length,
           issues: run.kind === 'adopted' ? run.issues : run.detail?.issues ?? null,
           timings: run.kind === 'adopted' ? run.timings : null,
-          detail: run.kind === 'fallback' ? run.detail ?? null : null,
+          detail: run.kind === 'adopted' ? run.detail ?? null : run.detail ?? null,
         },
       };
     }
@@ -251,7 +256,7 @@ try {
     model: config.model, threads: config.threads, gpu: config.gpu, candidate: config.candidate,
     projectionOnly: config.projectionOnly, mode: config.mode,
     maxTokens: config.maxTokens, minChars: config.minChars, targetChars: config.targetChars,
-    timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs,
+    timeoutMs: config.timeoutMs, deadlineMs: config.deadlineMs, results: config.results,
   });
   evidence.status = config.projectionOnly ? 'PROJECTION_ONLY' : result.run.kind === 'adopted' ? 'ACCEPTED' : 'REJECTED';
   evidence.result = result;
