@@ -77,17 +77,19 @@ def main() -> int:
                         str(ROOT / "subset-declaration.json"), "--skip-serializer-errors"])
         check("build_prompts refuses a tampered cases file", tampered.returncode == 2, f"exit={tampered.returncode}")
 
-    real = run(["src/build_prompts.py", "--manifest", str(DEV / "manifest.json"),
-                "--expect-manifest-sha256", manifest_sha,
-                "--out-dir", str(ROOT / "evidence/selftest-prompts"),
-                "--declare-subset", str(ROOT / "subset-declaration.json"), "--skip-serializer-errors"])
-    ok = real.returncode == 0
-    count = None
-    if ok:
-        out_manifest = json.loads((ROOT / "evidence/selftest-prompts/prompts.manifest.json").read_text(encoding="utf-8"))
-        count = out_manifest["promptCount"]
-        ok = count == 12 and out_manifest["frozen"] is True
-    check("build_prompts pins the 12-case declared subset", ok, f"prompts={count}")
+    with tempfile.TemporaryDirectory() as tmp:
+        out_dir = pathlib.Path(tmp) / "pinned"
+        real = run(["src/build_prompts.py", "--manifest", str(DEV / "manifest.json"),
+                    "--expect-manifest-sha256", manifest_sha,
+                    "--out-dir", str(out_dir),
+                    "--declare-subset", str(ROOT / "subset-declaration.json"), "--skip-serializer-errors"])
+        ok = real.returncode == 0
+        count = None
+        if ok:
+            out_manifest = json.loads((out_dir / "prompts.manifest.json").read_text(encoding="utf-8"))
+            count = out_manifest["promptCount"]
+            ok = count == 12 and out_manifest["frozen"] is True
+        check("build_prompts pins the 12-case declared subset", ok, f"prompts={count}")
 
     with tempfile.TemporaryDirectory() as tmp:
         run_dir = pathlib.Path(tmp) / "fake-run"
