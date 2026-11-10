@@ -376,6 +376,22 @@ describe('visible acceptance summary', () => {
     expect(report.errors.some((item) => item.detail.includes('draft'))).toBe(true);
   });
 
+  it('rejects an empty settlement-failed turn even without text', () => {
+    const report = verifyDisplayedCommit([{
+      turn: 1,
+      text: '',
+      textSource: 'program',
+      historyDelta: 0,
+      note: '本回合没有完成：结算没有完成。',
+      product: { source: null, acceptedMs: null, draftMs: null },
+      timings: { doneMs: 29_823, firstReadableMs: null },
+      problems: ['submit_refused:结算没有完成，可以重试。', 'empty_text', 'settlement_failed_recoverable'],
+      submission: { inputText: '我沿着服务巷往里走。' },
+    }]);
+    expect(report.ok).toBe(false);
+    expect(report.errors.some((item) => item.detail.includes('empty/failed'))).toBe(true);
+  });
+
   it('rejects a program fallback and a slow accepted turn', () => {
     const report = verifyDisplayedCommit([{
       turn: 1,
