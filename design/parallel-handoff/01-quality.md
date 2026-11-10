@@ -196,3 +196,4 @@
 - 02 spine 验收稿复核（root-2 144 / move-2 171，均 accepted）：「黄黑绳被放下」再次与「已放下」冲突；「银质手链」是新增佩戴物（判 `fact.object_added`，回答 02 留的问题）；move 把「演习规则牌」放到诺诺脚边并「指尖轻触」，状态是墙上的赛区路线图；「发圈垂落」改变束在脑后的结算；诺诺在巷口而路明非已到中央庭院。见 `findings-02-spine.md`、`requests-01-to-02-spine-prose.md`。
 
 - 3-turn d101 第 2 回合：输入「我向诺诺问：现在红蓝两方各在哪，我能不能先保持中立？」；submission 170 ms、results/updates/continuation 调用全 0、decision null，随后 330 s 超时、no_entry_added、history_delta_0、textSource program；显示文本与第 1 回合模型正文逐字相同（不是本轮回退）。06 不得用上回合正文冒充本轮；0 调用提交需单独追因。
+- 3-turn d101 结束 **FAILED**（21:48:06Z），只有 2 回合；第 2 回合 0 调用 170 ms 提交 + 330 s 超时 + 显示第 1 回合正文；不是完成的 3 回合证据。
