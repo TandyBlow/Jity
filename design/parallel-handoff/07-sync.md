@@ -627,8 +627,9 @@ PROGRESS_SYNC_URL=http://127.0.0.1:18081 PROGRESS_SYNC_TOKEN=smoke-token \
   兜底压成 `too_short` 而被丢弃；
 - 加了三个单测：短场景一段、长场景保留空行、低于长度下限时保留空行。
 
-在 06 `d597fb6a` 上连同另外四个补丁一起验证：五个补丁干净应用、tsc 0、
-`local` + controller **646 passed | 2 skipped**、audit READY。`joinText` 的行为
+在 06 `cf3d027e`（页面已持久化成文来源）上覆盖全部五个补丁验证：干净应用、tsc 0、
+`local` + controller **646 passed | 2 skipped**、audit READY；页面补丁同时保留
+了 06 新增的 `narrationSourceOf` 参数并在恢复远端快照时传入。`joinText` 的行为
 归 06，补丁只是提案；若 06 把兜底切到 07 的整场入口 `generateCandidate`，也
 已经是同一条规则。
 
