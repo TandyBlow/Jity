@@ -127,6 +127,7 @@ function scriptedEngine(brain: Brain): InferenceEngine {
 }
 
 function actionPort(state: () => InitialTemplate, brain: Brain): WorldModelPort {
+  let autoActionRound = 0;
   return {
     async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
       if (task === 'pointPlan') {
@@ -148,9 +149,15 @@ function actionPort(state: () => InitialTemplate, brain: Brain): WorldModelPort 
         if (data.actor === data.workingState.protagonistId && data.advance?.intentStatus === 'pending' && data.advance.inputText) {
           return { kind: 'act', text: data.advance.inputText };
         }
-        return data.actor === 'person_a'
-          ? { kind: 'act', text: '林川朝盒盖那边走了一步。' }
-          : { kind: 'skip' };
+        if (data.actor === 'person_a') {
+          // A real automatic action lane resolves the current candidate; using
+          // the same fixed text every round would turn a legitimate chain into
+          // an accidental same-action replay.
+          const plan = brain.continuations[autoActionRound];
+          autoActionRound += 1;
+          return { kind: 'act', text: plan?.candidates[0]?.text ?? '林川朝盒盖那边走了一步。' };
+        }
+        return { kind: 'skip' };
       }
       if (task === 'targets') return { targets: [] };
       if (task === 'reaction') return { kind: 'skip' };
