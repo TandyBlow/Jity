@@ -131,9 +131,22 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       const mostlyPlayer = valueSkeleton.length >= 6 && subsequence.coverage >= 0.8;
       const containsPlayer = subsequence.length >= 8 && playerCoverage >= 0.7;
       if (mostlyPlayer || containsPlayer) {
-        push(issue('npc_repeats_player', 'error',
-          `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
-          { detail: value }), '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
+        // Shared scene words are not an echo. An NPC near the same person
+        // necessarily reuses "巷口"/"护目镜"; remove the registered names and
+        // ask how much of the PREDICATE is left in common. If almost nothing
+        // is left, the overlap is the scene, not the player's sentence: make
+        // it a warning and let the action stand. If the verb phrase still
+        // tracks the player's sentence (run-1 A1: 「靠在巷口墙边，确认护目镜
+        // 是否起雾」 vs 「我靠在巷口墙边，先确认护目镜有没有起雾」), it is a
+        // paraphrase and stays an error that triggers repair.
+        const lexicon = sceneLexicon(state);
+        const residual = sharedSubsequence(stripLexicon(valueSkeleton, lexicon), stripLexicon(playerSkeleton, lexicon));
+        const sceneOnly = residual.length <= 3;
+        push(issue('npc_repeats_player', sceneOnly ? 'warn' : 'error',
+          sceneOnly
+            ? `行动句与玩家原话共用了现场名词（覆盖 ${Math.round(playerCoverage * 100)}%），但没有复述玩家的动作；请确认这是角色自己的行动`
+            : `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
+          { detail: value }), sceneOnly ? undefined : '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
       }
     }
     for (const quote of longQuotes(value)) {
@@ -180,6 +193,24 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       `行动句提到不在本地点、也不在身上的物品：${names(mentions.absentItems)}`, { detail: names(mentions.absentItems) }));
   }
   return { value, issues, repairs };
+}
+
+/** Registered proper names that a scene sentence naturally reuses. Only names
+ * of two characters or more: single generic characters ("门", "墙") are part of
+ * the scene vocabulary, not an entity reference. */
+function sceneLexicon(state: WorldState): string[] {
+  const names: string[] = [];
+  const add = (name: string | undefined): void => { if (name && [...name].length >= 2) names.push(name); };
+  for (const id of Object.keys(state.initial.characters)) add(state.initial.characters[id]?.name);
+  for (const id of Object.keys(state.initial.items)) add(state.initial.items[id]?.name);
+  for (const id of Object.keys(state.initial.locations)) add(state.initial.locations[id]?.name);
+  return [...new Set(names)].sort((a, b) => [...b].length - [...a].length);
+}
+
+function stripLexicon(text: string, lexicon: string[]): string {
+  let out = text;
+  for (const word of lexicon) out = out.split(word).join('');
+  return out;
 }
 
 function characterNameIndex(state: WorldState): { byId: Map<Id, string>; byAlias: Map<string, Id> } {

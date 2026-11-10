@@ -87,7 +87,10 @@ export function targetsPrompt(scene: ActionScene, actionText: string, maxTargets
     '指代按现场判断：行动里的“他/她/对方/那个人”指的是谁，由你根据在场人物、位置和刚发生的事决定，不要因为没写名字就当成没有人。',
     '行动点名的人如果不在场，不能选；名单里另列了不在场角色。行动里明确点名、要求其回应的人通常都要列入；行动只写移动、观察或对物品操作时，返回空数组。',
     '不要替行动者补写行动，不要新增人物；只输出被牵连角色的 id。',
-    `最多 ${maxTargets} 人。输出 {"targets":[{"targetId":"角色id"}]}；没有就是 {"targets":[]}。`,
+    // Show a real registered id, never a literal like "id"/"角色id": a small
+    // model copies the example and the id then fails to resolve (the 13:21Z
+    // run produced a literal `id` in the updates output).
+    `最多 ${maxTargets} 人。输出 {"targets":[{"targetId":"${candidates[0]?.id ?? scene.actor.id}"}]}；没有就是 {"targets":[]}。`,
     '',
     `【行动者】${characterLine(scene.actor, false)}`,
     `【行动】${clip(actionText, 160)}`,

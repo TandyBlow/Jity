@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { decodeTaskOutput } from '../../../runtime/structured-output';
 import type { Json, WorldState } from '../../../types';
-import { createActionHandlers, createActionModelPort, buildScene, type HandlerResult } from './index';
+import { createActionHandlers, createActionModelPort, buildScene, targetsPrompt as targetsPromptForTest, type HandlerResult } from './index';
 import { buildTestWorld, withPosition } from './fixtures';
 
 type Reply = string | Error | ((prompt: string, call: number) => string);
@@ -48,6 +48,19 @@ function codecAccepts(result: HandlerResult): void {
   const raw = typeof result.value === 'string' ? result.value : JSON.stringify(result.value);
   expect(() => decodeTaskOutput(result.task, raw)).not.toThrow();
 }
+
+describe('prompts do not offer a copyable fake id', () => {
+  it('shows a registered target id in the targets example', () => {
+    const state = buildTestWorld();
+    const scene = buildScene(state, 'hero');
+    const prompt = targetsPromptForTest(scene, '阿宁把木箱推到门边。', 2);
+    // A literal "角色id"/"id" in the example is what small models copy; the
+    // 13:21Z run produced the literal `id` in the updates output.
+    expect(prompt).toContain('"targetId":"ally"');
+    expect(prompt).not.toContain('角色id');
+    expect(prompt).not.toMatch(/"targetId":"id"/);
+  });
+});
 
 describe('scene derivation', () => {
   it('separates present, nested-location, absent and carried entities', () => {
