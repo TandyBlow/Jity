@@ -1,0 +1,178 @@
+/** Constrained beat writer.
+ *
+ * One model call per beat, with only the licensed material for that beat in
+ * the prompt. The model writes language; the fact list is frozen by the
+ * planner. A reply that fails beat verification is retried once with the
+ * missing facts named, then the caller falls back to `realizeBeat` — never to
+ * a fact list.
+ */
+import type { InferenceEngine } from '../../../runtime/engine';
+import { isAbortError } from '../../../runtime/engine';
+import type { BeatDirective, SceneFact, SceneSkeleton } from './types';
+
+export interface BeatPromptOptions {
+  instruction?: string | null;
+  sanityStyle: 'direction' | 'number';
+  /** Longer detail budget for the beat prompt. */
+  maxDetails?: number;
+}
+
+const UNIT_LABEL: Record<string, string> = {
+  second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年',
+};
+
+export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'number'): string {
+  switch (fact.kind) {
+    case 'time': {
+      const { amount, unit } = fact.advance.duration;
+      const label = unit === 'hour' ? `${amount}小时` : unit === 'month' ? `${amount}个月` : `${amount}${UNIT_LABEL[unit]}`;
+      return `时间过去 ${label}（正文必须写出这个时长）`;
+    }
+    case 'move':
+      return `${fact.name}从${fact.from}到${fact.to}（方向必须是从到；${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
+    case 'task_achieved':
+      return `${fact.name}完成了一项任务，目标原文是「${fact.goal}」（正文要让人读到这件事已经做到）`;
+    case 'subtask_added':
+      return `${fact.name}新增一条待办：「${fact.goal}」（只是新目标，没有完成）`;
+    case 'personality_changed':
+      return fact.removed
+        ? `${fact.name}不再有原来那一点个性：${fact.supersededTexts.join('；')}`
+        : `${fact.name}的个性发生了变化，变化原文是「${fact.text}」`;
+    case 'appearance_changed':
+      return fact.removed
+        ? `${fact.name}原来的样子不再成立：${fact.supersededTexts.join('；')}`
+        : `${fact.name}的外貌出现新描述：「${fact.text}」`;
+    case 'sanity_changed':
+      return sanityStyle === 'number'
+        ? `${fact.name}的精神数值从 ${fact.from} 变成 ${fact.to}（正文必须写出数值变化）`
+        : `${fact.name}的精神状态${fact.to < fact.from ? '下降' : fact.to > fact.from ? '回升' : '没有变化'}（写成体感，不要写数字）`;
+    case 'item_present':
+      return `${fact.name}现在在${fact.container}`;
+    case 'item_discovered':
+      return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
+    case 'result':
+      return `本段的结算结果原文是「${fact.text}」（可以换措辞，但不能改变其中的人和事）`;
+    case 'at':
+      return `${fact.name}在${fact.location}`;
+    default:
+      return '';
+  }
+}
+
+function clip(text: string, max: number): string {
+  const clean = text.replace(/\s+/gu, ' ').trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const punctuation = Math.max(cut.lastIndexOf('，'), cut.lastIndexOf('、'), cut.lastIndexOf('；'));
+  return `${(punctuation > max * 0.5 ? cut.slice(0, punctuation) : cut).replace(/[，、；]+$/u, '')}…`;
+}
+
+export function buildBeatPrompt(
+  beat: BeatDirective,
+  scene: SceneSkeleton,
+  prior: string | null,
+  options: BeatPromptOptions,
+): string {
+  const facts = beat.factIds
+    .map((id) => scene.facts.find((fact) => fact.id === id))
+    .filter((fact): fact is SceneFact => Boolean(fact))
+    .map((fact) => factDirective(fact, options.sanityStyle))
+    .filter(Boolean);
+  const details = scene.licensed.details
+    .map((detail) => clip(detail, 44))
+    .filter((detail) => detail.length > 1)
+    .slice(0, options.maxDetails ?? 10);
+  const present = scene.present.map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
+  const objects = scene.objects.slice(0, 8).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
+  const lastPrior = prior
+    ? clip(prior.split(/\n+/u).filter(Boolean).slice(-1)[0] ?? '', 60)
+    : '';
+  const lines = [
+    '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
+    `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
+    ...facts.map((fact) => `- ${fact}`),
+    '',
+    '场景材料（只可使用这些）：',
+    `- 视角人物：${scene.viewpoint.name}`,
+    `- 地点：${scene.place.name}${scene.place.note ? `；${clip(scene.place.note, 60)}` : ''}`,
+    ...(present.length ? [`- 在场：${present.join('；')}`] : []),
+    ...(objects.length ? [`- 可见物品：${objects.join('；')}`] : []),
+    ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
+    ...(lastPrior ? [`上一段结尾：${lastPrior}`] : []),
+    '',
+    '要求：',
+    `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
+    '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
+    '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
+    options.instruction ? `- ${options.instruction}` : '',
+    '',
+    '只输出正文：',
+  ].filter((line) => line !== '');
+  return lines.join('\n');
+}
+
+export interface ModelBeatResult {
+  text: string;
+  raw: string;
+  prompt: string;
+  attempts: number;
+  ms: number;
+  feedback: string | null;
+}
+
+/** Strip wrappers a small model adds; the beat gate still checks the facts. */
+export function sanitizeBeat(raw: string): string {
+  const body = raw.includes('【正文】') ? raw.split('【正文】').pop() ?? raw : raw;
+  return body
+    .replace(/```[\s\S]*?```/gu, '')
+    .replace(/```/gu, '')
+    .replace(/^\s*(正文|叙事|输出|片段)[:：]\s*/u, '')
+    .replace(/【[^】]{1,10}】/gu, '')
+    .replace(/\*\*/gu, '')
+    .replace(/[ \t]+/gu, ' ')
+    .replace(/\n{2,}/gu, '\n')
+    .trim();
+}
+
+export async function composeBeatWithModel(
+  engine: InferenceEngine,
+  beat: BeatDirective,
+  scene: SceneSkeleton,
+  prior: string | null,
+  options: {
+    sanityStyle: 'direction' | 'number';
+    instruction?: string | null;
+    maxTokens: number;
+    temperature: number;
+    timeoutMs: number;
+    signal?: AbortSignal;
+    onProgress?: (progress: { text: string; elapsedMs: number }) => void;
+    feedback?: string | null;
+  },
+): Promise<ModelBeatResult> {
+  const started = performance.now();
+  const prompt = buildBeatPrompt(beat, scene, prior, {
+    instruction: [options.instruction, options.feedback].filter(Boolean).join(' ') || null,
+    sanityStyle: options.sanityStyle,
+  });
+  const raw = await engine.complete(prompt, {
+    maxTokens: options.maxTokens,
+    temperature: options.temperature,
+    timeoutMs: options.timeoutMs,
+    signal: options.signal,
+    onProgress: options.onProgress
+      ? (progress) => options.onProgress?.({ text: sanitizeBeat(progress.raw), elapsedMs: performance.now() - started })
+      : undefined,
+  });
+  return {
+    text: sanitizeBeat(raw),
+    raw,
+    prompt,
+    attempts: 1,
+    ms: performance.now() - started,
+    feedback: options.feedback ?? null,
+  };
+}
+
+export { isAbortError };
