@@ -493,6 +493,15 @@ export default function WorldLocalPage() {
 
   useEffect(() => {
     let alive = true;
+    // The evidence globals exist from page start, not only after the first
+    // turn: an acceptance driver uses them to prove it is on the product page
+    // before any turn runs. Existing arrays survive a StrictMode remount.
+    {
+      const w = window as unknown as { __worldTurns?: unknown[]; __worldGenerations?: unknown[]; __worldCandidate?: unknown[] };
+      w.__worldTurns ??= [];
+      w.__worldGenerations ??= [];
+      w.__worldCandidate ??= [];
+    }
     /** Cancels the StrictMode-probe cold-load timer if this mount is unmounted
      * before the real load starts. */
     let releaseLoadGate: (() => void) | null = null;
