@@ -161,7 +161,8 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 - `results/06-recovery/real-candidate-constrained-model-instruct.json`：C model + instruct 1.5B（160 token/段），223 字，模型段与程序段混合，含编造动作。
 - `results/06-recovery/real-candidate-constrained-model-narr-short.json`、`…-instruct-short.json`：把每段压到 60–80 token 后，模型段全部被 C 的逐段校验打回，整篇变成程序文本（composers 全为 `program+model-failed`）。
 - `results/06-recovery/product-turn*.json`：真实页面整轮（B 选择、C v1.1、C v1.2、C v1.3），含内部日志、页面正文、降级标注、快照字节数。
-- `results/06-recovery/wiring-check.json`：20 项接线检查。
+- `results/06-recovery/wiring-check.json`：20 项接线检查（本线合并树）。
+- `results/06-recovery/wiring-check-main.json`：把补丁应用到干净的主树快照 `77be4c0a` 后，`tsc` 通过、20 项接线检查全过；证明补丁不依赖 02/04/07 的合入。
 
 ## 6. 已知限制
 
