@@ -1175,6 +1175,25 @@ anchors.append(
     },
 )
 
+
+rows_f15d = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+for suffix, note in (
+    ("opening", "Red hair is said to hang loose; the red mark is on the left; the chest pocket holds a magazine."),
+    ("point", "The chest pocket again contains a magazine; the read-the-rules result is missing."),
+    ("auto", "The goggles are in his hand although they hang on the chest, and the same text ends with empty hands."),
+):
+    row = rows_f15d[f"f15d-{suffix}"]
+    anchors.append(
+        {
+            "id": f"neg/page-f15d-{suffix}",
+            "source": "09 run 2026-11-10T1846-a5ff (06 f15d7a98, new qwen3-1.7b scene/prose-facts chain): " + note,
+            "input": row["input"],
+            "text": row["text"],
+            "options": {"minChars": 1},
+            "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [], "notes": note},
+        },
+    )
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

@@ -855,19 +855,27 @@ export function reviewNarration(args: {
       const personHits = nameHits(clause, names, Object.keys(projection.people));
       const claimers = personHits.map((hit) => hit.name);
       let implied = claimers;
-      if (!claimers.length) {
+      // 「她手里的短枪」 / 「他手中的护目镜」: a third-person possessive is the
+      // holder even when another person is named elsewhere in the sentence
+      // (镜片上映出诺诺的侧脸 does not make the goggles hers).
+      const pronounPossessive = /(?:他|她|他们|她们)(?:的)?(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)(?:的)?/u.test(clause);
+      if (pronounPossessive && holder !== 'scene') {
+        // The possessive pronoun's gender is enough to judge the holder:
+        // 「他手中的护目镜」 is his, even if the sentence also names a woman.
+        const possessive = /(他|她|他们|她们)(?:的)?(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.exec(clause);
+        const want = possessive?.[1] === '他' ? 'male' : possessive?.[1] === '她' ? 'female' : null;
+        if (want && genderTable[holder] === want) continue;
+        if (want) {
+          findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
+            `${object} belongs with ${holder}, but the possessive pronoun is ${possessive?.[1]}`,
+            [ctx.holders.basis.get(object) ?? ''], [`item:${object}`]));
+          continue;
+        }
+        implied = claimers;
+      } else if (!claimers.length) {
         const before = narration.slice(0, Math.max(0, narration.indexOf(clause)));
         const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
-        // 「她手里的短枪」 names nobody, but the pronoun and gender pick the
-        // holder; assuming the viewpoint would put the object in the wrong hand.
-        const pronounPossessive = /^(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)
-          || /(?:他|她|他们|她们)(?:的)?(?:手里|手中)/u.test(clause);
-        if (pronounPossessive) {
-          const person = pronounPerson(clause, sentences.indexOf(sentence))
-            ?? lastPersonBefore.get(sentences.indexOf(sentence))
-            ?? unique[unique.length - 1];
-          if (person) implied = [person];
-        } else if (unique.length === 1) {
+        if (unique.length === 1) {
           implied = unique;
         } else if (projection.viewpoint) {
           implied = [projection.viewpoint];
@@ -909,7 +917,14 @@ export function reviewNarration(args: {
       if (!named && !impliedViewpoint) continue;
       const handled = (entry: string): string | null => {
         const clause = possessionClause(narration, entry);
-        if (clause) return clause;
+        if (clause) {
+          const pronoun = /(他|她|他们|她们)(?:的)?(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)(?:的)?/u.exec(clause);
+          if (pronoun) {
+            const want = pronoun[1] === '他' ? 'male' : pronoun[1] === '她' ? 'female' : null;
+            if (want && genderTable[person.name] !== want) return null;
+          }
+          return clause;
+        }
         const index = narration.indexOf(entry);
         if (index < 0) return null;
         const around = clauseAt(narration, index).text;
@@ -935,6 +950,23 @@ export function reviewNarration(args: {
       findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
         `${person.name}'s settled appearance says the hand is empty, but the prose has ${prop} in it`,
         [emptyHand], [`item:${prop}`]));
+    }
+    // An item settled as worn/hanging is not in a hand.
+    for (const [name, item] of Object.entries(projection.items)) {
+      const worn = item.descriptions.find((entry) => /(挂在|戴在|别在)/u.test(entry));
+      if (!worn) continue;
+      const short = name.replace(/^.*的/u, '');
+      const inHand = new RegExp(`(?:手里|手中|握着|拿着|举着|捏着)(?:的)?(?:${escapeRegExp(name)}|${escapeRegExp(short)})`, 'u');
+      if (inHand.test(narration)) {
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${name} is settled worn/hanging, but the prose has it in a hand`, [worn.slice(0, 60)], []));
+      }
+    }
+    // A tied hair tie is not loose.
+    if (projection.sourceText.includes('发圈') && /束(?:在|着)/u.test(projection.sourceText)
+      && /发圈(?:松散|松了|松开|滑落)/u.test(narration)) {
+      findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+        'the hair is settled tied with a hair tie, but the tie is loose in the prose', [], []));
     }
     // A handled tool whose name is not settled (裁纸刀 cutting a ledger) is an
     // invented object even though no fixed noun list knows it.
@@ -1328,6 +1360,9 @@ export function reviewNarration(args: {
           if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(narration)) continue;
           // Taking them off the chest is the settled transfer, not wearing them.
           if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(narration)) continue;
+          // Taking them off the chest is a transfer; a bare 「摘下」 still
+          // implies they were worn, which the settled look contradicts.
+          if (/(?:从|把)(?:胸前|身上|颈上|脖子上|怀里)[^。]{0,6}(?:摘下|取下|摘掉)/u.test(narration)) continue;
           if (/(未|没|不|尚未|没有)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
@@ -1340,6 +1375,11 @@ export function reviewNarration(args: {
     // to the wrong body.
     {
       const named = nameHits(narration, names, Object.keys(projection.people)).map((hit) => hit.name);
+      // 「他手中的护目镜」 names nobody, but the pronoun still mentions the owner.
+      {
+        const bound = pronounPerson(narration, sentences.indexOf(sentence));
+        if (bound && !named.includes(bound)) named.push(bound);
+      }
       if (named.length) {
         const phrases = new Map<string, Set<string>>();
         for (const [owner, person] of Object.entries(projection.people)) {
@@ -1353,8 +1393,17 @@ export function reviewNarration(args: {
             }
           }
         }
+        // A rule board that mentions 「护目镜必须戴好」 is not someone wearing
+        // or owning the goggles, but the exemption only covers the phrase the
+        // board governs, not every accessory in the same sentence.
+        const at = (phrase: string): number => narration.indexOf(phrase);
+        const boardGoverns = (phrase: string): boolean => {
+          const index = at(phrase);
+          if (index < 0) return false;
+          return /(牌面|写着|写明|规定|必须|禁止|要求)[^。]{0,24}$/u.test(narration.slice(Math.max(0, index - 24), index));
+        };
         const hit = [...phrases.entries()].find(([phrase, owners]) =>
-          owners.size === 1 && narration.includes(phrase));
+          owners.size === 1 && narration.includes(phrase) && !boardGoverns(phrase));
 
         if (hit) {
           const [phrase, owners] = hit;
