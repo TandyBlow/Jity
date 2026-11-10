@@ -455,6 +455,16 @@ function sceneBeat(beat: BeatDirective, facts: SceneFact[], ctx: RealizerContext
   return paragraphs.filter(Boolean).join(PARA_BREAK);
 }
 
+/** Drop variants whose sentence the player just read. Used for the two beats
+ * whose wording does not carry a fact (open/close), where repeating the same
+ * frame two turns running is pure template feel. */
+function avoidPrior(ctx: RealizerContext, variants: string[]): string[] {
+  const prior = ctx.priorText ?? '';
+  if (!prior) return variants;
+  const fresh = variants.filter((variant) => !prior.includes(stripEnd(variant)));
+  return fresh.length ? fresh : variants;
+}
+
 function closeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   const { scene } = ctx;
   const name = scene.viewpoint.name;
@@ -475,5 +485,5 @@ function closeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   if (scene.timeOnly && !alreadyHere) {
     variants.push(`${name}留在${place}`);
   }
-  return remember(ctx, choose(ctx, beat.seed, 'close', variants));
+  return remember(ctx, choose(ctx, beat.seed, 'close', avoidPrior(ctx, variants)));
 }
