@@ -180,6 +180,9 @@ def main() -> int:
                 issues.append("filler:" + ",".join(filler[:2]))
             if len(prose) > 320:
                 issues.append("too_long")
+            if len(prose) < 140:
+                # game-model.ts:410 needs >=140 supported chars to accept.
+                issues.append(f"below_accept_floor:{len(prose)}")
             dialogue = has_added_dialogue(prose, row["draft"])
             if dialogue:
                 # Reported, not failed: a licensed fact can legitimately be

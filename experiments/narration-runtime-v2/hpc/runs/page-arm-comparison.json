@@ -284,5 +284,29 @@
    "file": "models-narration/qwen15b-page-v3/model-Q4_K_M.gguf",
    "data": "same 6 dev rows (8-row set not rerun for v3)"
   }
+ },
+ "contract160": {
+  "shipped-default": {
+   "rows": 8,
+   "clean": 0,
+   "materializedDraftMiss": 8,
+   "belowAcceptFloor": 0,
+   "dialogueRows": 6,
+   "meanChars": 274,
+   "minChars": 155,
+   "maxChars": 325,
+   "data": "data/eval-page-dev-v1.jsonl (8 dev rows, 160-240 repair prompt, the page's own)"
+  },
+  "page-v3": {
+   "rows": 8,
+   "clean": 0,
+   "materializedDraftMiss": 7,
+   "belowAcceptFloor": 6,
+   "dialogueRows": 5,
+   "meanChars": 126,
+   "minChars": 50,
+   "maxChars": 218,
+   "data": "data/eval-page-dev-v1.jsonl (8 dev rows, 160-240 repair prompt, the page's own)"
+  }
  }
 }
