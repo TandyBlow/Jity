@@ -1,6 +1,6 @@
 {
   "batch": 1,
-  "createdAt": "2026-11-10T05:58:00Z",
+  "createdAt": "2026-11-10T06:00:00Z",
   "status": "first-batch-ready",
   "rowsFile": "rows.jsonl",
   "rowCount": 22,
@@ -59,7 +59,7 @@
   "targetLength": {
     "min": 62,
     "max": 106,
-    "mean": 85.7
+    "mean": 86.0
   },
   "rows": [
     {
@@ -69,7 +69,7 @@
       "categories": [
         "no_change"
       ],
-      "targetChars": 79,
+      "targetChars": 87,
       "derived": false
     },
     {
