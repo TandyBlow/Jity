@@ -111,20 +111,20 @@ describe('prompt rendering', () => {
     expect(text).toContain('本回合经过的时间：2分钟。');
     expect(text).toContain('- 周宁在走廊。');
     expect(text).toContain('可用专名：林川、周宁、门厅');
-    expect(text).toContain('120～240 字左右');
+    expect(text).toContain('120～240 字');
     // The raw serializer string is not fed to the prose by default (it makes
     // instruct models copy field labels); it stays available on request.
     expect(text).not.toContain('本点输入资料');
     expect(text).not.toContain('【状态】原始投影串');
     const withInput = renderNarrationUser(movePacket(), '【状态】原始投影串', { includeInputText: true });
     expect(withInput).toContain('本点输入资料');
-    expect(withInput.indexOf('【状态】原始投影串')).toBeGreaterThan(withInput.indexOf('本回合已发生'));
+    expect(withInput.indexOf('【状态】原始投影串')).toBeGreaterThan(withInput.indexOf('这一小段时间里发生的事'));
   });
 
   test('an empty delta explicitly forbids inventing changes', () => {
     const text = renderNarrationUser({ anchor: ANCHOR, facts: [] }, '', { time: { amount: 5, unit: 'minute' } });
-    expect(text).toContain('本回合没有实体变化');
-    expect(text).toContain('不要写任何移动、任务达成或状态改变');
+    expect(text).toContain('这一小段时间里没有实体变化');
+    expect(text).toContain('不要写任何移动、任务达成或新的动作');
     expect(text).toContain('5分钟');
   });
 

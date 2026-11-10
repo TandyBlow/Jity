@@ -13,6 +13,7 @@ import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { TimeAdvance } from '../../../types';
 import type { CandidatePolicy, CandidateScene, ChatTurn, ModelSpec } from './types';
 import { NARRATOR_SYSTEM_PROMPT, describeCommitted } from './types';
+import { mergePositions, projectProseFacts } from './facts';
 
 /** Render the user turn for a committed narration point. Deterministic for a
  * fixed packet + policy, which lets the probe compare models on one input. */
@@ -26,18 +27,26 @@ export function renderNarrationUser(
   const viewName = policy.viewpoint?.name ?? null;
   if (viewName) lines.push(`视角人物：${viewName}。`);
   lines.push(...renderScene(scene));
-  const facts = describeCommitted(committed);
+  const projected = projectProseFacts(committed);
+  const facts = describeCommitted(projected.packet);
   if (facts.length > 0) {
-    lines.push('本回合已发生（必须写到，不得增删改）：');
+    lines.push('这一小段时间里发生的事（必须写进正文，不能添加别的事件）：');
     for (const fact of facts) lines.push(`- ${fact}`);
   } else {
-    lines.push('本回合没有实体变化。不要写任何移动、任务达成或状态改变。');
+    lines.push('这一小段时间里没有实体变化。不要写任何移动、任务达成或新的动作。');
   }
   const time = normalizeTime(policy.time);
-  if (time) lines.push(`本回合经过的时间：${time.amount}${timeUnitWord(time.unit)}。`);
-  if (policy.knownPositions?.length) {
-    lines.push('已知在场位置（现状，不是本回合变化）：');
-    for (const entry of policy.knownPositions) lines.push(`- ${entry.name}在${entry.location}。`);
+  if (time) {
+    lines.push(`本回合经过的时间：${time.amount}${timeUnitWord(time.unit)}。正文里要明确写出「${time.amount}${timeUnitWord(time.unit)}」。`);
+  }
+  const positions = mergePositions(policy.knownPositions, projected.positions);
+  if (positions.length > 0) {
+    lines.push('此刻的站位（已经如此，不必逐条复述）：');
+    for (const entry of positions) lines.push(`- ${entry.name}在${entry.location}。`);
+  }
+  if (projected.hints.length > 0) {
+    lines.push('只能用神态或动作暗示，不要写出数字，也不要照抄原句：');
+    for (const hint of projected.hints) lines.push(`- ${hint}`);
   }
   if (policy.priorText) lines.push(`上一点已写正文（延续语气与位置，不要重复其事件）：\n${trim(policy.priorText, 400)}`);
   // The raw serializer string is evidence for the caller, not material for the
@@ -46,8 +55,9 @@ export function renderNarrationUser(
   if (policy.includeInputText && inputText.trim()) {
     lines.push(`本点输入资料（只作依据，不要逐项复述，不要照抄字段名）：\n${trim(inputText, 1200)}`);
   }
-  const length = policy.targetChars
-    ? `写 ${Math.max(policy.minChars ?? 80, 1)}～${policy.targetChars} 字左右。`
+  const target = policy.targetChars;
+  const length = target
+    ? `写 ${Math.max(policy.minChars ?? Math.round(target * 0.6), 1)}～${target} 字，不要提前收尾。`
     : '写两到四句，约 80～200 字。';
   lines.push(`要求：${length}直接给正文，不要小标题，不要解释，不要重复已知位置清单。`);
   lines.push('用具体的动作、声音和细节推进，不要把「本回合已发生」逐条翻译成句子。');

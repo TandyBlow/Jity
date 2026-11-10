@@ -20,6 +20,7 @@ import {
   buildMessages, cleanNarration, describeCommitted, normalizeTime, renderFallbackPrompt, renderNarrationUser, ThinkingFilter,
 } from './template';
 import { modelSpecByFile } from './catalog';
+import { mergePositions, projectProseFacts } from './facts';
 import type {
   CandidateArgs, CandidateAttempt, CandidateIssue, CandidatePolicy, CandidateResult, CandidateVerification,
   ChatCapableEngine, ModelSpec,
@@ -57,11 +58,12 @@ function verifiedResult(
   text: string,
   policy: CandidatePolicy,
 ): CandidateVerification {
-  const alignment = alignNarration(committed, text, {
+  const projected = projectProseFacts(committed);
+  const alignment = alignNarration(projected.packet, text, {
     time: normalizeTime(policy.time),
     roster: policy.roster,
     locations: policy.locations,
-    knownPositions: policy.knownPositions,
+    knownPositions: mergePositions(policy.knownPositions, projected.positions),
     previousText: policy.priorText ?? null,
   });
   return {

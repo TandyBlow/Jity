@@ -230,6 +230,10 @@ try {
       const { legacyNarrationInput } = await import('/src/lib/world-engine/local/prompt.ts');
       const { SHORT_STATE } = await import('/src/lib/world-engine/runtime/b3-short-samples.ts');
       const spec = modelSpec(config.modelId);
+      const adapter = navigator.gpu ? await navigator.gpu.requestAdapter() : null;
+      const adapterInfo = adapter?.info
+        ? { vendor: adapter.info.vendor, architecture: adapter.info.architecture, device: adapter.info.device, description: adapter.info.description }
+        : null;
       const diagnostics = new RuntimeDiagnostics({ limit: 128 });
       const loaded = await loadCandidateModel(spec, {
         preferGpu: !config.forceCpu,
@@ -320,6 +324,7 @@ try {
       return {
         modelId: config.modelId,
         webgpuAvailable: webgpuAvailable(),
+        adapterInfo,
         backend: loaded.backend,
         fallback: loaded.fallback,
         attempts: loaded.attempts,
