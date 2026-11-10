@@ -1,9 +1,9 @@
 {
   "batch": 1,
-  "createdAt": "2026-11-10T05:27:28Z",
+  "createdAt": "2026-11-10T05:35:00Z",
   "status": "first-batch-ready",
   "rowsFile": "rows.jsonl",
-  "rowCount": 17,
+  "rowCount": 21,
   "source": {
     "dataset": "narration-dataset-v1",
     "sourceCommit": "1ab6ca791f97529a7bffed1f4837bf81a28badcb",
@@ -36,14 +36,14 @@
     "library-basement": 3,
     "library-courtyard": 2,
     "library-lending": 2,
-    "library-news": 7,
+    "library-news": 10,
     "library-upper-corridor": 1,
-    "library-utilities": 2
+    "library-utilities": 3
   },
   "categories": {
-    "appearance_change": 1,
+    "appearance_change": 2,
     "item_change": 4,
-    "location_change": 3,
+    "location_change": 6,
     "movement": 3,
     "no_change": 1,
     "personality_change": 1,
@@ -54,9 +54,9 @@
     "task_complete": 4
   },
   "targetLength": {
-    "min": 76,
+    "min": 62,
     "max": 106,
-    "mean": 90.6
+    "mean": 86.0
   },
   "rows": [
     {
@@ -223,6 +223,42 @@
         "task_added"
       ],
       "targetChars": 102
+    },
+    {
+      "id": "short-0138-empty-slots",
+      "sourceRowId": "row-0138",
+      "worldFamily": "library-news",
+      "categories": [
+        "location_change"
+      ],
+      "targetChars": 64
+    },
+    {
+      "id": "short-0161-damp-plant",
+      "sourceRowId": "row-0161",
+      "worldFamily": "library-news",
+      "categories": [
+        "location_change"
+      ],
+      "targetChars": 75
+    },
+    {
+      "id": "short-0175-window-rustle",
+      "sourceRowId": "row-0175",
+      "worldFamily": "library-news",
+      "categories": [
+        "location_change"
+      ],
+      "targetChars": 62
+    },
+    {
+      "id": "short-0178-dirty-hands",
+      "sourceRowId": "row-0178",
+      "worldFamily": "library-utilities",
+      "categories": [
+        "appearance_change"
+      ],
+      "targetChars": 63
     }
   ]
 }
