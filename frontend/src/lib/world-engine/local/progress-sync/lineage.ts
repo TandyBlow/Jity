@@ -57,22 +57,32 @@ function distances(start: string, map: NodeMap): Map<string, number> {
 }
 
 /** Path from `start` up to `target`, returned start -> ... -> target. */
-function pathTo(start: string, target: string, map: NodeMap, distance: Map<string, number>): string[] {
-  const path = [start];
-  let current = start;
-  let guard = distance.size + 1;
-  while (current !== target && guard-- > 0) {
+function pathTo(start: string, target: string, map: NodeMap): string[] | null {
+  if (start === target) return [start];
+  const stack = [start];
+  const previous = new Map<string, string | null>([[start, null]]);
+  while (stack.length) {
+    const current = stack.pop()!;
     const node = map.get(current);
-    const currentDistance = distance.get(current);
-    if (!node || currentDistance === undefined) break;
-    const candidates = node.parentSnapshotIds
-      .filter((parent) => distance.get(parent) === currentDistance + 1)
-      .sort();
-    if (!candidates.length) break;
-    current = candidates[0];
-    path.push(current);
+    if (!node) continue;
+    // Sorted + reversed so the lexicographically smallest parent is visited
+    // first while preserving deterministic output.
+    for (const parent of [...node.parentSnapshotIds].sort().reverse()) {
+      if (previous.has(parent)) continue;
+      previous.set(parent, current);
+      if (parent === target) {
+        const path = [target];
+        let cursor: string | null = current;
+        while (cursor !== null) {
+          path.push(cursor);
+          cursor = previous.get(cursor) ?? null;
+        }
+        return path.reverse();
+      }
+      stack.push(parent);
+    }
   }
-  return current === target ? path : [start];
+  return null;
 }
 
 /** Farthest known ancestor, used only when two nodes share no ancestor. */
@@ -88,8 +98,10 @@ function rootOf(start: string, map: NodeMap, distance: Map<string, number>): str
   return best;
 }
 
-function rootTo(start: string, target: string, map: NodeMap, distance: Map<string, number>): string[] {
-  return pathTo(start, target, map, distance).reverse();
+function rootTo(start: string, map: NodeMap, distance: Map<string, number>): string[] {
+  const path = pathTo(start, rootOf(start, map, distance), map);
+  if (!path) return [start];
+  return path.reverse();
 }
 
 /**
@@ -127,29 +139,18 @@ export function compareLineage(
   const leftIsAncestorOfRight = commonAncestor === leftId;
   const rightIsAncestorOfLeft = commonAncestor === rightId;
 
-  const leftRootPath = rootTo(
-    leftId,
-    rootOf(leftId, map, leftDistances),
-    map,
-    leftDistances,
-  );
-  const rightRootPath = rootTo(
-    rightId,
-    rootOf(rightId, map, rightDistances),
-    map,
-    rightDistances,
-  );
+  const leftRootPath = rootTo(leftId, map, leftDistances);
+  const rightRootPath = rootTo(rightId, map, rightDistances);
   let sharedHistory: string[] = [];
   let leftOnly: string[] = leftRootPath;
   let rightOnly: string[] = rightRootPath;
   if (commonAncestor) {
-    const sharedEnd = leftRootPath.indexOf(commonAncestor);
-    if (sharedEnd >= 0) {
-      sharedHistory = leftRootPath.slice(0, sharedEnd + 1);
-      leftOnly = leftRootPath.slice(sharedEnd + 1);
-    }
-    const rightSharedEnd = rightRootPath.indexOf(commonAncestor);
-    if (rightSharedEnd >= 0) rightOnly = rightRootPath.slice(rightSharedEnd + 1);
+    const commonDistances = distances(commonAncestor, map);
+    sharedHistory = rootTo(commonAncestor, map, commonDistances);
+    const leftPath = pathTo(leftId, commonAncestor, map);
+    const rightPath = pathTo(rightId, commonAncestor, map);
+    if (leftPath) leftOnly = leftPath.reverse().slice(1);
+    if (rightPath) rightOnly = rightPath.reverse().slice(1);
   }
 
   return {

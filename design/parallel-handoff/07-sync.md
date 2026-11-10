@@ -125,8 +125,8 @@ diverged/leftIsAncestorOfRight/rightIsAncestorOfLeft`，所有路径按
 ```bash
 cd backend
 python -X utf8 -m pytest -q tests/test_local_progress_sync.py
-# 13 passed：CAS 失败、幂等重放、祖先不能覆盖、离线分叉、分支选择、
-# 双设备恢复、父链/大小/token/不透明 payload、同内容不同分支位置。
+# 14 passed：CAS 失败、幂等重放、祖先不能覆盖、离线分叉、分支选择、
+# 双设备恢复、重启恢复、父链/大小/token/不透明 payload、同内容不同分支位置。
 
 cd frontend
 ./node_modules/.bin/tsc -p tsconfig.world-contract.json --noEmit

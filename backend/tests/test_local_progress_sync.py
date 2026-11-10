@@ -489,3 +489,19 @@ def test_malformed_payload_is_rejected_without_touching_storage(client):
     assert response.status_code == 400
     assert response.json()["detail"]["code"] == "request_malformed"
     assert client.get("/local-progress/worlds/w1/head").status_code == 404
+
+
+def test_saved_progress_survives_a_store_restart(tmp_path):
+    database = tmp_path / "restart.sqlite3"
+    with TestClient(make_app(database)) as first:
+        created = start(first, payload(1, "重启前。"), request_id="before-restart")
+
+    with TestClient(make_app(database)) as second:
+        head = second.get("/local-progress/worlds/w1/head")
+        assert head.status_code == 200
+        assert head.json()["headSnapshotId"] == created["snapshotId"]
+        restored = second.get(
+            f"/local-progress/worlds/w1/snapshots/{created['snapshotId']}"
+        )
+        assert restored.status_code == 200
+        assert restored.json()["payload"] == payload(1, "重启前。")

@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -96,7 +95,14 @@ def content_identity(payload: Any) -> tuple[str, str, int]:
     document id: the same state can be a legitimate node in two branches.
     """
     payload_json = canonical_json(payload)
-    encoded = payload_json.encode("utf-8")
+    try:
+        encoded = payload_json.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ProgressError(
+            "request_malformed",
+            400,
+            f"payload contains an unpaired Unicode surrogate: {exc}",
+        ) from exc
     return payload_json, sha256_hex(payload_json), len(encoded)
 
 
@@ -129,17 +135,6 @@ class ProgressError(Exception):
         self.message = message
         self.head = head
         self.branches = branches or []
-
-
-def _int_env(name: str, default: int) -> int:
-    raw = os.environ.get(name)
-    if raw is None:
-        return default
-    try:
-        parsed = int(raw)
-    except ValueError:
-        return default
-    return parsed if parsed > 0 else default
 
 
 class LocalProgressStore:
