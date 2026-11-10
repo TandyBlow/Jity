@@ -19,6 +19,7 @@ import datetime
 import hashlib
 import json
 import pathlib
+import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -280,6 +281,21 @@ def main() -> int:
         "prompts.jsonl": sha(prompts_dir / "prompts.jsonl"),
         "prompts.manifest.json": sha(prompts_dir / "prompts.manifest.json"),
     }
+    try:
+        commit = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        commit = "unknown"
+    script_paths = ("screen.py", "collect.py", "make_review_input.py",
+                    "verify_preflight.py", "build_prompts.py")
+    scripts = [{"path": f"experiments/narration-model-search/src/{name}",
+                "sha256": sha(ROOT / "src" / name)} for name in script_paths]
+    shared_package = {
+        "path": "results/quality/dev-package-v1/",
+        "manifestSha256": data_hashes["manifest.json"],
+        "casesSha256": data_hashes["cases.jsonl"],
+        "rubricSha256": sha(DEV_PACKAGE / "RUBRIC.md"),
+    }
     model_source = [{
         "id": row["id"],
         "repo": row["gguf"]["repo"],
@@ -313,6 +329,15 @@ def main() -> int:
         request["estimatedResources"] = request.get("resourceEstimate")
         request["outputDir"] = output_dir
         request["openQuestions"] = questions
+        request["branch"] = "goal/local-11-model-search"
+        request["worktree"] = "worktrees/11-model-search"
+        request["commit"] = commit
+        request["candidateRegistry"] = {
+            "path": "experiments/narration-model-search/models/candidates.json",
+            "sha256": sha(CANDIDATES),
+        }
+        request["scriptsToUpload"] = scripts
+        request["sharedPackage"] = shared_package
 
     OUT.mkdir(parents=True, exist_ok=True)
     for name, obj in (("11-model-search-preflight-001.json", preflight),
