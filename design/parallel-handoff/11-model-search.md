@@ -55,6 +55,12 @@ python -X utf8 src/screen.py \
 
 `python -X utf8 src/selftest.py` → 13/13 PASS：真实 GGUF 读取、wasm 架构表、gate 候选真实架构在 wasm 表内、错误 manifest 哈希拒绝、篡改 cases 拒绝、12 例子集冻结、collect 重复统计且无 pass、review 输入拼接与 3 个声明排除、GGUF 模板预演（5 个候选）、verify_preflight 正/负例、semantic_validate 四类错误正/负例、"screen --dry-run" 计划、registry 门一致性。没有模型推理，没有 GPU 占用。
 
+## 模型路线决策规则（restart 2026-11-10）
+
+- 09 的引用/占位符/覆盖错误先由 03/04/06 排除协议与组织缺陷；11 只在修正后的契约上测候选的结构化能力。协议缺陷未排除前不归因模型。
+- 语义失败与叙事质量分开；两个回合的 0.6B 错误不足以宣布 0.6B 不可能或转 4B。
+- 只有同一候选在修正契约的语义探针上稳定失败，且冻结叙事包无可说明收益时，才建议换模型路线；仍须 10 离线证据和 09 页面验证。
+
 ## 结构化语义探针
 
 真实回合的 `results` 未声明 target、`updates` 字面量 `id`、12/73 任务覆盖、`continuation` 显示名错误已被 03/04 承接；11 的职责是排除引用/协议/覆盖组织缺陷后，再用修正版契约测候选的结构化能力。当前已交付 `src/semantic_validate.py` 和 pack 格式（`semantic-probes/README.md`），真实 pack 待 03/04 提供（`results/11-model-search/requests/11-to-03-04-semantic-cases-001.json`）；没有候选语义结果。
