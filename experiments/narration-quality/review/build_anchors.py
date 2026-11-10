@@ -997,6 +997,23 @@ anchors.append(
     },
 )
 
+
+# ------------------------------------------------- 82-char static inventory
+rows_move = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-all.jsonl", encoding="utf-8"))}
+state_list_input = json.loads(json.dumps(rows_move["real-qwen3-free-day-160::free-day-root-160::prose"]["input"]))
+state_list_input["本回合变化"] = {"变化": {"路明非": {"位置": "中央庭院"}}}
+anchors.append(
+    {
+        "id": "neg/state-list-82",
+        "source": "02 Qwen3-1.7B free-day move arm, 82 chars accepted by 02's own flag; a static inventory, not prose",
+        "input": state_list_input,
+        "text": "路明非在中央庭院的石阶上，护目镜无裂纹，演习背心前襟完好。诺诺在西侧服务巷，红发用发圈束在脑后。演习规则牌在手心，赛区路线图在脚边。风穿过庭院，带着潮湿的泥土气息。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": ["style.state_recital"], "review": [],
+                   "notes": "A change point rendered as 6 current-state clauses; accepted flags do not make this prose."},
+    },
+)
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

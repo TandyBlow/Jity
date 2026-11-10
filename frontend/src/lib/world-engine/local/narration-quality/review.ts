@@ -24,7 +24,11 @@ const SQUARE_FORM = new Set<string>(['style.status_panel', 'style.field_sentence
 const BLOCKING_STYLE = new Set<string>([
   'style.status_panel', 'style.loop', 'style.echo_prior', 'style.repeated_opening',
   'style.truncated', 'style.premature_closure', 'style.meta', 'style.roster_recital',
+  'style.state_recital',
 ]);
+
+const STATE_CLAUSE = /(?:在|位于)[^，。；]{1,10}(?:上|里|中|边|处|旁|前|后|巷|室|厅|廊|院|街|桥|口|角|侧|下|内|外|手心|手中|手里|脚边|胸前|脑后)|无[^，。；]{0,4}|没有[^，。；]{0,6}|完好|松着|紧着|空着|束在|挂在|压在|披在|别在|停在|闭着|开着|亮着|垂着|立着|放着|摆着|贴着/u;
+const STATE_ACTION = /走|跑|站起|坐|转身|伸手|拿|握|推|拉|打开|合上|递|接|放|抬|低|看|望|盯|听|说|问|答|喊|笑|皱|缩|退|迈|踏|绕|停|靠|蹲|跪|扑|抓|扯|拽|敲|踢|踩|摸|抚|揉|捏|捻|翻|掏|塞|插|拔|挑|举|挥|甩|扔|投|拍|打|撞|磕|蹭|挡|捂|抱|扛|拎|提|拖|搬|挂|摘|戴|脱|换|系|解|锁|开|关|穿|拂/u;
 
 const PROPS = [
   '短枪', '演习枪', '长枪', '枪', '护目镜', '盒子', '盒盖', '规则牌', '路线图',
@@ -113,10 +117,11 @@ function mentionIndexes(text: string, name: string, names: readonly string[]): n
     const index = text.indexOf(name, start);
     if (index < 0) break;
     start = index + 1;
-    const longer = names.some((other) => other !== name && other.length > name.length
+    const longer = names.find((other) => other !== name && other.length > name.length
       && text.startsWith(other, index));
-    // A one-character name inside a longer word is not a mention.
-    if (longer) continue;
+    // A possessive phrase ("路明非的护目镜") is an item name that still names
+    // its owner; any other longer word swallows the shorter name.
+    if (longer && !longer.startsWith(name + '的')) continue;
     if (name.length === 1 && lastIndexCjk(text.slice(0, index))) continue;
     indexes.push(index);
   }
@@ -785,16 +790,23 @@ export function reviewNarration(args: {
       if (!clause) continue;
       const personHits = nameHits(clause, names, Object.keys(projection.people));
       const claimers = personHits.map((hit) => hit.name);
-      let implied = projection.viewpoint && !claimers.length ? [projection.viewpoint] : claimers;
+      let implied = claimers;
       if (!claimers.length) {
         const before = narration.slice(0, Math.max(0, narration.indexOf(clause)));
         const unique = [...new Set(nameHits(before, names, Object.keys(projection.people)).map((hit) => hit.name))];
-        const pronounLocative = /(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause);
-        if (unique.length === 1 && (/^\s*(?:他|她|他们|她们|手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause) || pronounLocative)) implied = unique;
-        // 「她手中的短枪」 with no name in the clause binds to the last person named.
-        if (!unique.length && /^(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)) {
-          const last = lastPersonBefore.get(sentences.indexOf(sentence));
-          if (last) implied = [last];
+        // 「她手里的短枪」 names nobody, but the pronoun and gender pick the
+        // holder; assuming the viewpoint would put the object in the wrong hand.
+        const pronounPossessive = /^(?:他|她|他们|她们)(?:手里|手中|肩上|背上|怀里|胸前|脖子上|腰间)/u.test(clause)
+          || /(?:他|她|他们|她们)(?:的)?(?:手里|手中)/u.test(clause);
+        if (pronounPossessive) {
+          const person = pronounPerson(clause, sentences.indexOf(sentence))
+            ?? lastPersonBefore.get(sentences.indexOf(sentence))
+            ?? unique[unique.length - 1];
+          if (person) implied = [person];
+        } else if (unique.length === 1) {
+          implied = unique;
+        } else if (projection.viewpoint) {
+          implied = [projection.viewpoint];
         }
       }
       if (holder === 'scene') {
@@ -1152,12 +1164,18 @@ export function reviewNarration(args: {
     const bound = (personName: string): boolean =>
       /(他|她)/u.test(narration) && lastPersonBefore.get(sentences.indexOf(sentence)) === personName;
     for (const [personName, person] of Object.entries(projection.people)) {
-      const eligible = namedHere.length
-        ? namedHere.includes(personName)
-        : lookMatch(person) || bound(personName);
-      if (!eligible) continue;
       const mark = /(红痕|血迹|流血|伤口|淤青|擦伤|疤痕|肿起|肿了|绷带|包扎)/u.exec(narration);
       if (!mark) continue;
+      // The mark's own clause decides the owner; "镜片映出诺诺的红发和左臂红痕"
+      // marks 诺诺, not the person named earlier in the sentence.
+      const clauseNames = nameHits(clauseAt(narration, mark.index).text, names, Object.keys(projection.people)).map((hit) => hit.name);
+      const owner = clauseNames.length ? clauseNames[clauseNames.length - 1] : null;
+      const eligible = owner
+        ? owner === personName
+        : namedHere.length
+          ? namedHere.includes(personName)
+          : lookMatch(person) || bound(personName);
+      if (!eligible) continue;
       const nearby = narration.slice(Math.max(0, mark.index - 25), mark.index + mark[1].length);
       const body = /(手背|手心|手指|手腕|手臂|胳膊|大臂|小臂|右臂|左臂|膝盖|小腿|脚踝|额头|脸|脸颊|肩膀|后背|脖子|颈侧)/u.exec(nearby);
       if (!body) continue;
@@ -1184,6 +1202,8 @@ export function reviewNarration(args: {
           // A rule board saying "护目镜必须戴好" is not someone wearing them.
           if (/(牌面|写明|规则|规定|必须|禁止|要求|白线)/u.test(narration)) continue;
           if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(narration)) continue;
+          // Taking them off the chest is the settled transfer, not wearing them.
+          if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(narration)) continue;
           if (/(未|没|不|尚未|没有)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
@@ -1211,6 +1231,7 @@ export function reviewNarration(args: {
         }
         const hit = [...phrases.entries()].find(([phrase, owners]) =>
           owners.size === 1 && narration.includes(phrase));
+
         if (hit) {
           const [phrase, owners] = hit;
           const owner = [...owners][0];
@@ -1405,6 +1426,24 @@ export function reviewNarration(args: {
   if (firstPersonSentence !== null) {
     findings.push(finding(ctx, 'style.perspective', firstPersonSentence,
       'first-person prose outside dialogue; the viewpoint is a named person and the rows are third-person', []));
+  }
+  // A change point rendered as an inventory of current states ("X 在 A，Y 完好")
+  // is not prose. No-change points are allowed to be static, so this only runs
+  // when the point actually moved, advanced time, changed a task or a level.
+  {
+    const changed = projection.moves.length > 0
+      || projection.taskCompleted.length > 0 || projection.taskAdded.length > 0
+      || projection.sanityChanges.length > 0
+      || projection.appearanceAdded.length > 0 || projection.appearanceRemoved.length > 0;
+    const clauses = text.split(/[，。；]/u).map((part) => part.trim()).filter(Boolean);
+    const stateClauses = clauses.filter((clause) => STATE_CLAUSE.test(clause));
+    const actionClauses = clauses.filter((clause) => STATE_ACTION.test(clause));
+    if (changed && clauses.length >= 4 && stateClauses.length >= 4
+      && stateClauses.length / clauses.length >= 0.6 && actionClauses.length <= 1
+      && !text.includes('「')) {
+      findings.push(finding(ctx, 'style.state_recital', text,
+        `${stateClauses.length}/${clauses.length} clauses only list settled states of a point that changed`, []));
+    }
   }
   const bare = text.replace(/[\s。．，,、；;：:！!？?…·.．"“”‘’]/gu, '');
   if (charCount > 0 && bare.length === 0) {

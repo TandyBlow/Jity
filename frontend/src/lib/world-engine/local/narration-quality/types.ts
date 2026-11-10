@@ -65,6 +65,7 @@ export type FindingKind =
   | 'style.meta'
   | 'style.placeholder'
   | 'style.appearance_recital'
+  | 'style.state_recital'
   | 'style.perspective'
   // Undecidable.
   | 'review.unbound'
