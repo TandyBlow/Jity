@@ -354,6 +354,13 @@ export function sceneFromGrounding(
       appearance: appearance ? [appearance] : [], isProtagonist: true,
     });
   }
+  // Someone may have left the room this turn; the fact still names them, so
+  // they must stay referable even though the grounding no longer lists them.
+  for (const fact of committed.facts ?? []) {
+    if (!cast.some((actor) => actor.id === fact.actorId)) {
+      cast.push({ id: fact.actorId, name: fact.name, isProtagonist: false });
+    }
+  }
   const here = grounding.location;
   const items: ProseItem[] = (grounding.objects ?? []).map((item) => ({
     id: item.id, name: item.name,
@@ -369,7 +376,9 @@ export function sceneFromGrounding(
     items,
     beats: [],
     priorText: policy.priorText ?? null,
-    policy: { minChars: policy.minChars ?? 60, requireTime: true },
+    // The driver's short fixture can legitimately hold only a place note and
+    // one elapsed beat; a fixed 60-character floor would reject real prose.
+    policy: { minChars: policy.minChars ?? 30, requireTime: true },
     seed: policy.seed,
   };
   const beats = beatsFromFacts(committed.facts ?? [], protagonistId);

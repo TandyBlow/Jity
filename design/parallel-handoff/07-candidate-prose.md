@@ -184,6 +184,11 @@ signal, onProgress}`），整段口会**只把 state 当场景材料**用：
 136 / 151 / 92 字，页面内 4–11 ms。证据：
 `artifacts/prose-composer/browser-07.json`。
 
+共享短场景 `--set short` 也 3/3 accepted（49 / 37 / 34 字）：
+`artifacts/prose-composer/browser-07-short.json`。短场景材料少，整段口在
+grounding 输入下的地板是 30 字，而不是 60 字；否则两个合法短场景会被
+`too_short` 误杀。
+
 这次用的是 **program-only 装载器**（`scripts/candidate-prose/stub-engine-loader.ts`），
 因为本 composer 从不调用模型；共享运行器仍要求一个 engine 槽，所以用 stub
 满足它，证据里 `backend` 明确写着 `program-only stub (no model)`，不冒充模型运行。
