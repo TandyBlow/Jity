@@ -10,7 +10,7 @@
 // as contradicting the settled facts. Nothing is written to that tree.
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 const option = (flag, fallback) => (args.includes(flag) ? args[args.indexOf(flag) + 1] : fallback);
@@ -68,6 +68,39 @@ const cases = [
     text: '十分钟过去，秦既明离开借阅台，走进报刊阅览室，在窗边站住。',
   },
 ];
+
+/** Product mode: run the product tree's alignment over the text one arm wrote
+ * for the frozen fixture. Sentences it flags are the ones game-model.pruneNarration
+ * would delete from that arm's output. */
+const scenarioFile = option('--scenario', '');
+const recordsFile = option('--records', '');
+if (scenarioFile && recordsFile) {
+  const scenario = JSON.parse(readFileSync(resolve(scenarioFile), 'utf8'));
+  const records = JSON.parse(readFileSync(resolve(recordsFile), 'utf8')).runs ?? [];
+  const policy = scenario.policy ?? {};
+  const options = {
+    roster: policy.roster ?? [],
+    locations: policy.locations ?? [],
+    knownPositions: policy.knownPositions ?? [],
+    time: scenario.time?.duration ?? null,
+    allowedEvents: [],
+  };
+  const rows = [];
+  for (const record of records) {
+    if (!record.text) continue;
+    const result = alignNarration(scenario.committed, record.text, options);
+    const flagged = result.violations.map((violation) => ({ kind: violation.kind, sentence: violation.sentence, detail: violation.detail }));
+    rows.push({ id: record.id, accepted: record.accepted, chars: record.chars, flagged, omissions: result.omissions });
+    console.log(`${flagged.length ? 'PRUNE' : 'keep '} ${record.id} accepted=${record.accepted} flagged=${flagged.length}`);
+    for (const item of flagged) console.log(`   ${item.kind}: ${item.sentence}  (${item.detail})`);
+  }
+  if (out) {
+    writeFileSync(resolve(out), `${JSON.stringify({ tree, scenario: scenarioFile, records: rows }, null, 2)}
+`, 'utf8');
+    console.log(`written to ${out}`);
+  }
+  process.exit(0);
+}
 
 const roster = base.map((fact) => fact.name).concat(['柏含章', '周含章', '韩照', '周书言', '温照']);
 const locations = ['借阅台', '书库', '报刊阅览室', '地下书库', '装订间'];
