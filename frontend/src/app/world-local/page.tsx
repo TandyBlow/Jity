@@ -582,7 +582,11 @@ export default function WorldLocalPage() {
             const stageNote = detail.stageMs && typeof detail.stageMs === 'object'
               ? ` stages=${Object.entries(detail.stageMs).map(([name, ms]) => `${name}:${Math.round(Number(ms))}`).join(',')}`
               : '';
-            console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}${stageNote}`);
+            const scope = detail.scope;
+            const scopeNote = scope
+              ? ` scope=${scope.mode ?? '?'} affected=${scope.affectedCharacters ?? '?'}/${(scope.affectedCharacters ?? 0) + (scope.unaffectedCharacters ?? 0)} taskIds=${scope.affectedTaskIds?.length ?? 0} rows=${scope.taskRows ?? '?'}`
+              : '';
+            console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}${stageNote}${scopeNote}`);
             if (task === 'action' || task === 'targets' || task === 'reaction') {
               const live = turnRecordRef.current;
               if (live) (live.actions ??= []).push({

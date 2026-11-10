@@ -82,6 +82,8 @@ export interface GameModelOptions {
     /** Per-stage milliseconds for a multi-stage (updates) call. */
     stageMs?: Record<string, number>;
     stages?: string[];
+    /** Affected-projection scope from the updates ledger. */
+    scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
   }) => void;
 }
 

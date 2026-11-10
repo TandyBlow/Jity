@@ -53,6 +53,8 @@ export interface ModelTaskDetail {
    * without waiting for the whole submission to close. */
   stageMs?: Record<string, number>;
   stages?: string[];
+  /** Affected projection for this updates group (which owners/rows were judged). */
+  scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
 }
 
 export interface ModelCallEvidence {
