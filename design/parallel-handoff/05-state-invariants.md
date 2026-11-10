@@ -243,7 +243,9 @@ rejects the turn. This is not a state-kernel failure.
 Run `2026-11-10T2155-228b` at 06 `26035d97`: results returned only a
 completion claim twice, 04 rejected both, no updates or point committed, and
 the page showed a recoverable empty turn. No state changed; no snapshot exists.
-This is upstream results/semantics, not a state-kernel failure.
+This is upstream results/semantics, not a state-kernel failure. `935ef787`
+also makes the displayed verifier reject a no-text settlement failure instead
+of skipping it.
 
 ## 3-turn d101: turn 1 valid, turn 2 infra-invalid
 
