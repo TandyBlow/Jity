@@ -27,7 +27,7 @@ const flag = (name, fallback) => {
   const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : fallback;
 };
-const tree = resolve(flag('--tree', 'D:/others/Jity/.local/parallel-local-game/scratch/shipping-06'));
+const tree = resolve(flag('--tree', 'D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery'));
 const out = flag('--out', null);
 if (!existsSync(resolve(tree, 'frontend/src/lib/world-engine/local/game-model.ts'))) {
   throw new Error(`patched tree not found: ${tree}`);

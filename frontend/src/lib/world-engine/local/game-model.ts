@@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
 import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
 import { taskOutputSchema } from '../runtime/output-schema';
 import { createActionHandlers, type HandlerResult } from './semantics/actions';
+import { createNarrationRunner, type NarrationRunner } from './narration-candidates/selection';
 import { createSettlementHandlers, requireSettlementValue, continuationPolicy } from './semantics/settlement';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
@@ -35,6 +36,14 @@ export interface GameModelOptions {
   /** How many non-protagonist actors may open their own frozen group in one
    * round. Reactions to admitted threats are separate and always run. */
   maxAutonomousActors?: number;
+  /** Internal narration candidate selection. `auto` only offers candidates
+   * whose real-model evidence is positive, so the shipped default changes
+   * nothing until one is accepted; the named routes exist for evaluation and
+   * are never a player-visible setting. */
+  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
+  /** Constrained route only: `program` never calls the model, `model` writes
+   * one verified beat per call. Internal. */
+  constrainedMode?: 'program' | 'model';
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
   onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
@@ -60,6 +69,10 @@ export class LocalGameModel implements WorldModelPort {
   private lastResultsText = '';
   private autoContinuations = 0;
   private recentEvents: string[] = [];
+  private readonly narrationRunner: NarrationRunner | null;
+  /** Last accepted prose (model or candidate). Only real prose is fed back as
+   * continuation context; program/ledger paragraphs never are. */
+  private lastAcceptedNarration: string | null = null;
   private readonly settlement;
   private readonly actionHandlers;
 
@@ -89,6 +102,19 @@ export class LocalGameModel implements WorldModelPort {
       mergedStages: true,
       continuation: this.options.maxAutoContinuations == null ? continuationPolicy : { ...continuationPolicy, maxAutoContinuations: this.options.maxAutoContinuations },
     } });
+    this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
+      ? null
+      : createNarrationRunner({
+        engine: narrationPort,
+        candidate: options.narrationCandidate ?? 'auto',
+        ...(options.constrainedMode ? { constrainedMode: options.constrainedMode } : {}),
+        // The page's chat model expects one templated user turn; the candidates
+        // send plain text, so the runner wraps them the same way.
+        engineTemplate: options.narrationMode === 'instruct' ? 'chatml' : 'none',
+        temperature: options.narrationTemperature ?? 0.45,
+        maxTokens: options.narrationMaxTokens ?? 240,
+        timeoutMs: options.narrationTimeoutMs ?? 150_000,
+      });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
@@ -307,6 +333,15 @@ export class LocalGameModel implements WorldModelPort {
     const before = data.before ?? null;
     const delta = data.delta ?? {};
     const draft = factualNarration(before, delta, after, view, this.lastPlayerInput, this.lastResultsText);
+
+    // Candidate path: one settled point in, one verified scene out. A rejected,
+    // cancelled or unavailable candidate returns null and the in-model writer
+    // below keeps the round; an accepted program scene is submitted with the
+    // labelled downgrade flag, never as a quality claim.
+    if (this.narrationRunner) {
+      const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after);
+      if (adopted) return adopted;
+    }
     const brief = this.options.narrationMode === 'instruct'
       ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft)
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
@@ -422,6 +457,7 @@ export class LocalGameModel implements WorldModelPort {
     const accepted = best.validation.ok && finalAlignment.ok && audit.ok
       && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 100;
     const text = accepted ? safe : draft;
+    if (accepted) this.lastAcceptedNarration = text;
     const reason = accepted ? undefined : [...new Set([
       best.validation.reason,
       ...best.dropped.map((entry) => entry.reason),
@@ -430,10 +466,68 @@ export class LocalGameModel implements WorldModelPort {
       ...(grounding.ratio < 0.5 || grounding.count < 2 ? ['ungrounded'] : []),
       audit.reason ?? 'low_support',
     ])].filter(Boolean).join(',');
-    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: brief.prompt.length });
-    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: accepted ? 'stop' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
-    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
+    // The model could not carry this round. Replace the terse factual draft
+    // with the constrained candidate's fact-grounded prose (lane 04 skeleton +
+    // lane 07 composer, no model call) and keep the explicit downgrade label.
+    // Accepted model prose above is never replaced and never becomes program.
+    let finalText = text;
+    let programFallback = false;
+    if (!accepted && this.narrationRunner) {
+      const program = await this.narrationRunner.generateProgram({
+        pointId, before, delta, after,
+        playerInput: this.lastPlayerInput,
+        settledResults: this.lastResultsText ? [this.lastResultsText] : [],
+        priorText: this.lastAcceptedNarration,
+        recentEvents: this.recentEvents,
+      });
+      if (program) {
+        console.info('[narration] in-model rejected', reason, '-> program fallback');
+        finalText = program.text;
+        programFallback = true;
+      }
+    }
+    const finalReason = programFallback ? '程序按已结算事实成文' : reason;
+    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
+    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });
+    this.options.onNarrationComplete?.({ pointId, raw: finalText, completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
+    return { value: finalText as unknown as Json, raw: finalText, ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason };
+  }
+
+  /** Run the configured candidate for this point. Only an accepted scene is
+   * returned; every other outcome logs an internal reason and lets the
+   * in-model writer produce the page's text. */
+  private async adoptNarrationCandidate(
+    pointId: Id,
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    after: WorldState,
+  ): Promise<Generated | null> {
+    if (!this.narrationRunner) return null;
+    const result = await this.narrationRunner.generate({
+      pointId,
+      before,
+      delta,
+      after,
+      playerInput: this.lastPlayerInput,
+      settledResults: this.lastResultsText ? [this.lastResultsText] : [],
+      priorText: this.lastAcceptedNarration,
+      recentEvents: this.recentEvents,
+    }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
+    if (result.kind !== 'adopted') {
+      console.info('[narration] candidate fallback', result.reason);
+      return null;
+    }
+    const program = result.grade === 'program';
+    if (!program) this.lastAcceptedNarration = result.text;
+    this.options.onTask?.('narration', pointId, {
+      ms: result.timings.totalMs,
+      fallback: program,
+      ...(program ? { error: '程序按已结算事实成文' } : {}),
+      raw: result.text,
+      promptChars: result.promptChars,
+    });
+    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion });
+    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: program };
   }
 
   private fallback(task: ModelTask, key: Id): Json {
