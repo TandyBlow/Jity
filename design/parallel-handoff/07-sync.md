@@ -146,6 +146,18 @@ checkpoint 的快照上传后读回，`toEqual` 完全一致。
 这个提交后，页面保存路径不用改代码；仍要补的是 `storage: window.localStorage`
 （离线队列和已知 head）以及 `restore()`/冲突选择。
 
+`__worldRestore` 的四个字段按什么算才算“真恢复”（06 当前实现里 `stateRestored`
+只表示“打开了一条记录”，`entriesTotal` 用的是 `commands.length`，两处都容易把失败
+显示成成功或反过来）：
+
+| 字段 | 应为 | 说明 |
+|---|---|---|
+| `stateRestored` | 打开的是已有记录，且 `session.state()` 的摘要等于 head 点位记录的摘要 | 摘要不一致就是状态没真恢复，不能只看“有记录” |
+| `entriesRestored` | `transport.points` 里 `trigger === 'player'`、且 `narrations[id].status === 'ready'` 且正文非空的点数 | 正文历史；程序降级正文也算，但要保留来源标记 |
+| `entriesTotal` | 已提交的 player 点数 | 不是 `commands.length`：被取消/失败的输入没有点位，用 commands 做分母会让“恢复完整”永远不成立 |
+| `inputConsumptionRestored` | 没有半结算的点（`transport.work == null` 或 work 的轮次等于当前轮）且 `advance.intentStatus !== 'pending'` | 只判 `intentStatus` 不够，半结算也会重复消费输入/骰点 |
+| `overallRestored` | 以上三项都成立，且 `entriesRestored === entriesTotal` | 任一不成立就是没恢复，不能改布尔值让它消失 |
+
 如果升级后刷新仍少条目，按顺序查这三处（都在 06 的代码里）：
 
 1. `snapshot.transport.points` 里已提交点的 `trigger` 是不是 `'player'`（自动回合会被
