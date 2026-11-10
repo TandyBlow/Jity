@@ -179,6 +179,16 @@ describe('real recovery session continuity', () => {
     expect(report.ok, JSON.stringify(report.errors)).toBe(true);
   });
 
+  it('labels the 95dc player paragraph as a program fallback after reload', () => {
+    const evidence = JSON.parse(readFileSync(
+      resolve('../../../results/product/evidence/09-one-legal-turn-95dc.json'), 'utf8'));
+    const entries = restoredEntries(evidence.refreshRestore.snapshotAfterReload);
+    expect(entries).toHaveLength(1);
+    expect(entries[0].source).toBe('mixed');
+    expect(entries[0].note).toContain('混有程序');
+    expect(entries[0].points?.find((point: { pointId: string }) => point.pointId === 'point_round_3_1')?.source).toBe('program');
+  });
+
   it('labels the e9a5 turn as a draft from its saved per-point sources', () => {
     const evidence = JSON.parse(readFileSync(
       resolve('../../../results/product/evidence/09-one-legal-turn-e9a5.json'), 'utf8'));
