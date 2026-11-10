@@ -838,7 +838,13 @@ try {
   if (!evidence.controls.cancelButtonDuringTurn && !evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control while a turn was running');
 
   }
-  evidence.status = selfTest ? (evidence.failures.some((failure) => /models/.test(failure.scope)) && evidence.turns.every((turn) => turn.text) ? 'SELFTEST' : (evidence.failures.length && !selfTest ? 'FAILED' : 'SELFTEST')) : (evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
+  // A run that executed is not a passing run: any turn without an accepted
+  // model segment fails the acceptance intent.
+  const blockingPrefixes = ['turn_timeout', 'no_accepted_model_text', 'source_program', 'source_draft',
+    'empty_text', 'no_readable_prose', 'settlement_failed_recoverable', 'submit_refused', 'page_error'];
+  const turnFailures = evidence.turns.filter((turn) => (turn.problems ?? []).some((problem) => blockingPrefixes.some((key) => problem.startsWith(key))));
+  evidence.turnFailures = turnFailures.map((turn) => ({ id: turn.id, problems: turn.problems }));
+  evidence.status = selfTest ? 'SELFTEST' : (evidence.failures.length || turnFailures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
   evidence.finishedAt = new Date().toISOString();
   if (qualityHandoff) {
     // What 01 needs to review sentence by sentence: the input, the displayed
