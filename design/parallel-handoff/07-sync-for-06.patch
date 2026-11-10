@@ -66,10 +66,10 @@ index 825da678..99a62e87 100644
        head: pulled.head,
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts b/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts
 new file mode 100644
-index 00000000..8eafcfd1
+index 00000000..2cc92af9
 --- /dev/null
 +++ b/frontend/src/lib/world-engine/local/progress-sync/product-wiring.test.ts
-@@ -0,0 +1,228 @@
+@@ -0,0 +1,286 @@
 +/** The exact wiring 06 has today vs the one that survives a reload.
 + *
 + * 06's page builds `createProductSync({store, worldId, baseUrl})` without
@@ -269,7 +269,52 @@ index 00000000..8eafcfd1
 +    expect(store.records.get('w1')).toBeUndefined();
 +  });
 +
-+  it('warns once in a browser when storage is not passed', () => {
++  it('uses the browser store automatically when storage is not passed', async () => {
++    const memory = new Map<string, string>();
++    const fake = {
++      getItem: (key: string) => memory.get(key) ?? null,
++      setItem: (key: string, value: string) => { memory.set(key, value); },
++      removeItem: (key: string) => { memory.delete(key); },
++    };
++    const globals = globalThis as { localStorage?: unknown };
++    const previous = globals.localStorage;
++    globals.localStorage = fake;
++    try {
++      // Offline save with no `storage` option, then a fresh adapter (a reload)
++      // must find the queued upload and the head it was based on.
++      const first = createProductSync<{ turn: number }>({
++        store: typedStore(), worldId: 'w1', baseUrl: 'http://127.0.0.1:9/local-progress',
++        writeLocal: true, fetchImpl: offlineFetch, sleep: async () => undefined,
++      });
++      const saved = await first.save({ turn: 1 });
++      expect(saved.outcome?.status).toBe('queued');
++
++      let uploads = 0;
++      const online = (async (input: RequestInfo | URL) => {
++        const url = new URL(String(input));
++        if (url.pathname.endsWith('/snapshots')) {
++          uploads += 1;
++          return new Response(JSON.stringify({
++            snapshotId: 'snap-1', worldId: 'w1', parentSnapshotIds: [], revision: 1,
++            contentDigest: 'd', sizeBytes: 1, createdAt: '2026-01-01T00:00:00Z', reused: false,
++          }), { status: 201, headers: { 'content-type': 'application/json' } });
++        }
++        return new Response(JSON.stringify({ worldId: 'w1', headSnapshotId: null, revision: 0 }),
++          { status: 200, headers: { 'content-type': 'application/json' } });
++      }) as unknown as typeof fetch;
++      const second = createProductSync<{ turn: number }>({
++        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
++        fetchImpl: online, sleep: async () => undefined,
++      });
++      const flushed = await second.flush();
++      expect(flushed.uploaded + flushed.conflicts).toBe(1);
++      expect(uploads).toBe(1);
++    } finally {
++      globals.localStorage = previous;
++    }
++  });
++
++  it('keeps everything in memory when the caller passes storage: null', async () => {
 +    const memory = new Map<string, string>();
 +    const fake = {
 +      getItem: (key: string) => memory.get(key) ?? null,
@@ -283,23 +328,36 @@ index 00000000..8eafcfd1
 +    globals.localStorage = fake;
 +    console.warn = (...args: unknown[]) => { warnings.push(args.join(' ')); };
 +    try {
-+      createProductSync<{ turn: number }>({
-+        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress', sleep: async () => undefined,
-+      });
-+      createProductSync<{ turn: number }>({
++      const sync = createProductSync<{ turn: number }>({
 +        store: typedStore(), worldId: 'w1', baseUrl: 'http://sync.test/local-progress',
-+        storage: fake, sleep: async () => undefined,
++        storage: null, writeLocal: true, fetchImpl: offlineFetch, sleep: async () => undefined,
 +      });
++      await sync.save({ turn: 1 });
 +    } finally {
 +      console.warn = originalWarn;
 +      globals.localStorage = previous;
 +    }
-+    expect(warnings).toHaveLength(1);
-+    expect(warnings[0]).toContain('storage is not passed');
++    expect(warnings).toHaveLength(0);
++    expect(memory.size).toBe(0);
++  });
++
++  it('restore says unavailable when the head cannot be read, not "none"', async () => {
++    const store = typedStore();
++    const offline = (async () => { throw new TypeError('offline'); }) as unknown as typeof fetch;
++    const sync = createProductSync<unknown>({
++      store, worldId: 'w1', baseUrl: 'http://127.0.0.1:9/local-progress', storage: null,
++      fetchImpl: offline, retry: { attempts: 0, baseDelayMs: 0 }, sleep: async () => undefined,
++    });
++    const restored = await sync.restore();
++    expect(restored.source).toBe('unavailable');
++    expect(restored.snapshot).toBeNull();
++    expect(restored.note).toBeTruthy();
++    // Unknown is not the same as "the server has no head": nothing was written.
++    expect(store.records.get('w1')).toBeUndefined();
 +  });
 +});
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/product.ts b/frontend/src/lib/world-engine/local/progress-sync/product.ts
-index 0fcd007c..10f9d4bb 100644
+index 0fcd007c..176837d5 100644
 --- a/frontend/src/lib/world-engine/local/progress-sync/product.ts
 +++ b/frontend/src/lib/world-engine/local/progress-sync/product.ts
 @@ -6,10 +6,16 @@
@@ -332,7 +390,18 @@ index 0fcd007c..10f9d4bb 100644
    fetchImpl?: typeof fetch;
    queueKey?: string;
    headKey?: string;
-@@ -137,8 +147,9 @@ export interface ProductFlushResult<P = unknown> {
+@@ -104,7 +114,9 @@ export interface ProductSaveResult<P> {
+ }
+ 
+ export interface ProductRestoreResult<P> {
+-  source: 'local' | 'remote' | 'none';
++  /** `none` = the service answered and has no head; `unavailable` = it could not
++   * be asked (offline/5xx), so "no remote copy" is not known. */
++  source: 'local' | 'remote' | 'none' | 'unavailable';
+   snapshot: P | null;
+   /** Unresolved conflict the player must decide; both copies stay stored. */
+   conflict?: ProgressConflictError<P>;
+@@ -137,8 +149,9 @@ export interface ProductFlushResult<P = unknown> {
  export interface ProductSync<P> {
    readonly client: ProgressSyncClient<P>;
    readonly worldId: string;
@@ -344,23 +413,41 @@ index 0fcd007c..10f9d4bb 100644
    /** Upload a snapshot the caller already saved locally (06's repository).
     * Keeps one durable record instead of writing it twice. */
    push(snapshot: P, options?: { requestId?: string }): Promise<ProductSaveResult<P>>;
-@@ -161,6 +172,15 @@ export interface ProductSync<P> {
+@@ -161,6 +174,18 @@ export interface ProductSync<P> {
  export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSync<P> {
    const { worldId } = options;
    const baseUrl = options.baseUrl?.trim() ? options.baseUrl.trim() : null;
-+  if (!options.storage && typeof globalThis.localStorage !== 'undefined') {
-+    // 06's page used to forget this: the queue and the last known head then
-+    // vanish on reload and an offline save cannot be uploaded later. Loud on
-+    // purpose, once per adapter, so a real-page run notices instead of
-+    // silently losing progress.
-+    console.warn('[progress-sync] storage is not passed: the offline queue and the last known head will be lost on reload. '
-+      + 'Pass storage: window.localStorage.');
++  // A browser has localStorage and nothing else to lose: use it unless the
++  // caller explicitly opted out with `storage: null`. 06's page forgot to pass
++  // it, so the queue and the last known head vanished on reload and an offline
++  // save could never be uploaded. Explicit `storage: null` still means "keep
++  // everything in memory".
++  const storage = options.storage === undefined
++    ? (typeof globalThis.localStorage !== 'undefined' ? globalThis.localStorage : null)
++    : options.storage;
++  if (!storage && typeof globalThis.localStorage === 'undefined') {
++    console.warn('[progress-sync] no browser storage: the offline queue and the last known head live in memory only.');
 +  }
 +
    const client = new ProgressSyncClient<P>({
      baseUrl: baseUrl ?? 'http://unconfigured.invalid',
      token: options.token ?? undefined,
-@@ -185,13 +205,18 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+@@ -168,11 +193,9 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+       throw new TypeError('progress service is not configured');
+     },
+     localStore: createLocalSnapshotStore(options.store),
+-    headStore: options.storage
+-      ? createWebStorageHeadStore(options.storage, options.headKey)
+-      : undefined,
+-    queueStore: options.storage
+-      ? createWebStorageQueueStore(options.queueKey ?? 'jity.progress-sync.queue.v1', options.storage)
++    headStore: storage ? createWebStorageHeadStore(storage, options.headKey) : undefined,
++    queueStore: storage
++      ? createWebStorageQueueStore(options.queueKey ?? 'jity.progress-sync.queue.v1', storage)
+       : undefined,
+     timeoutMs: options.timeoutMs,
+     retry: options.retry,
+@@ -185,13 +208,18 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
      client,
      worldId,
      async save(snapshot, saveOptions = {}) {
@@ -381,7 +468,7 @@ index 0fcd007c..10f9d4bb 100644
        });
        return { localSaved, outcome };
      },
-@@ -219,7 +244,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+@@ -219,14 +247,16 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
          return { source: 'local', snapshot: local };
        }
        try {
@@ -390,7 +477,54 @@ index 0fcd007c..10f9d4bb 100644
          return {
            source: pulled.snapshot ? 'remote' : 'none',
            snapshot: pulled.snapshot ? pulled.snapshot.payload : null,
-@@ -316,7 +341,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+         };
+       } catch (error) {
++        // Do not report "no remote copy" when the question could not be asked:
++        // the page would silently start a new world over an existing one.
+         return {
+-          source: 'none',
++          source: 'unavailable',
+           snapshot: null,
+           note: error instanceof Error ? error.message : String(error),
+         };
+@@ -271,6 +301,16 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+       }
+       const remote = { headSnapshotId: head.headSnapshotId, revision: head.revision };
+       if (!local) return { relation: remote.headSnapshotId ? 'remote-ahead' : 'unknown', localRevision: null, baseSnapshotId: base, remote };
++      // A queued upload is local work the server has not seen yet. Without it,
++      // a device that saved offline while the tab was closed would read
++      // "in-sync" (or "remote-ahead") and the page would never offer a choice.
++      const queued = await client.pending().catch(() => 0);
++      const withQueue = (relation: SyncRelation): SyncRelation => {
++        if (!queued) return relation;
++        if (relation === 'in-sync') return 'local-ahead';
++        if (relation === 'remote-ahead') return 'diverged';
++        return relation;
++      };
+       if (!base) {
+         if (!remote.headSnapshotId) {
+           return { relation: 'local-ahead', localRevision: null, baseSnapshotId: null, remote };
+@@ -289,7 +329,9 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+           return { relation: 'diverged', localRevision: null, baseSnapshotId: null, remote };
+         }
+       }
+-      if (remote.headSnapshotId === base) return { relation: 'in-sync', localRevision: null, baseSnapshotId: base, remote };
++      if (remote.headSnapshotId === base) {
++        return { relation: withQueue('in-sync'), localRevision: null, baseSnapshotId: base, remote };
++      }
+       try {
+         const graph = await client.peekGraph(worldId);
+         if (!remote.headSnapshotId) {
+@@ -297,7 +339,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
+         }
+         const comparison = compareLineage(base, remote.headSnapshotId, graph.nodes);
+         if (comparison.leftIsAncestorOfRight) {
+-          return { relation: 'remote-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
++          return { relation: withQueue('remote-ahead'), localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+         }
+         if (comparison.rightIsAncestorOfLeft) {
+           return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+@@ -316,7 +358,7 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
        }
      },
      choose(choice, conflict) {
@@ -400,7 +534,7 @@ index 0fcd007c..10f9d4bb 100644
      pending() {
        return client.pending();
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/progress-sync.test.ts b/frontend/src/lib/world-engine/local/progress-sync/progress-sync.test.ts
-index 75d91bdc..6973a50b 100644
+index 75d91bdc..7ba2b23e 100644
 --- a/frontend/src/lib/world-engine/local/progress-sync/progress-sync.test.ts
 +++ b/frontend/src/lib/world-engine/local/progress-sync/progress-sync.test.ts
 @@ -746,12 +746,12 @@ describe('createProductSync', () => {
@@ -511,7 +645,7 @@ index 75d91bdc..6973a50b 100644
      expect((await a.status()).relation).toBe('remote-ahead');
  
      // A third device forks from the root while A is still on revision 1.
-@@ -927,8 +973,10 @@ describe('createProductSync', () => {
+@@ -927,14 +973,55 @@ describe('createProductSync', () => {
  
      // A local save made while B moved on, then restored from an old base,
      // reports diverged instead of silently overwriting.
@@ -524,6 +658,51 @@ index 75d91bdc..6973a50b 100644
      const cStatus = await c.status();
      expect(cStatus.relation).toBe('diverged');
      // Nothing is written by status(); the page only learns it must ask.
+     expect(Array.isArray(cStatus.branches)).toBe(true);
+   });
+ 
++  it('a queued local save is local-ahead or diverged, never in-sync or remote-ahead', async () => {
++    const server = new FakeProgressServer();
++    const storeA = new ProductStore();
++    const make = (store: ProductStore = new ProductStore()) => createProductSync<unknown>({
++      store,
++      worldId: 'w1',
++      baseUrl: 'http://sync.test',
++      storage: new MemoryStorage(),
++      fetchImpl: server.fetch,
++      retry: { attempts: 1, baseDelayMs: 0 },
++      sleep: async () => undefined,
++      now: () => 1_700_000_000_000,
++    });
++    const a = make(storeA);
++    // The session writes the durable store; the sync adapter only uploads.
++    await storeA.save('w1', snapshot(1));
++    await a.save(snapshot(1), { requestId: 'q-1' });
++    expect((await a.status()).relation).toBe('in-sync');
++
++    // Offline: the upload stays queued, so the server head is still A's base.
++    server.offline = true;
++    const queued = await a.save(snapshot(2, '离线的一回合'), { requestId: 'q-2' });
++    expect(queued.outcome?.status).toBe('queued');
++    // Back online, the remote head has not moved: the queued save is ahead.
++    server.offline = false;
++    expect((await a.status()).relation).toBe('local-ahead');
++
++    // Another device moves the head while A's save is still queued: the page
++    // must offer a choice, not call itself in-sync or merely behind.
++    const b = make();
++    expect((await b.restore()).source).toBe('remote');
++    await b.push(snapshot(3, 'B的一回合'), { requestId: 'q-3' });
++    const diverged = await a.status();
++    expect(diverged.relation).toBe('diverged');
++    expect(diverged.branches?.length).toBeGreaterThanOrEqual(1);
++    // status() still writes nothing.
++    expect(await a.pending()).toBe(1);
++  });
++
+   it('flush returns the conflicts themselves so the page can ask the player', async () => {
+     const server = new FakeProgressServer();
+     const a = createProductSync<unknown>({
 diff --git a/frontend/src/lib/world-engine/local/progress-sync/real-server.test.ts b/frontend/src/lib/world-engine/local/progress-sync/real-server.test.ts
 index 0591f13a..f59536d2 100644
 --- a/frontend/src/lib/world-engine/local/progress-sync/real-server.test.ts
