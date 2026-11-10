@@ -1,6 +1,6 @@
 {
   "batch": 1,
-  "createdAt": "2026-11-10T05:44:00Z",
+  "createdAt": "2026-11-10T05:48:00Z",
   "status": "first-batch-ready",
   "rowsFile": "rows.jsonl",
   "rowCount": 21,
@@ -56,7 +56,7 @@
   "targetLength": {
     "min": 62,
     "max": 106,
-    "mean": 86.5
+    "mean": 86.6
   },
   "rows": [
     {
@@ -106,7 +106,7 @@
         "appearance_change",
         "sanity_change"
       ],
-      "targetChars": 78
+      "targetChars": 80
     },
     {
       "id": "short-0078-courtyard-drop",
