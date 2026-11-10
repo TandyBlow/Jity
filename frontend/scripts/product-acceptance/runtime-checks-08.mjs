@@ -38,6 +38,7 @@ const mainModelDir = 'D:/others/Jity/.local/world-narration-worktree/frontend/pu
 const outPath = resolve(flag('--out', resolve(here, '../../../results/product/evidence/09-runtime-08.json')));
 const gpu = has('--gpu') || !has('--cpu');
 const onlyHardStop = has('--only-hard-stop');
+const decodeCompare = has('--decode-compare');
 
 const evidence = {
   kind: '09-runtime-checks-08',
@@ -178,7 +179,7 @@ try {
   const engineUrl = `/@fs/${engineFile.replace(/\\/g, '/')}`;
   const cfg = { gpu, modelDir, mainModelDir };
 
-  if (!onlyHardStop) {
+  if (!onlyHardStop && !decodeCompare) {
   const preload = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
     const engine = new module.WllamaInferenceEngine({
@@ -197,7 +198,7 @@ try {
   check('complete-before-ready', 'complete() before load rejects immediately instead of waiting', /not loaded|not ready|load/i.test(preload.error ?? '') && preload.ms < 500 ? 'pass' : 'fail', { error: preload.error, ms: preload.ms, runtime: { loaded: preload.runtime.loaded, workersCreated: preload.runtime.workersCreated } });  }
 
 
-  if (!onlyHardStop) {
+  if (!onlyHardStop && !decodeCompare) {
   const phaseA = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
     const WllamaInferenceEngine = module.WllamaInferenceEngine;
@@ -264,7 +265,7 @@ try {
 
   // Same engine continues: cancel mid-generation, then a timeout that
   // hard-stops the worker, then ensureLoaded() on the same weights.
-  if (!onlyHardStop) {
+  if (!onlyHardStop && !decodeCompare) {
   const phaseC = await page.evaluate(async ({ engineUrl, cfg }) => {
     const engine = globalThis.__e08;
     if (!engine) return { error: 'engine_missing' };
@@ -328,6 +329,8 @@ try {
 
   // Hard-stop branch (08's followUp): abortGraceMs 0 so the timeout terminates
   // the worker immediately; ensureLoaded then has to reload the same weights.
+  let hardStop = null;
+  if (!decodeCompare) {
   await page.goto(`http://127.0.0.1:${port}/__runtime`);
   const hardStop = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
@@ -370,9 +373,11 @@ try {
     loads: hardStop.loads ?? null,
   });
   save();
+  }
 
-  if (!onlyHardStop) {
   // Fresh page: cancel a cold load, then load for real in the same tab.
+  let phaseE = null;
+  if (!onlyHardStop && !decodeCompare) {
   await page.goto(`http://127.0.0.1:${port}/__runtime`);
   const phaseE = await page.evaluate(async ({ engineUrl, cfg }) => {
     const module = await import(/* @vite-ignore */ engineUrl);
@@ -408,7 +413,7 @@ try {
   save();  }
 
 
-  if (has('--split') && !has('--skip-split') && !onlyHardStop) {
+  if (has('--split') && !has('--skip-split') && !onlyHardStop && !decodeCompare) {
     const shard1 = 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00001-of-00002.gguf';
     const shard2 = 'Qwen3-4B-Instruct-2507-Q4_K_M.gguf-00002-of-00002.gguf';
 
