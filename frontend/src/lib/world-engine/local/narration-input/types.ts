@@ -140,14 +140,10 @@ export interface NarrationLengthPolicy {
 }
 
 export interface NarrationProjectionPolicy {
-  /** How many ancestor location levels to add beyond each referenced
-   * location. The source dataset adds the immediate parent only. */
-  locationParentDepth: number;
   length: NarrationLengthPolicy;
 }
 
 export const DEFAULT_NARRATION_PROJECTION_POLICY: NarrationProjectionPolicy = {
-  locationParentDepth: 1,
   length: { maxChars: null, maxUtf8Bytes: null },
 };
 

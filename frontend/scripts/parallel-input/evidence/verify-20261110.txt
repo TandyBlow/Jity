@@ -1,4 +1,4 @@
-# 01-input verification 2026-11-10T03:30:46Z
+# 01-input verification 2026-11-10T03:32:19Z
 
 ## node/tsc
 v22.20.0
@@ -14,26 +14,26 @@ eslint: pass
 
  Test Files  6 passed (6)
       Tests  47 passed (47)
-   Start at  11:30:53
-   Duration  1.75s (import 56%, tests 25%, transform 16%, worker 2%)
+   Start at  11:32:26
+   Duration  2.32s (import 54%, tests 28%, transform 16%, worker 2%)
 
-    Isolate  6 workers spawned · ~108ms startup each (spawn + environment, per file)
-             at least ~542ms faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  6 workers spawned · ~150ms startup each (spawn + environment, per file)
+             at least ~752ms faster with isolate: false — reuses workers across files instead of one per file
 
 
 ## vitest verbose (live dataset block)
 
  RUN  v5.0.1 D:/others/Jity/.local/parallel-local-game/worktrees/01-input/frontend
 
- ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > reproduces the frozen Python bytes for all representative rows 27ms
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > reproduces the frozen Python bytes for all representative rows 33ms
  ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > has a manifest for every source row 1ms
  ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > legacy serializer byte goldens > squashes only the old time-advance space and keeps the rest lossless 1ms
- ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > live narration dataset bytes > matches every stored xProse and the manifest hashes 66ms
+ ✓ src/lib/world-engine/local/narration-input/legacy-golden.test.ts > live narration dataset bytes > matches every stored xProse and the manifest hashes 62ms
 
  Test Files  1 passed (1)
       Tests  4 passed (4)
-   Start at  11:30:56
-   Duration  697ms (import 47%, transform 30%, tests 22%, worker 1%)
+   Start at  11:32:31
+   Duration  746ms (import 51%, transform 27%, tests 20%, worker 1%)
 
 
 ## legacy golden rebuild (Python oracle)

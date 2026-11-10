@@ -59,12 +59,6 @@ const TIME_UNITS: Record<TimeAdvance['duration']['unit'], string> = {
 
 function mergePolicy(policy: ProjectNarrationInputArgs['policy']): NarrationProjectionPolicy {
   const base = DEFAULT_NARRATION_PROJECTION_POLICY;
-  const locationParentDepth = policy?.locationParentDepth ?? base.locationParentDepth;
-  if (!Number.isInteger(locationParentDepth) || locationParentDepth < 0) {
-    throw new NarrationInputError('invalid_projection', 'locationParentDepth must be a non-negative integer', {
-      locationParentDepth,
-    });
-  }
   const maxChars = policy?.length?.maxChars ?? base.length.maxChars;
   const maxUtf8Bytes = policy?.length?.maxUtf8Bytes ?? base.length.maxUtf8Bytes;
   for (const [name, value] of [['maxChars', maxChars], ['maxUtf8Bytes', maxUtf8Bytes]] as const) {
@@ -73,7 +67,6 @@ function mergePolicy(policy: ProjectNarrationInputArgs['policy']): NarrationProj
     }
   }
   return {
-    locationParentDepth,
     length: { maxChars, maxUtf8Bytes },
   };
 }
@@ -296,8 +289,10 @@ function assertUniqueNames(state: WorldState, ids: Iterable<Id>): void {
   }
 }
 
+const SOURCE_LOCATION_PARENT_DEPTH = 1;
+
 function collectIncludedLocations(
-  before: WorldState, after: WorldState, policy: NarrationProjectionPolicy,
+  before: WorldState, after: WorldState,
   changed: Set<Id>, characters: Iterable<Id>, items: Iterable<Id>, viewRoom: Id,
 ): Set<Id> {
   const seeds = new Set<Id>([viewRoom]);
@@ -313,7 +308,7 @@ function collectIncludedLocations(
   const included = new Set<Id>(seeds);
   for (const seed of seeds) {
     let frontier = [seed];
-    for (let depth = 0; depth < policy.locationParentDepth; depth += 1) {
+    for (let depth = 0; depth < SOURCE_LOCATION_PARENT_DEPTH; depth += 1) {
       const next: Id[] = [];
       for (const locationId of frontier) {
         const parent = before.initial.locations[locationId]?.parentLocationId
@@ -520,7 +515,7 @@ export function projectNarrationInput(args: ProjectNarrationInputArgs): ProjectN
   const includedItems = new Set<Id>();
   for (const id of effectiveChanged) if (after.initial.items[id]) includedItems.add(id);
   const includedLocations = collectIncludedLocations(
-    before, after, policy, effectiveChanged, includedCharacters, includedItems, viewRoom,
+    before, after, effectiveChanged, includedCharacters, includedItems, viewRoom,
   );
 
   assertUniqueNames(before, [
