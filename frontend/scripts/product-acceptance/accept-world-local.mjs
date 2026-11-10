@@ -307,7 +307,10 @@ try {
     }
     return { chunks: new Set(chunks).size, markerChunks: hits };
   })();
-  evidence.productIdentity = identity;
+  const globalsWaitStarted = Date.now();
+  const globalsReady = await page.waitForFunction(() => Array.isArray(globalThis.__worldTurns), { timeout: 15000 })
+    .then(() => true).catch(() => false);
+  evidence.productIdentity = { ...identity, globalsReady, globalsWaitMs: Date.now() - globalsWaitStarted };
   const seenMarkers = new Set(identity.markerChunks.flatMap((hit) => hit.markers));
   const buildIsCurrent = seenMarkers.has('per_character_decision') && seenMarkers.has('__worldRestore');
   if (!buildIsCurrent && !process.argv.includes('--allow-unknown-page')) {
@@ -496,7 +499,13 @@ try {
             .find((label) => /^(结算中|正在写正文|本轮完成|本轮已交还|本轮停止)/.test(label)) ?? '';
           const text = last?.querySelector('div[style*="pre-wrap"]')?.textContent ?? '';
           const bodyText = document.body.innerText;
+          const record = Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.at(-1) : null;
           return {
+            record: record ? {
+              index: record.index, done: record.done ?? null, failed: record.failed ?? null,
+              stopped: record.stopped ?? record.stop ?? null, finishedAtMs: record.finishedAtMs ?? null,
+              source: record.source ?? null,
+            } : null,
             count: articles.length,
             stage,
             text,
@@ -535,6 +544,10 @@ try {
           firstReadableAt = Date.now() - submitAt;
           entry.timings.firstReadableMs = firstReadableAt;
           entry.firstReadableSample = earlyText.slice(0, 120);
+        }
+        if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)) {
+          entry.terminal = sample.record;
+          break;
         }
         if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
         // A submit can be refused synchronously (e.g. progress_conflict): the
