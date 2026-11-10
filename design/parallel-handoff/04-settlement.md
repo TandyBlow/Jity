@@ -30,7 +30,7 @@
 5. `continuation('r1', input)` 先让模型提出“大概率发生且与主角相关”的候选行动，再让模型逐条判断 `likely` 和 `related`：
    - 两者都为 true 的候选才进入 `candidateCharacterIds`，返回 `kind:'continue'` 和新的 `nextRoundId`。
    - 没有候选，或全部不是 likely+related，返回普通 `kind:'handback'`。
-   - 连续两轮没有任何实体变化（只有时间推进也算无进展），或同一组候选连续三轮重复，策略返回 handback，并把 `no_progress`/`repeated_candidate` 写进 evidence。
+   - 连续两轮没有真实变化（重复写同一个 positionSet 不算；结算时间、新事实/动作、状态或场外依赖变化算），或已消费的候选再次出现，策略返回可见停止：`value:null`，`error:continuation_policy_no_progress|repeated_candidate|abstract_task_goal`，evidence `decision:policy_stop`；不写 handback。
    - 模型调用失败、输出结构错误、head 对不上：返回 `value:null` 和错误，**不返回 handback**。接入方必须抛错/停止，不能把异常当交还。
    - 人物引用可以写唯一全名或 id；程序把唯一全名解析成 id。未知 id、占位符 `id`、未声明的 effect target 都会触发一次带具体原因的修复重试；重试仍失败就中止该点。不会把写错的名字默认到某个实体。
    - 默认 `continuationPolicy.maxAutoContinuations = null`，不存在“默认 0 次”或“只允许 1 次”的静默关闭。
@@ -162,7 +162,7 @@ resetAutoContinuations(): void { this.settlement.resetContinuation(); }
 ```
 
 - 页面如果有 `maxAutoContinuations: 0` 或任何固定次数默认值（当前基线没有该选项，但主树可能已加），删掉它。正常交还不能由次数决定；需要安全上限时用 `continuationPolicy.maxAutoContinuations`（默认 `null` = 不按次数交还），把 `noProgressRounds`/`repeatRounds` 作为可解释的防循环规则。
-- 策略交还目前仍使用现有 `Conclusion` 的 `kind:'handback'`（共享类型只允许 `closedBy:'model'` 或 `cancel`）；具体原因是 evidence 里的 `reason: 'no_progress' | 'repeated_candidate'`。如果页面要显示“推进已暂停”而不是“世界没有后续”，需要读取该 evidence 并显示不同提示；本线不改页面。
+- 策略停止不是模型 handback：`value:null`，evidence `decision:policy_stop`，error 带 `continuation_policy_*`。页面必须把“推进已暂停/策略停止”和“模型交还”分开显示；不能写 `closedBy:'model'`。本线不改页面，06 负责显示。
 
 ## 验证
 
@@ -185,7 +185,7 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 六阶段顺序、物品移动、全人物任务/个性覆盖、跨人物任务达成、已完成任务不重做、个性与理智配对、理智非法回退当前值。
 - 时间扫描跳过位置/外貌，仍扫描全部任务；没有个性变化不写理智。
 - 拆分阶段返回单个 `UpdatesCall`；后续阶段读取已应用工作态；同批任务达成触发个性阶段。
-- 继续：likely+related 才继续；无候选交还；连续无进展/重复候选策略交还；模型失败返回 null；默认无次数上限。
+- 继续：likely+related 才继续；无候选是模型 handback；连续无真实进展/已消费候选/抽象任务目标是可见策略停止；模型失败返回 null；默认无次数上限。
 - `settlement-integration.test.ts` 用真实 `ControllerDriver` + `LocalWorldTransport` + 脚本化 engine 跑通一个回合：results → 六阶段 updates → continuation → 状态提交。
 
 ## 限制和未验证
