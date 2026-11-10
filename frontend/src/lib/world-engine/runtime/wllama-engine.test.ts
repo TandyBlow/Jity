@@ -312,6 +312,21 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(row.streamChunks).toBe(3);
   });
 
+  test('chat() forwards a real system turn and shares the completion contract', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);
+    await engine.load();
+    await engine.chat([
+      { role: 'system', content: 'SYSTEM' },
+      { role: 'user', content: 'USER' },
+    ], { maxTokens: 32, temperature: 0.2 });
+    expect(fake.calls.completions[0]).toMatchObject({
+      messages: [{ role: 'system', content: 'SYSTEM' }, { role: 'user', content: 'USER' }],
+      max_tokens: 32, temperature: 0.2, stream: true,
+    });
+    await expect(engine.chat([])).rejects.toThrow(/at least one message/);
+  });
+
   test('text generation has no JSON grammar and uses bounded defaults', async () => {
     const fake = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf', directBlob: false }, async () => fake.instance);

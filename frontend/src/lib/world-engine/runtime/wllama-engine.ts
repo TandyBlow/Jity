@@ -17,11 +17,24 @@
  * free; a different URL is a configuration error instead of silently reusing
  * the old model. A failed or cancelled load exits the factory instance so a
  * leaked worker cannot keep wasm memory alive across retries.
+ *
+ * `chat()` is additive next to the InferenceEngine contract: `complete()`
+ * sends a single user turn, which makes an instruct checkpoint use its own
+ * default system prompt. Narrative candidates need their own system turn
+ * (2026-11-10 candidate-model registration), so `chat()` forwards a real
+ * message list and shares the same cancellation/evidence path.
  */
 import type { Wllama } from '@wllama/wllama';
 import { createWllama } from '../../benchmark/wllama-loader';
 import { abortError, IncompleteGenerationError, type CompletionEvidence, type CompleteOptions, type EngineInfo, type InferenceEngine } from './engine';
 import type { AbortCause, GenerationEvidence, ModelLoadEvidence } from '../local/runtime-diagnostics/types';
+
+/** A chat turn for `chat()`. Mirrors the parts of the OpenAI message shape
+ * the wllama adapter forwards; the GGUF's own template decides the rendering. */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
 
 export interface WllamaEngineOptions {
   /** Default model source for load(); a per-call modelUrl overrides it. */
@@ -257,6 +270,19 @@ export class WllamaInferenceEngine implements InferenceEngine {
   }
 
   async complete(prompt: string, options?: CompleteOptions): Promise<string> {
+    return this.generate([{ role: 'user', content: prompt }], options);
+  }
+
+  /** Chat completion with a real message list, so an instruct model receives
+   * the caller's system prompt instead of the checkpoint's default system
+   * turn. Additive to the InferenceEngine contract: the interface keeps
+   * complete() and callers that only know the interface still work. */
+  async chat(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
+    if (messages.length === 0) throw new Error('chat needs at least one message');
+    return this.generate(messages, options);
+  }
+
+  private async generate(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
     if (options?.signal?.aborted || this.disposed) throw abortError();
@@ -332,7 +358,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     let enginePromise: Promise<unknown>;
     try {
       enginePromise = Promise.resolve(instance.createChatCompletion({
-        messages: [{ role: 'user', content: prompt }],
+        messages: messages.map((message) => ({ role: message.role, content: message.content })),
         chat_template_kwargs: { enable_thinking: false },
         cache_prompt: cachePrompt,
         stream: true,

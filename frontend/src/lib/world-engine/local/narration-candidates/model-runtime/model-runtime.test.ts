@@ -1,0 +1,259 @@
+import { describe, expect, test } from 'vitest';
+import type { CommittedNarration } from '../../../runtime/committed-narration';
+import type { CompleteOptions } from '../../../runtime/engine';
+import { MODEL_CATALOG, DEFAULT_MODEL_ID, modelSpec, modelSpecByFile } from './catalog';
+import { generateCandidate } from './candidate';
+import {
+  ThinkingFilter, buildMessages, cleanNarration, renderFallbackPrompt, renderNarrationUser, stripThinking,
+} from './template';
+import type { CandidateArgs, ChatCapableEngine } from './types';
+
+const ANCHOR = { worldId: 'world_a', pointId: 'p1', version: 1, stateDigest: 'f'.repeat(64), previousPointId: 'root' };
+
+function movePacket(): CommittedNarration {
+  return {
+    anchor: ANCHOR,
+    facts: [{ id: 'a:position', actorId: 'char_lin', name: '林川', kind: 'moved', fromId: 'corridor', from: '走廊', toId: 'hall', to: '门厅' }],
+  };
+}
+
+const SPEC = modelSpec('qwen2.5-1.5b-instruct-q4km');
+
+/** Records what the candidate asked the engine to do and streams a fixed
+ * answer in chunks. `rounds` picks the chunk list per call, so a test can
+ * script a first bad attempt and a repaired second one. */
+function fakeEngine(rounds: string[][] | string[], options: { chat?: boolean } = {}) {
+  const scripted: string[][] = Array.isArray(rounds[0]) ? (rounds as string[][]) : [rounds as string[]];
+  const calls: { messages?: { role: string; content: string }[]; prompt?: string; options?: CompleteOptions }[] = [];
+  let round = 0;
+  const next = () => scripted[Math.min(round++, scripted.length - 1)]!;
+  const run = (chunks: string[], callOptions?: CompleteOptions) => {
+    let built = '';
+    for (const piece of chunks) {
+      built += piece;
+      callOptions?.onProgress?.({ raw: built, elapsedMs: 1 });
+    }
+    callOptions?.onCompletion?.({ raw: built, finishReason: 'stop', firstTokenMs: 5, wallMs: 10 });
+    return built;
+  };
+  const engine: ChatCapableEngine = {
+    info: { backend: 'fake', modelId: 'fake' },
+    load: async () => undefined,
+    dispose: async () => undefined,
+    complete: async (prompt, callOptions) => {
+      calls.push({ prompt, options: callOptions });
+      return run(next(), callOptions);
+    },
+  };
+  if (options.chat !== false) {
+    (engine as ChatCapableEngine & { chat: NonNullable<ChatCapableEngine['chat']> }).chat = async (messages, callOptions) => {
+      calls.push({ messages, options: callOptions });
+      return run(next(), callOptions);
+    };
+  }
+  return { engine, calls };
+}
+
+function args(overrides: Partial<CandidateArgs> = {}): CandidateArgs {
+  return {
+    engine: fakeEngine(['林川从走廊走进门厅。']).engine,
+    committed: movePacket(),
+    inputText: '【视角】周宁。林川在走廊。',
+    policy: {
+      viewpoint: { id: 'char_zhou', name: '周宁' },
+      roster: ['林川', '周宁'],
+      locations: ['走廊', '门厅'],
+      time: { amount: 2, unit: 'minute' },
+      minChars: 10,
+      targetChars: 120,
+      temperature: 0.7,
+      seed: 42,
+    },
+    ...overrides,
+  };
+}
+
+const VERIFIED_TEXT = '两分钟里，林川从走廊走到门厅，脚步不急。';
+
+describe('model catalog', () => {
+  test('every entry carries identity, a template and a real hash', () => {
+    expect(MODEL_CATALOG.length).toBeGreaterThanOrEqual(4);
+    for (const spec of MODEL_CATALOG) {
+      expect(spec.gguf).toMatch(/\.gguf$/);
+      expect(spec.sha256).toMatch(/^[0-9a-f]{64}$/);
+      expect(spec.bytes).toBeGreaterThan(100_000_000);
+      expect(spec.template.id.length).toBeGreaterThan(3);
+      expect(spec.recommended.contextSize).toBeGreaterThanOrEqual(2048);
+    }
+    expect(DEFAULT_MODEL_ID).toBe('qwen2.5-1.5b-instruct-q4km');
+    expect(modelSpec('qwen3-1.7b-q4km').thinking).toBe('hybrid');
+    expect(modelSpec('qwen3-4b-instruct-2507-q4km').thinking).toBe('none');
+    expect(modelSpecByFile('D:/models/Qwen3-1.7B-Q4_K_M.gguf').id).toBe('qwen3-1.7b-q4km');
+    expect(() => modelSpec('nope')).toThrow(/unknown candidate model/);
+  });
+});
+
+describe('prompt rendering', () => {
+  test('the user turn carries the committed fact, elapsed time and scene without copying raw state', () => {
+    const text = renderNarrationUser(movePacket(), '【状态】原始投影串', {
+      viewpoint: { id: 'char_zhou', name: '周宁' },
+      scene: { location: '门厅', placeNotes: ['地砖很亮。'], present: [{ name: '林川', note: '穿灰衣' }], objects: [{ name: '盒子' }] },
+      time: { amount: 2, unit: 'minute' },
+      knownPositions: [{ name: '周宁', location: '走廊' }],
+      knownEntities: ['林川', '周宁', '门厅'],
+      targetChars: 240,
+      minChars: 120,
+    });
+    expect(text).toContain('视角人物：周宁');
+    expect(text).toContain('场景：门厅。地砖很亮。');
+    expect(text).toContain('在场人物：林川（穿灰衣）');
+    expect(text).toContain('- 林川从走廊移动到门厅。');
+    expect(text).toContain('本回合经过的时间：2分钟。');
+    expect(text).toContain('- 周宁在走廊。');
+    expect(text).toContain('可用专名：林川、周宁、门厅');
+    expect(text).toContain('120～240 字左右');
+    // The raw serializer projection is quoted as evidence, never as the body.
+    expect(text).toContain('本点输入资料');
+    expect(text.indexOf('【状态】原始投影串')).toBeGreaterThan(text.indexOf('本回合已发生'));
+  });
+
+  test('an empty delta explicitly forbids inventing changes', () => {
+    const text = renderNarrationUser({ anchor: ANCHOR, facts: [] }, '', { time: { amount: 5, unit: 'minute' } });
+    expect(text).toContain('本回合没有实体变化');
+    expect(text).toContain('不要写任何移动、任务达成或状态改变');
+    expect(text).toContain('5分钟');
+  });
+
+  test('a chat spec sends a system + user message; a legacy engine gets a labelled prompt', () => {
+    const messages = buildMessages(SPEC, 'USER');
+    expect(messages[0]!.role).toBe('system');
+    expect(messages[0]!.content).toContain('不要列点');
+    expect(messages[1]).toEqual({ role: 'user', content: 'USER' });
+    const prompt = renderFallbackPrompt(SPEC, 'USER');
+    expect(prompt).toContain('不要列点');
+    expect(prompt.endsWith('USER')).toBe(true);
+  });
+});
+
+const OPEN_THINK = '<' + 'think>';
+const CLOSE_THINK = '</' + 'think>';
+
+describe('thinking handling', () => {
+  test('complete answers drop a closed or unclosed think block', () => {
+    expect(stripThinking(OPEN_THINK + '思考很久' + CLOSE_THINK + '\n答：正文。')).toBe('答：正文。');
+    expect(stripThinking(OPEN_THINK + '思考没有结束')).toBe('');
+    expect(stripThinking('正文直接开始。')).toBe('正文直接开始。');
+  });
+
+  test('the streaming filter never emits think text, even across chunk splits', () => {
+    const filter = new ThinkingFilter();
+    const out = [
+      filter.push(OPEN_THINK.slice(0, 4)), filter.push(OPEN_THINK.slice(4) + 'internal reasoning'),
+      filter.push(' more'),
+      filter.push(CLOSE_THINK.slice(0, 5)), filter.push(CLOSE_THINK.slice(5) + '\n正'),
+      filter.push('文。'),
+    ].join('');
+    expect(out).toBe('\n正文。');
+    expect(filter.push('')).toBe('');
+    expect(filter.flush()).toBe('');
+    expect(filter.text).toBe('\n正文。');
+  });
+
+  test('the filter holds a partial opening tag at the end instead of leaking it', () => {
+    const filter = new ThinkingFilter();
+    expect(filter.push('好的<')).toBe('好的');
+    expect(filter.push('think>')).toBe('');
+    expect(filter.push('想')).toBe('');
+    expect(filter.push(CLOSE_THINK + '正文')).toBe('正文');
+  });
+
+  test('cleanNarration removes fences, role labels and chat markers', () => {
+    expect(cleanNarration('```\n正文：他走进门厅。\n```')).toBe('他走进门厅。');
+    expect(cleanNarration('正文：他走进门厅。<|im_end|>')).toBe('他走进门厅。');
+  });
+});
+
+describe('generateCandidate', () => {
+  test('streams real chunks, reports timings, and accepts a fact-aligned scene', async () => {
+    const { engine, calls } = fakeEngine(['两分钟', '里，林川从走廊走到门厅', '，脚步不急。']);
+    const seen: { status: string; verified: boolean; text: string }[] = [];
+    const result = await generateCandidate({
+      ...args({ engine }),
+      onProgress: (progress) => seen.push({ status: progress.status, verified: progress.verified, text: progress.text }),
+    }, { spec: SPEC });
+    expect(result.accepted).toBe(true);
+    expect(result.text).toBe(VERIFIED_TEXT);
+    expect(result.issues.filter((issue) => issue.severity === 'hard')).toHaveLength(0);
+    expect(result.verification?.coverage[0]?.expressed).toBe(true);
+    expect(result.verification?.timeExpressed).toBe(true);
+    // A chat-capable engine with a chat spec got messages, not a pasted template.
+    expect(calls[0]!.messages?.[0]!.role).toBe('system');
+    expect(calls[0]!.messages?.[1]!.content).toContain('林川从走廊移动到门厅');
+    expect(calls[0]!.options).toMatchObject({ maxTokens: 192, temperature: 0.7, seed: 42 });
+    expect(result.timings.calls).toBe(1);
+    expect(result.timings.firstReadableMs).not.toBeNull();
+    expect(seen[0]!.status).toBe('streaming');
+    expect(seen.at(-1)).toMatchObject({ status: 'done', verified: true });
+  });
+
+  test('an engine without chat() gets the combined prompt and still works', async () => {
+    const { engine, calls } = fakeEngine([VERIFIED_TEXT], { chat: false });
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(result.accepted).toBe(true);
+    expect(calls[0]!.prompt).toContain('不要列点');
+    expect(calls[0]!.prompt).toContain('林川从走廊移动到门厅');
+    expect(calls[0]!.messages).toBeUndefined();
+  });
+
+  test('a fact-wrong first attempt is retried with the exact repair note, then accepted', async () => {
+    const { engine, calls } = fakeEngine([
+      ['林川从门厅走回走廊，花了两分钟。'],
+      [VERIFIED_TEXT],
+    ]);
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(result.accepted).toBe(true);
+    expect(result.rawAttempts).toHaveLength(2);
+    expect(result.rawAttempts[0]!.verification?.violations.map((violation) => violation.kind)).toContain('direction_reversed');
+    const repairPrompt = result.rawAttempts[1]!.prompt;
+    expect(repairPrompt).toContain('方向写反了');
+    expect(result.timings.calls).toBe(2);
+    expect(result.rawAttempts[1]!.temperature).toBeLessThan(result.rawAttempts[0]!.temperature);
+    expect(calls).toHaveLength(2);
+  });
+
+  test('two failing attempts return the draft with accepted:false and hard issues, never a fabricated template', async () => {
+    const { engine } = fakeEngine([
+      ['走廊里安静了下来，没有任何人经过。'],
+      ['门厅的灯还亮着，没有人说话。'],
+    ]);
+    const result = await generateCandidate(args({ engine }), { spec: SPEC });
+    expect(result.accepted).toBe(false);
+    const hard = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
+    expect(hard).toContain('omitted_fact');
+    expect(hard).toContain('time_not_narrated');
+    // The draft stays the model's own text; the candidate never substitutes prose.
+    expect(result.text).toContain('走廊里安静了下来');
+    expect(result.model).toEqual({ id: SPEC.id, templateId: SPEC.template.id });
+  });
+
+  test('a model that aborts does not get turned into an accepted scene', async () => {
+    const controller = new AbortController();
+    const { engine } = fakeEngine([VERIFIED_TEXT]);
+    const aborting: ChatCapableEngine = {
+      ...engine,
+      chat: async () => { controller.abort(); throw new DOMException('Aborted', 'AbortError'); },
+    };
+    await expect(generateCandidate(args({ engine: aborting, signal: controller.signal }), { spec: SPEC })).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
+  test('an empty delta point passed with invented movement is rejected', async () => {
+    const { engine } = fakeEngine([['他走进门厅，五分钟就这样过去了。']]);
+    const result = await generateCandidate({
+      ...args({ engine }),
+      committed: { anchor: ANCHOR, facts: [] },
+      policy: { roster: ['林川'], locations: ['走廊', '门厅'], time: { amount: 5, unit: 'minute' }, minChars: 5 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.map((issue) => issue.kind)).toContain('movement_without_fact');
+  });
+});
