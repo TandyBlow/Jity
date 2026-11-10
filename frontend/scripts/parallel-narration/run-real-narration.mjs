@@ -562,6 +562,10 @@ try {
           committed: s.committed, inputText: s.inputText,
           view: s.viewpoint?.id ?? s.policy?.viewpoint?.id,
           policy: s.policy, scene: s.scene ?? null,
+          // A frozen fixture may carry the previous accepted passage. Copying
+          // scene but not priorText silently dropped it, so the continuation
+          // case ran as a first turn and its echo rule had nothing to compare.
+          priorText: s.priorText ?? null,
           continuation: false,
         });
       }
@@ -576,6 +580,7 @@ try {
         committed: s.committed, inputText: s.inputText,
         view: s.viewpoint?.id ?? s.policy?.viewpoint?.id,
         policy: s.policy, scene: s.scene ?? null,
+        priorText: s.priorText ?? null,
         continuation: false,
       });
     }
@@ -776,7 +781,7 @@ try {
       if (typeof window !== 'undefined' && window.__narrationCheckpoint) {
         await window.__narrationCheckpoint(clone(record));
       }
-      console.log(`[narration] ${scenario.id} [${mode}]: accepted=${generated.accepted} status=${generated.status} `
+      console.log(`[narration] ${scenario.id} [${mode}]: priorChars=${[...(priorText ?? '')].length} accepted=${generated.accepted} status=${generated.status} `
         + `chars=${record.chars} wallMs=${Math.round(wallMs)} attempts=${generated.rawAttempts.length} `
         + `beats=${(generated.beats ?? []).map((beat) => beat.source).join(',')}`);
       }
