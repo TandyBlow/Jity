@@ -4,7 +4,8 @@ import type { InitialState, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import { buildInitialState } from '../../state';
 import { projectStage } from './support';
-import { createSettlementHandlers, continuationPolicy } from './index';
+import type { RoundProgressEvidence } from './support';
+import { createContinuationPolicy, createSettlementHandlers, continuationPolicy } from './index';
 
 class ScriptedEngine implements InferenceEngine {
   readonly info = { backend: 'scripted', modelId: 'scripted' };
@@ -98,6 +99,20 @@ function continuationInput(roundChanges: Json[], roundId = 'r1', headPointId = '
     workingState: world(),
     roundChanges,
   } as unknown as Json;
+}
+
+function progressEvidence(
+  progress: boolean,
+  reason: RoundProgressEvidence['reason'] = progress ? 'new_action' : 'no_change',
+): RoundProgressEvidence {
+  return {
+    progress,
+    reason,
+    stateChanged: reason === 'state_changed',
+    timeAdvanced: reason === 'time_advanced',
+    newActionCount: reason === 'new_action' ? 1 : 0,
+    newSettledFactCount: reason === 'new_settled_fact' ? 1 : 0,
+  };
 }
 
 // Automatic rounds may only carry a same-scene character other than the
@@ -437,7 +452,83 @@ describe('continuation', () => {
     expect(second.value).toBeNull();
     expect(second.error).toBe('continuation_policy_repeated_candidate');
     expect((second.evidence.detail as { decision: string }).decision).toBe('policy_stop');
-    expect(continuationPolicy.repeatRounds).toBe(1);
+    expect(continuationPolicy.repeatRounds).toBe(2);
+  });
+
+  it('rejects a task-goal restatement before it becomes an automatic action', async () => {
+    const state = world();
+    state.characters.b.tasks.b2 = {
+      id: 'b2', ownerId: 'b', parentTaskId: null,
+      goal: '让甲的行动有掩护，而不被看见', status: 'pending',
+    };
+    const engine = new ScriptedEngine([continueProposal('让甲的行动有掩护，而不被看见')]);
+    const handlers = createSettlementHandlers({ engine });
+    const input = { ...(continuationInput([]) as Record<string, unknown>), workingState: state } as unknown as Json;
+    const outcome = await handlers.continuation('r1', input);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toBe('continuation_policy_abstract_task_goal');
+    const detail = outcome.evidence.detail as {
+      decision: string;
+      policy: { reason: string };
+      rejectedCandidates: { reason: string; text: string }[];
+    };
+    expect(detail.decision).toBe('policy_stop');
+    expect(detail.policy.reason).toBe('abstract_task_goal');
+    expect(detail.rejectedCandidates).toHaveLength(1);
+    expect(detail.rejectedCandidates[0]?.reason).toBe('abstract_task_goal');
+    // The proposal was the only model call: no judgment was spent proving a
+    // task goal is executable.
+    expect(engine.prompts).toHaveLength(1);
+  });
+
+  it('counts a real new action/fact but not a repeated position assignment', () => {
+    const policy = createContinuationPolicy();
+    const same = progressEvidence(false, 'no_change');
+    const reading = progressEvidence(true, 'new_action');
+    expect(policy.observe([], [{ characterId: 'b', text: '乙继续向前走。' }], same, 'automatic').allow).toBe(true);
+    // The first observation had no actual progress; the second different
+    // action does, so the streak resets instead of deleting the action.
+    expect(policy.observe([], [{ characterId: 'b', text: '乙低头看盒子。' }], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [{ characterId: 'b', text: '乙抬头看门。' }], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [{ characterId: 'b', text: '乙退到墙边。' }], reading, 'automatic').allow).toBe(true);
+  });
+
+  it('stops a consumed candidate even after a different candidate in between', () => {
+    const policy = createContinuationPolicy();
+    const reading = progressEvidence(true, 'new_action');
+    const a = { characterId: 'b', text: '乙继续向前走。' };
+    const b = { characterId: 'b', text: '乙低头看盒子。' };
+    expect(policy.observe([], [a], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [b], reading, 'automatic').allow).toBe(true);
+    const third = policy.observe([], [a], reading, 'automatic');
+    expect(third.allow).toBe(false);
+    expect(third.reason).toBe('repeated_candidate');
+    expect(third.consumedCount).toBe(2);
+  });
+
+  it('does not count the player round in the automatic no-progress streak', () => {
+    const policy = createContinuationPolicy();
+    const same = progressEvidence(false, 'no_change');
+    const a = { characterId: 'b', text: '乙继续向前走。' };
+    const b = { characterId: 'b', text: '乙低头看盒子。' };
+    const c = { characterId: 'b', text: '乙退到墙边。' };
+    expect(policy.observe([], [a], same, 'player').allow).toBe(true);
+    expect(policy.observe([], [b], same, 'automatic').allow).toBe(true);
+    const third = policy.observe([], [c], same, 'automatic');
+    expect(third.allow).toBe(false);
+    expect(third.reason).toBe('no_progress');
+  });
+
+  it('resets consumed identity at the start of a new submission', () => {
+    const policy = createContinuationPolicy();
+    const a = { characterId: 'b', text: '乙继续向前走。' };
+    const reading = progressEvidence(true, 'new_action');
+    expect(policy.observe([], [a], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [a], reading, 'automatic').allow).toBe(false);
+    policy.reset();
+    expect(policy.observe([], [a], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [{ characterId: 'b', text: '乙停车。' }], reading, 'automatic').allow).toBe(true);
+    expect(policy.observe([], [{ characterId: 'b', text: '乙后退。' }], reading, 'automatic').allow).toBe(true);
   });
 
   it('turns a configured 0 call cap into a policy stop, not a model handback', async () => {

@@ -312,10 +312,11 @@ describe('turn execution through the real kernel', () => {
     settlement.beginSubmission('我打开盒盖。');
     await expect(driver.run()).rejects.toThrow(/continuation_policy_no_progress/u);
     const submission = settlement.endSubmission()!;
-    // Two rounds produced no committed change (the player's own round and the
-    // first automatic round), which is the designed no-progress stop: the chain
-    // ends after the second observation, not at a default call cap.
-    expect(submission.continuationCalls).toBe(2);
+    // The player round introduces a new action, and so does the first automatic
+    // round. The automatic lane then repeats the same resolved action without
+    // a new fact, time advance or state change; two such observations are the
+    // designed no-progress stop, not a one-call default cap.
+    expect(submission.continuationCalls).toBe(3);
     expect(submission.continuationDecision).toBe('policy_stop');
     expect(submission.stops).toContain('continuation:continuation_policy_no_progress');
     expect(submission.updatesCalls).toBeGreaterThanOrEqual(2);
@@ -324,8 +325,12 @@ describe('turn execution through the real kernel', () => {
     const executedPlayerCommand = brain.seenInputs.filter((call) => call.text === '我打开盒盖。' && call.intentStatus === 'pending');
     expect(executedPlayerCommand.length).toBeGreaterThan(0);
     expect(brain.seenInputs.some((call) => call.intentStatus === 'consumed')).toBe(true);
+    const continuationRecords = submission.calls.filter((call) => call.task === 'continuation');
+    expect(continuationRecords).toHaveLength(3);
+    expect(continuationRecords.some((call) => call.roundProgress?.progress === true)).toBe(true);
+    expect(continuationRecords.at(-1)?.roundProgress?.progress).toBe(false);
     const snapshot = transport.snapshot();
-    expect(snapshot.version).toBe(2);
+    expect(snapshot.version).toBe(3);
     expect(snapshot.round?.trigger).toBe('automatic');
     expect(snapshot.round?.conclusion).toBeNull();
     // A policy stop never rewrites committed state.

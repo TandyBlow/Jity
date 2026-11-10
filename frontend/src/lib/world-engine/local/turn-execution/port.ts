@@ -24,13 +24,14 @@
  * The port does not own scheduling, freezing, dice, commit or narration order:
  * the controller does. It also never writes `closedBy` on its own.
  */
-import type { Id, Json } from '../../types';
+import type { Id, Json, WorldState } from '../../types';
 import type { InferenceEngine } from '../../runtime/engine';
 import type { ModelTask } from '../../schedule';
 import type { WorldModelPort } from '../../controller';
 import { runResults } from '../semantics/settlement/results';
 import { createUpdatesRunner, type UpdatesRunner } from '../semantics/settlement/updates';
 import { ContinuationRunner } from '../semantics/settlement/continuation';
+import { roundProgressFromState, type RoundProgressEvidence } from '../semantics/settlement/support';
 import type {
   SettlementConclusion, SettlementOptions, SettlementOutcome, SettlementTask,
 } from '../semantics/settlement/types';
@@ -73,6 +74,9 @@ export interface PortCallRecord {
   };
   /** Model time per updates stage, for finding which stage made a turn slow. */
   stageMs?: Record<string, number>;
+  /** What the completed round actually did. The continuation policy uses
+   * this instead of counting filled position fields as progress. */
+  roundProgress?: RoundProgressEvidence;
   /** Failed calls keep the raw model output (bounded) and each attempt's time
    * and error, so a placeholder/unknown-reference repair is auditable. */
   raw?: string;
@@ -130,6 +134,12 @@ export function createSettlementModelPort(
   const calls: PortCallRecord[] = [];
   let submission: PortSubmission | null = null;
 
+  let roundStartState: WorldState | null = null;
+  let roundActionTexts: string[] = [];
+  let roundFacts: string[] = [];
+  const consumedActions = new Set<string>();
+  const consumedFacts = new Set<string>();
+
   function record(task: ModelTask, key: Id, outcome: SettlementOutcome<unknown>, stage: string | null): void {
     const record: PortCallRecord = {
       task,
@@ -183,6 +193,8 @@ export function createSettlementModelPort(
           : {}),
       };
     }
+    const progress = (outcome.evidence.detail as { roundProgress?: RoundProgressEvidence } | null)?.roundProgress;
+    if (progress) record.roundProgress = progress;
     // Keep the successful attempt's raw output too: a semantically invalid
     // answer can pass the structural schema, and the reviewer needs the text
     // that was actually accepted (not only failing attempts).
@@ -226,27 +238,91 @@ export function createSettlementModelPort(
     return outcome.value;
   }
 
+  function captureRoundStart(input: Json): void {
+    if (roundStartState) return;
+    const state = stateOf(input);
+    if (state) roundStartState = structuredClone(state);
+  }
+
+  function captureResults(input: Json, value: unknown): void {
+    captureRoundStart(input);
+    if (input != null && typeof input === 'object' && !Array.isArray(input)) {
+      const members = (input as { members?: unknown }).members;
+      if (Array.isArray(members)) {
+        for (const member of members) {
+          if (member == null || typeof member !== 'object') continue;
+          const text = (member as { actionText?: unknown }).actionText;
+          if (typeof text === 'string' && text.trim()) roundActionTexts.push(text.trim());
+        }
+      }
+    }
+    if (value != null && typeof value === 'object' && !Array.isArray(value)) {
+      for (const fact of Object.values(value as Record<string, unknown>)) {
+        if (typeof fact === 'string' && fact.trim()) roundFacts.push(fact.trim());
+      }
+    }
+  }
+
   return {
     async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
       if (task === 'results') {
-        return unwrap('results', key, null, await runResults(engine, key, input, options)) as unknown as Json;
+        const outcome = await runResults(engine, key, input, options);
+        const value = unwrap('results', key, null, outcome);
+        captureResults(input, value);
+        return value as unknown as Json;
       }
       if (task === 'updates') {
         const stage = readStage(input);
+        captureRoundStart(input);
         const outcome = await updates.run(key, input);
         return unwrap('updates', key, stage, outcome) as unknown as Json;
       }
       if (task === 'continuation') {
-        const outcome = await continuation.run(key, input);
-        // The controller only accepts a Conclusion value; a null value is a
-        // visible stop (policy rule or model failure), never a handback.
-        return unwrap('continuation', key, null, outcome) as unknown as Json;
+        const before = roundStartState;
+        const after = stateOf(input);
+        let enriched = input;
+        if (before && after) {
+          const computed = await roundProgressFromState({
+            before,
+            after,
+            facts: roundFacts,
+            actions: roundActionTexts,
+            knownFacts: consumedFacts,
+            knownActions: consumedActions,
+          });
+          for (const action of computed.newActions) consumedActions.add(action);
+          for (const fact of computed.newFacts) consumedFacts.add(fact);
+          enriched = {
+            ...(input as Record<string, unknown>),
+            roundProgress: computed.evidence,
+          } as unknown as Json;
+        }
+        try {
+          const outcome = await continuation.run(key, enriched);
+          // The controller only accepts a Conclusion value; a null value is a
+          // visible stop (policy rule or model failure), never a handback.
+          return unwrap('continuation', key, null, outcome) as unknown as Json;
+        } finally {
+          roundStartState = null;
+          roundActionTexts = [];
+          roundFacts = [];
+        }
       }
       if (options.fallback) return options.fallback.generate(task, key, input);
       throw new Error(`settlement_port_has_no_handler:${task}`);
     },
 
     beginSubmission(inputText: string): void {
+      // A new player submission is a new chain: candidate identity, round
+      // progress and the policy streak all start fresh. Resetting here is what
+      // lets a later turn legitimately repeat an action that was consumed in
+      // the previous turn.
+      continuation.reset();
+      roundStartState = null;
+      roundActionTexts = [];
+      roundFacts = [];
+      consumedActions.clear();
+      consumedFacts.clear();
       submission = {
         inputText,
         startedAtMs: now(),
@@ -289,10 +365,21 @@ export function createSettlementModelPort(
     reset(): void {
       calls.length = 0;
       submission = null;
+      roundStartState = null;
+      roundActionTexts = [];
+      roundFacts = [];
+      consumedActions.clear();
+      consumedFacts.clear();
       updates.reset();
       continuation.reset();
     },
   };
+}
+
+function stateOf(input: Json): WorldState | null {
+  if (input == null || typeof input !== 'object' || Array.isArray(input)) return null;
+  const state = (input as { workingState?: unknown }).workingState;
+  return state != null && typeof state === 'object' ? state as WorldState : null;
 }
 
 function readStage(input: Json): string | null {
