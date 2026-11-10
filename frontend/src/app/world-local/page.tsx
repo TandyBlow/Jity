@@ -14,7 +14,7 @@ import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/loca
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
 import { STATIC_WORLD_ASSET, STATIC_WORLD_REGISTRATION } from '@/lib/world-engine/local/static-world-registration';
-import type { Id, InitialTemplate, WorldState } from '@/lib/world-engine/types';
+import type { WorldState } from '@/lib/world-engine/types';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
@@ -22,7 +22,17 @@ const NARRATION_MODEL = '/models/qwen25-1.5b-narr-Q4_K_M.gguf';
 
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
-interface TurnEntry { key: number; input: string; text: string; note: string | null; ms: number | null }
+interface TurnEntry {
+  key: number; input: string; text: string; note: string | null; ms: number | null;
+  /** Wall time from submit to the first streamed character. A draft stream is
+   * shown for reading, but it is NOT the acceptance number: a draft is not
+   * fact-checked yet and can still be replaced or cancelled. */
+  draftMs: number | null;
+  /** Wall time from submit to the fact-verified text that was committed to the
+   * page. This is the only "readable" number used for product acceptance. */
+  acceptedMs: number | null;
+  cancelled?: boolean;
+}
 
 interface ViewState {
   time: string;
@@ -50,11 +60,11 @@ async function loadEngine(url: string, contextSize = 8192): Promise<WllamaInfere
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
   // must not leave the first player turn waiting forever.
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 180_000 });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 180_000 });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000 });
     await cpu.ensureLoaded();
     return cpu;
   }
@@ -129,6 +139,13 @@ export default function WorldLocalPage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
   const [entries, setEntries] = useState<TurnEntry[]>([]);
+  /** Submit wall-clock origin for this turn; the narration callbacks run outside
+   * the submit closure, so the origin lives in a ref. */
+  const submittedAtRef = useRef(0);
+  /** Seconds since the page opened while the cold load is still running, so a
+   * 120 s bounded load never looks like a frozen page. */
+  const [loadSeconds, setLoadSeconds] = useState(0);
+  const loadStartedRef = useRef(0);
   const [view, setView] = useState<ViewState | null>(null);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -177,6 +194,10 @@ export default function WorldLocalPage() {
 
   useEffect(() => {
     let alive = true;
+    loadStartedRef.current = performance.now();
+    const ticker = setInterval(() => {
+      setLoadSeconds(Math.max(0, Math.round((performance.now() - loadStartedRef.current) / 1000)));
+    }, 1000);
     (async () => {
       try {
         // The static world is verified, not merely parsed: asset hash, initial
@@ -212,11 +233,18 @@ export default function WorldLocalPage() {
           onNarrationProgress: (progress) => {
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
-            setEntries((list) => updateLast(list, (entry) => ({ ...entry, text })));
+            // Draft only: recorded separately from the accepted, fact-checked text.
+            const draftMs = Math.round(performance.now() - submittedAtRef.current);
+            setEntries((list) => updateLast(list, (entry) => ({
+              ...entry, text, draftMs: entry.draftMs ?? draftMs,
+            })));
           },
           onNarrationComplete: (progress) => {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
-            setEntries((list) => updateLast(list, (entry) => ({ ...entry, text })));
+            const acceptedMs = Math.round(performance.now() - submittedAtRef.current);
+            setEntries((list) => updateLast(list, (entry) => ({
+              ...entry, text, acceptedMs, ms: acceptedMs,
+            })));
             setPhase('ready');
           },
         });
@@ -277,7 +305,7 @@ export default function WorldLocalPage() {
         setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
       }
     })();
-    return () => { alive = false; };
+    return () => { alive = false; clearInterval(ticker); };
   }, [refresh]);
 
   // Flush the queued save when the tab is hidden or closed, so a refresh after
@@ -295,7 +323,9 @@ export default function WorldLocalPage() {
     if (!session || !text || busy) return;
     setBusy(true); setError(null); setWarning(null); setPhase('thinking');
     const key = Date.now();
-    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null }]);
+    const submittedAt = performance.now();
+    submittedAtRef.current = submittedAt;
+    setEntries((list) => [...list, { key, input: text, text: '', note: null, ms: null, draftMs: null, acceptedMs: null }]);
     setMessage('正在判断行动、结算并写正文…');
     setInput('');
     modelRef.current?.beginTurn();
@@ -342,6 +372,11 @@ export default function WorldLocalPage() {
       const typed = engine as unknown as { cancelActive?: () => number } | null;
       try { typed?.cancelActive?.(); } catch { /* best effort: signal already aborts */ }
     }
+    // A cancelled draft is not a committed turn: keep the text visible for
+    // diagnosis but label it and drop any accepted timing.
+    setEntries((list) => updateLast(list, (entry) => (entry.acceptedMs == null && entry.text
+      ? { ...entry, cancelled: true, ms: null, note: entry.note ?? '本轮已取消，正文草稿未通过核对。' }
+      : entry)));
     try {
       const status = await session.cancel('player_cancelled');
       console.info('[world-local] cancel status', status);
@@ -391,17 +426,24 @@ export default function WorldLocalPage() {
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? '正在加载本地模型，第一次会久一些。' : '等待输入…'}</div>}
+              {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? `正在加载本地模型，第一次会久一些（已等待 ${loadSeconds}s，上限 120s）。` : '等待输入…'}</div>}
               {entries.map((entry) => (
                 <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
-                  <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>你：{entry.input}{entry.ms ? ` · 正文 ${(entry.ms / 1000).toFixed(1)}s` : ''}</div>
+                  <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>
+                    你：{entry.input}
+                    {entry.acceptedMs != null ? ` · 可读正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（已核对）` : ''}
+                    {entry.acceptedMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
+                  </div>
                   <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || '…'}</div>
-                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>正文已按已结算事实修正：{entry.note}</div>}
+                  {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
+                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
                 </article>
               ))}
             </div>
           </div>
 
+          {durable === false && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
+          {warning && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c', whiteSpace: 'pre-wrap' }}>{warning}</div>}
           {error && <div style={{ marginTop: 10, padding: '8px 10px', background: '#ffe8e5', border: '1px solid #e7b1a9', borderRadius: 6, fontSize: 12, color: '#8b2a1e', whiteSpace: 'pre-wrap' }}>{error}</div>}
 
           <div style={{ marginTop: 16 }}>
