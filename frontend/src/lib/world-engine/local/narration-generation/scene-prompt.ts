@@ -96,6 +96,10 @@ export const NARRATOR_SYSTEM_PROMPT = [
   // fallen leaves, a paper with writing, and the viewpoint touching another
   // character. Those are new world facts, not polish.
   '这一回合里只做简报写过的事：不要碰触在场的人，也不要添新的小物件（纸片、落叶、雨水、灰尘之类）。',
+  // Measured with style-compare against the 71-scene reference corpus: every
+  // accepted scene opened sentence after sentence with a perception verb
+  // (100% vs 14%) and used a simile (100% vs 1%). Direct description instead.
+  '句子直接写东西在动、在响、在什么位置，不要每句都用「他看见」「他注意到」「他望着」开头；比喻最多用一个。',
   '结尾停在这一刻，不要总结、不要陈词滥调的收束，也不要重复上一回合最后一句。',
   ...BACKGROUND_RULES,
 ].join('\n');

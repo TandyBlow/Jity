@@ -231,3 +231,17 @@ describe('product regressions: an object cannot be in a hand and hanging on the 
     expect(hard).toContain('self_contradiction');
   });
 });
+
+describe('product regressions: the batch-3 quiet passage', () => {
+  // 09 ran the quiet fixture at 6d4236be and accepted a passage with
+  // «她耳后有一道细小的红痕» although the fixture input has no 红痕. Locally the
+  // same input and text are rejected, so this pins the local behaviour until
+  // the difference in the run is explained.
+  test('a mark the fixture input never states is rejected', async () => {
+    const text = '路明非站在西侧服务巷，看着诺诺发髻间飘动的红发。她低头整理发圈，手指在发丝间轻轻滑动，仿佛在梳理某种情绪。'
+      + '他注意到她耳后有一道细小的红痕，像是被什么轻敲过。诺诺转身时，路明非看见她裙摆扫过地面，带起一阵微凉的风。'
+      + '他没说话，只是静静地看着她，心里浮起一丝疑惑。一分钟过去，他依旧站在原处，目光落在那张路线图上，眼神却落在诺诺身上，仿佛在等待什么。';
+    const { kinds } = await issuesOf(text);
+    expect(kinds).toContain('hard:unlicensed_appearance');
+  });
+});
