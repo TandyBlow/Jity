@@ -223,3 +223,4 @@
 - constrained beats 首跑 23:11:44Z **FAILED**，仅 1 program 回合；仍无模型正文样本。
 - constrained 第二跑（2026-11-10T2313-21c6，head 897885dd）：仍 program 217 字/183 s，状态面板+错误结果；连续两跑无模型正文。
 - constrained 第二跑 23:19:00Z **FAILED**，同样 1 program 回合；连续两跑无模型正文。
+- 02 `205fd1f0` 复跑：停水水花、诺诺身后已拦；规则牌 `在脚下` 因 `placed` 只认 `(墙上)` 仍漏；风/钟/影子/落叶/算盘/刀刃/雨仍未拦。
