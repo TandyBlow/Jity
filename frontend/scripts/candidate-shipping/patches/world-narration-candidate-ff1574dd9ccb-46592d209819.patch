@@ -3739,7 +3739,7 @@ new file mode 100644
 +}
 
 diff --git a/frontend/src/lib/world-engine/local/game-model.ts b/frontend/src/lib/world-engine/local/game-model.ts
-index d7798f6..5da8b01 100644
+index d7798f6..86f9478 100644
 --- a/frontend/src/lib/world-engine/local/game-model.ts
 +++ b/frontend/src/lib/world-engine/local/game-model.ts
 @@ -15,6 +15,7 @@ import { IncompleteGenerationError } from '../runtime/engine';
@@ -3801,7 +3801,14 @@ index d7798f6..5da8b01 100644
      const started = performance.now();
      const before = data.before ?? null;
      const delta = data.delta ?? {};
-@@ -340,10 +364,68 @@ export class LocalGameModel implements WorldModelPort {
+@@ -334,16 +358,75 @@ export class LocalGameModel implements WorldModelPort {
+     }
+     const accepted = best.dropped.length === 0 && best.validation.ok && finalAlignment.ok && [...safe].length >= 80;
+     const text = accepted ? safe : draft;
++    if (accepted) this.lastAcceptedNarration = text;
+     const reason = accepted ? undefined : [...new Set([
+       best.validation.reason,
+       ...best.dropped.map((entry) => entry.reason),
        ...finalAlignment.violations.map((entry) => entry.kind),
        'low_support',
      ])].filter(Boolean).join(',');

@@ -145,6 +145,11 @@ const TRANSFORMS = [
     ].join('\n'),
   },
   {
+    id: 'narration-accepted-continuation',
+    anchor: '    const text = accepted ? safe : draft;\n',
+    insert: '    if (accepted) this.lastAcceptedNarration = text;\n',
+  },
+  {
     id: 'narration-program-fallback',
     anchor: "    ])].filter(Boolean).join(',');\n",
     insert: [
