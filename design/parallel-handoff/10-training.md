@@ -74,21 +74,31 @@ python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json
 - 49 条 golden 自检通过，覆盖统计见 `golden/manifest.json`；
 - 199 行中没有真实物品移动或精神值 0；这些由 synthetic golden 覆盖，不是训练行。
 
-## 5. HPC 现状
+## 5. HPC 实际结果
 
-已实际提交 YuYan 诊断臂：
+YuYan 诊断臂已实际跑完。配置 `configs/yuyan-lora-v2.json`；基座
+`~/narr_rows/checkpoint_best.pt`（`674b897a…`）；tokenizer `~/narr_rows/dict.txt`
+（`20287a9d…`）；数据 `~/narr_v2/data/rows-yuyan-v2.jsonl`（`cb6764bf…`）；split
+`c6686b4b…`；seed 20261109；LoRA rank 16 / alpha 32；lr 1e-4；6 epochs；maxLen 2560。
 
-- 配置：`configs/yuyan-lora-v2.json`
-- 基座：`~/narr_rows/checkpoint_best.pt`，SHA-256 `674b897a…`
-- tokenizer：`~/narr_rows/dict.txt`，SHA-256 `20287a9d…`
-- 数据：`~/narr_v2/data/rows-yuyan-v2.jsonl`，SHA-256 `cb6764bf…`
-- split：`c6686b4b…`
-- seed 20261109，LoRA rank 16 / alpha 32，lr 1e-4，6 epochs，maxLen 2560
-- 旧臂对照：`hpc/runs/report-250409.json`，同基座/同行/split/seed/LoRA/lr/epochs，旧臂无结果块
-- 旧臂 `max_len=2048` 会截断 `row-0002`；v2 用 2560 装下 2382 token，差异已记录
-- 作业 ID `251205`，状态与结果以 `hpc/runs/251205/` 和最终 completion 为准
+| 作业 | 状态 | 说明 |
+| --- | --- | --- |
+| 251205 | FAILED，1:18 | 训练前 `print()` 误收 `ensure_ascii` 参数；无权重；已修复 |
+| 251206 | COMPLETED，6:30 | best dev 1.4106 @ epoch 3；test 1.4241；train 1.0582；峰值 11,089 MiB |
 
-在作业返回前，不能写“模型质量改善”；只能写“v2 数据/入口/预检已完成”。
+与旧臂 `report-250409.json`（dev 1.4096，test 1.423）相比，dev +0.0010、test +0.0011，
+基本不变。旧臂 `max_len=2048` 会静默截断 `row-0002`；v2 用 2560 装下 2382 token，差异已登记。
+
+样本观察：v2 greedy 字数普遍比旧臂长（如 row-0006 621 vs 418），但全部仍以
+`stopReason=length`（600 token 上限）结束；4-gram 最高重复 6–16；`row-0006` sampled 输出出现
+输入中不存在的 `程雪峰`。因此：
+
+- 数据/输入路径修复已完成，受控诊断已跑完；
+- **没有模型质量改善或语义通过的证据**，loss 也不是正文质量指标；
+- 不把这次训练写成产品验收通过；正文质量仍需独立评估。
+
+完整清单：`experiments/narration-runtime-v2/hpc/runs/251206/run-manifest.json`；
+失败记录：`.../hpc/runs/251205/README.md`。代码提交 `a9d6606b` 包含实际部署的 trainer。
 
 ## 6. 主 agent 需要做的接线
 

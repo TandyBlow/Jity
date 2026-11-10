@@ -1,0 +1,149 @@
+{
+  "schema": "jity-narration-training-run-v2",
+  "runId": "yuyan-lora-result-v2-r1",
+  "jobId": "251206",
+  "status": "completed",
+  "codeCommit": "a9d6606b",
+  "dataCommit": "c267cf18",
+  "submittedAt": "2026-11-10T11:30:58+08:00",
+  "allocatedAt": "2026-11-10T11:30:58+08:00",
+  "finishedAt": "2026-11-10T11:37:28+08:00",
+  "fetchedAt": "2026-11-10T11:39:00+08:00",
+  "firstEvaluatedAt": "2026-11-10T11:39:00+08:00",
+  "device": {
+    "node": "hpcgpu10",
+    "gpu": "NVIDIA GeForce RTX 4090 D",
+    "gpuMemoryMiB": 24564,
+    "python": "3.11.17",
+    "torch": "2.5.1+cu124",
+    "transformers": "4.51.3"
+  },
+  "command": [
+    "sbatch ~/narr_v2/run_yuyan.sh",
+    "~/miniconda3/envs/crf/bin/python -X utf8 train/preflight_v2.py --config configs/yuyan-lora-v2.json --hash-base",
+    "~/miniconda3/envs/crf/bin/python -X utf8 train/train_yuyan_v2.py --config configs/yuyan-lora-v2.json --out runs/yuyan-result-v2-r1 --resume auto"
+  ],
+  "config": {
+    "path": "configs/yuyan-lora-v2.json",
+    "byteSha256": "be2d0ae6cfb4467c3b6113471f09998bfb0d6c1c3e0ba9296906a9195f3871ed",
+    "canonicalSha256": "9fc7f4a271c208069bb8b5393f8e0ad94cded3a72cb20ca971ad0e25e85349c1"
+  },
+  "trainer": {
+    "path": "train/train_yuyan_v2.py",
+    "sha256": "cf84e1e6ba00943e099e4b9efecd93fe991821b51a3f5ae7f584ce5434f64a6a",
+    "sourceCommit": "a9d6606b"
+  },
+  "preflight": {
+    "path": "train/preflight_v2.py",
+    "sha256": "b777b571ab82e24a685e42b72771d4a573d1909b5ce7073db75decda2c100ce4"
+  },
+  "data": {
+    "path": "hpc:~/narr_v2/data/rows-yuyan-v2.jsonl",
+    "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+    "manifest": "data/manifest.json",
+    "manifestSha256": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+    "rows": 199
+  },
+  "split": {
+    "path": "hpc:~/narr_v2/splits/v1.json",
+    "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+    "train": 139,
+    "dev": 40,
+    "test": 20
+  },
+  "base": {
+    "path": "hpc:~/narr_rows/checkpoint_best.pt",
+    "sha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106"
+  },
+  "tokenizer": {
+    "path": "hpc:~/narr_rows/dict.txt",
+    "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4"
+  },
+  "hyper": {
+    "mode": "lora",
+    "rank": 16,
+    "alpha": 32,
+    "lr": 0.0001,
+    "epochs": 6,
+    "batch": 1,
+    "maxLen": 2560,
+    "seed": 20261109
+  },
+  "responseMask": {
+    "policy": "target_only",
+    "promptField": "xProse",
+    "targetField": "yMarked",
+    "eos": "</s>",
+    "truncatedRows": 0
+  },
+  "result": {
+    "best": {
+      "epoch": 3,
+      "devLoss": 1.4106
+    },
+    "testLoss": 1.4241,
+    "trainLoss": 1.0582,
+    "seconds": 375.6,
+    "peakAllocatedMiB": 11089
+  },
+  "artifacts": {
+    "report": {
+      "path": "hpc/runs/251206/report.json",
+      "sha256": "4554af144da72512c17ce071bcb5c3d1e193171da4f9f3c7d42d15a8f1bda21c"
+    },
+    "samples": {
+      "path": "hpc/runs/251206/samples.txt",
+      "sha256": "e6cd04a0a593df57f47784a9247a57fc66e776eecdc9195ae5301c8899cbca8a"
+    },
+    "comparison": {
+      "path": "hpc/runs/251206/comparison.json",
+      "sha256": "0577aca49a64dbbf6a56c17a5086701c5e0dca95ffb1248620d55bd692b19c9b"
+    },
+    "jobOut": {
+      "path": "hpc/runs/251206/job.out",
+      "sha256": "4daa78902208fcc4688db6236ea4d7027af4ba339a3a298f47f73875c17d0964"
+    },
+    "jobErr": {
+      "path": "hpc/runs/251206/job.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "remoteCheckpoints": {
+    "adapterBest": {
+      "path": "hpc:~/narr_v2/runs/yuyan-result-v2-r1/adapter-best.pt",
+      "sha256": "789ab22c3b68bd6ac457d5c242893e814fd7d808b83a5cc08dd2737b99363e29",
+      "inGit": false,
+      "bytes": 53477376
+    },
+    "resume": {
+      "path": "hpc:~/narr_v2/runs/yuyan-result-v2-r1/resume.pt",
+      "sha256": "15ccfd0dfb9aa1f4dbdd7efc4dfd18bcaae12a0c28363ae0ecb78b4a3f6f1e81",
+      "inGit": false,
+      "bytes": 213909504
+    }
+  },
+  "legacyComparison": {
+    "report": "experiments/world-components/narration-dataset-v1/hpc/runs/report-250409.json",
+    "reportSha256": "f1ec11b9bbc2e19fa9bb3e37f6e8264cbe7765f616d38856a903c9fe96585591",
+    "legacyBestDev": 1.4096,
+    "legacyBestEpoch": 3,
+    "legacyTestLoss": 1.423,
+    "legacySeconds": 545.5,
+    "devDelta": 0.001,
+    "testDelta": 0.0011,
+    "sameBase": true,
+    "sameRows": true,
+    "sameSplit": true,
+    "sameSeed": true,
+    "sameLora": true,
+    "sameEpochs": true,
+    "maxLenDifference": "legacy 2048 (silently truncated row-0002) vs v2 2560 (no truncation)"
+  },
+  "conclusion": "Format fix is implemented and the controlled diagnostic completed. Dev/test loss is essentially unchanged and samples still show repetition and a fabricated person; no model-quality improvement or semantic acceptance is claimed.",
+  "failureBefore": {
+    "jobId": "251205",
+    "status": "failed",
+    "cause": "print() received ensure_ascii kwarg",
+    "path": "hpc/runs/251205/README.md"
+  }
+}

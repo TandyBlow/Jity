@@ -174,6 +174,18 @@ YuYan 诊断臂与旧 `report-250409.json` 使用同一基座、同一 199 行�
 旧臂 `max_len=2048` 会静默截断 `row-0002`；v2 臂用 `max_len=2560` 装下全部 2382 token，
 该差异记录在配置的 `comparison.maxLenNote` 里，不能把两臂当成完全同条件。
 
+实际运行：
+
+| 作业 | 状态 | 结果 |
+| --- | --- | --- |
+| 251205 | FAILED，1:18 | 训练前 `print()` 参数错误；无权重 |
+| 251206 | COMPLETED，6:30 | best dev 1.4106 @ epoch 3；test 1.4241；train 1.0582 |
+
+对照旧臂 dev 1.4096 / test 1.423，dev +0.0010、test +0.0011，基本不变。样本仍以
+`stopReason=length` 结束、4-gram 最高重复 6–16，`row-0006` sampled 出现输入中不存在的
+`程雪峰`。因此本目录只声明“数据/输入路径修复并完成受控诊断”，不声明模型质量改善或语义通过。
+完整清单：`hpc/runs/251206/run-manifest.json`；失败记录：`hpc/runs/251205/README.md`。
+
 instruct 入口的配置 `configs/hf-instruct.template.json` 仍是 `status=pending`：没有选定 instruct
 基座/tokenizer，不能编造哈希，也不能声称已训练。填好身份并通过 preflight 后才能提交
 `run_instruct.sh`。
