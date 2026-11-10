@@ -294,3 +294,16 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - 真正重复同一位置且没有新动作、事实、时间、状态变化的回合，仍由真实进度和已消费候选停止。
 
 `1e678a60` 需要 06 合入；`03ec746a` 的构建不包含这条时间判定。
+
+### 2026-11-11 根因收口：没有实际证据就不算进展（`b3ad76f5`）
+
+上一版 `1e678a60` 让端口用真实时间/状态/事实/动作判断进展，但 `hasRoundProgress` 仍保留“直接调用方没有 evidence 时，只要填了 `positionSet` 等字段就算进展”的后备。这个后备正是 e9a5/21c3 的根因，只是产品端口绕开了它。
+
+`b3ad76f5` 删掉后备：
+
+- `ContinuationPolicy.observe` 只接受 `roundProgress.progress`；没有 evidence 时保守记为“无进展”。
+- 直接 `ContinuationRunner` 调用方必须传 `roundProgress`（端口本来就会传）；否则两个不同候选会在第二轮 `continuation_policy_no_progress` 停止。
+- 新增回归：roundChanges 填了 `b -> far` 的 positionSet，但故意删掉 `roundProgress`；第一次允许，第二次不同候选仍 no-progress 停止。旧代码会错误继续。
+- 生产路径不受影响：端口在每轮第一次 results 前保存状态、continuation 前取 after，生成真实 evidence；时间-only、场外依赖、阅读动作仍有独立回归。
+
+测试变为 **75 passed | 1 expected fail**。`b3ad76f5` 需要 06 合入；`03ec/cf` 构建不含它。
