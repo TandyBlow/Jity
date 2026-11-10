@@ -78,7 +78,7 @@ echo "node=$(hostname) start=$(date) config=$CONFIG out=$OUT"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null || echo "cpu-only node"
 DEV="${DEVICE:-cuda}"
 "$PY" -X utf8 train/train_beats.py --device "$DEV" --config "configs/$CONFIG" --out "runs/$OUT" \
-  --resume "${RESUME:-}" --epochs "${EPOCHS:-0}" --sample-n "${SAMPLE_N:-3}"
+  --resume "${RESUME:-}" --epochs "${EPOCHS:-0}" --sample-n "${SAMPLE_N:-3}"   --precision "${PREC:-auto}"
 """
 
 
@@ -108,7 +108,7 @@ def write_remote(h, text: str, name: str) -> None:
 
 
 def deploy(h) -> None:
-    h.do(f"mkdir -p ~/{REMOTE}/data ~/{REMOTE}/configs ~/{REMOTE}/train ~/{REMOTE}/runs",
+    h.do(f"mkdir -p ~/{REMOTE}/data ~/{REMOTE}/configs ~/{REMOTE}/train ~/{REMOTE}/runs ~/{REMOTE}/hpc",
          show=False)
     files = {
         os.path.join(HERE, "teacher_beats.py"): f"{REMOTE}/teacher_beats.py",
@@ -143,6 +143,8 @@ def deploy(h) -> None:
         os.path.join(V2, "configs", "qwen15b-page-v1.json"):
             f"{REMOTE}/configs/qwen15b-page-v1.json",
         os.path.join(V2, "data", "train-v5.jsonl"): f"{REMOTE}/data/train-v5.jsonl",
+        os.path.join(HERE, "gpu_probe.py"): f"{REMOTE}/hpc/gpu_probe.py",
+        os.path.join(HERE, "batch_screen.py"): f"{REMOTE}/hpc/batch_screen.py",
         os.path.join(V2, "data", "train-v4.jsonl"): f"{REMOTE}/data/train-v4.jsonl",
     }
     for local, remote in files.items():
@@ -172,7 +174,8 @@ def submit_train(h, args) -> str:
     env = (f"CONFIG={args.config} OUT={args.run} RESUME={args.resume} "
            f"EPOCHS={args.epochs} SAMPLE_N={args.sample_n} "
            f"DEVICE={args.device} NARR_PARTITION={args.partition} NARR_CPUS={args.cpus} "
-           f"NARR_GRES={args.gres} NARR_TIME={args.time} NARR_MEM={args.mem}")
+           f"NARR_GRES={args.gres} NARR_TIME={args.time} NARR_MEM={args.mem} "
+           f"PREC={getattr(args, 'precision', 'auto')}")
     out, err, rc = h.do(f"cd ~/{REMOTE} && {env} sbatch run_train.sh", show=True)
     match = re.search(r"(\d+)", out)
     if not match:
@@ -229,6 +232,8 @@ def main() -> int:
     parser.add_argument("--gres", default="gpu:1")
     parser.add_argument("--time", default="02:00:00")
     parser.add_argument("--mem", default="48G")
+    parser.add_argument("--precision", default="auto",
+                        choices=("auto", "bf16", "fp16", "fp32"))
     args = parser.parse_args()
     h = hpc()
     try:

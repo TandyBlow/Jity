@@ -58,12 +58,14 @@ def main() -> int:
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
     load_started = time.time()
-    model = AutoModelForCausalLM.from_pretrained(MODEL, torch_dtype=torch.float16).cuda()
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL, local_files_only=True, torch_dtype=torch.float16).cuda()
     report["loadSeconds"] = round(time.time() - load_started, 2)
 
     def generate(dtype: str) -> dict:
+        """One generation over the fixed prompt set; returns wall time and tokens/s."""
         prompts = [f"<|im_start|>user\n{p}<|im_end|>\n<|im_start|>assistant\n" for p in PROMPTS]
         encoded = tokenizer(prompts, return_tensors="pt", padding=True).to("cuda")
         started = time.time()
@@ -77,7 +79,11 @@ def main() -> int:
                 "tokensPerSecond": round(new_tokens / seconds, 1) if seconds else None,
                 "sample": text.strip()[:120]}
 
-    report["fp16"] = generate("float16")
+    # First call pays kernel autotuning/CUDA-graph warmup; a warm call is the
+    # number that matters for "can a batch run here", so both are recorded.
+    report["fp16FirstCall"] = generate("float16")
+    report["fp16Warm"] = generate("float16")
+    report["fp16"] = report["fp16Warm"]
     report["memAfter"] = sh("nvidia-smi --query-gpu=memory.used,utilization.gpu --format=csv,noheader")
     report["verdict"] = "fp16 inference runs on this GPU" if report["fp16"]["tokensPerSecond"] \
         else "fp16 ran but produced no tokens"
