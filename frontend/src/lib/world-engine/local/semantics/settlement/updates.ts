@@ -971,7 +971,9 @@ function readDescriptionOperations(
 function buildTasksPrompt(ctx: StageContext): string {
   const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id));
   const now = ctx.state.time.dateTime;
-  const sample = allTasks(ctx.state)[0]?.ownerId;
+  const required = [...new Set(allTasks(ctx.state).map((row) => row.ownerId))].sort();
+  const sample = required[0];
+  const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
   return [
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
     '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
@@ -985,6 +987,7 @@ function buildTasksPrompt(ctx: StageContext): string {
     `结算结果：${resultText(ctx.results) || '（无）'}`,
     '人物和任务：',
     ...rows,
+    `有任务、必须各写一条的人物（${required.length} 人）：${checklist}`,
     `输出 {"decisions":[{"characterId":"${sample ?? '人物id'}","achieved":[]}]}。`,
   ].join('\n');
 }
