@@ -63,6 +63,36 @@ export interface VerifyOutput {
   metrics: NarrationMetrics;
 }
 
+/** A settled sanity/personality change can be shown through a concrete
+ * reaction instead of the grader's literal number or trait phrase. This is an
+ * expression-form allowance, not a fact allowance: the name and a visible
+ * change marker are required, the sanity direction is checked when the prose
+ * states one, and every natural expression is returned as a soft review flag.
+ * Moved/task/time facts still require their checkable content. */
+type NaturalFact = { sentence: string; direction?: 'match' | 'wrong' | 'unstated' };
+const BODY_REACTION = /(呼吸|手指|手|声音|视线|肩|脸色|脚步|膝盖|背|眼|喉|胸口|心跳|沉默|坐|站|扶|攥|捏|握|松开|垂下|抬起|移开|闭|睁|笑|皱眉)/u;
+const CHANGE_MARKER = /(比刚才|比平时|下来|起来|少了|多了|慢|快|浅|沉|稳|轻|紧|松|抬|垂|移开|停|颤|不再|第一次|这次|顿了顿|停了停)/u;
+const SANITY_UP = /(稳|轻|松|暖|亮|快|强|舒|匀|平静|缓|直|好|清明)/u;
+const SANITY_DOWN = /(沉|低|乱|紧|冷|抖|弱|慢|重|浅|急|暗|退|缩|空|木)/u;
+const TRAIT_BEHAVIOUR = /(说|问|答|笑|看|望|停|让|接|推|收|放|走|站|坐|转|低|抬|摇|点|沉默|没有|不再|第一次|这次)/u;
+
+function naturalFactExpression(fact: NarrationFact, sentences: readonly string[]): NaturalFact | null {
+  if (fact.kind !== 'sanity_changed' && fact.kind !== 'personality_changed') return null;
+  for (const sentence of sentences) {
+    if (!sentence.includes(fact.name)) continue;
+    if (!BODY_REACTION.test(sentence) && !TRAIT_BEHAVIOUR.test(sentence)) continue;
+    if (!CHANGE_MARKER.test(sentence)) continue;
+    if (fact.kind === 'personality_changed') return { sentence };
+    const up = SANITY_UP.test(sentence);
+    const down = SANITY_DOWN.test(sentence);
+    if (!up && !down) return { sentence, direction: 'unstated' };
+    const rose = fact.to > fact.from;
+    if ((rose && down && !up) || (!rose && up && !down)) return { sentence, direction: 'wrong' };
+    return { sentence, direction: 'match' };
+  }
+  return null;
+}
+
 const hard = (kind: NarrationIssueKind, attempt: number, detail: string, sentence?: string): NarrationIssue =>
   ({ kind, severity: 'hard', attempt, detail, ...(sentence ? { sentence } : {}) });
 const soft = (kind: NarrationIssueKind, attempt: number, detail: string, sentence?: string): NarrationIssue =>
@@ -173,9 +203,20 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
   // is not narrated. Static backdrop facts stay optional (no roll-call).
   const expressed = new Set((alignment?.coverage ?? []).filter((entry) => entry.expressed).map((entry) => entry.id));
   for (const fact of ledger.mandatory) {
-    if (!expressed.has(fact.id)) {
-      issues.push(hard('fact_omitted', attempt, factPhrases(fact)[0], undefined));
+    if (expressed.has(fact.id)) continue;
+    const natural = naturalFactExpression(fact, sentences);
+    if (natural?.direction === 'wrong') {
+      issues.push(hard('fact_wrong_number', attempt,
+        `${factPhrases(fact)[0]} (natural direction contradicts the committed change)`, natural.sentence));
+      continue;
     }
+    if (natural) {
+      expressed.add(fact.id);
+      issues.push(soft('unverified_sentence', attempt,
+        `${fact.kind} shown through a reaction; human review required`, natural.sentence));
+      continue;
+    }
+    issues.push(hard('fact_omitted', attempt, factPhrases(fact)[0], undefined));
   }
 
   if (ledger.requireTime && duration && (alignment === null || alignment.timeExpressed === false)) {

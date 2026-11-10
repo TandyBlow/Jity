@@ -57,7 +57,8 @@ export function buildLedger(
     if (name.length < 2) continue;
     if (inputText.includes(name) || (priorText ? priorText.includes(name) : false)) licensed.add(name);
   }
-  const sourceText = `${inputText}\n${priorText ?? ''}`;
+  const factText = facts.flatMap((fact) => fact.kind === 'personality_changed' ? [fact.text] : []).join('\n');
+  const sourceText = `${inputText}\n${priorText ?? ''}\n${factText}`;
   const licensedPromises = PROMISE_VERBS.filter((verb) => sourceText.includes(verb) || (policy.licensedEvents ?? []).includes(verb));
   const licensedPastMarkers = PAST_MARKERS.filter((marker) => sourceText.includes(marker));
   const time = policy.time ?? null;

@@ -9,7 +9,7 @@
 
 - 已实现可执行策略 `generateCommittedNarration(...)`，接入现有
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
-- CPU 小测试 46 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
+- CPU 小测试 50 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
 - 真实浏览器模型（Edge headless + wllama）：三个叙事检查点各 3 个代表性点，共 18 次真实生成全部被拒（legacy v2 0/3，instruct v1 0/3，1.5B v2 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
@@ -107,6 +107,22 @@
   `licensedEvents` 就记 `fact_event_added`。这覆盖了上游词表没有的 `开启`。
 - 新增回归测试直接使用 1.5B 那次被接受的原文；当前代码会把该拍拒掉，最终只剩
   明确的时间兜底句，而不是模型编的古董。
+
+### 3.6 同义表达：理智/个性不逼模型报数字或复述原句
+
+`alignNarration` 对 `sanity_changed` 要求句子里出现 from/to 数字，对
+`personality_changed` 要求接近原句；真实好场景常用“呼吸比刚才浅”“这次没有把话
+推回去”这类写法。现在：
+
+- 理智变化：句子里有该人物 + 身体反应（呼吸/手指/声音/视线/肩/脚步…）+ 变化标记
+  （比刚才/下来/浅/停…）时，不再直接判 `fact_omitted`；若句子写了方向词，方向与
+  已结算 from→to 相反仍硬拒（如精神值降了却写“稳了下来”）。
+- 个性变化：句子里有该人物 + 一个行为/态度动词 + 变化标记时，不再判遗漏。
+- 两者都返回 `unverified_sentence` 软提示，交人工复核；`metrics` 仍记录上游 coverage
+  的原始 false。移动/任务/时间仍要求可核对内容，不放宽事实。
+
+这样不会因为“没逐字写出精神值/没复述个性原句”把忠实的短场景误拒；但软提示不是
+质量通过，最终仍需用户读评。
 
 ### 4. 有界重试
 
@@ -314,7 +330,7 @@ npx tsc -p tsconfig.world-contract.json
 npx eslint src/lib/world-engine/local/narration-generation
 ```
 
-46 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
+50 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
 整段拒绝返回最佳稿和全部问题；非视角心理泄露；POV 心理合法；隐藏知识；未许可实体；
 句内循环；跨回合回声；提前收尾；截断后提高 token 预算；elapsed 时间必述；玩家
 动作许可事件；复述指令；revise/regenerate 两种修复；外取消（无输出/带部分流式）；

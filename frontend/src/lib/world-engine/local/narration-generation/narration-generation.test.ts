@@ -823,6 +823,69 @@ describe('beat mode', () => {
     expect(result.issues.some((issue) => issue.kind === 'echo_prior')).toBe(false);
   });
 
+  test('a sanity drop shown through a reaction is not a fact omission', async () => {
+    const sanityDrop: NarrationFact = {
+      id: 'person_c:sanity_changed', actorId: 'person_c', name: '周宁',
+      kind: 'sanity_changed', from: 10, to: 8,
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁的呼吸比刚才浅，手指在袖口上停了一会儿。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(sanityDrop), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'unverified_sentence' && issue.severity === 'soft')).toBe(true);
+  });
+
+  test('a sanity rise shown with the opposite reaction is still rejected', async () => {
+    const sanityDrop: NarrationFact = {
+      id: 'person_c:sanity_changed', actorId: 'person_c', name: '周宁',
+      kind: 'sanity_changed', from: 10, to: 8,
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁的呼吸稳了下来，手指也松开了。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(sanityDrop), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_wrong_number')).toBe(true);
+  });
+
+  test('a promise inside a committed personality fact is licensed from the fact itself', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_trait', text: '答应替林川查那批旧报纸，只是一直没开口',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁这次点了点头，答应明天去查那批旧报纸。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'promise_without_fact')).toBe(false);
+  });
+
+  test('a personality change shown through a changed act is a soft review, not an omission', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_trait', text: '答应替林川查那批旧报纸，只是一直没开口',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁这次没有把话推回去，只是点了点头。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'unverified_sentence')).toBe(true);
+  });
+
   test('the 1.5B elapsed sample that used to pass is rejected for opening the box', async () => {
     const atLin: NarrationFact = {
       id: 'person_a:at', actorId: 'person_a', name: '林川', kind: 'at',
